@@ -1,0 +1,35 @@
+{
+  "name": "go-sdk-js",
+  "version": "0.1.0",
+  "description": "JavaScript library for TomTom maps and location services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/go-sdk-js.git"
+  },
+  "keywords": [
+    "tomtom",
+    "sdk",
+    "api",
+    "map",
+    "location",
+    "search",
+    "routing",
+    "traffic"
+  ],
+  "author": "danielfornies-tomtom <daniel.forniessoria@tomtom.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/go-sdk-js/issues"
+  },
+  "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0"
+  }
+}
