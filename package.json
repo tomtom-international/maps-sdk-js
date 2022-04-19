@@ -26,11 +26,11 @@
     "url": "https://github.com/tomtom-international/go-sdk-js/issues"
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
-  "dependencies": {},
   "devDependencies": {
     "eslint": "^8.13.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0"
+    "eslint-plugin-prettier": "^4.0.0",
+    "rollup": "^2.70.2"
   },
   "workspaces": [
     "services",

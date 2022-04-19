@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/tomtom-international/go-sdk-js/issues"
   },
-  "homepage": "https://github.com/tomtom-international/go-sdk-js#readme"
+  "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
+  "dependencies": {
+    "axios": "^0.26.1"
+  }
 }
