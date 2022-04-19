@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/tomtom-international/go-sdk-js.git"
   },
-  "author": "danielfornies-tomtom <daniel.forniessoria@tomtom.com>",
+  "author": "GO SDK JS Team",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/tomtom-international/go-sdk-js/issues"

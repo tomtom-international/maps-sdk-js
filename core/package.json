@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "danielfornies-tomtom <daniel.forniessoria@tomtom.com>",
+  "author": "GO SDK JS Team",
   "license": "ISC",
   "devDependencies": {},
   "repository": {
