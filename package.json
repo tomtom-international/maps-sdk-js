@@ -4,7 +4,7 @@
   "description": "JavaScript library for TomTom maps and location services",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "type-check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.2.1",
     "@rollup/plugin-typescript": "^8.3.2",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
