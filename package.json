@@ -7,7 +7,8 @@
     "build": "rollup -c",
     "lint": "eslint --ext .ts,.js */src/**",
     "lint:fix": "eslint --debug --ext .ts,.js --fix */src/**",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
