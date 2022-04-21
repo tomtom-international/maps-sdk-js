@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
     "declaration": true,
     "typeRoots": [
       "./node_modules/@types",
@@ -10,8 +8,6 @@
     ],
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "allowJs": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
