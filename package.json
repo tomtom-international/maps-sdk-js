@@ -4,8 +4,10 @@
   "description": "JavaScript library for TomTom maps and location services",
   "main": "index.js",
   "scripts": {
-    "type-check": "tsc --noEmit",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint --ext .ts,.js */src/**",
+    "lint:fix": "eslint --debug --ext .ts,.js --fix */src/**",
+    "type-check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",

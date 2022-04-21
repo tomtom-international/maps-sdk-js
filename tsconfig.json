@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "incremental": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "declaration": true,
@@ -13,13 +14,12 @@
     "emitDecoratorMetadata": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "lib": ["ESNext"],
-    "module": "esnext",
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "target": "ES2015"
-  },
-  "exclude": ["**/*.js", "node_modules/", "dist/"]
+    "target": "es6",
+    //"rootDir": "./src",
+    //"exclude": ["**/*.js", "node_modules/", "dist/"]
+  }
 }
