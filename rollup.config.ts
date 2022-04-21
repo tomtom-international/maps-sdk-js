@@ -1,9 +1,6 @@
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-// We use rollup-plugin-typescript2 instead of @rollup/plugin-typescript
-// because the latter is not compatible with rollup-plugin-web-worker-loader.
-// More info: https://github.com/darionco/rollup-plugin-web-worker-loader/issues/57
 import { terser } from "rollup-plugin-terser";
 
 export default () => {
