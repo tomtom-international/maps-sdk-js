@@ -2,10 +2,7 @@
   "compilerOptions": {
     "incremental": true,
     "declaration": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ],
+    "composite": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowJs": true,
@@ -15,5 +12,6 @@
     "sourceMap": true,
     "strict": true,
     "target": "es6"
-  }
+  },
+  "exclude": ["**/*.js", "node_modules/", "dist/"]
 }
