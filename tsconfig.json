@@ -18,8 +18,6 @@
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "target": "es6",
-    //"rootDir": "./src",
-    //"exclude": ["**/*.js", "node_modules/", "dist/"]
+    "target": "es6"
   }
 }
