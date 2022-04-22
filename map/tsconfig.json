@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "declarationDir": "dist/dts",
+    "declarationDir": "dts",
     "rootDir": "./src"
   }
 }

@@ -1,5 +1,4 @@
 import commonjs from "@rollup/plugin-commonjs";
-import dts from 'rollup-plugin-dts';
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
@@ -8,7 +7,7 @@ export default () => {
     const plugins = [
         // has to be before typescript plugin
         nodeResolve({ browser: true }),
-        typescript(),
+        typescript(), //needed for correct order
         commonjs(),
         terser()
     ];
@@ -21,7 +20,8 @@ export default () => {
                 format: "es",
                 sourcemap: true
             },
-            plugins
+            // so we use correct tsconfig and make it work
+            plugins: [...plugins, typescript({ tsconfig: "./core/tsconfig.json" })]
         },
         {
             input: "services/src/index.ts",
@@ -30,7 +30,8 @@ export default () => {
                 format: "es",
                 sourcemap: true
             },
-            plugins
+            // so we use correct tsconfig
+            plugins: [...plugins, typescript({ tsconfig: "./services/tsconfig.json" })]
         },
         {
             input: "map/src/index.ts",
@@ -39,7 +40,8 @@ export default () => {
                 format: "es",
                 sourcemap: true
             },
-            plugins
+            // so we use correct tsconfig
+            plugins: [...plugins, typescript({ tsconfig: "./map/tsconfig.json" })]
         }
     ];
 };
