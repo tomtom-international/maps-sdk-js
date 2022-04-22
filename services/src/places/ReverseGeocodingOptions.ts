@@ -95,16 +95,6 @@ export type ReverseGeocodingOptions = {
     number?: string;
 
     /**
-     * Longitude and latitude data in one of the supported
-     * formats.
-     *
-     * This option's value should have the location to be reverse geocoded.
-     * This option is able to convert a number of popular formats into a geographic coordinate.
-     * @default None
-     */
-    position?: HasLngLat;
-
-    /**
      * The protocol type to be used in the calls.
      *
      * Represents the type of protocol used to perform a service call.
