@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
   "dependencies": {
-    "axios": "^0.26.1",
-    "core": "*"
+    "core": "*",
+    "isomorphic-fetch": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Address, getLngLatArray, HasLngLat } from "core/src";
 import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
 
@@ -13,16 +12,10 @@ import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
 export const reverseGeocode = async (position: HasLngLat, options?: ReverseGeocodingOptions): Promise<Address> => {
     const lngLatArray = getLngLatArray(position);
     return new Promise((resolve, reject) => {
-        axios
-            .get(`/${lngLatArray[1]},${lngLatArray[0]}.json`, {
-                baseURL: "https://api.tomtom.com/search/2/reverseGeocode",
-                params: {
-                    key: "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE"
-                }
-            })
-            .then(
-                (resolved) => resolve(resolved.data?.addresses[0]?.address),
-                (rejected) => reject(rejected)
-            );
+        const url = new URL(`https://api.tomtom.com/search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
+        url.searchParams.append("key", "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE");
+        fetch(url.toString())
+            .then((response) => response.json().then((json) => resolve(json.addresses[0]?.address)))
+            .catch((error) => reject(error));
     });
 };

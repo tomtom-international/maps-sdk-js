@@ -1,3 +1,4 @@
+require("isomorphic-fetch");
 import { reverseGeocode } from "../ReverseGeocoding";
 
 describe("ReverseGeocode integration tests", () => {
