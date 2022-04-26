@@ -10,6 +10,9 @@
     "type-check": "tsc --noEmit",
     "test": "jest"
   },
+  "publishConfig": {
+    "registry": "https://tomtom.jfrog.io/artifactory/api/npm/go-sdk-js-npm-local/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomtom-international/go-sdk-js.git"
