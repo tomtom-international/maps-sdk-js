@@ -1,4 +1,4 @@
-import { HasLngLat, View } from "core/src";
+import { View } from "core/src";
 
 export type EntityType =
     | "Country"
