@@ -1,6 +1,6 @@
 {
-  "name": "go-sdk-js",
-  "version": "0.1.0",
+  "name": "@anw/go-sdk-js",
+  "version": "0.1.1",
   "description": "JavaScript library for TomTom maps and location services",
   "main": "index.js",
   "scripts": {
