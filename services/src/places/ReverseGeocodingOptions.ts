@@ -1,4 +1,4 @@
-import { View } from "core/src";
+import { GlobalConfig, View } from "core/src";
 
 export type EntityType =
     | "Country"
@@ -11,7 +11,7 @@ export type EntityType =
     | "PostalCodeArea";
 
 // TODO: review, cleanup & improve
-export type ReverseGeocodingOptions = {
+export type ReverseGeocodingOptions = GlobalConfig & {
     /**
      * Format of newlines in the formatted address.
      *
@@ -43,26 +43,6 @@ export type ReverseGeocodingOptions = {
      * @default None
      */
     heading?: number;
-
-    /**
-     * A valid API Key for the requested service.
-     *
-     * A valid API Key is required to make use of the given service.
-     * It can be issued in the Developer Portal.
-     * @default None
-     */
-    key: string;
-
-    /**
-     * Language code that decides in which language the results
-     * should be returned.
-     *
-     * The value should correspond to one of the supported IETF language codes.
-     * The list is available here.
-     * The code is case insensitive.
-     * @default null
-     */
-    language?: string;
 
     /**
      * Enables the return of a comma-separted mapcodes list.

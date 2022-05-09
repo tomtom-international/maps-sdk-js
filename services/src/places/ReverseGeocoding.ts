@@ -1,4 +1,5 @@
-import { Address, getLngLatArray, HasLngLat } from "core/src";
+import { Feature, Point } from "geojson";
+import { AddressProperties, getLngLatArray, HasLngLat, mergeFromGlobal } from "core/src";
 import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
 
 /**
@@ -9,11 +10,15 @@ import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
  * @param options
  * @see https://developer.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode
  */
-export const reverseGeocode = async (position: HasLngLat, options?: ReverseGeocodingOptions): Promise<Address> => {
+export const reverseGeocode = async (
+    position: HasLngLat,
+    options?: ReverseGeocodingOptions
+): Promise<Feature<Point, AddressProperties>> => {
+    options = mergeFromGlobal(options);
     const lngLatArray = getLngLatArray(position);
     return new Promise((resolve, reject) => {
-        const url = new URL(`https://api.tomtom.com/search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
-        url.searchParams.append("key", "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE");
+        const url = new URL(`${options?.baseURL}search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
+        url.searchParams.append("key", <string>options?.apiKey);
         fetch(url.toString())
             .then((response) => response.json().then((json) => resolve(json.addresses[0]?.address)))
             .catch((error) => reject(error));

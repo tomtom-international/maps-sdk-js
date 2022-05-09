@@ -1,4 +1,4 @@
-export type Address = {
+export type AddressProperties = {
     /**
      * The building number on the street.
      */
