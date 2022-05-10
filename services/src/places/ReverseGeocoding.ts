@@ -1,8 +1,8 @@
-import { Feature, Point } from "geojson";
+import { Feature, Point, Position } from "geojson";
 import { getLngLatArray, HasLngLat, mergeFromGlobal, RevGeoAddressProps, toPointFeature } from "core/src";
 import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
 
-export const parseResponse = (requestLngLat: number[], apiResponseJSON: any): Feature<Point, RevGeoAddressProps> => {
+export const parseResponse = (requestLngLat: Position, apiResponseJSON: any): Feature<Point, RevGeoAddressProps> => {
     console.log(apiResponseJSON);
     const addressLatLng = (apiResponseJSON.position as string).split(",").map((coordStr) => Number(coordStr));
     return {

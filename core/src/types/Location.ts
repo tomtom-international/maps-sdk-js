@@ -1,5 +1,7 @@
+import { Position } from "geojson";
+
 export type HasLngLatProp = {
-    lngLat: number[];
+    lngLat: Position;
 };
 
 export type AddressProperties = {

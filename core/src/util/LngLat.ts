@@ -1,7 +1,7 @@
-import { Feature, Point } from "geojson";
+import { Feature, Point, Position } from "geojson";
 import { HasLngLat } from "../types/Geometry";
 
-export const getLngLatArray = (hasLngLat: HasLngLat): number[] => {
+export const getLngLatArray = (hasLngLat: HasLngLat): Position => {
     if (Array.isArray(hasLngLat)) {
         return hasLngLat;
     } else if ((hasLngLat as Point).coordinates) {
@@ -12,7 +12,7 @@ export const getLngLatArray = (hasLngLat: HasLngLat): number[] => {
     throw new Error("Received object does not have lng lat coordinates");
 };
 
-export const toPointFeature = (lngLat: number[]): Feature<Point> => ({
+export const toPointFeature = (lngLat: Position): Feature<Point> => ({
     type: "Feature",
     geometry: {
         type: "Point",
