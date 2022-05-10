@@ -3,7 +3,6 @@ import { getLngLatArray, HasLngLat, mergeFromGlobal, RevGeoAddressProps, toPoint
 import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
 
 export const parseResponse = (requestLngLat: Position, apiResponseJSON: any): Feature<Point, RevGeoAddressProps> => {
-    console.log(apiResponseJSON);
     const addressLatLng = (apiResponseJSON.position as string).split(",").map((coordStr) => Number(coordStr));
     return {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:

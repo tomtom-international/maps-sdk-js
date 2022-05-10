@@ -35,15 +35,17 @@ export class GOSDKConfig {
         this.config = defaultConfig;
     }
 
-    public add = (config: GlobalConfig) => {
+    public add(config: GlobalConfig) {
         this.config = { ...this.config, ...config };
-    };
+    }
 
-    public set = (config: GlobalConfig) => {
+    public set(config: GlobalConfig) {
         this.config = config;
-    };
+    }
 
-    public get = () => this.config;
+    public get() {
+        return this.config;
+    }
 }
 
 export const mergeFromGlobal = <T extends GlobalConfig>(givenConfig: T = {} as T): T => ({
