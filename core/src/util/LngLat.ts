@@ -11,3 +11,12 @@ export const getLngLatArray = (hasLngLat: HasLngLat): number[] => {
     }
     throw new Error("Received object does not have lng lat coordinates");
 };
+
+export const toPointFeature = (lngLat: number[]): Feature<Point> => ({
+    type: "Feature",
+    geometry: {
+        type: "Point",
+        coordinates: lngLat
+    } as Point,
+    properties: {}
+});

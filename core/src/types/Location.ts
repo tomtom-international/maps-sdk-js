@@ -1,3 +1,7 @@
+export type HasLngLatProp = {
+    lngLat: number[];
+};
+
 export type AddressProperties = {
     /**
      * The building number on the street.
@@ -78,3 +82,5 @@ export type AddressProperties = {
      */
     localName?: string;
 };
+
+export type RevGeoAddressProps = HasLngLatProp & AddressProperties;
