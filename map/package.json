@@ -3,11 +3,6 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
-  "devDependencies": {
-    "@types/jest": "^27.4.1",
-    "jest": "^27.5.1",
-    "ts-jest": "^27.1.4"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
