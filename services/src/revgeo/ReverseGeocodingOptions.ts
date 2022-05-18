@@ -75,14 +75,6 @@ export type ReverseGeocodingOptions = GlobalConfig & {
     number?: string;
 
     /**
-     * The protocol type to be used in the calls.
-     *
-     * Represents the type of protocol used to perform a service call.
-     * @default "https"
-     */
-    protocol?: "http" | "https";
-
-    /**
      * A positive integer value in meters.
      *
      * This option specifies the search radius in meters using the coordinates given to the center

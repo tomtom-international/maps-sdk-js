@@ -3,7 +3,7 @@ require("isomorphic-fetch");
 import { GOSDKConfig } from "core/src";
 import reverseGeocode from "../ReverseGeocoding";
 
-describe("ReverseGeocode integration tests", () => {
+describe("Reverse Geocoding integration tests", () => {
     beforeAll(() => {
         GOSDKConfig.instance.add({
             apiKey: "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE"
