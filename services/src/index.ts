@@ -1,1 +1,1 @@
-export * from "./places/ReverseGeocoding";
+export * from "./revgeo/ReverseGeocoding";

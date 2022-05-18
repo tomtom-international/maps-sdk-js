@@ -1,8 +1,19 @@
-import { Position } from "geojson";
+import { Polygon, Position } from "geojson";
+import { EntityType } from "services/dist/dts/places/ReverseGeocodingOptions";
+import { LocationDataSources } from "./LocationDataSources";
 
-export type HasLngLatProp = {
-    lngLat: Position;
+export type CommonLocationProps = {
+    boundingBox?: Polygon;
+    dataSources?: LocationDataSources;
 };
+
+export type RevGeoAddressProps = CommonLocationProps &
+    AddressProperties & {
+        /**
+         * Original lng-lat coordinates of the reverse geocoded location.
+         */
+        originalPosition: Position;
+    };
 
 export type AddressProperties = {
     /**
@@ -84,5 +95,3 @@ export type AddressProperties = {
      */
     localName?: string;
 };
-
-export type RevGeoAddressProps = HasLngLatProp & AddressProperties;

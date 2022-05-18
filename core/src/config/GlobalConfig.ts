@@ -9,12 +9,11 @@ export type GlobalConfig = {
     apiKey?: string;
 
     /**
-     * Language code that decides in which language the results
-     * should be returned.
+     * Overall language code for the SDK services and map.
      *
      * The value should correspond to one of the supported IETF language codes.
      * The list is available here.
-     * The code is case insensitive.
+     * The code is case-insensitive.
      * @default null
      */
     language?: string;
