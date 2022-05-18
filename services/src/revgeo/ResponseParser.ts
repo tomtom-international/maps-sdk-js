@@ -11,7 +11,6 @@ export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string })
 };
 
 export const parseResponse = (requestLngLat: Position, apiResponse: any): Feature<Point, RevGeoAddressProps> => {
-    const addressLatLng = csvLatLngToPosition(apiResponse.position);
     const responseAddress = apiResponse.address;
     return {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
@@ -19,7 +18,7 @@ export const parseResponse = (requestLngLat: Position, apiResponse: any): Featur
         properties: {
             ...responseAddress,
             // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
-            originalPosition: [addressLatLng[1], addressLatLng[0]],
+            originalPosition: csvLatLngToPosition(apiResponse.position),
             ...(responseAddress.boundingBox && { boundingBox: bboxToPolygon(responseAddress.boundingBox) })
         }
     };
