@@ -1,3 +1,6 @@
-import { Position } from 'geojson';
+import { Position } from "geojson";
 
-export const csvStringToPosition = (csv: string): Position => csv.split(",").map((coordStr) => Number(coordStr));
+export const csvLatLngToPosition = (csv: string): Position => {
+    const splitLatLng = csv.split(",");
+    return [Number(splitLatLng[1]), Number(splitLatLng[0])];
+};
