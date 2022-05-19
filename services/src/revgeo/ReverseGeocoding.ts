@@ -18,15 +18,15 @@ export const reverseGeocode = async (
 ): Promise<Feature<Point, RevGeoAddressProps>> => {
     const mergedOptions = mergeFromGlobal(options);
     const lngLatArray = getLngLatArray(position);
-    return new Promise((resolve, reject) => {
-        const url = new URL(`${mergedOptions.baseURL}search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
-        const urlParams = url.searchParams;
-        urlParams.append("key", mergedOptions.apiKey as string);
-        mergedOptions.allowFreeformNewline &&
-            urlParams.append("allowFreeformNewline", String(mergedOptions.allowFreeformNewline));
-        mergedOptions.entityType && urlParams.append("entityType", mergedOptions.entityType as string);
-        mergedOptions.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedOptions.mapcodes));
+    const url = new URL(`${mergedOptions.baseURL}search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
+    const urlParams = url.searchParams;
+    urlParams.append("key", mergedOptions.apiKey as string);
+    mergedOptions.allowFreeformNewline &&
+        urlParams.append("allowFreeformNewline", String(mergedOptions.allowFreeformNewline));
+    mergedOptions.entityType && urlParams.append("entityType", mergedOptions.entityType as string);
+    mergedOptions.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedOptions.mapcodes));
 
+    return new Promise((resolve, reject) => {
         fetch(url.toString())
             .then((response) => response.json().then((json) => resolve(parseResponse(lngLatArray, json.addresses[0]))))
             .catch((error) => reject(error));
