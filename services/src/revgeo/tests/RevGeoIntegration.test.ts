@@ -38,4 +38,16 @@ describe("Reverse Geocoding integration tests", () => {
         });
         expect(result).toBeDefined();
     });
+
+    test("Reverse geocoding from the sea with small radius", async () => {
+        const result = await reverseGeocode([4.49112, 52.35937], {
+            radius: 10
+        });
+        expect(result.properties.country).toBeUndefined();
+    });
+
+    test("Reverse geocoding from the sea with default radius which yields a result", async () => {
+        const result = await reverseGeocode([4.49112, 52.35937]);
+        expect(result.properties.country).toBeDefined();
+    });
 });

@@ -28,6 +28,7 @@ export const reverseGeocode = async (
     mergedOptions.entityType && urlParams.append("entityType", mergedOptions.entityType as string);
     mergedOptions.heading && urlParams.append("heading", String(mergedOptions.heading));
     mergedOptions.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedOptions.mapcodes));
+    mergedOptions.radius && urlParams.append("radius", String(mergedOptions.radius));
     mergedOptions.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(mergedOptions.returnSpeedLimit));
 
     return new Promise((resolve, reject) => {
