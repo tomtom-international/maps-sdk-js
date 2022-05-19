@@ -10,6 +10,10 @@ export type EntityType =
     | "Neighbourhood"
     | "PostalCodeArea";
 
+export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rotary" | "LocalStreet";
+
+export type MapcodeType = "Local" | "International" | "Alternative";
+
 // TODO: review, cleanup & improve
 export type ReverseGeocodingOptions = GlobalConfig & {
     /**
@@ -56,7 +60,7 @@ export type ReverseGeocodingOptions = GlobalConfig & {
      * Every location on Earth can be represented by a mapcode. Mapcodes are designed to be short,
      * easy to recognize, remember, and communicate. Visit the Mapcode project website for more information.
      */
-    mapcodes?: string;
+    mapcodes?: MapcodeType | MapcodeType[];
 
     /**
      * The date and time used to return time zone information.
@@ -110,7 +114,7 @@ export type ReverseGeocodingOptions = GlobalConfig & {
     /**
      * An array of strings, or just one string with comma-separated values.
      *
-     * Use this option if you want to restrict the result to one, or a group of the following road uses:
+     * Use this option if you want to restrict the result to one, or a group of the defined road uses:
      * "LimitedAccess"
      * "Arterial"
      * "Terminal"
@@ -119,7 +123,7 @@ export type ReverseGeocodingOptions = GlobalConfig & {
      * "LocalStreet"
      * @default None
      */
-    roadUse?: string[] | string;
+    roadUse?: RoadUse | RoadUse[];
 
     /**
      * The street's number.

@@ -2,6 +2,7 @@ import { Feature, Point } from "geojson";
 import { getLngLatArray, HasLngLat, mergeFromGlobal, RevGeoAddressProps } from "core/src";
 import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
 import { parseResponse } from "./ResponseParser";
+import { arrayToCSV } from "../shared/Arrays";
 
 /**
  * The TomTom Reverse Geocoding API gives users a tool to translate a coordinate (for example: 37.786505, -122.3862)
@@ -19,10 +20,13 @@ export const reverseGeocode = async (
     const lngLatArray = getLngLatArray(position);
     return new Promise((resolve, reject) => {
         const url = new URL(`${mergedOptions.baseURL}search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
-        url.searchParams.append("key", <string>mergedOptions.apiKey);
-        if (mergedOptions?.entityType) {
-            url.searchParams.append("entityType", <string>mergedOptions.entityType);
-        }
+        const urlParams = url.searchParams;
+        urlParams.append("key", <string>mergedOptions.apiKey);
+        mergedOptions?.allowFreeformNewline &&
+            urlParams.append("allowFreeformNewline", String(mergedOptions.allowFreeformNewline));
+        mergedOptions?.entityType && urlParams.append("entityType", mergedOptions.entityType as string);
+        mergedOptions?.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedOptions.mapcodes));
+
         fetch(url.toString())
             .then((response) => response.json().then((json) => resolve(parseResponse(lngLatArray, json.addresses[0]))))
             .catch((error) => reject(error));
