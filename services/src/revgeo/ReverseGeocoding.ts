@@ -16,15 +16,19 @@ export const reverseGeocode = async (
     position: HasLngLat,
     options?: ReverseGeocodingOptions
 ): Promise<Feature<Point, RevGeoAddressProps>> => {
-    const mergedOptions = mergeFromGlobal(options);
+    const mergedOptions = <ReverseGeocodingOptions>mergeFromGlobal(options);
     const lngLatArray = getLngLatArray(position);
     const url = new URL(`${mergedOptions.baseURL}search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
     const urlParams = url.searchParams;
     urlParams.append("key", mergedOptions.apiKey as string);
+    mergedOptions.language && urlParams.append("language", mergedOptions.language);
+
     mergedOptions.allowFreeformNewline &&
         urlParams.append("allowFreeformNewline", String(mergedOptions.allowFreeformNewline));
     mergedOptions.entityType && urlParams.append("entityType", mergedOptions.entityType as string);
+    mergedOptions.heading && urlParams.append("heading", String(mergedOptions.heading));
     mergedOptions.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedOptions.mapcodes));
+    mergedOptions.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(mergedOptions.returnSpeedLimit));
 
     return new Promise((resolve, reject) => {
         fetch(url.toString())

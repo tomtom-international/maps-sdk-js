@@ -63,13 +63,6 @@ export type ReverseGeocodingOptions = GlobalConfig & {
     mapcodes?: MapcodeType | MapcodeType[];
 
     /**
-     * The date and time used to return time zone information.
-     * * It allows the service to decide whether the Daylight Saving Time time zone should be used or not.
-     * * It must conform to RFC 3339.
-     */
-    dateTime?: string;
-
-    /**
      * Street number as a string.
      *
      * If a street number is sent in along with the request, the response may
