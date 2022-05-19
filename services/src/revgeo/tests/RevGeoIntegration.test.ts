@@ -50,4 +50,17 @@ describe("Reverse Geocoding integration tests", () => {
         const result = await reverseGeocode([4.49112, 52.35937]);
         expect(result.properties.country).toBeDefined();
     });
+
+    test("Reverse geocoding with most options as non defaults", async () => {
+        const result = await reverseGeocode([5.72884, 52.33499], {
+            allowFreeformNewline: true,
+            heading: 90,
+            language: "nl-NL",
+            mapcodes: ["Local", "International"],
+            number: "10",
+            radius: 50000,
+            roadUse: ["LimitedAccess", "Ramp"]
+        });
+        expect(result).toBeDefined();
+    });
 });
