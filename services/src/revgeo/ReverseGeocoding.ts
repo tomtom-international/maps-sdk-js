@@ -21,11 +21,11 @@ export const reverseGeocode = async (
     return new Promise((resolve, reject) => {
         const url = new URL(`${mergedOptions.baseURL}search/2/reverseGeocode/${lngLatArray[1]},${lngLatArray[0]}.json`);
         const urlParams = url.searchParams;
-        urlParams.append("key", <string>mergedOptions.apiKey);
-        mergedOptions?.allowFreeformNewline &&
+        urlParams.append("key", mergedOptions.apiKey as string);
+        mergedOptions.allowFreeformNewline &&
             urlParams.append("allowFreeformNewline", String(mergedOptions.allowFreeformNewline));
-        mergedOptions?.entityType && urlParams.append("entityType", mergedOptions.entityType as string);
-        mergedOptions?.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedOptions.mapcodes));
+        mergedOptions.entityType && urlParams.append("entityType", mergedOptions.entityType as string);
+        mergedOptions.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedOptions.mapcodes));
 
         fetch(url.toString())
             .then((response) => response.json().then((json) => resolve(parseResponse(lngLatArray, json.addresses[0]))))
