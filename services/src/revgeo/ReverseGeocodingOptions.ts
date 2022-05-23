@@ -119,14 +119,6 @@ export type ReverseGeocodingOptions = GlobalConfig & {
     roadUse?: RoadUse | RoadUse[];
 
     /**
-     * The street's number.
-     *
-     * Represents the street's number for the structured address.
-     * @default None
-     */
-    streetNumber?: string;
-
-    /**
      * The new value to be set.
      *
      * Sets or returns the view option value to be used in the calls.

@@ -39,6 +39,31 @@ describe("Reverse Geocoding integration tests", () => {
         expect(result).toBeDefined();
     });
 
+    test("Reverse geocoding with house number input", async () => {
+        // Point by Singel 117:
+        const result = await reverseGeocode([4.89081, 52.37552]);
+
+        expect(result?.properties?.streetNumber).toStrictEqual("117");
+        expect(result?.properties?.sideOfStreet).toBeUndefined();
+        expect(result?.properties?.offsetPosition).toBeUndefined();
+
+        // Point by Singel 117, but passing 115 number:
+        const resultWithNumber = await reverseGeocode([4.89081, 52.37552], {
+            number: "115"
+        });
+        expect(resultWithNumber?.properties?.streetNumber).toStrictEqual("115");
+        expect(resultWithNumber?.properties?.sideOfStreet).toStrictEqual("R");
+        expect(result?.properties?.offsetPosition).toBeDefined();
+
+        // Point around Langestraat 94, building on the left side:
+        const resultWithNumberOtherSide = await reverseGeocode([4.89021, 52.37562], {
+            number: "94"
+        });
+        expect(resultWithNumberOtherSide?.properties?.streetNumber).toStrictEqual("94");
+        expect(resultWithNumberOtherSide?.properties?.sideOfStreet).toStrictEqual("L");
+        expect(result?.properties?.offsetPosition).toBeDefined();
+    });
+
     test("Reverse geocoding from the sea with small radius", async () => {
         const result = await reverseGeocode([4.49112, 52.35937], {
             radius: 10
@@ -51,6 +76,14 @@ describe("Reverse Geocoding integration tests", () => {
         expect(result.properties.country).toBeDefined();
     });
 
+    test("Reverse geocoding with specified road uses", async () => {
+        const result = await reverseGeocode([5.72884, 52.33499], {
+            returnRoadUse: true,
+            roadUse: ["Terminal", "LocalStreet"]
+        });
+        expect(result).toBeDefined();
+    });
+
     test("Reverse geocoding with most options as non defaults", async () => {
         const result = await reverseGeocode([5.72884, 52.33499], {
             allowFreeformNewline: true,
@@ -59,7 +92,8 @@ describe("Reverse Geocoding integration tests", () => {
             mapcodes: ["Local", "International"],
             number: "10",
             radius: 50000,
-            roadUse: ["LimitedAccess", "Ramp"]
+            returnRoadUse: true,
+            roadUse: ["Ramp"]
         });
         expect(result).toBeDefined();
     });

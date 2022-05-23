@@ -31,8 +31,8 @@ export const reverseGeocode = async (
     mergedOptions.number && urlParams.append("number", mergedOptions.number);
     mergedOptions.radius && urlParams.append("radius", String(mergedOptions.radius));
     mergedOptions.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(mergedOptions.returnSpeedLimit));
-    // TODO: revise this one, seems we need a JSON array
-    mergedOptions.roadUse && urlParams.append("roadUse", arrayToCSV(mergedOptions.roadUse));
+    mergedOptions.roadUse && urlParams.append("roadUse", JSON.stringify(mergedOptions.roadUse));
+    mergedOptions.returnRoadUse && urlParams.append("returnRoadUse", String(mergedOptions.returnRoadUse));
 
     return new Promise((resolve, reject) => {
         fetch(url.toString())

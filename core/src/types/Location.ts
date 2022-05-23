@@ -1,5 +1,4 @@
 import { Polygon, Position } from "geojson";
-import { EntityType } from "services/dist/dts/places/ReverseGeocodingOptions";
 import { LocationDataSources } from "./LocationDataSources";
 
 export type CommonLocationProps = {
@@ -13,6 +12,14 @@ export type RevGeoAddressProps = CommonLocationProps &
          * Original lng-lat coordinates of the reverse geocoded location.
          */
         originalPosition: Position;
+        /**
+         * The offset position coordinates of the location. Might only be returned if number parameter was defined.
+         */
+        offsetPosition: Position;
+        /**
+         * The left or right side of the street location. This is returned only when the number parameter was defined.
+         */
+        sideOfStreet: "L" | "R";
     };
 
 export type AddressProperties = {
