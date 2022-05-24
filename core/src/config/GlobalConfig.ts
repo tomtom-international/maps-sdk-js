@@ -34,7 +34,7 @@ export class GOSDKConfig {
         this.config = defaultConfig;
     }
 
-    public add(config: GlobalConfig) {
+    public put(config: GlobalConfig) {
         this.config = { ...this.config, ...config };
     }
 

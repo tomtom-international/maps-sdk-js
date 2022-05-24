@@ -3,9 +3,15 @@ require("isomorphic-fetch");
 import { GOSDKConfig } from "core/src";
 import reverseGeocode from "../ReverseGeocoding";
 
+describe("Reverse Geocoding integration test without API key", () => {
+    test("Reverse Geocoding integration test without API key", async () => {
+        await expect(reverseGeocode([5.72884, 52.33499])).rejects.toEqual(403);
+    });
+});
+
 describe("Reverse Geocoding integration tests", () => {
     beforeAll(() => {
-        GOSDKConfig.instance.add({
+        GOSDKConfig.instance.put({
             apiKey: "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE"
         });
     });
@@ -53,7 +59,7 @@ describe("Reverse Geocoding integration tests", () => {
         });
         expect(resultWithNumber?.properties?.streetNumber).toStrictEqual("115");
         expect(resultWithNumber?.properties?.sideOfStreet).toStrictEqual("R");
-        expect(result?.properties?.offsetPosition).toBeDefined();
+        expect(resultWithNumber?.properties?.offsetPosition).toBeDefined();
 
         // Point around Langestraat 94, building on the left side:
         const resultWithNumberOtherSide = await reverseGeocode([4.89021, 52.37562], {
@@ -61,7 +67,7 @@ describe("Reverse Geocoding integration tests", () => {
         });
         expect(resultWithNumberOtherSide?.properties?.streetNumber).toStrictEqual("94");
         expect(resultWithNumberOtherSide?.properties?.sideOfStreet).toStrictEqual("L");
-        expect(result?.properties?.offsetPosition).toBeDefined();
+        expect(resultWithNumberOtherSide?.properties?.offsetPosition).toBeDefined();
     });
 
     test("Reverse geocoding from the sea with small radius", async () => {
