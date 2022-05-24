@@ -14,6 +14,7 @@ export type RevGeoAddressProps = CommonLocationProps &
         originalPosition: Position;
         /**
          * The offset position coordinates of the location. Might only be returned if number parameter was defined.
+         * TODO: clarify behaviour and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
          */
         offsetPosition: Position;
         /**
