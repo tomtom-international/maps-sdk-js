@@ -16,11 +16,11 @@ export type RevGeoAddressProps = CommonLocationProps &
          * The offset position coordinates of the location. Might only be returned if number parameter was defined.
          * TODO: clarify behaviour and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
          */
-        offsetPosition: Position;
+        offsetPosition?: Position;
         /**
          * The left or right side of the street location. This is returned only when the number parameter was defined.
          */
-        sideOfStreet: "L" | "R";
+        sideOfStreet?: "L" | "R";
     };
 
 export type AddressProperties = {
