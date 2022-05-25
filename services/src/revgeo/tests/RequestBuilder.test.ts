@@ -68,8 +68,5 @@ describe("Reverse Geocoding request URL building tests", () => {
         ).toStrictEqual(
             "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=en-GB"
         );
-
-        // TODO
-
     });
 });
