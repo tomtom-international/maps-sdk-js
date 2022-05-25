@@ -18,12 +18,16 @@ export type GlobalConfig = {
      */
     language?: string;
 
-    baseURL?: string;
+    /**
+     * Common base domain URL for all services, unless overwritten by any of them.
+     * Must end with /.
+     * @default https://api.tomtom.com/
+     */
+    baseDomainURL?: string;
 };
 
 const defaultConfig: GlobalConfig = {
-    language: "en-GB",
-    baseURL: "https://api.tomtom.com/"
+    baseDomainURL: "https://api.tomtom.com/"
 };
 
 export class GOSDKConfig {

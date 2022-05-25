@@ -3,9 +3,12 @@ import { mergeFromGlobal } from "core/src";
 import { arrayToCSV } from "../shared/Arrays";
 import { Position } from "geojson";
 
+const buildURLBasePath = (lngLat: Position, mergedOptions: ReverseGeocodingOptions): string =>
+    mergedOptions.customBaseURL || `${mergedOptions.baseDomainURL}search/2/reverseGeocode/`;
+
 export const buildRevGeoRequest = (lngLat: Position, options?: ReverseGeocodingOptions): URL => {
     const mergedOptions = <ReverseGeocodingOptions>mergeFromGlobal(options);
-    const url = new URL(`${mergedOptions.baseURL}search/2/reverseGeocode/${lngLat[1]},${lngLat[0]}.json`);
+    const url = new URL(`${buildURLBasePath(lngLat, mergedOptions)}${lngLat[1]},${lngLat[0]}.json`);
     const urlParams = url.searchParams;
     // common parameters:
     urlParams.append("key", mergedOptions.apiKey as string);
@@ -19,7 +22,7 @@ export const buildRevGeoRequest = (lngLat: Position, options?: ReverseGeocodingO
     mergedOptions.number && urlParams.append("number", mergedOptions.number);
     mergedOptions.radius && urlParams.append("radius", String(mergedOptions.radius));
     mergedOptions.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(mergedOptions.returnSpeedLimit));
-    mergedOptions.roadUse && urlParams.append("roadUse", JSON.stringify(mergedOptions.roadUse));
     mergedOptions.returnRoadUse && urlParams.append("returnRoadUse", String(mergedOptions.returnRoadUse));
+    mergedOptions.roadUse && urlParams.append("roadUse", JSON.stringify(mergedOptions.roadUse));
     return url;
 };
