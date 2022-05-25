@@ -14,7 +14,7 @@ export type GlobalConfig = {
      * The value should correspond to one of the supported IETF language codes.
      * The list is available here.
      * The code is case-insensitive.
-     * @default none
+     * @default NGT (Neutral Ground Truth - language local to each location)
      */
     language?: string;
 
