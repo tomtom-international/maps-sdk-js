@@ -4,16 +4,43 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "build": "rollup -c",
+    "lint": "eslint --ext .ts,.js src/**",
+    "lint:fix": "eslint --debug --ext .ts,.js --fix src/**",
+    "type-check": "tsc --noEmit"
   },
+  "types": "dist/src/index.d.ts",
+  "author": "GO SDK JS Team",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomtom-international/go-sdk-js.git"
   },
-  "author": "GO SDK JS Team",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/tomtom-international/go-sdk-js/issues"
   },
-  "homepage": "https://github.com/tomtom-international/go-sdk-js#readme"
+  "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.2",
+    "@types/geojson": "^7946.0.8",
+    "@types/jest": "^27.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jest": "^26.4.6",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^28.1.0",
+    "prettier": "^2.6.2",
+    "rollup": "^2.75.4",
+    "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "ts-jest": "^28.0.3",
+    "typescript": "^4.7.2"
+  }
 }

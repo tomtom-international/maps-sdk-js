@@ -1,7 +1,8 @@
-import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
-import { mergeFromGlobal } from "core/src";
-import { arrayToCSV } from "../shared/Arrays";
+import { mergeFromGlobal } from "core";
 import { Position } from "geojson";
+
+import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
+import { arrayToCSV } from "../shared/Arrays";
 
 const buildURLBasePath = (lngLat: Position, mergedOptions: ReverseGeocodingOptions): string =>
     mergedOptions.customBaseURL || `${mergedOptions.baseDomainURL}search/2/reverseGeocode/`;

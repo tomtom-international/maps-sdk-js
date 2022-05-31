@@ -1,6 +1,7 @@
 import { Feature, Point, Polygon, Position } from "geojson";
+import { RevGeoAddressProps, toPointFeature } from "core";
+
 import { csvLatLngToPosition } from "../shared/Geometry";
-import { RevGeoAddressProps, toPointFeature } from "core/src";
 
 export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string }): Polygon => {
     const westSouth = csvLatLngToPosition(apiBBox.southWest);

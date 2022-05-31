@@ -1,5 +1,6 @@
+import { getLngLatArray, HasLngLat, RevGeoAddressProps } from "core";
 import { Feature, Point } from "geojson";
-import { getLngLatArray, HasLngLat, RevGeoAddressProps } from "core/src";
+
 import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
 import { parseResponse } from "./ResponseParser";
 import { buildRevGeoRequest } from "./RequestBuilder";

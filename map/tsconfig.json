@@ -1,7 +1,18 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "declarationDir": "dts",
-    "rootDir": "./src"
-  }
+    "incremental": true,
+    "declaration": true,
+    "declarationDir": ".",
+    "composite": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES6"
+  },
+  "exclude": ["*.js", "*.ts", "node_modules/", "dist/", ".rollup.cache/"]
 }

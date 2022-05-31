@@ -1,4 +1,5 @@
-import { GlobalConfig, View } from "core/src";
+import { GlobalConfig, View } from "core";
+
 import { CommonServiceOptions } from "../shared/ServiceTypes";
 
 export type EntityType =
