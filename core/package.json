@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "rollup -c",
+    "build-ci": "npm run type-check && npm run build",
     "lint": "eslint --ext .ts,.js src/**",
     "lint:fix": "eslint --debug --ext .ts,.js --fix src/**",
     "type-check": "tsc --noEmit"

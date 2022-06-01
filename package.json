@@ -29,8 +29,8 @@
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
   "workspaces": [
-    "services",
     "core",
+    "services",
     "map"
   ]
 }
