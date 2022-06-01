@@ -1,6 +1,6 @@
 require("isomorphic-fetch");
 
-import { GOSDKConfig } from "core/src";
+import { GOSDKConfig } from "core";
 import reverseGeocode from "../ReverseGeocoding";
 
 describe("Reverse Geocoding integration test without API key", () => {

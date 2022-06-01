@@ -1,5 +1,5 @@
 import { buildRevGeoRequest } from "../RequestBuilder";
-import { GOSDKConfig } from "core/src";
+import { GOSDKConfig } from "core";
 
 describe("Reverse Geocoding request URL building tests", () => {
     afterEach(() => {
