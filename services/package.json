@@ -9,7 +9,8 @@
     "build-ci": "npm run type-check && npm run build",
     "lint": "eslint --ext .ts,.js src/**",
     "lint:fix": "eslint --debug --ext .ts,.js --fix src/**",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "update-dependencies": "npx npm-check-updates -u --packageFile package.json"
   },
   "types": "dist/src/index.d.ts",
   "author": "GO SDK JS Team",
@@ -41,7 +42,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^28.1.0",
     "prettier": "^2.6.2",
-    "rollup": "^2.75.4",
+    "rollup": "^2.75.5",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "ts-jest": "^28.0.3",
