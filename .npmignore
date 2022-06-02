@@ -20,6 +20,7 @@ scripts/
 dist/jest-config/
 jest-config/
 types/
+scripts/
 
 .env*
 .huskyrc
