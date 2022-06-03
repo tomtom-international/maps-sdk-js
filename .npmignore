@@ -6,7 +6,6 @@ node-modules/
 
 .github/
 
-coverage/
 cache-jest/
 jest/
 src/
@@ -46,3 +45,6 @@ jest*.*
 */*config.*
 
 **/*.tsbuildinfo
+
+# Ignore test coverage
+**/coverage/

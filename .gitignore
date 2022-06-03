@@ -1,6 +1,7 @@
 .idea/
 node_modules/
 dist/
+coverage/
 .DS_Store
 .rollup.cache
 /tsconfig.tsbuildinfo

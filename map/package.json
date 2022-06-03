@@ -6,6 +6,7 @@
   "module": "./dist/map.es.js",
   "scripts": {
     "test": "echo \"Implement unit and integration tests!\"",
+    "test:coverage": "echo \"Implement unit and integration tests!\"",
     "build": "rollup -c",
     "build-ci": "npm run type-check && npm run build",
     "lint": "eslint --ext .ts,.js src/**",
