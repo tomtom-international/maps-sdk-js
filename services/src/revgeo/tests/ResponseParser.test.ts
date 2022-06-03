@@ -1,3 +1,5 @@
 describe("ReverseGeocode response parsing tests", () => {
-    // TODO
+    it("ReverseGeocode works :)", () => {
+        // TODO
+    });
 });

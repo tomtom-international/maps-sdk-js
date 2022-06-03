@@ -1,2 +1,7 @@
-// TODO Select a correct bundle
-module.exports = require("./dist/core.prod.js");
+'use strict';
+
+if (process.env.NODE_ENV === 'production') {
+    module.exports = require("./dist/core.cjs.min.js");
+} else {
+    module.exports = require("./dist/core.cjs.js");
+}

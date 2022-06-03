@@ -1,3 +1,1 @@
-export default {
-    hello: () => console.log("Hi there"),
-}
+export const hello = () => console.log("Hi there");

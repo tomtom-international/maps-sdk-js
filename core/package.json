@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
+  "module": "./dist/core.es.js",
   "scripts": {
     "test": "echo \"Implement unit and integration tests!\"",
     "build": "rollup -c",
@@ -10,7 +11,9 @@
     "lint": "eslint --ext .ts,.js src/**",
     "lint:fix": "eslint --debug --ext .ts,.js --fix src/**",
     "type-check": "tsc --noEmit",
-    "update-dependencies": "npx npm-check-updates -u --packageFile package.json"
+    "update-dependencies": "npx npm-check-updates -u --packageFile package.json",
+    "clean:dist": "rm -rf ./dist",
+    "clean:cache": "rm -rf ./.rollup.cache"
   },
   "types": "dist/src/index.d.ts",
   "author": "GO SDK JS Team",
