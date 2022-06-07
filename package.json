@@ -3,7 +3,10 @@
   "version": "0.1.4",
   "description": "JavaScript library for TomTom maps and location services",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "release:dry": "standard-version --dry-run",
+    "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi"
+  },
   "publishConfig": {
     "registry": "https://tomtom.jfrog.io/artifactory/api/npm/go-sdk-js-npm-local/"
   },
