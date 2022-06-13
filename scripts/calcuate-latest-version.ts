@@ -1,4 +1,4 @@
-const [,, ...args] = process.argv;
+const [, , ...args] = process.argv;
 const [localVersion, remoteVersion] = args;
 
 //console.log({alias, localVersion, remoteVersion});
@@ -6,7 +6,7 @@ const [localVersion, remoteVersion] = args;
 const resolveResult = (result: string) => {
     process.stdout.write(result, "utf-8");
     process.exit();
-}
+};
 
 if (!remoteVersion) {
     resolveResult(localVersion);
