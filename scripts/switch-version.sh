@@ -16,7 +16,7 @@ echo "Current package.json version is $previousVersion";
 # Get latest package version for given tag
 tag_v=$(npm dist-tag ls @anw/go-sdk-js | sed -n 's/^'"${tagName}"': //p');
 
-pkg_v=$(npx ts-node ./scripts/calcuate-latest-version.ts "$previousVersion" "$tag_v")
+pkg_v=$(npx ts-node ./scripts/calculate-latest-version.ts "$previousVersion" "$tag_v")
 
 # Check current resolved version
 echo "Current pre-release version is $pkg_v";
