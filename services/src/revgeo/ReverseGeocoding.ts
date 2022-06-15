@@ -11,7 +11,7 @@ import { fetchJson } from "../shared/Fetch";
  * into a human-understandable street address, street element, or geography.
  *
  * @param position Longitude and latitude data in one of the supported formats.
- * @param options
+ * @param options Optional parameters.
  * @see https://developer.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode
  */
 export const reverseGeocode = async (
@@ -19,11 +19,8 @@ export const reverseGeocode = async (
     options?: ReverseGeocodingOptions
 ): Promise<Feature<Point, RevGeoAddressProps>> => {
     const lngLatArray = getLngLatArray(position);
-    return new Promise((resolve, reject) => {
-        fetchJson<any>(buildRevGeoRequest(lngLatArray, options).toString())
-            .then((json) => resolve(parseResponse(lngLatArray, json.addresses[0])))
-            .catch((error) => reject(error));
-    });
+    const json = await fetchJson<any>(buildRevGeoRequest(lngLatArray, options).toString());
+    return parseResponse(lngLatArray, json.addresses[0]);
 };
 
 export default reverseGeocode;

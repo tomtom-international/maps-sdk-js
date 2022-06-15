@@ -69,4 +69,28 @@ describe("Reverse Geocoding request URL building tests", () => {
             "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=en-GB"
         );
     });
+
+    test("Basic performance test", async () => {
+        const numExecutions = 10;
+        let accExecTimes = 0;
+        for (let i = 0; i < numExecutions; i++) {
+            const start = performance.now();
+            buildRevGeoRequest([1.12345, 23.45678], {
+                apiKey: "GIVEN_API_KEY",
+                language: "es-ES",
+                allowFreeformNewline: true,
+                entityType: ["Country", "Municipality"],
+                mapcodes: ["Local", "International"],
+                heading: 30,
+                number: "10A",
+                radius: 30,
+                returnRoadUse: true,
+                returnSpeedLimit: true,
+                roadUse: ["LimitedAccess", "Arterial"],
+                view: "AR"
+            });
+            accExecTimes += performance.now() - start;
+        }
+        expect(accExecTimes / numExecutions).toBeLessThan(2);
+    });
 });
