@@ -46,7 +46,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "ts-jest": "^28.0.3",
     "ts-node": "^10.8.1",
-    "typescript": "^4.7.2"
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "geojson": "^0.5.0"
