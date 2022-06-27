@@ -1,6 +1,7 @@
 import { GlobalConfig, View } from "core";
 
 import { CommonServiceOptions } from "../shared/ServiceTypes";
+import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 
 export type EntityType =
     | "Country"
@@ -16,9 +17,8 @@ export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rota
 
 export type MapcodeType = "Local" | "International" | "Alternative";
 
-// TODO: review, cleanup & improve
 export type ReverseGeocodingOptions = GlobalConfig &
-    CommonServiceOptions & {
+    CommonServiceOptions<URL, ReverseGeocodingResponse> & {
         /**
          * Format of newlines in the formatted address.
          *

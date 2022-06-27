@@ -1,3 +1,5 @@
+import { example0SDKResponse } from "./RevGeoTest.data";
+
 require("isomorphic-fetch");
 
 import { GOSDKConfig } from "core";
@@ -18,7 +20,7 @@ describe("Reverse Geocoding integration tests", () => {
 
     test("Default reverse geocoding", async () => {
         const result = await reverseGeocode([5.72884, 52.33499]);
-        expect(result).toBeDefined();
+        expect(result).toStrictEqual(example0SDKResponse);
     });
 
     test("Localized reverse geocoding", async () => {
@@ -102,5 +104,15 @@ describe("Reverse Geocoding integration tests", () => {
             roadUse: ["Ramp"]
         });
         expect(result).toBeDefined();
+    });
+
+    test("Reverse geocoding with response override", async () => {
+        const result = await reverseGeocode([-0.12681, 51.50054], {
+            updateResponse: (response) => ({
+                ...response,
+                newField: "test"
+            })
+        });
+        expect(result).toStrictEqual({ ...result, newField: "test" });
     });
 });

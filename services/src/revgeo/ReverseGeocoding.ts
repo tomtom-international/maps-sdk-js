@@ -6,6 +6,8 @@ import { parseResponse } from "./ResponseParser";
 import { buildRevGeoRequest } from "./RequestBuilder";
 import { fetchJson } from "../shared/Fetch";
 
+export type ReverseGeocodingResponse = Feature<Point, RevGeoAddressProps>;
+
 /**
  * The TomTom Reverse Geocoding API gives users a tool to translate a coordinate (for example: 37.786505, -122.3862)
  * into a human-understandable street address, street element, or geography.
@@ -17,10 +19,15 @@ import { fetchJson } from "../shared/Fetch";
 export const reverseGeocode = async (
     position: HasLngLat,
     options?: ReverseGeocodingOptions
-): Promise<Feature<Point, RevGeoAddressProps>> => {
+): Promise<ReverseGeocodingResponse> => {
     const lngLatArray = getLngLatArray(position);
-    const json = await fetchJson<any>(buildRevGeoRequest(lngLatArray, options).toString());
-    return parseResponse(lngLatArray, json.addresses[0]);
+    let request = buildRevGeoRequest(lngLatArray, options);
+    if (options?.updateRequest) {
+        request = options.updateRequest(request);
+    }
+    const json = await fetchJson<any>(request.toString());
+    const response = parseResponse(lngLatArray, json.addresses[0]);
+    return options?.updateResponse ? options.updateResponse(response) : response;
 };
 
 export default reverseGeocode;
