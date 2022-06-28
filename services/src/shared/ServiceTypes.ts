@@ -8,13 +8,13 @@ export type CommonServiceOptions<REQUEST, RESPONSE> = {
 
     /**
      * Optionally updates the built request before sending it to the API.
-     * @param request
+     * @param request The built request to be updated before it's sent.
      */
     updateRequest?: (request: REQUEST) => REQUEST;
 
     /**
      * Optionally updates the parsed response before returning it.
-     * @param response
+     * @param response The parsed response to be updated before it's returned.
      */
     updateResponse?: (response: RESPONSE) => RESPONSE;
 };
