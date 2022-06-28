@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.11](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.10...v0.1.11) (2022-06-28)
+
+
+### Bug Fixes
+
+* **actions:** disable npm caching temporary ([e6fff9e](https://github.com/tomtom-international/go-sdk-js/commit/e6fff9e0516a52b43c02908aa174a6affd2b4102))
+* **hotfix:** github actions should react on all branch names ([385d06a](https://github.com/tomtom-international/go-sdk-js/commit/385d06ae23c6c390a18ee9555b19eb90837a8189))
+* **hotfix:** uncomment caching for npm ([9710bab](https://github.com/tomtom-international/go-sdk-js/commit/9710bab3a50e71e1aadf757e20bad78e89e4206d))
+* **hotfix:** use a correct alias name source for the deletion action ([69898bd](https://github.com/tomtom-international/go-sdk-js/commit/69898bde49bd9ebc175ee8a043922dbf851db6a7))
+* **version:** calculate the latest version for aliases correctly ([0ba6aeb](https://github.com/tomtom-international/go-sdk-js/commit/0ba6aebd0ec4bfd9067f893db56f6d708d00c95e))
+
 ### [0.1.10](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.9...v0.1.10) (2022-06-07)
 
 ### [0.1.9](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.8...v0.1.9) (2022-06-07)
