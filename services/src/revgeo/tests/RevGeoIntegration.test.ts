@@ -20,7 +20,7 @@ describe("Reverse Geocoding integration tests", () => {
 
     test("Default reverse geocoding", async () => {
         const result = await reverseGeocode([5.72884, 52.33499]);
-        expect(result).toStrictEqual(example0SDKResponse);
+        expect(result).toEqual(expect.objectContaining(example0SDKResponse));
     });
 
     test("Localized reverse geocoding", async () => {
