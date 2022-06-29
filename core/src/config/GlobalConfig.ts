@@ -35,7 +35,6 @@ export class GOSDKConfig {
     private config: GlobalConfig = defaultConfig;
 
     private constructor() {
-        this.config = defaultConfig;
     }
 
     /**
