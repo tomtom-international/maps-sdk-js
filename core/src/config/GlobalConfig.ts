@@ -41,7 +41,7 @@ export class GOSDKConfig {
      * Puts the content of the given config into this one, merging the two. The given config properties have priority.
      * @param config The config to merge into this one.
      */
-    public put(config: GlobalConfig) {
+    public put(config: Partial<GlobalConfig>) {
         this.config = { ...this.config, ...config };
     }
 
