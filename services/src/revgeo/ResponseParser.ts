@@ -1,11 +1,11 @@
-import { Polygon, Position } from "geojson";
-import { toPointFeature } from "core";
+import { Polygon } from "geojson";
+import { getLngLatArray, toPointFeature } from "core";
 
 import { csvLatLngToPosition } from "../shared/Geometry";
-import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
+import { ReverseGeocodingParams } from "./ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 
-export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string }): Polygon => {
+const bboxToPolygon = (apiBBox: { southWest: string; northEast: string }): Polygon => {
     const westSouth = csvLatLngToPosition(apiBBox.southWest);
     const eastNorth = csvLatLngToPosition(apiBBox.northEast);
     const westNorth = [westSouth[0], eastNorth[1]];
@@ -13,21 +13,18 @@ export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string })
     return { type: "Polygon", coordinates: [[westSouth, eastSouth, eastNorth, westNorth, westSouth]] };
 };
 
-export const parseRevGeoResponse = (
-    requestLngLat: Position,
-    apiResponse: any,
-    options?: ReverseGeocodingOptions
-): ReverseGeocodingResponse => {
-    const responseAddress = apiResponse.address;
-    const response = {
+export const parseRevGeoResponse = (params: ReverseGeocodingParams, apiResponse: any): ReverseGeocodingResponse => {
+    const pointFeature = toPointFeature(getLngLatArray(params.position));
+    const response = apiResponse.addresses[0];
+    const address = response.address;
+    return {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
-        ...toPointFeature(requestLngLat),
+        ...pointFeature,
         properties: {
-            ...responseAddress,
+            ...address,
             // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
-            originalPosition: csvLatLngToPosition(apiResponse.position),
-            ...(responseAddress.boundingBox && { boundingBox: bboxToPolygon(responseAddress.boundingBox) })
+            originalPosition: csvLatLngToPosition(response.position),
+            ...(address.boundingBox && { boundingBox: bboxToPolygon(address.boundingBox) })
         }
     };
-    return options?.updateResponse ? options.updateResponse(response) : response;
 };

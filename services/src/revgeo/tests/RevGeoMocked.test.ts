@@ -12,6 +12,6 @@ describe("Reverse Geocoding mocked tests", () => {
                 json: () => Promise.resolve(example0APIResponse)
             })
         );
-        expect(await reverseGeocode([5.72884, 52.33499])).toStrictEqual(example0SDKResponse);
+        expect(await reverseGeocode({ position: [5.72884, 52.33499] })).toStrictEqual(example0SDKResponse);
     });
 });

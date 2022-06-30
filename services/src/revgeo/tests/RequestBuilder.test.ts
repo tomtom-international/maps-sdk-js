@@ -13,17 +13,20 @@ describe("Reverse Geocoding request URL building tests", () => {
             language: "es-ES"
         });
 
-        expect(buildRevGeoRequest([1.12345, 23.45678]).toString()).toStrictEqual(
+        expect(buildRevGeoRequest({ position: [1.12345, 23.45678] }).toString()).toStrictEqual(
             "https://api-test.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GLOBAL_API_KEY&language=es-ES"
         );
-        expect(buildRevGeoRequest([1.12345, 23.45678], { apiKey: "ANOTHER_API_KEY" }).toString()).toStrictEqual(
+        expect(
+            buildRevGeoRequest({ position: [1.12345, 23.45678], apiKey: "ANOTHER_API_KEY" }).toString()
+        ).toStrictEqual(
             "https://api-test.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=ANOTHER_API_KEY&language=es-ES"
         );
-        expect(buildRevGeoRequest([-1.12345, -23.45678], { language: "en-US" }).toString()).toStrictEqual(
+        expect(buildRevGeoRequest({ position: [-1.12345, -23.45678], language: "en-US" }).toString()).toStrictEqual(
             "https://api-test.tomtom.com/search/2/reverseGeocode/-23.45678,-1.12345.json?key=GLOBAL_API_KEY&language=en-US"
         );
         expect(
-            buildRevGeoRequest([-100.12345, -23.45678], {
+            buildRevGeoRequest({
+                position: [-100.12345, -23.45678],
                 apiKey: "ANOTHER_API_KEY",
                 customBaseURL: "https://api.tomtom.com/search/10/reverseGeocodeTest/",
                 language: "en-US",
@@ -37,28 +40,16 @@ describe("Reverse Geocoding request URL building tests", () => {
         ).toStrictEqual(
             "https://api.tomtom.com/search/10/reverseGeocodeTest/-23.45678,-100.12345.json?key=ANOTHER_API_KEY&language=en-US&heading=30&number=10A&radius=30&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"
         );
-
-        // With updated request:
-        expect(
-            buildRevGeoRequest([-1.12345, -23.45678], {
-                updateRequest: (request: URL): URL => {
-                    const updatedRequest = new URL(request);
-                    updatedRequest.hostname = "updated";
-                    return updatedRequest;
-                }
-            }).toString()
-        ).toStrictEqual(
-            "https://updated/search/2/reverseGeocode/-23.45678,-1.12345.json?key=GLOBAL_API_KEY&language=es-ES"
-        );
     });
 
     test("Reverse Geocoding request URL building test without global config", async () => {
-        expect(buildRevGeoRequest([1.12345, 23.45678]).toString()).toStrictEqual(
+        expect(buildRevGeoRequest({ position: [1.12345, 23.45678] }).toString()).toStrictEqual(
             "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=undefined"
         );
 
         expect(
-            buildRevGeoRequest([1.12345, 23.45678], {
+            buildRevGeoRequest({
+                position: [1.12345, 23.45678],
                 apiKey: "GIVEN_API_KEY",
                 language: "es-ES",
                 allowFreeformNewline: true,
@@ -77,20 +68,10 @@ describe("Reverse Geocoding request URL building tests", () => {
         );
 
         expect(
-            buildRevGeoRequest([1.12345, 23.45678], { apiKey: "GIVEN_API_KEY", language: "en-GB" }).toString()
+            buildRevGeoRequest({ position: [1.12345, 23.45678], apiKey: "GIVEN_API_KEY", language: "en-GB" }).toString()
         ).toStrictEqual(
             "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=en-GB"
         );
-
-        // With updated request:
-        expect(
-            buildRevGeoRequest([-1.12345, -23.45678], {
-                updateRequest: (request: URL): URL => {
-                    request.hostname = "updated";
-                    return request;
-                }
-            }).toString()
-        ).toStrictEqual("https://updated/search/2/reverseGeocode/-23.45678,-1.12345.json?key=undefined");
     });
 
     test("Basic performance test", async () => {
@@ -98,7 +79,8 @@ describe("Reverse Geocoding request URL building tests", () => {
         let accExecTimes = 0;
         for (let i = 0; i < numExecutions; i++) {
             const start = performance.now();
-            buildRevGeoRequest([1.12345, 23.45678], {
+            buildRevGeoRequest({
+                position: [1.12345, 23.45678],
                 apiKey: "GIVEN_API_KEY",
                 language: "es-ES",
                 allowFreeformNewline: true,
