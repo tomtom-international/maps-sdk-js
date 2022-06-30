@@ -25,5 +25,5 @@ export const buildRevGeoRequest = (lngLat: Position, options?: ReverseGeocodingO
     mergedOptions.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(mergedOptions.returnSpeedLimit));
     mergedOptions.returnRoadUse && urlParams.append("returnRoadUse", String(mergedOptions.returnRoadUse));
     mergedOptions.roadUse && urlParams.append("roadUse", JSON.stringify(mergedOptions.roadUse));
-    return url;
+    return options?.updateRequest ? options.updateRequest(url) : url;
 };

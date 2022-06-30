@@ -1,7 +1,9 @@
-import { Feature, Point, Polygon, Position } from "geojson";
-import { RevGeoAddressProps, toPointFeature } from "core";
+import { Polygon, Position } from "geojson";
+import { toPointFeature } from "core";
 
 import { csvLatLngToPosition } from "../shared/Geometry";
+import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
+import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 
 export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string }): Polygon => {
     const westSouth = csvLatLngToPosition(apiBBox.southWest);
@@ -11,9 +13,13 @@ export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string })
     return { type: "Polygon", coordinates: [[westSouth, eastSouth, eastNorth, westNorth, westSouth]] };
 };
 
-export const parseResponse = (requestLngLat: Position, apiResponse: any): Feature<Point, RevGeoAddressProps> => {
+export const parseRevGeoResponse = (
+    requestLngLat: Position,
+    apiResponse: any,
+    options?: ReverseGeocodingOptions
+): ReverseGeocodingResponse => {
     const responseAddress = apiResponse.address;
-    return {
+    const response = {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...toPointFeature(requestLngLat),
         properties: {
@@ -23,4 +29,5 @@ export const parseResponse = (requestLngLat: Position, apiResponse: any): Featur
             ...(responseAddress.boundingBox && { boundingBox: bboxToPolygon(responseAddress.boundingBox) })
         }
     };
+    return options?.updateResponse ? options.updateResponse(response) : response;
 };

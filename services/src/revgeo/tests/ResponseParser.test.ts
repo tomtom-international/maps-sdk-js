@@ -1,7 +1,8 @@
 import { apiAndParsedResponses } from "./ResponseParser.data";
 import { Feature, Point, Position } from "geojson";
-import { parseResponse } from "../ResponseParser";
+import { parseRevGeoResponse } from "../ResponseParser";
 import { RevGeoAddressProps } from "core/src";
+import { ReverseGeocodingOptions } from "../ReverseGeocodingOptions";
 
 describe("ReverseGeocode response parsing tests", () => {
     test.each(apiAndParsedResponses)(
@@ -10,9 +11,10 @@ describe("ReverseGeocode response parsing tests", () => {
             name: string,
             lngLatInput: Position,
             apiResponse: any,
+            options: ReverseGeocodingOptions,
             expectedParsedResponse: Feature<Point, RevGeoAddressProps>
         ) => {
-            expect(parseResponse(lngLatInput, apiResponse)).toStrictEqual(expectedParsedResponse);
+            expect(parseRevGeoResponse(lngLatInput, apiResponse, options)).toStrictEqual(expectedParsedResponse);
         }
     );
 });

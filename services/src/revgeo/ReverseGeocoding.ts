@@ -2,7 +2,7 @@ import { getLngLatArray, HasLngLat, RevGeoAddressProps } from "core";
 import { Feature, Point } from "geojson";
 
 import { ReverseGeocodingOptions } from "./ReverseGeocodingOptions";
-import { parseResponse } from "./ResponseParser";
+import { parseRevGeoResponse } from "./ResponseParser";
 import { buildRevGeoRequest } from "./RequestBuilder";
 import { fetchJson } from "../shared/Fetch";
 
@@ -21,13 +21,9 @@ export const reverseGeocode = async (
     options?: ReverseGeocodingOptions
 ): Promise<ReverseGeocodingResponse> => {
     const lngLatArray = getLngLatArray(position);
-    let request = buildRevGeoRequest(lngLatArray, options);
-    if (options?.updateRequest) {
-        request = options.updateRequest(request);
-    }
+    const request = buildRevGeoRequest(lngLatArray, options);
     const json = await fetchJson<any>(request.toString());
-    const response = parseResponse(lngLatArray, json.addresses[0]);
-    return options?.updateResponse ? options.updateResponse(response) : response;
+    return parseRevGeoResponse(lngLatArray, json.addresses[0], options);
 };
 
 export default reverseGeocode;

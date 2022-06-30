@@ -37,6 +37,19 @@ describe("Reverse Geocoding request URL building tests", () => {
         ).toStrictEqual(
             "https://api.tomtom.com/search/10/reverseGeocodeTest/-23.45678,-100.12345.json?key=ANOTHER_API_KEY&language=en-US&heading=30&number=10A&radius=30&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"
         );
+
+        // With updated request:
+        expect(
+            buildRevGeoRequest([-1.12345, -23.45678], {
+                updateRequest: (request: URL): URL => {
+                    const updatedRequest = new URL(request);
+                    updatedRequest.hostname = "updated";
+                    return updatedRequest;
+                }
+            }).toString()
+        ).toStrictEqual(
+            "https://updated/search/2/reverseGeocode/-23.45678,-1.12345.json?key=GLOBAL_API_KEY&language=es-ES"
+        );
     });
 
     test("Reverse Geocoding request URL building test without global config", async () => {
@@ -68,6 +81,16 @@ describe("Reverse Geocoding request URL building tests", () => {
         ).toStrictEqual(
             "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=en-GB"
         );
+
+        // With updated request:
+        expect(
+            buildRevGeoRequest([-1.12345, -23.45678], {
+                updateRequest: (request: URL): URL => {
+                    request.hostname = "updated";
+                    return request;
+                }
+            }).toString()
+        ).toStrictEqual("https://updated/search/2/reverseGeocode/-23.45678,-1.12345.json?key=undefined");
     });
 
     test("Basic performance test", async () => {

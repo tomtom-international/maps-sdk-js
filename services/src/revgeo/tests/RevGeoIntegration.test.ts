@@ -1,9 +1,8 @@
 import { example0SDKResponse } from "./RevGeoTest.data";
-
-require("isomorphic-fetch");
-
 import { GOSDKConfig } from "core";
 import reverseGeocode from "../ReverseGeocoding";
+
+require("isomorphic-fetch");
 
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {
