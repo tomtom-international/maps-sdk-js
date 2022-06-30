@@ -2,7 +2,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
-import includePaths from 'rollup-plugin-includepaths';
+import includePaths from "rollup-plugin-includepaths";
 
 const includePathOptions = {
     include: {},
