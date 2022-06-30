@@ -32,7 +32,7 @@ export default () => {
         {
             input: "./src/index.ts",
             watch: {
-                include: './src/**',
+                include: "./src/**",
                 clearScreen: false
             },
             output: {
@@ -51,7 +51,7 @@ export default () => {
         {
             input: "./src/index.ts",
             watch: {
-                include: './src/**',
+                include: "./src/**",
                 clearScreen: false
             },
             output: {

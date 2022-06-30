@@ -1,7 +1,7 @@
-import commonjs from '@rollup/plugin-commonjs';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
-import { terser } from 'rollup-plugin-terser';
+import commonjs from "@rollup/plugin-commonjs";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript";
+import { terser } from "rollup-plugin-terser";
 
 export default () => {
     return [
@@ -23,7 +23,7 @@ export default () => {
         {
             input: "./src/index.ts",
             watch: {
-                include: './src/**',
+                include: "./src/**",
                 clearScreen: false
             },
             output: {
@@ -41,7 +41,7 @@ export default () => {
         {
             input: "./src/index.ts",
             watch: {
-                include: './src/**',
+                include: "./src/**",
                 clearScreen: false
             },
             output: {
