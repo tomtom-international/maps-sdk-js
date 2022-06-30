@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.14](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.13...v0.1.14) (2022-06-30)
+
+
+### Bug Fixes
+
+* **bundle:** exclude core from bundles of siblings ([1610d93](https://github.com/tomtom-international/go-sdk-js/commit/1610d9399324386b5bb0e799989e1fa40c618942))
+* **type:** configuration merge function should accept partial cfg ([7a7a666](https://github.com/tomtom-international/go-sdk-js/commit/7a7a6666f73735e0eecdf2ef61f33ec634a3a38d))
+* **type:** remove redundant config initialization ([7967424](https://github.com/tomtom-international/go-sdk-js/commit/7967424ab7951c9a547ee4943ca8ca0b29093846))
+
 ### [0.1.13](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.12...v0.1.13) (2022-06-28)
 
 ### [0.1.12](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.11...v0.1.12) (2022-06-28)
