@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.15](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.14...v0.1.15) (2022-06-30)
+
+
+### Features
+
+* **rev-geo:** refactoring to create a reusable service template ([3938832](https://github.com/tomtom-international/go-sdk-js/commit/3938832f61cd3056d81b38583539efe16bff582b))
+* **rev-geo:** refactoring to create a reusable service template ([da1576e](https://github.com/tomtom-international/go-sdk-js/commit/da1576ec3d6c357547c4d5fd7d22d4aa2a6d0901))
+* **rev-geo:** refactoring update request and response calls, adding tests ([f4d884f](https://github.com/tomtom-international/go-sdk-js/commit/f4d884fe37c3176be63503bd29e7666800cd41ca))
+* **rev-geo:** refactoring update request and response calls, adding tests ([183010c](https://github.com/tomtom-international/go-sdk-js/commit/183010c50b620984198f250eda4df2e4478b81eb))
+
 ### [0.1.14](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.13...v0.1.14) (2022-06-30)
 
 
