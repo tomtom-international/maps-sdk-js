@@ -1,4 +1,4 @@
-import { HasLngLat, View } from "core";
+import { HasLngLat, View } from "@anw/go-sdk-js/core";
 
 import { CommonServiceParams } from "../shared/ServiceTypes";
 

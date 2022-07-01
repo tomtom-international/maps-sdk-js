@@ -1,4 +1,4 @@
-import { GlobalConfig } from "core";
+import { GlobalConfig } from "@anw/go-sdk-js/core";
 
 export type CommonServiceParams = GlobalConfig & {
     /**

@@ -1,5 +1,5 @@
+import { getLngLatArray, toPointFeature } from "@anw/go-sdk-js/core";
 import { Polygon } from "geojson";
-import { getLngLatArray, toPointFeature } from "core";
 
 import { csvLatLngToPosition } from "../shared/Geometry";
 import { ReverseGeocodingParams } from "./ReverseGeocodingParams";

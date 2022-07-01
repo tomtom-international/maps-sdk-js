@@ -1,8 +1,12 @@
 .idea/
+.vscode/
+
 node_modules/
-dist/
-coverage/
+**/node_modules/
+**/.rollup.cache/
+**/dist/
+**/coverage/
+
 .DS_Store
-.rollup.cache
-/tsconfig.tsbuildinfo
 *.tgz
+**/*.tsbuildinfo

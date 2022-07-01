@@ -2,8 +2,8 @@
   "name": "@anw/go-sdk-js",
   "version": "0.1.16",
   "description": "JavaScript library for TomTom maps and location services",
-  "main": "index.js",
   "scripts": {
+    "clean": "rm -rf ./*/.rollup.cache ./*/dist",
     "release:dry": "npx standard-version --dry-run",
     "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi"
   },
@@ -34,5 +34,27 @@
     "core",
     "services",
     "map"
-  ]
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./core": {
+      "import": "./core/dist/core.es.js",
+      "require": "./core/dist/core.cjs.js",
+      "node": "./core/dist/core.cjs.js"
+    },
+    "./services": {
+      "import": "./services/dist/services.es.js",
+      "require": "./services/dist/services.cjs.js",
+      "node": "./services/dist/services.cjs.js"
+    },
+    "./map": {
+      "import": "./map/dist/map.es.js",
+      "require": "./map/dist/map.cjs.js",
+      "node": "./map/dist/map.cjs.js"
+    }
+  },
+  "types": "./index.d.ts",
+  "dependencies": {
+    "@types/geojson": "^7946.0.8"
+  }
 }

@@ -6,7 +6,7 @@ import { terser } from "rollup-plugin-terser";
 export default () => {
     return [
         {
-            input: "./src/index.ts",
+            input: "./index.ts",
             output: {
                 file: "./dist/core.cjs.min.js",
                 format: "cjs",
@@ -21,9 +21,9 @@ export default () => {
             ]
         },
         {
-            input: "./src/index.ts",
+            input: "./index.ts",
             watch: {
-                include: "./src/**",
+                include: "./**",
                 clearScreen: false
             },
             output: {
@@ -39,9 +39,9 @@ export default () => {
             ]
         },
         {
-            input: "./src/index.ts",
+            input: "./index.ts",
             watch: {
-                include: "./src/**",
+                include: "./**",
                 clearScreen: false
             },
             output: {

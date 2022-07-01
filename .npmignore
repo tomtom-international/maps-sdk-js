@@ -1,50 +1,22 @@
 .idea/
 .vscode/
-
-node-modules/
-*/node-modules/
-
 .github/
 
-cache-jest/
-jest/
-src/
-**/__mocks__/
-**/__stubs__/
-**/__tests__/
-**/test-utils/
-webpack-config/
-docs/
-scripts/
-dist/jest-config/
-jest-config/
-types/
-scripts/
-
-.env*
-.huskyrc
-.nonsense
-jest*.*
-.babelrc
-.prettierrc.js
-.eslintrc
-.eslintignore
-.*ignore
-.npmrc
-.npmignore
-.commitlintrc.json
-**/*.tgz
-
+node_modules/
+**/node_modules/
 **/.rollup.cache/
-**/*.test.*
+**/coverage/
 
-# Ignore first level of workspace sources
-*/src/*
-
-# Ignore first level of workspace config files
-*/*config.*
-
+.DS_Store
+*.tgz
 **/*.tsbuildinfo
 
-# Ignore test coverage
-**/coverage/
+scripts/
+**/tsconfig.json
+**/.eslintignore
+**/.eslintrc
+**/.prettierrc.js
+**/jest.config.ts
+**/rollup.config.ts
+**/tests/
+**/*.test.ts

@@ -1,5 +1,6 @@
+import { GOSDKConfig } from "@anw/go-sdk-js/core";
+
 import { example0SDKResponse } from "./RevGeoTest.data";
-import { GOSDKConfig } from "core";
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
 

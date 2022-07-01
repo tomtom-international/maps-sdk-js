@@ -1,4 +1,4 @@
-import { getLngLatArray, mergeFromGlobal } from "core";
+import { getLngLatArray, mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { Position } from "geojson";
 
 import { ReverseGeocodingParams } from "./ReverseGeocodingParams";

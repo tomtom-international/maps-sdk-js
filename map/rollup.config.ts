@@ -2,19 +2,20 @@ import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
+// @ts-ignore
 import includePaths from "rollup-plugin-includepaths";
 
 const includePathOptions = {
     include: {},
     paths: [],
-    external: ['core'],
+    external: ['@anw/go-sdk-js/core'],
     extensions: ['.js', '.json']
 };
 
 export default () => {
     return [
         {
-            input: "./src/index.ts",
+            input: "./index.ts",
             output: {
                 file: "./dist/map.cjs.min.js",
                 format: "cjs",
@@ -30,9 +31,9 @@ export default () => {
             ]
         },
         {
-            input: "./src/index.ts",
+            input: "./index.ts",
             watch: {
-                include: "./src/**",
+                include: "./**",
                 clearScreen: false
             },
             output: {
@@ -49,9 +50,9 @@ export default () => {
             ]
         },
         {
-            input: "./src/index.ts",
+            input: "./index.ts",
             watch: {
-                include: "./src/**",
+                include: "./**",
                 clearScreen: false
             },
             output: {

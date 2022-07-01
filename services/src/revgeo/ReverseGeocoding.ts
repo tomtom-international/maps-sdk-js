@@ -1,4 +1,4 @@
-import { RevGeoAddressProps } from "core";
+import { RevGeoAddressProps } from "@anw/go-sdk-js/core";
 import { Feature, Point } from "geojson";
 
 import { ReverseGeocodingParams } from "./ReverseGeocodingParams";

@@ -1,5 +1,6 @@
+import { GOSDKConfig } from "@anw/go-sdk-js/core";
+
 import { buildRevGeoRequest } from "../RequestBuilder";
-import { GOSDKConfig } from "core";
 
 describe("Reverse Geocoding request URL building tests", () => {
     afterEach(() => {

@@ -2,21 +2,21 @@
   "name": "core",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "module": "./dist/core.es.js",
   "scripts": {
     "test": "echo \"Implement unit and integration tests!\"",
     "test:coverage": "echo \"Implement unit and integration tests!\"",
     "build": "rollup -c",
     "build:full": "npm run type-check && npm run build",
-    "lint": "eslint --ext .ts,.js src/**",
-    "lint:fix": "eslint --debug --ext .ts,.js --fix src/**",
+    "lint": "eslint --ext .ts,.js .",
+    "lint:fix": "eslint --debug --ext .ts,.js --fix .",
     "type-check": "tsc --noEmit",
     "update-dependencies": "npx npm-check-updates -u --packageFile package.json",
     "clean:dist": "rm -rf ./dist",
     "clean:cache": "rm -rf ./.rollup.cache"
   },
-  "types": "dist/src/index.d.ts",
+  "types": "./dist/index.d.ts",
   "author": "GO SDK JS Team",
   "license": "ISC",
   "repository": {
@@ -27,6 +27,9 @@
     "url": "https://github.com/tomtom-international/go-sdk-js/issues"
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
+  "dependencies": {
+    "geojson": "^0.5.0"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
@@ -48,8 +51,5 @@
     "ts-jest": "^28.0.5",
     "ts-node": "^10.8.2",
     "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "geojson": "^0.5.0"
   }
 }

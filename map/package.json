@@ -2,7 +2,7 @@
   "name": "map",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "module": "./dist/map.es.js",
   "scripts": {
     "test": "echo \"Implement unit and integration tests!\"",
@@ -16,7 +16,7 @@
     "clean:dist": "rm -rf ./dist",
     "clean:cache": "rm -rf ./.rollup.cache"
   },
-  "types": "dist/src/index.d.ts",
+  "types": "./index.d.ts",
   "author": "GO SDK JS Team",
   "license": "ISC",
   "repository": {
