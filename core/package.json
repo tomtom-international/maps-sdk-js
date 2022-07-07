@@ -5,8 +5,8 @@
   "main": "main.js",
   "module": "./dist/core.es.js",
   "scripts": {
-    "test": "echo \"Implement unit and integration tests!\"",
-    "test:coverage": "echo \"Implement unit and integration tests!\"",
+    "test": "jest",
+    "test:coverage": "jest --coverage --no-cache",
     "build": "rollup -c",
     "build:full": "npm run type-check && npm run build",
     "lint": "eslint --ext .ts,.js .",
