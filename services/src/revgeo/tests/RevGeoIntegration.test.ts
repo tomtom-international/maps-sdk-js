@@ -4,8 +4,6 @@ import { example0SDKResponse } from "./RevGeoTest.data";
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
 
-require("isomorphic-fetch");
-
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {
         await expect(reverseGeocode({ position: [5.72884, 52.33499] })).rejects.toEqual(403);
