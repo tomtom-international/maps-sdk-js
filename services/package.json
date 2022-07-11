@@ -28,11 +28,8 @@
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
   "peerDependencies": {
-    "@anw/go-sdk-js": "*"
-  },
-  "dependencies": {
-    "geojson": "^0.5.0",
-    "isomorphic-fetch": "^3.0.0"
+    "@anw/go-sdk-js": "*",
+    "axios": "^0.27.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.1",
@@ -47,6 +44,7 @@
     "eslint-plugin-jest": "^26.5.3",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^28.1.2",
+    "jest-mock-axios": "^4.6.1",
     "prettier": "^2.7.1",
     "rollup": "^2.76.0",
     "rollup-plugin-dts": "^4.2.2",
