@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.16](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.15...v0.1.16) (2022-07-11)
+
+
+### Features
+
+* change color for release and delete workflows ([8b321fb](https://github.com/tomtom-international/go-sdk-js/commit/8b321fbc9f105f87e00f22ef0ff1e2207468cf8f))
+* colored slack notification border ([9544046](https://github.com/tomtom-international/go-sdk-js/commit/954404686af99028b7ea14bb704019f8d2fd76ea))
+
+
+### Bug Fixes
+
+* notification text ([2bfc551](https://github.com/tomtom-international/go-sdk-js/commit/2bfc55172476f5a7708bde5a9b662a766eda7f06))
+
 ### [0.1.15](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.14...v0.1.15) (2022-06-30)
 
 
