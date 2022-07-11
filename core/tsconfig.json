@@ -12,5 +12,5 @@
     "strict": true,
     "target": "ES6"
   },
-  "exclude": ["node_modules", "rollup.config.ts"]
+  "exclude": ["node_modules", "rollup.config.ts", ".rollup.cache/", "./dist", "__mocks__"]
 }
