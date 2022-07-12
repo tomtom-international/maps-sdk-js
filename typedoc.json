@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["."],
+  "entryPointStrategy": "packages",
+  "entryDocument": "home.md",
+  "out": "docs/api-reference",
+  "readme": "none"
+}
