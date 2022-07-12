@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.19](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.18...v0.1.19) (2022-07-12)
+
+
+### Features
+
+* add coverage report ([6c6e529](https://github.com/tomtom-international/go-sdk-js/commit/6c6e529ffc0013e31d8a77fc75d952d2422c64fc))
+* **axios:** bringing axios back, switching to jest axios mock ([b884323](https://github.com/tomtom-international/go-sdk-js/commit/b88432337b63f370847cecf91c65604a344bc89b))
+* configure sonarQube ([1d7cd6d](https://github.com/tomtom-international/go-sdk-js/commit/1d7cd6d72bb4dd9af0ab6dc35154e28608214cd7))
+* ignore test files from coverage analysis ([b44ece2](https://github.com/tomtom-international/go-sdk-js/commit/b44ece223600fd8aa922b92edd6000cd3aaef08f))
+* wildcard for coverage filepaths ([443b5c7](https://github.com/tomtom-international/go-sdk-js/commit/443b5c71428ac50f956f23c4e8688d9497e0857d))
+
+
+### Bug Fixes
+
+* **axios:** fix tests ([182efb8](https://github.com/tomtom-international/go-sdk-js/commit/182efb812e0643ea3e3ca0ba9e02f67a1cf32ee3))
+
 ### [0.1.18](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.17...v0.1.18) (2022-07-12)
 
 
