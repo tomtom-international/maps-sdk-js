@@ -1,19 +1,22 @@
 import { fetchJson } from "../Fetch";
-import mockAxios from "jest-mock-axios";
+import MockAdapter from "axios-mock-adapter";
+import axios from "axios";
 
 describe("Fetch json test", () => {
+    const axiosMock = new MockAdapter(axios);
+
     test("OK response", async () => {
-        mockAxios.get.mockResolvedValueOnce({ status: 200, data: { id: "some json" } });
+        axiosMock.onGet().replyOnce(200, { id: "some json" });
         expect(await fetchJson(new URL("https://blah.com"))).toStrictEqual({ id: "some json" });
     });
 
     test("Failed response from resolved axios promise with error code", async () => {
-        mockAxios.get.mockResolvedValueOnce({ status: 410 });
+        axiosMock.onGet().replyOnce(410);
         await expect(fetchJson(new URL("https://blah.com"))).rejects.toEqual(410);
     });
 
     test("Failed response from rejected axios promise", async () => {
-        mockAxios.get.mockRejectedValueOnce({ response: { status: 410 } });
+        axiosMock.onGet().replyOnce(410);
         await expect(fetchJson(new URL("https://blah.com"))).rejects.toEqual(410);
     });
 });
