@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.18](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.17...v0.1.18) (2022-07-12)
+
+
+### Features
+
+* **axios:** bringing axios back, switching to jest axios mock ([fe17db2](https://github.com/tomtom-international/go-sdk-js/commit/fe17db2e4291fb4b7e288f2eef3a49abb27ebefb))
+* **axios:** bringing axios back, switching to jest axios mock ([6ffd077](https://github.com/tomtom-international/go-sdk-js/commit/6ffd077d9354a47cce6ab14f4ca7e4d2adb6e472))
+
 ### [0.1.17](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.16...v0.1.17) (2022-07-11)
 
 
