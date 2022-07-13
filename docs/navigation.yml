@@ -1,0 +1,33 @@
+group: go-sdk-for-web
+isPrivate: false
+productName: GO-SDK for Web
+description: Easily integrate TomTom services into your web application
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+  - title: Search
+    items:
+      - fileId: /search/getting-started
+        title: Getting started
+      - fileId: /search/documentation
+        title: Documentation
+      - title: Search examples
+        items:
+          - fileId: /search/search-examples/reverse-geocoding
+            title: Reverse geocoding
+  - title: API Reference
+    items:
+        - fileId: /api-reference/home
+          title: Home
+        - title: Modules
+          items:
+              - fileId: /api-reference/modules/Core_Module
+                title: Core
+              - fileId: /api-reference/modules/Services_Module
+                title: Services
+              - fileId: /api-reference/modules/Map_Module
+                title: Map

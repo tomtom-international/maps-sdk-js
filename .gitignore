@@ -10,4 +10,4 @@ node_modules/
 .DS_Store
 *.tgz
 **/*.tsbuildinfo
-/docs/
+/docs/api-reference/

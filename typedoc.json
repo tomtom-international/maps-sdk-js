@@ -3,5 +3,9 @@
   "entryPointStrategy": "packages",
   "entryDocument": "home.md",
   "out": "docs/api-reference",
-  "readme": "none"
+  "readme": "none",
+  "name": "GO-SDK-JS",
+  "internalNamespace": "internal",
+  "excludeExternals": true,
+  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports"]
 }

@@ -6,7 +6,7 @@
     "clean": "rm -rf ./*/.rollup.cache ./*/dist",
     "release:dry": "npx standard-version --dry-run",
     "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi",
-    "docs" : "typedoc"
+    "docs": "typedoc"
   },
   "publishConfig": {
     "registry": "https://tomtom.jfrog.io/artifactory/api/npm/go-sdk-js-npm-local/"
@@ -60,6 +60,7 @@
   },
   "devDependencies": {
     "typedoc": "^0.23.7",
-    "typedoc-plugin-markdown": "^3.13.3"
+    "typedoc-plugin-markdown": "^3.13.3",
+    "typedoc-plugin-missing-exports": "^0.23.0"
   }
 }
