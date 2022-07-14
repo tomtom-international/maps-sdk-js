@@ -8,12 +8,14 @@ import { ReverseGeocodingTemplate, reverseGeocodingTemplate } from "./ReverseGeo
 export type ReverseGeocodingResponse = Feature<Point, RevGeoAddressProps>;
 
 /**
- * The TomTom Reverse Geocoding API gives users a tool to translate a coordinate (for example: 37.786505, -122.3862)
- * into a human-understandable street address, street element, or geography.
+ * Sometimes you need to translate a coordinate into a human-readable street address.
+ * This is often used in tracking applications that receive a GPS feed from a device or asset and need to obtain the corresponding address.
+ * The reverse geocoding endpoint returns the address information described in the Reverse Geocoding API documentation on the Developer Portal.
  *
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode
+ * @returns Promise<ReverseGeocodingResponse>
  */
 export const reverseGeocode = async (
     params: ReverseGeocodingParams,

@@ -9,16 +9,18 @@ menu:
     items:
       - fileId: /product-information/introduction
         title: Introduction
-  - title: Search
+  - title: Services
     items:
-      - fileId: /search/getting-started
-        title: Getting started
-      - fileId: /search/documentation
-        title: Documentation
-      - title: Search examples
+      - title: Search
         items:
-          - fileId: /search/search-examples/reverse-geocoding
-            title: Reverse geocoding
+          - fileId: /services/search/getting-started
+            title: Getting started
+          - fileId: /services/search/documentation
+            title: Documentation
+          - title: Search examples
+            items:
+              - fileId: /services/search/search-examples/reverse-geocoding
+                title: Reverse geocoding
   - title: API Reference
     items:
         - fileId: /api-reference/home
