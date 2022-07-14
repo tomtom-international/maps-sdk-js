@@ -25,9 +25,9 @@ menu:
           title: Home
         - title: Modules
           items:
-              - fileId: /api-reference/modules/Core_Module
-                title: Core
-              - fileId: /api-reference/modules/Services_Module
-                title: Services
-              - fileId: /api-reference/modules/Map_Module
-                title: Map
+            - fileId: /api-reference/modules/core
+              title: Core
+            - fileId: /api-reference/modules/services
+              title: Services
+            - fileId: /api-reference/modules/map
+              title: Map
