@@ -34,7 +34,9 @@ export class GOSDKConfig {
     static instance = new GOSDKConfig();
     private config: GlobalConfig = defaultConfig;
 
-    private constructor() {}
+    private constructor() {
+        // the empty private constructor
+    }
 
     /**
      * Puts the content of the given config into this one, merging the two. The given config properties have priority.

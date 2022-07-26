@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 /**
  * Fetches the given URL and returns a promise with the response as a JSON object.
@@ -10,6 +10,6 @@ export const fetchJson = async <T>(url: URL): Promise<T> => {
         const response = await axios.get(url.toString());
         return response.status < 400 ? response.data : Promise.reject(response.status);
     } catch (error) {
-        return Promise.reject((error as any).response.status);
+        return Promise.reject((error as AxiosError).response?.status);
     }
 };
