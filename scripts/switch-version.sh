@@ -7,16 +7,25 @@ export NODE_OPTIONS=--max_old_space_size=4096
 # Get tag name from the first argument
 tagName=$1;
 
-# Temporary file
+# Temporary files
+allTmp=$(mktemp);
 tmp=$(mktemp);
 
 previousVersion=$(cat package.json | jq -r .version);
 echo "Current package.json version is $previousVersion";
 
+npm show @anw/go-sdk-js versions --json > ${allTmp};
+#cat "$allTmp"
+jqparameter='[.[] | select(test("^\\d+\\.\\d+\\.\\d+-'$tagName'\\.\\d+$"))] | .[-1]'
+
 # Get latest package version for given tag
 tag_v=$(npm dist-tag ls @anw/go-sdk-js | sed -n 's/^'"${tagName}"': //p');
+repo_v=$(jq -r "$jqparameter" "$allTmp");
 
-pkg_v=$(npx ts-node ./scripts/calculate-latest-version.ts "$previousVersion" "$tag_v")
+echo "tag_v is $tag_v";
+echo "repo_v is $repo_v";
+
+pkg_v=$(npx ts-node ./scripts/calculate-latest-version.ts "$previousVersion" "$tag_v" "$repo_v")
 
 # Check current resolved version
 echo "Current pre-release version is $pkg_v";
