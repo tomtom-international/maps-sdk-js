@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.20](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.19...v0.1.20) (2022-07-27)
+
+
+### Bug Fixes
+
+* skip sonarqube workflow if github actor is dependabot ([5a0cab8](https://github.com/tomtom-international/go-sdk-js/commit/5a0cab8bfa5317ee770aa1caf058e46d7fa1f5ed))
+* sonarqube ignore branch syntax ([a4e9764](https://github.com/tomtom-international/go-sdk-js/commit/a4e976445b585c1b093f3a4c0625cf2e998c9e79))
+
 ### [0.1.19](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.18...v0.1.19) (2022-07-12)
 
 
