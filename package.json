@@ -56,7 +56,7 @@
   },
   "types": "./index.d.ts",
   "dependencies": {
-    "@types/geojson": "^7946.0.8"
+    "@types/geojson": "^7946.0.10"
   },
   "devDependencies": {
     "typedoc": "^0.23.7",
