@@ -21,3 +21,4 @@ scripts/
 **/tests/
 **/*.test.ts
 **/__mocks__/
+**/.env

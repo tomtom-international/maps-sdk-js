@@ -6,6 +6,7 @@ node_modules/
 **/.rollup.cache/
 **/dist/
 **/coverage/
+**/.env
 
 .DS_Store
 *.tgz
