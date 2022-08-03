@@ -1,16 +1,21 @@
 import { GlobalConfig } from "@anw/go-sdk-js/core";
 
+/**
+ * @group Shared
+ */
 export type CommonServiceParams = GlobalConfig & {
     /**
      * Optional, custom base URL for the service.
      * Should contain the URL until the part that will change per service call.
      * Example: https://api.tomtom.com/search/10/reverseGeocode/
+     * @group Utility
      */
     customBaseURL?: string;
 };
 
 /**
  * Template functions for any service.
+ * @group Utility
  */
 export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, RESPONSE> = {
     /**

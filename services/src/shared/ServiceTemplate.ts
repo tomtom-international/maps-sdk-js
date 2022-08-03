@@ -1,6 +1,7 @@
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
 
 /**
+ * @ignore
  * Template execution of a service call.
  * Any service goes through the same template steps:
  * 1- Build request

@@ -13,6 +13,13 @@ const bboxToPolygon = (apiBBox: { southWest: string; northEast: string }): Polyg
     return { type: "Polygon", coordinates: [[westSouth, eastSouth, eastNorth, westNorth, westSouth]] };
 };
 
+/**
+ * Default method for parsing reverse geocoding request from {@link ReverseGeocodingResponse}
+ * @group Search
+ * @category Reverse Geocoding
+ * @param params
+ * @param apiResponse
+ */
 export const parseRevGeoResponse = (params: ReverseGeocodingParams, apiResponse: any): ReverseGeocodingResponse => {
     const pointFeature = toPointFeature(getLngLatArray(params.position));
     const response = apiResponse.addresses[0];

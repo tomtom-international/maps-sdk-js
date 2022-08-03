@@ -7,6 +7,12 @@ import { arrayToCSV } from "../shared/Arrays";
 const buildURLBasePath = (lngLat: Position, mergedOptions: ReverseGeocodingParams): string =>
     mergedOptions.customBaseURL || `${mergedOptions.baseDomainURL}search/2/reverseGeocode/`;
 
+/**
+ * Default method for building reverse geocoding request from {@link ReverseGeocodingParams}
+ * @group Search
+ * @category Reverse Geocoding
+ * @param params
+ */
 export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     const mergedParams = <ReverseGeocodingParams>mergeFromGlobal(params);
     const lngLat = getLngLatArray(mergedParams.position);

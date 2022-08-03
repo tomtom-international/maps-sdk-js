@@ -1,7 +1,10 @@
 import { HasLngLat, View } from "@anw/go-sdk-js/core";
 
 import { CommonServiceParams } from "../shared/ServiceTypes";
-
+/**
+ * @enum
+ * @group Shared
+ */
 export type EntityType =
     | "Country"
     | "CountrySubdivision"
@@ -11,11 +14,20 @@ export type EntityType =
     | "MunicipalitySubdivision"
     | "Neighbourhood"
     | "PostalCodeArea";
-
+/**
+ * @enum
+ * @group Shared
+ */
 export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rotary" | "LocalStreet";
-
+/**
+ * @enum
+ * @group Shared
+ */
 export type MapcodeType = "Local" | "International" | "Alternative";
-
+/**
+ * @group Search
+ * @category Reverse Geocoding
+ */
 export type ReverseGeocodingParams = CommonServiceParams & {
     /**
      * Main reverse geocoding parameter (mandatory).

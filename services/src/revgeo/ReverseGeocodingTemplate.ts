@@ -7,11 +7,15 @@ import { parseRevGeoResponse } from "./ResponseParser";
 
 /**
  * Reverse Geocoding service template type.
+ * @group Search
+ * @category Reverse Geocoding
  */
 export type ReverseGeocodingTemplate = ServiceTemplate<ReverseGeocodingParams, URL, ReverseGeocodingResponse>;
 
 /**
  * Reverse Geocoding service template main implementation.
+ * @group Search
+ * @category Reverse Geocoding
  */
 export const reverseGeocodingTemplate: ReverseGeocodingTemplate = {
     buildRequest: buildRevGeoRequest,

@@ -1,6 +1,10 @@
 import { Feature, Point, Position } from "geojson";
 import { HasLngLat } from "../types/Geometry";
 
+/**
+ * @ignore
+ * @param hasLngLat
+ */
 export const getLngLatArray = (hasLngLat: HasLngLat): Position => {
     if (Array.isArray(hasLngLat)) {
         return hasLngLat;
