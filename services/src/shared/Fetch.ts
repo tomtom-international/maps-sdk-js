@@ -9,7 +9,7 @@ import axios, { AxiosError } from "axios";
 export const fetchJson = async <T>(url: URL): Promise<T> => {
     try {
         const response = await axios.get(url.toString());
-        return response.status < 400 ? response.data : Promise.reject(response.status);
+        return response.data;
     } catch (error) {
         return Promise.reject((error as AxiosError).response?.status);
     }

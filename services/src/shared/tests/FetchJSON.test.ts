@@ -10,13 +10,13 @@ describe("Fetch json test", () => {
         expect(await fetchJson(new URL("https://blah.com"))).toStrictEqual({ id: "some json" });
     });
 
-    test("Failed response from resolved axios promise with error code", async () => {
+    test("Failed response from rejected axios promise", async () => {
         axiosMock.onGet().replyOnce(410);
         await expect(fetchJson(new URL("https://blah.com"))).rejects.toEqual(410);
     });
 
-    test("Failed response from rejected axios promise", async () => {
-        axiosMock.onGet().replyOnce(410);
-        await expect(fetchJson(new URL("https://blah.com"))).rejects.toEqual(410);
+    test("Failed response", async () => {
+        axiosMock.onGet().timeout();
+        await expect(fetchJson(new URL("https://blah.com"))).rejects.toEqual(undefined);
     });
 });
