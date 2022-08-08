@@ -1,0 +1,78 @@
+import { GOSDKConfig } from "@anw/go-sdk-js/core";
+
+import { singleResultExample, multiResultExample, customParserExample } from "./GeocodingIntegration.data";
+import geocode from "../Geocoding";
+import { GeocodingAPIResponse } from "../ResponseParser";
+
+describe("Geocoding test without API key", () => {
+    test("Geocoding test without API key", async () => {
+        await expect(geocode({ query: "" })).rejects.toEqual(403);
+    });
+});
+
+describe("Geocoding integration tests", () => {
+    beforeAll(() => {
+        GOSDKConfig.instance.put({
+            apiKey: "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE"
+        });
+    });
+
+    test("Geocoding single results", async () => {
+        const result = await geocode({ query: "teakhout zaandam" });
+        expect(result).toEqual(expect.objectContaining(singleResultExample));
+    });
+
+    test("Geocoding multi results", async () => {
+        const result = await geocode({ query: "teakhout" });
+        expect(result).toEqual(expect.objectContaining(multiResultExample));
+    });
+
+    test("Geocoding with all parameters sent", async () => {
+        const result = await geocode({
+            query: "amsterdam",
+            typeahead: true,
+            limit: 15,
+            ofs: 3,
+            lat: 51.85925,
+            lon: 4.81063,
+            countrySet: [],
+            topLeft: [51.85925, 5.16905],
+            btmRight: [52.44009, 5.16957],
+            extendedPostalCodesFor: ["Addr", "Str", "Geo"],
+            mapcodes: "International",
+            view: "MA",
+            entityTypeSet: ["Municipality", "MunicipalitySubdivision"],
+            language: "en-GB",
+            radius: 1000000
+        });
+        expect(result).toEqual(
+            expect.objectContaining({
+                type: "FeatureCollection",
+                features: expect.any(Array)
+            })
+        );
+        expect(result.features).toHaveLength(4);
+    });
+
+    test("Geocoding with template response override to get only the first raw result and summary", async () => {
+        const result = await geocode(
+            { query: "teakhout" },
+            {
+                //@ts-ignore
+                parseResponse: (_params, response: GeocodingAPIResponse) => ({
+                    result: response.results[0],
+                    summary: response.summary
+                })
+            }
+        );
+        expect(result).toEqual(
+            expect.objectContaining({
+                ...customParserExample,
+                summary: {
+                    ...customParserExample.summary,
+                    queryTime: expect.any(Number)
+                }
+            })
+        );
+    });
+});
