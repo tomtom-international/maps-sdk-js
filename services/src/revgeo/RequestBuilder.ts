@@ -1,37 +1,34 @@
-import { getLngLatArray, mergeFromGlobal } from "@anw/go-sdk-js/core";
-import { Position } from "geojson";
-
-import { ReverseGeocodingParams } from "./ReverseGeocodingParams";
-import { arrayToCSV } from "../shared/Arrays";
 import isNil from "lodash/isNil";
 
-const buildURLBasePath = (lngLat: Position, mergedOptions: ReverseGeocodingParams): string =>
-    mergedOptions.customBaseURL || `${mergedOptions.baseDomainURL}search/2/reverseGeocode/`;
+import { getLngLatArray } from "@anw/go-sdk-js/core";
+import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
+import { arrayToCSV } from "../shared/Arrays";
+import { CommonServiceParams } from "../shared/ServiceTypes";
+import { appendCommonParams } from "../shared/RequestBuildingUtils";
+
+const buildURLBasePath = (params: CommonServiceParams): string =>
+    params.customServiceBaseURL || `${params.commonBaseURL}search/2/reverseGeocode/`;
 
 /**
  * Default method for building reverse geocoding request from {@link ReverseGeocodingParams}
  * @group Search
  * @category Reverse Geocoding
- * @param params
+ * @param params The reverse geocoding parameters, with global configuration already merged into them.
  */
 export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
-    const mergedParams = <ReverseGeocodingParams>mergeFromGlobal(params);
-    const lngLat = getLngLatArray(mergedParams.position);
-    const url = new URL(`${buildURLBasePath(lngLat, mergedParams)}${lngLat[1]},${lngLat[0]}.json`);
+    const lngLat = getLngLatArray(params.position);
+    const url = new URL(`${buildURLBasePath(params)}${lngLat[1]},${lngLat[0]}.json`);
     const urlParams = url.searchParams;
-    // common parameters:
-    mergedParams.apiKey && urlParams.append("key", mergedParams.apiKey);
-    mergedParams.language && urlParams.append("language", mergedParams.language);
+    appendCommonParams(urlParams, params);
     // rev-geo specific parameters:
-    mergedParams.allowFreeformNewline &&
-        urlParams.append("allowFreeformNewline", String(mergedParams.allowFreeformNewline));
-    mergedParams.geographyType && urlParams.append("entityType", arrayToCSV(mergedParams.geographyType));
-    !isNil(mergedParams.heading) && urlParams.append("heading", String(mergedParams.heading));
-    mergedParams.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedParams.mapcodes));
-    mergedParams.number && urlParams.append("number", mergedParams.number);
-    !isNil(mergedParams.radius) && urlParams.append("radius", String(mergedParams.radius));
-    mergedParams.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(mergedParams.returnSpeedLimit));
-    mergedParams.returnRoadUse && urlParams.append("returnRoadUse", String(mergedParams.returnRoadUse));
-    mergedParams.roadUse && urlParams.append("roadUse", JSON.stringify(mergedParams.roadUse));
+    params.allowFreeformNewline && urlParams.append("allowFreeformNewline", String(params.allowFreeformNewline));
+    params.geographyType && urlParams.append("entityType", arrayToCSV(params.geographyType));
+    !isNil(params.heading) && urlParams.append("heading", String(params.heading));
+    params.mapcodes && urlParams.append("mapcodes", arrayToCSV(params.mapcodes));
+    params.number && urlParams.append("number", params.number);
+    !isNil(params.radius) && urlParams.append("radius", String(params.radius));
+    params.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(params.returnSpeedLimit));
+    params.returnRoadUse && urlParams.append("returnRoadUse", String(params.returnRoadUse));
+    params.roadUses && urlParams.append("roadUse", JSON.stringify(params.roadUses));
     return url;
 };

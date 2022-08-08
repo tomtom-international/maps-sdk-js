@@ -1,6 +1,6 @@
 import { GeocodingResponse, GeocodingResponseAPI } from "../types/GeocodingResponse";
 
-export const APIResponse0: GeocodingResponseAPI = {
+export const apiResponse0: GeocodingResponseAPI = {
     summary: {
         query: "1507 zaandam",
         queryType: "NON_NEAR",
@@ -62,7 +62,7 @@ export const APIResponse0: GeocodingResponseAPI = {
     ]
 };
 
-export const APIResponse1: GeocodingResponseAPI = {
+export const apiResponse1: GeocodingResponseAPI = {
     summary: {
         query: "nieuwstraat 41 zwolle",
         queryType: "NON_NEAR",
@@ -120,11 +120,11 @@ export const APIResponse1: GeocodingResponseAPI = {
     ]
 };
 
-export const APIResponse2: GeocodingResponseAPI = {
-    ...APIResponse0,
+export const apiResponse2: GeocodingResponseAPI = {
+    ...apiResponse0,
     results: [
         {
-            ...APIResponse0.results[0],
+            ...apiResponse0.results[0],
             addressRanges: {
                 from: {
                     lat: 52.45513,
@@ -141,7 +141,7 @@ export const APIResponse2: GeocodingResponseAPI = {
     ]
 };
 
-export const SDKResponse0: GeocodingResponse = {
+export const sdkResponse0: GeocodingResponse = {
     type: "FeatureCollection",
     features: [
         {
@@ -198,7 +198,7 @@ export const SDKResponse0: GeocodingResponse = {
         }
     ]
 };
-export const SDKResponse1: GeocodingResponse = {
+export const sdkResponse1: GeocodingResponse = {
     type: "FeatureCollection",
     features: [
         {
@@ -246,13 +246,13 @@ export const SDKResponse1: GeocodingResponse = {
     ]
 };
 
-export const SDKResponse2: GeocodingResponse = {
-    ...SDKResponse0,
+export const sdkResponse2: GeocodingResponse = {
+    ...sdkResponse0,
     features: [
         {
-            ...SDKResponse0.features[0],
+            ...sdkResponse0.features[0],
             properties: {
-                ...SDKResponse0.features[0].properties,
+                ...sdkResponse0.features[0].properties,
                 addressRanges: {
                     from: [4.78348, 52.45513],
                     to: [4.81969, 52.42248],

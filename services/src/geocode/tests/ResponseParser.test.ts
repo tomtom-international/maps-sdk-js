@@ -1,19 +1,19 @@
 import {
-    APIResponse0,
-    SDKResponse0,
-    APIResponse1,
-    SDKResponse1,
-    APIResponse2,
-    SDKResponse2
+    apiResponse0,
+    sdkResponse0,
+    apiResponse1,
+    sdkResponse1,
+    apiResponse2,
+    sdkResponse2
 } from "./ResponseParser.data";
 import { parseGeocodingResponse } from "../ResponseParser";
 
 describe("Geocode response parsing tests", () => {
     test("parsing actual API responses", () => {
-        expect(parseGeocodingResponse(null as any, APIResponse0)).toMatchObject(SDKResponse0);
-        expect(parseGeocodingResponse(null as any, APIResponse1)).toMatchObject(SDKResponse1);
+        expect(parseGeocodingResponse(apiResponse0)).toMatchObject(sdkResponse0);
+        expect(parseGeocodingResponse(apiResponse1)).toMatchObject(sdkResponse1);
     });
     test("mocked addressRanges", () => {
-        expect(parseGeocodingResponse(null as any, APIResponse2)).toMatchObject(SDKResponse2);
+        expect(parseGeocodingResponse(apiResponse2)).toMatchObject(sdkResponse2);
     });
 });

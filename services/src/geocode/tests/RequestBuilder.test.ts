@@ -1,41 +1,43 @@
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
-
 import { buildGeocodingRequest } from "../RequestBuilder";
 
 describe("Geocoding request URL building tests", () => {
-    beforeAll(() => {
-        GOSDKConfig.instance.set({
-            apiKey: "GLOBAL_API_KEY",
-            baseDomainURL: "https://api.tomtom.com/",
-            language: "es-ES"
-        });
-    });
-
-    afterEach(() => {
-        GOSDKConfig.instance.put({ baseDomainURL: "https://api.tomtom.com/" });
-    });
-
-    test("Geocoding request URL building test with global config", async () => {
-        GOSDKConfig.instance.put({
-            baseDomainURL: "https://api-test.tomtom.com/"
-        });
-
-        expect(buildGeocodingRequest({ query: "amsterdam centrale" }).toString()).toStrictEqual(
+    test("Geocoding request URL building tests", async () => {
+        expect(
+            buildGeocodingRequest({
+                apiKey: "GLOBAL_API_KEY",
+                commonBaseURL: "https://api-test.tomtom.com/",
+                language: "es-ES",
+                query: "amsterdam centrale"
+            }).toString()
+        ).toStrictEqual(
             "https://api-test.tomtom.com/search/2/geocode/amsterdam%20centrale.json?key=GLOBAL_API_KEY&language=es-ES"
         );
         expect(
-            buildGeocodingRequest({ query: "amsterdam centrale", apiKey: "ANOTHER_API_KEY" }).toString()
+            buildGeocodingRequest({
+                apiKey: "ANOTHER_API_KEY",
+                commonBaseURL: "https://api-test.tomtom.com/",
+                language: "es-ES",
+                query: "amsterdam centrale"
+            }).toString()
         ).toStrictEqual(
             "https://api-test.tomtom.com/search/2/geocode/amsterdam%20centrale.json?key=ANOTHER_API_KEY&language=es-ES"
         );
-        expect(buildGeocodingRequest({ query: "amsterdam centrale", language: "en-US" }).toString()).toStrictEqual(
+        expect(
+            buildGeocodingRequest({
+                apiKey: "GLOBAL_API_KEY",
+                commonBaseURL: "https://api-test.tomtom.com/",
+                language: "en-US",
+                query: "amsterdam centrale"
+            }).toString()
+        ).toStrictEqual(
             "https://api-test.tomtom.com/search/2/geocode/amsterdam%20centrale.json?key=GLOBAL_API_KEY&language=en-US"
         );
         expect(
             buildGeocodingRequest({
                 query: "amsterdam central station",
                 apiKey: "ANOTHER_API_KEY",
-                customBaseURL: "https://kr-api.tomtom.com/search/3/geocodeCustom/",
+                commonBaseURL: "https://api-test.tomtom.com/",
+                customServiceBaseURL: "https://kr-api.tomtom.com/search/3/geocodeCustom/",
                 language: "en-US",
                 geographyType: ["Country", "CountrySubdivision"],
                 radius: 30,
@@ -52,6 +54,7 @@ describe("Geocoding request URL building tests", () => {
             buildGeocodingRequest({
                 query: "amsterdam central station",
                 apiKey: "ANOTHER_API_KEY",
+                commonBaseURL: "https://api-test.tomtom.com/",
                 language: "en-US",
                 boundingBox: {
                     type: "Polygon",
@@ -69,17 +72,19 @@ describe("Geocoding request URL building tests", () => {
         ).toStrictEqual(
             "https://api-test.tomtom.com/search/2/geocode/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&topLeft=51.85925%2C5.16905&btmRight=52.44009%2C5.16957"
         );
-    });
 
-    test("Geocoding request URL building test without global config", async () => {
-        GOSDKConfig.instance.reset();
-
-        expect(buildGeocodingRequest({ query: "4 north 2nd street san jose" }).toString()).toStrictEqual(
-            "https://api.tomtom.com/search/2/geocode/4%20north%202nd%20street%20san%20jose.json"
+        expect(
+            buildGeocodingRequest({
+                commonBaseURL: "https://api.tomtom.com/",
+                query: "4 north 2nd street san jose"
+            }).toString()
+        ).toStrictEqual(
+            "https://api.tomtom.com/search/2/geocode/4%20north%202nd%20street%20san%20jose.json?key=undefined"
         );
 
         expect(
             buildGeocodingRequest({
+                commonBaseURL: "https://api.tomtom.com/",
                 query: "4 north 2nd street san jose",
                 apiKey: "GIVEN_API_KEY",
                 language: "en-GB",
@@ -96,6 +101,7 @@ describe("Geocoding request URL building tests", () => {
 
         expect(
             buildGeocodingRequest({
+                commonBaseURL: "https://api.tomtom.com/",
                 query: "4 north 2nd street san jose",
                 apiKey: "GIVEN_API_KEY",
                 language: "en-GB"

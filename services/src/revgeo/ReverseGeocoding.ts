@@ -1,6 +1,6 @@
 import { RevGeoAddressProps, Location } from "@anw/go-sdk-js/core";
 
-import { ReverseGeocodingParams } from "./ReverseGeocodingParams";
+import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { callService } from "../shared/ServiceTemplate";
 import { ReverseGeocodingTemplate, reverseGeocodingTemplate } from "./ReverseGeocodingTemplate";
 
@@ -16,8 +16,8 @@ export type ReverseGeocodingResponse = Location<RevGeoAddressProps>;
  * The reverse geocoding endpoint returns the address information described in the Reverse Geocoding API documentation on the Developer Portal.
  * @group Search
  * @category Reverse Geocoding
- * @param params Mandatory and optional parameters.
- * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
+ * @param params Mandatory and optional parameters, with the global configuration automatically included.
+ * @param customTemplate Advanced optional parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode
  */
 export const reverseGeocode = async (

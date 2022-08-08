@@ -1,8 +1,7 @@
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
-
 import { example0SDKResponse } from "./RevGeoTest.data";
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
+import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {
@@ -11,12 +10,7 @@ describe("Reverse Geocoding integration test without API key", () => {
 });
 
 describe("Reverse Geocoding integration tests", () => {
-    beforeAll(() => {
-        GOSDKConfig.instance.put({
-            apiKey: "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE",
-            language: "nl-NL"
-        });
-    });
+    beforeAll(() => putIntegrationTestsAPIKey());
 
     test("Default reverse geocoding", async () => {
         const result = await reverseGeocode({ position: [5.72884, 52.33499] });
@@ -37,7 +31,7 @@ describe("Reverse Geocoding integration tests", () => {
     });
 
     test("Reverse geocoding with international mapcodes", async () => {
-        const result = await reverseGeocode({ position: [5.72884, 52.33499], mapcodes: "International" });
+        const result = await reverseGeocode({ position: [5.72884, 52.33499], mapcodes: ["International"] });
         expect(result).toBeDefined();
     });
 
@@ -84,7 +78,7 @@ describe("Reverse Geocoding integration tests", () => {
         const result = await reverseGeocode({
             position: [5.72884, 52.33499],
             returnRoadUse: true,
-            roadUse: ["Terminal", "LocalStreet"]
+            roadUses: ["Terminal", "LocalStreet"]
         });
         expect(result).toBeDefined();
     });
@@ -99,7 +93,7 @@ describe("Reverse Geocoding integration tests", () => {
             number: "10",
             radius: 50000,
             returnRoadUse: true,
-            roadUse: ["Ramp"]
+            roadUses: ["Ramp"]
         });
         expect(result).toBeDefined();
     });

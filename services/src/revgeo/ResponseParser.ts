@@ -1,7 +1,7 @@
 import { getLngLatArray, toPointFeature } from "@anw/go-sdk-js/core";
 
 import { csvLatLngToPosition, bboxToPolygon } from "../shared/Geometry";
-import { ReverseGeocodingParams } from "./ReverseGeocodingParams";
+import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 
 /**
@@ -11,7 +11,7 @@ import { ReverseGeocodingResponse } from "./ReverseGeocoding";
  * @param params
  * @param apiResponse
  */
-export const parseRevGeoResponse = (params: ReverseGeocodingParams, apiResponse: any): ReverseGeocodingResponse => {
+export const parseRevGeoResponse = (apiResponse: any, params: ReverseGeocodingParams): ReverseGeocodingResponse => {
     const pointFeature = toPointFeature(getLngLatArray(params.position));
     const response = apiResponse.addresses[0];
     const address = response.address;

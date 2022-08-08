@@ -1,8 +1,8 @@
 import { ServiceTemplate } from "../shared/ServiceTypes";
-import { ReverseGeocodingParams } from "./ReverseGeocodingParams";
+import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 import { buildRevGeoRequest } from "./RequestBuilder";
-import { fetchJson } from "../shared/Fetch";
+import { getJson } from "../shared/Fetch";
 import { parseRevGeoResponse } from "./ResponseParser";
 
 /**
@@ -10,7 +10,7 @@ import { parseRevGeoResponse } from "./ResponseParser";
  * @group Search
  * @category Reverse Geocoding
  */
-export type ReverseGeocodingTemplate = ServiceTemplate<ReverseGeocodingParams, URL, ReverseGeocodingResponse>;
+export type ReverseGeocodingTemplate = ServiceTemplate<ReverseGeocodingParams, URL, any, ReverseGeocodingResponse>;
 
 /**
  * Reverse Geocoding service template main implementation.
@@ -19,6 +19,6 @@ export type ReverseGeocodingTemplate = ServiceTemplate<ReverseGeocodingParams, U
  */
 export const reverseGeocodingTemplate: ReverseGeocodingTemplate = {
     buildRequest: buildRevGeoRequest,
-    sendRequest: fetchJson,
+    sendRequest: getJson,
     parseResponse: parseRevGeoResponse
 };

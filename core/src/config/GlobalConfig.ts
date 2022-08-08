@@ -12,9 +12,10 @@ export type GlobalConfig = {
      * Overall language code for the SDK services and map.
      *
      * The value should correspond to one of the supported IETF language codes.
-     * The list is available here.
      * The code is case-insensitive.
      * @default NGT (Neutral Ground Truth - language local to each location)
+     * @see Search: https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
+     * @see Routing: https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
      */
     language?: string;
 
@@ -23,14 +24,21 @@ export type GlobalConfig = {
      * Must end with /.
      * @default https://api.tomtom.com/
      */
-    baseDomainURL: string;
+    commonBaseURL?: string;
 };
 
-const defaultConfig: GlobalConfig = {
-    baseDomainURL: "https://api.tomtom.com/",
+/**
+ * Default global configuration contents.
+ */
+export const defaultConfig: GlobalConfig = {
+    commonBaseURL: "https://api.tomtom.com/",
     apiKey: ""
 };
 
+/**
+ * GO SDK Global configuration singleton class.
+ * It initializes to a default basic configuration.
+ */
 export class GOSDKConfig {
     public static readonly instance = new GOSDKConfig();
     private config: GlobalConfig = { ...defaultConfig };
@@ -48,14 +56,6 @@ export class GOSDKConfig {
     }
 
     /**
-     * Sets the given config, completely overwritting the current one.
-     * @param config The config to set.
-     */
-    public set(config: GlobalConfig) {
-        this.config = config;
-    }
-
-    /**
      * Reset configuration to the default values
      */
     public reset() {
@@ -70,6 +70,10 @@ export class GOSDKConfig {
     }
 }
 
+/**
+ * Merges the global configuration into the given one, with the latter having priority.
+ * @ignore
+ */
 export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(givenConfig: T = {} as T): T => ({
     ...GOSDKConfig.instance.get(),
     ...givenConfig

@@ -1,6 +1,6 @@
 import { HasLngLat, View, GeographyType, MapcodeType } from "@anw/go-sdk-js/core";
 
-import { CommonServiceParams } from "../shared/ServiceTypes";
+import { CommonServiceParams } from "../../shared/ServiceTypes";
 /**
  * @enum
  * @group Shared
@@ -11,13 +11,15 @@ export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rota
  * @group Search
  * @category Reverse Geocoding
  */
-export type ReverseGeocodingParams = CommonServiceParams & {
+export type ReverseGeocodingMandatoryParams = {
     /**
      * Main reverse geocoding parameter (mandatory).
      * Longitude and latitude data in one of the supported formats.
      */
     position: HasLngLat;
+};
 
+export type ReverseGeocodingOptionalParams = {
     /**
      * Format of newlines in the formatted address.
      *
@@ -62,7 +64,7 @@ export type ReverseGeocodingParams = CommonServiceParams & {
      * Every location on Earth can be represented by a mapcode. Mapcodes are designed to be short,
      * easy to recognize, remember, and communicate. Visit the Mapcode project website for more information.
      */
-    mapcodes?: MapcodeType | MapcodeType[];
+    mapcodes?: MapcodeType[];
 
     /**
      * Street number as a string.
@@ -118,7 +120,7 @@ export type ReverseGeocodingParams = CommonServiceParams & {
      * "LocalStreet"
      * @default None
      */
-    roadUse?: RoadUse | RoadUse[];
+    roadUses?: RoadUse[];
 
     /**
      * The new value to be set.
@@ -139,3 +141,7 @@ export type ReverseGeocodingParams = CommonServiceParams & {
      */
     view?: View;
 };
+
+export type ReverseGeocodingParams = CommonServiceParams &
+    ReverseGeocodingMandatoryParams &
+    ReverseGeocodingOptionalParams;

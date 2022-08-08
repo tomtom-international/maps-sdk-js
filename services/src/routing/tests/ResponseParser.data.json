@@ -1,0 +1,5193 @@
+[
+  [
+    "Small real route through Amsterdam with alternatives, sections and guidance",
+    {
+      "formatVersion": "0.0.12",
+      "routes": [
+        {
+          "summary": {
+            "lengthInMeters": 2452,
+            "travelTimeInSeconds": 516,
+            "trafficDelayInSeconds": 0,
+            "trafficLengthInMeters": 0,
+            "departureTime": "2022-08-17T09:43:10+02:00",
+            "arrivalTime": "2022-08-17T09:51:46+02:00",
+            "noTrafficTravelTimeInSeconds": 434,
+            "historicTrafficTravelTimeInSeconds": 545,
+            "liveTrafficIncidentsTravelTimeInSeconds": 516
+          },
+          "legs": [
+            {
+              "summary": {
+                "lengthInMeters": 2452,
+                "travelTimeInSeconds": 516,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-08-17T09:43:10+02:00",
+                "arrivalTime": "2022-08-17T09:51:46+02:00",
+                "noTrafficTravelTimeInSeconds": 434,
+                "historicTrafficTravelTimeInSeconds": 545,
+                "liveTrafficIncidentsTravelTimeInSeconds": 516
+              },
+              "points": [
+                {
+                  "latitude": 52.38686,
+                  "longitude": 4.87487
+                },
+                {
+                  "latitude": 52.38655,
+                  "longitude": 4.87486
+                },
+                {
+                  "latitude": 52.3864,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38623,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38618,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38582,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38577,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38573,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38556,
+                  "longitude": 4.87484
+                },
+                {
+                  "latitude": 52.38546,
+                  "longitude": 4.87484
+                },
+                {
+                  "latitude": 52.38547,
+                  "longitude": 4.87498
+                },
+                {
+                  "latitude": 52.38549,
+                  "longitude": 4.8767
+                },
+                {
+                  "latitude": 52.38551,
+                  "longitude": 4.87793
+                },
+                {
+                  "latitude": 52.38553,
+                  "longitude": 4.87904
+                },
+                {
+                  "latitude": 52.38549,
+                  "longitude": 4.8791
+                },
+                {
+                  "latitude": 52.38549,
+                  "longitude": 4.87919
+                },
+                {
+                  "latitude": 52.38546,
+                  "longitude": 4.87944
+                },
+                {
+                  "latitude": 52.38541,
+                  "longitude": 4.87966
+                },
+                {
+                  "latitude": 52.38529,
+                  "longitude": 4.8802
+                },
+                {
+                  "latitude": 52.38525,
+                  "longitude": 4.88036
+                },
+                {
+                  "latitude": 52.38524,
+                  "longitude": 4.88043
+                },
+                {
+                  "latitude": 52.38522,
+                  "longitude": 4.88052
+                },
+                {
+                  "latitude": 52.38519,
+                  "longitude": 4.88065
+                },
+                {
+                  "latitude": 52.38509,
+                  "longitude": 4.8811
+                },
+                {
+                  "latitude": 52.38503,
+                  "longitude": 4.88136
+                },
+                {
+                  "latitude": 52.38499,
+                  "longitude": 4.88154
+                },
+                {
+                  "latitude": 52.38495,
+                  "longitude": 4.88178
+                },
+                {
+                  "latitude": 52.38492,
+                  "longitude": 4.88197
+                },
+                {
+                  "latitude": 52.38487,
+                  "longitude": 4.88216
+                },
+                {
+                  "latitude": 52.38483,
+                  "longitude": 4.88234
+                },
+                {
+                  "latitude": 52.38481,
+                  "longitude": 4.88244
+                },
+                {
+                  "latitude": 52.38478,
+                  "longitude": 4.88256
+                },
+                {
+                  "latitude": 52.38471,
+                  "longitude": 4.88285
+                },
+                {
+                  "latitude": 52.38464,
+                  "longitude": 4.88314
+                },
+                {
+                  "latitude": 52.38461,
+                  "longitude": 4.88324
+                },
+                {
+                  "latitude": 52.38459,
+                  "longitude": 4.88331
+                },
+                {
+                  "latitude": 52.38466,
+                  "longitude": 4.88338
+                },
+                {
+                  "latitude": 52.38488,
+                  "longitude": 4.88359
+                },
+                {
+                  "latitude": 52.38493,
+                  "longitude": 4.88363
+                },
+                {
+                  "latitude": 52.38505,
+                  "longitude": 4.88372
+                },
+                {
+                  "latitude": 52.38521,
+                  "longitude": 4.88385
+                },
+                {
+                  "latitude": 52.38525,
+                  "longitude": 4.88388
+                },
+                {
+                  "latitude": 52.38529,
+                  "longitude": 4.88392
+                },
+                {
+                  "latitude": 52.38524,
+                  "longitude": 4.88416
+                },
+                {
+                  "latitude": 52.38521,
+                  "longitude": 4.88426
+                },
+                {
+                  "latitude": 52.3851,
+                  "longitude": 4.88449
+                },
+                {
+                  "latitude": 52.3851,
+                  "longitude": 4.8845
+                },
+                {
+                  "latitude": 52.38503,
+                  "longitude": 4.88464
+                },
+                {
+                  "latitude": 52.385,
+                  "longitude": 4.88468
+                },
+                {
+                  "latitude": 52.38485,
+                  "longitude": 4.88497
+                },
+                {
+                  "latitude": 52.38481,
+                  "longitude": 4.88491
+                },
+                {
+                  "latitude": 52.38473,
+                  "longitude": 4.88505
+                },
+                {
+                  "latitude": 52.38381,
+                  "longitude": 4.88675
+                },
+                {
+                  "latitude": 52.3835,
+                  "longitude": 4.88728
+                },
+                {
+                  "latitude": 52.38348,
+                  "longitude": 4.88732
+                },
+                {
+                  "latitude": 52.38348,
+                  "longitude": 4.88742
+                },
+                {
+                  "latitude": 52.38332,
+                  "longitude": 4.88766
+                },
+                {
+                  "latitude": 52.38308,
+                  "longitude": 4.88803
+                },
+                {
+                  "latitude": 52.38298,
+                  "longitude": 4.88824
+                },
+                {
+                  "latitude": 52.38295,
+                  "longitude": 4.88832
+                },
+                {
+                  "latitude": 52.38281,
+                  "longitude": 4.88865
+                },
+                {
+                  "latitude": 52.38264,
+                  "longitude": 4.88906
+                },
+                {
+                  "latitude": 52.3823,
+                  "longitude": 4.8898
+                },
+                {
+                  "latitude": 52.38228,
+                  "longitude": 4.88986
+                },
+                {
+                  "latitude": 52.38217,
+                  "longitude": 4.89009
+                },
+                {
+                  "latitude": 52.38212,
+                  "longitude": 4.8902
+                },
+                {
+                  "latitude": 52.38208,
+                  "longitude": 4.89027
+                },
+                {
+                  "latitude": 52.38176,
+                  "longitude": 4.89091
+                },
+                {
+                  "latitude": 52.38157,
+                  "longitude": 4.8913
+                },
+                {
+                  "latitude": 52.38138,
+                  "longitude": 4.89176
+                },
+                {
+                  "latitude": 52.38102,
+                  "longitude": 4.89289
+                },
+                {
+                  "latitude": 52.38081,
+                  "longitude": 4.89359
+                },
+                {
+                  "latitude": 52.38076,
+                  "longitude": 4.89377
+                },
+                {
+                  "latitude": 52.3807,
+                  "longitude": 4.89393
+                },
+                {
+                  "latitude": 52.38054,
+                  "longitude": 4.89434
+                },
+                {
+                  "latitude": 52.38053,
+                  "longitude": 4.89437
+                },
+                {
+                  "latitude": 52.3805,
+                  "longitude": 4.89444
+                },
+                {
+                  "latitude": 52.38047,
+                  "longitude": 4.89448
+                },
+                {
+                  "latitude": 52.38042,
+                  "longitude": 4.89452
+                },
+                {
+                  "latitude": 52.38033,
+                  "longitude": 4.89454
+                },
+                {
+                  "latitude": 52.38012,
+                  "longitude": 4.89455
+                },
+                {
+                  "latitude": 52.37992,
+                  "longitude": 4.89456
+                },
+                {
+                  "latitude": 52.37989,
+                  "longitude": 4.89459
+                },
+                {
+                  "latitude": 52.37988,
+                  "longitude": 4.8946
+                },
+                {
+                  "latitude": 52.37983,
+                  "longitude": 4.89462
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89463
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89464
+                },
+                {
+                  "latitude": 52.3798,
+                  "longitude": 4.89467
+                },
+                {
+                  "latitude": 52.3798,
+                  "longitude": 4.89473
+                },
+                {
+                  "latitude": 52.3798,
+                  "longitude": 4.89478
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89482
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89485
+                },
+                {
+                  "latitude": 52.37983,
+                  "longitude": 4.89491
+                },
+                {
+                  "latitude": 52.3799,
+                  "longitude": 4.89499
+                },
+                {
+                  "latitude": 52.3801,
+                  "longitude": 4.89524
+                },
+                {
+                  "latitude": 52.38014,
+                  "longitude": 4.89531
+                },
+                {
+                  "latitude": 52.38029,
+                  "longitude": 4.8955
+                },
+                {
+                  "latitude": 52.38037,
+                  "longitude": 4.89561
+                },
+                {
+                  "latitude": 52.3805,
+                  "longitude": 4.89575
+                },
+                {
+                  "latitude": 52.38052,
+                  "longitude": 4.89577
+                },
+                {
+                  "latitude": 52.38063,
+                  "longitude": 4.89588
+                },
+                {
+                  "latitude": 52.38072,
+                  "longitude": 4.89595
+                },
+                {
+                  "latitude": 52.3808,
+                  "longitude": 4.89601
+                },
+                {
+                  "latitude": 52.38084,
+                  "longitude": 4.89602
+                },
+                {
+                  "latitude": 52.38089,
+                  "longitude": 4.89604
+                },
+                {
+                  "latitude": 52.38113,
+                  "longitude": 4.89612
+                },
+                {
+                  "latitude": 52.38118,
+                  "longitude": 4.89619
+                },
+                {
+                  "latitude": 52.38132,
+                  "longitude": 4.89625
+                },
+                {
+                  "latitude": 52.38135,
+                  "longitude": 4.89626
+                },
+                {
+                  "latitude": 52.38136,
+                  "longitude": 4.89627
+                },
+                {
+                  "latitude": 52.38142,
+                  "longitude": 4.89632
+                },
+                {
+                  "latitude": 52.38137,
+                  "longitude": 4.8964
+                },
+                {
+                  "latitude": 52.38133,
+                  "longitude": 4.89647
+                },
+                {
+                  "latitude": 52.38124,
+                  "longitude": 4.89662
+                },
+                {
+                  "latitude": 52.38116,
+                  "longitude": 4.89674
+                },
+                {
+                  "latitude": 52.38108,
+                  "longitude": 4.89689
+                },
+                {
+                  "latitude": 52.38102,
+                  "longitude": 4.897
+                },
+                {
+                  "latitude": 52.38098,
+                  "longitude": 4.8971
+                },
+                {
+                  "latitude": 52.38092,
+                  "longitude": 4.89723
+                },
+                {
+                  "latitude": 52.3806,
+                  "longitude": 4.89809
+                },
+                {
+                  "latitude": 52.38032,
+                  "longitude": 4.89887
+                },
+                {
+                  "latitude": 52.38022,
+                  "longitude": 4.89912
+                },
+                {
+                  "latitude": 52.37993,
+                  "longitude": 4.8999
+                },
+                {
+                  "latitude": 52.37977,
+                  "longitude": 4.90033
+                },
+                {
+                  "latitude": 52.37945,
+                  "longitude": 4.90114
+                },
+                {
+                  "latitude": 52.37941,
+                  "longitude": 4.90126
+                }
+              ]
+            }
+          ],
+          "sections": [
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 125,
+              "sectionType": "COUNTRY",
+              "countryCode": "NLD"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 125,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "car"
+            },
+            {
+              "startPointIndex": 119,
+              "endPointIndex": 125,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 125,
+              "sectionType": "URBAN"
+            }
+          ],
+          "guidance": {
+            "instructions": [
+              {
+                "routeOffsetInMeters": 0,
+                "travelTimeInSeconds": 0,
+                "point": {
+                  "latitude": 52.38686,
+                  "longitude": 4.87487
+                },
+                "pointIndex": 0,
+                "instructionType": "LOCATION_DEPARTURE",
+                "street": "Haarlemmerweg",
+                "countryCode": "NLD",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "DEPART",
+                "message": "Salga de <street>Haarlemmerweg</street>"
+              },
+              {
+                "routeOffsetInMeters": 155,
+                "travelTimeInSeconds": 92,
+                "point": {
+                  "latitude": 52.38546,
+                  "longitude": 4.87484
+                },
+                "pointIndex": 9,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Haarlemmerweg",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 736,
+                "travelTimeInSeconds": 212,
+                "point": {
+                  "latitude": 52.38464,
+                  "longitude": 4.88314
+                },
+                "pointIndex": 33,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Haarlemmerplein",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                "combinedMessage": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 836,
+                "travelTimeInSeconds": 234,
+                "point": {
+                  "latitude": 52.38529,
+                  "longitude": 4.88392
+                },
+                "pointIndex": 42,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Haarlemmerplein",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "BEAR_RIGHT",
+                "message": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                "combinedMessage": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego gire a la derecha en <street>Kleine Houtstraat</street>"
+              },
+              {
+                "routeOffsetInMeters": 923,
+                "travelTimeInSeconds": 254,
+                "point": {
+                  "latitude": 52.38485,
+                  "longitude": 4.88497
+                },
+                "pointIndex": 49,
+                "instructionType": "TURN",
+                "street": "Kleine Houtstraat",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Kleine Houtstraat</street>",
+                "combinedMessage": "Gire a la derecha en <street>Kleine Houtstraat</street> luego gire a la izquierda en <street>Haarlemmer Houttuinen</street>"
+              },
+              {
+                "routeOffsetInMeters": 928,
+                "travelTimeInSeconds": 264,
+                "point": {
+                  "latitude": 52.38481,
+                  "longitude": 4.88491
+                },
+                "pointIndex": 50,
+                "instructionType": "TURN",
+                "street": "Haarlemmer Houttuinen",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Haarlemmer Houttuinen</street>"
+              },
+              {
+                "routeOffsetInMeters": 1807,
+                "travelTimeInSeconds": 429,
+                "point": {
+                  "latitude": 52.37992,
+                  "longitude": 4.89456
+                },
+                "pointIndex": 81,
+                "instructionType": "TURN",
+                "street": "Droogbak",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -135,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "SHARP_LEFT",
+                "message": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street>",
+                "combinedMessage": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street> luego gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 2045,
+                "travelTimeInSeconds": 480,
+                "point": {
+                  "latitude": 52.38142,
+                  "longitude": 4.89632
+                },
+                "pointIndex": 110,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s100"
+                ],
+                "street": "De Ruijterkade",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 2452,
+                "travelTimeInSeconds": 516,
+                "point": {
+                  "latitude": 52.37941,
+                  "longitude": 4.90126
+                },
+                "pointIndex": 125,
+                "instructionType": "LOCATION_ARRIVAL",
+                "roadNumbers": [
+                  "s100"
+                ],
+                "street": "Michiel de Ruijtertunnel",
+                "countryCode": "NLD",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ARRIVE_RIGHT",
+                "message": "Ha llegado a <street>Michiel de Ruijtertunnel</street>/<roadNumber>s100</roadNumber>. Su destino está a la derecha"
+              }
+            ],
+            "instructionGroups": [
+              {
+                "firstInstructionIndex": 0,
+                "lastInstructionIndex": 5,
+                "groupMessage": "Salga de <street>Haarlemmerweg</street>. Tome <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                "groupLengthInMeters": 1807
+              },
+              {
+                "firstInstructionIndex": 6,
+                "lastInstructionIndex": 8,
+                "groupMessage": "Tome <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>. Continúe hasta su destino en <street>Michiel de Ruijtertunnel</street>",
+                "groupLengthInMeters": 645
+              }
+            ]
+          }
+        },
+        {
+          "summary": {
+            "lengthInMeters": 2653,
+            "travelTimeInSeconds": 624,
+            "trafficDelayInSeconds": 0,
+            "trafficLengthInMeters": 0,
+            "departureTime": "2022-08-17T09:41:22+02:00",
+            "arrivalTime": "2022-08-17T09:51:46+02:00",
+            "noTrafficTravelTimeInSeconds": 528,
+            "historicTrafficTravelTimeInSeconds": 653,
+            "liveTrafficIncidentsTravelTimeInSeconds": 624,
+            "deviationDistance": 928,
+            "deviationTime": 264,
+            "deviationPoint": {
+              "latitude": 52.38481,
+              "longitude": 4.88491
+            }
+          },
+          "legs": [
+            {
+              "summary": {
+                "lengthInMeters": 2653,
+                "travelTimeInSeconds": 624,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-08-17T09:41:22+02:00",
+                "arrivalTime": "2022-08-17T09:51:46+02:00",
+                "noTrafficTravelTimeInSeconds": 528,
+                "historicTrafficTravelTimeInSeconds": 653,
+                "liveTrafficIncidentsTravelTimeInSeconds": 624
+              },
+              "points": [
+                {
+                  "latitude": 52.38686,
+                  "longitude": 4.87487
+                },
+                {
+                  "latitude": 52.38655,
+                  "longitude": 4.87486
+                },
+                {
+                  "latitude": 52.3864,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38623,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38618,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38582,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38577,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38573,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38556,
+                  "longitude": 4.87484
+                },
+                {
+                  "latitude": 52.38546,
+                  "longitude": 4.87484
+                },
+                {
+                  "latitude": 52.38547,
+                  "longitude": 4.87498
+                },
+                {
+                  "latitude": 52.38549,
+                  "longitude": 4.8767
+                },
+                {
+                  "latitude": 52.38551,
+                  "longitude": 4.87793
+                },
+                {
+                  "latitude": 52.38553,
+                  "longitude": 4.87904
+                },
+                {
+                  "latitude": 52.38549,
+                  "longitude": 4.8791
+                },
+                {
+                  "latitude": 52.38549,
+                  "longitude": 4.87919
+                },
+                {
+                  "latitude": 52.38546,
+                  "longitude": 4.87944
+                },
+                {
+                  "latitude": 52.38541,
+                  "longitude": 4.87966
+                },
+                {
+                  "latitude": 52.38529,
+                  "longitude": 4.8802
+                },
+                {
+                  "latitude": 52.38525,
+                  "longitude": 4.88036
+                },
+                {
+                  "latitude": 52.38524,
+                  "longitude": 4.88043
+                },
+                {
+                  "latitude": 52.38522,
+                  "longitude": 4.88052
+                },
+                {
+                  "latitude": 52.38519,
+                  "longitude": 4.88065
+                },
+                {
+                  "latitude": 52.38509,
+                  "longitude": 4.8811
+                },
+                {
+                  "latitude": 52.38503,
+                  "longitude": 4.88136
+                },
+                {
+                  "latitude": 52.38499,
+                  "longitude": 4.88154
+                },
+                {
+                  "latitude": 52.38495,
+                  "longitude": 4.88178
+                },
+                {
+                  "latitude": 52.38492,
+                  "longitude": 4.88197
+                },
+                {
+                  "latitude": 52.38487,
+                  "longitude": 4.88216
+                },
+                {
+                  "latitude": 52.38483,
+                  "longitude": 4.88234
+                },
+                {
+                  "latitude": 52.38481,
+                  "longitude": 4.88244
+                },
+                {
+                  "latitude": 52.38478,
+                  "longitude": 4.88256
+                },
+                {
+                  "latitude": 52.38471,
+                  "longitude": 4.88285
+                },
+                {
+                  "latitude": 52.38464,
+                  "longitude": 4.88314
+                },
+                {
+                  "latitude": 52.38461,
+                  "longitude": 4.88324
+                },
+                {
+                  "latitude": 52.38459,
+                  "longitude": 4.88331
+                },
+                {
+                  "latitude": 52.38466,
+                  "longitude": 4.88338
+                },
+                {
+                  "latitude": 52.38488,
+                  "longitude": 4.88359
+                },
+                {
+                  "latitude": 52.38493,
+                  "longitude": 4.88363
+                },
+                {
+                  "latitude": 52.38505,
+                  "longitude": 4.88372
+                },
+                {
+                  "latitude": 52.38521,
+                  "longitude": 4.88385
+                },
+                {
+                  "latitude": 52.38525,
+                  "longitude": 4.88388
+                },
+                {
+                  "latitude": 52.38529,
+                  "longitude": 4.88392
+                },
+                {
+                  "latitude": 52.38524,
+                  "longitude": 4.88416
+                },
+                {
+                  "latitude": 52.38521,
+                  "longitude": 4.88426
+                },
+                {
+                  "latitude": 52.3851,
+                  "longitude": 4.88449
+                },
+                {
+                  "latitude": 52.3851,
+                  "longitude": 4.8845
+                },
+                {
+                  "latitude": 52.38503,
+                  "longitude": 4.88464
+                },
+                {
+                  "latitude": 52.385,
+                  "longitude": 4.88468
+                },
+                {
+                  "latitude": 52.38485,
+                  "longitude": 4.88497
+                },
+                {
+                  "latitude": 52.38481,
+                  "longitude": 4.88491
+                },
+                {
+                  "latitude": 52.38467,
+                  "longitude": 4.88469
+                },
+                {
+                  "latitude": 52.38453,
+                  "longitude": 4.88449
+                },
+                {
+                  "latitude": 52.38445,
+                  "longitude": 4.88437
+                },
+                {
+                  "latitude": 52.38435,
+                  "longitude": 4.88421
+                },
+                {
+                  "latitude": 52.38416,
+                  "longitude": 4.88453
+                },
+                {
+                  "latitude": 52.38391,
+                  "longitude": 4.88497
+                },
+                {
+                  "latitude": 52.38385,
+                  "longitude": 4.8851
+                },
+                {
+                  "latitude": 52.38333,
+                  "longitude": 4.88602
+                },
+                {
+                  "latitude": 52.38314,
+                  "longitude": 4.88637
+                },
+                {
+                  "latitude": 52.38297,
+                  "longitude": 4.88666
+                },
+                {
+                  "latitude": 52.38281,
+                  "longitude": 4.88694
+                },
+                {
+                  "latitude": 52.38272,
+                  "longitude": 4.8871
+                },
+                {
+                  "latitude": 52.3825,
+                  "longitude": 4.88752
+                },
+                {
+                  "latitude": 52.38203,
+                  "longitude": 4.88834
+                },
+                {
+                  "latitude": 52.38159,
+                  "longitude": 4.88912
+                },
+                {
+                  "latitude": 52.38152,
+                  "longitude": 4.88925
+                },
+                {
+                  "latitude": 52.38145,
+                  "longitude": 4.88937
+                },
+                {
+                  "latitude": 52.38138,
+                  "longitude": 4.88951
+                },
+                {
+                  "latitude": 52.3818,
+                  "longitude": 4.88989
+                },
+                {
+                  "latitude": 52.38198,
+                  "longitude": 4.89009
+                },
+                {
+                  "latitude": 52.38113,
+                  "longitude": 4.89157
+                },
+                {
+                  "latitude": 52.38132,
+                  "longitude": 4.89172
+                },
+                {
+                  "latitude": 52.38138,
+                  "longitude": 4.89176
+                },
+                {
+                  "latitude": 52.38102,
+                  "longitude": 4.89289
+                },
+                {
+                  "latitude": 52.38081,
+                  "longitude": 4.89359
+                },
+                {
+                  "latitude": 52.38076,
+                  "longitude": 4.89377
+                },
+                {
+                  "latitude": 52.3807,
+                  "longitude": 4.89393
+                },
+                {
+                  "latitude": 52.38054,
+                  "longitude": 4.89434
+                },
+                {
+                  "latitude": 52.38053,
+                  "longitude": 4.89437
+                },
+                {
+                  "latitude": 52.3805,
+                  "longitude": 4.89444
+                },
+                {
+                  "latitude": 52.38047,
+                  "longitude": 4.89448
+                },
+                {
+                  "latitude": 52.38042,
+                  "longitude": 4.89452
+                },
+                {
+                  "latitude": 52.38033,
+                  "longitude": 4.89454
+                },
+                {
+                  "latitude": 52.38012,
+                  "longitude": 4.89455
+                },
+                {
+                  "latitude": 52.37992,
+                  "longitude": 4.89456
+                },
+                {
+                  "latitude": 52.37989,
+                  "longitude": 4.89459
+                },
+                {
+                  "latitude": 52.37988,
+                  "longitude": 4.8946
+                },
+                {
+                  "latitude": 52.37983,
+                  "longitude": 4.89462
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89463
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89464
+                },
+                {
+                  "latitude": 52.3798,
+                  "longitude": 4.89467
+                },
+                {
+                  "latitude": 52.3798,
+                  "longitude": 4.89473
+                },
+                {
+                  "latitude": 52.3798,
+                  "longitude": 4.89478
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89482
+                },
+                {
+                  "latitude": 52.37981,
+                  "longitude": 4.89485
+                },
+                {
+                  "latitude": 52.37983,
+                  "longitude": 4.89491
+                },
+                {
+                  "latitude": 52.3799,
+                  "longitude": 4.89499
+                },
+                {
+                  "latitude": 52.3801,
+                  "longitude": 4.89524
+                },
+                {
+                  "latitude": 52.38014,
+                  "longitude": 4.89531
+                },
+                {
+                  "latitude": 52.38029,
+                  "longitude": 4.8955
+                },
+                {
+                  "latitude": 52.38037,
+                  "longitude": 4.89561
+                },
+                {
+                  "latitude": 52.3805,
+                  "longitude": 4.89575
+                },
+                {
+                  "latitude": 52.38052,
+                  "longitude": 4.89577
+                },
+                {
+                  "latitude": 52.38063,
+                  "longitude": 4.89588
+                },
+                {
+                  "latitude": 52.38072,
+                  "longitude": 4.89595
+                },
+                {
+                  "latitude": 52.3808,
+                  "longitude": 4.89601
+                },
+                {
+                  "latitude": 52.38084,
+                  "longitude": 4.89602
+                },
+                {
+                  "latitude": 52.38089,
+                  "longitude": 4.89604
+                },
+                {
+                  "latitude": 52.38113,
+                  "longitude": 4.89612
+                },
+                {
+                  "latitude": 52.38118,
+                  "longitude": 4.89619
+                },
+                {
+                  "latitude": 52.38132,
+                  "longitude": 4.89625
+                },
+                {
+                  "latitude": 52.38135,
+                  "longitude": 4.89626
+                },
+                {
+                  "latitude": 52.38136,
+                  "longitude": 4.89627
+                },
+                {
+                  "latitude": 52.38142,
+                  "longitude": 4.89632
+                },
+                {
+                  "latitude": 52.38137,
+                  "longitude": 4.8964
+                },
+                {
+                  "latitude": 52.38133,
+                  "longitude": 4.89647
+                },
+                {
+                  "latitude": 52.38124,
+                  "longitude": 4.89662
+                },
+                {
+                  "latitude": 52.38116,
+                  "longitude": 4.89674
+                },
+                {
+                  "latitude": 52.38108,
+                  "longitude": 4.89689
+                },
+                {
+                  "latitude": 52.38102,
+                  "longitude": 4.897
+                },
+                {
+                  "latitude": 52.38098,
+                  "longitude": 4.8971
+                },
+                {
+                  "latitude": 52.38092,
+                  "longitude": 4.89723
+                },
+                {
+                  "latitude": 52.3806,
+                  "longitude": 4.89809
+                },
+                {
+                  "latitude": 52.38032,
+                  "longitude": 4.89887
+                },
+                {
+                  "latitude": 52.38022,
+                  "longitude": 4.89912
+                },
+                {
+                  "latitude": 52.37993,
+                  "longitude": 4.8999
+                },
+                {
+                  "latitude": 52.37977,
+                  "longitude": 4.90033
+                },
+                {
+                  "latitude": 52.37945,
+                  "longitude": 4.90114
+                },
+                {
+                  "latitude": 52.37941,
+                  "longitude": 4.90126
+                }
+              ]
+            }
+          ],
+          "sections": [
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 129,
+              "sectionType": "COUNTRY",
+              "countryCode": "NLD"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 129,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "car"
+            },
+            {
+              "startPointIndex": 123,
+              "endPointIndex": 129,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 129,
+              "sectionType": "URBAN"
+            }
+          ],
+          "guidance": {
+            "instructions": [
+              {
+                "routeOffsetInMeters": 0,
+                "travelTimeInSeconds": 0,
+                "point": {
+                  "latitude": 52.38686,
+                  "longitude": 4.87487
+                },
+                "pointIndex": 0,
+                "instructionType": "LOCATION_DEPARTURE",
+                "street": "Haarlemmerweg",
+                "countryCode": "NLD",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "DEPART",
+                "message": "Salga de <street>Haarlemmerweg</street>"
+              },
+              {
+                "routeOffsetInMeters": 155,
+                "travelTimeInSeconds": 92,
+                "point": {
+                  "latitude": 52.38546,
+                  "longitude": 4.87484
+                },
+                "pointIndex": 9,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Haarlemmerweg",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 736,
+                "travelTimeInSeconds": 211,
+                "point": {
+                  "latitude": 52.38464,
+                  "longitude": 4.88314
+                },
+                "pointIndex": 33,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Haarlemmerplein",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                "combinedMessage": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 836,
+                "travelTimeInSeconds": 234,
+                "point": {
+                  "latitude": 52.38529,
+                  "longitude": 4.88392
+                },
+                "pointIndex": 42,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Haarlemmerplein",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "BEAR_RIGHT",
+                "message": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                "combinedMessage": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego gire a la derecha en <street>Kleine Houtstraat</street>"
+              },
+              {
+                "routeOffsetInMeters": 923,
+                "travelTimeInSeconds": 253,
+                "point": {
+                  "latitude": 52.38485,
+                  "longitude": 4.88497
+                },
+                "pointIndex": 49,
+                "instructionType": "TURN",
+                "street": "Kleine Houtstraat",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Kleine Houtstraat</street>",
+                "combinedMessage": "Gire a la derecha en <street>Kleine Houtstraat</street> luego gire a la izquierda en <street>Haarlemmerdijk</street>"
+              },
+              {
+                "routeOffsetInMeters": 998,
+                "travelTimeInSeconds": 283,
+                "point": {
+                  "latitude": 52.38435,
+                  "longitude": 4.88421
+                },
+                "pointIndex": 54,
+                "instructionType": "TURN",
+                "street": "Haarlemmerdijk",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Haarlemmerdijk</street>"
+              },
+              {
+                "routeOffsetInMeters": 1489,
+                "travelTimeInSeconds": 407,
+                "point": {
+                  "latitude": 52.38138,
+                  "longitude": 4.88951
+                },
+                "pointIndex": 68,
+                "instructionType": "TURN",
+                "street": "Korte Prinsengracht",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Korte Prinsengracht</street>",
+                "combinedMessage": "Gire a la izquierda en <street>Korte Prinsengracht</street> luego gire a la derecha en <street>Haarlemmer Houttuinen</street>"
+              },
+              {
+                "routeOffsetInMeters": 1567,
+                "travelTimeInSeconds": 433,
+                "point": {
+                  "latitude": 52.38198,
+                  "longitude": 4.89009
+                },
+                "pointIndex": 70,
+                "instructionType": "TURN",
+                "street": "Haarlemmer Houttuinen",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Haarlemmer Houttuinen</street>",
+                "combinedMessage": "Gire a la derecha en <street>Haarlemmer Houttuinen</street> luego gire a la izquierda en <street>Buiten Brouwersstraat</street>"
+              },
+              {
+                "routeOffsetInMeters": 1705,
+                "travelTimeInSeconds": 469,
+                "point": {
+                  "latitude": 52.38113,
+                  "longitude": 4.89157
+                },
+                "pointIndex": 71,
+                "instructionType": "TURN",
+                "street": "Buiten Brouwersstraat",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Buiten Brouwersstraat</street>",
+                "combinedMessage": "Gire a la izquierda en <street>Buiten Brouwersstraat</street> luego gire a la derecha en <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 1735,
+                "travelTimeInSeconds": 486,
+                "point": {
+                  "latitude": 52.38138,
+                  "longitude": 4.89176
+                },
+                "pointIndex": 73,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Nieuwe Westerdokstraat",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber>",
+                "combinedMessage": "Gire a la derecha en <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber> luego tome la curva pronunciada a la izquierda en <street>Droogbak</street>"
+              },
+              {
+                "routeOffsetInMeters": 2008,
+                "travelTimeInSeconds": 538,
+                "point": {
+                  "latitude": 52.37992,
+                  "longitude": 4.89456
+                },
+                "pointIndex": 85,
+                "instructionType": "TURN",
+                "street": "Droogbak",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -135,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "SHARP_LEFT",
+                "message": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street>",
+                "combinedMessage": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street> luego gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 2246,
+                "travelTimeInSeconds": 588,
+                "point": {
+                  "latitude": 52.38142,
+                  "longitude": 4.89632
+                },
+                "pointIndex": 114,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s100"
+                ],
+                "street": "De Ruijterkade",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 2653,
+                "travelTimeInSeconds": 624,
+                "point": {
+                  "latitude": 52.37941,
+                  "longitude": 4.90126
+                },
+                "pointIndex": 129,
+                "instructionType": "LOCATION_ARRIVAL",
+                "roadNumbers": [
+                  "s100"
+                ],
+                "street": "Michiel de Ruijtertunnel",
+                "countryCode": "NLD",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ARRIVE_RIGHT",
+                "message": "Ha llegado a <street>Michiel de Ruijtertunnel</street>/<roadNumber>s100</roadNumber>. Su destino está a la derecha"
+              }
+            ],
+            "instructionGroups": [
+              {
+                "firstInstructionIndex": 0,
+                "lastInstructionIndex": 5,
+                "groupMessage": "Salga de <street>Haarlemmerweg</street>. Tome <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                "groupLengthInMeters": 1489
+              },
+              {
+                "firstInstructionIndex": 6,
+                "lastInstructionIndex": 12,
+                "groupMessage": "Siga por <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber> y tome <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>. Continúe hasta su destino en <street>Michiel de Ruijtertunnel</street>",
+                "groupLengthInMeters": 1164
+              }
+            ]
+          }
+        },
+        {
+          "summary": {
+            "lengthInMeters": 3800,
+            "travelTimeInSeconds": 735,
+            "trafficDelayInSeconds": 0,
+            "trafficLengthInMeters": 0,
+            "departureTime": "2022-08-17T09:39:31+02:00",
+            "arrivalTime": "2022-08-17T09:51:46+02:00",
+            "noTrafficTravelTimeInSeconds": 651,
+            "historicTrafficTravelTimeInSeconds": 766,
+            "liveTrafficIncidentsTravelTimeInSeconds": 735,
+            "deviationDistance": 155,
+            "deviationTime": 92,
+            "deviationPoint": {
+              "latitude": 52.38546,
+              "longitude": 4.87484
+            }
+          },
+          "legs": [
+            {
+              "summary": {
+                "lengthInMeters": 3800,
+                "travelTimeInSeconds": 735,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-08-17T09:39:31+02:00",
+                "arrivalTime": "2022-08-17T09:51:46+02:00",
+                "noTrafficTravelTimeInSeconds": 651,
+                "historicTrafficTravelTimeInSeconds": 766,
+                "liveTrafficIncidentsTravelTimeInSeconds": 735
+              },
+              "points": [
+                {
+                  "latitude": 52.38686,
+                  "longitude": 4.87487
+                },
+                {
+                  "latitude": 52.38655,
+                  "longitude": 4.87486
+                },
+                {
+                  "latitude": 52.3864,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38623,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38618,
+                  "longitude": 4.87485
+                },
+                {
+                  "latitude": 52.38582,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38577,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38573,
+                  "longitude": 4.87483
+                },
+                {
+                  "latitude": 52.38556,
+                  "longitude": 4.87484
+                },
+                {
+                  "latitude": 52.38546,
+                  "longitude": 4.87484
+                },
+                {
+                  "latitude": 52.38542,
+                  "longitude": 4.87327
+                },
+                {
+                  "latitude": 52.38541,
+                  "longitude": 4.87146
+                },
+                {
+                  "latitude": 52.38539,
+                  "longitude": 4.87076
+                },
+                {
+                  "latitude": 52.38538,
+                  "longitude": 4.87
+                },
+                {
+                  "latitude": 52.38536,
+                  "longitude": 4.86961
+                },
+                {
+                  "latitude": 52.38535,
+                  "longitude": 4.86952
+                },
+                {
+                  "latitude": 52.38535,
+                  "longitude": 4.86944
+                },
+                {
+                  "latitude": 52.38528,
+                  "longitude": 4.86947
+                },
+                {
+                  "latitude": 52.38526,
+                  "longitude": 4.86948
+                },
+                {
+                  "latitude": 52.3851,
+                  "longitude": 4.86957
+                },
+                {
+                  "latitude": 52.3847,
+                  "longitude": 4.86976
+                },
+                {
+                  "latitude": 52.38464,
+                  "longitude": 4.86985
+                },
+                {
+                  "latitude": 52.38459,
+                  "longitude": 4.86988
+                },
+                {
+                  "latitude": 52.38441,
+                  "longitude": 4.86995
+                },
+                {
+                  "latitude": 52.38415,
+                  "longitude": 4.87006
+                },
+                {
+                  "latitude": 52.38403,
+                  "longitude": 4.87011
+                },
+                {
+                  "latitude": 52.3836,
+                  "longitude": 4.87028
+                },
+                {
+                  "latitude": 52.3835,
+                  "longitude": 4.87032
+                },
+                {
+                  "latitude": 52.38313,
+                  "longitude": 4.87045
+                },
+                {
+                  "latitude": 52.38302,
+                  "longitude": 4.87049
+                },
+                {
+                  "latitude": 52.38282,
+                  "longitude": 4.87056
+                },
+                {
+                  "latitude": 52.38281,
+                  "longitude": 4.87057
+                },
+                {
+                  "latitude": 52.38256,
+                  "longitude": 4.87069
+                },
+                {
+                  "latitude": 52.38206,
+                  "longitude": 4.87086
+                },
+                {
+                  "latitude": 52.38154,
+                  "longitude": 4.87105
+                },
+                {
+                  "latitude": 52.38096,
+                  "longitude": 4.87125
+                },
+                {
+                  "latitude": 52.37969,
+                  "longitude": 4.87167
+                },
+                {
+                  "latitude": 52.37952,
+                  "longitude": 4.87174
+                },
+                {
+                  "latitude": 52.37941,
+                  "longitude": 4.87183
+                },
+                {
+                  "latitude": 52.37938,
+                  "longitude": 4.87187
+                },
+                {
+                  "latitude": 52.37936,
+                  "longitude": 4.87192
+                },
+                {
+                  "latitude": 52.37933,
+                  "longitude": 4.87201
+                },
+                {
+                  "latitude": 52.37932,
+                  "longitude": 4.87204
+                },
+                {
+                  "latitude": 52.37909,
+                  "longitude": 4.8727
+                },
+                {
+                  "latitude": 52.37906,
+                  "longitude": 4.87281
+                },
+                {
+                  "latitude": 52.37903,
+                  "longitude": 4.87294
+                },
+                {
+                  "latitude": 52.37897,
+                  "longitude": 4.87312
+                },
+                {
+                  "latitude": 52.37893,
+                  "longitude": 4.87325
+                },
+                {
+                  "latitude": 52.37881,
+                  "longitude": 4.87372
+                },
+                {
+                  "latitude": 52.37879,
+                  "longitude": 4.87385
+                },
+                {
+                  "latitude": 52.37878,
+                  "longitude": 4.87396
+                },
+                {
+                  "latitude": 52.37877,
+                  "longitude": 4.87411
+                },
+                {
+                  "latitude": 52.37878,
+                  "longitude": 4.87426
+                },
+                {
+                  "latitude": 52.37882,
+                  "longitude": 4.87446
+                },
+                {
+                  "latitude": 52.3789,
+                  "longitude": 4.87476
+                },
+                {
+                  "latitude": 52.3789,
+                  "longitude": 4.87486
+                },
+                {
+                  "latitude": 52.37895,
+                  "longitude": 4.87506
+                },
+                {
+                  "latitude": 52.37896,
+                  "longitude": 4.8751
+                },
+                {
+                  "latitude": 52.37895,
+                  "longitude": 4.87513
+                },
+                {
+                  "latitude": 52.37894,
+                  "longitude": 4.87518
+                },
+                {
+                  "latitude": 52.3789,
+                  "longitude": 4.87524
+                },
+                {
+                  "latitude": 52.37886,
+                  "longitude": 4.87531
+                },
+                {
+                  "latitude": 52.37877,
+                  "longitude": 4.87542
+                },
+                {
+                  "latitude": 52.37867,
+                  "longitude": 4.87556
+                },
+                {
+                  "latitude": 52.37872,
+                  "longitude": 4.87562
+                },
+                {
+                  "latitude": 52.37878,
+                  "longitude": 4.87585
+                },
+                {
+                  "latitude": 52.37883,
+                  "longitude": 4.87606
+                },
+                {
+                  "latitude": 52.37885,
+                  "longitude": 4.87621
+                },
+                {
+                  "latitude": 52.37887,
+                  "longitude": 4.87635
+                },
+                {
+                  "latitude": 52.37887,
+                  "longitude": 4.87652
+                },
+                {
+                  "latitude": 52.37884,
+                  "longitude": 4.87667
+                },
+                {
+                  "latitude": 52.3786,
+                  "longitude": 4.87761
+                },
+                {
+                  "latitude": 52.37855,
+                  "longitude": 4.87777
+                },
+                {
+                  "latitude": 52.37852,
+                  "longitude": 4.87789
+                },
+                {
+                  "latitude": 52.37851,
+                  "longitude": 4.87793
+                },
+                {
+                  "latitude": 52.37846,
+                  "longitude": 4.87809
+                },
+                {
+                  "latitude": 52.37842,
+                  "longitude": 4.87829
+                },
+                {
+                  "latitude": 52.37838,
+                  "longitude": 4.87843
+                },
+                {
+                  "latitude": 52.37824,
+                  "longitude": 4.87887
+                },
+                {
+                  "latitude": 52.37822,
+                  "longitude": 4.87894
+                },
+                {
+                  "latitude": 52.37784,
+                  "longitude": 4.87871
+                },
+                {
+                  "latitude": 52.37772,
+                  "longitude": 4.87909
+                },
+                {
+                  "latitude": 52.37769,
+                  "longitude": 4.87921
+                },
+                {
+                  "latitude": 52.37769,
+                  "longitude": 4.87925
+                },
+                {
+                  "latitude": 52.37768,
+                  "longitude": 4.87934
+                },
+                {
+                  "latitude": 52.37781,
+                  "longitude": 4.87941
+                },
+                {
+                  "latitude": 52.3787,
+                  "longitude": 4.87997
+                },
+                {
+                  "latitude": 52.37955,
+                  "longitude": 4.88051
+                },
+                {
+                  "latitude": 52.37962,
+                  "longitude": 4.88106
+                },
+                {
+                  "latitude": 52.37984,
+                  "longitude": 4.88257
+                },
+                {
+                  "latitude": 52.38006,
+                  "longitude": 4.8841
+                },
+                {
+                  "latitude": 52.38009,
+                  "longitude": 4.88431
+                },
+                {
+                  "latitude": 52.38032,
+                  "longitude": 4.88583
+                },
+                {
+                  "latitude": 52.38034,
+                  "longitude": 4.88599
+                },
+                {
+                  "latitude": 52.38052,
+                  "longitude": 4.8871
+                },
+                {
+                  "latitude": 52.38063,
+                  "longitude": 4.88783
+                },
+                {
+                  "latitude": 52.38047,
+                  "longitude": 4.88812
+                },
+                {
+                  "latitude": 52.38042,
+                  "longitude": 4.88821
+                },
+                {
+                  "latitude": 52.38031,
+                  "longitude": 4.8884
+                },
+                {
+                  "latitude": 52.38026,
+                  "longitude": 4.88849
+                },
+                {
+                  "latitude": 52.38036,
+                  "longitude": 4.88859
+                },
+                {
+                  "latitude": 52.38041,
+                  "longitude": 4.88862
+                },
+                {
+                  "latitude": 52.38046,
+                  "longitude": 4.88867
+                },
+                {
+                  "latitude": 52.38054,
+                  "longitude": 4.88874
+                },
+                {
+                  "latitude": 52.38138,
+                  "longitude": 4.88951
+                },
+                {
+                  "latitude": 52.3818,
+                  "longitude": 4.88989
+                },
+                {
+                  "latitude": 52.38198,
+                  "longitude": 4.89009
+                },
+                {
+                  "latitude": 52.38202,
+                  "longitude": 4.89014
+                },
+                {
+                  "latitude": 52.38204,
+                  "longitude": 4.8902
+                },
+                {
+                  "latitude": 52.38208,
+                  "longitude": 4.89027
+                },
+                {
+                  "latitude": 52.38212,
+                  "longitude": 4.89032
+                },
+                {
+                  "latitude": 52.38216,
+                  "longitude": 4.89037
+                },
+                {
+                  "latitude": 52.38232,
+                  "longitude": 4.89055
+                },
+                {
+                  "latitude": 52.38238,
+                  "longitude": 4.89064
+                },
+                {
+                  "latitude": 52.38245,
+                  "longitude": 4.89074
+                },
+                {
+                  "latitude": 52.38254,
+                  "longitude": 4.89087
+                },
+                {
+                  "latitude": 52.38258,
+                  "longitude": 4.89094
+                },
+                {
+                  "latitude": 52.38263,
+                  "longitude": 4.89099
+                },
+                {
+                  "latitude": 52.38265,
+                  "longitude": 4.89104
+                },
+                {
+                  "latitude": 52.38266,
+                  "longitude": 4.89112
+                },
+                {
+                  "latitude": 52.38269,
+                  "longitude": 4.8913
+                },
+                {
+                  "latitude": 52.38275,
+                  "longitude": 4.89199
+                },
+                {
+                  "latitude": 52.38279,
+                  "longitude": 4.89264
+                },
+                {
+                  "latitude": 52.3828,
+                  "longitude": 4.89274
+                },
+                {
+                  "latitude": 52.38281,
+                  "longitude": 4.89285
+                },
+                {
+                  "latitude": 52.38283,
+                  "longitude": 4.89299
+                },
+                {
+                  "latitude": 52.3829,
+                  "longitude": 4.89326
+                },
+                {
+                  "latitude": 52.3829,
+                  "longitude": 4.89328
+                },
+                {
+                  "latitude": 52.38287,
+                  "longitude": 4.89333
+                },
+                {
+                  "latitude": 52.38284,
+                  "longitude": 4.89337
+                },
+                {
+                  "latitude": 52.38281,
+                  "longitude": 4.89348
+                },
+                {
+                  "latitude": 52.38281,
+                  "longitude": 4.89348
+                },
+                {
+                  "latitude": 52.3828,
+                  "longitude": 4.89356
+                },
+                {
+                  "latitude": 52.38279,
+                  "longitude": 4.89371
+                },
+                {
+                  "latitude": 52.38279,
+                  "longitude": 4.89412
+                },
+                {
+                  "latitude": 52.38275,
+                  "longitude": 4.89437
+                },
+                {
+                  "latitude": 52.38272,
+                  "longitude": 4.89449
+                },
+                {
+                  "latitude": 52.38263,
+                  "longitude": 4.8947
+                },
+                {
+                  "latitude": 52.38258,
+                  "longitude": 4.89479
+                },
+                {
+                  "latitude": 52.38236,
+                  "longitude": 4.89511
+                },
+                {
+                  "latitude": 52.38225,
+                  "longitude": 4.89526
+                },
+                {
+                  "latitude": 52.38193,
+                  "longitude": 4.89568
+                },
+                {
+                  "latitude": 52.38183,
+                  "longitude": 4.89581
+                },
+                {
+                  "latitude": 52.3817,
+                  "longitude": 4.89596
+                },
+                {
+                  "latitude": 52.3816,
+                  "longitude": 4.89608
+                },
+                {
+                  "latitude": 52.38155,
+                  "longitude": 4.89613
+                },
+                {
+                  "latitude": 52.38149,
+                  "longitude": 4.89621
+                },
+                {
+                  "latitude": 52.38142,
+                  "longitude": 4.89632
+                },
+                {
+                  "latitude": 52.38137,
+                  "longitude": 4.8964
+                },
+                {
+                  "latitude": 52.38133,
+                  "longitude": 4.89647
+                },
+                {
+                  "latitude": 52.38124,
+                  "longitude": 4.89662
+                },
+                {
+                  "latitude": 52.38116,
+                  "longitude": 4.89674
+                },
+                {
+                  "latitude": 52.38108,
+                  "longitude": 4.89689
+                },
+                {
+                  "latitude": 52.38102,
+                  "longitude": 4.897
+                },
+                {
+                  "latitude": 52.38098,
+                  "longitude": 4.8971
+                },
+                {
+                  "latitude": 52.38092,
+                  "longitude": 4.89723
+                },
+                {
+                  "latitude": 52.3806,
+                  "longitude": 4.89809
+                },
+                {
+                  "latitude": 52.38032,
+                  "longitude": 4.89887
+                },
+                {
+                  "latitude": 52.38022,
+                  "longitude": 4.89912
+                },
+                {
+                  "latitude": 52.37993,
+                  "longitude": 4.8999
+                },
+                {
+                  "latitude": 52.37977,
+                  "longitude": 4.90033
+                },
+                {
+                  "latitude": 52.37945,
+                  "longitude": 4.90114
+                },
+                {
+                  "latitude": 52.37941,
+                  "longitude": 4.90126
+                }
+              ]
+            }
+          ],
+          "sections": [
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 162,
+              "sectionType": "COUNTRY",
+              "countryCode": "NLD"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 162,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "car"
+            },
+            {
+              "startPointIndex": 156,
+              "endPointIndex": 162,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 162,
+              "sectionType": "URBAN"
+            }
+          ],
+          "guidance": {
+            "instructions": [
+              {
+                "routeOffsetInMeters": 0,
+                "travelTimeInSeconds": 0,
+                "point": {
+                  "latitude": 52.38686,
+                  "longitude": 4.87487
+                },
+                "pointIndex": 0,
+                "instructionType": "LOCATION_DEPARTURE",
+                "street": "Haarlemmerweg",
+                "countryCode": "NLD",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "DEPART",
+                "message": "Salga de <street>Haarlemmerweg</street>"
+              },
+              {
+                "routeOffsetInMeters": 155,
+                "travelTimeInSeconds": 92,
+                "point": {
+                  "latitude": 52.38546,
+                  "longitude": 4.87484
+                },
+                "pointIndex": 9,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s103"
+                ],
+                "street": "Haarlemmerweg",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber>",
+                "combinedMessage": "Gire a la derecha en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber> luego gire a la izquierda en <street>Van Hallstraat</street>"
+              },
+              {
+                "routeOffsetInMeters": 511,
+                "travelTimeInSeconds": 147,
+                "point": {
+                  "latitude": 52.38536,
+                  "longitude": 4.86961
+                },
+                "pointIndex": 14,
+                "instructionType": "TURN",
+                "street": "Van Hallstraat",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Van Hallstraat</street>"
+              },
+              {
+                "routeOffsetInMeters": 1425,
+                "travelTimeInSeconds": 262,
+                "point": {
+                  "latitude": 52.3789,
+                  "longitude": 4.87476
+                },
+                "pointIndex": 54,
+                "instructionType": "TURN",
+                "street": "Frederik Hendrikplantsoen",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Frederik Hendrikplantsoen</street>",
+                "combinedMessage": "Gire a la derecha en <street>Frederik Hendrikplantsoen</street> luego gire a la izquierda en <street>Frederik Hendrikplantsoen</street>"
+              },
+              {
+                "routeOffsetInMeters": 1479,
+                "travelTimeInSeconds": 276,
+                "point": {
+                  "latitude": 52.37877,
+                  "longitude": 4.87542
+                },
+                "pointIndex": 62,
+                "instructionType": "TURN",
+                "street": "Frederik Hendrikplantsoen",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Frederik Hendrikplantsoen</street>",
+                "combinedMessage": "Gire a la izquierda en <street>Frederik Hendrikplantsoen</street> luego gire a la derecha en <street>Marnixplein</street>"
+              },
+              {
+                "routeOffsetInMeters": 1745,
+                "travelTimeInSeconds": 342,
+                "point": {
+                  "latitude": 52.37822,
+                  "longitude": 4.87894
+                },
+                "pointIndex": 79,
+                "instructionType": "TURN",
+                "street": "Marnixplein",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Marnixplein</street>",
+                "combinedMessage": "Gire a la derecha en <street>Marnixplein</street> luego gire a la izquierda en <street>Marnixplein</street>"
+              },
+              {
+                "routeOffsetInMeters": 1790,
+                "travelTimeInSeconds": 359,
+                "point": {
+                  "latitude": 52.37784,
+                  "longitude": 4.87871
+                },
+                "pointIndex": 80,
+                "instructionType": "TURN",
+                "street": "Marnixplein",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Marnixplein</street>",
+                "combinedMessage": "Gire a la izquierda en <street>Marnixplein</street> luego gire a la izquierda en <street>Lijnbaansgracht</street>"
+              },
+              {
+                "routeOffsetInMeters": 1836,
+                "travelTimeInSeconds": 380,
+                "point": {
+                  "latitude": 52.37768,
+                  "longitude": 4.87934
+                },
+                "pointIndex": 84,
+                "instructionType": "TURN",
+                "street": "Lijnbaansgracht",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Lijnbaansgracht</street>",
+                "combinedMessage": "Gire a la izquierda en <street>Lijnbaansgracht</street> luego gire a la derecha en <street>Lindengracht</street>"
+              },
+              {
+                "routeOffsetInMeters": 2058,
+                "travelTimeInSeconds": 435,
+                "point": {
+                  "latitude": 52.37955,
+                  "longitude": 4.88051
+                },
+                "pointIndex": 87,
+                "instructionType": "TURN",
+                "street": "Lindengracht",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Gire a la derecha en <street>Lindengracht</street>"
+              },
+              {
+                "routeOffsetInMeters": 2633,
+                "travelTimeInSeconds": 550,
+                "point": {
+                  "latitude": 52.38026,
+                  "longitude": 4.88849
+                },
+                "pointIndex": 99,
+                "instructionType": "TURN",
+                "street": "Prinsengracht",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Gire a la izquierda en <street>Prinsengracht</street>"
+              },
+              {
+                "routeOffsetInMeters": 3113,
+                "travelTimeInSeconds": 656,
+                "point": {
+                  "latitude": 52.3829,
+                  "longitude": 4.89328
+                },
+                "pointIndex": 127,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "s100"
+                ],
+                "street": "De Ruijterkade",
+                "countryCode": "NLD",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "BEAR_RIGHT",
+                "message": "Continúe por la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 3800,
+                "travelTimeInSeconds": 735,
+                "point": {
+                  "latitude": 52.37941,
+                  "longitude": 4.90126
+                },
+                "pointIndex": 162,
+                "instructionType": "LOCATION_ARRIVAL",
+                "roadNumbers": [
+                  "s100"
+                ],
+                "street": "Michiel de Ruijtertunnel",
+                "countryCode": "NLD",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ARRIVE_RIGHT",
+                "message": "Ha llegado a <street>Michiel de Ruijtertunnel</street>/<roadNumber>s100</roadNumber>. Su destino está a la derecha"
+              }
+            ],
+            "instructionGroups": [
+              {
+                "firstInstructionIndex": 0,
+                "lastInstructionIndex": 2,
+                "groupMessage": "Salga de <street>Haarlemmerweg</street>. Tome <roadNumber>s103</roadNumber>",
+                "groupLengthInMeters": 1425
+              },
+              {
+                "firstInstructionIndex": 3,
+                "lastInstructionIndex": 8,
+                "groupMessage": "Tome <street>Frederik Hendrikplantsoen</street>, <street>Marnixplein</street>, <street>Lijnbaansgracht</street>, <street>Lindengracht</street>",
+                "groupLengthInMeters": 1208
+              },
+              {
+                "firstInstructionIndex": 9,
+                "lastInstructionIndex": 11,
+                "groupMessage": "Tome <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>. Continúe hasta su destino en <street>Michiel de Ruijtertunnel</street>",
+                "groupLengthInMeters": 1167
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "routes": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [
+                  4.87487,
+                  52.38686
+                ],
+                [
+                  4.87486,
+                  52.38655
+                ],
+                [
+                  4.87485,
+                  52.3864
+                ],
+                [
+                  4.87485,
+                  52.38623
+                ],
+                [
+                  4.87485,
+                  52.38618
+                ],
+                [
+                  4.87483,
+                  52.38582
+                ],
+                [
+                  4.87483,
+                  52.38577
+                ],
+                [
+                  4.87483,
+                  52.38573
+                ],
+                [
+                  4.87484,
+                  52.38556
+                ],
+                [
+                  4.87484,
+                  52.38546
+                ],
+                [
+                  4.87498,
+                  52.38547
+                ],
+                [
+                  4.8767,
+                  52.38549
+                ],
+                [
+                  4.87793,
+                  52.38551
+                ],
+                [
+                  4.87904,
+                  52.38553
+                ],
+                [
+                  4.8791,
+                  52.38549
+                ],
+                [
+                  4.87919,
+                  52.38549
+                ],
+                [
+                  4.87944,
+                  52.38546
+                ],
+                [
+                  4.87966,
+                  52.38541
+                ],
+                [
+                  4.8802,
+                  52.38529
+                ],
+                [
+                  4.88036,
+                  52.38525
+                ],
+                [
+                  4.88043,
+                  52.38524
+                ],
+                [
+                  4.88052,
+                  52.38522
+                ],
+                [
+                  4.88065,
+                  52.38519
+                ],
+                [
+                  4.8811,
+                  52.38509
+                ],
+                [
+                  4.88136,
+                  52.38503
+                ],
+                [
+                  4.88154,
+                  52.38499
+                ],
+                [
+                  4.88178,
+                  52.38495
+                ],
+                [
+                  4.88197,
+                  52.38492
+                ],
+                [
+                  4.88216,
+                  52.38487
+                ],
+                [
+                  4.88234,
+                  52.38483
+                ],
+                [
+                  4.88244,
+                  52.38481
+                ],
+                [
+                  4.88256,
+                  52.38478
+                ],
+                [
+                  4.88285,
+                  52.38471
+                ],
+                [
+                  4.88314,
+                  52.38464
+                ],
+                [
+                  4.88324,
+                  52.38461
+                ],
+                [
+                  4.88331,
+                  52.38459
+                ],
+                [
+                  4.88338,
+                  52.38466
+                ],
+                [
+                  4.88359,
+                  52.38488
+                ],
+                [
+                  4.88363,
+                  52.38493
+                ],
+                [
+                  4.88372,
+                  52.38505
+                ],
+                [
+                  4.88385,
+                  52.38521
+                ],
+                [
+                  4.88388,
+                  52.38525
+                ],
+                [
+                  4.88392,
+                  52.38529
+                ],
+                [
+                  4.88416,
+                  52.38524
+                ],
+                [
+                  4.88426,
+                  52.38521
+                ],
+                [
+                  4.88449,
+                  52.3851
+                ],
+                [
+                  4.8845,
+                  52.3851
+                ],
+                [
+                  4.88464,
+                  52.38503
+                ],
+                [
+                  4.88468,
+                  52.385
+                ],
+                [
+                  4.88497,
+                  52.38485
+                ],
+                [
+                  4.88491,
+                  52.38481
+                ],
+                [
+                  4.88505,
+                  52.38473
+                ],
+                [
+                  4.88675,
+                  52.38381
+                ],
+                [
+                  4.88728,
+                  52.3835
+                ],
+                [
+                  4.88732,
+                  52.38348
+                ],
+                [
+                  4.88742,
+                  52.38348
+                ],
+                [
+                  4.88766,
+                  52.38332
+                ],
+                [
+                  4.88803,
+                  52.38308
+                ],
+                [
+                  4.88824,
+                  52.38298
+                ],
+                [
+                  4.88832,
+                  52.38295
+                ],
+                [
+                  4.88865,
+                  52.38281
+                ],
+                [
+                  4.88906,
+                  52.38264
+                ],
+                [
+                  4.8898,
+                  52.3823
+                ],
+                [
+                  4.88986,
+                  52.38228
+                ],
+                [
+                  4.89009,
+                  52.38217
+                ],
+                [
+                  4.8902,
+                  52.38212
+                ],
+                [
+                  4.89027,
+                  52.38208
+                ],
+                [
+                  4.89091,
+                  52.38176
+                ],
+                [
+                  4.8913,
+                  52.38157
+                ],
+                [
+                  4.89176,
+                  52.38138
+                ],
+                [
+                  4.89289,
+                  52.38102
+                ],
+                [
+                  4.89359,
+                  52.38081
+                ],
+                [
+                  4.89377,
+                  52.38076
+                ],
+                [
+                  4.89393,
+                  52.3807
+                ],
+                [
+                  4.89434,
+                  52.38054
+                ],
+                [
+                  4.89437,
+                  52.38053
+                ],
+                [
+                  4.89444,
+                  52.3805
+                ],
+                [
+                  4.89448,
+                  52.38047
+                ],
+                [
+                  4.89452,
+                  52.38042
+                ],
+                [
+                  4.89454,
+                  52.38033
+                ],
+                [
+                  4.89455,
+                  52.38012
+                ],
+                [
+                  4.89456,
+                  52.37992
+                ],
+                [
+                  4.89459,
+                  52.37989
+                ],
+                [
+                  4.8946,
+                  52.37988
+                ],
+                [
+                  4.89462,
+                  52.37983
+                ],
+                [
+                  4.89463,
+                  52.37981
+                ],
+                [
+                  4.89464,
+                  52.37981
+                ],
+                [
+                  4.89467,
+                  52.3798
+                ],
+                [
+                  4.89473,
+                  52.3798
+                ],
+                [
+                  4.89478,
+                  52.3798
+                ],
+                [
+                  4.89482,
+                  52.37981
+                ],
+                [
+                  4.89485,
+                  52.37981
+                ],
+                [
+                  4.89491,
+                  52.37983
+                ],
+                [
+                  4.89499,
+                  52.3799
+                ],
+                [
+                  4.89524,
+                  52.3801
+                ],
+                [
+                  4.89531,
+                  52.38014
+                ],
+                [
+                  4.8955,
+                  52.38029
+                ],
+                [
+                  4.89561,
+                  52.38037
+                ],
+                [
+                  4.89575,
+                  52.3805
+                ],
+                [
+                  4.89577,
+                  52.38052
+                ],
+                [
+                  4.89588,
+                  52.38063
+                ],
+                [
+                  4.89595,
+                  52.38072
+                ],
+                [
+                  4.89601,
+                  52.3808
+                ],
+                [
+                  4.89602,
+                  52.38084
+                ],
+                [
+                  4.89604,
+                  52.38089
+                ],
+                [
+                  4.89612,
+                  52.38113
+                ],
+                [
+                  4.89619,
+                  52.38118
+                ],
+                [
+                  4.89625,
+                  52.38132
+                ],
+                [
+                  4.89626,
+                  52.38135
+                ],
+                [
+                  4.89627,
+                  52.38136
+                ],
+                [
+                  4.89632,
+                  52.38142
+                ],
+                [
+                  4.8964,
+                  52.38137
+                ],
+                [
+                  4.89647,
+                  52.38133
+                ],
+                [
+                  4.89662,
+                  52.38124
+                ],
+                [
+                  4.89674,
+                  52.38116
+                ],
+                [
+                  4.89689,
+                  52.38108
+                ],
+                [
+                  4.897,
+                  52.38102
+                ],
+                [
+                  4.8971,
+                  52.38098
+                ],
+                [
+                  4.89723,
+                  52.38092
+                ],
+                [
+                  4.89809,
+                  52.3806
+                ],
+                [
+                  4.89887,
+                  52.38032
+                ],
+                [
+                  4.89912,
+                  52.38022
+                ],
+                [
+                  4.8999,
+                  52.37993
+                ],
+                [
+                  4.90033,
+                  52.37977
+                ],
+                [
+                  4.90114,
+                  52.37945
+                ],
+                [
+                  4.90126,
+                  52.37941
+                ]
+              ]
+            },
+            "properties": {
+              "summary": {
+                "lengthInMeters": 2452,
+                "travelTimeInSeconds": 516,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-08-17T07:43:10.000Z",
+                "arrivalTime": "2022-08-17T07:51:46.000Z",
+                "noTrafficTravelTimeInSeconds": 434,
+                "historicTrafficTravelTimeInSeconds": 545,
+                "liveTrafficIncidentsTravelTimeInSeconds": 516
+              },
+              "sections": {
+                "leg": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 126,
+                    "summary": {
+                      "lengthInMeters": 2452,
+                      "travelTimeInSeconds": 516,
+                      "trafficDelayInSeconds": 0,
+                      "trafficLengthInMeters": 0,
+                      "departureTime": "2022-08-17T07:43:10.000Z",
+                      "arrivalTime": "2022-08-17T07:51:46.000Z",
+                      "noTrafficTravelTimeInSeconds": 434,
+                      "historicTrafficTravelTimeInSeconds": 545,
+                      "liveTrafficIncidentsTravelTimeInSeconds": 516
+                    }
+                  }
+                ],
+                "country": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 125,
+                    "countryCodeISO3": "NLD"
+                  }
+                ],
+                "travelMode": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 125,
+                    "travelMode": "car"
+                  }
+                ],
+                "tunnel": [
+                  {
+                    "startPointIndex": 119,
+                    "endPointIndex": 125
+                  }
+                ],
+                "urban": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 125
+                  }
+                ]
+              },
+              "guidance": {
+                "instructions": [
+                  {
+                    "routeOffsetInMeters": 0,
+                    "travelTimeInSeconds": 0,
+                    "point": {
+                      "latitude": 52.38686,
+                      "longitude": 4.87487
+                    },
+                    "pointIndex": 0,
+                    "instructionType": "LOCATION_DEPARTURE",
+                    "street": "Haarlemmerweg",
+                    "countryCode": "NLD",
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "DEPART",
+                    "message": "Salga de <street>Haarlemmerweg</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 155,
+                    "travelTimeInSeconds": 92,
+                    "point": {
+                      "latitude": 52.38546,
+                      "longitude": 4.87484
+                    },
+                    "pointIndex": 9,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Haarlemmerweg",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 736,
+                    "travelTimeInSeconds": 212,
+                    "point": {
+                      "latitude": 52.38464,
+                      "longitude": 4.88314
+                    },
+                    "pointIndex": 33,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Haarlemmerplein",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                    "combinedMessage": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 836,
+                    "travelTimeInSeconds": 234,
+                    "point": {
+                      "latitude": 52.38529,
+                      "longitude": 4.88392
+                    },
+                    "pointIndex": 42,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Haarlemmerplein",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 45,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "BEAR_RIGHT",
+                    "message": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                    "combinedMessage": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego gire a la derecha en <street>Kleine Houtstraat</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 923,
+                    "travelTimeInSeconds": 254,
+                    "point": {
+                      "latitude": 52.38485,
+                      "longitude": 4.88497
+                    },
+                    "pointIndex": 49,
+                    "instructionType": "TURN",
+                    "street": "Kleine Houtstraat",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Kleine Houtstraat</street>",
+                    "combinedMessage": "Gire a la derecha en <street>Kleine Houtstraat</street> luego gire a la izquierda en <street>Haarlemmer Houttuinen</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 928,
+                    "travelTimeInSeconds": 264,
+                    "point": {
+                      "latitude": 52.38481,
+                      "longitude": 4.88491
+                    },
+                    "pointIndex": 50,
+                    "instructionType": "TURN",
+                    "street": "Haarlemmer Houttuinen",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Haarlemmer Houttuinen</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1807,
+                    "travelTimeInSeconds": 429,
+                    "point": {
+                      "latitude": 52.37992,
+                      "longitude": 4.89456
+                    },
+                    "pointIndex": 81,
+                    "instructionType": "TURN",
+                    "street": "Droogbak",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -135,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "SHARP_LEFT",
+                    "message": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street>",
+                    "combinedMessage": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street> luego gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 2045,
+                    "travelTimeInSeconds": 480,
+                    "point": {
+                      "latitude": 52.38142,
+                      "longitude": 4.89632
+                    },
+                    "pointIndex": 110,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s100"
+                    ],
+                    "street": "De Ruijterkade",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 2452,
+                    "travelTimeInSeconds": 516,
+                    "point": {
+                      "latitude": 52.37941,
+                      "longitude": 4.90126
+                    },
+                    "pointIndex": 125,
+                    "instructionType": "LOCATION_ARRIVAL",
+                    "roadNumbers": [
+                      "s100"
+                    ],
+                    "street": "Michiel de Ruijtertunnel",
+                    "countryCode": "NLD",
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "ARRIVE_RIGHT",
+                    "message": "Ha llegado a <street>Michiel de Ruijtertunnel</street>/<roadNumber>s100</roadNumber>. Su destino está a la derecha"
+                  }
+                ],
+                "instructionGroups": [
+                  {
+                    "firstInstructionIndex": 0,
+                    "lastInstructionIndex": 5,
+                    "groupMessage": "Salga de <street>Haarlemmerweg</street>. Tome <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                    "groupLengthInMeters": 1807
+                  },
+                  {
+                    "firstInstructionIndex": 6,
+                    "lastInstructionIndex": 8,
+                    "groupMessage": "Tome <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>. Continúe hasta su destino en <street>Michiel de Ruijtertunnel</street>",
+                    "groupLengthInMeters": 645
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [
+                  4.87487,
+                  52.38686
+                ],
+                [
+                  4.87486,
+                  52.38655
+                ],
+                [
+                  4.87485,
+                  52.3864
+                ],
+                [
+                  4.87485,
+                  52.38623
+                ],
+                [
+                  4.87485,
+                  52.38618
+                ],
+                [
+                  4.87483,
+                  52.38582
+                ],
+                [
+                  4.87483,
+                  52.38577
+                ],
+                [
+                  4.87483,
+                  52.38573
+                ],
+                [
+                  4.87484,
+                  52.38556
+                ],
+                [
+                  4.87484,
+                  52.38546
+                ],
+                [
+                  4.87498,
+                  52.38547
+                ],
+                [
+                  4.8767,
+                  52.38549
+                ],
+                [
+                  4.87793,
+                  52.38551
+                ],
+                [
+                  4.87904,
+                  52.38553
+                ],
+                [
+                  4.8791,
+                  52.38549
+                ],
+                [
+                  4.87919,
+                  52.38549
+                ],
+                [
+                  4.87944,
+                  52.38546
+                ],
+                [
+                  4.87966,
+                  52.38541
+                ],
+                [
+                  4.8802,
+                  52.38529
+                ],
+                [
+                  4.88036,
+                  52.38525
+                ],
+                [
+                  4.88043,
+                  52.38524
+                ],
+                [
+                  4.88052,
+                  52.38522
+                ],
+                [
+                  4.88065,
+                  52.38519
+                ],
+                [
+                  4.8811,
+                  52.38509
+                ],
+                [
+                  4.88136,
+                  52.38503
+                ],
+                [
+                  4.88154,
+                  52.38499
+                ],
+                [
+                  4.88178,
+                  52.38495
+                ],
+                [
+                  4.88197,
+                  52.38492
+                ],
+                [
+                  4.88216,
+                  52.38487
+                ],
+                [
+                  4.88234,
+                  52.38483
+                ],
+                [
+                  4.88244,
+                  52.38481
+                ],
+                [
+                  4.88256,
+                  52.38478
+                ],
+                [
+                  4.88285,
+                  52.38471
+                ],
+                [
+                  4.88314,
+                  52.38464
+                ],
+                [
+                  4.88324,
+                  52.38461
+                ],
+                [
+                  4.88331,
+                  52.38459
+                ],
+                [
+                  4.88338,
+                  52.38466
+                ],
+                [
+                  4.88359,
+                  52.38488
+                ],
+                [
+                  4.88363,
+                  52.38493
+                ],
+                [
+                  4.88372,
+                  52.38505
+                ],
+                [
+                  4.88385,
+                  52.38521
+                ],
+                [
+                  4.88388,
+                  52.38525
+                ],
+                [
+                  4.88392,
+                  52.38529
+                ],
+                [
+                  4.88416,
+                  52.38524
+                ],
+                [
+                  4.88426,
+                  52.38521
+                ],
+                [
+                  4.88449,
+                  52.3851
+                ],
+                [
+                  4.8845,
+                  52.3851
+                ],
+                [
+                  4.88464,
+                  52.38503
+                ],
+                [
+                  4.88468,
+                  52.385
+                ],
+                [
+                  4.88497,
+                  52.38485
+                ],
+                [
+                  4.88491,
+                  52.38481
+                ],
+                [
+                  4.88469,
+                  52.38467
+                ],
+                [
+                  4.88449,
+                  52.38453
+                ],
+                [
+                  4.88437,
+                  52.38445
+                ],
+                [
+                  4.88421,
+                  52.38435
+                ],
+                [
+                  4.88453,
+                  52.38416
+                ],
+                [
+                  4.88497,
+                  52.38391
+                ],
+                [
+                  4.8851,
+                  52.38385
+                ],
+                [
+                  4.88602,
+                  52.38333
+                ],
+                [
+                  4.88637,
+                  52.38314
+                ],
+                [
+                  4.88666,
+                  52.38297
+                ],
+                [
+                  4.88694,
+                  52.38281
+                ],
+                [
+                  4.8871,
+                  52.38272
+                ],
+                [
+                  4.88752,
+                  52.3825
+                ],
+                [
+                  4.88834,
+                  52.38203
+                ],
+                [
+                  4.88912,
+                  52.38159
+                ],
+                [
+                  4.88925,
+                  52.38152
+                ],
+                [
+                  4.88937,
+                  52.38145
+                ],
+                [
+                  4.88951,
+                  52.38138
+                ],
+                [
+                  4.88989,
+                  52.3818
+                ],
+                [
+                  4.89009,
+                  52.38198
+                ],
+                [
+                  4.89157,
+                  52.38113
+                ],
+                [
+                  4.89172,
+                  52.38132
+                ],
+                [
+                  4.89176,
+                  52.38138
+                ],
+                [
+                  4.89289,
+                  52.38102
+                ],
+                [
+                  4.89359,
+                  52.38081
+                ],
+                [
+                  4.89377,
+                  52.38076
+                ],
+                [
+                  4.89393,
+                  52.3807
+                ],
+                [
+                  4.89434,
+                  52.38054
+                ],
+                [
+                  4.89437,
+                  52.38053
+                ],
+                [
+                  4.89444,
+                  52.3805
+                ],
+                [
+                  4.89448,
+                  52.38047
+                ],
+                [
+                  4.89452,
+                  52.38042
+                ],
+                [
+                  4.89454,
+                  52.38033
+                ],
+                [
+                  4.89455,
+                  52.38012
+                ],
+                [
+                  4.89456,
+                  52.37992
+                ],
+                [
+                  4.89459,
+                  52.37989
+                ],
+                [
+                  4.8946,
+                  52.37988
+                ],
+                [
+                  4.89462,
+                  52.37983
+                ],
+                [
+                  4.89463,
+                  52.37981
+                ],
+                [
+                  4.89464,
+                  52.37981
+                ],
+                [
+                  4.89467,
+                  52.3798
+                ],
+                [
+                  4.89473,
+                  52.3798
+                ],
+                [
+                  4.89478,
+                  52.3798
+                ],
+                [
+                  4.89482,
+                  52.37981
+                ],
+                [
+                  4.89485,
+                  52.37981
+                ],
+                [
+                  4.89491,
+                  52.37983
+                ],
+                [
+                  4.89499,
+                  52.3799
+                ],
+                [
+                  4.89524,
+                  52.3801
+                ],
+                [
+                  4.89531,
+                  52.38014
+                ],
+                [
+                  4.8955,
+                  52.38029
+                ],
+                [
+                  4.89561,
+                  52.38037
+                ],
+                [
+                  4.89575,
+                  52.3805
+                ],
+                [
+                  4.89577,
+                  52.38052
+                ],
+                [
+                  4.89588,
+                  52.38063
+                ],
+                [
+                  4.89595,
+                  52.38072
+                ],
+                [
+                  4.89601,
+                  52.3808
+                ],
+                [
+                  4.89602,
+                  52.38084
+                ],
+                [
+                  4.89604,
+                  52.38089
+                ],
+                [
+                  4.89612,
+                  52.38113
+                ],
+                [
+                  4.89619,
+                  52.38118
+                ],
+                [
+                  4.89625,
+                  52.38132
+                ],
+                [
+                  4.89626,
+                  52.38135
+                ],
+                [
+                  4.89627,
+                  52.38136
+                ],
+                [
+                  4.89632,
+                  52.38142
+                ],
+                [
+                  4.8964,
+                  52.38137
+                ],
+                [
+                  4.89647,
+                  52.38133
+                ],
+                [
+                  4.89662,
+                  52.38124
+                ],
+                [
+                  4.89674,
+                  52.38116
+                ],
+                [
+                  4.89689,
+                  52.38108
+                ],
+                [
+                  4.897,
+                  52.38102
+                ],
+                [
+                  4.8971,
+                  52.38098
+                ],
+                [
+                  4.89723,
+                  52.38092
+                ],
+                [
+                  4.89809,
+                  52.3806
+                ],
+                [
+                  4.89887,
+                  52.38032
+                ],
+                [
+                  4.89912,
+                  52.38022
+                ],
+                [
+                  4.8999,
+                  52.37993
+                ],
+                [
+                  4.90033,
+                  52.37977
+                ],
+                [
+                  4.90114,
+                  52.37945
+                ],
+                [
+                  4.90126,
+                  52.37941
+                ]
+              ]
+            },
+            "properties": {
+              "summary": {
+                "lengthInMeters": 2653,
+                "travelTimeInSeconds": 624,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-08-17T07:41:22.000Z",
+                "arrivalTime": "2022-08-17T07:51:46.000Z",
+                "noTrafficTravelTimeInSeconds": 528,
+                "historicTrafficTravelTimeInSeconds": 653,
+                "liveTrafficIncidentsTravelTimeInSeconds": 624,
+                "deviationDistance": 928,
+                "deviationTime": 264,
+                "deviationPoint": {
+                  "latitude": 52.38481,
+                  "longitude": 4.88491
+                }
+              },
+              "sections": {
+                "leg": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 130,
+                    "summary": {
+                      "lengthInMeters": 2653,
+                      "travelTimeInSeconds": 624,
+                      "trafficDelayInSeconds": 0,
+                      "trafficLengthInMeters": 0,
+                      "departureTime": "2022-08-17T07:41:22.000Z",
+                      "arrivalTime": "2022-08-17T07:51:46.000Z",
+                      "noTrafficTravelTimeInSeconds": 528,
+                      "historicTrafficTravelTimeInSeconds": 653,
+                      "liveTrafficIncidentsTravelTimeInSeconds": 624
+                    }
+                  }
+                ],
+                "country": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 129,
+                    "countryCodeISO3": "NLD"
+                  }
+                ],
+                "travelMode": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 129,
+                    "travelMode": "car"
+                  }
+                ],
+                "tunnel": [
+                  {
+                    "startPointIndex": 123,
+                    "endPointIndex": 129
+                  }
+                ],
+                "urban": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 129
+                  }
+                ]
+              },
+              "guidance": {
+                "instructions": [
+                  {
+                    "routeOffsetInMeters": 0,
+                    "travelTimeInSeconds": 0,
+                    "point": {
+                      "latitude": 52.38686,
+                      "longitude": 4.87487
+                    },
+                    "pointIndex": 0,
+                    "instructionType": "LOCATION_DEPARTURE",
+                    "street": "Haarlemmerweg",
+                    "countryCode": "NLD",
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "DEPART",
+                    "message": "Salga de <street>Haarlemmerweg</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 155,
+                    "travelTimeInSeconds": 92,
+                    "point": {
+                      "latitude": 52.38546,
+                      "longitude": 4.87484
+                    },
+                    "pointIndex": 9,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Haarlemmerweg",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 736,
+                    "travelTimeInSeconds": 211,
+                    "point": {
+                      "latitude": 52.38464,
+                      "longitude": 4.88314
+                    },
+                    "pointIndex": 33,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Haarlemmerplein",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                    "combinedMessage": "Gire a la izquierda en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 836,
+                    "travelTimeInSeconds": 234,
+                    "point": {
+                      "latitude": 52.38529,
+                      "longitude": 4.88392
+                    },
+                    "pointIndex": 42,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Haarlemmerplein",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 45,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "BEAR_RIGHT",
+                    "message": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                    "combinedMessage": "Continúe por la derecha en <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber> luego gire a la derecha en <street>Kleine Houtstraat</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 923,
+                    "travelTimeInSeconds": 253,
+                    "point": {
+                      "latitude": 52.38485,
+                      "longitude": 4.88497
+                    },
+                    "pointIndex": 49,
+                    "instructionType": "TURN",
+                    "street": "Kleine Houtstraat",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Kleine Houtstraat</street>",
+                    "combinedMessage": "Gire a la derecha en <street>Kleine Houtstraat</street> luego gire a la izquierda en <street>Haarlemmerdijk</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 998,
+                    "travelTimeInSeconds": 283,
+                    "point": {
+                      "latitude": 52.38435,
+                      "longitude": 4.88421
+                    },
+                    "pointIndex": 54,
+                    "instructionType": "TURN",
+                    "street": "Haarlemmerdijk",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Haarlemmerdijk</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1489,
+                    "travelTimeInSeconds": 407,
+                    "point": {
+                      "latitude": 52.38138,
+                      "longitude": 4.88951
+                    },
+                    "pointIndex": 68,
+                    "instructionType": "TURN",
+                    "street": "Korte Prinsengracht",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Korte Prinsengracht</street>",
+                    "combinedMessage": "Gire a la izquierda en <street>Korte Prinsengracht</street> luego gire a la derecha en <street>Haarlemmer Houttuinen</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1567,
+                    "travelTimeInSeconds": 433,
+                    "point": {
+                      "latitude": 52.38198,
+                      "longitude": 4.89009
+                    },
+                    "pointIndex": 70,
+                    "instructionType": "TURN",
+                    "street": "Haarlemmer Houttuinen",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Haarlemmer Houttuinen</street>",
+                    "combinedMessage": "Gire a la derecha en <street>Haarlemmer Houttuinen</street> luego gire a la izquierda en <street>Buiten Brouwersstraat</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1705,
+                    "travelTimeInSeconds": 469,
+                    "point": {
+                      "latitude": 52.38113,
+                      "longitude": 4.89157
+                    },
+                    "pointIndex": 71,
+                    "instructionType": "TURN",
+                    "street": "Buiten Brouwersstraat",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Buiten Brouwersstraat</street>",
+                    "combinedMessage": "Gire a la izquierda en <street>Buiten Brouwersstraat</street> luego gire a la derecha en <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1735,
+                    "travelTimeInSeconds": 486,
+                    "point": {
+                      "latitude": 52.38138,
+                      "longitude": 4.89176
+                    },
+                    "pointIndex": 73,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Nieuwe Westerdokstraat",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber>",
+                    "combinedMessage": "Gire a la derecha en <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber> luego tome la curva pronunciada a la izquierda en <street>Droogbak</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 2008,
+                    "travelTimeInSeconds": 538,
+                    "point": {
+                      "latitude": 52.37992,
+                      "longitude": 4.89456
+                    },
+                    "pointIndex": 85,
+                    "instructionType": "TURN",
+                    "street": "Droogbak",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -135,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "SHARP_LEFT",
+                    "message": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street>",
+                    "combinedMessage": "Tome la curva pronunciada a la izquierda en <street>Droogbak</street> luego gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 2246,
+                    "travelTimeInSeconds": 588,
+                    "point": {
+                      "latitude": 52.38142,
+                      "longitude": 4.89632
+                    },
+                    "pointIndex": 114,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s100"
+                    ],
+                    "street": "De Ruijterkade",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 2653,
+                    "travelTimeInSeconds": 624,
+                    "point": {
+                      "latitude": 52.37941,
+                      "longitude": 4.90126
+                    },
+                    "pointIndex": 129,
+                    "instructionType": "LOCATION_ARRIVAL",
+                    "roadNumbers": [
+                      "s100"
+                    ],
+                    "street": "Michiel de Ruijtertunnel",
+                    "countryCode": "NLD",
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "ARRIVE_RIGHT",
+                    "message": "Ha llegado a <street>Michiel de Ruijtertunnel</street>/<roadNumber>s100</roadNumber>. Su destino está a la derecha"
+                  }
+                ],
+                "instructionGroups": [
+                  {
+                    "firstInstructionIndex": 0,
+                    "lastInstructionIndex": 5,
+                    "groupMessage": "Salga de <street>Haarlemmerweg</street>. Tome <street>Haarlemmerplein</street>/<roadNumber>s103</roadNumber>",
+                    "groupLengthInMeters": 1489
+                  },
+                  {
+                    "firstInstructionIndex": 6,
+                    "lastInstructionIndex": 12,
+                    "groupMessage": "Siga por <street>Nieuwe Westerdokstraat</street>/<roadNumber>s103</roadNumber> y tome <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>. Continúe hasta su destino en <street>Michiel de Ruijtertunnel</street>",
+                    "groupLengthInMeters": 1164
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [
+                  4.87487,
+                  52.38686
+                ],
+                [
+                  4.87486,
+                  52.38655
+                ],
+                [
+                  4.87485,
+                  52.3864
+                ],
+                [
+                  4.87485,
+                  52.38623
+                ],
+                [
+                  4.87485,
+                  52.38618
+                ],
+                [
+                  4.87483,
+                  52.38582
+                ],
+                [
+                  4.87483,
+                  52.38577
+                ],
+                [
+                  4.87483,
+                  52.38573
+                ],
+                [
+                  4.87484,
+                  52.38556
+                ],
+                [
+                  4.87484,
+                  52.38546
+                ],
+                [
+                  4.87327,
+                  52.38542
+                ],
+                [
+                  4.87146,
+                  52.38541
+                ],
+                [
+                  4.87076,
+                  52.38539
+                ],
+                [
+                  4.87,
+                  52.38538
+                ],
+                [
+                  4.86961,
+                  52.38536
+                ],
+                [
+                  4.86952,
+                  52.38535
+                ],
+                [
+                  4.86944,
+                  52.38535
+                ],
+                [
+                  4.86947,
+                  52.38528
+                ],
+                [
+                  4.86948,
+                  52.38526
+                ],
+                [
+                  4.86957,
+                  52.3851
+                ],
+                [
+                  4.86976,
+                  52.3847
+                ],
+                [
+                  4.86985,
+                  52.38464
+                ],
+                [
+                  4.86988,
+                  52.38459
+                ],
+                [
+                  4.86995,
+                  52.38441
+                ],
+                [
+                  4.87006,
+                  52.38415
+                ],
+                [
+                  4.87011,
+                  52.38403
+                ],
+                [
+                  4.87028,
+                  52.3836
+                ],
+                [
+                  4.87032,
+                  52.3835
+                ],
+                [
+                  4.87045,
+                  52.38313
+                ],
+                [
+                  4.87049,
+                  52.38302
+                ],
+                [
+                  4.87056,
+                  52.38282
+                ],
+                [
+                  4.87057,
+                  52.38281
+                ],
+                [
+                  4.87069,
+                  52.38256
+                ],
+                [
+                  4.87086,
+                  52.38206
+                ],
+                [
+                  4.87105,
+                  52.38154
+                ],
+                [
+                  4.87125,
+                  52.38096
+                ],
+                [
+                  4.87167,
+                  52.37969
+                ],
+                [
+                  4.87174,
+                  52.37952
+                ],
+                [
+                  4.87183,
+                  52.37941
+                ],
+                [
+                  4.87187,
+                  52.37938
+                ],
+                [
+                  4.87192,
+                  52.37936
+                ],
+                [
+                  4.87201,
+                  52.37933
+                ],
+                [
+                  4.87204,
+                  52.37932
+                ],
+                [
+                  4.8727,
+                  52.37909
+                ],
+                [
+                  4.87281,
+                  52.37906
+                ],
+                [
+                  4.87294,
+                  52.37903
+                ],
+                [
+                  4.87312,
+                  52.37897
+                ],
+                [
+                  4.87325,
+                  52.37893
+                ],
+                [
+                  4.87372,
+                  52.37881
+                ],
+                [
+                  4.87385,
+                  52.37879
+                ],
+                [
+                  4.87396,
+                  52.37878
+                ],
+                [
+                  4.87411,
+                  52.37877
+                ],
+                [
+                  4.87426,
+                  52.37878
+                ],
+                [
+                  4.87446,
+                  52.37882
+                ],
+                [
+                  4.87476,
+                  52.3789
+                ],
+                [
+                  4.87486,
+                  52.3789
+                ],
+                [
+                  4.87506,
+                  52.37895
+                ],
+                [
+                  4.8751,
+                  52.37896
+                ],
+                [
+                  4.87513,
+                  52.37895
+                ],
+                [
+                  4.87518,
+                  52.37894
+                ],
+                [
+                  4.87524,
+                  52.3789
+                ],
+                [
+                  4.87531,
+                  52.37886
+                ],
+                [
+                  4.87542,
+                  52.37877
+                ],
+                [
+                  4.87556,
+                  52.37867
+                ],
+                [
+                  4.87562,
+                  52.37872
+                ],
+                [
+                  4.87585,
+                  52.37878
+                ],
+                [
+                  4.87606,
+                  52.37883
+                ],
+                [
+                  4.87621,
+                  52.37885
+                ],
+                [
+                  4.87635,
+                  52.37887
+                ],
+                [
+                  4.87652,
+                  52.37887
+                ],
+                [
+                  4.87667,
+                  52.37884
+                ],
+                [
+                  4.87761,
+                  52.3786
+                ],
+                [
+                  4.87777,
+                  52.37855
+                ],
+                [
+                  4.87789,
+                  52.37852
+                ],
+                [
+                  4.87793,
+                  52.37851
+                ],
+                [
+                  4.87809,
+                  52.37846
+                ],
+                [
+                  4.87829,
+                  52.37842
+                ],
+                [
+                  4.87843,
+                  52.37838
+                ],
+                [
+                  4.87887,
+                  52.37824
+                ],
+                [
+                  4.87894,
+                  52.37822
+                ],
+                [
+                  4.87871,
+                  52.37784
+                ],
+                [
+                  4.87909,
+                  52.37772
+                ],
+                [
+                  4.87921,
+                  52.37769
+                ],
+                [
+                  4.87925,
+                  52.37769
+                ],
+                [
+                  4.87934,
+                  52.37768
+                ],
+                [
+                  4.87941,
+                  52.37781
+                ],
+                [
+                  4.87997,
+                  52.3787
+                ],
+                [
+                  4.88051,
+                  52.37955
+                ],
+                [
+                  4.88106,
+                  52.37962
+                ],
+                [
+                  4.88257,
+                  52.37984
+                ],
+                [
+                  4.8841,
+                  52.38006
+                ],
+                [
+                  4.88431,
+                  52.38009
+                ],
+                [
+                  4.88583,
+                  52.38032
+                ],
+                [
+                  4.88599,
+                  52.38034
+                ],
+                [
+                  4.8871,
+                  52.38052
+                ],
+                [
+                  4.88783,
+                  52.38063
+                ],
+                [
+                  4.88812,
+                  52.38047
+                ],
+                [
+                  4.88821,
+                  52.38042
+                ],
+                [
+                  4.8884,
+                  52.38031
+                ],
+                [
+                  4.88849,
+                  52.38026
+                ],
+                [
+                  4.88859,
+                  52.38036
+                ],
+                [
+                  4.88862,
+                  52.38041
+                ],
+                [
+                  4.88867,
+                  52.38046
+                ],
+                [
+                  4.88874,
+                  52.38054
+                ],
+                [
+                  4.88951,
+                  52.38138
+                ],
+                [
+                  4.88989,
+                  52.3818
+                ],
+                [
+                  4.89009,
+                  52.38198
+                ],
+                [
+                  4.89014,
+                  52.38202
+                ],
+                [
+                  4.8902,
+                  52.38204
+                ],
+                [
+                  4.89027,
+                  52.38208
+                ],
+                [
+                  4.89032,
+                  52.38212
+                ],
+                [
+                  4.89037,
+                  52.38216
+                ],
+                [
+                  4.89055,
+                  52.38232
+                ],
+                [
+                  4.89064,
+                  52.38238
+                ],
+                [
+                  4.89074,
+                  52.38245
+                ],
+                [
+                  4.89087,
+                  52.38254
+                ],
+                [
+                  4.89094,
+                  52.38258
+                ],
+                [
+                  4.89099,
+                  52.38263
+                ],
+                [
+                  4.89104,
+                  52.38265
+                ],
+                [
+                  4.89112,
+                  52.38266
+                ],
+                [
+                  4.8913,
+                  52.38269
+                ],
+                [
+                  4.89199,
+                  52.38275
+                ],
+                [
+                  4.89264,
+                  52.38279
+                ],
+                [
+                  4.89274,
+                  52.3828
+                ],
+                [
+                  4.89285,
+                  52.38281
+                ],
+                [
+                  4.89299,
+                  52.38283
+                ],
+                [
+                  4.89326,
+                  52.3829
+                ],
+                [
+                  4.89328,
+                  52.3829
+                ],
+                [
+                  4.89333,
+                  52.38287
+                ],
+                [
+                  4.89337,
+                  52.38284
+                ],
+                [
+                  4.89348,
+                  52.38281
+                ],
+                [
+                  4.89348,
+                  52.38281
+                ],
+                [
+                  4.89356,
+                  52.3828
+                ],
+                [
+                  4.89371,
+                  52.38279
+                ],
+                [
+                  4.89412,
+                  52.38279
+                ],
+                [
+                  4.89437,
+                  52.38275
+                ],
+                [
+                  4.89449,
+                  52.38272
+                ],
+                [
+                  4.8947,
+                  52.38263
+                ],
+                [
+                  4.89479,
+                  52.38258
+                ],
+                [
+                  4.89511,
+                  52.38236
+                ],
+                [
+                  4.89526,
+                  52.38225
+                ],
+                [
+                  4.89568,
+                  52.38193
+                ],
+                [
+                  4.89581,
+                  52.38183
+                ],
+                [
+                  4.89596,
+                  52.3817
+                ],
+                [
+                  4.89608,
+                  52.3816
+                ],
+                [
+                  4.89613,
+                  52.38155
+                ],
+                [
+                  4.89621,
+                  52.38149
+                ],
+                [
+                  4.89632,
+                  52.38142
+                ],
+                [
+                  4.8964,
+                  52.38137
+                ],
+                [
+                  4.89647,
+                  52.38133
+                ],
+                [
+                  4.89662,
+                  52.38124
+                ],
+                [
+                  4.89674,
+                  52.38116
+                ],
+                [
+                  4.89689,
+                  52.38108
+                ],
+                [
+                  4.897,
+                  52.38102
+                ],
+                [
+                  4.8971,
+                  52.38098
+                ],
+                [
+                  4.89723,
+                  52.38092
+                ],
+                [
+                  4.89809,
+                  52.3806
+                ],
+                [
+                  4.89887,
+                  52.38032
+                ],
+                [
+                  4.89912,
+                  52.38022
+                ],
+                [
+                  4.8999,
+                  52.37993
+                ],
+                [
+                  4.90033,
+                  52.37977
+                ],
+                [
+                  4.90114,
+                  52.37945
+                ],
+                [
+                  4.90126,
+                  52.37941
+                ]
+              ]
+            },
+            "properties": {
+              "summary": {
+                "lengthInMeters": 3800,
+                "travelTimeInSeconds": 735,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-08-17T07:39:31.000Z",
+                "arrivalTime": "2022-08-17T07:51:46.000Z",
+                "noTrafficTravelTimeInSeconds": 651,
+                "historicTrafficTravelTimeInSeconds": 766,
+                "liveTrafficIncidentsTravelTimeInSeconds": 735,
+                "deviationDistance": 155,
+                "deviationTime": 92,
+                "deviationPoint": {
+                  "latitude": 52.38546,
+                  "longitude": 4.87484
+                }
+              },
+              "sections": {
+                "leg": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 163,
+                    "summary": {
+                      "lengthInMeters": 3800,
+                      "travelTimeInSeconds": 735,
+                      "trafficDelayInSeconds": 0,
+                      "trafficLengthInMeters": 0,
+                      "departureTime": "2022-08-17T07:39:31.000Z",
+                      "arrivalTime": "2022-08-17T07:51:46.000Z",
+                      "noTrafficTravelTimeInSeconds": 651,
+                      "historicTrafficTravelTimeInSeconds": 766,
+                      "liveTrafficIncidentsTravelTimeInSeconds": 735
+                    }
+                  }
+                ],
+                "country": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 162,
+                    "countryCodeISO3": "NLD"
+                  }
+                ],
+                "travelMode": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 162,
+                    "travelMode": "car"
+                  }
+                ],
+                "tunnel": [
+                  {
+                    "startPointIndex": 156,
+                    "endPointIndex": 162
+                  }
+                ],
+                "urban": [
+                  {
+                    "startPointIndex": 0,
+                    "endPointIndex": 162
+                  }
+                ]
+              },
+              "guidance": {
+                "instructions": [
+                  {
+                    "routeOffsetInMeters": 0,
+                    "travelTimeInSeconds": 0,
+                    "point": {
+                      "latitude": 52.38686,
+                      "longitude": 4.87487
+                    },
+                    "pointIndex": 0,
+                    "instructionType": "LOCATION_DEPARTURE",
+                    "street": "Haarlemmerweg",
+                    "countryCode": "NLD",
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "DEPART",
+                    "message": "Salga de <street>Haarlemmerweg</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 155,
+                    "travelTimeInSeconds": 92,
+                    "point": {
+                      "latitude": 52.38546,
+                      "longitude": 4.87484
+                    },
+                    "pointIndex": 9,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s103"
+                    ],
+                    "street": "Haarlemmerweg",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber>",
+                    "combinedMessage": "Gire a la derecha en <street>Haarlemmerweg</street>/<roadNumber>s103</roadNumber> luego gire a la izquierda en <street>Van Hallstraat</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 511,
+                    "travelTimeInSeconds": 147,
+                    "point": {
+                      "latitude": 52.38536,
+                      "longitude": 4.86961
+                    },
+                    "pointIndex": 14,
+                    "instructionType": "TURN",
+                    "street": "Van Hallstraat",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Van Hallstraat</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1425,
+                    "travelTimeInSeconds": 262,
+                    "point": {
+                      "latitude": 52.3789,
+                      "longitude": 4.87476
+                    },
+                    "pointIndex": 54,
+                    "instructionType": "TURN",
+                    "street": "Frederik Hendrikplantsoen",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Frederik Hendrikplantsoen</street>",
+                    "combinedMessage": "Gire a la derecha en <street>Frederik Hendrikplantsoen</street> luego gire a la izquierda en <street>Frederik Hendrikplantsoen</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1479,
+                    "travelTimeInSeconds": 276,
+                    "point": {
+                      "latitude": 52.37877,
+                      "longitude": 4.87542
+                    },
+                    "pointIndex": 62,
+                    "instructionType": "TURN",
+                    "street": "Frederik Hendrikplantsoen",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Frederik Hendrikplantsoen</street>",
+                    "combinedMessage": "Gire a la izquierda en <street>Frederik Hendrikplantsoen</street> luego gire a la derecha en <street>Marnixplein</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1745,
+                    "travelTimeInSeconds": 342,
+                    "point": {
+                      "latitude": 52.37822,
+                      "longitude": 4.87894
+                    },
+                    "pointIndex": 79,
+                    "instructionType": "TURN",
+                    "street": "Marnixplein",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Marnixplein</street>",
+                    "combinedMessage": "Gire a la derecha en <street>Marnixplein</street> luego gire a la izquierda en <street>Marnixplein</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1790,
+                    "travelTimeInSeconds": 359,
+                    "point": {
+                      "latitude": 52.37784,
+                      "longitude": 4.87871
+                    },
+                    "pointIndex": 80,
+                    "instructionType": "TURN",
+                    "street": "Marnixplein",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Marnixplein</street>",
+                    "combinedMessage": "Gire a la izquierda en <street>Marnixplein</street> luego gire a la izquierda en <street>Lijnbaansgracht</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 1836,
+                    "travelTimeInSeconds": 380,
+                    "point": {
+                      "latitude": 52.37768,
+                      "longitude": 4.87934
+                    },
+                    "pointIndex": 84,
+                    "instructionType": "TURN",
+                    "street": "Lijnbaansgracht",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": true,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Lijnbaansgracht</street>",
+                    "combinedMessage": "Gire a la izquierda en <street>Lijnbaansgracht</street> luego gire a la derecha en <street>Lindengracht</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 2058,
+                    "travelTimeInSeconds": 435,
+                    "point": {
+                      "latitude": 52.37955,
+                      "longitude": 4.88051
+                    },
+                    "pointIndex": 87,
+                    "instructionType": "TURN",
+                    "street": "Lindengracht",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_RIGHT",
+                    "message": "Gire a la derecha en <street>Lindengracht</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 2633,
+                    "travelTimeInSeconds": 550,
+                    "point": {
+                      "latitude": 52.38026,
+                      "longitude": 4.88849
+                    },
+                    "pointIndex": 99,
+                    "instructionType": "TURN",
+                    "street": "Prinsengracht",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": -90,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "TURN_LEFT",
+                    "message": "Gire a la izquierda en <street>Prinsengracht</street>"
+                  },
+                  {
+                    "routeOffsetInMeters": 3113,
+                    "travelTimeInSeconds": 656,
+                    "point": {
+                      "latitude": 52.3829,
+                      "longitude": 4.89328
+                    },
+                    "pointIndex": 127,
+                    "instructionType": "TURN",
+                    "roadNumbers": [
+                      "s100"
+                    ],
+                    "street": "De Ruijterkade",
+                    "countryCode": "NLD",
+                    "junctionType": "REGULAR",
+                    "turnAngleInDecimalDegrees": 45,
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "BEAR_RIGHT",
+                    "message": "Continúe por la derecha en <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>"
+                  },
+                  {
+                    "routeOffsetInMeters": 3800,
+                    "travelTimeInSeconds": 735,
+                    "point": {
+                      "latitude": 52.37941,
+                      "longitude": 4.90126
+                    },
+                    "pointIndex": 162,
+                    "instructionType": "LOCATION_ARRIVAL",
+                    "roadNumbers": [
+                      "s100"
+                    ],
+                    "street": "Michiel de Ruijtertunnel",
+                    "countryCode": "NLD",
+                    "possibleCombineWithNext": false,
+                    "drivingSide": "RIGHT",
+                    "maneuver": "ARRIVE_RIGHT",
+                    "message": "Ha llegado a <street>Michiel de Ruijtertunnel</street>/<roadNumber>s100</roadNumber>. Su destino está a la derecha"
+                  }
+                ],
+                "instructionGroups": [
+                  {
+                    "firstInstructionIndex": 0,
+                    "lastInstructionIndex": 2,
+                    "groupMessage": "Salga de <street>Haarlemmerweg</street>. Tome <roadNumber>s103</roadNumber>",
+                    "groupLengthInMeters": 1425
+                  },
+                  {
+                    "firstInstructionIndex": 3,
+                    "lastInstructionIndex": 8,
+                    "groupMessage": "Tome <street>Frederik Hendrikplantsoen</street>, <street>Marnixplein</street>, <street>Lijnbaansgracht</street>, <street>Lindengracht</street>",
+                    "groupLengthInMeters": 1208
+                  },
+                  {
+                    "firstInstructionIndex": 9,
+                    "lastInstructionIndex": 11,
+                    "groupMessage": "Tome <street>De Ruijterkade</street>/<roadNumber>s100</roadNumber>. Continúe hasta su destino en <street>Michiel de Ruijtertunnel</street>",
+                    "groupLengthInMeters": 1167
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+]

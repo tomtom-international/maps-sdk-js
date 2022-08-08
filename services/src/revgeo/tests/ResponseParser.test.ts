@@ -1,6 +1,6 @@
 import { apiAndParsedResponses } from "./ResponseParser.data";
 import { parseRevGeoResponse } from "../ResponseParser";
-import { ReverseGeocodingParams } from "../ReverseGeocodingParams";
+import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "../ReverseGeocoding";
 
 describe("ReverseGeocode response parsing tests", () => {
@@ -12,7 +12,7 @@ describe("ReverseGeocode response parsing tests", () => {
             apiResponse: any,
             expectedParsedResponse: ReverseGeocodingResponse
         ) => {
-            expect(parseRevGeoResponse(params, apiResponse)).toStrictEqual(expectedParsedResponse);
+            expect(parseRevGeoResponse(apiResponse, params)).toStrictEqual(expectedParsedResponse);
         }
     );
 });
