@@ -1,7 +1,7 @@
 import { GeocodingTemplate } from "./types";
 import { parseGeocodingResponse } from "./ResponseParser";
 import { buildGeocodingRequest } from "./RequestBuilder";
-import { fetchJson } from "../..";
+import { fetchJson } from "../shared/Fetch";
 
 /**
  * Geocoding service template main implementation.

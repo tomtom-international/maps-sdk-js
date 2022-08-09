@@ -19,12 +19,38 @@ describe("Geocoding integration tests", () => {
 
     test("Geocoding single results", async () => {
         const result = await geocode({ query: "teakhout zaandam" });
-        expect(result).toEqual(expect.objectContaining(singleResultExample));
+        expect(result).toEqual(
+            expect.objectContaining({
+                type: "FeatureCollection",
+                features: expect.arrayContaining([
+                    expect.objectContaining({
+                        ...singleResultExample.features[0],
+                        properties: {
+                            ...singleResultExample.features[0].properties,
+                            id: expect.any(String)
+                        }
+                    })
+                ])
+            })
+        );
     });
 
     test("Geocoding multi results", async () => {
         const result = await geocode({ query: "teakhout" });
-        expect(result).toEqual(expect.objectContaining(multiResultExample));
+        expect(result).toHaveProperty("type", "FeatureCollection");
+        expect(result).toHaveProperty("features", expect.any(Array));
+        expect((result as GeocodingResponse).features).toHaveLength(4);
+        (result as GeocodingResponse).features.forEach((feat, i) => {
+            expect(feat).toEqual(
+                expect.objectContaining({
+                    ...multiResultExample.features[i],
+                    properties: {
+                        ...multiResultExample.features[i].properties,
+                        id: expect.any(String)
+                    }
+                })
+            );
+        });
     });
 
     test("Geocoding with all parameters sent", async () => {
@@ -39,7 +65,7 @@ describe("Geocoding integration tests", () => {
             topLeft: [51.85925, 5.16905],
             btmRight: [52.44009, 5.16957],
             extendedPostalCodesFor: ["Addr", "Str", "Geo"],
-            mapcodes: "International",
+            mapcodes: ["International"],
             view: "MA",
             entityTypeSet: ["Municipality", "MunicipalitySubdivision"],
             language: "en-GB",
@@ -66,7 +92,10 @@ describe("Geocoding integration tests", () => {
         );
         expect(result).toEqual(
             expect.objectContaining({
-                ...customParserExample,
+                result: {
+                    ...customParserExample.result,
+                    id: expect.any(String)
+                },
                 summary: {
                     ...customParserExample.summary,
                     queryTime: expect.any(Number)

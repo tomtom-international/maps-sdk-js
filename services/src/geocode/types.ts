@@ -1,7 +1,7 @@
 import { FeatureCollection, Point, Position } from "geojson";
 import { AddressProperties, GeometryDataSource, View } from "core";
-import { CommonServiceParams, ServiceTemplate } from "../..";
-import { EntityType, MapcodeType } from "../..";
+import { CommonServiceParams, ServiceTemplate } from "../shared/ServiceTypes";
+import { EntityType, MapcodeType } from "../revgeo/ReverseGeocodingParams";
 
 export type IndexTypesAbbreviation = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
 

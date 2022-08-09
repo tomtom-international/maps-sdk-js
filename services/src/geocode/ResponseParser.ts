@@ -2,7 +2,7 @@ import { GeocodingAPIResponse, GeocodingParams, GeocodingResponse } from "./type
 import { toPointFeature } from "@anw/go-sdk-js/core";
 
 export const parseGeocodingResponse = (
-    _params: GeocodingParams,
+    __params: GeocodingParams,
     apiResponse: GeocodingAPIResponse
 ): GeocodingResponse => {
     const results = apiResponse.results;
