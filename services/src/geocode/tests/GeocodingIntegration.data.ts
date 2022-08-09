@@ -1,6 +1,9 @@
-import { GeocodingAPIResult, GeocodingResponse } from "../types";
+import { GeocodingAPIResult } from "../types";
+import { FeatureCollection, Point } from "geojson";
 
-export const singleResultExample: GeocodingResponse = {
+type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingAPIResult, "id">>;
+
+export const singleResultExample: GeocodingResponseOmitId = {
     type: "FeatureCollection",
     features: [
         {
@@ -8,7 +11,6 @@ export const singleResultExample: GeocodingResponse = {
             geometry: { type: "Point", coordinates: [4.8093, 52.44131] },
             properties: {
                 type: "Street",
-                id: "NL/STR/p0/60516",
                 score: 3.8105280399,
                 matchConfidence: {
                     score: 1
@@ -43,9 +45,8 @@ export const singleResultExample: GeocodingResponse = {
     ]
 };
 
-const firstResult: GeocodingAPIResult = {
+const firstResult: Omit<GeocodingAPIResult, "id"> = {
     type: "Street",
-    id: "NL/STR/p0/60516",
     score: 2.1169600487,
     matchConfidence: {
         score: 1
@@ -77,7 +78,7 @@ const firstResult: GeocodingAPIResult = {
     }
 };
 
-export const multiResultExample: GeocodingResponse = {
+export const multiResultExample: GeocodingResponseOmitId = {
     type: "FeatureCollection",
     features: [
         {
@@ -92,7 +93,6 @@ export const multiResultExample: GeocodingResponse = {
             geometry: { type: "Point", coordinates: [5.16929, 52.01988] },
             properties: {
                 type: "Street",
-                id: "NL/STR/p0/225684",
                 score: 2.0959999561,
                 matchConfidence: {
                     score: 1
@@ -130,7 +130,6 @@ export const multiResultExample: GeocodingResponse = {
             geometry: { type: "Point", coordinates: [4.46823, 52.04562] },
             properties: {
                 type: "Street",
-                id: "NL/STR/p0/225685",
                 score: 2.0959999561,
                 matchConfidence: {
                     score: 1
@@ -168,7 +167,6 @@ export const multiResultExample: GeocodingResponse = {
             geometry: { type: "Point", coordinates: [4.49915, 51.85925] },
             properties: {
                 type: "Street",
-                id: "NL/STR/p0/225686",
                 score: 2.0959999561,
                 matchConfidence: {
                     score: 1
@@ -211,7 +209,6 @@ export const customParserExample = {
     summary: {
         query: "teakhout",
         queryType: "NON_NEAR",
-        queryTime: 7,
         numResults: 4,
         offset: 0,
         totalResults: 4,
