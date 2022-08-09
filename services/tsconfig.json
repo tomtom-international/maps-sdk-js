@@ -10,7 +10,10 @@
     "outDir": ".",
     "sourceMap": true,
     "strict": true,
-    "target": "ES6"
+    "target": "ES6",
+    "paths": {
+      "@anw/go-sdk-js/core": ["../core"],
+    }
   },
   "exclude": ["node_modules", "rollup.config.ts", ".rollup.cache/", "./dist", "__mocks__"]
 }

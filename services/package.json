@@ -28,7 +28,6 @@
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
   "peerDependencies": {
-    "@anw/go-sdk-js": "*",
     "axios": "^0.27.2"
   },
   "devDependencies": {
