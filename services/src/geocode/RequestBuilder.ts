@@ -1,7 +1,7 @@
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 
-import { GeocodingParams } from "./GeocodingParams";
-import { arrayToCSV } from "../shared/Arrays";
+import { GeocodingParams } from "./types";
+import { arrayToCSV } from "../..";
 
 const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
     mergedOptions.customBaseURL || `${mergedOptions.baseDomainURL}search/2/geocode/`;

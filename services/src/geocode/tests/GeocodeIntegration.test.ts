@@ -2,7 +2,7 @@ import { GOSDKConfig } from "@anw/go-sdk-js/core";
 
 import { singleResultExample, multiResultExample, customParserExample } from "./GeocodingIntegration.data";
 import geocode from "../Geocoding";
-import { GeocodingAPIResponse } from "../ResponseParser";
+import { GeocodingAPIResponse, GeocodingResponse } from "../types";
 
 describe("Geocoding test without API key", () => {
     test("Geocoding test without API key", async () => {
@@ -51,14 +51,13 @@ describe("Geocoding integration tests", () => {
                 features: expect.any(Array)
             })
         );
-        expect(result.features).toHaveLength(4);
+        expect((result as GeocodingResponse).features).toHaveLength(4);
     });
 
     test("Geocoding with template response override to get only the first raw result and summary", async () => {
         const result = await geocode(
             { query: "teakhout" },
             {
-                //@ts-ignore
                 parseResponse: (_params, response: GeocodingAPIResponse) => ({
                     result: response.results[0],
                     summary: response.summary

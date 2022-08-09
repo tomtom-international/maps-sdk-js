@@ -1,5 +1,5 @@
 export * from "./Geocoding";
 export * from "./GeocodingTemplate";
-export * from "./GeocodingParams";
+export * from "./types";
 export * from "./ResponseParser";
 export * from "./RequestBuilder";

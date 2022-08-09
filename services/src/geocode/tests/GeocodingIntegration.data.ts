@@ -1,4 +1,4 @@
-import { GeocodingAPIResult, GeocodingResponse } from "../ResponseParser";
+import { GeocodingAPIResult, GeocodingResponse } from "../types";
 
 export const singleResultExample: GeocodingResponse = {
     type: "FeatureCollection",

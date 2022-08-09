@@ -1,13 +1,7 @@
-import { ServiceTemplate } from "../shared/ServiceTypes";
-import { GeocodingParams } from "./GeocodingParams";
-import { GeocodingResponse, parseGeocodingResponse } from "./ResponseParser";
+import { GeocodingTemplate } from "./types";
+import { parseGeocodingResponse } from "./ResponseParser";
 import { buildGeocodingRequest } from "./RequestBuilder";
-import { fetchJson } from "../shared/Fetch";
-
-/**
- * Geocoding service template type.
- */
-export type GeocodingTemplate = ServiceTemplate<GeocodingParams, URL, GeocodingResponse>;
+import { fetchJson } from "../..";
 
 /**
  * Geocoding service template main implementation.
