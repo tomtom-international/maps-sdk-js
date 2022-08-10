@@ -32,7 +32,7 @@ describe("Geocoding integration tests", () => {
             query: "amsterdam",
             typeahead: true,
             limit: 15,
-            ofs: 3,
+            offset: 3,
             lat: 51.85925,
             lon: 4.81063,
             countrySet: [],

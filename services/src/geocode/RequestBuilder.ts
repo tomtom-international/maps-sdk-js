@@ -1,4 +1,4 @@
-import { mergeFromGlobal } from "@anw/go-sdk-js/core";
+import { getLngLatArray, mergeFromGlobal } from "@anw/go-sdk-js/core";
 
 import { GeocodingParams } from "./types";
 import { arrayToCSV } from "../shared/Arrays";
@@ -8,6 +8,7 @@ const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
 
 export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const mergedParams = mergeFromGlobal(params);
+    const lngLat = mergedParams.position && getLngLatArray(mergedParams.position);
     const url = new URL(`${buildURLBasePath(mergedParams)}${mergedParams.query}.json`);
     const urlParams = url.searchParams;
     // common parameters:
@@ -16,9 +17,9 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     // geocoding specific parameters:
     mergedParams.typeahead && urlParams.append("typeahead", String(mergedParams.typeahead));
     mergedParams.limit && urlParams.append("limit", String(mergedParams.limit));
-    mergedParams.ofs && urlParams.append("ofs", String(mergedParams.ofs));
-    mergedParams.lat && urlParams.append("lat", String(mergedParams.lat));
-    mergedParams.lon && urlParams.append("lon", String(mergedParams.lon));
+    mergedParams.offset && urlParams.append("ofs", String(mergedParams.offset));
+    lngLat && urlParams.append("lat", String(lngLat[1]));
+    lngLat && urlParams.append("lon", String(lngLat[0]));
     mergedParams.countrySet && urlParams.append("countrySet", arrayToCSV(mergedParams.countrySet));
     mergedParams.radius && urlParams.append("radius", String(mergedParams.radius));
     mergedParams.topLeft && urlParams.append("topLeft", String(mergedParams.topLeft));

@@ -1,9 +1,8 @@
 import { FeatureCollection, Point, Position } from "geojson";
-import { AddressProperties, GeometryDataSource, View } from "core";
+import { AddressProperties, DataSources, HasLngLat, LocationType, View } from "core";
 import { CommonServiceParams, ServiceTemplate } from "../shared/ServiceTypes";
 import { EntityType, MapcodeType } from "../revgeo/ReverseGeocodingParams";
-
-export type IndexTypesAbbreviation = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
+import { Summary, LatLon, EntryPoint, IndexTypesAbbreviation } from "../shared/types/APIResponseTypes";
 
 export type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
 
@@ -34,19 +33,13 @@ export type GeocodingParams = CommonServiceParams & {
      * @default 0
      * Maximum value: 1900
      */
-    ofs?: number;
+    offset?: number;
 
     /**
-     * Latitude where results should be biased.
+     * Position where results should be biased.
      * Note: supplying a lat/lon without a radius will bias the search results to that area.
      */
-    lat?: number;
-
-    /**
-     * Longitude where results should be biased.
-     * Note: supplying a lat/lon without a radius will bias the search results to that area.
-     */
-    lon?: number;
+    position: HasLngLat;
 
     /**
      * Country code or List of country codes in ISO 3166-1 alpha-2 or alpha-3 code formats
@@ -163,23 +156,7 @@ type Viewport = {
     btmRightPoint: LatLon;
 };
 
-type BoundingBox = Viewport;
-
-type EntryPoint = {
-    /**
-     * The main entry point.
-     */
-    type: "main" | "minor";
-    /**
-     * If present, represents the type of access for the POI.
-     * Example: FrontDoor
-     */
-    functions: [];
-    /**
-     * Position of the entry point.
-     */
-    position: LatLon;
-};
+export type BoundingBox = Viewport;
 
 type AddressRanges = {
     /**
@@ -200,29 +177,13 @@ type AddressRanges = {
     to: LatLon;
 };
 
-type LatLon = {
-    /**
-     * Latitude. min/max: -90 to +90
-     */
-    lat: number;
-    /**
-     * Longitude. min/max: -180 to +180
-     */
-    lon: number;
-};
-
-type DataSources = {
-    /**
-     * Information about the geometric shape of the result. Only present if type == Geography.
-     */
-    geometry: GeometryDataSource;
-};
+type GeocodingLocationType = Exclude<LocationType, "POI">;
 
 export type GeocodingAPIResult = {
     /**
      * Type of result.
      */
-    type: "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
+    type: GeocodingLocationType;
     /**
      * the non-stable unique id for this result.
      */
@@ -273,41 +234,6 @@ export type GeocodingAPIResult = {
      * An optional section. These are unique reference ids for use with the Additional Data service.
      */
     dataSources?: DataSources;
-};
-
-type Summary = {
-    /**
-     * 	The query as interpreted by the search engine.
-     */
-    query: string;
-    /**
-     Response type. Can be NEARBY or NON_NEAR.
-     */
-    queryType: string;
-    /**
-     * Time spent on resolving the query.
-     */
-    queryTime: number;
-    /**
-     * The number of results in the response.
-     */
-    numResults: number;
-    /**
-     * The starting offset of the returned results within the full result set.
-     */
-    offset: number;
-    /**
-     * The total number of results found.
-     */
-    totalResults: number;
-    /**
-     * The maximum fuzzy level required to provide results.
-     */
-    fuzzyLevel: number;
-    /**
-     * The position used to bias the results: Latitude, Longitude
-     */
-    geoBias: LatLon;
 };
 
 export type GeocodingAPIResponse = {

@@ -103,3 +103,5 @@ export type AddressProperties = {
      */
     localName?: string;
 };
+
+export type LocationType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
