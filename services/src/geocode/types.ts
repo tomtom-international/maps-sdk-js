@@ -39,7 +39,7 @@ export type GeocodingParams = CommonServiceParams & {
      * Position where results should be biased.
      * Note: supplying a lat/lon without a radius will bias the search results to that area.
      */
-    position: HasLngLat;
+    position?: HasLngLat;
 
     /**
      * Country code or List of country codes in ISO 3166-1 alpha-2 or alpha-3 code formats

@@ -35,8 +35,7 @@ describe("Geocoding request URL building tests", () => {
                 radius: 30,
                 typeahead: true,
                 limit: 20,
-                lat: 51.43,
-                lon: 4.78,
+                position: [4.78, 51.43],
                 extendedPostalCodesFor: ["Addr", "Str"]
             }).toString()
         ).toStrictEqual(
@@ -57,8 +56,7 @@ describe("Geocoding request URL building tests", () => {
                 radius: 50,
                 typeahead: true,
                 limit: 10,
-                lat: 52.5,
-                lon: 5.32,
+                position: [5.32, 52.5],
                 view: "AR",
                 extendedPostalCodesFor: ["Addr", "Str"]
             }).toString()
