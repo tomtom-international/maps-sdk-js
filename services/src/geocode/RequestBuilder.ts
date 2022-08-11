@@ -2,6 +2,7 @@ import { getLngLatArray, mergeFromGlobal } from "@anw/go-sdk-js/core";
 
 import { GeocodingParams } from "./types";
 import { arrayToCSV } from "../shared/Arrays";
+import { polygonToTopLeftBBox, polygonToBtmRightBBox } from "../shared/Geometry";
 
 const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
     mergedOptions.customBaseURL || `${mergedOptions.baseDomainURL}search/2/geocode/`;
@@ -9,6 +10,8 @@ const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
 export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const mergedParams = mergeFromGlobal(params);
     const lngLat = mergedParams.position && getLngLatArray(mergedParams.position);
+    const topLeft = mergedParams.boundingBox && polygonToTopLeftBBox(mergedParams.boundingBox);
+    const btmRight = mergedParams.boundingBox && polygonToBtmRightBBox(mergedParams.boundingBox);
     const url = new URL(`${buildURLBasePath(mergedParams)}${mergedParams.query}.json`);
     const urlParams = url.searchParams;
     // common parameters:
@@ -22,8 +25,8 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     lngLat && urlParams.append("lon", String(lngLat[0]));
     mergedParams.countrySet && urlParams.append("countrySet", arrayToCSV(mergedParams.countrySet));
     mergedParams.radius && urlParams.append("radius", String(mergedParams.radius));
-    mergedParams.topLeft && urlParams.append("topLeft", String(mergedParams.topLeft));
-    mergedParams.btmRight && urlParams.append("btmRight", String(mergedParams.btmRight));
+    topLeft && urlParams.append("topLeft", arrayToCSV(topLeft));
+    btmRight && urlParams.append("btmRight", arrayToCSV(btmRight));
     mergedParams.extendedPostalCodesFor &&
         urlParams.append("extendedPostalCodesFor", arrayToCSV(mergedParams.extendedPostalCodesFor));
     mergedParams.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedParams.mapcodes));

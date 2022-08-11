@@ -1,7 +1,7 @@
-import { GeocodingAPIResult } from "../types";
+import { GeocodingSDKResult } from "../types";
 import { FeatureCollection, Point } from "geojson";
 
-type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingAPIResult, "id">>;
+type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingSDKResult, "id">>;
 
 export const singleResultExample: GeocodingResponseOmitId = {
     type: "FeatureCollection",
@@ -26,26 +26,25 @@ export const singleResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, Zaanstad",
                     localName: "Zaanstad"
                 },
-                position: {
-                    lat: 52.44131,
-                    lon: 4.8093
-                },
+                position: [4.8093, 52.44131],
                 viewport: {
-                    topLeftPoint: {
-                        lat: 52.44179,
-                        lon: 4.80845
-                    },
-                    btmRightPoint: {
-                        lat: 52.44009,
-                        lon: 4.81063
-                    }
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [4.80845, 52.44009],
+                            [4.81063, 52.44009],
+                            [4.81063, 52.44179],
+                            [4.80845, 52.44179],
+                            [4.80845, 52.44009]
+                        ]
+                    ]
                 }
             }
         }
     ]
 };
 
-const firstResult: Omit<GeocodingAPIResult, "id"> = {
+const firstResult: Omit<GeocodingSDKResult, "id"> = {
     type: "Street",
     score: 2.1169600487,
     matchConfidence: {
@@ -62,19 +61,18 @@ const firstResult: Omit<GeocodingAPIResult, "id"> = {
         freeformAddress: "Teakhout, Zaanstad",
         localName: "Zaanstad"
     },
-    position: {
-        lat: 52.44131,
-        lon: 4.8093
-    },
+    position: [4.8093, 52.44131],
     viewport: {
-        topLeftPoint: {
-            lat: 52.44179,
-            lon: 4.80845
-        },
-        btmRightPoint: {
-            lat: 52.44009,
-            lon: 4.81063
-        }
+        type: "Polygon",
+        coordinates: [
+            [
+                [4.80845, 52.44009],
+                [4.81063, 52.44009],
+                [4.81063, 52.44179],
+                [4.80845, 52.44179],
+                [4.80845, 52.44009]
+            ]
+        ]
     }
 };
 
@@ -109,19 +107,18 @@ export const multiResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, 3991 PZ Houten",
                     localName: "Houten"
                 },
-                position: {
-                    lat: 52.01988,
-                    lon: 5.16929
-                },
+                position: [5.16929, 52.01988],
                 viewport: {
-                    topLeftPoint: {
-                        lat: 52.01995,
-                        lon: 5.16905
-                    },
-                    btmRightPoint: {
-                        lat: 52.01978,
-                        lon: 5.16957
-                    }
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [5.16905, 52.01978],
+                            [5.16957, 52.01978],
+                            [5.16957, 52.01995],
+                            [5.16905, 52.01995],
+                            [5.16905, 52.01978]
+                        ]
+                    ]
                 }
             }
         },
@@ -146,19 +143,18 @@ export const multiResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, 2719 KE Zoetermeer",
                     localName: "Zoetermeer"
                 },
-                position: {
-                    lat: 52.04562,
-                    lon: 4.46823
-                },
+                position: [4.46823, 52.04562],
                 viewport: {
-                    topLeftPoint: {
-                        lat: 52.04637,
-                        lon: 4.4668
-                    },
-                    btmRightPoint: {
-                        lat: 52.04548,
-                        lon: 4.46897
-                    }
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [4.4668, 52.04548],
+                            [4.46897, 52.04548],
+                            [4.46897, 52.04637],
+                            [4.4668, 52.04637],
+                            [4.4668, 52.04548]
+                        ]
+                    ]
                 }
             }
         },
@@ -183,19 +179,18 @@ export const multiResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, 2994 HS Barendrecht",
                     localName: "Barendrecht"
                 },
-                position: {
-                    lat: 51.85925,
-                    lon: 4.49915
-                },
+                position: [4.49915, 51.85925],
                 viewport: {
-                    topLeftPoint: {
-                        lat: 51.85925,
-                        lon: 4.49774
-                    },
-                    btmRightPoint: {
-                        lat: 51.85923,
-                        lon: 4.49915
-                    }
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [4.49774, 51.85923],
+                            [4.49915, 51.85923],
+                            [4.49915, 51.85925],
+                            [4.49774, 51.85925],
+                            [4.49774, 51.85923]
+                        ]
+                    ]
                 }
             }
         }
@@ -204,7 +199,18 @@ export const multiResultExample: GeocodingResponseOmitId = {
 
 export const customParserExample = {
     result: {
-        ...firstResult
+        ...firstResult,
+        position: { lat: firstResult.position?.[1], lon: firstResult.position?.[0] },
+        viewport: {
+            topLeftPoint: {
+                lat: 52.44179,
+                lon: 4.80845
+            },
+            btmRightPoint: {
+                lat: 52.44009,
+                lon: 4.81063
+            }
+        }
     },
     summary: {
         query: "teakhout",

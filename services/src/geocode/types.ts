@@ -1,4 +1,4 @@
-import { FeatureCollection, Point, Position } from "geojson";
+import { FeatureCollection, Point, Polygon } from "geojson";
 import { AddressProperties, DataSources, HasLngLat, LocationType, View } from "core";
 import { CommonServiceParams, ServiceTemplate } from "../shared/ServiceTypes";
 import { EntityType, MapcodeType } from "../revgeo/ReverseGeocodingParams";
@@ -61,15 +61,7 @@ export type GeocodingParams = CommonServiceParams & {
      * Important note: Point-Radius parameters and Bounding Box parameters are mutually exclusive.
      * Point-Radius parameters take precedence when both are passed.
      */
-    topLeft?: Position;
-
-    /**
-     * Bottom-right position of the bounding box.
-     *
-     * Important note: Point-Radius parameters and Bounding Box parameters are mutually exclusive.
-     * Point-Radius parameters take precedence when both are passed.
-     */
-    btmRight?: Position;
+    boundingBox?: Polygon;
 
     /**
      * Indexes for which extended postal codes should be included in the results.
@@ -247,7 +239,14 @@ export type GeocodingAPIResponse = {
     results: GeocodingAPIResult[];
 };
 
-export type GeocodingResponse = FeatureCollection<Point, GeocodingAPIResult>;
+export type GeocodingSDKResult = Omit<GeocodingAPIResult, "dist" | "position" | "boundingBox" | "viewport"> & {
+    position?: number[];
+    distance?: number;
+    boundingBox?: Polygon;
+    viewport: Polygon;
+};
+
+export type GeocodingResponse = FeatureCollection<Point, GeocodingSDKResult>;
 
 /**
  * Geocoding service template type.

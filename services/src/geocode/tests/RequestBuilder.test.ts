@@ -41,6 +41,28 @@ describe("Geocoding request URL building tests", () => {
         ).toStrictEqual(
             "https://kr-api.tomtom.com/search/3/geocodeCustom/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&typeahead=true&limit=20&lat=51.43&lon=4.78&radius=30&extendedPostalCodesFor=Addr%2CStr&entityTypeSet=Country%2CCountrySubdivision"
         );
+
+        expect(
+            buildGeocodingRequest({
+                query: "amsterdam central station",
+                apiKey: "ANOTHER_API_KEY",
+                language: "en-US",
+                boundingBox: {
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [5.16905, 52.44009],
+                            [5.16957, 52.44009],
+                            [5.16957, 51.85925],
+                            [5.16905, 51.85925],
+                            [5.16905, 52.44009]
+                        ]
+                    ]
+                }
+            }).toString()
+        ).toStrictEqual(
+            "https://api-test.tomtom.com/search/2/geocode/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&topLeft=51.85925%2C5.16905&btmRight=52.44009%2C5.16957"
+        );
     });
 
     test("Geocoding request URL building test without global config", async () => {

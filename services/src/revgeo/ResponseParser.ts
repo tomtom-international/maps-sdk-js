@@ -1,17 +1,8 @@
 import { getLngLatArray, toPointFeature } from "@anw/go-sdk-js/core";
-import { Polygon } from "geojson";
 
-import { csvLatLngToPosition } from "../shared/Geometry";
+import { csvLatLngToPosition, bboxToPolygon } from "../shared/Geometry";
 import { ReverseGeocodingParams } from "./ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";
-
-const bboxToPolygon = (apiBBox: { southWest: string; northEast: string }): Polygon => {
-    const westSouth = csvLatLngToPosition(apiBBox.southWest);
-    const eastNorth = csvLatLngToPosition(apiBBox.northEast);
-    const westNorth = [westSouth[0], eastNorth[1]];
-    const eastSouth = [eastNorth[0], westSouth[1]];
-    return { type: "Polygon", coordinates: [[westSouth, eastSouth, eastNorth, westNorth, westSouth]] };
-};
 
 /**
  * Default method for parsing reverse geocoding request from {@link ReverseGeocodingResponse}

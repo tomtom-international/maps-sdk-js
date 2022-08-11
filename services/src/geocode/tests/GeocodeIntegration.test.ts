@@ -35,8 +35,18 @@ describe("Geocoding integration tests", () => {
             offset: 3,
             position: [4.81063, 51.85925],
             countrySet: [],
-            topLeft: [51.85925, 5.16905],
-            btmRight: [52.44009, 5.16957],
+            boundingBox: {
+                type: "Polygon",
+                coordinates: [
+                    [
+                        [5.16905, 52.44009],
+                        [5.16957, 52.44009],
+                        [5.16957, 51.85925],
+                        [5.16905, 51.85925],
+                        [5.16905, 52.44009]
+                    ]
+                ]
+            },
             extendedPostalCodesFor: ["Addr", "Str", "Geo"],
             mapcodes: ["International"],
             view: "MA",
