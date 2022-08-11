@@ -1,7 +1,7 @@
-import { GeocodingSDKResult } from "../types";
+import { GeocodingResult } from "../types";
 import { FeatureCollection, Point } from "geojson";
 
-type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingSDKResult, "id">>;
+type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingResult, "id">>;
 
 export const singleResultExample: GeocodingResponseOmitId = {
     type: "FeatureCollection",
@@ -44,7 +44,7 @@ export const singleResultExample: GeocodingResponseOmitId = {
     ]
 };
 
-const firstResult: Omit<GeocodingSDKResult, "id"> = {
+const firstResult: Omit<GeocodingResult, "id"> = {
     type: "Street",
     score: 2.1169600487,
     matchConfidence: {

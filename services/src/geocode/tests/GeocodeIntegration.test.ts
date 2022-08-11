@@ -2,7 +2,7 @@ import { GOSDKConfig } from "@anw/go-sdk-js/core";
 
 import { singleResultExample, multiResultExample, customParserExample } from "./GeocodingIntegration.data";
 import geocode from "../Geocoding";
-import { GeocodingAPIResponse, GeocodingResponse } from "../types";
+import { GeocodingResponseAPI, GeocodingResponse } from "../types";
 
 describe("Geocoding test without API key", () => {
     test("Geocoding test without API key", async () => {
@@ -65,7 +65,7 @@ describe("Geocoding integration tests", () => {
         const result = await geocode(
             { query: "teakhout" },
             {
-                parseResponse: (_params, response: GeocodingAPIResponse) => ({
+                parseResponse: (_params, response: GeocodingResponseAPI) => ({
                     result: response.results[0],
                     summary: response.summary
                 })

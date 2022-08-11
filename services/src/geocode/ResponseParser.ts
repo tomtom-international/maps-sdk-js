@@ -1,10 +1,10 @@
-import { GeocodingAPIResponse, GeocodingParams, GeocodingResponse } from "./types";
+import { GeocodingResponseAPI, GeocodingParams, GeocodingResponse } from "./types";
 import { toPointFeature } from "@anw/go-sdk-js/core";
 import { bboxToPolygon } from "../shared/Geometry";
 
 export const parseGeocodingResponse = (
     __params: GeocodingParams,
-    apiResponse: GeocodingAPIResponse
+    apiResponse: GeocodingResponseAPI
 ): GeocodingResponse => {
     const results = apiResponse.results;
     const features = results.map(({ boundingBox, ...result }) => ({

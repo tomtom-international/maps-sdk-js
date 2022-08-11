@@ -1,5 +1,5 @@
-import { FeatureCollection, Point, Polygon } from "geojson";
-import { AddressProperties, DataSources, HasLngLat, LocationType, View } from "core";
+import { FeatureCollection, Point, Polygon, Position } from "geojson";
+import { AddressProperties, DataSources, HasLngLat, LocationType, View } from "@anw/go-sdk-js/core";
 import { CommonServiceParams, ServiceTemplate } from "../shared/ServiceTypes";
 import { EntityType, MapcodeType } from "../revgeo/ReverseGeocodingParams";
 import { Summary, LatLon, EntryPoint, IndexTypesAbbreviation } from "../shared/types/APIResponseTypes";
@@ -171,7 +171,7 @@ type AddressRanges = {
 
 type GeocodingLocationType = Exclude<LocationType, "POI">;
 
-export type GeocodingAPIResult = {
+export type GeocodingResult = {
     /**
      * Type of result.
      */
@@ -192,7 +192,7 @@ export type GeocodingAPIResult = {
     /**
      * Unit: meters. This is the distance to an object if geobias was provided.
      */
-    dist?: number;
+    distance?: number;
     /**
      * The structured address for the result.
      */
@@ -200,7 +200,7 @@ export type GeocodingAPIResult = {
     /**
      * The position of the result: Latitude, Longitude.
      */
-    position: LatLon;
+    position?: Position;
     /**
      * List of mapcode objects.
      */
@@ -208,12 +208,12 @@ export type GeocodingAPIResult = {
     /**
      * A viewport which can be used to display the result on a map.
      */
-    viewport: Viewport;
+    viewport: Polygon;
     /**
      * Optional section. Only present if type == Geography.
      * A bounding box which can be used to display the result on a map defined by minimum and maximum longitudes and latitudes.
      */
-    boundingBox?: BoundingBox;
+    boundingBox?: Polygon;
     /**
      * A list of entry points of the POI (Points of Interest).
      */
@@ -228,7 +228,7 @@ export type GeocodingAPIResult = {
     dataSources?: DataSources;
 };
 
-export type GeocodingAPIResponse = {
+export type GeocodingResponseAPI = {
     /**
      * Summary information about the search that was performed.
      */
@@ -236,17 +236,17 @@ export type GeocodingAPIResponse = {
     /**
      * The result list, sorted in descending order by score.
      */
-    results: GeocodingAPIResult[];
+    results: GeocodingResultAPI[];
 };
 
-export type GeocodingSDKResult = Omit<GeocodingAPIResult, "dist" | "position" | "boundingBox" | "viewport"> & {
-    position?: number[];
-    distance?: number;
-    boundingBox?: Polygon;
-    viewport: Polygon;
+type GeocodingResultAPI = Omit<GeocodingResult, "distance" | "position" | "boundingBox" | "viewport"> & {
+    position: LatLon;
+    dist?: number;
+    viewport: Viewport;
+    boundingBox?: BoundingBox;
 };
 
-export type GeocodingResponse = FeatureCollection<Point, GeocodingSDKResult>;
+export type GeocodingResponse = FeatureCollection<Point, GeocodingResult>;
 
 /**
  * Geocoding service template type.
