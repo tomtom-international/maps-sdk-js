@@ -10,8 +10,11 @@ const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
 export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const mergedParams = mergeFromGlobal(params);
     const lngLat = mergedParams.position && getLngLatArray(mergedParams.position);
-    const topLeft = mergedParams.boundingBox && polygonToTopLeftBBox(mergedParams.boundingBox);
-    const btmRight = mergedParams.boundingBox && polygonToBtmRightBBox(mergedParams.boundingBox);
+    let topLeft, btmRight;
+    if (mergedParams.boundingBox) {
+        topLeft = polygonToTopLeftBBox(mergedParams.boundingBox);
+        btmRight = polygonToBtmRightBBox(mergedParams.boundingBox);
+    }
     const url = new URL(`${buildURLBasePath(mergedParams)}${mergedParams.query}.json`);
     const urlParams = url.searchParams;
     // common parameters:
@@ -21,12 +24,16 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     mergedParams.typeahead && urlParams.append("typeahead", String(mergedParams.typeahead));
     mergedParams.limit && urlParams.append("limit", String(mergedParams.limit));
     mergedParams.offset && urlParams.append("ofs", String(mergedParams.offset));
-    lngLat && urlParams.append("lat", String(lngLat[1]));
-    lngLat && urlParams.append("lon", String(lngLat[0]));
+    if (lngLat) {
+        urlParams.append("lat", String(lngLat[1]));
+        urlParams.append("lon", String(lngLat[0]));
+    }
     mergedParams.countrySet && urlParams.append("countrySet", arrayToCSV(mergedParams.countrySet));
     mergedParams.radius && urlParams.append("radius", String(mergedParams.radius));
-    topLeft && urlParams.append("topLeft", arrayToCSV(topLeft));
-    btmRight && urlParams.append("btmRight", arrayToCSV(btmRight));
+    if (topLeft && btmRight) {
+        urlParams.append("topLeft", arrayToCSV(topLeft));
+        urlParams.append("btmRight", arrayToCSV(btmRight));
+    }
     mergedParams.extendedPostalCodesFor &&
         urlParams.append("extendedPostalCodesFor", arrayToCSV(mergedParams.extendedPostalCodesFor));
     mergedParams.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedParams.mapcodes));
