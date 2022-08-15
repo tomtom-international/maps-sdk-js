@@ -1,5 +1,5 @@
 import { Polygon, Position } from "geojson";
-import { BoundingBox } from "../geocode";
+import { BoundingBoxAPI } from "../shared/types/APIResponseTypes";
 
 /**
  * @ignore
@@ -10,11 +10,11 @@ export const csvLatLngToPosition = (csv: string): Position => {
     return [Number(splitLatLng[1]), Number(splitLatLng[0])];
 };
 
-const hasTopLeftPoint = (bbox: { southWest: string; northEast: string } | BoundingBox): bbox is BoundingBox => {
-    return (<BoundingBox>bbox).topLeftPoint !== undefined;
+const hasTopLeftPoint = (bbox: { southWest: string; northEast: string } | BoundingBoxAPI): bbox is BoundingBoxAPI => {
+    return (<BoundingBoxAPI>bbox).topLeftPoint !== undefined;
 };
 
-export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string } | BoundingBox): Polygon => {
+export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string } | BoundingBoxAPI): Polygon => {
     let westSouth, eastNorth;
     if (hasTopLeftPoint(apiBBox)) {
         westSouth = [apiBBox.topLeftPoint.lon, apiBBox.btmRightPoint.lat];

@@ -1,6 +1,6 @@
 export type IndexTypesAbbreviation = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
 
-export type LatLon = {
+export type LatLonAPI = {
     /**
      * Latitude. min/max: -90 to +90
      */
@@ -10,6 +10,19 @@ export type LatLon = {
      */
     lon: number;
 };
+
+export type ViewportAPI = {
+    /**
+     * Top-left corner of the rectangle
+     */
+    topLeftPoint: LatLonAPI;
+    /**
+     * Bottom-right corner of the rectangle
+     */
+    btmRightPoint: LatLonAPI;
+};
+
+export type BoundingBoxAPI = ViewportAPI;
 
 export type EntryPoint = {
     /**
@@ -24,7 +37,7 @@ export type EntryPoint = {
     /**
      * Position of the entry point.
      */
-    position: LatLon;
+    position: LatLonAPI;
 };
 
 type SummaryQueryType = "NEARBY" | "NON_NEAR";
@@ -61,5 +74,5 @@ export type Summary = {
     /**
      * The position used to bias the results: Latitude, Longitude
      */
-    geoBias: LatLon;
+    geoBias: LatLonAPI;
 };

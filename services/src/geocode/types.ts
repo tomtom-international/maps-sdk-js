@@ -2,7 +2,14 @@ import { FeatureCollection, Point, Polygon, Position } from "geojson";
 import { AddressProperties, DataSources, HasLngLat, LocationType, View } from "@anw/go-sdk-js/core";
 import { CommonServiceParams, ServiceTemplate } from "../shared/ServiceTypes";
 import { EntityType, MapcodeType } from "../revgeo/ReverseGeocodingParams";
-import { Summary, LatLon, EntryPoint, IndexTypesAbbreviation } from "../shared/types/APIResponseTypes";
+import {
+    Summary,
+    LatLonAPI,
+    EntryPoint,
+    IndexTypesAbbreviation,
+    ViewportAPI,
+    BoundingBoxAPI
+} from "../shared/types/APIResponseTypes";
 
 export type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
 
@@ -137,19 +144,6 @@ type MapCodes = {
     code: string;
 };
 
-type Viewport = {
-    /**
-     * Top-left corner of the rectangle
-     */
-    topLeftPoint: LatLon;
-    /**
-     * Bottom-right corner of the rectangle
-     */
-    btmRightPoint: LatLon;
-};
-
-export type BoundingBox = Viewport;
-
 type AddressRanges = {
     /**
      * An address range on the left side of a street segment (assuming looking from the "from" end toward the "to" end).
@@ -162,11 +156,11 @@ type AddressRanges = {
     /**
      * The beginning point of a street segment: Latitude, Longitude
      */
-    from: LatLon;
+    from: LatLonAPI;
     /**
      * The end point of a street segment: Latitude, Longitude
      */
-    to: LatLon;
+    to: LatLonAPI;
 };
 
 type GeocodingLocationType = Exclude<LocationType, "POI">;
@@ -240,10 +234,10 @@ export type GeocodingResponseAPI = {
 };
 
 type GeocodingResultAPI = Omit<GeocodingResult, "distance" | "position" | "boundingBox" | "viewport"> & {
-    position: LatLon;
+    position: LatLonAPI;
     dist?: number;
-    viewport: Viewport;
-    boundingBox?: BoundingBox;
+    viewport: ViewportAPI;
+    boundingBox?: BoundingBoxAPI;
 };
 
 export type GeocodingResponse = FeatureCollection<Point, GeocodingResult>;
