@@ -1,5 +1,5 @@
-import { GeocodingResult } from "../types";
-import { FeatureCollection, Point } from "geojson";
+import { GeocodingResult } from "../types/GeocodingResponse";
+import { FeatureCollection, Point, Position } from "geojson";
 
 type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingResult, "id">>;
 
@@ -200,7 +200,7 @@ export const multiResultExample: GeocodingResponseOmitId = {
 export const customParserExample = {
     result: {
         ...firstResult,
-        position: { lat: firstResult.position?.[1], lon: firstResult.position?.[0] },
+        position: { lat: (firstResult.position as Position)?.[1], lon: (firstResult.position as Position)?.[0] },
         viewport: {
             topLeftPoint: {
                 lat: 52.44179,

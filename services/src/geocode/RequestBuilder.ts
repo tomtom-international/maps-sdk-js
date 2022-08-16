@@ -1,6 +1,6 @@
 import { getLngLatArray, mergeFromGlobal } from "@anw/go-sdk-js/core";
 
-import { GeocodingParams } from "./types";
+import { GeocodingParams } from "./types/GeocodingParams";
 import { arrayToCSV } from "../shared/Arrays";
 import { polygonToTopLeftBBox, polygonToBtmRightBBox } from "../shared/Geometry";
 
@@ -10,11 +10,6 @@ const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
 export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const mergedParams = mergeFromGlobal(params);
     const lngLat = mergedParams.position && getLngLatArray(mergedParams.position);
-    let topLeft, btmRight;
-    if (mergedParams.boundingBox) {
-        topLeft = polygonToTopLeftBBox(mergedParams.boundingBox);
-        btmRight = polygonToBtmRightBBox(mergedParams.boundingBox);
-    }
     const url = new URL(`${buildURLBasePath(mergedParams)}${mergedParams.query}.json`);
     const urlParams = url.searchParams;
     // common parameters:
@@ -30,7 +25,9 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     }
     mergedParams.countrySet && urlParams.append("countrySet", arrayToCSV(mergedParams.countrySet));
     mergedParams.radius && urlParams.append("radius", String(mergedParams.radius));
-    if (topLeft && btmRight) {
+    if (mergedParams.boundingBox) {
+        const topLeft = polygonToTopLeftBBox(mergedParams.boundingBox);
+        const btmRight = polygonToBtmRightBBox(mergedParams.boundingBox);
         urlParams.append("topLeft", arrayToCSV(topLeft));
         urlParams.append("btmRight", arrayToCSV(btmRight));
     }

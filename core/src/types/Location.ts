@@ -1,5 +1,78 @@
 import { Polygon, Position } from "geojson";
 import { LocationDataSources } from "./LocationDataSources";
+import { HasLngLat } from "./Geometry";
+
+export type GeographyType =
+    | "Country"
+    | "CountrySubdivision"
+    | "CountrySecondarySubdivision"
+    | "CountryTertiarySubdivision"
+    | "Municipality"
+    | "MunicipalitySubdivision"
+    | "Neighbourhood"
+    | "PostalCodeArea";
+
+export type MapcodeType = "Local" | "International" | "Alternative";
+
+type MapCodes = {
+    /**
+     * Type of mapcode
+     */
+    type: MapcodeType;
+    /**
+     * The full form of a mapcode (territory + code). It is always unambiguous.
+     * The territory element is always in the Latin alphabet.
+     * In an International mapcode, the territory part is empty.
+     */
+    fullMapcode: string;
+    /**
+     * The territory element of the mapcode. The territory element is always in the Latin alphabet.
+     */
+    territory: string;
+    /**
+     * The mapcode without the territory element. It consists of two groups of letters and digits separated by a dot.
+     * The code is using the same language and alphabet as the response.
+     * The language parameter may be used to modify the language and alphabet of both the response and the code
+     * (for example: Cyrillic for the language ru-RU).
+     * This field is not returned for the International mapcodes. Use fullMapcode instead.
+     */
+    code: string;
+};
+
+type AddressRanges = {
+    /**
+     * An address range on the left side of a street segment (assuming looking from the "from" end toward the "to" end).
+     */
+    rangeLeft: string;
+    /**
+     * An address range on the right side of a street segment (assuming looking from the "from" end toward the "to" end).
+     */
+    rangeRight: string;
+    /**
+     * The beginning point of a street segment: Latitude, Longitude
+     */
+    from: HasLngLat;
+    /**
+     * The end point of a street segment: Latitude, Longitude
+     */
+    to: HasLngLat;
+};
+
+export type EntryPoint = {
+    /**
+     * The main entry point.
+     */
+    type: "main" | "minor";
+    /**
+     * If present, represents the type of access for the POI.
+     * Example: FrontDoor
+     */
+    functions: string[];
+    /**
+     * Position of the entry point.
+     */
+    position: HasLngLat;
+};
 
 export type CommonLocationProps = {
     boundingBox?: Polygon;
@@ -105,3 +178,55 @@ export type AddressProperties = {
 };
 
 export type LocationType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
+
+export type Location = {
+    /**
+     * Type of result.
+     */
+    type: LocationType;
+    /**
+     * the non-stable unique id for this result.
+     */
+    id?: string;
+    /**
+     * The score of the result.
+     * A larger score means there is a probability that a result meeting the query criteria is higher.
+     */
+    score?: number;
+    /**
+     * Unit: meters. This is the distance to an object if geobias was provided.
+     */
+    distance?: number;
+    /**
+     * The structured address for the result.
+     */
+    address: AddressProperties;
+    /**
+     * The position of the result: Latitude, Longitude.
+     */
+    position: HasLngLat;
+    /**
+     * List of mapcode objects.
+     */
+    geographyType?: GeographyType[];
+    /**
+     * List of mapcode objects.
+     */
+    mapcodes?: MapCodes[];
+    /**
+     * A viewport which can be used to display the result on a map.
+     */
+    viewport?: Polygon;
+    /**
+     * A list of entry points of the POI (Points of Interest).
+     */
+    entrypoints?: EntryPoint[];
+    /**
+     * The address ranges on a street segment. Available only for results where the result type is equal to Address Range.
+     */
+    addressRanges?: AddressRanges;
+    /**
+     * An optional section. These are unique reference ids for use with the Additional Data service.
+     */
+    dataSources?: LocationDataSources;
+};

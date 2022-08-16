@@ -29,13 +29,6 @@ export type GeometryDataSource = {
     id?: string;
 };
 
-export type DataSources = {
-    /**
-     * Information about the geometric shape of the result. Only present if type == Geography.
-     */
-    geometry: GeometryDataSource;
-};
-
 export type PoiDetailsDataSource = {
     /**
      * Pass this as id to the Points of Interest Details service to fetch additional data for the POI.

@@ -1,29 +1,12 @@
-import { HasLngLat, View } from "@anw/go-sdk-js/core";
+import { HasLngLat, View, GeographyType, MapcodeType } from "@anw/go-sdk-js/core";
 
 import { CommonServiceParams } from "../shared/ServiceTypes";
 /**
  * @enum
  * @group Shared
  */
-export type EntityType =
-    | "Country"
-    | "CountrySubdivision"
-    | "CountrySecondarySubdivision"
-    | "CountryTertiarySubdivision"
-    | "Municipality"
-    | "MunicipalitySubdivision"
-    | "Neighbourhood"
-    | "PostalCodeArea";
-/**
- * @enum
- * @group Shared
- */
 export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rotary" | "LocalStreet";
-/**
- * @enum
- * @group Shared
- */
-export type MapcodeType = "Local" | "International" | "Alternative";
+
 /**
  * @group Search
  * @category Reverse Geocoding
@@ -54,7 +37,7 @@ export type ReverseGeocodingParams = CommonServiceParams & {
      * heading, number, returnRoadUse, returnSpeedLimit, roadUse, and returnMatchType.
      * @default None
      */
-    entityType?: EntityType | EntityType[];
+    entityType?: GeographyType | GeographyType[];
 
     /**
      * The directional heading of the vehicle in degrees for travel along a

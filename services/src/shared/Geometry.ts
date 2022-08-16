@@ -1,5 +1,5 @@
 import { Polygon, Position } from "geojson";
-import { BoundingBoxAPI } from "../shared/types/APIResponseTypes";
+import { BoundingBoxAPI, LatLonAPI, BoundingBoxTopLeftAPI } from "../shared/types/APIResponseTypes";
 
 /**
  * @ignore
@@ -10,11 +10,11 @@ export const csvLatLngToPosition = (csv: string): Position => {
     return [Number(splitLatLng[1]), Number(splitLatLng[0])];
 };
 
-const hasTopLeftPoint = (bbox: { southWest: string; northEast: string } | BoundingBoxAPI): bbox is BoundingBoxAPI => {
-    return (<BoundingBoxAPI>bbox).topLeftPoint !== undefined;
+const hasTopLeftPoint = (bbox: BoundingBoxAPI): bbox is BoundingBoxTopLeftAPI => {
+    return (<BoundingBoxTopLeftAPI>bbox).topLeftPoint !== undefined;
 };
 
-export const bboxToPolygon = (apiBBox: { southWest: string; northEast: string } | BoundingBoxAPI): Polygon => {
+export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
     let westSouth, eastNorth;
     if (hasTopLeftPoint(apiBBox)) {
         westSouth = [apiBBox.topLeftPoint.lon, apiBBox.btmRightPoint.lat];
@@ -36,4 +36,8 @@ export const polygonToTopLeftBBox = (polygon: Polygon): Position => {
 export const polygonToBtmRightBBox = (polygon: Polygon): Position => {
     const { coordinates } = polygon;
     return [coordinates[0][1][1], coordinates[0][1][0]];
+};
+
+export const LatLonAPIToPosition = (point: LatLonAPI): Position => {
+    return [point.lon, point.lat];
 };
