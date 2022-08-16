@@ -1,5 +1,5 @@
 import { FeatureCollection, Point, Polygon } from "geojson";
-import { LocationType, Location, GeographyType } from "@anw/go-sdk-js/core";
+import { LocationType, Location } from "@anw/go-sdk-js/core";
 import {
     Summary,
     LatLonAPI,
@@ -28,15 +28,15 @@ export type GeocodingResponse = FeatureCollection<Point, GeocodingResult>;
 
 type GeocodingResultAPI = Omit<
     GeocodingResult,
-    "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entrypoints"
+    "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
     position: LatLonAPI;
     dist?: number;
     boundingBox?: BoundingBoxAPI;
-    viewport: ViewportAPI;
-    entityType: GeographyType[];
-    entrypoints: EntryPointAPI[];
-    addressRanges: AddressRangesAPI;
+    viewport?: ViewportAPI;
+    entityType?: string;
+    entryPoints?: EntryPointAPI[];
+    addressRanges?: AddressRangesAPI;
 };
 
 export type GeocodingResponseAPI = {

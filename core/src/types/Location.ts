@@ -67,7 +67,7 @@ export type EntryPoint = {
      * If present, represents the type of access for the POI.
      * Example: FrontDoor
      */
-    functions: string[];
+    functions?: string[];
     /**
      * Position of the entry point.
      */
@@ -220,7 +220,7 @@ export type Location = {
     /**
      * A list of entry points of the POI (Points of Interest).
      */
-    entrypoints?: EntryPoint[];
+    entryPoints?: EntryPoint[];
     /**
      * The address ranges on a street segment. Available only for results where the result type is equal to Address Range.
      */

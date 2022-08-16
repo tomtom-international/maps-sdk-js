@@ -89,5 +89,5 @@ export type Summary = {
     /**
      * The position used to bias the results: Latitude, Longitude
      */
-    geoBias: LatLonAPI;
+    geoBias?: LatLonAPI;
 };

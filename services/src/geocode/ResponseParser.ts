@@ -1,6 +1,6 @@
 import { GeocodingResponseAPI, GeocodingResponse } from "./types/GeocodingResponse";
 import { GeocodingParams } from "./types/GeocodingParams";
-import { toPointFeature } from "@anw/go-sdk-js/core";
+import { GeographyType, toPointFeature } from "@anw/go-sdk-js/core";
 import { bboxToPolygon, LatLonAPIToPosition } from "../shared/Geometry";
 
 export const parseGeocodingResponse = (
@@ -8,26 +8,26 @@ export const parseGeocodingResponse = (
     apiResponse: GeocodingResponseAPI
 ): GeocodingResponse => {
     const results = apiResponse.results;
-    const features = results.map(({ boundingBox, ...result }) => ({
+    const features = results.map(({ boundingBox, viewport, entryPoints, addressRanges, entityType, ...result }) => ({
         ...toPointFeature(LatLonAPIToPosition(result.position)),
         properties: {
             ...result,
             ...(result.position && { position: [result.position.lon, result.position.lat] }),
             ...(result.dist && { distance: result.dist }),
             ...(boundingBox && { boundingBox: bboxToPolygon(boundingBox) }),
-            ...(result.viewport && { viewport: bboxToPolygon(result.viewport) }),
-            ...(result.entityType && { geographyType: result.entityType }),
-            ...(result.entrypoints && {
-                entrypoints: result.entrypoints.map((entrypoint) => ({
+            ...(viewport && { viewport: bboxToPolygon(viewport) }),
+            ...(entityType && { geographyType: entityType.split(",") as GeographyType[] }),
+            ...(entryPoints && {
+                entryPoints: entryPoints.map((entrypoint) => ({
                     ...entrypoint,
                     position: LatLonAPIToPosition(entrypoint.position)
                 }))
             }),
-            ...(result.addressRanges && {
+            ...(addressRanges && {
                 addressRanges: {
-                    ...result.addressRanges,
-                    from: LatLonAPIToPosition(result.addressRanges.from),
-                    to: LatLonAPIToPosition(result.addressRanges.to)
+                    ...addressRanges,
+                    from: LatLonAPIToPosition(addressRanges.from),
+                    to: LatLonAPIToPosition(addressRanges.to)
                 }
             })
         }
