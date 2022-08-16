@@ -31,7 +31,7 @@ describe("Geocoding request URL building tests", () => {
                 apiKey: "ANOTHER_API_KEY",
                 customBaseURL: "https://kr-api.tomtom.com/search/3/geocodeCustom/",
                 language: "en-US",
-                entityTypeSet: ["Country", "CountrySubdivision"],
+                geographyType: ["Country", "CountrySubdivision"],
                 radius: 30,
                 typeahead: true,
                 limit: 20,

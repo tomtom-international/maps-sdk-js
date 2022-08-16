@@ -35,6 +35,6 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
         urlParams.append("extendedPostalCodesFor", arrayToCSV(mergedParams.extendedPostalCodesFor));
     mergedParams.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedParams.mapcodes));
     mergedParams.view && urlParams.append("view", arrayToCSV(mergedParams.view));
-    mergedParams.entityTypeSet && urlParams.append("entityTypeSet", arrayToCSV(mergedParams.entityTypeSet));
+    mergedParams.geographyType && urlParams.append("entityTypeSet", arrayToCSV(mergedParams.geographyType));
     return url;
 };

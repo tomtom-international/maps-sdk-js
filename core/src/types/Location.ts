@@ -14,7 +14,7 @@ export type GeographyType =
 
 export type MapcodeType = "Local" | "International" | "Alternative";
 
-type MapCodes = {
+export type MapCodes = {
     /**
      * Type of mapcode
      */
@@ -39,7 +39,7 @@ type MapCodes = {
     code: string;
 };
 
-type AddressRanges = {
+export type AddressRanges = {
     /**
      * An address range on the left side of a street segment (assuming looking from the "from" end toward the "to" end).
      */
@@ -185,6 +185,14 @@ export type Location = {
      */
     type: LocationType;
     /**
+     * The structured address for the result.
+     */
+    address: AddressProperties;
+    /**
+     * The position of the result: Latitude, Longitude.
+     */
+    position: HasLngLat;
+    /**
      * the non-stable unique id for this result.
      */
     id?: string;
@@ -197,14 +205,6 @@ export type Location = {
      * Unit: meters. This is the distance to an object if geobias was provided.
      */
     distance?: number;
-    /**
-     * The structured address for the result.
-     */
-    address: AddressProperties;
-    /**
-     * The position of the result: Latitude, Longitude.
-     */
-    position: HasLngLat;
     /**
      * List of mapcode objects.
      */

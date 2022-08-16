@@ -50,7 +50,7 @@ describe("Geocoding integration tests", () => {
             extendedPostalCodesFor: ["Addr", "Str", "Geo"],
             mapcodes: ["International"],
             view: "MA",
-            entityTypeSet: ["Municipality", "MunicipalitySubdivision"],
+            geographyType: ["Municipality", "MunicipalitySubdivision"],
             language: "en-GB",
             radius: 1000000
         });

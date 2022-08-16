@@ -24,7 +24,7 @@ export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     // rev-geo specific parameters:
     mergedParams.allowFreeformNewline &&
         urlParams.append("allowFreeformNewline", String(mergedParams.allowFreeformNewline));
-    mergedParams.entityType && urlParams.append("entityType", mergedParams.entityType as string);
+    mergedParams.geographyType && urlParams.append("entityType", arrayToCSV(mergedParams.geographyType) as string);
     mergedParams.heading && urlParams.append("heading", String(mergedParams.heading));
     mergedParams.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedParams.mapcodes));
     mergedParams.number && urlParams.append("number", mergedParams.number);

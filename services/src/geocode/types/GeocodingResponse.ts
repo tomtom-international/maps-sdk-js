@@ -24,16 +24,7 @@ export type GeocodingResult = Location & {
     boundingBox?: Polygon;
 };
 
-export type GeocodingResponseAPI = {
-    /**
-     * Summary information about the search that was performed.
-     */
-    summary: Summary;
-    /**
-     * The result list, sorted in descending order by score.
-     */
-    results: GeocodingResultAPI[];
-};
+export type GeocodingResponse = FeatureCollection<Point, GeocodingResult>;
 
 type GeocodingResultAPI = Omit<
     GeocodingResult,
@@ -48,4 +39,13 @@ type GeocodingResultAPI = Omit<
     addressRanges: AddressRangesAPI;
 };
 
-export type GeocodingResponse = FeatureCollection<Point, GeocodingResult>;
+export type GeocodingResponseAPI = {
+    /**
+     * Summary information about the search that was performed.
+     */
+    summary: Summary;
+    /**
+     * The result list, sorted in descending order by score.
+     */
+    results: GeocodingResultAPI[];
+};

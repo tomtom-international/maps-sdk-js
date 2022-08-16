@@ -33,11 +33,11 @@ export type ReverseGeocodingParams = CommonServiceParams & {
      * Providing the parameter narrows the search for the specified geography entity types.
      * The resulting response will contain the geography ID as well as the entity type matched.
      * This ID is a token that can be used to get the geometry of that geography.
-     * The following parameters are ignored when entityType is set:
+     * The following parameters are ignored when geographyType is set:
      * heading, number, returnRoadUse, returnSpeedLimit, roadUse, and returnMatchType.
      * @default None
      */
-    entityType?: GeographyType | GeographyType[];
+    geographyType?: GeographyType[];
 
     /**
      * The directional heading of the vehicle in degrees for travel along a

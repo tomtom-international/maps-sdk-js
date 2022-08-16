@@ -29,7 +29,7 @@ describe("Reverse Geocoding integration tests", () => {
     });
 
     test("Country reverse geocoding", async () => {
-        const result = await reverseGeocode({ position: [5.72884, 52.33499], entityType: "Country" });
+        const result = await reverseGeocode({ position: [5.72884, 52.33499], geographyType: ["Country"] });
         expect(result).toBeDefined();
         expect(result.properties.streetName).toBeUndefined();
     });
