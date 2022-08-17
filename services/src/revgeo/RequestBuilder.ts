@@ -20,7 +20,7 @@ export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     const url = new URL(`${buildURLBasePath(lngLat, mergedParams)}${lngLat[1]},${lngLat[0]}.json`);
     const urlParams = url.searchParams;
     // common parameters:
-    urlParams.append("key", mergedParams.apiKey as string);
+    mergedParams.apiKey && urlParams.append("key", mergedParams.apiKey);
     mergedParams.language && urlParams.append("language", mergedParams.language);
     // rev-geo specific parameters:
     mergedParams.allowFreeformNewline &&

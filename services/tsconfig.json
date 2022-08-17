@@ -4,7 +4,7 @@
     "declaration": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "allowJs": true,
+    "allowJs": false,
     "esModuleInterop": true,
     "moduleResolution": "Node",
     "outDir": ".",

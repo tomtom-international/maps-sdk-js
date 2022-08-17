@@ -6,7 +6,7 @@ export type GlobalConfig = {
      * It can be issued in the Developer Portal.
      * @default None
      */
-    apiKey?: string;
+    apiKey: string;
 
     /**
      * Overall language code for the SDK services and map.
@@ -16,26 +16,28 @@ export type GlobalConfig = {
      * The code is case-insensitive.
      * @default NGT (Neutral Ground Truth - language local to each location)
      */
-    language?: string;
+    language: string;
 
     /**
      * Common base domain URL for all services, unless overwritten by any of them.
      * Must end with /.
      * @default https://api.tomtom.com/
      */
-    baseDomainURL?: string;
+    baseDomainURL: string;
 };
 
 const defaultConfig: GlobalConfig = {
-    baseDomainURL: "https://api.tomtom.com/"
+    baseDomainURL: "https://api.tomtom.com/",
+    apiKey: "",
+    language: "" // TODO Empty or default "en-GB"?
 };
 
 export class GOSDKConfig {
-    static instance = new GOSDKConfig();
-    private config: GlobalConfig = defaultConfig;
+    public static readonly instance = new GOSDKConfig();
+    private config: GlobalConfig = { ...defaultConfig };
 
     private constructor() {
-        // the empty private constructor
+        return GOSDKConfig.instance;
     }
 
     /**
@@ -54,12 +56,22 @@ export class GOSDKConfig {
         this.config = config;
     }
 
+    /**
+     * Reset configuration to the default values
+     */
+    public reset() {
+        this.config = { ...defaultConfig };
+    }
+
+    /**
+     * Get configuration object
+     */
     public get() {
         return this.config;
     }
 }
 
-export const mergeFromGlobal = <T extends GlobalConfig>(givenConfig: T = {} as T): T => ({
+export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(givenConfig: T = {} as T): T => ({
     ...GOSDKConfig.instance.get(),
     ...givenConfig
 });

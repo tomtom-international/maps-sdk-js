@@ -13,7 +13,8 @@ describe("Reverse Geocoding integration test without API key", () => {
 describe("Reverse Geocoding integration tests", () => {
     beforeAll(() => {
         GOSDKConfig.instance.put({
-            apiKey: "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE"
+            apiKey: "XVxgvGPnXxuAHlFcKu1mBTGupVwhVlOE",
+            language: "nl-NL"
         });
     });
 

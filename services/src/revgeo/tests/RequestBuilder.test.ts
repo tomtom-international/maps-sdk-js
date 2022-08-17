@@ -3,27 +3,29 @@ import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { buildRevGeoRequest } from "../RequestBuilder";
 
 describe("Reverse Geocoding request URL building tests", () => {
+    beforeAll(() => {
+        GOSDKConfig.instance.set({
+            apiKey: "GLOBAL_API_KEY",
+            baseDomainURL: "https://api.tomtom.com/",
+            language: "es-ES"
+        });
+    });
+
     afterEach(() => {
-        GOSDKConfig.instance.set({ baseDomainURL: "https://api.tomtom.com/" });
+        GOSDKConfig.instance.put({ baseDomainURL: "https://api.tomtom.com/" });
     });
 
     test("Reverse Geocoding request URL building test with global config", async () => {
-        GOSDKConfig.instance.put({
-            apiKey: "GLOBAL_API_KEY",
-            baseDomainURL: "https://api-test.tomtom.com/",
-            language: "es-ES"
-        });
-
         expect(buildRevGeoRequest({ position: [1.12345, 23.45678] }).toString()).toStrictEqual(
-            "https://api-test.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GLOBAL_API_KEY&language=es-ES"
+            "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GLOBAL_API_KEY&language=es-ES"
         );
         expect(
             buildRevGeoRequest({ position: [1.12345, 23.45678], apiKey: "ANOTHER_API_KEY" }).toString()
         ).toStrictEqual(
-            "https://api-test.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=ANOTHER_API_KEY&language=es-ES"
+            "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=ANOTHER_API_KEY&language=es-ES"
         );
         expect(buildRevGeoRequest({ position: [-1.12345, -23.45678], language: "en-US" }).toString()).toStrictEqual(
-            "https://api-test.tomtom.com/search/2/reverseGeocode/-23.45678,-1.12345.json?key=GLOBAL_API_KEY&language=en-US"
+            "https://api.tomtom.com/search/2/reverseGeocode/-23.45678,-1.12345.json?key=GLOBAL_API_KEY&language=en-US"
         );
         expect(
             buildRevGeoRequest({
@@ -44,8 +46,9 @@ describe("Reverse Geocoding request URL building tests", () => {
     });
 
     test("Reverse Geocoding request URL building test without global config", async () => {
+        GOSDKConfig.instance.reset();
         expect(buildRevGeoRequest({ position: [1.12345, 23.45678] }).toString()).toStrictEqual(
-            "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=undefined"
+            "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json"
         );
 
         expect(
