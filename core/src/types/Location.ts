@@ -206,7 +206,9 @@ export type Location = {
      */
     distance?: number;
     /**
-     * List of mapcode objects.
+     * Type of geography entity,
+     * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
+     * Only present if type == Geography.
      */
     geographyType?: GeographyType[];
     /**

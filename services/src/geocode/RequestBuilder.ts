@@ -1,4 +1,5 @@
 import { getLngLatArray, mergeFromGlobal } from "@anw/go-sdk-js/core";
+import isNil from "lodash/isNil";
 
 import { GeocodingParams } from "./types/GeocodingParams";
 import { arrayToCSV } from "../shared/Arrays";
@@ -17,14 +18,14 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     mergedParams.language && urlParams.append("language", mergedParams.language);
     // geocoding specific parameters:
     mergedParams.typeahead && urlParams.append("typeahead", String(mergedParams.typeahead));
-    mergedParams.limit && urlParams.append("limit", String(mergedParams.limit));
-    mergedParams.offset && urlParams.append("ofs", String(mergedParams.offset));
+    !isNil(mergedParams.limit) && urlParams.append("limit", String(mergedParams.limit));
+    !isNil(mergedParams.offset) && urlParams.append("ofs", String(mergedParams.offset));
     if (lngLat) {
         urlParams.append("lat", String(lngLat[1]));
         urlParams.append("lon", String(lngLat[0]));
     }
     mergedParams.countrySet && urlParams.append("countrySet", arrayToCSV(mergedParams.countrySet));
-    mergedParams.radius && urlParams.append("radius", String(mergedParams.radius));
+    !isNil(mergedParams.radius) && urlParams.append("radius", String(mergedParams.radius));
     if (mergedParams.boundingBox) {
         const topLeft = polygonToTopLeftBBox(mergedParams.boundingBox);
         const btmRight = polygonToBtmRightBBox(mergedParams.boundingBox);
@@ -34,7 +35,7 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     mergedParams.extendedPostalCodesFor &&
         urlParams.append("extendedPostalCodesFor", arrayToCSV(mergedParams.extendedPostalCodesFor));
     mergedParams.mapcodes && urlParams.append("mapcodes", arrayToCSV(mergedParams.mapcodes));
-    mergedParams.view && urlParams.append("view", arrayToCSV(mergedParams.view));
+    mergedParams.view && urlParams.append("view", mergedParams.view);
     mergedParams.geographyType && urlParams.append("entityTypeSet", arrayToCSV(mergedParams.geographyType));
     return url;
 };
