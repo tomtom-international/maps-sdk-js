@@ -1,4 +1,4 @@
-import { Polygon, Position } from "geojson";
+import { Feature, FeatureCollection, Point, Polygon, Position } from "geojson";
 import { LocationDataSources } from "./LocationDataSources";
 import { HasLngLat } from "./Geometry";
 
@@ -75,12 +75,61 @@ export type EntryPoint = {
 };
 
 export type CommonLocationProps = {
+    /**
+     * Type of result.
+     */
+    type: LocationType;
+    /**
+     * The structured address for the result.
+     */
+    address: AddressProperties;
+    /**
+     * the non-stable unique id for this result.
+     */
+    id?: string;
+    /**
+     * The score of the result.
+     * A larger score means there is a probability that a result meeting the query criteria is higher.
+     */
+    score?: number;
+    /**
+     * Unit: meters. This is the distance to an object if geobias was provided.
+     */
+    distance?: number;
+    /**
+     * Type of geography entity,
+     * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
+     * Only present if type == Geography.
+     */
+    geographyType?: GeographyType[];
+    /**
+     * List of mapcode objects.
+     */
+    mapcodes?: MapCodes[];
+    /**
+     * A viewport which can be used to display the result on a map.
+     */
+    viewport?: Polygon;
+    /**
+     * A list of entry points of the POI (Points of Interest).
+     */
+    entryPoints?: EntryPoint[];
+    /**
+     * The address ranges on a street segment. Available only for results where the result type is equal to Address Range.
+     */
+    addressRanges?: AddressRanges;
+    /**
+     * A bounding box which can be used to display the result on a map defined by minimum and maximum longitudes and latitudes.
+     */
     boundingBox?: Polygon;
+    /**
+     * An optional section. These are unique reference ids for use with the Additional Data service.
+     */
     dataSources?: LocationDataSources;
 };
 
-export type RevGeoAddressProps = CommonLocationProps &
-    AddressProperties & {
+export type RevGeoAddressProps = CommonLocationProps & {
+    address: AddressProperties & {
         /**
          * Original lng-lat coordinates of the reverse geocoded location.
          */
@@ -95,6 +144,7 @@ export type RevGeoAddressProps = CommonLocationProps &
          */
         sideOfStreet?: "L" | "R";
     };
+};
 
 export type AddressProperties = {
     /**
@@ -179,56 +229,5 @@ export type AddressProperties = {
 
 export type LocationType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
 
-export type Location = {
-    /**
-     * Type of result.
-     */
-    type: LocationType;
-    /**
-     * The structured address for the result.
-     */
-    address: AddressProperties;
-    /**
-     * The position of the result: Latitude, Longitude.
-     */
-    position: HasLngLat;
-    /**
-     * the non-stable unique id for this result.
-     */
-    id?: string;
-    /**
-     * The score of the result.
-     * A larger score means there is a probability that a result meeting the query criteria is higher.
-     */
-    score?: number;
-    /**
-     * Unit: meters. This is the distance to an object if geobias was provided.
-     */
-    distance?: number;
-    /**
-     * Type of geography entity,
-     * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
-     * Only present if type == Geography.
-     */
-    geographyType?: GeographyType[];
-    /**
-     * List of mapcode objects.
-     */
-    mapcodes?: MapCodes[];
-    /**
-     * A viewport which can be used to display the result on a map.
-     */
-    viewport?: Polygon;
-    /**
-     * A list of entry points of the POI (Points of Interest).
-     */
-    entryPoints?: EntryPoint[];
-    /**
-     * The address ranges on a street segment. Available only for results where the result type is equal to Address Range.
-     */
-    addressRanges?: AddressRanges;
-    /**
-     * An optional section. These are unique reference ids for use with the Additional Data service.
-     */
-    dataSources?: LocationDataSources;
-};
+export type Location<P extends CommonLocationProps> = Feature<Point, P>;
+export type Locations<P extends CommonLocationProps> = FeatureCollection<Point, P>;

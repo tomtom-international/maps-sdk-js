@@ -165,7 +165,6 @@ export const SDKResponse0: GeocodingResponse = {
                     countryCodeISO3: "NLD",
                     freeformAddress: "1507 Zaanstad"
                 },
-                position: [4.80221, 52.4388],
                 viewport: {
                     type: "Polygon",
                     coordinates: [
@@ -224,7 +223,6 @@ export const SDKResponse1: GeocodingResponse = {
                     freeformAddress: "Nieuwstraat 41, 8011 TM Zwolle",
                     localName: "Zwolle"
                 },
-                position: [6.09283, 52.51322],
                 viewport: {
                     type: "Polygon",
                     coordinates: [

@@ -25,13 +25,14 @@ describe("Reverse Geocoding integration tests", () => {
     test("Localized reverse geocoding", async () => {
         const result = await reverseGeocode({ position: [-0.12681, 51.50054], language: "es-ES" });
         expect(result).toBeDefined();
-        expect(result.properties.country).toStrictEqual("Reino Unido");
+        expect(result.properties.address.country).toStrictEqual("Reino Unido");
     });
 
     test("Country reverse geocoding", async () => {
         const result = await reverseGeocode({ position: [5.72884, 52.33499], geographyType: ["Country"] });
         expect(result).toBeDefined();
-        expect(result.properties.streetName).toBeUndefined();
+        expect(result.properties.address.streetName).toBeUndefined();
+        expect(result.properties.type).toStrictEqual("Geography");
     });
 
     test("Reverse geocoding with international mapcodes", async () => {
@@ -51,31 +52,31 @@ describe("Reverse Geocoding integration tests", () => {
         // Point by Singel 117:
         const result = await reverseGeocode({ position: [4.89081, 52.37552] });
 
-        expect(result?.properties?.streetNumber).toStrictEqual("117");
-        expect(result?.properties?.sideOfStreet).toBeUndefined();
-        expect(result?.properties?.offsetPosition).toBeUndefined();
+        expect(result?.properties?.address.streetNumber).toStrictEqual("117");
+        expect(result?.properties?.address.sideOfStreet).toBeUndefined();
+        expect(result?.properties?.address.offsetPosition).toBeUndefined();
 
         // Point by Singel 117, but passing 115 number:
         const resultWithNumber = await reverseGeocode({ position: [4.89081, 52.37552], number: "115" });
-        expect(resultWithNumber?.properties?.streetNumber).toStrictEqual("115");
-        expect(resultWithNumber?.properties?.sideOfStreet).toStrictEqual("R");
-        expect(resultWithNumber?.properties?.offsetPosition).toBeDefined();
+        expect(resultWithNumber?.properties?.address.streetNumber).toStrictEqual("115");
+        expect(resultWithNumber?.properties?.address.sideOfStreet).toStrictEqual("R");
+        expect(resultWithNumber?.properties?.address.offsetPosition).toBeDefined();
 
         // Point around Langestraat 94, building on the left side:
         const resultWithNumberOtherSide = await reverseGeocode({ position: [4.89021, 52.37562], number: "94" });
-        expect(resultWithNumberOtherSide?.properties?.streetNumber).toStrictEqual("94");
-        expect(resultWithNumberOtherSide?.properties?.sideOfStreet).toStrictEqual("L");
-        expect(resultWithNumberOtherSide?.properties?.offsetPosition).toBeDefined();
+        expect(resultWithNumberOtherSide?.properties?.address.streetNumber).toStrictEqual("94");
+        expect(resultWithNumberOtherSide?.properties?.address.sideOfStreet).toStrictEqual("L");
+        expect(resultWithNumberOtherSide?.properties?.address.offsetPosition).toBeDefined();
     });
 
     test("Reverse geocoding from the sea with small radius", async () => {
         const result = await reverseGeocode({ position: [4.49112, 52.35937], radius: 10 });
-        expect(result.properties.country).toBeUndefined();
+        expect(result.properties.address.country).toBeUndefined();
     });
 
     test("Reverse geocoding from the sea with default radius which yields a result", async () => {
         const result = await reverseGeocode({ position: [4.49112, 52.35937] });
-        expect(result.properties.country).toBeDefined();
+        expect(result.properties.address.country).toBeDefined();
     });
 
     test("Reverse geocoding with specified road uses", async () => {

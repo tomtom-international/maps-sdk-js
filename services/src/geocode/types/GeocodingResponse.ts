@@ -1,5 +1,5 @@
-import { FeatureCollection, Point, Polygon } from "geojson";
-import { LocationType, Location } from "@anw/go-sdk-js/core";
+import { Polygon } from "geojson";
+import { LocationType, Locations, CommonLocationProps } from "@anw/go-sdk-js/core";
 import {
     Summary,
     LatLonAPI,
@@ -11,7 +11,7 @@ import {
 
 type GeocodingLocationType = Exclude<LocationType, "POI">;
 
-export type GeocodingResult = Location & {
+export type GeocodingProps = CommonLocationProps & {
     type: GeocodingLocationType;
     /**
      The confidence of the result`s textual match with the query.
@@ -24,10 +24,10 @@ export type GeocodingResult = Location & {
     boundingBox?: Polygon;
 };
 
-export type GeocodingResponse = FeatureCollection<Point, GeocodingResult>;
+export type GeocodingResponse = Locations<GeocodingProps>;
 
 type GeocodingResultAPI = Omit<
-    GeocodingResult,
+    GeocodingProps,
     "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
     position: LatLonAPI;

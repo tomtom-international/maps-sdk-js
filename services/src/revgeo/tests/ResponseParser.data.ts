@@ -34,31 +34,34 @@ export const apiAndParsedResponses = [
             type: "Feature",
             geometry: { type: "Point", coordinates: [5.72884, 52.33499] },
             properties: {
-                routeNumbers: [],
-                street: "Hierderweg",
-                streetName: "Hierderweg",
-                countryCode: "NL",
-                countrySubdivision: "Gelderland",
-                municipality: "Nunspeet",
-                postalCode: "8077",
-                municipalitySubdivision: "Hulshorst",
-                country: "Nederland",
-                countryCodeISO3: "NLD",
-                freeformAddress: "Hierderweg, 8077 Hulshorst",
-                boundingBox: {
-                    type: "Polygon",
-                    coordinates: [
-                        [
-                            [5.722876, 52.334605],
-                            [5.73938, 52.334605],
-                            [5.73938, 52.336436],
-                            [5.722876, 52.336436],
-                            [5.722876, 52.334605]
+                type: "Street",
+                address: {
+                    routeNumbers: [],
+                    street: "Hierderweg",
+                    streetName: "Hierderweg",
+                    countryCode: "NL",
+                    countrySubdivision: "Gelderland",
+                    municipality: "Nunspeet",
+                    postalCode: "8077",
+                    municipalitySubdivision: "Hulshorst",
+                    country: "Nederland",
+                    countryCodeISO3: "NLD",
+                    freeformAddress: "Hierderweg, 8077 Hulshorst",
+                    boundingBox: {
+                        type: "Polygon",
+                        coordinates: [
+                            [
+                                [5.722876, 52.334605],
+                                [5.73938, 52.334605],
+                                [5.73938, 52.336436],
+                                [5.722876, 52.336436],
+                                [5.722876, 52.334605]
+                            ]
                         ]
-                    ]
-                },
-                localName: "Hulshorst",
-                originalPosition: [5.728785, 52.335152]
+                    },
+                    localName: "Hulshorst",
+                    originalPosition: [5.728785, 52.335152]
+                }
             }
         } as ReverseGeocodingResponse
     ]

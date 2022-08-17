@@ -1,7 +1,7 @@
-import { GeocodingResult } from "../types/GeocodingResponse";
-import { FeatureCollection, Point, Position } from "geojson";
+import { GeocodingProps } from "../types/GeocodingResponse";
+import { FeatureCollection, Point } from "geojson";
 
-type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingResult, "id">>;
+type GeocodingResponseOmitId = FeatureCollection<Point, Omit<GeocodingProps, "id">>;
 
 export const singleResultExample: GeocodingResponseOmitId = {
     type: "FeatureCollection",
@@ -26,7 +26,6 @@ export const singleResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, Zaanstad",
                     localName: "Zaanstad"
                 },
-                position: [4.8093, 52.44131],
                 viewport: {
                     type: "Polygon",
                     coordinates: [
@@ -44,7 +43,7 @@ export const singleResultExample: GeocodingResponseOmitId = {
     ]
 };
 
-const firstResult: Omit<GeocodingResult, "id"> = {
+const firstResult: Omit<GeocodingProps, "id"> = {
     type: "Street",
     score: 2.1169600487,
     matchConfidence: {
@@ -61,7 +60,6 @@ const firstResult: Omit<GeocodingResult, "id"> = {
         freeformAddress: "Teakhout, Zaanstad",
         localName: "Zaanstad"
     },
-    position: [4.8093, 52.44131],
     viewport: {
         type: "Polygon",
         coordinates: [
@@ -107,7 +105,6 @@ export const multiResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, 3991 PZ Houten",
                     localName: "Houten"
                 },
-                position: [5.16929, 52.01988],
                 viewport: {
                     type: "Polygon",
                     coordinates: [
@@ -143,7 +140,6 @@ export const multiResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, 2719 KE Zoetermeer",
                     localName: "Zoetermeer"
                 },
-                position: [4.46823, 52.04562],
                 viewport: {
                     type: "Polygon",
                     coordinates: [
@@ -179,7 +175,6 @@ export const multiResultExample: GeocodingResponseOmitId = {
                     freeformAddress: "Teakhout, 2994 HS Barendrecht",
                     localName: "Barendrecht"
                 },
-                position: [4.49915, 51.85925],
                 viewport: {
                     type: "Polygon",
                     coordinates: [
@@ -200,7 +195,7 @@ export const multiResultExample: GeocodingResponseOmitId = {
 export const customParserExample = {
     result: {
         ...firstResult,
-        position: { lat: (firstResult.position as Position)?.[1], lon: (firstResult.position as Position)?.[0] },
+        position: { lat: 52.44131, lon: 4.8093 },
         viewport: {
             topLeftPoint: {
                 lat: 52.44179,

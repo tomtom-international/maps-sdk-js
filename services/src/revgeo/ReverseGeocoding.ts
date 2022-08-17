@@ -1,5 +1,4 @@
-import { RevGeoAddressProps } from "@anw/go-sdk-js/core";
-import { Feature, Point } from "geojson";
+import { RevGeoAddressProps, Location } from "@anw/go-sdk-js/core";
 
 import { ReverseGeocodingParams } from "./ReverseGeocodingParams";
 import { callService } from "../shared/ServiceTemplate";
@@ -9,7 +8,7 @@ import { ReverseGeocodingTemplate, reverseGeocodingTemplate } from "./ReverseGeo
  * @group Search
  * @category Reverse Geocoding
  */
-export type ReverseGeocodingResponse = Feature<Point, RevGeoAddressProps>;
+export type ReverseGeocodingResponse = Location<RevGeoAddressProps>;
 
 /**
  * Sometimes you need to translate a coordinate into a human-readable street address.
@@ -20,7 +19,6 @@ export type ReverseGeocodingResponse = Feature<Point, RevGeoAddressProps>;
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode
- * @returns Promise<ReverseGeocodingResponse>
  */
 export const reverseGeocode = async (
     params: ReverseGeocodingParams,

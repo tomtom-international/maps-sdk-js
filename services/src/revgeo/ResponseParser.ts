@@ -19,10 +19,13 @@ export const parseRevGeoResponse = (params: ReverseGeocodingParams, apiResponse:
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...pointFeature,
         properties: {
-            ...address,
-            // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
-            originalPosition: csvLatLngToPosition(response.position),
-            ...(address.boundingBox && { boundingBox: bboxToPolygon(address.boundingBox) })
+            type: response.entityType ? "Geography" : !address.streetNumber ? "Street" : "Point Address",
+            address: {
+                ...address,
+                // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
+                originalPosition: csvLatLngToPosition(response.position),
+                ...(address.boundingBox && { boundingBox: bboxToPolygon(address.boundingBox) })
+            }
         }
     };
 };
