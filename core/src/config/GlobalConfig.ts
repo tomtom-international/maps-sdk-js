@@ -16,7 +16,7 @@ export type GlobalConfig = {
      * The code is case-insensitive.
      * @default NGT (Neutral Ground Truth - language local to each location)
      */
-    language: string;
+    language?: string;
 
     /**
      * Common base domain URL for all services, unless overwritten by any of them.
@@ -28,8 +28,7 @@ export type GlobalConfig = {
 
 const defaultConfig: GlobalConfig = {
     baseDomainURL: "https://api.tomtom.com/",
-    apiKey: "",
-    language: "" // TODO Empty or default "en-GB"?
+    apiKey: ""
 };
 
 export class GOSDKConfig {

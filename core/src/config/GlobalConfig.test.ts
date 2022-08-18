@@ -17,8 +17,7 @@ describe("GlobalConfig", () => {
         expect(GOSDKConfig.instance.get()).toEqual(
             expect.objectContaining({
                 baseDomainURL: expect.any(String),
-                apiKey: "",
-                language: ""
+                apiKey: ""
             })
         );
     });
@@ -31,8 +30,7 @@ describe("GlobalConfig", () => {
         expect(GOSDKConfig.instance.get()).toEqual(
             expect.objectContaining({
                 baseDomainURL: expect.any(String),
-                apiKey,
-                language: ""
+                apiKey
             })
         );
     });
