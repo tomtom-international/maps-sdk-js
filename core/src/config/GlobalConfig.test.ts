@@ -10,7 +10,7 @@ describe("GlobalConfig", () => {
         const newInstance = new GOSDKConfig();
         const staticInstance = GOSDKConfig.instance;
 
-        expect(newInstance === staticInstance).toEqual(true);
+        expect(newInstance).toBe(staticInstance);
     });
 
     test("GOSDKConfig contains default config", () => {
