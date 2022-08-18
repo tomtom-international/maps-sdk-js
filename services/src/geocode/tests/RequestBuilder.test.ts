@@ -3,15 +3,21 @@ import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { buildGeocodingRequest } from "../RequestBuilder";
 
 describe("Geocoding request URL building tests", () => {
+    beforeAll(() => {
+        GOSDKConfig.instance.set({
+            apiKey: "GLOBAL_API_KEY",
+            baseDomainURL: "https://api.tomtom.com/",
+            language: "es-ES"
+        });
+    });
+
     afterEach(() => {
-        GOSDKConfig.instance.set({ baseDomainURL: "https://api.tomtom.com/" });
+        GOSDKConfig.instance.put({ baseDomainURL: "https://api.tomtom.com/" });
     });
 
     test("Geocoding request URL building test with global config", async () => {
         GOSDKConfig.instance.put({
-            apiKey: "GLOBAL_API_KEY",
-            baseDomainURL: "https://api-test.tomtom.com/",
-            language: "es-ES"
+            baseDomainURL: "https://api-test.tomtom.com/"
         });
 
         expect(buildGeocodingRequest({ query: "amsterdam centrale" }).toString()).toStrictEqual(
@@ -66,8 +72,10 @@ describe("Geocoding request URL building tests", () => {
     });
 
     test("Geocoding request URL building test without global config", async () => {
+        GOSDKConfig.instance.reset();
+
         expect(buildGeocodingRequest({ query: "4 north 2nd street san jose" }).toString()).toStrictEqual(
-            "https://api.tomtom.com/search/2/geocode/4%20north%202nd%20street%20san%20jose.json?key=undefined"
+            "https://api.tomtom.com/search/2/geocode/4%20north%202nd%20street%20san%20jose.json"
         );
 
         expect(

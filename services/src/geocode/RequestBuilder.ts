@@ -14,7 +14,7 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const url = new URL(`${buildURLBasePath(mergedParams)}${mergedParams.query}.json`);
     const urlParams = url.searchParams;
     // common parameters:
-    urlParams.append("key", mergedParams.apiKey as string);
+    mergedParams.apiKey && urlParams.append("key", mergedParams.apiKey);
     mergedParams.language && urlParams.append("language", mergedParams.language);
     // geocoding specific parameters:
     mergedParams.typeahead && urlParams.append("typeahead", String(mergedParams.typeahead));
