@@ -117,15 +117,14 @@ describe("Reverse Geocoding integration tests", () => {
     });
 
     test("Invalid position: latitude/longitude out of range.", async () => {
-        await expect(reverseGeocode({position: [-91,180]})).rejects.toEqual(400);
+        await expect(reverseGeocode({ position: [-91, 180] })).rejects.toEqual(400);
     });
 
     test("Verify missing latitude & longitude position", async () => {
-        await expect(reverseGeocode({position: []})).rejects.toEqual(400);
+        await expect(reverseGeocode({ position: [] })).rejects.toEqual(400);
     });
 
     test("Verify missing latitude or longitude position", async () => {
-        await expect(reverseGeocode({position: [90]})).rejects.toEqual(400);
+        await expect(reverseGeocode({ position: [90] })).rejects.toEqual(400);
     });
-
 });
