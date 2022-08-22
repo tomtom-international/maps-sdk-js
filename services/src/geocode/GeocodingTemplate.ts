@@ -1,9 +1,10 @@
-import { GeocodingResponse, GeocodingResponseAPI } from "./types/GeocodingResponse";
+import { GeocodingResponse } from "./types/GeocodingResponse";
 import { parseGeocodingResponse } from "./ResponseParser";
 import { buildGeocodingRequest } from "./RequestBuilder";
 import { getJson } from "../shared/Fetch";
 import { ServiceTemplate } from "../shared/ServiceTypes";
 import { GeocodingParams } from "./types/GeocodingParams";
+import { GeocodingResponseAPI } from "./types/APITypes";
 
 /**
  * Geocoding service template type.

@@ -1,6 +1,7 @@
 import { singleResultExample, multiResultExample, customParserExample } from "./GeocodingIntegration.data";
 import geocode from "../Geocoding";
-import { GeocodingResponseAPI, GeocodingResponse } from "../types/GeocodingResponse";
+import { GeocodingResponse } from "../types/GeocodingResponse";
+import { GeocodingResponseAPI } from "../types/APITypes";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 
 describe("Geocoding test without API key", () => {

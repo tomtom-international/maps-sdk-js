@@ -48,20 +48,20 @@ describe("Reverse Geocoding integration tests", () => {
         const result = await reverseGeocode({ position: [4.89081, 52.37552] });
 
         expect(result?.properties?.address.streetNumber).toStrictEqual("117");
-        expect(result?.properties?.address.sideOfStreet).toBeUndefined();
-        expect(result?.properties?.address.offsetPosition).toBeUndefined();
+        expect(result?.properties?.sideOfStreet).toBeUndefined();
+        expect(result?.properties?.offsetPosition).toBeUndefined();
 
         // Point by Singel 117, but passing 115 number:
         const resultWithNumber = await reverseGeocode({ position: [4.89081, 52.37552], number: "115" });
         expect(resultWithNumber?.properties?.address.streetNumber).toStrictEqual("115");
-        expect(resultWithNumber?.properties?.address.sideOfStreet).toStrictEqual("R");
-        expect(resultWithNumber?.properties?.address.offsetPosition).toBeDefined();
+        expect(resultWithNumber?.properties?.sideOfStreet).toStrictEqual("R");
+        expect(resultWithNumber?.properties?.offsetPosition).toBeDefined();
 
         // Point around Langestraat 94, building on the left side:
         const resultWithNumberOtherSide = await reverseGeocode({ position: [4.89021, 52.37562], number: "94" });
         expect(resultWithNumberOtherSide?.properties?.address.streetNumber).toStrictEqual("94");
-        expect(resultWithNumberOtherSide?.properties?.address.sideOfStreet).toStrictEqual("L");
-        expect(resultWithNumberOtherSide?.properties?.address.offsetPosition).toBeDefined();
+        expect(resultWithNumberOtherSide?.properties?.sideOfStreet).toStrictEqual("L");
+        expect(resultWithNumberOtherSide?.properties?.offsetPosition).toBeDefined();
     });
 
     test("Reverse geocoding from the sea with small radius", async () => {

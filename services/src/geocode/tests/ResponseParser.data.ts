@@ -1,4 +1,5 @@
-import { GeocodingResponse, GeocodingResponseAPI } from "../types/GeocodingResponse";
+import { GeocodingResponse } from "../types/GeocodingResponse";
+import { GeocodingResponseAPI } from "../types/APITypes";
 
 export const apiResponse0: GeocodingResponseAPI = {
     summary: {
@@ -206,6 +207,7 @@ export const sdkResponse1: GeocodingResponse = {
             geometry: { type: "Point", coordinates: [6.09283, 52.51322] },
             properties: {
                 type: "Point Address",
+                id: "NL/PAD/p0/2492368",
                 score: 5.8015999794,
                 matchConfidence: {
                     score: 1

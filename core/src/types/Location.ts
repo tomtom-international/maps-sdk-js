@@ -12,11 +12,29 @@ export type GeographyType =
     | "Neighbourhood"
     | "PostalCodeArea";
 
+/**
+ * Type of mapcode. Possible values:
+ *
+ * * Local: The shortest possible (and easiest to remember) mapcode.
+ * Local mapcodes are especially useful when the user knows what territory the mapcode is in
+ * (for example, when an application is designed to be used inside just one European country or US state).
+ * Note that the code element of a Local mapcode is ambiguous when used without the territory element
+ * e.g.,: the "4J.P2" mapcode can mean the Eiffel Tower location (48.858380, 2.294440)
+ * (with the territory set to FRA), but also some place in Amsterdam-Noord, Netherlands (52.382184, 4.911021)
+ * (with the territory set to NLD).
+ * * International:
+ * This mapcode is unambiguous. It is also the longest.
+ * * Alternative:
+ * Alternatives to Local mapcodes. Each Alternative mapcode points to slightly different coordinates
+ * due to the way mapcodes are computed (see the mapcode documentation).
+ * For example: the position from a response can be encoded as "5DM.WC" (51.759244, 19.448316) and the "VHJ.036"
+ * (51.759245, 19.448264), which are close to each other, but not exactly the same place.
+ */
 export type MapcodeType = "Local" | "International" | "Alternative";
 
 export type MapCodes = {
     /**
-     * Type of mapcode
+     * Type of mapcode.
      */
     type: MapcodeType;
     /**
@@ -27,16 +45,19 @@ export type MapCodes = {
     fullMapcode: string;
     /**
      * The territory element of the mapcode. The territory element is always in the Latin alphabet.
+     *
+     * This field is not returned for an International mapcode.
      */
-    territory: string;
+    territory?: string;
     /**
      * The mapcode without the territory element. It consists of two groups of letters and digits separated by a dot.
      * The code is using the same language and alphabet as the response.
      * The language parameter may be used to modify the language and alphabet of both the response and the code
      * (for example: Cyrillic for the language ru-RU).
+     *
      * This field is not returned for the International mapcodes. Use fullMapcode instead.
      */
-    code: string;
+    code?: string;
 };
 
 export type AddressRanges = {
@@ -49,13 +70,13 @@ export type AddressRanges = {
      */
     rangeRight: string;
     /**
-     * The beginning point of a street segment: Latitude, Longitude
+     * The beginning lng-lat point of a street segment.
      */
-    from: HasLngLat;
+    from: Position;
     /**
-     * The end point of a street segment: Latitude, Longitude
+     * The end lng-lat point of a street segment.
      */
-    to: HasLngLat;
+    to: Position;
 };
 
 export type EntryPoint = {
@@ -80,13 +101,13 @@ export type CommonLocationProps = {
      */
     type: LocationType;
     /**
+     * The unique id for this location.
+     */
+    id?: string;
+    /**
      * The structured address for the result.
      */
     address: AddressProperties;
-    /**
-     * the non-stable unique id for this result.
-     */
-    id?: string;
     /**
      * The score of the result.
      * A larger score means there is a probability that a result meeting the query criteria is higher.
@@ -129,21 +150,19 @@ export type CommonLocationProps = {
 };
 
 export type RevGeoAddressProps = CommonLocationProps & {
-    address: AddressProperties & {
-        /**
-         * Original lng-lat coordinates of the reverse geocoded location.
-         */
-        originalPosition: Position;
-        /**
-         * The offset position coordinates of the location. Might only be returned if number parameter was defined.
-         * TODO: clarify behaviour and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
-         */
-        offsetPosition?: Position;
-        /**
-         * The left or right side of the street location. This is returned only when the number parameter was defined.
-         */
-        sideOfStreet?: "L" | "R";
-    };
+    /**
+     * Original lng-lat coordinates of the reverse geocoded location.
+     */
+    originalPosition: Position;
+    /**
+     * The offset position coordinates of the location. Might only be returned if number parameter was defined.
+     * TODO: clarify behaviour and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
+     */
+    offsetPosition?: Position;
+    /**
+     * The left or right side of the street location. This is returned only when the number parameter was defined.
+     */
+    sideOfStreet?: "L" | "R";
 };
 
 export type AddressProperties = {

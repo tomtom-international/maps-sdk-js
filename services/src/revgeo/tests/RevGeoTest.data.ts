@@ -43,20 +43,20 @@ export const example0SDKResponse = {
             country: "Nederland",
             countryCodeISO3: "NLD",
             freeformAddress: "Hierderweg, 8077 Hulshorst",
-            boundingBox: {
-                type: "Polygon",
-                coordinates: [
-                    [
-                        [5.722876, 52.334605],
-                        [5.73938, 52.334605],
-                        [5.73938, 52.336436],
-                        [5.722876, 52.336436],
-                        [5.722876, 52.334605]
-                    ]
+            localName: "Hulshorst"
+        },
+        boundingBox: {
+            type: "Polygon",
+            coordinates: [
+                [
+                    [5.722876, 52.334605],
+                    [5.73938, 52.334605],
+                    [5.73938, 52.336436],
+                    [5.722876, 52.336436],
+                    [5.722876, 52.334605]
                 ]
-            },
-            localName: "Hulshorst",
-            originalPosition: [5.728785, 52.335152]
-        }
+            ]
+        },
+        originalPosition: [5.728785, 52.335152]
     }
 };

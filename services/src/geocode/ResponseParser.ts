@@ -1,14 +1,15 @@
-import { GeocodingResponseAPI, GeocodingResponse } from "./types/GeocodingResponse";
+import omit from "lodash/omit";
+import { GeocodingResponse } from "./types/GeocodingResponse";
+import { GeocodingResponseAPI } from "./types/APITypes";
 import { GeographyType, toPointFeature } from "@anw/go-sdk-js/core";
-import { bboxToPolygon, LatLonAPIToPosition } from "../shared/Geometry";
+import { bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
 
 export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): GeocodingResponse => {
     const results = apiResponse.results;
     const features = results.map(({ boundingBox, viewport, entryPoints, addressRanges, entityType, ...result }) => ({
-        ...toPointFeature(LatLonAPIToPosition(result.position)),
+        ...toPointFeature(latLonAPIToPosition(result.position)),
         properties: {
-            ...result,
-            ...(result.position && { position: [result.position.lon, result.position.lat] }),
+            ...omit(result, "position"),
             ...(result.dist && { distance: result.dist }),
             ...(boundingBox && { boundingBox: bboxToPolygon(boundingBox) }),
             ...(viewport && { viewport: bboxToPolygon(viewport) }),
@@ -16,14 +17,14 @@ export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): Geoco
             ...(entryPoints && {
                 entryPoints: entryPoints.map((entrypoint) => ({
                     ...entrypoint,
-                    position: LatLonAPIToPosition(entrypoint.position)
+                    position: latLonAPIToPosition(entrypoint.position)
                 }))
             }),
             ...(addressRanges && {
                 addressRanges: {
                     ...addressRanges,
-                    from: LatLonAPIToPosition(addressRanges.from),
-                    to: LatLonAPIToPosition(addressRanges.to)
+                    from: latLonAPIToPosition(addressRanges.from),
+                    to: latLonAPIToPosition(addressRanges.to)
                 }
             })
         }

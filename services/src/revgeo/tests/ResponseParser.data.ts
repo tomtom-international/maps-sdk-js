@@ -24,8 +24,23 @@ export const apiAndParsedResponses = [
                             southWest: "52.334605,5.722876",
                             entity: "position"
                         },
-                        localName: "Hulshorst"
+                        localName: "Hulshorst",
+                        sideOfStreet: "R",
+                        offsetPosition: "52.33516,5.72879"
                     },
+                    mapcodes: [
+                        {
+                            type: "Local",
+                            fullMapcode: "US-CA FS.WRG0",
+                            territory: "US-CA",
+                            code: "FS.WRG0"
+                        },
+                        {
+                            type: "International",
+                            fullMapcode: "S4ZW4.89XV"
+                        },
+                        { type: "Alternative", fullMapcode: "USA JJCH.H9CF", territory: "USA", code: "JJCH.H9CF" }
+                    ],
                     position: "52.335152,5.728785"
                 }
             ]
@@ -47,21 +62,36 @@ export const apiAndParsedResponses = [
                     country: "Nederland",
                     countryCodeISO3: "NLD",
                     freeformAddress: "Hierderweg, 8077 Hulshorst",
-                    boundingBox: {
-                        type: "Polygon",
-                        coordinates: [
-                            [
-                                [5.722876, 52.334605],
-                                [5.73938, 52.334605],
-                                [5.73938, 52.336436],
-                                [5.722876, 52.336436],
-                                [5.722876, 52.334605]
-                            ]
+                    localName: "Hulshorst"
+                },
+                boundingBox: {
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [5.722876, 52.334605],
+                            [5.73938, 52.334605],
+                            [5.73938, 52.336436],
+                            [5.722876, 52.336436],
+                            [5.722876, 52.334605]
                         ]
+                    ]
+                },
+                mapcodes: [
+                    {
+                        type: "Local",
+                        fullMapcode: "US-CA FS.WRG0",
+                        territory: "US-CA",
+                        code: "FS.WRG0"
                     },
-                    localName: "Hulshorst",
-                    originalPosition: [5.728785, 52.335152]
-                }
+                    {
+                        type: "International",
+                        fullMapcode: "S4ZW4.89XV"
+                    },
+                    { type: "Alternative", fullMapcode: "USA JJCH.H9CF", territory: "USA", code: "JJCH.H9CF" }
+                ],
+                sideOfStreet: "R",
+                offsetPosition: [5.72879, 52.33516],
+                originalPosition: [5.728785, 52.335152]
             }
         } as ReverseGeocodingResponse
     ]

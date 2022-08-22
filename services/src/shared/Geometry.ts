@@ -1,5 +1,5 @@
 import { Polygon, Position } from "geojson";
-import { BoundingBoxAPI, LatLonAPI, BoundingBoxTopLeftAPI } from "../shared/types/APIResponseTypes";
+import { BoundingBoxAPI, LatLonAPI, BoundingBoxTopLeftAPI } from "./types/APIResponseTypes";
 
 /**
  * @ignore
@@ -38,6 +38,6 @@ export const polygonToBtmRightBBox = (polygon: Polygon): Position => {
     return [coordinates[0][1][1], coordinates[0][1][0]];
 };
 
-export const LatLonAPIToPosition = (point: LatLonAPI): Position => {
+export const latLonAPIToPosition = (point: LatLonAPI): Position => {
     return [point.lon, point.lat];
 };
