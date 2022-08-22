@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.22](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.20...v0.1.22) (2022-08-22)
+
+
+### Features
+
+* geocoding service ([977ab9f](https://github.com/tomtom-international/go-sdk-js/commit/977ab9f1d1988e7048aa84e4c2cba3b7c2b03131))
+* **routing:** building route planning service ([d0fb7a0](https://github.com/tomtom-international/go-sdk-js/commit/d0fb7a0757b63a2f29c1b4be3dbafd6c36c7eeab))
+* **sonar:** add sonar metrics to the readme file ([2cb75a0](https://github.com/tomtom-international/go-sdk-js/commit/2cb75a03d57ddcdbc64bc9108e45ca02cd8d407f))
+
+
+### Bug Fixes
+
+* **eslint:** fix linter setup and errors ([459a5a6](https://github.com/tomtom-international/go-sdk-js/commit/459a5a659f71c0e0601372e2ec7b6c68d8e6c05e))
+* **eslint:** ignore files should include the generated resources directories ([8473d5e](https://github.com/tomtom-international/go-sdk-js/commit/8473d5e0a13814054c2ba3cd9b4753523eecb4fd))
+* fix tests to overcome unstable id results ([daaa543](https://github.com/tomtom-international/go-sdk-js/commit/daaa5436da94f3ca4d4e25cc9c17ebca08c2bf57))
+* **i18n:** language is always optional ([da09003](https://github.com/tomtom-international/go-sdk-js/commit/da090039ae8f54da47e70321dbfd41db6d79b82e))
+* **npm:** ability to calculate the old re-created package versions ([04ddaa5](https://github.com/tomtom-international/go-sdk-js/commit/04ddaa51c851264c8a211fee3dca241575a262f6))
+* **services:** fixing rev geo types, improving tests, refactoring ([3f44a8f](https://github.com/tomtom-international/go-sdk-js/commit/3f44a8f208585b53c01bf69bb7c695f1ea1e9b12))
+* **tests:** do not put the undefined key to url ([407eb9a](https://github.com/tomtom-international/go-sdk-js/commit/407eb9a992d0e3ae6615ce5b38ae56d322e61496))
+* update tests ([e0fdf10](https://github.com/tomtom-international/go-sdk-js/commit/e0fdf10f170a3db49b212182a5902041c662b0c2))
+* **workspaces:** ts build should use aliased local dependencies ([0bf2f4c](https://github.com/tomtom-international/go-sdk-js/commit/0bf2f4cf8739209af5b04502094da714b499ea66))
+
 ### [0.1.21](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.20...v0.1.21) (2022-08-22)
 
 
