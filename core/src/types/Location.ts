@@ -102,6 +102,8 @@ export type CommonLocationProps = {
     type: LocationType;
     /**
      * The unique id for this location.
+     *
+     * IDs are stable for POIs but can be unstable for other location types.
      */
     id?: string;
     /**
