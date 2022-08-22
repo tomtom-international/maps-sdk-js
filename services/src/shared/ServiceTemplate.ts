@@ -1,7 +1,8 @@
-import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
+
 import { SDKError } from "./Errors";
 import { Services } from "./types/ServicesTypes";
+import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
 
 /**
  * @ignore

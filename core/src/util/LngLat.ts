@@ -1,5 +1,5 @@
 import { Feature, Point, Position } from "geojson";
-import { HasLngLat } from "../types/Geometry";
+import { HasLngLat } from "../types";
 
 /**
  * @ignore

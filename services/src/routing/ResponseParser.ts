@@ -13,9 +13,10 @@ import {
     TravelModeSection
 } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
+import { LineString } from "geojson";
+
 import { CalculateRouteResponse } from "./CalculateRoute";
 import { CalculateRouteResponseAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
-import { LineString } from "geojson";
 
 const parseSummary = (apiSummary: SummaryAPI): Summary => ({
     ...apiSummary,
