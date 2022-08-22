@@ -1,11 +1,11 @@
 import { Guidance, TravelMode } from "@anw/go-sdk-js/core";
 import { TrafficCategory, TrafficIncidentTEC } from "core/src/types/route/Sections";
 
-export type APIReport = {
+export type ReportAPI = {
     effectiveSettings: { key: string; value: string }[];
 };
 
-export type APISectionType =
+export type SectionTypeAPI =
     | "CAR_TRAIN"
     | "COUNTRY"
     | "FERRY"
@@ -19,8 +19,8 @@ export type APISectionType =
     | "UNPAVED"
     | "URBAN";
 
-export type APIRouteSection = {
-    sectionType: APISectionType;
+export type SectionAPI = {
+    sectionType: SectionTypeAPI;
     startPointIndex: number;
     endPointIndex: number;
     travelMode?: TravelMode;
@@ -32,7 +32,7 @@ export type APIRouteSection = {
     tec?: TrafficIncidentTEC[];
 };
 
-export type APIRouteSummary = {
+export type SummaryAPI = {
     arrivalTime: string;
     departureTime: string;
     lengthInMeters: number;
@@ -41,26 +41,26 @@ export type APIRouteSummary = {
     trafficLengthInMeters: number;
 };
 
-export type APILatLng = {
+export type LatLngAPI = {
     latitude: number;
     longitude: number;
 };
 
-export type APIRouteLeg = {
-    points: APILatLng[];
-    summary: APIRouteSummary;
+export type LegAPI = {
+    points: LatLngAPI[];
+    summary: SummaryAPI;
 };
 
-export type APIRoute = {
-    legs: APIRouteLeg[];
-    sections: APIRouteSection[];
-    summary: APIRouteSummary;
+export type RouteAPI = {
+    legs: LegAPI[];
+    sections: SectionAPI[];
+    summary: SummaryAPI;
     guidance?: Guidance;
 };
 
-export type APICalculateRouteResult = {
+export type CalculateRouteResultAPI = {
     formatVersion: string;
-    routes: APIRoute[];
+    routes: RouteAPI[];
     optimizedWaypoints?: { providedIndex: number; optimizedIndex: number }[];
-    report?: APIReport;
+    report?: ReportAPI;
 };

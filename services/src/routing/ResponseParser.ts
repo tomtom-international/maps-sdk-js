@@ -1,24 +1,24 @@
 import { DelayMagnitude, Route, Sections, SectionType, Summary, TravelMode } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
 import { CalculateRouteResponse } from "./CalculateRoute";
-import { APICalculateRouteResult, APIRoute, APIRouteLeg, APIRouteSection, APIRouteSummary } from "./types/APITypes";
+import { CalculateRouteResultAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
 import { LineString } from "geojson";
 import { CountrySection, LegSection, Section, TrafficSection, TravelModeSection } from "core/src/types/route/Sections";
 
-const parseSummary = (apiSummary: APIRouteSummary): Summary => ({
+const parseSummary = (apiSummary: SummaryAPI): Summary => ({
     ...apiSummary,
     departureTime: new Date(apiSummary.departureTime),
     arrivalTime: new Date(apiSummary.arrivalTime)
 });
 
-const parseRoutePath = (apiRouteLegs: APIRouteLeg[]): LineString => ({
+const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
     type: "LineString",
     coordinates: apiRouteLegs.flatMap((apiLeg) =>
         apiLeg.points?.map((apiPoint) => [apiPoint.longitude, apiPoint.latitude])
     )
 });
 
-const parseLegSections = (apiLegs: APIRouteLeg[]): LegSection[] =>
+const parseLegSections = (apiLegs: LegAPI[]): LegSection[] =>
     apiLegs.reduce<LegSection[]>((accumulatedParsedLegs, nextApiLeg, currentIndex) => {
         const lastLegEndPointIndex = currentIndex === 0 ? 0 : accumulatedParsedLegs[currentIndex - 1]?.endPointIndex;
         const endPointIndex = !isNil(lastLegEndPointIndex) && lastLegEndPointIndex + nextApiLeg.points?.length;
@@ -30,17 +30,17 @@ const parseLegSections = (apiLegs: APIRouteLeg[]): LegSection[] =>
         return accumulatedParsedLegs;
     }, []);
 
-const toSection = (apiSection: APIRouteSection): Section => ({
+const toSection = (apiSection: SectionAPI): Section => ({
     startPointIndex: apiSection.startPointIndex,
     endPointIndex: apiSection.endPointIndex
 });
 
-const toCountrySection = (apiSection: APIRouteSection): CountrySection => ({
+const toCountrySection = (apiSection: SectionAPI): CountrySection => ({
     ...toSection(apiSection),
     countryCodeISO3: apiSection.countryCode as string
 });
 
-const toTravelModeSection = (apiSection: APIRouteSection): TravelModeSection => ({
+const toTravelModeSection = (apiSection: SectionAPI): TravelModeSection => ({
     ...toSection(apiSection),
     travelMode: apiSection.travelMode as TravelMode
 });
@@ -60,7 +60,7 @@ const parseMagnitudeOfDelay = (apiDelayMagnitude?: number): DelayMagnitude => {
     }
 };
 
-const toTrafficSection = (apiSection: APIRouteSection): TrafficSection => ({
+const toTrafficSection = (apiSection: SectionAPI): TrafficSection => ({
     ...toSection(apiSection),
     delayInSeconds: apiSection.delayInSeconds,
     effectiveSpeedInKmh: apiSection.effectiveSpeedInKmh,
@@ -77,8 +77,8 @@ const ensureInit = <S extends Section>(sectionType: SectionType, result: Section
 };
 
 const getSectionMapping = (
-    apiSection: APIRouteSection
-): { sectionType: SectionType; mappingFunction: (apiSection: APIRouteSection) => Section } => {
+    apiSection: SectionAPI
+): { sectionType: SectionType; mappingFunction: (apiSection: SectionAPI) => Section } => {
     switch (apiSection.sectionType) {
         case "CAR_TRAIN":
             return { sectionType: "carTrain", mappingFunction: toSection };
@@ -107,14 +107,14 @@ const getSectionMapping = (
     }
 };
 
-const parseSectionsAndAppendToResult = (apiSections: APIRouteSection[], result: Sections): void => {
+const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: Sections): void => {
     for (const apiSection of apiSections) {
         const sectionMapping = getSectionMapping(apiSection);
         ensureInit(sectionMapping.sectionType, result).push(sectionMapping.mappingFunction(apiSection));
     }
 };
 
-const parseSections = (apiRoute: APIRoute): Sections => {
+const parseSections = (apiRoute: RouteAPI): Sections => {
     const result = {
         leg: parseLegSections(apiRoute.legs)
         // (the rest of sections are parsed below)
@@ -123,7 +123,7 @@ const parseSections = (apiRoute: APIRoute): Sections => {
     return result;
 };
 
-const parseRoute = (apiRoute: APIRoute): Route => ({
+const parseRoute = (apiRoute: RouteAPI): Route => ({
     type: "Feature",
     geometry: parseRoutePath(apiRoute.legs),
     properties: {
@@ -133,7 +133,7 @@ const parseRoute = (apiRoute: APIRoute): Route => ({
     }
 });
 
-export const parseCalculateRouteResponse = (apiResponse: APICalculateRouteResult): CalculateRouteResponse => ({
+export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResultAPI): CalculateRouteResponse => ({
     routes: {
         type: "FeatureCollection",
         features: apiResponse.routes.map(parseRoute)
