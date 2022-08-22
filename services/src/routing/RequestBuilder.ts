@@ -1,7 +1,14 @@
 import isNil from "lodash/isNil";
-import { CalculateRouteParams, WaypointInput, WaypointInputs } from "./types/CalculateRouteParams";
+import {
+    CalculateRouteParams,
+    DepartArriveParams,
+    InputSectionTypes,
+    ThrillingParams,
+    WaypointInput,
+    WaypointInputs
+} from "./types/CalculateRouteParams";
 import { CommonServiceParams } from "../shared/ServiceTypes";
-import { getLngLatArray, inputSectionTypes, Waypoint, WaypointProps } from "@anw/go-sdk-js/core";
+import { Avoidable, getLngLatArray, inputSectionTypes, Waypoint, WaypointProps } from "@anw/go-sdk-js/core";
 import { appendCommonParams } from "../shared/RequestBuildingUtils";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
@@ -21,38 +28,56 @@ const buildWaypointsString = (waypointInputs: WaypointInputs): string => {
         .join(":");
 };
 
-export const buildCalculateRouteRequest = (params: CalculateRouteParams): URL => {
-    const url = new URL(`${buildURLBasePath(params)}${buildWaypointsString(params.locations)}/json`);
-    const urlParams = url.searchParams;
-    appendCommonParams(urlParams, params);
-    if (params.avoid) {
-        for (const avoidOption of params.avoid) {
+const appendAvoidParams = (urlParams: URLSearchParams, avoid?: Avoidable[]): void => {
+    if (avoid) {
+        for (const avoidOption of avoid) {
             urlParams.append("avoid", avoidOption);
         }
     }
-    params.computeAdditionalTravelTimeFor &&
-        urlParams.append("computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
-    params.considerTraffic && urlParams.append("traffic", String(params.considerTraffic));
-    if (params.when?.date) {
-        const formattedDate = params.when.date.toISOString();
-        if (params.when.option == "departAt") {
+};
+
+const appendWhenParams = (urlParams: URLSearchParams, when?: DepartArriveParams): void => {
+    if (when?.date) {
+        const formattedDate = when.date.toISOString();
+        if (when.option == "departAt") {
             urlParams.append("departAt", formattedDate);
-        } else if (params.when.option == "arriveBy") {
+        } else if (when.option == "arriveBy") {
             urlParams.append("arriveAt", formattedDate);
         }
     }
+};
+
+const appendThrillingParams = (urlParams: URLSearchParams, thrillingParams?: ThrillingParams): void => {
+    if (thrillingParams) {
+        thrillingParams.hilliness && urlParams.append("hilliness", thrillingParams.hilliness);
+        thrillingParams.windingness && urlParams.append("windingness", thrillingParams.windingness);
+    }
+};
+
+const appendSectionTypes = (urlParams: URLSearchParams, sectionTypes?: InputSectionTypes): void => {
+    const effectiveSectionTypes = sectionTypes == "all" ? inputSectionTypes : sectionTypes || [];
+    for (const sectionType of effectiveSectionTypes) {
+        urlParams.append("sectionType", sectionType);
+    }
+};
+
+export const buildCalculateRouteRequest = (params: CalculateRouteParams): URL => {
+    const url = new URL(`${buildURLBasePath(params)}${buildWaypointsString(params.locations)}/json`);
+    const urlParams: URLSearchParams = url.searchParams;
+    appendCommonParams(urlParams, params);
+    appendAvoidParams(urlParams, params.avoid);
+    params.computeAdditionalTravelTimeFor &&
+        urlParams.append("computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
+    params.considerTraffic && urlParams.append("traffic", String(params.considerTraffic));
+    appendWhenParams(urlParams, params.when);
     params.instructionsType && urlParams.append("instructionsType", params.instructionsType);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
     params.routeRepresentation && urlParams.append("routeRepresentation", params.routeRepresentation);
     params.routeType && urlParams.append("routeType", params.routeType);
-    const sectionTypes = params.sectionTypes == "all" ? inputSectionTypes : params.sectionTypes || [];
-    for (const sectionType of sectionTypes) {
-        urlParams.append("sectionType", sectionType);
-    }
+    appendSectionTypes(urlParams, params.sectionTypes);
     params.travelMode && urlParams.append("travelMode", params.travelMode);
-    if (params.routeType == "thrilling" && params.thrillingParams) {
-        params.thrillingParams.hilliness && urlParams.append("hilliness", params.thrillingParams.hilliness);
-        params.thrillingParams.windingness && urlParams.append("windingness", params.thrillingParams.windingness);
+    if (params.routeType == "thrilling") {
+        appendThrillingParams(urlParams, params.thrillingParams);
     }
     return url;
 };

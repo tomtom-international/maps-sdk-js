@@ -2,10 +2,53 @@ import { Avoidable, HasLngLat, inputSectionTypes, TravelMode, Waypoint } from "@
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 
 /**
+ * A waypoint input is either a complex waypoint object or anything with coordinates.
+ * * By default, waypoints are considered as single points,
+ * unless a radius is specified, which then transforms the waypoint into a circle(soft waypoint).
+ */
+export type WaypointInput = Waypoint | HasLngLat;
+
+/**
+ * List of waypoint inputs, including origin and destination at the edges.
+ * * They must at least contain origin and destination, with any further waypoints ordered in between them.
+ * * Origin and destination must be default waypoints without radius (point type, not circle).
+ * * All the locations in the array are to be traversed in sequence (e.g. [origin, waypoint1, waypoint2, destination])
+ */
+export type WaypointInputs = [WaypointInput, WaypointInput, ...WaypointInput[]];
+
+export type RouteMandatoryParams = {
+    /**
+     * These are the specified locations for route calculation. They are the main input and are mandatory.
+     * @default None
+     */
+    locations: WaypointInputs;
+};
+
+/**
+ * Specifies when to depart (start travelling) or to arrive (finish travelling).
+ */
+export type DepartArriveParams = { option: "departAt" | "arriveBy"; date: Date };
+
+/**
  * Section type which can be requested in the route parameters.
  * * (Other section types such as "leg" might be automatically calculated regardless of these inputs).
  */
 export type InputSectionType = typeof inputSectionTypes[number];
+
+/**
+ * Possible input section types that can be requested to the routing API.
+ * * These exclude sections that will be returned no matter what (e.g. leg).
+ *
+ * Possible values:
+ * * all: all section types are to be included in the response
+ * * carTrain, ferry, tunnel or motorway: get sections if the route includes car trains, ferries, tunnels, or motorways.
+ * * pedestrian: sections which are only suited for pedestrians.
+ * * tollRoad: sections which require a toll to be payed.
+ * * tollVignette: sections which require a toll vignette to be present.
+ * * country: countries the route has parts in.
+ * * travelMode: sections in relation to the request parameter 'travelMode'.
+ */
+export type InputSectionTypes = "all" | InputSectionType[];
 
 /**
  * Basic low/normal/high option.
@@ -32,29 +75,6 @@ export type ThrillingParams = {
      * @default None
      */
     windingness?: LNH;
-};
-
-/**
- * A waypoint input is either a complex waypoint object or anything with coordinates.
- * * By default, waypoints are considered as single points,
- * unless a radius is specified, which then transforms the waypoint into a circle(soft waypoint).
- */
-export type WaypointInput = Waypoint | HasLngLat;
-
-/**
- * List of waypoint inputs, including origin and destination at the edges.
- * * They must at least contain origin and destination, with any further waypoints ordered in between them.
- * * Origin and destination must be default waypoints without radius (point type, not circle).
- * * All the locations in the array are to be traversed in sequence (e.g. [origin, waypoint1, waypoint2, destination])
- */
-export type WaypointInputs = [WaypointInput, WaypointInput, ...WaypointInput[]];
-
-export type RouteMandatoryParams = {
-    /**
-     * These are the specified locations for route calculation. They are the main input and are mandatory.
-     * @default None
-     */
-    locations: WaypointInputs;
 };
 
 export type RouteOptionalParams = {
@@ -143,19 +163,9 @@ export type RouteOptionalParams = {
 
     /**
      * Specifies which of the section types is reported in the route response.
-     *
-     * Possible values:
-     * carTrain, ferry, tunnel or motorway: get
-     * sections if the route includes car trains, ferries, tunnels, or motorways.
-     * pedestrian: sections which are only suited for pedestrians.
-     * tollRoad: sections which require a toll to be payed.
-     * tollVignette: sections which require a toll vignette to be present.
-     * country: countries the route has parts in.
-     * travelMode: sections in relation to the request parameter 'travelMode'.
-     * The default value is travelMode.
      * @default travelMode
      */
-    sectionTypes?: "all" | InputSectionType[];
+    sectionTypes?: InputSectionTypes;
 
     /**
      * Optional parameters if the route type is "thrilling" to indicate how curvy and hilly the route should be.
@@ -179,7 +189,7 @@ export type RouteOptionalParams = {
      * (e.g. an imminent arrival date for a long route), then it will default to departing now.
      * @default depart now
      */
-    when?: { option: "departAt" | "arriveBy"; date: Date };
+    when?: DepartArriveParams;
 };
 
 export type CalculateRouteParams = CommonServiceParams & RouteMandatoryParams & RouteOptionalParams;
