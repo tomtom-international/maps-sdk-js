@@ -34,7 +34,7 @@ export type MapcodeType = "Local" | "International" | "Alternative";
 
 export type MapCodes = {
     /**
-     * Type of mapcode.
+     * The type of the Mapcode.
      */
     type: MapcodeType;
     /**
@@ -102,8 +102,7 @@ export type CommonLocationProps = {
     type: LocationType;
     /**
      * The unique id for this location.
-     *
-     * IDs are stable for POIs but can be unstable for other location types.
+     * * IDs are stable for POIs but can be unstable for other location types.
      */
     id?: string;
     /**
