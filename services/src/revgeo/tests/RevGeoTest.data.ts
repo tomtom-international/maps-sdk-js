@@ -378,3 +378,54 @@ export const exampleSDKResponseForKrEndPoint = {
         originalPosition: [126.97332, 37.574394]
     }
 };
+
+export const requestObjectsAndResponses = [
+    [
+        "Default reverse geocoding",
+        {
+            position: [5.72884, 52.33499]
+        },
+        example0APIResponse,
+        example0SDKResponse
+    ],
+
+    [
+        "Default reverse geocoding - Korea",
+        {
+            position: [126.97367, 37.57435],
+            customServiceBaseURL: "https://api.tomtom.com/search/2/reverseGeocode/"
+        },
+        exampleAPIResponseFromKrEndPoint,
+        exampleSDKResponseForKrEndPoint
+    ],
+    [
+        "Reverse geocoding for coordinates in middle of an ocean with a radius of 80Kms",
+        {
+            position: [-36.491432, -54.283085],
+            radius: 80000
+        },
+        exampleAPIResponseWithRadius,
+        exampleSDKResponseWithRadius
+    ],
+    [
+        "Reverse geocoding with house number, return road-use & return speed limit input",
+        {
+            position: [5.149537, 52.352848],
+            number: "22",
+            returnRoadUse: true,
+            returnSpeedLimit: true
+        },
+        exampleAPIResponseWithNumberRoadUseSpeedLimit,
+        exampleSDKResponseWithNumberRoadUseSpeedLimit
+    ],
+    [
+        "Localized municipality reverse geocoding with map-codes",
+        {
+            position: [-3.140351, 55.947106],
+            geographyType: ["Municipality"],
+            mapcodes: ["International"]
+        },
+        exampleAPIResponseWithLanguageGeoTypeMapCode,
+        exampleSDKResponseWithLanguageGeoTypeMapCode
+    ]
+];
