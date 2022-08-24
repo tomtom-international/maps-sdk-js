@@ -65,6 +65,7 @@ export const requestObjectsAndURLs = [
             avoid: ["carpools", "ferries", "motorways", "alreadyUsedRoads", "tollRoads", "unpavedRoads"],
             computeAdditionalTravelTimeFor: "all",
             considerTraffic: false,
+            currentHeading: 45,
             instructionsType: "tagged",
             maxAlternatives: 2,
             routeRepresentation: "summaryOnly",
@@ -83,6 +84,8 @@ export const requestObjectsAndURLs = [
             "&language=es-ES" +
             "&avoid=carpools&avoid=ferries&avoid=motorways&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads" +
             "&computeTravelTimeFor=all" +
+            "&traffic=false" +
+            "&vehicleHeading=45" +
             "&arriveAt=2022-09-16T15%3A48%3A15.400Z" +
             "&instructionsType=tagged" +
             "&maxAlternatives=2" +

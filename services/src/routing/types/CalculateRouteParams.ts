@@ -110,6 +110,17 @@ export type RouteOptionalParams = {
     considerTraffic?: boolean;
 
     /**
+     * The current heading at the starting point, in degrees starting at true North and continuing in a clockwise direction.
+     * * North is 0 degrees.
+     * * East is 90 degrees.
+     * * South is 180 degrees.
+     * * West is 270 degrees.
+     *
+     * Allowed values: 0-359
+     */
+    currentHeading?: number;
+
+    /**
      * If specified, guidance instructions will be returned (if available).
      *
      * Possible values:

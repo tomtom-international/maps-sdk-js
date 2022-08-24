@@ -68,7 +68,8 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): URL =>
     appendAvoidParams(urlParams, params.avoid);
     params.computeAdditionalTravelTimeFor &&
         urlParams.append("computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
-    params.considerTraffic && urlParams.append("traffic", String(params.considerTraffic));
+    !isNil(params.considerTraffic) && urlParams.append("traffic", String(params.considerTraffic));
+    params.currentHeading && urlParams.append("vehicleHeading", String(params.currentHeading));
     appendWhenParams(urlParams, params.when);
     params.instructionsType && urlParams.append("instructionsType", params.instructionsType);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
