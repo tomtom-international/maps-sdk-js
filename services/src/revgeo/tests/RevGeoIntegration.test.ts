@@ -1,4 +1,4 @@
-import { example0SDKResponse } from "./RevGeoTest.data";
+import exampleSDKResponse from "./RevGeoIntegrationTest.data.json";
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
@@ -14,7 +14,7 @@ describe("Reverse Geocoding integration tests", () => {
 
     test("Default reverse geocoding", async () => {
         const result = await reverseGeocode({ position: [5.72884, 52.33499] });
-        expect(result).toEqual(expect.objectContaining(example0SDKResponse));
+        expect(result).toStrictEqual(expect.objectContaining(exampleSDKResponse[0]));
     });
 
     test("Localized reverse geocoding", async () => {

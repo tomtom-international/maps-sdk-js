@@ -1,17 +1,17 @@
 import reverseGeocode from "../ReverseGeocoding";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { requestObjectsAndResponses } from "./RevGeoTest.data";
+import apiAndParsedResponses from "./RevGeoTest.data.json";
 import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 
 describe("Reverse Geocoding mock tests", () => {
     const axiosMock = new MockAdapter(axios);
-    test.each(requestObjectsAndResponses)(
+    test.each(apiAndParsedResponses)(
         `'%s`,
         // @ts-ignore
-        async (name: string, params: ReverseGeocodingParams, apiResponse: never, sdkResponse: never) => {
+        async (name: string, params: ReverseGeocodingParams, apiResponse: never, expectedParsedResponse: never) => {
             axiosMock.onGet().replyOnce(200, apiResponse);
-            expect(await reverseGeocode(params)).toStrictEqual(sdkResponse);
+            expect(await reverseGeocode(params)).toStrictEqual(expectedParsedResponse);
         }
     );
 });
