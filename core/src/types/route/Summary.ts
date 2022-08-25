@@ -45,4 +45,30 @@ export type Summary = {
      * Included if requested using the computeTravelTimeFor parameter.
      */
     liveTrafficIncidentsTravelTimeInSeconds?: number;
+    /**
+     * The estimated fuel consumption in liters using the Combustion Consumption Model.
+     *
+     * Included if:
+     * * The vehicle engine type is set to combustion.
+     * * The speed to consumption rates are specified.
+     *
+     * The value will be positive.
+     */
+    fuelConsumptionInLiters?: number;
+
+    /**
+     * The estimated electric energy consumption in kilowatt-hours (kWh) using the Electric Consumption Model.
+     *
+     * Included if:
+     * * The vehicle engine type is set to electric.
+     * * The speed to consumption rates are specified.
+     *
+     * * The value of batteryConsumptionInkWh includes the recuperated electric energy and can therefore be negative
+     * (which indicates gaining energy).
+     * * If both maxChargeInkWh and currentChargeInkWh are specified, recuperation will be capped to ensure that
+     * the battery charge level never exceeds maxChargeInkWh.
+     * * If neither maxChargeInkWh nor currentChargeInkWh are specified,
+     * unconstrained recuperation is assumed in the consumption calculation.
+     */
+    batteryConsumptionInkWh?: number;
 };

@@ -26,25 +26,48 @@ const assertSectionBasics = (section: Section): void => {
 describe("Calculate route integration tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
-    test("Amsterdam to Leiden to Rotterdam with default options", async () => {
+    test("Amsterdam to Leiden to Rotterdam with combustion vehicle parameters", async () => {
         const result = await calculateRoute({
             locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
                 [4.47059, 51.92291]
-            ]
+            ],
+            vehicle: {
+                dimensions: {
+                    weightKG: 1500
+                },
+                consumption: {
+                    speedsToConsumptionsLiters: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
+                        { speedKMH: 130, consumptionUnitsPer100KM: 11.5 }
+                    ],
+                    auxiliaryPowerInLitersPerHour: 0.2,
+                    currentFuelLiters: 55,
+                    fuelEnergyDensityInMJoulesPerLiter: 34.2,
+                    efficiency: {
+                        acceleration: 0.33,
+                        deceleration: 0.83,
+                        uphill: 0.27,
+                        downhill: 0.51
+                    }
+                }
+            }
         });
         expect(result.routes?.features?.length).toEqual(1);
         const routeFeature = result.routes.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
         const routeProperties = routeFeature.properties;
         assertSummaryBasics(routeProperties.summary);
+        expect(routeProperties.summary.fuelConsumptionInLiters).toBeDefined();
         const sections = routeProperties.sections;
         expect(sections.leg).toHaveLength(2);
         assertLegSectionBasics(sections.leg[0]);
+        expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
         assertLegSectionBasics(sections.leg[1]);
+        expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
         // (this example has an extra "other" travel mode section)
-        expect(sections.travelMode?.length).toEqual(2);
+        expect(sections.travelMode?.length).toBeGreaterThan(1);
         for (const inputSectionType of inputSectionTypes.filter(
             (sectionType) => !["leg", "travelMode"].includes(sectionType)
         )) {
@@ -52,7 +75,61 @@ describe("Calculate route integration tests", () => {
         }
     });
 
-    test("Roses to Olot with mostly custom options", async () => {
+    test("Amsterdam to Leiden to Rotterdam with electric vehicle parameters", async () => {
+        const result = await calculateRoute({
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109],
+                // Dragged point in Pijnacker
+                {
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [4.42788, 52.01833]
+                    },
+                    properties: {
+                        radiusMeters: 20
+                    }
+                },
+                [4.47059, 51.92291]
+            ],
+            vehicle: {
+                dimensions: {
+                    weightKG: 3500
+                },
+                consumption: {
+                    engineType: "electric",
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+                        { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+                    ],
+                    auxiliaryPowerInkW: 1.7,
+                    currentChargeKWH: 43,
+                    maxChargeKWH: 85,
+                    efficiency: {
+                        acceleration: 0.66,
+                        deceleration: 0.91,
+                        uphill: 0.74,
+                        downhill: 0.73
+                    }
+                }
+            }
+        });
+        expect(result.routes?.features?.length).toEqual(1);
+        const routeFeature = result.routes.features[0];
+        expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
+        const routeProperties = routeFeature.properties;
+        assertSummaryBasics(routeProperties.summary);
+        expect(routeProperties.summary.batteryConsumptionInkWh).toBeDefined();
+        const sections = routeProperties.sections;
+        expect(sections.leg).toHaveLength(2);
+        assertLegSectionBasics(sections.leg[0]);
+        expect(sections.leg[0].summary.batteryConsumptionInkWh).toBeDefined();
+        assertLegSectionBasics(sections.leg[1]);
+        expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
+    });
+
+    test("Roses to Olot thrilling route with alternatives", async () => {
         const result = await calculateRoute({
             language: "es-ES",
             locations: [
@@ -66,6 +143,7 @@ describe("Calculate route integration tests", () => {
             maxAlternatives: 2,
             routeType: "thrilling",
             sectionTypes: "all",
+            travelMode: "motorcycle",
             thrillingParams: {
                 hilliness: "low",
                 windingness: "high"

@@ -1,5 +1,6 @@
 import { Avoidable, HasLngLat, inputSectionTypes, TravelMode, Waypoint } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
+import { VehicleParameters } from "./VehicleParams";
 
 /**
  * A waypoint input is either a complex waypoint object or anything with coordinates.
@@ -43,7 +44,7 @@ export type InputSectionType = typeof inputSectionTypes[number];
  * * all: all section types are to be included in the response
  * * carTrain, ferry, tunnel or motorway: get sections if the route includes car trains, ferries, tunnels, or motorways.
  * * pedestrian: sections which are only suited for pedestrians.
- * * tollRoad: sections which require a toll to be payed.
+ * * tollRoad: sections which require a toll to be paid.
  * * tollVignette: sections which require a toll vignette to be present.
  * * country: countries the route has parts in.
  * * travelMode: sections in relation to the request parameter 'travelMode'.
@@ -193,6 +194,11 @@ export type RouteOptionalParams = {
      * @default None
      */
     travelMode?: TravelMode;
+
+    /**
+     * Parameters for the vehicle that will be used to drive the route.
+     */
+    vehicle?: VehicleParameters;
 
     /**
      * Specifies when to depart or arrive.

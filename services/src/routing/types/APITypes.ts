@@ -1,4 +1,4 @@
-import { Guidance, TravelMode } from "@anw/go-sdk-js/core";
+import { Guidance, Summary, TravelMode } from "@anw/go-sdk-js/core";
 import { TrafficCategory, TrafficIncidentTEC } from "core/src/types/route/Sections";
 
 export type ReportAPI = {
@@ -32,13 +32,9 @@ export type SectionAPI = {
     tec?: TrafficIncidentTEC[];
 };
 
-export type SummaryAPI = {
+export type SummaryAPI = Omit<Summary, "arrivalTime" | "departureTime"> & {
     arrivalTime: string;
     departureTime: string;
-    lengthInMeters: number;
-    trafficDelayInSeconds: number;
-    travelTimeInSeconds: number;
-    trafficLengthInMeters: number;
 };
 
 export type LatLngAPI = {
