@@ -8,6 +8,7 @@ node_modules/
 **/coverage/
 documentation/
 **/documentation/
+*/src/
 
 .DS_Store
 *.tgz
