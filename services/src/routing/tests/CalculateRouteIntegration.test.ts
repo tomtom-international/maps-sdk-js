@@ -170,4 +170,31 @@ describe("Calculate route integration tests", () => {
             }
         }
     });
+
+    test("Route from kandersteg to Dover via Lötschen Pass to different sectionTypes in SDK response", async () => {
+        const result = await calculateRoute({
+            locations: [
+                [7.675106, 46.490793],
+                [7.74328, 46.403849],
+                [1.32248, 51.111645]
+            ],
+            sectionTypes: ["carTrain", "motorway", "traffic", "tollRoad", "tollVignette", "urban"]
+        });
+
+        const inputSectionTypes = ["carTrain", "motorway", "traffic", "tollRoad", "tollVignette", "urban"];
+        let sectionTypeMatch = 0;
+        for (const routeFeature of result.routes.features) {
+            const routeProperties = routeFeature.properties;
+            const sections: Sections = routeProperties.sections;
+            for (const sectionType of Object.keys(sections)) {
+                for (const inputSectionType of inputSectionTypes) {
+                    if (sectionType == inputSectionType) {
+                        sectionTypeMatch++;
+                        break;
+                    }
+                }
+            }
+        }
+        expect(sectionTypeMatch).toEqual(inputSectionTypes.length);
+    });
 });
