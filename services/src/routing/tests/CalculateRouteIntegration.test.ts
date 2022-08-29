@@ -1,6 +1,7 @@
 import { inputSectionTypes, LegSection, Section, Sections, Summary } from "@anw/go-sdk-js/core";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { calculateRoute } from "../CalculateRoute";
+import { SectionType } from "core/src/types/route/Sections";
 
 const assertSummaryBasics = (summary: Summary): void => {
     expect(summary).toBeDefined();
@@ -172,20 +173,26 @@ describe("Calculate route integration tests", () => {
     });
 
     test("Route from kandersteg to Dover via Lötschen Pass to different sectionTypes in SDK response", async () => {
+        const inputSectionTypes: SectionType[] = [
+            "carTrain",
+            "motorway",
+            "traffic",
+            "tollRoad",
+            "tollVignette",
+            "urban"
+        ];
         const result = await calculateRoute({
             locations: [
                 [7.675106, 46.490793],
                 [7.74328, 46.403849],
                 [1.32248, 51.111645]
             ],
-            sectionTypes: ["carTrain", "motorway", "traffic", "tollRoad", "tollVignette", "urban"]
+            sectionTypes: inputSectionTypes
         });
 
         for (const routeFeature of result.routes.features) {
             const routeProperties = routeFeature.properties;
-            for (const inputSectionType of inputSectionTypes.filter((sectionType) =>
-                ["carTrain", "motorway", "traffic", "tollRoad", "tollVignette", "urban"].includes(sectionType)
-            )) {
+            for (const inputSectionType of inputSectionTypes) {
                 expect(routeProperties.sections[inputSectionType]).toBeDefined();
             }
         }
