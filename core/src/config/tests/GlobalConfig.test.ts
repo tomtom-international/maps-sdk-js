@@ -77,7 +77,7 @@ describe("mergeFromGlobal tests", () => {
             commonBaseURL: "https://api.tomtom.com/",
             language: "it-IT"
         });
-        expect(mergeFromGlobal<any>({ randomProp: "blah" })).toEqual({
+        expect(mergeFromGlobal<Partial<GlobalConfig> & { randomProp: string }>({ randomProp: "blah" })).toEqual({
             randomProp: "blah",
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com/",
