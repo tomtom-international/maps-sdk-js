@@ -1,5 +1,10 @@
 import { CommonServiceParams } from "./ServiceTypes";
 
+/**
+ * @internal
+ * @param urlParams
+ * @param params
+ */
 export const appendCommonParams = (urlParams: URLSearchParams, params: CommonServiceParams): void => {
     urlParams.append("key", params.apiKey as string);
     params.language && urlParams.append("language", params.language);

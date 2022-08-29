@@ -1,5 +1,6 @@
 /**
  * @ignore
+ * @internal
  * @param input
  */
 export const arrayToCSV = (input: unknown | unknown[]): string =>

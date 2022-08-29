@@ -3,6 +3,7 @@ import { BoundingBoxAPI, LatLonAPI, BoundingBoxTopLeftAPI } from "./types/APIRes
 
 /**
  * @ignore
+ * @internal
  * @param csv
  */
 export const csvLatLngToPosition = (csv: string): Position => {
@@ -32,16 +33,28 @@ export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
     return { type: "Polygon", coordinates: [[westSouth, eastSouth, eastNorth, westNorth, westSouth]] };
 };
 
+/**
+ * @internal
+ * @param polygon
+ */
 export const polygonToTopLeftBBox = (polygon: Polygon): Position => {
     const { coordinates } = polygon;
     return [coordinates[0][2][1], coordinates[0][0][0]];
 };
 
+/**
+ * @internal
+ * @param polygon
+ */
 export const polygonToBtmRightBBox = (polygon: Polygon): Position => {
     const { coordinates } = polygon;
     return [coordinates[0][1][1], coordinates[0][1][0]];
 };
 
+/**
+ * @internal
+ * @param point
+ */
 export const latLonAPIToPosition = (point: LatLonAPI): Position => {
     return [point.lon, point.lat];
 };
