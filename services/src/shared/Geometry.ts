@@ -14,6 +14,10 @@ const hasTopLeftPoint = (bbox: BoundingBoxAPI): bbox is BoundingBoxTopLeftAPI =>
     return (<BoundingBoxTopLeftAPI>bbox).topLeftPoint !== undefined;
 };
 
+/**
+ * @internal
+ * @param apiBBox
+ */
 export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
     let westSouth, eastNorth;
     if (hasTopLeftPoint(apiBBox)) {
