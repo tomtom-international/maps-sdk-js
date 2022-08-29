@@ -20,7 +20,7 @@ export type Section = {
  */
 export type CountrySection = Section & {
     /**
-     * It provides the 3-character ISO 3166-1 alpha-3 country code in which the section is located.
+     * It provides the 3-character {@link https://gist.github.com/tadast/8827699 ISO 3166-1 alpha-3} country code in which the section is located.
      */
     countryCodeISO3: string;
 };

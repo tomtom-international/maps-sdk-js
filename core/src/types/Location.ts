@@ -223,7 +223,7 @@ export type AddressProperties = {
     country?: string;
 
     /**
-     * ISO alpha-3 country code
+     * {@link https://gist.github.com/tadast/8827699 ISO 3166-1 alpha-3} country code
      */
     countryCodeISO3?: string;
 
