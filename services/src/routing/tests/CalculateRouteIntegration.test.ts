@@ -181,20 +181,13 @@ describe("Calculate route integration tests", () => {
             sectionTypes: ["carTrain", "motorway", "traffic", "tollRoad", "tollVignette", "urban"]
         });
 
-        const inputSectionTypes = ["carTrain", "motorway", "traffic", "tollRoad", "tollVignette", "urban"];
-        let sectionTypeMatch = 0;
         for (const routeFeature of result.routes.features) {
             const routeProperties = routeFeature.properties;
-            const sections: Sections = routeProperties.sections;
-            for (const sectionType of Object.keys(sections)) {
-                for (const inputSectionType of inputSectionTypes) {
-                    if (sectionType == inputSectionType) {
-                        sectionTypeMatch++;
-                        break;
-                    }
-                }
+            for (const inputSectionType of inputSectionTypes.filter((sectionType) =>
+                ["carTrain", "motorway", "traffic", "tollRoad", "tollVignette", "urban"].includes(sectionType)
+            )) {
+                expect(routeProperties.sections[inputSectionType]).toBeDefined();
             }
         }
-        expect(sectionTypeMatch).toEqual(inputSectionTypes.length);
     });
 });
