@@ -16,7 +16,7 @@
     "clean:dist": "rm -rf ./dist",
     "clean:cache": "rm -rf ./.rollup.cache"
   },
-  "types": "./index.d.ts",
+  "types": "./dist/index.d.ts",
   "author": "GO SDK JS Team",
   "license": "ISC",
   "repository": {
