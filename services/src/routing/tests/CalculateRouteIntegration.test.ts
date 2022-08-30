@@ -27,13 +27,22 @@ const assertSectionBasics = (section: Section): void => {
 describe("Calculate route integration tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
-    test("Amsterdam to Leiden to Rotterdam with combustion vehicle parameters", async () => {
+    test("Route from Kandersteg to Dover via Lötschen Pass with different sectionTypes and combustion vehicle parameters", async () => {
+        const testInputSectionTypes: SectionType[] = [
+            "carTrain",
+            "motorway",
+            "traffic",
+            "tollRoad",
+            "tollVignette",
+            "urban"
+        ];
         const result = await calculateRoute({
             locations: [
-                [4.89066, 52.37317],
-                [4.49015, 52.16109],
-                [4.47059, 51.92291]
+                [7.675106, 46.490793],
+                [7.74328, 46.403849],
+                [1.32248, 51.111645]
             ],
+            sectionTypes: testInputSectionTypes,
             vehicle: {
                 dimensions: {
                     weightKG: 1500
@@ -55,6 +64,7 @@ describe("Calculate route integration tests", () => {
                 }
             }
         });
+
         expect(result.routes?.features?.length).toEqual(1);
         const routeFeature = result.routes.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
@@ -67,10 +77,16 @@ describe("Calculate route integration tests", () => {
         expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
         assertLegSectionBasics(sections.leg[1]);
         expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
-        // (this example has an extra "other" travel mode section)
-        expect(sections.travelMode?.length).toBeGreaterThan(1);
+        // Asserting the existence of sections in response:
+        for (const inputSectionType of testInputSectionTypes) {
+            expect(routeFeature.properties.sections[inputSectionType]?.length).toBeGreaterThan(0);
+            for (const section of routeFeature.properties.sections[inputSectionType]!) {
+                assertSectionBasics(section as Section);
+            }
+        }
+        // Asserting the lack of unrequested sections in the response:
         for (const inputSectionType of inputSectionTypes.filter(
-            (sectionType) => !["leg", "travelMode"].includes(sectionType)
+            (sectionType) => !["leg", ...testInputSectionTypes].includes(sectionType)
         )) {
             expect(routeProperties.sections[inputSectionType]).toBeUndefined();
         }
@@ -128,6 +144,8 @@ describe("Calculate route integration tests", () => {
         expect(sections.leg[0].summary.batteryConsumptionInkWh).toBeDefined();
         assertLegSectionBasics(sections.leg[1]);
         expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
+        // (this example has an extra "other" travel mode section)
+        expect(sections.travelMode?.length).toBeGreaterThan(1);
     });
 
     test("Roses to Olot thrilling route with alternatives", async () => {
@@ -168,32 +186,6 @@ describe("Calculate route integration tests", () => {
                 for (const section of sectionArray) {
                     assertSectionBasics(section as Section);
                 }
-            }
-        }
-    });
-
-    test("Route from kandersteg to Dover via Lötschen Pass to different sectionTypes in SDK response", async () => {
-        const inputSectionTypes: SectionType[] = [
-            "carTrain",
-            "motorway",
-            "traffic",
-            "tollRoad",
-            "tollVignette",
-            "urban"
-        ];
-        const result = await calculateRoute({
-            locations: [
-                [7.675106, 46.490793],
-                [7.74328, 46.403849],
-                [1.32248, 51.111645]
-            ],
-            sectionTypes: inputSectionTypes
-        });
-
-        for (const routeFeature of result.routes.features) {
-            const routeProperties = routeFeature.properties;
-            for (const inputSectionType of inputSectionTypes) {
-                expect(routeProperties.sections[inputSectionType]).toBeDefined();
             }
         }
     });
