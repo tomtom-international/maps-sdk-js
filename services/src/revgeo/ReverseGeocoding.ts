@@ -24,7 +24,7 @@ export const reverseGeocode = async (
     params: ReverseGeocodingParams,
     customTemplate?: Partial<ReverseGeocodingTemplate>
 ): Promise<ReverseGeocodingResponse> => {
-    return callService(params, { ...reverseGeocodingTemplate, ...customTemplate });
+    return callService(params, { ...reverseGeocodingTemplate, ...customTemplate }, "ReverseGeocode");
 };
 
 export default reverseGeocode;

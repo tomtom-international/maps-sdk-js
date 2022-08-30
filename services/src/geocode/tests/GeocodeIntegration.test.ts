@@ -3,10 +3,11 @@ import geocode from "../Geocoding";
 import { GeocodingResponse } from "../types/GeocodingResponse";
 import { GeocodingResponseAPI } from "../types/APITypes";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
+import { SDKError } from "../../shared/Errors";
 
 describe("Geocoding test without API key", () => {
     test("Geocoding test without API key", async () => {
-        await expect(geocode({ query: "" })).rejects.toEqual(403);
+        await expect(geocode({ query: "" })).rejects.toBeInstanceOf(SDKError);
     });
 });
 

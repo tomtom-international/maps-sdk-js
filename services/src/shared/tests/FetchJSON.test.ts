@@ -12,12 +12,17 @@ describe("Get json test", () => {
 
     test("Failed response from rejected axios promise", async () => {
         axiosMock.onGet().replyOnce(410);
-        await expect(getJson(new URL("https://blah.com"))).rejects.toEqual(410);
+        await expect(getJson(new URL("https://blah.com"))).rejects.toHaveProperty("response.status", 410);
     });
 
     test("Failed response", async () => {
         axiosMock.onGet().timeout();
-        await expect(getJson(new URL("https://blah.com"))).rejects.toEqual(undefined);
+        await expect(getJson(new URL("https://blah.com"))).rejects.toMatchObject({
+            config: {
+                data: undefined
+            },
+            code: "ECONNABORTED"
+        });
     });
 });
 
@@ -29,11 +34,16 @@ describe("Post json test", () => {
 
     test("Failed response from rejected axios promise", async () => {
         axiosMock.onPost().replyOnce(410);
-        await expect(postJson({ url: new URL("https://blah.com") })).rejects.toEqual(410);
+        await expect(postJson({ url: new URL("https://blah.com") })).rejects.toHaveProperty("response.status", 410);
     });
 
     test("Failed response", async () => {
         axiosMock.onPost().timeout();
-        await expect(postJson({ url: new URL("https://blah.com") })).rejects.toEqual(undefined);
+        await expect(postJson({ url: new URL("https://blah.com") })).rejects.toMatchObject({
+            config: {
+                data: undefined
+            },
+            code: "ECONNABORTED"
+        });
     });
 });

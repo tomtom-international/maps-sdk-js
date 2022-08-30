@@ -2,10 +2,18 @@ import exampleSDKResponse from "./RevGeoIntegrationTest.data.json";
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
+import { SDKError } from "../../shared/Errors";
 
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {
-        await expect(reverseGeocode({ position: [5.72884, 52.33499] })).rejects.toEqual(403);
+        const coordinates = { position: [5.72884, 52.33499] };
+
+        await expect(reverseGeocode(coordinates)).rejects.toBeInstanceOf(SDKError);
+        await expect(reverseGeocode(coordinates)).rejects.toMatchObject({
+            service: "ReverseGeocode",
+            message: "Request failed with status code 403",
+            status: 403
+        });
     });
 });
 
@@ -112,6 +120,10 @@ describe("Reverse Geocoding integration tests", () => {
     });
 
     test("Invalid position: latitude/longitude out of range.", async () => {
-        await expect(reverseGeocode({ position: [-91, 180] })).rejects.toEqual(400);
+        await expect(reverseGeocode({ position: [-91, 180] })).rejects.toMatchObject({
+            service: "ReverseGeocode",
+            message: "Invalid request: invalid position: latitude/longitude out of range.",
+            status: 400
+        });
     });
 });

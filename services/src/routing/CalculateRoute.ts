@@ -22,5 +22,5 @@ export const calculateRoute = async (
     params: CalculateRouteParams,
     customTemplate?: Partial<CalculateRouteTemplate>
 ): Promise<CalculateRouteResponse> => {
-    return callService(params, { ...calculateRouteTemplate, ...customTemplate });
+    return callService(params, { ...calculateRouteTemplate, ...customTemplate }, "Routing");
 };

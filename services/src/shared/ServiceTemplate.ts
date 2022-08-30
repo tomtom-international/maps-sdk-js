@@ -1,5 +1,7 @@
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
+import { SDKError } from "./Errors";
+import { Services } from "./types/ServicesTypes";
 
 /**
  * @ignore
@@ -13,10 +15,15 @@ import { mergeFromGlobal } from "@anw/go-sdk-js/core";
  */
 export const callService = async <PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE>(
     params: PARAMS,
-    template: ServiceTemplate<PARAMS, REQUEST, API_RESPONSE, RESPONSE>
+    template: ServiceTemplate<PARAMS, REQUEST, API_RESPONSE, RESPONSE>,
+    serviceName: Services
 ): Promise<RESPONSE> => {
-    const mergedParams = mergeFromGlobal(params);
-    const request = template.buildRequest(mergedParams);
-    const apiResponse = await template.sendRequest(request);
-    return template.parseResponse(apiResponse, mergedParams);
+    try {
+        const mergedParams = mergeFromGlobal(params);
+        const request = template.buildRequest(mergedParams);
+        const apiResponse = await template.sendRequest(request);
+        return template.parseResponse(apiResponse, mergedParams);
+    } catch (e) {
+        return Promise.reject(new SDKError(e, serviceName));
+    }
 };

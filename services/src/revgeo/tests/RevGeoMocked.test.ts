@@ -14,4 +14,13 @@ describe("Reverse Geocoding mock tests", () => {
             expect(await reverseGeocode(params)).toStrictEqual(expectedParsedResponse);
         }
     );
+
+    test("Server response with 429.", async () => {
+        axiosMock.onGet().replyOnce(429);
+        await expect(reverseGeocode({ position: [-232, -22] })).rejects.toMatchObject({
+            service: "ReverseGeocode",
+            message: "Too Many Requests: The API Key is over QPS (Queries per second)",
+            status: 429
+        });
+    });
 });

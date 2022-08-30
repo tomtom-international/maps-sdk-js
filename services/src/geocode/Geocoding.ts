@@ -23,7 +23,7 @@ export const geocode = async (
     params: GeocodingParams,
     customTemplate?: Partial<GeocodingTemplate>
 ): Promise<GeocodingResponse | unknown> => {
-    return callService(params, { ...geocodingTemplate, ...customTemplate });
+    return callService(params, { ...geocodingTemplate, ...customTemplate }, "Geocode");
 };
 
 export default geocode;
