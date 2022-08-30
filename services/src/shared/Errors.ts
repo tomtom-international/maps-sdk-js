@@ -30,10 +30,9 @@ export class SDKError extends Error {
         this.status = response?.status;
         this.stack = stack;
 
-        if (this.status === 400) {
-            if (response && response.data.error) {
-                this.message = response.data.error;
-            }
+        /* We use as message what returns from API if any, otherwise we have our APIErrorCode as a fallback*/
+        if (response?.data?.error) {
+            this.message = response.data.error;
             return;
         }
 
