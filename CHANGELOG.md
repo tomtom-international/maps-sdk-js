@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.25](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.24...v0.1.25) (2022-08-30)
+
+
+### Features
+
+* **routing:** adding support for vehicle parameters ([c5a49dd](https://github.com/tomtom-international/go-sdk-js/commit/c5a49dd111654e8535502e4e6c104635261003b1))
+
+
+### Bug Fixes
+
+* attempt to parameterize tests ([6687cda](https://github.com/tomtom-international/go-sdk-js/commit/6687cdab28d736cf0fb6f69fcc235ee0d58d5b93))
+* ignore docs and sonar props file from node package ([0b8896b](https://github.com/tomtom-international/go-sdk-js/commit/0b8896bbb91b42df748cd747f30f59d699bfed5a))
+
 ### [0.1.24](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.23...v0.1.24) (2022-08-25)
 
 
