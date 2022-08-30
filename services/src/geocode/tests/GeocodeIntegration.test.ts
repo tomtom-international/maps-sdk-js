@@ -8,6 +8,11 @@ import { SDKError } from "../../shared/Errors";
 describe("Geocoding test without API key", () => {
     test("Geocoding test without API key", async () => {
         await expect(geocode({ query: "" })).rejects.toBeInstanceOf(SDKError);
+        await expect(geocode({ query: "" })).rejects.toMatchObject({
+            service: "Geocode",
+            message: "Request failed with status code 403",
+            status: 403
+        });
     });
 });
 
