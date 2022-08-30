@@ -9,7 +9,7 @@ import {
     WaypointInputs
 } from "./types/CalculateRouteParams";
 import { CommonServiceParams } from "../shared/ServiceTypes";
-import { appendCommonParams } from "../shared/RequestBuildingUtils";
+import { appendByRepeatingParamName, appendCommonParams } from "../shared/RequestBuildingUtils";
 import {
     CombustionConsumptionModel,
     ConsumptionModelEfficiency,
@@ -37,14 +37,6 @@ const buildWaypointsString = (waypointInputs: WaypointInputs): string => {
         .join(":");
 };
 
-// Adds parameter from the array by repeating each array part into a query parameter of the same name.
-// E.g. ...&avoid=motorways&avoid=ferries&...
-const appendByRepeatingParamName = (urlParams: URLSearchParams, paramName: string, paramArray?: string[]): void => {
-    for (const param of paramArray || []) {
-        urlParams.append(paramName, param);
-    }
-};
-
 const appendWhenParams = (urlParams: URLSearchParams, when?: DepartArriveParams): void => {
     if (when?.date) {
         const formattedDate = when.date.toISOString();
@@ -70,10 +62,10 @@ const appendSectionTypes = (urlParams: URLSearchParams, sectionTypes?: InputSect
 
 const appendConsumptionEfficiency = (urlParams: URLSearchParams, efficiency?: ConsumptionModelEfficiency): void => {
     if (efficiency) {
-        efficiency.acceleration && urlParams.append("accelerationEfficiency", String(efficiency.acceleration));
-        efficiency.deceleration && urlParams.append("decelerationEfficiency", String(efficiency.deceleration));
-        efficiency.uphill && urlParams.append("uphillEfficiency", String(efficiency.uphill));
-        efficiency.downhill && urlParams.append("downhillEfficiency", String(efficiency.downhill));
+        !isNil(efficiency.acceleration) && urlParams.append("accelerationEfficiency", String(efficiency.acceleration));
+        !isNil(efficiency.deceleration) && urlParams.append("decelerationEfficiency", String(efficiency.deceleration));
+        !isNil(efficiency.uphill) && urlParams.append("uphillEfficiency", String(efficiency.uphill));
+        !isNil(efficiency.downhill) && urlParams.append("downhillEfficiency", String(efficiency.downhill));
     }
 };
 
@@ -89,11 +81,11 @@ const appendCombustionConsumptionModel = (urlParams: URLSearchParams, model: Com
             "constantSpeedConsumptionInLitersPerHundredkm",
             buildSpeedToConsumptionString(model.speedsToConsumptionsLiters)
         );
-    model.auxiliaryPowerInLitersPerHour &&
+    !isNil(model.auxiliaryPowerInLitersPerHour) &&
         urlParams.append("auxiliaryPowerInLitersPerHour", String(model.auxiliaryPowerInLitersPerHour));
-    model.fuelEnergyDensityInMJoulesPerLiter &&
+    !isNil(model.fuelEnergyDensityInMJoulesPerLiter) &&
         urlParams.append("fuelEnergyDensityInMJoulesPerLiter", String(model.fuelEnergyDensityInMJoulesPerLiter));
-    model.currentFuelLiters && urlParams.append("currentFuelInLiters", String(model.currentFuelLiters));
+    !isNil(model.currentFuelLiters) && urlParams.append("currentFuelInLiters", String(model.currentFuelLiters));
 };
 
 const appendElectricConsumptionModel = (urlParams: URLSearchParams, model: ElectricConsumptionModel): void => {
@@ -102,13 +94,13 @@ const appendElectricConsumptionModel = (urlParams: URLSearchParams, model: Elect
             "constantSpeedConsumptionInkWhPerHundredkm",
             buildSpeedToConsumptionString(model.speedsToConsumptionsKWH)
         );
-    model.auxiliaryPowerInkW && urlParams.append("auxiliaryPowerInkW", String(model.auxiliaryPowerInkW));
-    model.consumptionInKWHPerKMAltitudeGain &&
+    !isNil(model.auxiliaryPowerInkW) && urlParams.append("auxiliaryPowerInkW", String(model.auxiliaryPowerInkW));
+    !isNil(model.consumptionInKWHPerKMAltitudeGain) &&
         urlParams.append("consumptionInkWhPerkmAltitudeGain", String(model.consumptionInKWHPerKMAltitudeGain));
-    model.recuperationInKWHPerKMAltitudeLoss &&
+    !isNil(model.recuperationInKWHPerKMAltitudeLoss) &&
         urlParams.append("recuperationInkWhPerkmAltitudeLoss", String(model.recuperationInKWHPerKMAltitudeLoss));
-    model.maxChargeKWH && urlParams.append("maxChargeInkWh", String(model.maxChargeKWH));
-    model.currentChargeKWH && urlParams.append("currentChargeInkWh", String(model.currentChargeKWH));
+    !isNil(model.maxChargeKWH) && urlParams.append("maxChargeInkWh", String(model.maxChargeKWH));
+    !isNil(model.currentChargeKWH) && urlParams.append("currentChargeInkWh", String(model.currentChargeKWH));
 };
 
 const appendVehicleConsumption = (urlParams: URLSearchParams, consumption?: VehicleConsumption): void => {
@@ -125,6 +117,7 @@ const appendVehicleConsumption = (urlParams: URLSearchParams, consumption?: Vehi
 
 const appendVehicleDimensions = (urlParams: URLSearchParams, dimensions?: VehicleDimensions): void => {
     if (dimensions) {
+        // (defaults are 0):
         dimensions.lengthMeters && urlParams.append("vehicleLength", String(dimensions.lengthMeters));
         dimensions.heightMeters && urlParams.append("vehicleHeight", String(dimensions.heightMeters));
         dimensions.widthMeters && urlParams.append("vehicleWidth", String(dimensions.widthMeters));
@@ -140,6 +133,7 @@ const appendVehicleParams = (urlParams: URLSearchParams, vehicleParams?: Vehicle
         appendByRepeatingParamName(urlParams, "vehicleLoadType", vehicleParams.loadTypes);
         vehicleParams.adrCode && urlParams.append("vehicleAdrTunnelRestrictionCode", vehicleParams.adrCode);
         vehicleParams.commercial && urlParams.append("vehicleCommercial", String(vehicleParams.commercial));
+        // (default is 0):
         vehicleParams.maxSpeedKMH && urlParams.append("vehicleMaxSpeed", String(vehicleParams.maxSpeedKMH));
     }
 };
