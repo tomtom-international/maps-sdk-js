@@ -8,12 +8,8 @@ export class SDKError extends Error {
     readonly __originalError: unknown;
 
     constructor(readonly error: unknown, readonly service?: Services, message?: string) {
-        super((error as Error).message);
+        super(message ? message : (error as Error).message);
         this.__originalError = error;
-
-        if (message) {
-            this.message = message;
-        }
 
         this.transformErrorForSerialization();
     }
