@@ -60,12 +60,16 @@ export type CauseTEC = {
 };
 
 /**
- *  describes Tec information about this traffic incident based on TPEG2-TEC standard
- *  {number} [effectCode] The effect on the traffic flow. For traffic incident based on TPEG2-TEC standard.
- *  {Case} [causes] List of cause elements that caused problems in traffic. For traffic incident based on TPEG2-TEC standard
+ *  Describes Tec information about this traffic incident based on TPEG2-TEC standard
  */
 export type TrafficIncidentTEC = {
+    /**
+     * The effect on the traffic flow. For traffic incident based on TPEG2-TEC standard.
+     */
     effectCode?: number;
+    /**
+     *  List of cause elements that caused problems in traffic. For traffic incident based on TPEG2-TEC standard
+     */
     causes?: CauseTEC[];
 };
 
