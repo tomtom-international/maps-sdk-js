@@ -86,6 +86,8 @@ Make sure you have installed the following applications:
 
 <br />
 
+### Installation
+
 1. Setup NodeJS/NPM via NVM
     ```shell
     nvm i 16
