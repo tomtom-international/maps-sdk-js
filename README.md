@@ -84,6 +84,46 @@ Make sure you have installed the following applications:
 * [NodeJS 16.+ (LTS)](https://nodejs.org/) - via NVM
 * NPM 8.+ (correspondent to the LTS) - via NVM
 
+<br />
+
+1. Setup NodeJS/NPM via NVM
+    ```shell
+    nvm i 16
+    nvm use 16
+
+    # making 16th version the default one (optional)
+    nvm alias default 16
+    ```
+
+2. Clone the repo
+   ```sh
+    git clone git@github.com:tomtom-international/go-sdk-js.git
+    # or
+    git clone https://github.com/tomtom-international/go-sdk-js.git
+   ```
+
+3. Install NPM packages
+   ```sh
+    npm i -ws
+    npm ci -ws
+    # root project (currently only for docs generation)
+    npm i
+    npm ci
+   ```
+   
+  You can also run install packages for a certain workspace:
+  ```sh
+        # specific workspaces
+        npm i -w core
+        npm i -w map
+        npm i -w services
+        # or
+        npm ci -w core
+        # and so on...
+  ```
+
+>```node_modules``` directory appears not in workspaces, but in the root directory. This is how it should be.
+
 ## Development of go-sdk-js
 
 * [Introduction](documentation/product-information/introduction.md)
