@@ -1,5 +1,3 @@
-# go-sdk-js
-
 [![Quality Gate Status](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=alert_status&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Reliability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=reliability_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Maintainability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=sqale_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
@@ -9,9 +7,82 @@
 [![Bugs](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=bugs&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Vulnerabilities](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=vulnerabilities&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 
+<div align="center">
+  <a href="https://github.com/tomtom-international/go-sdk-js">
+    <img src="documentation/images/tt_logo.png" alt="Logo" width="400" height="90">
+  </a>
+
+  <h3 align="center">go-sdk-js</h3>
+
+  <p align="center">
+    GO SDK JS is a JavaScript library for building web applications using TomTom maps and location services
+    <br />
+    <a href="https://github.com/tomtom-international/go-sdk-js/tree/main/documentation"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/tomtom-international/go-sdk-js/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/tomtom-international/go-sdk-js/issues">Request Feature</a>
+  </p>
+</div>
+<br />
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+      <li><a href="#what-is-go-sdk-for-web">What is GO-SDK for Web?</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
+<br />
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
 GO SDK JS is a JavaScript library for building web applications using TomTom maps and location services. With GO SDK JS you can build powerful web applications that seamlessly integrate TomTom's
 mapping and service technologies including map display and interaction, search, routing, and traffic.
+
+<br />
+
+<!-- WHAT IS GO SDK WEB -->
+## What is GO-SDK for Web?
+
+Easily integrate TomTom services into your web application with this convenient client library that hides the complexity of bare RESTful service calls from developers. Boost your productivity with fully styleable and easily customized components. Check out the examples page for the most common use cases for your web application.
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+**TODO**: Explain how to install the sdk for normal usage of it.
+
+To get start to contributing to **GO-SDK-WEB**, please follow the steps bellow.
+
+<br />
+
+### Prerequisites
+
+Make sure you have installed the following applications:
+
+* [Git](https://git-scm.com/) latest
+* [NVM](https://github.com/nvm-sh/nvm) latest
+* [NodeJS 16.+ (LTS)](https://nodejs.org/) - via NVM
+* NPM 8.+ (correspondent to the LTS) - via NVM
 
 ## Development of go-sdk-js
 
