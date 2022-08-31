@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "typedoc": "^0.23.12",
-    "typedoc-plugin-markdown": "^3.13.4",
+    "typedoc-plugin-markdown": "^3.13.5",
     "typedoc-plugin-missing-exports": "^1.0.0"
   }
 }
