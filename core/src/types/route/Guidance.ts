@@ -200,10 +200,10 @@ export type Guidance = {
     /**
      * Main ordered list of instructions to follow.
      */
-    instructions?: Instruction[];
+    instructions: Instruction[];
     /**
      * This groups a sequence of instruction elements which are related to each other.
      * * They refer to the main instructions list.
      */
-    instructionGroups?: InstructionGroup[];
+    instructionGroups: InstructionGroup[];
 };
