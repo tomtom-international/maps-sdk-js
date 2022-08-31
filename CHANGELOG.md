@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.27](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.26...v0.1.27) (2022-08-31)
+
+
+### Features
+
+* **error-handler:** Add first version of error handler ([c011740](https://github.com/tomtom-international/go-sdk-js/commit/c011740a1ed6a3ac391fa4e91bcc7328f9179a65))
+
+
+### Bug Fixes
+
+* **error-handler:** Removing Error.test ([6cdddb0](https://github.com/tomtom-international/go-sdk-js/commit/6cdddb0fb4026b7cf224b87251d47033f96e92ab))
+* **error-handler:** Testing error object to contain correct status. ([3f72a67](https://github.com/tomtom-international/go-sdk-js/commit/3f72a67b03751d29d8dc85810a4b8ae2dd4a76ba))
+* **error-handler:** Using the default message from API if any ([e19e222](https://github.com/tomtom-international/go-sdk-js/commit/e19e222d442503ad9202aaf0dd3d54ab75b99f3b))
+
 ### [0.1.26](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.25...v0.1.26) (2022-08-30)
 
 ### [0.1.25](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.24...v0.1.25) (2022-08-30)
