@@ -123,15 +123,13 @@ const parseSections = (apiRoute: RouteAPI): Sections => {
     return result;
 };
 
-const parseGuidance = (apiGuidance: GuidanceAPI): Guidance =>
-    ({
-        instructions: apiGuidance.instructions.map((apiInstruction) => (
-            {
-                ...apiInstruction,
-                point: [apiInstruction.point.longitude, apiInstruction.point.latitude]
-            })),
-        instructionGroups: apiGuidance.instructionGroups
-    });
+const parseGuidance = (apiGuidance: GuidanceAPI): Guidance => ({
+    instructions: apiGuidance.instructions.map((apiInstruction) => ({
+        ...apiInstruction,
+        point: [apiInstruction.point.longitude, apiInstruction.point.latitude]
+    })),
+    instructionGroups: apiGuidance.instructionGroups
+});
 
 const parseRoute = (apiRoute: RouteAPI): Route => ({
     type: "Feature",

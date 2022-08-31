@@ -51,7 +51,7 @@ export type InstructionAPI = Omit<Instruction, "point"> & {
     point: {
         latitude: number;
         longitude: number;
-    }
+    };
 };
 
 export type GuidanceAPI = Omit<Guidance, "instructions"> & {
