@@ -111,7 +111,7 @@ Make sure you have installed the following applications:
     npm ci
    ```
    
-  You can also run install packages for a certain workspace:
+  You can also install packages for a certain workspace:
   ```sh
         # specific workspaces
         npm i -w core
