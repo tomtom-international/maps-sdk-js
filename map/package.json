@@ -5,8 +5,8 @@
   "main": "main.js",
   "module": "./dist/map.es.js",
   "scripts": {
-    "test": "echo \"Implement unit and integration tests!\"",
-    "test:coverage": "echo \"Implement unit and integration tests!\"",
+    "test": "echo \"Implement unit and integration tests for the map!\"",
+    "test:coverage": "echo \"Implement unit and integration tests for the map!\"",
     "build": "rollup -c",
     "build:full": "npm run type-check && npm run build",
     "lint": "eslint .",

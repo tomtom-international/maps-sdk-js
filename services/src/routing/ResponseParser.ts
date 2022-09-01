@@ -1,9 +1,21 @@
-import { DelayMagnitude, Guidance, Route, Sections, SectionType, Summary, TravelMode } from "@anw/go-sdk-js/core";
+import {
+    CountrySection,
+    DelayMagnitude,
+    LegSection,
+    Guidance,
+    Route,
+    Section,
+    Sections,
+    SectionType,
+    Summary,
+    TrafficSection,
+    TravelMode,
+    TravelModeSection
+} from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
 import { CalculateRouteResponse } from "./CalculateRoute";
 import { CalculateRouteResultAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
 import { LineString } from "geojson";
-import { CountrySection, LegSection, Section, TrafficSection, TravelModeSection } from "core/src/types/route/Sections";
 
 const parseSummary = (apiSummary: SummaryAPI): Summary => ({
     ...apiSummary,

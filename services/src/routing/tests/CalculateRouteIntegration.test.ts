@@ -1,7 +1,6 @@
-import { inputSectionTypes, LegSection, Section, Sections, Summary } from "@anw/go-sdk-js/core";
+import { inputSectionTypes, LegSection, Section, Sections, SectionType, Summary } from "@anw/go-sdk-js/core";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { calculateRoute } from "../CalculateRoute";
-import { SectionType } from "core/src/types/route/Sections";
 
 const assertSummaryBasics = (summary: Summary): void => {
     expect(summary).toBeDefined();

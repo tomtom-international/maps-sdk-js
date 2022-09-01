@@ -1,5 +1,4 @@
-import { Guidance, Instruction, Summary, TravelMode } from "@anw/go-sdk-js/core";
-import { TrafficCategory, TrafficIncidentTEC } from "core/src/types/route/Sections";
+import { Guidance, Instruction, Summary, TrafficCategory, TrafficIncidentTEC, TravelMode } from "@anw/go-sdk-js/core";
 
 export type ReportAPI = {
     effectiveSettings: { key: string; value: string }[];
