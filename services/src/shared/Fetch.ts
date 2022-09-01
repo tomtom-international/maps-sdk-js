@@ -4,7 +4,6 @@ import axios from "axios";
  * Fetches the given HTTP JSON resource with an HTTP GET request and returns a promise with the response as a JSON object.
  * If the response isn't successful it returns a rejected promise with the http error code.
  * @ignore
- * @internal
  * @param url The URL to fetch.
  */
 export const getJson = async <T>(url: URL): Promise<T> => {
@@ -22,7 +21,6 @@ export type PostObject<D> = { url: URL; data?: D };
  * Fetches the given HTTP JSON resource with an HTTP POST request and returns a promise with the response as a JSON object.
  * If the response isn't successful it returns a rejected promise with the http error code.
  * @ignore
- * @internal
  * @param input The POST object with URL and optional payload.
  */
 export const postJson = async <T, D>(input: PostObject<D>): Promise<T> => {

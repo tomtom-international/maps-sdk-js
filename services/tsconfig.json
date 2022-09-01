@@ -3,7 +3,6 @@
     "incremental": true,
     "declaration": true,
     "skipLibCheck": true,
-    "stripInternal": true,
     "resolveJsonModule": true,
     "allowJs": false,
     "esModuleInterop": true,
