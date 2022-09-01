@@ -59,7 +59,7 @@
     "@types/geojson": "^7946.0.10"
   },
   "devDependencies": {
-    "typedoc": "^0.23.12",
+    "typedoc": "^0.23.13",
     "typedoc-plugin-markdown": "^3.13.5",
     "typedoc-plugin-missing-exports": "^1.0.0"
   }
