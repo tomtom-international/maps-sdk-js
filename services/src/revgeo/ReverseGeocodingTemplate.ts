@@ -4,13 +4,19 @@ import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 import { buildRevGeoRequest } from "./RequestBuilder";
 import { getJson } from "../shared/Fetch";
 import { parseRevGeoResponse } from "./ResponseParser";
+import { ReverseGeocodingResponseAPI } from "./types/APITypes";
 
 /**
  * Reverse Geocoding service template type.
  * @group Search
  * @category Reverse Geocoding
  */
-export type ReverseGeocodingTemplate = ServiceTemplate<ReverseGeocodingParams, URL, any, ReverseGeocodingResponse>;
+export type ReverseGeocodingTemplate = ServiceTemplate<
+    ReverseGeocodingParams,
+    URL,
+    ReverseGeocodingResponseAPI,
+    ReverseGeocodingResponse
+>;
 
 /**
  * Reverse Geocoding service template main implementation.

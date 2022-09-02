@@ -32,7 +32,7 @@ export type GeographyType =
  */
 export type MapcodeType = "Local" | "International" | "Alternative";
 
-export type MapCodes = {
+export type Mapcode = {
     /**
      * The type of the Mapcode.
      */
@@ -127,7 +127,7 @@ export type CommonLocationProps = {
     /**
      * List of mapcode objects.
      */
-    mapcodes?: MapCodes[];
+    mapcodes?: Mapcode[];
     /**
      * A viewport which can be used to display the result on a map.
      */
@@ -150,6 +150,8 @@ export type CommonLocationProps = {
     dataSources?: LocationDataSources;
 };
 
+export type SideOfStreet = "L" | "R";
+
 export type RevGeoAddressProps = CommonLocationProps & {
     /**
      * Original lng-lat coordinates of the reverse geocoded location.
@@ -163,7 +165,7 @@ export type RevGeoAddressProps = CommonLocationProps & {
     /**
      * The left or right side of the street location. This is returned only when the number parameter was defined.
      */
-    sideOfStreet?: "L" | "R";
+    sideOfStreet?: SideOfStreet;
 };
 
 export type AddressProperties = {

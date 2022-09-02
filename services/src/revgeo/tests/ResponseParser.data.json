@@ -134,5 +134,102 @@
         ]
       }
     }
+  ],
+  [
+    "Country example 0",
+    {
+      "position": [
+        5.72884,
+        52.33499
+      ],
+      "geographyType": [
+        "Country"
+      ]
+    },
+    {
+      "summary": {
+        "queryTime": 15,
+        "numResults": 1
+      },
+      "addresses": [
+        {
+          "address": {
+            "routeNumbers": [],
+            "countryCode": "NL",
+            "country": "Nederland",
+            "countryCodeISO3": "NLD",
+            "freeformAddress": "Nederland",
+            "boundingBox": {
+              "northEast": "53.555013,7.227545",
+              "southWest": "50.750449,3.358334",
+              "entity": "position"
+            }
+          },
+          "position": "52.334991,5.728840",
+          "dataSources": {
+            "geometry": {
+              "id": "00005858-5800-1200-0000-0000773670cd"
+            }
+          },
+          "entityType": "Country"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.72884,
+          52.33499
+        ]
+      },
+      "properties": {
+        "type": "Geography",
+        "address": {
+          "routeNumbers": [],
+          "countryCode": "NL",
+          "country": "Nederland",
+          "countryCodeISO3": "NLD",
+          "freeformAddress": "Nederland"
+        },
+        "dataSources": {
+          "geometry": {
+            "id": "00005858-5800-1200-0000-0000773670cd"
+          }
+        },
+        "boundingBox": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                3.358334,
+                50.750449
+              ],
+              [
+                7.227545,
+                50.750449
+              ],
+              [
+                7.227545,
+                53.555013
+              ],
+              [
+                3.358334,
+                53.555013
+              ],
+              [
+                3.358334,
+                50.750449
+              ]
+            ]
+          ]
+        },
+        "originalPosition": [
+          5.72884,
+          52.334991
+        ]
+      }
+    }
   ]
 ]

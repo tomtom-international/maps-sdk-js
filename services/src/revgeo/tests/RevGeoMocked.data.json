@@ -508,6 +508,11 @@
             "fullMapcode": "WH6SM.QSS7"
           }
         ],
+        "dataSources": {
+          "geometry": {
+            "id": "00004732-3100-3c00-0000-0000240fa19a"
+          }
+        },
         "boundingBox": {
           "type": "Polygon",
           "coordinates": [

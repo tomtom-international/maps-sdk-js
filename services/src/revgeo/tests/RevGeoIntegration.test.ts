@@ -1,4 +1,4 @@
-import exampleSDKResponse from "./RevGeoIntegrationTest.data.json";
+import exampleSDKResponse from "./RevGeoIntegration.data.json";
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
