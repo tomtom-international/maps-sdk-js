@@ -21,6 +21,10 @@ type GeocodingResultAPI = Omit<
     addressRanges?: AddressRangesAPI;
 };
 
+/**
+ * @group Geocoding
+ * @category Types
+ */
 export type GeocodingResponseAPI = {
     /**
      * Summary information about the search that was performed.

@@ -1,7 +1,12 @@
 import { EntryPoint } from "@anw/go-sdk-js/core";
 
+/**
+ * @group Shared
+ */
 export type IndexTypesAbbreviation = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
-
+/**
+ * @group Shared
+ */
 export type LatLonAPI = {
     /**
      * Latitude. min/max: -90 to +90
@@ -13,6 +18,9 @@ export type LatLonAPI = {
     lon: number;
 };
 
+/**
+ * @group Shared
+ */
 export type ViewportAPI = {
     /**
      * Top-left corner of the rectangle
@@ -24,11 +32,23 @@ export type ViewportAPI = {
     btmRightPoint: LatLonAPI;
 };
 
+/**
+ * @group Shared
+ */
 export type BoundingBoxTopLeftAPI = ViewportAPI;
+/**
+ * @group Shared
+ */
 export type BoundingBoxSouthWestAPI = { southWest: string; northEast: string };
 
+/**
+ * @group Shared
+ */
 export type BoundingBoxAPI = BoundingBoxTopLeftAPI | BoundingBoxSouthWestAPI;
 
+/**
+ * @group Shared
+ */
 export type EntryPointAPI = Omit<EntryPoint, "position"> & {
     /**
      * Position of the entry point.
@@ -36,6 +56,9 @@ export type EntryPointAPI = Omit<EntryPoint, "position"> & {
     position: LatLonAPI;
 };
 
+/**
+ * @group Shared
+ */
 export type AddressRangesAPI = {
     /**
      * An address range on the left side of a street segment (assuming looking from the "from" end toward the "to" end).
@@ -57,6 +80,9 @@ export type AddressRangesAPI = {
 
 type SummaryQueryType = "NEARBY" | "NON_NEAR";
 
+/**
+ * @group Shared
+ */
 export type Summary = {
     /**
      * 	The query as interpreted by the search engine.

@@ -8,8 +8,8 @@ import { ReverseGeocodingResponseAPI } from "./types/APITypes";
 
 /**
  * Reverse Geocoding service template type.
- * @group Search
- * @category Reverse Geocoding
+ * @group Reverse Geocoding
+ * @category Types
  */
 export type ReverseGeocodingTemplate = ServiceTemplate<
     ReverseGeocodingParams,
@@ -20,8 +20,8 @@ export type ReverseGeocodingTemplate = ServiceTemplate<
 
 /**
  * Reverse Geocoding service template main implementation.
- * @group Search
- * @category Reverse Geocoding
+ * @group Reverse Geocoding
+ * @category Variables
  */
 export const reverseGeocodingTemplate: ReverseGeocodingTemplate = {
     buildRequest: buildRevGeoRequest,

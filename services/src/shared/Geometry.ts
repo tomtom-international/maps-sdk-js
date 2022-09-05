@@ -14,6 +14,10 @@ const hasTopLeftPoint = (bbox: BoundingBoxAPI): bbox is BoundingBoxTopLeftAPI =>
     return (<BoundingBoxTopLeftAPI>bbox).topLeftPoint !== undefined;
 };
 
+/**
+ * @ignore
+ * @param apiBBox
+ */
 export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
     let westSouth, eastNorth;
     if (hasTopLeftPoint(apiBBox)) {
@@ -28,16 +32,28 @@ export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
     return { type: "Polygon", coordinates: [[westSouth, eastSouth, eastNorth, westNorth, westSouth]] };
 };
 
+/**
+ * @ignore
+ * @param polygon
+ */
 export const polygonToTopLeftBBox = (polygon: Polygon): Position => {
     const { coordinates } = polygon;
     return [coordinates[0][2][1], coordinates[0][0][0]];
 };
 
+/**
+ * @ignore
+ * @param polygon
+ */
 export const polygonToBtmRightBBox = (polygon: Polygon): Position => {
     const { coordinates } = polygon;
     return [coordinates[0][1][1], coordinates[0][1][0]];
 };
 
+/**
+ * @ignore
+ * @param point
+ */
 export const latLonAPIToPosition = (point: LatLonAPI): Position => {
     return [point.lon, point.lat];
 };

@@ -4,6 +4,12 @@ import { GeocodingResponseAPI } from "./types/APITypes";
 import { GeographyType, toPointFeature } from "@anw/go-sdk-js/core";
 import { bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
 
+/**
+ * Default method for parsing geocoding request from {@link GeocodingResponse}
+ * @group Geocoding
+ * @category Functions
+ * @param apiResponse
+ */
 export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): GeocodingResponse => {
     const results = apiResponse.results;
     const features = results.map(({ boundingBox, viewport, entryPoints, addressRanges, entityType, ...result }) => ({

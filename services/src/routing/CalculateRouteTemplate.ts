@@ -6,6 +6,10 @@ import { parseCalculateRouteResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
 import { CalculateRouteResponseAPI } from "./types/APITypes";
 
+/**
+ * @group Calculate Route
+ * @category Types
+ */
 export type CalculateRouteTemplate = ServiceTemplate<
     CalculateRouteParams,
     URL,
@@ -13,6 +17,10 @@ export type CalculateRouteTemplate = ServiceTemplate<
     CalculateRouteResponse
 >;
 
+/**
+ * @group Calculate Route
+ * @category Variables
+ */
 export const calculateRouteTemplate: CalculateRouteTemplate = {
     buildRequest: buildCalculateRouteRequest,
     sendRequest: getJson,

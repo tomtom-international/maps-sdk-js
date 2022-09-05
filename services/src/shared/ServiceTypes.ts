@@ -8,14 +8,13 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
      * Optional, custom base URL for the service.
      * Should contain the URL until the part that will change per service call.
      * Example: https://api.tomtom.com/search/10/reverseGeocode/
-     * @group Utility
      */
     customServiceBaseURL?: string;
 };
 
 /**
  * Template functions for any service.
- * @group Utility
+ * @group Shared
  */
 export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE> = {
     /**

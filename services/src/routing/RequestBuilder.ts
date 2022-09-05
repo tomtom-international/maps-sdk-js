@@ -138,6 +138,12 @@ const appendVehicleParams = (urlParams: URLSearchParams, vehicleParams?: Vehicle
     }
 };
 
+/**
+ * Default method for building calculate route request from {@link CalculateRouteParams}
+ * @group Calculate Route
+ * @category Functions
+ * @param params The calculate route parameters, with global configuration already merged into them.
+ */
 export const buildCalculateRouteRequest = (params: CalculateRouteParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}${buildWaypointsString(params.locations)}/json`);
     const urlParams: URLSearchParams = url.searchParams;

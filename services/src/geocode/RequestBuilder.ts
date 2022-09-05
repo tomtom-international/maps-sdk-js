@@ -8,6 +8,12 @@ import { polygonToTopLeftBBox, polygonToBtmRightBBox } from "../shared/Geometry"
 const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
     mergedOptions.customServiceBaseURL || `${mergedOptions.commonBaseURL}search/2/geocode/`;
 
+/**
+ * Default method for building geocoding request from {@link GeocodingParams}
+ * @group Geocoding
+ * @category Functions
+ * @param params The geocoding parameters, with global configuration already merged into them.
+ */
 export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const lngLat = params.position && getLngLatArray(params.position);
     const url = new URL(`${buildURLBasePath(params)}${params.query}.json`);

@@ -2,6 +2,10 @@ import { LocationType, Locations, CommonLocationProps } from "@anw/go-sdk-js/cor
 
 type GeocodingLocationType = Exclude<LocationType, "POI">;
 
+/**
+ * @group Geocoding
+ * @category Types
+ */
 export type GeocodingProps = CommonLocationProps & {
     type: GeocodingLocationType;
     /**
@@ -10,4 +14,8 @@ export type GeocodingProps = CommonLocationProps & {
     matchConfidence: { score: number };
 };
 
+/**
+ * @group Geocoding
+ * @category Types
+ */
 export type GeocodingResponse = Locations<GeocodingProps>;

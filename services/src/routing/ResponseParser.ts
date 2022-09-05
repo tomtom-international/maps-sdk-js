@@ -153,6 +153,12 @@ const parseRoute = (apiRoute: RouteAPI): Route => ({
     }
 });
 
+/**
+ * Default method for parsing calculate route request from {@link CalculateRouteResponse}
+ * @group Calculate Route
+ * @category Functions
+ * @param apiResponse
+ */
 export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): CalculateRouteResponse => ({
     routes: {
         type: "FeatureCollection",

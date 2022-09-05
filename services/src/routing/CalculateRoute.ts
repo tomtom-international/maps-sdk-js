@@ -3,6 +3,10 @@ import { CalculateRouteParams } from "./types/CalculateRouteParams";
 import { calculateRouteTemplate, CalculateRouteTemplate } from "./CalculateRouteTemplate";
 import { callService } from "../shared/ServiceTemplate";
 
+/**
+ * @group Calculate Route
+ * @category Types
+ */
 export type CalculateRouteResponse = { routes: Routes };
 
 /**
@@ -14,6 +18,8 @@ export type CalculateRouteResponse = { routes: Routes };
  * * Information returned includes the distance, estimated travel time, and a representation of the route geometry.
  * * Additional routing information such as optimized waypoint order or turn by turn instructions is also available,
  * depending on the options selected.
+ * @group Calculate Route
+ * @category Functions
  * @param params Mandatory and optional parameters, with the global configuration automatically included.
  * @param customTemplate Advanced optional parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/routing-api/documentation/routing/calculate-route

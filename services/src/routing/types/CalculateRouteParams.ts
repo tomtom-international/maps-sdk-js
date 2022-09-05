@@ -6,6 +6,8 @@ import { VehicleParameters } from "./VehicleParams";
  * A waypoint input is either a complex waypoint object or anything with coordinates.
  * * By default, waypoints are considered as single points,
  * unless a radius is specified, which then transforms the waypoint into a circle(soft waypoint).
+ * @group Calculate Route
+ * @category Types
  */
 export type WaypointInput = Waypoint | HasLngLat;
 
@@ -14,9 +16,14 @@ export type WaypointInput = Waypoint | HasLngLat;
  * * They must at least contain origin and destination, with any further waypoints ordered in between them.
  * * Origin and destination must be default waypoints without radius (point type, not circle).
  * * All the locations in the array are to be traversed in sequence (e.g. [origin, waypoint1, waypoint2, destination])
+ * @group Calculate Route
+ * @category Types
  */
 export type WaypointInputs = [WaypointInput, WaypointInput, ...WaypointInput[]];
-
+/**
+ * @group Calculate Route
+ * @category Types
+ */
 export type RouteMandatoryParams = {
     /**
      * These are the specified locations for route calculation. They are the main input and are mandatory.
@@ -27,12 +34,16 @@ export type RouteMandatoryParams = {
 
 /**
  * Specifies when to depart (start travelling) or to arrive (finish travelling).
+ * @group Calculate Route
+ * @category Types
  */
 export type DepartArriveParams = { option: "departAt" | "arriveBy"; date: Date };
 
 /**
  * Section type which can be requested in the route parameters.
  * * (Other section types such as "leg" might be automatically calculated regardless of these inputs).
+ * @group Calculate Route
+ * @category Types
  */
 export type InputSectionType = typeof inputSectionTypes[number];
 
@@ -48,16 +59,22 @@ export type InputSectionType = typeof inputSectionTypes[number];
  * * tollVignette: sections which require a toll vignette to be present.
  * * country: countries the route has parts in.
  * * travelMode: sections in relation to the request parameter 'travelMode'.
+ * @group Calculate Route
+ * @category Types
  */
 export type InputSectionTypes = "all" | InputSectionType[];
 
 /**
  * Basic low/normal/high option.
+ * @group Calculate Route
+ * @category Types
  */
 export type LNH = "low" | "normal" | "high";
 
 /**
  * Options applicable to the thrilling route type.
+ * @group Calculate Route
+ * @category Types
  */
 export type ThrillingParams = {
     /**
@@ -78,6 +95,10 @@ export type ThrillingParams = {
     windingness?: LNH;
 };
 
+/**
+ * @group Calculate Route
+ * @category Types
+ */
 export type RouteOptionalParams = {
     /**
      * Specifies something that the route calculation should try to avoid when determining the route.
@@ -209,4 +230,8 @@ export type RouteOptionalParams = {
     when?: DepartArriveParams;
 };
 
+/**
+ * @group Calculate Route
+ * @category Types
+ */
 export type CalculateRouteParams = CommonServiceParams & RouteMandatoryParams & RouteOptionalParams;

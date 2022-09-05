@@ -5,6 +5,10 @@ import { Polygon } from "geojson";
 
 type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
 
+/**
+ * @group Geocoding
+ * @category Types
+ */
 export type GeocodingParams = CommonServiceParams & {
     /**
      * Query string. Must be properly URL encoded (mandatory).

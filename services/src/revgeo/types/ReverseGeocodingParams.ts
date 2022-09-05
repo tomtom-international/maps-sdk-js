@@ -3,13 +3,14 @@ import { HasLngLat, View, GeographyType, MapcodeType } from "@anw/go-sdk-js/core
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 /**
  * @enum
- * @group Shared
+ * @group Reverse Geocoding
+ * @category Types
  */
 export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rotary" | "LocalStreet";
 
 /**
- * @group Search
- * @category Reverse Geocoding
+ * @group Reverse Geocoding
+ * @category Types
  */
 export type ReverseGeocodingMandatoryParams = {
     /**
@@ -19,6 +20,10 @@ export type ReverseGeocodingMandatoryParams = {
     position: HasLngLat;
 };
 
+/**
+ * @group Reverse Geocoding
+ * @category Types
+ */
 export type ReverseGeocodingOptionalParams = {
     /**
      * Format of newlines in the formatted address.
@@ -142,6 +147,10 @@ export type ReverseGeocodingOptionalParams = {
     view?: View;
 };
 
+/**
+ * @group Reverse Geocoding
+ * @category Types
+ */
 export type ReverseGeocodingParams = CommonServiceParams &
     ReverseGeocodingMandatoryParams &
     ReverseGeocodingOptionalParams;

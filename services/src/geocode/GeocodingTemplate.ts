@@ -8,6 +8,8 @@ import { GeocodingResponseAPI } from "./types/APITypes";
 
 /**
  * Geocoding service template type.
+ * @group Geocoding
+ * @category Types
  */
 export type GeocodingTemplate = ServiceTemplate<
     GeocodingParams,
@@ -18,6 +20,8 @@ export type GeocodingTemplate = ServiceTemplate<
 
 /**
  * Geocoding service template main implementation.
+ * @group Geocoding
+ * @category Variables
  */
 export const geocodingTemplate: GeocodingTemplate = {
     buildRequest: buildGeocodingRequest,

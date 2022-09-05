@@ -1,5 +1,7 @@
 /**
  * Physical properties of the vehicle (sizes and weights).
+ * @group Calculate Route
+ * @category Types
  */
 export type VehicleDimensions = {
     /**
@@ -45,7 +47,10 @@ export type VehicleDimensions = {
      */
     axleWeightKG?: number;
 };
-
+/**
+ * @group Calculate Route
+ * @category Variables
+ */
 export const loadTypes = [
     "USHazmatClass1",
     "USHazmatClass2",
@@ -79,6 +84,8 @@ export const loadTypes = [
  * * otherHazmatExplosive: Explosives
  * * otherHazmatGeneral: Miscellaneous
  * * otherHazmatHarmfulToWater: Harmful to water
+ * @group Calculate Route
+ * @category Types
  */
 export type LoadType = typeof loadTypes[number];
 
@@ -99,11 +106,15 @@ export type LoadType = typeof loadTypes[number];
  * Value type: Colon-delimited list of ElectricConstantSpeedConsumptionPair.
  * Minimum value: 01
  * Maximum value: 100000.0
+ * @group Calculate Route
+ * @category Types
  */
 export type SpeedToConsumptionRate = { speedKMH: number; consumptionUnitsPer100KM: number };
 
 /**
  * Parameters related to consumption efficiency.
+ * @group Calculate Route
+ * @category Types
  */
 export type ConsumptionModelEfficiency = {
     /**
@@ -164,6 +175,8 @@ export type ConsumptionModelEfficiency = {
 
 /**
  * The Combustion consumption model is used when the vehicleEngineType value is set to "combustion".
+ * @group Calculate Route
+ * @category Types
  */
 export type CombustionConsumptionModel = {
     /**
@@ -198,6 +211,10 @@ export type CombustionConsumptionModel = {
     currentFuelLiters?: number;
 };
 
+/**
+ * @group Calculate Route
+ * @category Types
+ */
 export type ElectricConsumptionModel = {
     /**
      * Specifies the speed-dependent component of consumption based on km/h and kW/h.
@@ -250,7 +267,8 @@ export type ElectricConsumptionModel = {
 /**
  * The engine type of the vehicle.
  * * When a detailed Consumption model is specified, it must be consistent with the provided engine type.
- *
+ * @group Calculate Route
+ * @category Types
  * @default combustion
  */
 export type VehicleEngineType = "combustion" | "electric";
@@ -259,6 +277,8 @@ export type VehicleEngineType = "combustion" | "electric";
  * The consumption model describes vehicle energy (fuel/electricity) consumption attributes.
  * * "combustion" vehicles can contain a combustion consumption model
  * * "electric" vehicles (EVs) can contain an EV consumption model
+ * @group Calculate Route
+ * @category Types
  */
 export type VehicleConsumption<MODEL = CombustionConsumptionModel | ElectricConsumptionModel> = MODEL & {
     /**
@@ -276,6 +296,8 @@ export type VehicleConsumption<MODEL = CombustionConsumptionModel | ElectricCons
 
 /**
  *  Object describing vehicle details
+ *  @group Calculate Route
+ *  @category Types
  */
 export type VehicleParameters = {
     /**

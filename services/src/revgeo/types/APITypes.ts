@@ -1,5 +1,9 @@
 import { AddressProperties, LocationDataSources, LocationType, Mapcode, SideOfStreet } from "@anw/go-sdk-js/core";
 
+/**
+ * @group Reverse Geocoding
+ * @category Types
+ */
 export type ReverseGeocodingResponseAPI = {
     summary: {
         queryTime: number;

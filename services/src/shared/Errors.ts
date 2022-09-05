@@ -2,6 +2,10 @@ import { AxiosError } from "axios";
 import { APIErrorCode, APIResponseError } from "./types/APIResponseErrorTypes";
 import { Services } from "./types/ServicesTypes";
 
+/**
+ * Main Error Class for the whole SDK to help with error handling.
+ * @group Shared
+ */
 export class SDKError extends Error {
     status?: number;
     stack?: string;
@@ -32,7 +36,7 @@ export class SDKError extends Error {
             return;
         }
 
-        /**
+        /*
          * Check if there is a status and if the status exists in the mapped API error types
          */
         if (this.status && APIErrorCode[this.status]) {
