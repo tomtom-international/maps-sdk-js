@@ -13,8 +13,9 @@
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit",
     "update-dependencies": "npx npm-check-updates -u --packageFile package.json",
-    "clean:dist": "rm -rf ./dist",
-    "clean:cache": "rm -rf ./.rollup.cache"
+    "clean:dist": "rimraf ./dist",
+    "clean:cache": "rimraf ./.rollup.cache",
+    "clean": "npm run clean:dist && npm run clean:cache"
   },
   "types": "./dist/index.d.ts",
   "author": "GO SDK JS Team",
@@ -47,6 +48,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^29.0.1",
     "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
     "rollup": "^2.79.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-includepaths": "^0.2.4",

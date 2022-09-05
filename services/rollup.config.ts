@@ -8,8 +8,8 @@ import includePaths from "rollup-plugin-includepaths";
 const includePathOptions = {
     include: {},
     paths: [],
-    external: ['@anw/go-sdk-js/core', 'axios'],
-    extensions: ['.js', '.json']
+    external: ["@anw/go-sdk-js/core", "axios"],
+    extensions: [".js", ".json"]
 };
 
 export default () => {
@@ -25,7 +25,7 @@ export default () => {
                 includePaths(includePathOptions),
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true }), //needed for correct order
+                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
                 commonjs(),
                 terser()
             ]
@@ -45,7 +45,7 @@ export default () => {
                 includePaths(includePathOptions),
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true }), //needed for correct order
+                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
                 commonjs()
             ]
         },
@@ -64,7 +64,7 @@ export default () => {
                 includePaths(includePathOptions),
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true }), //needed for correct order
+                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
                 commonjs()
             ]
         }

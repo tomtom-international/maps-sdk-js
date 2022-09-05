@@ -15,7 +15,7 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true }), //needed for correct order
+                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
                 commonjs(),
                 terser()
             ]
@@ -34,7 +34,7 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true }), //needed for correct order
+                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
                 commonjs()
             ]
         },
@@ -52,7 +52,7 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true }), //needed for correct order
+                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
                 commonjs()
             ]
         }
