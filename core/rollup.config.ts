@@ -3,6 +3,12 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
 
+const typescriptOptions = {
+    tsconfig: "./tsconfig.json",
+    outputToFilesystem: true,
+    exclude: ["**/*.test.ts"]
+};
+
 export default () => {
     return [
         {
@@ -15,7 +21,7 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
+                typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 terser()
             ]
@@ -34,7 +40,7 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
+                typescript(typescriptOptions), //needed for correct order
                 commonjs()
             ]
         },
@@ -52,7 +58,7 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
+                typescript(typescriptOptions), //needed for correct order
                 commonjs()
             ]
         }

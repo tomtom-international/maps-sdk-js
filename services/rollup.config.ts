@@ -12,6 +12,12 @@ const includePathOptions = {
     extensions: [".js", ".json"]
 };
 
+const typescriptOptions = {
+    tsconfig: "./tsconfig.json",
+    outputToFilesystem: true,
+    exclude: ["**/*.test.ts"]
+};
+
 export default () => {
     return [
         {
@@ -25,7 +31,7 @@ export default () => {
                 includePaths(includePathOptions),
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
+                typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 terser()
             ]
@@ -45,7 +51,7 @@ export default () => {
                 includePaths(includePathOptions),
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
+                typescript(typescriptOptions), //needed for correct order
                 commonjs()
             ]
         },
@@ -64,7 +70,7 @@ export default () => {
                 includePaths(includePathOptions),
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
-                typescript({ tsconfig: "./tsconfig.json", outputToFilesystem: true, exclude: ["**/*.test.ts"] }), //needed for correct order
+                typescript(typescriptOptions), //needed for correct order
                 commonjs()
             ]
         }
