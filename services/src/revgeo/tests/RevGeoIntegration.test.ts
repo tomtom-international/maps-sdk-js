@@ -118,13 +118,4 @@ describe("Reverse Geocoding integration tests", () => {
         );
         expect(result).toStrictEqual({ ...result, newField: "test" });
     });
-
-    test("Invalid position: latitude/longitude out of range.", async () => {
-        console.log(await reverseGeocode({ position: [23, 43] }));
-        await expect(reverseGeocode({ position: [23, 43], language: "FF" })).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            message: "Invalid request: invalid position: latitude/longitude out of range.",
-            status: 400
-        });
-    });
 });
