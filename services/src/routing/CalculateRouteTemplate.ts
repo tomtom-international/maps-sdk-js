@@ -4,12 +4,12 @@ import { CalculateRouteResponse } from "./CalculateRoute";
 import { buildCalculateRouteRequest } from "./RequestBuilder";
 import { parseCalculateRouteResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
-import { CalculateRouteResultAPI } from "./types/APITypes";
+import { CalculateRouteResponseAPI } from "./types/APITypes";
 
 export type CalculateRouteTemplate = ServiceTemplate<
     CalculateRouteParams,
     URL,
-    CalculateRouteResultAPI,
+    CalculateRouteResponseAPI,
     CalculateRouteResponse
 >;
 

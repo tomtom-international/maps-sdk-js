@@ -12,6 +12,7 @@ import { Services } from "./types/ServicesTypes";
  * 3- Parse and return API response
  * @param params The parameters for that specific service call.
  * @param template The implementation of the template steps.
+ * @param serviceName The name of the service.
  */
 export const callService = async <PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE>(
     params: PARAMS,

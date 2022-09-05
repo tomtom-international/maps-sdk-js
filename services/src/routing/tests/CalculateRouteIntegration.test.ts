@@ -26,70 +26,74 @@ const assertSectionBasics = (section: Section): void => {
 describe("Calculate route integration tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
-    test("Route from Kandersteg to Dover via Lötschen Pass with different sectionTypes and combustion vehicle parameters", async () => {
-        const testInputSectionTypes: SectionType[] = [
-            "carTrain",
-            "motorway",
-            "traffic",
-            "tollRoad",
-            "tollVignette",
-            "urban"
-        ];
-        const result = await calculateRoute({
-            locations: [
-                [7.675106, 46.490793],
-                [7.74328, 46.403849],
-                [1.32248, 51.111645]
-            ],
-            sectionTypes: testInputSectionTypes,
-            vehicle: {
-                dimensions: {
-                    weightKG: 1500
-                },
-                consumption: {
-                    speedsToConsumptionsLiters: [
-                        { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
-                        { speedKMH: 130, consumptionUnitsPer100KM: 11.5 }
-                    ],
-                    auxiliaryPowerInLitersPerHour: 0.2,
-                    currentFuelLiters: 55,
-                    fuelEnergyDensityInMJoulesPerLiter: 34.2,
-                    efficiency: {
-                        acceleration: 0.33,
-                        deceleration: 0.83,
-                        uphill: 0.27,
-                        downhill: 0.51
+    test(
+        "Route from Kandersteg to Dover via Lötschen Pass with different " +
+            "sectionTypes and combustion vehicle parameters",
+        async () => {
+            const testInputSectionTypes: SectionType[] = [
+                "carTrain",
+                "motorway",
+                "traffic",
+                "tollRoad",
+                "tollVignette",
+                "urban"
+            ];
+            const result = await calculateRoute({
+                locations: [
+                    [7.675106, 46.490793],
+                    [7.74328, 46.403849],
+                    [1.32248, 51.111645]
+                ],
+                sectionTypes: testInputSectionTypes,
+                vehicle: {
+                    dimensions: {
+                        weightKG: 1500
+                    },
+                    consumption: {
+                        speedsToConsumptionsLiters: [
+                            { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
+                            { speedKMH: 130, consumptionUnitsPer100KM: 11.5 }
+                        ],
+                        auxiliaryPowerInLitersPerHour: 0.2,
+                        currentFuelLiters: 55,
+                        fuelEnergyDensityInMJoulesPerLiter: 34.2,
+                        efficiency: {
+                            acceleration: 0.33,
+                            deceleration: 0.83,
+                            uphill: 0.27,
+                            downhill: 0.51
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        expect(result.routes?.features?.length).toEqual(1);
-        const routeFeature = result.routes.features[0];
-        expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
-        const routeProperties = routeFeature.properties;
-        assertSummaryBasics(routeProperties.summary);
-        expect(routeProperties.summary.fuelConsumptionInLiters).toBeDefined();
-        const sections = routeProperties.sections;
-        expect(sections.leg).toHaveLength(2);
-        assertLegSectionBasics(sections.leg[0]);
-        expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
-        assertLegSectionBasics(sections.leg[1]);
-        expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
-        // Asserting the existence of sections in response:
-        for (const inputSectionType of testInputSectionTypes) {
-            expect(routeFeature.properties.sections[inputSectionType]?.length).toBeGreaterThan(0);
-            for (const section of routeFeature.properties.sections[inputSectionType]!) {
-                assertSectionBasics(section as Section);
+            expect(result.routes?.features?.length).toEqual(1);
+            const routeFeature = result.routes.features[0];
+            expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
+            const routeProperties = routeFeature.properties;
+            assertSummaryBasics(routeProperties.summary);
+            expect(routeProperties.summary.fuelConsumptionInLiters).toBeDefined();
+            const sections = routeProperties.sections;
+            expect(sections.leg).toHaveLength(2);
+            assertLegSectionBasics(sections.leg[0]);
+            expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
+            assertLegSectionBasics(sections.leg[1]);
+            expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
+            // Asserting the existence of sections in response:
+            for (const inputSectionType of testInputSectionTypes) {
+                expect(routeProperties.sections[inputSectionType]?.length).toBeGreaterThan(0);
+                for (const section of routeProperties.sections[inputSectionType] || []) {
+                    assertSectionBasics(section as Section);
+                }
+            }
+            // Asserting the lack of unrequested sections in the response:
+            for (const inputSectionType of inputSectionTypes.filter(
+                (sectionType) => !["leg", ...testInputSectionTypes].includes(sectionType)
+            )) {
+                expect(routeProperties.sections[inputSectionType]).toBeUndefined();
             }
         }
-        // Asserting the lack of unrequested sections in the response:
-        for (const inputSectionType of inputSectionTypes.filter(
-            (sectionType) => !["leg", ...testInputSectionTypes].includes(sectionType)
-        )) {
-            expect(routeProperties.sections[inputSectionType]).toBeUndefined();
-        }
-    });
+    );
 
     test("Amsterdam to Leiden to Rotterdam with electric vehicle parameters", async () => {
         const result = await calculateRoute({

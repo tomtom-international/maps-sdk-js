@@ -14,7 +14,7 @@ import {
 } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
 import { CalculateRouteResponse } from "./CalculateRoute";
-import { CalculateRouteResultAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
+import { CalculateRouteResponseAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
 import { LineString } from "geojson";
 
 const parseSummary = (apiSummary: SummaryAPI): Summary => ({
@@ -153,7 +153,7 @@ const parseRoute = (apiRoute: RouteAPI): Route => ({
     }
 });
 
-export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResultAPI): CalculateRouteResponse => ({
+export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): CalculateRouteResponse => ({
     routes: {
         type: "FeatureCollection",
         features: apiResponse.routes.map(parseRoute)

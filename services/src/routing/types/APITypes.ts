@@ -64,7 +64,7 @@ export type RouteAPI = {
     guidance?: GuidanceAPI;
 };
 
-export type CalculateRouteResultAPI = {
+export type CalculateRouteResponseAPI = {
     formatVersion: string;
     routes: RouteAPI[];
     optimizedWaypoints?: { providedIndex: number; optimizedIndex: number }[];

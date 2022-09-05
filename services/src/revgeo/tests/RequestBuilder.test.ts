@@ -1,6 +1,6 @@
 import { buildRevGeoRequest } from "../RequestBuilder";
 
-describe("Reverse Geocoding request URL building tests", () => {
+describe("Reverse Geocoding request URL building functional tests", () => {
     test("Reverse Geocoding request URL building test", async () => {
         expect(
             buildRevGeoRequest({
@@ -66,9 +66,11 @@ describe("Reverse Geocoding request URL building tests", () => {
             "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=en-GB"
         );
     });
+});
 
+describe("Reverse Geocoding request URL building performance tests", () => {
     test("Basic performance test", async () => {
-        const numExecutions = 10;
+        const numExecutions = 20;
         let accExecTimes = 0;
         for (let i = 0; i < numExecutions; i++) {
             const start = performance.now();
