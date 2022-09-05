@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.28](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.27...v0.1.28) (2022-09-05)
+
+
+### Features
+
+* ignore internal functions ([3b6c605](https://github.com/tomtom-international/go-sdk-js/commit/3b6c60512257904e845f8871de8a8f258ff9b1cc))
+* skip internal methods from definition files ([be0af50](https://github.com/tomtom-international/go-sdk-js/commit/be0af50461cc4e3e3c75a04a16935e3f8842ceff))
+
+
+### Bug Fixes
+
+* correct the types property to point to the dist decleration file ([2ac075f](https://github.com/tomtom-international/go-sdk-js/commit/2ac075ff6a48bcb1c625147f1eedf3464cf52079))
+* **eslint:** downgrading eslint for now due to a bug found in their latest version ([c6ad928](https://github.com/tomtom-international/go-sdk-js/commit/c6ad92802fc544ae49c7445772a94046fc69b3b0))
+* **npm:** exporting types for lodash and geojson ([3b80dc5](https://github.com/tomtom-international/go-sdk-js/commit/3b80dc5059de861b8bc0560f22e111aa23ea1025))
+* remove src directory form the bundle ([ec1d735](https://github.com/tomtom-international/go-sdk-js/commit/ec1d7357601e099f9de8502afeff632180088a89))
+* **sonar:** minor typo fix ([0439b84](https://github.com/tomtom-international/go-sdk-js/commit/0439b84368c6a92d8bf1cf9894c8d1e54390efa7))
+
 ### [0.1.27](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.26...v0.1.27) (2022-08-31)
 
 
