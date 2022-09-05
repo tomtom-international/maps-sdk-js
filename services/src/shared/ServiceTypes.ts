@@ -2,6 +2,7 @@ import { GlobalConfig } from "@anw/go-sdk-js/core";
 
 /**
  * @group Shared
+ * @category Types
  */
 export type CommonServiceParams = Partial<GlobalConfig> & {
     /**
@@ -15,6 +16,7 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
 /**
  * Template functions for any service.
  * @group Shared
+ * @category Types
  */
 export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE> = {
     /**

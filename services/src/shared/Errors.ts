@@ -5,6 +5,7 @@ import { Services } from "./types/ServicesTypes";
 /**
  * Main Error Class for the whole SDK to help with error handling.
  * @group Shared
+ * @category Types
  */
 export class SDKError extends Error {
     status?: number;

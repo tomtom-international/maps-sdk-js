@@ -2,10 +2,12 @@ import { EntryPoint } from "@anw/go-sdk-js/core";
 
 /**
  * @group Shared
+ * @category Types
  */
 export type IndexTypesAbbreviation = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
 /**
  * @group Shared
+ * @category Types
  */
 export type LatLonAPI = {
     /**
