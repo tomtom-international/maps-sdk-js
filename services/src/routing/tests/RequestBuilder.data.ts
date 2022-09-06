@@ -3,7 +3,7 @@ export const requestObjectsAndURLs = [
         "Default A-B route",
         {
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
@@ -15,7 +15,7 @@ export const requestObjectsAndURLs = [
         "Default A-B-C route where B is a GeoJSON point feature",
         {
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             locations: [
                 [4.89066, 52.37317],
                 {
@@ -34,7 +34,7 @@ export const requestObjectsAndURLs = [
         "Default A-s-C route where s is a soft(circle) waypoint.",
         {
             apiKey: "API_KEY_X",
-            commonBaseURL: "https://api-test.tomtom.com/",
+            commonBaseURL: "https://api-test.tomtom.com",
             locations: [
                 [4.89066, 52.37317],
                 {
@@ -56,7 +56,7 @@ export const requestObjectsAndURLs = [
         "A-B route with many optional parameters set to non default values and electric vehicle params",
         {
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             language: "es-ES",
             locations: [
                 [3.1748, 42.26297],
@@ -133,7 +133,7 @@ export const requestObjectsAndURLs = [
         "A-B route with combustion vehicle parameters",
         {
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
@@ -176,7 +176,7 @@ export const requestObjectsAndURLs = [
         "A-B route with electric vehicle parameters",
         {
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]

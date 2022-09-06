@@ -1,0 +1,48 @@
+[
+  [
+    "Default map init",
+    {
+      "commonBaseURL": "https://api-test.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "htmlContainer": "<div id='map'></div>"
+    },
+    {
+      "key": "TEST_API_KEY",
+      "container": "<div id='map'></div>",
+      "style": "https://api-test.tomtom.com/style/1/style/22.3.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light"
+    }
+  ],
+  [
+    "Map init with most params set",
+    {
+      "commonBaseURL": "https://api-test.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "htmlContainer": "<div id='map'></div>",
+      "style": {
+        "custom": {
+          "url": "https://test_url"
+        }
+      },
+      "zoom": 7,
+      "center": [10, 20],
+      "minZoom": 2,
+      "maxZoom": 20,
+      "maxBounds": [10, 20, 30, 40],
+      "bearingDegrees": 90,
+      "projection": "spherical"
+    },
+    {
+      "key": "TEST_API_KEY",
+      "container": "<div id='map'></div>",
+      "style": "https://test_url/?key=TEST_API_KEY",
+      "zoom": 7,
+      "latitude": 20,
+      "longitude": 10,
+      "minZoom": 2,
+      "maxZoom": 20,
+      "maxBounds": [[10, 20], [30, 40]],
+      "rotation": 1.5707963267948966,
+      "projection": "spherical"
+    }
+  ]
+]

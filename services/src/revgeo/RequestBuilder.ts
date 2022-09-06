@@ -7,7 +7,7 @@ import { CommonServiceParams } from "../shared/ServiceTypes";
 import { appendCommonParams } from "../shared/RequestBuildingUtils";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}search/2/reverseGeocode/`;
+    params.customServiceBaseURL || `${params.commonBaseURL}/search/2/reverseGeocode`;
 
 /**
  * Default method for building reverse geocoding request from {@link ReverseGeocodingParams}
@@ -17,7 +17,7 @@ const buildURLBasePath = (params: CommonServiceParams): string =>
  */
 export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     const lngLat = getLngLatArray(params.position);
-    const url = new URL(`${buildURLBasePath(params)}${lngLat[1]},${lngLat[0]}.json`);
+    const url = new URL(`${buildURLBasePath(params)}/${lngLat[1]},${lngLat[0]}.json`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
     // rev-geo specific parameters:

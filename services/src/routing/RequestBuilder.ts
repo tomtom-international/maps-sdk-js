@@ -21,7 +21,7 @@ import {
 } from "./types/VehicleParams";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}routing/1/calculateRoute/`;
+    params.customServiceBaseURL || `${params.commonBaseURL}/routing/1/calculateRoute`;
 
 const getWaypointProps = (waypointInput: WaypointInput): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
@@ -145,7 +145,7 @@ const appendVehicleParams = (urlParams: URLSearchParams, vehicleParams?: Vehicle
  * @param params The calculate route parameters, with global configuration already merged into them.
  */
 export const buildCalculateRouteRequest = (params: CalculateRouteParams): URL => {
-    const url = new URL(`${buildURLBasePath(params)}${buildWaypointsString(params.locations)}/json`);
+    const url = new URL(`${buildURLBasePath(params)}/${buildWaypointsString(params.locations)}/json`);
     const urlParams: URLSearchParams = url.searchParams;
     appendCommonParams(urlParams, params);
     appendByRepeatingParamName(urlParams, "avoid", params.avoid);

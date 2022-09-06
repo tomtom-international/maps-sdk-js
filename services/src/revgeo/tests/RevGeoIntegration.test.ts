@@ -1,4 +1,3 @@
-import exampleSDKResponse from "./RevGeoIntegration.data.json";
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
@@ -21,8 +20,34 @@ describe("Reverse Geocoding integration tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
     test("Default reverse geocoding", async () => {
+        const exampleSDKResponse = {
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: [5.72884, 52.33499]
+            },
+            bbox: expect.any(Array),
+            properties: {
+                type: "Street",
+                address: {
+                    routeNumbers: [],
+                    street: "Hierderweg",
+                    streetName: "Hierderweg",
+                    countryCode: "NL",
+                    countrySubdivision: "Gelderland",
+                    municipality: "Nunspeet",
+                    postalCode: "8077",
+                    municipalitySubdivision: "Hulshorst",
+                    country: "Nederland",
+                    countryCodeISO3: "NLD",
+                    freeformAddress: "Hierderweg, 8077 Hulshorst",
+                    localName: "Hulshorst"
+                },
+                originalPosition: expect.any(Array)
+            }
+        };
         const result = await reverseGeocode({ position: [5.72884, 52.33499] });
-        expect(result).toStrictEqual(expect.objectContaining(exampleSDKResponse[0]));
+        expect(result).toMatchObject(exampleSDKResponse);
     });
 
     test("Localized reverse geocoding", async () => {

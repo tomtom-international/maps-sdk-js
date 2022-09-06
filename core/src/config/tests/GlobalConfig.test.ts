@@ -54,10 +54,10 @@ describe("mergeFromGlobal tests", () => {
     });
 
     test("mergeFromGlobal with default global config", () => {
-        expect(mergeFromGlobal()).toEqual({ commonBaseURL: "https://api.tomtom.com/", apiKey: "" });
+        expect(mergeFromGlobal()).toEqual({ commonBaseURL: "https://api.tomtom.com", apiKey: "" });
         expect(mergeFromGlobal({ randomProp: "blah", apiKey: "CUSTOM_API_KEY" })).toEqual({
             apiKey: "CUSTOM_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             randomProp: "blah"
         });
     });
@@ -69,18 +69,18 @@ describe("mergeFromGlobal tests", () => {
         });
         expect(mergeFromGlobal()).toEqual({
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             language: "it-IT"
         });
         expect(mergeFromGlobal({})).toEqual({
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             language: "it-IT"
         });
         expect(mergeFromGlobal<Partial<GlobalConfig> & { randomProp: string }>({ randomProp: "blah" })).toEqual({
             randomProp: "blah",
             apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com/",
+            commonBaseURL: "https://api.tomtom.com",
             language: "it-IT"
         });
         expect(

@@ -5,7 +5,7 @@ describe("Reverse Geocoding request URL building functional tests", () => {
         expect(
             buildRevGeoRequest({
                 apiKey: "GLOBAL_API_KEY",
-                commonBaseURL: "https://api-test.tomtom.com/",
+                commonBaseURL: "https://api-test.tomtom.com",
                 language: "es-ES",
                 position: [1.12345, 23.45678]
             }).toString()
@@ -16,8 +16,8 @@ describe("Reverse Geocoding request URL building functional tests", () => {
             buildRevGeoRequest({
                 position: [-100.12345, -23.45678],
                 apiKey: "ANOTHER_API_KEY",
-                commonBaseURL: "https://api.tomtom.com/",
-                customServiceBaseURL: "https://api.tomtom.com/search/10/reverseGeocodeTest/",
+                commonBaseURL: "https://api.tomtom.com",
+                customServiceBaseURL: "https://api.tomtom.com/search/10/reverseGeocodeTest",
                 language: "en-US",
                 heading: 30,
                 number: "10A",
@@ -31,14 +31,14 @@ describe("Reverse Geocoding request URL building functional tests", () => {
         );
 
         expect(
-            buildRevGeoRequest({ commonBaseURL: "https://api.tomtom.com/", position: [1.12345, 23.45678] }).toString()
+            buildRevGeoRequest({ commonBaseURL: "https://api.tomtom.com", position: [1.12345, 23.45678] }).toString()
         ).toStrictEqual("https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=undefined");
 
         expect(
             buildRevGeoRequest({
                 position: [1.12345, 23.45678],
                 apiKey: "GIVEN_API_KEY",
-                commonBaseURL: "https://api.tomtom.com/",
+                commonBaseURL: "https://api.tomtom.com",
                 language: "es-ES",
                 allowFreeformNewline: true,
                 geographyType: ["Country", "Municipality"],
@@ -59,7 +59,7 @@ describe("Reverse Geocoding request URL building functional tests", () => {
             buildRevGeoRequest({
                 position: [1.12345, 23.45678],
                 apiKey: "GIVEN_API_KEY",
-                commonBaseURL: "https://api.tomtom.com/",
+                commonBaseURL: "https://api.tomtom.com",
                 language: "en-GB"
             }).toString()
         ).toStrictEqual(
@@ -77,7 +77,7 @@ describe("Reverse Geocoding request URL building performance tests", () => {
             buildRevGeoRequest({
                 position: [1.12345, 23.45678],
                 apiKey: "GIVEN_API_KEY",
-                commonBaseURL: "https://api.tomtom.com/",
+                commonBaseURL: "https://api.tomtom.com",
                 language: "es-ES",
                 allowFreeformNewline: true,
                 geographyType: ["Country", "Municipality"],

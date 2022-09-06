@@ -24,14 +24,14 @@ export type GlobalConfig = {
      * Must end with /.
      * @default https://api.tomtom.com/
      */
-    commonBaseURL?: string;
+    commonBaseURL: string;
 };
 
 /**
  * Default global configuration contents.
  */
 export const defaultConfig: GlobalConfig = {
-    commonBaseURL: "https://api.tomtom.com/",
+    commonBaseURL: "https://api.tomtom.com",
     apiKey: ""
 };
 

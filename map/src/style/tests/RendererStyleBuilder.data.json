@@ -1,0 +1,143 @@
+[
+  [
+    "Standard light published style ID",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": "standardLight"
+    },
+    "https://api.tomtom.com/style/1/style/22.3.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light"
+  ],
+  [
+    "Standard dark published style ID",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": "standardDark"
+    },
+    "https://api.tomtom.com/style/1/style/22.3.*/?key=TEST_API_KEY&map=2/basic_street-dark&traffic_flow=2/flow_relative-dark&traffic_incidents=2/incidents_dark&poi=2/poi_dynamic-dark"
+  ],
+  [
+    "Driving light published style ID",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": "drivingLight"
+    },
+    "https://api.tomtom.com/style/1/style/22.3.*/?key=TEST_API_KEY&map=2/basic_street-light-driving&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light"
+  ],
+  [
+    "Driving dark published style ID",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": "drivingDark"
+    },
+    "https://api.tomtom.com/style/1/style/22.3.*/?key=TEST_API_KEY&map=2/basic_street-dark-driving&traffic_flow=2/flow_relative-dark&traffic_incidents=2/incidents_dark&poi=2/poi_dynamic-dark"
+  ],
+  [
+    "Mono light published style ID",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": "monoLight"
+    },
+    "https://api.tomtom.com/style/1/style/22.3.*/?key=TEST_API_KEY&map=2/basic_mono-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-mono-light"
+  ],
+  [
+    "Satellite published style ID",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": "monoLight"
+    },
+    "https://api.tomtom.com/style/1/style/22.3.*/?key=TEST_API_KEY&map=2/basic_mono-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-mono-light"
+  ],
+  [
+    "Standard light published style ID with version",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": {
+        "published": {
+          "id": "standardLight",
+          "version": "TEST_VERSION"
+        }
+      }
+    },
+    "https://api.tomtom.com/style/1/style/TEST_VERSION/?key=TEST_API_KEY&map=2/basic_street-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light"
+  ],
+  [
+    "Mono light published style ID with version",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": {
+        "published": {
+          "id": "monoLight",
+          "version": "TEST_VERSION"
+        }
+      }
+    },
+    "https://api.tomtom.com/style/1/style/TEST_VERSION/?key=TEST_API_KEY&map=2/basic_mono-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-mono-light"
+  ],
+  [
+    "Given style URL",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": {
+        "custom": {
+          "url": "https://api-test.tomtom.com/randomurl/bla/bla"
+        }
+      }
+    },
+    "https://api-test.tomtom.com/randomurl/bla/bla?key=TEST_API_KEY"
+  ],
+  [
+    "Given style URL without base URL",
+    {
+      "apiKey": "TEST_API_KEY",
+      "style": {
+        "custom": {
+          "url": "https://api-test.tomtom.com/randomurl/bla/bla"
+        }
+      }
+    },
+    "https://api-test.tomtom.com/randomurl/bla/bla?key=TEST_API_KEY"
+  ],
+  [
+    "Given style JSON",
+    {
+      "apiKey": "TEST_API_KEY",
+      "style": {
+        "custom": {
+          "json": {
+            "sources": [
+              "bar",
+              "foo"
+            ],
+            "layers": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        }
+      }
+    },
+    {
+      "sources": [
+        "bar",
+        "foo"
+      ],
+      "layers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ]
+]

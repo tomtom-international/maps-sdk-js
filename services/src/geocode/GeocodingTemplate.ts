@@ -11,12 +11,7 @@ import { GeocodingResponseAPI } from "./types/APITypes";
  * @group Geocoding
  * @category Types
  */
-export type GeocodingTemplate = ServiceTemplate<
-    GeocodingParams,
-    URL,
-    GeocodingResponseAPI,
-    GeocodingResponse | unknown
->;
+export type GeocodingTemplate = ServiceTemplate<GeocodingParams, URL, GeocodingResponseAPI, GeocodingResponse>;
 
 /**
  * Geocoding service template main implementation.

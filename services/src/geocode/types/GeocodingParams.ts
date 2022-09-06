@@ -102,5 +102,5 @@ export type GeocodingParams = CommonServiceParams & {
      * If geographyTypeSet is specified, only a Geography result with a proper entity type will be returned.
      * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
      */
-    geographyType?: GeographyType[];
+    geographyTypes?: GeographyType[];
 };
