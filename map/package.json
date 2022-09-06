@@ -31,7 +31,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
     "@rollup/plugin-node-resolve": "^14.0.0",
-    "@rollup/plugin-typescript": "^8.4.0",
+    "@rollup/plugin-typescript": "^8.5.0",
     "@types/geojson": "^7946.0.10",
     "@types/jest": "^29.0.0",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
