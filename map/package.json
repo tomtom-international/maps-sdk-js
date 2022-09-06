@@ -53,5 +53,8 @@
   },
   "typedoc": {
     "entryPoint": "./index.ts"
+  },
+  "dependencies": {
+    "@nav/web-renderer": "^0.0.1"
   }
 }
