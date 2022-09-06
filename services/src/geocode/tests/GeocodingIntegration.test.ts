@@ -28,6 +28,13 @@ describe("Geocoding integration tests", () => {
         }
     );
 
+    test("empty query", async ()=>{
+        const result = await geocode({
+            query:""
+        })
+        console.log(result)
+    })
+
     test("Geocoding with all parameters sent", async () => {
         const result = await geocode({
             query: "amsterdam",
