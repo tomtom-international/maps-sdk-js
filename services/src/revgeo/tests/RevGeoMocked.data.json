@@ -46,6 +46,12 @@
           52.33499
         ]
       },
+      "bbox": [
+        5.722876,
+        52.334605,
+        5.73938,
+        52.336436
+      ],
       "properties": {
         "type": "Street",
         "address": {
@@ -61,33 +67,6 @@
           "countryCodeISO3": "NLD",
           "freeformAddress": "Hierderweg, 8077 Hulshorst",
           "localName": "Hulshorst"
-        },
-        "boundingBox": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [
-                5.722876,
-                52.334605
-              ],
-              [
-                5.73938,
-                52.334605
-              ],
-              [
-                5.73938,
-                52.336436
-              ],
-              [
-                5.722876,
-                52.336436
-              ],
-              [
-                5.722876,
-                52.334605
-              ]
-            ]
-          ]
         },
         "originalPosition": [
           5.728785,
@@ -168,6 +147,12 @@
           37.57435
         ]
       },
+      "bbox": [
+        126.973232,
+        37.57406,
+        126.973443,
+        37.574619
+      ],
       "properties": {
         "type": "Point Address",
         "address": {
@@ -186,33 +171,6 @@
           "countryCodeISO3": "KOR",
           "freeformAddress": "03170 서울특별시 서울특별시 새문안로5가길 28 종로구",
           "localName": "종로구"
-        },
-        "boundingBox": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [
-                126.973232,
-                37.57406
-              ],
-              [
-                126.973443,
-                37.57406
-              ],
-              [
-                126.973443,
-                37.574619
-              ],
-              [
-                126.973232,
-                37.574619
-              ],
-              [
-                126.973232,
-                37.57406
-              ]
-            ]
-          ]
         },
         "originalPosition": [
           126.97332,
@@ -264,6 +222,12 @@
           -54.283085
         ]
       },
+      "bbox": [
+        -36.492804,
+        -54.283191,
+        -36.491432,
+        -54.283083
+      ],
       "properties": {
         "type": "Street",
         "address": {
@@ -274,33 +238,6 @@
           "countryCodeISO3": "SGS",
           "freeformAddress": "Islas Georgias Del Sur",
           "localName": "Islas Georgias Del Sur"
-        },
-        "boundingBox": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [
-                -36.492804,
-                -54.283191
-              ],
-              [
-                -36.491432,
-                -54.283191
-              ],
-              [
-                -36.491432,
-                -54.283083
-              ],
-              [
-                -36.492804,
-                -54.283083
-              ],
-              [
-                -36.492804,
-                -54.283191
-              ]
-            ]
-          ]
         },
         "originalPosition": [
           -36.491432,
@@ -368,6 +305,12 @@
           52.352848
         ]
       },
+      "bbox": [
+        5.149238,
+        52.352759,
+        5.149829,
+        52.352932
+      ],
       "properties": {
         "type": "Point Address",
         "address": {
@@ -387,33 +330,6 @@
           "freeformAddress": "Balderstraat 22, 1363 WH Almere",
           "extendedPostalCode": "1363 WH",
           "localName": "Almere"
-        },
-        "boundingBox": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [
-                5.149238,
-                52.352759
-              ],
-              [
-                5.149829,
-                52.352759
-              ],
-              [
-                5.149829,
-                52.352932
-              ],
-              [
-                5.149238,
-                52.352932
-              ],
-              [
-                5.149238,
-                52.352759
-              ]
-            ]
-          ]
         },
         "sideOfStreet": "R",
         "offsetPosition": [
@@ -489,6 +405,12 @@
           55.947106
         ]
       },
+      "bbox": [
+        -3.383767,
+        55.873118,
+        -3.075637,
+        56.02467
+      ],
       "properties": {
         "type": "Geography",
         "address": {
@@ -512,33 +434,6 @@
           "geometry": {
             "id": "00004732-3100-3c00-0000-0000240fa19a"
           }
-        },
-        "boundingBox": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [
-                -3.383767,
-                55.873118
-              ],
-              [
-                -3.075637,
-                55.873118
-              ],
-              [
-                -3.075637,
-                56.02467
-              ],
-              [
-                -3.383767,
-                56.02467
-              ],
-              [
-                -3.383767,
-                55.873118
-              ]
-            ]
-          ]
         },
         "originalPosition": [
           -3.140351,

@@ -2,7 +2,7 @@ import omit from "lodash/omit";
 import { GeocodingResponse } from "./types/GeocodingResponse";
 import { GeocodingResponseAPI } from "./types/APITypes";
 import { GeographyType, toPointFeature } from "@anw/go-sdk-js/core";
-import { bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
+import { apiToGeoJSONBBox, bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
 
 /**
  * Default method for parsing geocoding request from {@link GeocodingResponse}
@@ -14,10 +14,10 @@ export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): Geoco
     const results = apiResponse.results;
     const features = results.map(({ boundingBox, viewport, entryPoints, addressRanges, entityType, ...result }) => ({
         ...toPointFeature(latLonAPIToPosition(result.position)),
+        ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         properties: {
             ...omit(result, "position"),
             ...(result.dist && { distance: result.dist }),
-            ...(boundingBox && { boundingBox: bboxToPolygon(boundingBox) }),
             ...(viewport && { viewport: bboxToPolygon(viewport) }),
             ...(entityType && { geographyType: entityType.split(",") as GeographyType[] }),
             ...(entryPoints && {

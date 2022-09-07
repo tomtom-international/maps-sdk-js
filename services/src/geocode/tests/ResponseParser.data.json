@@ -74,6 +74,12 @@
               52.4388
             ]
           },
+          "bbox": [
+            4.78348,
+            52.42248,
+            4.81969,
+            52.45513
+          ],
           "properties": {
             "type": "Geography",
             "id": "NL/GEO/p0/7133",
@@ -95,33 +101,6 @@
               "freeformAddress": "1507 Zaanstad"
             },
             "viewport": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    4.78348,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.42248
-                  ]
-                ]
-              ]
-            },
-            "boundingBox": {
               "type": "Polygon",
               "coordinates": [
                 [
@@ -377,6 +356,12 @@
               52.4388
             ]
           },
+          "bbox": [
+            4.78348,
+            52.42248,
+            4.81969,
+            52.45513
+          ],
           "properties": {
             "type": "Geography",
             "id": "NL/GEO/p0/7133",
@@ -398,33 +383,6 @@
               "freeformAddress": "1507 Zaanstad"
             },
             "viewport": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    4.78348,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.42248
-                  ]
-                ]
-              ]
-            },
-            "boundingBox": {
               "type": "Polygon",
               "coordinates": [
                 [

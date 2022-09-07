@@ -1,4 +1,4 @@
-import { Polygon, Position } from "geojson";
+import { BBox, Polygon, Position } from "geojson";
 import { BoundingBoxAPI, LatLonAPI, BoundingBoxTopLeftAPI } from "./types/APIResponseTypes";
 
 /**
@@ -18,8 +18,9 @@ const hasTopLeftPoint = (bbox: BoundingBoxAPI): bbox is BoundingBoxTopLeftAPI =>
  * @ignore
  * @param apiBBox
  */
-export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
-    let westSouth, eastNorth;
+export const apiToGeoJSONBBox = (apiBBox: BoundingBoxAPI): BBox => {
+    let westSouth: Position;
+    let eastNorth: Position;
     if (hasTopLeftPoint(apiBBox)) {
         westSouth = [apiBBox.topLeftPoint.lon, apiBBox.btmRightPoint.lat];
         eastNorth = [apiBBox.btmRightPoint.lon, apiBBox.topLeftPoint.lat];
@@ -27,6 +28,17 @@ export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
         westSouth = csvLatLngToPosition(apiBBox.southWest);
         eastNorth = csvLatLngToPosition(apiBBox.northEast);
     }
+    return [westSouth[0], westSouth[1], eastNorth[0], eastNorth[1]];
+};
+
+/**
+ * @ignore
+ * @param apiBBox
+ */
+export const bboxToPolygon = (apiBBox: BoundingBoxAPI): Polygon => {
+    const bbox = apiToGeoJSONBBox(apiBBox);
+    const westSouth = [bbox[0], bbox[1]];
+    const eastNorth = [bbox[2], bbox[3]];
     const westNorth: Position = [westSouth[0], eastNorth[1]];
     const eastSouth: Position = [eastNorth[0], westSouth[1]];
     return { type: "Polygon", coordinates: [[westSouth, eastSouth, eastNorth, westNorth, westSouth]] };

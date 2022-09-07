@@ -52,7 +52,7 @@ export type GeocodingParams = CommonServiceParams & {
      */
     radius?: number;
     /**
-     * Top-left position of the bounding box.
+     * Bounding box to filter the geocoding operation on.
      *
      * Important note: Point-Radius parameters and Bounding Box parameters are mutually exclusive.
      * Point-Radius parameters take precedence when both are passed.

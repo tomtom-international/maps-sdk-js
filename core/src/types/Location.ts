@@ -141,10 +141,6 @@ export type CommonLocationProps = {
      */
     addressRanges?: AddressRanges;
     /**
-     * A bounding box which can be used to display the result on a map defined by minimum and maximum longitudes and latitudes.
-     */
-    boundingBox?: Polygon;
-    /**
      * An optional section. These are unique reference ids for use with the Additional Data service.
      */
     dataSources?: LocationDataSources;

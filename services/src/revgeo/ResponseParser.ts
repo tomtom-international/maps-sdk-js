@@ -1,7 +1,7 @@
 import omit from "lodash/omit";
 
 import { getLngLatArray, toPointFeature } from "@anw/go-sdk-js/core";
-import { csvLatLngToPosition, bboxToPolygon } from "../shared/Geometry";
+import { csvLatLngToPosition, apiToGeoJSONBBox } from "../shared/Geometry";
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 import { ReverseGeocodingResponseAPI } from "./types/APITypes";
@@ -23,6 +23,7 @@ export const parseRevGeoResponse = (
     return {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...pointFeature,
+        ...(address.boundingBox && { bbox: apiToGeoJSONBBox(address.boundingBox) }),
         properties: {
             type: firstAPIResult.entityType ? "Geography" : !address.streetNumber ? "Street" : "Point Address",
             address: {
@@ -30,7 +31,7 @@ export const parseRevGeoResponse = (
             },
             ...(firstAPIResult.dataSources && { dataSources: firstAPIResult.dataSources }),
             ...(firstAPIResult.mapcodes && { mapcodes: firstAPIResult.mapcodes }),
-            ...(address.boundingBox && { boundingBox: bboxToPolygon(address.boundingBox) }),
+
             ...(address.sideOfStreet && { sideOfStreet: address.sideOfStreet }),
             ...(address.offsetPosition && { offsetPosition: csvLatLngToPosition(address.offsetPosition) }),
             // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
