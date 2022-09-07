@@ -5,6 +5,7 @@ describe("SDKError tests", () => {
         const sdkError = new SDKError(new Error("Testing"));
         expect(sdkError.message).toEqual("Testing");
         expect(sdkError.service).toEqual(undefined);
+        expect(sdkError.status).toBe(undefined);
         expect(sdkError.stack).not.toBeNull();
     });
 
