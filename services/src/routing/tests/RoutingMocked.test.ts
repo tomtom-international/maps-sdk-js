@@ -58,10 +58,12 @@ describe("Routing mock tests", () => {
         axiosMock.onGet().replyOnce(400, {
             formatVersion: "0.0.12",
             error: {
-                description: "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1"
+                description:
+                    "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1"
             },
             detailedError: {
-                message: "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
+                message:
+                    "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
                 code: "NO_ROUTE_FOUND"
             }
         });
@@ -75,9 +77,9 @@ describe("Routing mock tests", () => {
             })
         ).rejects.toMatchObject({
             service: "Routing",
-            message: "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
+            message:
+                "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
             status: 400
         });
     });
 });
-
