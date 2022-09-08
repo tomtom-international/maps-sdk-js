@@ -1,8 +1,4 @@
-export interface APIResponseError {
-    /*
-     * A human-readable description of the error code.
-     */
-    error: string;
+export interface BaseAPIResponseError {
     /*
      * HTTP error code.
      */
@@ -25,6 +21,20 @@ export interface APIResponseError {
          */
         target: string;
     };
+}
+
+export interface APIResponseError extends BaseAPIResponseError {
+    /*
+     * A human-readable description of the error code.
+     */
+    error: string;
+}
+
+export interface GeocodeAPIResponseError extends BaseAPIResponseError {
+    /*
+     * A human-readable description of the error code.
+     */
+    errorText: string;
 }
 
 export interface RoutingAPIResponseError {

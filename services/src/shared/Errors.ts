@@ -1,5 +1,10 @@
 import { AxiosError } from "axios";
-import { APIErrorCode, APIResponseError, RoutingAPIResponseError } from "./types/APIResponseErrorTypes";
+import {
+    APIErrorCode,
+    APIResponseError,
+    GeocodeAPIResponseError,
+    RoutingAPIResponseError
+} from "./types/APIResponseErrorTypes";
 import { Services } from "./types/ServicesTypes";
 
 /**
@@ -34,6 +39,8 @@ export class SDKError extends Error {
         /* A few services returns different error responses, we should be able to transform those responses based on the service */
         if (this.service === "Routing") {
             this.transformRouteAPIError();
+        } else if (this.service === "Geocode") {
+            this.transformGeocodeAPIError();
         } else {
             this.transformDefaultAPIError();
         }
@@ -60,6 +67,14 @@ export class SDKError extends Error {
 
         if (response?.data.error.description) {
             this.message = response?.data.error.description;
+        }
+    }
+
+    private transformGeocodeAPIError() {
+        const { response } = this.error as AxiosError<GeocodeAPIResponseError>;
+
+        if (response?.data.errorText) {
+            this.message = response?.data.errorText;
         }
     }
 }
