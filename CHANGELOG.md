@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.30](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.29...v0.1.30) (2022-09-08)
+
+
+### Bug Fixes
+
+* **actions:** Install before switch version ([33783f6](https://github.com/tomtom-international/go-sdk-js/commit/33783f65ed9f56266a4fa77398abecc83efc551a))
+* **error-handler:** Add routing error handler ([506db39](https://github.com/tomtom-international/go-sdk-js/commit/506db390cbfd4c87f8e2cb9339c0973ce5b5cd63))
+* **tests:** making performance tests more stable ([f15afa9](https://github.com/tomtom-international/go-sdk-js/commit/f15afa9063034006930ce9e1af43991ca295a9e2))
+
 ### [0.1.29](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.28...v0.1.29) (2022-09-05)
 
 ### [0.1.28](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.27...v0.1.28) (2022-09-05)
