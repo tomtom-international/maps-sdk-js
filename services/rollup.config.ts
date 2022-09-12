@@ -4,6 +4,7 @@ import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
 // @ts-ignore
 import includePaths from "rollup-plugin-includepaths";
+import json from "@rollup/plugin-json";
 
 const includePathOptions = {
     include: {},
@@ -33,7 +34,8 @@ export default () => {
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
-                terser()
+                terser(),
+                json() // need for imported json from Ajv
             ]
         },
         {
@@ -52,7 +54,8 @@ export default () => {
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
-                commonjs()
+                commonjs(),
+                json() // need for imported json from Ajv
             ]
         },
         {
@@ -71,7 +74,8 @@ export default () => {
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
-                commonjs()
+                commonjs(),
+                json() // need for imported json from Ajv
             ]
         }
     ];
