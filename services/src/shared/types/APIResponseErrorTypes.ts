@@ -23,7 +23,7 @@ export interface BaseAPIResponseError {
     };
 }
 
-export interface APIResponseError extends BaseAPIResponseError {
+export interface DefaultAPIResponseError extends BaseAPIResponseError {
     /*
      * A human-readable description of the error code.
      */

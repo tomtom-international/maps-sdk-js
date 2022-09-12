@@ -1,7 +1,8 @@
+import { ErrorObject } from "ajv";
 import { AxiosError } from "axios";
 import {
     APIErrorCode,
-    APIResponseError,
+    DefaultAPIResponseError,
     GeocodeAPIResponseError,
     RoutingAPIResponseError
 } from "./types/APIResponseErrorTypes";
@@ -15,26 +16,19 @@ import { Services } from "./types/ServicesTypes";
 export class SDKError extends Error {
     status?: number;
     stack?: string;
-    readonly __originalError: unknown;
 
-    constructor(readonly error: unknown, readonly service?: Services, message?: string) {
+    constructor(readonly error: AxiosError, readonly service?: Services, message?: string) {
         super(message ? message : (error as Error).message);
-        this.__originalError = error;
 
-        this.transformErrorForSerialization();
-    }
-
-    private transformErrorForSerialization() {
-        if (this.error instanceof AxiosError) {
-            this.transformAxiosError();
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#custom_error_types
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, SDKError);
         }
-    }
 
-    private transformAxiosError() {
-        const { response, stack } = this.error as AxiosError;
+        const { response } = error;
 
         this.status = response?.status;
-        this.stack = stack;
 
         /* A few services returns different error responses, we should be able to transform those responses based on the service */
         if (this.service === "Routing") {
@@ -55,7 +49,7 @@ export class SDKError extends Error {
     }
 
     private transformDefaultAPIError() {
-        const { response } = this.error as AxiosError<APIResponseError>;
+        const { response } = this.error as AxiosError<DefaultAPIResponseError>;
 
         if (response?.data?.error) {
             this.message = response.data.error;

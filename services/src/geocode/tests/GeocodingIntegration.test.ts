@@ -170,4 +170,22 @@ describe("Geocoding integration tests", () => {
         );
         expect(result).toMatchObject(customParserExample);
     });
+
+    test("it should fail when passing invalid params", async () => {
+        const invalidParams: GeocodingParams = {
+            query: "amsterdam",
+            typeahead: true,
+            limit: 1500, // Invalid value, limit <= 100
+            offset: 3,
+            position: [4.81063, 51.85925],
+            // Using ts-ignore as the view is an invalid value
+            //@ts-ignore
+            view: "MAA", // Invalid value, it should be of type View
+            geographyType: ["Municipality", "MunicipalitySubdivision"],
+            language: "en-GB",
+            radius: 1000000
+        };
+
+        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
+    });
 });

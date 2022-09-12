@@ -1,4 +1,5 @@
 import { GlobalConfig } from "@anw/go-sdk-js/core";
+import { JSONSchemaType } from "ajv";
 
 /**
  * @group Shared
@@ -12,6 +13,8 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
      */
     customServiceBaseURL?: string;
 };
+
+export type CommonSchemaType<T> = JSONSchemaType<T>;
 
 /**
  * Template functions for any service.
@@ -37,4 +40,11 @@ export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RES
      * @param params The call parameters, if applicable for this service.
      */
     parseResponse: (apiResponse: API_RESPONSE, params: PARAMS) => RESPONSE;
+
+    /**
+     * Schema from Ajv for validating input parameters.
+     * This will be compiled and used for validation.
+     * https://ajv.js.org/guide/getting-started.html#basic-data-validation
+     */
+    requestValidationSchema?: any; // Type JSONSchemaType<REQUEST> ?
 };
