@@ -1,11 +1,11 @@
 import { GeographyType, MapcodeType, View, Connector, Fuel, OpeningHours, TimeZone } from "@anw/go-sdk-js/core";
-import { BBox, Geometry, Position } from "geojson";
+import { Geometry, Position } from "geojson";
 
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 
 export type SearchByGeometryPayload = {
-    geometryList: SDKGeometry[];
+    geometryList: GeometrySDK[];
 };
 
 type RelatedPoisRequest = "child" | "parent" | "all" | "off";
@@ -17,7 +17,7 @@ export type GeometrySearchRequest = CommonServiceParams &
          */
         query: string;
 
-        /**
+        /**trans
          * The maximum number of responses that will be returned.
          * @default 10
          * Maximum value: 100
@@ -120,14 +120,11 @@ export type GeometrySearchRequest = CommonServiceParams &
         entityTypes?: GeographyType[];
     };
 
-export type SDKGeometry = Geometry | Circle;
+export type GeometrySDK = Geometry | Circle;
 
 // geo-json does not support circle as a Geometry shape
 export interface Circle {
     type: "Circle";
     coordinates: Position;
     radius: number;
-
-    // repeating the GeoJsonObject interface
-    bbox?: BBox;
 }

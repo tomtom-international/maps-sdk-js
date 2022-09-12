@@ -7,10 +7,10 @@ import {
     GeometryAPI,
     PolygonAPI,
     GeometrySearchRequest,
-    SDKGeometry
+    GeometrySDK
 } from "./types";
 
-export const sdkGeometryToTTGeometry = (obj: SDKGeometry): GeometryAPI => {
+export const sdkGeometryToTTGeometry = (obj: GeometrySDK): GeometryAPI => {
     if (obj.type === "Circle") {
         return {
             type: "CIRCLE",

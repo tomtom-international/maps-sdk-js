@@ -1,11 +1,11 @@
 import { Fuel, GOSDKConfig, Location } from "@anw/go-sdk-js/core";
 
 import { buildGeometrySearchRequest, geometrySearch, parseGeometrySearchResponse } from "..";
-import { SDKGeometry, GeometrySearchResponseProps, GeometrySearchResponse } from "../types";
+import { GeometrySDK, GeometrySearchResponseProps, GeometrySearchResponse } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 
 describe("Geometry Search API", () => {
-    const geometryList: SDKGeometry[] = [
+    const geometryList: GeometrySDK[] = [
         {
             type: "Polygon",
             coordinates: [
