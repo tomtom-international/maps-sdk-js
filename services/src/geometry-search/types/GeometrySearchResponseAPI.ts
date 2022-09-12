@@ -10,7 +10,9 @@ import {
 } from "@anw/go-sdk-js/core";
 import { Polygon } from "geojson";
 
-type POI = {
+import { EntryPointAPI, LatLonAPI, Summary, ViewportAPI } from "../../shared/types/APIResponseTypes";
+
+type POIAPI = {
     name: string;
     phone?: string;
     brands?: Brand[];
@@ -23,8 +25,6 @@ type POI = {
     classifications?: Classification[];
     timeZone?: TimeZone;
 };
-
-import { EntryPointAPI, LatLonAPI, Summary, ViewportAPI } from "../../shared/types/APIResponseTypes";
 
 export type GeocodingProps = CommonLocationProps & {
     type: LocationType;
@@ -48,7 +48,7 @@ type GeometrySearchResultAPI = Omit<
     entryPoints?: EntryPointAPI[];
     address?: AddressProperties;
     info?: string;
-    poi?: POI;
+    poi?: POIAPI;
 };
 
 export type GeometrySearchResponseAPI = {
