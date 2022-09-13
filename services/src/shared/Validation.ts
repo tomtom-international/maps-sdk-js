@@ -1,7 +1,9 @@
-import Ajv, { ErrorObject, JSONSchemaType } from "ajv";
+import Ajv, { ErrorObject } from "ajv";
 import { CommonServiceParams } from "./ServiceTypes";
 
 const ajv = new Ajv();
+
+type ValidationErrorResponse = { property: string; message: string | undefined }[];
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.
@@ -9,14 +11,14 @@ const ajv = new Ajv();
  * @category Types
  */
 export class ValidationError extends Error {
-    errors: any[];
+    errors: ValidationErrorResponse;
 
     constructor(message: string, errors: any) {
         super(message);
         this.errors = this.transformErrors(errors);
     }
 
-    private transformErrors(errors: ErrorObject[]): { property: string; message: string | undefined }[] {
+    private transformErrors(errors: ErrorObject[]): ValidationErrorResponse {
         const formattedErrors = errors.map((error) => ({
             property: error.instancePath,
             message: error.message
