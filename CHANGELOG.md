@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.33](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.32...v0.1.33) (2022-09-13)
+
+
+### Features
+
+* **geometry-search:** implement geometry search api call ([f0eccdf](https://github.com/tomtom-international/go-sdk-js/commit/f0eccdfa0669b4e3a1c97d414fc376954c45eb2a))
+* **map:** first draft version of map initialization based on current wip renderer and misc improvements ([7d7f955](https://github.com/tomtom-international/go-sdk-js/commit/7d7f95505c76f28097f18e11c7c9224332eb51b6))
+
+
+### Bug Fixes
+
+* **error-handler:** Add geocode support ([19b7373](https://github.com/tomtom-international/go-sdk-js/commit/19b73738e44a697aea3ceb63c3e2063f335c925a))
+* **versioning:** regex should be resistant to backtracking ([086adbe](https://github.com/tomtom-international/go-sdk-js/commit/086adbe0644a3b339fa7a246f80ad3e3ea388bd8))
+
 ### [0.1.32](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.31...v0.1.32) (2022-09-08)
 
 ### [0.1.31](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.30...v0.1.31) (2022-09-08)
