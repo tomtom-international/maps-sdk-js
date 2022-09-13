@@ -57,7 +57,7 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@types/geojson": "^7946.0.10",
-    "@types/lodash": "^4.14.184"
+    "@types/lodash": "^4.14.185"
   },
   "devDependencies": {
     "typedoc": "^0.23.13",
