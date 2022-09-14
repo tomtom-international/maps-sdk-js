@@ -1,10 +1,8 @@
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
-
-import { SDKError } from "./Errors";
+import { generateError } from "./Errors";
 import { Services } from "./types/ServicesTypes";
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
-import { validateSchema, ValidationError } from "./Validation";
-import { AxiosError } from "axios";
+import { validateSchema } from "./Validation";
 
 /**
  * @ignore
@@ -29,12 +27,6 @@ export const callService = async <PARAMS extends CommonServiceParams, REQUEST, A
         const apiResponse = await template.sendRequest(request);
         return template.parseResponse(apiResponse, mergedParams);
     } catch (e) {
-        // Handling the errors regarding its type. Following MDN recommendation
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch#conditional_catch-blocks
-        if (e instanceof AxiosError) {
-            return Promise.reject(new SDKError(e, serviceName));
-        } else {
-            return Promise.reject(e);
-        }
+        return Promise.reject(generateError(e, serviceName));
     }
 };

@@ -60,10 +60,18 @@ export interface RoutingAPIResponseError {
     };
 }
 
+export type ErrorObjAPI = {
+    status: number | undefined;
+    message: string;
+    data: DefaultAPIResponseError | GeocodeAPIResponseError | RoutingAPIResponseError | undefined;
+};
+
 const enum APICode {
-    TOO_MANY_REQUESTS = 429
+    TOO_MANY_REQUESTS = 429,
+    FORBIDDEN = 403
 }
 
 export const APIErrorCode: { readonly [K in APICode as number]: string } = {
-    [APICode.TOO_MANY_REQUESTS]: "Too Many Requests: The API Key is over QPS (Queries per second)"
+    [APICode.TOO_MANY_REQUESTS]: "Too Many Requests: The API Key is over QPS (Queries per second)",
+    [APICode.FORBIDDEN]: "Request failed with status code 403"
 };
