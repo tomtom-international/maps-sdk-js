@@ -182,7 +182,7 @@ describe("Geocoding integration tests", () => {
             // Using ts-ignore as the view is an invalid value
             //@ts-ignore
             view: "MAA", // Invalid value, it should be of type View
-            geographyType: ["Municipality", "MunicipalitySubdivision"],
+            geographyTypes: ["Municipality", "MunicipalitySubdivision"],
             language: "en-GB",
             radius: 1000000
         };

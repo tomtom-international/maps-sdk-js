@@ -47,7 +47,7 @@ export const validationGeocodeSchema: JSONSchemaType<GeocodingParams> = {
         extendedPostalCodesFor: { type: "array", nullable: true, items: { type: "string" } },
         mapcodes: { type: "array", nullable: true, items: { type: "string" } },
         view: { type: "string", nullable: true, enum: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"] },
-        geographyType: { type: "array", nullable: true, items: { type: "string" } },
+        geographyTypes: { type: "array", nullable: true, items: { type: "string" } },
         commonBaseURL: { type: "string", nullable: true },
         customServiceBaseURL: { type: "string", nullable: true },
         language: { type: "string", nullable: true }
