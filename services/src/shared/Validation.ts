@@ -3,6 +3,7 @@ import { CommonServiceParams } from "./ServiceTypes";
 
 const ajv = new Ajv();
 
+export type AjvValidationErrors = ErrorObject<string, Record<string, any>, unknown>[];
 type ValidationErrorResponse = { property: string; message: string | undefined }[];
 
 /**
@@ -13,12 +14,12 @@ type ValidationErrorResponse = { property: string; message: string | undefined }
 export class ValidationError extends Error {
     errors: ValidationErrorResponse;
 
-    constructor(message: string, errors: any) {
+    constructor(message: string, errors: AjvValidationErrors | null | undefined) {
         super(message);
-        this.errors = this.transformErrors(errors);
+        this.errors = errors ? this.transformErrors(errors) : [];
     }
 
-    private transformErrors(errors: ErrorObject[]): ValidationErrorResponse {
+    private transformErrors(errors: AjvValidationErrors): ValidationErrorResponse {
         const formattedErrors = errors.map((error) => ({
             property: error.instancePath,
             message: error.message

@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { GeocodingParams } from "./types/GeocodingParams";
 
-export const validationGeocodeSchema: JSONSchemaType<GeocodingParams> = {
+export const geocodingRequestSchema: JSONSchemaType<GeocodingParams> = {
     type: "object",
     properties: {
         apiKey: { type: "string", nullable: true },

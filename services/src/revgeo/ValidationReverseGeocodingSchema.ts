@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 
-export const validationRevGeocodeSchema: JSONSchemaType<ReverseGeocodingParams> = {
+export const revGeocodeRequestSchema: JSONSchemaType<ReverseGeocodingParams> = {
     type: "object",
     properties: {
         apiKey: { type: "string", nullable: true },

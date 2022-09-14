@@ -14,8 +14,6 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
     customServiceBaseURL?: string;
 };
 
-export type CommonSchemaType<T> = JSONSchemaType<T>;
-
 /**
  * Template functions for any service.
  * @group Shared

@@ -5,7 +5,7 @@ import { buildRevGeoRequest } from "./RequestBuilder";
 import { getJson } from "../shared/Fetch";
 import { parseRevGeoResponse } from "./ResponseParser";
 import { ReverseGeocodingResponseAPI } from "./types/APITypes";
-import { validationRevGeocodeSchema } from "./ValidationReverseGeocodingSchema";
+import { revGeocodeRequestSchema } from "./ValidationReverseGeocodingSchema";
 
 /**
  * Reverse Geocoding service template type.
@@ -26,7 +26,7 @@ export type ReverseGeocodingTemplate = ServiceTemplate<
  */
 export const reverseGeocodingTemplate: ReverseGeocodingTemplate = {
     buildRequest: buildRevGeoRequest,
-    requestValidationSchema: validationRevGeocodeSchema,
+    requestValidationSchema: revGeocodeRequestSchema,
     sendRequest: getJson,
     parseResponse: parseRevGeoResponse
 };
