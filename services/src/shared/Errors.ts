@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { ParseRequestError } from "./ServiceTypes";
-import { APIErrorCode, DefaultAPIResponseError } from "./types/APIResponseErrorTypes";
+import { APICode, DefaultAPIResponseError } from "./types/APIResponseErrorTypes";
 import { ValidationError, ValidationErrorResponse } from "./Validation";
 
 /**
@@ -17,6 +17,11 @@ export class SDKError extends Error {
         super(message);
     }
 }
+
+export const APIErrorCode: { readonly [K in APICode as number]: string } = {
+    [APICode.TOO_MANY_REQUESTS]: "Too Many Requests: The API Key is over QPS (Queries per second)",
+    [APICode.FORBIDDEN]: "Request failed with status code 403"
+};
 
 /**
  * API Response Error Class for the handle API error responses.
@@ -60,8 +65,13 @@ export const defaultResponseParserError: ParseRequestError<DefaultAPIResponseErr
  * Generate error for APIResponse, any other error type will be returned as it is.
  * @param error The error captured by a catch function.
  * @param serviceName The name of the service.
+ * @param parserResponseError
  */
-export const generateError = (error: unknown, serviceName: string, parserResponseError?: ParseRequestError<any>) => {
+export const generateError = (
+    error: unknown,
+    serviceName: string,
+    parserResponseError?: ParseRequestError<unknown>
+): SDKError => {
     if (error instanceof AxiosError) {
         const errorObj = {
             status: error.response?.status,

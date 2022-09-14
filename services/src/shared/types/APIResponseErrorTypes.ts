@@ -1,3 +1,6 @@
+/**
+ * @ignore
+ */
 export interface BaseAPIResponseError {
     /*
      * HTTP error code.
@@ -23,6 +26,9 @@ export interface BaseAPIResponseError {
     };
 }
 
+/**
+ * @ignore
+ */
 export interface DefaultAPIResponseError extends BaseAPIResponseError {
     /*
      * A human-readable description of the error code.
@@ -31,6 +37,9 @@ export interface DefaultAPIResponseError extends BaseAPIResponseError {
     errorText?: string;
 }
 
+/**
+ * @ignore
+ */
 export interface RoutingAPIResponseError {
     /*
      * 	The format version
@@ -54,18 +63,19 @@ export interface RoutingAPIResponseError {
     };
 }
 
+/**
+ * @ignore
+ */
 export type ErrorObjAPI<T> = {
     status: number | undefined;
     message: string;
     data: T;
 };
 
-const enum APICode {
+/**
+ * @ignore
+ */
+export const enum APICode {
     TOO_MANY_REQUESTS = 429,
     FORBIDDEN = 403
 }
-
-export const APIErrorCode: { readonly [K in APICode as number]: string } = {
-    [APICode.TOO_MANY_REQUESTS]: "Too Many Requests: The API Key is over QPS (Queries per second)",
-    [APICode.FORBIDDEN]: "Request failed with status code 403"
-};

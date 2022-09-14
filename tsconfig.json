@@ -1,20 +1,19 @@
 {
-    "compilerOptions": {
-      "incremental": true,
-      "declaration": true,
-      "skipLibCheck": true,
-      "resolveJsonModule": true,
-      "allowJs": false,
-      "esModuleInterop": true,
-      "moduleResolution": "Node",
-      "sourceMap": true,
-      "strict": true,
-      "outDir": "./dist",
-      "target": "ES6",
-      "paths": {
-        "@anw/go-sdk-js/core": ["./core"]
-      }
-    },
-    "exclude": ["node_modules", "rollup.config.ts", ".rollup.cache/", "dist", "__mocks__"]
-  }
-  
+  "compilerOptions": {
+    "incremental": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "sourceMap": true,
+    "strict": true,
+    "outDir": "./dist",
+    "target": "ES6",
+    "paths": {
+      "@anw/go-sdk-js/core": ["./core"]
+    }
+  },
+  "exclude": ["node_modules", "rollup.config.ts", ".rollup.cache/", "dist", "__mocks__"]
+}

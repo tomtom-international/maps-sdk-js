@@ -13,6 +13,7 @@ describe("Calculate Route response parsing functional tests", () => {
         "'%s'",
         // @ts-ignore
         (_name: string, apiResponse: CalculateRouteResponseAPI, parsedResponse: CalculateRouteResponse) => {
+            // (We use JSON.stringify for comparisons because of the relation between JSON inputs and Date objects)
             expect(JSON.stringify(parseCalculateRouteResponse(apiResponse))).toStrictEqual(
                 JSON.stringify(parsedResponse)
             );

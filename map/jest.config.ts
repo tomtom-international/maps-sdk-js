@@ -1,8 +1,3 @@
-import path from "path";
-import dotenv from "dotenv";
-
-dotenv.config({ path: path.resolve("./jest-config/.env") });
-
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
     preset: "ts-jest",

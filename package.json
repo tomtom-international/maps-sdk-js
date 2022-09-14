@@ -35,7 +35,8 @@
   "workspaces": [
     "core",
     "services",
-    "map"
+    "map",
+    "map-integration-tests"
   ],
   "exports": {
     "./package.json": "./package.json",
@@ -58,14 +59,16 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@types/geojson": "^7946.0.10",
-    "@types/lodash": "^4.14.185"
+    "@types/lodash": "^4.14.185",
+    "map": "file:map",
+    "services": "file:services"
   },
   "devDependencies": {
     "@size-limit/file": "^8.1.0",
     "@size-limit/preset-app": "^8.1.0",
     "size-limit": "^8.1.0",
-    "typedoc": "^0.23.13",
-    "typedoc-plugin-markdown": "^3.13.5",
+    "typedoc": "^0.23.15",
+    "typedoc-plugin-markdown": "^3.13.6",
     "typedoc-plugin-missing-exports": "^1.0.0"
   },
   "size-limit": [

@@ -1,0 +1,4 @@
+coverage/**
+.rollup.cache/**
+dist/**
+rollup.config.ts
