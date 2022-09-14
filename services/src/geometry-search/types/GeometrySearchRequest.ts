@@ -1,4 +1,4 @@
-import { GeographyType, MapcodeType, View, Connector, Fuel, OpeningHours, TimeZone } from "@anw/go-sdk-js/core";
+import { GeographyType, MapcodeType, View, ConnectorType, Fuel } from "@anw/go-sdk-js/core";
 import { Geometry, Position } from "geojson";
 
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
@@ -9,6 +9,12 @@ export type SearchByGeometryPayload = {
 };
 
 type RelatedPoisRequest = "child" | "parent" | "all" | "off";
+
+type OpeningHoursRequest = "nextSevenDays";
+
+type TimeZoneRequest = "iana";
+
+type ConnectorRequest = ConnectorType;
 
 export type GeometrySearchRequest = CommonServiceParams &
     SearchByGeometryPayload & {
@@ -97,7 +103,7 @@ export type GeometrySearchRequest = CommonServiceParams &
          * A comma-separated list of connector types which could be used to restrict the result to the Points Of Interest of type Electric Vehicle Station supporting specific connector types. See the list of Supported Connector Types.
          * Value: A list of connector types (in any order). When multiple connector types are provided, only POIs that support (at least) one of the connector types from the provided list will be returned.
          */
-        connectors?: Connector[];
+        connectors?: ConnectorRequest[];
         /**
          * A list of fuel types which could be used to restrict the result to the Points Of Interest of specific fuels. If fuelSet is specified, the query can remain empty. Only POIs with a proper fuel type will be returned.
          */
@@ -105,13 +111,26 @@ export type GeometrySearchRequest = CommonServiceParams &
         /**
          * List of opening hours for a POI (Points of Interest).
          */
-        openingHours?: OpeningHours;
+        openingHours?: OpeningHoursRequest;
         /**
          * Used to indicate the mode in which the timeZone object should be returned.
          */
-        timeZone?: TimeZone;
+        timeZone?: TimeZoneRequest;
+        /**
+         * An optional parameter that provides the possibility to return related Points Of Interest.
+         * Default value: off
+         * Points Of Interest can be related to each other when one is physically part of another. For example, an airport terminal can physically belong to an airport. This relationship is expressed as a parent/child relationship: the airport terminal is a child of the airport. If the value child or parent is given, a related Points Of Interest with a specified relation type will be returned in the response. If the value all is given, then both child and parent relations are returned.
+         */
         relatedPois?: RelatedPoisRequest;
+        /**
+         * An optional parameter which could be used to restrict the result to the Points Of Interest of type Electric Vehicle Station supporting at least one connector with a specific minimal value of power in kilowatts (closed interval - with that value).
+         * Value: A double value representing the power rate in kilowatts.
+         */
         minPowerKW?: number;
+        /**
+         * An optional parameter which could be used to restrict the result to the Points Of Interest of type Electric Vehicle Station supporting at least one connector with a specific maximum value of power in kilowatts (closed interval - with that value).
+         * Value: A double value representing the power rate in kilowatts.
+         */
         maxPowerKW?: number;
         /**
          * A comma-separated list of entity types which can be used to restrict the result to a specific entity type. Parameter should be used with the idxSet parameter set to the Geography value.

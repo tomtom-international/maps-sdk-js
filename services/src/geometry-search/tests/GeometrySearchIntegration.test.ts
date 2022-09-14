@@ -33,8 +33,25 @@ describe("Geometry Search API", () => {
         const categories: number[] = [];
         const fuels: Fuel[] = [];
         const language = "en-GB";
+        const view = "Unified";
+        const timeZone = "iana";
+        const openingHours = "nextSevenDays";
+        const limit = 5;
         const indexes: IndexTypesAbbreviation[] = ["POI"];
-        const res = await geometrySearch({ query, geometryList, categories, fuels, language, limit: 5, indexes });
+        const res = await geometrySearch({
+            query,
+            geometryList,
+            categories,
+            fuels,
+            language,
+            limit,
+            indexes,
+            view,
+            timeZone,
+            openingHours
+        });
+
+        expect(res.features).toHaveLength(limit);
 
         expect(res).toEqual(
             expect.objectContaining<GeometrySearchResponse>({

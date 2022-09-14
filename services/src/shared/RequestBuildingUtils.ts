@@ -27,3 +27,23 @@ export const appendByRepeatingParamName = (
         urlParams.append(paramName, param);
     }
 };
+
+/**
+ * @ignore
+ */
+export const appendByJoiningParamValue = (
+    urlParams: URLSearchParams,
+    name: string,
+    values?: string[] | number[]
+): void => {
+    if (Array.isArray(values) && values.length > 0) {
+        urlParams.append(name, values.join(","));
+    }
+};
+
+/**
+ * @ignore
+ */
+export const appendParameter = (urlParams: URLSearchParams, name: string, value?: string | number): void => {
+    value && urlParams.append(name, String(value));
+};

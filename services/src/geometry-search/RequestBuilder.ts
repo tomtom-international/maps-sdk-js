@@ -9,6 +9,7 @@ import {
     GeometrySearchRequest,
     GeometrySDK
 } from "./types";
+import { appendByJoiningParamValue, appendCommonParams, appendParameter } from "../shared/RequestBuildingUtils";
 
 export const sdkGeometryToTTGeometry = (obj: GeometrySDK): GeometryAPI => {
     if (obj.type === "Circle") {
@@ -38,29 +39,24 @@ export const buildGeometrySearchRequest = (params: GeometrySearchRequest): PostO
     const url = new URL(`${buildURLBasePath(mergedParams)}`);
     const urlParams = url.searchParams;
 
-    // common parameters
-    mergedParams.apiKey && urlParams.append("key", mergedParams.apiKey);
-    mergedParams.language && urlParams.append("language", mergedParams.language);
+    appendCommonParams(urlParams, mergedParams);
+    appendParameter(urlParams, "limit", mergedParams.limit);
 
-    // method-specific parameters
-    if (mergedParams.fuels?.length) {
-        urlParams.append("fuelSet", mergedParams.fuels.join(","));
-    }
-    if (mergedParams.indexes?.length) {
-        urlParams.append("idxSet", mergedParams.indexes.join(","));
-    }
-    if (mergedParams.brands?.length) {
-        urlParams.append("brandSet", mergedParams.brands.join(","));
-    }
-    if (mergedParams.categories?.length) {
-        urlParams.append("categorySet", mergedParams.categories.join(","));
-    }
-    if (mergedParams.connectors?.length) {
-        urlParams.append("connectorSet", mergedParams.connectors.join(","));
-    }
-    if (mergedParams.mapcodes?.length) {
-        urlParams.append("mapcodes", mergedParams.mapcodes.join(","));
-    }
+    appendByJoiningParamValue(urlParams, "fuelSet", mergedParams.fuels);
+    appendByJoiningParamValue(urlParams, "idxSet", mergedParams.indexes);
+    appendByJoiningParamValue(urlParams, "brandSet", mergedParams.brands);
+    appendByJoiningParamValue(urlParams, "categorySet", mergedParams.categories);
+    appendByJoiningParamValue(urlParams, "connectorSet", mergedParams.connectors);
+    appendByJoiningParamValue(urlParams, "mapcodes", mergedParams.mapcodes);
+    appendByJoiningParamValue(urlParams, "extendedPostalCodesFor", mergedParams.extendedPostalCodesFor);
+
+    appendParameter(urlParams, "minPowerKW", mergedParams.minPowerKW);
+    appendParameter(urlParams, "maxPowerKW", mergedParams.maxPowerKW);
+    appendParameter(urlParams, "view", mergedParams.view);
+    appendParameter(urlParams, "openingHours", mergedParams.openingHours);
+    appendParameter(urlParams, "timeZone", mergedParams.timeZone);
+    appendParameter(urlParams, "relatedPois", mergedParams.relatedPois);
+    appendByJoiningParamValue(urlParams, "entityTypeSet", mergedParams.entityTypes);
 
     return {
         url,
