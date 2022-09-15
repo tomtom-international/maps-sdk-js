@@ -8,7 +8,7 @@ describe("Calculate Geometry Search request URL building tests", () => {
         // @ts-ignore
         (name: string, params: GeometrySearchRequest, url: string, requestData: SearchByGeometryPayloadAPI) => {
             expect(buildGeometrySearchRequest(params).url.href).toStrictEqual(url);
-            expect(JSON.stringify(buildGeometrySearchRequest(params).data)).toStrictEqual(JSON.stringify(requestData));
+            expect(buildGeometrySearchRequest(params).data).toStrictEqual(requestData);
         }
     );
 });
