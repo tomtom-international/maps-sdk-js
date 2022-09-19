@@ -5,6 +5,7 @@ import { buildCalculateRouteRequest } from "./RequestBuilder";
 import { parseCalculateRouteResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
 import { CalculateRouteResponseAPI } from "./types/APITypes";
+import { routingResponseErrorParser } from "./RoutingResponseErrorParser";
 
 /**
  * @group Calculate Route
@@ -24,5 +25,6 @@ export type CalculateRouteTemplate = ServiceTemplate<
 export const calculateRouteTemplate: CalculateRouteTemplate = {
     buildRequest: buildCalculateRouteRequest,
     sendRequest: getJson,
-    parseResponse: parseCalculateRouteResponse
+    parseResponse: parseCalculateRouteResponse,
+    parseRequestError: routingResponseErrorParser
 };

@@ -1,12 +1,12 @@
 import geocode from "../Geocoding";
 import { GeocodingResponseAPI } from "../types/APITypes";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
-import { GeocodeAPIParseErrorResponse } from "../../shared/Errors";
 import { GeocodingParams } from "../types/GeocodingParams";
+import { APIResponseError } from "../../shared/Errors";
 
 describe("Geocoding test without API key", () => {
     test("Geocoding test without API key", async () => {
-        await expect(geocode({ query: "" })).rejects.toBeInstanceOf(GeocodeAPIParseErrorResponse);
+        await expect(geocode({ query: "" })).rejects.toBeInstanceOf(APIResponseError);
         await expect(geocode({ query: "" })).rejects.toMatchObject({
             service: "Geocode",
             message: "Request failed with status code 403",
@@ -188,5 +188,10 @@ describe("Geocoding integration tests", () => {
         };
 
         await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
+        await expect(geocode(invalidParams)).rejects.toMatchObject({
+            message: "Validation error",
+            service: "Geocode",
+            errors: [{ property: "/limit", message: "must be <= 100" }]
+        });
     });
 });

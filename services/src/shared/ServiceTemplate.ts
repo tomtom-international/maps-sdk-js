@@ -2,7 +2,7 @@ import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { generateError } from "./Errors";
 import { Services } from "./types/ServicesTypes";
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
-import { validateSchema } from "./Validation";
+import { validateRequestSchema } from "./Validation";
 
 /**
  * @ignore
@@ -22,11 +22,11 @@ export const callService = async <PARAMS extends CommonServiceParams, REQUEST, A
 ): Promise<RESPONSE> => {
     try {
         const mergedParams = mergeFromGlobal(params);
-        const validatedParams = validateSchema(mergedParams, template.requestValidationSchema);
+        const validatedParams = validateRequestSchema(mergedParams, template.validateRequestSchema);
         const request = template.buildRequest(validatedParams);
         const apiResponse = await template.sendRequest(request);
         return template.parseResponse(apiResponse, mergedParams);
     } catch (e) {
-        return Promise.reject(generateError(e, serviceName));
+        return Promise.reject(generateError(e, serviceName, template.parseRequestError));
     }
 };

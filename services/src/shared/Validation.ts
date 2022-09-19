@@ -4,12 +4,12 @@ import { CommonServiceParams } from "./ServiceTypes";
 const ajv = new Ajv();
 
 export type AjvValidationErrors = ErrorObject<string, Record<string, any>, unknown>[];
-type ValidationErrorResponse = { property: string; message: string | undefined }[];
+export type ValidationErrorResponse = { property: string; message: string | undefined }[];
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.
  * @group Shared
- * @category Types
+ * @ignore
  */
 export class ValidationError extends Error {
     errors: ValidationErrorResponse;
@@ -29,7 +29,12 @@ export class ValidationError extends Error {
     }
 }
 
-export const validateSchema = <T extends CommonServiceParams>(params: T, schema: any): T => {
+/**
+ * @ignore
+ * @param params
+ * @param schema
+ */
+export const validateRequestSchema = <T extends CommonServiceParams>(params: T, schema: any): T => {
     if (schema) {
         const validate = ajv.compile(schema);
         if (!validate(params)) {

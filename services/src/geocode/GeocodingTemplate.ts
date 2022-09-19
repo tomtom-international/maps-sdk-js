@@ -5,7 +5,8 @@ import { getJson } from "../shared/Fetch";
 import { ServiceTemplate } from "../shared/ServiceTypes";
 import { GeocodingParams } from "./types/GeocodingParams";
 import { GeocodingResponseAPI } from "./types/APITypes";
-import { geocodingRequestSchema } from "./ValidationGeocodeSchema";
+import { geocodingRequestSchema } from "./GeocodingRequestSchema";
+import { geocodeResponseErrorParser } from "./GeocodingResponseErrorParser";
 
 /**
  * Geocoding service template type.
@@ -21,7 +22,8 @@ export type GeocodingTemplate = ServiceTemplate<GeocodingParams, URL, GeocodingR
  */
 export const geocodingTemplate: GeocodingTemplate = {
     buildRequest: buildGeocodingRequest,
-    requestValidationSchema: geocodingRequestSchema,
+    validateRequestSchema: geocodingRequestSchema,
     sendRequest: getJson,
-    parseResponse: parseGeocodingResponse
+    parseResponse: parseGeocodingResponse,
+    parseRequestError: geocodeResponseErrorParser
 };

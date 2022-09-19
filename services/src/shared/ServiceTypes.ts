@@ -1,5 +1,6 @@
 import { GlobalConfig } from "@anw/go-sdk-js/core";
-import { JSONSchemaType } from "ajv";
+import { APIResponseError } from "./Errors";
+import { ErrorObjAPI } from "./types/APIResponseErrorTypes";
 
 /**
  * @group Shared
@@ -13,6 +14,12 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
      */
     customServiceBaseURL?: string;
 };
+
+/**
+ * @group Shared
+ * @category Types
+ */
+export type ParseRequestError<T> = (apiError: ErrorObjAPI<T>, serviceName: string) => APIResponseError;
 
 /**
  * Template functions for any service.
@@ -44,5 +51,7 @@ export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RES
      * This will be compiled and used for validation.
      * https://ajv.js.org/guide/getting-started.html#basic-data-validation
      */
-    requestValidationSchema?: any; // Type JSONSchemaType<REQUEST> ?
+    validateRequestSchema?: any;
+
+    parseRequestError?: ParseRequestError<any>;
 };

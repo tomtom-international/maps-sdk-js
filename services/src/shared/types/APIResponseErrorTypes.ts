@@ -27,7 +27,7 @@ export interface DefaultAPIResponseError extends BaseAPIResponseError {
     /*
      * A human-readable description of the error code.
      */
-    error: string;
+    error?: string;
 }
 
 export interface GeocodeAPIResponseError extends BaseAPIResponseError {
@@ -60,10 +60,10 @@ export interface RoutingAPIResponseError {
     };
 }
 
-export type ErrorObjAPI = {
+export type ErrorObjAPI<T> = {
     status: number | undefined;
     message: string;
-    data: DefaultAPIResponseError | GeocodeAPIResponseError | RoutingAPIResponseError | undefined;
+    data: T;
 };
 
 const enum APICode {
