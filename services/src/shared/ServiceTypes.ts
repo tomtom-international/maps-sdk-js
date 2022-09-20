@@ -1,5 +1,5 @@
 import { GlobalConfig } from "@anw/go-sdk-js/core";
-import { APIResponseError } from "./Errors";
+import { SDKServiceError } from "./Errors";
 import { ErrorObjAPI } from "./types/APIResponseErrorTypes";
 
 /**
@@ -19,7 +19,7 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
  * @group Shared
  * @category Types
  */
-export type ParseRequestError<T> = (apiError: ErrorObjAPI<T>, serviceName: string) => APIResponseError;
+export type ParseRequestError<T> = (apiError: ErrorObjAPI<T>, serviceName: string) => SDKServiceError;
 
 /**
  * Template functions for any service.

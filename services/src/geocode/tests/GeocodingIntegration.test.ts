@@ -2,11 +2,11 @@ import geocode from "../Geocoding";
 import { GeocodingResponseAPI } from "../types/APITypes";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { GeocodingParams } from "../types/GeocodingParams";
-import { APIResponseError } from "../../shared/Errors";
+import { SDKServiceError } from "../../shared/Errors";
 
 describe("Geocoding test without API key", () => {
     test("Geocoding test without API key", async () => {
-        await expect(geocode({ query: "" })).rejects.toBeInstanceOf(APIResponseError);
+        await expect(geocode({ query: "" })).rejects.toBeInstanceOf(SDKServiceError);
         await expect(geocode({ query: "" })).rejects.toMatchObject({
             service: "Geocode",
             message: "Request failed with status code 403",

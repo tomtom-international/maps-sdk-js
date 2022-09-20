@@ -28,13 +28,7 @@ export interface DefaultAPIResponseError extends BaseAPIResponseError {
      * A human-readable description of the error code.
      */
     error?: string;
-}
-
-export interface GeocodeAPIResponseError extends BaseAPIResponseError {
-    /*
-     * A human-readable description of the error code.
-     */
-    errorText: string;
+    errorText?: string;
 }
 
 export interface RoutingAPIResponseError {

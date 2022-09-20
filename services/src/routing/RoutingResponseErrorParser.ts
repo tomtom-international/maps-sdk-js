@@ -1,4 +1,4 @@
-import { APIResponseError } from "../shared/Errors";
+import { SDKServiceError } from "../shared/Errors";
 import { ParseRequestError } from "../shared/ServiceTypes";
 import { RoutingAPIResponseError } from "../shared/types/APIResponseErrorTypes";
 
@@ -12,5 +12,5 @@ export const routingResponseErrorParser: ParseRequestError<RoutingAPIResponseErr
 
     const errorMessage = data.error.description || message;
 
-    return new APIResponseError(errorMessage, serviceName, status);
+    return new SDKServiceError(errorMessage, serviceName, status);
 };

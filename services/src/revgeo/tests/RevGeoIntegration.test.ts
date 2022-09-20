@@ -1,13 +1,13 @@
 import reverseGeocode from "../ReverseGeocoding";
 import { parseRevGeoResponse } from "../ResponseParser";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
-import { APIResponseError } from "../../shared/Errors";
+import { SDKServiceError } from "../../shared/Errors";
 
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {
         const coordinates = { position: [5.72884, 52.33499] };
 
-        await expect(reverseGeocode(coordinates)).rejects.toBeInstanceOf(APIResponseError);
+        await expect(reverseGeocode(coordinates)).rejects.toBeInstanceOf(SDKServiceError);
         await expect(reverseGeocode(coordinates)).rejects.toMatchObject({
             service: "ReverseGeocode",
             message: "Request failed with status code 403",

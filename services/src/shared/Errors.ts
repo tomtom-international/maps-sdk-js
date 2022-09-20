@@ -23,7 +23,7 @@ export class SDKError extends Error {
  * @group Shared
  * @category Types
  */
-export class APIResponseError extends SDKError {
+export class SDKServiceError extends SDKError {
     status?: number;
 
     constructor(message: string, service: string, status?: number) {
@@ -48,9 +48,11 @@ export class APIResponseError extends SDKError {
 export const defaultResponseParserError: ParseRequestError<DefaultAPIResponseError> = (error, serviceName) => {
     const { data, message, status } = error;
 
-    const errorMessage = data?.error || message;
+    // Different services uses property error or errorText
+    // Here we cover both situations as a default error parser
+    const errorMessage = data?.error || data?.errorText || message;
 
-    return new APIResponseError(errorMessage, serviceName, status);
+    return new SDKServiceError(errorMessage, serviceName, status);
 };
 
 /**
