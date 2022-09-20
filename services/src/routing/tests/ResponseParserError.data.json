@@ -13,7 +13,8 @@
           "code": "BAD_INPUT"
         }
       }
-    }
+    },
+    "Route requests with routeType=thrilling for distances over 900km are not supported."
   ],
   [
     {
@@ -29,7 +30,8 @@
           "code": "BAD_INPUT"
         }
       }
-    }
+    },
+    "Invalid value for vehicleMaxSpeed: 251. Value must be an integer in the range [0, 250]"
   ],
   [
     {
@@ -45,6 +47,7 @@
           "code": "NO_ROUTE_FOUND"
         }
       }
-    }
+    },
+    "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1"
   ]
 ]

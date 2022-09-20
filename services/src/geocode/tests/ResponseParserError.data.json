@@ -11,7 +11,8 @@
         },
         "httpStatusCode": 400
       }
-    }
+    },
+    "Empty query allowed only with the filters provided or in wildcard context."
   ],
   [
     {
@@ -26,6 +27,7 @@
         },
         "httpStatusCode": 400
       }
-    }
+    },
+    "Error parsing 'language': Language tag 'XYZ' not supported"
   ]
 ]

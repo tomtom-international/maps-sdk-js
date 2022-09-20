@@ -18,9 +18,9 @@ describe("Geocode - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
-        (apiResponseError: ErrorObjAPI<GeocodeAPIResponseError>) => {
+        (apiResponseError: ErrorObjAPI<GeocodeAPIResponseError>, expectedSDKErrorMessage: string) => {
             const sdkGeocodingError = geocodeResponseErrorParser(apiResponseError, "Geocode");
-            expect(sdkGeocodingError.message).toEqual(apiResponseError.data.errorText);
+            expect(sdkGeocodingError.message).toEqual(expectedSDKErrorMessage);
         }
     );
 });

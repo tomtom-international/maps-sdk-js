@@ -12,7 +12,8 @@
           "target": "position"
         }
       }
-    }
+    },
+    "Invalid request: position is missing"
   ],
   [
     {
@@ -27,7 +28,8 @@
           "target": "position"
         }
       }
-    }
+    },
+    "Invalid request: invalid position: cannot parse position."
   ],
   [
     {
@@ -42,7 +44,8 @@
           "target": "language"
         }
       }
-    }
+    },
+    "Invalid request: invalid language parameter: [ ]"
   ],
   [
     {
@@ -57,6 +60,7 @@
           "target": "position"
         }
       }
-    }
+    },
+    "Invalid request: invalid position: latitude/longitude out of range."
   ]
 ]
