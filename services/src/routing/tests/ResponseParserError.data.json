@@ -1,43 +1,49 @@
 [
   [
-    400,
-    "Bad Request",
     {
-      "formatVersion": "0.0.12",
-      "error": {
-        "description": "Route requests with routeType=thrilling for distances over 900km are not supported."
-      },
-      "detailedError": {
-        "message": "Route requests with routeType=thrilling for distances over 900km are not supported.",
-        "code": "BAD_INPUT"
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "formatVersion": "0.0.12",
+        "error": {
+          "description": "Route requests with routeType=thrilling for distances over 900km are not supported."
+        },
+        "detailedError": {
+          "message": "Route requests with routeType=thrilling for distances over 900km are not supported.",
+          "code": "BAD_INPUT"
+        }
       }
     }
   ],
   [
-    400,
-    "Bad Request",
     {
-      "formatVersion": "0.0.12",
-      "error": {
-        "description": "Invalid value for vehicleMaxSpeed: 251. Value must be an integer in the range [0, 250]"
-      },
-      "detailedError": {
-        "message": "Invalid value for vehicleMaxSpeed: 251. Value must be an integer in the range [0, 250]",
-        "code": "BAD_INPUT"
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "formatVersion": "0.0.12",
+        "error": {
+          "description": "Invalid value for vehicleMaxSpeed: 251. Value must be an integer in the range [0, 250]"
+        },
+        "detailedError": {
+          "message": "Invalid value for vehicleMaxSpeed: 251. Value must be an integer in the range [0, 250]",
+          "code": "BAD_INPUT"
+        }
       }
     }
   ],
   [
-    400,
-    "Bad Request",
     {
-      "formatVersion": "0.0.12",
-      "error": {
-        "description": "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1"
-      },
-      "detailedError": {
-        "message": "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
-        "code": "NO_ROUTE_FOUND"
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "formatVersion": "0.0.12",
+        "error": {
+          "description": "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1"
+        },
+        "detailedError": {
+          "message": "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
+          "code": "NO_ROUTE_FOUND"
+        }
       }
     }
   ]

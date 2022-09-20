@@ -5,7 +5,7 @@ import { CalculateRouteResponseAPI } from "../types/APITypes";
 import { CalculateRouteResponse } from "../CalculateRoute";
 import errorResponses from "./ResponseParserError.data.json";
 import { routingResponseErrorParser } from "../../routing/RoutingResponseErrorParser";
-import { RoutingAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
+import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
 
 describe("Calculate Route response parsing functional tests", () => {
     // Functional tests:
@@ -40,14 +40,9 @@ describe("Routing - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
-        (errorCode: number, errorDesc: string, apiErrorResponse: RoutingAPIResponseError) => {
-            const apiError = {
-                status: errorCode,
-                message: errorDesc,
-                data: apiErrorResponse
-            };
-            const sdkError = routingResponseErrorParser(apiError, "Routing");
-            expect(sdkError.message).toEqual(apiErrorResponse.detailedError.message);
+        async (apiResponseError: ErrorObjAPI<RoutingAPIResponseError>) => {
+            const sdkRoutingResponseError = routingResponseErrorParser(apiResponseError, "Routing");
+            expect(sdkRoutingResponseError.message).toEqual(apiResponseError.data.detailedError.message);
         }
     );
 });

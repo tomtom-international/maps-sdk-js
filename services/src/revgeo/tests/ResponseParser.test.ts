@@ -4,7 +4,7 @@ import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "../ReverseGeocoding";
 import { ReverseGeocodingResponseAPI } from "../types/APITypes";
 import errorResponses from "../../revgeo/tests/ResponseParserError.data.json";
-import { DefaultAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
+import { DefaultAPIResponseError, ErrorObjAPI } from "../../shared/types/APIResponseErrorTypes";
 import { defaultResponseParserError } from "../../shared/Errors";
 
 describe("ReverseGeocode response parsing tests", () => {
@@ -26,14 +26,9 @@ describe("ReverseGeocode - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
-        (errorCode: number, errorDesc: string, apiErrorResponse: DefaultAPIResponseError) => {
-            const apiError = {
-                status: errorCode,
-                message: errorDesc,
-                data: apiErrorResponse
-            };
-            const sdkError = defaultResponseParserError(apiError, "ReverseGeocode");
-            expect(sdkError.message).toEqual(apiErrorResponse.error);
+        (apiResponseError: ErrorObjAPI<DefaultAPIResponseError>) => {
+            const sdkReverseGeocodingError = defaultResponseParserError(apiResponseError, "ReverseGeocode");
+            expect(sdkReverseGeocodingError.message).toEqual(apiResponseError.data.error);
         }
     );
 });

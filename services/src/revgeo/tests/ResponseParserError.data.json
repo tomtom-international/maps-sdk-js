@@ -1,53 +1,61 @@
 [
   [
-    400,
-    "Bad Request",
     {
-      "error": "Invalid request: position is missing",
-      "httpStatusCode": 400,
-      "detailedError": {
-        "code": "BadRequest",
-        "message": "Invalid request: position is missing",
-        "target": "position"
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "error": "Invalid request: position is missing",
+        "httpStatusCode": 400,
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Invalid request: position is missing",
+          "target": "position"
+        }
       }
     }
   ],
   [
-    400,
-    "Bad Request",
     {
-      "error": "Invalid request: invalid position: cannot parse position.",
-      "httpStatusCode": 400,
-      "detailedError": {
-        "code": "BadRequest",
-        "message": "Invalid request: invalid position: cannot parse position.",
-        "target": "position"
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "error": "Invalid request: invalid position: cannot parse position.",
+        "httpStatusCode": 400,
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Invalid request: invalid position: cannot parse position.",
+          "target": "position"
+        }
       }
     }
   ],
   [
-    400,
-    "Bad Request",
     {
-      "error": "Invalid request: invalid language parameter: [ ]",
-      "httpStatusCode": 400,
-      "detailedError": {
-        "code": "BadRequest",
-        "message": "Invalid request: invalid language parameter: [ ]",
-        "target": "language"
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "error": "Invalid request: invalid language parameter: [ ]",
+        "httpStatusCode": 400,
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Invalid request: invalid language parameter: [ ]",
+          "target": "language"
+        }
       }
     }
   ],
   [
-    400,
-    "Bad Request",
     {
-      "error": "Invalid request: invalid position: latitude/longitude out of range.",
-      "httpStatusCode": 400,
-      "detailedError": {
-        "code": "BadRequest",
-        "message": "Invalid request: invalid position: latitude/longitude out of range.",
-        "target": "position"
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "error": "Invalid request: invalid position: latitude/longitude out of range.",
+        "httpStatusCode": 400,
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Invalid request: invalid position: latitude/longitude out of range.",
+          "target": "position"
+        }
       }
     }
   ]

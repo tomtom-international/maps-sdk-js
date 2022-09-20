@@ -1,27 +1,31 @@
 [
   [
-    400,
-    "Bad Request",
     {
-      "errorText": "Empty query allowed only with the filters provided or in wildcard context.",
-      "detailedError": {
-        "code": "BadRequest",
-        "message": "Empty query allowed only with the filters provided or in wildcard context."
-      },
-      "httpStatusCode": 400
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Empty query allowed only with the filters provided or in wildcard context.",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Empty query allowed only with the filters provided or in wildcard context."
+        },
+        "httpStatusCode": 400
+      }
     }
   ],
   [
-    400,
-    "Bad Request",
     {
-      "errorText": "Error parsing 'language': Language tag 'XYZ' not supported",
-      "detailedError": {
-        "code": "BadRequest",
-        "message": "Error parsing 'language': Language tag 'XYZ' not supported",
-        "target": "language"
-      },
-      "httpStatusCode": 400
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Error parsing 'language': Language tag 'XYZ' not supported",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Error parsing 'language': Language tag 'XYZ' not supported",
+          "target": "language"
+        },
+        "httpStatusCode": 400
+      }
     }
   ]
 ]
