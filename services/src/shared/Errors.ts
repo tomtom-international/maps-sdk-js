@@ -45,7 +45,7 @@ export class APIResponseError extends SDKError {
  * @param error
  * @param serviceName
  */
-const defaultResponseParserError: ParseRequestError<DefaultAPIResponseError> = (error, serviceName) => {
+export const defaultResponseParserError: ParseRequestError<DefaultAPIResponseError> = (error, serviceName) => {
     const { data, message, status } = error;
 
     const errorMessage = data?.error || message;
