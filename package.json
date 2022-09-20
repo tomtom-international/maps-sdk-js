@@ -57,13 +57,13 @@
   },
   "types": "./index.d.ts",
   "dependencies": {
-    "@size-limit/file": "^8.1.0",
-    "@size-limit/preset-app": "^8.1.0",
     "@types/geojson": "^7946.0.10",
-    "@types/lodash": "^4.14.185",
-    "size-limit": "^8.1.0"
+    "@types/lodash": "^4.14.185"
   },
   "devDependencies": {
+    "@size-limit/file": "^8.1.0",
+    "@size-limit/preset-app": "^8.1.0",
+    "size-limit": "^8.1.0",
     "typedoc": "^0.23.13",
     "typedoc-plugin-markdown": "^3.13.5",
     "typedoc-plugin-missing-exports": "^1.0.0"
