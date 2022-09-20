@@ -147,7 +147,6 @@ describe("Calculate route integration tests", () => {
         expect(sections.leg[0].summary.batteryConsumptionInkWh).toBeDefined();
         assertLegSectionBasics(sections.leg[1]);
         expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
-        // (this example has an extra "other" travel mode section)
         expect(sections.travelMode?.length).toBeGreaterThan(0);
     });
 
