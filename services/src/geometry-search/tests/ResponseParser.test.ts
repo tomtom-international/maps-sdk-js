@@ -1,6 +1,6 @@
-import {GeometrySearchResponse, GeometrySearchResponseAPI} from "../types";
+import { GeometrySearchResponse, GeometrySearchResponseAPI } from "../types";
 import apiAndParsedResponses from "../../geometry-search/tests/ResponseParser.data.json";
-import {parseGeometrySearchResponse} from "../ResponseParser";
+import { parseGeometrySearchResponse } from "../ResponseParser";
 
 describe("Geometry Search response parser tests", () => {
     test.each(apiAndParsedResponses)(
