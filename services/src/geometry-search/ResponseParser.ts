@@ -10,15 +10,15 @@ export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseA
     const features: Location<GeometrySearchResponseProps>[] = results.map((result) => ({
         ...toPointFeature(latLonAPIToPosition(result.position)),
         properties: {
-            ...omit(result, "poi"),
+            ...omit(result, "poi", "viewport", "entryPoints"),
             ...(result.position && { position: [result.position.lon, result.position.lat] }),
-            viewport: result.viewport ? bboxToPolygon(result.viewport) : undefined,
-            entryPoints: result.entryPoints
-                ? result.entryPoints.map((entrypoint) => ({
-                      ...entrypoint,
-                      position: latLonAPIToPosition(entrypoint.position)
-                  }))
-                : undefined,
+            ...(result.viewport && { viewport: bboxToPolygon(result.viewport) }),
+            ...(result.entryPoints && {
+                entryPoints: result.entryPoints.map((entrypoint) => ({
+                    ...entrypoint,
+                    position: latLonAPIToPosition(entrypoint.position)
+                }))
+            }),
             poi: {
                 ...omit(result.poi, "categorySet"),
                 brands: result.poi?.brands?.map((brand) => brand.name) ?? [],
