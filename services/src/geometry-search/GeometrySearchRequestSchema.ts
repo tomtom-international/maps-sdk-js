@@ -31,7 +31,7 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
                 type: "object",
                 required: ["coordinates", "type"],
                 if: { properties: { type: { const: "Circle" } } },
-                then: { required: ["radius"] }
+                then: { required: ["radius"], properties: { radius: { type: "number" } } }
             }
         }
     },

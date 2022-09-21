@@ -1,11 +1,6 @@
-import { GOSDKConfig } from "core";
 import geometrySearch from "../GeometrySearch";
 
 describe("GeometrySearch Validation", () => {
-    beforeAll(() => {
-        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
-    });
-
     test("it should fail when missing coordinates property", async () => {
         const query = "cafe";
         const geometries = [{ radius: 6000 }];
