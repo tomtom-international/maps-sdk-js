@@ -8,6 +8,7 @@ import {
     GeometrySearchResponseAPI,
     SearchByGeometryPayloadAPI
 } from "./types";
+import { geometrySearchRequestSchema } from "./GeometrySearchRequestSchema";
 
 /**
  * Geocoding service template type.
@@ -25,5 +26,6 @@ export type GeometrySearchTemplate = ServiceTemplate<
 export const geometrySearchTemplate: GeometrySearchTemplate = {
     buildRequest: buildGeometrySearchRequest,
     sendRequest: postJson,
-    parseResponse: parseGeometrySearchResponse
+    parseResponse: parseGeometrySearchResponse,
+    validateRequestSchema: geometrySearchRequestSchema
 };

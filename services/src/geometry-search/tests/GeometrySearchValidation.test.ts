@@ -1,0 +1,62 @@
+import { GOSDKConfig } from "core";
+import geometrySearch from "../GeometrySearch";
+
+describe("GeometrySearch Validation", () => {
+    beforeAll(() => {
+        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
+    });
+
+    test("it should fail when missing coordinates property", async () => {
+        const query = "cafe";
+        const geometries = [{ radius: 6000 }];
+        // @ts-ignore
+        await expect(geometrySearch({ query, geometryList: geometries })).rejects.toMatchObject({
+            message: "Validation error",
+            service: "GeometrySearch",
+            errors: [
+                {
+                    property: "/geometryList/0",
+                    message: "must have required property 'coordinates'"
+                }
+            ]
+        });
+    });
+
+    test("it should fail when missing type property", async () => {
+        const query = "cafe";
+        const geometries = [{ radius: 6000, coordinates: [37.71205, -121.36434] }];
+        // @ts-ignore
+        await expect(geometrySearch({ query, geometryList: geometries })).rejects.toMatchObject({
+            message: "Validation error",
+            service: "GeometrySearch",
+            errors: [
+                {
+                    property: "/geometryList/0",
+                    message: "must have required property 'type'"
+                }
+            ]
+        });
+    });
+
+    test("it should fail when type Circle is missing radius property", async () => {
+        const query = "cafe";
+        const geometries = [
+            {
+                type: "Circle",
+                coordinates: [37.71205, -121.36434]
+            }
+        ];
+
+        // @ts-ignore
+        await expect(geometrySearch({ query, geometryList: geometries })).rejects.toMatchObject({
+            message: "Validation error",
+            service: "GeometrySearch",
+            errors: [
+                {
+                    property: "/geometryList/0",
+                    message: "must have required property 'radius'"
+                }
+            ]
+        });
+    });
+});
