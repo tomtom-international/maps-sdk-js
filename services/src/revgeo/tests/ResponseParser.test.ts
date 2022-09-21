@@ -26,9 +26,9 @@ describe("ReverseGeocode - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
-        (apiResponseError: ErrorObjAPI<DefaultAPIResponseError>, expectedSDKErrorMessage: string) => {
+        (_name: string, apiResponseError: ErrorObjAPI<DefaultAPIResponseError>, expectedSDKError: string) => {
             const sdkReverseGeocodingError = defaultResponseParserError(apiResponseError, "ReverseGeocode");
-            expect(sdkReverseGeocodingError.message).toEqual(expectedSDKErrorMessage);
+            expect(sdkReverseGeocodingError).toMatchObject(expectedSDKError);
         }
     );
 });

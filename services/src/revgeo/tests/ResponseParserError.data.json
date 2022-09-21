@@ -1,5 +1,6 @@
 [
   [
+    "Missing coordinates",
     {
       "status": 400,
       "message": "Bad Request",
@@ -13,9 +14,14 @@
         }
       }
     },
-    "Invalid request: position is missing"
+    {
+      "service": "ReverseGeocode",
+      "message": "Invalid request: position is missing",
+      "status": 400
+    }
   ],
   [
+    "Cannot parse position",
     {
       "status": 400,
       "message": "Bad Request",
@@ -29,9 +35,14 @@
         }
       }
     },
-    "Invalid request: invalid position: cannot parse position."
+    {
+      "service": "ReverseGeocode",
+      "message": "Invalid request: invalid position: cannot parse position.",
+      "status": 400
+    }
   ],
   [
+    "Invalid Language code",
     {
       "status": 400,
       "message": "Bad Request",
@@ -45,9 +56,14 @@
         }
       }
     },
-    "Invalid request: invalid language parameter: [ ]"
+    {
+      "service": "ReverseGeocode",
+      "message": "Invalid request: invalid language parameter: [ ]",
+      "status": 400
+    }
   ],
   [
+    "latitude/longitude out of range.",
     {
       "status": 400,
       "message": "Bad Request",
@@ -61,6 +77,10 @@
         }
       }
     },
-    "Invalid request: invalid position: latitude/longitude out of range."
+    {
+      "service": "ReverseGeocode",
+      "message": "Invalid request: invalid position: latitude/longitude out of range.",
+      "status": 400
+    }
   ]
 ]

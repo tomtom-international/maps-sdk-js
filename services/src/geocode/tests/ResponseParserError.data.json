@@ -1,20 +1,6 @@
 [
   [
-    {
-      "status": 400,
-      "message": "Bad Request",
-      "data": {
-        "errorText": "Empty query allowed only with the filters provided or in wildcard context.",
-        "detailedError": {
-          "code": "BadRequest",
-          "message": "Empty query allowed only with the filters provided or in wildcard context."
-        },
-        "httpStatusCode": 400
-      }
-    },
-    "Empty query allowed only with the filters provided or in wildcard context."
-  ],
-  [
+    "Incorrect Language",
     {
       "status": 400,
       "message": "Bad Request",
@@ -28,6 +14,30 @@
         "httpStatusCode": 400
       }
     },
-    "Error parsing 'language': Language tag 'XYZ' not supported"
+    {
+      "service": "Geocode",
+      "message": "Error parsing 'language': Language tag 'XYZ' not supported",
+      "status": 400
+    }
+  ],
+  [
+    "Empty Query",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Empty query allowed only with the filters provided or in wildcard context.",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Empty query allowed only with the filters provided or in wildcard context."
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "status": 400
+    }
   ]
 ]

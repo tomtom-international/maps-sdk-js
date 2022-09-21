@@ -1,5 +1,6 @@
 [
   [
+    "Thrill route > 900 Kms",
     {
       "status": 400,
       "message": "Bad Request",
@@ -14,9 +15,14 @@
         }
       }
     },
-    "Route requests with routeType=thrilling for distances over 900km are not supported."
+    {
+      "service": "Routing",
+      "message": "Route requests with routeType=thrilling for distances over 900km are not supported.",
+      "status": 400
+    }
   ],
   [
+    "Vehicle max speed > 250",
     {
       "status": 400,
       "message": "Bad Request",
@@ -31,9 +37,14 @@
         }
       }
     },
-    "Invalid value for vehicleMaxSpeed: 251. Value must be an integer in the range [0, 250]"
+    {
+      "service": "Routing",
+      "message": "Invalid value for vehicleMaxSpeed: 251. Value must be an integer in the range [0, 250]",
+      "status": 400
+    }
   ],
   [
+    "No Route found",
     {
       "status": 400,
       "message": "Bad Request",
@@ -48,6 +59,10 @@
         }
       }
     },
-    "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1"
+    {
+      "service": "Routing",
+      "message": "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
+      "status": 400
+    }
   ]
 ]

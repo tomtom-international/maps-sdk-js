@@ -40,9 +40,9 @@ describe("Routing - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
-        async (apiResponseError: ErrorObjAPI<RoutingAPIResponseError>, expectedSDKErrorMessage: string) => {
+        async (_name: string, apiResponseError: ErrorObjAPI<RoutingAPIResponseError>, expectedSDKError: string) => {
             const sdkRoutingResponseError = routingResponseErrorParser(apiResponseError, "Routing");
-            expect(sdkRoutingResponseError.message).toEqual(expectedSDKErrorMessage);
+            expect(sdkRoutingResponseError).toMatchObject(expectedSDKError);
         }
     );
 });
