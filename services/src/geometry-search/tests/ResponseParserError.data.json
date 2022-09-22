@@ -1,0 +1,146 @@
+[
+  [
+    "Incorrect Language",
+    {
+      "status": 404,
+      "message": "Not found",
+      "data": {
+        "httpStatusCode": 404,
+        "errorText": "Not Found",
+        "detailedError": {
+          "code": "NotFound",
+          "message": "URL not found"
+        }
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Error parsing 'language': Language tag 'XYZ' not supported",
+      "status": 400
+    }
+  ],
+  [
+    "Missing or invalid geometryList parameter",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Missing or invalid geometryList parameter",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Missing or invalid geometryList parameter"
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "status": 400
+    }
+  ],
+  [
+    "Invalid limit parameter",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Invalid limit parameter. Limit should be an integer [1, 100] def 10.",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Invalid limit parameter. Limit should be an integer [1, 100] def 10."
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "status": 400
+    }
+  ],
+  [
+    "Error parsing 'geometryList'",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Error parsing 'geometryList': Invalid positions found: 1234.8828,2.28266",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Error parsing 'geometryList': Invalid positions found: 1234.8828,2.28266",
+          "target": "geometryList"
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "status": 400
+    }
+  ],
+  [
+    "Error parsing 'maxPowerKW'",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Error parsing 'maxPowerKW': Parameter should not have negative value",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Error parsing 'maxPowerKW': Parameter should not have negative value",
+          "target": "maxPowerKW"
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "status": 400
+    }
+  ],
+  [
+    "Error parsing 'minPowerKW'",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Error parsing 'minPowerKW': Parameter should not have negative value",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Error parsing 'minPowerKW': Parameter should not have negative value",
+          "target": "minPowerKW"
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "status": 400
+    }
+  ],
+  [
+    "Error parsing 'categorySet'",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Error parsing 'minPowerKW': Parameter should not have negative value",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Error parsing 'minPowerKW': Parameter should not have negative value",
+          "target": "minPowerKW"
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "Geocode",
+      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "status": 400
+    }
+  ]
+]
