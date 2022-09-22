@@ -26,7 +26,7 @@ type POIAPI = {
     timeZone?: TimeZone;
 };
 
-export type GeocodingProps = CommonLocationProps & {
+type GeometrySearchPropsAPI = CommonLocationProps & {
     type: LocationType;
     /**
      The confidence of the result`s textual match with the query.
@@ -40,7 +40,7 @@ export type GeocodingProps = CommonLocationProps & {
 };
 
 type GeometrySearchResultAPI = Omit<
-    GeocodingProps,
+    GeometrySearchPropsAPI,
     "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
     position: LatLonAPI;
