@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.36](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.35...v0.1.36) (2022-09-22)
+
+
+### Bug Fixes
+
+* **geometry-search:** misc type fixes and improvements ([f25ffa3](https://github.com/tomtom-international/go-sdk-js/commit/f25ffa3300cd029e36e72158381c1f05399c9175))
+
 ### [0.1.35](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.34...v0.1.35) (2022-09-22)
 
 
