@@ -3,6 +3,8 @@ import { GeometrySearchRequest } from "./types";
 
 export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> = {
     type: "object",
+    required: ["query", "geometries"],
+    oneOf: [{ required: ["commonBaseURL"] }, { required: ["customServiceBaseURL"] }],
     properties: {
         apiKey: { type: "string", nullable: true },
         commonBaseURL: { type: "string", nullable: true },
@@ -34,7 +36,5 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
         minPowerKW: { type: "number", nullable: true },
         maxPowerKW: { type: "number", nullable: true },
         entityTypes: { type: "array", items: { type: "string" }, nullable: true }
-    },
-    required: ["query", "geometries"],
-    oneOf: [{ required: ["commonBaseURL"] }, { required: ["customServiceBaseURL"] }]
+    }
 };

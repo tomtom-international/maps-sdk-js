@@ -41,7 +41,7 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    message: "must have required property 'geometryList'",
+                    message: "must have required property 'geometries'",
                     property: ""
                 }
             ]
