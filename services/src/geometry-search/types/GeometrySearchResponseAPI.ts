@@ -8,7 +8,6 @@ import {
     OpeningHours,
     TimeZone
 } from "@anw/go-sdk-js/core";
-import { Polygon } from "geojson";
 
 import { EntryPointAPI, LatLonAPI, Summary, ViewportAPI } from "../../shared/types/APIResponseTypes";
 
@@ -32,16 +31,11 @@ type GeometrySearchPropsAPI = CommonLocationProps & {
      The confidence of the result`s textual match with the query.
      */
     matchConfidence: { score: number };
-    /**
-     * Optional section. Only present if type == Geography.
-     * A bounding box which can be used to display the result on a map defined by minimum and maximum longitudes and latitudes.
-     */
-    boundingBox?: Polygon;
 };
 
 type GeometrySearchResultAPI = Omit<
     GeometrySearchPropsAPI,
-    "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
+    "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
     position: LatLonAPI;
     viewport?: ViewportAPI;
