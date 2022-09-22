@@ -25,18 +25,12 @@ type POIAPI = {
     timeZone?: TimeZone;
 };
 
-type GeometrySearchPropsAPI = CommonLocationProps & {
-    type: LocationType;
-    /**
-     The confidence of the result`s textual match with the query.
-     */
-    matchConfidence: { score: number };
-};
-
 type GeometrySearchResultAPI = Omit<
-    GeometrySearchPropsAPI,
+    CommonLocationProps,
     "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
+    type: LocationType;
+    matchConfidence: { score: number };
     position: LatLonAPI;
     viewport?: ViewportAPI;
     entryPoints?: EntryPointAPI[];
