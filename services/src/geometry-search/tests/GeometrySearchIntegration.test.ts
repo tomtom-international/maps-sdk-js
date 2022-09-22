@@ -5,7 +5,7 @@ import { GeometrySDK, GeometrySearchResponseProps, GeometrySearchResponse } from
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 
 describe("Geometry Search API", () => {
-    const geometryList: GeometrySDK[] = [
+    const geometries: GeometrySDK[] = [
         {
             type: "Polygon",
             coordinates: [
@@ -40,8 +40,8 @@ describe("Geometry Search API", () => {
         const indexes: IndexTypesAbbreviation[] = ["POI"];
         const res = await geometrySearch({
             query,
-            geometryList,
-            categories,
+            geometries,
+            poiCategories: categories,
             fuels,
             language,
             limit,
@@ -95,7 +95,7 @@ describe("Geometry Search API", () => {
             }
         ];
         // @ts-ignore
-        await expect(geometrySearch({ query, geometryList: geometries })).rejects.toMatchObject(
+        await expect(geometrySearch({ query, geometries })).rejects.toMatchObject(
             expect.objectContaining({
                 message: `Type ${type} is not supported`
             })
@@ -106,7 +106,7 @@ describe("Geometry Search API", () => {
         const query = "cafe";
         const newQuery = "petrol";
         const res = await geometrySearch(
-            { query, geometryList },
+            { query, geometries },
             {
                 buildRequest: (params) => {
                     const req = buildGeometrySearchRequest(params);
@@ -138,7 +138,7 @@ describe("Geometry Search API", () => {
     test("geometrySearchAPI.searchByGeometry parseResponse hook modifies response", async () => {
         const query = "cafe";
         const res = await geometrySearch(
-            { query, geometryList },
+            { query, geometries },
             {
                 parseResponse: (apiResponse) => {
                     const response = parseGeometrySearchResponse(apiResponse);

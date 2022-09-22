@@ -16,7 +16,7 @@ describe("Reverse GeometrySearch mock tests", () => {
             httpStatusCode: 400
         });
 
-        await expect(geometrySearch({ query: "cafe", geometryList: [] })).rejects.toThrow(
+        await expect(geometrySearch({ query: "cafe", geometries: [] })).rejects.toThrow(
             "Error parsing 'openingHours': Not supported openingHours mode"
         );
     });

@@ -15,8 +15,8 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
         geographyType: { type: "array", nullable: true, items: { type: "string" } },
         language: { type: "string", nullable: true },
         indexes: { type: "array", items: { type: "string" }, nullable: true },
-        categories: { type: "array", items: { type: "number" }, nullable: true },
-        brands: { type: "array", items: { type: "string" }, nullable: true },
+        poiCategories: { type: "array", items: { type: "number" }, nullable: true },
+        poiBrands: { type: "array", items: { type: "string" }, nullable: true },
         connectors: { type: "array", items: { type: "string" }, nullable: true },
         openingHours: { type: "string", nullable: true },
         fuels: { type: "array", items: { type: "string" }, nullable: true },
@@ -25,7 +25,7 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
         minPowerKW: { type: "number", nullable: true },
         maxPowerKW: { type: "number", nullable: true },
         entityTypes: { type: "array", items: { type: "string" }, nullable: true },
-        geometryList: {
+        geometries: {
             type: "array",
             items: {
                 type: "object",

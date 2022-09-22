@@ -11,7 +11,7 @@ import {
 } from "./types";
 import { appendByJoiningParamValue, appendCommonParams, appendParameter } from "../shared/RequestBuildingUtils";
 
-export const sdkGeometryToTTGeometry = (obj: GeometrySDK): GeometryAPI => {
+const sdkGeometryToAPIGeometry = (obj: GeometrySDK): GeometryAPI => {
     if (obj.type === "Circle") {
         return {
             type: "CIRCLE",
@@ -44,8 +44,8 @@ export const buildGeometrySearchRequest = (params: GeometrySearchRequest): PostO
 
     appendByJoiningParamValue(urlParams, "fuelSet", mergedParams.fuels);
     appendByJoiningParamValue(urlParams, "idxSet", mergedParams.indexes);
-    appendByJoiningParamValue(urlParams, "brandSet", mergedParams.brands);
-    appendByJoiningParamValue(urlParams, "categorySet", mergedParams.categories);
+    appendByJoiningParamValue(urlParams, "brandSet", mergedParams.poiBrands);
+    appendByJoiningParamValue(urlParams, "categorySet", mergedParams.poiCategories);
     appendByJoiningParamValue(urlParams, "connectorSet", mergedParams.connectors);
     appendByJoiningParamValue(urlParams, "mapcodes", mergedParams.mapcodes);
     appendByJoiningParamValue(urlParams, "extendedPostalCodesFor", mergedParams.extendedPostalCodesFor);
@@ -61,7 +61,7 @@ export const buildGeometrySearchRequest = (params: GeometrySearchRequest): PostO
     return {
         url,
         data: {
-            geometryList: params.geometryList.map(sdkGeometryToTTGeometry)
+            geometryList: params.geometries.map(sdkGeometryToAPIGeometry)
         }
     };
 };

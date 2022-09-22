@@ -5,12 +5,12 @@ describe("GeometrySearch Validation", () => {
         const query = "cafe";
         const geometries = [{ radius: 6000 }];
         // @ts-ignore
-        await expect(geometrySearch({ query, geometryList: geometries })).rejects.toMatchObject({
+        await expect(geometrySearch({ query, geometries })).rejects.toMatchObject({
             message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/geometryList/0",
+                    property: "/geometries/0",
                     message: "must have required property 'coordinates'"
                 }
             ]
@@ -21,12 +21,12 @@ describe("GeometrySearch Validation", () => {
         const query = "cafe";
         const geometries = [{ radius: 6000, coordinates: [37.71205, -121.36434] }];
         // @ts-ignore
-        await expect(geometrySearch({ query, geometryList: geometries })).rejects.toMatchObject({
+        await expect(geometrySearch({ query, geometries })).rejects.toMatchObject({
             message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/geometryList/0",
+                    property: "/geometries/0",
                     message: "must have required property 'type'"
                 }
             ]
@@ -43,12 +43,12 @@ describe("GeometrySearch Validation", () => {
         ];
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometryList: geometries })).rejects.toMatchObject({
+        await expect(geometrySearch({ query, geometries })).rejects.toMatchObject({
             message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/geometryList/0",
+                    property: "/geometries/0",
                     message: "must have required property 'radius'"
                 }
             ]
