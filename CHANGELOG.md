@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.34](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.33...v0.1.34) (2022-09-22)
+
+
+### Features
+
+* **validation:** Add Validation error response type ([56784b8](https://github.com/tomtom-international/go-sdk-js/commit/56784b85885eda8e2f346b85ce59c65c84dcd449))
+* **validation:** WIP - Add basic validation ([11753e1](https://github.com/tomtom-international/go-sdk-js/commit/11753e1f88a5e1d2ae080df9f65c56b97efc22c5))
+
+
+### Bug Fixes
+
+* [#373](https://github.com/tomtom-international/go-sdk-js/issues/373) bug fix ([8d36348](https://github.com/tomtom-international/go-sdk-js/commit/8d363486f8dbf1a77970ea285dd23452c31d8644))
+* **geometry-search:** send missing parameters ([113d768](https://github.com/tomtom-international/go-sdk-js/commit/113d768bd66fc3c185d33fa4b0f87aaebc0014d7))
+* **validation:** Fix typo ([46639ab](https://github.com/tomtom-international/go-sdk-js/commit/46639ab46acaba0836b7b9c656191ebc6cdb4f7d))
+* **validation:** Renaming/add types ([6678dae](https://github.com/tomtom-international/go-sdk-js/commit/6678dae401aa2fa3b5f53e10896bf7dba83d75b3))
+
 ### [0.1.33](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.32...v0.1.33) (2022-09-13)
 
 
