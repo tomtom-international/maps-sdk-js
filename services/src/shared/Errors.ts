@@ -15,6 +15,10 @@ import { ValidationError, ValidationErrorResponse } from "./Validation";
 export class SDKError extends Error {
     constructor(message: string, private service: string, private errors?: ValidationErrorResponse) {
         super(message);
+
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, SDKError);
+        }
     }
 }
 

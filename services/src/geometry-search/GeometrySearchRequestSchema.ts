@@ -8,6 +8,15 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
         commonBaseURL: { type: "string", nullable: true },
         customServiceBaseURL: { type: "string", nullable: true },
         query: { type: "string" },
+        geometries: {
+            type: "array",
+            items: {
+                type: "object",
+                required: ["coordinates", "type"],
+                if: { properties: { type: { const: "Circle" } } },
+                then: { required: ["radius"], properties: { radius: { type: "number" } } }
+            }
+        },
         limit: { type: "number", nullable: true, maximum: 100 },
         extendedPostalCodesFor: { type: "array", nullable: true, items: { type: "string" } },
         mapcodes: { type: "array", nullable: true, items: { type: "string" } },
@@ -24,16 +33,8 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
         relatedPois: { type: "string", nullable: true },
         minPowerKW: { type: "number", nullable: true },
         maxPowerKW: { type: "number", nullable: true },
-        entityTypes: { type: "array", items: { type: "string" }, nullable: true },
-        geometries: {
-            type: "array",
-            items: {
-                type: "object",
-                required: ["coordinates", "type"],
-                if: { properties: { type: { const: "Circle" } } },
-                then: { required: ["radius"], properties: { radius: { type: "number" } } }
-            }
-        }
+        entityTypes: { type: "array", items: { type: "string" }, nullable: true }
     },
-    required: ["query"]
+    required: ["query", "geometries"],
+    oneOf: [{ required: ["commonBaseURL"] }, { required: ["customServiceBaseURL"] }]
 };
