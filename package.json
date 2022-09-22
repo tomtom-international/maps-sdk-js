@@ -59,9 +59,7 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@types/geojson": "^7946.0.10",
-    "@types/lodash": "^4.14.185",
-    "map": "file:map",
-    "services": "file:services"
+    "@types/lodash": "^4.14.185"
   },
   "devDependencies": {
     "@size-limit/file": "^8.1.0",
@@ -69,7 +67,9 @@
     "size-limit": "^8.1.0",
     "typedoc": "^0.23.15",
     "typedoc-plugin-markdown": "^3.13.6",
-    "typedoc-plugin-missing-exports": "^1.0.0"
+    "typedoc-plugin-missing-exports": "^1.0.0",
+    "map": "file:map",
+    "services": "file:services"
   },
   "size-limit": [
     {
