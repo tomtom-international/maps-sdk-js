@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.35](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.34...v0.1.35) (2022-09-22)
+
+
+### Bug Fixes
+
+* **geometry-search:** fixing type exports and namings ([0967214](https://github.com/tomtom-international/go-sdk-js/commit/09672148896031b11a78deb07fcf84cf2f73d88b))
+* **geometry-search:** removing redundant type prop ([d39d682](https://github.com/tomtom-international/go-sdk-js/commit/d39d68279e4a1e42e20f88dc07cffc8c0748c2be))
+* **geometry-search:** simplifying types ([4c39032](https://github.com/tomtom-international/go-sdk-js/commit/4c39032dab56ebade98335bf6262d313c1523ef8))
+
 ### [0.1.34](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.33...v0.1.34) (2022-09-22)
 
 
