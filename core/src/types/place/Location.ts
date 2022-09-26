@@ -1,6 +1,6 @@
 import { Feature, FeatureCollection, Point, Polygon, Position } from "geojson";
 import { LocationDataSources } from "./LocationDataSources";
-import { HasLngLat } from "./Geometry";
+import { HasLngLat } from "../Geometry";
 
 export type GeographyType =
     | "Country"
