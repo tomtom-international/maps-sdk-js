@@ -1,4 +1,4 @@
-import { Locations, CommonLocationProps, Connector, OpeningHours, Classification, TimeZone } from "@anw/go-sdk-js/core";
+import { Places, CommonPlaceProps, Connector, OpeningHours, Classification, TimeZone } from "@anw/go-sdk-js/core";
 
 type POI = {
     name: string;
@@ -14,13 +14,13 @@ type POI = {
     timeZone?: TimeZone;
 };
 
-export type GeometrySearchResponseProps = CommonLocationProps & {
+export type GeometrySearchResponseProps = CommonPlaceProps & {
     /**
      * Information about the original data source of the result
      */
     info?: string;
     /**
-     * Information about the Points of Interest in the result. Optional section. Only present if CommonLocationProps.type == POI
+     * Information about the Points of Interest in the result. Optional section. Only present if CommonPlaceProps.type == POI
      */
     poi?: POI;
     /**
@@ -38,4 +38,4 @@ export type GeometrySearchResponseProps = CommonLocationProps & {
     };
 };
 
-export type GeometrySearchResponse = Locations<GeometrySearchResponseProps>;
+export type GeometrySearchResponse = Places<GeometrySearchResponseProps>;

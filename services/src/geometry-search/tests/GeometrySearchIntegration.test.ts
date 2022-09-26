@@ -1,4 +1,4 @@
-import { Fuel, GOSDKConfig, Location } from "@anw/go-sdk-js/core";
+import { Fuel, GOSDKConfig, Place } from "@anw/go-sdk-js/core";
 
 import { buildGeometrySearchRequest, geometrySearch, parseGeometrySearchResponse } from "..";
 import { GeometrySDK, GeometrySearchResponseProps, GeometrySearchResponse } from "../types";
@@ -56,8 +56,8 @@ describe("Geometry Search API", () => {
         expect(res).toEqual(
             expect.objectContaining<GeometrySearchResponse>({
                 type: "FeatureCollection",
-                features: expect.arrayContaining<Location<GeometrySearchResponseProps>>([
-                    expect.objectContaining<Location<GeometrySearchResponseProps>>({
+                features: expect.arrayContaining<Place<GeometrySearchResponseProps>>([
+                    expect.objectContaining<Place<GeometrySearchResponseProps>>({
                         type: "Feature",
                         geometry: expect.objectContaining({
                             coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
@@ -87,7 +87,7 @@ describe("Geometry Search API", () => {
     test("geometrySearchAPI.searchByGeometry fails to convert unsupported geometry types", async () => {
         const query = "cafe";
         const type = "UnknownType";
-        const geometries = [
+        const incorrectGeometry = [
             {
                 type,
                 coordinates: [37.71205, -121.36434],
@@ -95,7 +95,7 @@ describe("Geometry Search API", () => {
             }
         ];
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries })).rejects.toMatchObject(
+        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject(
             expect.objectContaining({
                 message: `Type ${type} is not supported`
             })

@@ -1,4 +1,4 @@
-import { AddressProperties, LocationDataSources, LocationType, Mapcode, SideOfStreet } from "@anw/go-sdk-js/core";
+import { AddressProperties, PlaceDataSources, PlaceType, Mapcode, SideOfStreet } from "@anw/go-sdk-js/core";
 
 /**
  * @group Reverse Geocoding
@@ -20,8 +20,8 @@ export type ReverseGeocodingResponseAPI = {
                 sideOfStreet: SideOfStreet;
                 offsetPosition: string;
             };
-            dataSources: LocationDataSources;
-            entityType: LocationType;
+            dataSources: PlaceDataSources;
+            entityType: PlaceType;
             mapcodes?: Mapcode[];
             position: string;
         }

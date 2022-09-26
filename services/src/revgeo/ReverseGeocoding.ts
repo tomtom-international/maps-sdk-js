@@ -1,4 +1,4 @@
-import { RevGeoAddressProps, Location } from "@anw/go-sdk-js/core";
+import { RevGeoAddressProps, Place } from "@anw/go-sdk-js/core";
 
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { callService } from "../shared/ServiceTemplate";
@@ -8,7 +8,7 @@ import { ReverseGeocodingTemplate, reverseGeocodingTemplate } from "./ReverseGeo
  * @group Reverse Geocoding
  * @category Types
  */
-export type ReverseGeocodingResponse = Location<RevGeoAddressProps>;
+export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
 
 /**
  * Sometimes you need to translate a coordinate into a human-readable street address.

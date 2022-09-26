@@ -1,13 +1,13 @@
-import { LocationType, Locations, CommonLocationProps } from "@anw/go-sdk-js/core";
+import { PlaceType, Places, CommonPlaceProps } from "@anw/go-sdk-js/core";
 
-type GeocodingLocationType = Exclude<LocationType, "POI">;
+type GeocodingPlaceType = Exclude<PlaceType, "POI">;
 
 /**
  * @group Geocoding
  * @category Types
  */
-export type GeocodingProps = CommonLocationProps & {
-    type: GeocodingLocationType;
+export type GeocodingProps = CommonPlaceProps & {
+    type: GeocodingPlaceType;
     /**
      The confidence of the result`s textual match with the query.
      */
@@ -18,4 +18,4 @@ export type GeocodingProps = CommonLocationProps & {
  * @group Geocoding
  * @category Types
  */
-export type GeocodingResponse = Locations<GeocodingProps>;
+export type GeocodingResponse = Places<GeocodingProps>;

@@ -1,5 +1,5 @@
 import { Feature, FeatureCollection, Point, Polygon, Position } from "geojson";
-import { LocationDataSources } from "./LocationDataSources";
+import { PlaceDataSources } from "./PlaceDataSources";
 import { HasLngLat } from "../Geometry";
 
 export type GeographyType =
@@ -95,14 +95,16 @@ export type EntryPoint = {
     position: HasLngLat;
 };
 
-export type CommonLocationProps = {
+export type PlaceType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
+
+export type CommonPlaceProps = {
     /**
-     * Type of result.
+     * Type of this place.
      */
-    type: LocationType;
+    type: PlaceType;
     /**
-     * The unique id for this location.
-     * * IDs are stable for POIs but can be unstable for other location types.
+     * The unique id for this place.
+     * * IDs are stable for POIs but can be unstable for other place types.
      */
     id?: string;
     /**
@@ -143,12 +145,12 @@ export type CommonLocationProps = {
     /**
      * An optional section. These are unique reference ids for use with the Additional Data service.
      */
-    dataSources?: LocationDataSources;
+    dataSources?: PlaceDataSources;
 };
 
 export type SideOfStreet = "L" | "R";
 
-export type RevGeoAddressProps = CommonLocationProps & {
+export type RevGeoAddressProps = CommonPlaceProps & {
     /**
      * Original lng-lat coordinates of the reverse geocoded location.
      */
@@ -245,7 +247,5 @@ export type AddressProperties = {
     localName?: string;
 };
 
-export type LocationType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
-
-export type Location<P extends CommonLocationProps> = Feature<Point, P>;
-export type Locations<P extends CommonLocationProps> = FeatureCollection<Point, P>;
+export type Place<P extends CommonPlaceProps> = Feature<Point, P>;
+export type Places<P extends CommonPlaceProps> = FeatureCollection<Point, P>;

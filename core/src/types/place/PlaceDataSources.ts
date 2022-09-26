@@ -1,4 +1,4 @@
-export type LocationDataSources = {
+export type PlaceDataSources = {
     /**
      * Information about the charging stations availability. Only present if type == POI.
      */

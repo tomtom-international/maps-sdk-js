@@ -1,4 +1,4 @@
-import { toPointFeature, Location } from "@anw/go-sdk-js/core";
+import { toPointFeature, Place } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
 
 import { bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
@@ -7,7 +7,7 @@ import { GeometrySearchResponseAPI, GeometrySearchResponse, GeometrySearchRespon
 export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseAPI): GeometrySearchResponse => {
     const results = apiResponse.results;
 
-    const features: Location<GeometrySearchResponseProps>[] = results.map((result) => ({
+    const features: Place<GeometrySearchResponseProps>[] = results.map((result) => ({
         ...toPointFeature(latLonAPIToPosition(result.position)),
         properties: {
             ...omit(result, "poi", "viewport", "entryPoints"),
