@@ -14,9 +14,10 @@ describe("Calculate Route response parsing functional tests", () => {
         "'%s'",
         // @ts-ignore
         (_name: string, apiResponse: CalculateRouteResponseAPI, parsedResponse: CalculateRouteResponse) => {
-            // (We use JSON.stringify for comparisons because of the relation between JSON inputs and Date objects)
-            expect(JSON.stringify(parseCalculateRouteResponse(apiResponse))).toStrictEqual(
-                JSON.stringify(parsedResponse)
+            // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
+            // (We reparse the objects to compare them ignoring the order of properties)
+            expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse)))).toStrictEqual(
+                JSON.parse(JSON.stringify(parsedResponse))
             );
         }
     );
@@ -25,7 +26,7 @@ describe("Calculate Route response parsing functional tests", () => {
 describe("Calculate Route response parsing performance tests", () => {
     test(
         "Parsing a very long API response " + "(e.g. Lisbon - Moscow with sections, instructions and alternatives)",
-        async () => {
+        () => {
             const numExecutions = 20;
             const accExecTimes = [];
             for (let i = 0; i < numExecutions; i++) {

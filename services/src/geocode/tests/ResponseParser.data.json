@@ -64,6 +64,12 @@
     },
     {
       "type": "FeatureCollection",
+      "bbox": [
+        4.78348,
+        52.42248,
+        4.81969,
+        52.45513
+      ],
       "features": [
         {
           "type": "Feature",
@@ -346,6 +352,12 @@
     },
     {
       "type": "FeatureCollection",
+      "bbox": [
+        4.78348,
+        52.42248,
+        4.81969,
+        52.45513
+      ],
       "features": [
         {
           "type": "Feature",

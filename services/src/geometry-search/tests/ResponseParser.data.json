@@ -131,10 +131,6 @@
               "freeformAddress": "Rue Saillard, 75014 14ème Arrondissement",
               "localName": "14ème Arrondissement"
             },
-            "position": [
-              2.32707,
-              48.83353
-            ],
             "chargingPark": {
               "connectors": [
                 {
@@ -368,10 +364,6 @@
               "freeformAddress": "19 Rue Bréa, 75006 Paris",
               "localName": "Paris"
             },
-            "position": [
-              2.33007,
-              48.84287
-            ],
             "mapcodes": [
               {
                 "type": "Local",
@@ -558,10 +550,6 @@
               "countryCodeISO3": "GBR",
               "freeformAddress": "London"
             },
-            "position": [
-              -0.12624,
-              51.50015
-            ],
             "boundingBox": {
               "topLeftPoint": {
                 "lat": 51.67235,
@@ -736,10 +724,6 @@
               "freeformAddress": "Wiispilweg 18, 3944 Unterbäch",
               "localName": "Unterbäch"
             },
-            "position": [
-              7.80076,
-              46.28515
-            ],
             "chargingPark": {
               "connectors": [
                 {
@@ -821,7 +805,7 @@
         "query": "fuel station",
         "queryType": "NON_NEAR",
         "queryTime": 64,
-        "numResults": 1,
+        "numResults": 2,
         "offset": 0,
         "totalResults": 94,
         "fuzzyLevel": 1
@@ -895,11 +879,67 @@
               }
             }
           ]
+        },
+        {
+          "type": "POI",
+          "id": "372008000031461",
+          "score": 4.324338913,
+          "info": "search:ta:372008000031461-IE",
+          "poi": {
+            "name": "Circle K Fuel Station",
+            "brands": [
+              {
+                "name": "Circle K"
+              }
+            ],
+            "categorySet": [
+              {
+                "id": 7311
+              }
+            ],
+            "categories": [
+              "petrol station"
+            ],
+            "classifications": [
+              {
+                "code": "PETROL_STATION",
+                "names": [
+                  {
+                    "nameLocale": "en-US",
+                    "name": "petrol station"
+                  }
+                ]
+              }
+            ]
+          },
+          "address": {
+            "streetName": "Cavan Road",
+            "municipalitySubdivision": "Townparks",
+            "municipality": "Kells",
+            "countrySubdivision": "Meath",
+            "postalCode": "A82",
+            "extendedPostalCode": "A82 E7F3",
+            "countryCode": "IE",
+            "country": "Ireland",
+            "countryCodeISO3": "IRL",
+            "freeformAddress": "Cavan Road, Townparks, Kells, Meath, A82 E7F3",
+            "localName": "Kells"
+          },
+          "position": {
+            "lat": 54.73118,
+            "lon": -5.12343
+          }
         }
       ]
     },
     {
       "type": "FeatureCollection",
+      "bbox": [
+        -6.88878,
+        53.73118,
+        -5.12343,
+        54.73118
+      ],
       "features": [
         {
           "type": "Feature",
@@ -928,10 +968,6 @@
               "freeformAddress": "Cavan Road, Townparks, Kells, Meath, A82 E7F3",
               "localName": "Kells"
             },
-            "position": [
-              -6.88878,
-              53.73118
-            ],
             "viewport": {
               "type": "Polygon",
               "coordinates": [
@@ -968,6 +1004,58 @@
                 ]
               }
             ],
+            "poi": {
+              "name": "Circle K Fuel Station",
+              "brands": [
+                "Circle K"
+              ],
+              "categories": [
+                "petrol station"
+              ],
+              "classifications": [
+                {
+                  "code": "PETROL_STATION",
+                  "names": [
+                    {
+                      "nameLocale": "en-US",
+                      "name": "petrol station"
+                    }
+                  ]
+                }
+              ],
+              "categoryIds": [
+                7311
+              ]
+            }
+          }
+        },
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -5.12343,
+              54.73118
+            ]
+          },
+          "properties": {
+            "type": "POI",
+            "id": "372008000031461",
+            "score": 4.324338913,
+            "info": "search:ta:372008000031461-IE",
+            "address": {
+              "streetName": "Cavan Road",
+              "municipalitySubdivision": "Townparks",
+              "municipality": "Kells",
+              "countrySubdivision": "Meath",
+              "postalCode": "A82",
+              "extendedPostalCode": "A82 E7F3",
+              "countryCode": "IE",
+              "country": "Ireland",
+              "countryCodeISO3": "IRL",
+              "freeformAddress": "Cavan Road, Townparks, Kells, Meath, A82 E7F3",
+              "localName": "Kells"
+            },
             "poi": {
               "name": "Circle K Fuel Station",
               "brands": [

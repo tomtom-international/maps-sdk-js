@@ -1,7 +1,7 @@
 import { arrayToCSV } from "../Arrays";
 
 describe("Array to CSV tests", () => {
-    test("Array to CSV test", async () => {
+    test("Array to CSV test", () => {
         expect(arrayToCSV(null as unknown as string)).toStrictEqual("");
         expect(arrayToCSV("123")).toStrictEqual("123");
         expect(arrayToCSV(["123"])).toStrictEqual("123");

@@ -69,7 +69,7 @@ describe("Reverse Geocoding request URL building functional tests", () => {
 });
 
 describe("Reverse Geocoding request URL building performance tests", () => {
-    test("Basic performance test", async () => {
+    test("Basic performance test", () => {
         const numExecutions = 20;
         const accExecTimes = [];
         for (let i = 0; i < numExecutions; i++) {

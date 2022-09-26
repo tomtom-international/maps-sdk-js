@@ -1,7 +1,7 @@
 import { buildGeocodingRequest } from "../RequestBuilder";
 
 describe("Geocoding request URL building tests", () => {
-    test("Geocoding request URL building tests", async () => {
+    test("Geocoding request URL building tests", () => {
         expect(
             buildGeocodingRequest({
                 apiKey: "GLOBAL_API_KEY",

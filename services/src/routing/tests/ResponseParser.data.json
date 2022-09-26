@@ -2579,6 +2579,12 @@
     {
       "routes": {
         "type": "FeatureCollection",
+        "bbox": [
+          4.86944,
+          52.37768,
+          4.90126,
+          52.38686
+        ],
         "features": [
           {
             "type": "Feature",
@@ -3091,6 +3097,12 @@
                 ]
               ]
             },
+            "bbox": [
+              4.87483,
+              52.37941,
+              4.90126,
+              52.38686
+            ],
             "properties": {
               "summary": {
                 "lengthInMeters": 2452,
@@ -3153,7 +3165,10 @@
                   {
                     "routeOffsetInMeters": 0,
                     "travelTimeInSeconds": 0,
-                    "point": [4.87487, 52.38686],
+                    "point": [
+                      4.87487,
+                      52.38686
+                    ],
                     "pointIndex": 0,
                     "instructionType": "LOCATION_DEPARTURE",
                     "street": "Haarlemmerweg",
@@ -3166,7 +3181,10 @@
                   {
                     "routeOffsetInMeters": 155,
                     "travelTimeInSeconds": 92,
-                    "point": [4.87484, 52.38546],
+                    "point": [
+                      4.87484,
+                      52.38546
+                    ],
                     "pointIndex": 9,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -3184,7 +3202,10 @@
                   {
                     "routeOffsetInMeters": 736,
                     "travelTimeInSeconds": 212,
-                    "point": [4.88314, 52.38464],
+                    "point": [
+                      4.88314,
+                      52.38464
+                    ],
                     "pointIndex": 33,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -3203,7 +3224,10 @@
                   {
                     "routeOffsetInMeters": 836,
                     "travelTimeInSeconds": 234,
-                    "point": [4.88392, 52.38529],
+                    "point": [
+                      4.88392,
+                      52.38529
+                    ],
                     "pointIndex": 42,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -3222,7 +3246,10 @@
                   {
                     "routeOffsetInMeters": 923,
                     "travelTimeInSeconds": 254,
-                    "point": [4.88497, 52.38485],
+                    "point": [
+                      4.88497,
+                      52.38485
+                    ],
                     "pointIndex": 49,
                     "instructionType": "TURN",
                     "street": "Kleine Houtstraat",
@@ -3238,7 +3265,10 @@
                   {
                     "routeOffsetInMeters": 928,
                     "travelTimeInSeconds": 264,
-                    "point": [4.88491, 52.38481],
+                    "point": [
+                      4.88491,
+                      52.38481
+                    ],
                     "pointIndex": 50,
                     "instructionType": "TURN",
                     "street": "Haarlemmer Houttuinen",
@@ -3253,7 +3283,10 @@
                   {
                     "routeOffsetInMeters": 1807,
                     "travelTimeInSeconds": 429,
-                    "point": [4.89456, 52.37992],
+                    "point": [
+                      4.89456,
+                      52.37992
+                    ],
                     "pointIndex": 81,
                     "instructionType": "TURN",
                     "street": "Droogbak",
@@ -3269,7 +3302,10 @@
                   {
                     "routeOffsetInMeters": 2045,
                     "travelTimeInSeconds": 480,
-                    "point": [4.89632, 52.38142],
+                    "point": [
+                      4.89632,
+                      52.38142
+                    ],
                     "pointIndex": 110,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -3287,7 +3323,10 @@
                   {
                     "routeOffsetInMeters": 2452,
                     "travelTimeInSeconds": 516,
-                    "point": [4.90126, 52.37941],
+                    "point": [
+                      4.90126,
+                      52.37941
+                    ],
                     "pointIndex": 125,
                     "instructionType": "LOCATION_ARRIVAL",
                     "roadNumbers": [
@@ -3320,6 +3359,12 @@
           },
           {
             "type": "Feature",
+            "bbox": [
+              4.87483,
+              52.37941,
+              4.90126,
+              52.38686
+            ],
             "geometry": {
               "type": "LineString",
               "coordinates": [
@@ -3913,7 +3958,10 @@
                   {
                     "routeOffsetInMeters": 0,
                     "travelTimeInSeconds": 0,
-                    "point": [4.87487, 52.38686],
+                    "point": [
+                      4.87487,
+                      52.38686
+                    ],
                     "pointIndex": 0,
                     "instructionType": "LOCATION_DEPARTURE",
                     "street": "Haarlemmerweg",
@@ -3926,7 +3974,10 @@
                   {
                     "routeOffsetInMeters": 155,
                     "travelTimeInSeconds": 92,
-                    "point": [4.87484, 52.38546],
+                    "point": [
+                      4.87484,
+                      52.38546
+                    ],
                     "pointIndex": 9,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -3944,7 +3995,10 @@
                   {
                     "routeOffsetInMeters": 736,
                     "travelTimeInSeconds": 211,
-                    "point": [4.88314, 52.38464],
+                    "point": [
+                      4.88314,
+                      52.38464
+                    ],
                     "pointIndex": 33,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -3963,7 +4017,10 @@
                   {
                     "routeOffsetInMeters": 836,
                     "travelTimeInSeconds": 234,
-                    "point": [4.88392, 52.38529],
+                    "point": [
+                      4.88392,
+                      52.38529
+                    ],
                     "pointIndex": 42,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -3982,7 +4039,10 @@
                   {
                     "routeOffsetInMeters": 923,
                     "travelTimeInSeconds": 253,
-                    "point": [4.88497, 52.38485],
+                    "point": [
+                      4.88497,
+                      52.38485
+                    ],
                     "pointIndex": 49,
                     "instructionType": "TURN",
                     "street": "Kleine Houtstraat",
@@ -3998,7 +4058,10 @@
                   {
                     "routeOffsetInMeters": 998,
                     "travelTimeInSeconds": 283,
-                    "point": [4.88421, 52.38435],
+                    "point": [
+                      4.88421,
+                      52.38435
+                    ],
                     "pointIndex": 54,
                     "instructionType": "TURN",
                     "street": "Haarlemmerdijk",
@@ -4013,7 +4076,10 @@
                   {
                     "routeOffsetInMeters": 1489,
                     "travelTimeInSeconds": 407,
-                    "point": [4.88951, 52.38138],
+                    "point": [
+                      4.88951,
+                      52.38138
+                    ],
                     "pointIndex": 68,
                     "instructionType": "TURN",
                     "street": "Korte Prinsengracht",
@@ -4029,7 +4095,10 @@
                   {
                     "routeOffsetInMeters": 1567,
                     "travelTimeInSeconds": 433,
-                    "point": [4.89009, 52.38198],
+                    "point": [
+                      4.89009,
+                      52.38198
+                    ],
                     "pointIndex": 70,
                     "instructionType": "TURN",
                     "street": "Haarlemmer Houttuinen",
@@ -4045,7 +4114,10 @@
                   {
                     "routeOffsetInMeters": 1705,
                     "travelTimeInSeconds": 469,
-                    "point": [4.89157, 52.38113],
+                    "point": [
+                      4.89157,
+                      52.38113
+                    ],
                     "pointIndex": 71,
                     "instructionType": "TURN",
                     "street": "Buiten Brouwersstraat",
@@ -4061,7 +4133,10 @@
                   {
                     "routeOffsetInMeters": 1735,
                     "travelTimeInSeconds": 486,
-                    "point": [4.89176, 52.38138],
+                    "point": [
+                      4.89176,
+                      52.38138
+                    ],
                     "pointIndex": 73,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -4080,7 +4155,10 @@
                   {
                     "routeOffsetInMeters": 2008,
                     "travelTimeInSeconds": 538,
-                    "point": [4.89456, 52.37992],
+                    "point": [
+                      4.89456,
+                      52.37992
+                    ],
                     "pointIndex": 85,
                     "instructionType": "TURN",
                     "street": "Droogbak",
@@ -4096,7 +4174,10 @@
                   {
                     "routeOffsetInMeters": 2246,
                     "travelTimeInSeconds": 588,
-                    "point": [4.89632, 52.38142],
+                    "point": [
+                      4.89632,
+                      52.38142
+                    ],
                     "pointIndex": 114,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -4114,7 +4195,10 @@
                   {
                     "routeOffsetInMeters": 2653,
                     "travelTimeInSeconds": 624,
-                    "point": [4.90126, 52.37941],
+                    "point": [
+                      4.90126,
+                      52.37941
+                    ],
                     "pointIndex": 129,
                     "instructionType": "LOCATION_ARRIVAL",
                     "roadNumbers": [
@@ -4147,6 +4231,12 @@
           },
           {
             "type": "Feature",
+            "bbox": [
+              4.86944,
+              52.37768,
+              4.90126,
+              52.38686
+            ],
             "geometry": {
               "type": "LineString",
               "coordinates": [
@@ -4872,7 +4962,10 @@
                   {
                     "routeOffsetInMeters": 0,
                     "travelTimeInSeconds": 0,
-                    "point": [4.87487, 52.38686],
+                    "point": [
+                      4.87487,
+                      52.38686
+                    ],
                     "pointIndex": 0,
                     "instructionType": "LOCATION_DEPARTURE",
                     "street": "Haarlemmerweg",
@@ -4885,7 +4978,10 @@
                   {
                     "routeOffsetInMeters": 155,
                     "travelTimeInSeconds": 92,
-                    "point": [4.87484, 52.38546],
+                    "point": [
+                      4.87484,
+                      52.38546
+                    ],
                     "pointIndex": 9,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -4904,7 +5000,10 @@
                   {
                     "routeOffsetInMeters": 511,
                     "travelTimeInSeconds": 147,
-                    "point": [4.86961, 52.38536],
+                    "point": [
+                      4.86961,
+                      52.38536
+                    ],
                     "pointIndex": 14,
                     "instructionType": "TURN",
                     "street": "Van Hallstraat",
@@ -4919,7 +5018,10 @@
                   {
                     "routeOffsetInMeters": 1425,
                     "travelTimeInSeconds": 262,
-                    "point": [4.87476, 52.3789],
+                    "point": [
+                      4.87476,
+                      52.3789
+                    ],
                     "pointIndex": 54,
                     "instructionType": "TURN",
                     "street": "Frederik Hendrikplantsoen",
@@ -4935,7 +5037,10 @@
                   {
                     "routeOffsetInMeters": 1479,
                     "travelTimeInSeconds": 276,
-                    "point": [4.87542, 52.37877],
+                    "point": [
+                      4.87542,
+                      52.37877
+                    ],
                     "pointIndex": 62,
                     "instructionType": "TURN",
                     "street": "Frederik Hendrikplantsoen",
@@ -4951,7 +5056,10 @@
                   {
                     "routeOffsetInMeters": 1745,
                     "travelTimeInSeconds": 342,
-                    "point": [4.87894, 52.37822],
+                    "point": [
+                      4.87894,
+                      52.37822
+                    ],
                     "pointIndex": 79,
                     "instructionType": "TURN",
                     "street": "Marnixplein",
@@ -4967,7 +5075,10 @@
                   {
                     "routeOffsetInMeters": 1790,
                     "travelTimeInSeconds": 359,
-                    "point": [4.87871, 52.37784],
+                    "point": [
+                      4.87871,
+                      52.37784
+                    ],
                     "pointIndex": 80,
                     "instructionType": "TURN",
                     "street": "Marnixplein",
@@ -4983,7 +5094,10 @@
                   {
                     "routeOffsetInMeters": 1836,
                     "travelTimeInSeconds": 380,
-                    "point": [4.87934, 52.37768],
+                    "point": [
+                      4.87934,
+                      52.37768
+                    ],
                     "pointIndex": 84,
                     "instructionType": "TURN",
                     "street": "Lijnbaansgracht",
@@ -4999,7 +5113,10 @@
                   {
                     "routeOffsetInMeters": 2058,
                     "travelTimeInSeconds": 435,
-                    "point": [4.88051, 52.37955],
+                    "point": [
+                      4.88051,
+                      52.37955
+                    ],
                     "pointIndex": 87,
                     "instructionType": "TURN",
                     "street": "Lindengracht",
@@ -5014,7 +5131,10 @@
                   {
                     "routeOffsetInMeters": 2633,
                     "travelTimeInSeconds": 550,
-                    "point": [4.88849, 52.38026],
+                    "point": [
+                      4.88849,
+                      52.38026
+                    ],
                     "pointIndex": 99,
                     "instructionType": "TURN",
                     "street": "Prinsengracht",
@@ -5029,7 +5149,10 @@
                   {
                     "routeOffsetInMeters": 3113,
                     "travelTimeInSeconds": 656,
-                    "point": [4.89328, 52.3829],
+                    "point": [
+                      4.89328,
+                      52.3829
+                    ],
                     "pointIndex": 127,
                     "instructionType": "TURN",
                     "roadNumbers": [
@@ -5047,7 +5170,10 @@
                   {
                     "routeOffsetInMeters": 3800,
                     "travelTimeInSeconds": 735,
-                    "point": [4.90126, 52.37941],
+                    "point": [
+                      4.90126,
+                      52.37941
+                    ],
                     "pointIndex": 162,
                     "instructionType": "LOCATION_ARRIVAL",
                     "roadNumbers": [

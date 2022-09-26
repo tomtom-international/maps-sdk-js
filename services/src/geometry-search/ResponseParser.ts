@@ -1,4 +1,4 @@
-import { toPointFeature, Place } from "@anw/go-sdk-js/core";
+import { bboxFromPointFeatures, bboxOnlyIfWithArea, Place, toPointFeature } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
 
 import { bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
@@ -10,8 +10,7 @@ export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseA
     const features: Place<GeometrySearchResponseProps>[] = results.map((result) => ({
         ...toPointFeature(latLonAPIToPosition(result.position)),
         properties: {
-            ...omit(result, "poi", "viewport", "entryPoints"),
-            ...(result.position && { position: [result.position.lon, result.position.lat] }),
+            ...omit(result, "position", "poi", "viewport", "entryPoints"),
             ...(result.viewport && { viewport: bboxToPolygon(result.viewport) }),
             ...(result.entryPoints && {
                 entryPoints: result.entryPoints.map((entrypoint) => ({
@@ -27,8 +26,10 @@ export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseA
         }
     }));
 
+    const bbox = bboxOnlyIfWithArea(bboxFromPointFeatures(features));
     return {
         type: "FeatureCollection",
-        features
+        features,
+        ...(bbox && { bbox })
     };
 };

@@ -3,5 +3,6 @@
  * @module
  */
 export * from "./src/config/GlobalConfig";
+export * from "./src/util/BBox";
 export * from "./src/util/LngLat";
 export * from "./src/types";

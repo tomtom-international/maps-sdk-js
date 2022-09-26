@@ -1,8 +1,10 @@
 import {
+    bboxFromBBoxes,
     CountrySection,
     DelayMagnitude,
     LegSection,
     Guidance,
+    quickBBoxFromLineString,
     Route,
     Section,
     Sections,
@@ -13,7 +15,7 @@ import {
     TravelModeSection
 } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
-import { LineString } from "geojson";
+import { BBox, LineString } from "geojson";
 
 import { CalculateRouteResponse } from "./CalculateRoute";
 import { CalculateRouteResponseAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
@@ -144,15 +146,20 @@ const parseGuidance = (apiGuidance: GuidanceAPI): Guidance => ({
     instructionGroups: apiGuidance.instructionGroups
 });
 
-const parseRoute = (apiRoute: RouteAPI): Route => ({
-    type: "Feature",
-    geometry: parseRoutePath(apiRoute.legs),
-    properties: {
-        summary: parseSummary(apiRoute.summary),
-        sections: parseSections(apiRoute),
-        ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance) })
-    }
-});
+const parseRoute = (apiRoute: RouteAPI): Route => {
+    const geometry = parseRoutePath(apiRoute.legs);
+    const bbox = quickBBoxFromLineString(geometry);
+    return {
+        type: "Feature",
+        geometry,
+        ...(bbox && { bbox }),
+        properties: {
+            summary: parseSummary(apiRoute.summary),
+            sections: parseSections(apiRoute),
+            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance) })
+        }
+    };
+};
 
 /**
  * Default method for parsing calculate route request from {@link CalculateRouteResponse}
@@ -160,9 +167,14 @@ const parseRoute = (apiRoute: RouteAPI): Route => ({
  * @category Functions
  * @param apiResponse
  */
-export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): CalculateRouteResponse => ({
-    routes: {
-        type: "FeatureCollection",
-        features: apiResponse.routes.map(parseRoute)
-    }
-});
+export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): CalculateRouteResponse => {
+    const features = apiResponse.routes.map(parseRoute);
+    const bbox = bboxFromBBoxes(features.map((feature) => feature.bbox as BBox));
+    return {
+        routes: {
+            type: "FeatureCollection",
+            ...(bbox && { bbox }),
+            features
+        }
+    };
+};

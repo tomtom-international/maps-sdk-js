@@ -1,7 +1,7 @@
 import omit from "lodash/omit";
+import { bboxOnlyIfWithArea, bboxFromPointFeatures, GeographyType, toPointFeature } from "@anw/go-sdk-js/core";
 import { GeocodingResponse } from "./types/GeocodingResponse";
 import { GeocodingResponseAPI } from "./types/APITypes";
-import { GeographyType, toPointFeature } from "@anw/go-sdk-js/core";
 import { apiToGeoJSONBBox, bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
 
 /**
@@ -35,8 +35,10 @@ export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): Geoco
             })
         }
     }));
+    const bbox = bboxOnlyIfWithArea(bboxFromPointFeatures(features));
     return {
         type: "FeatureCollection",
-        features
+        features,
+        ...(bbox && { bbox })
     };
 };
