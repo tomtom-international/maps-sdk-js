@@ -30,7 +30,7 @@ describe("Geometry Search API", () => {
 
     test("geometrySearchAPI.searchByGeometry works", async () => {
         const query = "cafe";
-        const categories: number[] = [-123.23];
+        const categories: number[] = [];
         const fuels: Fuel[] = [];
         const language = "en-GB";
         const view = "Unified";

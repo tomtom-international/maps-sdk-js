@@ -14,9 +14,9 @@
       }
     },
     {
-      "service": "Geocode",
-      "message": "Error parsing 'language': Language tag 'XYZ' not supported",
-      "status": 400
+      "service": "GeometrySearch",
+      "message": "Not Found",
+      "status": 404
     }
   ],
   [
@@ -34,8 +34,8 @@
       }
     },
     {
-      "service": "Geocode",
-      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "service": "GeometrySearch",
+      "message": "Missing or invalid geometryList parameter",
       "status": 400
     }
   ],
@@ -55,8 +55,8 @@
       }
     },
     {
-      "service": "Geocode",
-      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "service": "GeometrySearch",
+      "message": "Error parsing 'geometryList': Invalid positions found: 1234.8828,2.28266",
       "status": 400
     }
   ],
@@ -76,8 +76,8 @@
       }
     },
     {
-      "service": "Geocode",
-      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "service": "GeometrySearch",
+      "message": "Error parsing 'maxPowerKW': Parameter should not have negative value",
       "status": 400
     }
   ],
@@ -97,8 +97,8 @@
       }
     },
     {
-      "service": "Geocode",
-      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "service": "GeometrySearch",
+      "message": "Error parsing 'minPowerKW': Parameter should not have negative value",
       "status": 400
     }
   ],
@@ -118,8 +118,8 @@
       }
     },
     {
-      "service": "Geocode",
-      "message": "Empty query allowed only with the filters provided or in wildcard context.",
+      "service": "GeometrySearch",
+      "message": "Error parsing 'minPowerKW': Parameter should not have negative value",
       "status": 400
     }
   ]

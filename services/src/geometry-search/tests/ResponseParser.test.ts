@@ -1,9 +1,9 @@
-import {GeometrySearchResponse, GeometrySearchResponseAPI} from "../types";
+import { GeometrySearchResponse, GeometrySearchResponseAPI } from "../types";
 import apiAndParsedResponses from "../../geometry-search/tests/ResponseParser.data.json";
-import {parseGeometrySearchResponse} from "../ResponseParser";
-import errorResponses from "../../routing/tests/ResponseParserError.data.json";
-import {ErrorObjAPI, RoutingAPIResponseError} from "../../shared/types/APIResponseErrorTypes";
-import {routingResponseErrorParser} from "../../routing/RoutingResponseErrorParser";
+import { parseGeometrySearchResponse } from "../ResponseParser";
+import errorResponses from "../../geometry-search/tests/ResponseParserError.data.json";
+import { DefaultAPIResponseError, ErrorObjAPI } from "../../shared/types/APIResponseErrorTypes";
+import { defaultResponseParserError } from "../../shared/Errors";
 
 describe("Geometry Search response parser tests", () => {
     test.each(apiAndParsedResponses)(
@@ -15,17 +15,13 @@ describe("Geometry Search response parser tests", () => {
     );
 });
 
-describe("Routing - error response parsing tests", () => {
+describe("Geometry - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
-        // async (_name: string, apiResponseError: ErrorObjAPI<RoutingAPIResponseError>, expectedSDKError: string) => {
-        //     const sdkRoutingResponseError = routingResponseErrorParser(apiResponseError, "Routing");
-        //     expect(sdkRoutingResponseError).toMatchObject(expectedSDKError);
-        // }
-        async (_name: string, apiResponseError: ErrorObjAPI<RoutingAPIResponseError>) => {
-            const sdkRoutingResponseError = routingResponseErrorParser(apiResponseError, "GeometrySearch");
-            console.log(JSON.stringify(sdkRoutingResponseError));
+        async (_name: string, apiResponseError: ErrorObjAPI<DefaultAPIResponseError>, expectedSDKError: string) => {
+            const sdkGeometrySearchResponseError = defaultResponseParserError(apiResponseError, "GeometrySearch");
+            expect(sdkGeometrySearchResponseError).toMatchObject(expectedSDKError);
         }
     );
 });
