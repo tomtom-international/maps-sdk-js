@@ -108,18 +108,18 @@
       "status": 400,
       "message": "Bad Request",
       "data": {
-        "errorText": "Error parsing 'minPowerKW': Parameter should not have negative value",
+        "errorText": "Error parsing 'categorySet': '-1234.5' is not a valid integer",
         "detailedError": {
           "code": "BadRequest",
-          "message": "Error parsing 'minPowerKW': Parameter should not have negative value",
-          "target": "minPowerKW"
+          "message": "Error parsing 'categorySet': '-1234.5' is not a valid integer",
+          "target": "categorySet"
         },
         "httpStatusCode": 400
       }
     },
     {
       "service": "GeometrySearch",
-      "message": "Error parsing 'minPowerKW': Parameter should not have negative value",
+      "message": "Error parsing 'categorySet': '-1234.5' is not a valid integer",
       "status": 400
     }
   ]
