@@ -122,5 +122,26 @@
       "message": "Error parsing 'categorySet': '-1234.5' is not a valid integer",
       "status": 400
     }
+  ],
+  [
+    "Error parsing 'openingHours': Not supported openingHours mode",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "errorText": "Error parsing 'openingHours': Not supported openingHours mode",
+        "detailedError": {
+          "code": "BadRequest",
+          "message": "Error parsing 'openingHours': Not supported openingHours mode",
+          "target": "openingHours"
+        },
+        "httpStatusCode": 400
+      }
+    },
+    {
+      "service": "GeometrySearch",
+      "message": "Error parsing 'categorySet': '-1234.5' is not a valid integer",
+      "status": 400
+    }
   ]
 ]
