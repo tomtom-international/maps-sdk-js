@@ -5,7 +5,7 @@ import { ReverseGeocodingResponse } from "../ReverseGeocoding";
 import { ReverseGeocodingResponseAPI } from "../types/APITypes";
 import errorResponses from "../../revgeo/tests/ResponseParserError.data.json";
 import { DefaultAPIResponseError, ErrorObjAPI } from "../../shared/types/APIResponseErrorTypes";
-import { defaultResponseParserError } from "../../shared/Errors";
+import {defaultResponseParserError, SDKServiceError} from "../../shared/Errors";
 
 describe("ReverseGeocode response parsing tests", () => {
     test.each(apiAndParsedResponses)(
@@ -26,7 +26,7 @@ describe("ReverseGeocode - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
-        (_name: string, apiResponseError: ErrorObjAPI<DefaultAPIResponseError>, expectedSDKError: string) => {
+        (_name: string, apiResponseError: ErrorObjAPI<DefaultAPIResponseError>, expectedSDKError: SDKServiceError) => {
             const sdkReverseGeocodingError = defaultResponseParserError(apiResponseError, "ReverseGeocode");
             expect(sdkReverseGeocodingError).toMatchObject(expectedSDKError);
         }
