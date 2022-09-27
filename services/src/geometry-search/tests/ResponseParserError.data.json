@@ -40,26 +40,6 @@
     }
   ],
   [
-    "Invalid limit parameter",
-    {
-      "status": 400,
-      "message": "Bad Request",
-      "data": {
-        "errorText": "Invalid limit parameter. Limit should be an integer [1, 100] def 10.",
-        "detailedError": {
-          "code": "BadRequest",
-          "message": "Invalid limit parameter. Limit should be an integer [1, 100] def 10."
-        },
-        "httpStatusCode": 400
-      }
-    },
-    {
-      "service": "Geocode",
-      "message": "Empty query allowed only with the filters provided or in wildcard context.",
-      "status": 400
-    }
-  ],
-  [
     "Error parsing 'geometryList'",
     {
       "status": 400,
