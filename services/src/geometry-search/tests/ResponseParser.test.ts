@@ -15,7 +15,7 @@ describe("Geometry Search response parser tests", () => {
     );
 });
 
-describe("Geometry - error response parsing tests", () => {
+describe("Geometry Search - error response parsing tests", () => {
     test.each(errorResponses)(
         "'%s'",
         // @ts-ignore
