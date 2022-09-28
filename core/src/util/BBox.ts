@@ -6,7 +6,7 @@ import { BBox, Feature, LineString, Point, Position } from "geojson";
  * @param bbox The BBox to verify. If undefined, false is returned.
  */
 export const isBBoxWithArea = (bbox: BBox | undefined): boolean =>
-    bbox ? bbox?.length >= 4 && bbox[3] - bbox[1] !== 0 && bbox[2] - bbox[0] !== 0 : false;
+    bbox ? bbox.length >= 4 && bbox[3] !== bbox[1] && bbox[2] !== bbox[0] : false;
 
 /**
  * Returns the given bbox if it has area, or undefined otherwise.
