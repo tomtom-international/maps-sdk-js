@@ -1,5 +1,3 @@
-import omit from "lodash/omit";
-
 import { getLngLatArray, toPointFeature } from "@anw/go-sdk-js/core";
 import { csvLatLngToPosition, apiToGeoJSONBBox } from "../shared/Geometry";
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
@@ -19,21 +17,18 @@ export const parseRevGeoResponse = (
 ): ReverseGeocodingResponse => {
     const pointFeature = toPointFeature(getLngLatArray(params.position));
     const firstAPIResult = apiResponse.addresses[0];
-    const address = firstAPIResult.address;
+    const { boundingBox, sideOfStreet, offsetPosition, ...address } = firstAPIResult.address;
     return {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...pointFeature,
-        ...(address.boundingBox && { bbox: apiToGeoJSONBBox(address.boundingBox) }),
+        ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         properties: {
             type: firstAPIResult.entityType ? "Geography" : !address.streetNumber ? "Street" : "Point Address",
-            address: {
-                ...omit(address, "boundingBox", "sideOfStreet", "offsetPosition")
-            },
+            address,
             ...(firstAPIResult.dataSources && { dataSources: firstAPIResult.dataSources }),
             ...(firstAPIResult.mapcodes && { mapcodes: firstAPIResult.mapcodes }),
-
-            ...(address.sideOfStreet && { sideOfStreet: address.sideOfStreet }),
-            ...(address.offsetPosition && { offsetPosition: csvLatLngToPosition(address.offsetPosition) }),
+            ...(sideOfStreet && { sideOfStreet }),
+            ...(offsetPosition && { offsetPosition: csvLatLngToPosition(offsetPosition) }),
             // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
             originalPosition: csvLatLngToPosition(firstAPIResult.position)
         }

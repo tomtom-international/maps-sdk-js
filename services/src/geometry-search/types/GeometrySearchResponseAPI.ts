@@ -25,7 +25,12 @@ type POIAPI = {
     timeZone?: TimeZone;
 };
 
-type GeometrySearchResultAPI = Omit<
+/**
+ * @ignore
+ * @group Geometry-Search
+ * @category Types
+ */
+export type GeometrySearchResultAPI = Omit<
     CommonPlaceProps,
     "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
@@ -39,6 +44,11 @@ type GeometrySearchResultAPI = Omit<
     poi?: POIAPI;
 };
 
+/**
+ * @ignore
+ * @group Geometry-Search
+ * @category Types
+ */
 export type GeometrySearchResponseAPI = {
     /**
      * Summary information about the search that was performed.

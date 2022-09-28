@@ -67,10 +67,6 @@ describe("Geometry Search API", () => {
                             type: "POI",
                             address: expect.any(Object),
                             entryPoints: expect.arrayContaining([expect.any(Object)]),
-                            viewport: expect.objectContaining({
-                                type: "Polygon",
-                                coordinates: expect.any(Array)
-                            }),
                             poi: expect.objectContaining({
                                 name: expect.any(String),
                                 classifications: expect.any(Array),

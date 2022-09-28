@@ -44,10 +44,6 @@ describe("Geocoding integration tests", () => {
                             countryCodeISO3: "NLD",
                             freeformAddress: "Teakhout, Zaanstad",
                             localName: "Zaanstad"
-                        },
-                        viewport: {
-                            type: "Polygon",
-                            coordinates: expect.any(Array)
                         }
                     }
                 },

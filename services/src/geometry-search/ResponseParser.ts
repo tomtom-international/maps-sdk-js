@@ -1,31 +1,37 @@
 import { bboxFromPointFeatures, bboxOnlyIfWithArea, Place, toPointFeature } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
 
-import { bboxToPolygon, latLonAPIToPosition } from "../shared/Geometry";
-import { GeometrySearchResponseAPI, GeometrySearchResponse, GeometrySearchResponseProps } from "./types";
+import { latLonAPIToPosition } from "../shared/Geometry";
+import {
+    GeometrySearchResponseAPI,
+    GeometrySearchResponse,
+    GeometrySearchResponseProps,
+    GeometrySearchResultAPI
+} from "./types";
 
-export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseAPI): GeometrySearchResponse => {
-    const results = apiResponse.results;
-
-    const features: Place<GeometrySearchResponseProps>[] = results.map((result) => ({
-        ...toPointFeature(latLonAPIToPosition(result.position)),
+const parseAPIResult = (result: GeometrySearchResultAPI): Place<GeometrySearchResponseProps> => {
+    const { position, entryPoints, poi, ...rest } = result;
+    return {
+        ...toPointFeature(latLonAPIToPosition(position)),
         properties: {
-            ...omit(result, "position", "poi", "viewport", "entryPoints"),
-            ...(result.viewport && { viewport: bboxToPolygon(result.viewport) }),
-            ...(result.entryPoints && {
-                entryPoints: result.entryPoints.map((entrypoint) => ({
+            ...omit(rest, "viewport"),
+            ...(entryPoints && {
+                entryPoints: entryPoints.map((entrypoint) => ({
                     ...entrypoint,
                     position: latLonAPIToPosition(entrypoint.position)
                 }))
             }),
             poi: {
-                ...omit(result.poi, "categorySet"),
-                brands: result.poi?.brands?.map((brand) => brand.name) ?? [],
-                categoryIds: result.poi?.categorySet?.map((category) => category.id) ?? []
+                ...omit(poi, "categorySet"),
+                brands: poi?.brands?.map((brand) => brand.name) ?? [],
+                categoryIds: poi?.categorySet?.map((category) => category.id) ?? []
             }
         }
-    }));
+    };
+};
 
+export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseAPI): GeometrySearchResponse => {
+    const features: Place<GeometrySearchResponseProps>[] = apiResponse.results.map((result) => parseAPIResult(result));
     const bbox = bboxOnlyIfWithArea(bboxFromPointFeatures(features));
     return {
         type: "FeatureCollection",

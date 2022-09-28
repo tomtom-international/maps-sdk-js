@@ -106,33 +106,6 @@
               "countryCodeISO3": "NLD",
               "freeformAddress": "1507 Zaanstad"
             },
-            "viewport": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    4.78348,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.42248
-                  ]
-                ]
-              ]
-            },
             "dataSources": {
               "geometry": {
                 "id": "00004e4c-3100-3c00-0000-00004d7d11c3"
@@ -233,33 +206,6 @@
               "countryCodeISO3": "NLD",
               "freeformAddress": "Nieuwstraat 41, 8011 TM Zwolle",
               "localName": "Zwolle"
-            },
-            "viewport": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    6.09135,
-                    52.51232
-                  ],
-                  [
-                    6.09431,
-                    52.51232
-                  ],
-                  [
-                    6.09431,
-                    52.51412
-                  ],
-                  [
-                    6.09135,
-                    52.51412
-                  ],
-                  [
-                    6.09135,
-                    52.51232
-                  ]
-                ]
-              ]
             },
             "entryPoints": [
               {
@@ -393,33 +339,6 @@
               "country": "Nederland",
               "countryCodeISO3": "NLD",
               "freeformAddress": "1507 Zaanstad"
-            },
-            "viewport": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    4.78348,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.42248
-                  ],
-                  [
-                    4.81969,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.45513
-                  ],
-                  [
-                    4.78348,
-                    52.42248
-                  ]
-                ]
-              ]
             },
             "dataSources": {
               "geometry": {

@@ -8,7 +8,12 @@ import {
 } from "../../shared/types/APIResponseTypes";
 import { GeocodingProps } from "./GeocodingResponse";
 
-type GeocodingResultAPI = Omit<
+/**
+ * @ignore
+ * @group Geocoding
+ * @category Types
+ */
+export type GeocodingResultAPI = Omit<
     GeocodingProps,
     "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
@@ -22,6 +27,7 @@ type GeocodingResultAPI = Omit<
 };
 
 /**
+ * @ignore
  * @group Geocoding
  * @category Types
  */

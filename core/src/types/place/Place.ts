@@ -1,4 +1,4 @@
-import { Feature, FeatureCollection, Point, Polygon, Position } from "geojson";
+import { Feature, FeatureCollection, Point, Position } from "geojson";
 import { PlaceDataSources } from "./PlaceDataSources";
 import { HasLngLat } from "../Geometry";
 
@@ -130,10 +130,6 @@ export type CommonPlaceProps = {
      * List of mapcode objects.
      */
     mapcodes?: Mapcode[];
-    /**
-     * A viewport which can be used to display the result on a map.
-     */
-    viewport?: Polygon;
     /**
      * A list of entry points of the POI (Points of Interest).
      */
