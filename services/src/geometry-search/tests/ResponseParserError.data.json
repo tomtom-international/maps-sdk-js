@@ -140,7 +140,7 @@
     },
     {
       "service": "GeometrySearch",
-      "message": "Error parsing 'categorySet': '-1234.5' is not a valid integer",
+      "message": "Error parsing 'openingHours': Not supported openingHours mode",
       "status": 400
     }
   ]
