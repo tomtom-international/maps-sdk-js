@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.38](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.37...v0.1.38) (2022-09-28)
+
+
+### Features
+
+* **services:** calculating bounding boxes for different service results ([38d3c91](https://github.com/tomtom-international/go-sdk-js/commit/38d3c913a6f1ad4777f8fb81b48821e1649ada21))
+
+
+### Bug Fixes
+
+* **deps:** updating package lock ([3377cdf](https://github.com/tomtom-international/go-sdk-js/commit/3377cdf5e0a492c49406ddfa44d6dc3bc856978b))
+* expected test message correction ([d03dafe](https://github.com/tomtom-international/go-sdk-js/commit/d03dafee4111254e7fc43418294bf1956fb10f3a))
+
 ### [0.1.37](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.36...v0.1.37) (2022-09-22)
 
 
