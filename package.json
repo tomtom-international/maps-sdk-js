@@ -81,5 +81,9 @@
     {
       "path": "map/dist/map*.js"
     }
-  ]
+  ],
+  "volta": {
+    "node": "16.17.1",
+    "npm": "8.19.2"
+  }
 }
