@@ -3,12 +3,14 @@ import { parseGeocodingResponse } from "../ResponseParser";
 import errorResponses from "../../geocode/tests/ResponseParserError.data.json";
 import { ErrorObjAPI } from "../../shared/types/APIResponseErrorTypes";
 import { defaultResponseParserError, SDKServiceError } from "../../shared/Errors";
+import { GeocodingResponseAPI } from "../types/APITypes";
+import { GeocodingResponse } from "../types/GeocodingResponse";
 
 describe("Geocode response parsing tests", () => {
     test.each(apiAndParsedResponses)(
         `'%s`,
         // @ts-ignore
-        (_name: string, apiResponse: never, sdkResponse: never) => {
+        (_name: string, apiResponse: GeocodingResponseAPI, sdkResponse: GeocodingResponse) => {
             expect(parseGeocodingResponse(apiResponse)).toStrictEqual(sdkResponse);
         }
     );

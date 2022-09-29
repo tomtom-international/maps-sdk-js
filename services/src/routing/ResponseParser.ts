@@ -1,10 +1,10 @@
 import {
-    bboxFromBBoxes,
+    bboxFromGeoJSON,
+    bboxFromGeoJSONArray,
     CountrySection,
     DelayMagnitude,
     LegSection,
     Guidance,
-    quickBBoxFromLineString,
     Route,
     Section,
     Sections,
@@ -15,7 +15,7 @@ import {
     TravelModeSection
 } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
-import { BBox, LineString } from "geojson";
+import { LineString } from "geojson";
 
 import { CalculateRouteResponse } from "./CalculateRoute";
 import { CalculateRouteResponseAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
@@ -148,7 +148,7 @@ const parseGuidance = (apiGuidance: GuidanceAPI): Guidance => ({
 
 const parseRoute = (apiRoute: RouteAPI): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
-    const bbox = quickBBoxFromLineString(geometry);
+    const bbox = bboxFromGeoJSON(geometry);
     return {
         type: "Feature",
         geometry,
@@ -169,7 +169,7 @@ const parseRoute = (apiRoute: RouteAPI): Route => {
  */
 export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): CalculateRouteResponse => {
     const features = apiResponse.routes.map(parseRoute);
-    const bbox = bboxFromBBoxes(features.map((feature) => feature.bbox as BBox));
+    const bbox = bboxFromGeoJSONArray(features);
     return {
         routes: {
             type: "FeatureCollection",

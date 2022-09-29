@@ -1,4 +1,5 @@
 import { buildGeocodingRequest } from "../RequestBuilder";
+import { Polygon } from "geojson";
 
 describe("Geocoding request URL building tests", () => {
     test("Geocoding request URL building tests", () => {
@@ -40,16 +41,29 @@ describe("Geocoding request URL building tests", () => {
                 customServiceBaseURL: "https://kr-api.tomtom.com/search/3/geocodeCustom",
                 language: "en-US",
                 geographyTypes: ["Country", "CountrySubdivision"],
-                radius: 30,
+                countries: ["NLD", "ESP"],
+                radiusMeters: 30,
+                offset: 100,
+                mapcodes: ["Local", "International"],
                 typeahead: true,
                 limit: 20,
                 position: [4.78, 51.43],
                 extendedPostalCodesFor: ["Addr", "Str"]
             }).toString()
         ).toStrictEqual(
-            "https://kr-api.tomtom.com/search/3/geocodeCustom/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&typeahead=true&limit=20&lat=51.43&lon=4.78&radius=30&extendedPostalCodesFor=Addr%2CStr&entityTypeSet=Country%2CCountrySubdivision"
+            "https://kr-api.tomtom.com/search/3/geocodeCustom/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&typeahead=true&limit=20&ofs=100&lat=51.43&lon=4.78&countrySet=NLD%2CESP&radius=30&extendedPostalCodesFor=Addr%2CStr&mapcodes=Local%2CInternational&entityTypeSet=Country%2CCountrySubdivision"
         );
-
+        expect(
+            buildGeocodingRequest({
+                query: "amsterdam central station",
+                apiKey: "ANOTHER_API_KEY",
+                commonBaseURL: "https://api-test.tomtom.com",
+                language: "en-US",
+                boundingBox: [5.16905, 51.85925, 5.16957, 52.44009]
+            }).toString()
+        ).toStrictEqual(
+            "https://api-test.tomtom.com/search/2/geocode/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&topLeft=52.44009%2C5.16905&btmRight=51.85925%2C5.16957"
+        );
         expect(
             buildGeocodingRequest({
                 query: "amsterdam central station",
@@ -67,12 +81,11 @@ describe("Geocoding request URL building tests", () => {
                             [5.16905, 52.44009]
                         ]
                     ]
-                }
+                } as Polygon
             }).toString()
         ).toStrictEqual(
-            "https://api-test.tomtom.com/search/2/geocode/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&topLeft=51.85925%2C5.16905&btmRight=52.44009%2C5.16957"
+            "https://api-test.tomtom.com/search/2/geocode/amsterdam%20central%20station.json?key=ANOTHER_API_KEY&language=en-US&topLeft=52.44009%2C5.16905&btmRight=51.85925%2C5.16957"
         );
-
         expect(
             buildGeocodingRequest({
                 commonBaseURL: "https://api.tomtom.com",
@@ -88,7 +101,7 @@ describe("Geocoding request URL building tests", () => {
                 query: "4 north 2nd street san jose",
                 apiKey: "GIVEN_API_KEY",
                 language: "en-GB",
-                radius: 50,
+                radiusMeters: 50,
                 typeahead: true,
                 limit: 10,
                 position: [5.32, 52.5],

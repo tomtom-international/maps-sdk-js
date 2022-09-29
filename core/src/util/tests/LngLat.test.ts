@@ -14,6 +14,10 @@ describe("toPointFeature tests", () => {
 });
 
 describe("getLngLatArray tests", () => {
+    test("is incorrect", () => {
+        expect(() => getLngLatArray(undefined as never)).toThrow();
+        expect(() => getLngLatArray({ random: "blah" } as never)).toThrow();
+    });
     test("is coordinates", () => {
         expect(getLngLatArray([52.467, 4.872])).toEqual([52.467, 4.872]);
     });

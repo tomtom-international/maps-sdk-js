@@ -20,12 +20,10 @@ export class ValidationError extends Error {
     }
 
     private transformErrors(errors: AjvValidationErrors): ValidationErrorResponse {
-        const formattedErrors = errors.map((error) => ({
+        return errors.map((error) => ({
             property: error.instancePath,
             message: error.message
         }));
-
-        return formattedErrors;
     }
 }
 

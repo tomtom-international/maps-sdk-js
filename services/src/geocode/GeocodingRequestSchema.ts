@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { GeocodingParams } from "./types/GeocodingParams";
 
-export const geocodingRequestSchema: JSONSchemaType<GeocodingParams> = {
+export const geocodingRequestSchema: JSONSchemaType<Omit<GeocodingParams, "boundingBox">> = {
     type: "object",
     properties: {
         apiKey: { type: "string", nullable: true },
@@ -12,38 +12,14 @@ export const geocodingRequestSchema: JSONSchemaType<GeocodingParams> = {
         position: {
             type: "array",
             nullable: true,
-            items: {
-                type: "number"
-            }
+            items: { type: "number" }
         },
-        countrySet: {
+        countries: {
             type: "array",
             nullable: true,
-            items: {
-                type: "string"
-            }
+            items: { type: "string" }
         },
-        radius: { type: "number", nullable: true },
-        boundingBox: {
-            type: "object",
-            properties: {
-                coordinates: {
-                    type: "array",
-                    items: { type: "array", items: { type: "array", items: { type: "number" } } }
-                },
-                type: { type: "string" },
-                bbox: {
-                    type: "array",
-                    nullable: true,
-                    additionalItems: false,
-                    items: [{ type: "number" }, { type: "number" }, { type: "number" }, { type: "number" }],
-                    minItems: 4,
-                    maxItems: 6
-                }
-            },
-            nullable: true,
-            required: ["coordinates", "type"]
-        },
+        radiusMeters: { type: "number", nullable: true },
         extendedPostalCodesFor: { type: "array", nullable: true, items: { type: "string" } },
         mapcodes: { type: "array", nullable: true, items: { type: "string" } },
         view: { type: "string", nullable: true, enum: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"] },

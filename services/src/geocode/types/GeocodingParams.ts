@@ -1,7 +1,6 @@
+import { GeographyType, HasBBox, HasLngLat, MapcodeType, View } from "@anw/go-sdk-js/core";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
-import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/go-sdk-js/core";
-import { Polygon } from "geojson";
 
 type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
 
@@ -45,19 +44,21 @@ export type GeocodingParams = CommonServiceParams & {
      * The choice of view may restrict which countries are available.
      * Visit the Search API Market Coverage page for a list of all the countries supported by the Search engine.
      */
-    countrySet?: string[];
+    countries?: string[];
     /**
      * If radius and position are set, the results will be constrained to the defined area.
      * The radius parameter is specified in meters.
      */
-    radius?: number;
+    radiusMeters?: number;
     /**
      * Bounding box to filter the geocoding operation on.
+     * * It accepts a GeoJSON bounding box or any GeoJSON shape which contains a bbox,
+     * or from which a bbox can be calculated.
      *
-     * Important note: Point-Radius parameters and Bounding Box parameters are mutually exclusive.
+     * * Important note: Point-Radius parameters and Bounding Box parameters are mutually exclusive.
      * Point-Radius parameters take precedence when both are passed.
      */
-    boundingBox?: Polygon;
+    boundingBox?: HasBBox;
     /**
      * Indexes for which extended postal codes should be included in the results.
      * Available values are described in Additional Information indexes abbreviation values section.

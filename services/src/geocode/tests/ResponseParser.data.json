@@ -20,6 +20,7 @@
           "matchConfidence": {
             "score": 1
           },
+          "dist": 300,
           "address": {
             "municipalitySubdivision": "Zaandam, Westzaan, Amsterdam Havens",
             "municipality": "Zaanstad",
@@ -90,6 +91,7 @@
             "type": "Geography",
             "id": "NL/GEO/p0/7133",
             "score": 4.4519996643,
+            "distance": 300,
             "geographyType": [
               "PostalCodeArea"
             ],

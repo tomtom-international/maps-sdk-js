@@ -6,14 +6,16 @@ import { HasLngLat } from "../types";
  * @param hasLngLat
  */
 export const getLngLatArray = (hasLngLat: HasLngLat): Position => {
-    if (Array.isArray(hasLngLat)) {
-        return hasLngLat;
-    } else if ((hasLngLat as Point).coordinates) {
-        return (hasLngLat as Point).coordinates;
-    } else if ((hasLngLat as Feature).geometry) {
-        return (hasLngLat as Feature<Point>).geometry.coordinates;
+    if (hasLngLat) {
+        if (Array.isArray(hasLngLat)) {
+            return hasLngLat;
+        } else if ((hasLngLat as Point).coordinates) {
+            return (hasLngLat as Point).coordinates;
+        } else if ((hasLngLat as Feature).geometry) {
+            return (hasLngLat as Feature<Point>).geometry.coordinates;
+        }
     }
-    throw new Error("Received object does not have lng lat coordinates");
+    throw new Error("The received object does not have lng-lat coordinates");
 };
 
 /**

@@ -1,18 +1,18 @@
 import omit from "lodash/omit";
-import { bboxOnlyIfWithArea, bboxFromPointFeatures, GeographyType, Place, toPointFeature } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSONArray, bboxOnlyIfWithArea, GeographyType, Place, toPointFeature } from "@anw/go-sdk-js/core";
 import { GeocodingProps, GeocodingResponse } from "./types/GeocodingResponse";
 import { GeocodingResponseAPI, GeocodingResultAPI } from "./types/APITypes";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "../shared/Geometry";
 
 const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
-    const { position, boundingBox, entryPoints, addressRanges, entityType, ...rest } = result;
+    const { position, boundingBox, dist, entryPoints, addressRanges, entityType, ...rest } = result;
 
     return {
         ...toPointFeature(latLonAPIToPosition(position)),
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         properties: {
             ...omit(rest, "viewport"),
-            ...(result.dist && { distance: result.dist }),
+            ...(dist && { distance: dist }),
             ...(entityType && { geographyType: entityType.split(",") as GeographyType[] }),
             ...(entryPoints && {
                 entryPoints: entryPoints.map((entrypoint) => ({
@@ -40,7 +40,7 @@ const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
 export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): GeocodingResponse => {
     const results = apiResponse.results;
     const features = results.map((result) => parseAPIResult(result));
-    const bbox = bboxOnlyIfWithArea(bboxFromPointFeatures(features));
+    const bbox = bboxOnlyIfWithArea(bboxFromGeoJSONArray(features));
     return {
         type: "FeatureCollection",
         features,

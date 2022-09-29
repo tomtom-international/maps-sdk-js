@@ -1,11 +1,23 @@
-import { BBox, Feature, LineString, Point, Position } from "geojson";
+import {
+    BBox,
+    Feature,
+    FeatureCollection,
+    GeoJsonObject,
+    GeometryCollection,
+    LineString,
+    MultiPolygon,
+    Point,
+    Polygon,
+    Position
+} from "geojson";
+import { HasBBox, OptionalBBox } from "../types";
 
 /**
  * Calculates whether the given bbox has area (width and height).
  * @ignore
  * @param bbox The BBox to verify. If undefined, false is returned.
  */
-export const isBBoxWithArea = (bbox: BBox | undefined): boolean =>
+export const isBBoxWithArea = (bbox: OptionalBBox): boolean =>
     bbox ? bbox.length >= 4 && bbox[3] !== bbox[1] && bbox[2] !== bbox[0] : false;
 
 /**
@@ -13,8 +25,7 @@ export const isBBoxWithArea = (bbox: BBox | undefined): boolean =>
  * @ignore
  * @param bbox The BBox to verify. If undefined, undefined is returned.
  */
-export const bboxOnlyIfWithArea = (bbox: BBox | undefined): BBox | undefined =>
-    isBBoxWithArea(bbox) ? bbox : undefined;
+export const bboxOnlyIfWithArea = (bbox: OptionalBBox): OptionalBBox => (isBBoxWithArea(bbox) ? bbox : undefined);
 
 /**
  * Expands the given bounding box with the given position.
@@ -24,9 +35,9 @@ export const bboxOnlyIfWithArea = (bbox: BBox | undefined): BBox | undefined =>
  * @param positionToContain
  * @param bboxToExpand
  */
-export const bboxExpandedWithPosition = (positionToContain: Position, bboxToExpand?: BBox): BBox => {
-    if (!positionToContain.length) {
-        throw Error("bboxExpandedWithPosition: received empty position");
+export const bboxExpandedWithPosition = (positionToContain: Position, bboxToExpand?: BBox): OptionalBBox => {
+    if (!positionToContain || positionToContain.length < 2) {
+        return undefined;
     }
     return bboxToExpand
         ? [
@@ -48,9 +59,9 @@ export const bboxExpandedWithPosition = (positionToContain: Position, bboxToExpa
  * @param bboxToContain
  * @param bboxToExpand
  */
-export const bboxExpandedWithBBox = (bboxToContain: BBox, bboxToExpand?: BBox): BBox => {
-    if (!bboxToExpand) {
-        return bboxToContain;
+export const bboxExpandedWithBBox = (bboxToContain: OptionalBBox, bboxToExpand?: BBox): OptionalBBox => {
+    if (!bboxToExpand || !bboxToContain) {
+        return bboxToContain || bboxToExpand;
     }
     return [
         // min longitude:
@@ -69,41 +80,8 @@ export const bboxExpandedWithBBox = (bboxToContain: BBox, bboxToExpand?: BBox): 
  * @ignore
  * @param bboxes
  */
-export const bboxFromBBoxes = (bboxes: BBox[]): BBox =>
-    bboxes.reduce((previous, current) => bboxExpandedWithBBox(current, previous));
-
-/**
- * Expands the given bounding box with the given point Feature.
- * * If the feature has also a bounding box, the latter is considered instead.
- * * If the given bounding box is undefined, the given point is considered alone.
- * This results in a zero-sized bounding box or the point bbox if it exists.
- * @ignore
- * @param feature
- * @param bboxToExpand
- */
-export const bboxExpandedWithPointFeature = (feature: Feature<Point>, bboxToExpand?: BBox): BBox => {
-    const bbox = feature.bbox || feature.geometry?.bbox;
-    if (bbox) {
-        return bboxExpandedWithBBox(bbox, bboxToExpand);
-    } else {
-        return bboxExpandedWithPosition(feature.geometry.coordinates, bboxToExpand);
-    }
-};
-
-/**
- * Calculates a bounding box from the given point features.
- * * If any feature also has a bbox, the latter is considered instead.
- * @ignore
- * @param features
- * @return
- */
-export const bboxFromPointFeatures = (features: Feature<Point>[]): BBox | undefined => {
-    let bbox: BBox | undefined = undefined;
-    for (const feature of features) {
-        bbox = bboxExpandedWithPointFeature(feature, bbox);
-    }
-    return bbox;
-};
+export const bboxFromBBoxes = (bboxes: OptionalBBox[]): OptionalBBox =>
+    bboxes?.length ? bboxes.reduce((previous, current) => bboxExpandedWithBBox(current, previous)) : undefined;
 
 /**
  * Calculates a bounding box from an array of coordinates.
@@ -113,7 +91,7 @@ export const bboxFromPointFeatures = (features: Feature<Point>[]): BBox | undefi
  * @ignore
  * @param coordinates Should always be passed, but undefined is also supported, resulting in undefined bbox.
  */
-export const quickBBoxFromCoordsArray = (coordinates: Position[] | undefined): BBox | undefined => {
+export const bboxFromCoordsArray = (coordinates: Position[] | undefined): OptionalBBox => {
     const length = coordinates?.length;
     if (!length) {
         return undefined;
@@ -128,12 +106,83 @@ export const quickBBoxFromCoordsArray = (coordinates: Position[] | undefined): B
 };
 
 /**
- * Calculates a bounding box from a LineString.
- * * If the array is beyond a certain size, it doesn't scan it fully,
- * for performance, but ensures a decent accuracy still.
+ * Extracts or calculates a bounding box from a GeoJSON object which:
+ * * Is already a bounding box
+ * * Contains a bounding box
+ * * Can get a bounding box calculated from its geometry or aggregated parts.
  *
- * @ignore
- * @param lineString Should always be passed, but undefined is also supported, resulting in undefined bbox.
+ * "bbox" populated fields take priority over geometries.
+ * * Point features might have "bbox" enclosing a broader geometry than just the point, in compliance with TT services.
+ *
+ * Large geometries approximate their bounding box for speed by preventing to scan each single point.
+ * @param hasBBox
  */
-export const quickBBoxFromLineString = (lineString: LineString | undefined): BBox | undefined =>
-    quickBBoxFromCoordsArray(lineString?.coordinates);
+export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
+    // Edge case:
+    if (!hasBBox) {
+        return undefined;
+    }
+    // Else...
+    // Already a BBox:
+    if (Array.isArray(hasBBox)) {
+        return hasBBox.length >= 4 ? hasBBox : undefined;
+    }
+    // Else...
+    // Already containing a BBox:
+    const geoJSON = hasBBox as GeoJsonObject;
+    if (geoJSON.bbox) {
+        return geoJSON.bbox;
+    }
+    // Else...
+    // Needs direct or recursive bbox extraction/calculation:
+    switch (geoJSON.type) {
+        case "Feature":
+            return bboxFromGeoJSON((geoJSON as Feature).geometry);
+        case "FeatureCollection":
+            return bboxFromBBoxes((geoJSON as FeatureCollection).features.map((feature) => bboxFromGeoJSON(feature)));
+        case "GeometryCollection":
+            return bboxFromBBoxes(
+                (geoJSON as GeometryCollection).geometries.map((geometry) => bboxFromGeoJSON(geometry))
+            );
+        case "Point":
+            return bboxExpandedWithPosition((geoJSON as Point).coordinates);
+        case "LineString":
+        case "MultiPoint":
+            // (LineString and MultiPoint both have the same coordinates type)
+            return bboxFromCoordsArray((geoJSON as LineString).coordinates);
+        case "MultiLineString":
+        case "Polygon":
+            // (MultiLineString and Polygon both have the same coordinates type)
+            return bboxFromBBoxes((geoJSON as Polygon).coordinates.map((coords) => bboxFromCoordsArray(coords)));
+        case "MultiPolygon":
+            return bboxFromBBoxes(
+                (geoJSON as MultiPolygon).coordinates.flatMap((polygon) =>
+                    polygon.map((coords) => bboxFromCoordsArray(coords))
+                )
+            );
+        default:
+            return undefined;
+    }
+};
+
+/**
+ * Calculates a bounding box from the given point features.
+ * * If any feature also has a bbox, the latter is considered instead.
+ * @ignore
+ * @param geoJSONs
+ * @return
+ */
+export const bboxFromGeoJSONArray = (geoJSONs: GeoJsonObject[]): OptionalBBox =>
+    geoJSONs && bboxFromBBoxes(geoJSONs.map((geoJSON) => bboxFromGeoJSON(geoJSON)));
+
+/**
+ * Expands the given bounding box with the given GeoJSON.
+ * * If the feature has also a bounding box, the latter is considered instead.
+ * * If the given bounding box is undefined, the given point is considered alone.
+ * This results in a zero-sized bounding box or the point bbox if it exists.
+ * @ignore
+ * @param geoJSON
+ * @param bboxToExpand
+ */
+export const bboxExpandedWithGeoJSON = (geoJSON: GeoJsonObject, bboxToExpand?: BBox): OptionalBBox =>
+    bboxExpandedWithBBox(bboxFromGeoJSON(geoJSON), bboxToExpand);

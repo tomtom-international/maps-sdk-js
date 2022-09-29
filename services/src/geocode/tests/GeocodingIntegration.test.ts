@@ -1,3 +1,4 @@
+import { Polygon } from "geojson";
 import geocode from "../Geocoding";
 import { GeocodingResponseAPI } from "../types/APITypes";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
@@ -85,7 +86,7 @@ describe("Geocoding integration tests", () => {
             limit: 15,
             offset: 3,
             position: [4.81063, 51.85925],
-            countrySet: [],
+            countries: [],
             boundingBox: {
                 type: "Polygon",
                 coordinates: [
@@ -97,13 +98,13 @@ describe("Geocoding integration tests", () => {
                         [5.16905, 52.44009]
                     ]
                 ]
-            },
+            } as Polygon,
             extendedPostalCodesFor: ["Addr", "Str", "Geo"],
             mapcodes: ["International"],
             view: "MA",
             geographyTypes: ["Municipality", "MunicipalitySubdivision"],
             language: "en-GB",
-            radius: 1000000
+            radiusMeters: 1000000
         });
         expect(result).toMatchObject({
             type: "FeatureCollection",
@@ -180,7 +181,7 @@ describe("Geocoding integration tests", () => {
             view: "MAA", // Invalid value, it should be of type View
             geographyTypes: ["Municipality", "MunicipalitySubdivision"],
             language: "en-GB",
-            radius: 1000000
+            radiusMeters: 1000000
         };
 
         await expect(geocode(invalidParams)).rejects.toThrow("Validation error");

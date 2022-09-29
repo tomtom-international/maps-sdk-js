@@ -1,18 +1,31 @@
-import { Position } from "geojson";
 import {
+    Feature,
+    FeatureCollection,
+    GeometryCollection,
+    LineString,
+    MultiLineString,
+    MultiPoint,
+    MultiPolygon,
+    Polygon,
+    Position
+} from "geojson";
+import {
+    bboxFromGeoJSON,
     bboxExpandedWithBBox,
-    bboxExpandedWithPointFeature,
+    bboxExpandedWithGeoJSON,
     bboxExpandedWithPosition,
     bboxFromBBoxes,
-    bboxFromPointFeatures,
+    bboxFromCoordsArray,
+    bboxFromGeoJSONArray,
     bboxOnlyIfWithArea,
-    isBBoxWithArea,
-    quickBBoxFromCoordsArray,
-    quickBBoxFromLineString
+    isBBoxWithArea
 } from "../BBox";
 
 describe("Bounding Box expansion functions", () => {
     test("Expand bounding box with position", () => {
+        expect(bboxExpandedWithPosition(undefined as never)).toBeUndefined();
+        expect(bboxExpandedWithPosition([])).toBeUndefined();
+        expect(bboxExpandedWithPosition([20])).toBeUndefined();
         expect(bboxExpandedWithPosition([10, 20])).toEqual([10, 20, 10, 20]);
         expect(bboxExpandedWithPosition([10, 20], [0, 0, 1, 1])).toEqual([0, 0, 10, 20]);
         expect(bboxExpandedWithPosition([-10, -20], [0, 0, 1, 1])).toEqual([-10, -20, 1, 1]);
@@ -23,113 +36,55 @@ describe("Bounding Box expansion functions", () => {
     });
 
     test("Expand bounding box with another bounding box", () => {
+        expect(bboxExpandedWithBBox(undefined, [1, 2, 3, 4])).toEqual([1, 2, 3, 4]);
         expect(bboxExpandedWithBBox([0, 1, 2, 3])).toEqual([0, 1, 2, 3]);
         expect(bboxExpandedWithBBox([5, 6, 7, 8], [0, 0, 0, 0])).toEqual([0, 0, 7, 8]);
         expect(bboxExpandedWithBBox([5, 6, 7, 8], [10, 11, 0, 0])).toEqual([5, 6, 7, 8]);
         expect(bboxExpandedWithBBox([-10, -20, 30, 40], [-1, -2, 3, 4])).toEqual([-10, -20, 30, 40]);
     });
 
-    test("Expand bounding box with point feature", () => {
+    test("Expand bounding box with any GeoJSON", () => {
         expect(
-            bboxExpandedWithPointFeature({
+            bboxExpandedWithGeoJSON({
                 type: "Feature",
                 geometry: { type: "Point", coordinates: [10, 20] },
                 properties: {}
-            })
+            } as Feature)
         ).toEqual([10, 20, 10, 20]);
         expect(
-            bboxExpandedWithPointFeature(
+            bboxExpandedWithGeoJSON(
                 {
                     type: "Feature",
                     geometry: { type: "Point", coordinates: [10, 20] },
                     properties: {}
-                },
+                } as Feature,
                 [0, 0, 1, 2]
             )
         ).toEqual([0, 0, 10, 20]);
         expect(
-            bboxExpandedWithPointFeature(
+            bboxExpandedWithGeoJSON(
                 {
                     type: "Feature",
                     geometry: { type: "Point", coordinates: [10, 20] },
                     bbox: [-10, -20, 30, 40],
                     properties: {}
-                },
+                } as Feature,
                 [0, 0, 1, 2]
             )
         ).toEqual([-10, -20, 30, 40]);
     });
 });
 
-describe("BBox calculations from various inputs", () => {
-    test("Bounding box from point features", () => {
-        expect(bboxFromPointFeatures([])).toBeUndefined();
-        expect(
-            bboxFromPointFeatures([
-                {
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [20, -10]
-                    },
-                    properties: {}
-                }
-            ])
-        ).toEqual([20, -10, 20, -10]);
-        expect(
-            bboxFromPointFeatures([
-                {
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [20, -10]
-                    },
-                    properties: {}
-                },
-                {
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [-20, 30]
-                    },
-                    properties: {}
-                }
-            ])
-        ).toEqual([-20, -10, 20, 30]);
-        expect(
-            bboxFromPointFeatures([
-                {
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [0, 0]
-                    },
-                    bbox: [-50, -20, 30, 40],
-                    properties: {}
-                },
-                {
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [-20, 50]
-                    },
-                    properties: {}
-                }
-            ])
-        ).toEqual([-50, -20, 30, 50]);
-    });
-
+describe("Bounding box from other bounding boxes", () => {
     test("Bounding box from other bounding boxes", () => {
-        expect(
-            bboxFromBBoxes([
-                [-10, -20, -5, -3],
-                [-1, -30, 5, 10]
-            ])
-        ).toEqual([-10, -30, 5, 10]);
+        expect(bboxFromBBoxes(undefined as never)).toBeUndefined();
+        expect(bboxFromBBoxes([])).toBeUndefined();
+        expect(bboxFromBBoxes([undefined])).toBeUndefined();
+        expect(bboxFromBBoxes([[-10, -20, -5, -3]])).toEqual([-10, -20, -5, -3]);
         expect(
             bboxFromBBoxes([
                 [10, 20, 50, 90],
-                [0, 0, 0, 0],
+                [0, 0, 0, 0, 20, 20],
                 [0, -30, 110, 80]
             ])
         ).toEqual([0, -30, 110, 90]);
@@ -172,20 +127,20 @@ const buildTestDiagonal = (numPoints: number): Position[] => {
     return coordinates;
 };
 
-describe("Quick bbox from a line", () => {
-    test("Quick bounding box for short lines", () => {
-        expect(quickBBoxFromCoordsArray([])).toBeUndefined();
-        expect(quickBBoxFromCoordsArray(undefined)).toBeUndefined();
-        expect(quickBBoxFromCoordsArray([[0, 0]])).toEqual([0, 0, 0, 0]);
+describe("BBox from an array of coordinates", () => {
+    test("BBox from an array of coordinates", () => {
+        expect(bboxFromCoordsArray([])).toBeUndefined();
+        expect(bboxFromCoordsArray(undefined)).toBeUndefined();
+        expect(bboxFromCoordsArray([[0, 0]])).toEqual([0, 0, 0, 0]);
         expect(
-            quickBBoxFromCoordsArray([
+            bboxFromCoordsArray([
                 [0, 0],
                 [0, 1],
                 [0, 2]
             ])
         ).toEqual([0, 0, 0, 2]);
         expect(
-            quickBBoxFromCoordsArray([
+            bboxFromCoordsArray([
                 [-10, 0],
                 [5, -15],
                 [-20, 30]
@@ -193,31 +148,286 @@ describe("Quick bbox from a line", () => {
         ).toEqual([-20, -15, 5, 30]);
     });
 
-    test("Quick bounding box for LineString", () => {
-        expect(quickBBoxFromLineString(undefined)).toBeUndefined();
-        expect(quickBBoxFromLineString({ type: "LineString", coordinates: [[0, 0]] })).toEqual([0, 0, 0, 0]);
-        expect(
-            quickBBoxFromLineString({
-                type: "LineString",
-                coordinates: [
-                    [0, 0],
-                    [1, 2]
-                ]
-            })
-        ).toEqual([0, 0, 1, 2]);
-    });
-
-    test("Quick bounding box for long diagonals", () => {
+    test("Bounding box for long diagonals", () => {
         // This test ensures that the logic always considers the first and last points regardless of the line size
         // (we use a diagonal because in such case the first and last points are the ones ending up in the bbox)
         const expectedBBox = [-180, -90, 180, 90];
-        expect(quickBBoxFromCoordsArray(buildTestDiagonal(100))).toEqual(expectedBBox);
-        expect(quickBBoxFromCoordsArray(buildTestDiagonal(999))).toEqual(expectedBBox);
-        expect(quickBBoxFromCoordsArray(buildTestDiagonal(1000))).toEqual(expectedBBox);
-        expect(quickBBoxFromCoordsArray(buildTestDiagonal(1001))).toEqual(expectedBBox);
-        expect(quickBBoxFromCoordsArray(buildTestDiagonal(50000))).toEqual(expectedBBox);
-        expect(quickBBoxFromCoordsArray(buildTestDiagonal(99999))).toEqual(expectedBBox);
-        expect(quickBBoxFromCoordsArray(buildTestDiagonal(100001))).toEqual(expectedBBox);
+        expect(bboxFromCoordsArray(buildTestDiagonal(100))).toEqual(expectedBBox);
+        expect(bboxFromCoordsArray(buildTestDiagonal(999))).toEqual(expectedBBox);
+        expect(bboxFromCoordsArray(buildTestDiagonal(1000))).toEqual(expectedBBox);
+        expect(bboxFromCoordsArray(buildTestDiagonal(1001))).toEqual(expectedBBox);
+        expect(bboxFromCoordsArray(buildTestDiagonal(50000))).toEqual(expectedBBox);
+        expect(bboxFromCoordsArray(buildTestDiagonal(99999))).toEqual(expectedBBox);
+        expect(bboxFromCoordsArray(buildTestDiagonal(100001))).toEqual(expectedBBox);
+    });
+});
+
+const geometryCollection: GeometryCollection = {
+    type: "GeometryCollection",
+    geometries: [
+        undefined as never,
+        {
+            type: "Point",
+            // (max lat here)
+            bbox: [1, 2, 3, 80],
+            coordinates: [4, 5]
+        },
+        {
+            type: "UnsupportedType"
+        } as never,
+        {
+            type: "Polygon",
+            coordinates: [
+                [
+                    [4, 5],
+                    // (min lon here)
+                    [-10, 20],
+                    [3, 2]
+                ],
+                [
+                    // (max lon here)
+                    [55, 2],
+                    [4, 5]
+                ]
+            ]
+        },
+        {
+            type: "LineString",
+            coordinates: [
+                [10, 10],
+                [5, 2],
+                // (min lat here)
+                [0, -65]
+            ]
+        }
+    ]
+};
+
+describe("Main bounding box getter/calculator function", () => {
+    test("Extracting bounding box for undefined or basic edge cases", () => {
+        expect(bboxFromGeoJSON(undefined as never)).toBeUndefined();
+        expect(bboxFromGeoJSON([] as never)).toBeUndefined();
+        expect(bboxFromGeoJSON([1] as never)).toBeUndefined();
+        expect(bboxFromGeoJSON([1, 2, 3] as never)).toBeUndefined();
+    });
+
+    test("Extracting bounding box when passing already a bbox", () => {
+        expect(bboxFromGeoJSON([1, 2, 3, 4])).toEqual([1, 2, 3, 4]);
+        expect(bboxFromGeoJSON([1, 2, 3, 4, 5, 6])).toEqual([1, 2, 3, 4, 5, 6]);
+    });
+
+    test("Extracting bounding box from single features and geometries that already have it", () => {
+        expect(
+            bboxFromGeoJSON({
+                type: "Feature",
+                bbox: [1, 2, 3, 4],
+                geometry: { type: "Point", coordinates: [10, 20] },
+                properties: {}
+            } as Feature)
+        ).toEqual([1, 2, 3, 4]);
+        expect(
+            bboxFromGeoJSON({
+                type: "LineString",
+                bbox: [1, 2, 3, 4],
+                coordinates: []
+            } as LineString)
+        ).toEqual([1, 2, 3, 4]);
+        expect(
+            bboxFromGeoJSON({
+                type: "FeatureCollection",
+                bbox: [1, 2, 3, 4],
+                features: [],
+                properties: {}
+            } as FeatureCollection)
+        ).toEqual([1, 2, 3, 4]);
+    });
+
+    test(
+        "Extracting bounding box from collections of features and geometries " +
+            "that already have it in their elements",
+        () => {
+            expect(
+                bboxFromGeoJSON({
+                    type: "GeometryCollection",
+                    geometries: [
+                        { type: "Point", bbox: [0, -5, 10, 20], coordinates: [10, 20] },
+                        { type: "LineString", bbox: [-10, 0, 5, 30], coordinates: [[10, 20]] }
+                    ]
+                } as GeometryCollection)
+            ).toEqual([-10, -5, 10, 30]);
+            expect(
+                bboxFromGeoJSON({
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            type: "Feature",
+                            geometry: { type: "Point", bbox: [0, -5, 10, 20], coordinates: [10, 20] },
+                            properties: {}
+                        },
+                        {
+                            type: "Feature",
+                            geometry: { type: "LineString", bbox: [-10, 0, 5, 30], coordinates: [[10, 20]] },
+                            properties: {}
+                        }
+                    ],
+                    properties: {}
+                } as FeatureCollection)
+            ).toEqual([-10, -5, 10, 30]);
+        }
+    );
+
+    test("Calculating bounding box from single features and geometries that don't have it", () => {
+        expect(
+            bboxFromGeoJSON({
+                type: "Feature",
+                geometry: { type: "Point", coordinates: [10, 20] },
+                properties: {}
+            } as Feature)
+        ).toEqual([10, 20, 10, 20]);
+        expect(bboxFromGeoJSON({ type: "LineString", coordinates: [[0, 0]] } as LineString)).toEqual([0, 0, 0, 0]);
+        expect(
+            bboxFromGeoJSON({
+                type: "Feature",
+                geometry: {
+                    type: "LineString",
+                    coordinates: [
+                        [0, 0],
+                        [3, 2],
+                        [-1, 4]
+                    ]
+                }
+            } as Feature)
+        ).toEqual([-1, 0, 3, 4]);
+        expect(
+            bboxFromGeoJSON({
+                type: "MultiPoint",
+                coordinates: [
+                    [0, 0],
+                    [3, 2],
+                    [-1, 4]
+                ]
+            } as MultiPoint)
+        ).toEqual([-1, 0, 3, 4]);
+        expect(
+            bboxFromGeoJSON({
+                type: "MultiLineString",
+                coordinates: [
+                    [
+                        [0, 1],
+                        [2, 3]
+                    ],
+                    [
+                        [4, 5],
+                        [-10, -2]
+                    ]
+                ]
+            } as MultiLineString)
+        ).toEqual([-10, -2, 4, 5]);
+        expect(
+            bboxFromGeoJSON({
+                type: "Feature",
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [0, 1],
+                            [2, 3]
+                        ],
+                        [
+                            [4, 5],
+                            [-10, -2]
+                        ]
+                    ]
+                }
+            } as Feature)
+        ).toEqual([-10, -2, 4, 5]);
+        expect(
+            bboxFromGeoJSON({
+                type: "MultiPolygon",
+                coordinates: [
+                    [
+                        [
+                            [0, 1],
+                            [2, 3]
+                        ],
+                        [
+                            [4, 8],
+                            [-10, -2]
+                        ]
+                    ],
+                    [
+                        [
+                            [0, 1],
+                            [-20, -3]
+                        ],
+                        [
+                            [7, 5],
+                            [-10, -2]
+                        ]
+                    ]
+                ]
+            } as MultiPolygon)
+        ).toEqual([-20, -3, 7, 8]);
+    });
+
+    test("Calculating bounding box from complex geometry collection", () => {
+        expect(bboxFromGeoJSON(geometryCollection)).toEqual([-10, -65, 55, 80]);
+    });
+
+    test("Calculating bounding box from complex feature collection", () => {
+        expect(
+            bboxFromGeoJSON({
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        // calculates [-10, -65, 55, 80]
+                        geometry: geometryCollection
+                    },
+                    {
+                        type: "Feature",
+                        // (min lon here)
+                        geometry: { type: "Point", coordinates: [-125, 20] },
+                        properties: {}
+                    }
+                ],
+                properties: {}
+            } as FeatureCollection)
+        ).toEqual([-125, -65, 55, 80]);
+    });
+});
+
+describe("Bounding box from array of GeoJSON objects", () => {
+    test("Bounding box from array of GeoJSON objects", () => {
+        expect(bboxFromGeoJSONArray(undefined as never)).toBeUndefined();
+        expect(bboxFromGeoJSONArray([])).toBeUndefined();
+        expect(
+            bboxFromGeoJSONArray([
+                {
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [20, -10]
+                    },
+                    properties: {}
+                } as Feature
+            ])
+        ).toEqual([20, -10, 20, -10]);
+        expect(
+            bboxFromGeoJSONArray([
+                {
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        // (max lon here)
+                        coordinates: [155, -10]
+                    },
+                    properties: {}
+                } as Feature,
+                // calculates [-10, -65, 55, 80]
+                geometryCollection
+            ])
+        ).toEqual([-10, -65, 155, 80]);
     });
 });
 
@@ -228,7 +438,24 @@ describe("Bounding box calculation performance tests", () => {
         const accExecTimes = [];
         for (let i = 0; i < numExecutions; i++) {
             const start = performance.now();
-            quickBBoxFromCoordsArray(coordinates);
+            bboxFromCoordsArray(coordinates);
+            accExecTimes.push(performance.now() - start);
+        }
+        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(1);
+    });
+
+    test("Quick bounding box performance test for very long polygon", () => {
+        const coordinates = buildTestDiagonal(200000);
+        const numExecutions = 20;
+        const accExecTimes = [];
+        const polygon: Polygon = {
+            type: "Polygon",
+            // (we don't care if the shape is really polygon-correct here)
+            coordinates: [coordinates, coordinates, coordinates, coordinates]
+        };
+        for (let i = 0; i < numExecutions; i++) {
+            const start = performance.now();
+            bboxFromGeoJSON(polygon);
             accExecTimes.push(performance.now() - start);
         }
         expect(Math.min.apply(null, accExecTimes)).toBeLessThan(1);
