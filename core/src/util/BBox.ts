@@ -118,31 +118,11 @@ export const quickBBoxFromCoordsArray = (coordinates: Position[] | undefined): B
     if (!length) {
         return undefined;
     }
-
-    let minLon = coordinates[0][0];
-    let minLat = coordinates[0][1];
-    let maxLon = minLon;
-    let maxLat = minLat;
-
+    let bbox = undefined;
     const indexInterval = Math.ceil(length / 1000);
-    for (let i = 1; i < length; i += indexInterval) {
-        const coordinate = coordinates[i];
-        const lon = coordinate[0];
-        const lat = coordinate[1];
-        if (minLon > lon) {
-            minLon = lon;
-        }
-        if (minLat > lat) {
-            minLat = lat;
-        }
-        if (maxLon < lon) {
-            maxLon = lon;
-        }
-        if (maxLat < lat) {
-            maxLat = lat;
-        }
+    for (let i = 0; i < length; i += indexInterval) {
+        bbox = bboxExpandedWithPosition(coordinates[i], bbox);
     }
-    const bbox: BBox = [minLon, minLat, maxLon, maxLat];
     // (we ensure that if we had intervals greater than 1, the last position is always included in the calculation)
     return indexInterval == 1 ? bbox : bboxExpandedWithPosition(coordinates[length - 1], bbox);
 };
