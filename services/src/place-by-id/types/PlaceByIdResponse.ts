@@ -1,6 +1,6 @@
 import { Places, CommonPlaceProps, Connector, POI } from "@anw/go-sdk-js/core";
 
-export type GeometrySearchResponseProps = CommonPlaceProps & {
+export type PlaceByIdResponseProps = CommonPlaceProps & {
     /**
      * Information about the original data source of the result
      */
@@ -24,4 +24,4 @@ export type GeometrySearchResponseProps = CommonPlaceProps & {
     };
 };
 
-export type GeometrySearchResponse = Places<GeometrySearchResponseProps>;
+export type PlaceByIdResponse = Places<PlaceByIdResponseProps>;

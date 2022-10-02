@@ -3,12 +3,7 @@ import { Geometry, Position } from "geojson";
 
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
-
-type RelatedPoisRequest = "child" | "parent" | "all" | "off";
-
-type OpeningHoursRequest = "nextSevenDays";
-
-type TimeZoneRequest = "iana";
+import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
 
 type ConnectorRequest = ConnectorType;
 

@@ -1,4 +1,5 @@
 import { EntryPoint } from "@anw/go-sdk-js/core";
+import { Brand, Category, Classification, OpeningHours, TimeZone } from "core";
 
 /**
  * @group Shared
@@ -118,4 +119,20 @@ export type Summary = {
      * The position used to bias the results: Latitude, Longitude
      */
     geoBias?: LatLonAPI;
+};
+/**
+ * place of interest api type.
+ */
+export type POIAPI = {
+    name: string;
+    phone?: string;
+    brands?: Brand[];
+    url?: string;
+    // category ids
+    categorySet?: Category[];
+    // Example: Array(2) [café/pub, internet café]
+    categories?: string[];
+    openingHours?: OpeningHours;
+    classifications?: Classification[];
+    timeZone?: TimeZone;
 };

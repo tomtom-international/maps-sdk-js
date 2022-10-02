@@ -6,6 +6,7 @@ export * from "./place/poi/Category";
 export * from "./place/poi/Brand";
 export * from "./place/poi/Classification";
 export * from "./place/poi/OpeningHours";
+export * from "./place/poi/POI";
 export * from "./TimeZone";
 export * from "./place/poi/Fuel";
 

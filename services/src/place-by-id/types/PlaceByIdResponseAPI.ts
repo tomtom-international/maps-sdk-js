@@ -4,10 +4,10 @@ import { EntryPointAPI, LatLonAPI, POIAPI, Summary, ViewportAPI } from "../../sh
 
 /**
  * @ignore
- * @group Geometry-Search
+ * @group Place By Id
  * @category Types
  */
-export type GeometrySearchResultAPI = Omit<
+export type PlaceByIdResultAPI = Omit<
     CommonPlaceProps,
     "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
@@ -23,10 +23,10 @@ export type GeometrySearchResultAPI = Omit<
 
 /**
  * @ignore
- * @group Geometry-Search
+ * @group Place By Id
  * @category Types
  */
-export type GeometrySearchResponseAPI = {
+export type PlaceByIdResponseAPI = {
     /**
      * Summary information about the search that was performed.
      */
@@ -34,5 +34,5 @@ export type GeometrySearchResponseAPI = {
     /**
      * The result list, sorted in descending order by score.
      */
-    results: GeometrySearchResultAPI[];
+    results: PlaceByIdResultAPI[];
 };

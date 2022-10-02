@@ -1,4 +1,5 @@
 import { CommonServiceParams } from "./ServiceTypes";
+import isNil from "lodash/isNil";
 
 /**
  * @ignore
@@ -45,5 +46,5 @@ export const appendByJoiningParamValue = (
  * @ignore
  */
 export const appendParameter = (urlParams: URLSearchParams, name: string, value?: string | number): void => {
-    value && urlParams.append(name, String(value));
+    !isNil(value) && urlParams.append(name, String(value));
 };
