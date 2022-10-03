@@ -1,4 +1,4 @@
-import apiAndParsedResponses from "../../place-by-id/tests/ResponseParser.data.json"
+import apiAndParsedResponses from "../../place-by-id/tests/ResponseParser.data.json";
 import { PlaceByIdResponse, PlaceByIdResponseAPI } from "../types";
 import { parsePlaceByIdResponse } from "../ResponseParser";
 
