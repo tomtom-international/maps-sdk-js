@@ -56,7 +56,7 @@ export type PlaceByIdOptionalParams = {
  */
 export type PlaceByIdMandatoryParams = {
     /**
-     * A unique POI identifier (mandatory).
+     * The unique POI identifier (mandatory).
      */
     entityId: string;
 };
