@@ -1,4 +1,4 @@
-import { bboxFromPointFeatures, bboxOnlyIfWithArea, Place, toPointFeature } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSONArray, bboxOnlyIfWithArea, Place, toPointFeature } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
 
 import { latLonAPIToPosition } from "../shared/Geometry";
@@ -27,7 +27,7 @@ const parseAPIResult = (result: PlaceByIdResultAPI): Place<PlaceByIdResponseProp
 
 export const parsePlaceByIdResponse = (apiResponse: PlaceByIdResponseAPI): PlaceByIdResponse => {
     const features: Place<PlaceByIdResponseProps>[] = apiResponse.results.map((result) => parseAPIResult(result));
-    const bbox = bboxOnlyIfWithArea(bboxFromPointFeatures(features));
+    const bbox = bboxOnlyIfWithArea(bboxFromGeoJSONArray(features));
     return {
         type: "FeatureCollection",
         features,
