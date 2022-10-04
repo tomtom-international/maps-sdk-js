@@ -19,7 +19,7 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
  * @group Shared
  * @category Types
  */
-export type ParseRequestError<T> = (apiError: ErrorObjAPI<T>, serviceName: string) => SDKServiceError;
+export type ParseResponseError<T> = (apiError: ErrorObjAPI<T>, serviceName: string) => SDKServiceError;
 
 /**
  * Template functions for any service.
@@ -27,6 +27,13 @@ export type ParseRequestError<T> = (apiError: ErrorObjAPI<T>, serviceName: strin
  * @category Types
  */
 export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE> = {
+    /**
+     * Schema from Ajv for validating input parameters.
+     * This will be compiled and used for validation.
+     * https://ajv.js.org/guide/getting-started.html#basic-data-validation
+     */
+    validateRequestSchema?: any;
+
     /**
      * Builds the request to be sent to the API.
      * @param params The parameters to build the request from.
@@ -46,12 +53,5 @@ export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RES
      */
     parseResponse: (apiResponse: API_RESPONSE, params: PARAMS) => RESPONSE;
 
-    /**
-     * Schema from Ajv for validating input parameters.
-     * This will be compiled and used for validation.
-     * https://ajv.js.org/guide/getting-started.html#basic-data-validation
-     */
-    validateRequestSchema?: any;
-
-    parseRequestError?: ParseRequestError<any>;
+    parseResponseError?: ParseResponseError<any>;
 };

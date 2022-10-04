@@ -1,20 +1,18 @@
-import { PlaceByIdResponseProps, PlaceByIdResultAPI } from "../place-by-id";
-import { latLonAPIToPosition } from "./Geometry";
+import { Brand, Place, SearchPlaceProps, toPointFeature } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
-import { Place, toPointFeature } from "core";
-import { GeometrySearchResponseProps, GeometrySearchResultAPI } from "../geometry-search";
+import { latLonAPIToPosition } from "./Geometry";
+import { CommonPlaceResultAPI } from "./types/APIResponseTypes";
 
 /**
  * Shared response parsing between geometry search and place by id service.
  * @group Shared
  * @ignore
  */
-export const parseAPIResultForGeometrySearchAndPlaceById = (
-    result: PlaceByIdResultAPI | GeometrySearchResultAPI
-): Place<PlaceByIdResponseProps | GeometrySearchResponseProps> => {
-    const { position, entryPoints, poi, ...rest } = result;
+export const parseSearchAPIResult = (result: CommonPlaceResultAPI): Place<SearchPlaceProps> => {
+    const { position, entryPoints, poi, id, ...rest } = result;
     return {
         ...toPointFeature(latLonAPIToPosition(position)),
+        id,
         properties: {
             ...omit(rest, "viewport"),
             ...(entryPoints && {
@@ -25,7 +23,7 @@ export const parseAPIResultForGeometrySearchAndPlaceById = (
             }),
             poi: {
                 ...omit(poi, "categorySet"),
-                brands: poi?.brands?.map((brand) => brand.name) ?? [],
+                brands: poi?.brands?.map((brand: Brand) => brand.name) ?? [],
                 categoryIds: poi?.categorySet?.map((category) => category.id) ?? []
             }
         }

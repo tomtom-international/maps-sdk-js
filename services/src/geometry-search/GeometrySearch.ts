@@ -1,4 +1,4 @@
-import { GeometrySearchRequest, GeometrySearchResponse } from "./types";
+import { GeometrySearchParams, GeometrySearchResponse } from "./types";
 import { geometrySearchTemplate, GeometrySearchTemplate } from "./GeometrySearchTemplate";
 import { callService } from "../shared/ServiceTemplate";
 
@@ -9,7 +9,7 @@ import { callService } from "../shared/ServiceTemplate";
  * @see https://developer.tomtom.com/search-api/documentation/geocoding-service/geocode
  */
 export const geometrySearch = async (
-    params: GeometrySearchRequest,
+    params: GeometrySearchParams,
     customTemplate?: Partial<GeometrySearchTemplate>
 ): Promise<GeometrySearchResponse> => {
     return callService(params, { ...geometrySearchTemplate, ...customTemplate }, "GeometrySearch");

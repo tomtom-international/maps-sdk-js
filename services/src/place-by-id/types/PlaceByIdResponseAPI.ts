@@ -11,6 +11,7 @@ export type PlaceByIdResultAPI = Omit<
     CommonPlaceProps,
     "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
+    id: string;
     type: PlaceType;
     matchConfidence: { score: number };
     position: LatLonAPI;

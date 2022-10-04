@@ -1,16 +1,10 @@
-import { bboxFromGeoJSONArray, bboxOnlyIfWithArea, Place } from "@anw/go-sdk-js/core";
-
-import { PlaceByIdResponseAPI, PlaceByIdResponse, PlaceByIdResponseProps } from "./types";
-import { parseAPIResultForGeometrySearchAndPlaceById } from "../shared/SearchResultParsing";
+import { PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
+import { parseSearchAPIResult } from "../shared/SearchResultParsing";
 
 export const parsePlaceByIdResponse = (apiResponse: PlaceByIdResponseAPI): PlaceByIdResponse => {
-    const features: Place<PlaceByIdResponseProps>[] = apiResponse.results.map((result) =>
-        parseAPIResultForGeometrySearchAndPlaceById(result)
-    );
-    const bbox = bboxOnlyIfWithArea(bboxFromGeoJSONArray(features));
+    const features = apiResponse.results.map((result) => parseSearchAPIResult(result));
     return {
         type: "FeatureCollection",
-        features,
-        ...(bbox && { bbox })
+        features
     };
 };

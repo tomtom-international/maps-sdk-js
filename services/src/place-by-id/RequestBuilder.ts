@@ -1,6 +1,6 @@
 import { PlaceByIdParams } from "./types";
 import { CommonServiceParams } from "../shared/ServiceTypes";
-import { appendByJoiningParamValue, appendCommonParams, appendParameter } from "../shared/RequestBuildingUtils";
+import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from "../shared/RequestBuildingUtils";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}/search/2/place.json`;
@@ -15,11 +15,11 @@ export const buildPlaceByIdRequest = (params: PlaceByIdParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    appendParameter(urlParams, "entityId", params.entityId);
+    appendOptionalParam(urlParams, "entityId", params.entityId);
     appendByJoiningParamValue(urlParams, "mapcodes", params.mapcodes);
-    appendParameter(urlParams, "view", params.view);
-    appendParameter(urlParams, "openingHours", params.openingHours);
-    appendParameter(urlParams, "timeZone", params.timeZone);
-    appendParameter(urlParams, "relatedPois", params.relatedPois);
+    appendOptionalParam(urlParams, "view", params.view);
+    appendOptionalParam(urlParams, "openingHours", params.openingHours);
+    appendOptionalParam(urlParams, "timeZone", params.timeZone);
+    appendOptionalParam(urlParams, "relatedPois", params.relatedPois);
     return url;
 };

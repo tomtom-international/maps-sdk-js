@@ -17,6 +17,7 @@ export type GeocodingResultAPI = Omit<
     GeocodingProps,
     "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
+    id: string;
     position: LatLonAPI;
     dist?: number;
     boundingBox?: BoundingBoxAPI;

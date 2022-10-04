@@ -5,7 +5,7 @@ import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUti
 import { GeocodingParams } from "../types/GeocodingParams";
 import { SDKServiceError } from "../../shared/Errors";
 
-describe("Geocoding test without API key", () => {
+describe("Geocoding errors", () => {
     test("Geocoding test without API key", async () => {
         await expect(geocode({ query: "" })).rejects.toBeInstanceOf(SDKServiceError);
         await expect(geocode({ query: "" })).rejects.toMatchObject({

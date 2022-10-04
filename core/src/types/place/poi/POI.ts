@@ -18,3 +18,14 @@ export type POI = {
     classifications?: Classification[];
     timeZone?: TimeZone;
 };
+
+export type RelatedPOI = {
+    /**
+     * Relation type between this POI and the main one which refers to it.
+     */
+    relationType: "child" | "parent";
+    /**
+     * Pass this as entityId to the Place by ID service to fetch additional data for the Point Of Interest.
+     */
+    id: string;
+};

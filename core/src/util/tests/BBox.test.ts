@@ -10,12 +10,12 @@ import {
     Position
 } from "geojson";
 import {
-    bboxFromGeoJSON,
     bboxExpandedWithBBox,
     bboxExpandedWithGeoJSON,
     bboxExpandedWithPosition,
     bboxFromBBoxes,
     bboxFromCoordsArray,
+    bboxFromGeoJSON,
     bboxFromGeoJSONArray,
     bboxOnlyIfWithArea,
     isBBoxWithArea

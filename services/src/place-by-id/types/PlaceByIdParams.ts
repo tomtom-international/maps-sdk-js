@@ -1,6 +1,6 @@
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
-import { MapcodeType, View } from "core";
+import { MapcodeType, View } from "@anw/go-sdk-js/core";
 
 export type PlaceByIdOptionalParams = {
     /**

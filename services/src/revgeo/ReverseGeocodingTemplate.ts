@@ -25,8 +25,8 @@ export type ReverseGeocodingTemplate = ServiceTemplate<
  * @category Variables
  */
 export const reverseGeocodingTemplate: ReverseGeocodingTemplate = {
-    buildRequest: buildRevGeoRequest,
     validateRequestSchema: revGeocodeRequestSchema,
+    buildRequest: buildRevGeoRequest,
     sendRequest: getJson,
     parseResponse: parseRevGeoResponse
 };

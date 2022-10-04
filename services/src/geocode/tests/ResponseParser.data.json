@@ -87,9 +87,9 @@
             4.81969,
             52.45513
           ],
+          "id": "NL/GEO/p0/7133",
           "properties": {
             "type": "Geography",
-            "id": "NL/GEO/p0/7133",
             "score": 4.4519996643,
             "distance": 300,
             "geographyType": [
@@ -189,9 +189,9 @@
               52.51322
             ]
           },
+          "id": "NL/PAD/p0/2492368",
           "properties": {
             "type": "Point Address",
-            "id": "NL/PAD/p0/2492368",
             "score": 5.8015999794,
             "matchConfidence": {
               "score": 1
@@ -322,9 +322,9 @@
             4.81969,
             52.45513
           ],
+          "id": "NL/GEO/p0/7133",
           "properties": {
             "type": "Geography",
-            "id": "NL/GEO/p0/7133",
             "score": 4.4519996643,
             "geographyType": [
               "PostalCodeArea"

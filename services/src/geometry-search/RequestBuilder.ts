@@ -1,15 +1,13 @@
-import { mergeFromGlobal } from "@anw/go-sdk-js/core";
-
 import { PostObject } from "../shared/Fetch";
 import {
-    SearchByGeometryPayloadAPI,
     CircleAPI,
     GeometryAPI,
+    GeometrySDK,
+    GeometrySearchParams,
     PolygonAPI,
-    GeometrySearchRequest,
-    GeometrySDK
+    SearchByGeometryPayloadAPI
 } from "./types";
-import { appendByJoiningParamValue, appendCommonParams, appendParameter } from "../shared/RequestBuildingUtils";
+import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from "../shared/RequestBuildingUtils";
 
 const sdkGeometryToAPIGeometry = (obj: GeometrySDK): GeometryAPI => {
     if (obj.type === "Circle") {
@@ -30,33 +28,38 @@ const sdkGeometryToAPIGeometry = (obj: GeometrySDK): GeometryAPI => {
     throw new Error(`Type ${obj.type} is not supported`);
 };
 
-const buildURLBasePath = (mergedOptions: GeometrySearchRequest): string =>
+const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
     mergedOptions.customServiceBaseURL ||
     `${mergedOptions.commonBaseURL}/search/2/geometrySearch/${mergedOptions.query}.json`;
 
-export const buildGeometrySearchRequest = (params: GeometrySearchRequest): PostObject<SearchByGeometryPayloadAPI> => {
-    const mergedParams = mergeFromGlobal(params);
-    const url = new URL(`${buildURLBasePath(mergedParams)}`);
+/**
+ * Default function for building a geometry search request from {@link GeometrySearchParams}
+ * @group Geometry Search
+ * @category Functions
+ * @param params The geometry search parameters, with global configuration already merged into them.
+ */
+export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostObject<SearchByGeometryPayloadAPI> => {
+    const url = new URL(`${buildURLBasePath(params)}`);
     const urlParams = url.searchParams;
 
-    appendCommonParams(urlParams, mergedParams);
-    appendParameter(urlParams, "limit", mergedParams.limit);
+    appendCommonParams(urlParams, params);
+    appendOptionalParam(urlParams, "limit", params.limit);
 
-    appendByJoiningParamValue(urlParams, "fuelSet", mergedParams.fuels);
-    appendByJoiningParamValue(urlParams, "idxSet", mergedParams.indexes);
-    appendByJoiningParamValue(urlParams, "brandSet", mergedParams.poiBrands);
-    appendByJoiningParamValue(urlParams, "categorySet", mergedParams.poiCategories);
-    appendByJoiningParamValue(urlParams, "connectorSet", mergedParams.connectors);
-    appendByJoiningParamValue(urlParams, "mapcodes", mergedParams.mapcodes);
-    appendByJoiningParamValue(urlParams, "extendedPostalCodesFor", mergedParams.extendedPostalCodesFor);
+    appendByJoiningParamValue(urlParams, "fuelSet", params.fuels);
+    appendByJoiningParamValue(urlParams, "idxSet", params.indexes);
+    appendByJoiningParamValue(urlParams, "brandSet", params.poiBrands);
+    appendByJoiningParamValue(urlParams, "categorySet", params.poiCategories);
+    appendByJoiningParamValue(urlParams, "connectorSet", params.connectors);
+    appendByJoiningParamValue(urlParams, "mapcodes", params.mapcodes);
+    appendByJoiningParamValue(urlParams, "extendedPostalCodesFor", params.extendedPostalCodesFor);
 
-    appendParameter(urlParams, "minPowerKW", mergedParams.minPowerKW);
-    appendParameter(urlParams, "maxPowerKW", mergedParams.maxPowerKW);
-    appendParameter(urlParams, "view", mergedParams.view);
-    appendParameter(urlParams, "openingHours", mergedParams.openingHours);
-    appendParameter(urlParams, "timeZone", mergedParams.timeZone);
-    appendParameter(urlParams, "relatedPois", mergedParams.relatedPois);
-    appendByJoiningParamValue(urlParams, "entityTypeSet", mergedParams.entityTypes);
+    appendOptionalParam(urlParams, "minPowerKW", params.minPowerKW);
+    appendOptionalParam(urlParams, "maxPowerKW", params.maxPowerKW);
+    appendOptionalParam(urlParams, "view", params.view);
+    appendOptionalParam(urlParams, "openingHours", params.openingHours);
+    appendOptionalParam(urlParams, "timeZone", params.timeZone);
+    appendOptionalParam(urlParams, "relatedPois", params.relatedPois);
+    appendByJoiningParamValue(urlParams, "entityTypeSet", params.entityTypes);
 
     return {
         url,

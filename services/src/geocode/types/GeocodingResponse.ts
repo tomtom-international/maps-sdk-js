@@ -1,4 +1,4 @@
-import { PlaceType, Places, CommonPlaceProps } from "@anw/go-sdk-js/core";
+import { CommonPlaceProps, Places, PlaceType } from "@anw/go-sdk-js/core";
 
 type GeocodingPlaceType = Exclude<PlaceType, "POI">;
 
@@ -9,7 +9,7 @@ type GeocodingPlaceType = Exclude<PlaceType, "POI">;
 export type GeocodingProps = CommonPlaceProps & {
     type: GeocodingPlaceType;
     /**
-     The confidence of the result`s textual match with the query.
+     * The confidence of the result`s textual match with the query.
      */
     matchConfidence: { score: number };
 };

@@ -27,6 +27,7 @@ describe("Reverse Geocoding integration tests", () => {
                 coordinates: [5.72884, 52.33499]
             },
             bbox: expect.any(Array),
+            id: expect.any(String),
             properties: {
                 type: "Street",
                 address: {

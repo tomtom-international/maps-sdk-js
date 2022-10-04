@@ -1,7 +1,7 @@
 import { buildPlaceByIdRequest } from "../RequestBuilder";
 
 describe("Place by ID request URL building functional tests", () => {
-    test("Place by ID request URL building mandatory parameters request", async () => {
+    test("Place by ID request URL building mandatory parameters request", () => {
         expect(
             buildPlaceByIdRequest({
                 commonBaseURL: "https://api-test.tomtom.com",
@@ -10,7 +10,7 @@ describe("Place by ID request URL building functional tests", () => {
             }).toString()
         ).toStrictEqual("https://api-test.tomtom.com/search/2/place.json?key=testKey&entityId=testEntity");
     });
-    test("Place by ID request URL building optional parameters request", async () => {
+    test("Place by ID request URL building optional parameters request", () => {
         expect(
             buildPlaceByIdRequest({
                 commonBaseURL: "https://api-test.tomtom.com",

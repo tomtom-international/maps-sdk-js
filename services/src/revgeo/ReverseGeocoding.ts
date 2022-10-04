@@ -1,4 +1,4 @@
-import { RevGeoAddressProps, Place } from "@anw/go-sdk-js/core";
+import { Place, RevGeoAddressProps } from "@anw/go-sdk-js/core";
 
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { callService } from "../shared/ServiceTemplate";

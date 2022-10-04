@@ -1,5 +1,5 @@
 import { getLngLatArray, toPointFeature } from "@anw/go-sdk-js/core";
-import { csvLatLngToPosition, apiToGeoJSONBBox } from "../shared/Geometry";
+import { apiToGeoJSONBBox, csvLatLngToPosition } from "../shared/Geometry";
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 import { ReverseGeocodingResponseAPI } from "./types/APITypes";
@@ -22,6 +22,7 @@ export const parseRevGeoResponse = (
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...pointFeature,
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
+        id: `random_${Math.random()}`,
         properties: {
             type: firstAPIResult.entityType ? "Geography" : !address.streetNumber ? "Street" : "Point Address",
             address,

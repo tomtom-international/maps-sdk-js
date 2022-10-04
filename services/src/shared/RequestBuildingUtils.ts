@@ -45,6 +45,6 @@ export const appendByJoiningParamValue = (
 /**
  * @ignore
  */
-export const appendParameter = (urlParams: URLSearchParams, name: string, value?: string | number): void => {
+export const appendOptionalParam = (urlParams: URLSearchParams, name: string, value?: string | number): void => {
     !isNil(value) && urlParams.append(name, String(value));
 };

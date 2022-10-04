@@ -1,7 +1,7 @@
 import { buildRevGeoRequest } from "../RequestBuilder";
 
 describe("Reverse Geocoding request URL building functional tests", () => {
-    test("Reverse Geocoding request URL building test", async () => {
+    test("Reverse Geocoding request URL building test", () => {
         expect(
             buildRevGeoRequest({
                 apiKey: "GLOBAL_API_KEY",

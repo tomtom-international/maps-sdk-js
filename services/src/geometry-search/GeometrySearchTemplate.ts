@@ -3,7 +3,7 @@ import { buildGeometrySearchRequest } from "./RequestBuilder";
 import { postJson, PostObject } from "../shared/Fetch";
 import { ServiceTemplate } from "../shared/ServiceTypes";
 import {
-    GeometrySearchRequest,
+    GeometrySearchParams,
     GeometrySearchResponse,
     GeometrySearchResponseAPI,
     SearchByGeometryPayloadAPI
@@ -11,21 +11,21 @@ import {
 import { geometrySearchRequestSchema } from "./GeometrySearchRequestSchema";
 
 /**
- * Geocoding service template type.
+ * Geometry search service template type.
  */
 export type GeometrySearchTemplate = ServiceTemplate<
-    GeometrySearchRequest,
+    GeometrySearchParams,
     PostObject<SearchByGeometryPayloadAPI>,
     GeometrySearchResponseAPI,
     GeometrySearchResponse
 >;
 
 /**
- * Geocoding service template main implementation.
+ * Geometry search service template main implementation.
  */
 export const geometrySearchTemplate: GeometrySearchTemplate = {
+    validateRequestSchema: geometrySearchRequestSchema,
     buildRequest: buildGeometrySearchRequest,
     sendRequest: postJson,
-    parseResponse: parseGeometrySearchResponse,
-    validateRequestSchema: geometrySearchRequestSchema
+    parseResponse: parseGeometrySearchResponse
 };

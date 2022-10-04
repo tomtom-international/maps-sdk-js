@@ -1,7 +1,8 @@
 import { AxiosError } from "axios";
-import { ParseRequestError } from "./ServiceTypes";
+import { ParseResponseError } from "./ServiceTypes";
 import { APICode, DefaultAPIResponseError } from "./types/APIResponseErrorTypes";
 import { ValidationError, ValidationErrorResponse } from "./Validation";
+import { ServiceName } from "./types/ServicesTypes";
 
 /**
  * Main Error Class for the whole SDK to help with error handling.
@@ -54,7 +55,7 @@ export class SDKServiceError extends SDKError {
  * @param error
  * @param serviceName
  */
-export const defaultResponseParserError: ParseRequestError<DefaultAPIResponseError> = (error, serviceName) => {
+export const defaultResponseErrorParser: ParseResponseError<DefaultAPIResponseError> = (error, serviceName) => {
     const { data, message, status } = error;
 
     // Different services uses property error or errorText
@@ -69,12 +70,12 @@ export const defaultResponseParserError: ParseRequestError<DefaultAPIResponseErr
  * Generate error for APIResponse, any other error type will be returned as it is.
  * @param error The error captured by a catch function.
  * @param serviceName The name of the service.
- * @param parserResponseError
+ * @param parseResponseError
  */
-export const generateError = (
+export const buildResponseError = (
     error: unknown,
-    serviceName: string,
-    parserResponseError?: ParseRequestError<unknown>
+    serviceName: ServiceName,
+    parseResponseError?: ParseResponseError<unknown>
 ): SDKError => {
     if (error instanceof AxiosError) {
         const errorObj = {
@@ -83,15 +84,20 @@ export const generateError = (
             message: error.message
         };
 
-        if (parserResponseError) {
-            return parserResponseError(errorObj, serviceName);
+        if (parseResponseError) {
+            return parseResponseError(errorObj, serviceName);
         } else {
-            return defaultResponseParserError(errorObj, serviceName);
+            return defaultResponseErrorParser(errorObj, serviceName);
         }
     }
 
-    // Validation Error has errors property with all errors from validation
-    const errors = error instanceof ValidationError ? error.errors : undefined;
-
-    return new SDKError((error as Error).message, serviceName, errors);
+    return new SDKError((error as Error).message, serviceName);
 };
+
+/**
+ * @ignore
+ * @param error
+ * @param serviceName
+ */
+export const buildValidationError = (error: ValidationError, serviceName: ServiceName): SDKError =>
+    new SDKError(error.message, serviceName, error.errors);

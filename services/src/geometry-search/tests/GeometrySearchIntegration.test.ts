@@ -1,7 +1,7 @@
-import { Fuel, GOSDKConfig, Place } from "@anw/go-sdk-js/core";
+import { Fuel, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 import { buildGeometrySearchRequest, geometrySearch, parseGeometrySearchResponse } from "..";
-import { GeometrySDK, GeometrySearchResponseProps, GeometrySearchResponse } from "../types";
+import { GeometrySDK, GeometrySearchResponse } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 
 describe("Geometry Search API", () => {
@@ -56,14 +56,15 @@ describe("Geometry Search API", () => {
         expect(res).toEqual(
             expect.objectContaining<GeometrySearchResponse>({
                 type: "FeatureCollection",
-                features: expect.arrayContaining<Place<GeometrySearchResponseProps>>([
-                    expect.objectContaining<Place<GeometrySearchResponseProps>>({
+                features: expect.arrayContaining<Place<SearchPlaceProps>>([
+                    expect.objectContaining<Place<SearchPlaceProps>>({
                         type: "Feature",
+                        id: expect.any(String),
                         geometry: expect.objectContaining({
                             coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
                             type: expect.any(String)
                         }),
-                        properties: expect.objectContaining<GeometrySearchResponseProps>({
+                        properties: expect.objectContaining<SearchPlaceProps>({
                             type: "POI",
                             address: expect.any(Object),
                             entryPoints: expect.arrayContaining([expect.any(Object)]),

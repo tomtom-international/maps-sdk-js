@@ -1,5 +1,5 @@
 import template from "lodash/template";
-import { PublishedStyle, MapInitParams, PublishedStyleID } from "../types/MapInit";
+import { MapInitParams, PublishedStyle, PublishedStyleID } from "../types/MapInit";
 
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
     standardLight:

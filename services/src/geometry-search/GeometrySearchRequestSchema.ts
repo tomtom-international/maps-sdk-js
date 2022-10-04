@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
-import { GeometrySearchRequest } from "./types";
+import { GeometrySearchParams } from "./types";
 
-export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> = {
+export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchParams> = {
     type: "object",
     required: ["query", "geometries"],
     oneOf: [{ required: ["commonBaseURL"] }, { required: ["customServiceBaseURL"] }],
@@ -9,6 +9,7 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
         apiKey: { type: "string", nullable: true },
         commonBaseURL: { type: "string", nullable: true },
         customServiceBaseURL: { type: "string", nullable: true },
+        language: { type: "string", nullable: true },
         query: { type: "string" },
         geometries: {
             type: "array",
@@ -24,7 +25,6 @@ export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchRequest> 
         mapcodes: { type: "array", nullable: true, items: { type: "string" } },
         view: { type: "string", nullable: true, enum: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"] },
         geographyType: { type: "array", nullable: true, items: { type: "string" } },
-        language: { type: "string", nullable: true },
         indexes: { type: "array", items: { type: "string" }, nullable: true },
         poiCategories: { type: "array", items: { type: "number" }, nullable: true },
         poiBrands: { type: "array", items: { type: "string" }, nullable: true },

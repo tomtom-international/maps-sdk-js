@@ -1,7 +1,7 @@
 /**
  * List of all services managed by go-sdk-js
  */
-export type Services = string;
+export type ServiceName = string;
 
 /**
  * @group Shared

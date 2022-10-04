@@ -1,7 +1,7 @@
 import { ServiceTemplate } from "../shared/ServiceTypes";
 import { getJson } from "../shared/Fetch";
 import { placeByIdRequestSchema } from "./PlaceByIdSchema";
-import { PlaceByIdParams, PlaceByIdResponseAPI, PlaceByIdResponse } from "./types";
+import { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
 import { buildPlaceByIdRequest } from "./RequestBuilder";
 import { parsePlaceByIdResponse } from "./ResponseParser";
 

@@ -1,4 +1,4 @@
-import { AddressProperties, PlaceDataSources, PlaceType, Mapcode, SideOfStreet } from "@anw/go-sdk-js/core";
+import { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from "@anw/go-sdk-js/core";
 
 /**
  * @group Reverse Geocoding

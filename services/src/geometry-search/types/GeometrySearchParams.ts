@@ -1,13 +1,10 @@
-import { GeographyType, MapcodeType, View, ConnectorType, Fuel } from "@anw/go-sdk-js/core";
+import { ConnectorType, Fuel, GeographyType, MapcodeType, View } from "@anw/go-sdk-js/core";
 import { Geometry, Position } from "geojson";
-
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
 
-type ConnectorRequest = ConnectorType;
-
-export type GeometrySearchRequest = CommonServiceParams & {
+export type GeometrySearchParams = CommonServiceParams & {
     /**
      * Query string. Must be properly URL encoded (mandatory).
      */
@@ -95,7 +92,7 @@ export type GeometrySearchRequest = CommonServiceParams & {
      * A comma-separated list of connector types which could be used to restrict the result to the Points Of Interest of type Electric Vehicle Station supporting specific connector types. See the list of Supported Connector Types.
      * Value: A list of connector types (in any order). When multiple connector types are provided, only POIs that support (at least) one of the connector types from the provided list will be returned.
      */
-    connectors?: ConnectorRequest[];
+    connectors?: ConnectorType[];
     /**
      * A list of fuel types which could be used to restrict the result to the Points Of Interest of specific fuels. If fuelSet is specified, the query can remain empty. Only POIs with a proper fuel type will be returned.
      */

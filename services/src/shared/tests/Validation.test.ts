@@ -1,6 +1,12 @@
 import { AjvValidationErrors, ValidationError } from "../Validation";
 
 describe("Validation", () => {
+    test("no errors to transform", () => {
+        const error = new ValidationError("Validation Error", null);
+        expect(error).toBeInstanceOf(ValidationError);
+        expect(error.message).toEqual("Validation Error");
+        expect(error.errors).toHaveLength(0);
+    });
     test("it should transform Ajv errors", () => {
         const ajvErrors: AjvValidationErrors = [
             {

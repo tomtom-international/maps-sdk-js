@@ -24,7 +24,7 @@ export type ChargingAvailabilityDataSource = {
 
 export type GeometryDataSource = {
     /**
-     * Pass this as geometryId to the Additional Data service to fetch geometry information for this result.
+     * Pass this as geometry ID to the Geometry Data service to fetch geometry information for this result.
      */
     id?: string;
 };

@@ -1,8 +1,8 @@
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
-import { generateError } from "./Errors";
-import { Services } from "./types/ServicesTypes";
+import { buildResponseError, buildValidationError } from "./Errors";
+import { ServiceName } from "./types/ServicesTypes";
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
-import { validateRequestSchema } from "./Validation";
+import { validateRequestSchema, ValidationError } from "./Validation";
 
 /**
  * @ignore
@@ -18,15 +18,22 @@ import { validateRequestSchema } from "./Validation";
 export const callService = async <PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE>(
     params: PARAMS,
     template: ServiceTemplate<PARAMS, REQUEST, API_RESPONSE, RESPONSE>,
-    serviceName: Services
+    serviceName: ServiceName
 ): Promise<RESPONSE> => {
+    const mergedParams = mergeFromGlobal(params);
+    let validatedParams;
     try {
-        const mergedParams = mergeFromGlobal(params);
-        const validatedParams = validateRequestSchema(mergedParams, template.validateRequestSchema);
-        const request = template.buildRequest(validatedParams);
-        const apiResponse = await template.sendRequest(request);
-        return template.parseResponse(apiResponse, mergedParams);
+        validatedParams = validateRequestSchema(mergedParams, template.validateRequestSchema);
     } catch (e) {
-        return Promise.reject(generateError(e, serviceName, template.parseRequestError));
+        return Promise.reject(buildValidationError(e as ValidationError, serviceName));
     }
+
+    const request = template.buildRequest(validatedParams);
+    let apiResponse;
+    try {
+        apiResponse = await template.sendRequest(request);
+    } catch (e) {
+        return Promise.reject(buildResponseError(e, serviceName, template.parseResponseError));
+    }
+    return template.parseResponse(apiResponse, mergedParams);
 };

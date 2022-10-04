@@ -5,11 +5,12 @@ import { GeocodingResponseAPI, GeocodingResultAPI } from "./types/APITypes";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "../shared/Geometry";
 
 const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
-    const { position, boundingBox, dist, entryPoints, addressRanges, entityType, ...rest } = result;
+    const { position, boundingBox, dist, entryPoints, addressRanges, entityType, id, ...rest } = result;
 
     return {
         ...toPointFeature(latLonAPIToPosition(position)),
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
+        id,
         properties: {
             ...omit(rest, "viewport"),
             ...(dist && { distance: dist }),

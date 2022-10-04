@@ -1,6 +1,8 @@
 import { Feature, FeatureCollection, Point, Position } from "geojson";
 import { PlaceDataSources } from "./PlaceDataSources";
 import { HasLngLat } from "../Geometry";
+import { POI, RelatedPOI } from "./poi/POI";
+import { Connector } from "./poi/Connector";
 
 export type GeographyType =
     | "Country"
@@ -97,71 +99,6 @@ export type EntryPoint = {
 
 export type PlaceType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
 
-export type CommonPlaceProps = {
-    /**
-     * Type of this place.
-     */
-    type: PlaceType;
-    /**
-     * The unique id for this place.
-     * * IDs are stable for POIs but can be unstable for other place types.
-     */
-    id?: string;
-    /**
-     * The structured address for the result.
-     */
-    address: AddressProperties;
-    /**
-     * The score of the result.
-     * A larger score means there is a probability that a result meeting the query criteria is higher.
-     */
-    score?: number;
-    /**
-     * Unit: meters. This is the distance to an object if geobias was provided.
-     */
-    distance?: number;
-    /**
-     * Type of geography entity,
-     * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
-     * Only present if type == Geography.
-     */
-    geographyType?: GeographyType[];
-    /**
-     * List of mapcode objects.
-     */
-    mapcodes?: Mapcode[];
-    /**
-     * A list of entry points of the POI (Points of Interest).
-     */
-    entryPoints?: EntryPoint[];
-    /**
-     * The address ranges on a street segment. Available only for results where the result type is equal to Address Range.
-     */
-    addressRanges?: AddressRanges;
-    /**
-     * An optional section. These are unique reference ids for use with the Additional Data service.
-     */
-    dataSources?: PlaceDataSources;
-};
-
-export type SideOfStreet = "L" | "R";
-
-export type RevGeoAddressProps = CommonPlaceProps & {
-    /**
-     * Original lng-lat coordinates of the reverse geocoded location.
-     */
-    originalPosition: Position;
-    /**
-     * The offset position coordinates of the location. Might only be returned if number parameter was defined.
-     * TODO: clarify behaviour and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
-     */
-    offsetPosition?: Position;
-    /**
-     * The left or right side of the street location. This is returned only when the number parameter was defined.
-     */
-    sideOfStreet?: SideOfStreet;
-};
-
 export type AddressProperties = {
     /**
      * The building number on the street.
@@ -243,5 +180,92 @@ export type AddressProperties = {
     localName?: string;
 };
 
-export type Place<P extends CommonPlaceProps> = Feature<Point, P>;
+export type CommonPlaceProps = {
+    /**
+     * Type of this place.
+     */
+    type: PlaceType;
+    /**
+     * The structured address for the result.
+     */
+    address: AddressProperties;
+    /**
+     * Type of geography entity,
+     * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
+     * Only present if type == Geography.
+     */
+    geographyType?: GeographyType[];
+    /**
+     * List of mapcode objects.
+     */
+    mapcodes?: Mapcode[];
+    /**
+     * A list of entry points of the POI (Points of Interest).
+     */
+    entryPoints?: EntryPoint[];
+    /**
+     * The address ranges on a street segment. Available only for results where the result type is equal to Address Range.
+     */
+    addressRanges?: AddressRanges;
+    /**
+     * Information about the Points of Interest in the result. Optional section. Only present if CommonPlaceProps.type == POI
+     */
+    poi?: POI;
+    /**
+     * List of related Points Of Interest.
+     */
+    relatedPois?: RelatedPOI[];
+    /**
+     * A list of chargingPark objects. Present only when the Points of Interest are of the Electric Vehicle Station type.
+     */
+    chargingPark?: {
+        connectors: Connector[];
+    };
+    /**
+     * An optional section. These are unique reference ids for use with the Additional Data service.
+     */
+    dataSources?: PlaceDataSources;
+};
+
+export type SideOfStreet = "L" | "R";
+
+export type RevGeoAddressProps = CommonPlaceProps & {
+    /**
+     * Original lng-lat coordinates of the reverse geocoded location.
+     */
+    originalPosition: Position;
+    /**
+     * The offset position coordinates of the location. Might only be returned if number parameter was defined.
+     * TODO: clarify behaviour and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
+     */
+    offsetPosition?: Position;
+    /**
+     * The left or right side of the street location. This is returned only when the number parameter was defined.
+     */
+    sideOfStreet?: SideOfStreet;
+};
+
+export type SearchPlaceProps = CommonPlaceProps & {
+    /**
+     * Information about the original data source of the result
+     */
+    info?: string;
+    /**
+     * The score of the result.
+     * A larger score means there is a probability that a result meeting the query criteria is higher.
+     */
+    score?: number;
+    /**
+     * Unit: meters. This is the distance to an object if geobias was provided.
+     */
+    distance?: number;
+};
+
+export type Place<P extends CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & {
+    /**
+     * Identifier for this place.
+     * https://tools.ietf.org/html/rfc7946#section-3.2.
+     */
+    id: string;
+};
 export type Places<P extends CommonPlaceProps> = FeatureCollection<Point, P>;

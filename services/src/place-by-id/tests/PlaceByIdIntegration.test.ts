@@ -1,6 +1,6 @@
-import { GOSDKConfig, Place } from "@anw/go-sdk-js/core";
+import { GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
-import { placeById, PlaceByIdResponse, PlaceByIdResponseProps } from "..";
+import { placeById, PlaceByIdResponse } from "..";
 
 describe("Place By Id API", () => {
     beforeAll(() => {
@@ -26,14 +26,15 @@ describe("Place By Id API", () => {
         expect(res).toEqual(
             expect.objectContaining<PlaceByIdResponse>({
                 type: "FeatureCollection",
-                features: expect.arrayContaining<Place<PlaceByIdResponseProps>>([
-                    expect.objectContaining<Place<PlaceByIdResponseProps>>({
+                features: expect.arrayContaining<Place<SearchPlaceProps>>([
+                    expect.objectContaining<Place<SearchPlaceProps>>({
                         type: "Feature",
                         geometry: expect.objectContaining({
                             coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
                             type: expect.any(String)
                         }),
-                        properties: expect.objectContaining<PlaceByIdResponseProps>({
+                        id: expect.any(String),
+                        properties: expect.objectContaining<SearchPlaceProps>({
                             type: "POI",
                             address: expect.any(Object),
                             entryPoints: expect.arrayContaining([expect.any(Object)]),

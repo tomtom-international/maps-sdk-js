@@ -1,5 +1,14 @@
-import { EntryPoint } from "@anw/go-sdk-js/core";
-import { Brand, Category, Classification, OpeningHours, TimeZone } from "core";
+import {
+    AddressProperties,
+    Brand,
+    Category,
+    Classification,
+    CommonPlaceProps,
+    EntryPoint,
+    OpeningHours,
+    PlaceType,
+    TimeZone
+} from "@anw/go-sdk-js/core";
 
 /**
  * @group Shared
@@ -135,4 +144,24 @@ export type POIAPI = {
     openingHours?: OpeningHours;
     classifications?: Classification[];
     timeZone?: TimeZone;
+};
+
+/**
+ * @ignore
+ * @group Geometry-Search
+ * @category Types
+ */
+export type CommonPlaceResultAPI = Omit<
+    CommonPlaceProps,
+    "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
+> & {
+    id: string;
+    type: PlaceType;
+    matchConfidence: { score: number };
+    position: LatLonAPI;
+    viewport?: ViewportAPI;
+    entryPoints?: EntryPointAPI[];
+    address?: AddressProperties;
+    info?: string;
+    poi?: POIAPI;
 };

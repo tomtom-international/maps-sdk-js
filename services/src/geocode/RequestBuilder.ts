@@ -5,8 +5,8 @@ import { GeocodingParams } from "./types/GeocodingParams";
 import { arrayToCSV } from "../shared/Arrays";
 import { appendCommonParams } from "../shared/RequestBuildingUtils";
 
-const buildURLBasePath = (mergedOptions: GeocodingParams): string =>
-    mergedOptions.customServiceBaseURL || `${mergedOptions.commonBaseURL}/search/2/geocode`;
+const buildURLBasePath = (params: GeocodingParams): string =>
+    params.customServiceBaseURL || `${params.commonBaseURL}/search/2/geocode`;
 
 /**
  * Default method for building geocoding request from {@link GeocodingParams}
