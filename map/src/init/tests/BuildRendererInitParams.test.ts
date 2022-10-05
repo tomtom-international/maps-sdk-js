@@ -1,4 +1,4 @@
-import { MapOptions } from "@nav/web-renderer";
+import { MapOptions } from "maplibre-gl";
 import sdkAndRendererInitParams from "./BuildRendererInitParams.data.json";
 import { MapInitParams } from "../../types/MapInit";
 import { buildRendererInitParams } from "../BuildRendererInitParams";

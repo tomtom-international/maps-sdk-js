@@ -1,6 +1,6 @@
-import { Anything, GlobalConfig, HasLngLat } from "@anw/go-sdk-js/core";
-import { Projection } from "@nav/web-renderer";
+import { GlobalConfig, HasLngLat } from "@anw/go-sdk-js/core";
 import { BBox } from "geojson";
+import { StyleSpecification } from "maplibre-gl";
 
 export const publishedStyleIDs = [
     "standardLight",
@@ -43,7 +43,7 @@ export type CustomStyle = {
      * * This object contains the style as such.
      * * Mutually exclusive with the url style input.
      */
-    json?: Anything;
+    json?: StyleSpecification;
 };
 
 /**
@@ -109,9 +109,4 @@ export type MapInitParams = Partial<GlobalConfig> & {
      * Initial bearing in degrees.
      */
     bearingDegrees?: number;
-    /**
-     * The map projection type.
-     * @default 'webmercator'
-     */
-    projection?: Projection;
 };

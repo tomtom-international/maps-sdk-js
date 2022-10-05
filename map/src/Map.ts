@@ -1,4 +1,4 @@
-import { Map as MapRenderer } from "@nav/web-renderer";
+import { Map as MapRenderer } from "maplibre-gl";
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { MapInitParams } from "./types/MapInit";
 import { buildRendererInitParams } from "./init/BuildRendererInitParams";

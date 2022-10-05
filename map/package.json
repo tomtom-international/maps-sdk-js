@@ -55,6 +55,6 @@
     "entryPoint": "./index.ts"
   },
   "dependencies": {
-    "@nav/web-renderer": "^0.0.2"
+    "maplibre-gl": "^2.4.0"
   }
 }
