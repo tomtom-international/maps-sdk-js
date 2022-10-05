@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.40](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.39...v0.1.40) (2022-10-05)
+
+
+### Features
+
+* **86-place-by-id:** Adding place by id service, work in progress ([187877e](https://github.com/tomtom-international/go-sdk-js/commit/187877e44be8d0e6fc2e784ffaf64e58e65f2dac))
+* **86-place-by-id:** Adding place by id service, work in progress ([235288f](https://github.com/tomtom-international/go-sdk-js/commit/235288f396b12c8e26ee199a5f1099dde88e8ced))
+* **map:** switching to maplibre ([63df229](https://github.com/tomtom-international/go-sdk-js/commit/63df229c5f031cfa059d23e24773aa84b450694b))
+* **places:** building geometry data service and refactoring feature ids ([34e7e29](https://github.com/tomtom-international/go-sdk-js/commit/34e7e299e3f62cb27c714d4130061ad4cf401274))
+
+
+### Bug Fixes
+
+* **86-place-by-id:** code update after rebase ([38dd4a1](https://github.com/tomtom-international/go-sdk-js/commit/38dd4a1816f13604b786c8cfeaa49615e2fc70a4))
+* **86-place-by-id:** duplication code removal ([3f7b856](https://github.com/tomtom-international/go-sdk-js/commit/3f7b856d960a482c5e1a92f58f1e2478c7d1f159))
+* **86-place-by-id:** review comment ([743e20e](https://github.com/tomtom-international/go-sdk-js/commit/743e20ede79b3af5d8580e97a7aa77f61b0867bf))
+
 ### [0.1.39](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.38...v0.1.39) (2022-10-03)
 
 ### [0.1.38](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.37...v0.1.38) (2022-09-28)
