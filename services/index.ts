@@ -15,7 +15,7 @@ export * from "./src/geocode";
 export * from "./src/geometry-search";
 export * from "./src/routing";
 
-export const serviceHelpers = {
+export const customizeService = {
     reverseGeocode: revgeoCustomize,
     geocode: geocodeCustomize,
     calculateRoute: routingCustomize,
