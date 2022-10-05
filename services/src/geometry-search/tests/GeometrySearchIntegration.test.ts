@@ -1,6 +1,8 @@
 import { Fuel, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
-import { buildGeometrySearchRequest, geometrySearch, parseGeometrySearchResponse } from "..";
+import { geometrySearch } from "..";
+import { parseGeometrySearchResponse } from "../ResponseParser";
+import { buildGeometrySearchRequest } from "../RequestBuilder";
 import { GeometrySDK, GeometrySearchResponse } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 
