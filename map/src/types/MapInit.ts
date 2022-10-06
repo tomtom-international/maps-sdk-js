@@ -1,6 +1,5 @@
-import { GlobalConfig, HasLngLat } from "@anw/go-sdk-js/core";
-import { BBox } from "geojson";
-import { StyleSpecification } from "maplibre-gl";
+import { GlobalConfig, HasBBox, HasLngLat } from "@anw/go-sdk-js/core";
+import { MapOptions, StyleSpecification } from "maplibre-gl";
 
 export const publishedStyleIDs = [
     "standardLight",
@@ -68,12 +67,7 @@ export type StyleInput =
           custom?: CustomStyle;
       };
 
-export type MapInitParams = Partial<GlobalConfig> & {
-    /**
-     * HTML container element where the map is to be attached.
-     * * Should exist in the DOM by the same the map is initialized.
-     */
-    htmlContainer: HTMLElement;
+export type GOSDKMapParams = Partial<GlobalConfig> & {
     /**
      * Optional style to load for the map.
      */
@@ -84,29 +78,14 @@ export type MapInitParams = Partial<GlobalConfig> & {
      */
     center?: HasLngLat;
     /**
-     * Initial zoom on startup.
-     * * Mutually exclusive with bbox.
-     */
-    zoom?: number;
-    /**
-     * The maximum zoom level of the map.
-     */
-    maxZoom?: number;
-    /**
-     * The minimum zoom level of the map
-     */
-    minZoom?: number;
-    /**
      * Initial bounds for the map.
      * * Mutually exclusive with center and zoom.
      */
-    bounds?: BBox;
+    bounds?: HasBBox;
     /**
      * If set, the map will be constrained to the given bounds.
      */
-    maxBounds?: BBox;
-    /**
-     * Initial bearing in degrees.
-     */
-    bearingDegrees?: number;
+    maxBounds?: HasBBox;
 };
+
+export type MapLibreOptions = Omit<MapOptions, "style" | "attributionControl">;

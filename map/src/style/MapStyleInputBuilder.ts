@@ -1,5 +1,5 @@
 import template from "lodash/template";
-import { MapInitParams, PublishedStyle, PublishedStyleID } from "../types/MapInit";
+import { GOSDKMapParams, PublishedStyle, PublishedStyleID } from "../types/MapInit";
 import { StyleSpecification } from "maplibre-gl";
 
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
@@ -47,7 +47,7 @@ const withAPIKey = (givenURL: string, apiKey: string): string => {
  * @param mapParams The SDK parameters to convert to input renderer style.
  * @return The map style to load into the renderer.
  */
-export const buildRendererStyle = (mapParams: MapInitParams): StyleSpecification | string => {
+export const buildMapStyleInput = (mapParams: GOSDKMapParams): StyleSpecification | string => {
     const style = mapParams.style;
     const baseURL = mapParams.commonBaseURL as string;
     const apiKey = mapParams.apiKey as string;

@@ -27,14 +27,13 @@ describe("Map Integration tests", () => {
     test("Successful basic map initialization", async () => {
         await page.evaluate((apiKey) => {
             // @ts-ignore
-            new window.SDKMap({
-                apiKey,
-                style: "satellite",
-                center: [10, 50],
-                zoom: 3,
-                minZoom: 2,
-                htmlContainer: document.getElementById("map")
-            });
+            new window.GOSDKMap(
+                { container: document.getElementById("map"), zoom: 3, minZoom: 2, center: [10, 50] },
+                {
+                    apiKey,
+                    style: "satellite"
+                }
+            );
         }, process.env.API_KEY);
 
         expect(await getCanvasPromise()).not.toBeNull();

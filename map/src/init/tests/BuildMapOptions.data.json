@@ -2,9 +2,11 @@
   [
     "Default map init",
     {
+      "container": "<div id='map'></div>"
+    },
+    {
       "commonBaseURL": "https://api-test.tomtom.com",
-      "apiKey": "TEST_API_KEY",
-      "htmlContainer": "<div id='map'></div>"
+      "apiKey": "TEST_API_KEY"
     },
     {
       "container": "<div id='map'></div>",
@@ -15,29 +17,69 @@
   [
     "Map init with most params set",
     {
+      "container": "<div id='map'></div>",
+      "zoom": 7,
+      "center": [
+        10,
+        20
+      ],
+      "minZoom": 2,
+      "maxZoom": 20,
+      "bearing": 90
+    },
+    {
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
-      "htmlContainer": "<div id='map'></div>",
       "style": {
         "custom": {
           "url": "https://test_url"
         }
       },
-      "zoom": 7,
-      "center": [10, 20],
-      "minZoom": 2,
-      "maxZoom": 20,
-      "maxBounds": [10, 20, 30, 40],
-      "bearingDegrees": 90
+      "bounds": {
+        "type": "Feature",
+        "bbox": [
+          15,
+          25,
+          30,
+          35
+        ],
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            17,
+            28
+          ]
+        }
+      },
+      "maxBounds": [
+        10,
+        20,
+        30,
+        40
+      ]
     },
     {
       "container": "<div id='map'></div>",
       "style": "https://test_url/?key=TEST_API_KEY",
       "zoom": 7,
-      "center": [10, 20],
+      "center": [
+        10,
+        20
+      ],
       "minZoom": 2,
       "maxZoom": 20,
-      "maxBounds": [10, 20, 30, 40],
+      "bounds": [
+        15,
+        25,
+        30,
+        35
+      ],
+      "maxBounds": [
+        10,
+        20,
+        30,
+        40
+      ],
       "bearing": 90,
       "attributionControl": false
     }
