@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.42](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.41...v0.1.42) (2022-10-06)
+
+
+### Features
+
+* **map:** first iteration to export maplibre ([190ab52](https://github.com/tomtom-international/go-sdk-js/commit/190ab52c1f76c91854aa914021ace7f46ef11d88))
+
 ### [0.1.41](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.40...v0.1.41) (2022-10-06)
 
 
