@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.41](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.40...v0.1.41) (2022-10-06)
+
+
+### Features
+
+* customize obj for geometry search ([416c2e5](https://github.com/tomtom-international/go-sdk-js/commit/416c2e51d5f37b29476572aa032085ee530c39aa))
+* export helper object per service ([1b21739](https://github.com/tomtom-international/go-sdk-js/commit/1b217393a8d4f9f150ac143bf14d8c76f4e0b2d6))
+
 ### [0.1.40](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.39...v0.1.40) (2022-10-05)
 
 
