@@ -1,6 +1,6 @@
 import { MapOptions } from "maplibre-gl";
 import sdkAndRendererInitParams from "./BuildMapOptions.data.json";
-import { GOSDKMapParams, MapLibreOptions } from "../../types/MapInit";
+import { GOSDKMapParams, MapLibreOptions } from "../types/MapInit";
 import { buildMapOptions } from "../BuildMapOptions";
 
 describe("Renderer init params tests", () => {

@@ -441,7 +441,7 @@ describe("Bounding box calculation performance tests", () => {
             bboxFromCoordsArray(coordinates);
             accExecTimes.push(performance.now() - start);
         }
-        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(1);
+        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(2);
     });
 
     test("Quick bounding box performance test for very long polygon", () => {
@@ -458,6 +458,6 @@ describe("Bounding box calculation performance tests", () => {
             bboxFromGeoJSON(polygon);
             accExecTimes.push(performance.now() - start);
         }
-        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(1);
+        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(2);
     });
 });

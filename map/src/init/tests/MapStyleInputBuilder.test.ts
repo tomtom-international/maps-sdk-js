@@ -1,6 +1,6 @@
 import { StyleSpecification } from "maplibre-gl";
 import goSDKInitParamsAndMapStyles from "./MapStyleInputBuilder.data.json";
-import { GOSDKMapParams } from "../../types/MapInit";
+import { GOSDKMapParams } from "../types/MapInit";
 import { buildMapStyleInput } from "../MapStyleInputBuilder";
 
 describe("Map style input builder tests", () => {

@@ -1,10 +1,10 @@
 {
   "name": "map-integration-tests",
   "version": "0.1.0",
-  "description": "Runs integration tests by loading the locally build SDK into a local dev server",
+  "description": "Runs integration tests by starting a local web server with a page that contains the SDK code.",
   "scripts": {
     "test": "jest",
-    "test:coverage": "jest --coverage --no-cache",
+    "test:coverage": "",
     "build": "",
     "build:full": "npm run type-check && npm run build",
     "start-webpack-dev-server": "webpack serve",

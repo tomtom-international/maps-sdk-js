@@ -1,7 +1,7 @@
 import { MapOptions } from "maplibre-gl";
 import { bboxFromGeoJSON, getLngLatArray } from "@anw/go-sdk-js/core";
-import { GOSDKMapParams, MapLibreOptions } from "../types/MapInit";
-import { buildMapStyleInput } from "../style/MapStyleInputBuilder";
+import { GOSDKMapParams, MapLibreOptions } from "./types/MapInit";
+import { buildMapStyleInput } from "./MapStyleInputBuilder";
 
 type MapLibreBBox = [number, number, number, number];
 

@@ -4,7 +4,6 @@ import { validateRequestSchema, ValidationError } from "../Validation";
 describe("Validation", () => {
     test("no errors to transform", () => {
         const error = new ValidationError("Validation Error");
-        expect(error).toBeInstanceOf(ValidationError);
         expect(error.message).toEqual("Validation Error");
         expect(error.errors).toBe(undefined);
     });
@@ -54,7 +53,6 @@ describe("Validation", () => {
             position: [123, 321]
         };
 
-        // @ts-ignore
         const validationResult = () => validateRequestSchema(params, schema);
 
         expect(validationResult).toThrow(

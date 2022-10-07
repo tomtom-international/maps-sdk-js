@@ -1,38 +1,56 @@
 import template from "lodash/template";
-import { GOSDKMapParams, PublishedStyle, PublishedStyleID } from "../types/MapInit";
+import { GOSDKMapParams, PublishedStyle, PublishedStyleID } from "./types/MapInit";
 import { StyleSpecification } from "maplibre-gl";
 
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
     standardLight:
         "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
-        "&map=2/basic_street-light&traffic_flow=2/flow_relative-light" +
-        "&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light",
+        "&map=2/basic_street-light" +
+        "&traffic_flow=2/flow_relative-light" +
+        "&traffic_incidents=2/incidents_light" +
+        "&poi=2/poi_dynamic-light" +
+        "&hillshade=2-test/hillshade_rgb-light",
     standardDark:
         "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
-        "&map=2/basic_street-dark&traffic_flow=2/flow_relative-dark" +
-        "&traffic_incidents=2/incidents_dark&poi=2/poi_dynamic-dark",
+        "&map=2/basic_street-dark" +
+        "&traffic_flow=2/flow_relative-dark" +
+        "&traffic_incidents=2/incidents_dark" +
+        "&poi=2/poi_dynamic-dark" +
+        "&hillshade=2-test/hillshade_rgb-dark",
     drivingLight:
         "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
-        "&map=2/basic_street-light-driving&traffic_flow=2/flow_relative-light" +
-        "&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light",
+        "&map=2/basic_street-light-driving" +
+        "&traffic_flow=2/flow_relative-light" +
+        "&traffic_incidents=2/incidents_light" +
+        "&poi=2/poi_dynamic-light" +
+        "&hillshade=2-test/hillshade_rgb-light",
     drivingDark:
         "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
-        "&map=2/basic_street-dark-driving&traffic_flow=2/flow_relative-dark" +
-        "&traffic_incidents=2/incidents_dark&poi=2/poi_dynamic-dark",
+        "&map=2/basic_street-dark-driving" +
+        "&traffic_flow=2/flow_relative-dark" +
+        "&traffic_incidents=2/incidents_dark" +
+        "&poi=2/poi_dynamic-dark" +
+        "&hillshade=2-test/hillshade_rgb-dark",
     monoLight:
         "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
-        "&map=2/basic_mono-light&traffic_flow=2/flow_relative-light" +
-        "&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-mono-light",
+        "&map=2/basic_mono-light" +
+        "&traffic_flow=2/flow_relative-light" +
+        "&traffic_incidents=2/incidents_light" +
+        "&poi=2/poi_dynamic-mono-light" +
+        "&hillshade=2-test/hillshade_rgb-mono-light",
     satellite:
         "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
-        "&map=2/basic_street-satellite&traffic_incidents=2/incidents_light" +
-        "&traffic_flow=2/flow_relative-light&poi=2/poi_dynamic-satellite"
+        "&map=2/basic_street-satellite" +
+        "&traffic_incidents=2/incidents_light" +
+        "&traffic_flow=2/flow_relative-light" +
+        "&poi=2/poi_dynamic-satellite" +
+        "&hillshade=2-test/hillshade_rgb-satellite"
 };
 
 const buildPublishedStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
     template(publishedStyleURLTemplates[publishedStyle.id])({
         baseURL,
-        version: publishedStyle.version || "22.3.*",
+        version: publishedStyle.version || "23.1.*",
         apiKey
     });
 
