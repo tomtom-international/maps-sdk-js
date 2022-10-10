@@ -33,3 +33,22 @@ menu:
               title: Services
             - fileId: /api-reference/modules/map
               title: Map
+        - title: Extra pages
+          isHidden: true
+          items:
+            - fileId: /api-reference/modules/core.internal
+              isHidden: true
+            - fileId: /api-reference/modules/map.internal
+              isHidden: true
+            - fileId: /api-reference/modules/services.internal
+              isHidden: true
+            - fileId: /api-reference/interfaces/services.Circle
+              isHidden: true
+            - fileId: /api-reference/classes/core.GOSDKConfig
+              isHidden: true
+            - fileId: /api-reference/classes/map.GOSDKMap
+              isHidden: true
+            - fileId: /api-reference/classes/services.internal.SDKError
+              isHidden: true
+            - fileId: /api-reference/classes/services.internal.SDKServiceError
+              isHidden: true

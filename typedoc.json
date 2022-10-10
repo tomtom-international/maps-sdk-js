@@ -5,6 +5,7 @@
   "out": "documentation/api-reference",
   "readme": "none",
   "name": "GO-SDK-JS",
-  "internalModule": "external",
+  "internalModule": "internal",
+  "excludeExternals": true,
   "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports"]
 }
