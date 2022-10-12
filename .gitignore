@@ -11,4 +11,4 @@ node_modules/
 .DS_Store
 *.tgz
 **/*.tsbuildinfo
-documentation/api-reference/
+documentation/dev-portal/web/maps/documentation/api-reference/

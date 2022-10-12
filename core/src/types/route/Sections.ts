@@ -3,6 +3,8 @@ import { Summary } from "./Summary";
 
 /**
  * Base type for all route sections.
+ * @group Route
+ * @category Types
  */
 export type Section = {
     /**
@@ -17,6 +19,8 @@ export type Section = {
 
 /**
  * Represents a route section passing through a specific country.
+ * @group Route
+ * @category Types
  */
 export type CountrySection = Section & {
     /**
@@ -27,6 +31,8 @@ export type CountrySection = Section & {
 
 /**
  * Represents a route section with travel mode. This section type is related to the TravelMode request parameter.
+ * @group Route
+ * @category Types
  */
 export type TravelModeSection = Section & {
     /**
@@ -37,16 +43,22 @@ export type TravelModeSection = Section & {
 
 /**
  * The simple category for the traffic incident
+ * @group Route
+ * @category Types
  */
 export type TrafficCategory = "JAM" | "ROAD_WORK" | "ROAD_CLOSURE" | "OTHER";
 
 /**
  * The magnitude of the delay for the traffic incident.
+ * @group Route
+ * @category Types
  */
 export type DelayMagnitude = "UNKNOWN" | "MINOR" | "MODERATE" | "MAJOR" | "UNDEFINED";
 
 /**
  * Describes what caused a traffic incident, based on TPEG2-TEC standard.
+ * @group Route
+ * @category Types
  */
 export type CauseTEC = {
     /**
@@ -60,7 +72,9 @@ export type CauseTEC = {
 };
 
 /**
- *  Describes Tec information about this traffic incident based on TPEG2-TEC standard
+ * Describes Tec information about this traffic incident based on TPEG2-TEC standard
+ * @group Route
+ * @category Types
  */
 export type TrafficIncidentTEC = {
     /**
@@ -75,6 +89,8 @@ export type TrafficIncidentTEC = {
 
 /**
  * Section representing a traffic incident.
+ * @group Route
+ * @category Types
  */
 export type TrafficSection = Section & {
     /**
@@ -104,6 +120,8 @@ export type TrafficSection = Section & {
  * - An A-B route contains 1 leg (A-B).
  * - An A-B-C route contains 2 legs (A-B, B-C).
  * - An A-B-x-C route, where x is a circle waypoint, also contains 2 legs (A-B, B-C).
+ * @group Route
+ * @category Types
  */
 export type LegSection = Omit<Section, "startPointIndex" | "endPointIndex"> & {
     /**
@@ -124,6 +142,8 @@ export type LegSection = Omit<Section, "startPointIndex" | "endPointIndex"> & {
  * Route sections are parts of the planned route that have specific characteristics,
  * such as ones on a ferry or motorway, or sections with traffic incidents in them.
  * Using sections, you can show users where these things lie on a planned route.
+ * @group Route
+ * @category Types
  */
 export type Sections = {
     leg: LegSection[];
@@ -141,8 +161,16 @@ export type Sections = {
     urban?: Section[];
 };
 
+/**
+ * @group Route
+ * @category Types
+ */
 export type SectionType = keyof Sections;
 
+/**
+ * @group Route
+ * @category Variables
+ */
 export const inputSectionTypes: SectionType[] = [
     "carTrain",
     "ferry",
@@ -158,4 +186,8 @@ export const inputSectionTypes: SectionType[] = [
     "unpaved"
 ];
 
+/**
+ * @group Route
+ * @category Variables
+ */
 export const sectionTypes: SectionType[] = [...inputSectionTypes, "leg"];

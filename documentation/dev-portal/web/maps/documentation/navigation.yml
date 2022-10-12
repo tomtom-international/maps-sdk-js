@@ -1,0 +1,93 @@
+group: tomtom-sdk-for-web
+isPrivate: false
+noIndex: false
+productName: TomTom SDK for Web
+isMenuOpened: false
+menu:
+  - title: Overview
+    items:
+      - fileId: overview/introduction
+        title: Introduction (WIP)
+      - fileId: overview/project-set-up
+        title: Project set up (TODO)
+      - fileId: overview/release-notes
+        title: Release notes (TODO)
+  - title: Guides
+    items:
+      - title: Map Display
+        items:
+          - fileId: guides/map-display/quickstart
+            title: Quickstart (TODO)
+          - fileId: guides/map-display/map-configuration
+            title: Map configuration (TODO)
+          - fileId: guides/map-display/map-styles
+            title: Map styles (TODO)
+          - fileId: guides/map-display/user-location
+            title: User location (TODO)
+          - fileId: guides/map-display/events-and-gestures
+            title: Events and gestures (TODO)
+          - fileId: guides/map-display/camera-and-animations
+            title: Camera and animations (TODO)
+          - fileId: guides/map-display/markers
+            title: Markers (TODO)
+          - fileId: guides/map-display/overlays
+            title: Overlays (TODO)
+          - fileId: guides/map-display/traffic
+            title: Traffic (TODO)
+          - fileId: guides/map-display/ui-controls
+            title: UI controls (TODO)
+          - fileId: guides/map-display/routes
+            title: Routes (TODO)
+      - title: Search
+        items:
+          - fileId: guides/search/quickstart
+            title: Quickstart (TODO)
+          - fileId: guides/search/autocomplete-and-fuzzy-search
+            title: Autocomplete and fuzzy search (TODO)
+          - fileId: guides/search/specialized-search
+            title: Specialized search (TODO)
+          - fileId: guides/search/reverse-geocoding
+            title: Reverse geocoding (WIP)
+          - fileId: guides/search/ui-components
+            title: UI Components (TODO)
+      - title: Routing
+        items:
+          - fileId: guides/routing/quickstart
+            title: Quickstart (TODO)
+          - fileId: guides/routing/planning-a-route
+            title: Planning a route (TODO)
+          - fileId: guides/routing/waypoints-and-custom-routes
+            title: Waypoints and custom routes (TODO)
+          - fileId: guides/routing/route-sections
+            title: Route sections (TODO)
+  - title: API Reference (WIP)
+    items:
+      - fileId: /api-reference/home
+        title: Home
+      - title: Modules
+        items:
+          - fileId: /api-reference/modules/core
+            title: Core
+          - fileId: /api-reference/modules/services
+            title: Services
+          - fileId: /api-reference/modules/map
+            title: Map
+      - title: Extra pages
+        isHidden: true
+        items:
+          - fileId: /api-reference/modules/core.internal
+            isHidden: true
+          - fileId: /api-reference/modules/map.internal
+            isHidden: true
+          - fileId: /api-reference/modules/services.internal
+            isHidden: true
+          - fileId: /api-reference/interfaces/services.Circle
+            isHidden: true
+          - fileId: /api-reference/classes/core.GOSDKConfig
+            isHidden: true
+          - fileId: /api-reference/classes/map.GOSDKMap
+            isHidden: true
+          - fileId: /api-reference/classes/services.internal.SDKError
+            isHidden: true
+          - fileId: /api-reference/classes/services.internal.SDKServiceError
+            isHidden: true

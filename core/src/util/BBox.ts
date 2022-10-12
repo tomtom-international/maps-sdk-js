@@ -116,6 +116,8 @@ export const bboxFromCoordsArray = (coordinates: Position[] | undefined): Option
  *
  * Large geometries approximate their bounding box for speed by preventing to scan each single point.
  * @param hasBBox
+ * @group Shared
+ * @category Functions
  */
 export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
     // Edge case:

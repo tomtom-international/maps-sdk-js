@@ -1,3 +1,7 @@
+/**
+ * @group Place
+ * @category Types
+ */
 export type PlaceDataSources = {
     /**
      * Information about the charging stations availability. Only present if type == POI.
@@ -15,6 +19,10 @@ export type PlaceDataSources = {
     poiDetails?: PoiDetailsDataSource;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type ChargingAvailabilityDataSource = {
     /**
      * Pass this as chargingAvailability to the EV Charging Stations Availability service to fetch charging availability information for this result.
@@ -22,6 +30,10 @@ export type ChargingAvailabilityDataSource = {
     id?: string;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type GeometryDataSource = {
     /**
      * Pass this as geometry ID to the Geometry Data service to fetch geometry information for this result.
@@ -29,6 +41,10 @@ export type GeometryDataSource = {
     id?: string;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type PoiDetailsDataSource = {
     /**
      * Pass this as id to the Points of Interest Details service to fetch additional data for the POI.

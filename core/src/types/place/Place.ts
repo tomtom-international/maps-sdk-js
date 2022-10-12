@@ -4,6 +4,10 @@ import { HasLngLat } from "../Geometry";
 import { POI, RelatedPOI } from "./poi/POI";
 import { Connector } from "./poi/Connector";
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type GeographyType =
     | "Country"
     | "CountrySubdivision"
@@ -31,9 +35,14 @@ export type GeographyType =
  * due to the way mapcodes are computed (see the mapcode documentation).
  * For example: the position from a response can be encoded as "5DM.WC" (51.759244, 19.448316) and the "VHJ.036"
  * (51.759245, 19.448264), which are close to each other, but not exactly the same place.
+ * @group Place
+ * @category Types
  */
 export type MapcodeType = "Local" | "International" | "Alternative";
-
+/**
+ * @group Place
+ * @category Types
+ */
 export type Mapcode = {
     /**
      * The type of the Mapcode.
@@ -62,6 +71,10 @@ export type Mapcode = {
     code?: string;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type AddressRanges = {
     /**
      * An address range on the left side of a street segment (assuming looking from the "from" end toward the "to" end).
@@ -81,6 +94,10 @@ export type AddressRanges = {
     to: Position;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type EntryPoint = {
     /**
      * The main entry point.
@@ -97,8 +114,16 @@ export type EntryPoint = {
     position: HasLngLat;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type PlaceType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type AddressProperties = {
     /**
      * The building number on the street.
@@ -180,6 +205,10 @@ export type AddressProperties = {
     localName?: string;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type CommonPlaceProps = {
     /**
      * Type of this place.
@@ -227,8 +256,16 @@ export type CommonPlaceProps = {
     dataSources?: PlaceDataSources;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type SideOfStreet = "L" | "R";
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type RevGeoAddressProps = CommonPlaceProps & {
     /**
      * Original lng-lat coordinates of the reverse geocoded location.
@@ -245,6 +282,10 @@ export type RevGeoAddressProps = CommonPlaceProps & {
     sideOfStreet?: SideOfStreet;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type SearchPlaceProps = CommonPlaceProps & {
     /**
      * Information about the original data source of the result
@@ -261,6 +302,10 @@ export type SearchPlaceProps = CommonPlaceProps & {
     distance?: number;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type Place<P extends CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & {
     /**
      * Identifier for this place.
@@ -268,4 +313,9 @@ export type Place<P extends CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & 
      */
     id: string;
 };
+
+/**
+ * @group Place
+ * @category Types
+ */
 export type Places<P extends CommonPlaceProps> = FeatureCollection<Point, P>;

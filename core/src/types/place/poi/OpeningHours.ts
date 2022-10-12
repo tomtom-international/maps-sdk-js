@@ -9,6 +9,10 @@ type TimeRange = {
     endTime: Moment;
 };
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type OpeningHours = {
     mode: string;
     timeRanges: TimeRange[];

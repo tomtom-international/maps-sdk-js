@@ -1,0 +1,5 @@
+menuTopTitle: TomTom SDK for Web
+menu:
+- items:
+  - fileId: maps/documentation/overview/introduction
+    title: Maps SDK

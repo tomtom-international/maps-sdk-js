@@ -3,6 +3,8 @@ import { Anything } from "../Generic";
 
 /**
  * Waypoint-specific properties.
+ * @group Route
+ * @category Types
  */
 export type WaypointProps = {
     /**
@@ -26,5 +28,7 @@ export type WaypointProps = {
  * GeoJSON Waypoint type.
  *
  * Consists of a Point Feature with waypoint and other optional properties.
+ * @group Route
+ * @category Types
  */
 export type Waypoint<T extends Anything = Anything> = Feature<Point, WaypointProps & T>;

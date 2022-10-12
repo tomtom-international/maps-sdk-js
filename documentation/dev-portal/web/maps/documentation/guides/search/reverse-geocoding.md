@@ -1,0 +1,75 @@
+---
+title: Reverse geocoding
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.0.1"
+  color: "grey5"
+- label: "PRIVATE PREVIEW"
+  color: "grey5"
+---
+
+The Reverse Geocoding module translates a coordinate (`37.786505, -122.3862`) into human-understandable information
+like a street address or street element ("30 The Embarcadero, San Francisco, CA 94111").
+
+The type of response depends on the available data:
+
+-   `address`: Returns the most detailed information.
+-   `street element`: Less detailed; returned when there is no address data.
+-   `geography`: Returns the smallest available geographic data.
+  -   This is returned when there is no address or street element data.
+  -   You can specify the level of geography to get a geometry (see the [`PlaceType`](/web/maps/documentation/api-reference/modules/core#placetype) parameter).
+
+<a style="display: block; margin: 0; padding: 0;" id="_initializing"></a>
+
+# Initializing
+
+To use the Reverse Geocoding SDK, you need to configure its credentials and add the SDK reverse geocoding module as a dependency:
+1.  Get your TomTom API Key and configure the project as described in the [Project setup guide (TODO)](/web/maps/documentation/overview/project-set-up).
+2.  Add the `Reverse Geocoding` module dependency
+    - for NodeJS add dependency in `main.js`
+       ``` javascript
+       const reverseGeocode = require("@anw/go-sdk-js/services").reverseGeocode;
+       const GOSDKConfig = require("@anw/go-sdk-js/core").GOSDKConfig;
+       ```
+    - for Web add dependency in `index.js` 
+       ```javascript
+       import { reverseGeocode } from "@anw/go-sdk-js/services";
+       import { GOSDKConfig } from "@anw/go-sdk-js/core";
+       ```
+
+3. To enable your API key
+    ``` javascript
+    GOSDKConfig.instance.put({
+        // (Set your own API key when working in your own environment)
+        apiKey: process.env.API_KEY
+    });
+    ```
+
+<a style="display: block; margin: 0; padding: 0;" id="_making_a_reverse_geocoding_call"></a>
+
+# Making a reverse geocoding call
+
+Specify the reverse geocoding request parameters with the [`ReverseGeocodingParams`](/web/maps/documentation/api-reference/modules/services#reversegeocodingparams).
+
+``` javascript
+const reverseGeocodeParams = { position: [37.786505, -122.3862] };
+```
+
+Once you have a [`ReverseGeocodingParams`](/web/maps/documentation/api-reference/modules/services#reversegeocodingparams).
+
+``` javascript
+reverseGeocode(reverseGeocodeParams)
+    .then((response) => console.log(response));
+```
+
+<a style="display: block; margin: 0; padding: 0;" id="_next_steps"></a>
+
+# Next steps
+
+Since you have learned how to reverse geocode, here are recommendations for the next steps:
+
+-   [Autocomplete and fuzzy search (TODO)](/web/maps/documentation/guides/search/autocomplete-and-fuzzy-search)
+-   [Specialized search types (TODO)](/web/maps/documentation/guides/search/specialized-search)
+-   [Adding markers to the map (TODO)](/web/maps/documentation/guides/map-display/markers)

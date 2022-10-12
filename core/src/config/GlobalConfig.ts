@@ -1,3 +1,8 @@
+/**
+ * Global configuration containing basic parameters.
+ * @group Configuration
+ * @category Types
+ */
 export type GlobalConfig = {
     /**
      * A valid API Key for the requested functionality.
@@ -29,6 +34,8 @@ export type GlobalConfig = {
 
 /**
  * Default global configuration contents.
+ * @group Configuration
+ * @category Variables
  */
 export const defaultConfig: GlobalConfig = {
     commonBaseURL: "https://api.tomtom.com",
@@ -38,6 +45,8 @@ export const defaultConfig: GlobalConfig = {
 /**
  * GO SDK Global configuration singleton class.
  * It initializes to a default basic configuration.
+ * @group Configuration
+ * @category Types
  */
 export class GOSDKConfig {
     public static readonly instance = new GOSDKConfig();

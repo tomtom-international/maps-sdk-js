@@ -2,17 +2,23 @@ import { Position } from "geojson";
 
 /**
  * Type of the junction at which the maneuver takes place, i.e. regular junction, roundabout or bifurcation.
+ * @group Route
+ * @category Types
  */
 export type JunctionType = "REGULAR" | "ROUNDABOUT" | "BIFURCATION";
 
 /**
  * Indicates left-hand vs. right-hand side driving at the point of the maneuver.
+ * @group Route
+ * @category Types
  */
 export type DrivingSide = "LEFT" | "RIGHT";
 
 /**
  * Description of the maneuver, for example: arrive or turn right.
  * @see https://developer.tomtom.com/routing-api/documentation/routing/calculate-route#maneuver-codes
+ * @group Route
+ * @category Types
  */
 export type Maneuver =
     | "ARRIVE"
@@ -51,6 +57,8 @@ export type Maneuver =
 
 /**
  * Type of the instruction, e.g., turn or change of road form.
+ * @group Route
+ * @category Types
  */
 export type InstructionType =
     | "TURN"
@@ -62,6 +70,8 @@ export type InstructionType =
 
 /**
  * A set of attributes describing a maneuver, e.g., "Turn right", "Keep left", "Take the ferry", "Take the motorway", "Arrive".
+ * @group Route
+ * @category Types
  */
 export type Instruction = {
     /**
@@ -170,7 +180,9 @@ export type Instruction = {
  * This groups a sequence of instruction elements which are related to each other.
  * * The sequence range is constrained with firstInstructionIndex and lastInstructionIndex.
  * * When human-readable text messages are requested for guidance (instructionType=text or tagged),
- * then the instructionGroup has a summary message returned when available.*
+ * then the instructionGroup has a summary message returned when available.
+ * @group Route
+ * @category Types
  */
 export type InstructionGroup = {
     /**
@@ -195,6 +207,8 @@ export type InstructionGroup = {
 
 /**
  * Contains guidance related elements. This field is present only when guidance was requested and is available.
+ * @group Route
+ * @category Types
  */
 export type Guidance = {
     /**

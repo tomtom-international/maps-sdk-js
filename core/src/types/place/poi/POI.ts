@@ -4,6 +4,8 @@ import { TimeZone } from "../../TimeZone";
 
 /**
  * Place of interest information.
+ * @group Place
+ * @category Types
  */
 export type POI = {
     name: string;
@@ -18,7 +20,10 @@ export type POI = {
     classifications?: Classification[];
     timeZone?: TimeZone;
 };
-
+/**
+ * @group Place
+ * @category Types
+ */
 export type RelatedPOI = {
     /**
      * Relation type between this POI and the main one which refers to it.

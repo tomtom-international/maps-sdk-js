@@ -1,3 +1,7 @@
+/**
+ * @group Place
+ * @category Types
+ */
 export type ConnectorType =
     | "StandardHouseholdCountrySpecific"
     | "IEC62196Type1"
@@ -14,6 +18,10 @@ export type ConnectorType =
     | "IEC60309DCWhite"
     | "Tesla";
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type Connector = {
     connectorType: ConnectorType;
     ratedPowerKW: number;

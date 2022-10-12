@@ -1,6 +1,8 @@
 /**
  * Common summary type for a route or route leg.
  * Contains departure/arrival times, lengths and durations.
+ * @group Route
+ * @category Types
  */
 export type Summary = {
     /**

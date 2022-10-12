@@ -2,7 +2,7 @@
   "entryPoints": ["."],
   "entryPointStrategy": "packages",
   "entryDocument": "home.md",
-  "out": "documentation/api-reference",
+  "out": "documentation/dev-portal/web/maps/documentation/api-reference",
   "readme": "none",
   "name": "GO-SDK-JS",
   "internalModule": "internal",
