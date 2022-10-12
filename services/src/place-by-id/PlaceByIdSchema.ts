@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-const placeByIdParamsMandatory = z.object({
+const placeByIdRequestMandatory = z.object({
     entityId: z.string()
 });
 
-const placeByIdParamsOptional = z
+const placeByIdRequestOptional = z
     .object({
         mapcodes: z.string().array(),
         view: z.string(),
@@ -14,4 +14,4 @@ const placeByIdParamsOptional = z
     })
     .partial();
 
-export const placeByIdRequestSchema = placeByIdParamsMandatory.merge(placeByIdParamsOptional);
+export const placeByIdRequestSchema = placeByIdRequestMandatory.merge(placeByIdRequestOptional);

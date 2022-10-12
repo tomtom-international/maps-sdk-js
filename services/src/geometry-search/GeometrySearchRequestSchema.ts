@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const geometrySearchMandatory = z.object({
+const geometrySearchRequestMandatory = z.object({
     query: z.string(),
     geometries: z.array(
         z
@@ -20,7 +20,7 @@ const geometrySearchMandatory = z.object({
     )
 });
 
-const geometrySearchOptional = z
+const geometrySearchRequestOptional = z
     .object({
         limit: z.number(),
         extendedPostalCodesFor: z.string().array(),
@@ -41,4 +41,4 @@ const geometrySearchOptional = z
     })
     .partial();
 
-export const geometrySearchRequestSchema = geometrySearchMandatory.merge(geometrySearchOptional);
+export const geometrySearchRequestSchema = geometrySearchRequestMandatory.merge(geometrySearchRequestOptional);

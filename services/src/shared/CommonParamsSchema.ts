@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CommonServiceParamsSchema = z
+export const CommonServiceRequestSchema = z
     .object({
         apiKey: z.string(),
         commonBaseURL: z.string(),

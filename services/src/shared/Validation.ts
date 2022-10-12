@@ -1,5 +1,5 @@
 import { ZodError, ZodIssue, ZodObject } from "zod";
-import { CommonServiceParamsSchema } from "./CommonParamsSchema";
+import { CommonServiceRequestSchema } from "./CommonParamsSchema";
 import { CommonServiceParams } from "./ServiceTypes";
 
 /**
@@ -24,7 +24,7 @@ export class ValidationError extends Error {
 export const validateRequestSchema = <T extends CommonServiceParams>(params: T, schema?: ZodObject<any>): T => {
     if (schema) {
         const validate = schema
-            .merge(CommonServiceParamsSchema)
+            .merge(CommonServiceRequestSchema)
             // Check if there is commonBaseURL or customServiceBaseURL set in data
             .refine(
                 (data) => "commonBaseURL" in data || "customServiceBaseURL" in data,
