@@ -1,7 +1,7 @@
 import geometrySearch from "../GeometrySearch";
 import { GeometrySDK } from "../types";
 
-describe("GeometrySearch Validation", () => {
+describe("GeometrySearch Schema Validation", () => {
     const geometries: GeometrySDK[] = [
         {
             type: "Polygon",
@@ -22,15 +22,17 @@ describe("GeometrySearch Validation", () => {
     ];
     test("it should fail when missing coordinates property", async () => {
         const query = "cafe";
-        const incorrectGeometry = [{ radius: 6000 }];
+        const incorrectGeometry = [{ type: "Circle", radius: 6000 }];
+
         // @ts-ignore
         await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
             message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/geometries/0",
-                    message: "must have required property 'coordinates'"
+                    code: "invalid_union",
+                    path: ["geometries", 0, "coordinates"],
+                    message: "Invalid input"
                 }
             ]
         });
@@ -45,8 +47,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/geometries/0",
-                    message: "must have required property 'type'"
+                    code: "invalid_type",
+                    expected: "string",
+                    received: "undefined",
+                    path: ["geometries", 0, "type"],
+                    message: "Required"
                 }
             ]
         });
@@ -59,8 +64,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    message: "must have required property 'geometries'",
-                    property: ""
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "undefined",
+                    path: ["geometries"],
+                    message: "Required"
                 }
             ]
         });
@@ -81,8 +89,9 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/geometries/0",
-                    message: "must have required property 'radius'"
+                    code: "custom",
+                    message: 'type: "Circle" must have radius property',
+                    path: ["geometries", 0]
                 }
             ]
         });
@@ -95,8 +104,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "",
-                    message: "must have required property 'query'"
+                    code: "invalid_type",
+                    expected: "string",
+                    received: "undefined",
+                    path: ["query"],
+                    message: "Required"
                 }
             ]
         });
@@ -111,8 +123,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "",
-                    message: "must have required property 'query'"
+                    code: "invalid_type",
+                    expected: "string",
+                    received: "undefined",
+                    path: ["query"],
+                    message: "Required"
                 }
             ]
         });
@@ -128,8 +143,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/mapcodes",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "string",
+                    path: ["mapcodes"],
+                    message: "Expected array, received string"
                 }
             ]
         });
@@ -138,15 +156,18 @@ describe("GeometrySearch Validation", () => {
     test("it should fail when view is not amongst the defined enums", async () => {
         const query = "POI";
         const view = "CH";
-
         //@ts-ignore
         await expect(geometrySearch({ query, geometries, view })).rejects.toMatchObject({
             message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/view",
-                    message: "must be equal to one of the allowed values"
+                    received: "CH",
+                    code: "invalid_enum_value",
+                    options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
+                    path: ["view"],
+                    message:
+                        "Invalid enum value. Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'CH'"
                 }
             ]
         });
@@ -162,8 +183,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/geographyType",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "string",
+                    path: ["geographyType"],
+                    message: "Expected array, received string"
                 }
             ]
         });
@@ -179,8 +203,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/indexes",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "string",
+                    path: ["indexes"],
+                    message: "Expected array, received string"
                 }
             ]
         });
@@ -196,8 +223,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/poiCategories",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "number",
+                    path: ["poiCategories"],
+                    message: "Expected array, received number"
                 }
             ]
         });
@@ -220,8 +250,18 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/poiCategories/0",
-                    message: "must be number"
+                    code: "invalid_type",
+                    expected: "number",
+                    received: "string",
+                    path: ["poiCategories", 0],
+                    message: "Expected number, received string"
+                },
+                {
+                    code: "invalid_type",
+                    expected: "number",
+                    received: "string",
+                    path: ["poiCategories", 1],
+                    message: "Expected number, received string"
                 }
             ]
         });
@@ -243,8 +283,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/poiBrands",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "string",
+                    path: ["poiBrands"],
+                    message: "Expected array, received string"
                 }
             ]
         });
@@ -266,8 +309,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/connectors",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "string",
+                    path: ["connectors"],
+                    message: "Expected array, received string"
                 }
             ]
         });
@@ -289,8 +335,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/fuels",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "string",
+                    path: ["fuels"],
+                    message: "Expected array, received string"
                 }
             ]
         });
@@ -312,8 +361,11 @@ describe("GeometrySearch Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    property: "/entityTypes",
-                    message: "must be array"
+                    code: "invalid_type",
+                    expected: "array",
+                    received: "string",
+                    path: ["entityTypes"],
+                    message: "Expected array, received string"
                 }
             ]
         });

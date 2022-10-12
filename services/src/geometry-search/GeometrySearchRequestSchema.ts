@@ -1,40 +1,44 @@
-import { JSONSchemaType } from "ajv";
-import { GeometrySearchParams } from "./types";
+import { z } from "zod";
 
-export const geometrySearchRequestSchema: JSONSchemaType<GeometrySearchParams> = {
-    type: "object",
-    required: ["query", "geometries"],
-    oneOf: [{ required: ["commonBaseURL"] }, { required: ["customServiceBaseURL"] }],
-    properties: {
-        apiKey: { type: "string", nullable: true },
-        commonBaseURL: { type: "string", nullable: true },
-        customServiceBaseURL: { type: "string", nullable: true },
-        language: { type: "string", nullable: true },
-        query: { type: "string" },
-        geometries: {
-            type: "array",
-            items: {
-                type: "object",
-                required: ["coordinates", "type"],
-                if: { properties: { type: { const: "Circle" } } },
-                then: { required: ["radius"], properties: { radius: { type: "number" } } }
-            }
-        },
-        limit: { type: "number", nullable: true, maximum: 100 },
-        extendedPostalCodesFor: { type: "array", nullable: true, items: { type: "string" } },
-        mapcodes: { type: "array", nullable: true, items: { type: "string" } },
-        view: { type: "string", nullable: true, enum: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"] },
-        geographyType: { type: "array", nullable: true, items: { type: "string" } },
-        indexes: { type: "array", items: { type: "string" }, nullable: true },
-        poiCategories: { type: "array", items: { type: "number" }, nullable: true },
-        poiBrands: { type: "array", items: { type: "string" }, nullable: true },
-        connectors: { type: "array", items: { type: "string" }, nullable: true },
-        openingHours: { type: "string", nullable: true },
-        fuels: { type: "array", items: { type: "string" }, nullable: true },
-        timeZone: { type: "string", nullable: true },
-        relatedPois: { type: "string", nullable: true },
-        minPowerKW: { type: "number", nullable: true },
-        maxPowerKW: { type: "number", nullable: true },
-        entityTypes: { type: "array", items: { type: "string" }, nullable: true }
-    }
-};
+const geometrySearchMandatory = z.object({
+    query: z.string(),
+    geometries: z.array(
+        z
+            .object({
+                type: z.string(),
+                coordinates: z.union([
+                    z.array(z.number()),
+                    z.array(z.array(z.number())),
+                    z.array(z.array(z.array(z.number())))
+                ]),
+                radius: z.number().optional()
+            })
+            .refine(
+                (data) => (data.type === "Circle" ? Boolean(data.radius) : true),
+                'type: "Circle" must have radius property'
+            )
+    )
+});
+
+const geometrySearchOptional = z
+    .object({
+        limit: z.number(),
+        extendedPostalCodesFor: z.string().array(),
+        mapcodes: z.string().array(),
+        view: z.enum(["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"]),
+        geographyType: z.string().array(),
+        indexes: z.string().array(),
+        poiCategories: z.number().array(),
+        poiBrands: z.string().array(),
+        connectors: z.string().array(),
+        fuels: z.string().array(),
+        openingHours: z.string(),
+        timeZone: z.string(),
+        relatedPois: z.string(),
+        minPowerKW: z.number(),
+        maxPowerKW: z.number(),
+        entityTypes: z.string().array()
+    })
+    .partial();
+
+export const geometrySearchRequestSchema = geometrySearchMandatory.merge(geometrySearchOptional);

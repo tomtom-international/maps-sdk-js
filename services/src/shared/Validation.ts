@@ -1,10 +1,6 @@
-import Ajv, { ErrorObject } from "ajv";
+import { ZodError, ZodIssue, ZodObject } from "zod";
+import { CommonServiceParamsSchema } from "./CommonParamsSchema";
 import { CommonServiceParams } from "./ServiceTypes";
-
-const ajv = new Ajv();
-
-export type AjvValidationErrors = ErrorObject<string, Record<string, any>, unknown>[];
-export type ValidationErrorResponse = { property: string; message: string | undefined }[];
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.
@@ -12,18 +8,11 @@ export type ValidationErrorResponse = { property: string; message: string | unde
  * @ignore
  */
 export class ValidationError extends Error {
-    errors: ValidationErrorResponse;
+    errors: ZodIssue[] | undefined;
 
-    constructor(message: string, errors: AjvValidationErrors | null | undefined) {
+    constructor(message: string, errors?: ZodError) {
         super(message);
-        this.errors = errors ? this.transformErrors(errors) : [];
-    }
-
-    private transformErrors(errors: AjvValidationErrors): ValidationErrorResponse {
-        return errors.map((error) => ({
-            property: error.instancePath,
-            message: error.message
-        }));
+        this.errors = errors && errors.errors;
     }
 }
 
@@ -32,11 +21,19 @@ export class ValidationError extends Error {
  * @param params
  * @param schema
  */
-export const validateRequestSchema = <T extends CommonServiceParams>(params: T, schema: any): T => {
+export const validateRequestSchema = <T extends CommonServiceParams>(params: T, schema?: ZodObject<any>): T => {
     if (schema) {
-        const validate = ajv.compile(schema);
-        if (!validate(params)) {
-            throw new ValidationError("Validation error", validate.errors);
+        const validate = schema
+            .merge(CommonServiceParamsSchema)
+            // Check if there is commonBaseURL or customServiceBaseURL set in data
+            .refine(
+                (data) => "commonBaseURL" in data || "customServiceBaseURL" in data,
+                "commonBaseURL or customServiceBaseURL is required"
+            )
+            .safeParse(params);
+
+        if (!validate.success) {
+            throw new ValidationError("Validation error", validate.error);
         }
     }
 

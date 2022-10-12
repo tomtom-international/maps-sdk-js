@@ -1,5 +1,4 @@
 import { GOSDKConfig } from "@anw/go-sdk-js/core";
-
 import { placeById } from "..";
 
 describe("Place By Id API", () => {
@@ -33,7 +32,15 @@ describe("Place By Id API", () => {
         ).rejects.toMatchObject({
             message: "Validation error",
             service: "PlaceById",
-            errors: [{ property: "/entityId", message: "must be string" }]
+            errors: [
+                {
+                    code: "invalid_type",
+                    expected: "string",
+                    received: "number",
+                    path: ["entityId"],
+                    message: "Expected string, received number"
+                }
+            ]
         });
     });
 
@@ -59,7 +66,15 @@ describe("Place By Id API", () => {
         ).rejects.toMatchObject({
             message: "Validation error",
             service: "PlaceById",
-            errors: [{ property: "", message: "must have required property 'entityId'" }]
+            errors: [
+                {
+                    code: "invalid_type",
+                    expected: "string",
+                    received: "undefined",
+                    path: ["entityId"],
+                    message: "Required"
+                }
+            ]
         });
     });
 });

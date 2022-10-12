@@ -62,7 +62,7 @@
     "entryPoint": "./index.ts"
   },
   "dependencies": {
-    "ajv": "^8.11.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "zod": "^3.19.1"
   }
 }

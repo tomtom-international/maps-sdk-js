@@ -1,8 +1,9 @@
 import { AxiosError } from "axios";
 import { ParseResponseError } from "./ServiceTypes";
 import { APICode, DefaultAPIResponseError } from "./types/APIResponseErrorTypes";
-import { ValidationError, ValidationErrorResponse } from "./Validation";
+import { ValidationError } from "./Validation";
 import { ServiceName } from "./types/ServicesTypes";
+import { ZodIssue } from "zod";
 
 /**
  * Main Error Class for the whole SDK to help with error handling.
@@ -14,7 +15,7 @@ import { ServiceName } from "./types/ServicesTypes";
  * @category
  */
 export class SDKError extends Error {
-    constructor(message: string, private service: string, private errors?: ValidationErrorResponse) {
+    constructor(message: string, private service: string, private errors?: ZodIssue[]) {
         super(message);
 
         if (Error.captureStackTrace) {
