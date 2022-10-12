@@ -79,33 +79,6 @@ describe("Geocoding integration tests", () => {
     });
 
     test("Geocoding with all parameters sent", async () => {
-        geocode({
-            query: "amsterdam",
-            typeahead: true,
-            limit: 15,
-            offset: 3,
-            position: [4.81063, 51.85925],
-            countries: [],
-            boundingBox: {
-                type: "Polygon",
-                coordinates: [
-                    [
-                        [5.16905, 52.44009],
-                        [5.16957, 52.44009],
-                        [5.16957, 51.85925],
-                        [5.16905, 51.85925],
-                        [5.16905, 52.44009]
-                    ]
-                ]
-            } as Polygon,
-            extendedPostalCodesFor: ["Addr", "Str", "Geo"],
-            mapcodes: ["International"],
-            view: "MA",
-            geographyTypes: ["Municipality", "MunicipalitySubdivision"],
-            language: "en-GB",
-            radiusMeters: 1000000
-        }).catch((e) => console.log(e.errors));
-
         const result = await geocode({
             query: "amsterdam",
             typeahead: true,
