@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { hasLngLatSchema } from "../shared/GeometriesSchema";
 
 const geocodingRequestMandatory = z.object({
     query: z.string()
@@ -9,7 +10,7 @@ const geocodingRequestOptional = z
         typeahead: z.boolean(),
         limit: z.number().max(100),
         offset: z.number().max(1900),
-        position: z.any().array(),
+        position: hasLngLatSchema,
         countries: z.string().array(),
         radiusMeters: z.number(),
         boundingBox: z.any(),

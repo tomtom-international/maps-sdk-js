@@ -1,23 +1,9 @@
 import { z } from "zod";
+import { geometrySchema } from "../shared/GeometriesSchema";
 
 const geometrySearchRequestMandatory = z.object({
     query: z.string(),
-    geometries: z.array(
-        z
-            .object({
-                type: z.string(),
-                coordinates: z.union([
-                    z.array(z.number()),
-                    z.array(z.array(z.number())),
-                    z.array(z.array(z.array(z.number())))
-                ]),
-                radius: z.number().optional()
-            })
-            .refine(
-                (data) => (data.type === "Circle" ? Boolean(data.radius) : true),
-                'type: "Circle" must have radius property'
-            )
-    )
+    geometries: z.array(geometrySchema)
 });
 
 const geometrySearchRequestOptional = z
