@@ -10,7 +10,6 @@ describe("Geocoding schema validation", () => {
             view: "MAA" // Invalid value, it should be of type View
         };
 
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -33,7 +32,6 @@ describe("Geocoding schema validation", () => {
             typeahead: true,
             limit: 1500 // Invalid value, limit <= 100
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -55,7 +53,6 @@ describe("Geocoding schema validation", () => {
             query: "amsterdam",
             offset: 1901 // Invalid value, offset <= 1900
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -78,7 +75,6 @@ describe("Geocoding schema validation", () => {
             // @ts-ignore
             position: "91,51.85925"
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -98,7 +94,6 @@ describe("Geocoding schema validation", () => {
             // @ts-ignore
             countries: "NLD"
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -117,7 +112,6 @@ describe("Geocoding schema validation", () => {
         const invalidParams: GeocodingParams = {
             limit: 100
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -136,7 +130,6 @@ describe("Geocoding schema validation", () => {
             // @ts-ignore
             query: 33601
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -168,7 +161,6 @@ describe("Geocoding schema validation", () => {
             // @ts-ignore
             radiusMeters: "1000"
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -188,7 +180,6 @@ describe("Geocoding schema validation", () => {
             // @ts-ignore
             extendedPostalCodesFor: "Addr"
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -208,7 +199,6 @@ describe("Geocoding schema validation", () => {
             // @ts-ignore
             mapcodes: "Local"
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
@@ -228,7 +218,6 @@ describe("Geocoding schema validation", () => {
             // @ts-ignore
             geographyTypes: "Municipality"
         };
-        await expect(geocode(invalidParams)).rejects.toThrow("Validation error");
         await expect(geocode(invalidParams)).rejects.toMatchObject({
             message: "Validation error",
             service: "Geocode",
