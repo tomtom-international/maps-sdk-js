@@ -22,7 +22,6 @@ describe("Validation", () => {
         // @ts-ignore
         const validationResult = () => validateRequestSchema(params, schema);
 
-        expect(validationResult).toThrow(ValidationError);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
@@ -58,7 +57,6 @@ describe("Validation", () => {
         // @ts-ignore
         const validationResult = () => validateRequestSchema(params, schema);
 
-        expect(validationResult).toThrow(ValidationError);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
