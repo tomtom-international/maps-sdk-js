@@ -8,7 +8,8 @@ export const geometrySchema = z
             z.array(z.array(z.number())),
             z.array(z.array(z.array(z.number())))
         ]),
-        radius: z.number().optional()
+        radius: z.number().optional(),
+        radiusMeters: z.number().optional()
     })
     .refine(
         (data) => (data.type === "Circle" ? Boolean(data.radius) : true),

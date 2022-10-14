@@ -6,6 +6,7 @@ import { parseCalculateRouteResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
 import { CalculateRouteResponseAPI } from "./types/APITypes";
 import { routingResponseErrorParser } from "./RoutingResponseErrorParser";
+import { calculateRouteRequestSchema } from "./CalculateRouteRequestSchema";
 
 /**
  * @group Calculate Route
@@ -26,5 +27,6 @@ export const calculateRouteTemplate: CalculateRouteTemplate = {
     buildRequest: buildCalculateRouteRequest,
     sendRequest: getJson,
     parseResponse: parseCalculateRouteResponse,
-    parseResponseError: routingResponseErrorParser
+    parseResponseError: routingResponseErrorParser,
+    validateRequestSchema: calculateRouteRequestSchema
 };

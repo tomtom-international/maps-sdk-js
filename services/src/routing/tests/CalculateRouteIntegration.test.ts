@@ -38,6 +38,7 @@ describe("Calculate route integration tests", () => {
                 "tollVignette",
                 "urban"
             ];
+
             const result = await calculateRoute({
                 locations: [
                     [7.675106, 46.490793],
