@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.44](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.43...v0.1.44) (2022-10-17)
+
+
+### Features
+
+* add veracode pipeline ([03f0895](https://github.com/tomtom-international/go-sdk-js/commit/03f089513d61b967e89b026ab6dc620e9c1b8f9d))
+* calc latest version ([30fac89](https://github.com/tomtom-international/go-sdk-js/commit/30fac8961fdef9d4d9ad47e6f8cbf1a0357d2113))
+* run veracode scan after build workflow is successful ([a09cc3e](https://github.com/tomtom-international/go-sdk-js/commit/a09cc3e45dccd9abf8763b6ba1257ff1e05b14b9))
+
+
+### Bug Fixes
+
+* different name for PR ([9d57398](https://github.com/tomtom-international/go-sdk-js/commit/9d5739865a8af63f5ae641aa5681db40e7548339))
+
 ### [0.1.43](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.42...v0.1.43) (2022-10-11)
 
 
