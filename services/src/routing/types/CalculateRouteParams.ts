@@ -95,6 +95,14 @@ export type ThrillingParams = {
     windingness?: LNH;
 };
 
+export const instructionsTypes = ["coded", "text", "tagged"] as const;
+/**
+ * Basic coded/text/tagged values.
+ * @group Calculate Route
+ * @category Types
+ */
+export type InstructionsTypes = typeof instructionsTypes[number];
+
 /**
  * @group Calculate Route
  * @category Types
@@ -153,7 +161,7 @@ export type RouteOptionalParams = {
      * If alternative routes are requested, instructions will be generated for each route returned.
      * @default None
      */
-    instructionsType?: "coded" | "text" | "tagged";
+    instructionsType?: InstructionsTypes;
 
     /**
      * The number of desired alternative routes to be calculated.

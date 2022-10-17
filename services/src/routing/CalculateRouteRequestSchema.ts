@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { geometrySchema, hasLngLatSchema } from "../shared/GeometriesSchema";
+import { instructionsTypes } from "./types/CalculateRouteParams";
 import { vehicleParametersSchema } from "./VehicleSchema";
 
 const calculateRouteRequestMandatory = z.object({
@@ -11,12 +12,30 @@ const calculateRouteRequestOptional = z
         avoid: z.string().array(),
         computeAdditionalTravelTimeFor: z.enum(["none", "all"]),
         considerTraffic: z.boolean(),
-        currentHeading: z.number().min(0).max(359),
-        instructionsType: z.enum(["coded", "text", "tagged"]),
+        currentHeading: z.number().min(0).max(359.5),
+        instructionsType: z.enum(instructionsTypes),
         maxAlternatives: z.number().min(1).max(5),
         routeRepresentation: z.enum(["polyline", "summaryOnly"]),
         routeType: z.string(),
-        sectionTypes: z.union([z.literal("all"), z.string().array()]),
+        sectionTypes: z.union([
+            z.literal("all"),
+            z.array(
+                z.enum([
+                    "carTrain",
+                    "ferry",
+                    "tunnel",
+                    "motorway",
+                    "pedestrian",
+                    "tollRoad",
+                    "tollVignette",
+                    "country",
+                    "travelMode",
+                    "traffic",
+                    "urban",
+                    "unpaved"
+                ])
+            )
+        ]),
         thrillingParams: z.object({
             hilliness: z.enum(["low", "normal", "high"]).optional(),
             windingness: z.enum(["low", "normal", "high"]).optional()
