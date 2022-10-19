@@ -1,11 +1,11 @@
 import revgeocode from "../ReverseGeocoding";
-import {ReverseGeocodingParams} from "../types/ReverseGeocodingParams";
+import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 
 describe("ReverseGeocoding schema validation", () => {
     test("it should fail when position is an invalid param - case 1", async () => {
         const invalidParams: ReverseGeocodingParams = {
             // @ts-ignore
-            position: {lon: -122.420679, lat: 37.772537}
+            position: { lon: -122.420679, lat: 37.772537 }
         };
 
         await expect(revgeocode(invalidParams)).rejects.toMatchObject({
