@@ -1,6 +1,7 @@
 export * from "./Geometry";
 export * from "./place/Place";
 export * from "./place/PlaceDataSources";
+export * from "./place/poi/ChargingStation";
 export * from "./place/poi/Connector";
 export * from "./place/poi/Category";
 export * from "./place/poi/Brand";
