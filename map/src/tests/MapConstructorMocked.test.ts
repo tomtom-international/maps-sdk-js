@@ -1,6 +1,6 @@
 import { Map } from "maplibre-gl";
+import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { GOSDKMap } from "../GOSDKMap";
-import { GOSDKConfig } from "core";
 
 jest.mock("maplibre-gl", () => ({
     Map: jest.fn()
