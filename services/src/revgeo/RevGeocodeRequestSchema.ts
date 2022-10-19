@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { views } from "core";
 
 const revGeocodeRequestMandatory = z.object({
     position: z.array(z.any()).nonempty()
@@ -16,7 +17,7 @@ const revGeocodeRequestOptional = z
         returnRoadUse: z.boolean(),
         returnSpeedLimit: z.boolean(),
         roadUses: z.string().array(),
-        view: z.enum(["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"])
+        view: z.enum(views)
     })
     .partial();
 

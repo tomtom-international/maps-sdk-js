@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { views } from "core";
 
 const placeByIdRequestMandatory = z.object({
     entityId: z.string()
@@ -7,7 +8,7 @@ const placeByIdRequestMandatory = z.object({
 const placeByIdRequestOptional = z
     .object({
         mapcodes: z.string().array(),
-        view: z.string(),
+        view: z.enum(views),
         openingHours: z.string(),
         timeZone: z.string(),
         relatedPois: z.string()

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { geometrySchema } from "../shared/GeometriesSchema";
+import { views } from "core";
 
 const geometrySearchRequestMandatory = z.object({
     query: z.string(),
@@ -11,7 +12,7 @@ const geometrySearchRequestOptional = z
         limit: z.number(),
         extendedPostalCodesFor: z.string().array(),
         mapcodes: z.string().array(),
-        view: z.enum(["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"]),
+        view: z.enum(views),
         geographyType: z.string().array(),
         indexes: z.string().array(),
         poiCategories: z.number().array(),

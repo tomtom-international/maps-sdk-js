@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { hasLngLatSchema } from "../shared/GeometriesSchema";
+import { views } from "core";
 
 const geocodingRequestMandatory = z.object({
     query: z.string()
@@ -16,7 +17,7 @@ const geocodingRequestOptional = z
         boundingBox: z.any(),
         extendedPostalCodesFor: z.string().array(),
         mapcodes: z.string().array(),
-        view: z.enum(["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"]),
+        view: z.enum(views),
         geographyTypes: z.string().array()
     })
     .partial();
