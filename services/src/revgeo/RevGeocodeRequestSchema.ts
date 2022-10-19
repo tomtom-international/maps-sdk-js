@@ -16,7 +16,7 @@ const revGeocodeRequestOptional = z
         returnRoadUse: z.boolean(),
         returnSpeedLimit: z.boolean(),
         roadUses: z.string().array(),
-        view: z.string()
+        view: z.enum(["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"])
     })
     .partial();
 
