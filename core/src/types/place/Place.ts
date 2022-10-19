@@ -126,6 +126,13 @@ export type PlaceType = "POI" | "Street" | "Geography" | "Point Address" | "Addr
  */
 export type AddressProperties = {
     /**
+     * An address line formatted according to formatting
+     * rules of a result's country of origin, or in case
+     * of countries its full country name.
+     */
+    freeformAddress: string;
+
+    /**
      * The building number on the street.
      */
     streetNumber?: string;
@@ -184,13 +191,6 @@ export type AddressProperties = {
      * {@link https://gist.github.com/tadast/8827699 ISO 3166-1 alpha-3} country code
      */
     countryCodeISO3?: string;
-
-    /**
-     * An address line formatted according to formatting
-     * rules of a result's country of origin, or in case
-     * of countries its full country name.
-     */
-    freeformAddress?: string;
 
     /**
      * A full name of a first level of country administrative hierarchy.
@@ -306,7 +306,7 @@ export type SearchPlaceProps = CommonPlaceProps & {
  * @group Place
  * @category Types
  */
-export type Place<P extends CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & {
+export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & {
     /**
      * Identifier for this place.
      * https://tools.ietf.org/html/rfc7946#section-3.2.
@@ -318,4 +318,6 @@ export type Place<P extends CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & 
  * @group Place
  * @category Types
  */
-export type Places<P extends CommonPlaceProps> = FeatureCollection<Point, P>;
+export type Places<P extends CommonPlaceProps = CommonPlaceProps> = Omit<FeatureCollection<Point, P>, "features"> & {
+    features: Place<P>[];
+};

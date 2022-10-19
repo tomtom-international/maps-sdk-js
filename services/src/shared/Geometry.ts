@@ -10,6 +10,12 @@ export const csvLatLngToPosition = (csv: string): Position => {
     return [Number(splitLatLng[1]), Number(splitLatLng[0])];
 };
 
+/**
+ * @ignore
+ * @param position
+ */
+export const positionToCSVLatLon = (position: Position): string => `${position[1]},${position[0]}`;
+
 const hasTopLeftPoint = (bbox: BoundingBoxAPI): bbox is BoundingBoxTopLeftAPI => {
     return (<BoundingBoxTopLeftAPI>bbox).topLeftPoint !== undefined;
 };

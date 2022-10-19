@@ -1,5 +1,5 @@
 import isNil from "lodash/isNil";
-import { AbstractMapModule, filterLayersBySource, goSDKSourceFromRuntime, SourceWithLayers } from "../core";
+import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 import { VectorTilePOIsConfig } from ".";
 
 export const poiSourceID = "poiTiles";
@@ -9,33 +9,29 @@ export const poiSourceID = "poiTiles";
  * * Refers to the POIs layer from the vector map.
  */
 export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
-    private poi?: SourceWithLayers;
+    private poi?: StyleSourceWithLayers;
 
     protected init(config?: VectorTilePOIsConfig): void {
         const poiRuntimeSource = this.mapLibreMap.getSource(poiSourceID);
         if (poiRuntimeSource) {
-            this.poi = new SourceWithLayers(
-                this.mapLibreMap,
-                goSDKSourceFromRuntime(poiRuntimeSource),
-                filterLayersBySource(this.mapLibreMap, poiSourceID)
-            );
+            this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
             if (config) {
                 this.applyConfig(config);
             }
         }
     }
 
-    public applyConfig(config: VectorTilePOIsConfig): void {
+    applyConfig(config: VectorTilePOIsConfig): void {
         if (!isNil(config.visible)) {
             this.setVisible(config.visible);
         }
     }
 
-    public isVisible(): boolean {
+    isVisible(): boolean {
         return !!this.poi?.isAnyLayerVisible();
     }
 
-    public setVisible(visible: boolean): void {
+    setVisible(visible: boolean): void {
         if (this.poi) {
             this.poi.setAllLayersVisible(visible);
         } else {
@@ -46,7 +42,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         }
     }
 
-    public toggleVisibility(): void {
+    toggleVisibility(): void {
         this.setVisible(!this.isVisible());
     }
 }

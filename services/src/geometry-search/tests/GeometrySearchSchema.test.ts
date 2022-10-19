@@ -7,16 +7,16 @@ describe("GeometrySearch Schema Validation", () => {
             type: "Polygon",
             coordinates: [
                 [
-                    [37.7524152343544, -122.43576049804686],
-                    [37.70660472542312, -122.4330139160156],
-                    [37.712059855877314, -122.36434936523438],
-                    [37.75350561243041, -122.37396240234374]
+                    [-122.43576, 37.75241],
+                    [-122.433013, 37.7066],
+                    [-122.36434, 37.71205],
+                    [-122.373962, 37.7535]
                 ]
             ]
         },
         {
             type: "Circle",
-            coordinates: [37.71205, -121.36434],
+            coordinates: [-121.36434, 37.71205],
             radius: 6000
         }
     ];
@@ -79,7 +79,7 @@ describe("GeometrySearch Schema Validation", () => {
         const incorrectGeometry = [
             {
                 type: "Circle",
-                coordinates: [37.71205, -121.36434]
+                coordinates: [-121.36434, 37.71205]
             }
         ];
 
@@ -115,8 +115,7 @@ describe("GeometrySearch Schema Validation", () => {
     });
 
     test("it should fail when query is not of type string", async () => {
-        let restaurant;
-        const query = restaurant;
+        const query = undefined;
         // @ts-ignore
         await expect(geometrySearch({ query, geometries })).rejects.toMatchObject({
             message: "Validation error",

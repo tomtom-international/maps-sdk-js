@@ -48,11 +48,14 @@ export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RES
     sendRequest: (request: REQUEST) => Promise<API_RESPONSE>;
 
     /**
-     * Parses the API response before returning it to the caller.
+     * Parses the API successful response before returning it to the caller.
      * @param apiResponse The API response to parse.
      * @param params The call parameters, if applicable for this service.
      */
     parseResponse: (apiResponse: API_RESPONSE, params: PARAMS) => RESPONSE;
 
+    /**
+     * Parses an API response error before throwing it back to the caller.
+     */
     parseResponseError?: ParseResponseError<any>;
 };

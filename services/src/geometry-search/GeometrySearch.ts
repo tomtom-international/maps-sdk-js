@@ -6,7 +6,7 @@ import { callService } from "../shared/ServiceTemplate";
  *
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/search-api/documentation/geocoding-service/geocode
+ * @see https://developer.tomtom.com/search-api/documentation/search-service/geometry-search
  */
 export const geometrySearch = async (
     params: GeometrySearchParams,

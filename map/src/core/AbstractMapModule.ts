@@ -16,10 +16,14 @@ export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
      */
     constructor(goSDKMap: GOSDKMap, config?: CFG) {
         this.mapLibreMap = goSDKMap.mapLibreMap;
+        this.callWhenMapReady(() => this.init(config));
+    }
+
+    protected callWhenMapReady(func: () => void) {
         if (this.mapLibreMap.isStyleLoaded()) {
-            this.init(config);
+            func();
         } else {
-            this.mapLibreMap.once("styledata", () => this.init(config));
+            this.mapLibreMap.once("styledata", () => func());
         }
     }
 

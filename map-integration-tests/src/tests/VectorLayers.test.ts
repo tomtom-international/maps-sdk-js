@@ -1,4 +1,4 @@
-import { MapIntegrationTestEnv } from "./MapIntegrationTestEnv";
+import { getNumVisibleLayersBySource, MapIntegrationTestEnv, waitForMapToLoad } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
 describe("Map vector layer tests", () => {
@@ -17,15 +17,15 @@ describe("Map vector layer tests", () => {
     };
 
     const assertTrafficVisibility = async (incidentsVisible: boolean, flowVisible: boolean) => {
-        assertNumLayers(await mapEnv.getNumVisibleLayersBySource("vectorTilesIncidents"), incidentsVisible);
-        assertNumLayers(await mapEnv.getNumVisibleLayersBySource("vectorTilesFlow"), flowVisible);
+        assertNumLayers(await getNumVisibleLayersBySource("vectorTilesIncidents"), incidentsVisible);
+        assertNumLayers(await getNumVisibleLayersBySource("vectorTilesFlow"), flowVisible);
     };
 
     const assertPOIsVisibility = async (poisVisible: boolean) =>
-        assertNumLayers(await mapEnv.getNumVisibleLayersBySource("poiTiles"), poisVisible);
+        assertNumLayers(await getNumVisibleLayersBySource("poiTiles"), poisVisible);
 
     const assertHillshadeVisibility = async (hillshadeVisible: boolean) =>
-        assertNumLayers(await mapEnv.getNumVisibleLayersBySource("hillshade"), hillshadeVisible);
+        assertNumLayers(await getNumVisibleLayersBySource("hillshade"), hillshadeVisible);
 
     // eslint-disable-next-line jest/expect-expect
     test("Vector tiles traffic/pois/hillshade visibility", async () => {
@@ -43,7 +43,7 @@ describe("Map vector layer tests", () => {
             goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap, { visible: false });
             goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap, { visible: false });
         });
-        await mapEnv.waitForMapToLoad();
+        await waitForMapToLoad();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
@@ -82,5 +82,7 @@ describe("Map vector layer tests", () => {
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

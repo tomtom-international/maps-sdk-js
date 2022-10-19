@@ -3,8 +3,9 @@
  * @module
  */
 export * from "./src/core";
+export * from "./src/init/types/MapInit";
 export * from "./src/GOSDKMap";
 export * from "./src/hillshade";
-export * from "./src/places";
+export * from "./src/pois";
 export * from "./src/traffic";
-export * from "./src/init/types/MapInit";
+export * from "./src/places";

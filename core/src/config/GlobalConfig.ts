@@ -49,7 +49,7 @@ export const defaultConfig: GlobalConfig = {
  * @category Types
  */
 export class GOSDKConfig {
-    public static readonly instance = new GOSDKConfig();
+    static readonly instance = new GOSDKConfig();
     private config: GlobalConfig = { ...defaultConfig };
 
     private constructor() {
@@ -60,21 +60,21 @@ export class GOSDKConfig {
      * Puts the content of the given config into this one, merging the two. The given config properties have priority.
      * @param config The config to merge into this one.
      */
-    public put(config: Partial<GlobalConfig>) {
+    put(config: Partial<GlobalConfig>) {
         this.config = { ...this.config, ...config };
     }
 
     /**
      * Reset configuration to the default values
      */
-    public reset() {
+    reset() {
         this.config = { ...defaultConfig };
     }
 
     /**
      * Get configuration object
      */
-    public get() {
+    get() {
         return this.config;
     }
 }

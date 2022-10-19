@@ -8,7 +8,7 @@ import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
  * The map object displays a live map on a web application.
  */
 export class GOSDKMap {
-    public readonly mapLibreMap: Map;
+    readonly mapLibreMap: Map;
     private goSDKParams: GOSDKMapParams;
 
     /**
@@ -21,8 +21,8 @@ export class GOSDKMap {
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
     }
 
-    public setStyle(style: StyleInput) {
+    setStyle = (style: StyleInput): void => {
         this.goSDKParams = { ...this.goSDKParams, style };
         this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
-    }
+    };
 }

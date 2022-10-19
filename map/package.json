@@ -55,6 +55,6 @@
     "entryPoint": "./index.ts"
   },
   "dependencies": {
-    "maplibre-gl": "^2.4.0"
+    "maplibre-gl": "^3.0.0-pre.1"
   }
 }

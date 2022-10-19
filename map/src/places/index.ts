@@ -1,2 +1,2 @@
-export * from "./types/VectorTilePOIsConfig";
-export * from "./VectorTilePOIs";
+export * from "./types/DisplayProps";
+export * from "./GeoJSONPlaces";

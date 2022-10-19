@@ -1,6 +1,51 @@
-import { LayerSpecification, Map } from "maplibre-gl";
+import {
+    GeoJSONSource,
+    GeoJSONSourceSpecification,
+    LayerSpecification,
+    Map,
+    Source,
+    SourceSpecification
+} from "maplibre-gl";
 import { GOSDKSource } from "./GOSDKSource";
-import { GOSDKLayerSpec, LayerSpecFilter, LayerSpecWithSource } from "./types/GOSDKLayer";
+import {
+    LayerSpecFilter,
+    LayerSpecWithSource,
+    ToBeAddedLayerSpec,
+    ToBeAddedLayerSpecWithoutSource
+} from "./types/GOSDKLayerSpecs";
+import { FeatureCollection } from "geojson";
+
+/**
+ * Contains a source and the layers to render its data.
+ * @ignore
+ */
+export abstract class AbstractSourceWithLayers<
+    SOURCE_SPEC extends SourceSpecification = SourceSpecification,
+    RUNTIME_SOURCE extends Source = Source,
+    LAYER_SPEC extends LayerSpecification = LayerSpecification
+> {
+    constructor(
+        readonly map: Map,
+        readonly source: GOSDKSource<SOURCE_SPEC, RUNTIME_SOURCE>,
+        readonly layerSpecs: LAYER_SPEC[]
+    ) {}
+
+    private getLayerSpecs(filter?: LayerSpecFilter) {
+        return filter ? this.layerSpecs.filter(filter) : this.layerSpecs;
+    }
+
+    isAnyLayerVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
+        return this.getLayerSpecs(filter).some(
+            (layer) => this.map.getLayoutProperty(layer.id, "visibility") !== "none"
+        );
+    }
+
+    setAllLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {
+        for (const layerSpec of this.getLayerSpecs(filter)) {
+            this.map.setLayoutProperty(layerSpec.id, "visibility", visible ? "visible" : "none");
+        }
+    }
+}
 
 /**
  * @ignore
@@ -12,39 +57,79 @@ export const filterLayersBySource = (loadedMap: Map, sourceID: string): LayerSpe
 };
 
 /**
- * Contains a source and the layers to render its data.
- * @ignore
+ * Source with layers which are coming from the downloaded TT map style.
+ * * Examples are parts of the base map, traffic, pois, and hillshade.
  */
-export class SourceWithLayers<S extends GOSDKSource = GOSDKSource> {
-    readonly layerSpecs: LayerSpecification[];
+export class StyleSourceWithLayers<
+    SOURCE_SPEC extends SourceSpecification = SourceSpecification,
+    RUNTIME_SOURCE extends Source = Source
+> extends AbstractSourceWithLayers<SourceSpecification, RUNTIME_SOURCE> {
+    constructor(map: Map, runtimeSource: RUNTIME_SOURCE) {
+        super(
+            map,
+            new GOSDKSource<SOURCE_SPEC, RUNTIME_SOURCE>(
+                runtimeSource.id,
+                map.getStyle().sources[runtimeSource.id] as SOURCE_SPEC,
+                runtimeSource
+            ),
+            filterLayersBySource(map, runtimeSource.id)
+        );
+    }
+}
 
-    constructor(readonly map: Map, readonly source: S, layerSpecs: GOSDKLayerSpec[]) {
-        // We assign the source ID to the layers here:
-        this.layerSpecs = layerSpecs.map((layerSpec) => ({ ...layerSpec, source: source.id } as LayerSpecification));
+/**
+ * Source with layers which originally is not in the map style but it's to be added after the map is initialized.
+ */
+export class AddedSourceWithLayers<
+    SOURCE_SPEC extends SourceSpecification = SourceSpecification,
+    RUNTIME_SOURCE extends Source = Source
+> extends AbstractSourceWithLayers<SOURCE_SPEC, RUNTIME_SOURCE, ToBeAddedLayerSpec> {
+    constructor(map: Map, sourceID: string, sourceSpec: SOURCE_SPEC, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
+        super(
+            map,
+            new GOSDKSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceID, sourceSpec),
+            // We ensure the source ID is assigned to the layers:
+            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID } as ToBeAddedLayerSpec))
+        );
     }
 
-    public ensureAddedToMap = (beforeId?: string): void => {
+    ensureAddedToMap(): void {
         this.source.ensureAddedToMap(this.map);
         for (const layerSpec of this.layerSpecs) {
             if (!this.map.getLayer(layerSpec.id)) {
-                this.map.addLayer(layerSpec, beforeId);
+                this.map.addLayer(layerSpec, layerSpec.beforeID);
             }
         }
-    };
+    }
 
-    public ensureAddedToMapWithVisibility = (visible: boolean, beforeId?: string): void => {
-        this.ensureAddedToMap(beforeId);
+    ensureAddedToMapWithVisibility(visible: boolean): void {
+        this.ensureAddedToMap();
         this.setAllLayersVisible(visible);
-    };
+    }
+}
 
-    private getLayerSpecs = (filter?: LayerSpecFilter) => (filter ? this.layerSpecs.filter(filter) : this.layerSpecs);
+const emptyFeatureCollection: FeatureCollection = {
+    type: "FeatureCollection",
+    features: []
+};
 
-    public isAnyLayerVisible = (filter?: (layerSpec: LayerSpecification) => boolean): boolean =>
-        this.getLayerSpecs(filter).some((layer) => this.map.getLayoutProperty(layer.id, "visibility") !== "none");
+/**
+ * @ignore
+ */
+export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedSourceWithLayers<
+    GeoJSONSourceSpecification,
+    GeoJSONSource
+> {
+    constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
+        super(map, sourceID, { type: "geojson", data: emptyFeatureCollection }, layerSpecs);
+    }
 
-    public setAllLayersVisible = (visible: boolean, filter?: LayerSpecFilter): void => {
-        for (const layerSpec of this.getLayerSpecs(filter)) {
-            this.map.setLayoutProperty(layerSpec.id, "visibility", visible ? "visible" : "none");
-        }
-    };
+    show(featureCollection: T): void {
+        this.source.runtimeSource?.setData(featureCollection);
+        this.setAllLayersVisible(!!featureCollection?.features?.length);
+    }
+
+    clear(): void {
+        this.show(emptyFeatureCollection as T);
+    }
 }

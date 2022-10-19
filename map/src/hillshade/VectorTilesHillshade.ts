@@ -1,6 +1,6 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
-import { AbstractMapModule, filterLayersBySource, goSDKSourceFromRuntime, SourceWithLayers } from "../core";
+import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 
 export const hillshadeSourceID = "hillshade";
 
@@ -9,30 +9,25 @@ export const hillshadeSourceID = "hillshade";
  * * Hillshade refers to the semi-transparent terrain layer.
  */
 export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshadeConfig> {
-    private hillshade?: SourceWithLayers;
+    private hillshade?: StyleSourceWithLayers;
 
     protected init(config?: VectorTilesHillshadeConfig): void {
         const hillshadeSource = this.mapLibreMap.getSource(hillshadeSourceID);
         if (hillshadeSource) {
-            this.hillshade = new SourceWithLayers(
-                this.mapLibreMap,
-                goSDKSourceFromRuntime(hillshadeSource),
-                filterLayersBySource(this.mapLibreMap, hillshadeSourceID)
-            );
-
+            this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
             if (config) {
                 this.applyConfig(config);
             }
         }
     }
 
-    public applyConfig(config: VectorTilesHillshadeConfig): void {
+    applyConfig(config: VectorTilesHillshadeConfig): void {
         if (!isNil(config.visible)) {
             this.setVisible(config.visible);
         }
     }
 
-    public setVisible(visible: boolean): void {
+    setVisible(visible: boolean): void {
         if (this.hillshade) {
             this.hillshade.setAllLayersVisible(visible);
         } else {
@@ -43,11 +38,11 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
         }
     }
 
-    public isVisible(): boolean {
+    isVisible(): boolean {
         return !!this.hillshade?.isAnyLayerVisible();
     }
 
-    public toggleVisibility(): void {
+    toggleVisibility(): void {
         this.setVisible(!this.isVisible());
     }
 }

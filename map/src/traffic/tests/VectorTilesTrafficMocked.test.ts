@@ -15,7 +15,9 @@ describe("Vector tiles traffic module tests", () => {
                     .fn()
                     .mockImplementationOnce(() => incidentsSource)
                     .mockImplementationOnce(() => flowSource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}] })),
+                getStyle: jest
+                    .fn()
+                    .mockImplementation(() => ({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } })),
                 isStyleLoaded: jest.fn().mockImplementation(() => true)
             } as unknown as Map
         } as GOSDKMap;
@@ -52,7 +54,9 @@ describe("Vector tiles traffic module tests", () => {
                     .fn()
                     .mockImplementationOnce(() => incidentsSource)
                     .mockImplementationOnce(() => undefined),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}] })),
+                getStyle: jest
+                    .fn()
+                    .mockImplementation(() => ({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } })),
                 isStyleLoaded: jest.fn().mockImplementation(() => true)
             } as unknown as Map
         } as GOSDKMap;

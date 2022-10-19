@@ -1,11 +1,5 @@
 import isNil from "lodash/isNil";
-import {
-    AbstractMapModule,
-    filterLayersBySource,
-    goSDKSourceFromRuntime,
-    LayerSpecFilter,
-    SourceWithLayers
-} from "../core";
+import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers } from "../core";
 import { VectorTilesTrafficConfig } from ".";
 
 export const incidentsSourceID = "vectorTilesIncidents";
@@ -16,26 +10,18 @@ export const flowSourceID = "vectorTilesFlow";
  * * Controls both incidents and flow vector traffic sources and layers.
  */
 export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConfig> {
-    private incidents?: SourceWithLayers;
-    private flow?: SourceWithLayers;
+    private incidents?: StyleSourceWithLayers;
+    private flow?: StyleSourceWithLayers;
 
     protected init(config?: VectorTilesTrafficConfig): void {
         const incidentsRuntimeSource = this.mapLibreMap.getSource(incidentsSourceID);
         if (incidentsRuntimeSource) {
-            this.incidents = new SourceWithLayers(
-                this.mapLibreMap,
-                goSDKSourceFromRuntime(incidentsRuntimeSource),
-                filterLayersBySource(this.mapLibreMap, incidentsSourceID)
-            );
+            this.incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
         }
 
         const flowRuntimeSource = this.mapLibreMap.getSource(flowSourceID);
         if (flowRuntimeSource) {
-            this.flow = new SourceWithLayers(
-                this.mapLibreMap,
-                goSDKSourceFromRuntime(flowRuntimeSource),
-                filterLayersBySource(this.mapLibreMap, flowSourceID)
-            );
+            this.flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
         }
 
         if (config) {
@@ -43,7 +29,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         }
     }
 
-    public applyConfig(config: VectorTilesTrafficConfig): void {
+    applyConfig(config: VectorTilesTrafficConfig): void {
         if (!isNil(config.visible)) {
             this.setVisible(config.visible);
         }
@@ -67,44 +53,44 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         }
     }
 
-    public isVisible(): boolean {
+    isVisible(): boolean {
         return this.isIncidentsVisible() || this.isFlowVisible();
     }
 
-    public isIncidentsVisible(): boolean {
+    isIncidentsVisible(): boolean {
         return !!this.incidents?.isAnyLayerVisible();
     }
 
-    public isIncidentIconsVisible(): boolean {
+    isIncidentIconsVisible(): boolean {
         return !!this.incidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === "symbol");
     }
 
-    public isFlowVisible(): boolean {
+    isFlowVisible(): boolean {
         return !!this.flow?.isAnyLayerVisible();
     }
 
-    public toggleVisibility(): void {
+    toggleVisibility(): void {
         this.setVisible(!this.isVisible());
     }
 
-    public toggleIncidentsVisibility(): void {
+    toggleIncidentsVisibility(): void {
         this.setIncidentsVisible(!this.isIncidentsVisible());
     }
 
-    public toggleIncidentIconsVisibility(): void {
+    toggleIncidentIconsVisibility(): void {
         this.setIncidentIconsVisible(!this.isIncidentIconsVisible());
     }
 
-    public toggleFlowVisibility(): void {
+    toggleFlowVisibility(): void {
         this.setFlowVisible(!this.isFlowVisible());
     }
 
-    public setVisible(visible: boolean): void {
+    setVisible(visible: boolean): void {
         this.setIncidentsVisible(visible);
         this.setFlowVisible(visible);
     }
 
-    public setIncidentsVisible(visible: boolean, filter?: LayerSpecFilter): void {
+    setIncidentsVisible(visible: boolean, filter?: LayerSpecFilter): void {
         if (this.incidents) {
             this.incidents.setAllLayersVisible(visible, filter);
         } else {
@@ -115,11 +101,11 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         }
     }
 
-    public setIncidentIconsVisible(visible: boolean): void {
+    setIncidentIconsVisible(visible: boolean): void {
         this.setIncidentsVisible(visible, (layerSpec) => layerSpec.type === "symbol");
     }
 
-    public setFlowVisible(visible: boolean): void {
+    setFlowVisible(visible: boolean): void {
         if (this.flow) {
             this.flow.setAllLayersVisible(visible);
         } else {

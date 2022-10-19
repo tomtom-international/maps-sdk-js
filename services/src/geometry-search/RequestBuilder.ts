@@ -8,20 +8,21 @@ import {
     SearchByGeometryPayloadAPI
 } from "./types";
 import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from "../shared/RequestBuildingUtils";
+import { positionToCSVLatLon } from "../shared/Geometry";
 
 const sdkGeometryToAPIGeometry = (obj: GeometrySDK): GeometryAPI => {
     if (obj.type === "Circle") {
         return {
             type: "CIRCLE",
             radius: obj.radius,
-            position: obj.coordinates.join(",")
+            position: positionToCSVLatLon(obj.coordinates)
         } as CircleAPI;
     }
 
     if (obj.type === "Polygon") {
         return {
             type: "POLYGON",
-            vertices: obj.coordinates[0].map((coord) => coord.join(","))
+            vertices: obj.coordinates[0].map((coord) => positionToCSVLatLon(coord))
         } as PolygonAPI;
     }
 

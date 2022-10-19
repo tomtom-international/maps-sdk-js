@@ -7,22 +7,22 @@ import { GeometrySDK, GeometrySearchResponse } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { baseSearchPlaceTestProps } from "../../shared/tests/IntegrationTestUtils";
 
-describe("Geometry Search API", () => {
+describe("Geometry Search service", () => {
     const geometries: GeometrySDK[] = [
         {
             type: "Polygon",
             coordinates: [
                 [
-                    [37.7524152343544, -122.43576049804686],
-                    [37.70660472542312, -122.4330139160156],
-                    [37.712059855877314, -122.36434936523438],
-                    [37.75350561243041, -122.37396240234374]
+                    [-122.43576, 37.75241],
+                    [-122.433013, 37.7066],
+                    [-122.364349, 37.71205],
+                    [-122.373962, 37.7535]
                 ]
             ]
         },
         {
             type: "Circle",
-            coordinates: [37.71205, -121.36434],
+            coordinates: [-121.36434, 37.71205],
             radius: 6000
         }
     ];
@@ -31,7 +31,7 @@ describe("Geometry Search API", () => {
         GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
     });
 
-    test("geometrySearchAPI.searchByGeometry works", async () => {
+    test("geometrySearch works", async () => {
         const query = "cafe";
         const categories: number[] = [];
         const fuels: Fuel[] = [];
@@ -74,7 +74,7 @@ describe("Geometry Search API", () => {
         );
     });
 
-    test("geometrySearchAPI.searchByGeometry fails to convert unsupported geometry types", async () => {
+    test("geometrySearch fails to convert unsupported geometry types", async () => {
         const query = "cafe";
         const type = "UnknownType";
         const incorrectGeometry = [
@@ -92,7 +92,7 @@ describe("Geometry Search API", () => {
         );
     });
 
-    test("geometrySearchAPI.searchByGeometry buildRequest hook modifies url", async () => {
+    test("geometrySearch buildRequest hook modifies url", async () => {
         const query = "cafe";
         const newQuery = "petrol";
         const res = await geometrySearch(
@@ -125,7 +125,7 @@ describe("Geometry Search API", () => {
         );
     });
 
-    test("geometrySearchAPI.searchByGeometry parseResponse hook modifies response", async () => {
+    test("geometrySearch parseResponse hook modifies response", async () => {
         const query = "cafe";
         const res = await geometrySearch(
             { query, geometries },

@@ -11,7 +11,7 @@ describe("Vector tiles POI module tests", () => {
         const goSDKMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockImplementationOnce(() => poiSource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}] })),
+                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { poiSourceID: {} } })),
                 isStyleLoaded: jest.fn().mockImplementation(() => true)
             } as unknown as Map
         } as GOSDKMap;
@@ -35,7 +35,7 @@ describe("Vector tiles POI module tests", () => {
         const goSDKMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockImplementationOnce(() => poiSource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}] })),
+                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { poiSourceID: {} } })),
                 isStyleLoaded: jest.fn().mockImplementation(() => true)
             } as unknown as Map
         } as GOSDKMap;
