@@ -59,13 +59,13 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@types/geojson": "^7946.0.10",
-    "@types/lodash": "^4.14.185"
+    "@types/lodash": "^4.14.186"
   },
   "devDependencies": {
     "@size-limit/file": "^8.1.0",
     "@size-limit/preset-app": "^8.1.0",
     "size-limit": "^8.1.0",
-    "typedoc": "^0.23.15",
+    "typedoc": "^0.23.17",
     "typedoc-plugin-markdown": "^3.13.6",
     "typedoc-plugin-missing-exports": "^1.0.0",
     "map": "file:map",
