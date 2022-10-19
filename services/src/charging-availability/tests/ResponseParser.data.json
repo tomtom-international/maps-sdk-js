@@ -1,0 +1,79 @@
+[
+    [
+        "0: parsing actual API response",
+        {
+            "chargingParkId": "528009010040725",
+            "chargingStations": [
+                {
+                    "chargingStationId": "ffffffff-93e8-103f-0000-000000153b86",
+                    "accessibility": "NoRestriction",
+                    "chargingPoints": [
+                        {
+                            "evseId": "NL*NUO*EEVB*P1541136*2",
+                            "status": "Available",
+                            "connectors": [
+                                {
+                                    "type": "IEC62196Type2Outlet",
+                                    "ratedPowerKW": 11.0,
+                                    "voltageV": 400,
+                                    "currentA": 16,
+                                    "currentType": "AC3"
+                                }
+                            ]
+                        },
+                        {
+                            "evseId": "NL*NUO*EEVB*P1541136*1",
+                            "status": "Available",
+                            "connectors": [
+                                {
+                                    "type": "IEC62196Type2Outlet",
+                                    "ratedPowerKW": 11.0,
+                                    "voltageV": 400,
+                                    "currentA": 16,
+                                    "currentType": "AC3"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "chargingParkId": "528009010040725",
+            "chargingStations": [
+                {
+                    "chargingStationId": "ffffffff-93e8-103f-0000-000000153b86",
+                    "accessibility": "NoRestriction",
+                    "chargingPoints": [
+                        {
+                            "evseId": "NL*NUO*EEVB*P1541136*2",
+                            "status": "Available",
+                            "connectors": [
+                                {
+                                    "type": "IEC62196Type2Outlet",
+                                    "ratedPowerKW": 11.0,
+                                    "voltageV": 400,
+                                    "currentA": 16,
+                                    "currentType": "AC3"
+                                }
+                            ]
+                        },
+                        {
+                            "evseId": "NL*NUO*EEVB*P1541136*1",
+                            "status": "Available",
+                            "connectors": [
+                                {
+                                    "type": "IEC62196Type2Outlet",
+                                    "ratedPowerKW": 11.0,
+                                    "voltageV": 400,
+                                    "currentA": 16,
+                                    "currentType": "AC3"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+]
