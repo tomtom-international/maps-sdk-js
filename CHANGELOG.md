@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.45](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.44...v0.1.45) (2022-10-19)
+
+
+### Features
+
+* **map:** initial support for sdk map modules based on maplibre ([b5e4ee0](https://github.com/tomtom-international/go-sdk-js/commit/b5e4ee00dab6afb9b54a6ea888f63f8539c9b6bf))
+
+
+### Bug Fixes
+
+* **deps:** fixing import statement ([57aca4f](https://github.com/tomtom-international/go-sdk-js/commit/57aca4fcf789e9fcb64393fad4be859eaf463747))
+
 ### [0.1.44](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.43...v0.1.44) (2022-10-17)
 
 
