@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { geometrySchema } from "../shared/GeometriesSchema";
-import { views } from "core";
+import { views } from "@anw/go-sdk-js/core";
 
 const geometrySearchRequestMandatory = z.object({
     query: z.string(),

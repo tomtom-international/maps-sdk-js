@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { hasLngLatSchema } from "../shared/GeometriesSchema";
-import { views } from "core";
+import { views } from "@anw/go-sdk-js/core";
 
 const geocodingRequestMandatory = z.object({
     query: z.string()

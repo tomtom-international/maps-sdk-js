@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { views } from "core";
+import { views } from "@anw/go-sdk-js/core";
 
 const placeByIdRequestMandatory = z.object({
     entityId: z.string()
