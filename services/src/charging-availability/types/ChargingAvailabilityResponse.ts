@@ -1,4 +1,4 @@
-import { ChargingStation } from "core";
+import { ChargingStation } from "@anw/go-sdk-js/core";
 
 /**
  * @group ChargingAvailability

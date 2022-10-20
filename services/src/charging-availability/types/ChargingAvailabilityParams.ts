@@ -1,5 +1,5 @@
 import { CommonServiceParams } from "../../shared/ServiceTypes";
-import { ConnectorType } from "core";
+import { ConnectorType } from "@anw/go-sdk-js/core";
 
 export type ChargingAvailabilityParams = CommonServiceParams & {
     /**

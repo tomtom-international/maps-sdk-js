@@ -23,7 +23,7 @@ export type ConnectorType =
  * @category Types
  */
 export type Connector = {
-    connectorType: ConnectorType;
+    type: ConnectorType;
     ratedPowerKW: number;
     currentA: number;
     currentType: string;
