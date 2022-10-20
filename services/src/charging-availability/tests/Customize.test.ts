@@ -1,7 +1,7 @@
 import { customizeService } from "../../../index";
 
 describe("Using customize obj", () => {
-    test("Geocoding request URL building tests using customize obj", () => {
+    test("Charging availability request URL building tests using customize obj", () => {
         expect(
             customizeService.chargingAvailability
                 .buildChargingAvailabilityRequest({
