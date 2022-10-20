@@ -93,40 +93,28 @@ describe("chargingAvailability integration tests", () => {
         expect(result).toMatchObject(expectedResult);
     });
 
-    test("chargingAvailability with station filter", async () => {
-        const expectedResult = {
-            chargingParkId: "840479002976741",
-            chargingStations: [
+    test("chargingAvailability with connector filter", async () => {
+        const chargingStationObj = {
+            chargingStationId: expect.any(String),
+            accessibility: expect.stringMatching(
+                /Unspecified|NoRestriction|GenericRestriction|ResidentsOnly|EmployeesOnly|AuthorizedPersonnelOnly|MembersOnly/
+            ),
+            chargingPoints: [
                 {
-                    chargingStationId: "00000000-3399-0f2c-0000-000200153b86",
-                    accessibility: "NoRestriction",
-                    chargingPoints: [
-                        {
-                            evseId: "16999259726",
-                            status: "Unknown",
-                            connectors: [
-                                { type: "Chademo", ratedPowerKW: 25.0, voltageV: 400, currentA: 62, currentType: "DC" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    chargingStationId: "00000000-3399-0f2c-0000-000100153b86",
-                    accessibility: "NoRestriction",
-                    chargingPoints: [
-                        {
-                            evseId: "16999259726",
-                            status: "Unknown",
-                            connectors: [
-                                { type: "Chademo", ratedPowerKW: 25.0, voltageV: 400, currentA: 62, currentType: "DC" }
-                            ]
-                        }
+                    evseId: expect.any(String),
+                    status: expect.stringMatching(/Available|Reserved|Occupied|OutOfService|Unknown/),
+                    connectors: [
+                        { type: "Chademo", ratedPowerKW: 25.0, voltageV: 400, currentA: 62, currentType: "DC" }
                     ]
                 }
             ]
         };
+        const expectedResult = {
+            chargingParkId: "840479002976741",
+            chargingStations: [chargingStationObj, chargingStationObj]
+        };
 
         const result = await chargingAvailability({ id: "840479002976741", connectorTypes: ["Chademo"] });
-        expect(result).toEqual(expect.objectContaining(expectedResult));
+        expect(result).toMatchObject(expectedResult);
     });
 });

@@ -10,7 +10,7 @@ export type ChargingAvailabilityResponse = {
      */
     chargingParkId: string;
     /**
-     * Array of chargingStation{} objects.
+     * Array of chargingStation objects.
      */
     chargingStations: ChargingStation[];
 };

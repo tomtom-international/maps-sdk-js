@@ -23,7 +23,7 @@ export type ChargingPoint = {
     status: ChargingPointStatus;
 
     /**
-     * Array of connector{} objects
+     * Array of connector objects
      */
     connectors: Connector[];
 };
@@ -46,7 +46,7 @@ export type ChargingStation = {
     accessibility: Accessibility;
 
     /**
-     * Array of chargingPoint{} objects
+     * Array of chargingPoint objects
      */
     chargingPoints: ChargingPoint[];
 };
