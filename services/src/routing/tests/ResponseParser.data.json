@@ -5213,5 +5213,2772 @@
         ]
       }
     }
+  ],
+  [
+    "Route with traffic incidents, different sections, instruction messages, travel time computation and representation set to summary",
+    {
+      "formatVersion": "0.0.12",
+      "routes": [
+        {
+          "summary": {
+            "lengthInMeters": 1026313,
+            "travelTimeInSeconds": 40081,
+            "trafficDelayInSeconds": 277,
+            "trafficLengthInMeters": 19458,
+            "departureTime": "2022-10-21T09:06:56+02:00",
+            "arrivalTime": "2022-10-21T19:14:56+01:00",
+            "noTrafficTravelTimeInSeconds": 38662,
+            "historicTrafficTravelTimeInSeconds": 39716,
+            "liveTrafficIncidentsTravelTimeInSeconds": 40081
+          },
+          "legs": [
+            {
+              "summary": {
+                "lengthInMeters": 29829,
+                "travelTimeInSeconds": 3504,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-10-21T09:06:56+02:00",
+                "arrivalTime": "2022-10-21T10:05:19+02:00",
+                "noTrafficTravelTimeInSeconds": 3423,
+                "historicTrafficTravelTimeInSeconds": 3504,
+                "liveTrafficIncidentsTravelTimeInSeconds": 3504
+              }
+            },
+            {
+              "summary": {
+                "lengthInMeters": 996484,
+                "travelTimeInSeconds": 36577,
+                "trafficDelayInSeconds": 277,
+                "trafficLengthInMeters": 19458,
+                "departureTime": "2022-10-21T10:05:19+02:00",
+                "arrivalTime": "2022-10-21T19:14:56+01:00",
+                "noTrafficTravelTimeInSeconds": 35239,
+                "historicTrafficTravelTimeInSeconds": 36212,
+                "liveTrafficIncidentsTravelTimeInSeconds": 36577
+              }
+            }
+          ],
+          "sections": [
+            {
+              "startPointIndex": 141,
+              "endPointIndex": 202,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 103,
+              "endPointIndex": 219,
+              "sectionType": "CAR_TRAIN"
+            },
+            {
+              "startPointIndex": 275,
+              "endPointIndex": 289,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 318,
+              "endPointIndex": 326,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 377,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "car"
+            },
+            {
+              "startPointIndex": 377,
+              "endPointIndex": 960,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "other"
+            },
+            {
+              "startPointIndex": 1011,
+              "endPointIndex": 1019,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1048,
+              "endPointIndex": 1062,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1104,
+              "endPointIndex": 1113,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1121,
+              "endPointIndex": 1126,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1131,
+              "endPointIndex": 1136,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1142,
+              "endPointIndex": 1158,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1166,
+              "endPointIndex": 1170,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1182,
+              "endPointIndex": 1214,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1529,
+              "endPointIndex": 1543,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1492,
+              "endPointIndex": 1579,
+              "sectionType": "TOLL_ROAD"
+            },
+            {
+              "startPointIndex": 1492,
+              "endPointIndex": 1579,
+              "sectionType": "TOLL_VIGNETTE",
+              "countryCode": "CHE"
+            },
+            {
+              "startPointIndex": 1830,
+              "endPointIndex": 1870,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1936,
+              "endPointIndex": 1939,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1996,
+              "endPointIndex": 2008,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 2472,
+              "endPointIndex": 2484,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 2491,
+              "endPointIndex": 2499,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 2789,
+              "endPointIndex": 2821,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 3111,
+              "endPointIndex": 3126,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 3171,
+              "endPointIndex": 3177,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 3195,
+              "endPointIndex": 3201,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 3280,
+              "endPointIndex": 3290,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1766,
+              "endPointIndex": 4020,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 1798,
+              "endPointIndex": 4020,
+              "sectionType": "TOLL_ROAD"
+            },
+            {
+              "startPointIndex": 1798,
+              "endPointIndex": 4020,
+              "sectionType": "TOLL_VIGNETTE",
+              "countryCode": "CHE"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 4081,
+              "sectionType": "COUNTRY",
+              "countryCode": "CHE"
+            },
+            {
+              "startPointIndex": 5508,
+              "endPointIndex": 5648,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 5740,
+              "endPointIndex": 5745,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 5789,
+              "endPointIndex": 5805,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 5977,
+              "endPointIndex": 6067,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 6170,
+              "endPointIndex": 9836,
+              "sectionType": "TOLL_ROAD"
+            },
+            {
+              "startPointIndex": 9903,
+              "endPointIndex": 12387,
+              "sectionType": "TOLL_ROAD"
+            },
+            {
+              "startPointIndex": 6211,
+              "endPointIndex": 12501,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 4081,
+              "endPointIndex": 12709,
+              "sectionType": "COUNTRY",
+              "countryCode": "FRA"
+            },
+            {
+              "startPointIndex": 12673,
+              "endPointIndex": 12750,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 12785,
+              "endPointIndex": 12820,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 12625,
+              "endPointIndex": 12836,
+              "sectionType": "CAR_TRAIN"
+            },
+            {
+              "startPointIndex": 13054,
+              "endPointIndex": 13058,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 13014,
+              "endPointIndex": 13220,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 12735,
+              "endPointIndex": 13327,
+              "sectionType": "COUNTRY",
+              "countryCode": "GBR"
+            },
+            {
+              "startPointIndex": 960,
+              "endPointIndex": 13327,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "car"
+            },
+            {
+              "startPointIndex": 2325,
+              "endPointIndex": 2542,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 116,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 4
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 2325,
+              "endPointIndex": 2542,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 116,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 2325,
+              "endPointIndex": 2542,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 116,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3,
+                    "subCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 4
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 3077,
+              "endPointIndex": 3106,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 89,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 4573,
+              "endPointIndex": 4587,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 50,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 8500,
+              "endPointIndex": 8565,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 98,
+              "delayInSeconds": 36,
+              "magnitudeOfDelay": 1,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 4
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 8500,
+              "endPointIndex": 8565,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 98,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 1,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 11202,
+              "endPointIndex": 11271,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 92,
+              "delayInSeconds": 46,
+              "magnitudeOfDelay": 1,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 11897,
+              "endPointIndex": 12017,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 78,
+              "delayInSeconds": 195,
+              "magnitudeOfDelay": 1,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            }
+          ],
+          "guidance": {
+            "instructions": [
+              {
+                "routeOffsetInMeters": 0,
+                "travelTimeInSeconds": 0,
+                "point": {
+                  "latitude": 46.49122,
+                  "longitude": 7.67635
+                },
+                "pointIndex": 1,
+                "instructionType": "LOCATION_DEPARTURE",
+                "street": "Wildistrasse",
+                "countryCode": "CHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "DEPART",
+                "message": "Vertrek vanuit <street>Wildistrasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 253,
+                "travelTimeInSeconds": 64,
+                "point": {
+                  "latitude": 46.49344,
+                  "longitude": 7.67593
+                },
+                "pointIndex": 15,
+                "instructionType": "TURN",
+                "street": "Feldweg",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "BEAR_LEFT",
+                "message": "Buig links af bij <street>Feldweg</street>"
+              },
+              {
+                "routeOffsetInMeters": 415,
+                "travelTimeInSeconds": 101,
+                "point": {
+                  "latitude": 46.49421,
+                  "longitude": 7.67418
+                },
+                "pointIndex": 27,
+                "instructionType": "TURN",
+                "street": "Innere Dorfstrasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Sla rechtsaf richting <street>Innere Dorfstrasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 822,
+                "travelTimeInSeconds": 160,
+                "point": {
+                  "latitude": 46.49783,
+                  "longitude": 7.67450
+                },
+                "pointIndex": 44,
+                "instructionType": "TURN",
+                "street": "Risetistrasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Sla linksaf richting <street>Risetistrasse</street>",
+                "combinedMessage": "Sla linksaf richting <street>Risetistrasse</street> daarna sla rechtsaf richting <street>Risetistrasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 1056,
+                "travelTimeInSeconds": 201,
+                "point": {
+                  "latitude": 46.49885,
+                  "longitude": 7.67206
+                },
+                "pointIndex": 63,
+                "instructionType": "TURN",
+                "street": "Risetistrasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Sla rechtsaf richting <street>Risetistrasse</street>",
+                "combinedMessage": "Sla rechtsaf richting <street>Risetistrasse</street> daarna sla rechtsaf richting <street>Risetistrasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 1153,
+                "travelTimeInSeconds": 223,
+                "point": {
+                  "latitude": 46.49966,
+                  "longitude": 7.67240
+                },
+                "pointIndex": 69,
+                "instructionType": "TURN",
+                "street": "Risetistrasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Sla rechtsaf richting <street>Risetistrasse</street>",
+                "combinedMessage": "Sla rechtsaf richting <street>Risetistrasse</street> daarna sla rechtsaf richting <street>Merenweg</street>"
+              },
+              {
+                "routeOffsetInMeters": 1177,
+                "travelTimeInSeconds": 237,
+                "point": {
+                  "latitude": 46.49964,
+                  "longitude": 7.67271
+                },
+                "pointIndex": 71,
+                "instructionType": "TURN",
+                "street": "Merenweg",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Sla rechtsaf richting <street>Merenweg</street>"
+              },
+              {
+                "routeOffsetInMeters": 1829,
+                "travelTimeInSeconds": 438,
+                "point": {
+                  "latitude": 46.49458,
+                  "longitude": 7.67044
+                },
+                "pointIndex": 101,
+                "instructionType": "TURN",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Sla rechtsaf",
+                "combinedMessage": "Sla rechtsaf daarna neem de veerboot richting <street>Kandersteg - Goppenstein</street>"
+              },
+              {
+                "routeOffsetInMeters": 1899,
+                "travelTimeInSeconds": 495,
+                "point": {
+                  "latitude": 46.49395,
+                  "longitude": 7.67038
+                },
+                "pointIndex": 103,
+                "instructionType": "ROAD_CHANGE",
+                "street": "Kandersteg - Goppenstein",
+                "countryCode": "CHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_FERRY",
+                "message": "Neem de veerboot richting <street>Kandersteg - Goppenstein</street>"
+              },
+              {
+                "routeOffsetInMeters": 2329,
+                "travelTimeInSeconds": 1714,
+                "point": {
+                  "latitude": 46.49045,
+                  "longitude": 7.66814
+                },
+                "pointIndex": 113,
+                "instructionType": "DIRECTION_INFO",
+                "street": "Kandersteg - Goppenstein",
+                "countryCode": "CHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Kandersteg - Goppenstein</street>"
+              },
+              {
+                "routeOffsetInMeters": 19125,
+                "travelTimeInSeconds": 2470,
+                "point": {
+                  "latitude": 46.36294,
+                  "longitude": 7.75746
+                },
+                "pointIndex": 219,
+                "instructionType": "ROAD_CHANGE",
+                "countryCode": "CHE",
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "STRAIGHT",
+                "message": "Blijf rechtdoor rijden",
+                "combinedMessage": "Blijf rechtdoor rijden daarna sla linksaf richting <street>Bahnhofstrasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 19543,
+                "travelTimeInSeconds": 2568,
+                "point": {
+                  "latitude": 46.36357,
+                  "longitude": 7.75727
+                },
+                "pointIndex": 240,
+                "instructionType": "TURN",
+                "street": "Bahnhofstrasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Sla linksaf richting <street>Bahnhofstrasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 22804,
+                "travelTimeInSeconds": 2821,
+                "point": {
+                  "latitude": 46.39103,
+                  "longitude": 7.75710
+                },
+                "pointIndex": 356,
+                "instructionType": "TURN",
+                "street": "Neue Strasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "BEAR_LEFT",
+                "message": "Buig links af bij <street>Neue Strasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 23266,
+                "travelTimeInSeconds": 2894,
+                "point": {
+                  "latitude": 46.39475,
+                  "longitude": 7.75889
+                },
+                "pointIndex": 377,
+                "instructionType": "TURN",
+                "street": "Neue Strasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -135,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "SHARP_LEFT",
+                "message": "Neem een scherpe bocht naar links richting <street>Neue Strasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 25706,
+                "travelTimeInSeconds": 3133,
+                "point": {
+                  "latitude": 46.39438,
+                  "longitude": 7.74897
+                },
+                "pointIndex": 486,
+                "instructionType": "TURN",
+                "street": "Kummenalp",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Sla rechtsaf richting <street>Kummenalp</street>"
+              },
+              {
+                "routeOffsetInMeters": 29829,
+                "travelTimeInSeconds": 3504,
+                "point": {
+                  "latitude": 46.40426,
+                  "longitude": 7.74084
+                },
+                "pointIndex": 669,
+                "instructionType": "TURN",
+                "street": "Kummenalp",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -180,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TRY_MAKE_UTURN",
+                "message": "Probeer om te keren bij <street>Kummenalp</street>"
+              },
+              {
+                "routeOffsetInMeters": 29829,
+                "travelTimeInSeconds": 3504,
+                "point": {
+                  "latitude": 46.40426,
+                  "longitude": 7.74084
+                },
+                "pointIndex": 669,
+                "instructionType": "LOCATION_WAYPOINT",
+                "street": "Kummenalp",
+                "countryCode": "CHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "WAYPOINT_RIGHT",
+                "message": "Je hebt het tussenpunt bij <street>Kummenalp</street> bereikt. Het bevindt zich aan de rechterkant"
+              },
+              {
+                "routeOffsetInMeters": 33952,
+                "travelTimeInSeconds": 3995,
+                "point": {
+                  "latitude": 46.39438,
+                  "longitude": 7.74897
+                },
+                "pointIndex": 851,
+                "instructionType": "TURN",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Sla linksaf"
+              },
+              {
+                "routeOffsetInMeters": 36392,
+                "travelTimeInSeconds": 4233,
+                "point": {
+                  "latitude": 46.39475,
+                  "longitude": 7.75889
+                },
+                "pointIndex": 960,
+                "instructionType": "TURN",
+                "street": "Neue Strasse",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 135,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "SHARP_RIGHT",
+                "message": "Neem een scherpe bocht naar rechts richting <street>Neue Strasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 36854,
+                "travelTimeInSeconds": 4304,
+                "point": {
+                  "latitude": 46.39103,
+                  "longitude": 7.75710
+                },
+                "pointIndex": 981,
+                "instructionType": "TURN",
+                "street": "Goltschenried",
+                "countryCode": "CHE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "BEAR_RIGHT",
+                "message": "Buig rechts af bij <street>Goltschenried</street>"
+              },
+              {
+                "routeOffsetInMeters": 39527,
+                "travelTimeInSeconds": 4493,
+                "point": {
+                  "latitude": 46.36852,
+                  "longitude": 7.75522
+                },
+                "pointIndex": 1069,
+                "instructionType": "TURN",
+                "street": "Bahnhofstrasse",
+                "countryCode": "CHE",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <street>Bahnhofstrasse</street>"
+              },
+              {
+                "routeOffsetInMeters": 39822,
+                "travelTimeInSeconds": 4518,
+                "point": {
+                  "latitude": 46.36605,
+                  "longitude": 7.75652
+                },
+                "pointIndex": 1085,
+                "instructionType": "DIRECTION_INFO",
+                "street": "Bahnhofstrasse",
+                "countryCode": "CHE",
+                "signpostText": "Sion",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Bahnhofstrasse</street> richting <signpostText>Sion</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 49949,
+                "travelTimeInSeconds": 5208,
+                "point": {
+                  "latitude": 46.30610,
+                  "longitude": 7.74747
+                },
+                "pointIndex": 1459,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "9",
+                  "E62"
+                ],
+                "street": "Kantonsstrasse",
+                "countryCode": "CHE",
+                "signpostText": "Sion",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": -90,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_LEFT",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Sion</signpostText>",
+                "combinedMessage": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Sion</signpostText> daarna houd rechts aan bij <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 50527,
+                "travelTimeInSeconds": 5255,
+                "point": {
+                  "latitude": 46.30537,
+                  "longitude": 7.74072
+                },
+                "pointIndex": 1492,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "9",
+                  "E62"
+                ],
+                "street": "Kantonsstrasse",
+                "countryCode": "CHE",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_RIGHT",
+                "message": "Houd rechts aan bij <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 51181,
+                "travelTimeInSeconds": 5290,
+                "point": {
+                  "latitude": 46.30645,
+                  "longitude": 7.73246
+                },
+                "pointIndex": 1508,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "9",
+                  "E62"
+                ],
+                "countryCode": "CHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 56835,
+                "travelTimeInSeconds": 5488,
+                "point": {
+                  "latitude": 46.30713,
+                  "longitude": 7.66049
+                },
+                "pointIndex": 1561,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "9",
+                  "E62"
+                ],
+                "countryCode": "CHE",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_RIGHT",
+                "message": "Houd rechts aan bij <roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 57615,
+                "travelTimeInSeconds": 5533,
+                "point": {
+                  "latitude": 46.30895,
+                  "longitude": 7.65103
+                },
+                "pointIndex": 1579,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "9",
+                  "E62"
+                ],
+                "street": "Kantonsstrasse",
+                "countryCode": "CHE",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 90,
+                "roundaboutExitNumber": 1,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_RIGHT",
+                "message": "Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 58259,
+                "travelTimeInSeconds": 5587,
+                "point": {
+                  "latitude": 46.31106,
+                  "longitude": 7.64344
+                },
+                "pointIndex": 1605,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "9",
+                  "E62"
+                ],
+                "street": "Kantonsstrasse",
+                "countryCode": "CHE",
+                "signpostText": "Lausanne",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 58560,
+                "travelTimeInSeconds": 5620,
+                "point": {
+                  "latitude": 46.31196,
+                  "longitude": 7.63989
+                },
+                "pointIndex": 1621,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A9",
+                  "9",
+                  "E62"
+                ],
+                "street": "Kantonstrasse",
+                "countryCode": "CHE",
+                "signpostText": "Leukerbad",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Leukerbad</signpostText>",
+                "combinedMessage": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Leukerbad</signpostText> daarna neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Pfynstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 58670,
+                "travelTimeInSeconds": 5642,
+                "point": {
+                  "latitude": 46.31192,
+                  "longitude": 7.63884
+                },
+                "pointIndex": 1639,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A9",
+                  "E62"
+                ],
+                "street": "Pfynstrasse",
+                "countryCode": "CHE",
+                "signpostText": "Lausanne",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Pfynstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 58933,
+                "travelTimeInSeconds": 5667,
+                "point": {
+                  "latitude": 46.31106,
+                  "longitude": 7.63577
+                },
+                "pointIndex": 1654,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A9",
+                  "E62"
+                ],
+                "street": "Pfynstrasse",
+                "countryCode": "CHE",
+                "signpostText": "Sion",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Pfynstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Sion</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 153918,
+                "travelTimeInSeconds": 8771,
+                "point": {
+                  "latitude": 46.46704,
+                  "longitude": 6.87321
+                },
+                "pointIndex": 2937,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A9",
+                  "E62"
+                ],
+                "countryCode": "CHE",
+                "signpostText": "Lausanne",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 0,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "STRAIGHT",
+                "message": "Blijf rechtdoor rijden op de <roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 154483,
+                "travelTimeInSeconds": 8789,
+                "point": {
+                  "latitude": 46.47042,
+                  "longitude": 6.86772
+                },
+                "pointIndex": 2947,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A9",
+                  "E62"
+                ],
+                "countryCode": "CHE",
+                "signpostText": "Lutry",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lutry</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 181543,
+                "travelTimeInSeconds": 9735,
+                "point": {
+                  "latitude": 46.56451,
+                  "longitude": 6.56798
+                },
+                "pointIndex": 3479,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A9"
+                ],
+                "countryCode": "CHE",
+                "signpostText": "Besancon",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <roadNumber>A9</roadNumber> richting <signpostText>Besancon</signpostText>",
+                "combinedMessage": "Houd links aan bij <roadNumber>A9</roadNumber> richting <signpostText>Besancon</signpostText> daarna ga de snelweg <roadNumber>A9</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 181543,
+                "travelTimeInSeconds": 9735,
+                "point": {
+                  "latitude": 46.56451,
+                  "longitude": 6.56798
+                },
+                "pointIndex": 3479,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A9"
+                ],
+                "countryCode": "CHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A9</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 182018,
+                "travelTimeInSeconds": 9757,
+                "point": {
+                  "latitude": 46.56313,
+                  "longitude": 6.56216
+                },
+                "pointIndex": 3490,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A9"
+                ],
+                "countryCode": "CHE",
+                "signpostText": "La Sarraz",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>A9</roadNumber> richting <signpostText>La Sarraz</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 200557,
+                "travelTimeInSeconds": 10344,
+                "point": {
+                  "latitude": 46.72341,
+                  "longitude": 6.57029
+                },
+                "pointIndex": 3712,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A9",
+                  "E23"
+                ],
+                "exitNumber": "23",
+                "countryCode": "CHE",
+                "signpostText": "Besançon",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_EXIT",
+                "message": "Neem afslag <exitNumber>23</exitNumber> naar de <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>",
+                "combinedMessage": "Neem afslag <exitNumber>23</exitNumber> naar de <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText> daarna ga de snelweg <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 201617,
+                "travelTimeInSeconds": 10386,
+                "point": {
+                  "latitude": 46.72939,
+                  "longitude": 6.56306
+                },
+                "pointIndex": 3742,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A9",
+                  "E23"
+                ],
+                "countryCode": "CHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 201717,
+                "travelTimeInSeconds": 10389,
+                "point": {
+                  "latitude": 46.72957,
+                  "longitude": 6.56178
+                },
+                "pointIndex": 3744,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A9",
+                  "E23"
+                ],
+                "countryCode": "CHE",
+                "signpostText": "Les Clées",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Les Clées</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 217060,
+                "travelTimeInSeconds": 11042,
+                "point": {
+                  "latitude": 46.73055,
+                  "longitude": 6.38798
+                },
+                "pointIndex": 4055,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A9",
+                  "E23"
+                ],
+                "street": "Route du Creux",
+                "countryCode": "CHE",
+                "signpostText": "Dijon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 90,
+                "roundaboutExitNumber": 1,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_RIGHT",
+                "message": "Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde naar de <street>Route du Creux</street>/<roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Dijon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 217248,
+                "travelTimeInSeconds": 11071,
+                "point": {
+                  "latitude": 46.73119,
+                  "longitude": 6.38595
+                },
+                "pointIndex": 4073,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A9",
+                  "E23"
+                ],
+                "street": "Route du Creux",
+                "countryCode": "CHE",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <street>Route du Creux</street>/<roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 217468,
+                "travelTimeInSeconds": 11129,
+                "point": {
+                  "latitude": 46.73223,
+                  "longitude": 6.38361
+                },
+                "pointIndex": 4085,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "street": "Route de Vallorbe",
+                "countryCode": "FRA",
+                "signpostText": "Jougne-Centre",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Route de Vallorbe</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Jougne-Centre</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 222737,
+                "travelTimeInSeconds": 11480,
+                "point": {
+                  "latitude": 46.76976,
+                  "longitude": 6.38069
+                },
+                "pointIndex": 4262,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 45,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 223046,
+                "travelTimeInSeconds": 11495,
+                "point": {
+                  "latitude": 46.77250,
+                  "longitude": 6.38053
+                },
+                "pointIndex": 4279,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "La Cluse-et-Mijoux",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>La Cluse-et-Mijoux</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 238767,
+                "travelTimeInSeconds": 12344,
+                "point": {
+                  "latitude": 46.89470,
+                  "longitude": 6.36411
+                },
+                "pointIndex": 4682,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "street": "Rocade Georges Pompidou",
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": -45,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 239928,
+                "travelTimeInSeconds": 12479,
+                "point": {
+                  "latitude": 46.90128,
+                  "longitude": 6.35389
+                },
+                "pointIndex": 4734,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "D47",
+                  "E23"
+                ],
+                "street": "Rocade Georges Pompidou",
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>D47</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 240374,
+                "travelTimeInSeconds": 12537,
+                "point": {
+                  "latitude": 46.90136,
+                  "longitude": 6.34831
+                },
+                "pointIndex": 4762,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "street": "Rocade Georges Pompidou",
+                "countryCode": "FRA",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 45,
+                "roundaboutExitNumber": 1,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber>",
+                "combinedMessage": "Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> daarna neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 240564,
+                "travelTimeInSeconds": 12561,
+                "point": {
+                  "latitude": 46.90232,
+                  "longitude": 6.34627
+                },
+                "pointIndex": 4772,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "street": "Rocade Georges Pompidou",
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": -90,
+                "roundaboutExitNumber": 3,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_LEFT",
+                "message": "Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 241488,
+                "travelTimeInSeconds": 12635,
+                "point": {
+                  "latitude": 46.90000,
+                  "longitude": 6.33550
+                },
+                "pointIndex": 4810,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "street": "Rocade Georges Pompidou",
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 3,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 242965,
+                "travelTimeInSeconds": 12769,
+                "point": {
+                  "latitude": 46.91000,
+                  "longitude": 6.33236
+                },
+                "pointIndex": 4854,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "street": "Rocade Georges Pompidou",
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 244641,
+                "travelTimeInSeconds": 12849,
+                "point": {
+                  "latitude": 46.92410,
+                  "longitude": 6.33765
+                },
+                "pointIndex": 4898,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 3,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 245032,
+                "travelTimeInSeconds": 12875,
+                "point": {
+                  "latitude": 46.92734,
+                  "longitude": 6.33882
+                },
+                "pointIndex": 4918,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Saint-Gorgon-Main",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Saint-Gorgon-Main</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 275386,
+                "travelTimeInSeconds": 14286,
+                "point": {
+                  "latitude": 47.15804,
+                  "longitude": 6.25245
+                },
+                "pointIndex": 5377,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 3,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 275723,
+                "travelTimeInSeconds": 14309,
+                "point": {
+                  "latitude": 47.15945,
+                  "longitude": 6.24888
+                },
+                "pointIndex": 5393,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Besançon",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 292107,
+                "travelTimeInSeconds": 14879,
+                "point": {
+                  "latitude": 47.22388,
+                  "longitude": 6.07678
+                },
+                "pointIndex": 5667,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "D464"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Besançon-Centre",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "BEAR_RIGHT",
+                "message": "Buig rechts af bij <roadNumber>D464</roadNumber> richting <signpostText>Besançon-Centre</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 293493,
+                "travelTimeInSeconds": 14965,
+                "point": {
+                  "latitude": 47.21693,
+                  "longitude": 6.06606
+                },
+                "pointIndex": 5713,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57"
+                ],
+                "countryCode": "FRA",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 3,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde richting <roadNumber>N57</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 293822,
+                "travelTimeInSeconds": 14984,
+                "point": {
+                  "latitude": 47.21506,
+                  "longitude": 6.06297
+                },
+                "pointIndex": 5730,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "N57"
+                ],
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>N57</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 299400,
+                "travelTimeInSeconds": 15287,
+                "point": {
+                  "latitude": 47.21085,
+                  "longitude": 5.99917
+                },
+                "pointIndex": 5853,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N57",
+                  "E23"
+                ],
+                "street": "Voie des Mercureaux",
+                "countryCode": "FRA",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 90,
+                "roundaboutExitNumber": 1,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_RIGHT",
+                "message": "Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Voie des Mercureaux</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 302090,
+                "travelTimeInSeconds": 15477,
+                "point": {
+                  "latitude": 47.22733,
+                  "longitude": 5.97964
+                },
+                "pointIndex": 5931,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "D673"
+                ],
+                "exitNumber": "61",
+                "street": "Rue de Dole",
+                "countryCode": "FRA",
+                "signpostText": "Dole",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_RIGHT",
+                "message": "Houd rechts aan bij <street>Rue de Dole</street>/<roadNumber>D673</roadNumber> richting <signpostText>Dole</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 303186,
+                "travelTimeInSeconds": 15555,
+                "point": {
+                  "latitude": 47.22418,
+                  "longitude": 5.96904
+                },
+                "pointIndex": 5978,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "D673"
+                ],
+                "street": "Rue de Dole",
+                "countryCode": "FRA",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <street>Rue de Dole</street>/<roadNumber>D673</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 307431,
+                "travelTimeInSeconds": 15744,
+                "point": {
+                  "latitude": 47.21709,
+                  "longitude": 5.92001
+                },
+                "pointIndex": 6067,
+                "instructionType": "TURN",
+                "countryCode": "FRA",
+                "signpostText": "CHAUMONT",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_EXIT",
+                "message": "Neem de afslag"
+              },
+              {
+                "routeOffsetInMeters": 307696,
+                "travelTimeInSeconds": 15763,
+                "point": {
+                  "latitude": 47.21845,
+                  "longitude": 5.91740
+                },
+                "pointIndex": 6079,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N173"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Chaumont",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N173</roadNumber> richting <signpostText>Chaumont</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 309667,
+                "travelTimeInSeconds": 15868,
+                "point": {
+                  "latitude": 47.23360,
+                  "longitude": 5.90486
+                },
+                "pointIndex": 6128,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "N173",
+                  "D67"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "Dijon",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": -90,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_LEFT",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N173</roadNumber>/<roadNumber>D67</roadNumber> richting <signpostText>Dijon</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 310106,
+                "travelTimeInSeconds": 15907,
+                "point": {
+                  "latitude": 47.23439,
+                  "longitude": 5.89986
+                },
+                "pointIndex": 6158,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A36",
+                  "E60"
+                ],
+                "street": "La Comtoise",
+                "countryCode": "FRA",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde richting <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber>",
+                "combinedMessage": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde richting <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> daarna houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 310306,
+                "travelTimeInSeconds": 15955,
+                "point": {
+                  "latitude": 47.23488,
+                  "longitude": 5.89765
+                },
+                "pointIndex": 6176,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A36",
+                  "E60"
+                ],
+                "street": "La Comtoise",
+                "countryCode": "FRA",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber>",
+                "combinedMessage": "Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> daarna houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 310465,
+                "travelTimeInSeconds": 15965,
+                "point": {
+                  "latitude": 47.23523,
+                  "longitude": 5.89562
+                },
+                "pointIndex": 6178,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A36",
+                  "E60"
+                ],
+                "street": "La Comtoise",
+                "countryCode": "FRA",
+                "signpostText": "Paris",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText>",
+                "combinedMessage": "Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText> daarna ga de snelweg <roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 310993,
+                "travelTimeInSeconds": 15998,
+                "point": {
+                  "latitude": 47.23589,
+                  "longitude": 5.89398
+                },
+                "pointIndex": 6211,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A36",
+                  "E60"
+                ],
+                "street": "La Comtoise",
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 311093,
+                "travelTimeInSeconds": 16001,
+                "point": {
+                  "latitude": 47.23503,
+                  "longitude": 5.89362
+                },
+                "pointIndex": 6214,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A36",
+                  "E60"
+                ],
+                "street": "La Comtoise",
+                "countryCode": "FRA",
+                "signpostText": "PARIS",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>PARIS</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 352576,
+                "travelTimeInSeconds": 17182,
+                "point": {
+                  "latitude": 47.12465,
+                  "longitude": 5.39600
+                },
+                "pointIndex": 6736,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A39"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "DIJON",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_EXIT",
+                "message": "Neem de afslag naar de <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText>",
+                "combinedMessage": "Neem de afslag naar de <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText> daarna houd rechts aan bij <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 352892,
+                "travelTimeInSeconds": 17195,
+                "point": {
+                  "latitude": 47.12418,
+                  "longitude": 5.39198
+                },
+                "pointIndex": 6747,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A39"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "DIJON",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_RIGHT",
+                "message": "Houd rechts aan bij <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText>",
+                "combinedMessage": "Houd rechts aan bij <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText> daarna ga de snelweg <roadNumber>A39</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 353634,
+                "travelTimeInSeconds": 17224,
+                "point": {
+                  "latitude": 47.12775,
+                  "longitude": 5.38444
+                },
+                "pointIndex": 6764,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A39"
+                ],
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A39</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 353734,
+                "travelTimeInSeconds": 17226,
+                "point": {
+                  "latitude": 47.12846,
+                  "longitude": 5.38363
+                },
+                "pointIndex": 6766,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A39"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "LILLE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>A39</roadNumber> richting <signpostText>LILLE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 379121,
+                "travelTimeInSeconds": 17928,
+                "point": {
+                  "latitude": 47.27293,
+                  "longitude": 5.15073
+                },
+                "pointIndex": 7019,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A31",
+                  "E21",
+                  "E17"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "LILLE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_EXIT",
+                "message": "Neem de afslag naar de <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>",
+                "combinedMessage": "Neem de afslag naar de <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText> daarna ga de snelweg <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 379748,
+                "travelTimeInSeconds": 17952,
+                "point": {
+                  "latitude": 47.27732,
+                  "longitude": 5.14920
+                },
+                "pointIndex": 7041,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A31",
+                  "E21",
+                  "E17"
+                ],
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 379848,
+                "travelTimeInSeconds": 17955,
+                "point": {
+                  "latitude": 47.27802,
+                  "longitude": 5.15003
+                },
+                "pointIndex": 7042,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A31",
+                  "E21",
+                  "E17"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "LILLE-PARIS",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE-PARIS</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 454435,
+                "travelTimeInSeconds": 20007,
+                "point": {
+                  "latitude": 47.91065,
+                  "longitude": 5.22255
+                },
+                "pointIndex": 7731,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A5",
+                  "E17"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "LILLE",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <roadNumber>A5</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 455090,
+                "travelTimeInSeconds": 20025,
+                "point": {
+                  "latitude": 47.91645,
+                  "longitude": 5.22106
+                },
+                "pointIndex": 7736,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A5",
+                  "E17"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "LILLE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>A5</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 546480,
+                "travelTimeInSeconds": 22575,
+                "point": {
+                  "latitude": 48.22902,
+                  "longitude": 4.18454
+                },
+                "pointIndex": 8632,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A26",
+                  "E17"
+                ],
+                "street": "Autoroute des Anglais",
+                "countryCode": "FRA",
+                "signpostText": "LILLE",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_EXIT",
+                "message": "Neem de afslag naar de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 547311,
+                "travelTimeInSeconds": 22603,
+                "point": {
+                  "latitude": 48.23346,
+                  "longitude": 4.17640
+                },
+                "pointIndex": 8651,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A26",
+                  "E17"
+                ],
+                "street": "Autoroute des Anglais",
+                "countryCode": "FRA",
+                "signpostText": "LILLE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 642793,
+                "travelTimeInSeconds": 25230,
+                "point": {
+                  "latitude": 49.05239,
+                  "longitude": 4.28487
+                },
+                "pointIndex": 9442,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A4",
+                  "E17",
+                  "E50"
+                ],
+                "street": "Autoroute de l'Est",
+                "countryCode": "FRA",
+                "signpostText": "PARIS",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <street>Autoroute de l'Est</street>/<roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> richting <signpostText>PARIS</signpostText>",
+                "combinedMessage": "Houd links aan bij <street>Autoroute de l'Est</street>/<roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> richting <signpostText>PARIS</signpostText> daarna ga de snelweg <roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 643756,
+                "travelTimeInSeconds": 25271,
+                "point": {
+                  "latitude": 49.05948,
+                  "longitude": 4.28209
+                },
+                "pointIndex": 9469,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A4",
+                  "E17",
+                  "E50"
+                ],
+                "street": "Autoroute de l'Est",
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 643856,
+                "travelTimeInSeconds": 25274,
+                "point": {
+                  "latitude": 49.06019,
+                  "longitude": 4.28124
+                },
+                "pointIndex": 9471,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A4",
+                  "E17",
+                  "E50"
+                ],
+                "street": "Autoroute de l'Est",
+                "countryCode": "FRA",
+                "signpostText": "LILLE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Autoroute de l'Est</street>/<roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> richting <signpostText>LILLE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 677680,
+                "travelTimeInSeconds": 26245,
+                "point": {
+                  "latitude": 49.24166,
+                  "longitude": 3.96697
+                },
+                "pointIndex": 9811,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A26",
+                  "E17"
+                ],
+                "street": "Autoroute des Anglais",
+                "countryCode": "FRA",
+                "signpostText": "BRUXELLES",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_EXIT",
+                "message": "Neem de afslag naar de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>BRUXELLES</signpostText>",
+                "combinedMessage": "Neem de afslag naar de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>BRUXELLES</signpostText> daarna ga de snelweg <roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 679212,
+                "travelTimeInSeconds": 26330,
+                "point": {
+                  "latitude": 49.25430,
+                  "longitude": 3.96128
+                },
+                "pointIndex": 9836,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A26",
+                  "E17"
+                ],
+                "street": "Autoroute des Anglais",
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 679312,
+                "travelTimeInSeconds": 26334,
+                "point": {
+                  "latitude": 49.25518,
+                  "longitude": 3.96152
+                },
+                "pointIndex": 9837,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A26",
+                  "E17"
+                ],
+                "street": "Autoroute des Anglais",
+                "countryCode": "FRA",
+                "signpostText": "BRUXELLES",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>BRUXELLES</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 688147,
+                "travelTimeInSeconds": 26618,
+                "point": {
+                  "latitude": 49.32360,
+                  "longitude": 3.98247
+                },
+                "pointIndex": 9985,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A26",
+                  "E17"
+                ],
+                "street": "Autoroute des Anglais",
+                "countryCode": "FRA",
+                "signpostText": "LAON",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LAON</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 909239,
+                "travelTimeInSeconds": 33087,
+                "point": {
+                  "latitude": 50.72026,
+                  "longitude": 2.17100
+                },
+                "pointIndex": 12025,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A26",
+                  "E15"
+                ],
+                "street": "Autoroute des Anglais",
+                "countryCode": "FRA",
+                "signpostText": "CALAIS",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>CALAIS</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 940686,
+                "travelTimeInSeconds": 33982,
+                "point": {
+                  "latitude": 50.93390,
+                  "longitude": 1.91011
+                },
+                "pointIndex": 12359,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A16",
+                  "E15",
+                  "E402"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "LA MANCHE",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>LA MANCHE</signpostText>",
+                "combinedMessage": "Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>LA MANCHE</signpostText> daarna houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 941023,
+                "travelTimeInSeconds": 33996,
+                "point": {
+                  "latitude": 50.93675,
+                  "longitude": 1.90977
+                },
+                "pointIndex": 12372,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A16",
+                  "E15",
+                  "E402"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "TUNNEL SOUS LA MANCHE",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText>",
+                "combinedMessage": "Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText> daarna ga de snelweg <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 941840,
+                "travelTimeInSeconds": 34030,
+                "point": {
+                  "latitude": 50.93544,
+                  "longitude": 1.89922
+                },
+                "pointIndex": 12399,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "A16",
+                  "E15",
+                  "E402"
+                ],
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 941940,
+                "travelTimeInSeconds": 34034,
+                "point": {
+                  "latitude": 50.93525,
+                  "longitude": 1.89783
+                },
+                "pointIndex": 12400,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "A16",
+                  "E15",
+                  "E402"
+                ],
+                "countryCode": "FRA",
+                "signpostText": "TUNNEL SOUS LA MANCHE",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 947348,
+                "travelTimeInSeconds": 34249,
+                "point": {
+                  "latitude": 50.94162,
+                  "longitude": 1.82371
+                },
+                "pointIndex": 12501,
+                "instructionType": "TURN",
+                "exitNumber": "42",
+                "street": "Terminal Eurotunnel",
+                "countryCode": "FRA",
+                "signpostText": "Tunnel sous la Manche",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_EXIT",
+                "message": "Neem afslag <exitNumber>42</exitNumber> naar de <street>Terminal Eurotunnel</street> richting <signpostText>Tunnel sous la Manche</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 948375,
+                "travelTimeInSeconds": 34306,
+                "point": {
+                  "latitude": 50.93811,
+                  "longitude": 1.81536
+                },
+                "pointIndex": 12537,
+                "instructionType": "TURN",
+                "countryCode": "FRA",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": 45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_RIGHT",
+                "message": "Houd rechts aan",
+                "combinedMessage": "Houd rechts aan daarna neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Terminal Eurotunnel</street> richting <signpostText>Grande-Bretagne</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 948483,
+                "travelTimeInSeconds": 34317,
+                "point": {
+                  "latitude": 50.93719,
+                  "longitude": 1.81501
+                },
+                "pointIndex": 12545,
+                "instructionType": "TURN",
+                "street": "Terminal Eurotunnel",
+                "countryCode": "FRA",
+                "signpostText": "Grande-Bretagne",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Terminal Eurotunnel</street> richting <signpostText>Grande-Bretagne</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 949180,
+                "travelTimeInSeconds": 34865,
+                "point": {
+                  "latitude": 50.93106,
+                  "longitude": 1.81389
+                },
+                "pointIndex": 12569,
+                "instructionType": "TURN",
+                "countryCode": "FRA",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": -45,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde",
+                "combinedMessage": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde daarna houd links aan"
+              },
+              {
+                "routeOffsetInMeters": 949301,
+                "travelTimeInSeconds": 34881,
+                "point": {
+                  "latitude": 50.93050,
+                  "longitude": 1.81361
+                },
+                "pointIndex": 12591,
+                "instructionType": "TURN",
+                "countryCode": "FRA",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan",
+                "combinedMessage": "Houd links aan daarna sla linksaf"
+              },
+              {
+                "routeOffsetInMeters": 949751,
+                "travelTimeInSeconds": 34947,
+                "point": {
+                  "latitude": 50.92701,
+                  "longitude": 1.81061
+                },
+                "pointIndex": 12606,
+                "instructionType": "TURN",
+                "countryCode": "FRA",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": -90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "RIGHT",
+                "maneuver": "TURN_LEFT",
+                "message": "Sla linksaf",
+                "combinedMessage": "Sla linksaf daarna neem de veerboot richting <street>Dover Folkestone - Calais Frethun</street>"
+              },
+              {
+                "routeOffsetInMeters": 950215,
+                "travelTimeInSeconds": 35024,
+                "point": {
+                  "latitude": 50.92463,
+                  "longitude": 1.81440
+                },
+                "pointIndex": 12625,
+                "instructionType": "ROAD_CHANGE",
+                "street": "Dover Folkestone - Calais Frethun",
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "TAKE_FERRY",
+                "message": "Neem de veerboot richting <street>Dover Folkestone - Calais Frethun</street>"
+              },
+              {
+                "routeOffsetInMeters": 950645,
+                "travelTimeInSeconds": 36244,
+                "point": {
+                  "latitude": 50.92108,
+                  "longitude": 1.81219
+                },
+                "pointIndex": 12632,
+                "instructionType": "DIRECTION_INFO",
+                "street": "Dover Folkestone - Calais Frethun",
+                "countryCode": "FRA",
+                "possibleCombineWithNext": false,
+                "drivingSide": "RIGHT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <street>Dover Folkestone - Calais Frethun</street>"
+              },
+              {
+                "routeOffsetInMeters": 1005147,
+                "travelTimeInSeconds": 38705,
+                "point": {
+                  "latitude": 51.09571,
+                  "longitude": 1.13289
+                },
+                "pointIndex": 12836,
+                "instructionType": "ROAD_CHANGE",
+                "countryCode": "GBR",
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "STRAIGHT",
+                "message": "Blijf rechtdoor rijden"
+              },
+              {
+                "routeOffsetInMeters": 1008182,
+                "travelTimeInSeconds": 39026,
+                "point": {
+                  "latitude": 51.09274,
+                  "longitude": 1.10795
+                },
+                "pointIndex": 12902,
+                "instructionType": "TURN",
+                "countryCode": "GBR",
+                "signpostText": "Dover",
+                "junctionType": "BIFURCATION",
+                "turnAngleInDecimalDegrees": -45,
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "KEEP_LEFT",
+                "message": "Houd links aan"
+              },
+              {
+                "routeOffsetInMeters": 1008760,
+                "travelTimeInSeconds": 39083,
+                "point": {
+                  "latitude": 51.09492,
+                  "longitude": 1.10306
+                },
+                "pointIndex": 12924,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A20"
+                ],
+                "street": "Ashford Road",
+                "countryCode": "GBR",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 90,
+                "roundaboutExitNumber": 3,
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "ROUNDABOUT_RIGHT",
+                "message": "Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde richting <street>Ashford Road</street>/<roadNumber>A20</roadNumber>"
+              },
+              {
+                "routeOffsetInMeters": 1010849,
+                "travelTimeInSeconds": 39208,
+                "point": {
+                  "latitude": 51.09232,
+                  "longitude": 1.13011
+                },
+                "pointIndex": 12995,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "M20",
+                  "E15"
+                ],
+                "countryCode": "GBR",
+                "signpostText": "Dover",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": -45,
+                "roundaboutExitNumber": 1,
+                "possibleCombineWithNext": true,
+                "drivingSide": "LEFT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Dover</signpostText>",
+                "combinedMessage": "Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Dover</signpostText> daarna ga de snelweg <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 1011427,
+                "travelTimeInSeconds": 39236,
+                "point": {
+                  "latitude": 51.09429,
+                  "longitude": 1.13766
+                },
+                "pointIndex": 13014,
+                "instructionType": "ROAD_CHANGE",
+                "roadNumbers": [
+                  "M20",
+                  "E15"
+                ],
+                "countryCode": "GBR",
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "ENTER_MOTORWAY",
+                "message": "Ga de snelweg <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> op"
+              },
+              {
+                "routeOffsetInMeters": 1011527,
+                "travelTimeInSeconds": 39239,
+                "point": {
+                  "latitude": 51.09458,
+                  "longitude": 1.13901
+                },
+                "pointIndex": 13015,
+                "instructionType": "DIRECTION_INFO",
+                "roadNumbers": [
+                  "M20",
+                  "E15"
+                ],
+                "countryCode": "GBR",
+                "signpostText": "Dover",
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "FOLLOW",
+                "message": "Volg de <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Dover</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 1024346,
+                "travelTimeInSeconds": 39693,
+                "point": {
+                  "latitude": 51.11447,
+                  "longitude": 1.30296
+                },
+                "pointIndex": 13220,
+                "instructionType": "TURN",
+                "roadNumbers": [
+                  "A20",
+                  "E15"
+                ],
+                "street": "Archcliffe Road",
+                "countryCode": "GBR",
+                "signpostText": "Town Centre",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 0,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Archcliffe Road</street>/<roadNumber>A20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Town Centre</signpostText>"
+              },
+              {
+                "routeOffsetInMeters": 1024836,
+                "travelTimeInSeconds": 39728,
+                "point": {
+                  "latitude": 51.11724,
+                  "longitude": 1.30717
+                },
+                "pointIndex": 13251,
+                "instructionType": "TURN",
+                "street": "The Viaduct",
+                "countryCode": "GBR",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": 135,
+                "roundaboutExitNumber": 3,
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "ROUNDABOUT_RIGHT",
+                "message": "Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde richting <street>The Viaduct</street>"
+              },
+              {
+                "routeOffsetInMeters": 1025272,
+                "travelTimeInSeconds": 39783,
+                "point": {
+                  "latitude": 51.11542,
+                  "longitude": 1.31073
+                },
+                "pointIndex": 13281,
+                "instructionType": "TURN",
+                "street": "Lord Warden Square",
+                "countryCode": "GBR",
+                "junctionType": "ROUNDABOUT",
+                "turnAngleInDecimalDegrees": -45,
+                "roundaboutExitNumber": 2,
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "ROUNDABOUT_CROSS",
+                "message": "Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde richting <street>Lord Warden Square</street>"
+              },
+              {
+                "routeOffsetInMeters": 1026071,
+                "travelTimeInSeconds": 39959,
+                "point": {
+                  "latitude": 51.11184,
+                  "longitude": 1.31910
+                },
+                "pointIndex": 13318,
+                "instructionType": "TURN",
+                "countryCode": "GBR",
+                "junctionType": "REGULAR",
+                "turnAngleInDecimalDegrees": 90,
+                "possibleCombineWithNext": true,
+                "drivingSide": "LEFT",
+                "maneuver": "TURN_RIGHT",
+                "message": "Sla rechtsaf",
+                "combinedMessage": "Sla rechtsaf daarna je bent aangekomen. Je bestemming bevindt zich aan de linkerkant"
+              },
+              {
+                "routeOffsetInMeters": 1026313,
+                "travelTimeInSeconds": 40081,
+                "point": {
+                  "latitude": 51.11156,
+                  "longitude": 1.32247
+                },
+                "pointIndex": 13327,
+                "instructionType": "LOCATION_ARRIVAL",
+                "countryCode": "GBR",
+                "possibleCombineWithNext": false,
+                "drivingSide": "LEFT",
+                "maneuver": "ARRIVE_LEFT",
+                "message": "Je bent aangekomen. Je bestemming bevindt zich aan de linkerkant"
+              }
+            ],
+            "instructionGroups": [
+              {
+                "firstInstructionIndex": 0,
+                "lastInstructionIndex": 9,
+                "groupMessage": "Vertrek vanuit <street>Wildistrasse</street>. Ga <street>Feldweg</street>, <street>Innere Dorfstrasse</street>, <street>Risetistrasse</street>, <street>Merenweg</street>, <street>Kandersteg - Goppenstein</street> op",
+                "groupLengthInMeters": 19125
+              },
+              {
+                "firstInstructionIndex": 10,
+                "lastInstructionIndex": 11,
+                "groupMessage": "Ga <street>Bahnhofstrasse</street> op",
+                "groupLengthInMeters": 3679
+              },
+              {
+                "firstInstructionIndex": 12,
+                "lastInstructionIndex": 13,
+                "groupMessage": "Ga <street>Neue Strasse</street> op",
+                "groupLengthInMeters": 2902
+              },
+              {
+                "firstInstructionIndex": 14,
+                "lastInstructionIndex": 16,
+                "groupMessage": "Ga naar je tussenpunt op <street>Kummenalp</street>",
+                "groupLengthInMeters": 8246
+              },
+              {
+                "firstInstructionIndex": 17,
+                "lastInstructionIndex": 21,
+                "groupMessage": "Ga <street>Neue Strasse</street>, <street>Goltschenried</street>, <street>Bahnhofstrasse</street> op richting <signpostText>Sion</signpostText>",
+                "groupLengthInMeters": 15997
+              },
+              {
+                "firstInstructionIndex": 22,
+                "lastInstructionIndex": 53,
+                "groupMessage": "Ga <roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>/<roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber>/<roadNumber>N57</roadNumber>/<roadNumber>D47</roadNumber> op richting <signpostText>Sion</signpostText>, <signpostText>Lausanne</signpostText>, <signpostText>Leukerbad</signpostText>, <signpostText>Lutry</signpostText>, <signpostText>Besancon</signpostText>, <signpostText>La Sarraz</signpostText>, <signpostText>Besançon</signpostText>, <signpostText>Les Clées</signpostText>, <signpostText>Dijon</signpostText>, <signpostText>Jougne-Centre</signpostText>, <signpostText>La Cluse-et-Mijoux</signpostText>, <signpostText>Saint-Gorgon-Main</signpostText>",
+                "groupLengthInMeters": 242158
+              },
+              {
+                "firstInstructionIndex": 54,
+                "lastInstructionIndex": 71,
+                "groupMessage": "Ga <street>Voie des Mercureaux</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> op en ga daarna <roadNumber>N173</roadNumber>/<roadNumber>D67</roadNumber> op richting <signpostText>Chaumont</signpostText>, <signpostText>Dijon</signpostText>. Volg <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText>, <signpostText>PARIS</signpostText>",
+                "groupLengthInMeters": 87014
+              },
+              {
+                "firstInstructionIndex": 72,
+                "lastInstructionIndex": 90,
+                "groupMessage": "Ga <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>A5</roadNumber>/<roadNumber>A26</roadNumber>/<roadNumber>A4</roadNumber>/<roadNumber>E50</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>A16</roadNumber>/<roadNumber>E402</roadNumber> op richting <signpostText>LILLE</signpostText>, <signpostText>LILLE-PARIS</signpostText>, <signpostText>PARIS</signpostText>, <signpostText>BRUXELLES</signpostText>, <signpostText>LAON</signpostText>, <signpostText>CALAIS</signpostText>, <signpostText>LA MANCHE</signpostText>, <signpostText>TUNNEL SOUS LA MANCHE</signpostText>",
+                "groupLengthInMeters": 568227
+              },
+              {
+                "firstInstructionIndex": 91,
+                "lastInstructionIndex": 109,
+                "groupMessage": "Ga door naar <street>Ashford Road</street>/<roadNumber>A20</roadNumber> en ga <street>Archcliffe Road</street>/<roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>A20</roadNumber> op richting <signpostText>Dover</signpostText>, <signpostText>Town Centre</signpostText>. Ga door naar je bestemming",
+                "groupLengthInMeters": 78965
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {"routes":{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[null,null]},"properties":{"summary":{"lengthInMeters":1026313,"travelTimeInSeconds":40081,"trafficDelayInSeconds":277,"trafficLengthInMeters":19458,"departureTime":"2022-10-21T07:06:56.000Z","arrivalTime":"2022-10-21T18:14:56.000Z","noTrafficTravelTimeInSeconds":38662,"historicTrafficTravelTimeInSeconds":39716,"liveTrafficIncidentsTravelTimeInSeconds":40081},"sections":{"leg":[{"startPointIndex":0,"summary":{"lengthInMeters":29829,"travelTimeInSeconds":3504,"trafficDelayInSeconds":0,"trafficLengthInMeters":0,"departureTime":"2022-10-21T07:06:56.000Z","arrivalTime":"2022-10-21T08:05:19.000Z","noTrafficTravelTimeInSeconds":3423,"historicTrafficTravelTimeInSeconds":3504,"liveTrafficIncidentsTravelTimeInSeconds":3504}},{"summary":{"lengthInMeters":996484,"travelTimeInSeconds":36577,"trafficDelayInSeconds":277,"trafficLengthInMeters":19458,"departureTime":"2022-10-21T08:05:19.000Z","arrivalTime":"2022-10-21T18:14:56.000Z","noTrafficTravelTimeInSeconds":35239,"historicTrafficTravelTimeInSeconds":36212,"liveTrafficIncidentsTravelTimeInSeconds":36577}}],"tunnel":[{"startPointIndex":141,"endPointIndex":202},{"startPointIndex":275,"endPointIndex":289},{"startPointIndex":318,"endPointIndex":326},{"startPointIndex":1011,"endPointIndex":1019},{"startPointIndex":1048,"endPointIndex":1062},{"startPointIndex":1104,"endPointIndex":1113},{"startPointIndex":1121,"endPointIndex":1126},{"startPointIndex":1131,"endPointIndex":1136},{"startPointIndex":1142,"endPointIndex":1158},{"startPointIndex":1166,"endPointIndex":1170},{"startPointIndex":1182,"endPointIndex":1214},{"startPointIndex":1529,"endPointIndex":1543},{"startPointIndex":1830,"endPointIndex":1870},{"startPointIndex":1936,"endPointIndex":1939},{"startPointIndex":1996,"endPointIndex":2008},{"startPointIndex":2472,"endPointIndex":2484},{"startPointIndex":2491,"endPointIndex":2499},{"startPointIndex":2789,"endPointIndex":2821},{"startPointIndex":3111,"endPointIndex":3126},{"startPointIndex":3171,"endPointIndex":3177},{"startPointIndex":3195,"endPointIndex":3201},{"startPointIndex":3280,"endPointIndex":3290},{"startPointIndex":5740,"endPointIndex":5745},{"startPointIndex":5789,"endPointIndex":5805},{"startPointIndex":12673,"endPointIndex":12750},{"startPointIndex":12785,"endPointIndex":12820},{"startPointIndex":13054,"endPointIndex":13058}],"carTrain":[{"startPointIndex":103,"endPointIndex":219},{"startPointIndex":12625,"endPointIndex":12836}],"travelMode":[{"startPointIndex":0,"endPointIndex":377,"travelMode":"car"},{"startPointIndex":377,"endPointIndex":960,"travelMode":"other"},{"startPointIndex":960,"endPointIndex":13327,"travelMode":"car"}],"tollRoad":[{"startPointIndex":1492,"endPointIndex":1579},{"startPointIndex":1798,"endPointIndex":4020},{"startPointIndex":6170,"endPointIndex":9836},{"startPointIndex":9903,"endPointIndex":12387}],"tollVignette":[{"startPointIndex":1492,"endPointIndex":1579,"countryCodeISO3":"CHE"},{"startPointIndex":1798,"endPointIndex":4020,"countryCodeISO3":"CHE"}],"motorway":[{"startPointIndex":1766,"endPointIndex":4020},{"startPointIndex":5508,"endPointIndex":5648},{"startPointIndex":5977,"endPointIndex":6067},{"startPointIndex":6211,"endPointIndex":12501},{"startPointIndex":13014,"endPointIndex":13220}],"country":[{"startPointIndex":0,"endPointIndex":4081,"countryCodeISO3":"CHE"},{"startPointIndex":4081,"endPointIndex":12709,"countryCodeISO3":"FRA"},{"startPointIndex":12735,"endPointIndex":13327,"countryCodeISO3":"GBR"}],"traffic":[{"startPointIndex":2325,"endPointIndex":2542,"delayInSeconds":0,"effectiveSpeedInKmh":116,"simpleCategory":"OTHER","magnitudeOfDelay":"UNDEFINED","tec":{"causes":[{"mainCauseCode":4}],"effectCode":1}},{"startPointIndex":2325,"endPointIndex":2542,"delayInSeconds":0,"effectiveSpeedInKmh":116,"simpleCategory":"ROAD_WORK","magnitudeOfDelay":"UNDEFINED","tec":{"causes":[{"mainCauseCode":3}],"effectCode":1}},{"startPointIndex":2325,"endPointIndex":2542,"delayInSeconds":0,"effectiveSpeedInKmh":116,"simpleCategory":"OTHER","magnitudeOfDelay":"UNDEFINED","tec":{"causes":[{"mainCauseCode":3,"subCauseCode":3},{"mainCauseCode":4}],"effectCode":1}},{"startPointIndex":3077,"endPointIndex":3106,"delayInSeconds":0,"effectiveSpeedInKmh":89,"simpleCategory":"ROAD_WORK","magnitudeOfDelay":"UNDEFINED","tec":{"causes":[{"mainCauseCode":3}],"effectCode":1}},{"startPointIndex":4573,"endPointIndex":4587,"delayInSeconds":0,"effectiveSpeedInKmh":50,"simpleCategory":"ROAD_WORK","magnitudeOfDelay":"UNDEFINED","tec":{"causes":[{"mainCauseCode":22}],"effectCode":1}},{"startPointIndex":8500,"endPointIndex":8565,"delayInSeconds":36,"effectiveSpeedInKmh":98,"simpleCategory":"OTHER","magnitudeOfDelay":"MINOR","tec":{"causes":[{"mainCauseCode":4}],"effectCode":1}},{"startPointIndex":8500,"endPointIndex":8565,"delayInSeconds":0,"effectiveSpeedInKmh":98,"simpleCategory":"ROAD_WORK","magnitudeOfDelay":"MINOR","tec":{"causes":[{"mainCauseCode":3}],"effectCode":1}},{"startPointIndex":11202,"endPointIndex":11271,"delayInSeconds":46,"effectiveSpeedInKmh":92,"simpleCategory":"ROAD_WORK","magnitudeOfDelay":"MINOR","tec":{"causes":[{"mainCauseCode":3},{"mainCauseCode":22}],"effectCode":1}},{"startPointIndex":11897,"endPointIndex":12017,"delayInSeconds":195,"effectiveSpeedInKmh":78,"simpleCategory":"ROAD_WORK","magnitudeOfDelay":"MINOR","tec":{"causes":[{"mainCauseCode":3},{"mainCauseCode":22}],"effectCode":1}}]},"guidance":{"instructions":[{"routeOffsetInMeters":0,"travelTimeInSeconds":0,"point":[7.67635,46.49122],"pointIndex":1,"instructionType":"LOCATION_DEPARTURE","street":"Wildistrasse","countryCode":"CHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"DEPART","message":"Vertrek vanuit <street>Wildistrasse</street>"},{"routeOffsetInMeters":253,"travelTimeInSeconds":64,"point":[7.67593,46.49344],"pointIndex":15,"instructionType":"TURN","street":"Feldweg","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"BEAR_LEFT","message":"Buig links af bij <street>Feldweg</street>"},{"routeOffsetInMeters":415,"travelTimeInSeconds":101,"point":[7.67418,46.49421],"pointIndex":27,"instructionType":"TURN","street":"Innere Dorfstrasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":90,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TURN_RIGHT","message":"Sla rechtsaf richting <street>Innere Dorfstrasse</street>"},{"routeOffsetInMeters":822,"travelTimeInSeconds":160,"point":[7.6745,46.49783],"pointIndex":44,"instructionType":"TURN","street":"Risetistrasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":-90,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TURN_LEFT","message":"Sla linksaf richting <street>Risetistrasse</street>","combinedMessage":"Sla linksaf richting <street>Risetistrasse</street> daarna sla rechtsaf richting <street>Risetistrasse</street>"},{"routeOffsetInMeters":1056,"travelTimeInSeconds":201,"point":[7.67206,46.49885],"pointIndex":63,"instructionType":"TURN","street":"Risetistrasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":90,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TURN_RIGHT","message":"Sla rechtsaf richting <street>Risetistrasse</street>","combinedMessage":"Sla rechtsaf richting <street>Risetistrasse</street> daarna sla rechtsaf richting <street>Risetistrasse</street>"},{"routeOffsetInMeters":1153,"travelTimeInSeconds":223,"point":[7.6724,46.49966],"pointIndex":69,"instructionType":"TURN","street":"Risetistrasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":90,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TURN_RIGHT","message":"Sla rechtsaf richting <street>Risetistrasse</street>","combinedMessage":"Sla rechtsaf richting <street>Risetistrasse</street> daarna sla rechtsaf richting <street>Merenweg</street>"},{"routeOffsetInMeters":1177,"travelTimeInSeconds":237,"point":[7.67271,46.49964],"pointIndex":71,"instructionType":"TURN","street":"Merenweg","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":90,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TURN_RIGHT","message":"Sla rechtsaf richting <street>Merenweg</street>"},{"routeOffsetInMeters":1829,"travelTimeInSeconds":438,"point":[7.67044,46.49458],"pointIndex":101,"instructionType":"TURN","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":90,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TURN_RIGHT","message":"Sla rechtsaf","combinedMessage":"Sla rechtsaf daarna neem de veerboot richting <street>Kandersteg - Goppenstein</street>"},{"routeOffsetInMeters":1899,"travelTimeInSeconds":495,"point":[7.67038,46.49395],"pointIndex":103,"instructionType":"ROAD_CHANGE","street":"Kandersteg - Goppenstein","countryCode":"CHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TAKE_FERRY","message":"Neem de veerboot richting <street>Kandersteg - Goppenstein</street>"},{"routeOffsetInMeters":2329,"travelTimeInSeconds":1714,"point":[7.66814,46.49045],"pointIndex":113,"instructionType":"DIRECTION_INFO","street":"Kandersteg - Goppenstein","countryCode":"CHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Kandersteg - Goppenstein</street>"},{"routeOffsetInMeters":19125,"travelTimeInSeconds":2470,"point":[7.75746,46.36294],"pointIndex":219,"instructionType":"ROAD_CHANGE","countryCode":"CHE","possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"STRAIGHT","message":"Blijf rechtdoor rijden","combinedMessage":"Blijf rechtdoor rijden daarna sla linksaf richting <street>Bahnhofstrasse</street>"},{"routeOffsetInMeters":19543,"travelTimeInSeconds":2568,"point":[7.75727,46.36357],"pointIndex":240,"instructionType":"TURN","street":"Bahnhofstrasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":-90,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TURN_LEFT","message":"Sla linksaf richting <street>Bahnhofstrasse</street>"},{"routeOffsetInMeters":22804,"travelTimeInSeconds":2821,"point":[7.7571,46.39103],"pointIndex":356,"instructionType":"TURN","street":"Neue Strasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"BEAR_LEFT","message":"Buig links af bij <street>Neue Strasse</street>"},{"routeOffsetInMeters":23266,"travelTimeInSeconds":2894,"point":[7.75889,46.39475],"pointIndex":377,"instructionType":"TURN","street":"Neue Strasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":-135,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"SHARP_LEFT","message":"Neem een scherpe bocht naar links richting <street>Neue Strasse</street>"},{"routeOffsetInMeters":25706,"travelTimeInSeconds":3133,"point":[7.74897,46.39438],"pointIndex":486,"instructionType":"TURN","street":"Kummenalp","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":90,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TURN_RIGHT","message":"Sla rechtsaf richting <street>Kummenalp</street>"},{"routeOffsetInMeters":29829,"travelTimeInSeconds":3504,"point":[7.74084,46.40426],"pointIndex":669,"instructionType":"TURN","street":"Kummenalp","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":-180,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TRY_MAKE_UTURN","message":"Probeer om te keren bij <street>Kummenalp</street>"},{"routeOffsetInMeters":29829,"travelTimeInSeconds":3504,"point":[7.74084,46.40426],"pointIndex":669,"instructionType":"LOCATION_WAYPOINT","street":"Kummenalp","countryCode":"CHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"WAYPOINT_RIGHT","message":"Je hebt het tussenpunt bij <street>Kummenalp</street> bereikt. Het bevindt zich aan de rechterkant"},{"routeOffsetInMeters":33952,"travelTimeInSeconds":3995,"point":[7.74897,46.39438],"pointIndex":851,"instructionType":"TURN","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":-90,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TURN_LEFT","message":"Sla linksaf"},{"routeOffsetInMeters":36392,"travelTimeInSeconds":4233,"point":[7.75889,46.39475],"pointIndex":960,"instructionType":"TURN","street":"Neue Strasse","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":135,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"SHARP_RIGHT","message":"Neem een scherpe bocht naar rechts richting <street>Neue Strasse</street>"},{"routeOffsetInMeters":36854,"travelTimeInSeconds":4304,"point":[7.7571,46.39103],"pointIndex":981,"instructionType":"TURN","street":"Goltschenried","countryCode":"CHE","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"BEAR_RIGHT","message":"Buig rechts af bij <street>Goltschenried</street>"},{"routeOffsetInMeters":39527,"travelTimeInSeconds":4493,"point":[7.75522,46.36852],"pointIndex":1069,"instructionType":"TURN","street":"Bahnhofstrasse","countryCode":"CHE","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <street>Bahnhofstrasse</street>"},{"routeOffsetInMeters":39822,"travelTimeInSeconds":4518,"point":[7.75652,46.36605],"pointIndex":1085,"instructionType":"DIRECTION_INFO","street":"Bahnhofstrasse","countryCode":"CHE","signpostText":"Sion","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Bahnhofstrasse</street> richting <signpostText>Sion</signpostText>"},{"routeOffsetInMeters":49949,"travelTimeInSeconds":5208,"point":[7.74747,46.3061],"pointIndex":1459,"instructionType":"TURN","roadNumbers":["9","E62"],"street":"Kantonsstrasse","countryCode":"CHE","signpostText":"Sion","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":-90,"roundaboutExitNumber":2,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_LEFT","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Sion</signpostText>","combinedMessage":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Sion</signpostText> daarna houd rechts aan bij <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"},{"routeOffsetInMeters":50527,"travelTimeInSeconds":5255,"point":[7.74072,46.30537],"pointIndex":1492,"instructionType":"TURN","roadNumbers":["9","E62"],"street":"Kantonsstrasse","countryCode":"CHE","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"KEEP_RIGHT","message":"Houd rechts aan bij <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"},{"routeOffsetInMeters":51181,"travelTimeInSeconds":5290,"point":[7.73246,46.30645],"pointIndex":1508,"instructionType":"DIRECTION_INFO","roadNumbers":["9","E62"],"countryCode":"CHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"},{"routeOffsetInMeters":56835,"travelTimeInSeconds":5488,"point":[7.66049,46.30713],"pointIndex":1561,"instructionType":"TURN","roadNumbers":["9","E62"],"countryCode":"CHE","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"KEEP_RIGHT","message":"Houd rechts aan bij <roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"},{"routeOffsetInMeters":57615,"travelTimeInSeconds":5533,"point":[7.65103,46.30895],"pointIndex":1579,"instructionType":"TURN","roadNumbers":["9","E62"],"street":"Kantonsstrasse","countryCode":"CHE","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":90,"roundaboutExitNumber":1,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_RIGHT","message":"Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>"},{"routeOffsetInMeters":58259,"travelTimeInSeconds":5587,"point":[7.64344,46.31106],"pointIndex":1605,"instructionType":"TURN","roadNumbers":["9","E62"],"street":"Kantonsstrasse","countryCode":"CHE","signpostText":"Lausanne","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonsstrasse</street>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"},{"routeOffsetInMeters":58560,"travelTimeInSeconds":5620,"point":[7.63989,46.31196],"pointIndex":1621,"instructionType":"TURN","roadNumbers":["A9","9","E62"],"street":"Kantonstrasse","countryCode":"CHE","signpostText":"Leukerbad","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Leukerbad</signpostText>","combinedMessage":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Kantonstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Leukerbad</signpostText> daarna neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Pfynstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"},{"routeOffsetInMeters":58670,"travelTimeInSeconds":5642,"point":[7.63884,46.31192],"pointIndex":1639,"instructionType":"TURN","roadNumbers":["A9","E62"],"street":"Pfynstrasse","countryCode":"CHE","signpostText":"Lausanne","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Pfynstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"},{"routeOffsetInMeters":58933,"travelTimeInSeconds":5667,"point":[7.63577,46.31106],"pointIndex":1654,"instructionType":"DIRECTION_INFO","roadNumbers":["A9","E62"],"street":"Pfynstrasse","countryCode":"CHE","signpostText":"Sion","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Pfynstrasse</street>/<roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Sion</signpostText>"},{"routeOffsetInMeters":153918,"travelTimeInSeconds":8771,"point":[6.87321,46.46704],"pointIndex":2937,"instructionType":"TURN","roadNumbers":["A9","E62"],"countryCode":"CHE","signpostText":"Lausanne","junctionType":"REGULAR","turnAngleInDecimalDegrees":0,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"STRAIGHT","message":"Blijf rechtdoor rijden op de <roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lausanne</signpostText>"},{"routeOffsetInMeters":154483,"travelTimeInSeconds":8789,"point":[6.86772,46.47042],"pointIndex":2947,"instructionType":"DIRECTION_INFO","roadNumbers":["A9","E62"],"countryCode":"CHE","signpostText":"Lutry","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>A9</roadNumber>/<roadNumber>E62</roadNumber> richting <signpostText>Lutry</signpostText>"},{"routeOffsetInMeters":181543,"travelTimeInSeconds":9735,"point":[6.56798,46.56451],"pointIndex":3479,"instructionType":"TURN","roadNumbers":["A9"],"countryCode":"CHE","signpostText":"Besancon","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <roadNumber>A9</roadNumber> richting <signpostText>Besancon</signpostText>","combinedMessage":"Houd links aan bij <roadNumber>A9</roadNumber> richting <signpostText>Besancon</signpostText> daarna ga de snelweg <roadNumber>A9</roadNumber> op"},{"routeOffsetInMeters":181543,"travelTimeInSeconds":9735,"point":[6.56798,46.56451],"pointIndex":3479,"instructionType":"ROAD_CHANGE","roadNumbers":["A9"],"countryCode":"CHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A9</roadNumber> op"},{"routeOffsetInMeters":182018,"travelTimeInSeconds":9757,"point":[6.56216,46.56313],"pointIndex":3490,"instructionType":"DIRECTION_INFO","roadNumbers":["A9"],"countryCode":"CHE","signpostText":"La Sarraz","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>A9</roadNumber> richting <signpostText>La Sarraz</signpostText>"},{"routeOffsetInMeters":200557,"travelTimeInSeconds":10344,"point":[6.57029,46.72341],"pointIndex":3712,"instructionType":"TURN","roadNumbers":["A9","E23"],"exitNumber":"23","countryCode":"CHE","signpostText":"Besançon","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TAKE_EXIT","message":"Neem afslag <exitNumber>23</exitNumber> naar de <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>","combinedMessage":"Neem afslag <exitNumber>23</exitNumber> naar de <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText> daarna ga de snelweg <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> op"},{"routeOffsetInMeters":201617,"travelTimeInSeconds":10386,"point":[6.56306,46.72939],"pointIndex":3742,"instructionType":"ROAD_CHANGE","roadNumbers":["A9","E23"],"countryCode":"CHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> op"},{"routeOffsetInMeters":201717,"travelTimeInSeconds":10389,"point":[6.56178,46.72957],"pointIndex":3744,"instructionType":"DIRECTION_INFO","roadNumbers":["A9","E23"],"countryCode":"CHE","signpostText":"Les Clées","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Les Clées</signpostText>"},{"routeOffsetInMeters":217060,"travelTimeInSeconds":11042,"point":[6.38798,46.73055],"pointIndex":4055,"instructionType":"TURN","roadNumbers":["A9","E23"],"street":"Route du Creux","countryCode":"CHE","signpostText":"Dijon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":90,"roundaboutExitNumber":1,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_RIGHT","message":"Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde naar de <street>Route du Creux</street>/<roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Dijon</signpostText>"},{"routeOffsetInMeters":217248,"travelTimeInSeconds":11071,"point":[6.38595,46.73119],"pointIndex":4073,"instructionType":"TURN","roadNumbers":["A9","E23"],"street":"Route du Creux","countryCode":"CHE","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <street>Route du Creux</street>/<roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber>"},{"routeOffsetInMeters":217468,"travelTimeInSeconds":11129,"point":[6.38361,46.73223],"pointIndex":4085,"instructionType":"DIRECTION_INFO","roadNumbers":["N57","E23"],"street":"Route de Vallorbe","countryCode":"FRA","signpostText":"Jougne-Centre","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Route de Vallorbe</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Jougne-Centre</signpostText>"},{"routeOffsetInMeters":222737,"travelTimeInSeconds":11480,"point":[6.38069,46.76976],"pointIndex":4262,"instructionType":"TURN","roadNumbers":["N57","E23"],"countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":45,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":223046,"travelTimeInSeconds":11495,"point":[6.38053,46.7725],"pointIndex":4279,"instructionType":"DIRECTION_INFO","roadNumbers":["N57","E23"],"countryCode":"FRA","signpostText":"La Cluse-et-Mijoux","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>La Cluse-et-Mijoux</signpostText>"},{"routeOffsetInMeters":238767,"travelTimeInSeconds":12344,"point":[6.36411,46.8947],"pointIndex":4682,"instructionType":"TURN","roadNumbers":["N57","E23"],"street":"Rocade Georges Pompidou","countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":-45,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":239928,"travelTimeInSeconds":12479,"point":[6.35389,46.90128],"pointIndex":4734,"instructionType":"TURN","roadNumbers":["N57","D47","E23"],"street":"Rocade Georges Pompidou","countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>D47</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":240374,"travelTimeInSeconds":12537,"point":[6.34831,46.90136],"pointIndex":4762,"instructionType":"TURN","roadNumbers":["N57","E23"],"street":"Rocade Georges Pompidou","countryCode":"FRA","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":45,"roundaboutExitNumber":1,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber>","combinedMessage":"Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> daarna neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":240564,"travelTimeInSeconds":12561,"point":[6.34627,46.90232],"pointIndex":4772,"instructionType":"TURN","roadNumbers":["N57","E23"],"street":"Rocade Georges Pompidou","countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":-90,"roundaboutExitNumber":3,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_LEFT","message":"Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":241488,"travelTimeInSeconds":12635,"point":[6.3355,46.9],"pointIndex":4810,"instructionType":"TURN","roadNumbers":["N57","E23"],"street":"Rocade Georges Pompidou","countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":3,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":242965,"travelTimeInSeconds":12769,"point":[6.33236,46.91],"pointIndex":4854,"instructionType":"TURN","roadNumbers":["N57","E23"],"street":"Rocade Georges Pompidou","countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Rocade Georges Pompidou</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":244641,"travelTimeInSeconds":12849,"point":[6.33765,46.9241],"pointIndex":4898,"instructionType":"TURN","roadNumbers":["N57","E23"],"countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":3,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":245032,"travelTimeInSeconds":12875,"point":[6.33882,46.92734],"pointIndex":4918,"instructionType":"DIRECTION_INFO","roadNumbers":["N57","E23"],"countryCode":"FRA","signpostText":"Saint-Gorgon-Main","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Saint-Gorgon-Main</signpostText>"},{"routeOffsetInMeters":275386,"travelTimeInSeconds":14286,"point":[6.25245,47.15804],"pointIndex":5377,"instructionType":"TURN","roadNumbers":["N57","E23"],"countryCode":"FRA","signpostText":"Besançon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":3,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":275723,"travelTimeInSeconds":14309,"point":[6.24888,47.15945],"pointIndex":5393,"instructionType":"DIRECTION_INFO","roadNumbers":["N57","E23"],"countryCode":"FRA","signpostText":"Besançon","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> richting <signpostText>Besançon</signpostText>"},{"routeOffsetInMeters":292107,"travelTimeInSeconds":14879,"point":[6.07678,47.22388],"pointIndex":5667,"instructionType":"TURN","roadNumbers":["D464"],"countryCode":"FRA","signpostText":"Besançon-Centre","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"BEAR_RIGHT","message":"Buig rechts af bij <roadNumber>D464</roadNumber> richting <signpostText>Besançon-Centre</signpostText>"},{"routeOffsetInMeters":293493,"travelTimeInSeconds":14965,"point":[6.06606,47.21693],"pointIndex":5713,"instructionType":"TURN","roadNumbers":["N57"],"countryCode":"FRA","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":3,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde richting <roadNumber>N57</roadNumber>"},{"routeOffsetInMeters":293822,"travelTimeInSeconds":14984,"point":[6.06297,47.21506],"pointIndex":5730,"instructionType":"DIRECTION_INFO","roadNumbers":["N57"],"countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>N57</roadNumber>"},{"routeOffsetInMeters":299400,"travelTimeInSeconds":15287,"point":[5.99917,47.21085],"pointIndex":5853,"instructionType":"TURN","roadNumbers":["N57","E23"],"street":"Voie des Mercureaux","countryCode":"FRA","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":90,"roundaboutExitNumber":1,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_RIGHT","message":"Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde richting <street>Voie des Mercureaux</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber>"},{"routeOffsetInMeters":302090,"travelTimeInSeconds":15477,"point":[5.97964,47.22733],"pointIndex":5931,"instructionType":"TURN","roadNumbers":["D673"],"exitNumber":"61","street":"Rue de Dole","countryCode":"FRA","signpostText":"Dole","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"KEEP_RIGHT","message":"Houd rechts aan bij <street>Rue de Dole</street>/<roadNumber>D673</roadNumber> richting <signpostText>Dole</signpostText>"},{"routeOffsetInMeters":303186,"travelTimeInSeconds":15555,"point":[5.96904,47.22418],"pointIndex":5978,"instructionType":"TURN","roadNumbers":["D673"],"street":"Rue de Dole","countryCode":"FRA","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <street>Rue de Dole</street>/<roadNumber>D673</roadNumber>"},{"routeOffsetInMeters":307431,"travelTimeInSeconds":15744,"point":[5.92001,47.21709],"pointIndex":6067,"instructionType":"TURN","countryCode":"FRA","signpostText":"CHAUMONT","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TAKE_EXIT","message":"Neem de afslag"},{"routeOffsetInMeters":307696,"travelTimeInSeconds":15763,"point":[5.9174,47.21845],"pointIndex":6079,"instructionType":"TURN","roadNumbers":["N173"],"countryCode":"FRA","signpostText":"Chaumont","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N173</roadNumber> richting <signpostText>Chaumont</signpostText>"},{"routeOffsetInMeters":309667,"travelTimeInSeconds":15868,"point":[5.90486,47.2336],"pointIndex":6128,"instructionType":"TURN","roadNumbers":["N173","D67"],"countryCode":"FRA","signpostText":"Dijon","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":-90,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_LEFT","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>N173</roadNumber>/<roadNumber>D67</roadNumber> richting <signpostText>Dijon</signpostText>"},{"routeOffsetInMeters":310106,"travelTimeInSeconds":15907,"point":[5.89986,47.23439],"pointIndex":6158,"instructionType":"TURN","roadNumbers":["A36","E60"],"street":"La Comtoise","countryCode":"FRA","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde richting <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber>","combinedMessage":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde richting <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> daarna houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber>"},{"routeOffsetInMeters":310306,"travelTimeInSeconds":15955,"point":[5.89765,47.23488],"pointIndex":6176,"instructionType":"TURN","roadNumbers":["A36","E60"],"street":"La Comtoise","countryCode":"FRA","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber>","combinedMessage":"Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> daarna houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText>"},{"routeOffsetInMeters":310465,"travelTimeInSeconds":15965,"point":[5.89562,47.23523],"pointIndex":6178,"instructionType":"TURN","roadNumbers":["A36","E60"],"street":"La Comtoise","countryCode":"FRA","signpostText":"Paris","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText>","combinedMessage":"Houd links aan bij <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText> daarna ga de snelweg <roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> op"},{"routeOffsetInMeters":310993,"travelTimeInSeconds":15998,"point":[5.89398,47.23589],"pointIndex":6211,"instructionType":"ROAD_CHANGE","roadNumbers":["A36","E60"],"street":"La Comtoise","countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> op"},{"routeOffsetInMeters":311093,"travelTimeInSeconds":16001,"point":[5.89362,47.23503],"pointIndex":6214,"instructionType":"DIRECTION_INFO","roadNumbers":["A36","E60"],"street":"La Comtoise","countryCode":"FRA","signpostText":"PARIS","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>PARIS</signpostText>"},{"routeOffsetInMeters":352576,"travelTimeInSeconds":17182,"point":[5.396,47.12465],"pointIndex":6736,"instructionType":"TURN","roadNumbers":["A39"],"countryCode":"FRA","signpostText":"DIJON","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TAKE_EXIT","message":"Neem de afslag naar de <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText>","combinedMessage":"Neem de afslag naar de <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText> daarna houd rechts aan bij <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText>"},{"routeOffsetInMeters":352892,"travelTimeInSeconds":17195,"point":[5.39198,47.12418],"pointIndex":6747,"instructionType":"TURN","roadNumbers":["A39"],"countryCode":"FRA","signpostText":"DIJON","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_RIGHT","message":"Houd rechts aan bij <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText>","combinedMessage":"Houd rechts aan bij <roadNumber>A39</roadNumber> richting <signpostText>DIJON</signpostText> daarna ga de snelweg <roadNumber>A39</roadNumber> op"},{"routeOffsetInMeters":353634,"travelTimeInSeconds":17224,"point":[5.38444,47.12775],"pointIndex":6764,"instructionType":"ROAD_CHANGE","roadNumbers":["A39"],"countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A39</roadNumber> op"},{"routeOffsetInMeters":353734,"travelTimeInSeconds":17226,"point":[5.38363,47.12846],"pointIndex":6766,"instructionType":"DIRECTION_INFO","roadNumbers":["A39"],"countryCode":"FRA","signpostText":"LILLE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>A39</roadNumber> richting <signpostText>LILLE</signpostText>"},{"routeOffsetInMeters":379121,"travelTimeInSeconds":17928,"point":[5.15073,47.27293],"pointIndex":7019,"instructionType":"TURN","roadNumbers":["A31","E21","E17"],"countryCode":"FRA","signpostText":"LILLE","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TAKE_EXIT","message":"Neem de afslag naar de <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>","combinedMessage":"Neem de afslag naar de <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText> daarna ga de snelweg <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> op"},{"routeOffsetInMeters":379748,"travelTimeInSeconds":17952,"point":[5.1492,47.27732],"pointIndex":7041,"instructionType":"ROAD_CHANGE","roadNumbers":["A31","E21","E17"],"countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> op"},{"routeOffsetInMeters":379848,"travelTimeInSeconds":17955,"point":[5.15003,47.27802],"pointIndex":7042,"instructionType":"DIRECTION_INFO","roadNumbers":["A31","E21","E17"],"countryCode":"FRA","signpostText":"LILLE-PARIS","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE-PARIS</signpostText>"},{"routeOffsetInMeters":454435,"travelTimeInSeconds":20007,"point":[5.22255,47.91065],"pointIndex":7731,"instructionType":"TURN","roadNumbers":["A5","E17"],"countryCode":"FRA","signpostText":"LILLE","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <roadNumber>A5</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"},{"routeOffsetInMeters":455090,"travelTimeInSeconds":20025,"point":[5.22106,47.91645],"pointIndex":7736,"instructionType":"DIRECTION_INFO","roadNumbers":["A5","E17"],"countryCode":"FRA","signpostText":"LILLE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>A5</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"},{"routeOffsetInMeters":546480,"travelTimeInSeconds":22575,"point":[4.18454,48.22902],"pointIndex":8632,"instructionType":"TURN","roadNumbers":["A26","E17"],"street":"Autoroute des Anglais","countryCode":"FRA","signpostText":"LILLE","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TAKE_EXIT","message":"Neem de afslag naar de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"},{"routeOffsetInMeters":547311,"travelTimeInSeconds":22603,"point":[4.1764,48.23346],"pointIndex":8651,"instructionType":"DIRECTION_INFO","roadNumbers":["A26","E17"],"street":"Autoroute des Anglais","countryCode":"FRA","signpostText":"LILLE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LILLE</signpostText>"},{"routeOffsetInMeters":642793,"travelTimeInSeconds":25230,"point":[4.28487,49.05239],"pointIndex":9442,"instructionType":"TURN","roadNumbers":["A4","E17","E50"],"street":"Autoroute de l'Est","countryCode":"FRA","signpostText":"PARIS","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <street>Autoroute de l'Est</street>/<roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> richting <signpostText>PARIS</signpostText>","combinedMessage":"Houd links aan bij <street>Autoroute de l'Est</street>/<roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> richting <signpostText>PARIS</signpostText> daarna ga de snelweg <roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> op"},{"routeOffsetInMeters":643756,"travelTimeInSeconds":25271,"point":[4.28209,49.05948],"pointIndex":9469,"instructionType":"ROAD_CHANGE","roadNumbers":["A4","E17","E50"],"street":"Autoroute de l'Est","countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> op"},{"routeOffsetInMeters":643856,"travelTimeInSeconds":25274,"point":[4.28124,49.06019],"pointIndex":9471,"instructionType":"DIRECTION_INFO","roadNumbers":["A4","E17","E50"],"street":"Autoroute de l'Est","countryCode":"FRA","signpostText":"LILLE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Autoroute de l'Est</street>/<roadNumber>A4</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>E50</roadNumber> richting <signpostText>LILLE</signpostText>"},{"routeOffsetInMeters":677680,"travelTimeInSeconds":26245,"point":[3.96697,49.24166],"pointIndex":9811,"instructionType":"TURN","roadNumbers":["A26","E17"],"street":"Autoroute des Anglais","countryCode":"FRA","signpostText":"BRUXELLES","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TAKE_EXIT","message":"Neem de afslag naar de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>BRUXELLES</signpostText>","combinedMessage":"Neem de afslag naar de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>BRUXELLES</signpostText> daarna ga de snelweg <roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> op"},{"routeOffsetInMeters":679212,"travelTimeInSeconds":26330,"point":[3.96128,49.2543],"pointIndex":9836,"instructionType":"ROAD_CHANGE","roadNumbers":["A26","E17"],"street":"Autoroute des Anglais","countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> op"},{"routeOffsetInMeters":679312,"travelTimeInSeconds":26334,"point":[3.96152,49.25518],"pointIndex":9837,"instructionType":"DIRECTION_INFO","roadNumbers":["A26","E17"],"street":"Autoroute des Anglais","countryCode":"FRA","signpostText":"BRUXELLES","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>BRUXELLES</signpostText>"},{"routeOffsetInMeters":688147,"travelTimeInSeconds":26618,"point":[3.98247,49.3236],"pointIndex":9985,"instructionType":"DIRECTION_INFO","roadNumbers":["A26","E17"],"street":"Autoroute des Anglais","countryCode":"FRA","signpostText":"LAON","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E17</roadNumber> richting <signpostText>LAON</signpostText>"},{"routeOffsetInMeters":909239,"travelTimeInSeconds":33087,"point":[2.171,50.72026],"pointIndex":12025,"instructionType":"DIRECTION_INFO","roadNumbers":["A26","E15"],"street":"Autoroute des Anglais","countryCode":"FRA","signpostText":"CALAIS","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Autoroute des Anglais</street>/<roadNumber>A26</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>CALAIS</signpostText>"},{"routeOffsetInMeters":940686,"travelTimeInSeconds":33982,"point":[1.91011,50.9339],"pointIndex":12359,"instructionType":"TURN","roadNumbers":["A16","E15","E402"],"countryCode":"FRA","signpostText":"LA MANCHE","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>LA MANCHE</signpostText>","combinedMessage":"Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>LA MANCHE</signpostText> daarna houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText>"},{"routeOffsetInMeters":941023,"travelTimeInSeconds":33996,"point":[1.90977,50.93675],"pointIndex":12372,"instructionType":"TURN","roadNumbers":["A16","E15","E402"],"countryCode":"FRA","signpostText":"TUNNEL SOUS LA MANCHE","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText>","combinedMessage":"Houd links aan bij <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText> daarna ga de snelweg <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> op"},{"routeOffsetInMeters":941840,"travelTimeInSeconds":34030,"point":[1.89922,50.93544],"pointIndex":12399,"instructionType":"ROAD_CHANGE","roadNumbers":["A16","E15","E402"],"countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> op"},{"routeOffsetInMeters":941940,"travelTimeInSeconds":34034,"point":[1.89783,50.93525],"pointIndex":12400,"instructionType":"DIRECTION_INFO","roadNumbers":["A16","E15","E402"],"countryCode":"FRA","signpostText":"TUNNEL SOUS LA MANCHE","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <roadNumber>A16</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>E402</roadNumber> richting <signpostText>TUNNEL SOUS LA MANCHE</signpostText>"},{"routeOffsetInMeters":947348,"travelTimeInSeconds":34249,"point":[1.82371,50.94162],"pointIndex":12501,"instructionType":"TURN","exitNumber":"42","street":"Terminal Eurotunnel","countryCode":"FRA","signpostText":"Tunnel sous la Manche","junctionType":"REGULAR","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TAKE_EXIT","message":"Neem afslag <exitNumber>42</exitNumber> naar de <street>Terminal Eurotunnel</street> richting <signpostText>Tunnel sous la Manche</signpostText>"},{"routeOffsetInMeters":948375,"travelTimeInSeconds":34306,"point":[1.81536,50.93811],"pointIndex":12537,"instructionType":"TURN","countryCode":"FRA","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_RIGHT","message":"Houd rechts aan","combinedMessage":"Houd rechts aan daarna neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Terminal Eurotunnel</street> richting <signpostText>Grande-Bretagne</signpostText>"},{"routeOffsetInMeters":948483,"travelTimeInSeconds":34317,"point":[1.81501,50.93719],"pointIndex":12545,"instructionType":"TURN","street":"Terminal Eurotunnel","countryCode":"FRA","signpostText":"Grande-Bretagne","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Terminal Eurotunnel</street> richting <signpostText>Grande-Bretagne</signpostText>"},{"routeOffsetInMeters":949180,"travelTimeInSeconds":34865,"point":[1.81389,50.93106],"pointIndex":12569,"instructionType":"TURN","countryCode":"FRA","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":-45,"roundaboutExitNumber":2,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde","combinedMessage":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde daarna houd links aan"},{"routeOffsetInMeters":949301,"travelTimeInSeconds":34881,"point":[1.81361,50.9305],"pointIndex":12591,"instructionType":"TURN","countryCode":"FRA","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"KEEP_LEFT","message":"Houd links aan","combinedMessage":"Houd links aan daarna sla linksaf"},{"routeOffsetInMeters":949751,"travelTimeInSeconds":34947,"point":[1.81061,50.92701],"pointIndex":12606,"instructionType":"TURN","countryCode":"FRA","junctionType":"REGULAR","turnAngleInDecimalDegrees":-90,"possibleCombineWithNext":true,"drivingSide":"RIGHT","maneuver":"TURN_LEFT","message":"Sla linksaf","combinedMessage":"Sla linksaf daarna neem de veerboot richting <street>Dover Folkestone - Calais Frethun</street>"},{"routeOffsetInMeters":950215,"travelTimeInSeconds":35024,"point":[1.8144,50.92463],"pointIndex":12625,"instructionType":"ROAD_CHANGE","street":"Dover Folkestone - Calais Frethun","countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"TAKE_FERRY","message":"Neem de veerboot richting <street>Dover Folkestone - Calais Frethun</street>"},{"routeOffsetInMeters":950645,"travelTimeInSeconds":36244,"point":[1.81219,50.92108],"pointIndex":12632,"instructionType":"DIRECTION_INFO","street":"Dover Folkestone - Calais Frethun","countryCode":"FRA","possibleCombineWithNext":false,"drivingSide":"RIGHT","maneuver":"FOLLOW","message":"Volg de <street>Dover Folkestone - Calais Frethun</street>"},{"routeOffsetInMeters":1005147,"travelTimeInSeconds":38705,"point":[1.13289,51.09571],"pointIndex":12836,"instructionType":"ROAD_CHANGE","countryCode":"GBR","possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"STRAIGHT","message":"Blijf rechtdoor rijden"},{"routeOffsetInMeters":1008182,"travelTimeInSeconds":39026,"point":[1.10795,51.09274],"pointIndex":12902,"instructionType":"TURN","countryCode":"GBR","signpostText":"Dover","junctionType":"BIFURCATION","turnAngleInDecimalDegrees":-45,"possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"KEEP_LEFT","message":"Houd links aan"},{"routeOffsetInMeters":1008760,"travelTimeInSeconds":39083,"point":[1.10306,51.09492],"pointIndex":12924,"instructionType":"TURN","roadNumbers":["A20"],"street":"Ashford Road","countryCode":"GBR","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":90,"roundaboutExitNumber":3,"possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"ROUNDABOUT_RIGHT","message":"Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde richting <street>Ashford Road</street>/<roadNumber>A20</roadNumber>"},{"routeOffsetInMeters":1010849,"travelTimeInSeconds":39208,"point":[1.13011,51.09232],"pointIndex":12995,"instructionType":"TURN","roadNumbers":["M20","E15"],"countryCode":"GBR","signpostText":"Dover","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":-45,"roundaboutExitNumber":1,"possibleCombineWithNext":true,"drivingSide":"LEFT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Dover</signpostText>","combinedMessage":"Neem de <roundaboutExitNumber>eerste</roundaboutExitNumber> afslag op de rotonde naar de <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Dover</signpostText> daarna ga de snelweg <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> op"},{"routeOffsetInMeters":1011427,"travelTimeInSeconds":39236,"point":[1.13766,51.09429],"pointIndex":13014,"instructionType":"ROAD_CHANGE","roadNumbers":["M20","E15"],"countryCode":"GBR","possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"ENTER_MOTORWAY","message":"Ga de snelweg <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> op"},{"routeOffsetInMeters":1011527,"travelTimeInSeconds":39239,"point":[1.13901,51.09458],"pointIndex":13015,"instructionType":"DIRECTION_INFO","roadNumbers":["M20","E15"],"countryCode":"GBR","signpostText":"Dover","possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"FOLLOW","message":"Volg de <roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Dover</signpostText>"},{"routeOffsetInMeters":1024346,"travelTimeInSeconds":39693,"point":[1.30296,51.11447],"pointIndex":13220,"instructionType":"TURN","roadNumbers":["A20","E15"],"street":"Archcliffe Road","countryCode":"GBR","signpostText":"Town Centre","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":0,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde naar de <street>Archcliffe Road</street>/<roadNumber>A20</roadNumber>/<roadNumber>E15</roadNumber> richting <signpostText>Town Centre</signpostText>"},{"routeOffsetInMeters":1024836,"travelTimeInSeconds":39728,"point":[1.30717,51.11724],"pointIndex":13251,"instructionType":"TURN","street":"The Viaduct","countryCode":"GBR","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":135,"roundaboutExitNumber":3,"possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"ROUNDABOUT_RIGHT","message":"Neem de <roundaboutExitNumber>derde</roundaboutExitNumber> afslag op de rotonde richting <street>The Viaduct</street>"},{"routeOffsetInMeters":1025272,"travelTimeInSeconds":39783,"point":[1.31073,51.11542],"pointIndex":13281,"instructionType":"TURN","street":"Lord Warden Square","countryCode":"GBR","junctionType":"ROUNDABOUT","turnAngleInDecimalDegrees":-45,"roundaboutExitNumber":2,"possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"ROUNDABOUT_CROSS","message":"Neem de <roundaboutExitNumber>tweede</roundaboutExitNumber> afslag op de rotonde richting <street>Lord Warden Square</street>"},{"routeOffsetInMeters":1026071,"travelTimeInSeconds":39959,"point":[1.3191,51.11184],"pointIndex":13318,"instructionType":"TURN","countryCode":"GBR","junctionType":"REGULAR","turnAngleInDecimalDegrees":90,"possibleCombineWithNext":true,"drivingSide":"LEFT","maneuver":"TURN_RIGHT","message":"Sla rechtsaf","combinedMessage":"Sla rechtsaf daarna je bent aangekomen. Je bestemming bevindt zich aan de linkerkant"},{"routeOffsetInMeters":1026313,"travelTimeInSeconds":40081,"point":[1.32247,51.11156],"pointIndex":13327,"instructionType":"LOCATION_ARRIVAL","countryCode":"GBR","possibleCombineWithNext":false,"drivingSide":"LEFT","maneuver":"ARRIVE_LEFT","message":"Je bent aangekomen. Je bestemming bevindt zich aan de linkerkant"}],"instructionGroups":[{"firstInstructionIndex":0,"lastInstructionIndex":9,"groupMessage":"Vertrek vanuit <street>Wildistrasse</street>. Ga <street>Feldweg</street>, <street>Innere Dorfstrasse</street>, <street>Risetistrasse</street>, <street>Merenweg</street>, <street>Kandersteg - Goppenstein</street> op","groupLengthInMeters":19125},{"firstInstructionIndex":10,"lastInstructionIndex":11,"groupMessage":"Ga <street>Bahnhofstrasse</street> op","groupLengthInMeters":3679},{"firstInstructionIndex":12,"lastInstructionIndex":13,"groupMessage":"Ga <street>Neue Strasse</street> op","groupLengthInMeters":2902},{"firstInstructionIndex":14,"lastInstructionIndex":16,"groupMessage":"Ga naar je tussenpunt op <street>Kummenalp</street>","groupLengthInMeters":8246},{"firstInstructionIndex":17,"lastInstructionIndex":21,"groupMessage":"Ga <street>Neue Strasse</street>, <street>Goltschenried</street>, <street>Bahnhofstrasse</street> op richting <signpostText>Sion</signpostText>","groupLengthInMeters":15997},{"firstInstructionIndex":22,"lastInstructionIndex":53,"groupMessage":"Ga <roadNumber>9</roadNumber>/<roadNumber>E62</roadNumber>/<roadNumber>A9</roadNumber>/<roadNumber>E23</roadNumber>/<roadNumber>N57</roadNumber>/<roadNumber>D47</roadNumber> op richting <signpostText>Sion</signpostText>, <signpostText>Lausanne</signpostText>, <signpostText>Leukerbad</signpostText>, <signpostText>Lutry</signpostText>, <signpostText>Besancon</signpostText>, <signpostText>La Sarraz</signpostText>, <signpostText>Besançon</signpostText>, <signpostText>Les Clées</signpostText>, <signpostText>Dijon</signpostText>, <signpostText>Jougne-Centre</signpostText>, <signpostText>La Cluse-et-Mijoux</signpostText>, <signpostText>Saint-Gorgon-Main</signpostText>","groupLengthInMeters":242158},{"firstInstructionIndex":54,"lastInstructionIndex":71,"groupMessage":"Ga <street>Voie des Mercureaux</street>/<roadNumber>N57</roadNumber>/<roadNumber>E23</roadNumber> op en ga daarna <roadNumber>N173</roadNumber>/<roadNumber>D67</roadNumber> op richting <signpostText>Chaumont</signpostText>, <signpostText>Dijon</signpostText>. Volg <street>La Comtoise</street>/<roadNumber>A36</roadNumber>/<roadNumber>E60</roadNumber> richting <signpostText>Paris</signpostText>, <signpostText>PARIS</signpostText>","groupLengthInMeters":87014},{"firstInstructionIndex":72,"lastInstructionIndex":90,"groupMessage":"Ga <roadNumber>A31</roadNumber>/<roadNumber>E21</roadNumber>/<roadNumber>E17</roadNumber>/<roadNumber>A5</roadNumber>/<roadNumber>A26</roadNumber>/<roadNumber>A4</roadNumber>/<roadNumber>E50</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>A16</roadNumber>/<roadNumber>E402</roadNumber> op richting <signpostText>LILLE</signpostText>, <signpostText>LILLE-PARIS</signpostText>, <signpostText>PARIS</signpostText>, <signpostText>BRUXELLES</signpostText>, <signpostText>LAON</signpostText>, <signpostText>CALAIS</signpostText>, <signpostText>LA MANCHE</signpostText>, <signpostText>TUNNEL SOUS LA MANCHE</signpostText>","groupLengthInMeters":568227},{"firstInstructionIndex":91,"lastInstructionIndex":109,"groupMessage":"Ga door naar <street>Ashford Road</street>/<roadNumber>A20</roadNumber> en ga <street>Archcliffe Road</street>/<roadNumber>M20</roadNumber>/<roadNumber>E15</roadNumber>/<roadNumber>A20</roadNumber> op richting <signpostText>Dover</signpostText>, <signpostText>Town Centre</signpostText>. Ga door naar je bestemming","groupLengthInMeters":78965}]}}}]}}
+
   ]
 ]

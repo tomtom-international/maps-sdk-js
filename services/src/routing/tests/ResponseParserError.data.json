@@ -64,5 +64,27 @@
       "message": "Engine error while executing route request: NO_ROUTE_FOUND: route search failed between origin and waypoint 1",
       "status": 400
     }
+  ],
+  [
+    "Invalid Request",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "formatVersion": "0.0.12",
+        "error": {
+          "description": "Invalid request: neither optimize waypoints nor route description selected"
+        },
+        "detailedError": {
+          "message": "Invalid request: neither optimize waypoints nor route description selected",
+          "code": "BAD_INPUT"
+        }
+      }
+    },
+    {
+      "service": "Routing",
+      "message": "Invalid request: neither optimize waypoints nor route description selected",
+      "status": 400
+    }
   ]
 ]
