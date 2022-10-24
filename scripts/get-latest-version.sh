@@ -20,4 +20,4 @@ jq_parameter='[.[] | select(test("^\\d+\\.\\d+\\.\\d+-'$ref_name'\\.\\d+$"))] | 
 latest_registry_version=$(jq -r "$jq_parameter" "$all_registry_versions");
 echo "The latest version on the registry for the current alias is $latest_registry_version";
 
-echo "::set-output name=branch_version::$latest_registry_version"
+echo "BRANCH_VERSION=$latest_registry_version" >> $GITHUB_ENV
