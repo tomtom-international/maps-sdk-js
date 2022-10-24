@@ -48,7 +48,7 @@ describe("chargingAvailability integration tests", () => {
 
         const result = await chargingAvailability({ id: "528009010069650" });
         expect(result).toMatchObject(expectedResult);
-        expect(result.chargingStations[0].chargingPoints.length).toBe(5);
+        expect(result.chargingStations[0].chargingPoints).toHaveLength(5);
     });
 
     test("chargingAvailability with connector filter", async () => {
