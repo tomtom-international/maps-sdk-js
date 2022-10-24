@@ -1,14 +1,8 @@
 import chargingAvailability from "../ChargingAvailability";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { SDKServiceError } from "../../shared/Errors";
-import { ChargingPoint } from "@anw/go-sdk-js/core";
+import { ChargingPoint, accessibility, connectorTypes, chargingPointStatus } from "@anw/go-sdk-js/core";
 import { ChargingAvailabilityResponse } from "../types/ChargingAvailabilityResponse";
-
-const statusRegex = /Available|Reserved|Occupied|OutOfService|Unknown/;
-const accessibilityRegex =
-    /Unspecified|NoRestriction|GenericRestriction|ResidentsOnly|EmployeesOnly|AuthorizedPersonnelOnly|MembersOnly/;
-const connectorTypeRegex =
-    /StandardHouseholdCountrySpecific|IEC62196Type1|IEC62196Type1CCS|IEC62196Type2CableAttached|IEC62196Type2Outlet|IEC62196Type2CCS|IEC62196Type3|Chademo|GBT20234Part2|GBT20234Part3|IEC60309AC3PhaseRed|IEC60309AC1PhaseBlue|IEC60309DCWhite|Tesla/;
 
 describe("charging availability errors", () => {
     test("charging availability test without API key", async () => {
@@ -22,9 +16,12 @@ describe("charging availability errors", () => {
 });
 
 describe("chargingAvailability integration tests", () => {
+    const statusRegex = new RegExp(chargingPointStatus.join("|"));
+    const accessibilityRegex = new RegExp(accessibility.join("|"));
+    const connectorTypeRegex = new RegExp(connectorTypes.join("|"));
     beforeAll(() => putIntegrationTestsAPIKey());
 
-    test("chargingAvailability with default params", async () => {
+    test("chargingAvailability with required params", async () => {
         const chargingPointObj: ChargingPoint = {
             evseId: expect.any(String),
             status: expect.stringMatching(statusRegex),

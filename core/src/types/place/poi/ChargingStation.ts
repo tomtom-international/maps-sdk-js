@@ -1,15 +1,18 @@
 import { Connector } from "./Connector";
 
-export type Accessibility =
-    | "Unspecified"
-    | "NoRestriction"
-    | "GenericRestriction"
-    | "ResidentsOnly"
-    | "EmployeesOnly"
-    | "AuthorizedPersonnelOnly"
-    | "MembersOnly";
+export const accessibility = [
+    "Unspecified",
+    "NoRestriction",
+    "GenericRestriction",
+    "ResidentsOnly",
+    "EmployeesOnly",
+    "AuthorizedPersonnelOnly",
+    "MembersOnly"
+] as const;
+export type Accessibility = typeof accessibility[number];
 
-export type ChargingPointStatus = "Available" | "Reserved" | "Occupied" | "OutOfService" | "Unknown";
+export const chargingPointStatus = ["Available", "Reserved", "Occupied", "OutOfService", "Unknown"] as const;
+export type ChargingPointStatus = typeof chargingPointStatus[number];
 
 export type ChargingPoint = {
     /**
