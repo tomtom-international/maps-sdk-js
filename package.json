@@ -7,7 +7,10 @@
     "release:dry": "npx standard-version --dry-run",
     "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi",
     "documentation": "typedoc",
-    "build": "npm run build:full -ws"
+    "build": "npm run build:full -ws",
+    "type-check": "npm run type-check -ws",
+    "lint": "npm run lint -ws",
+    "test": "npm run test -ws"
   },
   "publishConfig": {
     "registry": "https://tomtom.jfrog.io/artifactory/api/npm/go-sdk-js-npm-local/"
