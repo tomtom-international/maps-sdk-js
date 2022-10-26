@@ -1,8 +1,9 @@
-import { Map } from "maplibre-gl";
+import mapLibreExported, { Map } from "maplibre-gl";
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
+import { localizeMap } from "./utils/localization";
 
 /**
  * The map object displays a live map on a web application.
@@ -19,10 +20,23 @@ export class GOSDKMap {
     constructor(mapLibreOptions: MapLibreOptions, goSDKParams?: GOSDKMapParams) {
         this.goSDKParams = mergeFromGlobal(goSDKParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
+        if (mapLibreExported.getRTLTextPluginStatus() !== "loaded") {
+            mapLibreExported.setRTLTextPlugin(
+                "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
+                (error) => {
+                    console.log("Something wrong happened when setting RTL plugin", error);
+                },
+                true
+            );
+        }
     }
 
     setStyle = (style: StyleInput): void => {
         this.goSDKParams = { ...this.goSDKParams, style };
         this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
     };
+
+    public localizeMap(locale: string) {
+        return localizeMap(this.mapLibreMap, locale);
+    }
 }
