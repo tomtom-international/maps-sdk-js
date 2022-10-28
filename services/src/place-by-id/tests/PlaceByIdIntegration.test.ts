@@ -36,6 +36,8 @@ describe("Place By Id API", () => {
                         id: expect.any(String),
                         properties: expect.objectContaining<SearchPlaceProps>({
                             type: "POI",
+                            score: expect.any(Number),
+                            info: expect.any(String),
                             address: expect.any(Object),
                             entryPoints: expect.arrayContaining([expect.any(Object)]),
                             poi: expect.objectContaining({

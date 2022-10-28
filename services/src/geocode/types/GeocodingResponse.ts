@@ -12,6 +12,15 @@ export type GeocodingProps = CommonPlaceProps & {
      * The confidence of the result`s textual match with the query.
      */
     matchConfidence: { score: number };
+    /**
+     * The score of the result.
+     * A larger score means there is a probability that a result meeting the query criteria is higher.
+     */
+    score: number;
+    /**
+     * Unit: meters. This is the distance to an object if geobias was provided.
+     */
+    distance?: number;
 };
 
 /**

@@ -3,10 +3,9 @@ import {
     Brand,
     Category,
     Classification,
-    CommonPlaceProps,
+    SearchPlaceProps,
     EntryPoint,
     OpeningHours,
-    PlaceType,
     TimeZone
 } from "@anw/go-sdk-js/core";
 
@@ -151,17 +150,15 @@ export type POIAPI = {
  * @group Geometry-Search
  * @category Types
  */
-export type CommonPlaceResultAPI = Omit<
-    CommonPlaceProps,
-    "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
+export type CommonSearchPlaceResultAPI = Omit<
+    SearchPlaceProps,
+    "distance" | "position" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
     id: string;
-    type: PlaceType;
-    matchConfidence: { score: number };
     position: LatLonAPI;
+    dist?: number;
     viewport?: ViewportAPI;
     entryPoints?: EntryPointAPI[];
     address?: AddressProperties;
-    info?: string;
     poi?: POIAPI;
 };

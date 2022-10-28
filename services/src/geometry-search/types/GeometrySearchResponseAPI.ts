@@ -1,6 +1,7 @@
-import { AddressProperties, CommonPlaceProps, PlaceType } from "@anw/go-sdk-js/core";
+import { AddressProperties } from "@anw/go-sdk-js/core";
 
 import { EntryPointAPI, LatLonAPI, POIAPI, Summary, ViewportAPI } from "../../shared/types/APIResponseTypes";
+import { SearchPlaceProps } from "core";
 
 /**
  * @ignore
@@ -8,17 +9,14 @@ import { EntryPointAPI, LatLonAPI, POIAPI, Summary, ViewportAPI } from "../../sh
  * @category Types
  */
 export type GeometrySearchResultAPI = Omit<
-    CommonPlaceProps,
-    "distance" | "position" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
+    SearchPlaceProps,
+    "position" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
     id: string;
-    type: PlaceType;
-    matchConfidence: { score: number };
     position: LatLonAPI;
     viewport?: ViewportAPI;
     entryPoints?: EntryPointAPI[];
     address?: AddressProperties;
-    info?: string;
     poi?: POIAPI;
 };
 

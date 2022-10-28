@@ -15,7 +15,7 @@ import { GeocodingProps } from "./GeocodingResponse";
  */
 export type GeocodingResultAPI = Omit<
     GeocodingProps,
-    "distance" | "position" | "boundingBox" | "viewport" | "addressRanges" | "geographyType" | "entryPoints"
+    "distance" | "position" | "boundingBox" | "addressRanges" | "geographyType" | "entryPoints"
 > & {
     id: string;
     position: LatLonAPI;
