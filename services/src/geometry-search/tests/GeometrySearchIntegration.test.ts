@@ -5,6 +5,7 @@ import { parseGeometrySearchResponse } from "../ResponseParser";
 import { buildGeometrySearchRequest } from "../RequestBuilder";
 import { GeometrySDK, GeometrySearchResponse } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
+import { baseSearchPlaceTestProps } from "../../shared/tests/IntegrationTestUtils";
 
 describe("Geometry Search API", () => {
     const geometries: GeometrySDK[] = [
@@ -66,19 +67,7 @@ describe("Geometry Search API", () => {
                             coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
                             type: expect.any(String)
                         }),
-                        properties: expect.objectContaining<SearchPlaceProps>({
-                            type: "POI",
-                            score: expect.any(Number),
-                            info: expect.any(String),
-                            address: expect.any(Object),
-                            entryPoints: expect.arrayContaining([expect.any(Object)]),
-                            poi: expect.objectContaining({
-                                name: expect.any(String),
-                                classifications: expect.any(Array),
-                                brands: expect.any(Array),
-                                categoryIds: expect.arrayContaining([expect.any(Number)])
-                            })
-                        })
+                        properties: expect.objectContaining<SearchPlaceProps>(baseSearchPlaceTestProps)
                     })
                 ])
             })
