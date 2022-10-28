@@ -1,23 +1,11 @@
-import { AddressProperties, SearchPlaceProps } from "@anw/go-sdk-js/core";
-
-import { EntryPointAPI, LatLonAPI, POIAPI, Summary, ViewportAPI } from "../../shared/types/APIResponseTypes";
+import { CommonSearchPlaceResultAPI, Summary } from "../../shared/types/APIResponseTypes";
 
 /**
  * @ignore
  * @group Place By Id
  * @category Types
  */
-export type PlaceByIdResultAPI = Omit<
-    SearchPlaceProps,
-    "position" | "addressRanges" | "geographyType" | "entryPoints"
-> & {
-    id: string;
-    position: LatLonAPI;
-    viewport?: ViewportAPI;
-    entryPoints?: EntryPointAPI[];
-    address?: AddressProperties;
-    poi?: POIAPI;
-};
+export type PlaceByIdResultAPI = CommonSearchPlaceResultAPI;
 
 /**
  * @ignore
