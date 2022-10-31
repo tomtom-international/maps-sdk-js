@@ -17,6 +17,18 @@ export type GeometrySearchParams = CommonServiceParams & {
     geometries: GeometrySDK[];
 
     /**
+     * Latitude, e.g., lat=37.337 lat,lon where results should be biased.
+     * Values: min/max: -90 to +90
+     */
+    lat?: number;
+
+    /**
+     * Longitude, e.g.,lon=-121.89 lat,lon where results should be biased.
+     * Values: min/max: -180 to +180
+     */
+    lon?: number;
+
+    /**
      * The maximum number of responses that will be returned.
      * @default 10
      * Maximum value: 100

@@ -9,6 +9,8 @@ const geometrySearchRequestMandatory = z.object({
 
 const geometrySearchRequestOptional = z
     .object({
+        lat: z.number().min(-90).max(90),
+        lon: z.number().min(-180).max(180),
         limit: z.number(),
         extendedPostalCodesFor: z.string().array(),
         mapcodes: z.string().array(),

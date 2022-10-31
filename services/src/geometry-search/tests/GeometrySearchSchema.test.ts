@@ -369,4 +369,38 @@ describe("GeometrySearch Schema Validation", () => {
             ]
         });
     });
+
+    test("it should fail when lan and lon parameters are not between permitted values", async () => {
+        const query = "EV";
+
+        await expect(
+            geometrySearch({
+                query,
+                geometries,
+                lat: -95,
+                lon: 200
+            })
+        ).rejects.toMatchObject({
+            message: "Validation error",
+            service: "GeometrySearch",
+            errors: [
+                {
+                    code: "too_small",
+                    minimum: -90,
+                    type: "number",
+                    inclusive: true,
+                    message: "Number must be greater than or equal to -90",
+                    path: ["lat"]
+                },
+                {
+                    code: "too_big",
+                    maximum: 180,
+                    type: "number",
+                    inclusive: true,
+                    message: "Number must be less than or equal to 180",
+                    path: ["lon"]
+                }
+            ]
+        });
+    });
 });

@@ -45,6 +45,8 @@ export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostOb
 
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, "limit", params.limit);
+    appendOptionalParam(urlParams, "lat", params.lat);
+    appendOptionalParam(urlParams, "lon", params.lon);
 
     appendByJoiningParamValue(urlParams, "fuelSet", params.fuels);
     appendByJoiningParamValue(urlParams, "idxSet", params.indexes);
