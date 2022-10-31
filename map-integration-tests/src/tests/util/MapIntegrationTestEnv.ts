@@ -1,7 +1,7 @@
 import { ConsoleMessage } from "puppeteer";
 import { GOSDKMapParams, LayerSpecWithSource, MapLibreOptions } from "map";
 import { GOSDKThis } from "../types/GOSDKThis";
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
 
 const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> => {
     return Promise.race<T>([
@@ -92,3 +92,11 @@ export class MapIntegrationTestEnv {
         );
     }
 }
+
+export const getSymbolLayersByID = async (layerID: string): Promise<SymbolLayerSpecification> => {
+    return page.evaluate((symbolLayerID) => {
+        return (globalThis as GOSDKThis).mapLibreMap
+            .getStyle()
+            .layers.filter((layer) => layer.id === symbolLayerID)[0] as SymbolLayerSpecification;
+    }, layerID);
+};

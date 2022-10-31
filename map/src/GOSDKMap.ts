@@ -36,6 +36,11 @@ export class GOSDKMap {
         this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
     };
 
+    /**
+     * Change the map locale.
+     * @param locale The locale to be used in map translations.
+     * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
+     */
     public localizeMap(locale: string) {
         localizeMap(this.mapLibreMap, locale);
     }
