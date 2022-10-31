@@ -16,7 +16,7 @@ export type GeocodingProps = CommonPlaceProps & {
      * The score of the result.
      * A larger score means there is a probability that a result meeting the query criteria is higher.
      */
-    score: number;
+    score?: number;
     /**
      * Unit: meters. This is the distance to an object if geobias was provided.
      */

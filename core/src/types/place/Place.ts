@@ -290,12 +290,12 @@ export type SearchPlaceProps = CommonPlaceProps & {
     /**
      * Information about the original data source of the result
      */
-    info: string;
+    info?: string;
     /**
      * The score of the result.
      * A larger score means there is a probability that a result meeting the query criteria is higher.
      */
-    score: number;
+    score?: number;
     /**
      * Unit: meters. This is the distance to an object if geobias was provided.
      */
