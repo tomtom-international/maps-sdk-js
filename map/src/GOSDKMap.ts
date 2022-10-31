@@ -20,11 +20,11 @@ export class GOSDKMap {
     constructor(mapLibreOptions: MapLibreOptions, goSDKParams?: GOSDKMapParams) {
         this.goSDKParams = mergeFromGlobal(goSDKParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
-        if (mapLibreExported.getRTLTextPluginStatus() !== "loaded") {
+        if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
                 (error) => {
-                    console.log("Something wrong happened when setting RTL plugin", error);
+                    console.log("Something went wrong when setting RTL plugin", error);
                 },
                 true
             );
@@ -37,6 +37,6 @@ export class GOSDKMap {
     };
 
     public localizeMap(locale: string) {
-        return localizeMap(this.mapLibreMap, locale);
+        localizeMap(this.mapLibreMap, locale);
     }
 }
