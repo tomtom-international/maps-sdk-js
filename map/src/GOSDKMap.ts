@@ -24,11 +24,12 @@ export class GOSDKMap {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
                 (error) => {
-                    console.log("Something went wrong when setting RTL plugin", error);
+                    console.error("Something went wrong when setting RTL plugin", error);
                 },
                 true
             );
         }
+        goSDKParams?.language && this.localizeMap(goSDKParams?.language);
     }
 
     setStyle = (style: StyleInput): void => {
@@ -41,7 +42,7 @@ export class GOSDKMap {
      * @param locale The locale to be used in map translations.
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
-    public localizeMap(locale: string) {
+    localizeMap(locale: string) {
         localizeMap(this.mapLibreMap, locale);
     }
 }

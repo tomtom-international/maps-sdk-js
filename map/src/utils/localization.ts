@@ -16,11 +16,7 @@ export const localizeMap = (map: Map, lang: string) => {
     const mapStyle = map.getStyle();
     mapStyle.layers.forEach((layer) => {
         if (layer.type == "symbol" && isLayerLocalizable(layer)) {
-            map.setLayoutProperty(layer.id, "text-field", [
-                "coalesce",
-                ["get", `name_${lang || "en-GB"}`],
-                ["get", "name"]
-            ]);
+            map.setLayoutProperty(layer.id, "text-field", ["coalesce", ["get", `name_${lang}`], ["get", "name"]]);
         }
     });
 };

@@ -1,7 +1,7 @@
 import { getSymbolLayersByID, waitForMapToLoad, MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
-describe("Map vector layer tests", () => {
+describe("Map localization tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
     const localizedTextFieldExpressionEN = ["coalesce", ["get", "name_en-GB"], ["get", "name"]];
     const localizedTextFieldExpressionNL = ["coalesce", ["get", "name_nl-NL"], ["get", "name"]];

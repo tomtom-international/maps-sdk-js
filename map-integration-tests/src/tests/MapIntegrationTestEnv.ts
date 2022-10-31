@@ -67,10 +67,10 @@ export class MapIntegrationTestEnv {
     }
 
     async getSymbolLayersByID(layerID: string): Promise<SymbolLayerSpecification> {
-        return page.evaluate((layerID) => {
+        return page.evaluate((symbolLayerID) => {
             return (globalThis as GOSDKThis).mapLibreMap
                 .getStyle()
-                .layers.filter((layer) => layer.id === layerID)[0] as SymbolLayerSpecification;
+                .layers.filter((layer) => layer.id === symbolLayerID)[0] as SymbolLayerSpecification;
         }, layerID);
     }
 }
