@@ -17,7 +17,8 @@ export const geometrySchema = z
     );
 
 export const hasLngLatSchema = z.union([
-    z.number().array(),
+    z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)]),
+    z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180), z.number()]),
     z.object({
         type: z.literal("Point"),
         coordinates: z.number().array()

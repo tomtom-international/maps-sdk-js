@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { geometrySchema } from "../shared/GeometriesSchema";
+import { geometrySchema, hasLngLatSchema } from "../shared/GeometriesSchema";
 import { views } from "@anw/go-sdk-js/core";
 
 const geometrySearchRequestMandatory = z.object({
@@ -9,8 +9,7 @@ const geometrySearchRequestMandatory = z.object({
 
 const geometrySearchRequestOptional = z
     .object({
-        lat: z.number().min(-90).max(90),
-        lon: z.number().min(-180).max(180),
+        position: hasLngLatSchema,
         limit: z.number(),
         extendedPostalCodesFor: z.string().array(),
         mapcodes: z.string().array(),

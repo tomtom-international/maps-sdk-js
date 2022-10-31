@@ -1,9 +1,9 @@
-import { bboxFromGeoJSON, getLngLatArray } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
 
 import { GeocodingParams } from "./types/GeocodingParams";
 import { arrayToCSV } from "../shared/Arrays";
-import { appendCommonParams } from "../shared/RequestBuildingUtils";
+import { appendCommonParams, appendLatLonParamsFromPosition } from "../shared/RequestBuildingUtils";
 
 const buildURLBasePath = (params: GeocodingParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}/search/2/geocode`;
@@ -22,11 +22,7 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     params.typeahead && urlParams.append("typeahead", String(params.typeahead));
     !isNil(params.limit) && urlParams.append("limit", String(params.limit));
     !isNil(params.offset) && urlParams.append("ofs", String(params.offset));
-    const lngLat = params.position && getLngLatArray(params.position);
-    if (lngLat) {
-        urlParams.append("lat", String(lngLat[1]));
-        urlParams.append("lon", String(lngLat[0]));
-    }
+    appendLatLonParamsFromPosition(urlParams, params.position);
     params.countries && urlParams.append("countrySet", arrayToCSV(params.countries));
     !isNil(params.radiusMeters) && urlParams.append("radius", String(params.radiusMeters));
     const bbox = params.boundingBox && bboxFromGeoJSON(params.boundingBox);

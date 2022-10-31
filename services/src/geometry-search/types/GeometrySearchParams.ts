@@ -1,4 +1,4 @@
-import { ConnectorType, Fuel, GeographyType, MapcodeType, View } from "@anw/go-sdk-js/core";
+import { ConnectorType, Fuel, GeographyType, HasLngLat, MapcodeType, View } from "@anw/go-sdk-js/core";
 import { Geometry, Position } from "geojson";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
@@ -17,16 +17,12 @@ export type GeometrySearchParams = CommonServiceParams & {
     geometries: GeometrySDK[];
 
     /**
-     * Latitude, e.g., lat=37.337 lat,lon where results should be biased.
-     * Values: min/max: -90 to +90
+     * Position where results should be biased.
+     * Note: supplying a lat/lon without a radius will bias the search results to that area.
+     * Latitude Values: min/max: -90 to +90
+     * Longitude Values: min/max: -180 to +180
      */
-    lat?: number;
-
-    /**
-     * Longitude, e.g.,lon=-121.89 lat,lon where results should be biased.
-     * Values: min/max: -180 to +180
-     */
-    lon?: number;
+    position?: HasLngLat;
 
     /**
      * The maximum number of responses that will be returned.

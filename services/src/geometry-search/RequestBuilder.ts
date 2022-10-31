@@ -7,8 +7,13 @@ import {
     PolygonAPI,
     SearchByGeometryPayloadAPI
 } from "./types";
-import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from "../shared/RequestBuildingUtils";
 import { positionToCSVLatLon } from "../shared/Geometry";
+import {
+    appendByJoiningParamValue,
+    appendCommonParams,
+    appendLatLonParamsFromPosition,
+    appendOptionalParam
+} from "../shared/RequestBuildingUtils";
 
 const sdkGeometryToAPIGeometry = (obj: GeometrySDK): GeometryAPI => {
     if (obj.type === "Circle") {
@@ -45,8 +50,7 @@ export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostOb
 
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, "limit", params.limit);
-    appendOptionalParam(urlParams, "lat", params.lat);
-    appendOptionalParam(urlParams, "lon", params.lon);
+    appendLatLonParamsFromPosition(urlParams, params.position);
 
     appendByJoiningParamValue(urlParams, "fuelSet", params.fuels);
     appendByJoiningParamValue(urlParams, "idxSet", params.indexes);

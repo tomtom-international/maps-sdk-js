@@ -377,8 +377,7 @@ describe("GeometrySearch Schema Validation", () => {
             geometrySearch({
                 query,
                 geometries,
-                lat: -95,
-                lon: 200
+                position: [-95, 200]
             })
         ).rejects.toMatchObject({
             message: "Validation error",
@@ -390,7 +389,7 @@ describe("GeometrySearch Schema Validation", () => {
                     type: "number",
                     inclusive: true,
                     message: "Number must be greater than or equal to -90",
-                    path: ["lat"]
+                    path: ["position", 0]
                 },
                 {
                     code: "too_big",
@@ -398,7 +397,7 @@ describe("GeometrySearch Schema Validation", () => {
                     type: "number",
                     inclusive: true,
                     message: "Number must be less than or equal to 180",
-                    path: ["lon"]
+                    path: ["position", 1]
                 }
             ]
         });
