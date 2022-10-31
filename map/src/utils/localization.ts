@@ -1,7 +1,7 @@
 import { Map, SymbolLayerSpecification, ExpressionSpecification } from "maplibre-gl";
 import isArray from "lodash/isArray";
 
-const isLayerLocalizable = (layer: SymbolLayerSpecification) => {
+export const isLayerLocalizable = (layer: SymbolLayerSpecification) => {
     const textField = layer.layout?.["text-field"] as string | ExpressionSpecification;
     // tries to detect layers which has "text-field" that can be localized
     // ex. "text-field": "{name}" or "text-field": ["get", "name"]
@@ -16,7 +16,8 @@ export const localizeMap = (map: Map, lang: string) => {
     const mapStyle = map.getStyle();
     mapStyle.layers.forEach((layer) => {
         if (layer.type == "symbol" && isLayerLocalizable(layer)) {
-            map.setLayoutProperty(layer.id, "text-field", ["coalesce", ["get", `name_${lang}`], ["get", "name"]]);
+            const textFieldValue = lang ? ["coalesce", ["get", `name_${lang}`], ["get", "name"]] : ["get", "name"];
+            map.setLayoutProperty(layer.id, "text-field", textFieldValue);
         }
     });
 };
