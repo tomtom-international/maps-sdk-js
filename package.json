@@ -3,7 +3,7 @@
   "version": "0.1.46",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
-    "clean": "rm -rf ./*/.rollup.cache ./*/dist",
+    "clean": "npm run clean:dist -ws && npm run clean:cache -ws",
     "release:dry": "npx standard-version --dry-run",
     "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi",
     "documentation": "typedoc",
