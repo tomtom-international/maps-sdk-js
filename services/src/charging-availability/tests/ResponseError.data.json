@@ -1,0 +1,46 @@
+[
+  [
+    "Charging Availability: Min Power should be greater than 0",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "error": {
+          "description": "Invalid Parameter."
+        },
+        "detailedError": {
+          "code": "InvalidParameter",
+          "message": "must be greater than 0"
+        }
+      }
+    },
+    "ChargingAvailability",
+    {
+      "service": "ChargingAvailability",
+      "message": "must be greater than 0",
+      "status": 400
+    }
+  ],
+  [
+    "Charging Availability: Param minPower & maxPower to be double",
+    {
+      "status": 400,
+      "message": "Bad Request",
+      "data": {
+        "error": {
+          "description": "Invalid Parameter Type."
+        },
+        "detailedError": {
+          "code": "InvalidParameterType",
+          "message": "Required Type: Double"
+        }
+      }
+    },
+    "ChargingAvailability",
+    {
+      "service": "ChargingAvailability",
+      "message": "Required Type: Double",
+      "status": 400
+    }
+  ]
+]

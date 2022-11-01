@@ -5,6 +5,7 @@ import { buildChargingAvailabilityRequest } from "./RequestBuilder";
 import { parseChargingAvailabilityResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
 import { chargingAvailabilityRequestSchema } from "./ChargingAvailabilityRequestSchema";
+import { chargingAvailabilityResponseErrorParser } from "./ChargingAvailabilityResponseErrorParser";
 
 /**
  * Charging Availability service template type.
@@ -27,5 +28,6 @@ export const chargingAvailabilityTemplate: ChargingAvailabilityTemplate = {
     validateRequestSchema: chargingAvailabilityRequestSchema,
     buildRequest: buildChargingAvailabilityRequest,
     sendRequest: getJson,
-    parseResponse: parseChargingAvailabilityResponse
+    parseResponse: parseChargingAvailabilityResponse,
+    parseResponseError: chargingAvailabilityResponseErrorParser
 };
