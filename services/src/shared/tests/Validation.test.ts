@@ -43,7 +43,7 @@ describe("Validation", () => {
         );
     });
 
-    test("it should fails when commonBaseURL or customServiceBaseURL are not passed", () => {
+    test("it should fail when commonBaseURL or customServiceBaseURL is not passed", () => {
         const schema = z.object({
             position: z.number().array().nonempty()
         });
