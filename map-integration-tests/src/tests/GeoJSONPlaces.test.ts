@@ -9,6 +9,7 @@ import {
 import placesTestData from "./GeoJSONPlaces.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
 import { MapGeoJSONFeature } from "maplibre-gl";
+import sortBy from "lodash/sortBy";
 
 const initPlaces = async () =>
     page.evaluate(() => {
@@ -28,9 +29,12 @@ const waitForRenderedPlaces = async (numPlaces: number) => waitUntilRenderedFeat
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource("places");
 
 const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: DisplayProps[]) =>
-    expect(places.map((place) => ({ title: place.properties.title, iconID: place.properties.iconID }))).toEqual(
-        expectedDisplayProps
-    );
+    expect(
+        sortBy(
+            places.map((place) => ({ title: place.properties.title, iconID: place.properties.iconID })),
+            "title"
+        )
+    ).toEqual(sortBy(expectedDisplayProps, "title"));
 
 describe("GeoJSON Places tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
