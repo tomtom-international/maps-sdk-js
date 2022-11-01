@@ -13,8 +13,8 @@ describe("Default error response parsing tests", () => {
             serviceName: ServiceName,
             expectedSDKError: SDKServiceError
         ) => {
-            const sdkGeometrySearchResponseError = defaultResponseErrorParser(apiResponseError, serviceName);
-            expect(sdkGeometrySearchResponseError).toMatchObject(expectedSDKError);
+            const sdkResponseError = defaultResponseErrorParser(apiResponseError, serviceName);
+            expect(sdkResponseError).toMatchObject(expectedSDKError);
         }
     );
 });
