@@ -12,6 +12,6 @@ export const chargingAvailabilityResponseErrorParser: ParseResponseError<Default
     serviceName
 ) => {
     const { data, message, status } = apiError;
-    const errorMessage = data.detailedError.message || message;
+    const errorMessage = data?.detailedError?.message || message;
     return new SDKServiceError(errorMessage, serviceName, status);
 };

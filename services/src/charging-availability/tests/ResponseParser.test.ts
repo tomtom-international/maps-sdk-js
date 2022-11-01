@@ -28,6 +28,7 @@ describe("Charging availability error response parsing tests", () => {
             expectedSDKError: SDKServiceError
         ) => {
             const sdkResponseError = chargingAvailabilityResponseErrorParser(apiResponseError, serviceName);
+            expect(sdkResponseError).toBeInstanceOf(SDKServiceError);
             expect(sdkResponseError).toMatchObject(expectedSDKError);
         }
     );
