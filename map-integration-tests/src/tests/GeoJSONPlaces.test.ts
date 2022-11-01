@@ -24,7 +24,7 @@ const showPlaces = async (places: Places) =>
 
 const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
 
-const waitForRenderedPlaces = async (numPlaces: number) => waitUntilRenderedFeatures("placesSymbols", numPlaces, 5000);
+const waitForRenderedPlaces = async (numPlaces: number) => waitUntilRenderedFeatures("placesSymbols", numPlaces, 20000);
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource("places");
 

@@ -26,7 +26,7 @@ export const waitForMapToLoad = async () =>
                 });
             }),
         "Map did not load",
-        10000
+        30000
     );
 
 export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>
