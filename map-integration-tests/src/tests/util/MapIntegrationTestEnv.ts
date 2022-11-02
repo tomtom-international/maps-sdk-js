@@ -18,7 +18,7 @@ export const waitForMapToLoad = async () =>
             page.evaluate((): Promise<boolean> => {
                 return new Promise((resolve) => {
                     const mapLibreMap = (globalThis as GOSDKThis).mapLibreMap;
-                    if (mapLibreMap.loaded()) {
+                    if (mapLibreMap.isStyleLoaded()) {
                         resolve(true);
                     } else {
                         mapLibreMap.once("load", () => resolve(true));
