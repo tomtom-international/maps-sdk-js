@@ -9,7 +9,7 @@
 
 <div align="center">
   <a href="https://github.com/tomtom-international/go-sdk-js">
-    <img src="documentation/images/tt_logo.png" alt="Logo" width="400" height="90">
+    <img src="documentation/images/tomtom-logo.svg" alt="Logo" width="400" height="90">
   </a>
 
   <h3 align="center">go-sdk-js</h3>
