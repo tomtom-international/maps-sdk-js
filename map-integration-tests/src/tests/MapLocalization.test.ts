@@ -15,9 +15,9 @@ describe("Map localization tests", () => {
     test("Map localization to multiple languages", async () => {
         await mapEnv.loadMap(
             {
-                zoom: 10,
+                zoom: 14,
                 minZoom: 2,
-                center: [30.175, 30.89396]
+                center: [-0.12621, 51.50394]
             },
             {}
         );
