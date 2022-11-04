@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.47](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.46...v0.1.47) (2022-11-04)
+
+
+### Features
+
+* add charging availability service ([efbd5bf](https://github.com/tomtom-international/go-sdk-js/commit/efbd5bf410aa0f582d657e5d79430f8770aa8c65))
+* add localize map method ([42c1984](https://github.com/tomtom-international/go-sdk-js/commit/42c19842020e4e3ff388af9333e72a04b30ec893))
+* init map with locale coming from goSDK config ([69b21ea](https://github.com/tomtom-international/go-sdk-js/commit/69b21ead63f9115946901aff763de37c6d116db7))
+* **map:** Map GeoJSON places ([e11e5c5](https://github.com/tomtom-international/go-sdk-js/commit/e11e5c5629d2c3508e10a3aa0d826f2154273618))
+
+
+### Bug Fixes
+
+* check if rtl plugin was loaded/deferred ([10f3412](https://github.com/tomtom-international/go-sdk-js/commit/10f3412fa27c2d8ca44ef7605250f4755d531be8))
+* **errors:** updated error validation logic to handle charging availability error responses ([cf6ed5a](https://github.com/tomtom-international/go-sdk-js/commit/cf6ed5a646099a9dc76e0ba77a7fa2cd228a4ce7))
+* expect any string to fix tests with changing data ([bcedd32](https://github.com/tomtom-international/go-sdk-js/commit/bcedd32074c8fcc7121c669938ca413a814d5ca4))
+* fix import from core, fix connector type, improve test to min dublications ([51265ec](https://github.com/tomtom-international/go-sdk-js/commit/51265ecc8c5af9a9f46734180f1b95f90f00641a))
+* for failing test because of changing data order ([b032098](https://github.com/tomtom-international/go-sdk-js/commit/b032098d6f3aa6391e8190990b83e688ca779e90))
+* increase map load and test timeout to avoid failing tests ([a3db3d8](https://github.com/tomtom-international/go-sdk-js/commit/a3db3d86b84a89270cb2a047fbad4d3f23fe9db2))
+* mock rtl plugin in tests ([f8a5736](https://github.com/tomtom-international/go-sdk-js/commit/f8a573680b82956df9a3b783bc74f674f6db29d9))
+* replace set-out with env var ([c95f1d8](https://github.com/tomtom-international/go-sdk-js/commit/c95f1d889348e52c4d033e1a44193623a342e2fb))
+* **services:** add correct score field to all relevant types ([a758514](https://github.com/tomtom-international/go-sdk-js/commit/a758514776820d11bba9e030fc22f753dfa1e023))
+* **view:** change exp type to enum to be uniform with other services ([86cfcb6](https://github.com/tomtom-international/go-sdk-js/commit/86cfcb6b6bff7151dfd53b83e2c90c1d8e65edc6))
+
 ### [0.1.46](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.44...v0.1.46) (2022-10-19)
 
 
