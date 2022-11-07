@@ -80,31 +80,59 @@ To get start to contributing to **GO-SDK-WEB**, please follow the steps bellow.
 Make sure you have installed the following applications:
 
 * [Git](https://git-scm.com/) latest
-* [NVM](https://github.com/nvm-sh/nvm) latest
-* [NodeJS 16.+ (LTS)](https://nodejs.org/) - via NVM
-* NPM 8.+ (correspondent to the LTS) - via NVM
+* [NodeJS 16.+ (LTS)](https://nodejs.org/) - Please check the Pre-installation section
+* NPM 8.+ (correspondent to the LTS) - Please check the Pre-installation section
 
 <br />
 
-### Installation
+### Pre-installation
 
-1. Setup NodeJS/NPM via NVM
-    ```shell
+We know that handling node versions without a proper tool can be tricky. There are two tools you can use to manage node versions, [NVM](https://github.com/nvm-sh/nvm) and [Volta](https://volta.sh/).
+
+<br />
+
+**Using Volta:**
+
+Volta is a tool that automatically change the **node** and **npm** version for you and if you don't have installed, it will download automatically and setup for you.
+
+> "Volta is a hassle-free way to manage your JavaScript command-line tools."
+
+Setup Volta:
+  ```shell
+    curl https://get.volta.sh | bash
+  ```
+
+The project has already **node** and **npm** version pinned in the package.json file in the root folder.
+
+Read more about Volta here: [https://docs.volta.sh/guide/](https://docs.volta.sh/guide/)
+
+<br />
+
+**Using NVM**:
+
+Setup NodeJS/NPM via NVM
+  ```shell
     nvm i 16
     nvm use 16
 
     # making 16th version the default one (optional)
     nvm alias default 16
-    ```
+  ```
 
-2. Clone the repo
+Read more about NVM here: [https://github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm)
+
+<br />
+
+### Installation
+
+1. Clone the repo
    ```sh
     git clone git@github.com:tomtom-international/go-sdk-js.git
     # or
     git clone https://github.com/tomtom-international/go-sdk-js.git
    ```
 
-3. Install NPM packages
+2. Install NPM packages
    ```sh
     npm i -ws
     npm ci -ws
