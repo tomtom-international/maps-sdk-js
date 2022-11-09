@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.48](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.47...v0.1.48) (2022-11-09)
+
+
+### Bug Fixes
+
+* **services:** Fixing geometry search inputs and geometry data export ([7564d34](https://github.com/tomtom-international/go-sdk-js/commit/7564d34720e4bb838309f1401541bdacdbb80397))
+
 ### [0.1.47](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.46...v0.1.47) (2022-11-04)
 
 
