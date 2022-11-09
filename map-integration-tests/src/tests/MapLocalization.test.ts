@@ -8,7 +8,7 @@ describe("Map localization tests", () => {
     const countryLayerID = "Places - Country name";
     const largeCityLayerID = "Places - Large city";
 
-    beforeAll(async () => {
+    beforeEach(async () => {
         await mapEnv.loadPage();
     });
 
@@ -29,6 +29,12 @@ describe("Map localization tests", () => {
         const largeCityLayerWithARText = await getSymbolLayersByID(largeCityLayerID);
         expect(countryLayerWithARText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("ar"));
         expect(largeCityLayerWithARText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("ar"));
+
+        await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("es-ES"));
+        const countryLayerWithENText = await getSymbolLayersByID(countryLayerID);
+        const largeCityLayerWithENText = await getSymbolLayersByID(largeCityLayerID);
+        expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("es-ES"));
+        expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("es-ES"));
     });
 
     test("Map localization to multiple languages", async () => {

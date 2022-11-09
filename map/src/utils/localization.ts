@@ -10,13 +10,3 @@ export const isLayerLocalizable = (layer: SymbolLayerSpecification) => {
     const isTextFieldAlreadyLocalized = Array.isArray(textField?.[2]) && textField?.[2].includes("name");
     return toBeLocalized || isTextFieldAlreadyLocalized;
 };
-
-export const localizeMap = (map: Map, lang: string) => {
-    const mapStyle = map.getStyle();
-    mapStyle.layers.forEach((layer) => {
-        if (layer.type == "symbol" && isLayerLocalizable(layer)) {
-            const textFieldValue = lang ? ["coalesce", ["get", `name_${lang}`], ["get", "name"]] : ["get", "name"];
-            map.setLayoutProperty(layer.id, "text-field", textFieldValue);
-        }
-    });
-};

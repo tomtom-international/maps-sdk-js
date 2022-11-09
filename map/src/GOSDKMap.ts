@@ -3,7 +3,7 @@ import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
-import { MapLanguage } from "./language/MapLanguage";
+import { MapLanguage } from "./language";
 
 /**
  * The map object displays a live map on a web application.
@@ -47,6 +47,6 @@ export class GOSDKMap {
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
     localizeMap(language: string) {
-        new MapLanguage(this, { language });
+        MapLanguage.localizeMapWhenReady(this, { language });
     }
 }
