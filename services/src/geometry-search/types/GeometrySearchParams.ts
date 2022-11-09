@@ -75,7 +75,7 @@ export type GeometrySearchParams = CommonServiceParams & {
      * If geographyTypeSet is specified, only a Geography result with a proper entity type will be returned.
      * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
      */
-    geographyType?: GeographyType[];
+    geographyTypes?: GeographyType[];
     /**
      * Parameter allows for fine-tuning Search by specifying which indexes to utilize for the search
      */
@@ -129,11 +129,6 @@ export type GeometrySearchParams = CommonServiceParams & {
      * Value: A double value representing the power rate in kilowatts.
      */
     maxPowerKW?: number;
-    /**
-     * A comma-separated list of entity types which can be used to restrict the result to a specific entity type. Parameter should be used with the idxSet parameter set to the Geography value.
-     * Value: A list of entity types. Item order in the list does not matter. Values are case sensitive.
-     */
-    entityTypes?: GeographyType[];
 };
 
 export type GeometrySDK = Geometry | Circle;

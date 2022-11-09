@@ -139,7 +139,7 @@
         "Geo",
         "Str"
       ],
-      "entityTypes": [
+      "geographyTypes": [
         "Municipality",
         "MunicipalitySubdivision",
         "Neighbourhood"

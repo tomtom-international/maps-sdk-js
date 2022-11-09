@@ -14,7 +14,7 @@ const geometrySearchRequestOptional = z
         extendedPostalCodesFor: z.string().array(),
         mapcodes: z.string().array(),
         view: z.enum(views),
-        geographyType: z.string().array(),
+        geographyTypes: z.string().array(),
         indexes: z.string().array(),
         poiCategories: z.number().array(),
         poiBrands: z.string().array(),
@@ -24,8 +24,7 @@ const geometrySearchRequestOptional = z
         timeZone: z.string(),
         relatedPois: z.string(),
         minPowerKW: z.number(),
-        maxPowerKW: z.number(),
-        entityTypes: z.string().array()
+        maxPowerKW: z.number()
     })
     .partial();
 

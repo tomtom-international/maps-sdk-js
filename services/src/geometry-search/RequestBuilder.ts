@@ -66,7 +66,7 @@ export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostOb
     appendOptionalParam(urlParams, "openingHours", params.openingHours);
     appendOptionalParam(urlParams, "timeZone", params.timeZone);
     appendOptionalParam(urlParams, "relatedPois", params.relatedPois);
-    appendByJoiningParamValue(urlParams, "entityTypeSet", params.entityTypes);
+    appendByJoiningParamValue(urlParams, "entityTypeSet", params.geographyTypes);
 
     return {
         url,

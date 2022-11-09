@@ -166,27 +166,8 @@ describe("GeometrySearch Schema Validation", () => {
                     options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
                     path: ["view"],
                     message:
-                        "Invalid enum value. Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'CH'"
-                }
-            ]
-        });
-    });
-
-    test("it should fail when geography is not of type array", async () => {
-        const query = "POI";
-        const geographyType = "MunicipalitySubdivision";
-
-        // @ts-ignore
-        await expect(geometrySearch({ query, geometries, geographyType })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "string",
-                    path: ["geographyType"],
-                    message: "Expected array, received string"
+                        "Invalid enum value. " +
+                        "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'CH'"
                 }
             ]
         });
@@ -344,16 +325,16 @@ describe("GeometrySearch Schema Validation", () => {
         });
     });
 
-    test("it should fail when entity-type is of type string", async () => {
+    test("it should fail when geography type is of type string", async () => {
         const query = "EV";
-        const entityTypes = "Municipality";
+        const geographyTypes = "Municipality";
 
         await expect(
             geometrySearch({
                 query,
                 geometries,
                 // @ts-ignore
-                entityTypes
+                geographyTypes
             })
         ).rejects.toMatchObject({
             message: "Validation error",
@@ -363,7 +344,7 @@ describe("GeometrySearch Schema Validation", () => {
                     code: "invalid_type",
                     expected: "array",
                     received: "string",
-                    path: ["entityTypes"],
+                    path: ["geographyTypes"],
                     message: "Expected array, received string"
                 }
             ]
