@@ -12,8 +12,4 @@ export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
     protected init(config: MapLanguageConfig): void {
         localizeMap(this.mapLibreMap, config.language);
     }
-
-    getLanguage(): string {
-        return this.config?.language as string;
-    }
 }

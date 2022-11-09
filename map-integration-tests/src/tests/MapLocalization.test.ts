@@ -1,11 +1,10 @@
 import { getSymbolLayersByID, waitForMapStyleToLoad, MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
+const calcLocalizedTextFieldExpression = (lang: string) => ["coalesce", ["get", `name_${lang}`], ["get", "name"]];
+
 describe("Map localization tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
-    const localizedTextFieldExpressionEN = ["coalesce", ["get", "name_en-GB"], ["get", "name"]];
-    const localizedTextFieldExpressionNL = ["coalesce", ["get", "name_nl-NL"], ["get", "name"]];
-    const localizedTextFieldExpressionAR = ["coalesce", ["get", "name_ar"], ["get", "name"]];
     const countryLayerID = "Places - Country name";
     const largeCityLayerID = "Places - Large city";
 
@@ -28,8 +27,8 @@ describe("Map localization tests", () => {
 
         const countryLayerWithARText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithARText = await getSymbolLayersByID(largeCityLayerID);
-        expect(countryLayerWithARText?.layout?.["text-field"]).toEqual(localizedTextFieldExpressionAR);
-        expect(largeCityLayerWithARText?.layout?.["text-field"]).toEqual(localizedTextFieldExpressionAR);
+        expect(countryLayerWithARText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("ar"));
+        expect(largeCityLayerWithARText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("ar"));
     });
 
     test("Map localization to multiple languages", async () => {
@@ -42,13 +41,13 @@ describe("Map localization tests", () => {
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("en-GB"));
         const countryLayerWithENText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithENText = await getSymbolLayersByID(largeCityLayerID);
-        expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(localizedTextFieldExpressionEN);
-        expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(localizedTextFieldExpressionEN);
+        expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("en-GB"));
+        expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("en-GB"));
 
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("nl-NL"));
         const countryLayerWithNLText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithNLText = await getSymbolLayersByID(largeCityLayerID);
-        expect(countryLayerWithNLText?.layout?.["text-field"]).toEqual(localizedTextFieldExpressionNL);
-        expect(largeCityLayerWithNLText?.layout?.["text-field"]).toEqual(localizedTextFieldExpressionNL);
+        expect(countryLayerWithNLText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("nl-NL"));
+        expect(largeCityLayerWithNLText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("nl-NL"));
     });
 });

@@ -3,7 +3,6 @@ import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
-import { localizeMap } from "./utils/localization";
 import { MapLanguage } from "./language/MapLanguage";
 
 /**
@@ -43,11 +42,11 @@ export class GOSDKMap {
     };
 
     /**
-     * Change the map locale.
-     * @param locale The locale to be used in map translations.
+     * Change the map language.
+     * @param language The language to be used in map translations.
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
-    localizeMap(locale: string) {
-        new MapLanguage(this, { language: locale });
+    localizeMap(language: string) {
+        new MapLanguage(this, { language });
     }
 }

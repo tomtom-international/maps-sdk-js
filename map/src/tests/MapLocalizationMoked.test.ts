@@ -22,7 +22,7 @@ describe("Map localization mocked tests", () => {
         jest.clearAllMocks();
     });
 
-    test("Map init with given locale", () => {
+    test("Map init with given language in sdk config", () => {
         jest.spyOn(GOSDKMap.prototype, "localizeMap");
         const goSDKMap = new GOSDKMap(
             { container: mockedContainer },
