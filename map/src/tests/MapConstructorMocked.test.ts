@@ -4,6 +4,8 @@ import { GOSDKMap } from "../GOSDKMap";
 
 jest.mock("maplibre-gl", () => ({
     Map: jest.fn().mockImplementation(() => ({
+        getStyle: jest.fn().mockImplementation(() => ({ layers: [{}] })),
+        isStyleLoaded: jest.fn().mockImplementation(() => false),
         once: jest.fn()
     })),
     setRTLTextPlugin: jest.fn(),

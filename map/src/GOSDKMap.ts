@@ -4,6 +4,7 @@ import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapIni
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
 import { localizeMap } from "./utils/localization";
+import { MapLanguage } from "./language/MapLanguage";
 
 /**
  * The map object displays a live map on a web application.
@@ -47,6 +48,6 @@ export class GOSDKMap {
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
     localizeMap(locale: string) {
-        localizeMap(this.mapLibreMap, locale);
+        new MapLanguage(this, { language: locale });
     }
 }

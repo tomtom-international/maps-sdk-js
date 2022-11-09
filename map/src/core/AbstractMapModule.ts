@@ -8,6 +8,7 @@ import { MapModuleConfig } from "./types/MapModuleConfig";
 export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
     private readonly goSDKMap: GOSDKMap;
     protected readonly mapLibreMap: Map;
+    config?: MapModuleConfig;
 
     /**
      * Builds this module based on a given GO SDK map.
@@ -18,6 +19,7 @@ export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
     constructor(goSDKMap: GOSDKMap, config?: CFG) {
         this.goSDKMap = goSDKMap;
         this.mapLibreMap = goSDKMap.mapLibreMap;
+        this.config = config;
         this.callWhenMapReady(() => this.init(config));
     }
 
