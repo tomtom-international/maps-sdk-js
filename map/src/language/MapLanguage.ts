@@ -1,5 +1,5 @@
 import { AbstractMapModule } from "../core";
-import { isLayerLocalizable } from "../utils/localization";
+import { isLayerLocalizable } from "./localization";
 import { MapLanguageConfig } from "./types/MapLanguageConfig";
 import { GOSDKMap } from "../GOSDKMap";
 
