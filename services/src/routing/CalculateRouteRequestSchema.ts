@@ -48,5 +48,9 @@ const calculateRouteRequestOptional = z
         })
     })
     .partial();
-
+/**
+ * @ignore
+ * @group Calculate Route
+ * @category Variables
+ */
 export const calculateRouteRequestSchema = calculateRouteRequestMandatory.merge(calculateRouteRequestOptional);

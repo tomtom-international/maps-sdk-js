@@ -94,7 +94,10 @@ export type ThrillingParams = {
      */
     windingness?: LNH;
 };
-
+/**
+ * @group Calculate Route
+ * @category Variables
+ */
 export const instructionsTypes = ["coded", "text", "tagged"] as const;
 /**
  * Basic coded/text/tagged values.

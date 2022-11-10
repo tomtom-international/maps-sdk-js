@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/**
+ * @ignore
+ */
 export const CommonServiceRequestSchema = z
     .object({
         apiKey: z.string(),

@@ -31,6 +31,7 @@ export type LatLonAPI = {
 
 /**
  * @group Shared
+ * @category Types
  */
 export type ViewportAPI = {
     /**
@@ -45,20 +46,24 @@ export type ViewportAPI = {
 
 /**
  * @group Shared
+ * @category Types
  */
 export type BoundingBoxTopLeftAPI = ViewportAPI;
 /**
  * @group Shared
+ * @category Types
  */
 export type BoundingBoxSouthWestAPI = { southWest: string; northEast: string };
 
 /**
  * @group Shared
+ * @category Types
  */
 export type BoundingBoxAPI = BoundingBoxTopLeftAPI | BoundingBoxSouthWestAPI;
 
 /**
  * @group Shared
+ * @category Types
  */
 export type EntryPointAPI = Omit<EntryPoint, "position"> & {
     /**
@@ -69,6 +74,7 @@ export type EntryPointAPI = Omit<EntryPoint, "position"> & {
 
 /**
  * @group Shared
+ * @category Types
  */
 export type AddressRangesAPI = {
     /**
@@ -93,6 +99,7 @@ type SummaryQueryType = "NEARBY" | "NON_NEAR";
 
 /**
  * @group Shared
+ * @category Types
  */
 export type Summary = {
     /**
@@ -130,6 +137,8 @@ export type Summary = {
 };
 /**
  * place of interest api type.
+ * @group Shared
+ * @category Types
  */
 export type POIAPI = {
     name: string;
@@ -147,7 +156,7 @@ export type POIAPI = {
 
 /**
  * @ignore
- * @group Geometry-Search
+ * @group Shared
  * @category Types
  */
 export type CommonSearchPlaceResultAPI = Omit<

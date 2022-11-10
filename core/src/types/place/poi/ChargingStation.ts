@@ -1,5 +1,9 @@
 import { Connector } from "./Connector";
 
+/**
+ * @group Place
+ * @category Variables
+ */
 export const accessibility = [
     "Unspecified",
     "NoRestriction",
@@ -9,11 +13,29 @@ export const accessibility = [
     "AuthorizedPersonnelOnly",
     "MembersOnly"
 ] as const;
+
+/**
+ * @group Place
+ * @category Types
+ */
 export type Accessibility = typeof accessibility[number];
 
+/**
+ * @group Place
+ * @category Variables
+ */
 export const chargingPointStatus = ["Available", "Reserved", "Occupied", "OutOfService", "Unknown"] as const;
+
+/**
+ * @group Place
+ * @category Types
+ */
 export type ChargingPointStatus = typeof chargingPointStatus[number];
 
+/**
+ * @group Place
+ * @category Types
+ */
 export type ChargingPoint = {
     /**
      * Charging point ID.
@@ -30,6 +52,11 @@ export type ChargingPoint = {
      */
     connectors: Connector[];
 };
+
+/**
+ * @group Place
+ * @category Types
+ */
 export type ChargingStation = {
     /**
      * Charging station ID.

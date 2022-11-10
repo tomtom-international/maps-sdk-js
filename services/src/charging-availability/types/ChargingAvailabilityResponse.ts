@@ -1,7 +1,7 @@
 import { ChargingStation } from "@anw/go-sdk-js/core";
 
 /**
- * @group ChargingAvailability
+ * @group Charging Availability
  * @category Types
  */
 export type ChargingAvailabilityResponse = {

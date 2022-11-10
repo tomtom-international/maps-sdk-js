@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/**
+ * @ignore
+ */
 export const geometrySchema = z
     .object({
         type: z.string(),
@@ -16,6 +19,9 @@ export const geometrySchema = z
         'type: "Circle" must have radius property'
     );
 
+/**
+ * @ignore
+ */
 export const hasLngLatSchema = z.union([
     z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)]),
     z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180), z.number()]),

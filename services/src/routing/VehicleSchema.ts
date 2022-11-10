@@ -55,7 +55,11 @@ const vehicleDimensionsSchema = z
         axleWeightKG: z.number()
     })
     .partial();
-
+/**
+ * @ignore
+ * @group Calculate Route
+ * @category Variables
+ */
 export const vehicleParametersSchema = z
     .object({
         consumption: vehicleConsumptionSchema,

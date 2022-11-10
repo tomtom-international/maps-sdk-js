@@ -9,7 +9,7 @@ import { chargingAvailabilityResponseErrorParser } from "./ChargingAvailabilityR
 
 /**
  * Charging Availability service template type.
- * @group ChargingAvailability
+ * @group Charging Availability
  * @category Types
  */
 export type ChargingAvailabilityTemplate = ServiceTemplate<
@@ -21,7 +21,7 @@ export type ChargingAvailabilityTemplate = ServiceTemplate<
 
 /**
  * Charging Availability service template main implementation.
- * @group ChargingAvailability
+ * @group Charging Availability
  * @category Variables
  */
 export const chargingAvailabilityTemplate: ChargingAvailabilityTemplate = {

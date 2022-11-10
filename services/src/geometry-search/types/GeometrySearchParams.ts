@@ -4,6 +4,10 @@ import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
 
+/**
+ * @group Geometry Search
+ * @category Types
+ */
 export type GeometrySearchParams = CommonServiceParams & {
     /**
      * Query string. Must be properly URL encoded (mandatory).
@@ -131,9 +135,17 @@ export type GeometrySearchParams = CommonServiceParams & {
     maxPowerKW?: number;
 };
 
+/**
+ * @group Geometry Search
+ * @category Types
+ */
 export type GeometrySDK = Geometry | Circle;
 
 // geo-json does not support circle as a Geometry shape
+/**
+ * @group Geometry Search
+ * @category Interface
+ */
 export interface Circle {
     type: "Circle";
     coordinates: Position;

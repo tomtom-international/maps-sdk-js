@@ -9,7 +9,7 @@ const buildURLBasePath = (params: ChargingAvailabilityParams): string =>
 
 /**
  * Default method for building charging availability request from {@link ChargingAvailabilityParams}
- * @group ChargingAvailability
+ * @group Charging Availability
  * @category Functions
  * @param params The charging availability parameters, with global configuration already merged into them.
  */

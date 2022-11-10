@@ -21,4 +21,9 @@ const revGeocodeRequestOptional = z
     })
     .partial();
 
+/**
+ * @ignore
+ * @group Reverse Geocoding
+ * @category Variables
+ */
 export const revGeocodeRequestSchema = revGeocodeRequestMandatory.merge(revGeocodeRequestOptional);

@@ -6,6 +6,8 @@ import { placeByIdTemplate, PlaceByIdTemplate } from "./PlaceByIdTemplate";
  *
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
+ * @group Place By Id
+ * @category Functions
  * @see https://developer.tomtom.com/search-api/documentation/geocoding-service/geocode
  */
 export const placeById = async (

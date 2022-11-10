@@ -2,6 +2,10 @@ import { CommonServiceParams } from "../../shared/ServiceTypes";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
 import { MapcodeType, View } from "@anw/go-sdk-js/core";
 
+/**
+ * @group Place By Id
+ * @category Types
+ */
 export type PlaceByIdOptionalParams = {
     /**
      * Enables the return of a comma-separated mapcodes list.

@@ -7,6 +7,10 @@ import { getJson } from "../shared/Fetch";
 import { parseGeometryDataResponse } from "./ResponseParser";
 import { geometryDataRequestSchema } from "./GeometryDataRequestSchema";
 
+/**
+ * @group Geometry Data
+ * @category Types
+ */
 export type GeometryDataTemplate = ServiceTemplate<
     GeometryDataParams,
     URL,
@@ -14,6 +18,10 @@ export type GeometryDataTemplate = ServiceTemplate<
     GeometryDataResponse
 >;
 
+/**
+ * @group Geometry Data
+ * @category Variables
+ */
 export const geometryDataTemplate: GeometryDataTemplate = {
     validateRequestSchema: geometryDataRequestSchema,
     buildRequest: buildGeometryDataRequest,

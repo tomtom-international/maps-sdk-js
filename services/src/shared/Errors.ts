@@ -12,7 +12,7 @@ import { ZodIssue } from "zod";
  *  2. API errors: These include recoverable errors that occur within the SDK implementation.
  *
  * @group Shared
- * @category
+ * @category Types
  */
 export class SDKError extends Error {
     constructor(message: string, private service: string, private errors?: ZodIssue[]) {
@@ -24,6 +24,10 @@ export class SDKError extends Error {
     }
 }
 
+/**
+ * @group Shared
+ * @category Variables
+ */
 export const APIErrorCode: { readonly [K in APICode as number]: string } = {
     [APICode.TOO_MANY_REQUESTS]: "Too Many Requests: The API Key is over QPS (Queries per second)",
     [APICode.FORBIDDEN]: "Request failed with status code 403"

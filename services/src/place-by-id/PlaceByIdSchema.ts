@@ -15,4 +15,9 @@ const placeByIdRequestOptional = z
     })
     .partial();
 
+/**
+ * @ignore
+ * @group Place By Id
+ * @category Variables
+ */
 export const placeByIdRequestSchema = placeByIdRequestMandatory.merge(placeByIdRequestOptional);

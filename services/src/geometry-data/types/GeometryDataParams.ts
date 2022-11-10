@@ -1,5 +1,9 @@
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 
+/**
+ * @group Geometry Data
+ * @category Types
+ */
 export type GeometryDataParams = CommonServiceParams & {
     /**
      * Mandatory parameter with the geometry IDs.

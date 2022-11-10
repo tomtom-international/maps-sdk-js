@@ -12,7 +12,9 @@ const chargingAvailabilityRequestOptional = z
         maxPowerKW: z.number()
     })
     .partial();
-
+/**
+ * @ignore
+ */
 export const chargingAvailabilityRequestSchema = chargingAvailabilityRequestMandatory.merge(
     chargingAvailabilityRequestOptional
 );

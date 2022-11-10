@@ -28,4 +28,9 @@ const geometrySearchRequestOptional = z
     })
     .partial();
 
+/**
+ * @ignore
+ * @group Geometry Search
+ * @category Types
+ */
 export const geometrySearchRequestSchema = geometrySearchRequestMandatory.merge(geometrySearchRequestOptional);
