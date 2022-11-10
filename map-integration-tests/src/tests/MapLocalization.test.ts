@@ -1,7 +1,7 @@
 import { getSymbolLayersByID, waitForMapStyleToLoad, MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
-const calcLocalizedTextFieldExpression = (lang: string) => ["coalesce", ["get", `name_${lang}`], ["get", "name"]];
+const calculateLocalizedTextFieldExpression = (lang: string) => ["coalesce", ["get", `name_${lang}`], ["get", "name"]];
 
 describe("Map localization tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -27,14 +27,16 @@ describe("Map localization tests", () => {
 
         const countryLayerWithARText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithARText = await getSymbolLayersByID(largeCityLayerID);
-        expect(countryLayerWithARText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("ar"));
-        expect(largeCityLayerWithARText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("ar"));
+        expect(countryLayerWithARText?.layout?.["text-field"]).toEqual(calculateLocalizedTextFieldExpression("ar"));
+        expect(largeCityLayerWithARText?.layout?.["text-field"]).toEqual(calculateLocalizedTextFieldExpression("ar"));
 
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("es-ES"));
         const countryLayerWithENText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithENText = await getSymbolLayersByID(largeCityLayerID);
-        expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("es-ES"));
-        expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("es-ES"));
+        expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(calculateLocalizedTextFieldExpression("es-ES"));
+        expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(
+            calculateLocalizedTextFieldExpression("es-ES")
+        );
     });
 
     test("Map localization to multiple languages", async () => {
@@ -47,13 +49,17 @@ describe("Map localization tests", () => {
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("en-GB"));
         const countryLayerWithENText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithENText = await getSymbolLayersByID(largeCityLayerID);
-        expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("en-GB"));
-        expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("en-GB"));
+        expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(calculateLocalizedTextFieldExpression("en-GB"));
+        expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(
+            calculateLocalizedTextFieldExpression("en-GB")
+        );
 
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("nl-NL"));
         const countryLayerWithNLText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithNLText = await getSymbolLayersByID(largeCityLayerID);
-        expect(countryLayerWithNLText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("nl-NL"));
-        expect(largeCityLayerWithNLText?.layout?.["text-field"]).toEqual(calcLocalizedTextFieldExpression("nl-NL"));
+        expect(countryLayerWithNLText?.layout?.["text-field"]).toEqual(calculateLocalizedTextFieldExpression("nl-NL"));
+        expect(largeCityLayerWithNLText?.layout?.["text-field"]).toEqual(
+            calculateLocalizedTextFieldExpression("nl-NL")
+        );
     });
 });

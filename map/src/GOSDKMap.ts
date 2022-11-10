@@ -47,6 +47,6 @@ export class GOSDKMap {
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
     localizeMap(language: string) {
-        MapLanguage.localizeMapWhenReady(this, { language });
+        MapLanguage.setLanguageWhenMapReady(this, { language });
     }
 }

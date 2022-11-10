@@ -12,7 +12,7 @@ describe("MapLanguage module", () => {
                 isStyleLoaded: jest.fn().mockImplementation(() => true)
             } as unknown as Map
         } as GOSDKMap;
-        MapLanguage.localizeMapWhenReady(goSDKMapMock, { language: "ar" });
+        MapLanguage.setLanguageWhenMapReady(goSDKMapMock, { language: "ar" });
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
         expect(goSDKMapMock.mapLibreMap.setLayoutProperty).toHaveBeenCalledTimes(4);
     });

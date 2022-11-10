@@ -8,24 +8,24 @@ import { GOSDKMap } from "../GOSDKMap";
  * @category Functions
  */
 export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
-    static mapLanguageInstance: MapLanguage | null = null;
+    static instance: MapLanguage;
     private constructor(goSDKMap: GOSDKMap, config: MapLanguageConfig) {
         super(goSDKMap, config);
     }
 
-    public static localizeMapWhenReady(goSDKMap: GOSDKMap, config: MapLanguageConfig): void {
-        if (!MapLanguage.mapLanguageInstance) {
-            MapLanguage.mapLanguageInstance = new MapLanguage(goSDKMap, config);
+    static setLanguageWhenMapReady(goSDKMap: GOSDKMap, config: MapLanguageConfig): void {
+        if (!MapLanguage.instance) {
+            MapLanguage.instance = new MapLanguage(goSDKMap, config);
             return;
         }
-        MapLanguage.mapLanguageInstance.localizeMap(config.language);
+        MapLanguage.instance.callWhenMapReady(() => MapLanguage.instance.setLanguage(config.language));
     }
 
     protected init(config: MapLanguageConfig): void {
-        this.localizeMap(config.language);
+        this.setLanguage(config.language);
     }
 
-    localizeMap(language: string) {
+    setLanguage(language: string) {
         const mapStyle = this.mapLibreMap.getStyle();
         mapStyle.layers.forEach((layer) => {
             if (layer.type == "symbol" && isLayerLocalizable(layer)) {
