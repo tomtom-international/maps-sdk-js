@@ -10,3 +10,4 @@ export * from "./src/pois";
 export * from "./src/traffic";
 export * from "./src/places";
 export * from "./src/language";
+export * from "./src/geometry";

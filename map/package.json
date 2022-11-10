@@ -8,6 +8,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage --no-cache",
     "build": "rollup -c --configPlugin typescript",
+    "build:watch": "rollup -c --configPlugin typescript --watch",
     "build:full": "npm run type-check && npm run build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -55,5 +56,10 @@
   },
   "peerDependencies": {
     "maplibre-gl": "^3.0.0-pre.1"
+  },
+  "dependencies": {
+    "@turf/bbox-polygon": "^6.5.0",
+    "@turf/difference": "^6.5.0",
+    "@turf/helpers": "^6.5.0"
   }
 }
