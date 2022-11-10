@@ -12,20 +12,20 @@ const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, tim
 
 export const waitForTimeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const waitForMapStyleToLoad = async () =>
+export const waitForMapToLoad = async () =>
     tryBeforeTimeout(
         () =>
             page.evaluate((): Promise<boolean> => {
                 return new Promise((resolve) => {
                     const mapLibreMap = (globalThis as GOSDKThis).mapLibreMap;
-                    if (mapLibreMap.isStyleLoaded()) {
+                    if (mapLibreMap.loaded()) {
                         resolve(true);
                     } else {
-                        mapLibreMap.once("styledata", () => resolve(true));
+                        mapLibreMap.once("load", () => resolve(true));
                     }
                 });
             }),
-        "Map style did not load",
+        "Map did not load",
         30000
     );
 

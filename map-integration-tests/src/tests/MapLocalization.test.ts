@@ -1,4 +1,4 @@
-import { getSymbolLayersByID, waitForMapStyleToLoad, MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
+import { getSymbolLayersByID, waitForMapToLoad, MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
 describe("Map localization tests", () => {
@@ -17,7 +17,7 @@ describe("Map localization tests", () => {
             zoom: 14,
             center: [-0.12621, 51.50394]
         });
-        await waitForMapStyleToLoad();
+        await waitForMapToLoad();
 
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("en-GB"));
         const countryLayerWithENText = await getSymbolLayersByID(countryLayerID);

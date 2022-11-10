@@ -1,8 +1,4 @@
-import {
-    getNumVisibleLayersBySource,
-    MapIntegrationTestEnv,
-    waitForMapStyleToLoad
-} from "./util/MapIntegrationTestEnv";
+import { getNumVisibleLayersBySource, MapIntegrationTestEnv, waitForMapToLoad } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
 describe("Map vector layer tests", () => {
@@ -35,7 +31,6 @@ describe("Map vector layer tests", () => {
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.toggleVisibility());
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.toggleVisibility());
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.toggleVisibility());
-        await waitForMapStyleToLoad();
     };
 
     // eslint-disable-next-line jest/expect-expect
@@ -50,7 +45,7 @@ describe("Map vector layer tests", () => {
             goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap, { visible: false });
             goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap, { visible: false });
         });
-        await waitForMapStyleToLoad();
+        await waitForMapToLoad();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
@@ -58,7 +53,6 @@ describe("Map vector layer tests", () => {
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(true));
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.setVisible(true));
-        await waitForMapStyleToLoad();
         await assertTrafficVisibility(true, true);
         await assertPOIsVisibility(true);
         await assertHillshadeVisibility(true);
@@ -66,18 +60,15 @@ describe("Map vector layer tests", () => {
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(false));
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.setVisible(false));
-        await waitForMapStyleToLoad();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.toggleIncidentsVisibility());
-        await waitForMapStyleToLoad();
         await assertTrafficVisibility(false, true);
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.toggleFlowVisibility());
-        await waitForMapStyleToLoad();
         await assertTrafficVisibility(false, false);
 
         await toggleVisibility();
@@ -105,7 +96,7 @@ describe("Map vector layer tests", () => {
             goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap).setVisible(false);
             goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap).setVisible(false);
         });
-        await waitForMapStyleToLoad();
+        await waitForMapToLoad();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);

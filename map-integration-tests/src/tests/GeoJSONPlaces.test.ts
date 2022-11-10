@@ -3,7 +3,7 @@ import { DisplayProps } from "map";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad,
+    waitForMapToLoad,
     waitUntilRenderedFeatures
 } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
@@ -49,7 +49,7 @@ describe("GeoJSON Places tests", () => {
         async (_name: string, testPlaces: Places, expectedDisplayProps: DisplayProps[]) => {
             await mapEnv.loadMap({}, { bounds: testPlaces });
             await initPlaces();
-            await waitForMapStyleToLoad();
+            await waitForMapToLoad();
             expect(await getNumVisibleLayers()).toStrictEqual(0);
 
             await showPlaces(testPlaces);
