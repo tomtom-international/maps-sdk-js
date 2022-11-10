@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, bboxFromGeoJSONArray, GeometryData } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON, bboxFromGeoJSONArray, GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { GeometryDataResponseAPI } from "./types/APITypes";
 
 /**
@@ -10,9 +10,9 @@ import { GeometryDataResponseAPI } from "./types/APITypes";
  * @category Functions
  * @param apiResponse
  */
-export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI): GeometryData => {
+export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI): GeometryDataResponse => {
     const features = apiResponse.additionalData.flatMap((data) =>
-        (data.geometryData as GeometryData).features.map((feature) => ({
+        (data.geometryData as GeometryDataResponse).features.map((feature) => ({
             ...feature,
             bbox: bboxFromGeoJSON(feature.geometry)
         }))

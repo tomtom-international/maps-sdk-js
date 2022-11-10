@@ -1,12 +1,5 @@
 import { PostObject } from "../shared/Fetch";
-import {
-    CircleAPI,
-    GeometryAPI,
-    GeometrySDK,
-    GeometrySearchParams,
-    PolygonAPI,
-    SearchByGeometryPayloadAPI
-} from "./types";
+import { GeometryAPI, GeometrySearchParams, SearchByGeometryPayloadAPI, SearchGeometryInput } from "./types";
 import { positionToCSVLatLon } from "../shared/Geometry";
 import {
     appendByJoiningParamValue,
@@ -14,24 +7,37 @@ import {
     appendLatLonParamsFromPosition,
     appendOptionalParam
 } from "../shared/RequestBuildingUtils";
+import { sampleWithinMaxLength } from "../shared/Arrays";
 
-const sdkGeometryToAPIGeometry = (obj: GeometrySDK): GeometryAPI => {
-    if (obj.type === "Circle") {
-        return {
-            type: "CIRCLE",
-            radius: obj.radius,
-            position: positionToCSVLatLon(obj.coordinates)
-        } as CircleAPI;
+const sdkGeometryToAPIGeometries = (searchGeometry: SearchGeometryInput): GeometryAPI[] => {
+    switch (searchGeometry.type) {
+        case "Circle":
+            return [
+                {
+                    type: "CIRCLE",
+                    radius: searchGeometry.radius,
+                    position: positionToCSVLatLon(searchGeometry.coordinates)
+                }
+            ];
+        case "Polygon":
+            return [
+                {
+                    type: "POLYGON",
+                    vertices: sampleWithinMaxLength(searchGeometry.coordinates[0], 50).map((coord) =>
+                        positionToCSVLatLon(coord)
+                    )
+                }
+            ];
+        case "MultiPolygon":
+            return searchGeometry.coordinates.flatMap((polygonCoords) =>
+                sdkGeometryToAPIGeometries({ type: "Polygon", coordinates: polygonCoords })
+            );
+        case "FeatureCollection":
+            return searchGeometry.features.flatMap((feature) => sdkGeometryToAPIGeometries(feature.geometry));
+        default:
+            // @ts-ignore
+            throw new Error(`Type ${(searchGeometry as unknown).type} is not supported`);
     }
-
-    if (obj.type === "Polygon") {
-        return {
-            type: "POLYGON",
-            vertices: obj.coordinates[0].map((coord) => positionToCSVLatLon(coord))
-        } as PolygonAPI;
-    }
-
-    throw new Error(`Type ${obj.type} is not supported`);
 };
 
 const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
@@ -71,7 +77,7 @@ export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostOb
     return {
         url,
         data: {
-            geometryList: params.geometries.map(sdkGeometryToAPIGeometry)
+            geometryList: params.geometries.flatMap(sdkGeometryToAPIGeometries)
         }
     };
 };

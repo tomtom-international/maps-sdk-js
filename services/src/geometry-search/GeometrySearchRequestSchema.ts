@@ -1,10 +1,10 @@
-import { z } from "zod";
-import { geometrySchema, hasLngLatSchema } from "../shared/GeometriesSchema";
 import { views } from "@anw/go-sdk-js/core";
+import { z } from "zod";
+import { featureCollectionSchema, geometrySchema, hasLngLatSchema } from "../shared/GeometriesSchema";
 
 const geometrySearchRequestMandatory = z.object({
     query: z.string(),
-    geometries: z.array(geometrySchema)
+    geometries: z.array(z.union([featureCollectionSchema, geometrySchema]))
 });
 
 const geometrySearchRequestOptional = z

@@ -1,5 +1,13 @@
-import { ConnectorType, Fuel, GeographyType, HasLngLat, MapcodeType, View } from "@anw/go-sdk-js/core";
-import { Geometry, Position } from "geojson";
+import {
+    ConnectorType,
+    Fuel,
+    GeographyType,
+    GeometryDataResponse,
+    HasLngLat,
+    MapcodeType,
+    View
+} from "@anw/go-sdk-js/core";
+import { MultiPolygon, Polygon, Position } from "geojson";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
@@ -18,7 +26,7 @@ export type GeometrySearchParams = CommonServiceParams & {
      * List of geometries to search.
      * * (Also referred to as "geometryList")
      */
-    geometries: GeometrySDK[];
+    geometries: SearchGeometryInput[];
 
     /**
      * Position where results should be biased.
@@ -135,12 +143,6 @@ export type GeometrySearchParams = CommonServiceParams & {
     maxPowerKW?: number;
 };
 
-/**
- * @group Geometry Search
- * @category Types
- */
-export type GeometrySDK = Geometry | Circle;
-
 // geo-json does not support circle as a Geometry shape
 /**
  * @group Geometry Search
@@ -151,3 +153,9 @@ export interface Circle {
     coordinates: Position;
     radius: number;
 }
+
+/**
+ * @group Geometry Search
+ * @category Types
+ */
+export type SearchGeometryInput = Polygon | MultiPolygon | Circle | GeometryDataResponse;

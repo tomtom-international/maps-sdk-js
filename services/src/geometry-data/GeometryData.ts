@@ -1,4 +1,4 @@
-import { GeometryData } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { GeometryDataParams } from "./types/GeometryDataParams";
 import { geometryDataTemplate, GeometryDataTemplate } from "./GeometryDataTemplate";
 import { callService } from "../shared/ServiceTemplate";
@@ -15,6 +15,6 @@ import { callService } from "../shared/ServiceTemplate";
 export const geometryData = async (
     params: GeometryDataParams,
     customTemplate?: Partial<GeometryDataTemplate>
-): Promise<GeometryData> => {
+): Promise<GeometryDataResponse> => {
     return callService(params, { ...geometryDataTemplate, ...customTemplate }, "GeometryData");
 };

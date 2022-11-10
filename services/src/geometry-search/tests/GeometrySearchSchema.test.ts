@@ -1,8 +1,8 @@
 import geometrySearch from "../GeometrySearch";
-import { GeometrySDK } from "../types";
+import { SearchGeometryInput } from "../types";
 
 describe("GeometrySearch Schema Validation", () => {
-    const geometries: GeometrySDK[] = [
+    const geometries: SearchGeometryInput[] = [
         {
             type: "Polygon",
             coordinates: [
@@ -26,12 +26,11 @@ describe("GeometrySearch Schema Validation", () => {
 
         // @ts-ignore
         await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
-            message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
                     code: "invalid_union",
-                    path: ["geometries", 0, "coordinates"],
+                    path: ["geometries", 0],
                     message: "Invalid input"
                 }
             ]
@@ -47,11 +46,9 @@ describe("GeometrySearch Schema Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    code: "invalid_type",
-                    expected: "string",
-                    received: "undefined",
-                    path: ["geometries", 0, "type"],
-                    message: "Required"
+                    code: "invalid_union",
+                    path: ["geometries", 0],
+                    message: "Invalid input"
                 }
             ]
         });

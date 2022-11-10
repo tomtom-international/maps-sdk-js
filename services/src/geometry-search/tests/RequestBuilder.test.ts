@@ -14,4 +14,22 @@ describe("Calculate Geometry Search request URL building tests", () => {
             );
         }
     );
+
+    const expectToThrow = (type: string): void => {
+        expect(() =>
+            buildGeometrySearchRequest({
+                query: "whatever",
+                commonBaseURL: "https://api.tomtom.com",
+                geometries: [{ type, coordinates: [0, 0] } as never]
+            })
+        ).toThrow();
+    };
+
+    // eslint-disable-next-line jest/expect-expect
+    test("Incorrect geometry type supplied", () => {
+        expectToThrow("Point");
+        expectToThrow("MultiPoint");
+        expectToThrow("LineString");
+        expectToThrow("MultiLineString");
+    });
 });

@@ -1,14 +1,15 @@
-import { Fuel, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { Fuel, GeometryDataResponse, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 import { geometrySearch } from "..";
 import { parseGeometrySearchResponse } from "../ResponseParser";
 import { buildGeometrySearchRequest } from "../RequestBuilder";
-import { GeometrySDK, GeometrySearchResponse } from "../types";
+import { SearchGeometryInput, GeometrySearchResponse } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { baseSearchPlaceTestProps } from "../../shared/tests/IntegrationTestUtils";
+import realGeometryDataInput from "./RealGeometryDataInput.json";
 
 describe("Geometry Search service", () => {
-    const geometries: GeometrySDK[] = [
+    const geometries: SearchGeometryInput[] = [
         {
             type: "Polygon",
             coordinates: [
@@ -30,6 +31,22 @@ describe("Geometry Search service", () => {
     beforeAll(() => {
         GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
     });
+
+    const expectWorkingResult = () =>
+        expect.objectContaining<GeometrySearchResponse>({
+            type: "FeatureCollection",
+            features: expect.arrayContaining<Place<SearchPlaceProps>>([
+                expect.objectContaining<Place<SearchPlaceProps>>({
+                    type: "Feature",
+                    id: expect.any(String),
+                    geometry: expect.objectContaining({
+                        coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
+                        type: expect.any(String)
+                    }),
+                    properties: expect.objectContaining<SearchPlaceProps>(baseSearchPlaceTestProps)
+                })
+            ])
+        });
 
     test("geometrySearch works", async () => {
         const query = "cafe";
@@ -55,23 +72,7 @@ describe("Geometry Search service", () => {
         });
 
         expect(res.features).toHaveLength(limit);
-
-        expect(res).toEqual(
-            expect.objectContaining<GeometrySearchResponse>({
-                type: "FeatureCollection",
-                features: expect.arrayContaining<Place<SearchPlaceProps>>([
-                    expect.objectContaining<Place<SearchPlaceProps>>({
-                        type: "Feature",
-                        id: expect.any(String),
-                        geometry: expect.objectContaining({
-                            coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
-                            type: expect.any(String)
-                        }),
-                        properties: expect.objectContaining<SearchPlaceProps>(baseSearchPlaceTestProps)
-                    })
-                ])
-            })
-        );
+        expect(res).toEqual(expectWorkingResult());
     });
 
     test("geometrySearch fails to convert unsupported geometry types", async () => {
@@ -87,7 +88,7 @@ describe("Geometry Search service", () => {
         // @ts-ignore
         await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject(
             expect.objectContaining({
-                message: `Type ${type} is not supported`
+                message: `Validation error`
             })
         );
     });
@@ -144,5 +145,11 @@ describe("Geometry Search service", () => {
                 bbox: [0, 0, 0, 0]
             })
         );
+    });
+
+    test("geometrySearch with real geometry data input from a geometry data call", async () => {
+        const query = "university";
+        const res = await geometrySearch({ query, geometries: [realGeometryDataInput as GeometryDataResponse] });
+        expect(res).toEqual(expectWorkingResult());
     });
 });

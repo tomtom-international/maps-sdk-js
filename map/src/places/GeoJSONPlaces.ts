@@ -23,7 +23,8 @@ export const buildPlaceTitle = (place: Place): string =>
  */
 export const getImageIDForPlace = (place: Place): string => {
     const classificationCode = place.properties.poi?.classifications?.[0]?.code;
-    return `${classificationCode ? poiClassificationToIconID[classificationCode].toString() : "default"}_pin`;
+    const iconID = (classificationCode && poiClassificationToIconID[classificationCode]?.toString()) || "default";
+    return `${iconID}_pin`;
 };
 
 const prepareForDisplay = (places: Places): Places<DisplayProps & CommonPlaceProps> => ({
