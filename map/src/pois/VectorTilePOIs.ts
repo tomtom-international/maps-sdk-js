@@ -32,14 +32,16 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     }
 
     setVisible(visible: boolean): void {
-        if (this.poi) {
-            this.poi.setAllLayersVisible(visible);
-        } else {
-            console.error(
-                "Trying to change map POIs visibility while they are not in the map style. " +
-                    "Is the map style not loaded yet, or did you exclude POIs when loading the map?"
-            );
-        }
+        this.callWhenMapReady(() => {
+            if (this.poi) {
+                this.poi.setAllLayersVisible(visible);
+            } else {
+                console.error(
+                    "Trying to change map POIs visibility while they are not in the map style. " +
+                        "Is the map style not loaded yet, or did you exclude POIs when loading the map?"
+                );
+            }
+        });
     }
 
     toggleVisibility(): void {

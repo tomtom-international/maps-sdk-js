@@ -29,14 +29,10 @@ describe("Map vector layer tests", () => {
 
     // eslint-disable-next-line jest/expect-expect
     test("Vector tiles traffic/pois/hillshade visibility", async () => {
-        await mapEnv.loadMap(
-            {
-                zoom: 14,
-                minZoom: 2,
-                center: [-0.12621, 51.50394]
-            },
-            {}
-        );
+        await mapEnv.loadMap({
+            zoom: 14,
+            center: [-0.12621, 51.50394]
+        });
         await page.evaluate(() => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.traffic = new goSDKThis.GOSDK.VectorTilesTraffic(goSDKThis.goSDKMap, { visible: false });
@@ -79,6 +75,26 @@ describe("Map vector layer tests", () => {
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.toggleVisibility());
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.toggleVisibility());
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.toggleVisibility());
+        await assertTrafficVisibility(false, false);
+        await assertPOIsVisibility(false);
+        await assertHillshadeVisibility(false);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    // eslint-disable-next-line jest/expect-expect
+    test("Vector tiles traffic/pois/hillshade visibility with setVisible before waiting for map to load", async () => {
+        await mapEnv.loadMap({
+            zoom: 14,
+            center: [-0.12621, 51.50394]
+        });
+        await page.evaluate(() => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.traffic = new goSDKThis.GOSDK.VectorTilesTraffic(goSDKThis.goSDKMap).setVisible(false);
+            goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap).setVisible(false);
+            goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap).setVisible(false);
+        });
+        await waitForMapToLoad();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);

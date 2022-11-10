@@ -13,14 +13,10 @@ describe("Map localization tests", () => {
     });
 
     test("Map localization to multiple languages", async () => {
-        await mapEnv.loadMap(
-            {
-                zoom: 14,
-                minZoom: 2,
-                center: [-0.12621, 51.50394]
-            },
-            {}
-        );
+        await mapEnv.loadMap({
+            zoom: 14,
+            center: [-0.12621, 51.50394]
+        });
         await waitForMapToLoad();
 
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.localizeMap("en-GB"));

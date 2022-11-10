@@ -74,7 +74,7 @@ export class MapIntegrationTestEnv {
         page.on("console", (message) => message.type() === "error" && this.consoleErrors.push(message));
     }
 
-    async loadMap(mapLibreOptions: Partial<MapLibreOptions>, goSDKParams: Partial<GOSDKMapParams>) {
+    async loadMap(mapLibreOptions: Partial<MapLibreOptions>, goSDKParams?: GOSDKMapParams) {
         this.consoleErrors = [];
         return page.evaluate(
             (pageMapLibreOptions, pageGOSDKParams, pageAPIKey) => {

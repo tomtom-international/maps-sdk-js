@@ -12,7 +12,7 @@ describe("Map Init tests", () => {
     test.each(mapInitTestData)(
         `'%s`,
         // @ts-ignore
-        async (_name: string, mapLibreOptions: Partial<MapLibreOptions>, goSDKParams: Partial<GOSDKMapParams>) => {
+        async (_name: string, mapLibreOptions: MapLibreOptions, goSDKParams: GOSDKMapParams) => {
             await mapEnv.loadMap(mapLibreOptions, goSDKParams);
             await waitForMapToLoad();
             expect(await getNumVisibleLayersBySource("vectorTilesIncidents")).toBeGreaterThan(0);

@@ -27,5 +27,12 @@ export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
         }
     }
 
+    /**
+     * Initializes the module.
+     * * Called when the map is ensured to be ready.
+     * @param config The optional configuration to apply.
+     * @protected
+     * @ignore
+     */
     protected abstract init(config?: CFG): void;
 }
