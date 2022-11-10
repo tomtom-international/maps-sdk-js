@@ -6,6 +6,7 @@ import { MapModuleConfig } from "./types/MapModuleConfig";
  * Base class for all GO SDK map modules.
  */
 export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
+    private readonly goSDKMap: GOSDKMap;
     protected readonly mapLibreMap: Map;
 
     /**
@@ -15,12 +16,13 @@ export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
      * @param config Optional configuration to initialize directly as soon as the map is ready.
      */
     constructor(goSDKMap: GOSDKMap, config?: CFG) {
+        this.goSDKMap = goSDKMap;
         this.mapLibreMap = goSDKMap.mapLibreMap;
         this.callWhenMapReady(() => this.init(config));
     }
 
     protected callWhenMapReady(func: () => void) {
-        if (this.mapLibreMap.isStyleLoaded()) {
+        if (this.goSDKMap.mapReady || this.mapLibreMap.isStyleLoaded()) {
             func();
         } else {
             this.mapLibreMap.once("styledata", () => func());

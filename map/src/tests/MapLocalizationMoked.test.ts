@@ -3,7 +3,8 @@ import { GOSDKMap } from "../GOSDKMap";
 
 jest.mock("maplibre-gl", () => ({
     Map: jest.fn().mockImplementation(() => ({
-        getStyle: jest.fn().mockImplementation(() => ({ layers: [{}] }))
+        getStyle: jest.fn().mockImplementation(() => ({ layers: [{}] })),
+        once: jest.fn()
     })),
     setRTLTextPlugin: jest.fn(),
     getRTLTextPluginStatus: jest.fn()

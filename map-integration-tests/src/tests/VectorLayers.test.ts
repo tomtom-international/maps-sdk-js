@@ -1,4 +1,8 @@
-import { getNumVisibleLayersBySource, MapIntegrationTestEnv, waitForMapToLoad } from "./util/MapIntegrationTestEnv";
+import {
+    getNumVisibleLayersBySource,
+    MapIntegrationTestEnv,
+    waitForMapStyleToLoad
+} from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
 describe("Map vector layer tests", () => {
@@ -45,7 +49,7 @@ describe("Map vector layer tests", () => {
             goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap, { visible: false });
             goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap, { visible: false });
         });
-        await waitForMapToLoad();
+        await waitForMapStyleToLoad();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
@@ -96,7 +100,7 @@ describe("Map vector layer tests", () => {
             goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap).setVisible(false);
             goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap).setVisible(false);
         });
-        await waitForMapToLoad();
+        await waitForMapStyleToLoad();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);

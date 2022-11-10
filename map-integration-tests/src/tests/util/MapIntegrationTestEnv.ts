@@ -3,30 +3,26 @@ import { GOSDKMapParams, LayerSpecWithSource, MapLibreOptions } from "map";
 import { GOSDKThis } from "../types/GOSDKThis";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
 
-const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> => {
-    return Promise.race<T>([
-        func(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))
-    ]);
-};
+const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
+    Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);
 
-export const waitForTimeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const waitForTimeout = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const waitForMapToLoad = async () =>
+export const waitForMapStyleToLoad = async () =>
     tryBeforeTimeout(
         () =>
             page.evaluate((): Promise<boolean> => {
                 return new Promise((resolve) => {
-                    const mapLibreMap = (globalThis as GOSDKThis).mapLibreMap;
-                    if (mapLibreMap.loaded()) {
+                    const goSDKThis = globalThis as GOSDKThis;
+                    if (goSDKThis.goSDKMap.mapReady) {
                         resolve(true);
                     } else {
-                        mapLibreMap.once("load", () => resolve(true));
+                        goSDKThis.mapLibreMap.once("styledata", () => resolve(true));
                     }
                 });
             }),
-        "Map did not load",
-        30000
+        "Map style did not load",
+        10000
     );
 
 export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>

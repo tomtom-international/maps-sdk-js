@@ -10,6 +10,7 @@ import { localizeMap } from "./utils/localization";
  */
 export class GOSDKMap {
     readonly mapLibreMap: Map;
+    mapReady = false;
     private goSDKParams: GOSDKMapParams;
 
     /**
@@ -20,6 +21,7 @@ export class GOSDKMap {
     constructor(mapLibreOptions: MapLibreOptions, goSDKParams?: GOSDKMapParams) {
         this.goSDKParams = mergeFromGlobal(goSDKParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
+        this.mapLibreMap.once("styledata", () => (this.mapReady = true));
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
@@ -34,6 +36,8 @@ export class GOSDKMap {
 
     setStyle = (style: StyleInput): void => {
         this.goSDKParams = { ...this.goSDKParams, style };
+        this.mapReady = false;
+        this.mapLibreMap.once("styledata", () => (this.mapReady = true));
         this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
     };
 

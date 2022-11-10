@@ -3,7 +3,9 @@ import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { GOSDKMap } from "../GOSDKMap";
 
 jest.mock("maplibre-gl", () => ({
-    Map: jest.fn(),
+    Map: jest.fn().mockImplementation(() => ({
+        once: jest.fn()
+    })),
     setRTLTextPlugin: jest.fn(),
     getRTLTextPluginStatus: jest.fn()
 }));

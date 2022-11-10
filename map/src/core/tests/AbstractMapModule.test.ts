@@ -69,4 +69,23 @@ describe("AbstractMapModule tests", () => {
         expect(testModule.initCalled).toStrictEqual(true);
         expect(testModule.initConfig).toStrictEqual(testConfig);
     });
+
+    test("Constructor with style not loaded yet and style data timeout", async () => {
+        const goSDKMapMock = {
+            mapLibreMap: {
+                isStyleLoaded: jest.fn().mockImplementation(() => false),
+                once: jest.fn().mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 6000)))
+            } as unknown as Map
+        } as GOSDKMap;
+
+        const testModule = new TestModule(goSDKMapMock);
+        await new Promise((resolve) => setTimeout(resolve, 6000));
+        const styleDataEventCallback = (goSDKMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
+        styleDataEventCallback();
+        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
+        expect(goSDKMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata", styleDataEventCallback);
+
+        expect(testModule.initCalled).toStrictEqual(true);
+        expect(testModule.initConfig).toBeUndefined();
+    });
 });
