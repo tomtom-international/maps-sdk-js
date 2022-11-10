@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.49](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.48...v0.1.49) (2022-11-10)
+
+
+### Bug Fixes
+
+* **map:** ensuring the map is ready when calling map module methods ([4e2c4b3](https://github.com/tomtom-international/go-sdk-js/commit/4e2c4b344019f1d9abea06cd24e4fbd5c4f6f0cf))
+* **services:** exporting geometry data response and adding it to service signature ([73779b2](https://github.com/tomtom-international/go-sdk-js/commit/73779b2caac2045045f7790e2913287b19b10d64))
+* **tests:** test stability fixes ([402b90e](https://github.com/tomtom-international/go-sdk-js/commit/402b90ec59e40b367aaa8c32f7043f7d2083333f))
+
 ### [0.1.48](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.47...v0.1.48) (2022-11-09)
 
 
