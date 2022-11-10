@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.50](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.49...v0.1.50) (2022-11-10)
+
+
+### Bug Fixes
+
+* **tests:** test stability fixes ([791c841](https://github.com/tomtom-international/go-sdk-js/commit/791c841537e2dc721f6ca6e62829e329114af7b0))
+
 ### [0.1.49](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.48...v0.1.49) (2022-11-10)
 
 
