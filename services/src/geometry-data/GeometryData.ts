@@ -1,3 +1,4 @@
+import { GeometryData } from "@anw/go-sdk-js/core";
 import { GeometryDataParams } from "./types/GeometryDataParams";
 import { geometryDataTemplate, GeometryDataTemplate } from "./GeometryDataTemplate";
 import { callService } from "../shared/ServiceTemplate";
@@ -11,6 +12,9 @@ import { callService } from "../shared/ServiceTemplate";
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/search-api/documentation/additional-data-service/additional-data
  */
-export const geometryData = async (params: GeometryDataParams, customTemplate?: Partial<GeometryDataTemplate>) => {
+export const geometryData = async (
+    params: GeometryDataParams,
+    customTemplate?: Partial<GeometryDataTemplate>
+): Promise<GeometryData> => {
     return callService(params, { ...geometryDataTemplate, ...customTemplate }, "GeometryData");
 };

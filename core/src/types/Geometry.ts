@@ -1,4 +1,4 @@
-import { BBox, Feature, GeoJsonObject, Point, Position } from "geojson";
+import { BBox, Feature, FeatureCollection, GeoJsonObject, MultiPolygon, Point, Polygon, Position } from "geojson";
 
 /**
  * An GeoJSON input type that consists of, or has, a [lng, lat] Position.
@@ -22,3 +22,10 @@ export type HasBBox = BBox | GeoJsonObject;
  * @category Types
  */
 export type OptionalBBox = BBox | undefined;
+
+/**
+ * Polygon geometry data (from geometry data service).
+ * @group Shared
+ * @category Types
+ */
+export type GeometryData = FeatureCollection<Polygon | MultiPolygon>;

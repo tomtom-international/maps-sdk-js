@@ -1,6 +1,6 @@
+import { GeometryData } from "@anw/go-sdk-js/core";
 import { ServiceTemplate } from "../shared/ServiceTypes";
 import { GeometryDataResponseAPI } from "./types/APITypes";
-import { GeometryDataResponse } from "./types/GeometryDataResponse";
 import { GeometryDataParams } from "./types/GeometryDataParams";
 import { buildGeometryDataRequest } from "./RequestBuilder";
 import { getJson } from "../shared/Fetch";
@@ -11,12 +11,7 @@ import { geometryDataRequestSchema } from "./GeometryDataRequestSchema";
  * @group Geometry Data
  * @category Types
  */
-export type GeometryDataTemplate = ServiceTemplate<
-    GeometryDataParams,
-    URL,
-    GeometryDataResponseAPI,
-    GeometryDataResponse
->;
+export type GeometryDataTemplate = ServiceTemplate<GeometryDataParams, URL, GeometryDataResponseAPI, GeometryData>;
 
 /**
  * @group Geometry Data
