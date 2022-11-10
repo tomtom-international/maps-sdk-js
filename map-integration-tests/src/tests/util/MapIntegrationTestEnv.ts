@@ -12,7 +12,7 @@ const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, tim
 
 export const waitForTimeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const waitForMapToLoad = async () =>
+export const waitForMapStyleToLoad = async () =>
     tryBeforeTimeout(
         () =>
             page.evaluate((): Promise<boolean> => {
@@ -21,11 +21,11 @@ export const waitForMapToLoad = async () =>
                     if (mapLibreMap.isStyleLoaded()) {
                         resolve(true);
                     } else {
-                        mapLibreMap.once("load", () => resolve(true));
+                        mapLibreMap.once("styledata", () => resolve(true));
                     }
                 });
             }),
-        "Map did not load",
+        "Map style did not load",
         30000
     );
 

@@ -1,5 +1,9 @@
 import { GOSDKMapParams, MapLibreOptions } from "map";
-import { getNumVisibleLayersBySource, MapIntegrationTestEnv, waitForMapToLoad } from "./util/MapIntegrationTestEnv";
+import {
+    getNumVisibleLayersBySource,
+    MapIntegrationTestEnv,
+    waitForMapStyleToLoad
+} from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
 
 describe("Map Init tests", () => {
@@ -14,7 +18,7 @@ describe("Map Init tests", () => {
         // @ts-ignore
         async (_name: string, mapLibreOptions: MapLibreOptions, goSDKParams: GOSDKMapParams) => {
             await mapEnv.loadMap(mapLibreOptions, goSDKParams);
-            await waitForMapToLoad();
+            await waitForMapStyleToLoad();
             expect(await getNumVisibleLayersBySource("vectorTilesIncidents")).toBeGreaterThan(0);
             expect(await getNumVisibleLayersBySource("vectorTilesFlow")).toBeGreaterThan(0);
             expect(await getNumVisibleLayersBySource("poiTiles")).toBeGreaterThan(0);
