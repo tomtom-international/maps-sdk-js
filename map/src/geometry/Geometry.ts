@@ -5,7 +5,7 @@ import { GeometryData } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers, MapModuleConfig } from "../core";
 import { locationGeometryFillSpec, locationGeometryOutlineSpec } from "./layers/GeometryLayers";
 
-const geometrySourceID = "LOCATION_GEOMETRY";
+export const geometrySourceID = "LOCATION_GEOMETRY";
 const locationGeometryFillId = "LOCATION_GEOMETRY_FILL";
 const locationGeometryOutlineId = "LOCATION_GEOMETRY_OUTLINE";
 
