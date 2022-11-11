@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.51](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.50...v0.1.51) (2022-11-11)
+
+
+### Bug Fixes
+
+* **map:** workaround against maplibre style loading state stability issues ([1c023bd](https://github.com/tomtom-international/go-sdk-js/commit/1c023bd46fc5bc13c9afd86ce94a96455f6e342c))
+
 ### [0.1.50](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.49...v0.1.50) (2022-11-10)
 
 
