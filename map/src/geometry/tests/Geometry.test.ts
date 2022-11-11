@@ -37,8 +37,8 @@ describe("GeoJSON Places module tests", () => {
                 }
             ]
         } as GeometryData;
-        const places = new Geometry(goSDKMapMock);
-        places.show(testGeometry, true);
-        places.clear();
+        const geometry = new Geometry(goSDKMapMock);
+        geometry.show(testGeometry, true);
+        geometry.clear();
     });
 });
