@@ -20,7 +20,7 @@ export class Geometry extends AbstractMapModule<MapModuleConfig> {
             { ...locationGeometryFillSpec, id: locationGeometryFillId },
             { ...locationGeometryOutlineSpec, id: locationGeometryOutlineId }
         ]);
-        this.geometry.ensureAddedToMapWithVisibility(true);
+        this.geometry.ensureAddedToMapWithVisibility(false);
     }
 
     reverse(geometry: GeometryData): GeometryData {
