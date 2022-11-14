@@ -7,7 +7,7 @@ import { GOSDKMap } from "../../GOSDKMap";
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
-describe("GeoJSON Places module tests", () => {
+describe("Geometry module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", () => {
         const geometrySource = { id: geometrySourceID };
