@@ -15,6 +15,16 @@ const featureCollection = <T extends FeatureCollection>(features: Feature[]): T 
         features
     } as T);
 
+const reverse = (geometry: GeometryDataResponse): GeometryDataResponse => {
+    const feature = geometry.features?.[0];
+    const invertedMultiPolygon = difference(bboxPolygon([-180, 90, 180, -90]), feature);
+    if (invertedMultiPolygon) {
+        return featureCollection([invertedMultiPolygon]);
+    } else {
+        return featureCollection([]);
+    }
+};
+
 /**
  * Geometry data module.
  */
@@ -29,23 +39,13 @@ export class Geometry extends AbstractMapModule<MapModuleConfig> {
         this.geometry.ensureAddedToMapWithVisibility(false);
     }
 
-    reverse(geometry: GeometryDataResponse): GeometryDataResponse {
-        const feature = geometry.features?.[0];
-        const invertedMultiPolygon = difference(bboxPolygon([-180, 90, 180, -90]), feature);
-        if (invertedMultiPolygon) {
-            return featureCollection([invertedMultiPolygon]);
-        } else {
-            return featureCollection([]);
-        }
-    }
-
     /**
      * Shows the given Geometry on the map.
      * @param geometry
      * @param reversed - Reverse polygon
      */
     show(geometry: GeometryDataResponse, reversed?: boolean): void {
-        this.callWhenMapReady(() => this.geometry?.show(reversed ? this.reverse(geometry) : geometry));
+        this.callWhenMapReady(() => this.geometry?.show(reversed ? reverse(geometry) : geometry));
     }
 
     /**
