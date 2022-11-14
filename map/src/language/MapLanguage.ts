@@ -13,12 +13,13 @@ export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
         super(goSDKMap, config);
     }
 
-    static setLanguageWhenMapReady(goSDKMap: GOSDKMap, config: MapLanguageConfig): void {
+    static setLanguage(goSDKMap: GOSDKMap, config: MapLanguageConfig): void {
         if (!MapLanguage.instance) {
             MapLanguage.instance = new MapLanguage(goSDKMap, config);
             return;
+        } else {
+            MapLanguage.instance.setLanguage(config.language);
         }
-        MapLanguage.instance.callWhenMapReady(() => MapLanguage.instance.setLanguage(config.language));
     }
 
     protected init(config: MapLanguageConfig): void {
@@ -26,14 +27,15 @@ export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
     }
 
     setLanguage(language: string) {
-        const mapStyle = this.mapLibreMap.getStyle();
-        mapStyle.layers.forEach((layer) => {
-            if (layer.type == "symbol" && isLayerLocalizable(layer)) {
-                const textFieldValue = language
-                    ? ["coalesce", ["get", `name_${language}`], ["get", "name"]]
-                    : ["get", "name"];
-                this.mapLibreMap.setLayoutProperty(layer.id, "text-field", textFieldValue);
-            }
+        this.callWhenMapReady(() => {
+            this.mapLibreMap.getStyle().layers.forEach((layer) => {
+                if (layer.type == "symbol" && isLayerLocalizable(layer)) {
+                    const textFieldValue = language
+                        ? ["coalesce", ["get", `name_${language}`], ["get", "name"]]
+                        : ["get", "name"];
+                    this.mapLibreMap.setLayoutProperty(layer.id, "text-field", textFieldValue);
+                }
+            });
         });
     }
 }

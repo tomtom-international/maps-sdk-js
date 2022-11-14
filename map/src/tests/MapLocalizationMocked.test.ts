@@ -20,7 +20,7 @@ describe("Map localization mocked tests", () => {
     });
 
     test("Map init with given language in sdk config", () => {
-        jest.spyOn(GOSDKMap.prototype, "localizeMap");
+        jest.spyOn(GOSDKMap.prototype, "setLanguage");
         const goSDKMap = new GOSDKMap(
             { container: mockedContainer },
             {
@@ -28,15 +28,15 @@ describe("Map localization mocked tests", () => {
             }
         );
         expect(goSDKMap.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
-        expect(goSDKMap.localizeMap).toHaveBeenCalledTimes(1);
-        expect(goSDKMap.localizeMap).toHaveBeenCalledWith("en_GB");
+        expect(goSDKMap.setLanguage).toHaveBeenCalledTimes(1);
+        expect(goSDKMap.setLanguage).toHaveBeenCalledWith("en_GB");
     });
 
     test("Localize map after initialization", () => {
         const goSDKMap = new GOSDKMap({ container: mockedContainer });
-        jest.spyOn(goSDKMap, "localizeMap");
-        goSDKMap.localizeMap("ar");
-        expect(goSDKMap.localizeMap).toHaveBeenCalledTimes(1);
-        expect(goSDKMap.localizeMap).toHaveBeenCalledWith("ar");
+        jest.spyOn(goSDKMap, "setLanguage");
+        goSDKMap.setLanguage("ar");
+        expect(goSDKMap.setLanguage).toHaveBeenCalledTimes(1);
+        expect(goSDKMap.setLanguage).toHaveBeenCalledWith("ar");
     });
 });

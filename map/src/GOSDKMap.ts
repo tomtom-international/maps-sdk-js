@@ -31,7 +31,7 @@ export class GOSDKMap {
                 true
             );
         }
-        goSDKParams?.language && this.localizeMap(goSDKParams?.language);
+        goSDKParams?.language && this.setLanguage(goSDKParams?.language);
     }
 
     setStyle = (style: StyleInput): void => {
@@ -46,7 +46,7 @@ export class GOSDKMap {
      * @param language The language to be used in map translations.
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
-    localizeMap(language: string) {
-        MapLanguage.setLanguageWhenMapReady(this, { language });
+    setLanguage(language: string) {
+        MapLanguage.setLanguage(this, { language });
     }
 }
