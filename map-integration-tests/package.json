@@ -29,7 +29,7 @@
   "devDependencies": {
     "@types/jest": "^29.2.0",
     "@types/jest-environment-puppeteer": "^5.0.2",
-    "@types/puppeteer": "^5.4.7",
+    "@types/puppeteer": "^7.0.4",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
     "dotenv": "^16.0.3",
