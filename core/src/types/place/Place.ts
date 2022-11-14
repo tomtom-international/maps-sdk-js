@@ -309,6 +309,7 @@ export type SearchPlaceProps = CommonPlaceProps & {
 export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & {
     /**
      * Identifier for this place.
+     * * It's the same GeoJSON Feature id, but made a mandatory string.
      * https://tools.ietf.org/html/rfc7946#section-3.2.
      */
     id: string;

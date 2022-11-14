@@ -38,7 +38,7 @@ export type GeometryDataSource = {
     /**
      * Pass this as geometry ID to the Geometry Data service to fetch geometry information for this result.
      */
-    id?: string;
+    id: string;
 };
 
 /**
@@ -49,7 +49,7 @@ export type PoiDetailsDataSource = {
     /**
      * Pass this as id to the Points of Interest Details service to fetch additional data for the POI.
      */
-    id?: string;
+    id: string;
 
     /**
      * Name of an additional data provider.

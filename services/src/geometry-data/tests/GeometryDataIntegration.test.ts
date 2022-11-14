@@ -5,8 +5,13 @@ describe("Geometry data errors", () => {
     test("Geometry data test without API key", async () => {
         await expect(geometryData({ geometries: [] })).rejects.toMatchObject({
             service: "GeometryData",
-            message: "Request failed with status code 403",
-            status: 403
+            errors: [
+                {
+                    code: "too_small",
+                    path: ["geometries"],
+                    message: "Array must contain at least 1 element(s)"
+                }
+            ]
         });
     });
 });
@@ -57,12 +62,12 @@ describe("Geometry data integration tests", () => {
     });
 
     test("Geometry data of the communities of Catalonia, Madrid, and Canary Islands", async () => {
+        const cataloniaGeometryID = "00005858-5800-1200-0000-000077363e04";
+        const madridGeometryID = "00005858-5800-1200-0000-0000773645b1";
+        const canaryIslandsGeometryID = "00005858-5800-1200-0000-000077364372";
+
         const result = await geometryData({
-            geometries: [
-                "00005858-5800-1200-0000-000077363e04", // Catalonia
-                "00005858-5800-1200-0000-0000773645b1", // Madrid
-                "00005858-5800-1200-0000-000077364372" // Canary Islands
-            ],
+            geometries: [cataloniaGeometryID, madridGeometryID, canaryIslandsGeometryID],
             zoom: 10
         });
         expect(result).toStrictEqual({
@@ -71,7 +76,7 @@ describe("Geometry data integration tests", () => {
             features: [
                 {
                     type: "Feature",
-                    id: "00005858-5800-1200-0000-000077363e04",
+                    id: cataloniaGeometryID,
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
@@ -81,7 +86,7 @@ describe("Geometry data integration tests", () => {
                 },
                 {
                     type: "Feature",
-                    id: "00005858-5800-1200-0000-0000773645b1",
+                    id: madridGeometryID,
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
@@ -91,7 +96,7 @@ describe("Geometry data integration tests", () => {
                 },
                 {
                     type: "Feature",
-                    id: "00005858-5800-1200-0000-000077364372",
+                    id: canaryIslandsGeometryID,
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
@@ -102,4 +107,45 @@ describe("Geometry data integration tests", () => {
             ]
         });
     });
+
+    test(
+        "Geometry data of the communities of Catalonia, Madrid, and Canary Islands " +
+            "where Madrid UUID is incorrect and won't be found",
+        async () => {
+            const cataloniaGeometryID = "00005858-5800-1200-0000-000077363e04";
+            const madridGeometryID = "INCORRECT";
+            const canaryIslandsGeometryID = "00005858-5800-1200-0000-000077364372";
+
+            const result = await geometryData({
+                geometries: [cataloniaGeometryID, madridGeometryID, canaryIslandsGeometryID],
+                zoom: 4
+            });
+            expect(result).toStrictEqual({
+                type: "FeatureCollection",
+                bbox: expect.any(Array),
+                features: [
+                    {
+                        type: "Feature",
+                        id: cataloniaGeometryID,
+                        bbox: expect.any(Array),
+                        properties: {},
+                        geometry: {
+                            type: "MultiPolygon",
+                            coordinates: expect.any(Array)
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        id: canaryIslandsGeometryID,
+                        bbox: expect.any(Array),
+                        properties: {},
+                        geometry: {
+                            type: "MultiPolygon",
+                            coordinates: expect.any(Array)
+                        }
+                    }
+                ]
+            });
+        }
+    );
 });

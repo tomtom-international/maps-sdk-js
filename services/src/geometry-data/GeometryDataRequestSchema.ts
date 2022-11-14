@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { featureCollectionSchema, featureSchema } from "../shared/GeometriesSchema";
 
 const geometryDataRequestMandatory = z.object({
-    geometries: z.string().array()
+    geometries: z.union([featureCollectionSchema, z.union([z.string(), featureSchema]).array().min(1).max(20)])
 });
 
 const geometryDataRequestOptional = z
