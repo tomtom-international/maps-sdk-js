@@ -4,9 +4,11 @@
  */
 import revgeoCustomize from "./src/revgeo/customize";
 import geocodeCustomize from "./src/geocode/customize";
-import routingCustomize from "./src/routing/customize";
+import geometryDataCustomize from "./src/geometry-data/customize";
 import geometrySearchCustomize from "./src/geometry-search/customize";
+import routingCustomize from "./src/routing/customize";
 import chargingAvailabilityCustomize from "./src/charging-availability/customize";
+import placeByIDCustomize from "./src/place-by-id/customize";
 
 export * from "./src/shared/ServiceTemplate";
 export * from "./src/shared/ServiceTypes";
@@ -17,6 +19,7 @@ export * from "./src/geometry-data";
 export * from "./src/geometry-search";
 export * from "./src/routing";
 export * from "./src/charging-availability";
+export * from "./src/place-by-id";
 /**
  * @group Shared
  * @category Variables
@@ -24,7 +27,9 @@ export * from "./src/charging-availability";
 export const customizeService = {
     reverseGeocode: revgeoCustomize,
     geocode: geocodeCustomize,
-    calculateRoute: routingCustomize,
+    geometryData: geometryDataCustomize,
     geometrySearch: geometrySearchCustomize,
-    chargingAvailability: chargingAvailabilityCustomize
+    calculateRoute: routingCustomize,
+    chargingAvailability: chargingAvailabilityCustomize,
+    placeByID: placeByIDCustomize
 };
