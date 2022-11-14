@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.52](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.51...v0.1.52) (2022-11-14)
+
+
+### Features
+
+* create mapLanguage module ([1d45823](https://github.com/tomtom-international/go-sdk-js/commit/1d458237c3bd1b326bf70540203bbcd6e12c7932))
+* **search:** adding more supported geometries search input types for convenience ([0c51ffb](https://github.com/tomtom-international/go-sdk-js/commit/0c51ffba0a88ea2d4324f7afce4efe17e4227eb6))
+* **search:** adding more supported geometry data service input types for convenience ([8c9bc41](https://github.com/tomtom-international/go-sdk-js/commit/8c9bc41169cdc014741cc5a36e40227f8dcc0bfe))
+
+
+### Bug Fixes
+
+* make sure map is ready before setting language ([9658c84](https://github.com/tomtom-international/go-sdk-js/commit/9658c841308fb9cd54283b163138fde90018e95b))
+
 ### [0.1.51](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.50...v0.1.51) (2022-11-11)
 
 
