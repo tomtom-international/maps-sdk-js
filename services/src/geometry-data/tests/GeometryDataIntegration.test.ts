@@ -3,7 +3,17 @@ import { GOSDKConfig } from "@anw/go-sdk-js/core";
 
 describe("Geometry data errors", () => {
     test("Geometry data test without API key", async () => {
-        await expect(geometryData({ geometries: [] })).rejects.toMatchObject({
+        await expect(geometryData({ geometries: ["GEOMETRY_ID"] })).rejects.toMatchObject({
+            service: "GeometryData",
+            message: "Request failed with status code 403",
+            status: 403
+        });
+    });
+
+    test("Geometry data test without geometries supplied", async () => {
+        await expect(
+            geometryData({ apiKey: "KEY", commonBaseURL: "https://api.tomtom.com", geometries: [] })
+        ).rejects.toMatchObject({
             service: "GeometryData",
             errors: [
                 {
