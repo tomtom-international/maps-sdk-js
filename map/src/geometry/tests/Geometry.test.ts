@@ -1,4 +1,4 @@
-import { GeometryData } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { Map } from "maplibre-gl";
 
 import { Geometry, geometrySourceID } from "../Geometry";
@@ -36,7 +36,7 @@ describe("GeoJSON Places module tests", () => {
                     bbox: [-0.3513754, 51.385139, 0.1447063, 51.6722571]
                 }
             ]
-        } as GeometryData;
+        } as GeometryDataResponse;
         const geometry = new Geometry(goSDKMapMock);
         geometry.show(testGeometry, true);
         geometry.clear();

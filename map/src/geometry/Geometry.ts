@@ -1,7 +1,7 @@
 import difference from "@turf/difference";
 import bboxPolygon from "@turf/bbox-polygon";
 import { featureCollection } from "@turf/helpers";
-import { GeometryData } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers, MapModuleConfig } from "../core";
 import { locationGeometryFillSpec, locationGeometryOutlineSpec } from "./layers/GeometryLayers";
 
@@ -13,7 +13,7 @@ const locationGeometryOutlineId = "LOCATION_GEOMETRY_OUTLINE";
  * Geometry data module.
  */
 export class Geometry extends AbstractMapModule<MapModuleConfig> {
-    private geometry?: GeoJSONSourceWithLayers<GeometryData>;
+    private geometry?: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     init(): void {
         this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, geometrySourceID, [
@@ -23,7 +23,7 @@ export class Geometry extends AbstractMapModule<MapModuleConfig> {
         this.geometry.ensureAddedToMapWithVisibility(false);
     }
 
-    reverse(geometry: GeometryData): GeometryData {
+    reverse(geometry: GeometryDataResponse): GeometryDataResponse {
         const feature = geometry.features?.[0];
         const invertedMultiPolygon = difference(bboxPolygon([-180, 90, 180, -90]), feature);
         if (invertedMultiPolygon) {
@@ -38,7 +38,7 @@ export class Geometry extends AbstractMapModule<MapModuleConfig> {
      * @param geometry
      * @param reversed - Reverse polygon
      */
-    show(geometry: GeometryData, reversed?: boolean): void {
+    show(geometry: GeometryDataResponse, reversed?: boolean): void {
         this.callWhenMapReady(() => this.geometry?.show(reversed ? this.reverse(geometry) : geometry));
     }
 

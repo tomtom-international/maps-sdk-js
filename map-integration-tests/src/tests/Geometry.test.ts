@@ -1,4 +1,4 @@
-import { GeometryData } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
@@ -17,8 +17,8 @@ const getNumVisibleLayers = async () => getNumVisibleLayersBySource("LOCATION_GE
 
 const clearGeometry = async () => page.evaluate(() => (globalThis as GOSDKThis).geometry?.clear());
 
-const showGeometry = async (geometry: GeometryData) =>
-    page.evaluate((inputGeometry: GeometryData) => {
+const showGeometry = async (geometry: GeometryDataResponse) =>
+    page.evaluate((inputGeometry: GeometryDataResponse) => {
         (globalThis as GOSDKThis).geometry?.show(inputGeometry, true);
     }, geometry);
 
@@ -35,7 +35,7 @@ describe("Geometry integration tests", () => {
         await waitForMapStyleToLoad();
         expect(await getNumVisibleLayers()).toStrictEqual(0);
 
-        await showGeometry(amsterdamGeometryData as GeometryData);
+        await showGeometry(amsterdamGeometryData as GeometryDataResponse);
         expect(await getNumVisibleLayers()).toStrictEqual(2);
 
         await clearGeometry();
