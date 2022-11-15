@@ -2,15 +2,16 @@ import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad
+    waitForMapStyleToLoad,
+    waitForTimeout
 } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
-import amsterdamGeometryData from "./Geometry.test.data.json";
+import amsterdamGeometryData from "./GeometryModule.test.data.json";
 
 const initGeometry = async () =>
     page.evaluate(() => {
         const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.geometry = new goSDKThis.GOSDK.Geometry(goSDKThis.goSDKMap);
+        goSDKThis.geometry = new goSDKThis.GOSDK.GeometryModule(goSDKThis.goSDKMap);
     });
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource("LOCATION_GEOMETRY");
@@ -30,13 +31,16 @@ describe("Geometry integration tests", () => {
     });
 
     test("Show geometry in the map", async () => {
-        await mapEnv.loadMap({ zoom: 8, center: [4.885097, 52.371014] });
+        const geometryData = amsterdamGeometryData as GeometryDataResponse;
+        await mapEnv.loadMap({}, { bounds: geometryData });
         await initGeometry();
         await waitForMapStyleToLoad();
         expect(await getNumVisibleLayers()).toStrictEqual(0);
 
-        await showGeometry(amsterdamGeometryData as GeometryDataResponse);
+        await showGeometry(geometryData);
         expect(await getNumVisibleLayers()).toStrictEqual(2);
+
+        await waitForTimeout(10000);
 
         await clearGeometry();
         expect(await getNumVisibleLayers()).toStrictEqual(0);

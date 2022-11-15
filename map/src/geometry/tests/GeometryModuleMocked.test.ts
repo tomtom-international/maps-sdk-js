@@ -1,8 +1,9 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { Map } from "maplibre-gl";
 
-import { Geometry, geometrySourceID } from "../Geometry";
+import { GeometryModule, geometrySourceID } from "../GeometryModule";
 import { GOSDKMap } from "../../GOSDKMap";
+import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -21,24 +22,8 @@ describe("Geometry module tests", () => {
                 setLayoutProperty: jest.fn()
             } as unknown as Map
         } as GOSDKMap;
-        const testGeometry = {
-            type: "FeatureCollection",
-            bbox: [-0.3513754, 51.385139, 0.1447063, 51.6722571],
-            features: [
-                {
-                    type: "Feature",
-                    properties: {},
-                    geometry: {
-                        type: "MultiPolygon",
-                        coordinates: []
-                    },
-                    id: "",
-                    bbox: [-0.3513754, 51.385139, 0.1447063, 51.6722571]
-                }
-            ]
-        } as GeometryDataResponse;
-        const geometry = new Geometry(goSDKMapMock);
-        geometry.show(testGeometry, true);
+        const geometry = new GeometryModule(goSDKMapMock);
+        geometry.show(amsterdamGeometryData as GeometryDataResponse, true);
         geometry.clear();
     });
 });

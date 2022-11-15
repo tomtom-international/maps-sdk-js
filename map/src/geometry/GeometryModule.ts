@@ -1,13 +1,19 @@
-import difference from "@turf/difference";
-import bboxPolygon from "@turf/bbox-polygon";
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
+import { Feature, FeatureCollection, Position } from "geojson";
 import { AbstractMapModule, GeoJSONSourceWithLayers, MapModuleConfig } from "../core";
 import { locationGeometryFillSpec, locationGeometryOutlineSpec } from "./layers/GeometryLayers";
-import { Feature, FeatureCollection } from "geojson";
 
 export const geometrySourceID = "LOCATION_GEOMETRY";
 const locationGeometryFillId = "LOCATION_GEOMETRY_FILL";
 const locationGeometryOutlineId = "LOCATION_GEOMETRY_OUTLINE";
+
+const worldBBoxPolygon: Position[] = [
+    [-180, -90],
+    [180, -90],
+    [180, 90],
+    [-180, 90],
+    [-180, -90]
+];
 
 const featureCollection = <T extends FeatureCollection>(features: Feature[]): T =>
     ({
@@ -15,20 +21,31 @@ const featureCollection = <T extends FeatureCollection>(features: Feature[]): T 
         features
     } as T);
 
-const reverse = (geometry: GeometryDataResponse): GeometryDataResponse => {
+const reversePolygon = (coords: Position[][]): Position[][] => coords.map((coord) => coord.reverse()).reverse();
+
+const invert = (geometry: GeometryDataResponse): GeometryDataResponse => {
     const feature = geometry.features?.[0];
-    const invertedMultiPolygon = difference(bboxPolygon([-180, 90, 180, -90]), feature);
-    if (invertedMultiPolygon) {
-        return featureCollection([invertedMultiPolygon]);
-    } else {
-        return featureCollection([]);
-    }
+    // This logic is a simplification of using: { turf.difference(turf.bboxPolygon([-180, 90, 180, -90]), feature) }
+    const reversedPolygon =
+        feature.geometry.type === "Polygon"
+            ? reversePolygon(feature.geometry.coordinates)
+            : feature.geometry.coordinates.flatMap((polygonCoords) => reversePolygon(polygonCoords));
+
+    return featureCollection([
+        {
+            ...feature,
+            geometry: {
+                type: "Polygon",
+                coordinates: [worldBBoxPolygon, ...reversedPolygon]
+            }
+        }
+    ]);
 };
 
 /**
  * Geometry data module.
  */
-export class Geometry extends AbstractMapModule<MapModuleConfig> {
+export class GeometryModule extends AbstractMapModule<MapModuleConfig> {
     private geometry?: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     init(): void {
@@ -42,10 +59,10 @@ export class Geometry extends AbstractMapModule<MapModuleConfig> {
     /**
      * Shows the given Geometry on the map.
      * @param geometry
-     * @param reversed - Reverse polygon
+     * @param inverted - Reverse polygon
      */
-    show(geometry: GeometryDataResponse, reversed?: boolean): void {
-        this.callWhenMapReady(() => this.geometry?.show(reversed ? reverse(geometry) : geometry));
+    show(geometry: GeometryDataResponse, inverted = true): void {
+        this.callWhenMapReady(() => this.geometry?.show(inverted ? invert(geometry) : geometry));
     }
 
     /**
