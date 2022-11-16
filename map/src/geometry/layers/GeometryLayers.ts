@@ -3,7 +3,7 @@ import { LayerSpecTemplate } from "../../core";
 
 const color = "#0A3653";
 
-export const locationGeometryFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
+export const geometryFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
     type: "fill",
     paint: {
         "fill-color": color,
@@ -12,7 +12,7 @@ export const locationGeometryFillSpec: LayerSpecTemplate<FillLayerSpecification>
     }
 };
 
-export const locationGeometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
+export const geometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
     type: "line",
     paint: {
         "line-color": color,

@@ -1,11 +1,13 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { Feature, FeatureCollection, Position } from "geojson";
-import { AbstractMapModule, GeoJSONSourceWithLayers, MapModuleConfig } from "../core";
-import { locationGeometryFillSpec, locationGeometryOutlineSpec } from "./layers/GeometryLayers";
+import isNil from "lodash/isNil";
+import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
+import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
+import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 
-export const geometrySourceID = "LOCATION_GEOMETRY";
-const locationGeometryFillId = "LOCATION_GEOMETRY_FILL";
-const locationGeometryOutlineId = "LOCATION_GEOMETRY_OUTLINE";
+export const geometrySourceID = "PLACE_GEOMETRY";
+const geometryFillLayerId = "PLACE_GEOMETRY_FILL";
+const geometryOutlineLayerId = "PLACE_GEOMETRY_OUTLINE";
 
 const worldBBoxPolygon: Position[] = [
     [-180, -90],
@@ -21,7 +23,8 @@ const featureCollection = <T extends FeatureCollection>(features: Feature[]): T 
         features
     } as T);
 
-const reversePolygon = (coords: Position[][]): Position[][] => coords.map((coord) => coord.reverse()).reverse();
+const reversePolygon = (multiCoords: Position[][]): Position[][] =>
+    multiCoords.map((coords) => [...coords].reverse()).reverse();
 
 const invert = (geometry: GeometryDataResponse): GeometryDataResponse => {
     const feature = geometry.features?.[0];
@@ -45,13 +48,13 @@ const invert = (geometry: GeometryDataResponse): GeometryDataResponse => {
 /**
  * Geometry data module.
  */
-export class GeometryModule extends AbstractMapModule<MapModuleConfig> {
+export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
     private geometry?: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     init(): void {
         this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, geometrySourceID, [
-            { ...locationGeometryFillSpec, id: locationGeometryFillId },
-            { ...locationGeometryOutlineSpec, id: locationGeometryOutlineId }
+            { ...geometryFillSpec, id: geometryFillLayerId },
+            { ...geometryOutlineSpec, id: geometryOutlineLayerId }
         ]);
         this.geometry.ensureAddedToMapWithVisibility(false);
     }
@@ -59,9 +62,11 @@ export class GeometryModule extends AbstractMapModule<MapModuleConfig> {
     /**
      * Shows the given Geometry on the map.
      * @param geometry
-     * @param inverted - Reverse polygon
+     * @param config - Optional configuration to override the module one.
      */
-    show(geometry: GeometryDataResponse, inverted = true): void {
+    show(geometry: GeometryDataResponse, config?: GeometryModuleConfig): void {
+        const mergedConfig = this.getMergedConfig(config);
+        const inverted = isNil(mergedConfig?.inverted) ? true : mergedConfig?.inverted;
         this.callWhenMapReady(() => this.geometry?.show(inverted ? invert(geometry) : geometry));
     }
 

@@ -1,3 +1,3 @@
-import { MapModuleConfig } from "../../core";
+import { VectorTileMapModuleConfig } from "../../core";
 
-export type VectorTilePOIsConfig = MapModuleConfig;
+export type VectorTilePOIsConfig = VectorTileMapModuleConfig;

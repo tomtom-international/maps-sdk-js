@@ -1,17 +1,22 @@
 import { Map } from "maplibre-gl";
 import { AbstractMapModule } from "../AbstractMapModule";
-import { MapModuleConfig } from "../types/MapModuleConfig";
+import { VectorTileMapModuleConfig } from "../types/VectorTileMapModuleConfig";
 import { GOSDKMap } from "../../GOSDKMap";
 import Mock = jest.Mock;
 
 describe("AbstractMapModule tests", () => {
-    class TestModule extends AbstractMapModule<MapModuleConfig> {
+    class TestModule extends AbstractMapModule<VectorTileMapModuleConfig> {
         initCalled?: boolean;
         initConfig?: unknown;
 
-        protected init(config?: MapModuleConfig): void {
+        protected init(config?: VectorTileMapModuleConfig): void {
             this.initCalled = true;
             this.initConfig = config;
+        }
+
+        // exposing protected method for testing:
+        getMergedConfig(config?: VectorTileMapModuleConfig): VectorTileMapModuleConfig | undefined {
+            return super.getMergedConfig(config);
         }
     }
 
@@ -87,5 +92,33 @@ describe("AbstractMapModule tests", () => {
 
         expect(testModule.initCalled).toStrictEqual(true);
         expect(testModule.initConfig).toBeUndefined();
+    });
+
+    test("Merge config", () => {
+        const goSDKMapMock = {
+            mapLibreMap: {
+                isStyleLoaded: jest.fn().mockImplementation(() => true)
+            } as unknown as Map
+        } as GOSDKMap;
+
+        expect(new TestModule(goSDKMapMock).getMergedConfig()).toBeUndefined();
+        expect(new TestModule(goSDKMapMock).getMergedConfig({ visible: false })).toStrictEqual({ visible: false });
+        expect(
+            new TestModule(goSDKMapMock).getMergedConfig({ visible: false, foo: "bar" } as VectorTileMapModuleConfig)
+        ).toStrictEqual({ visible: false, foo: "bar" });
+        expect(new TestModule(goSDKMapMock, { visible: true }).getMergedConfig()).toStrictEqual({ visible: true });
+        expect(new TestModule(goSDKMapMock, { visible: true }).getMergedConfig({ visible: false })).toStrictEqual({
+            visible: false
+        });
+
+        // Similar testing but keeping instance:
+        const testModuleWithoutConfig = new TestModule(goSDKMapMock);
+        expect(testModuleWithoutConfig.getMergedConfig({ visible: false })).toStrictEqual({ visible: false });
+        expect(testModuleWithoutConfig.getMergedConfig()).toBeUndefined();
+
+        const testModuleWithConfig = new TestModule(goSDKMapMock, { visible: false });
+        expect(testModuleWithConfig.getMergedConfig({ visible: false })).toStrictEqual({ visible: false });
+        expect(testModuleWithConfig.getMergedConfig({ visible: true })).toStrictEqual({ visible: true });
+        expect(testModuleWithConfig.getMergedConfig()).toStrictEqual({ visible: false });
     });
 });

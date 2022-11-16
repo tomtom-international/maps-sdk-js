@@ -11,10 +11,10 @@ import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 describe("Geometry module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", () => {
-        const geometrySource = { id: geometrySourceID };
+        const geometrySource = { id: geometrySourceID, setData: jest.fn() };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockImplementationOnce(() => geometrySource),
+                getSource: jest.fn().mockImplementation(() => geometrySource),
                 getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { geometrySourceID: {} } })),
                 getLayer: jest.fn(),
                 addLayer: jest.fn(),
@@ -22,8 +22,13 @@ describe("Geometry module tests", () => {
                 setLayoutProperty: jest.fn()
             } as unknown as Map
         } as GOSDKMap;
-        const geometry = new GeometryModule(goSDKMapMock);
-        geometry.show(amsterdamGeometryData as GeometryDataResponse, true);
+        const testGeometryData = amsterdamGeometryData as GeometryDataResponse;
+        let geometry = new GeometryModule(goSDKMapMock);
+        geometry.show(testGeometryData);
+        geometry.show(testGeometryData, { inverted: false });
+        geometry.clear();
+        geometry = new GeometryModule(goSDKMapMock, { inverted: false });
+        geometry.show(testGeometryData);
         geometry.clear();
     });
 });

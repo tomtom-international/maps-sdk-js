@@ -1,13 +1,13 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../GOSDKMap";
-import { MapModuleConfig } from "./types/MapModuleConfig";
 
 /**
  * Base class for all GO SDK map modules.
  */
-export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
+export abstract class AbstractMapModule<CFG = undefined> {
     private readonly goSDKMap: GOSDKMap;
     protected readonly mapLibreMap: Map;
+    protected config?: CFG;
 
     /**
      * Builds this module based on a given GO SDK map.
@@ -18,6 +18,7 @@ export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
     constructor(goSDKMap: GOSDKMap, config?: CFG) {
         this.goSDKMap = goSDKMap;
         this.mapLibreMap = goSDKMap.mapLibreMap;
+        this.config = config;
         this.callWhenMapReady(() => this.init(config));
     }
 
@@ -37,4 +38,20 @@ export abstract class AbstractMapModule<CFG extends MapModuleConfig> {
      * @ignore
      */
     protected abstract init(config?: CFG): void;
+
+    /**
+     * Merges the given optional config with the module optional config and returns it.
+     * * Does not change the module config itself.
+     * * Intended for individual usages that override or extend on the module config.
+     * @protected
+     * @ignore
+     */
+    protected getMergedConfig(config: CFG = undefined as CFG): CFG | undefined {
+        return this.config
+            ? {
+                  ...this.config,
+                  ...(config || {})
+              }
+            : config;
+    }
 }

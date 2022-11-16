@@ -1,5 +1,5 @@
 import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, GeoJSONSourceWithLayers, MapModuleConfig } from "../core";
+import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
 import { placesLayerSpec } from "./layers/PlacesLayers";
 import { poiClassificationToIconID } from "./poiIconIDMapping";
 import { DisplayProps } from "./types/DisplayProps";
@@ -43,7 +43,7 @@ const prepareForDisplay = (places: Places): Places<DisplayProps & CommonPlacePro
  * @group MapPlaces
  * @category Functions
  */
-export class GeoJSONPlaces extends AbstractMapModule<MapModuleConfig> {
+export class GeoJSONPlaces extends AbstractMapModule {
     private places?: GeoJSONSourceWithLayers<Places>;
 
     protected init(): void {

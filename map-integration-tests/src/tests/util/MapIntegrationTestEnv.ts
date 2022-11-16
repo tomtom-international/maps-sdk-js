@@ -2,6 +2,7 @@ import { ConsoleMessage } from "puppeteer";
 import { GOSDKMapParams, LayerSpecWithSource, MapLibreOptions } from "map";
 import { GOSDKThis } from "../types/GOSDKThis";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
+import { Position } from "geojson";
 
 const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);
@@ -37,22 +38,33 @@ export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerS
 export const getNumVisibleLayersBySource = async (sourceID: string): Promise<number> =>
     (await getVisibleLayersBySource(sourceID))?.length;
 
-export const queryRenderedFeatures = async (layerID: string): Promise<MapGeoJSONFeature[]> =>
-    page.evaluate((inputLayerID) => {
-        return (globalThis as GOSDKThis).mapLibreMap.queryRenderedFeatures(undefined, { layers: [inputLayerID] });
-    }, layerID);
+export const queryRenderedFeatures = async (layerID: string, lngLat?: Position): Promise<MapGeoJSONFeature[]> =>
+    page.evaluate(
+        (inputLayerID, inputLngLat) => {
+            const mapLibreMap = (globalThis as GOSDKThis).mapLibreMap;
+            return mapLibreMap.queryRenderedFeatures(
+                inputLngLat && mapLibreMap.project(inputLngLat as [number, number]),
+                {
+                    layers: [inputLayerID]
+                }
+            );
+        },
+        layerID,
+        lngLat
+    );
 
 export const waitUntilRenderedFeatures = async (
     layerID: string,
     expectNumFeatures: number,
-    timeoutMS: number
+    timeoutMS: number,
+    lngLat?: Position
 ): Promise<MapGeoJSONFeature[]> => {
     let currentFeatures: MapGeoJSONFeature[] = [];
     return tryBeforeTimeout(
         async (): Promise<MapGeoJSONFeature[]> => {
             while (currentFeatures.length !== expectNumFeatures) {
-                await waitForTimeout(1000);
-                currentFeatures = await queryRenderedFeatures(layerID);
+                await waitForTimeout(500);
+                currentFeatures = await queryRenderedFeatures(layerID, lngLat);
             }
             return currentFeatures;
         },
