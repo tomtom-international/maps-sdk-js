@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.54](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.52...v0.1.54) (2022-11-16)
+
+
+### Features
+
+* adding missing customize obj for services, export place by id service ([d8d35fc](https://github.com/tomtom-international/go-sdk-js/commit/d8d35fc43c73923ebf19859e1854319a87e80579))
+* **map:** geometry data related improvements, added tests and refactoring ([ea699df](https://github.com/tomtom-international/go-sdk-js/commit/ea699dfc8a318b7972066b1e777ac0524c556401))
+
 ### [0.1.53](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.52...v0.1.53) (2022-11-16)
 
 
