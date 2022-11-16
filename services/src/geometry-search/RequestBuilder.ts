@@ -5,7 +5,8 @@ import {
     appendByJoiningParamValue,
     appendCommonParams,
     appendLatLonParamsFromPosition,
-    appendOptionalParam
+    appendOptionalParam,
+    mapPOICategoriesToIDs
 } from "../shared/RequestBuildingUtils";
 import { sampleWithinMaxLength } from "../shared/Arrays";
 
@@ -61,7 +62,8 @@ export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostOb
     appendByJoiningParamValue(urlParams, "fuelSet", params.fuels);
     appendByJoiningParamValue(urlParams, "idxSet", params.indexes);
     appendByJoiningParamValue(urlParams, "brandSet", params.poiBrands);
-    appendByJoiningParamValue(urlParams, "categorySet", params.poiCategories);
+    params.poiCategories &&
+        appendByJoiningParamValue(urlParams, "categorySet", mapPOICategoriesToIDs(params.poiCategories));
     appendByJoiningParamValue(urlParams, "connectorSet", params.connectors);
     appendByJoiningParamValue(urlParams, "mapcodes", params.mapcodes);
     appendByJoiningParamValue(urlParams, "extendedPostalCodesFor", params.extendedPostalCodesFor);

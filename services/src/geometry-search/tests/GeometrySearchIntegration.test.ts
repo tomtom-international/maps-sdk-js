@@ -7,6 +7,7 @@ import { SearchGeometryInput, GeometrySearchResponse } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { baseSearchPlaceTestProps } from "../../shared/tests/IntegrationTestUtils";
 import realGeometryDataInput from "./RealGeometryDataInput.json";
+import { POICategory, poiCategoriesToID } from "../../poi-categories/poiCategoriesToID";
 
 describe("Geometry Search service", () => {
     const geometries: SearchGeometryInput[] = [
@@ -73,6 +74,33 @@ describe("Geometry Search service", () => {
 
         expect(res.features).toHaveLength(limit);
         expect(res).toEqual(expectWorkingResult());
+    });
+
+    test("geometrySearch with human-readable poi categories", async () => {
+        const query = "restaurant";
+        const poiCategories: (number | POICategory)[] = ["ITALIAN_RESTAURANT"];
+        const categoryID = poiCategoriesToID["ITALIAN_RESTAURANT"];
+        const language = "en-GB";
+        const indexes: IndexTypesAbbreviation[] = ["POI"];
+        const res = await geometrySearch({
+            query,
+            geometries,
+            poiCategories,
+            language,
+            indexes
+        });
+
+        expect(res.features).toEqual(
+            expect.arrayContaining<GeometrySearchResponse>([
+                expect.objectContaining({
+                    properties: expect.objectContaining({
+                        poi: expect.objectContaining({
+                            categoryIds: expect.arrayContaining([categoryID])
+                        })
+                    })
+                })
+            ])
+        );
     });
 
     test("geometrySearch fails to convert unsupported geometry types", async () => {

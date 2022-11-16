@@ -11,6 +11,7 @@ import { MultiPolygon, Polygon, Position } from "geojson";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
+import { POICategory } from "../../poi-categories/poiCategoriesToID";
 
 /**
  * @group Geometry Search
@@ -98,7 +99,7 @@ export type GeometrySearchParams = CommonServiceParams & {
      * * Value: A list of category identifiers (in any order). When multiple category identifiers are provided, only POIs that belong to (at least) one of the categories from the provided list will be returned.
      * * Examples: [7315025, 7315017] (search Points Of Interest of a category, in this example an Italian (italian) or French (french) Restaurant
      */
-    poiCategories?: number[];
+    poiCategories?: (number | POICategory)[];
     /**
      * A comma-separated list of brand names which could be used to restrict the result to Points Of Interest of specific brands.
      * Value: A comma-separated list of brand names (in any order). When multiple brands are provided, only POIs that belong to (at least) one of the brands from the provided list will be returned. Brands that contain a "," (comma) in their name should be put into quotes, for example: "A,B,C".

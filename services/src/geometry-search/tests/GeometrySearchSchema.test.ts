@@ -227,18 +227,16 @@ describe("GeometrySearch Schema Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    code: "invalid_type",
-                    expected: "number",
-                    received: "string",
+                    code: "invalid_enum_value",
+                    received: "7315025",
                     path: ["poiCategories", 0],
-                    message: "Expected number, received string"
+                    message: expect.stringMatching(/^Invalid enum value.*$/)
                 },
                 {
-                    code: "invalid_type",
-                    expected: "number",
-                    received: "string",
+                    code: "invalid_enum_value",
+                    received: "7315017",
                     path: ["poiCategories", 1],
-                    message: "Expected number, received string"
+                    message: expect.stringMatching(/^Invalid enum value.*$/)
                 }
             ]
         });

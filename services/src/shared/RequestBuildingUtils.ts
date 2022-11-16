@@ -1,6 +1,7 @@
 import { getLngLatArray, HasLngLat } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "./ServiceTypes";
 import isNil from "lodash/isNil";
+import { POICategory, poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
 
 /**
  * @ignore
@@ -36,7 +37,7 @@ export const appendByRepeatingParamName = (
 export const appendByJoiningParamValue = (
     urlParams: URLSearchParams,
     name: string,
-    values?: string[] | number[]
+    values?: string[] | number[] | (string | number)[]
 ): void => {
     if (Array.isArray(values) && values.length > 0) {
         urlParams.append(name, values.join(","));
@@ -62,4 +63,18 @@ export const appendLatLonParamsFromPosition = (urlParams: URLSearchParams, posit
         urlParams.append("lat", String(lngLat[1]));
         urlParams.append("lon", String(lngLat[0]));
     }
+};
+
+/**
+ * map human-readable poi categories to their ID.
+ * @ignore
+ * @param poiCategories
+ */
+export const mapPOICategoriesToIDs = (poiCategories: (number | POICategory)[]): number[] => {
+    return poiCategories.map((poiCategory) => {
+        if (typeof poiCategory !== "number") {
+            return poiCategoriesToID[poiCategory];
+        }
+        return poiCategory;
+    });
 };
