@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.55](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.54...v0.1.55) (2022-11-17)
+
+
+### Features
+
+* embed poi categories in the sdk ([4a14ba3](https://github.com/tomtom-international/go-sdk-js/commit/4a14ba3c9d884b7408946d7f3b2f33cd23942a81))
+
 ### [0.1.54](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.52...v0.1.54) (2022-11-16)
 
 
