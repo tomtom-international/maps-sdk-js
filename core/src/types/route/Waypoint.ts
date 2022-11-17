@@ -1,5 +1,6 @@
-import { Feature, Point } from "geojson";
+import { Feature, FeatureCollection, Point } from "geojson";
 import { Anything } from "../Generic";
+import { HasLngLat } from "../Geometry";
 
 /**
  * Waypoint-specific properties.
@@ -32,3 +33,14 @@ export type WaypointProps = {
  * @category Types
  */
 export type Waypoint<T extends Anything = Anything> = Feature<Point, WaypointProps & T>;
+
+export type Waypoints<T extends Anything = Anything> = FeatureCollection<Point, WaypointProps & T>;
+
+/**
+ * A waypoint-like input is either a complex waypoint object or anything with point coordinates.
+ * * By default, waypoints are considered as single points,
+ * unless a radius is specified, which then implicitly transforms the waypoint into a circle(soft waypoint).
+ * @group Calculate Route
+ * @category Types
+ */
+export type WaypointLike = Waypoint | HasLngLat;

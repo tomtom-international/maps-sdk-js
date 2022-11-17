@@ -1,12 +1,11 @@
-import { getLngLatArray, inputSectionTypes, Waypoint, WaypointProps } from "@anw/go-sdk-js/core";
+import { getLngLatArray, inputSectionTypes, Waypoint, WaypointLike, WaypointProps } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
 import {
     CalculateRouteParams,
+    CalculateRouteWaypointInputs,
     DepartArriveParams,
     InputSectionTypes,
-    ThrillingParams,
-    WaypointInput,
-    WaypointInputs
+    ThrillingParams
 } from "./types/CalculateRouteParams";
 import { CommonServiceParams } from "../shared/ServiceTypes";
 import { appendByRepeatingParamName, appendCommonParams } from "../shared/RequestBuildingUtils";
@@ -23,12 +22,12 @@ import {
 const buildURLBasePath = (params: CommonServiceParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}/routing/1/calculateRoute`;
 
-const getWaypointProps = (waypointInput: WaypointInput): WaypointProps | null =>
+const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
 
-const buildWaypointsString = (waypointInputs: WaypointInputs): string => {
+const buildWaypointsString = (waypointInputs: CalculateRouteWaypointInputs): string => {
     return waypointInputs
-        .map((waypointInput: WaypointInput) => {
+        .map((waypointInput: WaypointLike) => {
             const lngLat = getLngLatArray(waypointInput);
             const lngLatString = `${lngLat[1]},${lngLat[0]}`;
             const radius = getWaypointProps(waypointInput)?.radiusMeters;

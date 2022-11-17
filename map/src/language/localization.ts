@@ -1,4 +1,4 @@
-import { SymbolLayerSpecification, ExpressionSpecification } from "maplibre-gl";
+import { ExpressionSpecification, SymbolLayerSpecification } from "maplibre-gl";
 
 export const isLayerLocalizable = (layer: SymbolLayerSpecification) => {
     const textField = (layer.layout?.["text-field"] ?? "") as string | ExpressionSpecification;

@@ -2,7 +2,7 @@ import isNil from "lodash/isNil";
 import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 import { VectorTilePOIsConfig } from ".";
 
-export const poiSourceID = "poiTiles";
+export const POI_SOURCE_ID = "poiTiles";
 
 /**
  * Vector tile POIs map module.
@@ -12,7 +12,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     private poi?: StyleSourceWithLayers;
 
     protected init(config?: VectorTilePOIsConfig): void {
-        const poiRuntimeSource = this.mapLibreMap.getSource(poiSourceID);
+        const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (poiRuntimeSource) {
             this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
         }

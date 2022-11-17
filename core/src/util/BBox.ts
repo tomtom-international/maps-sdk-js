@@ -127,7 +127,11 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
     // Else...
     // Already a BBox:
     if (Array.isArray(hasBBox)) {
-        return hasBBox.length >= 4 ? hasBBox : undefined;
+        if (typeof hasBBox[0] === "number") {
+            return hasBBox.length >= 4 ? (hasBBox as OptionalBBox) : undefined;
+        } else {
+            return bboxFromBBoxes(hasBBox.map((geoJSONItem) => bboxFromGeoJSON(geoJSONItem as GeoJsonObject)));
+        }
     }
     // Else...
     // Already containing a BBox:
@@ -166,16 +170,6 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
             return undefined;
     }
 };
-
-/**
- * Calculates a bounding box from the given point features.
- * * If any feature also has a bbox, the latter is considered instead.
- * @ignore
- * @param geoJSONs
- * @return
- */
-export const bboxFromGeoJSONArray = (geoJSONs: GeoJsonObject[]): OptionalBBox =>
-    geoJSONs && bboxFromBBoxes(geoJSONs.map((geoJSON) => bboxFromGeoJSON(geoJSON)));
 
 /**
  * Expands the given bounding box with the given GeoJSON.

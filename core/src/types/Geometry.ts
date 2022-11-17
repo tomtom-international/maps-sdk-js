@@ -12,11 +12,13 @@ export type HasLngLat = Position | Point | Feature<Point>;
  * * BBox: directly a GeoJSON simple BBox
  * * Any GeoJSON object containing the "bbox" field.
  * * Any GeoJSON object from which a bbox can be calculated
+ * * An array of GeoJSON objects (not purely GeoJSON but added for convenience)
  * (feature or geometry with (Multi)LineString or (Multi)Polygon)).
  * @group Shared
  * @category Types
  */
-export type HasBBox = BBox | GeoJsonObject;
+export type HasBBox = BBox | GeoJsonObject | GeoJsonObject[];
+
 /**
  * @group Shared
  * @category Types

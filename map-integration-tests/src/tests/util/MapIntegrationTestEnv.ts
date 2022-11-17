@@ -1,4 +1,3 @@
-import { ConsoleMessage } from "puppeteer";
 import { GOSDKMapParams, LayerSpecWithSource, MapLibreOptions } from "map";
 import { GOSDKThis } from "../types/GOSDKThis";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
@@ -50,6 +49,7 @@ export const queryRenderedFeatures = async (layerID: string, lngLat?: Position):
             );
         },
         layerID,
+        // @ts-ignore
         lngLat
     );
 
@@ -68,14 +68,14 @@ export const waitUntilRenderedFeatures = async (
             }
             return currentFeatures;
         },
-        // eslint-disable-next-line max-len
-        `Did not get the expected map features for layer ${layerID}. Expected is ${expectNumFeatures} but got ${currentFeatures.length}`,
+        `Did not get the expected map features for layer ${layerID}. 
+        Expected is ${expectNumFeatures} but got ${currentFeatures.length}`,
         timeoutMS
     );
 };
 
 export class MapIntegrationTestEnv {
-    consoleErrors: ConsoleMessage[] = [];
+    consoleErrors: unknown[] = [];
 
     async loadPage() {
         await page.goto("https://localhost:9001");
@@ -94,6 +94,7 @@ export class MapIntegrationTestEnv {
                 );
                 goSDKThis.mapLibreMap = goSDKThis.goSDKMap.mapLibreMap;
             },
+            // @ts-ignore
             mapLibreOptions,
             goSDKParams,
             process.env.API_KEY

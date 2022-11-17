@@ -1,6 +1,5 @@
 import {
     bboxFromGeoJSON,
-    bboxFromGeoJSONArray,
     CountrySection,
     DelayMagnitude,
     Guidance,
@@ -169,7 +168,7 @@ const parseRoute = (apiRoute: RouteAPI): Route => {
  */
 export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): CalculateRouteResponse => {
     const features = apiResponse.routes.map(parseRoute);
-    const bbox = bboxFromGeoJSONArray(features);
+    const bbox = bboxFromGeoJSON(features);
     return {
         routes: {
             type: "FeatureCollection",

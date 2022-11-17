@@ -1,18 +1,18 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
-import { poiSourceID, VectorTilePOIs } from "../VectorTilePOIs";
+import { POI_SOURCE_ID, VectorTilePOIs } from "../VectorTilePOIs";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles POI module tests", () => {
     test("Constructor with config", () => {
-        const poiSource = { id: poiSourceID };
+        const poiSource = { id: POI_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockImplementationOnce(() => poiSource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { poiSourceID: {} } })),
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                getSource: jest.fn().mockReturnValueOnce(poiSource),
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 
@@ -31,12 +31,12 @@ describe("Vector tiles POI module tests", () => {
     });
 
     test("Constructor with no config", () => {
-        const poiSource = { id: poiSourceID };
+        const poiSource = { id: POI_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockImplementationOnce(() => poiSource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { poiSourceID: {} } })),
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                getSource: jest.fn().mockReturnValueOnce(poiSource),
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 

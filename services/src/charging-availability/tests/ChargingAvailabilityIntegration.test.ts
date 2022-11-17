@@ -1,7 +1,7 @@
 import chargingAvailability from "../ChargingAvailability";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { SDKServiceError } from "../../shared/Errors";
-import { ChargingPoint, accessibility, connectorTypes, chargingPointStatus } from "@anw/go-sdk-js/core";
+import { accessibility, ChargingPoint, chargingPointStatus, connectorTypes } from "@anw/go-sdk-js/core";
 import { ChargingAvailabilityResponse } from "../types/ChargingAvailabilityResponse";
 
 describe("charging availability errors", () => {

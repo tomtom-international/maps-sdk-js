@@ -3,11 +3,11 @@ import { Fuel, GeometryDataResponse, GOSDKConfig, Place, SearchPlaceProps } from
 import { geometrySearch } from "..";
 import { parseGeometrySearchResponse } from "../ResponseParser";
 import { buildGeometrySearchRequest } from "../RequestBuilder";
-import { SearchGeometryInput, GeometrySearchResponse } from "../types";
+import { GeometrySearchResponse, SearchGeometryInput } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
 import { baseSearchPlaceTestProps } from "../../shared/tests/IntegrationTestUtils";
 import realGeometryDataInput from "./RealGeometryDataInput.json";
-import { POICategory, poiCategoriesToID } from "../../poi-categories/poiCategoriesToID";
+import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
 
 describe("Geometry Search service", () => {
     const geometries: SearchGeometryInput[] = [

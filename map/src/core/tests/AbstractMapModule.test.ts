@@ -23,7 +23,7 @@ describe("AbstractMapModule tests", () => {
     test("Constructor with style loaded", () => {
         const goSDKMapMock = {
             mapLibreMap: {
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 
@@ -44,7 +44,7 @@ describe("AbstractMapModule tests", () => {
     test("Constructor with style not loaded yet", () => {
         const goSDKMapMock = {
             mapLibreMap: {
-                isStyleLoaded: jest.fn().mockImplementation(() => false),
+                isStyleLoaded: jest.fn().mockReturnValue(false),
                 once: jest.fn()
             } as unknown as Map
         } as GOSDKMap;
@@ -78,8 +78,8 @@ describe("AbstractMapModule tests", () => {
     test("Constructor with style not loaded yet and style data timeout", async () => {
         const goSDKMapMock = {
             mapLibreMap: {
-                isStyleLoaded: jest.fn().mockImplementation(() => false),
-                once: jest.fn().mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 6000)))
+                isStyleLoaded: jest.fn().mockReturnValue(false),
+                once: jest.fn().mockReturnValue(new Promise((resolve) => setTimeout(resolve, 6000)))
             } as unknown as Map
         } as GOSDKMap;
 
@@ -97,7 +97,7 @@ describe("AbstractMapModule tests", () => {
     test("Merge config", () => {
         const goSDKMapMock = {
             mapLibreMap: {
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 

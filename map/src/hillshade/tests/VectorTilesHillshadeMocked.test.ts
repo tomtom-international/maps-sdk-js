@@ -1,18 +1,18 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
-import { hillshadeSourceID, VectorTilesHillshade } from "../VectorTilesHillshade";
+import { HILLSHADE_SOURCE_ID, VectorTilesHillshade } from "../VectorTilesHillshade";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles Hillshade module tests", () => {
     test("Constructor with config", () => {
-        const hillshadeSource = { id: hillshadeSourceID };
+        const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockImplementationOnce(() => hillshadeSource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { hillshadeSourceID: {} } })),
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 
@@ -31,12 +31,12 @@ describe("Vector tiles Hillshade module tests", () => {
     });
 
     test("Constructor with no config", () => {
-        const hillshadeSource = { id: hillshadeSourceID };
+        const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockImplementationOnce(() => hillshadeSource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { hillshadeSourceID: {} } })),
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 

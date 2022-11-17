@@ -3,9 +3,9 @@ import {
     Brand,
     Category,
     Classification,
-    SearchPlaceProps,
     EntryPoint,
     OpeningHours,
+    SearchPlaceProps,
     TimeZone
 } from "@anw/go-sdk-js/core";
 

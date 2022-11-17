@@ -2,7 +2,7 @@ import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
 import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 
-export const hillshadeSourceID = "hillshade";
+export const HILLSHADE_SOURCE_ID = "hillshade";
 
 /**
  * Vector tiles hillshade module.
@@ -12,7 +12,7 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
     private hillshade?: StyleSourceWithLayers;
 
     protected init(config?: VectorTilesHillshadeConfig): void {
-        const hillshadeSource = this.mapLibreMap.getSource(hillshadeSourceID);
+        const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
         if (hillshadeSource) {
             this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
         }

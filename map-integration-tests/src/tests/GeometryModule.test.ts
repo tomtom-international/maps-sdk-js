@@ -12,10 +12,14 @@ import amsterdamGeometryData from "./GeometryModule.test.data.json";
 import { Position } from "geojson";
 
 const initGeometry = async (config?: GeometryModuleConfig) =>
-    page.evaluate((inputConfig) => {
-        const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.geometry = new goSDKThis.GOSDK.GeometryModule(goSDKThis.goSDKMap, inputConfig);
-    }, config);
+    page.evaluate(
+        (inputConfig: GeometryModuleConfig) => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.geometry = new goSDKThis.GOSDK.GeometryModule(goSDKThis.goSDKMap, inputConfig);
+        },
+        // @ts-ignore
+        config
+    );
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource("PLACE_GEOMETRY");
 
@@ -24,6 +28,7 @@ const clearGeometry = async () => page.evaluate(() => (globalThis as GOSDKThis).
 const showGeometry = async (geometry: GeometryDataResponse) =>
     page.evaluate(
         (inputGeometry: GeometryDataResponse) => (globalThis as GOSDKThis).geometry?.show(inputGeometry),
+        // @ts-ignore
         geometry
     );
 

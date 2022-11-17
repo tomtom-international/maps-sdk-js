@@ -1,7 +1,7 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { Map } from "maplibre-gl";
 
-import { GeometryModule, geometrySourceID } from "../GeometryModule";
+import { GEOMETRY_SOURCE_ID, GeometryModule } from "../GeometryModule";
 import { GOSDKMap } from "../../GOSDKMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 
@@ -11,14 +11,14 @@ import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 describe("Geometry module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", () => {
-        const geometrySource = { id: geometrySourceID, setData: jest.fn() };
+        const geometrySource = { id: GEOMETRY_SOURCE_ID, setData: jest.fn() };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockImplementation(() => geometrySource),
-                getStyle: jest.fn().mockImplementation(() => ({ layers: [{}], sources: { geometrySourceID: {} } })),
+                getSource: jest.fn().mockReturnValue(geometrySource),
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { geometrySourceID: {} } }),
                 getLayer: jest.fn(),
                 addLayer: jest.fn(),
-                isStyleLoaded: jest.fn().mockImplementation(() => true),
+                isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn()
             } as unknown as Map
         } as GOSDKMap;

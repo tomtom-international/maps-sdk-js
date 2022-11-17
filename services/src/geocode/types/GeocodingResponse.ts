@@ -1,4 +1,4 @@
-import { SearchPlaceProps, Places, PlaceType } from "@anw/go-sdk-js/core";
+import { Places, PlaceType, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 type GeocodingPlaceType = Exclude<PlaceType, "POI">;
 

@@ -1,5 +1,5 @@
 import omit from "lodash/omit";
-import { bboxFromGeoJSONArray, bboxOnlyIfWithArea, GeographyType, Place, toPointFeature } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON, bboxOnlyIfWithArea, GeographyType, Place, toPointFeature } from "@anw/go-sdk-js/core";
 import { GeocodingProps, GeocodingResponse } from "./types/GeocodingResponse";
 import { GeocodingResponseAPI, GeocodingResultAPI } from "./types/APITypes";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "../shared/Geometry";
@@ -41,7 +41,7 @@ const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
 export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): GeocodingResponse => {
     const results = apiResponse.results;
     const features = results.map((result) => parseAPIResult(result));
-    const bbox = bboxOnlyIfWithArea(bboxFromGeoJSONArray(features));
+    const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
     return {
         type: "FeatureCollection",
         features,

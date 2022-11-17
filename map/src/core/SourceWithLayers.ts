@@ -93,7 +93,7 @@ export class AddedSourceWithLayers<
         );
     }
 
-    ensureAddedToMap(): void {
+    private ensureAddedToMap(): void {
         this.source.ensureAddedToMap(this.map);
         for (const layerSpec of this.layerSpecs) {
             if (!this.map.getLayer(layerSpec.id)) {
@@ -122,6 +122,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedS
 > {
     constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
         super(map, sourceID, { type: "geojson", data: emptyFeatureCollection }, layerSpecs);
+        this.ensureAddedToMapWithVisibility(false);
     }
 
     show(featureCollection: T): void {

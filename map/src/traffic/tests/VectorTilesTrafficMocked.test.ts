@@ -1,24 +1,21 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
-import { flowSourceID, incidentsSourceID, VectorTilesTraffic } from "../VectorTilesTraffic";
+import { FLOW_SOURCE_ID, INCIDENTS_SOURCE_ID, VectorTilesTraffic } from "../VectorTilesTraffic";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles traffic module tests", () => {
     test("Constructor with config", () => {
-        const incidentsSource = { id: incidentsSourceID };
-        const flowSource = { id: flowSourceID };
+        const incidentsSource = { id: INCIDENTS_SOURCE_ID };
+        const flowSource = { id: FLOW_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest
-                    .fn()
-                    .mockImplementationOnce(() => incidentsSource)
-                    .mockImplementationOnce(() => flowSource),
+                getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(flowSource),
                 getStyle: jest
                     .fn()
-                    .mockImplementation(() => ({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } })),
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                    .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 
@@ -47,17 +44,14 @@ describe("Vector tiles traffic module tests", () => {
     });
 
     test("Constructor with no config and no flow in style", () => {
-        const incidentsSource = { id: incidentsSourceID };
+        const incidentsSource = { id: INCIDENTS_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest
-                    .fn()
-                    .mockImplementationOnce(() => incidentsSource)
-                    .mockImplementationOnce(() => undefined),
+                getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(undefined),
                 getStyle: jest
                     .fn()
-                    .mockImplementation(() => ({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } })),
-                isStyleLoaded: jest.fn().mockImplementation(() => true)
+                    .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map
         } as GOSDKMap;
 

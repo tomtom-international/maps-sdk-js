@@ -2,9 +2,9 @@ import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
 import { placesLayerSpec } from "./layers/PlacesLayers";
 import { poiClassificationToIconID } from "./poiIconIDMapping";
-import { DisplayProps } from "./types/DisplayProps";
+import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
 
-export const placesSourceID = "places";
+export const PLACES_SOURCE_ID = "places";
 
 /**
  * Builds the title of the place to display it on the map.
@@ -27,7 +27,7 @@ export const getImageIDForPlace = (place: Place): string => {
     return `${iconID}_pin`;
 };
 
-const prepareForDisplay = (places: Places): Places<DisplayProps & CommonPlaceProps> => ({
+const prepareForDisplay = (places: Places): Places<PlaceDisplayProps & CommonPlaceProps> => ({
     ...places,
     features: places.features.map((place) => ({
         ...place,
@@ -48,10 +48,9 @@ export class GeoJSONPlaces extends AbstractMapModule {
 
     protected init(): void {
         const placesLayerID = "placesSymbols";
-        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, placesSourceID, [
+        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
             { ...placesLayerSpec, id: placesLayerID }
         ]);
-        this.places.ensureAddedToMapWithVisibility(false);
     }
 
     /**

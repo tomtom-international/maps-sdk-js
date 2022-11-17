@@ -1,4 +1,4 @@
-import { bboxFromGeoJSONArray, bboxOnlyIfWithArea, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON, bboxOnlyIfWithArea, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 import { GeometrySearchResponse, GeometrySearchResponseAPI } from "./types";
 import { parseSearchAPIResult } from "../shared/SearchResultParsing";
@@ -11,7 +11,7 @@ import { parseSearchAPIResult } from "../shared/SearchResultParsing";
  */
 export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseAPI): GeometrySearchResponse => {
     const features: Place<SearchPlaceProps>[] = apiResponse.results.map((result) => parseSearchAPIResult(result));
-    const bbox = bboxOnlyIfWithArea(bboxFromGeoJSONArray(features));
+    const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
     return {
         type: "FeatureCollection",
         features,

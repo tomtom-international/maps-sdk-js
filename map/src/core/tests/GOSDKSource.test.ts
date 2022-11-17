@@ -21,10 +21,7 @@ describe("GOSDKSource tests", () => {
     test("ensureAddedToMap when source not yet in the map", () => {
         const goSDKSource = new GOSDKSource(testSourceID, testSourceSpec);
         const mapLibreMock = {
-            getSource: jest
-                .fn()
-                .mockImplementationOnce(() => undefined)
-                .mockImplementationOnce(() => testRuntimeSource),
+            getSource: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(testRuntimeSource),
             addSource: jest.fn()
         } as unknown as Map;
 
@@ -47,7 +44,7 @@ describe("GOSDKSource tests", () => {
     test("ensureAddedToMap when source already in the map but not set as runtimeSource", () => {
         const goSDKSource = new GOSDKSource(testSourceID, testSourceSpec);
         const mapLibreMock = {
-            getSource: jest.fn().mockImplementation(() => testRuntimeSource),
+            getSource: jest.fn().mockReturnValue(testRuntimeSource),
             addSource: jest.fn()
         } as unknown as Map;
 

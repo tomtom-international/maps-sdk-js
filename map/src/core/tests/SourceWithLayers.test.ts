@@ -29,10 +29,7 @@ describe("AbstractSourceWithLayers tests", () => {
 
     test("isAnyLayerVisible true", () => {
         const mapLibreMock = {
-            getLayoutProperty: jest
-                .fn()
-                .mockImplementationOnce(() => "visible")
-                .mockImplementationOnce(() => "none")
+            getLayoutProperty: jest.fn().mockReturnValueOnce("visible").mockReturnValueOnce("none")
         } as unknown as Map;
 
         let sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
@@ -42,10 +39,7 @@ describe("AbstractSourceWithLayers tests", () => {
         // (First layer was visible, so no more need to query layers)
 
         // ----------------------
-        mapLibreMock.getLayoutProperty = jest
-            .fn()
-            .mockImplementationOnce(() => "none")
-            .mockImplementationOnce(() => undefined); // defaults to visible
+        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("none").mockReturnValueOnce(undefined); // defaults to visible
 
         sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
         expect(sourceWithLayers.isAnyLayerVisible()).toStrictEqual(true);
@@ -56,7 +50,7 @@ describe("AbstractSourceWithLayers tests", () => {
 
     test("isAnyLayerVisible true with filter", () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockImplementationOnce(() => "visible")
+            getLayoutProperty: jest.fn().mockReturnValueOnce("visible")
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
@@ -67,10 +61,7 @@ describe("AbstractSourceWithLayers tests", () => {
 
     test("isAnyLayerVisible false", () => {
         const mapLibreMock = {
-            getLayoutProperty: jest
-                .fn()
-                .mockImplementationOnce(() => "none")
-                .mockImplementationOnce(() => "none")
+            getLayoutProperty: jest.fn().mockReturnValueOnce("none").mockReturnValueOnce("none")
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
@@ -81,7 +72,7 @@ describe("AbstractSourceWithLayers tests", () => {
 
     test("isAnyLayerVisible false with filter", () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockImplementationOnce(() => "none")
+            getLayoutProperty: jest.fn().mockReturnValueOnce("none")
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
@@ -138,10 +129,10 @@ describe("AbstractSourceWithLayers tests", () => {
 describe("StyleSourceWithLayers tests", () => {
     test("constructor", () => {
         const mapLibreMock = {
-            getStyle: jest.fn().mockImplementation(() => ({
+            getStyle: jest.fn().mockReturnValue({
                 sources: { testSourceID: { id: testSourceID } },
                 layers: testLayerSpecs
-            }))
+            })
         } as unknown as Map;
         const source = { id: testSourceID } as Source;
         const sourceWithLayers = new StyleSourceWithLayers(mapLibreMock, source);
@@ -172,9 +163,9 @@ describe("AddedSourceWithLayers tests", () => {
         const mapLibreMock = {
             getLayer: jest
                 .fn()
-                .mockImplementationOnce(() => undefined) // layer0 isn't yet there so it will be added
-                .mockImplementationOnce(() => layer1),
-            getSource: jest.fn().mockImplementation(() => ({ id: testSourceID })),
+                .mockReturnValueOnce(undefined) // layer0 isn't yet there so it will be added
+                .mockReturnValueOnce(layer1),
+            getSource: jest.fn().mockReturnValue({ id: testSourceID }),
             addLayer: jest.fn(),
             setLayoutProperty: jest.fn()
         } as unknown as Map;
@@ -199,7 +190,12 @@ describe("AddedSourceWithLayers tests", () => {
 
 describe("GeoJSONSourceWithLayers", () => {
     test("Constructor", () => {
-        const mapLibreMock = jest.fn() as unknown as Map;
+        const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
+            setLayoutProperty: jest.fn()
+        } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
         expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
         expect(sourceWithLayers.source.id).toStrictEqual(testSourceID);
@@ -207,12 +203,16 @@ describe("GeoJSONSourceWithLayers", () => {
             type: "geojson",
             data: { type: "FeatureCollection", features: [] }
         });
-        expect(sourceWithLayers.source.runtimeSource).toBeUndefined();
+        expect(sourceWithLayers.source.runtimeSource).toStrictEqual({ id: testSourceID });
         expect(sourceWithLayers.layerSpecs).toStrictEqual(testLayerSpecs);
     });
 
+    // eslint-disable-next-line jest/expect-expect
     test("show empty collection", () => {
         const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
             setLayoutProperty: jest.fn()
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
@@ -223,8 +223,12 @@ describe("GeoJSONSourceWithLayers", () => {
         sourceWithLayers.show(emptyFeatures);
     });
 
+    // eslint-disable-next-line jest/expect-expect
     test("show filled collection", () => {
         const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
             setLayoutProperty: jest.fn()
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
@@ -235,8 +239,12 @@ describe("GeoJSONSourceWithLayers", () => {
         sourceWithLayers.show(features);
     });
 
+    // eslint-disable-next-line jest/expect-expect
     test("clear", () => {
         const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
             setLayoutProperty: jest.fn()
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);

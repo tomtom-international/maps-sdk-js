@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, bboxFromGeoJSONArray, GeometryDataResponse } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON, GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { GeometryDataResponseAPI } from "./types/APITypes";
 
 /**
@@ -21,7 +21,7 @@ export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI):
         .filter((feature) => feature);
     return {
         type: "FeatureCollection",
-        bbox: bboxFromGeoJSONArray(features),
+        bbox: bboxFromGeoJSON(features),
         features
     };
 };

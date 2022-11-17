@@ -1,5 +1,13 @@
 import { Map } from "maplibre-gl";
-import { GOSDKMap, VectorTilesHillshade, VectorTilePOIs, VectorTilesTraffic, GeoJSONPlaces, GeometryModule } from "map";
+import {
+    GeoJSONPlaces,
+    GeometryModule,
+    GOSDKMap,
+    RoutingModule,
+    VectorTilePOIs,
+    VectorTilesHillshade,
+    VectorTilesTraffic
+} from "map";
 
 export type GOSDKThis = typeof globalThis & {
     // @ts-ignore
@@ -11,4 +19,5 @@ export type GOSDKThis = typeof globalThis & {
     hillshade?: VectorTilesHillshade;
     places?: GeoJSONPlaces;
     geometry?: GeometryModule;
+    routing?: RoutingModule;
 };

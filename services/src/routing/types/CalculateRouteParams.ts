@@ -1,15 +1,6 @@
-import { Avoidable, HasLngLat, inputSectionTypes, TravelMode, Waypoint } from "@anw/go-sdk-js/core";
+import { Avoidable, inputSectionTypes, TravelMode, WaypointLike } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../../shared/ServiceTypes";
 import { VehicleParameters } from "./VehicleParams";
-
-/**
- * A waypoint input is either a complex waypoint object or anything with coordinates.
- * * By default, waypoints are considered as single points,
- * unless a radius is specified, which then transforms the waypoint into a circle(soft waypoint).
- * @group Calculate Route
- * @category Types
- */
-export type WaypointInput = Waypoint | HasLngLat;
 
 /**
  * List of waypoint inputs, including origin and destination at the edges.
@@ -19,7 +10,8 @@ export type WaypointInput = Waypoint | HasLngLat;
  * @group Calculate Route
  * @category Types
  */
-export type WaypointInputs = [WaypointInput, WaypointInput, ...WaypointInput[]];
+export type CalculateRouteWaypointInputs = [WaypointLike, WaypointLike, ...WaypointLike[]];
+
 /**
  * @group Calculate Route
  * @category Types
@@ -29,7 +21,7 @@ export type RouteMandatoryParams = {
      * These are the specified locations for route calculation. They are the main input and are mandatory.
      * @default None
      */
-    locations: WaypointInputs;
+    locations: CalculateRouteWaypointInputs;
 };
 
 /**

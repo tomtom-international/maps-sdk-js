@@ -3,9 +3,9 @@ import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 
-export const geometrySourceID = "PLACE_GEOMETRY";
-const geometryFillLayerId = "PLACE_GEOMETRY_FILL";
-const geometryOutlineLayerId = "PLACE_GEOMETRY_OUTLINE";
+export const GEOMETRY_SOURCE_ID = "PLACE_GEOMETRY";
+const GEOMETRY_FILL_LAYER_ID = "PLACE_GEOMETRY_FILL";
+const GEOMETRY_OUTLINE_LAYER_ID = "PLACE_GEOMETRY_OUTLINE";
 
 /**
  * Geometry data module.
@@ -14,11 +14,10 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
     private geometry?: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     init(): void {
-        this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, geometrySourceID, [
-            { ...geometryFillSpec, id: geometryFillLayerId },
-            { ...geometryOutlineSpec, id: geometryOutlineLayerId }
+        this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
+            { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
+            { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
         ]);
-        this.geometry.ensureAddedToMapWithVisibility(false);
     }
 
     /**

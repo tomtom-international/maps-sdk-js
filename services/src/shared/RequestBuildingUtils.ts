@@ -1,7 +1,7 @@
 import { getLngLatArray, HasLngLat } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "./ServiceTypes";
 import isNil from "lodash/isNil";
-import { POICategory, poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
+import { poiCategoriesToID, POICategory } from "../poi-categories/poiCategoriesToID";
 
 /**
  * @ignore

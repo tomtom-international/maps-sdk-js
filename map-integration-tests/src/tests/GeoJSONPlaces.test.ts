@@ -1,5 +1,5 @@
 import { Places } from "@anw/go-sdk-js/core";
-import { DisplayProps } from "map";
+import { PlaceDisplayProps } from "map";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
@@ -20,6 +20,7 @@ const initPlaces = async () =>
 const showPlaces = async (places: Places) =>
     page.evaluate((inputPlaces: Places) => {
         (globalThis as GOSDKThis).places?.show(inputPlaces);
+        // @ts-ignore
     }, places);
 
 const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
@@ -28,7 +29,7 @@ const waitForRenderedPlaces = async (numPlaces: number) => waitUntilRenderedFeat
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource("places");
 
-const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: DisplayProps[]) =>
+const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: PlaceDisplayProps[]) =>
     expect(
         sortBy(
             places.map((place) => ({ title: place.properties.title, iconID: place.properties.iconID })),

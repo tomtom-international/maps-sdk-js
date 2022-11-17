@@ -16,7 +16,6 @@ import {
     bboxFromBBoxes,
     bboxFromCoordsArray,
     bboxFromGeoJSON,
-    bboxFromGeoJSONArray,
     bboxOnlyIfWithArea,
     isBBoxWithArea
 } from "../BBox";
@@ -203,7 +202,7 @@ const geometryCollection: GeometryCollection = {
     ]
 };
 
-describe("Main bounding box getter/calculator function", () => {
+describe("Bounding box getter/calculator function", () => {
     test("Extracting bounding box for undefined or basic edge cases", () => {
         expect(bboxFromGeoJSON(undefined as never)).toBeUndefined();
         expect(bboxFromGeoJSON([] as never)).toBeUndefined();
@@ -395,14 +394,12 @@ describe("Main bounding box getter/calculator function", () => {
             } as FeatureCollection)
         ).toEqual([-125, -65, 55, 80]);
     });
-});
 
-describe("Bounding box from array of GeoJSON objects", () => {
     test("Bounding box from array of GeoJSON objects", () => {
-        expect(bboxFromGeoJSONArray(undefined as never)).toBeUndefined();
-        expect(bboxFromGeoJSONArray([])).toBeUndefined();
+        expect(bboxFromGeoJSON(undefined as never)).toBeUndefined();
+        expect(bboxFromGeoJSON([])).toBeUndefined();
         expect(
-            bboxFromGeoJSONArray([
+            bboxFromGeoJSON([
                 {
                     type: "Feature",
                     geometry: {
@@ -414,7 +411,7 @@ describe("Bounding box from array of GeoJSON objects", () => {
             ])
         ).toEqual([20, -10, 20, -10]);
         expect(
-            bboxFromGeoJSONArray([
+            bboxFromGeoJSON([
                 {
                     type: "Feature",
                     geometry: {
