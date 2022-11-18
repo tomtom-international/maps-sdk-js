@@ -19,7 +19,7 @@ describe("Geometry Search request URL builder performance tests", () => {
 });
 
 describe("Geometry Search response parser performance tests", () => {
-    const REFERENCE_KPI = 3; //3ms - needs to be agreed
+    const REFERENCE_KPI = 5; //3ms - needs to be agreed
     test.each(geometrySearchResponses)(
         "'%s'",
         // @ts-ignore
