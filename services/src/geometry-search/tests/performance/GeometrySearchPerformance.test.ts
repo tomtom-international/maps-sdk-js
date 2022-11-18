@@ -5,7 +5,7 @@ import geometrySearchResponses from "../performance/ResponseParserForPerf.data.j
 import { parseGeometrySearchResponse } from "../../ResponseParser";
 
 describe("Geometry Search request URL builder performance tests", () => {
-    const REFERENCE_KPI = 2; //1ms - needs to be agreed
+    const REFERENCE_KPI = 2; //2ms - needs to be agreed
     test.each(geometrySearchReqObjects)(
         "'%s'",
         // @ts-ignore
