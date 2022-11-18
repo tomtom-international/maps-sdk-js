@@ -1,0 +1,397 @@
+[
+  [
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://api.tomtom.com",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -67.13734351262877,
+                45.137451890638886
+              ],
+              [
+                -66.96466,
+                44.8097
+              ],
+              [
+                -68.03252,
+                44.3252
+              ],
+              [
+                -69.06,
+                43.98
+              ],
+              [
+                -70.11617,
+                43.68405
+              ],
+              [
+                -70.64573401557249,
+                43.090083319667144
+              ],
+              [
+                -70.75102474636725,
+                43.08003225358635
+              ],
+              [
+                -70.79761105007827,
+                43.21973948828747
+              ],
+              [
+                -70.98176001655037,
+                43.36789581966826
+              ],
+              [
+                -70.94416541205806,
+                43.46633942318431
+              ],
+              [
+                -71.08482,
+                45.3052400000002
+              ],
+              [
+                -70.6600225491012,
+                45.46022288673396
+              ],
+              [
+                -70.30495378282376,
+                45.914794623389355
+              ],
+              [
+                -70.00014034695016,
+                46.69317088478567
+              ],
+              [
+                -69.23708614772835,
+                47.44777598732787
+              ],
+              [
+                -68.90478084987546,
+                47.184794623394396
+              ],
+              [
+                -68.23430497910454,
+                47.35462921812177
+              ],
+              [
+                -67.79035274928509,
+                47.066248887716995
+              ],
+              [
+                -67.79141211614706,
+                45.702585354182816
+              ],
+              [
+                -67.13734351262877,
+                45.137451890638886
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "Circle",
+          "coordinates": [
+            -68.13734351262877,
+            45.137451890638886
+          ],
+          "radius": 6000
+        }
+      ],
+      "query": "24x7 restaurant",
+      "limit": 75,
+      "extendedPostalCodesFor": [
+        "POI",
+        "PAD",
+        "Addr",
+        "Geo",
+        "Str",
+        "XStr"
+      ],
+      "mapcodes": [
+        "Local",
+        "Alternative",
+        "International"
+      ],
+      "entityTypes": [
+        "Country",
+        "CountrySubdivision",
+        "CountrySecondarySubdivision",
+        "CountryTertiarySubdivision",
+        "Municipality",
+        "MunicipalitySubdivision",
+        "Neighbourhood",
+        "PostalCodeArea"
+      ],
+      "view": [
+        "Unified",
+        "AR",
+        "IN",
+        "PK",
+        "IL",
+        "MA",
+        "RU",
+        "TR",
+        "CN"
+      ],
+      "language": "fr-FR",
+      "poiCategories": [
+        7315148,
+        7315025,
+        7315012,
+        7315033,
+        7315036,
+        7315,
+        7315003,
+        7315005,
+        7315015,
+        7315016,
+        7315023,
+        7315024,
+        7315025,
+        7315026,
+        7315027,
+        7315029,
+        7315032,
+        7315033,
+        7315034,
+        7315036,
+        7315042,
+        7315043,
+        7315049,
+        7315051,
+        7315061,
+        7315062,
+        7315073
+      ],
+      "openingHours": "nextSevenDays",
+      "timeZone": "iana"
+    }
+  ],
+  [
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://api.tomtom.com",
+      "geometries": [
+        {
+          "type": "Circle",
+          "coordinates": [
+            2.30046,
+            48.37394
+          ],
+          "radius": 2000
+        }
+      ],
+      "query": "Electric Charging Station"
+    }
+  ],
+  [
+    {
+      "apiKey": "GLOBAL_API_KEY_2",
+      "commonBaseURL": "https://api-test.tomtom.com",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -122.43576049804686,
+                37.7524152343544
+              ],
+              [
+                -122.43301391601562,
+                37.70660472542312
+              ],
+              [
+                -122.36434936523438,
+                37.712059855877314
+              ],
+              [
+                -122.37396240234374,
+                37.75350561243041
+              ]
+            ]
+          ]
+        }
+      ],
+      "query": "24x7 restaurant",
+      "limit": 25,
+      "extendedPostalCodesFor": [
+        "POI"
+      ],
+      "mapcodes": [
+        "Local",
+        "Alternative",
+        "International"
+      ],
+      "view": "Unified",
+      "language": "fr-FR",
+      "poiCategories": [
+        7315148,
+        7315025
+      ],
+      "openingHours": "nextSevenDays",
+      "timeZone": "iana"
+    }
+  ],
+  [
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://test.api.tomtom.com",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -8.035008812609183,
+                54.13685073020183
+              ],
+              [
+                -6.262918651314352,
+                37.06108866671211
+              ],
+              [
+                22.447323445066136,
+                39.86985107867881
+              ],
+              [
+                13.908887227934784,
+                51.86618028824101
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "Circle",
+          "coordinates": [
+            22.07076650941282,
+            39.43633092454649
+          ],
+          "radius": 6000
+        }
+      ],
+      "query": "London",
+      "limit": 20,
+      "indexes": [
+        "Geo",
+        "Str"
+      ],
+      "entityTypes": [
+        "Municipality",
+        "MunicipalitySubdivision",
+        "Neighbourhood"
+      ]
+    }
+  ],
+  [
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://test.api.tomtom.com",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -8.035008812609183,
+                54.13685073020183
+              ],
+              [
+                -6.262918651314352,
+                37.06108866671211
+              ],
+              [
+                22.447323445066136,
+                39.86985107867881
+              ],
+              [
+                13.908887227934784,
+                51.86618028824101
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "Circle",
+          "coordinates": [
+            22.07076650941282,
+            39.43633092454649
+          ],
+          "radius": 6000
+        }
+      ],
+      "query": "EV charging points",
+      "minPowerKW": 20,
+      "maxPowerKW": 43.2,
+      "connectors": [
+        "IEC62196Type2Outlet",
+        "StandardHouseholdCountrySpecific",
+        "IEC62196Type2CableAttached",
+        "IEC62196Type3",
+        "IEC62196Type2CCS",
+        "IEC60309AC1PhaseBlue",
+        "IEC60309AC3PhaseRed",
+        "IEC60309DCWhite",
+        "IEC62196Type1",
+        "IEC62196Type1CCS"
+      ]
+    }
+  ],
+  [
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://test.api.tomtom.com",
+      "geometries": [
+        {
+          "type": "Circle",
+          "coordinates": [
+            22.07076650941282,
+            39.43633092454649
+          ],
+          "radius": 6000
+        },
+        {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -8.035008812609183,
+                54.13685073020183
+              ],
+              [
+                -6.262918651314352,
+                37.06108866671211
+              ],
+              [
+                22.447323445066136,
+                39.86985107867881
+              ],
+              [
+                13.908887227934784,
+                51.86618028824101
+              ]
+            ]
+          ]
+        }
+      ],
+      "query": "Fuel Station",
+      "fuels": [
+        "Petrol",
+        "Diesel",
+        "LPG",
+        "Biodiesel",
+        "AdBlue",
+        "DieselForCommercialVehicles"
+      ],
+      "poiBrands": [
+        "Circle K",
+        "X Fuel",
+        "Sia Fuel",
+        "Easy Fuel"
+      ]
+    }
+  ]
+]
