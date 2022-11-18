@@ -5,29 +5,43 @@ import geometrySearchResponses from "../performance/ResponseParserForPerf.data.j
 import { parseGeometrySearchResponse } from "../../ResponseParser";
 
 describe("Geometry Search request URL builder performance tests", () => {
-    const REFERENCE_KPI = 2; //2ms - needs to be agreed
+    const maxExecTimeMS = 2; //2ms - needs to be agreed
     test.each(geometrySearchReqObjects)(
         "'%s'",
         // @ts-ignore
         (params: GeometrySearchParams) => {
-            const t0 = performance.now();
-            buildGeometrySearchRequest(params);
-            const t1 = performance.now();
-            expect(Number(`${t1 - t0}`)).toBeLessThanOrEqual(REFERENCE_KPI);
+            const timeTakenToExec = [];
+            //We run each test 10 times
+            for (let i = 0; i < 10; i++) {
+                const t0 = performance.now();
+                buildGeometrySearchRequest(params);
+                const t1 = performance.now();
+                timeTakenToExec.push(`${t1 - t0}`);
+            }
+            timeTakenToExec.sort();
+            //Smallest number amongst the derived time is considered for assertion
+            expect(Number(timeTakenToExec[0])).toBeLessThanOrEqual(maxExecTimeMS);
         }
     );
 });
 
 describe("Geometry Search response parser performance tests", () => {
-    const REFERENCE_KPI = 7; //7ms - needs to be agreed
+    const maxExecTimeMS = 5; //5ms - needs to be agreed
     test.each(geometrySearchResponses)(
         "'%s'",
         // @ts-ignore
         (_name: title, apiResponse: GeometrySearchResponseAPI) => {
-            const t0 = performance.now();
-            parseGeometrySearchResponse(apiResponse);
-            const t1 = performance.now();
-            expect(Number(`${t1 - t0}`)).toBeLessThanOrEqual(REFERENCE_KPI);
+            const timeTakenToExec = [];
+            //We run each test 10 times
+            for (let i = 0; i < 10; i++) {
+                const t0 = performance.now();
+                parseGeometrySearchResponse(apiResponse);
+                const t1 = performance.now();
+                timeTakenToExec.push(`${t1 - t0}`);
+            }
+            timeTakenToExec.sort();
+            //Smallest number amongst the derived time is considered for assertion
+            expect(Number(timeTakenToExec[0])).toBeLessThanOrEqual(maxExecTimeMS);
         }
     );
 });
