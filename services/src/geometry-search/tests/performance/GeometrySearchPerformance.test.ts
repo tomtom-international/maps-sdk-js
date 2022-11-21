@@ -9,7 +9,7 @@ describe("Geometry Search request URL builder performance tests", () => {
     test.each(geometrySearchReqObjects)(
         "'%s'",
         // @ts-ignore
-        (params: GeometrySearchParams) => {
+        (_name: name, params: GeometrySearchParams) => {
             const timeTakenToExec = [];
             //We run each test 10 times
             for (let i = 0; i < 10; i++) {
@@ -19,8 +19,9 @@ describe("Geometry Search request URL builder performance tests", () => {
                 timeTakenToExec.push(`${t1 - t0}`);
             }
             timeTakenToExec.sort();
-            //Smallest number amongst the derived time is considered for assertion
-            expect(Number(timeTakenToExec[0])).toBeLessThanOrEqual(maxExecTimeMS);
+            const p90Index = Math.round(0.9 * timeTakenToExec.length) - 1;
+            //90th Percentile is considered
+            expect(Number(timeTakenToExec[p90Index])).toBeLessThanOrEqual(maxExecTimeMS);
         }
     );
 });
@@ -40,8 +41,9 @@ describe("Geometry Search response parser performance tests", () => {
                 timeTakenToExec.push(`${t1 - t0}`);
             }
             timeTakenToExec.sort();
-            //Smallest number amongst the derived time is considered for assertion
-            expect(Number(timeTakenToExec[0])).toBeLessThanOrEqual(maxExecTimeMS);
+            const p90Index = Math.round(0.9 * timeTakenToExec.length) - 1;
+            //90th Percentile is considered
+            expect(Number(timeTakenToExec[p90Index])).toBeLessThanOrEqual(maxExecTimeMS);
         }
     );
 });
