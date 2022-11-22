@@ -18,9 +18,8 @@ describe("Geometry Search request URL builder performance tests", () => {
                 const t1 = performance.now();
                 timeTakenToExec.push(Number(`${t1 - t0}`));
             }
-            timeTakenToExec.sort((a, b) => a - b);
             //smallest value is considered
-            expect(timeTakenToExec[0]).toBeLessThanOrEqual(MAX_EXEC_TIME_MS);
+            expect(Math.min(...timeTakenToExec)).toBeLessThanOrEqual(MAX_EXEC_TIME_MS);
         }
     );
 });
@@ -39,9 +38,8 @@ describe("Geometry Search response parser performance tests", () => {
                 const t1 = performance.now();
                 timeTakenToExec.push(Number(`${t1 - t0}`));
             }
-            timeTakenToExec.sort((a, b) => a - b);
             //smallest value is considered
-            expect(timeTakenToExec[0]).toBeLessThanOrEqual(MAX_EXEC_TIME_MS);
+            expect(Math.min(...timeTakenToExec)).toBeLessThanOrEqual(MAX_EXEC_TIME_MS);
         }
     );
 });
