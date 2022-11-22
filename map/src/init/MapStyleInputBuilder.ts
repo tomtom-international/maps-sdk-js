@@ -1,5 +1,5 @@
 import template from "lodash/template";
-import { GOSDKMapParams, PublishedStyle, PublishedStyleID } from "./types/MapInit";
+import { GOSDKMapParams, PublishedStyle, PublishedStyleID, StyleHideOptions } from "./types/MapInit";
 import { StyleSpecification } from "maplibre-gl";
 
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
@@ -58,6 +58,31 @@ const withAPIKey = (givenURL: string, apiKey: string): string => {
     const url = new URL(givenURL);
     url.searchParams.set("key", apiKey);
     return url.toString();
+};
+
+/**
+ * @ignore
+ * @param url The SDK parameters to convert to input renderer style.
+ * @param options Object with the properties to hide in the style url.
+ * @return The map style to load into the renderer.
+ */
+export const removeHiddenStyleOptions = (url: string, options: StyleHideOptions | undefined): string => {
+    const styleUrl = new URL(url);
+
+    if (options?.trafficFlow) {
+        styleUrl.searchParams.delete("traffic_flow");
+    }
+    if (options?.trafficIncidents) {
+        styleUrl.searchParams.delete("traffic_incidents");
+    }
+    if (options?.poi) {
+        styleUrl.searchParams.delete("poi");
+    }
+    if (options?.hillshade) {
+        styleUrl.searchParams.delete("hillshade");
+    }
+
+    return decodeURIComponent(styleUrl.toString());
 };
 
 /**

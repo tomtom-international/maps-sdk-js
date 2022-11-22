@@ -46,6 +46,20 @@ export type CustomStyle = {
 };
 
 /**
+ * Optinal parameter to hide when loading styles.
+ * * trafficIncidents: Hide traffic incidents
+ * * trafficFlow: Hide traffic flow
+ * * poi: Hide POI (Point of Interest)
+ * * hillshade: Hide hillshade
+ */
+export type StyleHideOptions = {
+    trafficIncidents?: boolean;
+    trafficFlow?: boolean;
+    poi?: boolean;
+    hillshade?: boolean;
+};
+
+/**
  * Style to load on the map.
  * Can be either a:
  * * Published style ID from last supported version.
@@ -72,6 +86,10 @@ export type GOSDKMapParams = Partial<GlobalConfig> & {
      * Optional style to load for the map.
      */
     style?: StyleInput;
+    /**
+     * Hide traffic incidents, traffic flow, poi and hillshade when loading styles.
+     */
+    hide?: StyleHideOptions;
     /**
      * Where to center the map on startup.
      * * Mutually exclusive with bbox.
