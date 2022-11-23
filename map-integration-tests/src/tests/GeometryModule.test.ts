@@ -21,13 +21,10 @@ const getNumVisibleLayers = async () => getNumVisibleLayersBySource("PLACE_GEOME
 
 const clearGeometry = async () => page.evaluate(() => (globalThis as GOSDKThis).geometry?.clear());
 
-const showGeometry = async (geometry: GeometryDataResponse, config?: GeometryModuleConfig) =>
+const showGeometry = async (geometry: GeometryDataResponse) =>
     page.evaluate(
-        (inputGeometry: GeometryDataResponse, inputConfig?: GeometryModuleConfig) => {
-            (globalThis as GOSDKThis).geometry?.show(inputGeometry, inputConfig);
-        },
-        geometry,
-        config
+        (inputGeometry: GeometryDataResponse) => (globalThis as GOSDKThis).geometry?.show(inputGeometry),
+        geometry
     );
 
 const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
@@ -56,15 +53,6 @@ describe("Geometry integration tests", () => {
 
         await showGeometry(geometryData);
         expect(await getNumVisibleLayers()).toStrictEqual(2);
-
-        // default inverted polygon: fills the edges but not inside:
-        await waitUntilRenderedGeometry(0, amsterdamCenter);
-        await waitUntilRenderedGeometry(0, amsterdamSouthEast);
-        await waitUntilRenderedGeometry(1, outsideAmsterdamNorth);
-        await waitUntilRenderedGeometry(1, outsideAmsterdamSouth);
-
-        await showGeometry(geometryData, { inverted: false });
-        expect(await getNumVisibleLayers()).toStrictEqual(2);
         // non-inverted polygon: fills inside but not the edges:
         await waitUntilRenderedGeometry(1, amsterdamCenter);
         await waitUntilRenderedGeometry(1, amsterdamSouthEast);
@@ -75,32 +63,5 @@ describe("Geometry integration tests", () => {
         expect(await getNumVisibleLayers()).toStrictEqual(0);
         await showGeometry(geometryData);
         expect(await getNumVisibleLayers()).toStrictEqual(2);
-    });
-
-    test("Show geometry in the map, non-inverted module config", async () => {
-        await mapEnv.loadMap({}, { bounds: geometryData });
-        await initGeometry({ inverted: false });
-        await waitForMapStyleToLoad();
-        expect(await getNumVisibleLayers()).toStrictEqual(0);
-
-        await showGeometry(geometryData);
-        expect(await getNumVisibleLayers()).toStrictEqual(2);
-
-        // configured non-inverted polygon: fills inside but not the edges:
-        await waitUntilRenderedGeometry(1, amsterdamCenter);
-        await waitUntilRenderedGeometry(1, amsterdamSouthEast);
-        await waitUntilRenderedGeometry(0, outsideAmsterdamNorth);
-        await waitUntilRenderedGeometry(0, outsideAmsterdamSouth);
-
-        await showGeometry(geometryData, { inverted: true });
-        expect(await getNumVisibleLayers()).toStrictEqual(2);
-        // inverted polygon: fills the edges but not inside:
-        await waitUntilRenderedGeometry(0, amsterdamCenter);
-        await waitUntilRenderedGeometry(0, amsterdamSouthEast);
-        await waitUntilRenderedGeometry(1, outsideAmsterdamNorth);
-        await waitUntilRenderedGeometry(1, outsideAmsterdamSouth);
-
-        await clearGeometry();
-        expect(await getNumVisibleLayers()).toStrictEqual(0);
     });
 });
