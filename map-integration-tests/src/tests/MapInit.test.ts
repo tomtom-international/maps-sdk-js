@@ -5,6 +5,7 @@ import {
     waitForMapStyleToLoad
 } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
+import { GOSDKThis } from "./types/GOSDKThis";
 
 describe("Map Init tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -26,4 +27,29 @@ describe("Map Init tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
+
+    test("Show console errors when loading traffic if hide traffic options are set", async () => {
+        await mapEnv.loadMap(
+            {
+                zoom: 12,
+                minZoom: 2,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: "monoLight",
+                hide: {
+                    trafficFlow: true,
+                    trafficIncidents: true
+                }
+            }
+        );
+
+        await page.evaluate(() => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.traffic = new goSDKThis.GOSDK.VectorTilesTraffic(goSDKThis.goSDKMap, { visible: true });
+        });
+
+        await waitForMapStyleToLoad();
+        expect(mapEnv.consoleErrors).toHaveLength(2);
+    });
 });
