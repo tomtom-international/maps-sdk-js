@@ -1,8 +1,8 @@
 import { MapOptions } from "maplibre-gl";
+import isEmpty from "lodash/isEmpty";
 import { bboxFromGeoJSON, getLngLatArray } from "@anw/go-sdk-js/core";
 import { GOSDKMapParams, MapLibreOptions } from "./types/MapInit";
 import { buildMapStyleInput, removeHiddenStyleOptions } from "./MapStyleInputBuilder";
-import { isEmpty } from "../utils/isEmpty";
 
 type MapLibreBBox = [number, number, number, number];
 
