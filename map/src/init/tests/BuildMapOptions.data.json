@@ -92,10 +92,7 @@
     {
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
-      "hide": {
-        "trafficFlow": true,
-        "trafficIncidents": true
-      }
+      "exclude": ["traffic_flow", "traffic_incidents"]
     },
     {
       "container": "<div id='map'></div>",
@@ -111,12 +108,7 @@
   {
     "commonBaseURL": "https://api-test.tomtom.com",
     "apiKey": "TEST_API_KEY",
-    "hide": {
-      "trafficFlow": true,
-      "trafficIncidents": true,
-      "poi": true,
-      "hillshade": true
-    }
+    "exclude": [ "traffic_flow", "traffic_incidents", "poi", "hillshade"]
   },
   {
     "container": "<div id='map'></div>",

@@ -37,10 +37,7 @@ describe("Map Init tests", () => {
             },
             {
                 style: "monoLight",
-                hide: {
-                    trafficFlow: true,
-                    trafficIncidents: true
-                }
+                exclude: ["traffic_flow", "traffic_incidents"]
             }
         );
 
