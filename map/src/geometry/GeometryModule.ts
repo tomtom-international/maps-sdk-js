@@ -24,9 +24,8 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
     /**
      * Shows the given Geometry on the map.
      * @param geometry
-     * @param config - Optional configuration to override the module one.
      */
-    show(geometry: GeometryDataResponse, config?: GeometryModuleConfig): void {
+    show(geometry: GeometryDataResponse): void {
         this.callWhenMapReady(() => this.geometry?.show(geometry));
     }
 

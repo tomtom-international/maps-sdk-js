@@ -25,9 +25,9 @@ describe("Geometry module tests", () => {
         const testGeometryData = amsterdamGeometryData as GeometryDataResponse;
         let geometry = new GeometryModule(goSDKMapMock);
         geometry.show(testGeometryData);
-        geometry.show(testGeometryData, { });
+        geometry.show(testGeometryData);
         geometry.clear();
-        geometry = new GeometryModule(goSDKMapMock, { });
+        geometry = new GeometryModule(goSDKMapMock);
         geometry.show(testGeometryData);
         geometry.clear();
     });

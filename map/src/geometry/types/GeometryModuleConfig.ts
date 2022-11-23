@@ -1,2 +1,1 @@
-export type GeometryModuleConfig = {
-};
+export type GeometryModuleConfig = Record<string, unknown>;
