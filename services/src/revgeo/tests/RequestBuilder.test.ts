@@ -67,31 +67,3 @@ describe("Reverse Geocoding request URL building functional tests", () => {
         );
     });
 });
-
-describe("Reverse Geocoding request URL building performance tests", () => {
-    test("Basic performance test", () => {
-        const numExecutions = 20;
-        const accExecTimes = [];
-        for (let i = 0; i < numExecutions; i++) {
-            const start = performance.now();
-            buildRevGeoRequest({
-                position: [1.12345, 23.45678],
-                apiKey: "GIVEN_API_KEY",
-                commonBaseURL: "https://api.tomtom.com",
-                language: "es-ES",
-                allowFreeformNewline: true,
-                geographyType: ["Country", "Municipality"],
-                mapcodes: ["Local", "International"],
-                heading: 30,
-                number: "10A",
-                radius: 30,
-                returnRoadUse: true,
-                returnSpeedLimit: true,
-                roadUses: ["LimitedAccess", "Arterial"],
-                view: "AR"
-            });
-            accExecTimes.push(performance.now() - start);
-        }
-        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(2);
-    });
-});
