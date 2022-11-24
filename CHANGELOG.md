@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.56](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.55...v0.1.56) (2022-11-24)
+
+
+### Bug Fixes
+
+* **496:** removing invert from SDK, moving it to examples ([0fe1b6c](https://github.com/tomtom-international/go-sdk-js/commit/0fe1b6ca0c549cfd20d70510002d4c2ae0102d96))
+* increasing reference kpi for response parser performance tests ([fd85f2b](https://github.com/tomtom-international/go-sdk-js/commit/fd85f2b271dfea16ee6813fb81d8ed5a3eaf7fb7))
+* increasing reference kpi for response parser performance tests ([564677c](https://github.com/tomtom-international/go-sdk-js/commit/564677c9b716e59f96c2fc31eb7179f2c25cad65))
+* increasing reference kpi for response parser performance tests ([8f40437](https://github.com/tomtom-international/go-sdk-js/commit/8f40437300cd95f12b9d6a5b880e2e8e00c17b52))
+* increasing reference kpi for response parser performance tests ([5ed7400](https://github.com/tomtom-international/go-sdk-js/commit/5ed7400d68eeba5e096510463c7a7e4cffd65adc))
+
 ### [0.1.55](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.54...v0.1.55) (2022-11-17)
 
 
