@@ -35,21 +35,22 @@ describe("Map Init tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                style: "monoLight",
                 exclude: ["traffic_flow", "traffic_incidents"]
             }
         );
 
         await page.evaluate(() => {
             const goSDKThis = globalThis as GOSDKThis;
+            /* This will trigger a console.error. Here we are trying to load modules that has been excluded.*/
             goSDKThis.traffic = new goSDKThis.GOSDK.VectorTilesTraffic(goSDKThis.goSDKMap, { visible: true });
         });
 
         await waitForMapStyleToLoad();
 
-        expect(mapEnv.consoleErrors).toHaveLength(2);
         expect(await getVisibleLayersBySource("vectorTilesIncidents")).toHaveLength(0);
         expect(await getVisibleLayersBySource("vectorTilesFlow")).toHaveLength(0);
+        /* The two errors are due to the two modules excluded: traffic_flow and traffic_incidents */
+        expect(mapEnv.consoleErrors).toHaveLength(2);
     });
 
     test("Should not have poi and hillshade layers source ID when module are excluded", async () => {
@@ -58,13 +59,13 @@ describe("Map Init tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                style: "monoLight",
                 exclude: ["poi", "hillshade"]
             }
         );
 
         await page.evaluate(() => {
             const goSDKThis = globalThis as GOSDKThis;
+            /* This will trigger a console.error. Here we are trying to load modules that has been excluded.*/
             goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap, { visible: false });
             goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap, { visible: false });
         });

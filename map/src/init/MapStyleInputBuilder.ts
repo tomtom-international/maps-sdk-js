@@ -3,10 +3,10 @@ import { GOSDKMapParams, PublishedStyle, PublishedStyleID, StyleModules } from "
 import { StyleSpecification } from "maplibre-gl";
 import { isEmpty } from "lodash";
 
-const TRAFFIC_INCIDENTS = "traffic_incidents";
-const TRAFFIC_FLOW = "traffic_flow";
-const POI = "poi";
-const HILLSHADE = "hillshade";
+export const TRAFFIC_INCIDENTS = "traffic_incidents";
+export const TRAFFIC_FLOW = "traffic_flow";
+export const POI = "poi";
+export const HILLSHADE = "hillshade";
 
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
     standardLight:
