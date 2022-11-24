@@ -15,9 +15,10 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
         const hillshadeSource = this.mapLibreMap.getSource(hillshadeSourceID);
         if (hillshadeSource) {
             this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
-            if (config) {
-                this.applyConfig(config);
-            }
+        }
+
+        if (config) {
+            this.applyConfig(config);
         }
     }
 

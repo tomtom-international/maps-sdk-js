@@ -15,9 +15,10 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         const poiRuntimeSource = this.mapLibreMap.getSource(poiSourceID);
         if (poiRuntimeSource) {
             this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
-            if (config) {
-                this.applyConfig(config);
-            }
+        }
+
+        if (config) {
+            this.applyConfig(config);
         }
     }
 
