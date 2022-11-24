@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.57](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.56...v0.1.57) (2022-11-24)
+
+
+### Bug Fixes
+
+* **map:** Move check config statement outside of RuntimeSource check ([d2c8a82](https://github.com/tomtom-international/go-sdk-js/commit/d2c8a82e118fd2c7a2fd714d87e7d48427aa1eaf))
+
 ### [0.1.56](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.55...v0.1.56) (2022-11-24)
 
 
