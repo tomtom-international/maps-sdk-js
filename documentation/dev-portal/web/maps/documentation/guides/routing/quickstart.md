@@ -10,4 +10,37 @@ titleTags:
   color: "grey5"
 ---
 
-TODO
+The Routing SDK provides the tools to integrate the [TomTom Routing API](https://developer.tomtom.com/routing-api/documentation/product-information/introduction) into a Web application. It is used to calculate a route between an origin and a destination, using a range of options and taking traffic into account. Read more about [TomTom’s Routing parameters](https://developer.tomtom.com/routing-api/documentation/routing/calculate-route/#request-parameters).
+
+<a style={{display: 'block', margin: '0', padding: '0'}} id="_project_set_up"></a>
+
+# Project set up
+
+To use the Routing SDK, you will need to do the following:
+1.  Get your TomTom API Key and configure the project as described in the [Project setup guide (TODO)](/web/maps/documentation/overview/project-set-up).
+2.  Add the `Reverse Geocoding` module dependency
+    - for NodeJS add dependency in `main.js`
+     ``` javascript
+     const calculateRoute = require("@anw/go-sdk-js/services").calculateRoute;
+     const GOSDKConfig = require("@anw/go-sdk-js/core").GOSDKConfig;
+     ```
+    - for Web add dependency in `index.js`
+     ```javascript
+     import { calculateRoute } from "@anw/go-sdk-js/services";
+     import { GOSDKConfig } from "@anw/go-sdk-js/core";
+     ```
+3. To enable your API key
+    ``` javascript
+    GOSDKConfig.instance.put({
+        // (Set your own API key when working in your own environment)
+        apiKey: process.env.API_KEY
+    });
+    ```
+
+<a style={{display: 'block', margin: '0', padding: '0'}} id="_routing_basic_usage"></a>
+
+# Routing basic usage
+
+To calculate a route from A to B, you need to provide route planning criteria. They are built using a [`CalculateRouteParams`](/web/maps/documentation/api-reference/modules/services/#calculaterouteparams) object. Once you have a [`CalculateRouteParams`](/web/maps/documentation/api-reference/modules/services/#calculaterouteparams) object, pass it to the [`calculateRoute`](/web/maps/documentation/api-reference/modules/services/#calculateroute) function from the object in order to make a request. Read more about routing options and route planning in the [Planning a route](/web/maps/documentation/guides/routing/planning-a-route) guide.
+
+For a more advanced navigation experience, you can add optional intermediate locations to the route. Read more about this feature in the [Waypoints and reconstruction routes](/web/maps/documentation/guides/routing/waypoints-and-reconstruction-routes) guide.

@@ -1,0 +1,86 @@
+---
+title: Waypoints
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.0.1"
+  color: "grey5"
+- label: "PRIVATE PREVIEW"
+  color: "grey5"
+---
+
+Planning a route may involve locations beyond the origin and destination, where the origin and destination are the first and last waypoints of the [`locations`](/web/maps/documentation/api-reference/modules/services/#routemandatoryparams) parameter respectively. 
+
+In a more advanced navigation experience, the user may want to provide more waypoints through which the route should be calculated. These can be stops along the way, or places that the user wants to pass by during the journey. These additional waypoints can be added to the [`locations`](/web/maps/documentation/api-reference/modules/services/#routemandatoryparams) array and are included in the route in the order they are specified.
+
+<Blockquote type="announcement" hasIcon>
+
+The maximum allowed number of additional waypoints is 150.
+
+</Blockquote>
+
+A [`WaypointInput`](/web/maps/documentation/api-reference/modules/services/#waypointinput) is either a complex [`Waypoint`](/web/maps/documentation/api-reference/modules/core/#waypoint) object or anything with coordinates.
+
+There are two different types of waypoints:
+- Single point waypoints - considered as a single point and seen as stops along the route.
+- Circle or soft waypoints - a point with a radius. The routing engine calculates, for the given planning criteria, the best path for the route to follow while intersecting with the waypoint circle.
+The origin and destination must be single point waypoints.
+
+In [route planning](/web/maps/documentation/guides/routing/planning-a-route), each single point waypoint results in an extra [leg section](/web/maps/documentation/guides/routing/route-sections) in the response. A circle (soft) waypoint will not generate any extra leg section or specific guidance for it.
+
+By default, a [`Waypoint`](/web/maps/documentation/api-reference/modules/core/#waypoint) is considered a single point, unless a [`radius`](/web/maps/documentation/api-reference/modules/core/#waypoint) is specified, which then transforms the waypoint into a circle (soft) waypoint.
+
+<Code>
+
+```typescript
+// Single point waypoints
+const amsterdam = [4.897070, 52.377956];
+const rotterdam = [4.462456, 51.926517];
+const hague = [4.288788, 52.078663];
+
+// Circle (soft) waypoint
+const utrecht: Waypoint = {
+  type: "Feature",
+  properties: {
+    radiusMeters: 100
+  },
+  geometry: {
+    type: "Point",
+    coordinates: [5.11518, 52.091458]
+  }
+};
+
+// A route that traverses the waypoints in the same sequence that the array is defined
+const routePlanningParams: CalculateRouteParams = {
+  locations: [amsterdam, hague, utrecht, rotterdam]
+};
+```
+
+```javascript
+// Single point waypoints
+const amsterdam = [4.897070, 52.377956];
+const rotterdam = [4.462456, 51.926517];
+const hague = [4.288788, 52.078663];
+
+// Circle (soft) waypoint
+const utrecht = {
+  type: "Feature",
+  properties: {
+    radiusMeters: 100
+  },
+  geometry: {
+    type: "Point",
+    coordinates: [5.11518, 52.091458]
+  }
+};
+
+// A route that traverses the waypoints in the same sequence that the array is defined
+const routePlanningParams = {
+  locations: [amsterdam, hague, utrecht, rotterdam]
+};
+```
+
+</Code>
+
+# Reconstruction routes (TODO?)
