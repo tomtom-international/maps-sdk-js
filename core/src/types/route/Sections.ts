@@ -159,6 +159,7 @@ export type Sections = {
     tunnel?: Section[];
     unpaved?: Section[];
     urban?: Section[];
+    carpool?: Section[];
 };
 
 /**
@@ -183,7 +184,8 @@ export const inputSectionTypes: SectionType[] = [
     "travelMode",
     "traffic",
     "urban",
-    "unpaved"
+    "unpaved",
+    "carpool"
 ];
 
 /**

@@ -24,7 +24,8 @@ export type SectionTypeAPI =
     | "TRAVEL_MODE"
     | "TUNNEL"
     | "UNPAVED"
-    | "URBAN";
+    | "URBAN"
+    | "CARPOOL";
 
 /**
  * @group Calculate Route

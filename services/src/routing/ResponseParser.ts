@@ -118,6 +118,8 @@ const getSectionMapping = (
             return { sectionType: "unpaved", mappingFunction: toSection };
         case "URBAN":
             return { sectionType: "urban", mappingFunction: toSection };
+        case "CARPOOL":
+            return { sectionType: "carpool", mappingFunction: toSection };
     }
 };
 

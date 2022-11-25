@@ -119,7 +119,7 @@ export const requestObjectsAndURLs = [
             "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
             "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
             "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved" +
-            "&hilliness=low&windingness=high" +
+            "&sectionType=carpool&hilliness=low&windingness=high" +
             "&vehicleEngineType=electric" +
             "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
             "&auxiliaryPowerInkW=1.7" +
