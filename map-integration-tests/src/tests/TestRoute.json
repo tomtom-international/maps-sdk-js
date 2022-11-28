@@ -2,7 +2,7 @@
   "type": "FeatureCollection",
   "bbox": [
     4.34732,
-    51.92233,
+    51.92113,
     4.8906,
     52.37585
   ],
@@ -1645,276 +1645,148 @@
             52.29488
           ],
           [
-            4.73574,
-            52.29475
+            4.73505,
+            52.29414
           ],
           [
-            4.73517,
-            52.29442
+            4.73458,
+            52.29382
           ],
           [
-            4.73482,
-            52.29422
+            4.73211,
+            52.29209
           ],
           [
-            4.73425,
-            52.29393
+            4.72821,
+            52.28939
           ],
           [
-            4.73366,
-            52.29369
+            4.72674,
+            52.28841
           ],
           [
-            4.73292,
-            52.29343
+            4.7261,
+            52.288
           ],
           [
-            4.73198,
-            52.29308
+            4.72599,
+            52.28793
           ],
           [
-            4.73159,
-            52.29294
-          ],
-          [
-            4.73126,
-            52.29278
-          ],
-          [
-            4.73083,
-            52.29256
-          ],
-          [
-            4.73069,
-            52.29247
-          ],
-          [
-            4.73046,
-            52.29231
-          ],
-          [
-            4.73019,
-            52.29208
-          ],
-          [
-            4.7299,
-            52.29179
-          ],
-          [
-            4.7293,
-            52.29102
-          ],
-          [
-            4.72917,
-            52.29088
-          ],
-          [
-            4.72908,
-            52.29076
-          ],
-          [
-            4.72887,
-            52.29052
-          ],
-          [
-            4.72853,
-            52.29015
-          ],
-          [
-            4.72723,
-            52.28914
-          ],
-          [
-            4.72618,
-            52.28837
-          ],
-          [
-            4.72612,
-            52.28832
-          ],
-          [
-            4.72586,
-            52.28813
-          ],
-          [
-            4.72574,
-            52.28806
-          ],
-          [
-            4.72564,
-            52.28799
-          ],
-          [
-            4.72552,
-            52.28791
-          ],
-          [
-            4.72534,
+            4.72577,
             52.28778
           ],
           [
-            4.72506,
-            52.2876
+            4.7256,
+            52.28765
           ],
           [
-            4.72459,
-            52.28725
+            4.7252,
+            52.28735
+          ],
+          [
+            4.72498,
+            52.28717
+          ],
+          [
+            4.72455,
+            52.28687
           ],
           [
             4.72412,
-            52.28692
+            52.28657
           ],
           [
-            4.72259,
-            52.28588
+            4.72406,
+            52.28653
           ],
           [
-            4.72174,
-            52.28528
+            4.71995,
+            52.28365
           ],
           [
-            4.72131,
-            52.28495
-          ],
-          [
-            4.7212,
-            52.28487
-          ],
-          [
-            4.72032,
-            52.28427
-          ],
-          [
-            4.71937,
-            52.28358
-          ],
-          [
-            4.71918,
+            4.71963,
             52.28344
           ],
           [
-            4.71913,
-            52.28341
+            4.71944,
+            52.2833
           ],
           [
-            4.71901,
-            52.28332
-          ],
-          [
-            4.71892,
+            4.71938,
             52.28326
           ],
           [
-            4.71815,
-            52.28273
+            4.71928,
+            52.28318
           ],
           [
-            4.71708,
-            52.28199
+            4.71919,
+            52.28312
           ],
           [
-            4.71562,
-            52.28101
+            4.71894,
+            52.28294
           ],
           [
-            4.71504,
-            52.28058
+            4.71744,
+            52.28191
           ],
           [
-            4.71493,
-            52.2805
+            4.71697,
+            52.28158
           ],
           [
-            4.71473,
-            52.28035
+            4.71587,
+            52.28083
           ],
           [
-            4.71459,
-            52.28025
+            4.71488,
+            52.28013
           ],
           [
-            4.71436,
-            52.28009
+            4.71448,
+            52.27986
           ],
           [
-            4.71415,
-            52.27997
+            4.71243,
+            52.27842
           ],
           [
-            4.71327,
-            52.27938
+            4.70828,
+            52.27552
           ],
           [
-            4.71212,
-            52.27858
-          ],
-          [
-            4.71168,
-            52.27828
-          ],
-          [
-            4.70856,
-            52.27607
-          ],
-          [
-            4.70816,
-            52.27576
-          ],
-          [
-            4.70665,
-            52.2747
-          ],
-          [
-            4.70417,
-            52.27301
-          ],
-          [
-            4.70409,
+            4.70459,
             52.27295
           ],
           [
-            4.70327,
-            52.27237
+            4.70379,
+            52.27239
           ],
           [
-            4.70313,
-            52.27228
+            4.70355,
+            52.27223
           ],
           [
-            4.70305,
-            52.27221
+            4.70344,
+            52.27214
+          ],
+          [
+            4.70334,
+            52.27208
           ],
           [
             4.70215,
-            52.27151
-          ],
-          [
-            4.70209,
-            52.27147
-          ],
-          [
-            4.70177,
             52.27124
           ],
           [
-            4.70099,
-            52.27069
+            4.69992,
+            52.26969
           ],
           [
-            4.70008,
-            52.27005
-          ],
-          [
-            4.6998,
-            52.26982
-          ],
-          [
-            4.69948,
-            52.26953
-          ],
-          [
-            4.69901,
-            52.26915
+            4.69903,
+            52.26909
           ],
           [
             4.69878,
@@ -4433,164 +4305,296 @@
             51.92901
           ],
           [
-            4.45512,
-            51.92908
+            4.455,
+            51.92878
           ],
           [
-            4.45528,
-            51.92913
+            4.45502,
+            51.92871
           ],
           [
-            4.45548,
-            51.9292
+            4.45502,
+            51.92866
           ],
           [
-            4.45584,
-            51.92931
+            4.455,
+            51.92852
           ],
           [
-            4.45635,
-            51.92947
+            4.45489,
+            51.92816
           ],
           [
-            4.45651,
-            51.92952
+            4.45493,
+            51.92809
           ],
           [
-            4.45668,
-            51.92957
+            4.4546,
+            51.9269
           ],
           [
-            4.45816,
-            51.93007
+            4.45452,
+            51.92653
           ],
           [
-            4.45847,
-            51.93018
+            4.45438,
+            51.92589
           ],
           [
-            4.45863,
-            51.92998
+            4.45435,
+            51.92578
           ],
           [
-            4.45895,
-            51.92962
+            4.45434,
+            51.92574
           ],
           [
-            4.45942,
-            51.92907
+            4.45435,
+            51.92571
           ],
           [
-            4.45948,
-            51.929
+            4.45436,
+            51.92561
           ],
           [
-            4.4597,
-            51.92873
+            4.45437,
+            51.92555
           ],
           [
-            4.46015,
-            51.92822
+            4.45442,
+            51.9254
           ],
           [
-            4.46033,
-            51.92801
+            4.45452,
+            51.92503
+          ],
+          [
+            4.45478,
+            51.92414
+          ],
+          [
+            4.45482,
+            51.92389
+          ],
+          [
+            4.45489,
+            51.92347
+          ],
+          [
+            4.45493,
+            51.92323
+          ],
+          [
+            4.45495,
+            51.92318
+          ],
+          [
+            4.45496,
+            51.92314
+          ],
+          [
+            4.45503,
+            51.9227
+          ],
+          [
+            4.45508,
+            51.92241
+          ],
+          [
+            4.4551,
+            51.9223
+          ],
+          [
+            4.45511,
+            51.92203
+          ],
+          [
+            4.45511,
+            51.92188
+          ],
+          [
+            4.45506,
+            51.92161
+          ],
+          [
+            4.45503,
+            51.92139
+          ],
+          [
+            4.455,
+            51.92139
+          ],
+          [
+            4.45494,
+            51.92139
+          ],
+          [
+            4.45494,
+            51.92139
+          ],
+          [
+            4.45489,
+            51.92137
+          ],
+          [
+            4.45485,
+            51.92135
+          ],
+          [
+            4.45482,
+            51.92133
+          ],
+          [
+            4.4548,
+            51.92129
+          ],
+          [
+            4.4548,
+            51.92126
+          ],
+          [
+            4.4548,
+            51.92123
+          ],
+          [
+            4.45481,
+            51.92121
+          ],
+          [
+            4.45482,
+            51.9212
+          ],
+          [
+            4.45485,
+            51.92117
+          ],
+          [
+            4.4549,
+            51.92115
+          ],
+          [
+            4.45496,
+            51.92113
+          ],
+          [
+            4.455,
+            51.92113
+          ],
+          [
+            4.45506,
+            51.92114
+          ],
+          [
+            4.45511,
+            51.92115
+          ],
+          [
+            4.45515,
+            51.92117
+          ],
+          [
+            4.45518,
+            51.92119
+          ],
+          [
+            4.45521,
+            51.92123
+          ],
+          [
+            4.45539,
+            51.92127
+          ],
+          [
+            4.45572,
+            51.92131
+          ],
+          [
+            4.45581,
+            51.92132
+          ],
+          [
+            4.45609,
+            51.92133
+          ],
+          [
+            4.45618,
+            51.92133
+          ],
+          [
+            4.45644,
+            51.92134
+          ],
+          [
+            4.45658,
+            51.92136
+          ],
+          [
+            4.45676,
+            51.92139
+          ],
+          [
+            4.4572,
+            51.92145
+          ],
+          [
+            4.45774,
+            51.92153
+          ],
+          [
+            4.45782,
+            51.92154
+          ],
+          [
+            4.45808,
+            51.92157
+          ],
+          [
+            4.45918,
+            51.92174
+          ],
+          [
+            4.45929,
+            51.92176
+          ],
+          [
+            4.45966,
+            51.92181
+          ],
+          [
+            4.45989,
+            51.92185
+          ],
+          [
+            4.45997,
+            51.92186
           ],
           [
             4.46045,
-            51.92787
+            51.92193
           ],
           [
-            4.46084,
-            51.92741
+            4.46093,
+            51.92201
           ],
           [
-            4.46095,
-            51.92727
+            4.46166,
+            51.92214
           ],
           [
-            4.46101,
-            51.92715
-          ],
-          [
-            4.46106,
-            51.92705
-          ],
-          [
-            4.46119,
-            51.92678
-          ],
-          [
-            4.46136,
-            51.92639
-          ],
-          [
-            4.46142,
-            51.92624
-          ],
-          [
-            4.46158,
-            51.92588
-          ],
-          [
-            4.46163,
-            51.92577
+            4.46172,
+            51.92215
           ],
           [
             4.46175,
-            51.92553
+            51.92216
           ],
           [
-            4.46174,
-            51.92547
+            4.46206,
+            51.92227
           ],
           [
-            4.46173,
-            51.92536
-          ],
-          [
-            4.46196,
-            51.92454
-          ],
-          [
-            4.46201,
-            51.92435
-          ],
-          [
-            4.46207,
-            51.92418
-          ],
-          [
-            4.46207,
-            51.92412
-          ],
-          [
-            4.4622,
-            51.92375
-          ],
-          [
-            4.46228,
-            51.92348
-          ],
-          [
-            4.46233,
-            51.92336
-          ],
-          [
-            4.46239,
-            51.92319
-          ],
-          [
-            4.46247,
-            51.92296
-          ],
-          [
-            4.46251,
-            51.92288
-          ],
-          [
-            4.46261,
-            51.92261
+            4.46237,
+            51.92238
           ],
           [
             4.46265,
@@ -4704,49 +4708,716 @@
       },
       "bbox": [
         4.34732,
-        51.92233,
+        51.92113,
         4.8906,
         52.37585
       ],
       "properties": {
         "summary": {
-          "lengthInMeters": 73070,
-          "travelTimeInSeconds": 4195,
-          "trafficDelayInSeconds": 234,
-          "trafficLengthInMeters": 5568,
-          "departureTime": "2022-11-17T13:59:53.000Z",
-          "arrivalTime": "2022-11-17T15:09:47.000Z"
+          "lengthInMeters": 73311,
+          "travelTimeInSeconds": 3685,
+          "trafficDelayInSeconds": 0,
+          "trafficLengthInMeters": 0,
+          "departureTime": "2022-11-30T13:08:51.000Z",
+          "arrivalTime": "2022-11-30T14:10:15.000Z"
         },
         "sections": {
           "leg": [
             {
               "startPointIndex": 0,
-              "endPointIndex": 1172,
+              "endPointIndex": 1173,
               "summary": {
-                "lengthInMeters": 73070,
-                "travelTimeInSeconds": 4195,
-                "trafficDelayInSeconds": 234,
-                "trafficLengthInMeters": 5568,
-                "departureTime": "2022-11-17T13:59:53.000Z",
-                "arrivalTime": "2022-11-17T15:09:47.000Z"
+                "lengthInMeters": 73311,
+                "travelTimeInSeconds": 3685,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2022-11-30T13:08:51.000Z",
+                "arrivalTime": "2022-11-30T14:10:15.000Z"
               }
+            }
+          ],
+          "urban": [
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 235
+            },
+            {
+              "startPointIndex": 624,
+              "endPointIndex": 632
+            },
+            {
+              "startPointIndex": 823,
+              "endPointIndex": 826
+            },
+            {
+              "startPointIndex": 1009,
+              "endPointIndex": 1172
+            }
+          ],
+          "tunnel": [
+            {
+              "startPointIndex": 371,
+              "endPointIndex": 380
+            },
+            {
+              "startPointIndex": 623,
+              "endPointIndex": 651
+            },
+            {
+              "startPointIndex": 1089,
+              "endPointIndex": 1095
+            }
+          ],
+          "motorway": [
+            {
+              "startPointIndex": 184,
+              "endPointIndex": 1072
+            }
+          ],
+          "country": [
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 1172,
+              "countryCodeISO3": "NLD"
             }
           ],
           "travelMode": [
             {
               "startPointIndex": 0,
-              "endPointIndex": 1,
+              "endPointIndex": 1172,
               "travelMode": "car"
-            },
+            }
+          ],
+          "traffic": [
             {
               "startPointIndex": 1,
               "endPointIndex": 3,
-              "travelMode": "other"
+              "delayInSeconds": 0,
+              "effectiveSpeedInKmh": 22,
+              "simpleCategory": "ROAD_WORK",
+              "magnitudeOfDelay": "UNDEFINED",
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
             },
             {
-              "startPointIndex": 3,
-              "endPointIndex": 1171,
-              "travelMode": "car"
+              "startPointIndex": 5,
+              "endPointIndex": 20,
+              "delayInSeconds": 0,
+              "effectiveSpeedInKmh": 29,
+              "simpleCategory": "ROAD_WORK",
+              "magnitudeOfDelay": "UNDEFINED",
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 978,
+              "endPointIndex": 988,
+              "delayInSeconds": 0,
+              "effectiveSpeedInKmh": 103,
+              "simpleCategory": "OTHER",
+              "magnitudeOfDelay": "UNDEFINED",
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 13
+                  }
+                ],
+                "effectCode": 1
+              }
+            }
+          ]
+        },
+        "guidance": {
+          "instructions": [
+            {
+              "routeOffsetInMeters": 0,
+              "travelTimeInSeconds": 0,
+              "point": [
+                4.8906,
+                52.37316
+              ],
+              "pointIndex": 0,
+              "instructionType": "LOCATION_DEPARTURE",
+              "street": "Raadhuisstraat",
+              "countryCode": "NLD",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "DEPART",
+              "message": "Leave from <street>Raadhuisstraat</street>"
+            },
+            {
+              "routeOffsetInMeters": 770,
+              "travelTimeInSeconds": 149,
+              "point": [
+                4.87994,
+                52.37327
+              ],
+              "pointIndex": 40,
+              "instructionType": "TURN",
+              "street": "Tweede Bloemdwarsstraat",
+              "countryCode": "NLD",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": 90,
+              "possibleCombineWithNext": true,
+              "drivingSide": "RIGHT",
+              "maneuver": "TURN_RIGHT",
+              "message": "Turn right onto <street>Tweede Bloemdwarsstraat</street>",
+              "combinedMessage": "Turn right onto <street>Tweede Bloemdwarsstraat</street> then turn left onto <street>Bloemgracht</street>"
+            },
+            {
+              "routeOffsetInMeters": 909,
+              "travelTimeInSeconds": 205,
+              "point": [
+                4.87921,
+                52.37444
+              ],
+              "pointIndex": 45,
+              "instructionType": "TURN",
+              "street": "Bloemgracht",
+              "countryCode": "NLD",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": -90,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "TURN_LEFT",
+              "message": "Turn left onto <street>Bloemgracht</street>"
+            },
+            {
+              "routeOffsetInMeters": 1357,
+              "travelTimeInSeconds": 348,
+              "point": [
+                4.87295,
+                52.37462
+              ],
+              "pointIndex": 67,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "s105"
+              ],
+              "street": "Tweede Hugo de Grootstraat",
+              "countryCode": "NLD",
+              "junctionType": "ROUNDABOUT",
+              "turnAngleInDecimalDegrees": 0,
+              "roundaboutExitNumber": 2,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "ROUNDABOUT_CROSS",
+              "message": "At the roundabout take the <roundaboutExitNumber>second</roundaboutExitNumber> exit onto <street>Tweede Hugo de Grootstraat</street>/<roadNumber>s105</roadNumber>"
+            },
+            {
+              "routeOffsetInMeters": 3506,
+              "travelTimeInSeconds": 741,
+              "point": [
+                4.84296,
+                52.37233
+              ],
+              "pointIndex": 163,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A10",
+                "E22"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Den Haag",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": -90,
+              "possibleCombineWithNext": true,
+              "drivingSide": "RIGHT",
+              "maneuver": "TURN_LEFT",
+              "message": "Turn left onto <roadNumber>A10</roadNumber>/<roadNumber>E22</roadNumber> toward <signpostText>Den Haag</signpostText>",
+              "combinedMessage": "Turn left onto <roadNumber>A10</roadNumber>/<roadNumber>E22</roadNumber> toward <signpostText>Den Haag</signpostText> then take the <roadNumber>A10</roadNumber>/<roadNumber>E22</roadNumber> motorway"
+            },
+            {
+              "routeOffsetInMeters": 4129,
+              "travelTimeInSeconds": 783,
+              "point": [
+                4.84209,
+                52.36767
+              ],
+              "pointIndex": 184,
+              "instructionType": "ROAD_CHANGE",
+              "roadNumbers": [
+                "A10",
+                "E22"
+              ],
+              "countryCode": "NLD",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "ENTER_MOTORWAY",
+              "message": "Take the <roadNumber>A10</roadNumber>/<roadNumber>E22</roadNumber> motorway"
+            },
+            {
+              "routeOffsetInMeters": 6716,
+              "travelTimeInSeconds": 907,
+              "point": [
+                4.84091,
+                52.34451
+              ],
+              "pointIndex": 237,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": -45,
+              "possibleCombineWithNext": true,
+              "drivingSide": "RIGHT",
+              "maneuver": "MOTORWAY_EXIT_LEFT",
+              "message": "Take the left exit onto <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>",
+              "combinedMessage": "Take the left exit onto <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText> then take the <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> motorway"
+            },
+            {
+              "routeOffsetInMeters": 8302,
+              "travelTimeInSeconds": 968,
+              "point": [
+                4.82532,
+                52.33885
+              ],
+              "pointIndex": 281,
+              "instructionType": "ROAD_CHANGE",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "ENTER_MOTORWAY",
+              "message": "Take the <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> motorway"
+            },
+            {
+              "routeOffsetInMeters": 8662,
+              "travelTimeInSeconds": 981,
+              "point": [
+                4.82003,
+                52.33876
+              ],
+              "pointIndex": 286,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": 0,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "STRAIGHT",
+              "message": "Keep straight on at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 10266,
+              "travelTimeInSeconds": 1038,
+              "point": [
+                4.80051,
+                52.33181
+              ],
+              "pointIndex": 317,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": 0,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "STRAIGHT",
+              "message": "Keep straight on at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 10816,
+              "travelTimeInSeconds": 1056,
+              "point": [
+                4.79432,
+                52.32867
+              ],
+              "pointIndex": 325,
+              "instructionType": "DIRECTION_INFO",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "FOLLOW",
+              "message": "Follow <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 25112,
+              "travelTimeInSeconds": 1576,
+              "point": [
+                4.65531,
+                52.23849
+              ],
+              "pointIndex": 479,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "junctionType": "BIFURCATION",
+              "turnAngleInDecimalDegrees": -45,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "KEEP_LEFT",
+              "message": "Keep left at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 25707,
+              "travelTimeInSeconds": 1599,
+              "point": [
+                4.64971,
+                52.23439
+              ],
+              "pointIndex": 483,
+              "instructionType": "DIRECTION_INFO",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "FOLLOW",
+              "message": "Follow <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 39798,
+              "travelTimeInSeconds": 2119,
+              "point": [
+                4.51308,
+                52.1437
+              ],
+              "pointIndex": 655,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "exitNumber": "6a+7",
+              "countryCode": "NLD",
+              "signpostText": "Zoeterwoude",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": 45,
+              "possibleCombineWithNext": true,
+              "drivingSide": "RIGHT",
+              "maneuver": "TAKE_EXIT",
+              "message": "Take exit <exitNumber>6a+7</exitNumber> onto <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Zoeterwoude</signpostText>",
+              "combinedMessage": "Take exit <exitNumber>6a+7</exitNumber> onto <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Zoeterwoude</signpostText> then keep left at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Zoeterwoude-Dorp</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 40282,
+              "travelTimeInSeconds": 2139,
+              "point": [
+                4.50873,
+                52.14031
+              ],
+              "pointIndex": 666,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "exitNumber": "7",
+              "countryCode": "NLD",
+              "signpostText": "Zoeterwoude-Dorp",
+              "junctionType": "BIFURCATION",
+              "turnAngleInDecimalDegrees": -45,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "KEEP_LEFT",
+              "message": "Keep left at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Zoeterwoude-Dorp</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 41798,
+              "travelTimeInSeconds": 2197,
+              "point": [
+                4.49297,
+                52.1309
+              ],
+              "pointIndex": 687,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "junctionType": "BIFURCATION",
+              "turnAngleInDecimalDegrees": -45,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "KEEP_LEFT",
+              "message": "Keep left at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 42780,
+              "travelTimeInSeconds": 2233,
+              "point": [
+                4.48163,
+                52.12554
+              ],
+              "pointIndex": 698,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "junctionType": "BIFURCATION",
+              "turnAngleInDecimalDegrees": -45,
+              "possibleCombineWithNext": true,
+              "drivingSide": "RIGHT",
+              "maneuver": "KEEP_LEFT",
+              "message": "Keep left at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>",
+              "combinedMessage": "Keep left at <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText> then take the <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> motorway"
+            },
+            {
+              "routeOffsetInMeters": 44637,
+              "travelTimeInSeconds": 2298,
+              "point": [
+                4.46354,
+                52.11319
+              ],
+              "pointIndex": 715,
+              "instructionType": "ROAD_CHANGE",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "ENTER_MOTORWAY",
+              "message": "Take the <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> motorway"
+            },
+            {
+              "routeOffsetInMeters": 44737,
+              "travelTimeInSeconds": 2302,
+              "point": [
+                4.46263,
+                52.11248
+              ],
+              "pointIndex": 717,
+              "instructionType": "DIRECTION_INFO",
+              "roadNumbers": [
+                "A4",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "FOLLOW",
+              "message": "Follow <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 53678,
+              "travelTimeInSeconds": 2626,
+              "point": [
+                4.36958,
+                52.05714
+              ],
+              "pointIndex": 801,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Rotterdam",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": 45,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "TAKE_EXIT",
+              "message": "Take the exit onto <roadNumber>E19</roadNumber> toward <signpostText>Rotterdam</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 57029,
+              "travelTimeInSeconds": 2746,
+              "point": [
+                4.35294,
+                52.03456
+              ],
+              "pointIndex": 875,
+              "instructionType": "DIRECTION_INFO",
+              "roadNumbers": [
+                "A13",
+                "E19"
+              ],
+              "countryCode": "NLD",
+              "signpostText": "Delft",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "FOLLOW",
+              "message": "Follow <roadNumber>A13</roadNumber>/<roadNumber>E19</roadNumber> toward <signpostText>Delft</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 69372,
+              "travelTimeInSeconds": 3249,
+              "point": [
+                4.43218,
+                51.93654
+              ],
+              "pointIndex": 1025,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "A13"
+              ],
+              "exitNumber": "13",
+              "street": "Rijksweg A13",
+              "countryCode": "NLD",
+              "signpostText": "Hoek van Holland",
+              "junctionType": "BIFURCATION",
+              "turnAngleInDecimalDegrees": 45,
+              "possibleCombineWithNext": true,
+              "drivingSide": "RIGHT",
+              "maneuver": "KEEP_RIGHT",
+              "message": "Keep right at <street>Rijksweg A13</street>/<roadNumber>A13</roadNumber> toward <signpostText>Hoek van Holland</signpostText>",
+              "combinedMessage": "Keep right at <street>Rijksweg A13</street>/<roadNumber>A13</roadNumber> toward <signpostText>Hoek van Holland</signpostText> then keep left at <street>Stadhoudersviaduct</street> toward <signpostText>Centrum</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 69902,
+              "travelTimeInSeconds": 3274,
+              "point": [
+                4.43682,
+                51.93274
+              ],
+              "pointIndex": 1034,
+              "instructionType": "TURN",
+              "street": "Stadhoudersviaduct",
+              "countryCode": "NLD",
+              "signpostText": "Centrum",
+              "junctionType": "BIFURCATION",
+              "turnAngleInDecimalDegrees": -45,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "KEEP_LEFT",
+              "message": "Keep left at <street>Stadhoudersviaduct</street> toward <signpostText>Centrum</signpostText>"
+            },
+            {
+              "routeOffsetInMeters": 71290,
+              "travelTimeInSeconds": 3368,
+              "point": [
+                4.45489,
+                51.92901
+              ],
+              "pointIndex": 1072,
+              "instructionType": "TURN",
+              "street": "Van Aerssenlaan",
+              "countryCode": "NLD",
+              "junctionType": "REGULAR",
+              "turnAngleInDecimalDegrees": 90,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "TURN_RIGHT",
+              "message": "Turn right onto <street>Van Aerssenlaan</street>"
+            },
+            {
+              "routeOffsetInMeters": 72148,
+              "travelTimeInSeconds": 3487,
+              "point": [
+                4.45503,
+                51.92139
+              ],
+              "pointIndex": 1101,
+              "instructionType": "TURN",
+              "roadNumbers": [
+                "s115"
+              ],
+              "street": "Beukelsdijk",
+              "countryCode": "NLD",
+              "junctionType": "ROUNDABOUT",
+              "turnAngleInDecimalDegrees": -90,
+              "roundaboutExitNumber": 3,
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "ROUNDABOUT_LEFT",
+              "message": "At the roundabout take the <roundaboutExitNumber>third</roundaboutExitNumber> exit onto <street>Beukelsdijk</street>/<roadNumber>s115</roadNumber>"
+            },
+            {
+              "routeOffsetInMeters": 73081,
+              "travelTimeInSeconds": 3651,
+              "point": [
+                4.46742,
+                51.92236
+              ],
+              "pointIndex": 1158,
+              "instructionType": "TURN",
+              "street": "Weena",
+              "countryCode": "NLD",
+              "junctionType": "BIFURCATION",
+              "turnAngleInDecimalDegrees": 45,
+              "possibleCombineWithNext": true,
+              "drivingSide": "RIGHT",
+              "maneuver": "KEEP_RIGHT",
+              "message": "Keep right at <street>Weena</street>",
+              "combinedMessage": "Keep right at <street>Weena</street> then you have arrived at <street>Weena</street>"
+            },
+            {
+              "routeOffsetInMeters": 73311,
+              "travelTimeInSeconds": 3685,
+              "point": [
+                4.47061,
+                51.92289
+              ],
+              "pointIndex": 1172,
+              "instructionType": "LOCATION_ARRIVAL",
+              "street": "Weena",
+              "countryCode": "NLD",
+              "possibleCombineWithNext": false,
+              "drivingSide": "RIGHT",
+              "maneuver": "ARRIVE",
+              "message": "You have arrived at <street>Weena</street>"
+            }
+          ],
+          "instructionGroups": [
+            {
+              "firstInstructionIndex": 0,
+              "lastInstructionIndex": 5,
+              "groupMessage": "Leave from <street>Raadhuisstraat</street>. Continue to <street>Tweede Hugo de Grootstraat</street>/<roadNumber>s105</roadNumber> and take the <roadNumber>A10</roadNumber>/<roadNumber>E22</roadNumber> toward <signpostText>Den Haag</signpostText>",
+              "groupLengthInMeters": 6716
+            },
+            {
+              "firstInstructionIndex": 6,
+              "lastInstructionIndex": 22,
+              "groupMessage": "Take the <street>Rijksweg A13</street>/<roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber>/<roadNumber>A13</roadNumber> toward <signpostText>Rotterdam</signpostText>, <signpostText>Zoeterwoude</signpostText>, <signpostText>Zoeterwoude-Dorp</signpostText>, <signpostText>Delft</signpostText>, <signpostText>Hoek van Holland</signpostText>",
+              "groupLengthInMeters": 64574
+            },
+            {
+              "firstInstructionIndex": 23,
+              "lastInstructionIndex": 26,
+              "groupMessage": "Take the <street>Beukelsdijk</street>/<roadNumber>s115</roadNumber>. Continue to your destination at <street>Weena</street>",
+              "groupLengthInMeters": 2021
             }
           ]
         }

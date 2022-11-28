@@ -55,7 +55,7 @@ const appendThrillingParams = (urlParams: URLSearchParams, thrillingParams?: Thr
 };
 
 const appendSectionTypes = (urlParams: URLSearchParams, sectionTypes?: InputSectionTypes): void => {
-    const effectiveSectionTypes = sectionTypes == "all" ? inputSectionTypes : sectionTypes;
+    const effectiveSectionTypes = sectionTypes || inputSectionTypes;
     appendByRepeatingParamName(urlParams, "sectionType", effectiveSectionTypes);
 };
 

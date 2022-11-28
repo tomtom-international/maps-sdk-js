@@ -1,14 +1,18 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
-import { FLOW_SOURCE_ID, INCIDENTS_SOURCE_ID, VectorTilesTraffic } from "../VectorTilesTraffic";
+import {
+    VECTOR_TILES_FLOW_SOURCE_ID,
+    VECTOR_TILES_INCIDENTS_SOURCE_ID,
+    VectorTilesTraffic
+} from "../VectorTilesTraffic";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles traffic module tests", () => {
     test("Constructor with config", () => {
-        const incidentsSource = { id: INCIDENTS_SOURCE_ID };
-        const flowSource = { id: FLOW_SOURCE_ID };
+        const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
+        const flowSource = { id: VECTOR_TILES_FLOW_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(flowSource),
@@ -44,7 +48,7 @@ describe("Vector tiles traffic module tests", () => {
     });
 
     test("Constructor with no config and no flow in style", () => {
-        const incidentsSource = { id: INCIDENTS_SOURCE_ID };
+        const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(undefined),

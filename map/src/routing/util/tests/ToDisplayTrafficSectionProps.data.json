@@ -1,0 +1,84 @@
+[
+  [
+    "Moderate jam with some delay",
+    {
+      "magnitudeOfDelay": "MODERATE",
+      "delayInSeconds": 170,
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      }
+    },
+    {
+      "magnitudeOfDelay": "MODERATE",
+      "delayInSeconds": 170,
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      },
+      "iconID": "traffic_queueing_jam",
+      "title": "3 min"
+    }
+  ],
+  [
+    "Lane closed with no delay",
+    {
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 16
+          }
+        ]
+      }
+    },
+    {
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 16
+          }
+        ]
+      },
+      "iconID": "traffic_no_delay_lane_closed"
+    }
+  ],
+  [
+    "Major rain with extra jam code with big delay",
+    {
+      "magnitudeOfDelay": "MAJOR",
+      "delayInSeconds": 580,
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 19
+          },
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      }
+    },
+    {
+      "magnitudeOfDelay": "MAJOR",
+      "delayInSeconds": 580,
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 19
+          },
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      },
+      "iconID": "traffic_stationary_weather_rain",
+      "title": "10 min"
+    }
+  ]
+]

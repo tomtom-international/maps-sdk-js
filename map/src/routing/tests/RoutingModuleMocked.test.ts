@@ -1,6 +1,6 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
-import { ROUTES_SOURCE_ID, RoutingModule, WAYPOINTS_SOURCE_ID } from "../RoutingModule";
+import { ROUTE_INCIDENTS_SOURCE_ID, ROUTES_SOURCE_ID, RoutingModule, WAYPOINTS_SOURCE_ID } from "../RoutingModule";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -8,16 +8,19 @@ import { ROUTES_SOURCE_ID, RoutingModule, WAYPOINTS_SOURCE_ID } from "../Routing
 describe("Routing module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", () => {
-        const routesSource = { id: ROUTES_SOURCE_ID, setData: jest.fn() };
         const waypointsSource = { id: WAYPOINTS_SOURCE_ID, setData: jest.fn() };
+        const routesSource = { id: ROUTES_SOURCE_ID, setData: jest.fn() };
+        const incidentsSource = { id: ROUTE_INCIDENTS_SOURCE_ID, setData: jest.fn() };
         const goSDKMapMock = {
             mapLibreMap: {
                 getSource: jest
                     .fn()
-                    .mockReturnValueOnce(routesSource)
-                    .mockReturnValueOnce(routesSource)
                     .mockReturnValueOnce(waypointsSource)
-                    .mockReturnValueOnce(waypointsSource),
+                    .mockReturnValueOnce(waypointsSource)
+                    .mockReturnValueOnce(routesSource)
+                    .mockReturnValueOnce(routesSource)
+                    .mockReturnValueOnce(incidentsSource)
+                    .mockReturnValueOnce(incidentsSource),
                 getLayer: jest.fn(),
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),

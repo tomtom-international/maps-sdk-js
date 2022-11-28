@@ -2,8 +2,8 @@ import isNil from "lodash/isNil";
 import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers } from "../core";
 import { VectorTilesTrafficConfig } from ".";
 
-export const INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
-export const FLOW_SOURCE_ID = "vectorTilesFlow";
+export const VECTOR_TILES_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
+export const VECTOR_TILES_FLOW_SOURCE_ID = "vectorTilesFlow";
 
 /**
  * Vector tiles traffic module.
@@ -14,12 +14,12 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     private flow?: StyleSourceWithLayers;
 
     protected init(config?: VectorTilesTrafficConfig): void {
-        const incidentsRuntimeSource = this.mapLibreMap.getSource(INCIDENTS_SOURCE_ID);
+        const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
         if (incidentsRuntimeSource) {
             this.incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
         }
 
-        const flowRuntimeSource = this.mapLibreMap.getSource(FLOW_SOURCE_ID);
+        const flowRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_FLOW_SOURCE_ID);
         if (flowRuntimeSource) {
             this.flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
         }

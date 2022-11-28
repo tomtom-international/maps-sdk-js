@@ -41,7 +41,7 @@ export type SectionAPI = {
     magnitudeOfDelay?: number;
     effectiveSpeedInKmh?: number;
     delayInSeconds?: number;
-    tec?: TrafficIncidentTEC[];
+    tec?: TrafficIncidentTEC;
 };
 
 /**

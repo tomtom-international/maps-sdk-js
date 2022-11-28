@@ -23,9 +23,10 @@ const showRoutes = async (routes: Routes) =>
 const clearRoutes = async () => page.evaluate(() => (globalThis as GOSDKThis).routing?.clearRoutes());
 
 const getNumVisibleRouteLayers = async () => getNumVisibleLayersBySource("routes");
+const getNumVisibleIncidentLayers = async () => getNumVisibleLayersBySource("routeIncidents");
 
 const waitForRenderedRoutes = async (numRoutes: number) =>
-    waitUntilRenderedFeatures("routeLineForeground", numRoutes, 10000);
+    waitUntilRenderedFeatures(["routeLineForeground"], numRoutes, 10000);
 
 const showWaypoints = async (waypoints: WaypointLike[]) =>
     page.evaluate((inputWaypoints) => {
@@ -38,13 +39,14 @@ const clearWaypoints = async () => page.evaluate(() => (globalThis as GOSDKThis)
 const getNumVisibleWaypointLayers = async () => getNumVisibleLayersBySource("waypoints");
 
 const waitForRenderedWaypoints = async (numWaypoint: number) =>
-    waitUntilRenderedFeatures("waypointSymbols", numWaypoint, 10000);
+    waitUntilRenderedFeatures(["waypointSymbols"], numWaypoint, 10000);
 
 // (We reparse the route because it contains Date objects):
 const parsedTestRoutes = JSON.parse(JSON.stringify(testRoutes));
 
 const NUM_ROUTE_LAYERS = 2;
 const NUM_WAYPOINT_LAYERS = 2;
+const NUM_INCIDENT_LAYERS = 4;
 
 describe("Routing tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -54,27 +56,30 @@ describe("Routing tests", () => {
     });
 
     test("Show and clear flows", async () => {
-        await mapEnv.loadMap({ fitBoundsOptions: { padding: 100 }, bounds: parsedTestRoutes.bbox });
+        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox });
         await initRouting();
-
         await showRoutes(parsedTestRoutes);
         await showWaypoints([
             [4.8906, 52.37316],
             [4.47061, 51.92289]
         ]);
         await waitForMapStyleToLoad();
-        expect(await getNumVisibleRouteLayers()).toStrictEqual(NUM_ROUTE_LAYERS);
+
         expect(await getNumVisibleWaypointLayers()).toStrictEqual(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleRouteLayers()).toStrictEqual(NUM_ROUTE_LAYERS);
+        expect(await getNumVisibleIncidentLayers()).toStrictEqual(NUM_INCIDENT_LAYERS);
         await waitForRenderedRoutes(1);
         await waitForRenderedWaypoints(2);
 
         await clearRoutes();
-        expect(await getNumVisibleRouteLayers()).toStrictEqual(0);
         expect(await getNumVisibleWaypointLayers()).toStrictEqual(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleRouteLayers()).toStrictEqual(0);
+        expect(await getNumVisibleIncidentLayers()).toStrictEqual(0);
 
         await clearWaypoints();
-        expect(await getNumVisibleRouteLayers()).toStrictEqual(0);
         expect(await getNumVisibleWaypointLayers()).toStrictEqual(0);
+        expect(await getNumVisibleRouteLayers()).toStrictEqual(0);
+        expect(await getNumVisibleIncidentLayers()).toStrictEqual(0);
 
         await showWaypoints([[4.8906, 52.37316]]);
         expect(await getNumVisibleWaypointLayers()).toStrictEqual(NUM_WAYPOINT_LAYERS);

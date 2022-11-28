@@ -1,5 +1,5 @@
 import { Guidance } from "./Guidance";
-import { Sections } from "./Sections";
+import { SectionsProps } from "./Sections";
 import { Summary } from "./Summary";
 import { Feature, FeatureCollection, LineString } from "geojson";
 
@@ -29,7 +29,7 @@ export type TravelMode = "car" | "truck" | "taxi" | "bus" | "van" | "motorcycle"
  */
 export type RouteProps = {
     summary: Summary;
-    sections: Sections;
+    sections: SectionsProps;
     guidance?: Guidance;
 };
 

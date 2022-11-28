@@ -1,0 +1,112 @@
+[
+  [
+    "Undefined (from object itself) delay magnitude jam",
+    {
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      }
+    },
+    "traffic_no_delay_jam"
+  ],
+  [
+    "Undefined (via code) delay magnitude jam",
+    {
+      "magnitudeOfDelay": "UNDEFINED",
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      }
+    },
+    "traffic_no_delay_jam"
+  ],
+  [
+    "Unknown delay magnitude jam",
+    {
+      "magnitudeOfDelay": "UNKNOWN",
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      }
+    },
+    "traffic_no_delay_jam"
+  ],
+  [
+    "Minor jam",
+    {
+      "magnitudeOfDelay": "MINOR",
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 1
+          }
+        ]
+      }
+    },
+    "traffic_slow_jam"
+  ],
+  [
+    "Major danger",
+    {
+      "magnitudeOfDelay": "MAJOR",
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 9
+          }
+        ]
+      }
+    },
+    "traffic_stationary_danger"
+  ],
+  [
+    "Road closed with minor magnitude",
+    {
+      "magnitudeOfDelay": "MINOR",
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 5
+          }
+        ]
+      }
+    },
+    "traffic_road_closed"
+  ],
+  [
+    "Road closed with major magnitude",
+    {
+      "magnitudeOfDelay": "MAJOR",
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 5
+          }
+        ]
+      }
+    },
+    "traffic_road_closed"
+  ],
+  [
+    "Road closed with undefined magnitude",
+    {
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 5
+          }
+        ]
+      }
+    },
+    "traffic_road_closed"
+  ]
+]

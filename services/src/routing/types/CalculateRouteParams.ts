@@ -51,10 +51,11 @@ export type InputSectionType = typeof inputSectionTypes[number];
  * * tollVignette: sections which require a toll vignette to be present.
  * * country: countries the route has parts in.
  * * travelMode: sections in relation to the request parameter 'travelMode'.
+ * @default All of them (If you want none, pass an empty array).
  * @group Calculate Route
  * @category Types
  */
-export type InputSectionTypes = "all" | InputSectionType[];
+export type InputSectionTypes = InputSectionType[];
 
 /**
  * Basic low/normal/high option.
@@ -86,11 +87,13 @@ export type ThrillingParams = {
      */
     windingness?: LNH;
 };
+
 /**
  * @group Calculate Route
  * @category Variables
  */
 export const instructionsTypes = ["coded", "text", "tagged"] as const;
+
 /**
  * Basic coded/text/tagged values.
  * @group Calculate Route

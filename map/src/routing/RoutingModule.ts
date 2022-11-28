@@ -1,6 +1,6 @@
-import { Routes, Waypoints } from "@anw/go-sdk-js/core";
+import { Routes, TrafficSectionProps, Waypoints } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
-import { routeLineBackgroundSpec, routeLineForegroundSpec } from "./layers/routeLineLayers";
+import { routeLineBackgroundSpec, routeLineForegroundSpec } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
@@ -11,30 +11,49 @@ import {
 } from "./layers/waypointLayers";
 import { toDisplayWaypoints } from "./util/WaypointUtils";
 import { PlanningWaypoint } from "./types/PlanningWaypoint";
+import {
+    routeIncidentsBGLine,
+    routeIncidentsDashedLine,
+    routeIncidentsPatternLine,
+    routeIncidentsPointSymbol
+} from "./layers/routeTrafficSectionLayers";
+import { RoutingModuleConfig } from "./types/RouteModuleConfig";
+import { buildRouteSections } from "./util/RouteSections";
+import { toDisplayTrafficSectionProps } from "./util/DisplayTrafficSectionProps";
+import { RouteSections } from "./types/RouteSections";
 
-export const ROUTES_SOURCE_ID = "routes";
 export const WAYPOINTS_SOURCE_ID = "waypoints";
+export const ROUTES_SOURCE_ID = "routes";
+export const ROUTE_INCIDENTS_SOURCE_ID = "routeIncidents";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
+const WAYPOINT_SYMBOLS_LAYER_ID = "waypointSymbols";
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
  * @group MapRoutes
  * @category Functions
  */
-export class RoutingModule extends AbstractMapModule {
-    private routes?: GeoJSONSourceWithLayers<Routes>;
+export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     private waypoints?: GeoJSONSourceWithLayers<Waypoints>;
+    private routeLines?: GeoJSONSourceWithLayers<Routes>;
+    private incidents?: GeoJSONSourceWithLayers<RouteSections<TrafficSectionProps>>;
 
     protected init(): void {
-        this.routes = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, [
+        this.waypoints = new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
+            { ...waypointSymbols, id: WAYPOINT_SYMBOLS_LAYER_ID },
+            { ...waypointLabels, id: "waypointLabels" }
+        ]);
+        this.routeLines = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, [
             { ...routeLineBackgroundSpec, id: "routeLineBackground", beforeID: LAYER_TO_RENDER_LINES_UNDER },
             { ...routeLineForegroundSpec, id: "routeLineForeground", beforeID: LAYER_TO_RENDER_LINES_UNDER }
         ]);
-        this.waypoints = new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
-            { ...waypointSymbols, id: "waypointSymbols" },
-            { ...waypointLabels, id: "waypointLabels" }
+        this.incidents = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_INCIDENTS_SOURCE_ID, [
+            { ...routeIncidentsBGLine, id: "routeIncidentsBackground", beforeID: LAYER_TO_RENDER_LINES_UNDER },
+            { ...routeIncidentsDashedLine, id: "routeIncidentsDashedLines", beforeID: LAYER_TO_RENDER_LINES_UNDER },
+            { ...routeIncidentsPatternLine, id: "routeIncidentsPatternLines", beforeID: LAYER_TO_RENDER_LINES_UNDER },
+            { ...routeIncidentsPointSymbol, id: "routeIncidentSymbols", beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
         ]);
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
@@ -55,7 +74,10 @@ export class RoutingModule extends AbstractMapModule {
      * @param routes The routes to show.
      */
     showRoutes(routes: Routes) {
-        this.callWhenMapReady(() => this.routes?.show(routes));
+        this.callWhenMapReady(() => {
+            this.routeLines?.show(routes);
+            this.incidents?.show(buildRouteSections(routes, "traffic", toDisplayTrafficSectionProps));
+        });
     }
 
     /**
@@ -63,7 +85,10 @@ export class RoutingModule extends AbstractMapModule {
      * * If nothing was shown before, nothing happens.
      */
     clearRoutes() {
-        this.callWhenMapReady(() => this.routes?.clear());
+        this.callWhenMapReady(() => {
+            this.routeLines?.clear();
+            this.incidents?.clear();
+        });
     }
 
     /**

@@ -9,7 +9,37 @@ export const requestObjectsAndURLs = [
                 [4.49015, 52.16109]
             ]
         },
+        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
+            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+    ],
+    [
+        "Default A-B route with no sections",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            commonBaseURL: "https://api.tomtom.com",
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109]
+            ],
+            sectionTypes: []
+        },
         "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY"
+    ],
+    [
+        "Default A-B route with specific sections",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            commonBaseURL: "https://api.tomtom.com",
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109]
+            ],
+            sectionTypes: ["traffic", "ferry"]
+        },
+        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+            "&sectionType=traffic&sectionType=ferry"
     ],
     [
         "Default A-B-C route where B is a GeoJSON point feature",
@@ -28,7 +58,10 @@ export const requestObjectsAndURLs = [
                 [4.47059, 51.92291]
             ]
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?key=GLOBAL_API_KEY"
+        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?key=GLOBAL_API_KEY" +
+            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
+            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
     ],
     [
         "Default A-s-C route where s is a soft(circle) waypoint.",
@@ -50,7 +83,10 @@ export const requestObjectsAndURLs = [
                 [4.47059, 51.92291]
             ]
         },
-        "https://api-test.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:circle(52.16109,4.49015,20):51.92291,4.47059/json?key=API_KEY_X"
+        "https://api-test.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:circle(52.16109,4.49015,20):51.92291,4.47059/json?key=API_KEY_X" +
+            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
+            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
     ],
     [
         "A-B route with many optional parameters set to non default values and electric vehicle params",
@@ -70,7 +106,6 @@ export const requestObjectsAndURLs = [
             maxAlternatives: 2,
             routeRepresentation: "summaryOnly",
             routeType: "thrilling",
-            sectionTypes: "all",
             thrillingParams: {
                 hilliness: "low",
                 windingness: "high"
@@ -165,6 +200,9 @@ export const requestObjectsAndURLs = [
         },
         "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
             "&departAt=2022-09-16T15%3A48%3A15.400Z" +
+            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
+            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
             "&accelerationEfficiency=0.33&decelerationEfficiency=0.83&uphillEfficiency=0.27&downhillEfficiency=0.51" +
             "&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5" +
             "&auxiliaryPowerInLitersPerHour=0.2" +
@@ -205,6 +243,9 @@ export const requestObjectsAndURLs = [
             }
         },
         "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
+            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
             "&vehicleEngineType=electric" +
             "&accelerationEfficiency=0.66&decelerationEfficiency=0.91&uphillEfficiency=0.74&downhillEfficiency=0.73" +
             "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +

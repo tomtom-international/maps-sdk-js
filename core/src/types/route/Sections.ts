@@ -2,11 +2,11 @@ import { TravelMode } from "./Route";
 import { Summary } from "./Summary";
 
 /**
- * Base type for all route sections.
+ * Base type for all route section properties.
  * @group Route
  * @category Types
  */
-export type Section = {
+export type SectionProps = {
     /**
      * The route path point index where this section starts.
      */
@@ -22,7 +22,7 @@ export type Section = {
  * @group Route
  * @category Types
  */
-export type CountrySection = Section & {
+export type CountrySectionProps = SectionProps & {
     /**
      * It provides the 3-character {@link https://gist.github.com/tadast/8827699 ISO 3166-1 alpha-3} country code in which the section is located.
      */
@@ -34,7 +34,7 @@ export type CountrySection = Section & {
  * @group Route
  * @category Types
  */
-export type TravelModeSection = Section & {
+export type TravelModeSectionProps = SectionProps & {
     /**
      * The travel mode for this section.
      */
@@ -64,9 +64,9 @@ export type CauseTEC = {
     /**
      * Main cause code for traffic incident based on TPEG2-TEC standard.
      */
-    mainCauseCode?: number;
+    mainCauseCode: number;
     /**
-     * Sub cause code for traffic incident based on TPEG2-TEC standard.
+     * Optional sub cause code for traffic incident based on TPEG2-TEC standard.
      */
     subCauseCode?: number;
 };
@@ -80,11 +80,11 @@ export type TrafficIncidentTEC = {
     /**
      * The effect on the traffic flow. For traffic incident based on TPEG2-TEC standard.
      */
-    effectCode?: number;
+    effectCode: number;
     /**
      *  List of cause elements that caused problems in traffic. For traffic incident based on TPEG2-TEC standard
      */
-    causes?: CauseTEC[];
+    causes: [CauseTEC, ...CauseTEC[]];
 };
 
 /**
@@ -92,15 +92,19 @@ export type TrafficIncidentTEC = {
  * @group Route
  * @category Types
  */
-export type TrafficSection = Section & {
+export type TrafficSectionProps = SectionProps & {
     /**
      * The simple category for the traffic incident.
      */
-    simpleCategory?: TrafficCategory;
+    simpleCategory: TrafficCategory;
     /**
      * The magnitude of the delay for the traffic incident.
      */
-    magnitudeOfDelay?: DelayMagnitude;
+    magnitudeOfDelay: DelayMagnitude;
+    /**
+     * Tec information about this traffic incident based on TPEG2-TEC standard.
+     */
+    tec: TrafficIncidentTEC;
     /**
      * The effective speed in KM/H through this traffic incident, if known.
      */
@@ -109,10 +113,6 @@ export type TrafficSection = Section & {
      * The delay in seconds for this traffic incident, if known.
      */
     delayInSeconds?: number;
-    /**
-     * Tec information about this traffic incident based on TPEG2-TEC standard.
-     */
-    tec?: TrafficIncidentTEC[];
 };
 
 /**
@@ -123,7 +123,7 @@ export type TrafficSection = Section & {
  * @group Route
  * @category Types
  */
-export type LegSection = Omit<Section, "startPointIndex" | "endPointIndex"> & {
+export type LegSectionProps = Omit<SectionProps, "startPointIndex" | "endPointIndex"> & {
     /**
      * The route path point index where this section starts. Only available if the route polyline is also available.
      */
@@ -145,28 +145,28 @@ export type LegSection = Omit<Section, "startPointIndex" | "endPointIndex"> & {
  * @group Route
  * @category Types
  */
-export type Sections = {
-    leg: LegSection[];
-    carTrain?: Section[];
-    country?: CountrySection[];
-    ferry?: Section[];
-    motorway?: Section[];
-    pedestrian?: Section[];
-    tollRoad?: Section[];
-    tollVignette?: CountrySection[];
-    traffic?: TrafficSection[];
-    travelMode?: TravelModeSection[];
-    tunnel?: Section[];
-    unpaved?: Section[];
-    urban?: Section[];
-    carpool?: Section[];
+export type SectionsProps = {
+    leg: LegSectionProps[];
+    carTrain?: SectionProps[];
+    country?: CountrySectionProps[];
+    ferry?: SectionProps[];
+    motorway?: SectionProps[];
+    pedestrian?: SectionProps[];
+    tollRoad?: SectionProps[];
+    tollVignette?: CountrySectionProps[];
+    traffic?: TrafficSectionProps[];
+    travelMode?: TravelModeSectionProps[];
+    tunnel?: SectionProps[];
+    unpaved?: SectionProps[];
+    urban?: SectionProps[];
+    carpool?: SectionProps[];
 };
 
 /**
  * @group Route
  * @category Types
  */
-export type SectionType = keyof Sections;
+export type SectionType = keyof SectionsProps;
 
 /**
  * @group Route

@@ -14,7 +14,10 @@ describe("Using customize obj", () => {
                 })
                 .toString()
         ).toStrictEqual(
-            "https://api.tomtom.com/routing/1/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?key=API_KEY"
+            "https://api.tomtom.com/routing/1/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?key=API_KEY" +
+                "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
+                "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
         );
     });
 });

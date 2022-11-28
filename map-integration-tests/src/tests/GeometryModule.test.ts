@@ -33,7 +33,7 @@ const showGeometry = async (geometry: GeometryDataResponse) =>
     );
 
 const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
-    waitUntilRenderedFeatures("PLACE_GEOMETRY_FILL", numFeatures, 3000, position);
+    waitUntilRenderedFeatures(["PLACE_GEOMETRY_FILL"], numFeatures, 3000, position);
 
 describe("Geometry integration tests", () => {
     const mapEnv = new MapIntegrationTestEnv();

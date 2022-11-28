@@ -1,4 +1,11 @@
-import { inputSectionTypes, LegSection, Section, Sections, SectionType, Summary } from "@anw/go-sdk-js/core";
+import {
+    inputSectionTypes,
+    LegSectionProps,
+    SectionProps,
+    SectionsProps,
+    SectionType,
+    Summary
+} from "@anw/go-sdk-js/core";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { calculateRoute } from "../CalculateRoute";
 
@@ -12,13 +19,13 @@ const assertSummaryBasics = (summary: Summary): void => {
     expect(summary.arrivalTime).toBeDefined();
 };
 
-const assertLegSectionBasics = (section: LegSection): void => {
+const assertLegSectionBasics = (section: LegSectionProps): void => {
     expect(section.startPointIndex).toBeDefined();
     expect(section.endPointIndex).toBeDefined();
     assertSummaryBasics(section.summary);
 };
 
-const assertSectionBasics = (section: Section): void => {
+const assertSectionBasics = (section: SectionProps): void => {
     expect(section.startPointIndex).toBeDefined();
     expect(section.endPointIndex).toBeDefined();
 };
@@ -27,7 +34,7 @@ describe("Calculate route integration tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
     test(
-        "Route from Kandersteg to Dover via Lötschen Pass with different " +
+        "Route from Kandersteg to Dover via Lötschen Pass with specified " +
             "sectionTypes and combustion vehicle parameters",
         async () => {
             const testInputSectionTypes: SectionType[] = [
@@ -84,7 +91,7 @@ describe("Calculate route integration tests", () => {
             for (const inputSectionType of testInputSectionTypes) {
                 expect(routeProperties.sections[inputSectionType]?.length).toBeGreaterThan(0);
                 for (const section of routeProperties.sections[inputSectionType] || []) {
-                    assertSectionBasics(section as Section);
+                    assertSectionBasics(section as SectionProps);
                 }
             }
             // Asserting the lack of unrequested sections in the response:
@@ -164,7 +171,7 @@ describe("Calculate route integration tests", () => {
             instructionsType: "tagged",
             maxAlternatives: 2,
             routeType: "thrilling",
-            sectionTypes: "all",
+            sectionTypes: ["traffic", "ferry", "tollRoad"],
             travelMode: "motorcycle",
             thrillingParams: {
                 hilliness: "low",
@@ -182,12 +189,12 @@ describe("Calculate route integration tests", () => {
             const routeProperties = routeFeature.properties;
             assertSummaryBasics(routeProperties.summary);
             expect(routeProperties.guidance).toBeDefined();
-            const sections: Sections = routeProperties.sections;
+            const sections: SectionsProps = routeProperties.sections;
             expect(sections.leg).toHaveLength(1);
             assertLegSectionBasics(sections.leg[0]);
             for (const sectionArray of Object.values(sections)) {
                 for (const section of sectionArray) {
-                    assertSectionBasics(section as Section);
+                    assertSectionBasics(section as SectionProps);
                 }
             }
         }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { inputSectionTypes, SectionType } from "@anw/go-sdk-js/core";
 import { geometrySchema, hasLngLatSchema } from "../shared/GeometriesSchema";
 import { instructionsTypes } from "./types/CalculateRouteParams";
 import { vehicleParametersSchema } from "./VehicleSchema";
@@ -17,25 +18,7 @@ const calculateRouteRequestOptional = z
         maxAlternatives: z.number().min(1).max(5),
         routeRepresentation: z.enum(["polyline", "summaryOnly"]),
         routeType: z.string(),
-        sectionTypes: z.union([
-            z.literal("all"),
-            z.array(
-                z.enum([
-                    "carTrain",
-                    "ferry",
-                    "tunnel",
-                    "motorway",
-                    "pedestrian",
-                    "tollRoad",
-                    "tollVignette",
-                    "country",
-                    "travelMode",
-                    "traffic",
-                    "urban",
-                    "unpaved"
-                ])
-            )
-        ]),
+        sectionTypes: z.array(z.enum(inputSectionTypes as [SectionType, ...SectionType[]])),
         thrillingParams: z.object({
             hilliness: z.enum(["low", "normal", "high"]).optional(),
             windingness: z.enum(["low", "normal", "high"]).optional()

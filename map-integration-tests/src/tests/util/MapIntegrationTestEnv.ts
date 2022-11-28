@@ -37,24 +37,24 @@ export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerS
 export const getNumVisibleLayersBySource = async (sourceID: string): Promise<number> =>
     (await getVisibleLayersBySource(sourceID))?.length;
 
-export const queryRenderedFeatures = async (layerID: string, lngLat?: Position): Promise<MapGeoJSONFeature[]> =>
+export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Position): Promise<MapGeoJSONFeature[]> =>
     page.evaluate(
-        (inputLayerID, inputLngLat) => {
+        (inputLayerIDs, inputLngLat) => {
             const mapLibreMap = (globalThis as GOSDKThis).mapLibreMap;
             return mapLibreMap.queryRenderedFeatures(
                 inputLngLat && mapLibreMap.project(inputLngLat as [number, number]),
                 {
-                    layers: [inputLayerID]
+                    layers: inputLayerIDs
                 }
             );
         },
-        layerID,
+        layerIDs,
         // @ts-ignore
         lngLat
     );
 
 export const waitUntilRenderedFeatures = async (
-    layerID: string,
+    layerIDs: string[],
     expectNumFeatures: number,
     timeoutMS: number,
     lngLat?: Position
@@ -64,11 +64,11 @@ export const waitUntilRenderedFeatures = async (
         async (): Promise<MapGeoJSONFeature[]> => {
             while (currentFeatures.length !== expectNumFeatures) {
                 await waitForTimeout(500);
-                currentFeatures = await queryRenderedFeatures(layerID, lngLat);
+                currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
             }
             return currentFeatures;
         },
-        `Did not get the expected map features for layer ${layerID}. 
+        `Did not get the expected map features for layers ${layerIDs}. 
         Expected is ${expectNumFeatures} but got ${currentFeatures.length}`,
         timeoutMS
     );

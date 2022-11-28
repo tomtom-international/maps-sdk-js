@@ -1,5 +1,6 @@
 import { HasBBox, Places } from "@anw/go-sdk-js/core";
 import { PlaceDisplayProps } from "map";
+import { MapGeoJSONFeature } from "maplibre-gl";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
@@ -8,7 +9,6 @@ import {
 } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
-import { MapGeoJSONFeature, LngLatBoundsLike } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
 
 const initPlaces = async () =>
@@ -25,14 +25,15 @@ const showPlaces = async (places: Places) =>
 
 const getBBox = async (places: HasBBox) =>
     page.evaluate(
-        (inputPlaces) => (globalThis as GOSDKThis).GOSDKCore.bboxFromGeoJSON(inputPlaces) as LngLatBoundsLike,
+        (inputPlaces) => (globalThis as GOSDKThis).GOSDKCore.bboxFromGeoJSON(inputPlaces),
         // @ts-ignore
         places
     );
 
 const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
 
-const waitForRenderedPlaces = async (numPlaces: number) => waitUntilRenderedFeatures("placesSymbols", numPlaces, 20000);
+const waitForRenderedPlaces = async (numPlaces: number) =>
+    waitUntilRenderedFeatures(["placesSymbols"], numPlaces, 20000);
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource("places");
 

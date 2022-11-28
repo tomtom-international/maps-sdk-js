@@ -1,17 +1,19 @@
 import {
     bboxFromGeoJSON,
-    CountrySection,
+    CountrySectionProps,
     DelayMagnitude,
     Guidance,
-    LegSection,
+    LegSectionProps,
     Route,
-    Section,
-    Sections,
+    SectionProps,
+    SectionsProps,
     SectionType,
     Summary,
-    TrafficSection,
+    TrafficCategory,
+    TrafficIncidentTEC,
+    TrafficSectionProps,
     TravelMode,
-    TravelModeSection
+    TravelModeSectionProps
 } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
 import { LineString } from "geojson";
@@ -32,8 +34,8 @@ const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
     )
 });
 
-const parseLegSections = (apiLegs: LegAPI[]): LegSection[] =>
-    apiLegs.reduce<LegSection[]>((accumulatedParsedLegs, nextApiLeg, currentIndex) => {
+const parseLegSectionProps = (apiLegs: LegAPI[]): LegSectionProps[] =>
+    apiLegs.reduce<LegSectionProps[]>((accumulatedParsedLegs, nextApiLeg, currentIndex) => {
         const lastLegEndPointIndex = currentIndex === 0 ? 0 : accumulatedParsedLegs[currentIndex - 1]?.endPointIndex;
         const endPointIndex = !isNil(lastLegEndPointIndex) && lastLegEndPointIndex + nextApiLeg.points?.length;
         accumulatedParsedLegs.push({
@@ -44,18 +46,18 @@ const parseLegSections = (apiLegs: LegAPI[]): LegSection[] =>
         return accumulatedParsedLegs;
     }, []);
 
-const toSection = (apiSection: SectionAPI): Section => ({
+const toSectionProps = (apiSection: SectionAPI): SectionProps => ({
     startPointIndex: apiSection.startPointIndex,
     endPointIndex: apiSection.endPointIndex
 });
 
-const toCountrySection = (apiSection: SectionAPI): CountrySection => ({
-    ...toSection(apiSection),
+const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => ({
+    ...toSectionProps(apiSection),
     countryCodeISO3: apiSection.countryCode as string
 });
 
-const toTravelModeSection = (apiSection: SectionAPI): TravelModeSection => ({
-    ...toSection(apiSection),
+const toTravelModeSectionProps = (apiSection: SectionAPI): TravelModeSectionProps => ({
+    ...toSectionProps(apiSection),
     travelMode: apiSection.travelMode as TravelMode
 });
 
@@ -74,16 +76,16 @@ const parseMagnitudeOfDelay = (apiDelayMagnitude?: number): DelayMagnitude => {
     }
 };
 
-const toTrafficSection = (apiSection: SectionAPI): TrafficSection => ({
-    ...toSection(apiSection),
+const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => ({
+    ...toSectionProps(apiSection),
     delayInSeconds: apiSection.delayInSeconds,
     effectiveSpeedInKmh: apiSection.effectiveSpeedInKmh,
-    simpleCategory: apiSection.simpleCategory,
+    simpleCategory: apiSection.simpleCategory as TrafficCategory,
     magnitudeOfDelay: parseMagnitudeOfDelay(apiSection.magnitudeOfDelay),
-    tec: apiSection.tec
+    tec: apiSection.tec as TrafficIncidentTEC
 });
 
-const ensureInit = <S extends Section>(sectionType: SectionType, result: Sections): S[] => {
+const ensureInit = <S extends SectionProps>(sectionType: SectionType, result: SectionsProps): S[] => {
     if (!result[sectionType]) {
         result[sectionType] = [];
     }
@@ -92,49 +94,49 @@ const ensureInit = <S extends Section>(sectionType: SectionType, result: Section
 
 const getSectionMapping = (
     apiSection: SectionAPI
-): { sectionType: SectionType; mappingFunction: (apiSection: SectionAPI) => Section } => {
+): { sectionType: SectionType; mappingFunction: (apiSection: SectionAPI) => SectionProps } => {
     switch (apiSection.sectionType) {
         case "CAR_TRAIN":
-            return { sectionType: "carTrain", mappingFunction: toSection };
+            return { sectionType: "carTrain", mappingFunction: toSectionProps };
         case "COUNTRY":
-            return { sectionType: "country", mappingFunction: toCountrySection };
+            return { sectionType: "country", mappingFunction: toCountrySectionProps };
         case "FERRY":
-            return { sectionType: "ferry", mappingFunction: toSection };
+            return { sectionType: "ferry", mappingFunction: toSectionProps };
         case "MOTORWAY":
-            return { sectionType: "motorway", mappingFunction: toSection };
+            return { sectionType: "motorway", mappingFunction: toSectionProps };
         case "PEDESTRIAN":
-            return { sectionType: "pedestrian", mappingFunction: toSection };
+            return { sectionType: "pedestrian", mappingFunction: toSectionProps };
         case "TOLL_ROAD":
-            return { sectionType: "tollRoad", mappingFunction: toSection };
+            return { sectionType: "tollRoad", mappingFunction: toSectionProps };
         case "TOLL_VIGNETTE":
-            return { sectionType: "tollVignette", mappingFunction: toCountrySection };
+            return { sectionType: "tollVignette", mappingFunction: toCountrySectionProps };
         case "TRAFFIC":
-            return { sectionType: "traffic", mappingFunction: toTrafficSection };
+            return { sectionType: "traffic", mappingFunction: toTrafficSectionProps };
         case "TRAVEL_MODE":
-            return { sectionType: "travelMode", mappingFunction: toTravelModeSection };
+            return { sectionType: "travelMode", mappingFunction: toTravelModeSectionProps };
         case "TUNNEL":
-            return { sectionType: "tunnel", mappingFunction: toSection };
+            return { sectionType: "tunnel", mappingFunction: toSectionProps };
         case "UNPAVED":
-            return { sectionType: "unpaved", mappingFunction: toSection };
+            return { sectionType: "unpaved", mappingFunction: toSectionProps };
         case "URBAN":
-            return { sectionType: "urban", mappingFunction: toSection };
+            return { sectionType: "urban", mappingFunction: toSectionProps };
         case "CARPOOL":
-            return { sectionType: "carpool", mappingFunction: toSection };
+            return { sectionType: "carpool", mappingFunction: toSectionProps };
     }
 };
 
-const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: Sections): void => {
+const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: SectionsProps): void => {
     for (const apiSection of apiSections) {
         const sectionMapping = getSectionMapping(apiSection);
         ensureInit(sectionMapping.sectionType, result).push(sectionMapping.mappingFunction(apiSection));
     }
 };
 
-const parseSections = (apiRoute: RouteAPI): Sections => {
+const parseSections = (apiRoute: RouteAPI): SectionsProps => {
     const result = {
-        leg: parseLegSections(apiRoute.legs)
+        leg: parseLegSectionProps(apiRoute.legs)
         // (the rest of sections are parsed below)
-    } as Sections;
+    } as SectionsProps;
     parseSectionsAndAppendToResult(apiRoute.sections, result);
     return result;
 };
