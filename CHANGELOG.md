@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.58](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.57...v0.1.58) (2022-11-28)
+
+
+### Features
+
+* **map:** [#70](https://github.com/tomtom-international/go-sdk-js/issues/70) first iteration to render routes on the map ([9e7a1f3](https://github.com/tomtom-international/go-sdk-js/commit/9e7a1f3485e8a178a7104324aafbe4c4f8be85c6))
+
 ### [0.1.57](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.56...v0.1.57) (2022-11-24)
 
 
