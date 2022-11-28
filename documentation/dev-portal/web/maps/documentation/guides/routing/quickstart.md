@@ -44,3 +44,8 @@ To use the Routing SDK, you will need to do the following:
 To calculate a route from A to B, you need to provide route planning criteria. They are built using a [`CalculateRouteParams`](/web/maps/documentation/api-reference/modules/services/#calculaterouteparams) object. Once you have a [`CalculateRouteParams`](/web/maps/documentation/api-reference/modules/services/#calculaterouteparams) object, pass it to the [`calculateRoute`](/web/maps/documentation/api-reference/modules/services/#calculateroute) function from the object in order to make a request. Read more about routing options and route planning in the [Planning a route](/web/maps/documentation/guides/routing/planning-a-route) guide.
 
 For a more advanced navigation experience, you can add optional intermediate locations to the route. Read more about this feature in the [Waypoints and reconstruction routes](/web/maps/documentation/guides/routing/waypoints-and-reconstruction-routes) guide.
+
+# Next steps
+-   [Planning a route](/web/maps/documentation/guides/routing/planning-a-route)
+-   [Waypoints and reconstruction routes](/web/maps/documentation/guides/routing/waypoints-and-reconstruction-routes)
+-   [Route sections](/web/maps/documentation/guides/routing/route-sections)

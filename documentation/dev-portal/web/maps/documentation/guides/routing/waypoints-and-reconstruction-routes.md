@@ -27,7 +27,7 @@ There are two different types of waypoints:
 - Circle or soft waypoints - a point with a radius. The routing engine calculates, for the given planning criteria, the best path for the route to follow while intersecting with the waypoint circle.
 The origin and destination must be single point waypoints.
 
-In [route planning](/web/maps/documentation/guides/routing/planning-a-route), each single point waypoint results in an extra [leg section](/web/maps/documentation/guides/routing/route-sections) in the response. A circle (soft) waypoint will not generate any extra leg section or specific guidance for it.
+In [route planning](/web/maps/documentation/guides/routing/planning-a-route), each single point waypoint results in an extra [leg section](/web/maps/documentation/guides/routing/route-sections) in the response. A circle (soft) waypoint will not generate any extra leg section or specific guidance.
 
 By default, a [`Waypoint`](/web/maps/documentation/api-reference/modules/core/#waypoint) is considered a single point, unless a [`radius`](/web/maps/documentation/api-reference/modules/core/#waypoint) is specified, which then transforms the waypoint into a circle (soft) waypoint.
 
