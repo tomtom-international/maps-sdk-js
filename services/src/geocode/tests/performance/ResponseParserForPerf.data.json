@@ -1,0 +1,5997 @@
+[
+  [
+    {
+      "summary": {
+        "query": "kor",
+        "queryType": "NON_NEAR",
+        "queryTime": 406,
+        "numResults": 100,
+        "offset": 0,
+        "totalResults": 153,
+        "fuzzyLevel": 1
+      },
+      "results": [
+        {
+          "type": "Geography",
+          "id": "KR/GEO/p0/14766",
+          "score": 2.7559998035,
+          "entityType": "Country",
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "countryCode": "KR",
+            "country": "대한민국",
+            "countryCodeISO3": "KOR",
+            "freeformAddress": "대한민국"
+          },
+          "position": {
+            "lat": 37.5749,
+            "lon": 126.97514
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KOR ᅡ8.ᅩᅲ",
+              "territory": "KOR",
+              "code": "ᅡ8.ᅩᅲ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄌ4ᄐ8.6ᄉᄑ01"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KOR ᅢᅡ.567ᅣ",
+              "territory": "KOR",
+              "code": "ᅢᅡ.567ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KOR 노4.ᄀ2뷰",
+              "territory": "KOR",
+              "code": "노4.ᄀ2뷰"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KOR ᄂ58.챠4ᅥᅭ",
+              "territory": "KOR",
+              "code": "ᄂ58.챠4ᅥᅭ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 38.61681,
+              "lon": 124.60884
+            },
+            "btmRightPoint": {
+              "lat": 33.1125,
+              "lon": 131.87219
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 38.61681,
+              "lon": 124.60884
+            },
+            "btmRightPoint": {
+              "lat": 33.1125,
+              "lon": 131.87219
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-4b00-1200-0000-000077359401"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/1748",
+          "score": 2.3817329407,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "municipality": "Kor",
+            "countrySecondarySubdivision": "Tboung Khmum",
+            "countrySubdivision": "Tboung Khmum",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Kor Tboung Khmum, Tboung Khmum"
+          },
+          "position": {
+            "lat": 11.98577,
+            "lon": 105.76445
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM 5ᅡᅡ6.ᄇᄏ",
+              "territory": "KHM",
+              "code": "5ᅡᅡ6.ᄇᄏ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ61ᄂ.22ᅧ91"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᄌᄇ6.ᅣ1ᄂᄏ",
+              "territory": "KHM",
+              "code": "ᄌᄇ6.ᅣ1ᄂᄏ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅤᄇ7.ᄅ645ᄏ",
+              "territory": "KHM",
+              "code": "ᅤᄇ7.ᄅ645ᄏ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 12.02161,
+              "lon": 105.68637
+            },
+            "btmRightPoint": {
+              "lat": 11.94427,
+              "lon": 105.86223
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 12.02161,
+              "lon": 105.68637
+            },
+            "btmRightPoint": {
+              "lat": 11.94427,
+              "lon": 105.86223
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342a7b"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/1800",
+          "score": 2.3817329407,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "municipality": "Kor",
+            "countrySecondarySubdivision": "Prey Chhor",
+            "countrySubdivision": "Kampong Cham",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Kor Prey Chhor, Kampong Cham"
+          },
+          "position": {
+            "lat": 12.12367,
+            "lon": 105.21856
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM ᅤᅢ5.353ᄂ",
+              "territory": "KHM",
+              "code": "ᅤᅢ5.353ᄂ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ533.9ᄇ81ᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅣ28.3ᄉ6쳐",
+              "territory": "KHM",
+              "code": "ᅣ28.3ᄉ6쳐"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 12.17113,
+              "lon": 105.19526
+            },
+            "btmRightPoint": {
+              "lat": 12.09258,
+              "lon": 105.25249
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 12.17113,
+              "lon": 105.19526
+            },
+            "btmRightPoint": {
+              "lat": 12.09258,
+              "lon": 105.25249
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342ab7"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/2317",
+          "score": 2.3585357666,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.8672487363130017
+          },
+          "address": {
+            "municipality": "Voat Kor",
+            "countrySecondarySubdivision": "Battambang City",
+            "countrySubdivision": "Battambang",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Voat Kor Battambang City, Battambang"
+          },
+          "position": {
+            "lat": 13.08417,
+            "lon": 103.19219
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM 38.98ᅤᅲ",
+              "territory": "KHM",
+              "code": "38.98ᅤᅲ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ3ᅩᄏ.90453"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM 8ᄏ1.35태",
+              "territory": "KHM",
+              "code": "8ᄏ1.35태"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᄉ09.ᄀᄏ7ᄃᄎ",
+              "territory": "KHM",
+              "code": "ᄉ09.ᄀᄏ7ᄃᄎ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.08458,
+              "lon": 103.14167
+            },
+            "btmRightPoint": {
+              "lat": 13.02923,
+              "lon": 103.20425
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 13.08458,
+              "lon": 103.14167
+            },
+            "btmRightPoint": {
+              "lat": 13.02923,
+              "lon": 103.20425
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342d5b"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/1289",
+          "score": 2.358474493,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.891393650966385
+          },
+          "address": {
+            "municipality": "Trapeang Kor",
+            "countrySecondarySubdivision": "Cheung Prey",
+            "countrySubdivision": "Kampong Cham",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Trapeang Kor Cheung Prey, Kampong Cham"
+          },
+          "position": {
+            "lat": 12.1129,
+            "lon": 105.10941
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM ᅣᅲ6.ᅣ12ᄌ",
+              "territory": "KHM",
+              "code": "ᅣᅲ6.ᅣ12ᄌ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ530.6ᅧᄑ86"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅢᄌ8.0239ᄐ",
+              "territory": "KHM",
+              "code": "ᅢᄌ8.0239ᄐ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 12.13998,
+              "lon": 105.07473
+            },
+            "btmRightPoint": {
+              "lat": 12.08543,
+              "lon": 105.13816
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 12.13998,
+              "lon": 105.07473
+            },
+            "btmRightPoint": {
+              "lat": 12.08543,
+              "lon": 105.13816
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342ad7"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/985",
+          "score": 2.3583827019,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.9035372649445301
+          },
+          "address": {
+            "municipality": "Kampong Kor",
+            "countrySecondarySubdivision": "Preaek Prasab",
+            "countrySubdivision": "Kratie",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Kampong Kor Preaek Prasab, Kratie"
+          },
+          "position": {
+            "lat": 12.31248,
+            "lon": 105.95756
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM 88ᄐ7.3ᄏ",
+              "territory": "KHM",
+              "code": "88ᄐ7.3ᄏ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ6ᅮᅭ.1ᄎᄐ50"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅤᄏ7.ᄎᄂ6뇨",
+              "territory": "KHM",
+              "code": "ᅤᄏ7.ᄎᄂ6뇨"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 12.4679,
+              "lon": 105.84045
+            },
+            "btmRightPoint": {
+              "lat": 12.26346,
+              "lon": 106.0351
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 12.4679,
+              "lon": 105.84045
+            },
+            "btmRightPoint": {
+              "lat": 12.26346,
+              "lon": 106.0351
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342b61"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/2304",
+          "score": 2.3583827019,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.8890384966218725
+          },
+          "address": {
+            "municipality": "Srae Kor",
+            "countrySecondarySubdivision": "Sesan",
+            "countrySubdivision": "Stung Treng",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Srae Kor Sesan, Stung Treng"
+          },
+          "position": {
+            "lat": 13.66705,
+            "lon": 106.37317
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM 로9.ᄌ2ᅮ8",
+              "territory": "KHM",
+              "code": "로9.ᄌ2ᅮ8"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ626.66ᄉ4ᅮ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅧ1ᄃ8.ᅤᄑ5",
+              "territory": "KHM",
+              "code": "ᅧ1ᄃ8.ᅤᄑ5"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.83874,
+              "lon": 106.27131
+            },
+            "btmRightPoint": {
+              "lat": 13.51211,
+              "lon": 106.45029
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 13.83874,
+              "lon": 106.27131
+            },
+            "btmRightPoint": {
+              "lat": 13.51211,
+              "lon": 106.45029
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342d54"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/1344",
+          "score": 2.3583519459,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.8672487363130017
+          },
+          "address": {
+            "municipality": "Krouch Kor",
+            "countrySecondarySubdivision": "Kralanh",
+            "countrySubdivision": "Siem Reap",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Krouch Kor Kralanh, Siem Reap"
+          },
+          "position": {
+            "lat": 13.70652,
+            "lon": 103.58512
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM ᄃ03.ᅥ6표",
+              "territory": "KHM",
+              "code": "ᄃ03.ᅥ6표"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ4ᅮᅡ.2ᅩᄉ3ᄀ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM 쇼3ᄎ.4ᄌ8",
+              "territory": "KHM",
+              "code": "쇼3ᄎ.4ᄌ8"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.73877,
+              "lon": 103.55037
+            },
+            "btmRightPoint": {
+              "lat": 13.6813,
+              "lon": 103.61385
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 13.73877,
+              "lon": 103.55037
+            },
+            "btmRightPoint": {
+              "lat": 13.6813,
+              "lon": 103.61385
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342b0f"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/1612",
+          "score": 2.3583519459,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.8823966862079711
+          },
+          "address": {
+            "municipality": "Thma Kor",
+            "countrySecondarySubdivision": "Lvea Aem",
+            "countrySubdivision": "Kandal",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Thma Kor Lvea Aem, Kandal"
+          },
+          "position": {
+            "lat": 11.51983,
+            "lon": 105.10601
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM 챼.34ᄐᄌ",
+              "territory": "KHM",
+              "code": "챼.34ᄐᄌ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ55ᄏ.7ᅣᄇ3ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅤ23.6ᅥᄃ",
+              "territory": "KHM",
+              "code": "ᅤ23.6ᅥᄃ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅢᄌ9.ᄂ02쿄",
+              "territory": "KHM",
+              "code": "ᅢᄌ9.ᄂ02쿄"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 11.54503,
+              "lon": 105.08714
+            },
+            "btmRightPoint": {
+              "lat": 11.49519,
+              "lon": 105.12352
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 11.54503,
+              "lon": 105.08714
+            },
+            "btmRightPoint": {
+              "lat": 11.49519,
+              "lon": 105.12352
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342f22"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/2288",
+          "score": 2.3583519459,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.8524586402864013
+          },
+          "address": {
+            "municipality": "San Kor",
+            "countrySecondarySubdivision": "S'ang",
+            "countrySubdivision": "Kampong Speu",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "San Kor S'ang, Kampong Speu"
+          },
+          "position": {
+            "lat": 11.52652,
+            "lon": 104.59557
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM ᄐ8ᄀ.ᄏ0ᄅ",
+              "territory": "KHM",
+              "code": "ᄐ8ᄀ.ᄏ0ᄅ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ5ᄏ0.0ᅭ96ᄇ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅡᄉ6.ᅤᅡ6저",
+              "territory": "KHM",
+              "code": "ᅡᄉ6.ᅤᅡ6저"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 11.55558,
+              "lon": 104.56181
+            },
+            "btmRightPoint": {
+              "lat": 11.4962,
+              "lon": 104.62405
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 11.55558,
+              "lon": 104.56181
+            },
+            "btmRightPoint": {
+              "lat": 11.4962,
+              "lon": 104.62405
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d342d44"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "KH/GEO/p0/66",
+          "score": 2.3361232281,
+          "entityType": "Municipality",
+          "matchConfidence": {
+            "score": 0.833223161565622
+          },
+          "address": {
+            "municipality": "Phsar Daeum Kor",
+            "countrySecondarySubdivision": "Tuol Kouk",
+            "countrySubdivision": "Phnom Penh",
+            "countryCode": "KH",
+            "country": "캄보디아",
+            "countryCodeISO3": "KHM",
+            "freeformAddress": "Phsar Daeum Kor Tuol Kouk, Phnom Penh"
+          },
+          "position": {
+            "lat": 11.55754,
+            "lon": 104.90426
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "KHM ᄉᄑ.533",
+              "territory": "KHM",
+              "code": "ᄉᄑ.533"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ5튜.6ᅢᄉ0ᅲ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM 바.55ᅭ0",
+              "territory": "KHM",
+              "code": "바.55ᅭ0"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅢᄅ6.ᅮ60ᅢ",
+              "territory": "KHM",
+              "code": "ᅢᄅ6.ᅮ60ᅢ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "KHM ᅢᄃ8.6ᅥ384",
+              "territory": "KHM",
+              "code": "ᅢᄃ8.6ᅥ384"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 11.56116,
+              "lon": 104.90075
+            },
+            "btmRightPoint": {
+              "lat": 11.55202,
+              "lon": 104.90811
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 11.56116,
+              "lon": 104.90075
+            },
+            "btmRightPoint": {
+              "lat": 11.55202,
+              "lon": 104.90811
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005831-5100-1200-0000-00007d343051"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "IN/GEO/p0/32343",
+          "score": 2.1768069267,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "municipalitySubdivision": "Kor",
+            "municipality": "Nilokheri Tehsil",
+            "countrySecondarySubdivision": "Karnal",
+            "countrySubdivision": "하르야나",
+            "countryCode": "IN",
+            "country": "인도",
+            "countryCodeISO3": "IND",
+            "freeformAddress": "Kor, Nilokheri Tehsil, 하르야나"
+          },
+          "position": {
+            "lat": 29.80776,
+            "lon": 76.74167
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IN-HR ᅣ4ᅧ.0ᅲᅮ",
+              "territory": "IN-HR",
+              "code": "ᅣ4ᅧ.0ᅲᅮ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅥᅥ1ᅮᅧ.1도61"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-HR ᄂᄐ3.ᄇᄏ9ᄃ3",
+              "territory": "IN-HR",
+              "code": "ᄂᄐ3.ᄇᄏ9ᄃ3"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-HR 978ᄃ.8ᅤ93ᅥ",
+              "territory": "IN-HR",
+              "code": "978ᄃ.8ᅤ93ᅥ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND ᄂᄐ3.ᄇᄏ9ᄃ3",
+              "territory": "IND",
+              "code": "ᄂᄐ3.ᄇᄏ9ᄃ3"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND 978ᄃ.8ᅤ93ᅥ",
+              "territory": "IND",
+              "code": "978ᄃ.8ᅤ93ᅥ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 29.83287,
+              "lon": 76.71869
+            },
+            "btmRightPoint": {
+              "lat": 29.79965,
+              "lon": 76.76901
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 29.83287,
+              "lon": 76.71869
+            },
+            "btmRightPoint": {
+              "lat": 29.79965,
+              "lon": 76.76901
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "c93070c6-84b1-4685-aae1-ee257db722bc"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "IN/GEO/p0/116935",
+          "score": 2.1768069267,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "municipalitySubdivision": "Kor",
+            "municipality": "Gavan",
+            "countrySecondarySubdivision": "Girīḍīh",
+            "countrySubdivision": "자르칸드",
+            "countryCode": "IN",
+            "country": "인도",
+            "countryCodeISO3": "IND",
+            "freeformAddress": "Kor, Gavan, 자르칸드"
+          },
+          "position": {
+            "lat": 24.59483,
+            "lon": 85.92111
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IN-JH 705.ᅭ3ᄐ9",
+              "territory": "IN-JH",
+              "code": "705.ᅭ3ᄐ9"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅤᅥ8ᅲᅲ.82ᅲ5ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-JH 648.ᄂᄀ8ᄇ5",
+              "territory": "IN-JH",
+              "code": "648.ᄂᄀ8ᄇ5"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-JH ᅢᄃ8ᄐ.6ᄌ63",
+              "territory": "IN-JH",
+              "code": "ᅢᄃ8ᄐ.6ᄌ63"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND 648.ᄂᄀ8ᄇ5",
+              "territory": "IND",
+              "code": "648.ᄂᄀ8ᄇ5"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND ᅢᄃ8ᄐ.6ᄌ63",
+              "territory": "IND",
+              "code": "ᅢᄃ8ᄐ.6ᄌ63"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 24.60182,
+              "lon": 85.9158
+            },
+            "btmRightPoint": {
+              "lat": 24.59063,
+              "lon": 85.9216
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 24.60182,
+              "lon": 85.9158
+            },
+            "btmRightPoint": {
+              "lat": 24.59063,
+              "lon": 85.9216
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "afc77c15-f0dd-4350-b198-3d10b403c9c5"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "RU/GEO/p0/55225",
+          "score": 2.1768069267,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "municipalitySubdivision": "Kor'",
+            "municipality": "Yukhnov",
+            "countrySecondarySubdivision": "칼루시스카야 주",
+            "countryTertiarySubdivision": "유흐놉스키 군",
+            "countrySubdivision": "중앙구 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Kor', Yukhnov"
+          },
+          "position": {
+            "lat": 54.72427,
+            "lon": 35.23651
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-KLU ᄇ67.50ᄅ",
+              "territory": "RU-KLU",
+              "code": "ᄇ67.50ᄅ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차56ᄅ.77ᄐ1ᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-KLU ᄃᄑ6ᅥ.0ᄑ3",
+              "territory": "RU-KLU",
+              "code": "ᄃᄑ6ᅥ.0ᄑ3"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-KLU ᅤ6ᄌ9.24져",
+              "territory": "RU-KLU",
+              "code": "ᅤ6ᄌ9.24져"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅤ6ᄌ9.24져",
+              "territory": "RUS",
+              "code": "ᅤ6ᄌ9.24져"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 54.72642,
+              "lon": 35.23448
+            },
+            "btmRightPoint": {
+              "lat": 54.72124,
+              "lon": 35.23869
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 54.72642,
+              "lon": 35.23448
+            },
+            "btmRightPoint": {
+              "lat": 54.72124,
+              "lon": 35.23869
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005231-3400-3c00-0000-0000270a9c8e"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "ER/GEO/p0/150",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8675840533025165
+          },
+          "address": {
+            "municipalitySubdivision": "Keyih Kor",
+            "municipality": "멘데페라",
+            "countrySubdivision": "Debub",
+            "countryCode": "ER",
+            "country": "에리트리아",
+            "countryCodeISO3": "ERI",
+            "freeformAddress": "멘데페라 Keyih Kor, Debub"
+          },
+          "position": {
+            "lat": 15.09761,
+            "lon": 39.0598
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "ERI ᄑ5ᅥ.ᅤ3",
+              "territory": "ERI",
+              "code": "ᄑ5ᅥ.ᅤ3"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅢᅡ8ᅢᅣ.5ᅣᄐ9ᄉ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "ERI ᄀᄃ1.44ᅥᄇ",
+              "territory": "ERI",
+              "code": "ᄀᄃ1.44ᅥᄇ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "ERI ᄃᄉ6.ᅮᄃ5ᅲ1",
+              "territory": "ERI",
+              "code": "ᄃᄉ6.ᅮᄃ5ᅲ1"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 15.10349,
+              "lon": 39.05394
+            },
+            "btmRightPoint": {
+              "lat": 15.09036,
+              "lon": 39.06713
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 15.10349,
+              "lon": 39.05394
+            },
+            "btmRightPoint": {
+              "lat": 15.09036,
+              "lon": 39.06713
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00004146-3500-3c00-0000-0000668528c6"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "ER/GEO/p0/243",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8675840533025165
+          },
+          "address": {
+            "municipalitySubdivision": "Kor Chokomte",
+            "municipality": "멘데페라",
+            "countrySubdivision": "Debub",
+            "countryCode": "ER",
+            "country": "에리트리아",
+            "countryCodeISO3": "ERI",
+            "freeformAddress": "멘데페라 Kor Chokomte, Debub"
+          },
+          "position": {
+            "lat": 14.91266,
+            "lon": 39.03522
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "ERI ᄀᄂ2.ᅢ59ᄌ",
+              "territory": "ERI",
+              "code": "ᄀᄂ2.ᅢ59ᄌ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅢᅡ8ᅣᅢ.62571"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "ERI ᄂᄐ9.ᅮᄏ8ᄀᄎ",
+              "territory": "ERI",
+              "code": "ᄂᄐ9.ᅮᄏ8ᄀᄎ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 14.91959,
+              "lon": 39.03057
+            },
+            "btmRightPoint": {
+              "lat": 14.90715,
+              "lon": 39.04026
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 14.91959,
+              "lon": 39.03057
+            },
+            "btmRightPoint": {
+              "lat": 14.90715,
+              "lon": 39.04026
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00004146-3500-3c00-0000-000066852848"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "IN/GEO/p0/22691",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.876265192334863
+          },
+          "address": {
+            "municipalitySubdivision": "Bhoja Kor",
+            "municipality": "Lohawat",
+            "countrySecondarySubdivision": "Jodhpur",
+            "countrySubdivision": "라자스탄",
+            "countryCode": "IN",
+            "country": "인도",
+            "countryCodeISO3": "IND",
+            "freeformAddress": "Bhoja Kor, Lohawat, 라자스탄"
+          },
+          "position": {
+            "lat": 26.8358,
+            "lon": 72.39262
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IN-RJ ᄇ24.큐58ᅧ",
+              "territory": "IN-RJ",
+              "code": "ᄇ24.큐58ᅧ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅤᅤ72ᅣ.3ᅡᄉ1ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-RJ 5ᄀ5ᄀ.02726",
+              "territory": "IN-RJ",
+              "code": "5ᄀ5ᄀ.02726"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND ᄇ24.큐58ᅧ",
+              "territory": "IND",
+              "code": "ᄇ24.큐58ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND 5ᄀ5ᄀ.02726",
+              "territory": "IND",
+              "code": "5ᄀ5ᄀ.02726"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 26.84187,
+              "lon": 72.37839
+            },
+            "btmRightPoint": {
+              "lat": 26.80527,
+              "lon": 72.42521
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 26.84187,
+              "lon": 72.37839
+            },
+            "btmRightPoint": {
+              "lat": 26.80527,
+              "lon": 72.42521
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "be871488-ef9b-4c58-8452-707e6f43a2c0"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "IN/GEO/p0/23505",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8824508655359483
+          },
+          "address": {
+            "municipalitySubdivision": "Daya Kor",
+            "municipality": "Lohawat",
+            "countrySecondarySubdivision": "Jodhpur",
+            "countrySubdivision": "라자스탄",
+            "countryCode": "IN",
+            "country": "인도",
+            "countryCodeISO3": "IND",
+            "freeformAddress": "Daya Kor, Lohawat, 라자스탄"
+          },
+          "position": {
+            "lat": 26.92754,
+            "lon": 72.47975
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IN-RJ ᄇ34.ᅲᅧ4ᅣᄌ",
+              "territory": "IN-RJ",
+              "code": "ᄇ34.ᅲᅧ4ᅣᄌ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅤᅤ7ᅧᄅ.2ᅢ61ᅥ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-RJ 5ᄀ57.6ᅲᄅ3ᅡ",
+              "territory": "IN-RJ",
+              "code": "5ᄀ57.6ᅲᄅ3ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND ᄇ34.ᅲᅧ4ᅣᄌ",
+              "territory": "IND",
+              "code": "ᄇ34.ᅲᅧ4ᅣᄌ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND 5ᄀ57.6ᅲᄅ3ᅡ",
+              "territory": "IND",
+              "code": "5ᄀ57.6ᅲᄅ3ᅡ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 26.95007,
+              "lon": 72.44677
+            },
+            "btmRightPoint": {
+              "lat": 26.90034,
+              "lon": 72.51477
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 26.95007,
+              "lon": 72.44677
+            },
+            "btmRightPoint": {
+              "lat": 26.90034,
+              "lon": 72.51477
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "b82c86ea-0b49-49f6-841e-dcd1c01f504b"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "IN/GEO/p0/269404",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.873405815488418
+          },
+          "address": {
+            "municipalitySubdivision": "Bheekam Kor",
+            "municipality": "오시안",
+            "countrySecondarySubdivision": "Jodhpur",
+            "countrySubdivision": "라자스탄",
+            "countryCode": "IN",
+            "country": "인도",
+            "countryCodeISO3": "IND",
+            "freeformAddress": "Bheekam Kor, 오시안, 라자스탄"
+          },
+          "position": {
+            "lat": 26.78263,
+            "lon": 72.82166
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IN-RJ ᄇ74.ᄅᄅ61ᅩ",
+              "territory": "IN-RJ",
+              "code": "ᄇ74.ᄅᄅ61ᅩ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅤᅤ7ᄇᄂ.7ᅡᅲ1ᄏ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-RJ 5ᄀ8ᄂ.8ᅣᄎ81",
+              "territory": "IN-RJ",
+              "code": "5ᄀ8ᄂ.8ᅣᄎ81"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND ᄇ74.ᄅᄅ61ᅩ",
+              "territory": "IND",
+              "code": "ᄇ74.ᄅᄅ61ᅩ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND 5ᄀ8ᄂ.8ᅣᄎ81",
+              "territory": "IND",
+              "code": "5ᄀ8ᄂ.8ᅣᄎ81"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 26.81167,
+              "lon": 72.80377
+            },
+            "btmRightPoint": {
+              "lat": 26.72895,
+              "lon": 72.88743
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 26.81167,
+              "lon": 72.80377
+            },
+            "btmRightPoint": {
+              "lat": 26.72895,
+              "lon": 72.88743
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "a782a5bf-9fd6-4e2a-a804-9ff5116fb34d"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "IQ/GEO/p0/739",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8856730213902237
+          },
+          "address": {
+            "municipalitySubdivision": "Hamza Kor",
+            "municipality": "아르빌",
+            "countrySecondarySubdivision": "Erbil",
+            "countrySubdivision": "Erbil",
+            "countryCode": "IQ",
+            "country": "이라크",
+            "countryCodeISO3": "IRQ",
+            "freeformAddress": "아르빌 Hamza Kor Erbil, Erbil"
+          },
+          "position": {
+            "lat": 35.96511,
+            "lon": 44.07196
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IRQ 텨98.72",
+              "territory": "IRQ",
+              "code": "텨98.72"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅧᅢ2ᄃᄌ.9ᅭ12ᅢ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IRQ ᅣ49.ᅮᄂ725",
+              "territory": "IRQ",
+              "code": "ᅣ49.ᅮᄂ725"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 35.96721,
+              "lon": 44.06895
+            },
+            "btmRightPoint": {
+              "lat": 35.9632,
+              "lon": 44.07562
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 35.96721,
+              "lon": 44.06895
+            },
+            "btmRightPoint": {
+              "lat": 35.9632,
+              "lon": 44.07562
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "efba1085-02c3-4060-aec8-a70afaaad820"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "MY/GEO/p0/9290",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.9391829447150529
+          },
+          "address": {
+            "municipalitySubdivision": "Bukit Kor",
+            "municipality": "Marang",
+            "countrySecondarySubdivision": "Marang",
+            "countrySubdivision": "Terengganu",
+            "countryCode": "MY",
+            "country": "말레이시아",
+            "countryCodeISO3": "MYS",
+            "freeformAddress": "Bukit Kor, Marang, Terengganu"
+          },
+          "position": {
+            "lat": 5.17966,
+            "lon": 103.19502
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "MYS ᅭᅧ1.ᄅ4ᄇᄏ",
+              "territory": "MYS",
+              "code": "ᅭᅧ1.ᄅ4ᄇᄏ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "토41ᅭ.17ᅲ8ᅥ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "MYS 5ᅣ7.ᅢ050ᄉ",
+              "territory": "MYS",
+              "code": "5ᅣ7.ᅢ050ᄉ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 5.2559,
+              "lon": 103.11144
+            },
+            "btmRightPoint": {
+              "lat": 5.16319,
+              "lon": 103.20267
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 5.2559,
+              "lon": 103.11144
+            },
+            "btmRightPoint": {
+              "lat": 5.16319,
+              "lon": 103.20267
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00004d59-3400-3c00-0000-000024f47349"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "RU/GEO/p0/42443",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8648276976548501
+          },
+          "address": {
+            "municipalitySubdivision": "Savin-Kor'",
+            "municipality": "Yekimovskoye",
+            "countrySecondarySubdivision": "랴잔스카야 주",
+            "countryTertiarySubdivision": "랴잔스키 군",
+            "countrySubdivision": "중앙구 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Savin-Kor', Yekimovskoye"
+          },
+          "position": {
+            "lat": 54.36689,
+            "lon": 39.52796
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-RYA 67ᄀ.ᄃ8ᅲ",
+              "territory": "RU-RYA",
+              "code": "67ᄀ.ᄃ8ᅲ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차9ᅥᅥ.25ᄉ63"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-RYA ᅡᅡ9ᅢ.ᅤ6ᅢ",
+              "territory": "RU-RYA",
+              "code": "ᅡᅡ9ᅢ.ᅤ6ᅢ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-RYA ᅤᄇ4ᅩ.0231ᄉ",
+              "territory": "RU-RYA",
+              "code": "ᅤᄇ4ᅩ.0231ᄉ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅤᄇ4ᅩ.0231ᄉ",
+              "territory": "RUS",
+              "code": "ᅤᄇ4ᅩ.0231ᄉ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 54.37123,
+              "lon": 39.51596
+            },
+            "btmRightPoint": {
+              "lat": 54.36356,
+              "lon": 39.53767
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 54.37123,
+              "lon": 39.51596
+            },
+            "btmRightPoint": {
+              "lat": 54.36356,
+              "lon": 39.53767
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005231-3400-3c00-0000-0000270a88eb"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "RU/GEO/p0/69575",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8794356264578655
+          },
+          "address": {
+            "municipalitySubdivision": "Kor'khovo",
+            "municipality": "Vyskodskaya",
+            "countrySecondarySubdivision": "프스코브스카야 주",
+            "countryTertiarySubdivision": "드놉스키 군",
+            "countrySubdivision": "북서 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Kor'khovo, Vyskodskaya"
+          },
+          "position": {
+            "lat": 57.79108,
+            "lon": 30.14096
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-PSK 975.ᄉ0ᅩᄉ",
+              "territory": "RU-PSK",
+              "code": "975.ᄉ0ᅩᄉ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차245.ᅮᄅ0ᅢ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-PSK 499.ᅲᅡ7ᄌ4",
+              "territory": "RU-PSK",
+              "code": "499.ᅲᅡ7ᄌ4"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-PSK ᅢ476.1바1ᄂ",
+              "territory": "RU-PSK",
+              "code": "ᅢ476.1바1ᄂ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅢ476.1바1ᄂ",
+              "territory": "RUS",
+              "code": "ᅢ476.1바1ᄂ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 57.79482,
+              "lon": 30.13475
+            },
+            "btmRightPoint": {
+              "lat": 57.7877,
+              "lon": 30.1551
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 57.79482,
+              "lon": 30.13475
+            },
+            "btmRightPoint": {
+              "lat": 57.7877,
+              "lon": 30.1551
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "8048e429-9e7f-48f1-ab7d-9910ecd24a24"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "RU/GEO/p0/115518",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8799681846268134
+          },
+          "address": {
+            "municipalitySubdivision": "Mokryy Kor'",
+            "municipality": "Telyakovskoye",
+            "countrySecondarySubdivision": "툴스카야 주",
+            "countryTertiarySubdivision": "야스노고르스키 군",
+            "countrySubdivision": "중앙구 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Mokryy Kor', Telyakovskoye"
+          },
+          "position": {
+            "lat": 54.57122,
+            "lon": 37.96622
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-TUL ᅣᄅ6.38ᅭᄅ",
+              "territory": "RU-TUL",
+              "code": "ᅣᄅ6.38ᅭᄅ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차7ᄐᄇ.95ᄂ7ᄃ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-TUL 타23.9ᅡ6",
+              "territory": "RU-TUL",
+              "code": "타23.9ᅡ6"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-TUL ᅤᄂ6ᄇ.4ᄉᄑ1ᅮ",
+              "territory": "RU-TUL",
+              "code": "ᅤᄂ6ᄇ.4ᄉᄑ1ᅮ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅤᄂ6ᄇ.4ᄉᄑ1ᅮ",
+              "territory": "RUS",
+              "code": "ᅤᄂ6ᄇ.4ᄉᄑ1ᅮ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 54.5825,
+              "lon": 37.95531
+            },
+            "btmRightPoint": {
+              "lat": 54.56723,
+              "lon": 37.979
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 54.5825,
+              "lon": 37.95531
+            },
+            "btmRightPoint": {
+              "lat": 54.56723,
+              "lon": 37.979
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005231-3400-3c00-0000-0000270ab238"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "RU/GEO/p0/161955",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.900552536479719
+          },
+          "address": {
+            "municipalitySubdivision": "Kor'ki",
+            "municipality": "Prudovskoye",
+            "countrySecondarySubdivision": "오를롭스카야 주",
+            "countryTertiarySubdivision": "노보실스키 군",
+            "countrySubdivision": "중앙구 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Kor'ki, Prudovskoye"
+          },
+          "position": {
+            "lat": 53.04965,
+            "lon": 37.13436
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-ORL ᅤᅢ5.ᄎ176",
+              "territory": "RU-ORL",
+              "code": "ᅤᅢ5.ᄎ176"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차7ᅣ0.1다88"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ORL 버9.0ᄑ57ᄉ",
+              "territory": "RU-ORL",
+              "code": "버9.0ᄑ57ᄉ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ORL ᅤᄀ4ᄌ.9ᄉᄇ8ᄉ",
+              "territory": "RU-ORL",
+              "code": "ᅤᄀ4ᄌ.9ᄉᄇ8ᄉ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅤᄀ4ᄌ.9ᄉᄇ8ᄉ",
+              "territory": "RUS",
+              "code": "ᅤᄀ4ᄌ.9ᄉᄇ8ᄉ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 53.0529,
+              "lon": 37.13068
+            },
+            "btmRightPoint": {
+              "lat": 53.04663,
+              "lon": 37.13732
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 53.0529,
+              "lon": 37.13068
+            },
+            "btmRightPoint": {
+              "lat": 53.04663,
+              "lon": 37.13732
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005231-3400-3c00-0000-0000270b003d"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "RU/GEO/p0/186797",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.8708581922580811
+          },
+          "address": {
+            "municipalitySubdivision": "Kor-Koshevo",
+            "municipality": "Gorskoye",
+            "countrySecondarySubdivision": "트베르스카야 주",
+            "countryTertiarySubdivision": "손코브스키 군",
+            "countrySubdivision": "중앙구 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Kor-Koshevo, Gorskoye"
+          },
+          "position": {
+            "lat": 57.86234,
+            "lon": 36.95089
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-TVE ᅣᄀ6.ᄇ6ᄃᄎ",
+              "territory": "RU-TVE",
+              "code": "ᅣᄀ6.ᄇ6ᄃᄎ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차6ᄎᄉ.5퍄9ᄎ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-TVE ᄇ9ᅢᅣ.4ᅢ1",
+              "territory": "RU-TVE",
+              "code": "ᄇ9ᅢᅣ.4ᅢ1"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-TVE ᅢᄇ0ᄀ.ᄌ6ᅮᅧ",
+              "territory": "RU-TVE",
+              "code": "ᅢᄇ0ᄀ.ᄌ6ᅮᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅢᄇ0ᄀ.ᄌ6ᅮᅧ",
+              "territory": "RUS",
+              "code": "ᅢᄇ0ᄀ.ᄌ6ᅮᅧ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 57.86349,
+              "lon": 36.94805
+            },
+            "btmRightPoint": {
+              "lat": 57.86113,
+              "lon": 36.95339
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 57.86349,
+              "lon": 36.94805
+            },
+            "btmRightPoint": {
+              "lat": 57.86113,
+              "lon": 36.95339
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00005231-3400-3c00-0000-0000270addff"
+            }
+          }
+        },
+        {
+          "type": "Geography",
+          "id": "SS/GEO/p0/21",
+          "score": 2.1554658413,
+          "entityType": "MunicipalitySubdivision",
+          "matchConfidence": {
+            "score": 0.875
+          },
+          "address": {
+            "municipalitySubdivision": "Majom Kor",
+            "municipality": "Kuajok",
+            "countrySubdivision": "Warab",
+            "countryCode": "SS",
+            "country": "남수단",
+            "countryCodeISO3": "SSD",
+            "freeformAddress": "Kuajok Majom Kor, Warab"
+          },
+          "position": {
+            "lat": 8.87374,
+            "lon": 28.71446
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "SSD ᄐ32.ᄐ2라",
+              "territory": "SSD",
+              "code": "ᄐ32.ᄐ2라"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄑᄑ9ᅩᅢ.62ᅭ2ᄌ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "SSD ᄃᄏ5.ᄎᄅ69ᅥ",
+              "territory": "SSD",
+              "code": "ᄃᄏ5.ᄎᄅ69ᅥ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "SSD ᅡᅧ02.84ᅣᅮ",
+              "territory": "SSD",
+              "code": "ᅡᅧ02.84ᅣᅮ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 8.87618,
+              "lon": 28.70996
+            },
+            "btmRightPoint": {
+              "lat": 8.87197,
+              "lon": 28.71704
+            }
+          },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 8.87618,
+              "lon": 28.70996
+            },
+            "btmRightPoint": {
+              "lat": 8.87197,
+              "lon": 28.71704
+            }
+          },
+          "dataSources": {
+            "geometry": {
+              "id": "00004146-3400-3c00-0000-00006638da23"
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/50704",
+          "score": 2.0962057114,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "데브레첸",
+            "countrySecondarySubdivision": "Debreceni járás",
+            "countrySubdivision": "Hajdú-Bihar",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 데브레첸",
+            "localName": "데브레첸"
+          },
+          "position": {
+            "lat": 47.53724,
+            "lon": 21.48729
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᅤᄎ4.08ᄇ",
+              "territory": "HUN",
+              "code": "ᅤᄎ4.08ᄇ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ3ᄑᄎ.8ᄃ59ᄀ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄐ96.ᄐᄃ5ᅣᄇ",
+              "territory": "HUN",
+              "code": "ᄐ96.ᄐᄃ5ᅣᄇ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.53895,
+              "lon": 21.48613
+            },
+            "btmRightPoint": {
+              "lat": 47.53658,
+              "lon": 21.49029
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "DE/STR/p0/1523013",
+          "score": 2.0959999561,
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "streetName": "Koerstraße",
+            "municipalitySubdivision": "Wambel",
+            "municipality": "도르트문트",
+            "countrySecondarySubdivision": "Dortmund",
+            "countrySubdivision": "노르트라인베스트팔렌",
+            "postalCode": "44143",
+            "countryCode": "DE",
+            "country": "독일",
+            "countryCodeISO3": "DEU",
+            "freeformAddress": "Koerstraße, 44143 도르트문트",
+            "localName": "도르트문트"
+          },
+          "position": {
+            "lat": 51.52446,
+            "lon": 7.52429
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "DEU 슈.74ᄃᄀ",
+              "territory": "DEU",
+              "code": "슈.74ᄃᄀ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄐ120.7뇨0ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "DEU 9ᄌᄉ.99ᅣ",
+              "territory": "DEU",
+              "code": "9ᄌᄉ.99ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "DEU 3ᅭ8ᄃ.ᅢ30",
+              "territory": "DEU",
+              "code": "3ᅭ8ᄃ.ᅢ30"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 51.5264,
+              "lon": 7.5235
+            },
+            "btmRightPoint": {
+              "lat": 51.52252,
+              "lon": 7.52571
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "DE/STR/p0/3101083",
+          "score": 2.0959999561,
+          "matchConfidence": {
+            "score": 1
+          },
+          "address": {
+            "streetName": "Am Kör",
+            "municipalitySubdivision": "Kückelheim",
+            "municipality": "Plettenberg",
+            "countrySecondarySubdivision": "Märkischer Kreis",
+            "countrySubdivision": "노르트라인베스트팔렌",
+            "postalCode": "58840",
+            "countryCode": "DE",
+            "country": "독일",
+            "countryCodeISO3": "DEU",
+            "freeformAddress": "Am Kör, 58840 Plettenberg",
+            "localName": "Plettenberg"
+          },
+          "position": {
+            "lat": 51.16871,
+            "lon": 7.84884
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "DEU 너1.9ᅤᄉ",
+              "territory": "DEU",
+              "code": "너1.9ᅤᄉ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄐ51ᄃ.0ᄎ7ᄅ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "DEU 4ᅥᅡ2.2ᅢ7",
+              "territory": "DEU",
+              "code": "4ᅥᅡ2.2ᅢ7"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 51.16965,
+              "lon": 7.84545
+            },
+            "btmRightPoint": {
+              "lat": 51.16739,
+              "lon": 7.85243
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "IL/STR/p0/133299",
+          "score": 2.075854063,
+          "matchConfidence": {
+            "score": 0.8878815460087464
+          },
+          "address": {
+            "streetName": "Paul Kor Street",
+            "municipalitySubdivision": "Harakevet",
+            "municipality": "Tel Aviv-Yafo",
+            "countrySubdivision": "Tel Aviv District",
+            "postalCode": "67",
+            "countryCode": "IL",
+            "country": "이스라엘",
+            "countryCodeISO3": "ISR",
+            "freeformAddress": "Paul Kor Street 67 Tel Aviv-Yafo",
+            "localName": "Tel Aviv-Yafo"
+          },
+          "position": {
+            "lat": 32.06294,
+            "lon": 34.78381
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "ISR 2ᄇ.84ᄅ1",
+              "territory": "ISR",
+              "code": "2ᄇ.84ᄅ1"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅧᅡ5섀.2ᅧ326"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "ISR 규7.ᄃ0ᄅ",
+              "territory": "ISR",
+              "code": "규7.ᄃ0ᄅ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "ISR 1ᅡ6ᅢ.27ᄇ",
+              "territory": "ISR",
+              "code": "1ᅡ6ᅢ.27ᄇ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 32.06298,
+              "lon": 34.78282
+            },
+            "btmRightPoint": {
+              "lat": 32.06278,
+              "lon": 34.78505
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "RU/STR/p0/263116",
+          "score": 2.075854063,
+          "matchConfidence": {
+            "score": 0.8549105494798765
+          },
+          "address": {
+            "streetName": "Derevnya Savin-Kor'",
+            "municipality": "Yekimovskoye",
+            "countrySecondarySubdivision": "랴잔스카야 주",
+            "countryTertiarySubdivision": "랴잔스키 군",
+            "countrySubdivision": "중앙구 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Derevnya Savin-Kor', Yekimovskoye",
+            "localName": "Yekimovskoye"
+          },
+          "position": {
+            "lat": 54.36849,
+            "lon": 39.52837
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-RYA 67ᄀ.6ᄃᄐ",
+              "territory": "RU-RYA",
+              "code": "67ᄀ.6ᄃᄐ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차9ᅥᅥ.15ᄇ99"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-RYA ᅡᅡ7.ᅢᄉ3ᄀ8",
+              "territory": "RU-RYA",
+              "code": "ᅡᅡ7.ᅢᄉ3ᄀ8"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-RYA ᅤᄇ3ᅩ.9228ᅣ",
+              "territory": "RU-RYA",
+              "code": "ᅤᄇ3ᅩ.9228ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅤᄇ3ᅩ.9228ᅣ",
+              "territory": "RUS",
+              "code": "ᅤᄇ3ᅩ.9228ᅣ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 54.37704,
+              "lon": 39.51221
+            },
+            "btmRightPoint": {
+              "lat": 54.35906,
+              "lon": 39.54309
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "SA/STR/p0/104236",
+          "score": 2.075854063,
+          "matchConfidence": {
+            "score": 0.9611900398625473
+          },
+          "address": {
+            "streetName": "Al Kor Street",
+            "municipalitySubdivision": "Ashuhada Aljanubiyyah District",
+            "municipality": "타이프",
+            "countrySubdivision": "Makkah Al Mukarramah Province",
+            "countryCode": "SA",
+            "country": "사우디아라비아",
+            "countryCodeISO3": "SAU",
+            "freeformAddress": "Al Kor Street - , Ashuhada Aljanubiyyah District - , 타이프",
+            "localName": "타이프"
+          },
+          "position": {
+            "lat": 21.25692,
+            "lon": 40.4317
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "SAU ᅢᄑ.83ᅤᄃ",
+              "territory": "SAU",
+              "code": "ᅢᄑ.83ᅤᄃ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅣᅡ93ᄅ.7ᅥᅥ4ᄑ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "SAU 5ᅢᅡ.3ᅥᅧ",
+              "territory": "SAU",
+              "code": "5ᅢᅡ.3ᅥᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "SAU ᅤᅡ6.8ᄂ2ᅩᄌ",
+              "territory": "SAU",
+              "code": "ᅤᅡ6.8ᄂ2ᅩᄌ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "SAU 8ᅤ70.47ᄃ6ᄀ",
+              "territory": "SAU",
+              "code": "8ᅤ70.47ᄃ6ᄀ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 21.25751,
+              "lon": 40.42935
+            },
+            "btmRightPoint": {
+              "lat": 21.25662,
+              "lon": 40.43403
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/125248",
+          "score": 2.075854063,
+          "matchConfidence": {
+            "score": 0.8723717873133784
+          },
+          "address": {
+            "streetName": "Kör Oğlu Sokak",
+            "municipalitySubdivision": "Alaşehir",
+            "municipality": "마니사",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Oğlu Sokak, Alaşehir",
+            "localName": "Alaşehir"
+          },
+          "position": {
+            "lat": 38.35902,
+            "lon": 28.5077
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᅤᄉ5.ᄃ8ᄀ2",
+              "territory": "TUR",
+              "code": "ᅤᄉ5.ᄃ8ᄀ2"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ9ᅣ2.5ᄌᄌ39"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 4ᅢ9.ᅡ941ᄐ",
+              "territory": "TUR",
+              "code": "4ᅢ9.ᅡ941ᄐ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 38.35967,
+              "lon": 28.50736
+            },
+            "btmRightPoint": {
+              "lat": 38.35735,
+              "lon": 28.50886
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/250358",
+          "score": 2.075854063,
+          "matchConfidence": {
+            "score": 0.9005602260527084
+          },
+          "address": {
+            "streetName": "Kör Hacı Sokak",
+            "municipalitySubdivision": "Kılbasan",
+            "municipality": "카라만센터",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Hacı Sokak, Kılbasan",
+            "localName": "Kılbasan"
+          },
+          "position": {
+            "lat": 37.32759,
+            "lon": 33.18754
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᄃ77.추2ᅢ2",
+              "territory": "TUR",
+              "code": "ᄃ77.추2ᅢ2"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ3ᄃ9.84ᅩ55"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 37.33683,
+              "lon": 33.17595
+            },
+            "btmRightPoint": {
+              "lat": 37.31884,
+              "lon": 33.19857
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "AU/STR/p0/1015963",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.971550194271563
+          },
+          "address": {
+            "streetName": "Kor Street",
+            "municipality": "Aurukun",
+            "countrySecondarySubdivision": "Peninsula",
+            "countrySubdivision": "퀸즈랜드",
+            "postalCode": "4892",
+            "countryCode": "AU",
+            "country": "오스트레일리아",
+            "countryCodeISO3": "AUS",
+            "freeformAddress": "Kor Street, Aurukun, 퀸즈랜드, 4892",
+            "localName": "Aurukun"
+          },
+          "position": {
+            "lat": -13.35569,
+            "lon": 141.7261
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "AU-QLD ᄅ63.672조",
+              "territory": "AU-QLD",
+              "code": "ᄅ63.672조"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄃᄎ70ᄅ.4ᅤᅤ0ᅥ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "AU-QLD ᅢ2규.0ᅮ74",
+              "territory": "AU-QLD",
+              "code": "ᅢ2규.0ᅮ74"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "AUS ᅢ2규.0ᅮ74",
+              "territory": "AUS",
+              "code": "ᅢ2규.0ᅮ74"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": -13.35543,
+              "lon": 141.72315
+            },
+            "btmRightPoint": {
+              "lat": -13.35598,
+              "lon": 141.72916
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "GR/STR/p0/129705",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.8841476783009705
+          },
+          "address": {
+            "streetName": "Kor. Klada",
+            "municipalitySubdivision": "Ano Liosia",
+            "municipality": "Fyli",
+            "countrySecondarySubdivision": "Dytiki Attiki",
+            "countrySubdivision": "Attiki",
+            "postalCode": "133 43",
+            "countryCode": "GR",
+            "country": "그리스",
+            "countryCodeISO3": "GRC",
+            "freeformAddress": "Kor. Klada, 133 43 Fyli",
+            "localName": "Fyli"
+          },
+          "position": {
+            "lat": 38.08622,
+            "lon": 23.69598
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "GRC ᄐ9.32ᅥ3",
+              "territory": "GRC",
+              "code": "ᄐ9.32ᅥ3"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ535.6처9ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "GRC ᅢᄅ8.4985",
+              "territory": "GRC",
+              "code": "ᅢᄅ8.4985"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "GRC ᄅᄐ2ᄀ.ᅡ85",
+              "territory": "GRC",
+              "code": "ᄅᄐ2ᄀ.ᅡ85"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 38.08668,
+              "lon": 23.69554
+            },
+            "btmRightPoint": {
+              "lat": 38.08622,
+              "lon": 23.69598
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/18343",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9505654642888454
+          },
+          "address": {
+            "streetName": "Kör út",
+            "municipality": "Bátonyterenye",
+            "countrySecondarySubdivision": "Bátonyterenyei járás",
+            "countrySubdivision": "Nógrád",
+            "postalCode": "3070",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör út, 3070 Bátonyterenye",
+            "localName": "Bátonyterenye"
+          },
+          "position": {
+            "lat": 47.96315,
+            "lon": 19.81796
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN 9ᄃ8.6바",
+              "territory": "HUN",
+              "code": "9ᄃ8.6바"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ2ᄎᄑ.3ᄇᄇ4ᄀ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄅ87ᄂ.ᄎ41",
+              "territory": "HUN",
+              "code": "ᄅ87ᄂ.ᄎ41"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.96342,
+              "lon": 19.81763
+            },
+            "btmRightPoint": {
+              "lat": 47.96315,
+              "lon": 19.81811
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/18344",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9505654642888454
+          },
+          "address": {
+            "streetName": "Kör út",
+            "municipality": "Tiszaszentimre",
+            "countrySecondarySubdivision": "Tiszafüredi járás",
+            "countrySubdivision": "Jász-Nagykun-Szolnok",
+            "postalCode": "5322",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör út, 5322 Tiszaszentimre",
+            "localName": "Tiszaszentimre"
+          },
+          "position": {
+            "lat": 47.49442,
+            "lon": 20.72807
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᅣᅧ4.ᄎ4ᅩᄏ",
+              "territory": "HUN",
+              "code": "ᅣᅧ4.ᄎ4ᅩᄏ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ8ᅲ9.77배"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄇ9ᅩᅣ.4ᅤᄇ",
+              "territory": "HUN",
+              "code": "ᄇ9ᅩᅣ.4ᅤᄇ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.49772,
+              "lon": 20.72513
+            },
+            "btmRightPoint": {
+              "lat": 47.4916,
+              "lon": 20.729
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41901",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "Gyomaendrőd",
+            "countrySecondarySubdivision": "Gyomaendrődi járás",
+            "countrySubdivision": "Békés",
+            "postalCode": "5502",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 5502 Gyomaendrőd",
+            "localName": "Gyomaendrőd"
+          },
+          "position": {
+            "lat": 46.90154,
+            "lon": 20.77325
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᅭᄎ5.71ᅩᅡ",
+              "territory": "HUN",
+              "code": "ᅭᄎ5.71ᅩᅡ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ9ᅲᅤ.04재"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄇᄂ9.7ᅲ598",
+              "territory": "HUN",
+              "code": "ᄇᄂ9.7ᅲ598"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 46.90999,
+              "lon": 20.76043
+            },
+            "btmRightPoint": {
+              "lat": 46.892,
+              "lon": 20.78675
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41902",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "Kiszombor",
+            "countrySecondarySubdivision": "Makói járás",
+            "countrySubdivision": "Csongrád-Csanád",
+            "postalCode": "6775",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 6775 Kiszombor",
+            "localName": "Kiszombor"
+          },
+          "position": {
+            "lat": 46.18424,
+            "lon": 20.42065
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN 7ᄇ3.ᅩ3ᅡ3",
+              "territory": "HUN",
+              "code": "7ᄇ3.ᅩ3ᅡ3"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅲᄑ7ᅤ5.95ᅤᄑ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN 7ᄇ8.ᅣ0댜",
+              "territory": "HUN",
+              "code": "7ᄇ8.ᅣ0댜"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄇᄅ85.ᄎ66",
+              "territory": "HUN",
+              "code": "ᄇᄅ85.ᄎ66"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 46.19441,
+              "lon": 20.40971
+            },
+            "btmRightPoint": {
+              "lat": 46.17642,
+              "lon": 20.43568
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41903",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "Pásztó",
+            "countrySecondarySubdivision": "Pásztói járás",
+            "countrySubdivision": "Nógrád",
+            "postalCode": "3060",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 3060 Pásztó",
+            "localName": "Pásztó"
+          },
+          "position": {
+            "lat": 47.91557,
+            "lon": 19.69341
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN 96ᄂ.8ᅧᄃ",
+              "territory": "HUN",
+              "code": "96ᄂ.8ᅧᄃ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ5ᅮ7.9ᅣᄉ9"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄅ86.쇼2ᅩᅢ",
+              "territory": "HUN",
+              "code": "ᄅ86.쇼2ᅩᅢ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.91569,
+              "lon": 19.69325
+            },
+            "btmRightPoint": {
+              "lat": 47.91557,
+              "lon": 19.6944
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41904",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipalitySubdivision": "Kertváros",
+            "municipality": "Gödöllő",
+            "countrySecondarySubdivision": "Gödöllői járás",
+            "countrySubdivision": "Pest",
+            "postalCode": "2100",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 2100 Gödöllő",
+            "localName": "Gödöllő"
+          },
+          "position": {
+            "lat": 47.60509,
+            "lon": 19.3499
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᄏᄅ.35ᅤ1",
+              "territory": "HUN",
+              "code": "ᄏᄅ.35ᅤ1"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ234.0ᄀᄇ3ᄎ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN 8ᅤ6.ᅮ8ᅩᅮ",
+              "territory": "HUN",
+              "code": "8ᅤ6.ᅮ8ᅩᅮ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄃ97.ᄀᄏ72ᄎ",
+              "territory": "HUN",
+              "code": "ᄃ97.ᄀᄏ72ᄎ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.60587,
+              "lon": 19.34845
+            },
+            "btmRightPoint": {
+              "lat": 47.60433,
+              "lon": 19.35124
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41905",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "Dabas",
+            "countrySecondarySubdivision": "Dabasi járás",
+            "countrySubdivision": "Pest",
+            "postalCode": "2373",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 2373 Dabas",
+            "localName": "Dabas"
+          },
+          "position": {
+            "lat": 47.169,
+            "lon": 19.33135
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᅡᅥ6.ᄃ5ᄇ8",
+              "territory": "HUN",
+              "code": "ᅡᅥ6.ᄃ5ᄇ8"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ558.1ᄅ23"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄃᄀ7.ᄐᄉ6ᄑᄑ",
+              "territory": "HUN",
+              "code": "ᄃᄀ7.ᄐᄉ6ᄑᄑ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.1708,
+              "lon": 19.3288
+            },
+            "btmRightPoint": {
+              "lat": 47.16887,
+              "lon": 19.33302
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41906",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "Rábagyarmat",
+            "countrySecondarySubdivision": "Szentgotthárdi járás",
+            "countrySubdivision": "Vas",
+            "postalCode": "9961",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 9961 Rábagyarmat",
+            "localName": "Rábagyarmat"
+          },
+          "position": {
+            "lat": 46.94138,
+            "lon": 16.4239
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᅧᄅ6.ᄂ4ᅲᅡ",
+              "territory": "HUN",
+              "code": "ᅧᄅ6.ᄂ4ᅲᅡ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄐ9ᅲ5.2ᅢ45ᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN 7ᄂᄅ4.ᄅ2ᅤ",
+              "territory": "HUN",
+              "code": "7ᄂᄅ4.ᄅ2ᅤ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 46.94292,
+              "lon": 16.42248
+            },
+            "btmRightPoint": {
+              "lat": 46.94094,
+              "lon": 16.4239
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41907",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipalitySubdivision": "Belváros",
+            "municipality": "스장탕드르",
+            "countrySecondarySubdivision": "Szentendrei járás",
+            "countrySubdivision": "Pest",
+            "postalCode": "2000",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 2000 스장탕드르",
+            "localName": "스장탕드르"
+          },
+          "position": {
+            "lat": 47.66616,
+            "lon": 19.07502
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᄐ9.33ᄀᄎ",
+              "territory": "HUN",
+              "code": "ᄐ9.33ᄀᄎ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ22ᅡ.0ᅡᄏ92"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN 89ᄎ.3ᄅ5",
+              "territory": "HUN",
+              "code": "89ᄎ.3ᄅ5"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄂ9ᅭ5.ᅧᄏ4",
+              "territory": "HUN",
+              "code": "ᄂ9ᅭ5.ᅧᄏ4"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.66667,
+              "lon": 19.07489
+            },
+            "btmRightPoint": {
+              "lat": 47.66569,
+              "lon": 19.07552
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41908",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipalitySubdivision": "Soroksár",
+            "municipality": "부다페스트",
+            "countrySubdivision": "Budapest",
+            "postalCode": "1239",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 1239 부다페스트",
+            "localName": "부다페스트"
+          },
+          "position": {
+            "lat": 47.38929,
+            "lon": 19.11514
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᅡᄌ.54ᄉᄏ",
+              "territory": "HUN",
+              "code": "ᅡᄌ.54ᄉᄏ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ53ᅮ.8초7"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᅡᄃ5.ᄅ1투",
+              "territory": "HUN",
+              "code": "ᅡᄃ5.ᄅ1투"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄃ96.코3재",
+              "territory": "HUN",
+              "code": "ᄃ96.코3재"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.39075,
+              "lon": 19.1143
+            },
+            "btmRightPoint": {
+              "lat": 47.38844,
+              "lon": 19.11576
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41909",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "하즈두소보슬로",
+            "countrySecondarySubdivision": "Hajdúszoboszlói járás",
+            "countrySubdivision": "Hajdú-Bihar",
+            "postalCode": "4200",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 4200 하즈두소보슬로",
+            "localName": "하즈두소보슬로"
+          },
+          "position": {
+            "lat": 47.43329,
+            "lon": 21.38598
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN 져.85ᅲᄉ",
+              "territory": "HUN",
+              "code": "져.85ᅲᄉ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ3ᅣᅧ.4ᅢᅩ9ᅩ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᅤᅥ4.ᅣ8ᅣᄅ",
+              "territory": "HUN",
+              "code": "ᅤᅥ4.ᅣ8ᅣᄅ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄉ99.ᅲᄀ6ᄀ3",
+              "territory": "HUN",
+              "code": "ᄉ99.ᅲᄀ6ᄀ3"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.43377,
+              "lon": 21.38483
+            },
+            "btmRightPoint": {
+              "lat": 47.43289,
+              "lon": 21.38683
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/41910",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9779974655502701
+          },
+          "address": {
+            "streetName": "Kör utca",
+            "municipality": "Dévaványa",
+            "countrySecondarySubdivision": "Gyomaendrődi járás",
+            "countrySubdivision": "Békés",
+            "postalCode": "5510",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör utca, 5510 Dévaványa",
+            "localName": "Dévaványa"
+          },
+          "position": {
+            "lat": 47.02815,
+            "lon": 20.96758
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN ᅮ55.75ᅮ",
+              "territory": "HUN",
+              "code": "ᅮ55.75ᅮ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ9ᅲ0.됴2ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄉᄀ6ᄏ.901",
+              "territory": "HUN",
+              "code": "ᄉᄀ6ᄏ.901"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.02969,
+              "lon": 20.96514
+            },
+            "btmRightPoint": {
+              "lat": 47.02812,
+              "lon": 20.96915
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/112183",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9278469301304904
+          },
+          "address": {
+            "streetName": "Kör tér",
+            "municipality": "Harkány",
+            "countrySecondarySubdivision": "Siklósi járás",
+            "countrySubdivision": "Baranya",
+            "postalCode": "7815",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör tér, 7815 Harkány",
+            "localName": "Harkány"
+          },
+          "position": {
+            "lat": 45.85084,
+            "lon": 18.24791
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN 걔2.ᅤ47ᅲ",
+              "territory": "HUN",
+              "code": "걔2.ᅤ47ᅲ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅲᄑ1ᄎ5.ᅥᄑ85"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN 걔8.ᄀ8ᅧᄐ",
+              "territory": "HUN",
+              "code": "걔8.ᄀ8ᅧᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN ᄀᄇ8.2ᅩ3랴",
+              "territory": "HUN",
+              "code": "ᄀᄇ8.2ᅩ3랴"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 45.85084,
+              "lon": 18.24791
+            },
+            "btmRightPoint": {
+              "lat": 45.84991,
+              "lon": 18.24836
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "HU/STR/p0/112184",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9278469301304904
+          },
+          "address": {
+            "streetName": "Kör tér",
+            "municipalitySubdivision": "Győrszentiván",
+            "municipality": "교르",
+            "countrySecondarySubdivision": "Győri járás",
+            "countrySubdivision": "Győr-Moson-Sopron",
+            "postalCode": "9011",
+            "countryCode": "HU",
+            "country": "헝가리",
+            "countryCodeISO3": "HUN",
+            "freeformAddress": "Kör tér, 9011 교르",
+            "localName": "교르"
+          },
+          "position": {
+            "lat": 47.69904,
+            "lon": 17.73793
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "HUN 6ᄂ6.ᅲ2ᅮᄐ",
+              "territory": "HUN",
+              "code": "6ᄂ6.ᅲ2ᅮᄐ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄑ1ᄃ1.ᄃ3ᅤ7"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "HUN 99ᅣ2.ᅮᅩ7",
+              "territory": "HUN",
+              "code": "99ᅣ2.ᅮᅩ7"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.70118,
+              "lon": 17.73319
+            },
+            "btmRightPoint": {
+              "lat": 47.69778,
+              "lon": 17.74259
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "NL/STR/p0/3037",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.8772501970624706
+          },
+          "address": {
+            "streetName": "Kor Kuilerstraat",
+            "municipality": "Hengelo",
+            "countrySubdivision": "Overijssel",
+            "postalCode": "7558",
+            "countryCode": "NL",
+            "country": "네덜란드",
+            "countryCodeISO3": "NLD",
+            "freeformAddress": "Kor Kuilerstraat, 7558 Hengelo",
+            "localName": "Hengelo"
+          },
+          "position": {
+            "lat": 52.28801,
+            "lon": 6.82329
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "NLD ᅭᅭ6.ᅡᄉ",
+              "territory": "NLD",
+              "code": "ᅭᅭ6.ᅡᄉ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄐ231.7ᅧ1ᄂ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD ᄉᄇ5.ᄏ04ᄑ",
+              "territory": "NLD",
+              "code": "ᄉᄇ5.ᄏ04ᄑ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD ᅲ356.ᅥ2ᄑ",
+              "territory": "NLD",
+              "code": "ᅲ356.ᅥ2ᄑ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 52.28834,
+              "lon": 6.82252
+            },
+            "btmRightPoint": {
+              "lat": 52.2875,
+              "lon": 6.82463
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "NL/STR/p0/3038",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.8772501970624706
+          },
+          "address": {
+            "streetName": "Kor Kuilerstraat",
+            "municipality": "Schiedam",
+            "countrySubdivision": "Zuid-Holland",
+            "postalCode": "3122",
+            "countryCode": "NL",
+            "country": "네덜란드",
+            "countryCodeISO3": "NLD",
+            "freeformAddress": "Kor Kuilerstraat, 3122 Schiedam",
+            "localName": "Schiedam"
+          },
+          "position": {
+            "lat": 51.93042,
+            "lon": 4.37355
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "NLD 부.86ᅤᅧ",
+              "territory": "NLD",
+              "code": "부.86ᅤᅧ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄉ8ᅤ7.4ᅧᅧ5ᄉ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD ᅡ54.ᅥ5ᅩᄀ",
+              "territory": "NLD",
+              "code": "ᅡ54.ᅥ5ᅩᄀ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD ᅣ46.3ᅤ3ᅤᄐ",
+              "territory": "NLD",
+              "code": "ᅣ46.3ᅤ3ᅤᄐ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 51.93078,
+              "lon": 4.37338
+            },
+            "btmRightPoint": {
+              "lat": 51.92978,
+              "lon": 4.37383
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "NL/STR/p0/149008",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.8678733900749819
+          },
+          "address": {
+            "streetName": "Kor Bootpaed",
+            "municipalitySubdivision": "Franeker",
+            "municipality": "Waadhoeke",
+            "countrySubdivision": "Friesland",
+            "postalCode": "8801",
+            "countryCode": "NL",
+            "country": "네덜란드",
+            "countryCodeISO3": "NLD",
+            "freeformAddress": "Kor Bootpaed, 8801 Franeker",
+            "localName": "Franeker"
+          },
+          "position": {
+            "lat": 53.18875,
+            "lon": 5.55062
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "NLD 4ᄇᄀ.3ᄏ1",
+              "territory": "NLD",
+              "code": "4ᄇᄀ.3ᄏ1"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄎᄐ06ᄇ.73뎌"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD 0ᅭ6.ᄇ42ᅧ",
+              "territory": "NLD",
+              "code": "0ᅭ6.ᄇ42ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD ᅥ08.코2ᄀ4",
+              "territory": "NLD",
+              "code": "ᅥ08.코2ᄀ4"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 53.19063,
+              "lon": 5.54883
+            },
+            "btmRightPoint": {
+              "lat": 53.18704,
+              "lon": 5.55071
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "NL/STR/p0/188583",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9458209691316183
+          },
+          "address": {
+            "streetName": "De Kor",
+            "municipalitySubdivision": "Muiderberg",
+            "municipality": "Gooise Meren",
+            "countrySubdivision": "Noord-Holland",
+            "postalCode": "1399",
+            "countryCode": "NL",
+            "country": "네덜란드",
+            "countryCodeISO3": "NLD",
+            "freeformAddress": "De Kor, 1399 Muiderberg",
+            "localName": "Muiderberg"
+          },
+          "position": {
+            "lat": 52.32653,
+            "lon": 5.12478
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "NLD ᅧᄃ.5417",
+              "territory": "NLD",
+              "code": "ᅧᄃ.5417"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄉ9배.1ᅩᅩ84"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD ᄃᄏ4.38ᅢᄂ",
+              "territory": "NLD",
+              "code": "ᄃᄏ4.38ᅢᄂ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "NLD ᅤ3ᅢ3.ᅣᄂ6",
+              "territory": "NLD",
+              "code": "ᅤ3ᅢ3.ᅣᄂ6"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 52.3272,
+              "lon": 5.12385
+            },
+            "btmRightPoint": {
+              "lat": 52.3259,
+              "lon": 5.12567
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/55732",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kör Sokak",
+            "municipalitySubdivision": "산탁테페",
+            "municipality": "이스탄불",
+            "postalCode": "34887",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Sokak, 34887 산탁테페",
+            "localName": "산탁테페"
+          },
+          "position": {
+            "lat": 41.00731,
+            "lon": 29.22804
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᅢᅭ.22구",
+              "territory": "TUR",
+              "code": "ᅢᅭ.22구"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ9ᅲ5.7ᄐ973"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᅩᄃ3.63ᅭ1",
+              "territory": "TUR",
+              "code": "ᅩᄃ3.63ᅭ1"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 5ᅣᄌ2.새2",
+              "territory": "TUR",
+              "code": "5ᅣᄌ2.새2"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 41.00766,
+              "lon": 29.22773
+            },
+            "btmRightPoint": {
+              "lat": 41.00674,
+              "lon": 29.22856
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/185515",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kör Sokak",
+            "municipalitySubdivision": "테페바시",
+            "municipality": "에스키셔",
+            "postalCode": "26555",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Sokak, 26555 테페바시",
+            "localName": "테페바시"
+          },
+          "position": {
+            "lat": 39.84112,
+            "lon": 30.54834
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 7재6.ᅩᅣ3",
+              "territory": "TUR",
+              "code": "7재6.ᅩᅣ3"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ1캐.5다6ᄅ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 39.84132,
+              "lon": 30.54829
+            },
+            "btmRightPoint": {
+              "lat": 39.84074,
+              "lon": 30.5489
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/367051",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kor Sokak",
+            "municipalitySubdivision": "폴라틀리",
+            "municipality": "앙카라",
+            "postalCode": "06900",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kor Sokak, 06900 폴라틀리",
+            "localName": "폴라틀리"
+          },
+          "position": {
+            "lat": 39.57648,
+            "lon": 32.14705
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᄀᄉ9.0ᅩ27ᄑ",
+              "territory": "TUR",
+              "code": "ᄀᄉ9.0ᅩ27ᄑ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ2추.6ᅭ802"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 39.57648,
+              "lon": 32.14705
+            },
+            "btmRightPoint": {
+              "lat": 39.57593,
+              "lon": 32.14755
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/581232",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kor Sokak",
+            "municipalitySubdivision": "투르구틀루",
+            "municipality": "마니사",
+            "postalCode": "45400",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kor Sokak, 45400 투르구틀루",
+            "localName": "투르구틀루"
+          },
+          "position": {
+            "lat": 38.48656,
+            "lon": 27.70624
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᄇ23.8ᄅ4",
+              "territory": "TUR",
+              "code": "ᄇ23.8ᄅ4"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ88ᄃ.8탸2ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 39ᅩ8.57ᅣ",
+              "territory": "TUR",
+              "code": "39ᅩ8.57ᅣ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 38.48664,
+              "lon": 27.70555
+            },
+            "btmRightPoint": {
+              "lat": 38.48656,
+              "lon": 27.70624
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/647605",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kör Sokak",
+            "municipalitySubdivision": "Araban",
+            "municipality": "가젠테프",
+            "postalCode": "27650",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Sokak, 27650 Araban",
+            "localName": "Araban"
+          },
+          "position": {
+            "lat": 37.42826,
+            "lon": 37.69091
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᅢᄅ9.5ᄃ5차",
+              "territory": "TUR",
+              "code": "ᅢᄅ9.5ᄃ5차"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ75ᅧ.8ᅩ72ᄏ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 37.42833,
+              "lon": 37.68996
+            },
+            "btmRightPoint": {
+              "lat": 37.4282,
+              "lon": 37.69136
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/726401",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kor Sokak",
+            "municipalitySubdivision": "카레시",
+            "municipality": "발리케시르",
+            "postalCode": "10010",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kor Sokak, 10010 카레시",
+            "localName": "카레시"
+          },
+          "position": {
+            "lat": 39.6462,
+            "lon": 27.87853
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᄐᄀ.79ᅲ9",
+              "territory": "TUR",
+              "code": "ᄐᄀ.79ᅲ9"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ8ᄎ3.91ᄉ8ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᄃᄎ3.ᄏ0ᅣᄏ",
+              "territory": "TUR",
+              "code": "ᄃᄎ3.ᄏ0ᅣᄏ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 3ᄐ8.4ᄀ3ᅡᄐ",
+              "territory": "TUR",
+              "code": "3ᄐ8.4ᄀ3ᅡᄐ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 39.64639,
+              "lon": 27.8775
+            },
+            "btmRightPoint": {
+              "lat": 39.64597,
+              "lon": 27.87933
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/893640",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kor Sokak",
+            "municipalitySubdivision": "베이코즈",
+            "municipality": "이스탄불",
+            "postalCode": "34830",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kor Sokak, 34830 베이코즈",
+            "localName": "베이코즈"
+          },
+          "position": {
+            "lat": 41.0867,
+            "lon": 29.16208
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 벼.29ᄅᄐ",
+              "territory": "TUR",
+              "code": "벼.29ᄅᄐ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ9ᅩᅧ.8591ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᅩᄂ1.85ᅡᅡ",
+              "territory": "TUR",
+              "code": "ᅩᄂ1.85ᅡᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 5ᅣ9.ᄂᄌ20ᅭ",
+              "territory": "TUR",
+              "code": "5ᅣ9.ᄂᄌ20ᅭ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 41.08739,
+              "lon": 29.16165
+            },
+            "btmRightPoint": {
+              "lat": 41.08635,
+              "lon": 29.1624
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/893641",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kor Sokak",
+            "municipalitySubdivision": "바셀리블러",
+            "municipality": "이스탄불",
+            "postalCode": "34197",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kor Sokak, 34197 바셀리블러",
+            "localName": "바셀리블러"
+          },
+          "position": {
+            "lat": 41.02355,
+            "lon": 28.81335
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᄑᄀ.546ᅥ",
+              "territory": "TUR",
+              "code": "ᄑᄀ.546ᅥ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ90ᄐ.82ᄎ0ᅢ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᅤᄃ1.01ᅢ7",
+              "territory": "TUR",
+              "code": "ᅤᄃ1.01ᅢ7"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 525ᄌ.ᅲ4ᅥ",
+              "territory": "TUR",
+              "code": "525ᄌ.ᅲ4ᅥ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 41.02421,
+              "lon": 28.81275
+            },
+            "btmRightPoint": {
+              "lat": 41.0231,
+              "lon": 28.81422
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/893642",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kor Sokak",
+            "municipalitySubdivision": "우슈타르",
+            "municipality": "이스탄불",
+            "postalCode": "34697",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kor Sokak, 34697 우슈타르",
+            "localName": "우슈타르"
+          },
+          "position": {
+            "lat": 41.01109,
+            "lon": 29.08639
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᅡᅤ.459ᅢ",
+              "territory": "TUR",
+              "code": "ᅡᅤ.459ᅢ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ9ᅲ2.8ᅢ60ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᅧᄃ2.45퍠",
+              "territory": "TUR",
+              "code": "ᅧᄃ2.45퍠"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 5ᄑ3ᄂ.12ᅩ",
+              "territory": "TUR",
+              "code": "5ᄑ3ᄂ.12ᅩ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 41.01118,
+              "lon": 29.08538
+            },
+            "btmRightPoint": {
+              "lat": 41.01083,
+              "lon": 29.08732
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/908339",
+          "score": 2.0754508972,
+          "matchConfidence": {
+            "score": 0.9814379896440557
+          },
+          "address": {
+            "streetName": "Kör Sokak",
+            "municipalitySubdivision": "Emirdağ",
+            "municipality": "아피온카라히사르센터",
+            "postalCode": "03600",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Sokak, 03600 Emirdağ",
+            "localName": "Emirdağ"
+          },
+          "position": {
+            "lat": 39.03487,
+            "lon": 31.15914
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 8ᅲ9.ᄐ863ᅤ",
+              "territory": "TUR",
+              "code": "8ᅲ9.ᄐ863ᅤ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ2ᅢ8.2ᅲᄌ1ᅣ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 39.03626,
+              "lon": 31.15795
+            },
+            "btmRightPoint": {
+              "lat": 39.03288,
+              "lon": 31.15924
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "RU/STR/p0/1523318",
+          "score": 2.055893898,
+          "matchConfidence": {
+            "score": 0.8474149382245751
+          },
+          "address": {
+            "streetName": "Ulitsa Sel'kor Bayeva",
+            "municipality": "Krymskoye",
+            "countrySecondarySubdivision": "로스토브스카야 주",
+            "countryTertiarySubdivision": "먀스니코브스키 군",
+            "countrySubdivision": "유즈니 연방관구",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Ulitsa Sel'kor Bayeva, Krymskoye",
+            "localName": "Krymskoye"
+          },
+          "position": {
+            "lat": 47.30273,
+            "lon": 39.51032
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-ROS 27.23ᅴ9",
+              "territory": "RU-ROS",
+              "code": "27.23ᅴ9"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "자9ᅣᅡ.0ᅩ29ᄃ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ROS 8ᅩ1.ᄐ2ᅡᄎ",
+              "territory": "RU-ROS",
+              "code": "8ᅩ1.ᄐ2ᅡᄎ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ROS 01ᅤ7.ᄂᄐ",
+              "territory": "RU-ROS",
+              "code": "01ᅤ7.ᄂᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ROS 6ᄃ9.4ᅧ6컈",
+              "territory": "RU-ROS",
+              "code": "6ᄃ9.4ᅧ6컈"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ROS ᅥ65ᅢ.2ᄃ44ᄌ",
+              "territory": "RU-ROS",
+              "code": "ᅥ65ᅢ.2ᄃ44ᄌ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅥ65ᅢ.2ᄃ44ᄌ",
+              "territory": "RUS",
+              "code": "ᅥ65ᅢ.2ᄃ44ᄌ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 47.3137,
+              "lon": 39.49603
+            },
+            "btmRightPoint": {
+              "lat": 47.29572,
+              "lon": 39.52255
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "RU/STR/p0/1416138",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8747893048187203
+          },
+          "address": {
+            "streetName": "Poselok Kor'ki",
+            "municipality": "Prudovskoye",
+            "countrySecondarySubdivision": "오를롭스카야 주",
+            "countryTertiarySubdivision": "노보실스키 군",
+            "countrySubdivision": "중앙구 연방관구",
+            "postalCode": "303512",
+            "countryCode": "RU",
+            "country": "러시아",
+            "countryCodeISO3": "RUS",
+            "freeformAddress": "Poselok Kor'ki, Prudovskoye, 303512",
+            "localName": "Prudovskoye"
+          },
+          "position": {
+            "lat": 53.04989,
+            "lon": 37.13455
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "RU-ORL ᅤᅢ5.ᄎ19ᅣ",
+              "territory": "RU-ORL",
+              "code": "ᅤᅢ5.ᄎ19ᅣ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "차7ᅣ0.1다3ᄂ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ORL 버9.0ᄑ58ᄇ",
+              "territory": "RU-ORL",
+              "code": "버9.0ᄑ58ᄇ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RU-ORL ᅤᄀ4ᄌ.9ᄉᄇ3ᅡ",
+              "territory": "RU-ORL",
+              "code": "ᅤᄀ4ᄌ.9ᄉᄇ3ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "RUS ᅤᄀ4ᄌ.9ᄉᄇ3ᅡ",
+              "territory": "RUS",
+              "code": "ᅤᄀ4ᄌ.9ᄉᄇ3ᅡ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 53.0586,
+              "lon": 37.12141
+            },
+            "btmRightPoint": {
+              "lat": 53.04062,
+              "lon": 37.15133
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/10347",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8725109906308683
+          },
+          "address": {
+            "streetName": "Soi Kor Pai",
+            "municipalitySubdivision": "Noen Phra",
+            "municipality": "라용",
+            "countrySecondarySubdivision": "Amphoe Mueang Rayong",
+            "countrySubdivision": "Changwat Rayong",
+            "postalCode": "21000",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Kor Pai, Noen Phra Sub District, Amphoe Mueang Rayong District, Changwat Rayong 21000",
+            "localName": "Amphoe Mueang Rayong"
+          },
+          "position": {
+            "lat": 12.70876,
+            "lon": 101.19457
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA 퍠5.ᅥ6됴",
+              "territory": "THA",
+              "code": "퍠5.ᅥ6됴"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ2ᅥ3.47ᄑ9ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 9ᅧ8.ᄃ3728",
+              "territory": "THA",
+              "code": "9ᅧ8.ᄃ3728"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 12.71761,
+              "lon": 101.18507
+            },
+            "btmRightPoint": {
+              "lat": 12.69963,
+              "lon": 101.2035
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/19160",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.9033781279844195
+          },
+          "address": {
+            "streetName": "Soi 14 Kor",
+            "municipalitySubdivision": "Lat Phrao",
+            "municipality": "방콕",
+            "countrySecondarySubdivision": "방콕",
+            "countrySubdivision": "방콕",
+            "postalCode": "10230",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi 14 Kor, Lat Phrao Sub District, 방콕 District, 방콕 10230",
+            "localName": "방콕"
+          },
+          "position": {
+            "lat": 13.81709,
+            "lon": 100.60783
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅤᄂ.26ᄎ7",
+              "territory": "THA",
+              "code": "ᅤᄂ.26ᄎ7"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ1ᅡᅮ.6ᅢᅥ8ᅤ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 구2.ᄂ1ᅣ",
+              "territory": "THA",
+              "code": "구2.ᄂ1ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 8내0.2수",
+              "territory": "THA",
+              "code": "8내0.2수"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.81709,
+              "lon": 100.60595
+            },
+            "btmRightPoint": {
+              "lat": 13.81708,
+              "lon": 100.60783
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/70765",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8910503058097206
+          },
+          "address": {
+            "streetName": "Soi 26 Kor",
+            "municipalitySubdivision": "Lat Phrao",
+            "municipality": "방콕",
+            "countrySecondarySubdivision": "방콕",
+            "countrySubdivision": "방콕",
+            "postalCode": "10230",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi 26 Kor, Lat Phrao Sub District, 방콕 District, 방콕 10230",
+            "localName": "방콕"
+          },
+          "position": {
+            "lat": 13.81204,
+            "lon": 100.60658
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅤᄂ.42ᄂᄉ",
+              "territory": "THA",
+              "code": "ᅤᄂ.42ᄂᄉ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ1ᅡᅮ.6ᅡᄌ4ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 구4.ᅥ0퍼",
+              "territory": "THA",
+              "code": "구4.ᅥ0퍼"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 8내0.ᄇ08",
+              "territory": "THA",
+              "code": "8내0.ᄇ08"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.81204,
+              "lon": 100.60658
+            },
+            "btmRightPoint": {
+              "lat": 13.81152,
+              "lon": 100.6066
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/73359",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8807072490266635
+          },
+          "address": {
+            "streetName": "Soi Khok Kor",
+            "municipalitySubdivision": "Na Khian",
+            "municipality": "나콘시탐마랏",
+            "countrySecondarySubdivision": "Amphoe Mueang Nakhon Si Thammarat",
+            "countrySubdivision": "Changwat Nakhon Si Thammarat",
+            "postalCode": "80000",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Khok Kor, Na Khian Sub District, Amphoe Mueang Nakhon Si Thammarat District, Changwat Nakhon Si Thammarat 80000",
+            "localName": "Amphoe Mueang Nakhon Si Thammarat"
+          },
+          "position": {
+            "lat": 8.44858,
+            "lon": 99.92093
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᄅ56.4ᅭ",
+              "territory": "THA",
+              "code": "ᄅ56.4ᅭ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "포18ᄇ.3챠8ᅲ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA ᅢᄀ3.467ᄎ",
+              "territory": "THA",
+              "code": "ᅢᄀ3.467ᄎ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 6ᅡ9.ᄃᄉ6ᄎ9",
+              "territory": "THA",
+              "code": "6ᅡ9.ᄃᄉ6ᄎ9"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 8.44888,
+              "lon": 99.91988
+            },
+            "btmRightPoint": {
+              "lat": 8.44782,
+              "lon": 99.92237
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/361195",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.9016516512685486
+          },
+          "address": {
+            "streetName": "Soi 15 Kor",
+            "municipalitySubdivision": "Lat Phrao",
+            "municipality": "방콕",
+            "countrySecondarySubdivision": "방콕",
+            "countrySubdivision": "방콕",
+            "postalCode": "10230",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi 15 Kor, Lat Phrao Sub District, 방콕 District, 방콕 10230",
+            "localName": "방콕"
+          },
+          "position": {
+            "lat": 13.81685,
+            "lon": 100.609
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅤᄂ.279ᅩ",
+              "territory": "THA",
+              "code": "ᅤᄂ.279ᅩ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ1ᅡᅮ.7ᅣᅥ3ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 구2.ᄂᄐ0",
+              "territory": "THA",
+              "code": "구2.ᄂᄐ0"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 8내0.2ᅮ9",
+              "territory": "THA",
+              "code": "8내0.2ᅮ9"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.81685,
+              "lon": 100.60783
+            },
+            "btmRightPoint": {
+              "lat": 13.8168,
+              "lon": 100.60907
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/95449",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.9255926344782189
+          },
+          "address": {
+            "streetName": "Kor 1 Sokak",
+            "municipalitySubdivision": "바셀리블러",
+            "municipality": "이스탄불",
+            "postalCode": "34188",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kor 1 Sokak, 34188 바셀리블러",
+            "localName": "바셀리블러"
+          },
+          "position": {
+            "lat": 41.01062,
+            "lon": 28.84666
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 패.55ᄂᄂ",
+              "territory": "TUR",
+              "code": "패.55ᄂᄂ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ90ᅥ.9ᅧ618"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᅤᄃ2.40ᄎᄎ",
+              "territory": "TUR",
+              "code": "ᅤᄃ2.40ᄎᄎ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 5269.5ᄒᄒ",
+              "territory": "TUR",
+              "code": "5269.5ᄒᄒ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 41.01094,
+              "lon": 28.8464
+            },
+            "btmRightPoint": {
+              "lat": 41.01041,
+              "lon": 28.84689
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/192237",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8822194036773674
+          },
+          "address": {
+            "streetName": "Kör Hüseyin Caddesi",
+            "municipalitySubdivision": "Zile",
+            "municipality": "도카트센터",
+            "postalCode": "60400",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Hüseyin Caddesi, 60400 Zile",
+            "localName": "Zile"
+          },
+          "position": {
+            "lat": 40.30984,
+            "lon": 35.88443
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᄐᄉ8.3ᄇ8ᅥᅣ",
+              "territory": "TUR",
+              "code": "ᄐᄉ8.3ᄇ8ᅥᅣ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ609.11ᅲ28"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 40.31288,
+              "lon": 35.88095
+            },
+            "btmRightPoint": {
+              "lat": 40.30684,
+              "lon": 35.88817
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/288700",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8706340446374973
+          },
+          "address": {
+            "streetName": "Kör Pınar Cadde",
+            "municipalitySubdivision": "엘비스탄",
+            "municipality": "카라마란마라스",
+            "postalCode": "46300",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Pınar Cadde, 46300 엘비스탄",
+            "localName": "엘비스탄"
+          },
+          "position": {
+            "lat": 38.15669,
+            "lon": 37.32316
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᅡᅲ9.2ᄇ3코",
+              "territory": "TUR",
+              "code": "ᅡᅲ9.2ᄇ3코"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ78ᅣ.2교43"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 38.15862,
+              "lon": 37.32296
+            },
+            "btmRightPoint": {
+              "lat": 38.15453,
+              "lon": 37.32348
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/326226",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8853585446357963
+          },
+          "address": {
+            "streetName": "Kör Irmak Sokak",
+            "municipalitySubdivision": "카삼바",
+            "municipality": "삼순",
+            "postalCode": "55500",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Irmak Sokak, 55500 카삼바",
+            "localName": "카삼바"
+          },
+          "position": {
+            "lat": 41.20104,
+            "lon": 36.73146
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 퓨5ᅭ.4ᅢ9",
+              "territory": "TUR",
+              "code": "퓨5ᅭ.4ᅢ9"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ675.68ᄅ7ᅤ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 41.2021,
+              "lon": 36.7313
+            },
+            "btmRightPoint": {
+              "lat": 41.19942,
+              "lon": 36.7315
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/376307",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8796902537351463
+          },
+          "address": {
+            "streetName": "Kör Kadı Sokak",
+            "municipalitySubdivision": "베식타스",
+            "municipality": "이스탄불",
+            "postalCode": "34340, 34345",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Kadı Sokak, 베식타스",
+            "localName": "베식타스"
+          },
+          "position": {
+            "lat": 41.07041,
+            "lon": 29.03456
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 래.46ᅢᄂ",
+              "territory": "TUR",
+              "code": "래.46ᅢᄂ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ9ᅩᅣ.9퍠7ᅭ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᅧᄂ1.ᄇ14ᄅ",
+              "territory": "TUR",
+              "code": "ᅧᄂ1.ᄇ14ᄅ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 5ᄅ7.ᅥᄃ40ᄑ",
+              "territory": "TUR",
+              "code": "5ᄅ7.ᅥᄃ40ᄑ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 41.07935,
+              "lon": 29.02283
+            },
+            "btmRightPoint": {
+              "lat": 41.06137,
+              "lon": 29.04669
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/578287",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8482558601934918
+          },
+          "address": {
+            "streetName": "Kör Kerimler Çıkmazı",
+            "municipalitySubdivision": "알라니아",
+            "municipality": "안탈리아",
+            "postalCode": "07400",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Kerimler Çıkmazı, 07400 알라니아",
+            "localName": "알라니아"
+          },
+          "position": {
+            "lat": 36.5525,
+            "lon": 32.04763
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᄀᄀ3ᅡ.621",
+              "territory": "TUR",
+              "code": "ᄀᄀ3ᅡ.621"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ2내.9ᄏ87ᄂ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 36.55342,
+              "lon": 32.04761
+            },
+            "btmRightPoint": {
+              "lat": 36.55157,
+              "lon": 32.04786
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/597621",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.9027552360915401
+          },
+          "address": {
+            "streetName": "Kör Ahmet Sokak",
+            "municipalitySubdivision": "Başiskele",
+            "municipality": "코카엘리",
+            "postalCode": "41190",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Ahmet Sokak, 41190 Başiskele",
+            "localName": "Başiskele"
+          },
+          "position": {
+            "lat": 40.68567,
+            "lon": 29.95946
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 6ᄎ9ᄀ.ᄏ60",
+              "territory": "TUR",
+              "code": "6ᄎ9ᄀ.ᄏ60"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ16ᅩ.2ᄃᄂ7ᅧ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 40.6862,
+              "lon": 29.95926
+            },
+            "btmRightPoint": {
+              "lat": 40.68504,
+              "lon": 29.96035
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/857672",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.9255926344782189
+          },
+          "address": {
+            "streetName": "1. Kor Sokak",
+            "municipalitySubdivision": "오스망가지",
+            "municipality": "부르사",
+            "postalCode": "16175",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "1. Kor Sokak, 16175 오스망가지",
+            "localName": "오스망가지"
+          },
+          "position": {
+            "lat": 40.26126,
+            "lon": 28.98593
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR 챠.262ᅩ",
+              "territory": "TUR",
+              "code": "챠.262ᅩ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᄑ9컈.9ᅡ108"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR ᅥᅣ2.ᅲ8ᅢᄇ",
+              "territory": "TUR",
+              "code": "ᅥᅣ2.ᅲ8ᅢᄇ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "TUR 5ᄀ34.0ᄇᄏ",
+              "territory": "TUR",
+              "code": "5ᄀ34.0ᄇᄏ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 40.26181,
+              "lon": 28.9859
+            },
+            "btmRightPoint": {
+              "lat": 40.26125,
+              "lon": 28.98629
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/904942",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8997524880855182
+          },
+          "address": {
+            "streetName": "Kör Mustafa Sokak",
+            "municipalitySubdivision": "Besni",
+            "municipality": "아디야만센터",
+            "postalCode": "02300",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Mustafa Sokak, 02300 Besni",
+            "localName": "Besni"
+          },
+          "position": {
+            "lat": 37.69316,
+            "lon": 37.8553
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᅢᅤ5ᄇ.8료",
+              "territory": "TUR",
+              "code": "ᅢᅤ5ᄇ.8료"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ7커.65ᅡ50"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 37.69398,
+              "lon": 37.85523
+            },
+            "btmRightPoint": {
+              "lat": 37.69261,
+              "lon": 37.85533
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "US/STR/p1/1666122",
+          "score": 2.055300951,
+          "matchConfidence": {
+            "score": 0.8600082826111881
+          },
+          "address": {
+            "streetName": "Ed Kor Jan Road",
+            "municipality": "Jones",
+            "countrySecondarySubdivision": "Morehouse",
+            "countrySubdivision": "LA",
+            "countrySubdivisionName": "루이지애나",
+            "postalCode": "71250",
+            "countryCode": "US",
+            "country": "미국",
+            "countryCodeISO3": "USA",
+            "freeformAddress": "Ed Kor Jan Road, Jones, LA 71250",
+            "localName": "Jones"
+          },
+          "position": {
+            "lat": 32.9964,
+            "lon": -91.65091
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "US-LA 4ᄅ1.ᄇᄏ0",
+              "territory": "US-LA",
+              "code": "4ᄅ1.ᄇᄏ0"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅧ761ᄂ.2댜8ᄀ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "US-LA 4ᅧ9.5ᄏ7ᄎᄌ",
+              "territory": "US-LA",
+              "code": "4ᅧ9.5ᄏ7ᄎᄌ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "US-LA ᅩ73ᄅ.8ᄂᄑ7ᄇ",
+              "territory": "US-LA",
+              "code": "ᅩ73ᄅ.8ᄂᄑ7ᄇ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "USA ᅩ73ᄅ.8ᄂᄑ7ᄇ",
+              "territory": "USA",
+              "code": "ᅩ73ᄅ.8ᄂᄑ7ᄇ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 33.00495,
+              "lon": -91.66118
+            },
+            "btmRightPoint": {
+              "lat": 32.98696,
+              "lon": -91.63974
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/108926",
+          "score": 2.0363140106,
+          "matchConfidence": {
+            "score": 0.8095284900190164
+          },
+          "address": {
+            "streetName": "Soi Bor. Kor Sung Sut",
+            "municipality": "방콕",
+            "countrySecondarySubdivision": "방콕",
+            "countrySubdivision": "방콕",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Bor. Kor Sung Sut, 방콕 District, 방콕",
+            "localName": "방콕"
+          },
+          "position": {
+            "lat": 13.82591,
+            "lon": 100.54052
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᄑᄀ.46ᅥ2",
+              "territory": "THA",
+              "code": "ᄑᄀ.46ᅥ2"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ1ᅡᄏ.7ᅭᄉ5ᅤ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 9ᄏ5.ᅣ1ᅮᄐ",
+              "territory": "THA",
+              "code": "9ᄏ5.ᅣ1ᅮᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 847.ᅡᄑ9ᄑᄀ",
+              "territory": "THA",
+              "code": "847.ᅡᄑ9ᄑᄀ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.82675,
+              "lon": 100.53775
+            },
+            "btmRightPoint": {
+              "lat": 13.82519,
+              "lon": 100.54361
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "AT/STR/p0/363608",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8250745459056853
+          },
+          "address": {
+            "streetName": "Kleingarten Östlich Ruthnergasse 109",
+            "municipalitySubdivision": "21. Bezirk Floridsdorf",
+            "municipality": "비엔나",
+            "countrySecondarySubdivision": "Wien",
+            "countrySubdivision": "비엔나",
+            "postalCode": "1210",
+            "countryCode": "AT",
+            "country": "오스트리아",
+            "countryCodeISO3": "AUT",
+            "freeformAddress": "Kleingarten Östlich Ruthnergasse 109, 1210 비엔나",
+            "localName": "비엔나"
+          },
+          "position": {
+            "lat": 48.28098,
+            "lon": 16.42603
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "AUT ᅢ3.44ᄂᄐ",
+              "territory": "AUT",
+              "code": "ᅢ3.44ᄂᄐ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᄌᄐ9ᅡᅡ.2ᅣᄇ7ᅣ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "AUT ᄀᄅ5.ᄂ4ᅡᅲ",
+              "territory": "AUT",
+              "code": "ᄀᄅ5.ᄂ4ᅡᅲ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "AUT ᅲᅲ6.두6뱌",
+              "territory": "AUT",
+              "code": "ᅲᅲ6.두6뱌"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 48.28098,
+              "lon": 16.42603
+            },
+            "btmRightPoint": {
+              "lat": 48.28088,
+              "lon": 16.42693
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "ID/STR/p0/290276",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8574174930261282
+          },
+          "address": {
+            "streetName": "Jalan Kor Jimbaran Estate",
+            "municipalitySubdivision": "Kuta Selatan",
+            "municipality": "바둥",
+            "countrySubdivision": "Bali",
+            "postalCode": "80361",
+            "countryCode": "ID",
+            "country": "인도네시아",
+            "countryCodeISO3": "IDN",
+            "freeformAddress": "Jalan Kor Jimbaran Estate, Kuta Selatan Village/Sub District, 바둥 District, Bali 80361",
+            "localName": "바둥"
+          },
+          "position": {
+            "lat": -8.77716,
+            "lon": 115.18853
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IDN 9ᄅ2ᄇ.ᄉ4",
+              "territory": "IDN",
+              "code": "9ᄅ2ᄇ.ᄉ4"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "류45ᅩ.4채71"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IDN 죠7.ᄇᄅ6ᄌᄌ",
+              "territory": "IDN",
+              "code": "죠7.ᄇᄅ6ᄌᄌ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IDN ᄅᄌ5ᄎ.96ᅤ84",
+              "territory": "IDN",
+              "code": "ᄅᄌ5ᄎ.96ᅤ84"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": -8.77647,
+              "lon": 115.18817
+            },
+            "btmRightPoint": {
+              "lat": -8.7782,
+              "lon": 115.18961
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "IN/STR/p0/2089236",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8431107585740978
+          },
+          "address": {
+            "streetName": "Santosh Pundlik Kor Marg",
+            "municipalitySubdivision": "Khativali",
+            "municipality": "샤하푸르",
+            "countrySecondarySubdivision": "Thane",
+            "countrySubdivision": "마하라슈트라",
+            "postalCode": "421601",
+            "countryCode": "IN",
+            "country": "인도",
+            "countryCodeISO3": "IND",
+            "freeformAddress": "Santosh Pundlik Kor Marg, Khativali, 샤하푸르 421601, 마하라슈트라",
+            "localName": "샤하푸르"
+          },
+          "position": {
+            "lat": 19.41138,
+            "lon": 73.27939
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "IN-MH 6ᅢ2.ᅭᄉ8",
+              "territory": "IN-MH",
+              "code": "6ᅢ2.ᅭᄉ8"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅣᅤ8ᅡ2.2737ᄇ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-MH ᄉ79ᄐ.7ᅣᄂ",
+              "territory": "IN-MH",
+              "code": "ᄉ79ᄐ.7ᅣᄂ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IN-MH 6ᄑ4ᅣ.14ᄇ04",
+              "territory": "IN-MH",
+              "code": "6ᄑ4ᅣ.14ᄇ04"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND ᄉ79ᄐ.7ᅣᄂ",
+              "territory": "IND",
+              "code": "ᄉ79ᄐ.7ᅣᄂ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "IND 6ᄑ4ᅣ.14ᄇ04",
+              "territory": "IND",
+              "code": "6ᄑ4ᅣ.14ᄇ04"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 19.41171,
+              "lon": 73.27854
+            },
+            "btmRightPoint": {
+              "lat": 19.41082,
+              "lon": 73.27946
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/18757",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8417500772657245
+          },
+          "address": {
+            "streetName": "Soi Nantaram 5 Kor",
+            "municipalitySubdivision": "Haiya",
+            "municipality": "치앙마이",
+            "countrySecondarySubdivision": "Amphoe Mueang Chiang Mai",
+            "countrySubdivision": "Changwat Chiang Mai",
+            "postalCode": "50100",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Nantaram 5 Kor, Haiya Sub District, Amphoe Mueang Chiang Mai District, Changwat Chiang Mai 50100",
+            "localName": "Amphoe Mueang Chiang Mai"
+          },
+          "position": {
+            "lat": 18.77366,
+            "lon": 98.98776
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA 6ᅧ7.ᅩ5",
+              "territory": "THA",
+              "code": "6ᅧ7.ᅩ5"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅣᅩ0ᅲᅤ.4ᅡ480"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 419.ᅥ0ᄂᄉ",
+              "territory": "THA",
+              "code": "419.ᅥ0ᄂᄉ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 45ᅧ0.2ᅧ2",
+              "territory": "THA",
+              "code": "45ᅧ0.2ᅧ2"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 18.77456,
+              "lon": 98.98756
+            },
+            "btmRightPoint": {
+              "lat": 18.7732,
+              "lon": 98.98918
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/22419",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.855285164033225
+          },
+          "address": {
+            "streetName": "Soi Mittraphap 11/Kor",
+            "municipalitySubdivision": "Nai Mueang",
+            "municipality": "콘건",
+            "countrySecondarySubdivision": "Amphoe Mueang Khon Kaen",
+            "countrySubdivision": "Changwat Khon Kaen",
+            "postalCode": "40000",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Mittraphap 11/Kor, Nai Mueang Sub District, Amphoe Mueang Khon Kaen District, Changwat Khon Kaen 40000",
+            "localName": "Amphoe Mueang Khon Kaen"
+          },
+          "position": {
+            "lat": 16.45929,
+            "lon": 102.83337
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᄂᄉ6.ᅮᄌ",
+              "territory": "THA",
+              "code": "ᄂᄉ6.ᅮᄌ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅢᅩ3ᄌᄎ.6ᅣ96ᄇ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA ᄇ25ᅤ.495",
+              "territory": "THA",
+              "code": "ᄇ25ᅤ.495"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 16.45929,
+              "lon": 102.83337
+            },
+            "btmRightPoint": {
+              "lat": 16.4588,
+              "lon": 102.83342
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/62939",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8211782036585815
+          },
+          "address": {
+            "streetName": "Thanon Kor Nong Bod",
+            "municipalitySubdivision": "Thang Kwian",
+            "municipality": "클랭",
+            "countrySecondarySubdivision": "Amphoe Klaeng",
+            "countrySubdivision": "Changwat Rayong",
+            "postalCode": "21110",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Thanon Kor Nong Bod, Thang Kwian Sub District, Amphoe Klaeng District, Changwat Rayong 21110",
+            "localName": "Amphoe Klaeng"
+          },
+          "position": {
+            "lat": 12.78253,
+            "lon": 101.66505
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅥᄏ5.01ᅥᅡ",
+              "territory": "THA",
+              "code": "ᅥᄏ5.01ᅥᅡ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ2ᅮᄑ.6ᅭᅥ4ᄎ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA ᄂ48ᅲ.ᄂ4ᅮ",
+              "territory": "THA",
+              "code": "ᄂ48ᅲ.ᄂ4ᅮ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 12.79201,
+              "lon": 101.65574
+            },
+            "btmRightPoint": {
+              "lat": 12.77403,
+              "lon": 101.67418
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/222599",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8253659651627626
+          },
+          "address": {
+            "streetName": "Soi Thanintorn 22 Kor",
+            "municipalitySubdivision": "돈무앙",
+            "municipality": "방콕",
+            "countrySecondarySubdivision": "방콕",
+            "countrySubdivision": "방콕",
+            "postalCode": "10210",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Thanintorn 22 Kor, 돈무앙 Sub District, 방콕 District, 방콕 10210",
+            "localName": "방콕"
+          },
+          "position": {
+            "lat": 13.94107,
+            "lon": 100.61247
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅥ3.28ᅣᄑ",
+              "territory": "THA",
+              "code": "ᅥ3.28ᅣᄑ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ1ᅡᄃ.8ᅧᅡ28"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA ᄀᄏ5.ᄃ5ᄎ3",
+              "territory": "THA",
+              "code": "ᄀᄏ5.ᄃ5ᄎ3"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 8ᄂ8.ᄇ43ᄀᄎ",
+              "territory": "THA",
+              "code": "8ᄂ8.ᄇ43ᄀᄎ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.94134,
+              "lon": 100.61216
+            },
+            "btmRightPoint": {
+              "lat": 13.94055,
+              "lon": 100.6125
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/258459",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8104140611743542
+          },
+          "address": {
+            "streetName": "Ruam Kor Thor Mor.",
+            "municipalitySubdivision": "Phon",
+            "municipality": "Kham Muang",
+            "countrySecondarySubdivision": "Amphoe Kham Muang",
+            "countrySubdivision": "Changwat Kalasin",
+            "postalCode": "46180",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Ruam Kor Thor Mor., Phon Sub District, Amphoe Kham Muang District, Changwat Kalasin 46180",
+            "localName": "Amphoe Kham Muang"
+          },
+          "position": {
+            "lat": 16.86275,
+            "lon": 103.61753
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᄉᄎ9.ᄌᄂ4ᅩᄐ",
+              "territory": "THA",
+              "code": "ᄉᄎ9.ᄌᄂ4ᅩᄐ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅢᅩ4ᅧᅭ.1ᅲ598"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 16.86338,
+              "lon": 103.61511
+            },
+            "btmRightPoint": {
+              "lat": 16.86262,
+              "lon": 103.61947
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/317359",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8609852346540245
+          },
+          "address": {
+            "streetName": "Soi Muban Kor Samut",
+            "municipalitySubdivision": "Tha Sai",
+            "municipality": "사뭇사콘",
+            "countrySecondarySubdivision": "Amphoe Mueang Samut Sakhon",
+            "countrySubdivision": "Changwat Samut Sakhon",
+            "postalCode": "74000",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Muban Kor Samut, Tha Sai Sub District, Amphoe Mueang Samut Sakhon District, Changwat Samut Sakhon 74000",
+            "localName": "Amphoe Mueang Samut Sakhon"
+          },
+          "position": {
+            "lat": 13.55914,
+            "lon": 100.26506
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅭᄎ7.ᅲᅥ",
+              "territory": "THA",
+              "code": "ᅭᄎ7.ᅲᅥ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ40ᄀ.364ᄂ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 6ᄎ5.ᄐ6ᅮ",
+              "territory": "THA",
+              "code": "6ᄎ5.ᄐ6ᅮ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 7ᄇ7.3ᅤ3ᄅᄀ",
+              "territory": "THA",
+              "code": "7ᄇ7.3ᅤ3ᄅᄀ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.56792,
+              "lon": 100.2558
+            },
+            "btmRightPoint": {
+              "lat": 13.54994,
+              "lon": 100.27431
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/317368",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.815775319578226
+          },
+          "address": {
+            "streetName": "Soi Toe Kor Teb",
+            "municipalitySubdivision": "Na Khian",
+            "municipality": "나콘시탐마랏",
+            "countrySecondarySubdivision": "Amphoe Mueang Nakhon Si Thammarat",
+            "countrySubdivision": "Changwat Nakhon Si Thammarat",
+            "postalCode": "80000",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Toe Kor Teb, Na Khian Sub District, Amphoe Mueang Nakhon Si Thammarat District, Changwat Nakhon Si Thammarat 80000",
+            "localName": "Amphoe Mueang Nakhon Si Thammarat"
+          },
+          "position": {
+            "lat": 8.45663,
+            "lon": 99.90263
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅢᄀ2.29ᅧ2",
+              "territory": "THA",
+              "code": "ᅢᄀ2.29ᅧ2"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "포18ᄇ.3ᄅᄇ3ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 6ᅡ9.ᄂ26터",
+              "territory": "THA",
+              "code": "6ᅡ9.ᄂ26터"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 8.45697,
+              "lon": 99.90181
+            },
+            "btmRightPoint": {
+              "lat": 8.45606,
+              "lon": 99.9035
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TR/STR/p0/955132",
+          "score": 2.035538435,
+          "matchConfidence": {
+            "score": 0.8549807615736219
+          },
+          "address": {
+            "streetName": "Kör Osman Küme Evleri",
+            "municipalitySubdivision": "Çınar",
+            "municipality": "디야르바키르",
+            "postalCode": "21750",
+            "countryCode": "TR",
+            "country": "튀르키예",
+            "countryCodeISO3": "TUR",
+            "freeformAddress": "Kör Osman Küme Evleri, 21750 Çınar",
+            "localName": "Çınar"
+          },
+          "position": {
+            "lat": 37.81028,
+            "lon": 40.0355
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "TUR ᅧ8캬.7ᄇᄐ",
+              "territory": "TUR",
+              "code": "ᅧ8캬.7ᄇᄐ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅩᅡ9ᄃᄏ.4탸2ᅧ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 37.81266,
+              "lon": 40.03101
+            },
+            "btmRightPoint": {
+              "lat": 37.80754,
+              "lon": 40.03907
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/454220",
+          "score": 2.017103672,
+          "matchConfidence": {
+            "score": 0.8041451039667837
+          },
+          "address": {
+            "streetName": "Soi Bandankao (Sor Por Kor 2)",
+            "countrySubdivision": "Changwat Chachoengsao",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Bandankao (Sor Por Kor 2), Changwat Chachoengsao"
+          },
+          "position": {
+            "lat": 13.58522,
+            "lon": 100.99486
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᄉ76.ᅭ5ᄌ2",
+              "territory": "THA",
+              "code": "ᄉ76.ᅭ5ᄌ2"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ2쿄.28ᄐ2ᄑ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 996.ᅲᅲ5ᄉ4",
+              "territory": "THA",
+              "code": "996.ᅲᅲ5ᄉ4"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.59404,
+              "lon": 100.9855
+            },
+            "btmRightPoint": {
+              "lat": 13.57606,
+              "lon": 101.00401
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/32910",
+          "score": 2.0161523819,
+          "matchConfidence": {
+            "score": 0.8232899163480734
+          },
+          "address": {
+            "streetName": "Soi Chang Phuak 4 Kor",
+            "municipalitySubdivision": "Si Phum",
+            "municipality": "치앙마이",
+            "countrySecondarySubdivision": "Amphoe Mueang Chiang Mai",
+            "countrySubdivision": "Changwat Chiang Mai",
+            "postalCode": "50200",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Chang Phuak 4 Kor, Si Phum Sub District, Amphoe Mueang Chiang Mai District, Changwat Chiang Mai 50200",
+            "localName": "Amphoe Mueang Chiang Mai"
+          },
+          "position": {
+            "lat": 18.80004,
+            "lon": 98.98443
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA 6ᅤ.78뉴",
+              "territory": "THA",
+              "code": "6ᅤ.78뉴"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅣᅩ0ᅲᄉ.5ᄉᄇ8ᅡ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 3ᅲᄎ4.72",
+              "territory": "THA",
+              "code": "3ᅲᄎ4.72"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 45ᅥᅢ.7ᄅᄎ",
+              "territory": "THA",
+              "code": "45ᅥᅢ.7ᄅᄎ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 18.80062,
+              "lon": 98.98432
+            },
+            "btmRightPoint": {
+              "lat": 18.79968,
+              "lon": 98.9846
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/35166",
+          "score": 2.0161523819,
+          "matchConfidence": {
+            "score": 0.8038196228279956
+          },
+          "address": {
+            "streetName": "Soi Koun Kor Choug Khao",
+            "municipality": "Tham Phannara",
+            "countrySecondarySubdivision": "Amphoe Tham Phannara",
+            "countrySubdivision": "Changwat Nakhon Si Thammarat",
+            "postalCode": "80260",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Koun Kor Choug Khao, Amphoe Tham Phannara District, Changwat Nakhon Si Thammarat 80260",
+            "localName": "Amphoe Tham Phannara"
+          },
+          "position": {
+            "lat": 8.40556,
+            "lon": 99.37891
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᄅᄀ2.ᅢ85ᅮ",
+              "territory": "THA",
+              "code": "ᄅᄀ2.ᅢ85ᅮ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "포104.28ᅥ2ᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 579ᄅ.952",
+              "territory": "THA",
+              "code": "579ᄅ.952"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 8.41515,
+              "lon": 99.36991
+            },
+            "btmRightPoint": {
+              "lat": 8.39717,
+              "lon": 99.38809
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/130032",
+          "score": 2.0161523819,
+          "matchConfidence": {
+            "score": 0.8415282280127768
+          },
+          "address": {
+            "streetName": "Soi Jamon Kor 1/1",
+            "municipalitySubdivision": "Khu Khot",
+            "municipality": "Lam Luk ka",
+            "countrySecondarySubdivision": "Amphoe Lam Luk Ka",
+            "countrySubdivision": "Changwat Pathum Thani",
+            "postalCode": "12130",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Jamon Kor 1/1, Khu Khot Sub District, Amphoe Lam Luk Ka District, Changwat Pathum Thani 12130",
+            "localName": "Amphoe Lam Luk Ka"
+          },
+          "position": {
+            "lat": 13.95794,
+            "lon": 100.63863
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅧ2.34ᅩᄑ",
+              "territory": "THA",
+              "code": "ᅧ2.34ᅩᄑ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ1ᅡᄅ.8ᄃ53ᄐ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA ᄀᄏ5.ᄐ0ᅮ2",
+              "territory": "THA",
+              "code": "ᄀᄏ5.ᄐ0ᅮ2"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 8ᄂ8.ᄀ23ᅩᅤ",
+              "territory": "THA",
+              "code": "8ᄂ8.ᄀ23ᅩᅤ"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.95797,
+              "lon": 100.63815
+            },
+            "btmRightPoint": {
+              "lat": 13.95744,
+              "lon": 100.63893
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/130042",
+          "score": 2.0161523819,
+          "matchConfidence": {
+            "score": 0.8411815683383738
+          },
+          "address": {
+            "streetName": "Soi Jamon Kor 1/2",
+            "municipalitySubdivision": "Khu Khot",
+            "municipality": "Lam Luk ka",
+            "countrySecondarySubdivision": "Amphoe Lam Luk Ka",
+            "countrySubdivision": "Changwat Pathum Thani",
+            "postalCode": "12130",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Jamon Kor 1/2, Khu Khot Sub District, Amphoe Lam Luk Ka District, Changwat Pathum Thani 12130",
+            "localName": "Amphoe Lam Luk Ka"
+          },
+          "position": {
+            "lat": 13.9577,
+            "lon": 100.63893
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᅧ2.34ᅭ1",
+              "territory": "THA",
+              "code": "ᅧ2.34ᅭ1"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ1ᅡᄅ.8ᄃ59ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA ᄀᄏ5.ᄑ02ᅧ",
+              "territory": "THA",
+              "code": "ᄀᄏ5.ᄑ02ᅧ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 8ᄂ8.ᄀ23ᅭ5",
+              "territory": "THA",
+              "code": "8ᄂ8.ᄀ23ᅭ5"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.95791,
+              "lon": 100.63822
+            },
+            "btmRightPoint": {
+              "lat": 13.95732,
+              "lon": 100.63935
+            }
+          }
+        },
+        {
+          "type": "Street",
+          "id": "TH/STR/p0/142696",
+          "score": 2.0161523819,
+          "matchConfidence": {
+            "score": 0.8088093576771385
+          },
+          "address": {
+            "streetName": "Soi Kaeha Nongchok Kwa Kor",
+            "municipalitySubdivision": "Nong Chok",
+            "municipality": "방콕",
+            "countrySecondarySubdivision": "방콕",
+            "countrySubdivision": "방콕",
+            "postalCode": "10530",
+            "countryCode": "TH",
+            "country": "태국",
+            "countryCodeISO3": "THA",
+            "freeformAddress": "Soi Kaeha Nongchok Kwa Kor, Nong Chok Sub District, 방콕 District, 방콕 10530",
+            "localName": "방콕"
+          },
+          "position": {
+            "lat": 13.86532,
+            "lon": 100.82031
+          },
+          "mapcodes": [
+            {
+              "type": "Local",
+              "fullMapcode": "THA ᄅ1ᅡ.9ᄃᄐ",
+              "territory": "THA",
+              "code": "ᄅ1ᅡ.9ᄃᄐ"
+            },
+            {
+              "type": "International",
+              "fullMapcode": "ᅡᅩ27ᅤ.1ᄏᄉ5ᅤ"
+            },
+            {
+              "type": "Alternative",
+              "fullMapcode": "THA 8ᅲᅲ0.3ᄅ9",
+              "territory": "THA",
+              "code": "8ᅲᅲ0.3ᄅ9"
+            }
+          ],
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 13.86945,
+              "lon": 100.81983
+            },
+            "btmRightPoint": {
+              "lat": 13.86141,
+              "lon": 100.82077
+            }
+          }
+        }
+      ]
+    }
+  ]
+]
