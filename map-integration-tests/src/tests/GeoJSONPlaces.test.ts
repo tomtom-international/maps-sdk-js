@@ -48,7 +48,7 @@ describe("GeoJSON Places tests", () => {
         `'%s`,
         // @ts-ignore
         async (_name: string, testPlaces: Places, expectedDisplayProps: DisplayProps[]) => {
-            await mapEnv.loadMap({}, { bounds: testPlaces });
+            await mapEnv.loadMap({});
             await initPlaces();
             await waitForMapStyleToLoad();
             expect(await getNumVisibleLayers()).toStrictEqual(0);
@@ -72,7 +72,7 @@ describe("GeoJSON Places tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
 
             // once more, reloading the map and this time showing places before waiting for it to load:
-            await mapEnv.loadMap({}, { bounds: testPlaces });
+            await mapEnv.loadMap({});
             await initPlaces();
             await showPlaces(testPlaces);
             renderedPlaces = await waitForRenderedPlaces(numTestPlaces);

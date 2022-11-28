@@ -51,7 +51,7 @@ describe("Geometry integration tests", () => {
     const outsideAmsterdamSouth = [4.8799, 52.3087];
 
     test("Show geometry in the map, default module config", async () => {
-        await mapEnv.loadMap({}, { bounds: geometryData });
+        await mapEnv.loadMap({});
         await initGeometry();
         await waitForMapStyleToLoad();
         expect(await getNumVisibleLayers()).toStrictEqual(0);

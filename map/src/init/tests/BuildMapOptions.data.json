@@ -34,29 +34,7 @@
         "custom": {
           "url": "https://test_url"
         }
-      },
-      "bounds": {
-        "type": "Feature",
-        "bbox": [
-          15,
-          25,
-          30,
-          35
-        ],
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            17,
-            28
-          ]
-        }
-      },
-      "maxBounds": [
-        10,
-        20,
-        30,
-        40
-      ]
+      }
     },
     {
       "container": "<div id='map'></div>",
@@ -68,18 +46,6 @@
       ],
       "minZoom": 2,
       "maxZoom": 20,
-      "bounds": [
-        15,
-        25,
-        30,
-        35
-      ],
-      "maxBounds": [
-        10,
-        20,
-        30,
-        40
-      ],
       "bearing": 90,
       "attributionControl": false
     }

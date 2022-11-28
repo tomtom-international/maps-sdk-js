@@ -1,4 +1,4 @@
-import { GlobalConfig, HasBBox, HasLngLat } from "@anw/go-sdk-js/core";
+import { GlobalConfig, HasLngLat } from "@anw/go-sdk-js/core";
 import { MapOptions, StyleSpecification } from "maplibre-gl";
 
 export const publishedStyleIDs = [
@@ -90,15 +90,6 @@ export type GOSDKMapParams = Partial<GlobalConfig> & {
      * * Mutually exclusive with bbox.
      */
     center?: HasLngLat;
-    /**
-     * Initial bounds for the map.
-     * * Mutually exclusive with center and zoom.
-     */
-    bounds?: HasBBox;
-    /**
-     * If set, the map will be constrained to the given bounds.
-     */
-    maxBounds?: HasBBox;
 };
 
 export type MapLibreOptions = Omit<MapOptions, "style" | "attributionControl">;
