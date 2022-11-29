@@ -10,7 +10,6 @@ module.exports = {
         "^.+\\.ts?$": "ts-jest"
     },
     testPathIgnorePatterns: ["<rootDir>/node_modules/"],
-    moduleFileExtensions: ["js", "jsx", "ts"],
     moduleNameMapper: {
         "@anw/go-sdk-js/core": "<rootDir>/../core/dist/core.cjs.min.js"
     }
