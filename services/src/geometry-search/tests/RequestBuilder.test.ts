@@ -1,6 +1,8 @@
 import { buildGeometrySearchRequest } from "../RequestBuilder";
 import geometrySearchReqObjectsAndURLs from "./RequestBuilder.data.json";
+import geometrySearchReqObjects from "./RequestBuilderPerf.data.json";
 import { GeometrySearchParams, SearchByGeometryPayloadAPI } from "../types";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
 
 describe("Calculate Geometry Search request URL building tests", () => {
     test.each(geometrySearchReqObjectsAndURLs)(
@@ -32,4 +34,14 @@ describe("Calculate Geometry Search request URL building tests", () => {
         expectToThrow("LineString");
         expectToThrow("MultiLineString");
     });
+});
+
+describe("Geometry Search request URL builder performance tests", () => {
+    test.each(geometrySearchReqObjects)(
+        "'%s'",
+        // @ts-ignore
+        (title: string, params: GeometrySearchParams) => {
+            expect(assertExecutionTime(() => buildGeometrySearchRequest(params), 10, 2)).toBeTruthy();
+        }
+    );
 });
