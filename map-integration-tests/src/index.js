@@ -3,3 +3,4 @@
 // (See webpack config).
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 globalThis.GOSDK = require("localGOSDKJSMap");
+globalThis.GOSDKCore = require("@anw/go-sdk-js/core");

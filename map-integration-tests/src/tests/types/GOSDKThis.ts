@@ -12,6 +12,8 @@ import {
 export type GOSDKThis = typeof globalThis & {
     // @ts-ignore
     GOSDK: typeof globalThis.GOSDK;
+    // @ts-ignore
+    GOSDKCore: typeof globalThis.GOSDKCore;
     goSDKMap: GOSDKMap;
     mapLibreMap: Map;
     traffic?: VectorTilesTraffic;

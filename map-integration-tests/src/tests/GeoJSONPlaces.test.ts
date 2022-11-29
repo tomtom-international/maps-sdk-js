@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, Places } from "@anw/go-sdk-js/core";
+import { HasBBox, Places } from "@anw/go-sdk-js/core";
 import { MapLibreBBox, PlaceDisplayProps } from "map";
 import {
     getNumVisibleLayersBySource,
@@ -23,7 +23,12 @@ const showPlaces = async (places: Places) =>
         // @ts-ignore
     }, places);
 
-const getBBox = async (input: Places) => page.evaluate(() => bboxFromGeoJSON(input) as MapLibreBBox);
+const getBBox = async (places: HasBBox) =>
+    page.evaluate(
+        (inputPlaces) => (globalThis as GOSDKThis).GOSDKCore.bboxFromGeoJSON(inputPlaces) as MapLibreBBox,
+        // @ts-ignore
+        places
+    );
 
 const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
 
