@@ -1,5 +1,5 @@
-import { Places } from "@anw/go-sdk-js/core";
-import { PlaceDisplayProps } from "map";
+import { bboxFromGeoJSON, Places } from "@anw/go-sdk-js/core";
+import { MapLibreBBox, PlaceDisplayProps } from "map";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
@@ -48,7 +48,8 @@ describe("GeoJSON Places tests", () => {
         `'%s`,
         // @ts-ignore
         async (_name: string, testPlaces: Places, expectedDisplayProps: DisplayProps[]) => {
-            await mapEnv.loadMap({});
+            const bounds = bboxFromGeoJSON(testPlaces) as MapLibreBBox;
+            await mapEnv.loadMap({ bounds });
             await initPlaces();
             await waitForMapStyleToLoad();
             expect(await getNumVisibleLayers()).toStrictEqual(0);

@@ -54,7 +54,7 @@ describe("Routing tests", () => {
     });
 
     test("Show and clear flows", async () => {
-        await mapEnv.loadMap({ fitBoundsOptions: { padding: 100 } });
+        await mapEnv.loadMap({ fitBoundsOptions: { padding: 100 }, bounds: parsedTestRoutes.bbox });
         await initRouting();
 
         await showRoutes(parsedTestRoutes);
