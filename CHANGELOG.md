@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.59](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.58...v0.1.59) (2022-11-29)
+
+
+### Bug Fixes
+
+* **routing:** add carpool section type ([26af7ae](https://github.com/tomtom-international/go-sdk-js/commit/26af7ae7dc475801386985e207ec9021fb87edf6))
+
 ### [0.1.58](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.57...v0.1.58) (2022-11-28)
 
 
