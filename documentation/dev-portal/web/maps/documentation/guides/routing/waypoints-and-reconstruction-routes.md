@@ -20,7 +20,7 @@ The maximum allowed number of additional waypoints is 150.
 
 </Blockquote>
 
-A [`WaypointInput`](/web/maps/documentation/api-reference/modules/services/#waypointinput) is either a complex [`Waypoint`](/web/maps/documentation/api-reference/modules/core/#waypoint) object or anything with coordinates.
+A [`WaypointLike`](/web/maps/documentation/api-reference/modules/core/#waypointlike) is either a complex [`Waypoint`](/web/maps/documentation/api-reference/modules/core/#waypoint) object or anything with coordinates.
 
 There are two different types of waypoints:
 - Single point waypoints - considered as a single point and seen as stops along the route.
@@ -34,22 +34,16 @@ By default, a [`Waypoint`](/web/maps/documentation/api-reference/modules/core/#w
 <Code>
 
 ```typescript
+import { asSoftWaypoint, Waypoint } from "@anw/go-sdk-js/core";
+import { CalculateRouteParams } from "@anw/go-sdk-js/services";
+
 // Single point waypoints
 const amsterdam = [4.897070, 52.377956];
 const rotterdam = [4.462456, 51.926517];
 const hague = [4.288788, 52.078663];
 
 // Circle (soft) waypoint
-const utrecht: Waypoint = {
-  type: "Feature",
-  properties: {
-    radiusMeters: 100
-  },
-  geometry: {
-    type: "Point",
-    coordinates: [5.11518, 52.091458]
-  }
-};
+const utrecht: Waypoint = asSoftWaypoint([5.11518, 52.091458], 100);
 
 // A route that traverses the waypoints in the same sequence that the array is defined
 const routePlanningParams: CalculateRouteParams = {
@@ -58,22 +52,15 @@ const routePlanningParams: CalculateRouteParams = {
 ```
 
 ```javascript
+import { asSoftWaypoint } from "@anw/go-sdk-js/core";
+
 // Single point waypoints
 const amsterdam = [4.897070, 52.377956];
 const rotterdam = [4.462456, 51.926517];
 const hague = [4.288788, 52.078663];
 
 // Circle (soft) waypoint
-const utrecht = {
-  type: "Feature",
-  properties: {
-    radiusMeters: 100
-  },
-  geometry: {
-    type: "Point",
-    coordinates: [5.11518, 52.091458]
-  }
-};
+const utrecht: Waypoint = asSoftWaypoint([5.11518, 52.091458], 100);
 
 // A route that traverses the waypoints in the same sequence that the array is defined
 const routePlanningParams = {
@@ -83,4 +70,4 @@ const routePlanningParams = {
 
 </Code>
 
-# Reconstruction routes (TODO?)
+# Reconstruction routes (TODO)

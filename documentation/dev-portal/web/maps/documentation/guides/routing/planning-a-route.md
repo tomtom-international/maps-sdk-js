@@ -17,6 +17,8 @@ To calculate a route from A to B, you need to first provide route planning crite
 <Code>
 
 ``` typescript
+import { CalculateRouteParams } from "@anw/go-sdk-js/services";
+
 const amsterdam = [4.897070, 52.377956];
 const rotterdam = [4.462456, 51.926517];
 const routePlanningParams: CalculateRouteParams = {
@@ -102,31 +104,4 @@ Vehicle profile properties are valid only at the current point in time and they 
 
 </Blockquote>
 
-# Planning errors (TODO?)
-
-[//]: # (If any errors occurred during the planning, the result returned by the completion block will be [`.failure&#40;error&#41;`]&#40;https://developer.apple.com/documentation/swift/result/failure&#41;. The error type is [`NSError`]&#40;https://developer.apple.com/documentation/foundation/nserror&#41; for common errors &#40;e.g., Networking&#41; and [`RoutingError`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Classes/RoutingError.html&#41; for routing-specific errors. There are a few [`RoutingError`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Classes/RoutingError.html&#41; codes that are returned in different situations.)
-
-[//]: # ()
-[//]: # (-   [`unknown`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - Routing call ended with an unknown error.)
-
-[//]: # (-   [`badInput`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - The combination of input parameters was not valid.)
-
-[//]: # (-   [`noRouteFound`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - No valid route could be found.)
-
-[//]: # (-   [`internalError`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - The service encountered an unexpected error while fulfilling the request.)
-
-[//]: # (-   [`cannotRestoreBaseroute`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - The route could not be reconstructed using [`supportingPoints`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlanner/Structs/RouteLegOptions.html#/s:03TomA10SDKRouting15RouteLegOptionsV16supportingPointsSaySo22CLLocationCoordinate2DVGvp&#41;.)
-
-[//]: # (-   [`serviceUnavailable`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - The service is not ready to handle the request.)
-
-[//]: # (-   [`deserialization`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - Deserialization of the routing response failed.)
-
-[//]: # (-   [`network`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - Routing network call failed.)
-
-[//]: # (-   [`computationTimeout`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; -The request reached an internal computation time threshold and timed out.)
-
-[//]: # (-   [`apiKeyError`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - Indicates that the API key has no permission to access this resource.)
-
-[//]: # (-   [`mapMatchingFailure`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - One of the input points &#40;Origin, Destination, Waypoints&#41; could not be matched to the map because no drivable section near this point could be found.)
-
-[//]: # (-   [`cancelled`]&#40;https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlannerOnline/Enums/RoutingErrorCode.html&#41; - The request has been cancelled.)
+# Planning errors (TODO)

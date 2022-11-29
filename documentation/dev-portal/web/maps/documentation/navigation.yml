@@ -45,7 +45,7 @@ menu:
           - fileId: guides/search/autocomplete-and-fuzzy-search
             title: Autocomplete and fuzzy search (TODO)
           - fileId: guides/search/specialized-search
-            title: Specialized search (TODO)
+            title: Specialized search
           - fileId: guides/search/reverse-geocoding
             title: Reverse geocoding (WIP)
           - fileId: guides/search/ui-components
@@ -53,13 +53,13 @@ menu:
       - title: Routing
         items:
           - fileId: guides/routing/quickstart
-            title: Quickstart (TODO)
+            title: Quickstart
           - fileId: guides/routing/planning-a-route
-            title: Planning a route (TODO)
-          - fileId: guides/routing/waypoints-and-custom-routes
-            title: Waypoints and custom routes (TODO)
+            title: Planning a route
+          - fileId: guides/routing/waypoints-and-reconstruction-routes
+            title: Waypoints and reconstruction routes
           - fileId: guides/routing/route-sections
-            title: Route sections (TODO)
+            title: Route sections
   - title: API Reference (WIP)
     items:
       - fileId: /api-reference/home
