@@ -23,6 +23,8 @@ const showPlaces = async (places: Places) =>
         // @ts-ignore
     }, places);
 
+const getBBox = async (input: Places) => page.evaluate(() => bboxFromGeoJSON(input) as MapLibreBBox);
+
 const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
 
 const waitForRenderedPlaces = async (numPlaces: number) => waitUntilRenderedFeatures("placesSymbols", numPlaces, 20000);
@@ -48,7 +50,7 @@ describe("GeoJSON Places tests", () => {
         `'%s`,
         // @ts-ignore
         async (_name: string, testPlaces: Places, expectedDisplayProps: DisplayProps[]) => {
-            const bounds = bboxFromGeoJSON(testPlaces) as MapLibreBBox;
+            const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlaces();
             await waitForMapStyleToLoad();
@@ -73,7 +75,7 @@ describe("GeoJSON Places tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
 
             // once more, reloading the map and this time showing places before waiting for it to load:
-            await mapEnv.loadMap({});
+            await mapEnv.loadMap({ bounds });
             await initPlaces();
             await showPlaces(testPlaces);
             renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
