@@ -2,7 +2,7 @@ import reverseGeocode from "../ReverseGeocoding";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import apiAndParsedResponses from "./RevGeoMocked.data.json";
-import {ReverseGeocodingParams} from "../types/ReverseGeocodingParams";
+import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 import omit from "lodash/omit";
 
 describe("Reverse Geocoding mock tests", () => {
@@ -22,7 +22,7 @@ describe("Reverse Geocoding mock tests", () => {
 
     test("Server response with 429.", async () => {
         axiosMock.onGet().replyOnce(429);
-        await expect(reverseGeocode({position: [180, 90]})).rejects.toMatchObject({
+        await expect(reverseGeocode({ position: [180, 90] })).rejects.toMatchObject({
             service: "ReverseGeocode",
             message: "Too Many Requests: The API Key is over QPS (Queries per second)",
             status: 429
