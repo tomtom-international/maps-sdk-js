@@ -18,7 +18,7 @@ describe("Geometry Search response parser performance tests", () => {
     test.each(apiResponses)(
         "'%s'",
         // @ts-ignore
-        (title: string, apiResponse: GeometrySearchResponseAPI) => {
+        (_title: string, apiResponse: GeometrySearchResponseAPI) => {
             expect(assertExecutionTime(() => parseGeometrySearchResponse(apiResponse), 10, 5)).toBeTruthy();
         }
     );

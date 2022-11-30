@@ -40,7 +40,7 @@ describe("Geometry Search request URL builder performance tests", () => {
     test.each(geometrySearchReqObjects)(
         "'%s'",
         // @ts-ignore
-        (title: string, params: GeometrySearchParams) => {
+        (_title: string, params: GeometrySearchParams) => {
             expect(assertExecutionTime(() => buildGeometrySearchRequest(params), 10, 2)).toBeTruthy();
         }
     );

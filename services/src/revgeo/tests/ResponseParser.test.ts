@@ -30,7 +30,7 @@ describe("ReverseGeocode response parsing performance tests", () => {
     test.each(apiResponses)(
         "'%s'",
         // @ts-ignore
-        (title: string, params: ReverseGeocodingParams, apiResponse: ReverseGeocodingResponseAPI) => {
+        (_title: string, params: ReverseGeocodingParams, apiResponse: ReverseGeocodingResponseAPI) => {
             expect(assertExecutionTime(() => parseRevGeoResponse(apiResponse, params), 10, 2)).toBeTruthy();
         }
     );

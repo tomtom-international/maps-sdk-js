@@ -8,7 +8,7 @@ describe("Reverse Geocoding request URL building functional tests", () => {
     test.each(reverseGeocodeReqObjectsAndURLS)(
         "'%s'",
         // @ts-ignore
-        (title: string, params: ReverseGeocodingParams, url: string) => {
+        (_title: string, params: ReverseGeocodingParams, url: string) => {
             expect(buildRevGeoRequest(params).toString()).toStrictEqual(url);
         }
     );
@@ -18,7 +18,7 @@ describe("Reverse Geocoding request URL building performance test", () => {
     test.each(reverseGeocodeReqObjects)(
         "'%s'",
         // @ts-ignore
-        (title: string, params: ReverseGeocodingParams) => {
+        (_title: string, params: ReverseGeocodingParams) => {
             expect(assertExecutionTime(() => buildRevGeoRequest(params), 10, 2)).toBeTruthy();
         }
     );
