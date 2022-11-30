@@ -21,6 +21,34 @@ describe("ReverseGeocoding schema validation", () => {
         });
     });
 
+    test("it should fail when latitude/longitude is out of range", async () => {
+        await expect(
+            revgeocode({
+                position: [200, -95]
+            })
+        ).rejects.toMatchObject({
+            service: "ReverseGeocode",
+            errors: [
+                {
+                    code: "too_big",
+                    maximum: 180,
+                    type: "number",
+                    inclusive: true,
+                    message: "Number must be less than or equal to 180",
+                    path: ["position", 0]
+                },
+                {
+                    code: "too_small",
+                    minimum: -90,
+                    type: "number",
+                    inclusive: true,
+                    message: "Number must be greater than or equal to -90",
+                    path: ["position", 1]
+                }
+            ]
+        });
+    });
+
     test("it should fail when position is an invalid param - case 2", async () => {
         const invalidParams: ReverseGeocodingParams = {
             // @ts-ignore

@@ -230,4 +230,22 @@ describe("Geocoding schema validation", () => {
             ]
         });
     });
+
+    test("it should fail when position lat/lon is out of range", async () => {
+        const invalidParams: GeocodingParams = {
+            query: "Minnesota",
+            position: [46.6144, -93.1432] //Inverted coords for Minnesota
+        };
+        await expect(geocode(invalidParams)).rejects.toMatchObject({
+            message: "Validation error",
+            service: "Geocode",
+            errors: [
+                {
+                    code: "too_small",
+                    message: "Number must be greater than or equal to -90",
+                    path: ["position", 1]
+                }
+            ]
+        });
+    });
 });

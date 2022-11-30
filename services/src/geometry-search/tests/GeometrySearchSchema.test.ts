@@ -353,26 +353,26 @@ describe("GeometrySearch Schema Validation", () => {
             geometrySearch({
                 query,
                 geometries,
-                position: [-95, 200]
+                position: [200, -95]
             })
         ).rejects.toMatchObject({
             message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
-                    code: "too_small",
-                    minimum: -90,
-                    type: "number",
-                    inclusive: true,
-                    message: "Number must be greater than or equal to -90",
-                    path: ["position", 0]
-                },
-                {
                     code: "too_big",
                     maximum: 180,
                     type: "number",
                     inclusive: true,
                     message: "Number must be less than or equal to 180",
+                    path: ["position", 0]
+                },
+                {
+                    code: "too_small",
+                    minimum: -90,
+                    type: "number",
+                    inclusive: true,
+                    message: "Number must be greater than or equal to -90",
                     path: ["position", 1]
                 }
             ]

@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { views } from "@anw/go-sdk-js/core";
+import { hasLngLatSchema } from "../shared/GeometriesSchema";
 
 const revGeocodeRequestMandatory = z.object({
-    position: z.array(z.any()).nonempty()
+    position: hasLngLatSchema
 });
 
 const revGeocodeRequestOptional = z
