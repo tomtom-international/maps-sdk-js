@@ -1,21 +1,20 @@
 import revgeocode from "../ReverseGeocoding";
-import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
+import {ReverseGeocodingParams} from "../types/ReverseGeocodingParams";
 
 describe("ReverseGeocoding schema validation", () => {
     test("it should fail when position is an invalid param - case 1", async () => {
         const invalidParams: ReverseGeocodingParams = {
             // @ts-ignore
-            position: { lon: -122.420679, lat: 37.772537 }
+            position: {lon: -122.420679, lat: 37.772537}
         };
 
         await expect(revgeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
-                    received: "object",
-                    code: "invalid_type",
+                    code: "invalid_union",
                     path: ["position"],
-                    message: "Expected array, received object"
+                    message: "Invalid input"
                 }
             ]
         });
@@ -59,10 +58,9 @@ describe("ReverseGeocoding schema validation", () => {
             service: "ReverseGeocode",
             errors: [
                 {
-                    received: "number",
-                    code: "invalid_type",
+                    code: "invalid_union",
                     path: ["position"],
-                    message: "Expected array, received number"
+                    message: "Invalid input",
                 }
             ]
         });
@@ -78,10 +76,9 @@ describe("ReverseGeocoding schema validation", () => {
             service: "ReverseGeocode",
             errors: [
                 {
-                    received: "string",
-                    code: "invalid_type",
+                    code: "invalid_union",
                     path: ["position"],
-                    message: "Expected array, received string"
+                    message: "Invalid input",
                 }
             ]
         });
@@ -97,10 +94,9 @@ describe("ReverseGeocoding schema validation", () => {
             service: "ReverseGeocode",
             errors: [
                 {
-                    code: "invalid_type",
+                    code: "invalid_union",
                     path: ["position"],
-                    received: "undefined",
-                    message: "Required"
+                    message: "Invalid input"
                 }
             ]
         });
