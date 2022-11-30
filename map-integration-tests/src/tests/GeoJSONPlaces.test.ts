@@ -1,5 +1,5 @@
 import { HasBBox, Places } from "@anw/go-sdk-js/core";
-import { MapLibreBBox, PlaceDisplayProps } from "map";
+import { PlaceDisplayProps } from "map";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
@@ -8,7 +8,7 @@ import {
 } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { MapGeoJSONFeature, LngLatBoundsLike } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
 
 const initPlaces = async () =>
@@ -25,7 +25,7 @@ const showPlaces = async (places: Places) =>
 
 const getBBox = async (places: HasBBox) =>
     page.evaluate(
-        (inputPlaces) => (globalThis as GOSDKThis).GOSDKCore.bboxFromGeoJSON(inputPlaces) as MapLibreBBox,
+        (inputPlaces) => (globalThis as GOSDKThis).GOSDKCore.bboxFromGeoJSON(inputPlaces) as LngLatBoundsLike,
         // @ts-ignore
         places
     );

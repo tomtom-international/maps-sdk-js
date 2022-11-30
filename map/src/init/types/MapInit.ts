@@ -92,6 +92,4 @@ export type GOSDKMapParams = Partial<GlobalConfig> & {
     center?: HasLngLat;
 };
 
-export type MapLibreBBox = [number, number, number, number];
-
 export type MapLibreOptions = Omit<MapOptions, "style" | "attributionControl">;

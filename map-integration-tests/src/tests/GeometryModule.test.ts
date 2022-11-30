@@ -1,6 +1,6 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
-import { GeometryModuleConfig, MapLibreBBox } from "map";
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { GeometryModuleConfig } from "map";
+import { MapGeoJSONFeature, LngLatBoundsLike } from "maplibre-gl";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
@@ -51,7 +51,7 @@ describe("Geometry integration tests", () => {
     const outsideAmsterdamSouth = [4.8799, 52.3087];
 
     test("Show geometry in the map, default module config", async () => {
-        await mapEnv.loadMap({ bounds: geometryData.bbox as MapLibreBBox });
+        await mapEnv.loadMap({ bounds: geometryData.bbox as LngLatBoundsLike });
         await initGeometry();
         await waitForMapStyleToLoad();
         expect(await getNumVisibleLayers()).toStrictEqual(0);
