@@ -56,8 +56,8 @@ export const featureCollectionSchema = z.object({
  * @ignore
  */
 export const hasLngLatSchema = z.union([
-    z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)]),
-    z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180), z.number()]),
+    z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)]),
+    z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90), z.number()]),
     z.object({
         type: z.literal("Point"),
         coordinates: z.number().array()
