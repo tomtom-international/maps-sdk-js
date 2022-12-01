@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.60](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.59...v0.1.60) (2022-12-01)
+
+
+### Features
+
+* **map:** adding support for route sections on the map ([a557a6c](https://github.com/tomtom-international/go-sdk-js/commit/a557a6cbd821910c3b35c9ee7ad1de9bf20fab35))
+
+
+### Bug Fixes
+
+* [#539](https://github.com/tomtom-international/go-sdk-js/issues/539): fix hasLnglatSchema ([a53030d](https://github.com/tomtom-international/go-sdk-js/commit/a53030dc832cc62b1915630f8ab24456177a175a))
+* [#539](https://github.com/tomtom-international/go-sdk-js/issues/539): fix/add tests containing hasLnglatSchema ([d5ccf0d](https://github.com/tomtom-international/go-sdk-js/commit/d5ccf0d730b7ec461da9b77e553dece4159e3875))
+
 ### [0.1.59](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.58...v0.1.59) (2022-11-29)
 
 
