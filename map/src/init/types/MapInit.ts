@@ -1,4 +1,4 @@
-import { GlobalConfig, HasLngLat } from "@anw/go-sdk-js/core";
+import { GlobalConfig } from "@anw/go-sdk-js/core";
 import { MapOptions, StyleSpecification } from "maplibre-gl";
 
 export const publishedStyleIDs = [
@@ -85,11 +85,6 @@ export type GOSDKMapParams = Partial<GlobalConfig> & {
      * Exclude traffic incidents, traffic flow, poi and hillshade modules when loading styles.
      */
     exclude?: StyleModules[];
-    /**
-     * Where to center the map on startup.
-     * * Mutually exclusive with bbox.
-     */
-    center?: HasLngLat;
 };
 
 export type MapLibreOptions = Omit<MapOptions, "style" | "attributionControl">;
