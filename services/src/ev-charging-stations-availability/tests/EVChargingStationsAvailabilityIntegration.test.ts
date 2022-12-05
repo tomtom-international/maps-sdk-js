@@ -1,27 +1,27 @@
-import chargingAvailability from "../ChargingAvailability";
+import EVChargingStationsAvailability from "../EVChargingStationsAvailability";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { SDKServiceError } from "../../shared/Errors";
 import { accessibility, ChargingPoint, chargingPointStatus, connectorTypes } from "@anw/go-sdk-js/core";
-import { ChargingAvailabilityResponse } from "../types/ChargingAvailabilityResponse";
+import { EVChargingStationsAvailabilityResponse } from "../types/EVChargingStationsAvailabilityResponse";
 
 describe("charging availability errors", () => {
     test("charging availability test without API key", async () => {
-        await expect(chargingAvailability({ id: "1234" })).rejects.toBeInstanceOf(SDKServiceError);
-        await expect(chargingAvailability({ id: "1234" })).rejects.toMatchObject({
-            service: "ChargingAvailability",
+        await expect(EVChargingStationsAvailability({ id: "1234" })).rejects.toBeInstanceOf(SDKServiceError);
+        await expect(EVChargingStationsAvailability({ id: "1234" })).rejects.toMatchObject({
+            service: "EVChargingStationsAvailability",
             message: "Request failed with status code 403",
             status: 403
         });
     });
 });
 
-describe("chargingAvailability integration tests", () => {
+describe("EVChargingStationsAvailability integration tests", () => {
     const statusRegex = new RegExp(chargingPointStatus.join("|"));
     const accessibilityRegex = new RegExp(accessibility.join("|"));
     const connectorTypeRegex = new RegExp(connectorTypes.join("|"));
     beforeAll(() => putIntegrationTestsAPIKey());
 
-    test("chargingAvailability with required params", async () => {
+    test("EVChargingStationsAvailability with required params", async () => {
         const chargingPointObj: ChargingPoint = {
             evseId: expect.any(String),
             status: expect.stringMatching(statusRegex),
@@ -35,7 +35,7 @@ describe("chargingAvailability integration tests", () => {
                 }
             ]
         };
-        const expectedResult: ChargingAvailabilityResponse = {
+        const expectedResult: EVChargingStationsAvailabilityResponse = {
             chargingParkId: "528009010069650",
             chargingStations: [
                 {
@@ -46,12 +46,12 @@ describe("chargingAvailability integration tests", () => {
             ]
         };
 
-        const result = await chargingAvailability({ id: "528009010069650" });
+        const result = await EVChargingStationsAvailability({ id: "528009010069650" });
         expect(result).toMatchObject(expectedResult);
         expect(result.chargingStations[0].chargingPoints).toHaveLength(5);
     });
 
-    test("chargingAvailability with connector filter", async () => {
+    test("EVChargingStationsAvailability with connector filter", async () => {
         const chargingStationObj = {
             chargingStationId: expect.any(String),
             accessibility: expect.stringMatching(accessibilityRegex),
@@ -70,7 +70,7 @@ describe("chargingAvailability integration tests", () => {
             chargingStations: [chargingStationObj, chargingStationObj]
         };
 
-        const result = await chargingAvailability({ id: "840479002976741", connectorTypes: ["Chademo"] });
+        const result = await EVChargingStationsAvailability({ id: "840479002976741", connectorTypes: ["Chademo"] });
         expect(result).toMatchObject(expectedResult);
     });
 });

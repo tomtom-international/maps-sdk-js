@@ -1,9 +1,9 @@
-import { buildChargingAvailabilityRequest } from "../RequestBuilder";
+import { buildEVChargingStationsAvailabilityRequest } from "../RequestBuilder";
 
 describe("Charging availability request URL building tests", () => {
     test("Charging availability request URL building tests", () => {
         expect(
-            buildChargingAvailabilityRequest({
+            buildEVChargingStationsAvailabilityRequest({
                 apiKey: "GLOBAL_API_KEY",
                 commonBaseURL: "https://api-test.tomtom.com",
                 language: "es-ES",
@@ -16,7 +16,7 @@ describe("Charging availability request URL building tests", () => {
 
     test("Charging availability request URL building with all params tests", () => {
         expect(
-            buildChargingAvailabilityRequest({
+            buildEVChargingStationsAvailabilityRequest({
                 apiKey: "API_KEY",
                 commonBaseURL: "https://api.tomtom.com",
                 language: "en-GB",

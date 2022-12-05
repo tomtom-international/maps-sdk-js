@@ -1,15 +1,15 @@
-import chargingAvailability from "../ChargingAvailability";
-import { ChargingAvailabilityParams } from "../types/ChargingAvailabilityParams";
+import EVChargingStationsAvailability from "../EVChargingStationsAvailability";
+import { EVChargingStationsAvailabilityParams } from "../types/EVChargingStationsAvailabilityParams";
 
-describe("Charging availability schema validation", () => {
+describe("EV Charging Stations availability schema validation", () => {
     test("it should fail when id is an invalid param", async () => {
-        const invalidParams: ChargingAvailabilityParams = {
+        const invalidParams: EVChargingStationsAvailabilityParams = {
             //@ts-ignore
             id: 555
         };
 
-        await expect(chargingAvailability(invalidParams)).rejects.toMatchObject({
-            service: "ChargingAvailability",
+        await expect(EVChargingStationsAvailability(invalidParams)).rejects.toMatchObject({
+            service: "EVChargingStationsAvailability",
             errors: [
                 {
                     received: "number",
@@ -22,12 +22,12 @@ describe("Charging availability schema validation", () => {
     });
 
     test("it should fail when connectorTypes is invalid and id is missing", async () => {
-        const invalidParams: ChargingAvailabilityParams = {
+        const invalidParams: EVChargingStationsAvailabilityParams = {
             //@ts-ignore
             connectorTypes: "Tesla"
         };
-        await expect(chargingAvailability(invalidParams)).rejects.toMatchObject({
-            service: "ChargingAvailability",
+        await expect(EVChargingStationsAvailability(invalidParams)).rejects.toMatchObject({
+            service: "EVChargingStationsAvailability",
             errors: [
                 {
                     code: "invalid_type",
@@ -48,13 +48,13 @@ describe("Charging availability schema validation", () => {
     });
 
     test("it should fail when connectorTypes is array of invalid values", async () => {
-        const invalidParams: ChargingAvailabilityParams = {
+        const invalidParams: EVChargingStationsAvailabilityParams = {
             id: "abc",
             //@ts-ignore
             connectorTypes: ["Tesla", "any string"]
         };
-        await expect(chargingAvailability(invalidParams)).rejects.toMatchObject({
-            service: "ChargingAvailability",
+        await expect(EVChargingStationsAvailability(invalidParams)).rejects.toMatchObject({
+            service: "EVChargingStationsAvailability",
             errors: [
                 {
                     code: "invalid_enum_value",
@@ -72,15 +72,15 @@ describe("Charging availability schema validation", () => {
     });
 
     test("it should fail when max or min PowerKW is invalid", async () => {
-        const invalidParams: ChargingAvailabilityParams = {
+        const invalidParams: EVChargingStationsAvailabilityParams = {
             id: "abc",
             //@ts-ignore
             maxPowerKW: "50",
             //@ts-ignore
             minPowerKW: "11"
         };
-        await expect(chargingAvailability(invalidParams)).rejects.toMatchObject({
-            service: "ChargingAvailability",
+        await expect(EVChargingStationsAvailability(invalidParams)).rejects.toMatchObject({
+            service: "EVChargingStationsAvailability",
             errors: [
                 {
                     code: "invalid_type",

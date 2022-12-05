@@ -7,7 +7,7 @@ import geocodeCustomize from "./src/geocode/customize";
 import geometryDataCustomize from "./src/geometry-data/customize";
 import geometrySearchCustomize from "./src/geometry-search/customize";
 import routingCustomize from "./src/routing/customize";
-import chargingAvailabilityCustomize from "./src/charging-availability/customize";
+import evChargingStationsAvailabilityCustomize from "./src/ev-charging-stations-availability/customize";
 import placeByIDCustomize from "./src/place-by-id/customize";
 
 export * from "./src/shared/ServiceTemplate";
@@ -19,7 +19,7 @@ export * from "./src/geometry-data";
 export * from "./src/geometry-search";
 export * from "./src/geometry-data";
 export * from "./src/routing";
-export * from "./src/charging-availability";
+export * from "./src/ev-charging-stations-availability";
 export * from "./src/place-by-id";
 /**
  * @group Shared
@@ -31,6 +31,6 @@ export const customizeService = {
     geometryData: geometryDataCustomize,
     geometrySearch: geometrySearchCustomize,
     calculateRoute: routingCustomize,
-    chargingAvailability: chargingAvailabilityCustomize,
+    evChargingStationsAvailability: evChargingStationsAvailabilityCustomize,
     placeByID: placeByIDCustomize
 };

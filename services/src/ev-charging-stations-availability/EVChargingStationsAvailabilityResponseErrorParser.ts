@@ -7,7 +7,7 @@ import { DefaultAPIResponseError } from "../shared/types/APIResponseErrorTypes";
  * @param apiError
  * @param serviceName
  */
-export const chargingAvailabilityResponseErrorParser: ParseResponseError<DefaultAPIResponseError> = (
+export const evChargingStationsAvailabilityResponseErrorParser: ParseResponseError<DefaultAPIResponseError> = (
     apiError,
     serviceName
 ) => {

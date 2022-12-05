@@ -1,10 +1,10 @@
 import { ChargingStation } from "@anw/go-sdk-js/core";
 
 /**
- * @group Charging Availability
+ * @group EV Charging Stations Availability
  * @category Types
  */
-export type ChargingAvailabilityResponse = {
+export type EVChargingStationsAvailabilityResponse = {
     /**
      * The ID of the returned entity.
      */

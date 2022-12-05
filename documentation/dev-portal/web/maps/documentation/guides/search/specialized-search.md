@@ -208,9 +208,9 @@ try {
 
 <a style="display: block; margin: 0; padding: 0;" id="_ev_charging_stations_availability_search"></a>
 
-# Charging station availability search
+# EV Charging station availability search
 
-The EV charging stations availability search checks the availability of Electric Vehicle (EV) charging points at a specific charging station. To make the request, you need to call [`chargingAvailability`](/web/maps/documentation/api-reference/modules/services/#chargingavailability) and provide the corresponding [`ChargingAvailabilityParams`](/web/maps/documentation/api-reference/modules/services/#chargingavailabilityparams). The only mandatory parameter is the charging station identifier. You can get this identifier from the [`CommonPlaceProps`](/web/maps/documentation/api-reference/modules/core/#commonplaceprops) in the result of a Search. The identifier is in the [`PlaceDataSources`](/web/maps/documentation/api-reference/modules/core/#placedatasources) of a Search result, labeled [`ChargingAvailabilityDataSource`](/web/maps/documentation/api-reference/modules/core/#chargingavailabilitydatasource).
+The EV charging stations availability search checks the availability of Electric Vehicle (EV) charging points at a specific charging station. To make the request, you need to call [`EVChargingStationsAvailability`](/web/maps/documentation/api-reference/modules/services/#evchargingstationsavailability) and provide the corresponding [`EVChargingStationsAvailabilityParams`](/web/maps/documentation/api-reference/modules/services/#evchargingstationsavailabilityparams). The only mandatory parameter is the charging station identifier. You can get this identifier from the [`CommonPlaceProps`](/web/maps/documentation/api-reference/modules/core/#commonplaceprops) in the result of a Search. The identifier is in the [`PlaceDataSources`](/web/maps/documentation/api-reference/modules/core/#placedatasources) of a Search result, labeled [`ChargingAvailabilityDataSource`](/web/maps/documentation/api-reference/modules/core/#chargingavailabilitydatasource).
 
 <Blockquote>
 
@@ -218,17 +218,17 @@ Not every Search result contains charging station information.
 
 </Blockquote>
 
-You can add optional restrictions to the request (see [`ChargingAvailabilityParams`](/web/maps/documentation/api-reference/modules/services/#chargingavailabilityparams)): [connector type](https://developer.tomtom.com/search-api/search-api-documentation/supported-connector-types), minimum power (expressed in kilowatts) and maximum power (expressed in kilowatts).
+You can add optional restrictions to the request (see [`EVChargingStationsAvailabilityParams`](/web/maps/documentation/api-reference/modules/services/#evchargingstationsavailabilityparams)): [connector type](https://developer.tomtom.com/search-api/search-api-documentation/supported-connector-types), minimum power (expressed in kilowatts) and maximum power (expressed in kilowatts).
 
 <Code>
 
 ``` typescript
-import { ChargingAvailabilityParams } from "@anw/go-sdk-js/services";
+import { EVChargingStationsAvailabilityParams } from "@anw/go-sdk-js/services";
 
-const chargingStationId = ... // get a charging station identifier from a search
+const evChargingStationId = ... // get an ev charging station identifier from a search
 
-const chargingAvailabilityParams: ChargingAvailabilityParams = {
-    id: chargingStationId,
+const evChargingStationsAvailabilityParams: EVChargingStationsAvailabilityParams = {
+    id: evChargingStationId,
     connectorTypes: ["StandardHouseholdCountrySpecific", "IEC62196Type1", "IEC62196Type1CCS"],
     minPowerKW: 1,
     maxPowerKW: 5
@@ -236,10 +236,10 @@ const chargingAvailabilityParams: ChargingAvailabilityParams = {
 ```
 
 ``` javascript
-const chargingStationId = ... // get a charging station identifier from a search
+const evChargingStationId = ... // get an ev charging station identifier from a search
 
-const chargingAvailabilityParams = {
-    id: chargingStationId,
+const evChargingStationsAvailabilityParams = {
+    id: evChargingStationId,
     connectorTypes: ["StandardHouseholdCountrySpecific", "IEC62196Type1", "IEC62196Type1CCS"],
     minPowerKW: 1,
     maxPowerKW: 5
@@ -252,7 +252,7 @@ A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/Jav
 
 ``` javascript
 try {
-    const chargingAvailabilityResponse = await chargingAvailability(chargingAvailabilityParams);
+    const evChargingStationsAvailabilityResponse = await EVChargingStationsAvailability(evChargingStationsAvailabilityParams);
     // handle success
 } catch (e) {
     // handle error
