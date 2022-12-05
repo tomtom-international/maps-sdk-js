@@ -7,5 +7,6 @@
   "name": "GO-SDK-JS",
   "internalModule": "internal",
   "excludeExternals": true,
+  "allReflectionsHaveOwnDocument": true,
   "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports"]
 }
