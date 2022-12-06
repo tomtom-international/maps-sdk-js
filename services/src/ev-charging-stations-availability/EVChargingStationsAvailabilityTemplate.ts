@@ -5,7 +5,7 @@ import { buildEVChargingStationsAvailabilityRequest } from "./RequestBuilder";
 import { parseEVChargingStationsAvailabilityResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
 import { evChargingStationsAvailabilityRequestSchema } from "./EVChargingStationsAvailabilityRequestSchema";
-import { evChargingStationsAvailabilityResponseErrorParser } from "./EVChargingStationsAvailabilityResponseErrorParser";
+import { parseEVChargingStationsAvailabilityResponseError } from "./EVChargingStationsAvailabilityResponseErrorParser";
 
 /**
  * EV Charging Stations Availability service template type.
@@ -29,5 +29,5 @@ export const evChargingStationsAvailabilityTemplate: EVChargingStationsAvailabil
     buildRequest: buildEVChargingStationsAvailabilityRequest,
     sendRequest: getJson,
     parseResponse: parseEVChargingStationsAvailabilityResponse,
-    parseResponseError: evChargingStationsAvailabilityResponseErrorParser
+    parseResponseError: parseEVChargingStationsAvailabilityResponseError
 };

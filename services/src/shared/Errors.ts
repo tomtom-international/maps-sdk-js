@@ -60,7 +60,7 @@ export class SDKServiceError extends SDKError {
  * @param error
  * @param serviceName
  */
-export const defaultResponseErrorParser: ParseResponseError<DefaultAPIResponseError> = (error, serviceName) => {
+export const parseDefaultResponseError: ParseResponseError<DefaultAPIResponseError> = (error, serviceName) => {
     const { data, message, status } = error;
     // Different services uses property error or errorText or detailedError
     // Here we cover all situations as a default error parser
@@ -90,7 +90,7 @@ export const buildResponseError = (
         if (parseResponseError) {
             return parseResponseError(errorObj, serviceName);
         } else {
-            return defaultResponseErrorParser(errorObj, serviceName);
+            return parseDefaultResponseError(errorObj, serviceName);
         }
     }
 

@@ -1,0 +1,29 @@
+[
+  [
+    "EV Charging Stations Availability URL with all params",
+    {
+      "apiKey": "API_KEY",
+      "commonBaseURL": "https://api.tomtom.com",
+      "language": "en-GB",
+      "id": "528009002413828",
+      "connectorTypes": [
+        "Tesla",
+        "Chademo",
+        "IEC62196Type1",
+        "IEC62196Type1CCS",
+        "IEC62196Type2CCS",
+        "IEC62196Type3",
+        "IEC62196Type2Outlet",
+        "IEC60309DCWhite",
+        "IEC60309AC3PhaseRed",
+        "IEC60309AC1PhaseBlue",
+        "IEC62196Type2CableAttached",
+        "StandardHouseholdCountrySpecific",
+        "GBT20234Part2",
+        "GBT20234Part3"
+      ],
+      "minPowerKW": 6,
+      "maxPowerKW": 60
+    }
+  ]
+]

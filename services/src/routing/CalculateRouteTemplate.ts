@@ -5,7 +5,7 @@ import { buildCalculateRouteRequest } from "./RequestBuilder";
 import { parseCalculateRouteResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
 import { CalculateRouteResponseAPI } from "./types/APITypes";
-import { routingResponseErrorParser } from "./RoutingResponseErrorParser";
+import { parseRoutingResponseError } from "./RoutingResponseErrorParser";
 import { calculateRouteRequestSchema } from "./CalculateRouteRequestSchema";
 
 /**
@@ -27,6 +27,6 @@ export const calculateRouteTemplate: CalculateRouteTemplate = {
     buildRequest: buildCalculateRouteRequest,
     sendRequest: getJson,
     parseResponse: parseCalculateRouteResponse,
-    parseResponseError: routingResponseErrorParser,
+    parseResponseError: parseRoutingResponseError,
     validateRequestSchema: calculateRouteRequestSchema
 };

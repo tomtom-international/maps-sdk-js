@@ -4,7 +4,7 @@ import { parseCalculateRouteResponse } from "../ResponseParser";
 import { CalculateRouteResponseAPI } from "../types/APITypes";
 import { CalculateRouteResponse } from "../CalculateRoute";
 import errorResponses from "./ResponseParserError.data.json";
-import { routingResponseErrorParser } from "../RoutingResponseErrorParser";
+import { parseRoutingResponseError } from "../RoutingResponseErrorParser";
 import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
 import { SDKServiceError } from "../../shared/Errors";
 
@@ -48,7 +48,7 @@ describe("Routing - error response parsing tests", () => {
             apiResponseError: ErrorObjAPI<RoutingAPIResponseError>,
             expectedSDKError: SDKServiceError
         ) => {
-            const sdkRoutingResponseError = routingResponseErrorParser(apiResponseError, "Routing");
+            const sdkRoutingResponseError = parseRoutingResponseError(apiResponseError, "Routing");
             expect(sdkRoutingResponseError).toMatchObject(expectedSDKError);
         }
     );

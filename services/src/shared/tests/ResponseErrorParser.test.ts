@@ -1,6 +1,6 @@
 import errorResponses from "./ResponseError.data.json";
 import { DefaultAPIResponseError, ErrorObjAPI } from "../types/APIResponseErrorTypes";
-import { defaultResponseErrorParser, SDKServiceError } from "../Errors";
+import { parseDefaultResponseError, SDKServiceError } from "../Errors";
 import { ServiceName } from "../types/ServicesTypes";
 
 describe("Default error response parsing tests", () => {
@@ -13,7 +13,7 @@ describe("Default error response parsing tests", () => {
             serviceName: ServiceName,
             expectedSDKError: SDKServiceError
         ) => {
-            const sdkResponseError = defaultResponseErrorParser(apiResponseError, serviceName);
+            const sdkResponseError = parseDefaultResponseError(apiResponseError, serviceName);
             expect(sdkResponseError).toMatchObject(expectedSDKError);
         }
     );
