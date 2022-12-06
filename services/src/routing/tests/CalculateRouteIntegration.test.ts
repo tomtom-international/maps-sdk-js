@@ -155,7 +155,6 @@ describe("Calculate route integration tests", () => {
         expect(sections.leg[0].summary.batteryConsumptionInkWh).toBeDefined();
         assertLegSectionBasics(sections.leg[1]);
         expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
-        expect(sections.travelMode?.length).toBeGreaterThan(0);
     });
 
     test("Roses to Olot thrilling route with alternatives", async () => {

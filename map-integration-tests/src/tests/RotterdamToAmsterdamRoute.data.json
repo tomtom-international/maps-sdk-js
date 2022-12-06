@@ -4652,6 +4652,16 @@
               }
             }
           ],
+          "vehicleRestricted": [
+            {
+              "startPointIndex": 350,
+              "endPointIndex": 370
+            },
+            {
+              "startPointIndex": 790,
+              "endPointIndex": 820
+            }
+          ],
           "urban": [
             {
               "startPointIndex": 0,

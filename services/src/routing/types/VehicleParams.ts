@@ -328,7 +328,7 @@ export type VehicleParameters = {
      * * Vehicles with code E are restricted from roads with ADR tunnel category E.
      *
      * Notes:
-     * If travelMode is pedestrian or bicycle,vehicleAdrTunnelRestrictionCode is not considered.
+     * If travelMode is pedestrian or bicycle, adrCode is not considered.
      * The adrCode and loadType parameters are independent; please provide both if applicable.
      * @see https://unece.org/about-adr
      */

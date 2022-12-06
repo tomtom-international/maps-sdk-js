@@ -5,6 +5,7 @@ import {
     ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
     ROUTE_TUNNELS_SOURCE_ID,
+    ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
     RoutingModule,
     WAYPOINTS_SOURCE_ID
@@ -18,6 +19,7 @@ describe("Routing module tests", () => {
     test("Basic flows", () => {
         const waypointsSource = { id: WAYPOINTS_SOURCE_ID, setData: jest.fn() };
         const routesSource = { id: ROUTES_SOURCE_ID, setData: jest.fn() };
+        const vehicleRestrictedSource = { id: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, setData: jest.fn() };
         const incidentsSource = { id: ROUTE_INCIDENTS_SOURCE_ID, setData: jest.fn() };
         const ferriesSource = { id: ROUTE_FERRIES_SOURCE_ID, setData: jest.fn() };
         const tollRoadsSource = { id: ROUTE_TOLL_ROADS_SOURCE_ID, setData: jest.fn() };
@@ -30,6 +32,8 @@ describe("Routing module tests", () => {
                     .mockReturnValueOnce(waypointsSource)
                     .mockReturnValueOnce(routesSource)
                     .mockReturnValueOnce(routesSource)
+                    .mockReturnValueOnce(vehicleRestrictedSource)
+                    .mockReturnValueOnce(vehicleRestrictedSource)
                     .mockReturnValueOnce(incidentsSource)
                     .mockReturnValueOnce(incidentsSource)
                     .mockReturnValueOnce(ferriesSource)

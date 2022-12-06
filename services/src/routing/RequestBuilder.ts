@@ -55,7 +55,9 @@ const appendThrillingParams = (urlParams: URLSearchParams, thrillingParams?: Thr
 };
 
 const appendSectionTypes = (urlParams: URLSearchParams, sectionTypes?: InputSectionTypes): void => {
-    const effectiveSectionTypes = sectionTypes || inputSectionTypes;
+    const effectiveSectionTypes = (sectionTypes || inputSectionTypes).map((sectionType) =>
+        sectionType === "vehicleRestricted" ? "travelMode" : sectionType
+    );
     appendByRepeatingParamName(urlParams, "sectionType", effectiveSectionTypes);
 };
 

@@ -1,6 +1,6 @@
 import { Routes, TrafficSectionProps, Waypoints } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
-import { routeLineBackgroundSpec, routeLineForegroundSpec } from "./layers/routeMainLineLayers";
+import { routeOutline, routeMainLine } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
@@ -24,6 +24,10 @@ import { RouteSections } from "./types/RouteSections";
 import { routeFerriesLine, routeFerriesSymbol } from "./layers/routeFerrySectionLayers";
 import { routeTunnelsLine } from "./layers/routeTunnelSectionLayers";
 import { routeTollRoadsOutline, routeTollRoadsSymbol } from "./layers/routeTollRoadLayers";
+import {
+    routeVehicleRestrictedBackgroundLine,
+    routeVehicleRestrictedDottedLine
+} from "./layers/routeVehicleRestrictedLayers";
 
 export const WAYPOINTS_SOURCE_ID = "waypoints";
 export const WAYPOINT_SYMBOLS_LAYER_ID = "waypointsSymbol";
@@ -32,6 +36,10 @@ export const WAYPOINT_LABELS_LAYER_ID = "waypointsLabel";
 export const ROUTES_SOURCE_ID = "routes";
 export const ROUTE_OUTLINE_LAYER_ID = "routeOutline";
 export const ROUTE_FOREGROUND_LAYER_ID = "routesLineForeground";
+
+export const ROUTE_VEHICLE_RESTRICTED_SOURCE_ID = "routeVehicleRestricted";
+export const ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID = "routeVehicleRestrictedBackground";
+export const ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID = "routeVehicleRestrictedForeground";
 
 export const ROUTE_INCIDENTS_SOURCE_ID = "routeIncidents";
 export const ROUTE_INCIDENTS_BACKGROUND_LAYER_ID = "routeIncidentsBackground";
@@ -61,6 +69,8 @@ const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     private waypoints?: GeoJSONSourceWithLayers<Waypoints>;
     private routeLines?: GeoJSONSourceWithLayers<Routes>;
+    // route sections:
+    private vehicleRestricted?: GeoJSONSourceWithLayers<RouteSections>;
     private incidents?: GeoJSONSourceWithLayers<RouteSections<TrafficSectionProps>>;
     private ferries?: GeoJSONSourceWithLayers<RouteSections>;
     private tollRoads?: GeoJSONSourceWithLayers<RouteSections>;
@@ -72,8 +82,20 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
             { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
         ]);
         this.routeLines = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, [
-            { ...routeLineBackgroundSpec, id: ROUTE_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-            { ...routeLineForegroundSpec, id: ROUTE_FOREGROUND_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
+            { ...routeOutline, id: ROUTE_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
+            { ...routeMainLine, id: ROUTE_FOREGROUND_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
+        ]);
+        this.vehicleRestricted = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, [
+            {
+                ...routeVehicleRestrictedBackgroundLine,
+                id: ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID,
+                beforeID: LAYER_TO_RENDER_LINES_UNDER
+            },
+            {
+                ...routeVehicleRestrictedDottedLine,
+                id: ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
+                beforeID: LAYER_TO_RENDER_LINES_UNDER
+            }
         ]);
         this.incidents = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_INCIDENTS_SOURCE_ID, [
             { ...routeIncidentsBGLine, id: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
@@ -127,6 +149,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     showRoutes(routes: Routes) {
         this.callWhenMapReady(() => {
             this.routeLines?.show(routes);
+            this.vehicleRestricted?.show(buildRouteSections(routes, "vehicleRestricted"));
             this.incidents?.show(buildRouteSections(routes, "traffic", toDisplayTrafficSectionProps));
             this.ferries?.show(buildRouteSections(routes, "ferry"));
             this.tollRoads?.show(buildRouteSections(routes, "tollRoad"));
@@ -141,6 +164,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     clearRoutes() {
         this.callWhenMapReady(() => {
             this.routeLines?.clear();
+            this.vehicleRestricted?.clear();
             this.incidents?.clear();
             this.ferries?.clear();
             this.tollRoads?.clear();

@@ -36,10 +36,10 @@ export const requestObjectsAndURLs = [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ],
-            sectionTypes: ["traffic", "ferry"]
+            sectionTypes: ["vehicleRestricted", "traffic", "ferry"]
         },
         "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-            "&sectionType=traffic&sectionType=ferry"
+            "&sectionType=travelMode&sectionType=traffic&sectionType=ferry"
     ],
     [
         "Default A-B-C route where B is a GeoJSON point feature",

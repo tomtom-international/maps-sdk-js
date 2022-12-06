@@ -35,7 +35,7 @@ export type SectionAPI = {
     sectionType: SectionTypeAPI;
     startPointIndex: number;
     endPointIndex: number;
-    travelMode?: TravelMode;
+    travelMode?: TravelMode | "other";
     countryCode?: string;
     simpleCategory?: TrafficCategory;
     magnitudeOfDelay?: number;

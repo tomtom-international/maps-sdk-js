@@ -1321,6 +1321,12 @@
             },
             {
               "startPointIndex": 0,
+              "endPointIndex": 10,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "other"
+            },
+            {
+              "startPointIndex": 10,
               "endPointIndex": 129,
               "sectionType": "TRAVEL_MODE",
               "travelMode": "car"
@@ -3140,13 +3146,6 @@
                     "countryCodeISO3": "NLD"
                   }
                 ],
-                "travelMode": [
-                  {
-                    "startPointIndex": 0,
-                    "endPointIndex": 125,
-                    "travelMode": "car"
-                  }
-                ],
                 "tunnel": [
                   {
                     "startPointIndex": 119,
@@ -3933,11 +3932,10 @@
                     "countryCodeISO3": "NLD"
                   }
                 ],
-                "travelMode": [
+                "vehicleRestricted": [
                   {
                     "startPointIndex": 0,
-                    "endPointIndex": 129,
-                    "travelMode": "car"
+                    "endPointIndex": 10
                   }
                 ],
                 "tunnel": [
@@ -4937,13 +4935,6 @@
                     "countryCodeISO3": "NLD"
                   }
                 ],
-                "travelMode": [
-                  {
-                    "startPointIndex": 0,
-                    "endPointIndex": 162,
-                    "travelMode": "car"
-                  }
-                ],
                 "tunnel": [
                   {
                     "startPointIndex": 156,
@@ -5281,9 +5272,21 @@
             },
             {
               "startPointIndex": 0,
-              "endPointIndex": 979,
+              "endPointIndex": 10,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "other"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 969,
               "sectionType": "TRAVEL_MODE",
               "travelMode": "car"
+            },
+            {
+              "startPointIndex": 969,
+              "endPointIndex": 979,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "other"
             },
             {
               "startPointIndex": 56,
@@ -6025,11 +6028,14 @@
                     "countryCodeISO3": "GBR"
                   }
                 ],
-                "travelMode": [
+                "vehicleRestricted": [
                   {
                     "startPointIndex": 0,
-                    "endPointIndex": 979,
-                    "travelMode": "car"
+                    "endPointIndex": 10
+                  },
+                  {
+                    "startPointIndex": 969,
+                    "endPointIndex": 979
                   }
                 ],
                 "traffic": [

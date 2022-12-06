@@ -1,4 +1,3 @@
-import { TravelMode } from "./Route";
 import { Summary } from "./Summary";
 
 /**
@@ -27,18 +26,6 @@ export type CountrySectionProps = SectionProps & {
      * It provides the 3-character {@link https://gist.github.com/tadast/8827699 ISO 3166-1 alpha-3} country code in which the section is located.
      */
     countryCodeISO3: string;
-};
-
-/**
- * Represents a route section with travel mode. This section type is related to the TravelMode request parameter.
- * @group Route
- * @category Types
- */
-export type TravelModeSectionProps = SectionProps & {
-    /**
-     * The travel mode for this section.
-     */
-    travelMode: TravelMode;
 };
 
 /**
@@ -155,7 +142,7 @@ export type SectionsProps = {
     tollRoad?: SectionProps[];
     tollVignette?: CountrySectionProps[];
     traffic?: TrafficSectionProps[];
-    travelMode?: TravelModeSectionProps[];
+    vehicleRestricted?: SectionProps[];
     tunnel?: SectionProps[];
     unpaved?: SectionProps[];
     urban?: SectionProps[];
@@ -181,7 +168,7 @@ export const inputSectionTypes: SectionType[] = [
     "tollRoad",
     "tollVignette",
     "country",
-    "travelMode",
+    "vehicleRestricted",
     "traffic",
     "urban",
     "unpaved",

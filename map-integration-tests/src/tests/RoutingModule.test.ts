@@ -6,6 +6,8 @@ import {
     ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
     ROUTE_TUNNELS_SOURCE_ID,
+    ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
+    ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
@@ -48,8 +50,9 @@ const waitForRenderedWaypoints = async (numWaypoint: number) =>
 // (We reparse the route because it contains Date objects):
 const parsedTestRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutes));
 
-const NUM_ROUTE_LAYERS = 2;
 const NUM_WAYPOINT_LAYERS = 2;
+const NUM_ROUTE_LAYERS = 2;
+const NUM_VEHICLE_RESTRICTED_LAYERS = 2;
 const NUM_INCIDENT_LAYERS = 4;
 const NUM_FERRY_LAYERS = 2;
 const NUM_TUNNEL_LAYERS = 1;
@@ -75,18 +78,23 @@ describe("Routing tests", () => {
 
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toStrictEqual(NUM_ROUTE_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toStrictEqual(
+            NUM_VEHICLE_RESTRICTED_LAYERS
+        );
         expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toStrictEqual(NUM_INCIDENT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toStrictEqual(NUM_FERRY_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toStrictEqual(NUM_TOLL_ROAD_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toStrictEqual(NUM_TUNNEL_LAYERS);
-        await waitUntilRenderedFeatures([ROUTE_FOREGROUND_LAYER_ID], 1, 10000);
-        await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 5000);
+        await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 10000);
+        await waitUntilRenderedFeatures([ROUTE_FOREGROUND_LAYER_ID], 1, 5000);
+        await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
         await clearRoutes();
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toStrictEqual(0);
         expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toStrictEqual(0);
         expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toStrictEqual(0);
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toStrictEqual(0);

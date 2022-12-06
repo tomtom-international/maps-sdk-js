@@ -187,7 +187,9 @@ describe("Calculate route request schema validation", () => {
                 {
                     code: "invalid_enum_value",
                     message:
-                        "Invalid enum value. Expected 'carTrain' | 'ferry' | 'tunnel' | 'motorway' | 'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | 'travelMode' | 'traffic' | 'urban' | 'unpaved' | 'carpool', received 'motorways'",
+                        "Invalid enum value. Expected 'carTrain' | 'ferry' | 'tunnel' | 'motorway' | 'pedestrian' | " +
+                        "'tollRoad' | 'tollVignette' | 'country' | 'vehicleRestricted' | 'traffic' | 'urban' | " +
+                        "'unpaved' | 'carpool', received 'motorways'",
                     options: [
                         "carTrain",
                         "ferry",
@@ -197,7 +199,7 @@ describe("Calculate route request schema validation", () => {
                         "tollRoad",
                         "tollVignette",
                         "country",
-                        "travelMode",
+                        "vehicleRestricted",
                         "traffic",
                         "urban",
                         "unpaved",

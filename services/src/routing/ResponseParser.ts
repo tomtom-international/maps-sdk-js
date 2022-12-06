@@ -11,9 +11,7 @@ import {
     Summary,
     TrafficCategory,
     TrafficIncidentTEC,
-    TrafficSectionProps,
-    TravelMode,
-    TravelModeSectionProps
+    TrafficSectionProps
 } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
 import { LineString } from "geojson";
@@ -56,10 +54,8 @@ const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => (
     countryCodeISO3: apiSection.countryCode as string
 });
 
-const toTravelModeSectionProps = (apiSection: SectionAPI): TravelModeSectionProps => ({
-    ...toSectionProps(apiSection),
-    travelMode: apiSection.travelMode as TravelMode
-});
+const toVehicleRestrictedSectionProps = (apiSection: SectionAPI): SectionProps | null =>
+    apiSection.travelMode === "other" ? toSectionProps(apiSection) : null;
 
 const parseMagnitudeOfDelay = (apiDelayMagnitude?: number): DelayMagnitude => {
     switch (apiDelayMagnitude) {
@@ -94,7 +90,7 @@ const ensureInit = <S extends SectionProps>(sectionType: SectionType, result: Se
 
 const getSectionMapping = (
     apiSection: SectionAPI
-): { sectionType: SectionType; mappingFunction: (apiSection: SectionAPI) => SectionProps } => {
+): { sectionType: SectionType; mappingFunction: (apiSection: SectionAPI) => SectionProps | null } => {
     switch (apiSection.sectionType) {
         case "CAR_TRAIN":
             return { sectionType: "carTrain", mappingFunction: toSectionProps };
@@ -113,7 +109,8 @@ const getSectionMapping = (
         case "TRAFFIC":
             return { sectionType: "traffic", mappingFunction: toTrafficSectionProps };
         case "TRAVEL_MODE":
-            return { sectionType: "travelMode", mappingFunction: toTravelModeSectionProps };
+            // NOTE: vehicleRestricted sections come from TRAVEL_MODE "other" ones:
+            return { sectionType: "vehicleRestricted", mappingFunction: toVehicleRestrictedSectionProps };
         case "TUNNEL":
             return { sectionType: "tunnel", mappingFunction: toSectionProps };
         case "UNPAVED":
@@ -128,7 +125,10 @@ const getSectionMapping = (
 const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: SectionsProps): void => {
     for (const apiSection of apiSections) {
         const sectionMapping = getSectionMapping(apiSection);
-        ensureInit(sectionMapping.sectionType, result).push(sectionMapping.mappingFunction(apiSection));
+        const mappedSection = sectionMapping.mappingFunction(apiSection);
+        if (mappedSection) {
+            ensureInit(sectionMapping.sectionType, result).push(mappedSection);
+        }
     }
 };
 
