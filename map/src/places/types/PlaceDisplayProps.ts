@@ -1,5 +1,5 @@
 /**
- * Display properties for a place.
+ * Properties to display a place on the map.
  */
 export type PlaceDisplayProps = { title?: string; iconID: string };
 

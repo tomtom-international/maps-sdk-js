@@ -93,7 +93,7 @@ export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification
 /**
  * @ignore
  */
-export const routeIncidentsPointSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
+export const routeIncidentsSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
     type: "symbol",
     minzoom: 6,
     layout: {

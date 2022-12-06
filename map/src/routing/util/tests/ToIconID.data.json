@@ -1,5 +1,26 @@
 [
   [
+    "Undefined incident",
+    {
+      "tec": {
+      }
+    },
+    null
+  ],
+  [
+    "Incident with unsupported cause code",
+    {
+      "tec": {
+        "causes": [
+          {
+            "mainCauseCode": 999
+          }
+        ]
+      }
+    },
+    null
+  ],
+  [
     "Undefined (from object itself) delay magnitude jam",
     {
       "tec": {

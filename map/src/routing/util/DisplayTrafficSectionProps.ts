@@ -25,14 +25,18 @@ const tecCauseToIconSuffix: Record<number, string> = {
 /**
  * @ignore
  */
-export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): string => {
-    const tecCauseCode = sectionProps.tec.causes[0].mainCauseCode;
+export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): string | null => {
+    const tecCauseCode = sectionProps.tec.causes?.[0].mainCauseCode;
+    const tecIconSuffix = tecCauseCode && tecCauseToIconSuffix[tecCauseCode];
+    if (!tecIconSuffix) {
+        return null;
+    }
     const magnitudePrefix =
         // ("traffic_road_closed" is an exception)
-        tecCauseToIconSuffix[tecCauseCode] === "road_closed"
+        tecIconSuffix === "road_closed"
             ? "traffic"
             : delayMagnitudeToIconPrefix[sectionProps.magnitudeOfDelay || "UNKNOWN"];
-    return `${magnitudePrefix}_${tecCauseToIconSuffix[tecCauseCode]}`;
+    return `${magnitudePrefix}_${tecIconSuffix}`;
 };
 
 /**
@@ -40,9 +44,10 @@ export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): strin
  */
 export const toDisplayTrafficSectionProps = (section: TrafficSectionProps): DisplayTrafficSectionProps => {
     const title = formatDuration(section.delayInSeconds);
+    const iconID = trafficSectionToIconID(section);
     return {
         ...section,
-        iconID: trafficSectionToIconID(section),
+        ...(iconID && { iconID }),
         ...(title && { title })
     };
 };

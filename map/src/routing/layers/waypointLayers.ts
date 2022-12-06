@@ -9,6 +9,9 @@ export const WAYPOINT_STOP_IMAGE_ID = "waypointStop";
 export const WAYPOINT_SOFT_IMAGE_ID = "waypointSoft";
 export const WAYPOINT_FINISH_IMAGE_ID = "waypointFinish";
 
+/**
+ * @ignore
+ */
 export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
     type: "symbol",
     paint: {
@@ -40,6 +43,9 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
     }
 };
 
+/**
+ * @ignore
+ */
 export const waypointLabels: LayerSpecTemplate<SymbolLayerSpecification> = {
     type: "symbol",
     paint: {

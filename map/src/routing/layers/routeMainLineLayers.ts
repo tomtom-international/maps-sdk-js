@@ -1,8 +1,6 @@
-import { ExpressionSpecification, LineLayerSpecification } from "maplibre-gl";
+import { LineLayerSpecification } from "maplibre-gl";
 import { LayerSpecTemplate } from "../../core";
-import { FOREGROUND_COLOR } from "./shared";
-
-const MAIN_LINE_WIDTH: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], 1, 3, 5, 4, 10, 7, 18, 10];
+import { FOREGROUND_COLOR, FOREGROUND_LINE_WIDTH } from "./shared";
 
 const baseLineLayerSpec: LayerSpecTemplate<LineLayerSpecification> = {
     type: "line",
@@ -12,14 +10,20 @@ const baseLineLayerSpec: LayerSpecTemplate<LineLayerSpecification> = {
     }
 };
 
+/**
+ * @ignore
+ */
 export const routeLineForegroundSpec: LayerSpecTemplate<LineLayerSpecification> = {
     ...baseLineLayerSpec,
     paint: {
         "line-color": FOREGROUND_COLOR,
-        "line-width": MAIN_LINE_WIDTH
+        "line-width": FOREGROUND_LINE_WIDTH
     }
 };
 
+/**
+ * @ignore
+ */
 export const routeLineBackgroundSpec: LayerSpecTemplate<LineLayerSpecification> = {
     ...baseLineLayerSpec,
     paint: {

@@ -92,7 +92,7 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
                     // (will be filtered out below - we don't pre-filter it to keep the original input index)
                     return null as unknown as Waypoint<WaypointDisplayProps>;
                 }
-                const waypoint = asWaypoint(waypointInput);
+                const waypoint: Waypoint = asWaypoint(waypointInput);
                 const indexType = indexTypeFor(index, waypoints.length);
                 const hardWaypoint = isHardWaypoint(waypoint);
                 if (hardWaypoint) {

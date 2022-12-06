@@ -4,6 +4,9 @@ import { placesLayerSpec } from "./layers/PlacesLayers";
 import { poiClassificationToIconID } from "./poiIconIDMapping";
 import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
 
+/**
+ * @ignore
+ */
 export const PLACES_SOURCE_ID = "places";
 
 /**

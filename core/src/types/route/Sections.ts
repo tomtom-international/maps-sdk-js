@@ -84,7 +84,7 @@ export type TrafficIncidentTEC = {
     /**
      *  List of cause elements that caused problems in traffic. For traffic incident based on TPEG2-TEC standard
      */
-    causes: [CauseTEC, ...CauseTEC[]];
+    causes?: [CauseTEC, ...CauseTEC[]];
 };
 
 /**

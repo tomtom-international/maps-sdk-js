@@ -1,3 +1,15 @@
+import {
+    ROUTE_FERRIES_LINE_LAYER_ID,
+    ROUTE_FERRIES_SOURCE_ID,
+    ROUTE_FOREGROUND_LAYER_ID,
+    ROUTE_INCIDENTS_SOURCE_ID,
+    ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
+    ROUTE_TOLL_ROADS_SOURCE_ID,
+    ROUTE_TUNNELS_SOURCE_ID,
+    ROUTES_SOURCE_ID,
+    WAYPOINT_SYMBOLS_LAYER_ID,
+    WAYPOINTS_SOURCE_ID
+} from "map";
 import { Routes, WaypointLike } from "@anw/go-sdk-js/core";
 import { GOSDKThis } from "./types/GOSDKThis";
 import {
@@ -6,7 +18,7 @@ import {
     waitForMapStyleToLoad,
     waitUntilRenderedFeatures
 } from "./util/MapIntegrationTestEnv";
-import testRoutes from "./TestRoute.json";
+import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
 
 const initRouting = async () =>
     page.evaluate(() => {
@@ -22,12 +34,6 @@ const showRoutes = async (routes: Routes) =>
 
 const clearRoutes = async () => page.evaluate(() => (globalThis as GOSDKThis).routing?.clearRoutes());
 
-const getNumVisibleRouteLayers = async () => getNumVisibleLayersBySource("routes");
-const getNumVisibleIncidentLayers = async () => getNumVisibleLayersBySource("routeIncidents");
-
-const waitForRenderedRoutes = async (numRoutes: number) =>
-    waitUntilRenderedFeatures(["routeLineForeground"], numRoutes, 10000);
-
 const showWaypoints = async (waypoints: WaypointLike[]) =>
     page.evaluate((inputWaypoints) => {
         (globalThis as GOSDKThis).routing?.showWaypoints(inputWaypoints);
@@ -36,17 +42,18 @@ const showWaypoints = async (waypoints: WaypointLike[]) =>
 
 const clearWaypoints = async () => page.evaluate(() => (globalThis as GOSDKThis).routing?.clearWaypoints());
 
-const getNumVisibleWaypointLayers = async () => getNumVisibleLayersBySource("waypoints");
-
 const waitForRenderedWaypoints = async (numWaypoint: number) =>
-    waitUntilRenderedFeatures(["waypointSymbols"], numWaypoint, 10000);
+    waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 10000);
 
 // (We reparse the route because it contains Date objects):
-const parsedTestRoutes = JSON.parse(JSON.stringify(testRoutes));
+const parsedTestRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutes));
 
 const NUM_ROUTE_LAYERS = 2;
 const NUM_WAYPOINT_LAYERS = 2;
 const NUM_INCIDENT_LAYERS = 4;
+const NUM_FERRY_LAYERS = 2;
+const NUM_TUNNEL_LAYERS = 1;
+const NUM_TOLL_ROAD_LAYERS = 2;
 
 describe("Routing tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -58,31 +65,40 @@ describe("Routing tests", () => {
     test("Show and clear flows", async () => {
         await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox });
         await initRouting();
+
         await showRoutes(parsedTestRoutes);
         await showWaypoints([
-            [4.8906, 52.37316],
-            [4.47061, 51.92289]
+            [4.53074, 51.95102],
+            [4.88951, 52.37229]
         ]);
         await waitForMapStyleToLoad();
 
-        expect(await getNumVisibleWaypointLayers()).toStrictEqual(NUM_WAYPOINT_LAYERS);
-        expect(await getNumVisibleRouteLayers()).toStrictEqual(NUM_ROUTE_LAYERS);
-        expect(await getNumVisibleIncidentLayers()).toStrictEqual(NUM_INCIDENT_LAYERS);
-        await waitForRenderedRoutes(1);
-        await waitForRenderedWaypoints(2);
+        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toStrictEqual(NUM_ROUTE_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toStrictEqual(NUM_INCIDENT_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toStrictEqual(NUM_FERRY_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toStrictEqual(NUM_TOLL_ROAD_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toStrictEqual(NUM_TUNNEL_LAYERS);
+        await waitUntilRenderedFeatures([ROUTE_FOREGROUND_LAYER_ID], 1, 10000);
+        await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 5000);
+        await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
         await clearRoutes();
-        expect(await getNumVisibleWaypointLayers()).toStrictEqual(NUM_WAYPOINT_LAYERS);
-        expect(await getNumVisibleRouteLayers()).toStrictEqual(0);
-        expect(await getNumVisibleIncidentLayers()).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toStrictEqual(0);
 
         await clearWaypoints();
-        expect(await getNumVisibleWaypointLayers()).toStrictEqual(0);
-        expect(await getNumVisibleRouteLayers()).toStrictEqual(0);
-        expect(await getNumVisibleIncidentLayers()).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toStrictEqual(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toStrictEqual(0);
 
-        await showWaypoints([[4.8906, 52.37316]]);
-        expect(await getNumVisibleWaypointLayers()).toStrictEqual(NUM_WAYPOINT_LAYERS);
+        await showWaypoints([[4.53074, 51.95102]]);
+        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
         await waitForRenderedWaypoints(1);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -125,7 +141,7 @@ describe("Routing tests", () => {
 
         await showWaypoints(waypoints);
         await waitForMapStyleToLoad();
-        expect(await getNumVisibleWaypointLayers()).toStrictEqual(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
         const renderedWaypoints = await waitForRenderedWaypoints(4);
 
         // rendered features array seem to come in reversed order from MapLibre:
