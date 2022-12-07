@@ -21,6 +21,7 @@ export * from "./src/geometry-data";
 export * from "./src/routing";
 export * from "./src/ev-charging-stations-availability";
 export * from "./src/place-by-id";
+export * from "./src/search";
 /**
  * @group Shared
  * @category Variables

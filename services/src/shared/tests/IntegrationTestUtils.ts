@@ -1,4 +1,4 @@
-import { GOSDKConfig, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { GOSDKConfig, SearchPlaceProps, placeType } from "@anw/go-sdk-js/core";
 
 export const putIntegrationTestsAPIKey = () => {
     GOSDKConfig.instance.put({
@@ -6,7 +6,7 @@ export const putIntegrationTestsAPIKey = () => {
     });
 };
 
-export const baseSearchPlaceTestProps: SearchPlaceProps = {
+export const baseSearchPOITestProps: SearchPlaceProps = {
     type: "POI",
     score: expect.any(Number),
     info: expect.any(String),
@@ -18,4 +18,10 @@ export const baseSearchPlaceTestProps: SearchPlaceProps = {
         brands: expect.any(Array),
         categoryIds: expect.arrayContaining([expect.any(Number)])
     })
+};
+
+const placeRegex = new RegExp(placeType.join("|"));
+export const baseSearchPlaceMandatoryProps: SearchPlaceProps = {
+    type: expect.stringMatching(placeRegex),
+    address: expect.any(Object)
 };

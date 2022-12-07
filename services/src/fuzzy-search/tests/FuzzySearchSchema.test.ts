@@ -1,109 +1,14 @@
-import geometrySearch from "../GeometrySearch";
-import { SearchGeometryInput } from "../types";
+import fuzzySearch from "../FuzzySearch";
 
-describe("GeometrySearch Schema Validation", () => {
-    const geometries: SearchGeometryInput[] = [
-        {
-            type: "Polygon",
-            coordinates: [
-                [
-                    [-122.43576, 37.75241],
-                    [-122.433013, 37.7066],
-                    [-122.36434, 37.71205],
-                    [-122.373962, 37.7535]
-                ]
-            ]
-        },
-        {
-            type: "Circle",
-            coordinates: [-121.36434, 37.71205],
-            radius: 6000
-        }
-    ];
-    test("it should fail when missing coordinates property", async () => {
-        const query = "cafe";
-        const incorrectGeometry = [{ type: "Circle", radius: 6000 }];
-
+describe("FuzzySearch Schema Validation", () => {
+    test("it should fail when missing mandatory query", async () => {
+        const limit = 10;
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["geometries", 0],
-                    message: "Invalid input"
-                }
-            ]
-        });
-    });
-
-    test("it should fail when missing type property", async () => {
-        const query = "cafe";
-        const incorrectGeometry = [{ radius: 6000, coordinates: [37.71205, -121.36434] }];
-        // @ts-ignore
-        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["geometries", 0],
-                    message: "Invalid input"
-                }
-            ]
-        });
-    });
-
-    test("it should fail when geometryList property is missing", async () => {
-        const query = "cafe";
-        // @ts-ignore
-        await expect(geometrySearch({ query })).rejects.toMatchObject({
-            service: "GeometrySearch",
+        await expect(fuzzySearch({ limit })).rejects.toMatchObject({
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
-                    expected: "array",
-                    received: "undefined",
-                    path: ["geometries"],
-                    message: "Required"
-                }
-            ]
-        });
-    });
-
-    test("it should fail when type Circle is missing radius property", async () => {
-        const query = "cafe";
-        const incorrectGeometry = [
-            {
-                type: "Circle",
-                coordinates: [-121.36434, 37.71205]
-            }
-        ];
-
-        // @ts-ignore
-        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "custom",
-                    message: 'type: "Circle" must have radius property',
-                    path: ["geometries", 0]
-                }
-            ]
-        });
-    });
-
-    test("it should fail when query is missing", async () => {
-        // @ts-ignore
-        await expect(geometrySearch({ geometries })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "string",
-                    received: "undefined",
                     path: ["query"],
                     message: "Required"
                 }
@@ -114,9 +19,9 @@ describe("GeometrySearch Schema Validation", () => {
     test("it should fail when query is not of type string", async () => {
         const query = undefined;
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries })).rejects.toMatchObject({
+        await expect(fuzzySearch({ query })).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -129,14 +34,50 @@ describe("GeometrySearch Schema Validation", () => {
         });
     });
 
+    test("it should fail when typeahead has wrong value", async () => {
+        const query = "restaurant";
+        const typeahead = 1;
+        // @ts-ignore
+        await expect(fuzzySearch({ query, typeahead })).rejects.toMatchObject({
+            service: "FuzzySearch",
+            errors: [
+                {
+                    code: "invalid_type",
+                    expected: "boolean",
+                    received: "number",
+                    path: ["typeahead"],
+                    message: "Expected boolean, received number"
+                }
+            ]
+        });
+    });
+
+    test("it should fail when minFuzzyLevel has invalid number", async () => {
+        const query = "restaurant";
+        const minFuzzyLevel = 6;
+
+        await expect(fuzzySearch({ query, minFuzzyLevel })).rejects.toMatchObject({
+            message: "Validation error",
+            service: "FuzzySearch",
+            errors: [
+                {
+                    code: "too_big",
+                    message: "Number must be less than or equal to 4",
+                    path: ["minFuzzyLevel"]
+                }
+            ]
+        });
+    });
+
+    //
     test("it should fail when map-code is not of type array", async () => {
         const query = "Fuel Station";
         const mapcodes = "Local";
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries, mapcodes })).rejects.toMatchObject({
+        await expect(fuzzySearch({ query, mapcodes })).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -153,9 +94,9 @@ describe("GeometrySearch Schema Validation", () => {
         const query = "POI";
         const view = "CH";
         //@ts-ignore
-        await expect(geometrySearch({ query, geometries, view })).rejects.toMatchObject({
+        await expect(fuzzySearch({ query, view })).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     received: "CH",
@@ -169,15 +110,15 @@ describe("GeometrySearch Schema Validation", () => {
             ]
         });
     });
-
+    //
     test("it should fail when index is not of type array", async () => {
         const query = "Noe Valley, San Francisco";
         const indexes = "STR";
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries, indexes })).rejects.toMatchObject({
+        await expect(fuzzySearch({ query, indexes })).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -189,15 +130,15 @@ describe("GeometrySearch Schema Validation", () => {
             ]
         });
     });
-
+    //
     test("it should fail when POI categories are not of type array", async () => {
         const query = "Restaurant";
         const poiCategories = 7315025;
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries, poiCategories })).rejects.toMatchObject({
+        await expect(fuzzySearch({ query, poiCategories })).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -210,52 +151,19 @@ describe("GeometrySearch Schema Validation", () => {
         });
     });
 
-    test("it should fail when POI categories are of type string-array", async () => {
-        const query = "Restaurant";
-        const poiCategory1 = "7315025";
-        const poiCategory2 = "7315017";
-
-        await expect(
-            geometrySearch({
-                query,
-                geometries,
-                // @ts-ignore
-                poiCategories: [poiCategory1, poiCategory2]
-            })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_enum_value",
-                    received: "7315025",
-                    path: ["poiCategories", 0],
-                    message: expect.stringMatching(/^Invalid enum value.*$/)
-                },
-                {
-                    code: "invalid_enum_value",
-                    received: "7315017",
-                    path: ["poiCategories", 1],
-                    message: expect.stringMatching(/^Invalid enum value.*$/)
-                }
-            ]
-        });
-    });
-
     test("it should fail when POI brands is of type string", async () => {
         const query = "Restaurant";
         const poiBrands = "TomTom";
 
         await expect(
-            geometrySearch({
+            fuzzySearch({
                 query,
-                geometries,
                 // @ts-ignore
                 poiBrands
             })
         ).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -273,15 +181,14 @@ describe("GeometrySearch Schema Validation", () => {
         const connectors = "IEC62196Type1";
 
         await expect(
-            geometrySearch({
+            fuzzySearch({
                 query,
-                geometries,
                 // @ts-ignore
                 connectors
             })
         ).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -299,15 +206,14 @@ describe("GeometrySearch Schema Validation", () => {
         const fuelTypes = "AdBlue";
 
         await expect(
-            geometrySearch({
+            fuzzySearch({
                 query,
-                geometries,
                 // @ts-ignore
                 fuelTypes
             })
         ).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -325,15 +231,14 @@ describe("GeometrySearch Schema Validation", () => {
         const geographyTypes = "Municipality";
 
         await expect(
-            geometrySearch({
+            fuzzySearch({
                 query,
-                geometries,
                 // @ts-ignore
                 geographyTypes
             })
         ).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "invalid_type",
@@ -350,14 +255,13 @@ describe("GeometrySearch Schema Validation", () => {
         const query = "EV";
 
         await expect(
-            geometrySearch({
+            fuzzySearch({
                 query,
-                geometries,
                 position: [200, -95]
             })
         ).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch",
+            service: "FuzzySearch",
             errors: [
                 {
                     code: "too_big",

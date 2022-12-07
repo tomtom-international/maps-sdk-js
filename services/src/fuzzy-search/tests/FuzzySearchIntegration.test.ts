@@ -1,0 +1,142 @@
+import { Fuel, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+
+import { search } from "../../search";
+import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
+import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
+import { baseSearchPlaceMandatoryProps } from "../../shared/tests/IntegrationTestUtils";
+import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
+import { buildFuzzySearchRequest } from "../RequestBuilder";
+import { parseFuzzySearchResponse } from "../ResponseParser";
+
+describe("Fuzzy Search service", () => {
+    beforeAll(() => {
+        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
+    });
+
+    const expectWorkingResult = expect.objectContaining<FuzzySearchResponse>({
+        type: "FeatureCollection",
+        features: expect.arrayContaining<Place<SearchPlaceProps>>([
+            expect.objectContaining<Place<SearchPlaceProps>>({
+                type: "Feature",
+                id: expect.any(String),
+                geometry: expect.objectContaining({
+                    coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
+                    type: expect.any(String)
+                }),
+                properties: expect.objectContaining<SearchPlaceProps>(baseSearchPlaceMandatoryProps)
+            })
+        ])
+    });
+
+    test("basic fuzzy search call", async () => {
+        const query = "home";
+        const res = await search({ query });
+        expect(res).toEqual(expectWorkingResult);
+    });
+
+    test("fuzzy search with multiple option parameters", async () => {
+        const query = "restaurant";
+        const poiCategories: number[] = [];
+        const fuelTypes: Fuel[] = [];
+        const language = "en-GB";
+        const view = "Unified";
+        const timeZone = "iana";
+        const openingHours = "nextSevenDays";
+        const limit = 5;
+        const indexes: IndexTypesAbbreviation[] = ["POI"];
+        const res = await search({
+            query,
+            poiCategories,
+            fuelTypes,
+            language,
+            limit,
+            indexes,
+            view,
+            timeZone,
+            openingHours
+        });
+
+        expect(res.features).toHaveLength(limit);
+        expect(res).toEqual(expectWorkingResult);
+    });
+
+    test("fuzzy search with human-readable poi categories", async () => {
+        const query = "restaurant";
+        const poiCategories: (number | POICategory)[] = ["ITALIAN_RESTAURANT"];
+        const categoryID = poiCategoriesToID["ITALIAN_RESTAURANT"];
+        const language = "en-GB";
+        const indexes: IndexTypesAbbreviation[] = ["POI"];
+        const res = await search({
+            query,
+            poiCategories,
+            language,
+            indexes
+        });
+
+        expect(res.features).toEqual(
+            expect.arrayContaining<FuzzySearchResponse>([
+                expect.objectContaining({
+                    properties: expect.objectContaining({
+                        poi: expect.objectContaining({
+                            categoryIds: expect.arrayContaining([categoryID])
+                        })
+                    })
+                })
+            ])
+        );
+    });
+
+    test("fuzzy search buildRequest hook modifies url", async () => {
+        const query = "cafe";
+        const newQuery = "petrol";
+        const res = await search(
+            { query },
+            {
+                buildRequest: (params: FuzzySearchParams) => {
+                    const req = buildFuzzySearchRequest(params);
+                    req.pathname = req.pathname.replace(`${query}.json`, `${newQuery}.json`);
+                    return req;
+                }
+            }
+        );
+
+        expect(res).toEqual(
+            expect.objectContaining({
+                type: "FeatureCollection",
+                features: expect.arrayContaining([
+                    expect.objectContaining({
+                        properties: expect.objectContaining({
+                            poi: expect.objectContaining({
+                                categories: expect.arrayContaining([
+                                    expect.stringContaining(newQuery),
+                                    expect.not.stringContaining(query)
+                                ])
+                            })
+                        })
+                    })
+                ])
+            })
+        );
+    });
+
+    test("fuzzy search parseResponse hook modifies response", async () => {
+        const query = "cafe";
+        const res = await search(
+            { query },
+            {
+                parseResponse: (apiResponse: FuzzySearchResponseAPI) => {
+                    const response = parseFuzzySearchResponse(apiResponse);
+                    response.bbox = [0, 0, 0, 0];
+                    return response;
+                }
+            }
+        );
+
+        expect(res).toEqual(
+            expect.objectContaining({
+                type: "FeatureCollection",
+                bbox: [0, 0, 0, 0]
+            })
+        );
+    });
+});

@@ -1,0 +1,102 @@
+[
+  [
+    "Fuzzy search with required parameters",
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://api.tomtom.com",
+      "query": "Restaurant"
+    },
+    "https://api.tomtom.com/search/2/search/Restaurant.json?key=GLOBAL_API_KEY"
+  ],
+  [
+    "Fuzzy search with required parameters & optional parameters",
+    {
+      "apiKey": "GLOBAL_API_KEY_2",
+      "commonBaseURL": "https://api-test.tomtom.com",
+      "query": "restaurant",
+      "limit": 25,
+      "extendedPostalCodesFor": [
+        "POI"
+      ],
+      "mapcodes": [
+        "Local",
+        "Alternative",
+        "International"
+      ],
+      "view": "Unified",
+      "language": "fr-FR",
+      "poiCategories": [
+        7315148,
+        7315025
+      ],
+      "openingHours": "nextSevenDays",
+      "timeZone": "iana"
+    },
+    "https://api-test.tomtom.com/search/2/search/restaurant.json?key=GLOBAL_API_KEY_2&language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana"
+  ],
+  [
+    "Geometry search with required parameters & optional parameters such as indexes & entityType",
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://test.api.tomtom.com",
+      "query": "London",
+      "limit": 20,
+      "indexes": [
+        "Geo",
+        "Str"
+      ],
+      "geographyTypes": [
+        "Municipality",
+        "MunicipalitySubdivision",
+        "Neighbourhood"
+      ]
+    },
+    "https://test.api.tomtom.com/search/2/search/London.json?key=GLOBAL_API_KEY&limit=20&idxSet=Geo%2CStr&entityTypeSet=Municipality%2CMunicipalitySubdivision%2CNeighbourhood"
+  ],
+  [
+    "Fuzzy search for EV connectors within specific power range",
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://test.api.tomtom.com",
+      "query": "EV charging points",
+      "minPowerKW": 20,
+      "maxPowerKW": 43.2,
+      "connectors": [
+        "IEC62196Type2Outlet",
+        "StandardHouseholdCountrySpecific",
+        "IEC62196Type2CableAttached",
+        "IEC62196Type3",
+        "IEC62196Type2CCS",
+        "IEC60309AC1PhaseBlue",
+        "IEC60309AC3PhaseRed",
+        "IEC60309DCWhite",
+        "IEC62196Type1",
+        "IEC62196Type1CCS"
+      ]
+    },
+    "https://test.api.tomtom.com/search/2/search/EV%20charging%20points.json?key=GLOBAL_API_KEY&connectorSet=IEC62196Type2Outlet%2CStandardHouseholdCountrySpecific%2CIEC62196Type2CableAttached%2CIEC62196Type3%2CIEC62196Type2CCS%2CIEC60309AC1PhaseBlue%2CIEC60309AC3PhaseRed%2CIEC60309DCWhite%2CIEC62196Type1%2CIEC62196Type1CCS&minPowerKW=20&maxPowerKW=43.2"
+  ],
+  [
+    "Fuzzy search for fuel station and with specific brands",
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://test.api.tomtom.com",
+      "query": "Fuel Station",
+      "fuelTypes": [
+        "Petrol",
+        "Diesel",
+        "LPG",
+        "Biodiesel",
+        "AdBlue",
+        "DieselForCommercialVehicles"
+      ],
+      "poiBrands": [
+        "Circle K",
+        "X Fuel",
+        "Sia Fuel",
+        "Easy Fuel"
+      ]
+    },
+     "https://test.api.tomtom.com/search/2/search/Fuel%20Station.json?key=GLOBAL_API_KEY&fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel"
+  ]
+]

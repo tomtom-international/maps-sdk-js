@@ -3,6 +3,7 @@ import { PlaceDataSources } from "./PlaceDataSources";
 import { HasLngLat } from "../Geometry";
 import { POI, RelatedPOI } from "./poi/POI";
 import { Connector } from "./poi/Connector";
+import { FeatureCollectionWithProperties } from "../ExtendedGeoJSON";
 
 /**
  * @group Place
@@ -116,10 +117,14 @@ export type EntryPoint = {
 
 /**
  * @group Place
+ * @category variables
+ */
+export const placeType = ["POI", "Street", "Geography", "Point Address", "Address Range", "Cross Street"] as const;
+/**
+ * @group Place
  * @category Types
  */
-export type PlaceType = "POI" | "Street" | "Geography" | "Point Address" | "Address Range" | "Cross Street";
-
+export type PlaceType = typeof placeType[number];
 /**
  * @group Place
  * @category Types
@@ -319,6 +324,9 @@ export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<
  * @group Place
  * @category Types
  */
-export type Places<P extends CommonPlaceProps = CommonPlaceProps> = Omit<FeatureCollection<Point, P>, "features"> & {
+export type Places<P extends CommonPlaceProps = CommonPlaceProps> = Omit<
+    FeatureCollectionWithProperties<Point, P>,
+    "features"
+> & {
     features: Place<P>[];
 };

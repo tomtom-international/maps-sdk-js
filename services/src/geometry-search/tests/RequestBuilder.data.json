@@ -282,7 +282,7 @@
         }
       ],
       "query": "Fuel Station",
-      "fuels": [
+      "fuelTypes": [
         "Petrol",
         "Diesel",
         "LPG",

@@ -1,7 +1,7 @@
 import { GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 import { placeById, PlaceByIdResponse } from "..";
-import { baseSearchPlaceTestProps } from "../../shared/tests/IntegrationTestUtils";
+import { baseSearchPOITestProps } from "../../shared/tests/IntegrationTestUtils";
 
 describe("Place By Id API", () => {
     beforeAll(() => {
@@ -35,7 +35,7 @@ describe("Place By Id API", () => {
                             type: expect.any(String)
                         }),
                         id: expect.any(String),
-                        properties: expect.objectContaining<SearchPlaceProps>(baseSearchPlaceTestProps)
+                        properties: expect.objectContaining<SearchPlaceProps>(baseSearchPOITestProps)
                     })
                 ])
             })

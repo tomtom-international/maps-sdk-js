@@ -1,0 +1,60 @@
+[
+  [
+    "Performance Test",
+    {
+      "apiKey": "GLOBAL_API_KEY",
+      "commonBaseURL": "https://api.tomtom.com",
+      "query": "restaurant",
+      "limit": 75,
+      "extendedPostalCodesFor": [
+        "POI",
+        "PAD",
+        "Addr",
+        "Geo",
+        "Str",
+        "XStr"
+      ],
+      "mapcodes": [
+        "Local",
+        "Alternative",
+        "International"
+      ],
+      "entityTypes": [
+        "Country",
+        "CountrySubdivision",
+        "CountrySecondarySubdivision",
+        "CountryTertiarySubdivision",
+        "Municipality",
+        "MunicipalitySubdivision",
+        "Neighbourhood",
+        "PostalCodeArea"
+      ],
+      "view": [
+        "Unified",
+        "AR",
+        "IN",
+        "PK",
+        "IL",
+        "MA",
+        "RU",
+        "TR",
+        "CN"
+      ],
+      "language": "fr-FR",
+      "poiCategories": [
+        7315148,
+        7315025,
+        7315012,
+        7315033,
+        7315036,
+        7315,
+        7315003,
+        7315005,
+        7315015,
+        7315016
+      ],
+      "openingHours": "nextSevenDays",
+      "timeZone": "iana"
+    }
+  ]
+]

@@ -1,0 +1,344 @@
+[
+  [
+    "Fuzzy search with required parameters",
+    {
+      "summary": {
+        "query": "hotel",
+        "queryType": "NON_NEAR",
+        "queryTime": 206,
+        "numResults": 2,
+        "offset": 0,
+        "totalResults": 1528897,
+        "fuzzyLevel": 1,
+        "geoBias": {
+          "lat": 37.337,
+          "lon": -121.89
+        },
+        "queryIntent": []
+      },
+      "results": [
+        {
+          "type": "POI",
+          "id": "840069015734006",
+          "score": 2.5745258331,
+          "dist": 78.08678234100528,
+          "info": "search:ta:840069015734006-US",
+          "poi": {
+            "name": "The James Apartments",
+            "phone": "+1 408-975-6273",
+            "categorySet": [
+              {
+                "id": 7314003
+              }
+            ],
+            "url": "https://www.livethejamesapartments.com",
+            "categories": [
+              "hotel",
+              "hotel/motel"
+            ],
+            "classifications": [
+              {
+                "code": "HOTEL_MOTEL",
+                "names": [
+                  {
+                    "nameLocale": "en-US",
+                    "name": "hotel"
+                  },
+                  {
+                    "nameLocale": "en-US",
+                    "name": "hotel/motel"
+                  }
+                ]
+              }
+            ]
+          },
+          "address": {
+            "streetNumber": "98",
+            "streetName": "North 1st Street",
+            "municipalitySubdivision": "Downtown San Jose",
+            "municipality": "San Jose",
+            "countrySecondarySubdivision": "Santa Clara",
+            "countrySubdivision": "CA",
+            "countrySubdivisionName": "California",
+            "postalCode": "95113",
+            "extendedPostalCode": "95113-1200",
+            "countryCode": "US",
+            "country": "United States",
+            "countryCodeISO3": "USA",
+            "freeformAddress": "98 North 1st Street, San Jose, CA 95113",
+            "localName": "San Jose"
+          },
+          "position": {
+            "lat": 37.33728,
+            "lon": -121.89081
+          },
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 37.33818,
+              "lon": -121.89194
+            },
+            "btmRightPoint": {
+              "lat": 37.33638,
+              "lon": -121.88968
+            }
+          },
+          "entryPoints": [
+            {
+              "type": "main",
+              "position": {
+                "lat": 37.33705,
+                "lon": -121.89123
+              }
+            }
+          ]
+        },
+        {
+          "type": "POI",
+          "id": "840069008281694",
+          "score": 2.574524641,
+          "dist": 100.86055390285325,
+          "info": "search:ta:840069008281694-US",
+          "poi": {
+            "name": "Hyatt",
+            "phone": "+1 408-288-2820",
+            "brands": [
+              {
+                "name": "Hyatt"
+              }
+            ],
+            "categorySet": [
+              {
+                "id": 7314003
+              }
+            ],
+            "url": "www.hyatt.com/",
+            "categories": [
+              "hotel",
+              "hotel/motel"
+            ],
+            "classifications": [
+              {
+                "code": "HOTEL_MOTEL",
+                "names": [
+                  {
+                    "nameLocale": "en-US",
+                    "name": "hotel"
+                  },
+                  {
+                    "nameLocale": "en-US",
+                    "name": "hotel/motel"
+                  }
+                ]
+              }
+            ]
+          },
+          "address": {
+            "streetNumber": "40",
+            "streetName": "North 1st Street",
+            "municipalitySubdivision": "Downtown San Jose",
+            "municipality": "San Jose",
+            "countrySecondarySubdivision": "Santa Clara",
+            "countrySubdivision": "CA",
+            "countrySubdivisionName": "California",
+            "postalCode": "95113",
+            "extendedPostalCode": "95113-1202",
+            "countryCode": "US",
+            "country": "United States",
+            "countryCodeISO3": "USA",
+            "freeformAddress": "40 North 1st Street, San Jose, CA 95113",
+            "localName": "San Jose"
+          },
+          "position": {
+            "lat": 37.33661,
+            "lon": -121.89103
+          },
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 37.33751,
+              "lon": -121.89216
+            },
+            "btmRightPoint": {
+              "lat": 37.33571,
+              "lon": -121.8899
+            }
+          },
+          "entryPoints": [
+            {
+              "type": "main",
+              "position": {
+                "lat": 37.33666,
+                "lon": -121.89094
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FeatureCollection",
+      "properties": {
+        "numResults": 2,
+        "queryIntent": [],
+        "totalResults": 1528897
+      },
+      "bbox": [-121.89103, 37.33661, -121.89081, 37.33728],
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -121.89081,
+              37.33728
+            ]
+          },
+          "id": "840069015734006",
+          "properties": {
+            "type": "POI",
+            "score": 2.5745258331,
+            "distance": 78.08678234100528,
+            "info": "search:ta:840069015734006-US",
+            "poi": {
+              "name": "The James Apartments",
+              "phone": "+1 408-975-6273",
+              "categoryIds": [7314003],
+              "url": "https://www.livethejamesapartments.com",
+              "categories": [
+                "hotel",
+                "hotel/motel"
+              ],
+              "brands": [],
+              "classifications": [
+                {
+                  "code": "HOTEL_MOTEL",
+                  "names": [
+                    {
+                      "nameLocale": "en-US",
+                      "name": "hotel"
+                    },
+                    {
+                      "nameLocale": "en-US",
+                      "name": "hotel/motel"
+                    }
+                  ]
+                }
+              ]
+            },
+            "address": {
+              "streetNumber": "98",
+              "streetName": "North 1st Street",
+              "municipalitySubdivision": "Downtown San Jose",
+              "municipality": "San Jose",
+              "countrySecondarySubdivision": "Santa Clara",
+              "countrySubdivision": "CA",
+              "countrySubdivisionName": "California",
+              "postalCode": "95113",
+              "extendedPostalCode": "95113-1200",
+              "countryCode": "US",
+              "country": "United States",
+              "countryCodeISO3": "USA",
+              "freeformAddress": "98 North 1st Street, San Jose, CA 95113",
+              "localName": "San Jose"
+            },
+            "entryPoints": [
+              {
+                "type": "main",
+                "position": [-121.89123, 37.33705]
+              }
+            ]
+          }
+        },{
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -121.89103,
+              37.33661
+            ]
+          },
+          "id": "840069008281694",
+          "properties": {
+            "type": "POI",
+            "score": 2.574524641,
+            "distance": 100.86055390285325,
+            "info": "search:ta:840069008281694-US",
+            "poi": {
+              "name": "Hyatt",
+              "phone": "+1 408-288-2820",
+              "brands": ["Hyatt"],
+              "categoryIds": [7314003],
+              "url": "www.hyatt.com/",
+              "categories": [
+                "hotel",
+                "hotel/motel"
+              ],
+              "classifications": [
+                {
+                  "code": "HOTEL_MOTEL",
+                  "names": [
+                    {
+                      "nameLocale": "en-US",
+                      "name": "hotel"
+                    },
+                    {
+                      "nameLocale": "en-US",
+                      "name": "hotel/motel"
+                    }
+                  ]
+                }
+              ]
+            },
+            "address": {
+              "streetNumber": "40",
+              "streetName": "North 1st Street",
+              "municipalitySubdivision": "Downtown San Jose",
+              "municipality": "San Jose",
+              "countrySecondarySubdivision": "Santa Clara",
+              "countrySubdivision": "CA",
+              "countrySubdivisionName": "California",
+              "postalCode": "95113",
+              "extendedPostalCode": "95113-1202",
+              "countryCode": "US",
+              "country": "United States",
+              "countryCodeISO3": "USA",
+              "freeformAddress": "40 North 1st Street, San Jose, CA 95113",
+              "localName": "San Jose"
+            },
+            "entryPoints": [
+              {
+                "type": "main",
+                "position": [-121.89094, 37.33666]
+              }
+            ]
+          }
+        }
+
+      ]
+    }
+  ],
+  [
+    "No Results",
+    {
+      "summary": {
+        "query": "ams",
+        "queryType": "NON_NEAR",
+        "queryTime": 161,
+        "numResults": 0,
+        "offset": 0,
+        "totalResults": 0,
+        "fuzzyLevel": 2,
+        "queryIntent": []
+      },
+      "results": []
+    },
+    {
+      "type": "FeatureCollection",
+      "properties": {
+         "numResults": 0,
+         "queryIntent": [],
+         "totalResults": 0
+       },
+      "features": []
+    }
+  ]
+]

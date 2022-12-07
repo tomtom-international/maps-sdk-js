@@ -1,11 +1,11 @@
 import { Fuel, GeometryDataResponse, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
-import { geometrySearch } from "..";
+import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../ResponseParser";
 import { buildGeometrySearchRequest } from "../RequestBuilder";
-import { GeometrySearchResponse, SearchGeometryInput } from "../types";
+import { GeometrySearchParams, GeometrySearchResponse, GeometrySearchResponseAPI, SearchGeometryInput } from "../types";
 import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
-import { baseSearchPlaceTestProps } from "../../shared/tests/IntegrationTestUtils";
+import { baseSearchPOITestProps } from "../../shared/tests/IntegrationTestUtils";
 import realGeometryDataInput from "./RealGeometryDataInput.json";
 import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
 
@@ -44,7 +44,7 @@ describe("Geometry Search service", () => {
                         coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
                         type: expect.any(String)
                     }),
-                    properties: expect.objectContaining<SearchPlaceProps>(baseSearchPlaceTestProps)
+                    properties: expect.objectContaining<SearchPlaceProps>(baseSearchPOITestProps)
                 })
             ])
         });
@@ -52,18 +52,18 @@ describe("Geometry Search service", () => {
     test("geometrySearch works", async () => {
         const query = "cafe";
         const categories: number[] = [];
-        const fuels: Fuel[] = [];
+        const fuelTypes: Fuel[] = [];
         const language = "en-GB";
         const view = "Unified";
         const timeZone = "iana";
         const openingHours = "nextSevenDays";
         const limit = 5;
         const indexes: IndexTypesAbbreviation[] = ["POI"];
-        const res = await geometrySearch({
+        const res = await search({
             query,
             geometries,
             poiCategories: categories,
-            fuels,
+            fuelTypes,
             language,
             limit,
             indexes,
@@ -82,7 +82,7 @@ describe("Geometry Search service", () => {
         const categoryID = poiCategoriesToID["ITALIAN_RESTAURANT"];
         const language = "en-GB";
         const indexes: IndexTypesAbbreviation[] = ["POI"];
-        const res = await geometrySearch({
+        const res = await search({
             query,
             geometries,
             poiCategories,
@@ -114,7 +114,7 @@ describe("Geometry Search service", () => {
             }
         ];
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject(
+        await expect(search({ query, geometries: incorrectGeometry })).rejects.toMatchObject(
             expect.objectContaining({
                 message: `Validation error`
             })
@@ -124,10 +124,10 @@ describe("Geometry Search service", () => {
     test("geometrySearch buildRequest hook modifies url", async () => {
         const query = "cafe";
         const newQuery = "petrol";
-        const res = await geometrySearch(
+        const res = await search(
             { query, geometries },
             {
-                buildRequest: (params) => {
+                buildRequest: (params: GeometrySearchParams) => {
                     const req = buildGeometrySearchRequest(params);
                     req.url.pathname = req.url.pathname.replace(`${query}.json`, `${newQuery}.json`);
                     return req;
@@ -156,10 +156,10 @@ describe("Geometry Search service", () => {
 
     test("geometrySearch parseResponse hook modifies response", async () => {
         const query = "cafe";
-        const res = await geometrySearch(
+        const res = await search(
             { query, geometries },
             {
-                parseResponse: (apiResponse) => {
+                parseResponse: (apiResponse: GeometrySearchResponseAPI) => {
                     const response = parseGeometrySearchResponse(apiResponse);
                     response.bbox = [0, 0, 0, 0];
                     return response;
@@ -177,7 +177,7 @@ describe("Geometry Search service", () => {
 
     test("geometrySearch with real geometry data input from a geometry data call", async () => {
         const query = "university";
-        const res = await geometrySearch({ query, geometries: [realGeometryDataInput as GeometryDataResponse] });
+        const res = await search({ query, geometries: [realGeometryDataInput as GeometryDataResponse] });
         expect(res).toEqual(expectWorkingResult());
     });
 });
