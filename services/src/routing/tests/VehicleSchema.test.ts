@@ -1,12 +1,12 @@
 import { calculateRoute } from "../CalculateRoute";
-import {CalculateRouteWaypointInputs} from "../types/CalculateRouteParams";
+import { CalculateRouteWaypointInputs } from "../types/CalculateRouteParams";
 
 describe("Routing: Vehicle parameter request schema tests", () => {
-    const locations : CalculateRouteWaypointInputs = [
+    const locations: CalculateRouteWaypointInputs = [
         [4.89066, 52.37317],
         [4.49015, 52.16109],
         [4.47059, 51.92291]
-    ]
+    ];
     test("it should fail when format of vehicle dimensions are incorrect", async () => {
         await expect(
             calculateRoute({
@@ -15,14 +15,6 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                     dimensions: {
                         //@ts-ignore
                         weightKG: "1900",
-                        //@ts-ignore
-                        lengthMeters: "4.62",
-                        //@ts-ignore
-                        widthMeters: "2",
-                        //@ts-ignore
-                        heightMeters: "3",
-                        //@ts-ignore
-                        axleWeightKG: "1900"
                     },
                     consumption: {
                         engineType: "electric",
@@ -49,35 +41,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                     code: "invalid_type",
                     expected: "number",
                     message: "Expected number, received string",
-                    path: ["vehicle", "dimensions", "lengthMeters"],
-                    received: "string"
-                },
-                {
-                    code: "invalid_type",
-                    expected: "number",
-                    message: "Expected number, received string",
-                    path: ["vehicle", "dimensions", "widthMeters"],
-                    received: "string"
-                },
-                {
-                    code: "invalid_type",
-                    expected: "number",
-                    message: "Expected number, received string",
-                    path: ["vehicle", "dimensions", "heightMeters"],
-                    received: "string"
-                },
-                {
-                    code: "invalid_type",
-                    expected: "number",
-                    message: "Expected number, received string",
                     path: ["vehicle", "dimensions", "weightKG"],
-                    received: "string"
-                },
-                {
-                    code: "invalid_type",
-                    expected: "number",
-                    message: "Expected number, received string",
-                    path: ["vehicle", "dimensions", "axleWeightKG"],
                     received: "string"
                 }
             ]
