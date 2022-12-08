@@ -14,7 +14,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                 vehicle: {
                     dimensions: {
                         //@ts-ignore
-                        weightKG: "1900",
+                        weightKG: "1900"
                     },
                     consumption: {
                         engineType: "electric",
