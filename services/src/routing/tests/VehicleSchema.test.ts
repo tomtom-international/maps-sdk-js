@@ -1,14 +1,16 @@
 import { calculateRoute } from "../CalculateRoute";
+import {CalculateRouteWaypointInputs} from "../types/CalculateRouteParams";
 
 describe("Routing: Vehicle parameter request schema tests", () => {
+    const locations : CalculateRouteWaypointInputs = [
+        [4.89066, 52.37317],
+        [4.49015, 52.16109],
+        [4.47059, 51.92291]
+    ]
     test("it should fail when format of vehicle dimensions are incorrect", async () => {
         await expect(
             calculateRoute({
-                locations: [
-                    [4.89066, 52.37317],
-                    [4.49015, 52.16109],
-                    [4.47059, 51.92291]
-                ],
+                locations,
                 vehicle: {
                     dimensions: {
                         //@ts-ignore
@@ -84,11 +86,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
     test("it should fail when incorrect engine combustion type is specified", async () => {
         await expect(
             calculateRoute({
-                locations: [
-                    [4.89066, 52.37317],
-                    [4.49015, 52.16109],
-                    [4.47059, 51.92291]
-                ],
+                locations,
                 vehicle: {
                     dimensions: {
                         weightKG: 1900
@@ -127,11 +125,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
     test("it should fail when format of efficiency within vehicle consumption is incorrect", async () => {
         await expect(
             calculateRoute({
-                locations: [
-                    [4.89066, 52.37317],
-                    [4.49015, 52.16109],
-                    [4.47059, 51.92291]
-                ],
+                locations,
                 vehicle: {
                     consumption: {
                         engineType: "electric",
@@ -190,11 +184,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
     test("it should fail when format of electric consumption model is incorrect", async () => {
         await expect(
             calculateRoute({
-                locations: [
-                    [4.89066, 52.37317],
-                    [4.49015, 52.16109],
-                    [4.47059, 51.92291]
-                ],
+                locations,
                 vehicle: {
                     consumption: {
                         engineType: "electric",
@@ -282,11 +272,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
     test("it should fail when format of combustion consumption model is incorrect & efficiency object is missing", async () => {
         await expect(
             calculateRoute({
-                locations: [
-                    [4.89066, 52.37317],
-                    [4.49015, 52.16109],
-                    [4.47059, 51.92291]
-                ],
+                locations,
                 vehicle: {
                     consumption: {
                         speedsToConsumptionsLiters: [
