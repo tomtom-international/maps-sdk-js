@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, bboxOnlyIfWithArea, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON, bboxOnlyIfWithArea } from "@anw/go-sdk-js/core";
 
 import { FuzzySearchResponse, FuzzySearchResponseAPI } from "./types";
 import { parseSearchAPIResult } from "../shared/SearchResultParsing";
