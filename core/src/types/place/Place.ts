@@ -1,4 +1,4 @@
-import { Feature, FeatureCollection, Point, Position } from "geojson";
+import { Feature, Point, Position } from "geojson";
 import { PlaceDataSources } from "./PlaceDataSources";
 import { HasLngLat } from "../Geometry";
 import { POI, RelatedPOI } from "./poi/POI";
@@ -324,8 +324,8 @@ export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<
  * @group Place
  * @category Types
  */
-export type Places<P extends CommonPlaceProps = CommonPlaceProps> = Omit<
-    FeatureCollectionWithProperties<Point, P>,
+export type Places<P extends CommonPlaceProps = CommonPlaceProps, FeatureCollectionProps = unknown> = Omit<
+    FeatureCollectionWithProperties<Point, P, FeatureCollectionProps>,
     "features"
 > & {
     features: Place<P>[];

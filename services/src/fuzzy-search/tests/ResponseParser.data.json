@@ -177,7 +177,6 @@
     {
       "type": "FeatureCollection",
       "properties": {
-        "numResults": 2,
         "queryIntent": [],
         "totalResults": 1528897
       },
@@ -334,7 +333,6 @@
     {
       "type": "FeatureCollection",
       "properties": {
-         "numResults": 0,
          "queryIntent": [],
          "totalResults": 0
        },

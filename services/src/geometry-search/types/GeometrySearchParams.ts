@@ -1,17 +1,5 @@
-import {
-    ConnectorType,
-    Fuel,
-    GeographyType,
-    GeometryDataResponse,
-    HasLngLat,
-    MapcodeType,
-    View
-} from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { MultiPolygon, Polygon, Position } from "geojson";
-import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
-import { CommonServiceParams } from "../../shared/ServiceTypes";
-import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
-import { POICategory } from "../../poi-categories/poiCategoriesToID";
 import { CommonSearchParams } from "../../search/types/CommonSearchParams";
 
 /**
