@@ -1,11 +1,12 @@
 import { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { FOREGROUND_LINE_WIDTH } from "./shared";
+import { FOREGROUND_LINE_WIDTH, SELECTED_ROUTE_FILTER } from "./shared";
 import { LayerSpecTemplate } from "../../core";
 
 /**
  * @ignore
  */
 export const routeFerriesLine: LayerSpecTemplate<LineLayerSpecification> = {
+    filter: SELECTED_ROUTE_FILTER,
     type: "line",
     layout: {
         "line-join": "round"
@@ -20,6 +21,7 @@ export const routeFerriesLine: LayerSpecTemplate<LineLayerSpecification> = {
  * @ignore
  */
 export const routeFerriesSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
+    filter: SELECTED_ROUTE_FILTER,
     type: "symbol",
     minzoom: 6,
     // zoom where the map POI naturally appears:

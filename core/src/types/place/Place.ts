@@ -119,12 +119,14 @@ export type EntryPoint = {
  * @group Place
  * @category variables
  */
-export const placeType = ["POI", "Street", "Geography", "Point Address", "Address Range", "Cross Street"] as const;
+export const placeTypes = ["POI", "Street", "Geography", "Point Address", "Address Range", "Cross Street"] as const;
+
 /**
  * @group Place
  * @category Types
  */
-export type PlaceType = typeof placeType[number];
+export type PlaceType = typeof placeTypes[number];
+
 /**
  * @group Place
  * @category Types

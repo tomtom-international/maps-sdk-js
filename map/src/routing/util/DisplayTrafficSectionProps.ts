@@ -1,6 +1,7 @@
 import { TrafficSectionProps } from "@anw/go-sdk-js/core";
 import { DisplayTrafficSectionProps } from "../types/RouteSections";
 import { formatDuration } from "../../core";
+import { DisplayRouteProps } from "../types/DisplayRoutes";
 
 const delayMagnitudeToIconPrefix = {
     MINOR: "traffic_slow",
@@ -42,12 +43,16 @@ export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): strin
 /**
  * @ignore
  */
-export const toDisplayTrafficSectionProps = (section: TrafficSectionProps): DisplayTrafficSectionProps => {
-    const title = formatDuration(section.delayInSeconds);
-    const iconID = trafficSectionToIconID(section);
+export const toDisplayTrafficSectionProps = (
+    sectionProps: TrafficSectionProps,
+    routeProps: DisplayRouteProps
+): DisplayTrafficSectionProps => {
+    const title = formatDuration(sectionProps.delayInSeconds);
+    const iconID = trafficSectionToIconID(sectionProps);
     return {
-        ...section,
+        ...sectionProps,
         ...(iconID && { iconID }),
-        ...(title && { title })
+        ...(title && { title }),
+        routeStyle: routeProps.routeStyle
     };
 };

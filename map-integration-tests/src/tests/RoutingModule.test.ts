@@ -1,7 +1,7 @@
 import {
     ROUTE_FERRIES_LINE_LAYER_ID,
     ROUTE_FERRIES_SOURCE_ID,
-    ROUTE_FOREGROUND_LAYER_ID,
+    ROUTE_LINE_LAYER_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
@@ -10,7 +10,8 @@ import {
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
-    WAYPOINTS_SOURCE_ID
+    WAYPOINTS_SOURCE_ID,
+    ROUTE_DESELECTED_LINE_LAYER_ID
 } from "map";
 import { Routes, WaypointLike } from "@anw/go-sdk-js/core";
 import { GOSDKThis } from "./types/GOSDKThis";
@@ -51,7 +52,7 @@ const waitForRenderedWaypoints = async (numWaypoint: number) =>
 const parsedTestRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutes));
 
 const NUM_WAYPOINT_LAYERS = 2;
-const NUM_ROUTE_LAYERS = 2;
+const NUM_ROUTE_LAYERS = 4;
 const NUM_VEHICLE_RESTRICTED_LAYERS = 2;
 const NUM_INCIDENT_LAYERS = 4;
 const NUM_FERRY_LAYERS = 2;
@@ -86,7 +87,8 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toStrictEqual(NUM_TOLL_ROAD_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toStrictEqual(NUM_TUNNEL_LAYERS);
         await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 10000);
-        await waitUntilRenderedFeatures([ROUTE_FOREGROUND_LAYER_ID], 1, 5000);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
+        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);

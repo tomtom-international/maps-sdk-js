@@ -23,24 +23,41 @@ export type Avoidable = "tollRoads" | "motorways" | "ferries" | "unpavedRoads" |
  * @category Types
  */
 export type TravelMode = "car" | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
+
 /**
  * @group Route
  * @category Types
  */
 export type RouteProps = {
+    /**
+     * Common summary type for the route.
+     * * Contains departure/arrival times, lengths and durations.
+     */
     summary: Summary;
+    /**
+     * Route sections are parts of the planned route that have specific characteristics.
+     */
     sections: SectionsProps;
+    /**
+     * Contains guidance related elements. This field is present only when guidance was requested and is available.
+     */
     guidance?: Guidance;
+    /**
+     * Index related to other routes.
+     * * Only available when there is more than one route.
+     * * By default, the first route (index 0) is considered the main one, and the next one are alternatives.
+     */
+    index?: number;
 };
 
 /**
  * @group Route
  * @category Types
  */
-export type Route = Feature<LineString, RouteProps>;
+export type Route<P extends RouteProps = RouteProps> = Feature<LineString, P>;
 
 /**
  * @group Route
  * @category Types
  */
-export type Routes = FeatureCollection<LineString, RouteProps>;
+export type Routes<P extends RouteProps = RouteProps> = FeatureCollection<LineString, P>;

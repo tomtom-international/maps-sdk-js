@@ -1,11 +1,12 @@
 import { LineLayerSpecification } from "maplibre-gl";
-import { FOREGROUND_LINE_WIDTH } from "./shared";
+import { FOREGROUND_LINE_WIDTH, SELECTED_ROUTE_FILTER } from "./shared";
 import { LayerSpecTemplate } from "../../core";
 
 /**
  * @ignore
  */
 export const routeTunnelsLine: LayerSpecTemplate<LineLayerSpecification> = {
+    filter: SELECTED_ROUTE_FILTER,
     type: "line",
     layout: {
         "line-join": "round"

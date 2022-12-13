@@ -1,6 +1,6 @@
-import { Routes, TrafficSectionProps, Waypoints } from "@anw/go-sdk-js/core";
+import { Routes, Waypoints } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
-import { routeOutline, routeMainLine } from "./layers/routeMainLineLayers";
+import { routeOutline, routeMainLine, routeDeselectedOutline, routeDeselectedLine } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
@@ -18,9 +18,9 @@ import {
     routeIncidentsSymbol
 } from "./layers/routeTrafficSectionLayers";
 import { RoutingModuleConfig } from "./types/RouteModuleConfig";
-import { buildRouteSections } from "./util/RouteSections";
+import { buildDisplayRouteSections } from "./util/RouteSections";
 import { toDisplayTrafficSectionProps } from "./util/DisplayTrafficSectionProps";
-import { RouteSections } from "./types/RouteSections";
+import { DisplayTrafficSectionProps, RouteSections } from "./types/RouteSections";
 import { routeFerriesLine, routeFerriesSymbol } from "./layers/routeFerrySectionLayers";
 import { routeTunnelsLine } from "./layers/routeTunnelSectionLayers";
 import { routeTollRoadsOutline, routeTollRoadsSymbol } from "./layers/routeTollRoadLayers";
@@ -28,14 +28,18 @@ import {
     routeVehicleRestrictedBackgroundLine,
     routeVehicleRestrictedDottedLine
 } from "./layers/routeVehicleRestrictedLayers";
+import { buildDisplayRoutes } from "./util/Routes";
+import { DisplayRouteProps } from "./types/DisplayRoutes";
 
 export const WAYPOINTS_SOURCE_ID = "waypoints";
 export const WAYPOINT_SYMBOLS_LAYER_ID = "waypointsSymbol";
 export const WAYPOINT_LABELS_LAYER_ID = "waypointsLabel";
 
 export const ROUTES_SOURCE_ID = "routes";
-export const ROUTE_OUTLINE_LAYER_ID = "routeOutline";
-export const ROUTE_FOREGROUND_LAYER_ID = "routesLineForeground";
+export const ROUTE_OUTLINE_LAYER_ID = "routesOutline";
+export const ROUTE_LINE_LAYER_ID = "routesLine";
+export const ROUTE_DESELECTED_OUTLINE_LAYER_ID = "routesDeselectedOutline";
+export const ROUTE_DESELECTED_LINE_LAYER_ID = "routesDeselectedLine";
 
 export const ROUTE_VEHICLE_RESTRICTED_SOURCE_ID = "routeVehicleRestricted";
 export const ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID = "routeVehicleRestrictedBackground";
@@ -68,10 +72,10 @@ const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
  */
 export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     private waypoints?: GeoJSONSourceWithLayers<Waypoints>;
-    private routeLines?: GeoJSONSourceWithLayers<Routes>;
+    private routeLines?: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
     private vehicleRestricted?: GeoJSONSourceWithLayers<RouteSections>;
-    private incidents?: GeoJSONSourceWithLayers<RouteSections<TrafficSectionProps>>;
+    private incidents?: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
     private ferries?: GeoJSONSourceWithLayers<RouteSections>;
     private tollRoads?: GeoJSONSourceWithLayers<RouteSections>;
     private tunnels?: GeoJSONSourceWithLayers<RouteSections>;
@@ -82,8 +86,10 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
             { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
         ]);
         this.routeLines = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, [
+            { ...routeDeselectedOutline, id: ROUTE_DESELECTED_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
+            { ...routeDeselectedLine, id: ROUTE_DESELECTED_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
             { ...routeOutline, id: ROUTE_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-            { ...routeMainLine, id: ROUTE_FOREGROUND_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
+            { ...routeMainLine, id: ROUTE_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
         ]);
         this.vehicleRestricted = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, [
             {
@@ -148,12 +154,13 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      */
     showRoutes(routes: Routes) {
         this.callWhenMapReady(() => {
-            this.routeLines?.show(routes);
-            this.vehicleRestricted?.show(buildRouteSections(routes, "vehicleRestricted"));
-            this.incidents?.show(buildRouteSections(routes, "traffic", toDisplayTrafficSectionProps));
-            this.ferries?.show(buildRouteSections(routes, "ferry"));
-            this.tollRoads?.show(buildRouteSections(routes, "tollRoad"));
-            this.tunnels?.show(buildRouteSections(routes, "tunnel"));
+            const displayRoutes = buildDisplayRoutes(routes);
+            this.routeLines?.show(displayRoutes);
+            this.vehicleRestricted?.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
+            this.incidents?.show(buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps));
+            this.ferries?.show(buildDisplayRouteSections(displayRoutes, "ferry"));
+            this.tollRoads?.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
+            this.tunnels?.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
         });
     }
 

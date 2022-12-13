@@ -1,10 +1,11 @@
 import { Routes } from "@anw/go-sdk-js/core";
 import TEST_ROUTES_DATA from "./DummyRoutesWithSections.data.json";
-import { buildRouteSections } from "../RouteSections";
+import { buildDisplayRouteSections } from "../RouteSections";
 import { FeatureCollection } from "geojson";
 import { toDisplayTrafficSectionProps } from "../DisplayTrafficSectionProps";
+import { DisplayRouteProps } from "../../types/DisplayRoutes";
 
-const TEST_ROUTES = TEST_ROUTES_DATA as Routes;
+const TEST_ROUTES = TEST_ROUTES_DATA as Routes<DisplayRouteProps>;
 
 const EMPTY_FEATURE_COLLECTION: FeatureCollection = {
     type: "FeatureCollection",
@@ -13,9 +14,9 @@ const EMPTY_FEATURE_COLLECTION: FeatureCollection = {
 
 describe("Tests to test building route sections", () => {
     test("Build route sections", () => {
-        expect(buildRouteSections(TEST_ROUTES, "carTrain")).toStrictEqual(EMPTY_FEATURE_COLLECTION);
-        expect(buildRouteSections(TEST_ROUTES, "carTrain22" as never)).toStrictEqual(EMPTY_FEATURE_COLLECTION);
-        expect(buildRouteSections(TEST_ROUTES, "ferry")).toStrictEqual({
+        expect(buildDisplayRouteSections(TEST_ROUTES, "carTrain")).toStrictEqual(EMPTY_FEATURE_COLLECTION);
+        expect(buildDisplayRouteSections(TEST_ROUTES, "carTrain22" as never)).toStrictEqual(EMPTY_FEATURE_COLLECTION);
+        expect(buildDisplayRouteSections(TEST_ROUTES, "ferry")).toStrictEqual({
             type: "FeatureCollection",
             features: [
                 {
@@ -29,7 +30,8 @@ describe("Tests to test building route sections", () => {
                     },
                     properties: {
                         startPointIndex: 1,
-                        endPointIndex: 3
+                        endPointIndex: 3,
+                        routeStyle: "selected"
                     }
                 },
                 {
@@ -40,14 +42,15 @@ describe("Tests to test building route sections", () => {
                     },
                     properties: {
                         startPointIndex: 2,
-                        endPointIndex: 3
+                        endPointIndex: 3,
+                        routeStyle: "deselected"
                     }
                 }
             ]
         });
 
         // Traffic sections as-is:
-        expect(buildRouteSections(TEST_ROUTES, "traffic")).toStrictEqual({
+        expect(buildDisplayRouteSections(TEST_ROUTES, "traffic")).toStrictEqual({
             type: "FeatureCollection",
             features: [
                 {
@@ -70,14 +73,15 @@ describe("Tests to test building route sections", () => {
                                     mainCauseCode: 19
                                 }
                             ]
-                        }
+                        },
+                        routeStyle: "deselected"
                     }
                 }
             ]
         });
 
         // Traffic section, passing its display props function:
-        expect(buildRouteSections(TEST_ROUTES, "traffic", toDisplayTrafficSectionProps)).toStrictEqual({
+        expect(buildDisplayRouteSections(TEST_ROUTES, "traffic", toDisplayTrafficSectionProps)).toStrictEqual({
             type: "FeatureCollection",
             features: [
                 {
@@ -102,7 +106,8 @@ describe("Tests to test building route sections", () => {
                             ]
                         },
                         iconID: "traffic_queueing_weather_rain",
-                        title: "6 min"
+                        title: "6 min",
+                        routeStyle: "deselected"
                     }
                 }
             ]

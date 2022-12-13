@@ -1,6 +1,7 @@
 import { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { MAP_BOLD_FONT } from "../../core/layers/CommonLayerProps";
 import { LayerSpecTemplate } from "../../core";
+import { SELECTED_ROUTE_FILTER } from "./shared";
 
 const EXTRA_FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
     "interpolate",
@@ -94,6 +95,7 @@ export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification
  * @ignore
  */
 export const routeIncidentsSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
+    filter: SELECTED_ROUTE_FILTER,
     type: "symbol",
     minzoom: 6,
     layout: {

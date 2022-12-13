@@ -1,10 +1,12 @@
 import { LayerSpecTemplate } from "../../core";
 import { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import { SELECTED_ROUTE_FILTER } from "./shared";
 
 /**
  * @ignore
  */
 export const routeTollRoadsOutline: LayerSpecTemplate<LineLayerSpecification> = {
+    filter: SELECTED_ROUTE_FILTER,
     type: "line",
     layout: {
         "line-join": "round",
@@ -20,6 +22,7 @@ export const routeTollRoadsOutline: LayerSpecTemplate<LineLayerSpecification> = 
  * @ignore
  */
 export const routeTollRoadsSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
+    filter: SELECTED_ROUTE_FILTER,
     type: "symbol",
     minzoom: 4,
     layout: {

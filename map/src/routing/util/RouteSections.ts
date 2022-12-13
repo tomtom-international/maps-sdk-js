@@ -1,18 +1,26 @@
 import { Route, Routes, SectionProps, SectionType } from "@anw/go-sdk-js/core";
-import { RouteSection, RouteSections } from "../types/RouteSections";
+import { DisplaySectionProps, RouteSection, RouteSections } from "../types/RouteSections";
+import { DisplayRouteProps } from "../types/DisplayRoutes";
 
-const buildRouteSectionsFromRoute = <S extends SectionProps = SectionProps, D extends S = S>(
-    route: Route,
+const buildRouteSectionsFromRoute = <
+    S extends SectionProps = SectionProps,
+    D extends DisplaySectionProps = DisplaySectionProps
+>(
+    route: Route<DisplayRouteProps>,
     sectionType: SectionType,
-    displaySectionPropsBuilder?: (section: S) => D
+    displaySectionPropsBuilder?: (sectionProps: S, routeProps: DisplayRouteProps) => D
 ): RouteSection<D>[] =>
-    (route.properties.sections[sectionType] as S[])?.map((section) => ({
+    (route.properties.sections[sectionType] as S[])?.map((sectionProps) => ({
         type: "Feature",
         geometry: {
             type: "LineString",
-            coordinates: route.geometry.coordinates.slice(section.startPointIndex, section.endPointIndex)
+            coordinates: route.geometry.coordinates.slice(sectionProps.startPointIndex, sectionProps.endPointIndex)
         },
-        properties: displaySectionPropsBuilder ? displaySectionPropsBuilder(section) : (section as D)
+        properties: {
+            ...(displaySectionPropsBuilder
+                ? displaySectionPropsBuilder(sectionProps, route.properties)
+                : ({ ...sectionProps, routeStyle: route.properties.routeStyle } as unknown as D))
+        }
     })) || [];
 
 /**
@@ -22,10 +30,13 @@ const buildRouteSectionsFromRoute = <S extends SectionProps = SectionProps, D ex
  * @param displaySectionPropsBuilder An optional function which will convert each section props into an extended display-ready version.
  * @ignore
  */
-export const buildRouteSections = <S extends SectionProps = SectionProps, D extends S = S>(
-    routes: Routes,
+export const buildDisplayRouteSections = <
+    S extends SectionProps = SectionProps,
+    D extends DisplaySectionProps = DisplaySectionProps
+>(
+    routes: Routes<DisplayRouteProps>,
     sectionType: SectionType,
-    displaySectionPropsBuilder?: (section: S) => D
+    displaySectionPropsBuilder?: (sectionProps: S, routeProps: DisplayRouteProps) => D
 ): RouteSections<D> => ({
     type: "FeatureCollection",
     features: routes.features.flatMap((route) =>

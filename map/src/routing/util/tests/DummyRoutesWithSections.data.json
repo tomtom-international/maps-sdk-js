@@ -33,6 +33,7 @@
         ]
       },
       "properties": {
+        "routeStyle": "selected",
         "sections": {
           "ferry": [
             {
@@ -81,6 +82,7 @@
         ]
       },
       "properties": {
+        "routeStyle": "deselected",
         "sections": {
           "ferry": [
             {

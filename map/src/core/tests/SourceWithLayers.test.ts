@@ -6,7 +6,7 @@ import {
     GeoJSONSourceWithLayers,
     StyleSourceWithLayers
 } from "../SourceWithLayers";
-import { omit } from "lodash";
+import omit from "lodash/omit";
 import { FeatureCollection } from "geojson";
 
 const testSourceID = "SOURCE_ID";

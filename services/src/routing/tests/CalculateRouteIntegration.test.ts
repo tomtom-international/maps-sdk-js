@@ -181,6 +181,7 @@ describe("Calculate route integration tests", () => {
                 date: new Date()
             }
         });
+
         expect(result.routes?.features?.length).toEqual(3);
         for (const routeFeature of result.routes.features) {
             expect(routeFeature).toBeDefined();

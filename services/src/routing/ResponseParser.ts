@@ -149,7 +149,7 @@ const parseGuidance = (apiGuidance: GuidanceAPI): Guidance => ({
     instructionGroups: apiGuidance.instructionGroups
 });
 
-const parseRoute = (apiRoute: RouteAPI): Route => {
+const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[]): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
     const bbox = bboxFromGeoJSON(geometry);
     return {
@@ -159,7 +159,8 @@ const parseRoute = (apiRoute: RouteAPI): Route => {
         properties: {
             summary: parseSummary(apiRoute.summary),
             sections: parseSections(apiRoute),
-            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance) })
+            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance) }),
+            ...(apiRoutes.length > 1 && { index })
         }
     };
 };

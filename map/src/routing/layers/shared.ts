@@ -21,3 +21,13 @@ export const FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
     18,
     10
 ];
+
+/**
+ * @ignore
+ */
+export const SELECTED_ROUTE_FILTER: ExpressionSpecification = ["==", ["get", "routeStyle"], "selected"];
+
+/**
+ * @ignore
+ */
+export const DESELECTED_ROUTE_FILTER: ExpressionSpecification = ["==", ["get", "routeStyle"], "deselected"];

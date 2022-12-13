@@ -1,6 +1,6 @@
 [
   [
-    "Small real route through Amsterdam with alternatives, sections and guidance",
+    "Small route through Amsterdam with alternatives, sections and guidance",
     {
       "formatVersion": "0.0.12",
       "routes": [
@@ -3110,6 +3110,7 @@
               52.38686
             ],
             "properties": {
+              "index": 0,
               "summary": {
                 "lengthInMeters": 2452,
                 "travelTimeInSeconds": 516,
@@ -3890,6 +3891,7 @@
               ]
             },
             "properties": {
+              "index": 1,
               "summary": {
                 "lengthInMeters": 2653,
                 "travelTimeInSeconds": 624,
@@ -4893,6 +4895,7 @@
               ]
             },
             "properties": {
+              "index": 2,
               "summary": {
                 "lengthInMeters": 3800,
                 "travelTimeInSeconds": 735,
