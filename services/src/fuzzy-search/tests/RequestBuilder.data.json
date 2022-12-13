@@ -35,7 +35,7 @@
     "https://api-test.tomtom.com/search/2/search/restaurant.json?key=GLOBAL_API_KEY_2&language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana"
   ],
   [
-    "Geometry search with required parameters & optional parameters such as indexes & entityType",
+    "Fuzzy search with required parameters & optional parameters such as indexes & entityType",
     {
       "apiKey": "GLOBAL_API_KEY",
       "commonBaseURL": "https://test.api.tomtom.com",

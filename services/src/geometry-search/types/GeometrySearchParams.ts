@@ -1,6 +1,6 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { MultiPolygon, Polygon, Position } from "geojson";
-import { CommonSearchParams } from "../../search/types/CommonSearchParams";
+import { CommonSearchParams } from "../../search";
 
 /**
  * @group Geometry Search
