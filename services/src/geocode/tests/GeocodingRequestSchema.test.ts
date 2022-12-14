@@ -1,6 +1,10 @@
 import geocode from "../Geocoding";
 import { GeocodingParams } from "../types/GeocodingParams";
 import { Polygon } from "geojson";
+import geoCodingReqObjects from "../../geocode/tests/RequestBuilderPerf.data.json";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { validateRequestSchema } from "../../shared/Validation";
+import { geocodingRequestSchema } from "../GeocodingRequestSchema";
 
 describe("Geocoding schema validation", () => {
     test("it should fail when view is an invalid param", async () => {
@@ -248,4 +252,16 @@ describe("Geocoding schema validation", () => {
             ]
         });
     });
+});
+
+describe("Geocoding request schema performance tests", () => {
+    test.each(geoCodingReqObjects)(
+        "'%s'",
+        // @ts-ignore
+        (params: GeocodingParams) => {
+            expect(
+                assertExecutionTime(() => validateRequestSchema(params, geocodingRequestSchema), 10, 5)
+            ).toBeTruthy();
+        }
+    );
 });

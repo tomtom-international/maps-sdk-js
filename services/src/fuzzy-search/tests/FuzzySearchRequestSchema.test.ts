@@ -1,5 +1,9 @@
 import fuzzySearch from "../FuzzySearch";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
 import { fuzzySearchRequestSchema } from "../FuzzySearchRequestSchema";
+import { FuzzySearchParams } from "../types";
+import fuzzySearchReqObjects from "./RequestBuilderPerf.data.json";
+import { validateRequestSchema } from "../../shared/Validation";
 
 describe("FuzzySearch Schema Validation", () => {
     test("it should pass when poi category is of type array consisting poi category IDs", () => {
@@ -274,7 +278,7 @@ describe("FuzzySearch Schema Validation", () => {
         await expect(
             fuzzySearch({
                 query,
-                position: [200, -95]
+                position: [190, -95]
             })
         ).rejects.toMatchObject({
             message: "Validation error",
@@ -299,4 +303,16 @@ describe("FuzzySearch Schema Validation", () => {
             ]
         });
     });
+});
+
+describe("Fuzzy Search request schema performance tests", () => {
+    test.each(fuzzySearchReqObjects)(
+        "'%s'",
+        // @ts-ignore
+        (_title: string, params: FuzzySearchParams) => {
+            expect(
+                assertExecutionTime(() => validateRequestSchema(params, fuzzySearchRequestSchema), 10, 5)
+            ).toBeTruthy();
+        }
+    );
 });

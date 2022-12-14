@@ -2,10 +2,8 @@ import apiAndParsedResponses from "./ResponseParser.data.json";
 import { parseGeocodingResponse } from "../ResponseParser";
 import { GeocodingResponseAPI } from "../types/APITypes";
 import { GeocodingResponse } from "../types/GeocodingResponse";
-import geocodingReqObjects from "./RequestBuilderPerf.data.json";
-import { GeocodingParams } from "../types/GeocodingParams";
 import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
-import { buildGeocodingRequest } from "../RequestBuilder";
+import geocodingAPIResponses from "./ResponseParserPerf.data.json";
 
 describe("Geocode response parsing tests", () => {
     test.each(apiAndParsedResponses)(
@@ -17,12 +15,12 @@ describe("Geocode response parsing tests", () => {
     );
 });
 
-describe("Geocoding service request builder performance tests", () => {
-    test.each(geocodingReqObjects)(
+describe("Geocoding service response parser performance tests", () => {
+    test.each(geocodingAPIResponses)(
         "'%s'",
         // @ts-ignore
-        (params: GeocodingParams) => {
-            expect(assertExecutionTime(() => buildGeocodingRequest(params), 10, 2)).toBeTruthy();
+        (apiResponse: GeocodingResponseAPI) => {
+            expect(assertExecutionTime(() => parseGeocodingResponse(apiResponse), 10, 5)).toBeTruthy();
         }
     );
 });

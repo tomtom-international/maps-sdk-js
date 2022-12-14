@@ -1,0 +1,19 @@
+[
+  [
+    {
+      "commonBaseURL": "https://api-test.tomtom.com",
+      "apiKey": "testKey",
+      "language": "es-ES",
+      "entityId": "testEntity",
+      "mapcodes": [
+        "Local",
+        "International",
+        "Alternative"
+      ],
+      "view": "Unified",
+      "openingHours": "nextSevenDays",
+      "timeZone": "iana",
+      "relatedPois": "off"
+    }
+  ]
+]

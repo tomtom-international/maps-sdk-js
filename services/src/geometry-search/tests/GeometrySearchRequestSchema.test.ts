@@ -1,6 +1,9 @@
 import geometrySearch from "../GeometrySearch";
-import { SearchGeometryInput } from "../types";
+import { GeometrySearchParams, SearchGeometryInput } from "../types";
 import { geometrySearchRequestSchema } from "../GeometrySearchRequestSchema";
+import geometrySearchReqObjects from "../../geometry-search/tests/RequestBuilderPerf.data.json";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { validateRequestSchema } from "../../shared/Validation";
 
 describe("GeometrySearch Schema Validation", () => {
     const geometries: SearchGeometryInput[] = [
@@ -365,29 +368,41 @@ describe("GeometrySearch Schema Validation", () => {
             geometrySearch({
                 query,
                 geometries,
-                position: [200, -95]
+                position: [-200, 95]
             })
         ).rejects.toMatchObject({
             message: "Validation error",
             service: "GeometrySearch",
             errors: [
                 {
-                    code: "too_big",
-                    maximum: 180,
+                    code: "too_small",
+                    minimum: -180,
                     type: "number",
                     inclusive: true,
-                    message: "Number must be less than or equal to 180",
+                    message: "Number must be greater than or equal to -180",
                     path: ["position", 0]
                 },
                 {
-                    code: "too_small",
-                    minimum: -90,
+                    code: "too_big",
+                    maximum: 90,
                     type: "number",
                     inclusive: true,
-                    message: "Number must be greater than or equal to -90",
+                    message: "Number must be less than or equal to 90",
                     path: ["position", 1]
                 }
             ]
         });
     });
+});
+
+describe("Geometry Search request schema performance tests", () => {
+    test.each(geometrySearchReqObjects)(
+        "'%s'",
+        // @ts-ignore
+        (_title: string, params: GeometrySearchParams) => {
+            expect(
+                assertExecutionTime(() => validateRequestSchema(params, geometrySearchRequestSchema), 10, 10)
+            ).toBeTruthy();
+        }
+    );
 });

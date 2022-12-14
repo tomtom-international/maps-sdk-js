@@ -1,5 +1,9 @@
 import revgeocode from "../ReverseGeocoding";
 import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
+import revGeoReqObjects from "../../revgeo/tests/RequestBuilderPerf.data.json";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { validateRequestSchema } from "../../shared/Validation";
+import { revGeocodeRequestSchema } from "../RevGeocodeRequestSchema";
 
 describe("ReverseGeocoding schema validation", () => {
     test("it should fail when position is an invalid param - case 1", async () => {
@@ -330,4 +334,16 @@ describe("ReverseGeocoding schema validation", () => {
             ]
         });
     });
+});
+
+describe("Rev-Geo request schema performance tests", () => {
+    test.each(revGeoReqObjects)(
+        "'%s'",
+        // @ts-ignore
+        (_title: string, params: ReverseGeocodingParams) => {
+            expect(
+                assertExecutionTime(() => validateRequestSchema(params, revGeocodeRequestSchema), 10, 2)
+            ).toBeTruthy();
+        }
+    );
 });

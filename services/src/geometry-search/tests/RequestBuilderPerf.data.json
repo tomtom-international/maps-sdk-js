@@ -3741,17 +3741,7 @@
         "Neighbourhood",
         "PostalCodeArea"
       ],
-      "view": [
-        "Unified",
-        "AR",
-        "IN",
-        "PK",
-        "IL",
-        "MA",
-        "RU",
-        "TR",
-        "CN"
-      ],
+      "view": "TR",
       "language": "fr-FR",
       "poiCategories": [
         7315148,

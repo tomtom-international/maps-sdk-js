@@ -1,5 +1,9 @@
 import EVChargingStationsAvailability from "../EVChargingStationsAvailability";
 import { EVChargingStationsAvailabilityParams } from "../types/EVChargingStationsAvailabilityParams";
+import requestObjects from "./RequestBuilderPerf.data.json";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { evChargingStationsAvailabilityRequestSchema } from "../EVChargingStationsAvailabilityRequestSchema";
+import { validateRequestSchema } from "../../shared/Validation";
 
 describe("EV Charging Stations availability schema validation", () => {
     test("it should fail when id is an invalid param", async () => {
@@ -99,4 +103,20 @@ describe("EV Charging Stations availability schema validation", () => {
             ]
         });
     });
+});
+
+describe("EV charging stations availability request schema performance tests", () => {
+    test.each(requestObjects)(
+        "'%s'",
+        //@ts-ignore
+        (_title: string, params: EVChargingStationsAvailabilityParams) => {
+            expect(
+                assertExecutionTime(
+                    () => validateRequestSchema(params, evChargingStationsAvailabilityRequestSchema),
+                    10,
+                    1
+                )
+            ).toBeTruthy();
+        }
+    );
 });

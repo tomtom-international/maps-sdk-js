@@ -1,5 +1,10 @@
 import { GOSDKConfig } from "@anw/go-sdk-js/core";
-import { placeById } from "..";
+import { PlaceByIdParams } from "../types";
+import placeByIdReqObjects from "../../place-by-id/tests/RequestBuilderPerf.data.json";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { validateRequestSchema } from "../../shared/Validation";
+import { placeByIdRequestSchema } from "../PlaceByIdSchema";
+import placeById from "../PlaceById";
 
 describe("Place By Id API", () => {
     beforeAll(() => {
@@ -77,4 +82,16 @@ describe("Place By Id API", () => {
             ]
         });
     });
+});
+
+describe("PlaceById request schema performance tests", () => {
+    test.each(placeByIdReqObjects)(
+        "'%s'",
+        // @ts-ignore
+        (params: PlaceByIdParams) => {
+            expect(
+                assertExecutionTime(() => validateRequestSchema(params, placeByIdRequestSchema), 10, 2)
+            ).toBeTruthy();
+        }
+    );
 });

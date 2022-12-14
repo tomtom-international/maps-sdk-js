@@ -20,6 +20,8 @@ import {
     isBBoxWithArea
 } from "../BBox";
 
+import { assertExecutionTime } from "services/src/shared/tests/PerformanceTestUtils";
+
 describe("Bounding Box expansion functions", () => {
     test("Expand bounding box with position", () => {
         expect(bboxExpandedWithPosition(undefined as never)).toBeUndefined();
@@ -431,30 +433,16 @@ describe("Bounding box getter/calculator function", () => {
 describe("Bounding box calculation performance tests", () => {
     test("Quick bounding box performance test for very long line", () => {
         const coordinates = buildTestDiagonal(100000);
-        const numExecutions = 20;
-        const accExecTimes = [];
-        for (let i = 0; i < numExecutions; i++) {
-            const start = performance.now();
-            bboxFromCoordsArray(coordinates);
-            accExecTimes.push(performance.now() - start);
-        }
-        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(2);
+        expect(assertExecutionTime(() => bboxFromCoordsArray(coordinates), 20, 2)).toBeTruthy();
     });
 
     test("Quick bounding box performance test for very long polygon", () => {
         const coordinates = buildTestDiagonal(200000);
-        const numExecutions = 20;
-        const accExecTimes = [];
         const polygon: Polygon = {
             type: "Polygon",
             // (we don't care if the shape is really polygon-correct here)
             coordinates: [coordinates, coordinates, coordinates, coordinates]
         };
-        for (let i = 0; i < numExecutions; i++) {
-            const start = performance.now();
-            bboxFromGeoJSON(polygon);
-            accExecTimes.push(performance.now() - start);
-        }
-        expect(Math.min.apply(null, accExecTimes)).toBeLessThan(2);
+        expect(assertExecutionTime(() => bboxFromGeoJSON(polygon), 20, 2)).toBeTruthy();
     });
 });

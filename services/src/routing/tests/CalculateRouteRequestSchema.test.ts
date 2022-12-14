@@ -1,4 +1,9 @@
 import { calculateRoute } from "../CalculateRoute";
+import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { validateRequestSchema } from "../../shared/Validation";
+import { CalculateRouteParams } from "../types/CalculateRouteParams";
+import { calculateRouteRequestSchema } from "../CalculateRouteRequestSchema";
+import { routeRequestParams } from "./RequestBuilderPerf.data";
 
 describe("Calculate route request schema validation", () => {
     test("it should fail when latitude & longitude are out of range", async () => {
@@ -231,5 +236,18 @@ describe("Calculate route request schema validation", () => {
                 }
             ]
         });
+    });
+});
+
+describe("Calculate route request schema performance tests", () => {
+    // @ts-ignore
+    test("Calculate route request with many waypoints, mandatory & optional params", () => {
+        expect(
+            assertExecutionTime(
+                () => validateRequestSchema(routeRequestParams as CalculateRouteParams, calculateRouteRequestSchema),
+                10,
+                2
+            )
+        ).toBeTruthy();
     });
 });
