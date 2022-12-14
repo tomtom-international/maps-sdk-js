@@ -160,11 +160,9 @@ describe("FuzzySearch Schema Validation", () => {
             service: "FuzzySearch",
             errors: [
                 {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "number",
+                    code: "invalid_union",
                     path: ["poiCategories"],
-                    message: "Expected array, received number"
+                    message: "Invalid input"
                 }
             ]
         });
