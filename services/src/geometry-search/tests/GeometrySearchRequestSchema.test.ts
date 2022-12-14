@@ -222,9 +222,9 @@ describe("GeometrySearch Schema Validation", () => {
             service: "GeometrySearch",
             errors: [
                 {
-                    code: "invalid_union",
+                    code: "invalid_type",
                     path: ["poiCategories"],
-                    message: "Invalid input"
+                    message: "Expected array, received number"
                 }
             ]
         });
@@ -244,7 +244,13 @@ describe("GeometrySearch Schema Validation", () => {
             })
         ).rejects.toMatchObject({
             message: "Validation error",
-            service: "GeometrySearch"
+            service: "GeometrySearch",
+            errors: [
+                {
+                    path: ["poiCategories", 0],
+                    message: "Invalid input"
+                }
+            ]
         });
     });
 
