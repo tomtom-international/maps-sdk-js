@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.63](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.62...v0.1.63) (2022-12-14)
+
+
+### Features
+
+* integrate with fuzzy search service and expose general search call ([0dcb0c8](https://github.com/tomtom-international/go-sdk-js/commit/0dcb0c877aafbf35f01ec317b36ced7d16f88f3e))
+* **map:** adding more route sections on the map ([7b3e40d](https://github.com/tomtom-international/go-sdk-js/commit/7b3e40d12b786a17a6507a2199c5ebb76e508c2f))
+* **map:** adding vehicle restricted sections, refactored from travel mode "other" sections ([99d19b3](https://github.com/tomtom-international/go-sdk-js/commit/99d19b376bf1f627336960c1eb0e6db228a7d1d5))
+
 ### [0.1.62](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.61...v0.1.62) (2022-12-06)
 
 ### [0.1.61](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.60...v0.1.61) (2022-12-06)
