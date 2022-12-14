@@ -72,7 +72,6 @@ describe("Fuzzy Search service", () => {
             indexes
         });
 
-        console.log(JSON.stringify(res));
         expect(res.features).toEqual(
             expect.arrayContaining<FuzzySearchResponse>([
                 expect.objectContaining({
