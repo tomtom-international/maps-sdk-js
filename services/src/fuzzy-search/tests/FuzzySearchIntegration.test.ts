@@ -60,10 +60,9 @@ describe("Fuzzy Search service", () => {
         expect(res).toEqual(expectWorkingResult);
     });
 
-    test("fuzzy search with human-readable poi categories", async () => {
+    test("fuzzy search with a combination of poi category IDs & human readable poi category names", async () => {
         const query = "restaurant";
-        const poiCategories: (number | POICategory)[] = ["ITALIAN_RESTAURANT"];
-        const categoryID = poiCategoriesToID["ITALIAN_RESTAURANT"];
+        const poiCategories: (number | POICategory)[] = ["SPANISH_RESTAURANT", "ITALIAN_RESTAURANT", 7315017];
         const language = "en-GB";
         const indexes: IndexTypesAbbreviation[] = ["POI"];
         const res = await search({
@@ -73,12 +72,27 @@ describe("Fuzzy Search service", () => {
             indexes
         });
 
+        console.log(JSON.stringify(res));
         expect(res.features).toEqual(
             expect.arrayContaining<FuzzySearchResponse>([
                 expect.objectContaining({
                     properties: expect.objectContaining({
                         poi: expect.objectContaining({
-                            categoryIds: expect.arrayContaining([categoryID])
+                            categoryIds: expect.arrayContaining([poiCategoriesToID["ITALIAN_RESTAURANT"]])
+                        })
+                    })
+                }),
+                expect.objectContaining({
+                    properties: expect.objectContaining({
+                        poi: expect.objectContaining({
+                            categoryIds: expect.arrayContaining([poiCategoriesToID["SPANISH_RESTAURANT"]])
+                        })
+                    })
+                }),
+                expect.objectContaining({
+                    properties: expect.objectContaining({
+                        poi: expect.objectContaining({
+                            categoryIds: expect.arrayContaining([7315017])
                         })
                     })
                 })

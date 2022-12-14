@@ -19,7 +19,11 @@ const searchParamsOptional = z
         view: z.enum(views),
         geographyTypes: z.string().array(),
         indexes: z.string().array(),
-        poiCategories: z.array(poiCategoriesToIDZodObject.keyof()),
+        poiCategories: z.union([
+            z.number().array(),
+            z.array(poiCategoriesToIDZodObject.keyof()),
+            z.array(z.number().or(poiCategoriesToIDZodObject.keyof()))
+        ]),
         poiBrands: z.string().array(),
         connectors: z.string().array(),
         fuelTypes: z.string().array(),

@@ -1,6 +1,25 @@
 import fuzzySearch from "../FuzzySearch";
+import { fuzzySearchRequestSchema } from "../FuzzySearchRequestSchema";
 
 describe("FuzzySearch Schema Validation", () => {
+    test("it should pass when poi category is of type array consisting poi category IDs", () => {
+        expect(
+            fuzzySearchRequestSchema.parse({
+                query: "restaurant",
+                poiCategories: [7315, 7315081]
+            })
+        ).toMatchObject({ query: "restaurant", poiCategories: [7315, 7315081] });
+    });
+
+    test("it should pass when poi category is of type array consisting human readable category names", () => {
+        expect(
+            fuzzySearchRequestSchema.parse({
+                query: "restaurant",
+                poiCategories: ["ITALIAN_RESTAURANT", "FRENCH_RESTAURANT"]
+            })
+        ).toMatchObject({ query: "restaurant", poiCategories: ["ITALIAN_RESTAURANT", "FRENCH_RESTAURANT"] });
+    });
+
     test("it should fail when missing mandatory query", async () => {
         const limit = 10;
         // @ts-ignore

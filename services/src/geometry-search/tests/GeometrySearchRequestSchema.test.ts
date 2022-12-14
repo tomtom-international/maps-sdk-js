@@ -1,5 +1,6 @@
 import geometrySearch from "../GeometrySearch";
 import { SearchGeometryInput } from "../types";
+import { geometrySearchRequestSchema } from "../GeometrySearchRequestSchema";
 
 describe("GeometrySearch Schema Validation", () => {
     const geometries: SearchGeometryInput[] = [
@@ -20,6 +21,27 @@ describe("GeometrySearch Schema Validation", () => {
             radius: 6000
         }
     ];
+
+    test("it should pass when poi category is of type array consisting poi category IDs", () => {
+        expect(
+            geometrySearchRequestSchema.parse({
+                query: "restaurant",
+                geometries,
+                poiCategories: [7315, 7315081]
+            })
+        ).toMatchObject({ query: "restaurant", poiCategories: [7315, 7315081] });
+    });
+
+    test("it should pass when poi category is of type array consisting human readable category names", () => {
+        expect(
+            geometrySearchRequestSchema.parse({
+                query: "restaurant",
+                geometries,
+                poiCategories: ["ITALIAN_RESTAURANT", "FRENCH_RESTAURANT"]
+            })
+        ).toMatchObject({ query: "restaurant", poiCategories: ["ITALIAN_RESTAURANT", "FRENCH_RESTAURANT"] });
+    });
+
     test("it should fail when missing coordinates property", async () => {
         const query = "cafe";
         const incorrectGeometry = [{ type: "Circle", radius: 6000 }];
