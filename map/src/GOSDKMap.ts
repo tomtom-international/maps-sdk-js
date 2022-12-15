@@ -1,4 +1,5 @@
 import mapLibreExported, { Map } from "maplibre-gl";
+import { BBox } from "geojson";
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
@@ -48,5 +49,9 @@ export class GOSDKMap {
      */
     setLanguage(language: string) {
         MapLanguage.setLanguage(this, { language });
+    }
+
+    getBounds(): BBox {
+        return this.mapLibreMap.getBounds().toArray().flat() as BBox;
     }
 }
