@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { hasLngLatSchema } from "../shared/GeometriesSchema";
+import { hasBBoxSchema, hasLngLatSchema } from "../shared/GeometriesSchema";
 import { views } from "@anw/go-sdk-js/core";
 
 const geocodingRequestMandatory = z.object({
@@ -14,7 +14,7 @@ const geocodingRequestOptional = z
         position: hasLngLatSchema,
         countries: z.string().array(),
         radiusMeters: z.number(),
-        boundingBox: z.any(),
+        boundingBox: hasBBoxSchema,
         extendedPostalCodesFor: z.string().array(),
         mapcodes: z.string().array(),
         view: z.enum(views),

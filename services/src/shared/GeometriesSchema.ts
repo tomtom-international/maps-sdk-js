@@ -64,3 +64,18 @@ export const hasLngLatSchema = z.union([
     }),
     featureSchema
 ]);
+
+/**
+ * @ignore
+ */
+const geoJSONBBoxSchema = z.array(z.number()).length(4).or(z.array(z.number()).length(6));
+
+/**
+ * @ignore
+ */
+export const geoJSONBObjectSchema = geometrySchema.or(featureSchema).or(featureCollectionSchema);
+
+/**
+ * @ignore
+ */
+export const hasBBoxSchema = geoJSONBBoxSchema.or(geoJSONBObjectSchema).or(z.array(geoJSONBObjectSchema));
