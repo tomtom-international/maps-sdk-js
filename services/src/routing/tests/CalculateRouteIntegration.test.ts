@@ -37,14 +37,7 @@ describe("Calculate route integration tests", () => {
         "Route from Kandersteg to Dover via Lötschen Pass with specified " +
             "sectionTypes and combustion vehicle parameters",
         async () => {
-            const testInputSectionTypes: SectionType[] = [
-                "carTrain",
-                "motorway",
-                "traffic",
-                "tollRoad",
-                "tollVignette",
-                "urban"
-            ];
+            const testInputSectionTypes: SectionType[] = ["carTrain", "motorway", "tollRoad", "tollVignette", "urban"];
 
             const result = await calculateRoute({
                 locations: [
