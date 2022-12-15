@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.65](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.64...v0.1.65) (2022-12-15)
+
+
+### Features
+
+* add gitBounds method to sdk map ([61bc455](https://github.com/tomtom-international/go-sdk-js/commit/61bc45524479aa7e16e41b8e15eaca812c6776e1))
+
+
+### Bug Fixes
+
+* **search-schema-validation:** allow number|POICategory as part of search poi category ([c2a8c67](https://github.com/tomtom-international/go-sdk-js/commit/c2a8c67f7d7978d5efe01880b1b6ca4a85f47569))
+* **tests:** improving integration test stability ([a82d668](https://github.com/tomtom-international/go-sdk-js/commit/a82d668a576eb39daa8580e928dbcf216b1092dc))
+
 ### [0.1.64](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.63...v0.1.64) (2022-12-15)
 
 
