@@ -1,6 +1,7 @@
 import isNil from "lodash/isNil";
 import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers } from "../core";
 import { VectorTilesTrafficConfig } from ".";
+import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 
 export const VECTOR_TILES_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
 export const VECTOR_TILES_FLOW_SOURCE_ID = "vectorTilesFlow";
@@ -95,10 +96,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             if (this.incidents) {
                 this.incidents.setAllLayersVisible(visible, filter);
             } else {
-                console.error(
-                    "Trying to change traffic incidents visibility while they are not in the map style. " +
-                        "Is the map style not loaded yet, or did you exclude incidents when loading the map?"
-                );
+                console.error(changingWhileNotInTheStyle("traffic incidents visibility"));
             }
         });
     }
@@ -112,10 +110,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             if (this.flow) {
                 this.flow.setAllLayersVisible(visible);
             } else {
-                console.error(
-                    "Trying to change traffic flow visibility while they are not in the map style. " +
-                        "Is the map style not loaded yet, or did you exclude flow when loading the map?"
-                );
+                console.error(changingWhileNotInTheStyle("traffic flow visibility"));
             }
         });
     }

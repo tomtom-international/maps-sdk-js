@@ -1,6 +1,7 @@
 import isNil from "lodash/isNil";
 import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 import { VectorTilePOIsConfig } from ".";
+import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 
 export const POI_SOURCE_ID = "poiTiles";
 
@@ -37,10 +38,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
             if (this.poi) {
                 this.poi.setAllLayersVisible(visible);
             } else {
-                console.error(
-                    "Trying to change map POIs visibility while they are not in the map style. " +
-                        "Is the map style not loaded yet, or did you exclude POIs when loading the map?"
-                );
+                console.error(changingWhileNotInTheStyle("POIs visibility"));
             }
         });
     }

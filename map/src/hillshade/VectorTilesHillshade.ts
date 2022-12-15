@@ -1,6 +1,7 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
 import { AbstractMapModule, StyleSourceWithLayers } from "../core";
+import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 
 export const HILLSHADE_SOURCE_ID = "hillshade";
 
@@ -33,10 +34,7 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
             if (this.hillshade) {
                 this.hillshade.setAllLayersVisible(visible);
             } else {
-                console.error(
-                    "Trying to change hillshade visibility while it is not in the map style. " +
-                        "Is the map style not loaded yet, or did you exclude hillshade when loading the map?"
-                );
+                console.error(changingWhileNotInTheStyle("hillshade visibility"));
             }
         });
     }
