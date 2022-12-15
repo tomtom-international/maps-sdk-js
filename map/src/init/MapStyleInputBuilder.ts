@@ -1,7 +1,6 @@
-import template from "lodash/template";
-import { GOSDKMapParams, PublishedStyle, PublishedStyleID, StyleModules } from "./types/MapInit";
-import { StyleSpecification } from "maplibre-gl";
 import isEmpty from "lodash/isEmpty";
+import { StyleSpecification } from "maplibre-gl";
+import { GOSDKMapParams, PublishedStyle, PublishedStyleID, StyleModules } from "./types/MapInit";
 
 export const TRAFFIC_INCIDENTS = "traffic_incidents";
 export const TRAFFIC_FLOW = "traffic_flow";
@@ -54,11 +53,10 @@ const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
 };
 
 const buildPublishedStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
-    template(publishedStyleURLTemplates[publishedStyle.id])({
-        baseURL,
-        version: publishedStyle.version || "23.1.*",
-        apiKey
-    });
+    publishedStyleURLTemplates[publishedStyle.id]
+        .replace("${baseURL}", baseURL)
+        .replace("${version}", publishedStyle.version || "23.1.*")
+        .replace("${apiKey}", apiKey);
 
 const withAPIKey = (givenURL: string, apiKey: string): string => {
     const url = new URL(givenURL);

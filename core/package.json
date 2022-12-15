@@ -48,6 +48,7 @@
     "prettier": "^2.8.0",
     "rimraf": "^3.0.2",
     "rollup": "^3.6.0",
+    "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-includepaths": "^0.2.4",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",

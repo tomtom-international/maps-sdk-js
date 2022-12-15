@@ -4,6 +4,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 // @ts-ignore
 import includePaths from "rollup-plugin-includepaths";
+import analyze from "rollup-plugin-analyzer";
 
 const includePathOptions = {
     include: {},
@@ -71,7 +72,8 @@ export default () => {
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
-                commonjs()
+                commonjs(),
+                analyze({ summaryOnly: true, limit: 10 })
             ]
         }
     ];
