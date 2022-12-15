@@ -10,7 +10,7 @@ titleTags:
   color: "grey5"
 ---
 
-<a style="display: block; margin: 0; padding: 0;" id="_geocoding"></a>
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_geocoding"></a>}
 
 # Geocoding
 
@@ -44,9 +44,9 @@ const geocodingParams = {
 };
 ```
 
-</Code> 
+</Code>
 
-A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[`GeocodingResponse`](/web/maps/documentation/api-reference/modules/services/#geocodingresponse)>.
+A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeocodingResponse`](/web/maps/documentation/api-reference/modules/services/#geocodingresponse)>.
 
 ```javascript
 try {
@@ -57,7 +57,7 @@ try {
 }
 ```
 
-<a style="display: block; margin: 0; padding: 0;" id="_geometry_search"></a>
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_geometry_search"></a>}
 
 # Geometry search
 
@@ -66,12 +66,12 @@ The geometry search allows you to perform a free-form search inside one or more 
 There are two basic types of geometries that are supported:
 
 -   [`Polygon`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/1261ff052c0ef57ce5465c26716b96d836e048f5/types/geojson/index.d.ts#L118L125) - an array of coordinates of vertices.
-    
+
     <Code>
 
     ``` typescript
     import { Polygon } from "geojson";
-    
+
     const polygon: Polygon = {
         type: "Polygon",
         coordinates: [
@@ -84,7 +84,7 @@ There are two basic types of geometries that are supported:
         ]
     };
     ```
-    
+
     ``` javascript
     const polygon = {
         type: "Polygon",
@@ -98,16 +98,16 @@ There are two basic types of geometries that are supported:
         ]
     };
     ```
-    
+
     </Code>
-    
+
 -   [`Circle`](/web/maps/documentation/api-reference/interfaces/services.Circle) - center coordinates and a radius in meters.
-    
-    <Code>    
+
+    <Code>
 
     ``` typescript
     import { Circle } from "@anw/go-sdk-js/services";
-    
+
     const circle: Circle = {
         type: "Circle",
         coordinates: [4.9041, 52.3676],
@@ -115,7 +115,7 @@ There are two basic types of geometries that are supported:
     };
     ```
 
-    ``` javascript 
+    ``` javascript
     const circle = {
         type: "Circle",
         coordinates: [4.9041, 52.3676],
@@ -130,7 +130,7 @@ Provide the geometries and query to the [`GeometrySearchParams`](/web/maps/docum
 
 <Code>
 
-``` typescript 
+``` typescript
 import { GeometrySearchParams } from "@anw/go-sdk-js/services";
 
 const geometrySearchParams: GeometrySearchParams = {
@@ -148,7 +148,7 @@ const geometrySearchParams = {
 
 </Code>
 
-The response is presented as a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[`GeometrySearchResponse`](/web/maps/documentation/api-reference/modules/services/#geometrysearchresponse)>.
+The response is presented as a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeometrySearchResponse`](/web/maps/documentation/api-reference/modules/services/#geometrysearchresponse)>.
 
 ``` javascript
 try {
@@ -159,11 +159,11 @@ try {
 }
 ```
 
-<a style="display: block; margin: 0; padding: 0;" id="_geometry_data_search"></a>
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_geometry_data_search"></a>}
 
 # Geometry data search
 
-Geometry data search is used to obtain geometries to represent the outline of a city, county, or land area. It supports batch requests for up to 20 identifiers per call. To make the Geometry Data search request, use the [`geometryData`](/web/maps/documentation/api-reference/modules/services/#geometrydata) function and provide it [`GeometryDataParams`](/web/maps/documentation/api-reference/modules/services/#geometrydataparams). The only required parameter is a list of identifiers you want to get geometries for. Such identifiers can be found in Search results. 
+Geometry data search is used to obtain geometries to represent the outline of a city, county, or land area. It supports batch requests for up to 20 identifiers per call. To make the Geometry Data search request, use the [`geometryData`](/web/maps/documentation/api-reference/modules/services/#geometrydata) function and provide it [`GeometryDataParams`](/web/maps/documentation/api-reference/modules/services/#geometrydataparams). The only required parameter is a list of identifiers you want to get geometries for. Such identifiers can be found in Search results.
 
 <Blockquote>
 
@@ -195,7 +195,7 @@ const geometryDataParams = {
 };
 ```
 
-The request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[`GeometryDataResponse`](/web/maps/documentation/api-reference/modules/core/#geometrydataresponse)>.
+The request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeometryDataResponse`](/web/maps/documentation/api-reference/modules/core/#geometrydataresponse)>.
 
 ``` javascript
 try {
@@ -206,7 +206,7 @@ try {
 }
 ```
 
-<a style="display: block; margin: 0; padding: 0;" id="_ev_charging_stations_availability_search"></a>
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_ev_charging_stations_availability_search"></a>}
 
 # EV Charging station availability search
 
@@ -248,7 +248,7 @@ const evChargingStationsAvailabilityParams = {
 
 </Code>
 
-A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[`ChargingAvailabilityResponse`](/web/maps/documentation/api-reference/modules/services/#chargingavailabilityresponse)> object.
+A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ChargingAvailabilityResponse`](/web/maps/documentation/api-reference/modules/services/#chargingavailabilityresponse)> object.
 
 ``` javascript
 try {
@@ -259,7 +259,7 @@ try {
 }
 ```
 
-<a style="display: block; margin: 0; padding: 0;" id="_place_by_id"></a>
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_place_by_id"></a>}
 
 # Place by ID
 
@@ -279,7 +279,7 @@ A request can be made by calling the [`placeById`](/web/maps/documentation/api-r
 import { PlaceByIdParams } from "@anw/go-sdk-js/services";
 
 const placebyIdParams: PlaceByIdParams = {
-    entityId: "756009003511328" 
+    entityId: "756009003511328"
 };
 ```
 
@@ -291,7 +291,7 @@ const placebyIdParams = {
 
 </Code>
 
-A request will return a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[`PlaceByIdResponse`](/web/maps/documentation/api-reference/modules/services/#placebyidresponse).
+A request will return a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlaceByIdResponse`](/web/maps/documentation/api-reference/modules/services/#placebyidresponse).
 
 ```javascript
 try {
@@ -302,6 +302,6 @@ try {
 }
 ```
 
-<a style="display: block; margin: 0; padding: 0;" id="_search_along_a_route"></a>
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_search_along_a_route"></a>}
 
 # Search along a route (TODO)

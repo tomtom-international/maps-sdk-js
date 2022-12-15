@@ -6,12 +6,13 @@
     "clean": "npm run clean:dist -ws && npm run clean:cache -ws",
     "release:dry": "npx standard-version --dry-run",
     "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi",
-    "documentation": "typedoc",
+    "documentation": "npm run build-theme && typedoc",
     "build:full": "npm run build:full -ws",
     "build": "npm run build -ws",
     "type-check": "npm run type-check -ws",
     "lint": "npm run lint -ws",
-    "test": "npm run test -ws"
+    "test": "npm run test -ws",
+    "build-theme": "rimraf ./documentation/go-sdk-theme/dist && tsc -p ./documentation/go-sdk-theme && cp -R ./documentation/go-sdk-theme/src/resources ./documentation/go-sdk-theme/dist"
   },
   "publishConfig": {
     "registry": "https://tomtom.jfrog.io/artifactory/api/npm/go-sdk-js-npm-local/"
@@ -68,12 +69,13 @@
   "devDependencies": {
     "@size-limit/file": "^8.1.0",
     "@size-limit/preset-app": "^8.1.0",
+    "handlebars": "^4.7.7",
+    "map": "file:map",
+    "services": "file:services",
     "size-limit": "^8.1.0",
     "typedoc": "^0.23.21",
     "typedoc-plugin-markdown": "^3.14.0",
-    "typedoc-plugin-missing-exports": "^1.0.0",
-    "map": "file:map",
-    "services": "file:services"
+    "typedoc-plugin-missing-exports": "^1.0.0"
   },
   "size-limit": [
     {

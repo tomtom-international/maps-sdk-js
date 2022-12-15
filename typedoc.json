@@ -1,12 +1,13 @@
 {
   "entryPoints": ["."],
   "entryPointStrategy": "packages",
-  "entryDocument": "home.md",
+  "entryDocument": "home.mdx",
   "out": "documentation/dev-portal/web/maps/documentation/api-reference",
   "readme": "none",
   "name": "GO-SDK-JS",
   "internalModule": "internal",
   "excludeExternals": true,
-  "allReflectionsHaveOwnDocument": true,
-  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports"]
+  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports", "./documentation/go-sdk-theme/dist"],
+  "theme": "go-sdk-theme",
+  "preserveAnchorCasing": true
 }

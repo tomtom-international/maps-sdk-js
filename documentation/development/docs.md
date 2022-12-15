@@ -16,9 +16,8 @@ npm run documentation
 Note that this will remove the existing files from the api-reference folder and generate new documents.
 
 ---
-After the documentation is generated we need to manually do two steps:
+After the documentation is generated we need to manually do one step:
 - Make sure that all the files generated are in [navigation](../dev-portal/web/maps/documentation/navigation.yml) list, only the main ones should not be hidden
-- Run find/replace on whole api-reference folder and replace ".md" with ""
 ---
 The whole folder structure except development subfolder should be tested using [monorepo project](https://github.com/tomtom-international/drumkit-monorepo)
 and committed to [dev-portal documentation](https://github.com/tomtom-international/devportal-documentation) when ready.
