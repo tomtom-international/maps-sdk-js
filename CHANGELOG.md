@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.64](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.63...v0.1.64) (2022-12-15)
+
+
+### Features
+
+* **map:** adding support for alternatives by default ([05013a4](https://github.com/tomtom-international/go-sdk-js/commit/05013a4262ea8fde205df781ed9f0fa56dcc63c3))
+
 ### [0.1.63](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.62...v0.1.63) (2022-12-14)
 
 
