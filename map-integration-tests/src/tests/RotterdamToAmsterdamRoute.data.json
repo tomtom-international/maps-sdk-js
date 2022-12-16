@@ -16307,6 +16307,16 @@
               }
             }
           ],
+          "tollRoad": [
+            {
+              "startPointIndex": 350,
+              "endPointIndex": 400
+            },
+            {
+              "startPointIndex": 450,
+              "endPointIndex": 973
+            }
+          ],
           "urban": [
             {
               "startPointIndex": 0,

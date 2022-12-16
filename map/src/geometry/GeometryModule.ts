@@ -2,6 +2,7 @@ import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
+import { asDefined } from "../core/AssertionUtils";
 
 export const GEOMETRY_SOURCE_ID = "PLACE_GEOMETRY";
 const GEOMETRY_FILL_LAYER_ID = "PLACE_GEOMETRY_FILL";
@@ -25,13 +26,13 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
      * @param geometry
      */
     show(geometry: GeometryDataResponse): void {
-        this.callWhenMapReady(() => this.geometry?.show(geometry));
+        this.callWhenMapReady(() => asDefined(this.geometry).show(geometry));
     }
 
     /**
      * Clears the Geometry from the map.
      */
     clear(): void {
-        this.callWhenMapReady(() => this.geometry?.clear());
+        this.callWhenMapReady(() => asDefined(this.geometry).clear());
     }
 }

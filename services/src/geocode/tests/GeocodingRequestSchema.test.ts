@@ -261,7 +261,7 @@ describe("Geocoding request schema performance tests", () => {
         // @ts-ignore
         (params: GeocodingParams) => {
             expect(bestExecutionTimeMS(() => validateRequestSchema(params, geocodingRequestSchema), 10)).toBeLessThan(
-                5
+                7
             );
         }
     );

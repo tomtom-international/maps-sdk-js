@@ -5,13 +5,13 @@ import { DisplayRouteProps } from "../types/DisplayRoutes";
  * Builds map display-ready routes, applying default style props.
  * @ignore
  */
-export const buildDisplayRoutes = (routes: Routes): Routes<DisplayRouteProps> => ({
+export const buildDisplayRoutes = (routes: Routes, selectedIndex = 0): Routes<DisplayRouteProps> => ({
     ...routes,
-    features: routes.features.map((feature, index) => ({
-        ...feature,
+    features: routes.features.map((route, index) => ({
+        ...route,
         properties: {
-            ...feature.properties,
-            routeStyle: index === 0 ? "selected" : "deselected"
+            ...route.properties,
+            routeStyle: index === selectedIndex ? "selected" : "deselected"
         }
     }))
 });

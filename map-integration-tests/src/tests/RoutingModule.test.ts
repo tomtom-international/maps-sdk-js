@@ -35,6 +35,12 @@ const showRoutes = async (routes: Routes) =>
         // @ts-ignore
     }, routes);
 
+const selectRoute = async (index: number) =>
+    page.evaluate((inputIndex: number) => {
+        (globalThis as GOSDKThis).routing?.selectRoute(inputIndex);
+        // @ts-ignore
+    }, index);
+
 const clearRoutes = async () => page.evaluate(() => (globalThis as GOSDKThis).routing?.clearRoutes());
 
 const showWaypoints = async (waypoints: WaypointLike[]) =>
@@ -70,11 +76,11 @@ describe("Routing tests", () => {
         await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox });
         await initRouting();
 
-        await showRoutes(parsedTestRoutes);
         await showWaypoints([
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
+        await showRoutes(parsedTestRoutes);
         await waitForMapStyleToLoad();
 
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
@@ -92,6 +98,13 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
+
+        await selectRoute(2);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 2, 2000);
 
         await clearRoutes();
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);

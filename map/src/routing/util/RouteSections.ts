@@ -1,6 +1,8 @@
+import isNil from "lodash/isNil";
 import { Route, Routes, SectionProps, SectionType } from "@anw/go-sdk-js/core";
 import { DisplaySectionProps, RouteSection, RouteSections } from "../types/RouteSections";
 import { DisplayRouteProps } from "../types/DisplayRoutes";
+import { GeoJSONSourceWithLayers } from "../../core";
 
 const buildRouteSectionsFromRoute = <
     S extends SectionProps = SectionProps,
@@ -8,7 +10,10 @@ const buildRouteSectionsFromRoute = <
 >(
     route: Route<DisplayRouteProps>,
     sectionType: SectionType,
-    displaySectionPropsBuilder?: (sectionProps: S, routeProps: DisplayRouteProps) => D
+    displaySectionPropsBuilder?: (
+        sectionProps: S,
+        routeProps?: DisplayRouteProps
+    ) => Omit<D, "routeStyle" | "routeIndex">
 ): RouteSection<D>[] =>
     (route.properties.sections[sectionType] as S[])?.map((sectionProps) => ({
         type: "Feature",
@@ -17,10 +22,10 @@ const buildRouteSectionsFromRoute = <
             coordinates: route.geometry.coordinates.slice(sectionProps.startPointIndex, sectionProps.endPointIndex)
         },
         properties: {
-            ...(displaySectionPropsBuilder
-                ? displaySectionPropsBuilder(sectionProps, route.properties)
-                : ({ ...sectionProps, routeStyle: route.properties.routeStyle } as unknown as D))
-        }
+            ...(displaySectionPropsBuilder ? displaySectionPropsBuilder(sectionProps, route.properties) : sectionProps),
+            routeStyle: route.properties.routeStyle,
+            ...(!isNil(route.properties.index) && { routeIndex: route.properties.index })
+        } as D
     })) || [];
 
 /**
@@ -36,10 +41,38 @@ export const buildDisplayRouteSections = <
 >(
     routes: Routes<DisplayRouteProps>,
     sectionType: SectionType,
-    displaySectionPropsBuilder?: (sectionProps: S, routeProps: DisplayRouteProps) => D
+    displaySectionPropsBuilder?: (
+        sectionProps: S,
+        routeProps?: DisplayRouteProps
+    ) => Omit<D, "routeStyle" | "routeIndex">
 ): RouteSections<D> => ({
     type: "FeatureCollection",
     features: routes.features.flatMap((route) =>
         buildRouteSectionsFromRoute<S, D>(route, sectionType, displaySectionPropsBuilder)
     )
 });
+
+/**
+ * @ignore
+ */
+export const rebuildSectionsWithSelection = (
+    routes: Routes<DisplayRouteProps>,
+    sections: RouteSections
+): RouteSections => ({
+    ...sections,
+    features: sections.features.map((section) => ({
+        ...section,
+        properties: {
+            ...section.properties,
+            routeStyle: routes.features[section.properties.routeIndex || 0].properties.routeStyle
+        }
+    }))
+});
+
+/**
+ * @ignore
+ */
+export const showSectionsWithRouteSelection = (
+    routesWithSelection: Routes<DisplayRouteProps>,
+    sourceWithLayers: GeoJSONSourceWithLayers<RouteSections>
+): void => sourceWithLayers.show(rebuildSectionsWithSelection(routesWithSelection, sourceWithLayers.shownFeatures));

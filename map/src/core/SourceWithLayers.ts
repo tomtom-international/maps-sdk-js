@@ -14,6 +14,7 @@ import {
     ToBeAddedLayerSpecWithoutSource
 } from "./types/GOSDKLayerSpecs";
 import { FeatureCollection } from "geojson";
+import { asDefined } from "./AssertionUtils";
 
 /**
  * Contains a source and the layers to render its data.
@@ -120,14 +121,17 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedS
     GeoJSONSourceSpecification,
     GeoJSONSource
 > {
+    shownFeatures: T = emptyFeatureCollection as T;
+
     constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
         super(map, sourceID, { type: "geojson", data: emptyFeatureCollection }, layerSpecs);
         this.ensureAddedToMapWithVisibility(false);
     }
 
     show(featureCollection: T): void {
-        this.source.runtimeSource?.setData(featureCollection);
+        asDefined(this.source.runtimeSource).setData(featureCollection);
         this.setAllLayersVisible(!!featureCollection?.features?.length);
+        this.shownFeatures = featureCollection;
     }
 
     clear(): void {

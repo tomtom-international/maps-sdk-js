@@ -3,6 +3,7 @@ import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
 import { placesLayerSpec } from "./layers/PlacesLayers";
 import { poiClassificationToIconID } from "./poiIconIDMapping";
 import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
+import { asDefined } from "../core/AssertionUtils";
 
 /**
  * @ignore
@@ -61,13 +62,13 @@ export class GeoJSONPlaces extends AbstractMapModule {
      * @param places
      */
     show(places: Places): void {
-        this.callWhenMapReady(() => this.places?.show(prepareForDisplay(places)));
+        this.callWhenMapReady(() => asDefined(this.places).show(prepareForDisplay(places)));
     }
 
     /**
      * Clears the places from the map.
      */
     clear(): void {
-        this.callWhenMapReady(() => this.places?.clear());
+        this.callWhenMapReady(() => asDefined(this.places).clear());
     }
 }

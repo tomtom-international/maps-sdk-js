@@ -311,7 +311,7 @@ describe("Fuzzy Search request schema performance tests", () => {
         // @ts-ignore
         (_title: string, params: FuzzySearchParams) => {
             expect(bestExecutionTimeMS(() => validateRequestSchema(params, fuzzySearchRequestSchema), 10)).toBeLessThan(
-                5
+                7
             );
         }
     );

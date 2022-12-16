@@ -18,7 +18,7 @@ import {
     routeIncidentsSymbol
 } from "./layers/routeTrafficSectionLayers";
 import { RoutingModuleConfig } from "./types/RouteModuleConfig";
-import { buildDisplayRouteSections } from "./util/RouteSections";
+import { buildDisplayRouteSections, showSectionsWithRouteSelection } from "./util/RouteSections";
 import { toDisplayTrafficSectionProps } from "./util/DisplayTrafficSectionProps";
 import { DisplayTrafficSectionProps, RouteSections } from "./types/RouteSections";
 import { routeFerriesLine, routeFerriesSymbol } from "./layers/routeFerrySectionLayers";
@@ -30,6 +30,8 @@ import {
 } from "./layers/routeVehicleRestrictedLayers";
 import { buildDisplayRoutes } from "./util/Routes";
 import { DisplayRouteProps } from "./types/DisplayRoutes";
+import { asDefined, assertDefined } from "../core/AssertionUtils";
+import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 
 export const WAYPOINTS_SOURCE_ID = "waypoints";
 export const WAYPOINT_SYMBOLS_LAYER_ID = "waypointsSymbol";
@@ -125,7 +127,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
             {
                 ...routeTollRoadsOutline,
                 id: ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
-                beforeID: ROUTE_OUTLINE_LAYER_ID
+                beforeID: ROUTE_DESELECTED_OUTLINE_LAYER_ID
             },
             { ...routeTollRoadsSymbol, id: ROUTE_TOLL_ROADS_SYMBOL, beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
         ]);
@@ -151,16 +153,20 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     /**
      * Shows the given routes on the map.
      * @param routes The routes to show.
+     * @param options An optional selected index from the array of routes. Will make that route appear seleected.
+     * Defaults to 0 (first/recommended route).
      */
-    showRoutes(routes: Routes) {
+    showRoutes(routes: Routes, options?: ShowRoutesOptions) {
         this.callWhenMapReady(() => {
-            const displayRoutes = buildDisplayRoutes(routes);
-            this.routeLines?.show(displayRoutes);
-            this.vehicleRestricted?.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
-            this.incidents?.show(buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps));
-            this.ferries?.show(buildDisplayRouteSections(displayRoutes, "ferry"));
-            this.tollRoads?.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
-            this.tunnels?.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
+            const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
+            asDefined(this.routeLines).show(displayRoutes);
+            asDefined(this.vehicleRestricted).show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
+            asDefined(this.incidents).show(
+                buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
+            );
+            asDefined(this.ferries).show(buildDisplayRouteSections(displayRoutes, "ferry"));
+            asDefined(this.tollRoads).show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
+            asDefined(this.tunnels).show(buildDisplayRouteSections(displayRoutes, "tunnel"));
         });
     }
 
@@ -170,12 +176,31 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      */
     clearRoutes() {
         this.callWhenMapReady(() => {
-            this.routeLines?.clear();
-            this.vehicleRestricted?.clear();
-            this.incidents?.clear();
-            this.ferries?.clear();
-            this.tollRoads?.clear();
-            this.tunnels?.clear();
+            asDefined(this.routeLines).clear();
+            asDefined(this.vehicleRestricted).clear();
+            asDefined(this.incidents).clear();
+            asDefined(this.ferries).clear();
+            asDefined(this.tollRoads).clear();
+            asDefined(this.tunnels).clear();
+        });
+    }
+
+    /**
+     * Shows the currently rendered route with the given index as selected.
+     * * De-selects the previously selected route, if applicable.
+     * @param index The route index to select. Must be within the existing rendered routes.
+     */
+    selectRoute(index: number) {
+        this.callWhenMapReady(() => {
+            assertDefined(this.routeLines);
+            const updatedRoutes = buildDisplayRoutes(this.routeLines.shownFeatures, index);
+            this.routeLines.show(updatedRoutes);
+
+            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.vehicleRestricted));
+            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.incidents));
+            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.ferries));
+            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.tollRoads));
+            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.tunnels));
         });
     }
 

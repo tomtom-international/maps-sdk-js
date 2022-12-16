@@ -73,9 +73,9 @@ const geoJSONBBoxSchema = z.array(z.number()).length(4).or(z.array(z.number()).l
 /**
  * @ignore
  */
-export const geoJSONBObjectSchema = geometrySchema.or(featureSchema).or(featureCollectionSchema);
+export const geoJSONObjectSchema = geometrySchema.or(featureSchema).or(featureCollectionSchema);
 
 /**
  * @ignore
  */
-export const hasBBoxSchema = geoJSONBBoxSchema.or(geoJSONBObjectSchema).or(z.array(geoJSONBObjectSchema));
+export const hasBBoxSchema = geoJSONBBoxSchema.or(geoJSONObjectSchema).or(z.array(geoJSONObjectSchema));

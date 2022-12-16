@@ -3,7 +3,6 @@ import { toDisplayTrafficSectionProps, trafficSectionToIconID } from "../Display
 import { DisplayTrafficSectionProps } from "../../types/RouteSections";
 import toIconIDTestData from "./ToIconID.data.json";
 import toDisplayTrafficSectionPropsData from "./ToDisplayTrafficSectionProps.data.json";
-import { DisplayRouteProps } from "../../types/DisplayRoutes";
 
 describe("Traffic section builder tests", () => {
     test.each(toIconIDTestData)(
@@ -17,13 +16,8 @@ describe("Traffic section builder tests", () => {
     test.each(toDisplayTrafficSectionPropsData)(
         "'%s'",
         // @ts-ignore
-        (
-            _name: string,
-            sectionProps: TrafficSectionProps,
-            routeProps: DisplayRouteProps,
-            expectedDisplaySectionProps: DisplayTrafficSectionProps
-        ) => {
-            expect(toDisplayTrafficSectionProps(sectionProps, routeProps)).toStrictEqual(expectedDisplaySectionProps);
+        (_name: string, sectionProps: TrafficSectionProps, expectedDisplaySectionProps: DisplayTrafficSectionProps) => {
+            expect(toDisplayTrafficSectionProps(sectionProps)).toStrictEqual(expectedDisplaySectionProps);
         }
     );
 });

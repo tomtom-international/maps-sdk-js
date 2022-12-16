@@ -82,6 +82,7 @@
         ]
       },
       "properties": {
+        "index": 1,
         "routeStyle": "deselected",
         "sections": {
           "ferry": [

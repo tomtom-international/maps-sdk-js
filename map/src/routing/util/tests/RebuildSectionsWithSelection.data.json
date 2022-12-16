@@ -1,0 +1,160 @@
+[
+  [
+    "Single section",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "properties": {
+            "startPointIndex": 0,
+            "endPointIndex": 2,
+            "routeIndex": 0,
+            "routeStyle": "deselected"
+          }
+        }
+      ]
+    },
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "properties": {
+            "startPointIndex": 0,
+            "endPointIndex": 2,
+            "routeIndex": 0,
+            "routeStyle": "selected"
+          }
+        }
+      ]
+    }
+  ],
+  [
+    "A couple of sections belonging to different routes",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "properties": {
+            "startPointIndex": 0,
+            "endPointIndex": 2,
+            "routeIndex": 0,
+            "routeStyle": "deselected"
+          }
+        },
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ]
+          },
+          "properties": {
+            "startPointIndex": 2,
+            "endPointIndex": 4,
+            "routeIndex": 1,
+            "routeStyle": "selected"
+          }
+        }
+      ]
+    },
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "properties": {
+            "startPointIndex": 0,
+            "endPointIndex": 2,
+            "routeIndex": 0,
+            "routeStyle": "selected"
+          }
+        },
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ]
+          },
+          "properties": {
+            "startPointIndex": 2,
+            "endPointIndex": 4,
+            "routeIndex": 1,
+            "routeStyle": "deselected"
+          }
+        }
+      ]
+    }
+  ]
+]

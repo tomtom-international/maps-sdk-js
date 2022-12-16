@@ -2,7 +2,7 @@ import { SectionProps, TrafficSectionProps } from "@anw/go-sdk-js/core";
 import { Feature, FeatureCollection, LineString } from "geojson";
 import { RouteStyleProps } from "./DisplayRoutes";
 
-export type DisplaySectionProps = SectionProps & RouteStyleProps;
+export type DisplaySectionProps = SectionProps & RouteStyleProps & { routeIndex?: number };
 
 /**
  * GeoJSON feature representing a route section of a certain type.

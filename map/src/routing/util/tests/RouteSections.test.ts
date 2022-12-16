@@ -1,9 +1,11 @@
+import { FeatureCollection } from "geojson";
 import { Routes } from "@anw/go-sdk-js/core";
 import TEST_ROUTES_DATA from "./DummyRoutesWithSections.data.json";
-import { buildDisplayRouteSections } from "../RouteSections";
-import { FeatureCollection } from "geojson";
+import SECTIONS_WITH_SELECTION from "./RebuildSectionsWithSelection.data.json";
+import { buildDisplayRouteSections, rebuildSectionsWithSelection } from "../RouteSections";
 import { toDisplayTrafficSectionProps } from "../DisplayTrafficSectionProps";
 import { DisplayRouteProps } from "../../types/DisplayRoutes";
+import { RouteSections } from "../../types/RouteSections";
 
 const TEST_ROUTES = TEST_ROUTES_DATA as Routes<DisplayRouteProps>;
 
@@ -12,7 +14,7 @@ const EMPTY_FEATURE_COLLECTION: FeatureCollection = {
     features: []
 };
 
-describe("Tests to test building route sections", () => {
+describe("Tests about building route sections", () => {
     test("Build route sections", () => {
         expect(buildDisplayRouteSections(TEST_ROUTES, "carTrain")).toStrictEqual(EMPTY_FEATURE_COLLECTION);
         expect(buildDisplayRouteSections(TEST_ROUTES, "carTrain22" as never)).toStrictEqual(EMPTY_FEATURE_COLLECTION);
@@ -43,6 +45,7 @@ describe("Tests to test building route sections", () => {
                     properties: {
                         startPointIndex: 2,
                         endPointIndex: 3,
+                        routeIndex: 1,
                         routeStyle: "deselected"
                     }
                 }
@@ -74,6 +77,7 @@ describe("Tests to test building route sections", () => {
                                 }
                             ]
                         },
+                        routeIndex: 1,
                         routeStyle: "deselected"
                     }
                 }
@@ -107,10 +111,19 @@ describe("Tests to test building route sections", () => {
                         },
                         iconID: "traffic_queueing_weather_rain",
                         title: "6 min",
+                        routeIndex: 1,
                         routeStyle: "deselected"
                     }
                 }
             ]
         });
     });
+
+    test.each(SECTIONS_WITH_SELECTION)(
+        `'%s`,
+        // @ts-ignore
+        (_name: string, inputSections: RouteSections, expectedSections: RouteSections) => {
+            expect(rebuildSectionsWithSelection(TEST_ROUTES, inputSections)).toStrictEqual(expectedSections);
+        }
+    );
 });

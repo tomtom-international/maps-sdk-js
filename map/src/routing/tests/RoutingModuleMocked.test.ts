@@ -53,6 +53,7 @@ describe("Routing module tests", () => {
 
         const routing = new RoutingModule(goSDKMapMock);
         routing.showRoutes({ type: "FeatureCollection", features: [] });
+        routing.selectRoute(0);
         routing.clearRoutes();
         routing.showWaypoints([]);
         routing.showWaypoints({ type: "FeatureCollection", features: [] });

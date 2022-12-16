@@ -1,5 +1,5 @@
 import { Places } from "@anw/go-sdk-js/core";
-import { Map } from "maplibre-gl";
+import { GeoJSONSource, Map } from "maplibre-gl";
 
 import { GeoJSONPlaces, PLACES_SOURCE_ID } from "../GeoJSONPlaces";
 import { GOSDKMap } from "../../GOSDKMap";
@@ -10,10 +10,10 @@ import { GOSDKMap } from "../../GOSDKMap";
 describe("GeoJSON Places module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", () => {
-        const placesSource = { id: PLACES_SOURCE_ID };
+        const placesSource: Partial<GeoJSONSource> = { id: PLACES_SOURCE_ID, setData: jest.fn() };
         const goSDKMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(placesSource),
+                getSource: jest.fn().mockReturnValue(placesSource),
                 getLayer: jest.fn(),
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
