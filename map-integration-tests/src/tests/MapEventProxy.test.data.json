@@ -1,0 +1,64 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            4.92811,
+            52.35606
+          ]
+        },
+        "properties": {
+          "type": "POI",
+          "score": 2.1455652714,
+          "info": "search:ta:528007000009400-NL",
+          "address": {
+            "streetNumber": "11B",
+            "streetName": "Oranje-Vrijstaatkade",
+            "municipality": "Amsterdam",
+            "countrySubdivision": "Noord-Holland",
+            "postalCode": "1093",
+            "extendedPostalCode": "1093 KS",
+            "countryCode": "NL",
+            "country": "Nederland",
+            "countryCodeISO3": "NLD",
+            "freeformAddress": "Oranje-Vrijstaatkade 11B, 1093 KS Amsterdam",
+            "localName": "Amsterdam"
+          },
+          "entryPoints": [
+            {
+              "type": "main",
+              "position": [
+                4.9282,
+                52.35594
+              ]
+            }
+          ],
+          "poi": {
+            "name": "H32 Sportfondsenbad Amsterdam-Oost",
+            "categories": [
+              "open parking area"
+            ],
+            "classifications": [
+              {
+                "code": "OPEN_PARKING_AREA",
+                "names": [
+                  {
+                    "nameLocale": "en-US",
+                    "name": "open parking area"
+                  }
+                ]
+              }
+            ],
+            "brands": [],
+            "categoryIds": [
+              7369
+            ]
+          }
+        },
+        "id": "528007000009400"
+      }
+    ]
+  }

@@ -1,11 +1,12 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../GOSDKMap";
+import { EventModule } from "./EventModule";
 
 /**
  * Base class for all GO SDK map modules.
  */
 export abstract class AbstractMapModule<CFG = undefined> {
-    private readonly goSDKMap: GOSDKMap;
+    protected readonly goSDKMap: GOSDKMap;
     protected readonly mapLibreMap: Map;
     protected config?: CFG;
 
@@ -38,6 +39,13 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * @ignore
      */
     protected abstract init(config?: CFG): void;
+
+    /**
+     * Initializes the module events.
+     * @protected
+     * @ignore
+     */
+    protected abstract get events(): EventModule | { [k: string]: EventModule };
 
     /**
      * Merges the given optional config with the module optional config and returns it.

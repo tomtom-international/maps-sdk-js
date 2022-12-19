@@ -2,6 +2,7 @@ import isNil from "lodash/isNil";
 import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 import { VectorTilePOIsConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
+import { EventModule } from "../core/EventModule";
 
 export const POI_SOURCE_ID = "poiTiles";
 
@@ -45,5 +46,9 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
 
     toggleVisibility(): void {
         this.setVisible(!this.isVisible());
+    }
+
+    get events() {
+        return new EventModule(this.goSDKMap._eventsProxy, this.poi);
     }
 }

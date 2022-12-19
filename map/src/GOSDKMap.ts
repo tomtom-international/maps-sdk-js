@@ -5,14 +5,16 @@ import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapIni
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
 import { MapLanguage } from "./language";
+import { EventProxy } from "./core";
 
 /**
  * The map object displays a live map on a web application.
  */
 export class GOSDKMap {
-    readonly mapLibreMap: Map;
     mapReady = false;
+    readonly mapLibreMap: Map;
     private goSDKParams: GOSDKMapParams;
+    _eventsProxy: EventProxy;
 
     /**
      * Builds the map object and attaches it to an element of the web application.
@@ -23,6 +25,7 @@ export class GOSDKMap {
         this.goSDKParams = mergeFromGlobal(goSDKParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
         this.mapLibreMap.once("styledata", () => (this.mapReady = true));
+        this._eventsProxy = new EventProxy(this.mapLibreMap);
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",

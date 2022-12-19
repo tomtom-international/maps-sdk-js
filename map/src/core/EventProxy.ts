@@ -1,0 +1,213 @@
+import { Map, Point2D, MapGeoJSONFeature, LngLat, MapMouseEvent } from "maplibre-gl";
+import { StyleSourceWithLayers } from "./SourceWithLayers";
+import { AbstractEventProxy } from "./AbstractEventProxy";
+import { ClickEvent } from "./types/EventProxy";
+
+const toPaddedBounds = (point: Point2D): [[number, number], [number, number]] => {
+    return [
+        // sw:
+        [point.x - 5, point.y + 5],
+        // ne:
+        [point.x + 5, point.y - 5]
+    ];
+};
+
+/**
+ * This is the place where we handle the user events on the map (mousemove/hover and click mostly).
+ * To have full control on hovers and clicks when multiple overlapping layers are present, that logic must be centralized here.
+ */
+export class EventProxy extends AbstractEventProxy {
+    private map: Map;
+    private enabled = true;
+    private hoveringLngLat?: LngLat;
+    private hoveringPoint?: Point2D;
+    private hoveringFeature?: MapGeoJSONFeature;
+    private hoveringSourceWithLayers?: StyleSourceWithLayers;
+    // delayed hover control:
+    // The first hover we do after the map moves is longer:
+    private firstHoverAfterMapMoveDelayMS = 800;
+    // Followup hovers with the same non-moving map are quicker ("hovering around mode"):
+    private followupHoverWithStaticMapDelayMS = 300;
+    private longHoverTimeoutHandlerID?: number;
+    // Control flag to indicate that the coming hover is the first one since the map is "quiet" again:
+    private firstDelayedHoverSinceMapMove = true;
+    private lastClickedFeature?: MapGeoJSONFeature;
+    private lastClickedSourceWithLayers?: StyleSourceWithLayers;
+    private lastCursorStyle = "default";
+
+    constructor(map: Map) {
+        super();
+        this.map = map;
+        this.listenToDefaultEvents();
+        this.listenToMapClicks();
+    }
+
+    private listenToDefaultEvents = () => {
+        this.map.on("mousemove", this.onMouseMove);
+        this.map.on("movestart", this.onMouseStart);
+        this.map.on("mouseout", this.onMouseOut);
+        this.map.on("mouseover", this.onMouseMove);
+        this.map.on("mousedown", this.onMouseDown);
+        this.map.on("mouseup", this.onMouseUp);
+    };
+
+    private listenToMapClicks = () => {
+        this.map.on("click", this.onMapClick("click"));
+        this.map.on("contextmenu", this.onMapClick("contextmenu"));
+    };
+
+    // Enable/Disable Events
+    public enable = (enabled: boolean) => {
+        this.enabled = enabled;
+        if (!enabled) {
+            window.clearTimeout(this.longHoverTimeoutHandlerID);
+        }
+    };
+
+    private onMouseStart = () => {
+        this.firstDelayedHoverSinceMapMove = true;
+        window.clearTimeout(this.longHoverTimeoutHandlerID);
+    };
+
+    private onMouseOut = () => {
+        // Preventing accidental de-hover event if we actually leave the map canvas.
+        // Since this could potentially be about jumping into a map popup, so we leave that up to the caller.
+        window.clearTimeout(this.longHoverTimeoutHandlerID);
+    };
+
+    private onMouseDown = () => {
+        this.lastCursorStyle = this.map.getCanvas().style.cursor;
+        this.lastCursorStyle = this.map.getCanvas().style.cursor;
+        this.map.getCanvas().style.cursor = "grabbing";
+    };
+
+    private onMouseUp = () => {
+        this.map.getCanvas().style.cursor = this.lastCursorStyle;
+    };
+
+    private onMouseMove = (ev: MapMouseEvent) => {
+        if (!this.enabled || this.map.isMoving()) {
+            // We ensure no unwanted hover handling while the map moves
+            return;
+        }
+
+        const hoveredTopFeature = this.map.queryRenderedFeatures(toPaddedBounds(ev.point), {
+            layers: this.interactiveLayerIDs
+        })?.[0];
+        const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
+
+        // flag to determine whether a change happened, such as no-hover -> hover or vice-versa:
+        let hoverChangeDetected = false;
+        // flag to detect whether the mouse is moving along the hovered feature (not stopped on it):
+        let mouseInMotionOverHoveredFeature = false;
+
+        if (hoveredTopFeature) {
+            // Workaround/hack to avoid listening to map style POIs without ID (bad data):
+            if (hoveredTopFeature.source === "poiTiles" && !hoveredTopFeature.properties?.id) {
+                return;
+            }
+
+            if (!this.hoveringFeature) {
+                // no hover -> hover
+                this.map.getCanvas().style.cursor = "pointer";
+                hoverChangeDetected = true;
+            } else if (hoveredTopFeature.id !== this.hoveringFeature.id) {
+                // hovering from one feature to another one (from the same or different layer/source):
+                hoverChangeDetected = true;
+            } else {
+                // (else we're hovering along the same feature)
+                if (this.hoveringPoint) {
+                    if (
+                        Math.abs(ev.point.x - this.hoveringPoint?.x) > 0 ||
+                        Math.abs(ev.point.y - this.hoveringPoint?.y) > 0
+                    ) {
+                        mouseInMotionOverHoveredFeature = true;
+                    }
+                }
+            }
+        } else {
+            if (this.hoveringFeature) {
+                // hover -> no hover (un-hover)
+                this.map.getCanvas().style.cursor = "default";
+                hoverChangeDetected = true;
+            }
+        }
+
+        this.hoveringLngLat = ev.lngLat;
+        this.hoveringPoint = ev.point;
+        this.hoveringFeature = hoveredTopFeature;
+        this.hoveringSourceWithLayers = hoveredTopFeature
+            ? this.interactiveSourcesAndLayers[hoveredTopFeature.source]
+            : undefined;
+
+        if (hoverChangeDetected) {
+            if (this.listeners[listenerId]) {
+                // (If de-hovering this should fire undefined, undefined):
+                this.listeners[listenerId].forEach((cb) =>
+                    cb(ev.lngLat, this.hoveringFeature, this.hoveringSourceWithLayers)
+                );
+            }
+        }
+
+        if (hoverChangeDetected || mouseInMotionOverHoveredFeature) {
+            this.restartLongHoverTimeout();
+        }
+    };
+
+    private restartLongHoverTimeout = () => {
+        window.clearTimeout(this.longHoverTimeoutHandlerID);
+        this.longHoverTimeoutHandlerID = window.setTimeout(
+            this.handleLongHoverTimeout,
+            this.firstDelayedHoverSinceMapMove
+                ? this.firstHoverAfterMapMoveDelayMS
+                : this.followupHoverWithStaticMapDelayMS
+        );
+    };
+
+    private handleLongHoverTimeout = () => {
+        // We try to avoid firing long hovers when the feature was just clicked
+        // (requires a safe-ish efficient way to compare features coming from different events, like IDs):
+        if (
+            !this.hoveringFeature ||
+            !this.lastClickedFeature ||
+            // properties IDs, if any, are expected to be most reliable for comparison:
+            this.lastClickedFeature.properties.id !== this.hoveringFeature.properties.id ||
+            (!this.lastClickedFeature.properties.id &&
+                !this.hoveringFeature.properties.id &&
+                // otherwise (auto-generated) IDs are used next, but they could potentially be different for essentially the same core item:
+                this.lastClickedFeature.id !== this.hoveringFeature.id)
+        ) {
+            this.firstDelayedHoverSinceMapMove = false;
+            if (this.hoveringSourceWithLayers) {
+                const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
+                if (this.listeners[listenerId]) {
+                    this.listeners[listenerId].forEach((cb) =>
+                        cb(this.hoveringLngLat, this.hoveringFeature, this.hoveringSourceWithLayers)
+                    );
+                }
+            }
+        }
+    };
+
+    private onMapClick = (clickType: ClickEvent) => (ev: MapMouseEvent) => {
+        if (!this.enabled || this.map.isMoving()) {
+            // We avoid any accidental click handling while the map moves
+            return;
+        }
+        this.lastClickedFeature = this.map.queryRenderedFeatures(toPaddedBounds(ev.point), {
+            layers: this.interactiveLayerIDs
+        })?.[0];
+        this.lastClickedSourceWithLayers = this.lastClickedFeature
+            ? this.interactiveSourcesAndLayers[this.lastClickedFeature.source]
+            : undefined;
+
+        if (
+            this.lastClickedSourceWithLayers &&
+            this.listeners[this.lastClickedSourceWithLayers.source.id + `_${clickType}`]
+        ) {
+            this.listeners[this.lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb) => {
+                cb(ev.lngLat, this.lastClickedFeature, this.lastClickedSourceWithLayers);
+            });
+        }
+    };
+}

@@ -22,4 +22,8 @@ export type GOSDKThis = typeof globalThis & {
     places?: GeoJSONPlaces;
     geometry?: GeometryModule;
     routing?: RoutingModule;
+    _numOfHovers: number;
+    _numOfClicks: number;
+    _numOfContextmenuClicks: number;
+    _numOfLongHovers: number;
 };

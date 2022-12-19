@@ -1,5 +1,6 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
+import { EventModule } from "../core/EventModule";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { asDefined } from "../core/AssertionUtils";
@@ -34,5 +35,12 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
      */
     clear(): void {
         this.callWhenMapReady(() => asDefined(this.geometry).clear());
+    }
+
+    /**
+     * Create the events on/off for this module
+     */
+    get events() {
+        return new EventModule(this.goSDKMap._eventsProxy, this.geometry);
     }
 }

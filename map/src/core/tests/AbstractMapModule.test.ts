@@ -18,6 +18,11 @@ describe("AbstractMapModule tests", () => {
         getMergedConfig(config?: VectorTileMapModuleConfig): VectorTileMapModuleConfig | undefined {
             return super.getMergedConfig(config);
         }
+
+        // Implement events, however it is not tested here.
+        get events(): any {
+            return jest.fn();
+        }
     }
 
     test("Constructor with style loaded", () => {

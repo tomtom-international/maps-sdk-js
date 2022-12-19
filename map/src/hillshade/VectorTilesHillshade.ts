@@ -2,6 +2,7 @@ import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
 import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
+import { EventModule } from "../core/EventModule";
 
 export const HILLSHADE_SOURCE_ID = "hillshade";
 
@@ -45,5 +46,9 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
 
     toggleVisibility(): void {
         this.setVisible(!this.isVisible());
+    }
+
+    get events() {
+        return new EventModule(this.goSDKMap._eventsProxy, this.hillshade);
     }
 }
