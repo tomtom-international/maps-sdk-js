@@ -3,7 +3,7 @@ import fuzzySearchReqObjectsAndURLs from "./RequestBuilder.data.json";
 import { FuzzySearchParams } from "../types";
 import fuzzySearchReqObjects from "./RequestBuilderPerf.data.json";
 import { GeometrySearchParams } from "../../geometry-search";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 
 describe("Calculate Fuzzy Search request URL building tests", () => {
     test.each(fuzzySearchReqObjectsAndURLs)(
@@ -20,7 +20,7 @@ describe("Fuzzy Search request URL builder performance tests", () => {
         "'%s'",
         // @ts-ignore
         (_title: string, params: GeometrySearchParams) => {
-            expect(assertExecutionTime(() => buildFuzzySearchRequest(params), 10, 2)).toBeTruthy();
+            expect(bestExecutionTimeMS(() => buildFuzzySearchRequest(params), 10)).toBeLessThan(2);
         }
     );
 });

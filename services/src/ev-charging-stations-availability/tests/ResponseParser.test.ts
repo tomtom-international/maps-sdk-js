@@ -5,7 +5,7 @@ import { DefaultAPIResponseError, ErrorObjAPI } from "../../shared/types/APIResp
 import { ServiceName } from "../../shared/types/ServicesTypes";
 import { SDKServiceError } from "../../shared/Errors";
 import { parseEVChargingStationsAvailabilityResponseError } from "../EVChargingStationsAvailabilityResponseErrorParser";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { EVChargingStationsAvailabilityResponse } from "../types/EVChargingStationsAvailabilityResponse";
 
 describe("Charging availability response parsing tests", () => {
@@ -45,8 +45,8 @@ describe("Charging availability response parsing performance tests", () => {
         // @ts-ignore
         (_name: string, apiResponse: EVChargingStationsAvailabilityResponse) => {
             expect(
-                assertExecutionTime(() => parseEVChargingStationsAvailabilityResponse(apiResponse), 10, 2)
-            ).toBeTruthy();
+                bestExecutionTimeMS(() => parseEVChargingStationsAvailabilityResponse(apiResponse), 10)
+            ).toBeLessThan(2);
         }
     );
 });

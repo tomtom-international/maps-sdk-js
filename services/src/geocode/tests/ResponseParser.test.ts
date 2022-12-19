@@ -2,7 +2,7 @@ import apiAndParsedResponses from "./ResponseParser.data.json";
 import { parseGeocodingResponse } from "../ResponseParser";
 import { GeocodingResponseAPI } from "../types/APITypes";
 import { GeocodingResponse } from "../types/GeocodingResponse";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import geocodingAPIResponses from "./ResponseParserPerf.data.json";
 
 describe("Geocode response parsing tests", () => {
@@ -20,7 +20,7 @@ describe("Geocoding service response parser performance tests", () => {
         "'%s'",
         // @ts-ignore
         (apiResponse: GeocodingResponseAPI) => {
-            expect(assertExecutionTime(() => parseGeocodingResponse(apiResponse), 10, 5)).toBeTruthy();
+            expect(bestExecutionTimeMS(() => parseGeocodingResponse(apiResponse), 10)).toBeLessThan(5);
         }
     );
 });

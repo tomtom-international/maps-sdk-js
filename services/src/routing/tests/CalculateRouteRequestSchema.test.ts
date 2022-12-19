@@ -1,5 +1,5 @@
 import { calculateRoute } from "../CalculateRoute";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";
 import { calculateRouteRequestSchema } from "../CalculateRouteRequestSchema";
@@ -243,11 +243,10 @@ describe("Calculate route request schema performance tests", () => {
     // @ts-ignore
     test("Calculate route request with many waypoints, mandatory & optional params", () => {
         expect(
-            assertExecutionTime(
+            bestExecutionTimeMS(
                 () => validateRequestSchema(routeRequestParams as CalculateRouteParams, calculateRouteRequestSchema),
-                10,
-                2
+                10
             )
-        ).toBeTruthy();
+        ).toBeLessThan(2);
     });
 });

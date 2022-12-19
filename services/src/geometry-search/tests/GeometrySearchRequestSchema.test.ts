@@ -2,7 +2,7 @@ import geometrySearch from "../GeometrySearch";
 import { GeometrySearchParams, SearchGeometryInput } from "../types";
 import { geometrySearchRequestSchema } from "../GeometrySearchRequestSchema";
 import geometrySearchReqObjects from "../../geometry-search/tests/RequestBuilderPerf.data.json";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 
 describe("GeometrySearch Schema Validation", () => {
@@ -401,8 +401,8 @@ describe("Geometry Search request schema performance tests", () => {
         // @ts-ignore
         (_title: string, params: GeometrySearchParams) => {
             expect(
-                assertExecutionTime(() => validateRequestSchema(params, geometrySearchRequestSchema), 10, 10)
-            ).toBeTruthy();
+                bestExecutionTimeMS(() => validateRequestSchema(params, geometrySearchRequestSchema), 10)
+            ).toBeLessThan(10);
         }
     );
 });

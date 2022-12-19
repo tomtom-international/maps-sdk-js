@@ -7,7 +7,7 @@ import errorResponses from "./ResponseParserError.data.json";
 import { parseRoutingResponseError } from "../RoutingResponseErrorParser";
 import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
 import { SDKServiceError } from "../../shared/Errors";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 
 describe("Calculate Route response parsing functional tests", () => {
     // Functional tests:
@@ -29,12 +29,8 @@ describe("Calculate Route response parsing performance tests", () => {
         "Parsing a very long API response " + "(e.g. Lisbon - Moscow with sections, instructions and alternatives)",
         () => {
             expect(
-                assertExecutionTime(
-                    () => parseCalculateRouteResponse(longAPIResponse as CalculateRouteResponseAPI),
-                    20,
-                    50
-                )
-            ).toBeTruthy();
+                bestExecutionTimeMS(() => parseCalculateRouteResponse(longAPIResponse as CalculateRouteResponseAPI), 20)
+            ).toBeLessThan(50);
         }
     );
 });

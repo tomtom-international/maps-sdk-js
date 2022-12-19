@@ -1,7 +1,7 @@
 import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { PlaceByIdParams } from "../types";
 import placeByIdReqObjects from "../../place-by-id/tests/RequestBuilderPerf.data.json";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { placeByIdRequestSchema } from "../PlaceByIdSchema";
 import placeById from "../PlaceById";
@@ -89,9 +89,9 @@ describe("PlaceById request schema performance tests", () => {
         "'%s'",
         // @ts-ignore
         (params: PlaceByIdParams) => {
-            expect(
-                assertExecutionTime(() => validateRequestSchema(params, placeByIdRequestSchema), 10, 2)
-            ).toBeTruthy();
+            expect(bestExecutionTimeMS(() => validateRequestSchema(params, placeByIdRequestSchema), 10)).toBeLessThan(
+                2
+            );
         }
     );
 });

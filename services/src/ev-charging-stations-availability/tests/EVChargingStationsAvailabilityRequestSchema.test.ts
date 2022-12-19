@@ -1,7 +1,7 @@
 import EVChargingStationsAvailability from "../EVChargingStationsAvailability";
 import { EVChargingStationsAvailabilityParams } from "../types/EVChargingStationsAvailabilityParams";
 import requestObjects from "./RequestBuilderPerf.data.json";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { evChargingStationsAvailabilityRequestSchema } from "../EVChargingStationsAvailabilityRequestSchema";
 import { validateRequestSchema } from "../../shared/Validation";
 
@@ -111,12 +111,11 @@ describe("EV charging stations availability request schema performance tests", (
         //@ts-ignore
         (_title: string, params: EVChargingStationsAvailabilityParams) => {
             expect(
-                assertExecutionTime(
+                bestExecutionTimeMS(
                     () => validateRequestSchema(params, evChargingStationsAvailabilityRequestSchema),
-                    10,
-                    1
+                    10
                 )
-            ).toBeTruthy();
+            ).toBeLessThan(1);
         }
     );
 });

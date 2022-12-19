@@ -1,5 +1,5 @@
 import fuzzySearch from "../FuzzySearch";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { fuzzySearchRequestSchema } from "../FuzzySearchRequestSchema";
 import { FuzzySearchParams } from "../types";
 import fuzzySearchReqObjects from "./RequestBuilderPerf.data.json";
@@ -310,9 +310,9 @@ describe("Fuzzy Search request schema performance tests", () => {
         "'%s'",
         // @ts-ignore
         (_title: string, params: FuzzySearchParams) => {
-            expect(
-                assertExecutionTime(() => validateRequestSchema(params, fuzzySearchRequestSchema), 10, 5)
-            ).toBeTruthy();
+            expect(bestExecutionTimeMS(() => validateRequestSchema(params, fuzzySearchRequestSchema), 10)).toBeLessThan(
+                5
+            );
         }
     );
 });

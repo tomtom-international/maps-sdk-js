@@ -20,7 +20,7 @@ import {
     isBBoxWithArea
 } from "../BBox";
 
-import { assertExecutionTime } from "services/src/shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "./PerformanceTestUtils";
 
 describe("Bounding Box expansion functions", () => {
     test("Expand bounding box with position", () => {
@@ -433,7 +433,7 @@ describe("Bounding box getter/calculator function", () => {
 describe("Bounding box calculation performance tests", () => {
     test("Quick bounding box performance test for very long line", () => {
         const coordinates = buildTestDiagonal(100000);
-        expect(assertExecutionTime(() => bboxFromCoordsArray(coordinates), 20, 2)).toBeTruthy();
+        expect(bestExecutionTimeMS(() => bboxFromCoordsArray(coordinates), 20)).toBeLessThan(2);
     });
 
     test("Quick bounding box performance test for very long polygon", () => {
@@ -443,6 +443,6 @@ describe("Bounding box calculation performance tests", () => {
             // (we don't care if the shape is really polygon-correct here)
             coordinates: [coordinates, coordinates, coordinates, coordinates]
         };
-        expect(assertExecutionTime(() => bboxFromGeoJSON(polygon), 20, 2)).toBeTruthy();
+        expect(bestExecutionTimeMS(() => bboxFromGeoJSON(polygon), 20)).toBeLessThan(2);
     });
 });

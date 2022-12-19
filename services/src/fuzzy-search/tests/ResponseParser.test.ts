@@ -2,7 +2,7 @@ import { FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
 import apiAndParsedResponses from "./ResponseParser.data.json";
 import { parseFuzzySearchResponse } from "../ResponseParser";
 import apiResponses from "./ResponseParserPerf.data.json";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 
 describe("Fuzzy Search response parser tests", () => {
     test.each(apiAndParsedResponses)(
@@ -19,7 +19,7 @@ describe("Fuzzy Search response parser performance tests", () => {
         "'%s'",
         // @ts-ignore
         (_title: string, apiResponse: FuzzySearchResponseAPI) => {
-            expect(assertExecutionTime(() => parseFuzzySearchResponse(apiResponse), 10, 5)).toBeTruthy();
+            expect(bestExecutionTimeMS(() => parseFuzzySearchResponse(apiResponse), 10)).toBeLessThan(5);
         }
     );
 });

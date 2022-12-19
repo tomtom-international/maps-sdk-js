@@ -1,7 +1,7 @@
-import revgeocode from "../ReverseGeocoding";
+import reverseGeocode from "../ReverseGeocoding";
 import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 import revGeoReqObjects from "../../revgeo/tests/RequestBuilderPerf.data.json";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { revGeocodeRequestSchema } from "../RevGeocodeRequestSchema";
 
@@ -12,7 +12,7 @@ describe("ReverseGeocoding schema validation", () => {
             position: { lon: -122.420679, lat: 37.772537 }
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -26,7 +26,7 @@ describe("ReverseGeocoding schema validation", () => {
 
     test("it should fail when latitude/longitude is out of range", async () => {
         await expect(
-            revgeocode({
+            reverseGeocode({
                 position: [200, -95]
             })
         ).rejects.toMatchObject({
@@ -58,7 +58,7 @@ describe("ReverseGeocoding schema validation", () => {
             position: (-122.420679, 37.772537)
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -76,7 +76,7 @@ describe("ReverseGeocoding schema validation", () => {
             position: "-122.420679, 37.772537"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -94,7 +94,7 @@ describe("ReverseGeocoding schema validation", () => {
             geographyType: ["Country"]
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -113,7 +113,7 @@ describe("ReverseGeocoding schema validation", () => {
             heading: 361
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -132,7 +132,7 @@ describe("ReverseGeocoding schema validation", () => {
             heading: -361
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -151,7 +151,7 @@ describe("ReverseGeocoding schema validation", () => {
             heading: "180"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -170,7 +170,7 @@ describe("ReverseGeocoding schema validation", () => {
             mapcodes: "Local"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -189,7 +189,7 @@ describe("ReverseGeocoding schema validation", () => {
             number: 36
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -208,7 +208,7 @@ describe("ReverseGeocoding schema validation", () => {
             radius: "2000"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -227,7 +227,7 @@ describe("ReverseGeocoding schema validation", () => {
             geographyType: "Country"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -246,7 +246,7 @@ describe("ReverseGeocoding schema validation", () => {
             returnRoadUse: "LimitedAccess"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -265,7 +265,7 @@ describe("ReverseGeocoding schema validation", () => {
             allowFreeformNewline: "true"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -284,7 +284,7 @@ describe("ReverseGeocoding schema validation", () => {
             returnSpeedLimit: "true"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -303,7 +303,7 @@ describe("ReverseGeocoding schema validation", () => {
             returnMatchType: "true"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
@@ -322,13 +322,15 @@ describe("ReverseGeocoding schema validation", () => {
             view: "MAA"
         };
 
-        await expect(revgeocode(invalidParams)).rejects.toMatchObject({
+        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
             service: "ReverseGeocode",
             errors: [
                 {
                     code: "invalid_enum_value",
                     message:
-                        "Invalid enum value. Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'",
+                        "Invalid enum value. " +
+                        "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', " +
+                        "received 'MAA'",
                     path: ["view"]
                 }
             ]
@@ -341,9 +343,9 @@ describe("Rev-Geo request schema performance tests", () => {
         "'%s'",
         // @ts-ignore
         (_title: string, params: ReverseGeocodingParams) => {
-            expect(
-                assertExecutionTime(() => validateRequestSchema(params, revGeocodeRequestSchema), 10, 2)
-            ).toBeTruthy();
+            expect(bestExecutionTimeMS(() => validateRequestSchema(params, revGeocodeRequestSchema), 10)).toBeLessThan(
+                2
+            );
         }
     );
 });

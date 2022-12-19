@@ -2,7 +2,7 @@ import geocode from "../Geocoding";
 import { GeocodingParams } from "../types/GeocodingParams";
 import { Polygon } from "geojson";
 import geoCodingReqObjects from "../../geocode/tests/RequestBuilderPerf.data.json";
-import { assertExecutionTime } from "../../shared/tests/PerformanceTestUtils";
+import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { geocodingRequestSchema } from "../GeocodingRequestSchema";
 
@@ -24,7 +24,8 @@ describe("Geocoding schema validation", () => {
                     options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
                     path: ["view"],
                     message:
-                        "Invalid enum value. Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'"
+                        "Invalid enum value. " +
+                        "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'"
                 }
             ]
         });
@@ -259,9 +260,9 @@ describe("Geocoding request schema performance tests", () => {
         "'%s'",
         // @ts-ignore
         (params: GeocodingParams) => {
-            expect(
-                assertExecutionTime(() => validateRequestSchema(params, geocodingRequestSchema), 10, 5)
-            ).toBeTruthy();
+            expect(bestExecutionTimeMS(() => validateRequestSchema(params, geocodingRequestSchema), 10)).toBeLessThan(
+                5
+            );
         }
     );
 });
