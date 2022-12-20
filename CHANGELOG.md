@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.66](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.65...v0.1.66) (2022-12-20)
+
+
+### Features
+
+* **map:** allowing to change route selection ([7d51241](https://github.com/tomtom-international/go-sdk-js/commit/7d51241e432c9b66161af3c8bda6d816d9f4c6f4))
+
+
+### Bug Fixes
+
+* geojson object validation schema ([2bcc054](https://github.com/tomtom-international/go-sdk-js/commit/2bcc054895b2ea10726544fc210176207f34a449))
+
 ### [0.1.65](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.64...v0.1.65) (2022-12-15)
 
 
