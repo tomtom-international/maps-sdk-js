@@ -26,8 +26,14 @@ export type FuzzySearchResponseAPI = {
     results: FuzzySearchResultAPI[];
 };
 
+/**
+ * @ignore
+ */
 export type QueryIntentAPI = CoordinateIntentAPI | NearbyIntentAPI | W3WIntent | BookmarkIntent;
 
+/**
+ * @ignore
+ */
 export type CoordinateIntentAPI = {
     /**
      * the query is a coordinate in one of the supported formats (e.g., "48.858380, 2.294440").
@@ -36,6 +42,9 @@ export type CoordinateIntentAPI = {
     details: CoordinateIntentDetailsAPI;
 };
 
+/**
+ * @ignore
+ */
 export type NearbyIntentAPI = {
     /**
      * the query asks for some entity in the proximity of another entity (e.g., "hotel near Lyon").
@@ -44,6 +53,9 @@ export type NearbyIntentAPI = {
     details: NearbyIntentDetailsAPI;
 };
 
+/**
+ * @ignore
+ */
 export type CoordinateIntentDetailsAPI = {
     /**
      * Latitude of the (parsed) user input coordinate. See LatLon. The results will be places nearby this coordinate.
@@ -56,6 +68,9 @@ export type CoordinateIntentDetailsAPI = {
     lon: number;
 };
 
+/**
+ * @ignore
+ */
 export type NearbyIntentDetailsAPI = Omit<NearbyIntentDetails, "position"> & {
     /**
      * Latitude of the place, near which the user searches for something.
