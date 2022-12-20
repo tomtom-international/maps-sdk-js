@@ -117,7 +117,7 @@ export type EntryPoint = {
 
 /**
  * @group Place
- * @category variables
+ * @category Variables
  */
 export const placeTypes = ["POI", "Street", "Geography", "Point Address", "Address Range", "Cross Street"] as const;
 

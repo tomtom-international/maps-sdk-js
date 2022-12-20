@@ -3,6 +3,8 @@ import { CommonServiceParams } from "../../shared/ServiceTypes";
 
 /**
  * Geometry IDs or places containing them.
+ * @group Geometry Data
+ * @categpry Types
  */
 export type GeometriesInput = string[] | Place[] | Places;
 

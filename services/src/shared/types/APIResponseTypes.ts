@@ -95,6 +95,10 @@ export type AddressRangesAPI = {
     to: LatLonAPI;
 };
 
+/**
+ * @group Shared
+ * @category Types
+ */
 type SummaryQueryType = "NEARBY" | "NON_NEAR";
 
 /**

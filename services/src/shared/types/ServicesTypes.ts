@@ -1,5 +1,7 @@
 /**
  * List of all services managed by go-sdk-js
+ * @group Shared
+ * @category Types
  */
 export type ServiceName = string;
 

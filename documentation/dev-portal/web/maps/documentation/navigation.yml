@@ -68,10 +68,28 @@ menu:
         items:
           - fileId: /api-reference/modules/core
             title: Core
-          - fileId: /api-reference/modules/services
-            title: Services
           - fileId: /api-reference/modules/map
             title: Map
+          - title: Services
+            items:
+              - fileId: /api-reference/modules/calculate_route
+                title: Calculate Route
+              - fileId: /api-reference/modules/fuzzy_search
+                title: Fuzzy Search
+              - fileId: /api-reference/modules/geocoding
+                title: Geocoding
+              - fileId: /api-reference/modules/geometry_data
+                title: Geometry Data
+              - fileId: /api-reference/modules/geometry_search
+                title: Geometry Search
+              - fileId: /api-reference/modules/place_by_id
+                title: Place By Id
+              - fileId: /api-reference/modules/reverse_geocoding
+                title: Reverse Geocoding
+              - fileId: /api-reference/modules/search
+                title: Search
+              - fileId: /api-reference/modules/shared
+                title: Shared
       - title: Extra pages
         isHidden: true
         items:
@@ -79,15 +97,23 @@ menu:
             isHidden: true
           - fileId: /api-reference/modules/map.internal
             isHidden: true
-          - fileId: /api-reference/modules/services.internal
-            isHidden: true
-          - fileId: /api-reference/interfaces/services.Circle
-            isHidden: true
           - fileId: /api-reference/classes/core.GOSDKConfig
             isHidden: true
           - fileId: /api-reference/classes/map.GOSDKMap
             isHidden: true
-          - fileId: /api-reference/classes/services.internal.SDKError
+          - fileId: /api-reference/modules/calculate_route.internal
             isHidden: true
-          - fileId: /api-reference/classes/services.internal.SDKServiceError
+          - fileId: /api-reference/modules/fuzzy_search.internal
+            isHidden: true
+          - fileId: /api-reference/modules/geocoding.internal
+            isHidden: true
+          - fileId: /api-reference/modules/geometry_data.internal
+            isHidden: true
+          - fileId: /api-reference/modules/place_by_id.internal
+            isHidden: true
+          - fileId: /api-reference/modules/reverse_geocoding.internal
+            isHidden: true
+          - fileId: /api-reference/modules/search.internal
+            isHidden: true
+          - fileId: /api-reference/modules/shared.internal
             isHidden: true

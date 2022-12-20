@@ -1,4 +1,4 @@
-import {DeclarationReflection, Reflection, Renderer} from 'typedoc';
+import {DeclarationReflection,  Reflection, Renderer} from 'typedoc';
 import { MarkdownTheme } from 'typedoc-plugin-markdown';
 import { PageEvent } from 'typedoc';
 import { registerPartials } from './render-utils';

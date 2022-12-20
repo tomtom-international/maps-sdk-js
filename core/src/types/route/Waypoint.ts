@@ -34,6 +34,11 @@ export type WaypointProps = {
  */
 export type Waypoint<T extends Anything = Anything> = Feature<Point, WaypointProps & T>;
 
+/**
+ * GeoJSON collection of a Waypoint type.
+ * @group Route
+ * @category Types
+ */
 export type Waypoints<T extends Anything = Anything> = FeatureCollection<Point, WaypointProps & T>;
 
 /**

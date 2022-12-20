@@ -1,6 +1,19 @@
 {
-  "entryPoints": ["."],
-  "entryPointStrategy": "packages",
+  "entryPoints": [
+    "./core",
+    "./map",
+    "./services/src/fuzzy-search/index.ts",
+    "./services/src/ev-charging-station-availability/index.ts",
+    "./services/src/geocode/index.ts",
+    "./services/src/geometry-data/index.ts",
+    "./services/src/geometry-search/index.ts",
+    "./services/src/place-by-id/index.ts",
+    "./services/src/revgeo/index.ts",
+    "./services/src/routing/index.ts",
+    "./services/src/search/index.ts",
+    "./services/src/shared/index.ts"
+  ],
+  "entryPointStrategy": "resolve",
   "entryDocument": "home.mdx",
   "out": "documentation/dev-portal/web/maps/documentation/api-reference",
   "readme": "none",
