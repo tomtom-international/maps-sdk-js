@@ -1,6 +1,5 @@
-import {DeclarationReflection,  Reflection, Renderer} from 'typedoc';
+import {DeclarationReflection,  Reflection, Renderer, PageEvent} from 'typedoc';
 import { MarkdownTheme } from 'typedoc-plugin-markdown';
-import { PageEvent } from 'typedoc';
 import { registerPartials } from './render-utils';
 
 export class GOSDKTheme extends MarkdownTheme {
