@@ -25,7 +25,7 @@ export class GOSDKTheme extends MarkdownTheme {
      * Removing `.mdx` extension from relative links (devportal requirement).
      */
     getRelativeUrl(url: string) {
-        return super.getRelativeUrl(url).replace(/(.*).mdx/, "$1");
+        return super.getRelativeUrl(url).replace(/\.mdx/, "");
     }
 
     /**
