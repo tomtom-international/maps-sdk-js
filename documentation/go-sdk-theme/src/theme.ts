@@ -1,25 +1,50 @@
-import {DeclarationReflection,  Reflection, Renderer, PageEvent} from 'typedoc';
-import { MarkdownTheme } from 'typedoc-plugin-markdown';
-import { registerPartials } from './render-utils';
+import { DeclarationReflection, Reflection, Renderer, PageEvent } from "typedoc";
+import { MarkdownTheme } from "typedoc-plugin-markdown";
+import { basename, join } from "path";
+import { readdirSync, readFileSync } from "fs";
+import { registerPartial } from "handlebars";
 
 export class GOSDKTheme extends MarkdownTheme {
     constructor(renderer: Renderer) {
         super(renderer);
-        registerPartials();
+        this.registerPartials();
     }
 
+    /**
+     * Workaround for escaping characters in the output, since the plugin
+     * doesn't allow customizing which characters are escaped (yet)
+     */
     render(page: PageEvent<Reflection>): string {
-        // Workaround for escaping characters, since the plugin doesn't allow customizing escaped characters (yet)
-        return super.render(page)
+        return super
+            .render(page)
             .replace(/<(?!(\/?)(Accordion|a))/g, "\\<") // matches all < except in Accordion and a tags
             .replace(/(?<!{){(?!(<a|{))/g, "\\{"); //matches all { except in {{ and {<a
     }
 
+    /**
+     * Removing `.mdx` extension from relative links (devportal requirement).
+     */
     getRelativeUrl(url: string) {
-        return super.getRelativeUrl(url).replace(/(.*).mdx/, '$1');
+        return super.getRelativeUrl(url).replace(/(.*).mdx/, "$1");
     }
 
+    /**
+     * Output `.mdx` urls instead of '.md' (devportal requirement).
+     */
     toUrl(mapping: any, reflection: DeclarationReflection) {
-        return mapping.directory + '/' + this.getUrl(reflection) + '.mdx';
+        return mapping.directory + "/" + this.getUrl(reflection) + ".mdx";
+    }
+
+    /**
+     * Overwrites the partials defined by typedoc-plugin-markdowns with the partials we have defined in `./resources/partials`
+     */
+    registerPartials() {
+        const partialsFolder = join(__dirname, "resources", "partials");
+        const partialFiles = readdirSync(partialsFolder);
+        partialFiles.forEach((partialFile) => {
+            const partialName = basename(partialFile, ".hbs");
+            const partialContent = readFileSync(partialsFolder + "/" + partialFile).toString();
+            registerPartial(partialName, partialContent);
+        });
     }
 }
