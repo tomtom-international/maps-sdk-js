@@ -14,6 +14,14 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
      * Example: https://api.tomtom.com/search/10/reverseGeocode/
      */
     customServiceBaseURL?: string;
+
+    /**
+     * Optional, validation of input request schema.
+     * Providing true or skipping this param will result in input request schema validation,
+     * Providing false will skip schema validation
+     * @default=true
+     */
+    validateRequest?: boolean;
 };
 
 /**

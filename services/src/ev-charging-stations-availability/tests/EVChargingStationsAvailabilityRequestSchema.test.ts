@@ -9,7 +9,8 @@ describe("EV Charging Stations availability schema validation", () => {
     test("it should fail when id is an invalid param", async () => {
         const invalidParams: EVChargingStationsAvailabilityParams = {
             //@ts-ignore
-            id: 555
+            id: 555,
+            validateRequest: true
         };
 
         await expect(EVChargingStationsAvailability(invalidParams)).rejects.toMatchObject({
@@ -24,6 +25,23 @@ describe("EV Charging Stations availability schema validation", () => {
             ]
         });
     });
+
+    test(
+        "Charging station availability(Without API Key): " + "Skipping schema validation should result in 403",
+        async () => {
+            await expect(
+                EVChargingStationsAvailability({
+                    //@ts-ignore
+                    connectorTypes: "Tesla",
+                    validateRequest: false
+                })
+            ).rejects.toMatchObject({
+                service: "EVChargingStationsAvailability",
+                message: "Request failed with status code 403",
+                status: 403
+            });
+        }
+    );
 
     test("it should fail when connectorTypes is invalid and id is missing", async () => {
         const invalidParams: EVChargingStationsAvailabilityParams = {

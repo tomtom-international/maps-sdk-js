@@ -21,14 +21,15 @@ export const callService = async <PARAMS extends CommonServiceParams, REQUEST, A
     serviceName: ServiceName
 ): Promise<RESPONSE> => {
     const mergedParams = mergeFromGlobal(params);
-    let validatedParams;
-    try {
-        validatedParams = validateRequestSchema(mergedParams, template.validateRequestSchema);
-    } catch (e) {
-        return Promise.reject(buildValidationError(e as ValidationError, serviceName));
+    if (params.validateRequest || params.validateRequest == undefined) {
+        try {
+            validateRequestSchema(mergedParams, template.validateRequestSchema);
+        } catch (e) {
+            return Promise.reject(buildValidationError(e as ValidationError, serviceName));
+        }
     }
+    const request = template.buildRequest(mergedParams);
 
-    const request = template.buildRequest(validatedParams);
     let apiResponse;
     try {
         apiResponse = await template.sendRequest(request);
