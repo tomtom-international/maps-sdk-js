@@ -1,15 +1,12 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { MultiPolygon, Polygon, Position } from "geojson";
-import { CommonSearchParams } from "../../search";
+import { CommonSearchParams } from "../../shared";
 
 /**
  * @group Geometry Search
  * @category Types
  */
-export type GeometrySearchParams = Omit<
-    CommonSearchParams,
-    "typeahead" | "offset" | "countries" | "radiusMeters" | "boundingBox"
-> & {
+export type GeometrySearchParams = CommonSearchParams & {
     /**
      * List of geometries to search.
      * * (Also referred to as "geometryList")

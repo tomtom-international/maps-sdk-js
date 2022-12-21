@@ -1,5 +1,4 @@
-import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
-import { CommonSearchParams } from "../../search";
+import { CommonPlacesParams, GeocodeSearchParams, IndexTypesAbbreviation } from "../../shared";
 
 type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
 
@@ -7,20 +6,7 @@ type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
  * @group Geocoding
  * @category Types
  */
-export type GeocodingParams = Omit<
-    CommonSearchParams,
-    | "indexes"
-    | "poiCategories"
-    | "poiBrands"
-    | "connectors"
-    | "fuelTypes"
-    | "openingHours"
-    | "timeZone"
-    | "relatedPois"
-    | "minPowerKW"
-    | "maxPowerKW"
-    | "extendedPostalCodesFor"
-> & {
+export type GeocodingParams = Omit<CommonPlacesParams & GeocodeSearchParams, "extendedPostalCodesFor"> & {
     /**
      * Indexes for which extended postal codes should be included in the results.
      * Available values are described in Additional Information indexes abbreviation values section.

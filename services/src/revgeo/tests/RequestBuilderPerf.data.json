@@ -25,7 +25,7 @@
       ],
       "heading": 30,
       "number": "10A",
-      "radius": 30,
+      "radiusMeters": 30,
       "returnRoadUse": true,
       "returnSpeedLimit": true,
       "roadUses": [

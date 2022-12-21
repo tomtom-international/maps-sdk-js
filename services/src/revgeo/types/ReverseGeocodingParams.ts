@@ -88,7 +88,7 @@ export type ReverseGeocodingOptionalParams = {
      * option as origin.
      * @default None
      */
-    radius?: number;
+    radiusMeters?: number;
 
     /**
      * Type of match.

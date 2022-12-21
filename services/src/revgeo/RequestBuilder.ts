@@ -26,7 +26,7 @@ export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     !isNil(params.heading) && urlParams.append("heading", String(params.heading));
     params.mapcodes && urlParams.append("mapcodes", arrayToCSV(params.mapcodes));
     params.number && urlParams.append("number", params.number);
-    !isNil(params.radius) && urlParams.append("radius", String(params.radius));
+    !isNil(params.radiusMeters) && urlParams.append("radius", String(params.radiusMeters));
     params.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(params.returnSpeedLimit));
     params.returnRoadUse && urlParams.append("returnRoadUse", String(params.returnRoadUse));
     params.roadUses && urlParams.append("roadUse", JSON.stringify(params.roadUses));

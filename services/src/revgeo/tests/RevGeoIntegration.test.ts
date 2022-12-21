@@ -99,7 +99,7 @@ describe("Reverse Geocoding integration tests", () => {
     });
 
     test("Reverse geocoding from the sea with small radius", async () => {
-        const result = await reverseGeocode({ position: [4.49112, 52.35937], radius: 10 });
+        const result = await reverseGeocode({ position: [4.49112, 52.35937], radiusMeters: 10 });
         expect(result.properties.address.country).toBeUndefined();
     });
 
@@ -125,7 +125,7 @@ describe("Reverse Geocoding integration tests", () => {
             language: "nl-NL",
             mapcodes: ["Local", "International"],
             number: "10",
-            radius: 50000,
+            radiusMeters: 50000,
             returnRoadUse: true,
             roadUses: ["Ramp"]
         });
