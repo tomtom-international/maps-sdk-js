@@ -2,7 +2,7 @@ import { DeclarationReflection, Reflection, Renderer, PageEvent } from "typedoc"
 import { MarkdownTheme } from "typedoc-plugin-markdown";
 import { basename, join } from "path";
 import { readdirSync, readFileSync } from "fs";
-import { registerPartial } from "handlebars";
+import * as Handlebars from "handlebars";
 
 export class GOSDKTheme extends MarkdownTheme {
     constructor(renderer: Renderer) {
@@ -44,7 +44,7 @@ export class GOSDKTheme extends MarkdownTheme {
         partialFiles.forEach((partialFile) => {
             const partialName = basename(partialFile, ".hbs");
             const partialContent = readFileSync(partialsFolder + "/" + partialFile).toString();
-            registerPartial(partialName, partialContent);
+            Handlebars.registerPartial(partialName, partialContent);
         });
     }
 }
