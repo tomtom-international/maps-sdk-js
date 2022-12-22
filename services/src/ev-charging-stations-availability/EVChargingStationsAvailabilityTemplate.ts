@@ -1,4 +1,4 @@
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import { EVChargingStationsAvailabilityParams } from "./types/EVChargingStationsAvailabilityParams";
 import { EVChargingStationsAvailabilityResponse } from "./types/EVChargingStationsAvailabilityResponse";
 import { buildEVChargingStationsAvailabilityRequest } from "./RequestBuilder";

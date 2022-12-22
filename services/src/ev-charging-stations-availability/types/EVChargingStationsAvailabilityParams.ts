@@ -1,4 +1,4 @@
-import { CommonServiceParams } from "../../shared/ServiceTypes";
+import { CommonServiceParams } from "../../shared";
 import { ConnectorType } from "@anw/go-sdk-js/core";
 
 /**

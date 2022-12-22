@@ -1,4 +1,4 @@
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import { CalculateRouteParams } from "./types/CalculateRouteParams";
 import { CalculateRouteResponse } from "./CalculateRoute";
 import { buildCalculateRouteRequest } from "./RequestBuilder";

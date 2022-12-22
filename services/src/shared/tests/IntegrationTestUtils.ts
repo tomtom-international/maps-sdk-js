@@ -1,4 +1,4 @@
-import { GOSDKConfig, SearchPlaceProps, placeTypes } from "@anw/go-sdk-js/core";
+import { GOSDKConfig, placeTypes, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 export const putIntegrationTestsAPIKey = () => {
     GOSDKConfig.instance.put({

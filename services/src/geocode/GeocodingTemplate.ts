@@ -2,7 +2,7 @@ import { GeocodingResponse } from "./types/GeocodingResponse";
 import { parseGeocodingResponse } from "./ResponseParser";
 import { buildGeocodingRequest } from "./RequestBuilder";
 import { getJson } from "../shared/Fetch";
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import { GeocodingParams } from "./types/GeocodingParams";
 import { GeocodingResponseAPI } from "./types/APITypes";
 import { geocodingRequestSchema } from "./GeocodingRequestSchema";

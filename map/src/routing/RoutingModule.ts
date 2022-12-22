@@ -1,6 +1,6 @@
 import { Routes, Waypoints } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
-import { routeOutline, routeMainLine, routeDeselectedOutline, routeDeselectedLine } from "./layers/routeMainLineLayers";
+import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,

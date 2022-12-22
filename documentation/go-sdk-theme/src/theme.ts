@@ -1,4 +1,4 @@
-import { DeclarationReflection, Reflection, Renderer, PageEvent } from "typedoc";
+import { DeclarationReflection, PageEvent, Reflection, Renderer } from "typedoc";
 import { MarkdownTheme } from "typedoc-plugin-markdown";
 import { basename, join } from "path";
 import { readdirSync, readFileSync } from "fs";

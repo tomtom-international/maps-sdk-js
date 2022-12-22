@@ -1,4 +1,4 @@
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";
 import { buildRevGeoRequest } from "./RequestBuilder";

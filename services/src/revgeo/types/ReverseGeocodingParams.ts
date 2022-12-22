@@ -1,6 +1,6 @@
 import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/go-sdk-js/core";
 
-import { CommonServiceParams } from "../../shared/ServiceTypes";
+import { CommonServiceParams } from "../../shared";
 
 /**
  * @enum

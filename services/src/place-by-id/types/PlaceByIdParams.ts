@@ -1,5 +1,4 @@
-import { CommonServiceParams } from "../../shared/ServiceTypes";
-import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared/types/ServicesTypes";
+import { CommonServiceParams, OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared";
 import { MapcodeType, View } from "@anw/go-sdk-js/core";
 
 /**

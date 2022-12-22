@@ -1,5 +1,5 @@
 import { Avoidable, inputSectionTypes, TravelMode, WaypointLike } from "@anw/go-sdk-js/core";
-import { CommonServiceParams } from "../../shared/ServiceTypes";
+import { CommonServiceParams } from "../../shared";
 import { VehicleParameters } from "./VehicleParams";
 
 /**

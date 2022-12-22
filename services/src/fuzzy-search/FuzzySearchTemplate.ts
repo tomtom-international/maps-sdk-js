@@ -1,7 +1,7 @@
 import { parseFuzzySearchResponse } from "./ResponseParser";
 import { buildFuzzySearchRequest } from "./RequestBuilder";
 import { getJson } from "../shared/Fetch";
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "./types";
 import { fuzzySearchRequestSchema } from "./FuzzySearchRequestSchema";
 

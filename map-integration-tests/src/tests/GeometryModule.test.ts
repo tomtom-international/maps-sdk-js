@@ -1,6 +1,6 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { GeometryModuleConfig } from "map";
-import { MapGeoJSONFeature, LngLatBoundsLike } from "maplibre-gl";
+import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,

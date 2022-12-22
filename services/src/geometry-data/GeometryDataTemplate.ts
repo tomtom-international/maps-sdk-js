@@ -1,5 +1,5 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import { GeometryDataResponseAPI } from "./types/APITypes";
 import { GeometryDataParams } from "./types/GeometryDataParams";
 import { buildGeometryDataRequest } from "./RequestBuilder";

@@ -1,7 +1,7 @@
 import { parseGeometrySearchResponse } from "./ResponseParser";
 import { buildGeometrySearchRequest } from "./RequestBuilder";
 import { postJson, PostObject } from "../shared/Fetch";
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import {
     GeometrySearchParams,
     GeometrySearchResponse,

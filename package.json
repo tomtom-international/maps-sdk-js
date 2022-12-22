@@ -73,7 +73,7 @@
     "map": "file:map",
     "services": "file:services",
     "size-limit": "^8.1.0",
-    "typedoc": "^0.23.21",
+    "typedoc": "^0.23.23",
     "typedoc-plugin-markdown": "^3.14.0",
     "typedoc-plugin-missing-exports": "^1.0.0"
   },

@@ -1,5 +1,5 @@
 import { Place, Places } from "@anw/go-sdk-js/core";
-import { CommonServiceParams } from "../../shared/ServiceTypes";
+import { CommonServiceParams } from "../../shared";
 
 /**
  * Geometry IDs or places containing them.

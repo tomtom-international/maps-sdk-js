@@ -7,7 +7,7 @@ import {
     InputSectionTypes,
     ThrillingParams
 } from "./types/CalculateRouteParams";
-import { CommonServiceParams } from "../shared/ServiceTypes";
+import { CommonServiceParams } from "../shared";
 import { appendByRepeatingParamName, appendCommonParams } from "../shared/RequestBuildingUtils";
 import {
     CombustionConsumptionModel,

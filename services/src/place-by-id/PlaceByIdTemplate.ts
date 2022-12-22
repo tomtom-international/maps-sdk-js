@@ -1,4 +1,4 @@
-import { ServiceTemplate } from "../shared/ServiceTypes";
+import { ServiceTemplate } from "../shared";
 import { getJson } from "../shared/Fetch";
 import { placeByIdRequestSchema } from "./PlaceByIdSchema";
 import { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
