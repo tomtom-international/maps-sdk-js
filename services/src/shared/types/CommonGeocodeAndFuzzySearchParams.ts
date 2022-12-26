@@ -5,7 +5,7 @@ import { HasBBox } from "@anw/go-sdk-js/core";
  * @group Shared
  * @category Types
  */
-export type GeocodeSearchParams = {
+export type CommonGeocodeAndFuzzySearchParams = {
     /**
      * If the typeahead flag is set, the query will be interpreted as a partial input, and the search will enter predictive mode.
      * @default false

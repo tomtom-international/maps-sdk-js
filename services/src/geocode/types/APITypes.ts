@@ -1,11 +1,4 @@
-import {
-    AddressRangesAPI,
-    BoundingBoxAPI,
-    EntryPointAPI,
-    LatLonAPI,
-    Summary,
-    ViewportAPI
-} from "../../shared/types/APIResponseTypes";
+import { AddressRangesAPI, BoundingBoxAPI, EntryPointAPI, LatLonAPI, SummaryAPI, ViewportAPI } from "../../shared";
 import { GeocodingProps } from "./GeocodingResponse";
 
 /**
@@ -36,7 +29,7 @@ export type GeocodingResponseAPI = {
     /**
      * Summary information about the search that was performed.
      */
-    summary: Summary;
+    summary: SummaryAPI;
     /**
      * The result list, sorted in descending order by score.
      */

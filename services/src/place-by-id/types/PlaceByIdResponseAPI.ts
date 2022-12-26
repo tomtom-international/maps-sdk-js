@@ -1,4 +1,4 @@
-import { CommonSearchPlaceResultAPI, Summary } from "../../shared/types/APIResponseTypes";
+import { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared";
 
 /**
  * @ignore
@@ -16,7 +16,7 @@ export type PlaceByIdResponseAPI = {
     /**
      * Summary information about the search that was performed.
      */
-    summary: Summary;
+    summary: SummaryAPI;
     /**
      * The result list, sorted in descending order by score.
      */

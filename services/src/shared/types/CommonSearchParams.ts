@@ -1,6 +1,6 @@
 import { ConnectorType, Fuel } from "@anw/go-sdk-js/core";
 import { CommonPlacesParams } from "./CommonPlacesParams";
-import { IndexTypesAbbreviation } from "./APIResponseTypes";
+import { IndexTypesAbbreviation } from "./APIPlacesResponseTypes";
 import { POICategory } from "../../poi-categories/poiCategoriesToID";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "./ServicesTypes";
 

@@ -1,23 +1,12 @@
-import { views } from "@anw/go-sdk-js/core";
 import { z } from "zod";
-import { hasLngLatSchema } from "../shared/GeometriesSchema";
 import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
 import { ZodRawShape } from "zod/lib/types";
-
-const searchParamsMandatory = z.object({
-    query: z.string()
-});
+import { commonPlacesParamsSchema } from "../shared/CommonPlacesParamsSchema";
 
 const poiCategoriesToIDZodObject = z.object(poiCategoriesToID as unknown as ZodRawShape);
 
-const searchParamsOptional = z
+const searchExtraParamsOptional = z
     .object({
-        position: hasLngLatSchema,
-        limit: z.number(),
-        extendedPostalCodesFor: z.string().array(),
-        mapcodes: z.string().array(),
-        view: z.enum(views),
-        geographyTypes: z.string().array(),
         indexes: z.string().array(),
         poiCategories: z.array(z.number().or(poiCategoriesToIDZodObject.keyof())),
         poiBrands: z.string().array(),
@@ -38,4 +27,4 @@ const searchParamsOptional = z
  * @group Search
  * @category Types
  */
-export const commonSearchParamsSchema = searchParamsMandatory.merge(searchParamsOptional);
+export const commonSearchParamsSchema = commonPlacesParamsSchema.merge(searchExtraParamsOptional);

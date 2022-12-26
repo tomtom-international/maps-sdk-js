@@ -205,7 +205,7 @@ describe("ReverseGeocoding schema validation", () => {
         const invalidParams: ReverseGeocodingParams = {
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            radius: "2000"
+            radiusMeters: "2000"
         };
 
         await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
@@ -213,7 +213,7 @@ describe("ReverseGeocoding schema validation", () => {
             errors: [
                 {
                     code: "invalid_type",
-                    path: ["radius"],
+                    path: ["radiusMeters"],
                     message: "Expected number, received string"
                 }
             ]

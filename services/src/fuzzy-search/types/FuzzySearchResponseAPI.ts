@@ -1,4 +1,4 @@
-import { CommonSearchPlaceResultAPI, Summary } from "../../shared/types/APIResponseTypes";
+import { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared";
 import { BookmarkIntent, NearbyIntentDetails, W3WIntent } from "./FuzzySearchResponse";
 
 /**
@@ -17,7 +17,7 @@ export type FuzzySearchResponseAPI = {
     /**
      * Summary information about the search that was performed.
      */
-    summary: Summary & {
+    summary: SummaryAPI & {
         queryIntent: QueryIntentAPI[];
     };
     /**

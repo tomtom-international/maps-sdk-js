@@ -1,14 +1,9 @@
 import { z } from "zod";
 import { commonSearchParamsSchema } from "../search/CommonSearchParamsSchema";
-import { hasBBoxSchema } from "../shared/GeometriesSchema";
+import { commonGeocodeAndFuzzySearchParamsSchema } from "../shared/CommonGeocodeAndFuzzySearchParamsSchema";
 
 const fuzzySearchRequestOptional = z
     .object({
-        typeahead: z.boolean(),
-        offset: z.number(),
-        countries: z.string().array(),
-        radiusMeters: z.number(),
-        boundingBox: hasBBoxSchema,
         minFuzzyLevel: z.number().min(1).max(4),
         mixFuzzyLevel: z.number().min(1).max(4)
     })
@@ -19,4 +14,6 @@ const fuzzySearchRequestOptional = z
  * @group Fuzzy Search
  * @category Types
  */
-export const fuzzySearchRequestSchema = commonSearchParamsSchema.merge(fuzzySearchRequestOptional);
+export const fuzzySearchRequestSchema = commonSearchParamsSchema.merge(
+    commonGeocodeAndFuzzySearchParamsSchema.merge(fuzzySearchRequestOptional)
+);

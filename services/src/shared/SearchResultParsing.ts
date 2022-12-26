@@ -1,7 +1,7 @@
 import { Brand, Place, SearchPlaceProps, toPointFeature } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
 import { latLonAPIToPosition } from "./Geometry";
-import { CommonSearchPlaceResultAPI } from "./types/APIResponseTypes";
+import { CommonSearchPlaceResultAPI } from "./types/APIPlacesResponseTypes";
 
 /**
  * Shared response parsing between geometry search and place by id service.

@@ -1,11 +1,11 @@
-import { CommonSearchParams, GeocodeSearchParams } from "../../shared";
+import { CommonSearchParams, CommonGeocodeAndFuzzySearchParams } from "../../shared";
 
 /**
  * @group Fuzzy Search
  * @category Types
  */
 export type FuzzySearchParams = CommonSearchParams &
-    GeocodeSearchParams & {
+    CommonGeocodeAndFuzzySearchParams & {
         /**
          * Minimum fuzzyness level to be used.
          * @default 1

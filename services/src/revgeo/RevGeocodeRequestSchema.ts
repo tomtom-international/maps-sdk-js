@@ -13,7 +13,7 @@ const revGeocodeRequestOptional = z
         heading: z.number().min(-360).max(360),
         mapcodes: z.string().array(),
         number: z.string(),
-        radius: z.number(),
+        radiusMeters: z.number(),
         returnMatchType: z.boolean(),
         returnRoadUse: z.boolean(),
         returnSpeedLimit: z.boolean(),

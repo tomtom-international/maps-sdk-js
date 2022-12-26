@@ -1,5 +1,5 @@
 import { BBox, Position } from "geojson";
-import { BoundingBoxAPI, BoundingBoxTopLeftAPI, LatLonAPI } from "./types/APIResponseTypes";
+import { BoundingBoxAPI, BoundingBoxTopLeftAPI, LatLonAPI } from "./types/APIPlacesResponseTypes";
 
 /**
  * @ignore

@@ -1,4 +1,4 @@
-import { CommonPlacesParams, GeocodeSearchParams, IndexTypesAbbreviation } from "../../shared";
+import { CommonPlacesParams, CommonGeocodeAndFuzzySearchParams, IndexTypesAbbreviation } from "../../shared";
 
 type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
 
@@ -6,7 +6,7 @@ type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
  * @group Geocoding
  * @category Types
  */
-export type GeocodingParams = Omit<CommonPlacesParams & GeocodeSearchParams, "extendedPostalCodesFor"> & {
+export type GeocodingParams = Omit<CommonPlacesParams & CommonGeocodeAndFuzzySearchParams, "extendedPostalCodesFor"> & {
     /**
      * Indexes for which extended postal codes should be included in the results.
      * Available values are described in Additional Information indexes abbreviation values section.

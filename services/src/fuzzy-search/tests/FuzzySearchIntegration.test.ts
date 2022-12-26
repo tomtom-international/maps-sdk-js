@@ -2,7 +2,7 @@ import { Fuel, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core"
 
 import { search } from "../../search";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
-import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
+import { IndexTypesAbbreviation } from "../../shared";
 import { baseSearchPlaceMandatoryProps } from "../../shared/tests/IntegrationTestUtils";
 import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
 import { buildFuzzySearchRequest } from "../RequestBuilder";

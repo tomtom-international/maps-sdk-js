@@ -1,6 +1,6 @@
 import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../ServiceTypes";
-import { IndexTypesAbbreviation } from "./APIResponseTypes";
+import { IndexTypesAbbreviation } from "./APIPlacesResponseTypes";
 
 /**
  * Common parameters to services related to places services (search, geocoding, reverse geocoding).

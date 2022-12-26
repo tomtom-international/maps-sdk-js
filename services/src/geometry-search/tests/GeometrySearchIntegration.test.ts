@@ -4,7 +4,7 @@ import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../ResponseParser";
 import { buildGeometrySearchRequest } from "../RequestBuilder";
 import { GeometrySearchParams, GeometrySearchResponse, GeometrySearchResponseAPI, SearchGeometryInput } from "../types";
-import { IndexTypesAbbreviation } from "../../shared/types/APIResponseTypes";
+import { IndexTypesAbbreviation } from "../../shared";
 import { baseSearchPOITestProps } from "../../shared/tests/IntegrationTestUtils";
 import realGeometryDataInput from "./RealGeometryDataInput.json";
 import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
