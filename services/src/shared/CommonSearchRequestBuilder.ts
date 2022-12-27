@@ -5,17 +5,18 @@ import {
     appendLatLonParamsFromPosition,
     appendOptionalParam,
     mapPOICategoriesToIDs
-} from "../shared/RequestBuildingUtils";
+} from "./RequestBuildingUtils";
 import { GeometrySearchParams } from "../geometry-search";
 
 /**
- * Default function for search request
+ * Appends request parameters common to search APIs such as fuzzy + geometry search.
+ * * Mutates the given searchURL with the appended parameters.
  * @group Search
  * @category Functions
- * @param searchURL
+ * @param searchURL The search URL to append parameters to. Should come without any parameters at this point.
  * @param params The search parameters, with global configuration already merged into them.
  */
-export const buildSearchRequest = (searchURL: URL, params: FuzzySearchParams | GeometrySearchParams): URL => {
+export const appendCommonSearchParams = (searchURL: URL, params: FuzzySearchParams | GeometrySearchParams): void => {
     const urlParams = searchURL.searchParams;
 
     appendCommonParams(urlParams, params);
@@ -38,6 +39,4 @@ export const buildSearchRequest = (searchURL: URL, params: FuzzySearchParams | G
     appendOptionalParam(urlParams, "timeZone", params.timeZone);
     appendOptionalParam(urlParams, "relatedPois", params.relatedPois);
     appendByJoiningParamValue(urlParams, "entityTypeSet", params.geographyTypes);
-
-    return searchURL;
 };

@@ -2,7 +2,7 @@ import { PostObject } from "../shared/Fetch";
 import { GeometryAPI, GeometrySearchParams, SearchByGeometryPayloadAPI, SearchGeometryInput } from "./types";
 import { positionToCSVLatLon } from "../shared/Geometry";
 import { sampleWithinMaxLength } from "../shared/Arrays";
-import { buildSearchRequest } from "../search/RequestBuilder";
+import { appendCommonSearchParams } from "../shared/CommonSearchRequestBuilder";
 
 const sdkGeometryToAPIGeometries = (searchGeometry: SearchGeometryInput): GeometryAPI[] => {
     switch (searchGeometry.type) {
@@ -47,7 +47,7 @@ const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
  */
 export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostObject<SearchByGeometryPayloadAPI> => {
     const url = new URL(`${buildURLBasePath(params)}`);
-    buildSearchRequest(url, params);
+    appendCommonSearchParams(url, params);
 
     return {
         url,

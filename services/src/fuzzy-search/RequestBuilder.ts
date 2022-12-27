@@ -1,7 +1,7 @@
 import { bboxFromGeoJSON } from "@anw/go-sdk-js/core";
 import { FuzzySearchParams } from "./types";
 import { appendByJoiningParamValue, appendOptionalParam } from "../shared/RequestBuildingUtils";
-import { buildSearchRequest } from "../search/RequestBuilder";
+import { appendCommonSearchParams } from "../shared/CommonSearchRequestBuilder";
 import { arrayToCSV } from "../shared/Arrays";
 
 const buildURLBasePath = (mergedOptions: FuzzySearchParams): string =>
@@ -15,8 +15,8 @@ const buildURLBasePath = (mergedOptions: FuzzySearchParams): string =>
  */
 export const buildFuzzySearchRequest = (params: FuzzySearchParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}`);
-    const commonSearchURL = buildSearchRequest(url, params);
-    const urlParams = commonSearchURL.searchParams;
+    appendCommonSearchParams(url, params);
+    const urlParams = url.searchParams;
     appendOptionalParam(urlParams, "typeahead", params.typeahead);
     appendOptionalParam(urlParams, "ofs", params.offset);
     appendByJoiningParamValue(urlParams, "countrySet", params.countries);
