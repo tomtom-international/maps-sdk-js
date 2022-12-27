@@ -1,5 +1,5 @@
 import { EventsModule } from "../EventsModule";
-import { EventProxy } from "../EventProxy";
+import { EventsProxy } from "../EventsProxy";
 import { StyleSourceWithLayers } from "../SourceWithLayers";
 
 const mockedMapModule = { source: { id: "testModule" } } as StyleSourceWithLayers;
@@ -9,7 +9,7 @@ describe("EventsModule tests", () => {
     const MockEventProxy = {
         addEventHandler: jest.fn(),
         remove: jest.fn()
-    } as unknown as EventProxy;
+    } as unknown as EventsProxy;
 
     afterAll(() => {
         mockConsoleError.mockRestore();
