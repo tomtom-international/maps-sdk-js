@@ -4,12 +4,6 @@ import { calculateRouteTemplate, CalculateRouteTemplate } from "./CalculateRoute
 import { callService } from "../shared/ServiceTemplate";
 
 /**
- * @group Calculate Route
- * @category Types
- */
-export type CalculateRouteResponse = { routes: Routes };
-
-/**
  * The Calculate Route service calculates a route between an origin and a destination,
  * passing through waypoints if they are specified.
  *
@@ -27,6 +21,6 @@ export type CalculateRouteResponse = { routes: Routes };
 export const calculateRoute = async (
     params: CalculateRouteParams,
     customTemplate?: Partial<CalculateRouteTemplate>
-): Promise<CalculateRouteResponse> => {
+): Promise<Routes> => {
     return callService(params, { ...calculateRouteTemplate, ...customTemplate }, "Routing");
 };

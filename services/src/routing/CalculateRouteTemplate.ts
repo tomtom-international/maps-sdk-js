@@ -1,6 +1,6 @@
+import { Routes } from "@anw/go-sdk-js/core";
 import { ServiceTemplate } from "../shared";
 import { CalculateRouteParams } from "./types/CalculateRouteParams";
-import { CalculateRouteResponse } from "./CalculateRoute";
 import { buildCalculateRouteRequest } from "./RequestBuilder";
 import { parseCalculateRouteResponse } from "./ResponseParser";
 import { getJson } from "../shared/Fetch";
@@ -12,12 +12,7 @@ import { calculateRouteRequestSchema } from "./CalculateRouteRequestSchema";
  * @group Calculate Route
  * @category Types
  */
-export type CalculateRouteTemplate = ServiceTemplate<
-    CalculateRouteParams,
-    URL,
-    CalculateRouteResponseAPI,
-    CalculateRouteResponse
->;
+export type CalculateRouteTemplate = ServiceTemplate<CalculateRouteParams, URL, CalculateRouteResponseAPI, Routes>;
 
 /**
  * @group Calculate Route

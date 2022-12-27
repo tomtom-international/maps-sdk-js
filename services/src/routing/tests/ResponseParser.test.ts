@@ -1,12 +1,12 @@
+import { Routes } from "@anw/go-sdk-js/core";
 import apiAndParsedResponses from "./ResponseParser.data.json";
 import longAPIResponse from "./ResponseParserPerf.data.json";
 import { parseCalculateRouteResponse } from "../ResponseParser";
 import { CalculateRouteResponseAPI } from "../types/APITypes";
-import { CalculateRouteResponse } from "../CalculateRoute";
 import errorResponses from "./ResponseParserError.data.json";
 import { parseRoutingResponseError } from "../RoutingResponseErrorParser";
 import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
-import { SDKServiceError } from "../../shared/Errors";
+import { SDKServiceError } from "../../shared";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 
 describe("Calculate Route response parsing functional tests", () => {
@@ -14,7 +14,7 @@ describe("Calculate Route response parsing functional tests", () => {
     test.each(apiAndParsedResponses)(
         "'%s'",
         // @ts-ignore
-        (_name: string, apiResponse: CalculateRouteResponseAPI, parsedResponse: CalculateRouteResponse) => {
+        (_name: string, apiResponse: CalculateRouteResponseAPI, parsedResponse: Routes) => {
             // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
             // (We reparse the objects to compare them ignoring the order of properties)
             expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse)))).toStrictEqual(

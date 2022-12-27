@@ -5,6 +5,7 @@ import {
     Guidance,
     LegSectionProps,
     Route,
+    Routes,
     SectionProps,
     SectionsProps,
     SectionType,
@@ -16,7 +17,6 @@ import {
 import isNil from "lodash/isNil";
 import { LineString } from "geojson";
 
-import { CalculateRouteResponse } from "./CalculateRoute";
 import { CalculateRouteResponseAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
 
 const parseSummary = (apiSummary: SummaryAPI): Summary => ({
@@ -171,14 +171,12 @@ const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[]): R
  * @category Functions
  * @param apiResponse
  */
-export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): CalculateRouteResponse => {
+export const parseCalculateRouteResponse = (apiResponse: CalculateRouteResponseAPI): Routes => {
     const features = apiResponse.routes.map(parseRoute);
     const bbox = bboxFromGeoJSON(features);
     return {
-        routes: {
-            type: "FeatureCollection",
-            ...(bbox && { bbox }),
-            features
-        }
+        type: "FeatureCollection",
+        ...(bbox && { bbox }),
+        features
     };
 };

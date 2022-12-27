@@ -1,7 +1,8 @@
 import { Guidance } from "./Guidance";
 import { SectionsProps } from "./Sections";
 import { Summary } from "./Summary";
-import { Feature, FeatureCollection, LineString } from "geojson";
+import { Feature, LineString } from "geojson";
+import { FeatureCollectionWithProperties } from "../ExtendedGeoJSON";
 
 /**
  * Specifies something that the route calculation should try to avoid when determining the route.
@@ -60,4 +61,7 @@ export type Route<P extends RouteProps = RouteProps> = Feature<LineString, P>;
  * @group Route
  * @category Types
  */
-export type Routes<P extends RouteProps = RouteProps> = FeatureCollection<LineString, P>;
+export type Routes<
+    P extends RouteProps = RouteProps,
+    FeatureCollectionProps = unknown
+> = FeatureCollectionWithProperties<LineString, P, FeatureCollectionProps>;

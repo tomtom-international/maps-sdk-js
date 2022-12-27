@@ -1,3 +1,4 @@
+export * from "./ExtendedGeoJSON";
 export * from "./Geometry";
 export * from "./place/Place";
 export * from "./place/PlaceDataSources";

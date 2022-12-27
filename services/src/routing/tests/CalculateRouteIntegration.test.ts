@@ -68,8 +68,8 @@ describe("Calculate route integration tests", () => {
                 }
             });
 
-            expect(result.routes?.features?.length).toEqual(1);
-            const routeFeature = result.routes.features[0];
+            expect(result?.features?.length).toEqual(1);
+            const routeFeature = result.features[0];
             expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
             const routeProperties = routeFeature.properties;
             assertSummaryBasics(routeProperties.summary);
@@ -136,8 +136,8 @@ describe("Calculate route integration tests", () => {
                 }
             }
         });
-        expect(result.routes?.features?.length).toEqual(1);
-        const routeFeature = result.routes.features[0];
+        expect(result?.features?.length).toEqual(1);
+        const routeFeature = result.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
         const routeProperties = routeFeature.properties;
         assertSummaryBasics(routeProperties.summary);
@@ -175,8 +175,8 @@ describe("Calculate route integration tests", () => {
             }
         });
 
-        expect(result.routes?.features?.length).toEqual(3);
-        for (const routeFeature of result.routes.features) {
+        expect(result?.features?.length).toEqual(3);
+        for (const routeFeature of result.features) {
             expect(routeFeature).toBeDefined();
             expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
             const routeProperties = routeFeature.properties;
