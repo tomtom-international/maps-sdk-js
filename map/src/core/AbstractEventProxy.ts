@@ -1,6 +1,6 @@
 import remove from "lodash/remove";
 import { StyleSourceWithLayers } from "./SourceWithLayers";
-import { EventHandlers, EventType, HoverClickHandler } from "./types/EventProxy";
+import { EventHandlers, EventType, HoverClickHandler } from "./types/EventsProxy";
 
 interface SourceWithLayersMap {
     [sourceID: string]: StyleSourceWithLayers;

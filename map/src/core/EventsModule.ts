@@ -1,5 +1,5 @@
 import { EventsProxy } from "./EventsProxy";
-import { EventType, HoverClickHandler } from "./types/EventProxy";
+import { EventType, HoverClickHandler } from "./types/EventsProxy";
 import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
 
 export class EventsModule {

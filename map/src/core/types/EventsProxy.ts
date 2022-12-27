@@ -1,5 +1,5 @@
 import { LngLat, MapGeoJSONFeature } from "maplibre-gl";
-import { StyleSourceWithLayers } from "../SourceWithLayers";
+import { SourceWithLayers } from "./GOSDKLayerSpecs";
 
 export type ClickEvent = "click" | "contextmenu";
 export type HoverEvent = "hover" | "long-hover";
@@ -14,7 +14,7 @@ export type EventType = ClickEvent | HoverEvent;
 export type HoverClickHandler = (
     lngLat?: LngLat,
     feature?: MapGeoJSONFeature,
-    sourceWithLayers?: StyleSourceWithLayers
+    sourceWithLayers?: SourceWithLayers
 ) => void;
 
 export type EventHandlers = { [_: string]: Array<HoverClickHandler> };

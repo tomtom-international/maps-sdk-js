@@ -1,7 +1,7 @@
 import { Map, Point2D, MapGeoJSONFeature, LngLat, MapMouseEvent } from "maplibre-gl";
 import { POI_SOURCE_ID } from "../pois";
 import { AbstractEventProxy } from "./AbstractEventProxy";
-import { ClickEvent } from "./types/EventProxy";
+import { ClickEvent } from "./types/EventsProxy";
 import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
 
 const toPaddedBounds = (point: Point2D): [[number, number], [number, number]] => {
