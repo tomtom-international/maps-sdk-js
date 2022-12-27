@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.67](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.66...v0.1.67) (2022-12-27)
+
+
+### Features
+
+* **routing:** changing routing response type into a geojson extension ([6f74f99](https://github.com/tomtom-international/go-sdk-js/commit/6f74f99e4c3b4a18599f9b8f0b1c4f2300ed7b97))
+
 ### [0.1.66](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.65...v0.1.66) (2022-12-20)
 
 
