@@ -1,6 +1,5 @@
 import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
-import { EventsModule } from "../core";
+import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule } from "../core";
 import { placesLayerSpec } from "./layers/PlacesLayers";
 import { poiClassificationToIconID } from "./poiIconIDMapping";
 import { PlaceDisplayProps } from "./types/PlaceDisplayProps";

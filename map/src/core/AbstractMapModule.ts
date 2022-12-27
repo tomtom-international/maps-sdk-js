@@ -41,7 +41,7 @@ export abstract class AbstractMapModule<CFG = undefined> {
     protected abstract init(config?: CFG): void;
 
     /**
-     * Initializes the module events.
+     * Initializes the module events and allows to register handlers to them
      * @protected
      * @ignore
      */

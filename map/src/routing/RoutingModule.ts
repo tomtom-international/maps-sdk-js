@@ -1,5 +1,5 @@
 import { Routes, Waypoints } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, GeoJSONSourceWithLayers } from "../core";
+import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule } from "../core";
 import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
@@ -32,7 +32,6 @@ import { buildDisplayRoutes } from "./util/Routes";
 import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { asDefined, assertDefined } from "../core/AssertionUtils";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
-import { EventsModule } from "../core";
 
 export const WAYPOINTS_SOURCE_ID = "waypoints";
 export const WAYPOINT_SYMBOLS_LAYER_ID = "waypointsSymbol";

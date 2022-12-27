@@ -1,8 +1,7 @@
-import { AbstractMapModule } from "../core";
+import { AbstractMapModule, EventsModule } from "../core";
 import { isLayerLocalizable } from "./localization";
 import { MapLanguageConfig } from "./types/MapLanguageConfig";
 import { GOSDKMap } from "../GOSDKMap";
-import { EventsModule } from "../core";
 
 /**
  * @group Language

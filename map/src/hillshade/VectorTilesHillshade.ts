@@ -1,8 +1,7 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
-import { AbstractMapModule, StyleSourceWithLayers } from "../core";
+import { AbstractMapModule, StyleSourceWithLayers, EventsModule } from "../core";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
-import { EventsModule } from "../core";
 
 export const HILLSHADE_SOURCE_ID = "hillshade";
 
