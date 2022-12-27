@@ -1,4 +1,3 @@
-import geometrySearch from "../GeometrySearch";
 import { GeometrySearchParams, SearchGeometryInput } from "../types";
 import { geometrySearchRequestSchema } from "../GeometrySearchRequestSchema";
 import geometrySearchReqObjects from "../../geometry-search/tests/RequestBuilderPerf.data.json";
@@ -6,6 +5,9 @@ import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 
 describe("GeometrySearch Schema Validation", () => {
+    const apiKey = "APIKEY";
+    const commonBaseURL = "https://api-test.tomtom.com";
+
     const geometries: SearchGeometryInput[] = [
         {
             type: "Polygon",
@@ -50,50 +52,62 @@ describe("GeometrySearch Schema Validation", () => {
         const incorrectGeometry = [{ type: "Circle", radius: 6000 }];
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["geometries", 0],
-                    message: "Invalid input"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, incorrectGeometry, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "undefined",
+                        path: ["geometries"],
+                        message: "Required"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when missing type property", async () => {
         const query = "cafe";
         const incorrectGeometry = [{ radius: 6000, coordinates: [37.71205, -121.36434] }];
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["geometries", 0],
-                    message: "Invalid input"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, incorrectGeometry, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "undefined",
+                        path: ["geometries"],
+                        message: "Required"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when geometryList property is missing", async () => {
         const query = "cafe";
         // @ts-ignore
-        await expect(geometrySearch({ query })).rejects.toMatchObject({
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "undefined",
-                    path: ["geometries"],
-                    message: "Required"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "undefined",
+                        path: ["geometries"],
+                        message: "Required"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when type Circle is missing radius property", async () => {
@@ -106,52 +120,60 @@ describe("GeometrySearch Schema Validation", () => {
         ];
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries: incorrectGeometry })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "custom",
-                    message: 'type: "Circle" must have radius property',
-                    path: ["geometries", 0]
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, incorrectGeometry, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "undefined",
+                        path: ["geometries"],
+                        message: "Required"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when query is missing", async () => {
         // @ts-ignore
-        await expect(geometrySearch({ geometries })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "string",
-                    received: "undefined",
-                    path: ["query"],
-                    message: "Required"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ geometries, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "string",
+                        received: "undefined",
+                        path: ["query"],
+                        message: "Required"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when query is not of type string", async () => {
         const query = undefined;
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "string",
-                    received: "undefined",
-                    path: ["query"],
-                    message: "Required"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, geometries, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "string",
+                        received: "undefined",
+                        path: ["query"],
+                        message: "Required"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when map-code is not of type array", async () => {
@@ -159,40 +181,44 @@ describe("GeometrySearch Schema Validation", () => {
         const mapcodes = "Local";
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries, mapcodes })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "string",
-                    path: ["mapcodes"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, geometries, mapcodes, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["mapcodes"],
+                        message: "Expected array, received string"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when view is not amongst the defined enums", async () => {
         const query = "POI";
         const view = "CH";
         //@ts-ignore
-        await expect(geometrySearch({ query, geometries, view })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    received: "CH",
-                    code: "invalid_enum_value",
-                    options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
-                    path: ["view"],
-                    message:
-                        "Invalid enum value. " +
-                        "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'CH'"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, geometries, view, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        received: "CH",
+                        code: "invalid_enum_value",
+                        options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
+                        path: ["view"],
+                        message:
+                            "Invalid enum value. " +
+                            "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'CH'"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when index is not of type array", async () => {
@@ -200,19 +226,21 @@ describe("GeometrySearch Schema Validation", () => {
         const indexes = "STR";
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries, indexes })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "string",
-                    path: ["indexes"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema({ query, geometries, indexes, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["indexes"],
+                        message: "Expected array, received string"
+                    }
+                ]
+            })
+        );
     });
 
     test("it should fail when POI categories are not of type array", async () => {
@@ -220,178 +248,158 @@ describe("GeometrySearch Schema Validation", () => {
         const poiCategories = 7315025;
 
         // @ts-ignore
-        await expect(geometrySearch({ query, geometries, poiCategories })).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["poiCategories"],
-                    message: "Expected array, received number"
-                }
-            ]
-        });
+        const validationResult = () =>
+            validateRequestSchema(
+                { query, geometries, poiCategories, apiKey, commonBaseURL },
+                geometrySearchRequestSchema
+            );
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        expected: "array",
+                        received: "number",
+                        code: "invalid_type",
+                        path: ["poiCategories"],
+                        message: "Expected array, received number"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when POI categories are of type string-array", async () => {
+    test("it should fail when POI categories are of type string-array", () => {
         const query = "Restaurant";
         const poiCategory1 = "7315025";
-
-        // @ts-ignore
-        await expect(
-            geometrySearch({
-                query,
-                geometries,
-                // @ts-ignore
-                poiCategories: [poiCategory1]
-            })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    path: ["poiCategories", 0],
-                    message: "Invalid input"
-                }
-            ]
+        const schema = geometrySearchRequestSchema.safeParse({
+            // @ts-ignore
+            query,
+            geometries,
+            // @ts-ignore
+            poiCategories: [poiCategory1]
         });
+        expect(schema.success).toEqual(false);
     });
 
     test("it should fail when POI brands is of type string", async () => {
         const query = "Restaurant";
         const poiBrands = "TomTom";
 
-        await expect(
-            geometrySearch({
-                query,
-                geometries,
-                // @ts-ignore
-                poiBrands
+        const validationResult = () =>
+            validateRequestSchema({ query, geometries, poiBrands, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["poiBrands"],
+                        message: "Expected array, received string"
+                    }
+                ]
             })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "string",
-                    path: ["poiBrands"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        );
     });
 
     test("it should fail when connectors is of type string", async () => {
         const query = "EV";
         const connectors = "IEC62196Type1";
 
-        await expect(
-            geometrySearch({
-                query,
-                geometries,
-                // @ts-ignore
-                connectors
+        const validationResult = () =>
+            validateRequestSchema(
+                { query, geometries, connectors, apiKey, commonBaseURL },
+                geometrySearchRequestSchema
+            );
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["connectors"],
+                        message: "Expected array, received string"
+                    }
+                ]
             })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "string",
-                    path: ["connectors"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        );
     });
 
     test("it should fail when fuel is of type string", async () => {
         const query = "EV";
         const fuelTypes = "AdBlue";
 
-        await expect(
-            geometrySearch({
-                query,
-                geometries,
-                // @ts-ignore
-                fuelTypes
+        const validationResult = () =>
+            validateRequestSchema({ query, geometries, fuelTypes, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["fuelTypes"],
+                        message: "Expected array, received string"
+                    }
+                ]
             })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "string",
-                    path: ["fuelTypes"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        );
     });
 
     test("it should fail when geography type is of type string", async () => {
         const query = "EV";
         const geographyTypes = "Municipality";
 
-        await expect(
-            geometrySearch({
-                query,
-                geometries,
-                // @ts-ignore
-                geographyTypes
+        const validationResult = () =>
+            validateRequestSchema(
+                { query, geometries, geographyTypes, apiKey, commonBaseURL },
+                geometrySearchRequestSchema
+            );
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["geographyTypes"],
+                        message: "Expected array, received string"
+                    }
+                ]
             })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "array",
-                    received: "string",
-                    path: ["geographyTypes"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        );
     });
 
     test("it should fail when lan and lon parameters are not between permitted values", async () => {
         const query = "EV";
-
-        await expect(
-            geometrySearch({
-                query,
-                geometries,
-                position: [-200, 95]
+        const position = [-200, 95];
+        const validationResult = () =>
+            validateRequestSchema({ query, geometries, position, apiKey, commonBaseURL }, geometrySearchRequestSchema);
+        expect(validationResult).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "too_small",
+                        minimum: -180,
+                        type: "number",
+                        inclusive: true,
+                        exact: false,
+                        message: "Number must be greater than or equal to -180",
+                        path: ["position", 0]
+                    },
+                    {
+                        code: "too_big",
+                        maximum: 90,
+                        type: "number",
+                        inclusive: true,
+                        exact: false,
+                        message: "Number must be less than or equal to 90",
+                        path: ["position", 1]
+                    }
+                ]
             })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "GeometrySearch",
-            errors: [
-                {
-                    code: "too_small",
-                    minimum: -180,
-                    type: "number",
-                    inclusive: true,
-                    message: "Number must be greater than or equal to -180",
-                    path: ["position", 0]
-                },
-                {
-                    code: "too_big",
-                    maximum: 90,
-                    type: "number",
-                    inclusive: true,
-                    message: "Number must be less than or equal to 90",
-                    path: ["position", 1]
-                }
-            ]
-        });
+        );
     });
 });
 
