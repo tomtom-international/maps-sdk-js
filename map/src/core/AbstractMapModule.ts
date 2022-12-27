@@ -45,7 +45,7 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * @protected
      * @ignore
      */
-    protected abstract get events(): EventsModule | { [k: string]: EventsModule };
+    protected abstract get events(): EventsModule | Record<string, EventsModule>;
 
     /**
      * Merges the given optional config with the module optional config and returns it.
