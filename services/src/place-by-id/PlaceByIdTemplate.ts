@@ -1,5 +1,5 @@
 import { ServiceTemplate } from "../shared";
-import { getJson } from "../shared/Fetch";
+import { get } from "../shared/Fetch";
 import { placeByIdRequestSchema } from "./PlaceByIdSchema";
 import { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
 import { buildPlaceByIdRequest } from "./RequestBuilder";
@@ -19,7 +19,7 @@ export type PlaceByIdTemplate = ServiceTemplate<PlaceByIdParams, URL, PlaceByIdR
  */
 export const placeByIdTemplate: PlaceByIdTemplate = {
     buildRequest: buildPlaceByIdRequest,
-    sendRequest: getJson,
+    sendRequest: get,
     parseResponse: parsePlaceByIdResponse,
     validateRequestSchema: placeByIdRequestSchema
 };

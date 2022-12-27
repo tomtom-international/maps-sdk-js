@@ -3,7 +3,7 @@ import { ServiceTemplate } from "../shared";
 import { GeometryDataResponseAPI } from "./types/APITypes";
 import { GeometryDataParams } from "./types/GeometryDataParams";
 import { buildGeometryDataRequest } from "./RequestBuilder";
-import { getJson } from "../shared/Fetch";
+import { get } from "../shared/Fetch";
 import { parseGeometryDataResponse } from "./ResponseParser";
 import { geometryDataRequestSchema } from "./GeometryDataRequestSchema";
 
@@ -25,6 +25,6 @@ export type GeometryDataTemplate = ServiceTemplate<
 export const geometryDataTemplate: GeometryDataTemplate = {
     validateRequestSchema: geometryDataRequestSchema,
     buildRequest: buildGeometryDataRequest,
-    sendRequest: getJson,
+    sendRequest: get,
     parseResponse: parseGeometryDataResponse
 };

@@ -3,7 +3,7 @@ import { EVChargingStationsAvailabilityParams } from "./types/EVChargingStations
 import { EVChargingStationsAvailabilityResponse } from "./types/EVChargingStationsAvailabilityResponse";
 import { buildEVChargingStationsAvailabilityRequest } from "./RequestBuilder";
 import { parseEVChargingStationsAvailabilityResponse } from "./ResponseParser";
-import { getJson } from "../shared/Fetch";
+import { get } from "../shared/Fetch";
 import { evChargingStationsAvailabilityRequestSchema } from "./EVChargingStationsAvailabilityRequestSchema";
 import { parseEVChargingStationsAvailabilityResponseError } from "./EVChargingStationsAvailabilityResponseErrorParser";
 
@@ -27,7 +27,7 @@ export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
 export const evChargingStationsAvailabilityTemplate: EVChargingStationsAvailabilityTemplate = {
     validateRequestSchema: evChargingStationsAvailabilityRequestSchema,
     buildRequest: buildEVChargingStationsAvailabilityRequest,
-    sendRequest: getJson,
+    sendRequest: get,
     parseResponse: parseEVChargingStationsAvailabilityResponse,
     parseResponseError: parseEVChargingStationsAvailabilityResponseError
 };

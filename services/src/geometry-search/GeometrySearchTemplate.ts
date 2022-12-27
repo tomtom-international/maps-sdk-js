@@ -1,6 +1,6 @@
 import { parseGeometrySearchResponse } from "./ResponseParser";
 import { buildGeometrySearchRequest } from "./RequestBuilder";
-import { postJson, PostObject } from "../shared/Fetch";
+import { post, PostObject } from "../shared/Fetch";
 import { ServiceTemplate } from "../shared";
 import {
     GeometrySearchParams,
@@ -30,6 +30,6 @@ export type GeometrySearchTemplate = ServiceTemplate<
 export const geometrySearchTemplate: GeometrySearchTemplate = {
     validateRequestSchema: geometrySearchRequestSchema,
     buildRequest: buildGeometrySearchRequest,
-    sendRequest: postJson,
+    sendRequest: post,
     parseResponse: parseGeometrySearchResponse
 };

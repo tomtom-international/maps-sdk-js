@@ -1,16 +1,14 @@
 import { Guidance, Instruction, Summary, TrafficCategory, TrafficIncidentTEC, TravelMode } from "@anw/go-sdk-js/core";
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type ReportAPI = {
     effectiveSettings: { key: string; value: string }[];
 };
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type SectionTypeAPI =
     | "CAR_TRAIN"
@@ -28,8 +26,7 @@ export type SectionTypeAPI =
     | "CARPOOL";
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type SectionAPI = {
     sectionType: SectionTypeAPI;
@@ -45,8 +42,7 @@ export type SectionAPI = {
 };
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type SummaryAPI = Omit<Summary, "arrivalTime" | "departureTime"> & {
     arrivalTime: string;
@@ -54,44 +50,38 @@ export type SummaryAPI = Omit<Summary, "arrivalTime" | "departureTime"> & {
 };
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
+ * @see {@link https://developer.tomtom.com/routing-api/documentation/routing/common-routing-parameters point}
  */
-export type LatLngAPI = {
+export type LatLngPointAPI = {
     latitude: number;
     longitude: number;
 };
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type LegAPI = {
-    points: LatLngAPI[];
+    points: LatLngPointAPI[];
     summary: SummaryAPI;
 };
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type InstructionAPI = Omit<Instruction, "point"> & {
-    point: {
-        latitude: number;
-        longitude: number;
-    };
+    point: LatLngPointAPI;
 };
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type GuidanceAPI = Omit<Guidance, "instructions"> & {
     instructions: InstructionAPI[];
 };
+
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type RouteAPI = {
     legs: LegAPI[];
@@ -101,8 +91,7 @@ export type RouteAPI = {
 };
 
 /**
- * @group Calculate Route
- * @category Types
+ * @ignore
  */
 export type CalculateRouteResponseAPI = {
     formatVersion: string;

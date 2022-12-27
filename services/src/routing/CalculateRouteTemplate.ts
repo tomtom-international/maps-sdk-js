@@ -3,7 +3,7 @@ import { ServiceTemplate } from "../shared";
 import { CalculateRouteParams } from "./types/CalculateRouteParams";
 import { buildCalculateRouteRequest } from "./RequestBuilder";
 import { parseCalculateRouteResponse } from "./ResponseParser";
-import { getJson } from "../shared/Fetch";
+import { get } from "../shared/Fetch";
 import { CalculateRouteResponseAPI } from "./types/APITypes";
 import { parseRoutingResponseError } from "./RoutingResponseErrorParser";
 import { calculateRouteRequestSchema } from "./CalculateRouteRequestSchema";
@@ -20,7 +20,7 @@ export type CalculateRouteTemplate = ServiceTemplate<CalculateRouteParams, URL, 
  */
 export const calculateRouteTemplate: CalculateRouteTemplate = {
     buildRequest: buildCalculateRouteRequest,
-    sendRequest: getJson,
+    sendRequest: get,
     parseResponse: parseCalculateRouteResponse,
     parseResponseError: parseRoutingResponseError,
     validateRequestSchema: calculateRouteRequestSchema

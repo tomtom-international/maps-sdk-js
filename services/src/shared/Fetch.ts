@@ -6,7 +6,7 @@ import axios from "axios";
  * @ignore
  * @param url The URL to fetch.
  */
-export const getJson = async <T>(url: URL): Promise<T> => {
+export const get = async <T>(url: URL): Promise<T> => {
     const response = await axios.get(url.toString());
     return response.data;
 };
@@ -23,7 +23,7 @@ export type PostObject<D> = { url: URL; data?: D };
  * @ignore
  * @param input The POST object with URL and optional payload.
  */
-export const postJson = async <T, D>(input: PostObject<D>): Promise<T> => {
+export const post = async <T, D>(input: PostObject<D>): Promise<T> => {
     const response = await axios.post(input.url.toString(), input.data);
     return response.data;
 };

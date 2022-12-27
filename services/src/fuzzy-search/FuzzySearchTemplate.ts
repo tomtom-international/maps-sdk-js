@@ -1,6 +1,6 @@
 import { parseFuzzySearchResponse } from "./ResponseParser";
 import { buildFuzzySearchRequest } from "./RequestBuilder";
-import { getJson } from "../shared/Fetch";
+import { get } from "../shared/Fetch";
 import { ServiceTemplate } from "../shared";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "./types";
 import { fuzzySearchRequestSchema } from "./FuzzySearchRequestSchema";
@@ -20,6 +20,6 @@ export type FuzzySearchTemplate = ServiceTemplate<FuzzySearchParams, URL, FuzzyS
 export const fuzzySearchTemplate: FuzzySearchTemplate = {
     validateRequestSchema: fuzzySearchRequestSchema,
     buildRequest: buildFuzzySearchRequest,
-    sendRequest: getJson,
+    sendRequest: get,
     parseResponse: parseFuzzySearchResponse
 };
