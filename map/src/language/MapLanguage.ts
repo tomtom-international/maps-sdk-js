@@ -2,7 +2,7 @@ import { AbstractMapModule } from "../core";
 import { isLayerLocalizable } from "./localization";
 import { MapLanguageConfig } from "./types/MapLanguageConfig";
 import { GOSDKMap } from "../GOSDKMap";
-import { EventModule } from "../core/EventModule";
+import { EventsModule } from "../core";
 
 /**
  * @group Language
@@ -41,6 +41,6 @@ export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
     }
 
     get events() {
-        return new EventModule(this.goSDKMap._eventsProxy);
+        return new EventsModule(this.goSDKMap._eventsProxy);
     }
 }

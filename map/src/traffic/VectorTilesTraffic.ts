@@ -2,7 +2,7 @@ import isNil from "lodash/isNil";
 import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers } from "../core";
 import { VectorTilesTrafficConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
-import { EventModule } from "../core/EventModule";
+import { EventsModule } from "../core";
 
 export const VECTOR_TILES_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
 export const VECTOR_TILES_FLOW_SOURCE_ID = "vectorTilesFlow";
@@ -118,8 +118,8 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
 
     get events() {
         return {
-            incidents: new EventModule(this.goSDKMap._eventsProxy, this.incidents),
-            flow: new EventModule(this.goSDKMap._eventsProxy, this.flow)
+            incidents: new EventsModule(this.goSDKMap._eventsProxy, this.incidents),
+            flow: new EventsModule(this.goSDKMap._eventsProxy, this.flow)
         };
     }
 }

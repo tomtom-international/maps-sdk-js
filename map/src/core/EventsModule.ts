@@ -1,22 +1,18 @@
-import { EventProxy } from "./EventProxy";
+import { EventsProxy } from "./EventsProxy";
 import { EventType, HoverClickHandler } from "./types/EventProxy";
-import { GeoJSONSourceWithLayers, StyleSourceWithLayers } from "./SourceWithLayers";
-import { FeatureCollection } from "geojson";
+import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
 
-export class EventModule {
-    constructor(
-        private eventProxy: EventProxy,
-        private mapModule?: StyleSourceWithLayers | GeoJSONSourceWithLayers<FeatureCollection>
-    ) {}
+export class EventsModule {
+    constructor(private eventProxy: EventsProxy, private mapModule?: SourceWithLayers) {}
 
     /**
      * Add Event to the EventProxy list
      * @private
      * @ignore
      */
-    private addToEventProxy(type: EventType, callback: HoverClickHandler) {
+    private addToEventProxy(type: EventType, handler: HoverClickHandler) {
         if (this.mapModule) {
-            this.eventProxy.addEventListener(this.mapModule, callback, type);
+            this.eventProxy.addEventHandler(this.mapModule, handler, type);
         } else {
             console.error("mapModule can't be undefined.");
         }
@@ -36,16 +32,16 @@ export class EventModule {
     }
 
     /**
-     * Add an event to map layer.
+     * Add event handler of an event type
      * @param type
      * @param callback
      */
-    on(type: EventType, callback: HoverClickHandler) {
-        this.addToEventProxy(type, callback);
+    on(type: EventType, handler: HoverClickHandler) {
+        this.addToEventProxy(type, handler);
     }
 
     /**
-     * Remove an event from map layer.
+     * Remove event handlers for event type
      * @param type
      */
     off(type: EventType) {

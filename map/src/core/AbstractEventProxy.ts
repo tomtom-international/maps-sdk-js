@@ -1,6 +1,6 @@
 import remove from "lodash/remove";
 import { StyleSourceWithLayers } from "./SourceWithLayers";
-import { EventListeners, EventType, HoverClickHandler } from "./types/EventProxy";
+import { EventHandlers, EventType, HoverClickHandler } from "./types/EventProxy";
 
 interface SourceWithLayersMap {
     [sourceID: string]: StyleSourceWithLayers;
@@ -10,17 +10,13 @@ export abstract class AbstractEventProxy {
     // This is the list of all sources/layers we listen to:
     protected interactiveSourcesAndLayers: SourceWithLayersMap = {};
     protected interactiveLayerIDs: string[] = [];
-    protected listeners: EventListeners = {};
+    protected handlers: EventHandlers = {};
 
     /**
      * Adds the given sources and layers as interactive, so we'll listen to them for hover and click.
      * @param sourcesWithLayers The sources and layers to listen to.
      */
     private add = (sourceWithLayers: StyleSourceWithLayers) => {
-        if (this.has(sourceWithLayers)) {
-            return;
-        }
-
         const sourceID = sourceWithLayers.source.id;
         this.interactiveSourcesAndLayers[sourceID] = sourceWithLayers;
         sourceWithLayers.layerSpecs.forEach((layerSpec) => {
@@ -32,25 +28,21 @@ export abstract class AbstractEventProxy {
 
     /**
      * Register an event listener to the list.
-     * @param sourcesWithLayers The sources and layers to remove, matched by source and layer IDs.
-     * @param listener Function that will handle the event.
+     * @param sourcesWithLayers The sources and layers to added.
+     * @param handler Function that will handle the event.
      * @param type Type of event to listen to.
      */
-    public addEventListener = (
-        sourceWithLayers: StyleSourceWithLayers,
-        listener: HoverClickHandler,
-        type: EventType
-    ) => {
+    public addEventHandler = (sourceWithLayers: StyleSourceWithLayers, handler: HoverClickHandler, type: EventType) => {
         if (!this.has(sourceWithLayers)) {
             this.add(sourceWithLayers);
         }
 
-        const listenerId = `${sourceWithLayers.source.id}_${type}`;
-        const listenerExists = this.listeners[listenerId] && this.listeners[listenerId].indexOf(listener) !== -1;
+        const handlerId = `${sourceWithLayers.source.id}_${type}`;
+        const handlerExists = this.handlers[handlerId] && this.handlers[handlerId].indexOf(handler) !== -1;
 
-        if (!listenerExists) {
-            this.listeners[listenerId] = this.listeners[listenerId] || [];
-            this.listeners[listenerId].push(listener);
+        if (!handlerExists) {
+            this.handlers[handlerId] = this.handlers[handlerId] || [];
+            this.handlers[handlerId].push(handler);
         }
     };
 
@@ -60,7 +52,7 @@ export abstract class AbstractEventProxy {
      * @param sourcesWithLayers The sources and layers to remove, matched by source and layer IDs.
      */
     public remove = (type: EventType, sourceWithLayers: StyleSourceWithLayers) => {
-        delete this.listeners[`${sourceWithLayers.source.id}_${type}`];
+        delete this.handlers[`${sourceWithLayers.source.id}_${type}`];
         delete this.interactiveSourcesAndLayers[sourceWithLayers.source.id];
         sourceWithLayers.layerSpecs.forEach((layer) => {
             remove(this.interactiveLayerIDs, (item) => layer.id.includes(item));
@@ -73,7 +65,7 @@ export abstract class AbstractEventProxy {
     public removeAll = () => {
         this.interactiveSourcesAndLayers = {};
         this.interactiveLayerIDs = [];
-        this.listeners = {};
+        this.handlers = {};
     };
 
     /**

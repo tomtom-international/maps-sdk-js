@@ -2,7 +2,7 @@ import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
 import { AbstractMapModule, StyleSourceWithLayers } from "../core";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
-import { EventModule } from "../core/EventModule";
+import { EventsModule } from "../core";
 
 export const HILLSHADE_SOURCE_ID = "hillshade";
 
@@ -49,6 +49,6 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
     }
 
     get events() {
-        return new EventModule(this.goSDKMap._eventsProxy, this.hillshade);
+        return new EventsModule(this.goSDKMap._eventsProxy, this.hillshade);
     }
 }

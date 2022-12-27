@@ -32,7 +32,7 @@ import { buildDisplayRoutes } from "./util/Routes";
 import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { asDefined, assertDefined } from "../core/AssertionUtils";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
-import { EventModule } from "../core/EventModule";
+import { EventsModule } from "../core";
 
 export const WAYPOINTS_SOURCE_ID = "waypoints";
 export const WAYPOINT_SYMBOLS_LAYER_ID = "waypointsSymbol";
@@ -227,13 +227,13 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
 
     get events() {
         return {
-            routeLines: new EventModule(this.goSDKMap._eventsProxy, this.routeLines),
-            waypoints: new EventModule(this.goSDKMap._eventsProxy, this.waypoints),
-            vehicleRestricted: new EventModule(this.goSDKMap._eventsProxy, this.vehicleRestricted),
-            incidents: new EventModule(this.goSDKMap._eventsProxy, this.incidents),
-            ferries: new EventModule(this.goSDKMap._eventsProxy, this.ferries),
-            tollRoads: new EventModule(this.goSDKMap._eventsProxy, this.tollRoads),
-            tunnels: new EventModule(this.goSDKMap._eventsProxy, this.tunnels)
+            routeLines: new EventsModule(this.goSDKMap._eventsProxy, this.routeLines),
+            waypoints: new EventsModule(this.goSDKMap._eventsProxy, this.waypoints),
+            vehicleRestricted: new EventsModule(this.goSDKMap._eventsProxy, this.vehicleRestricted),
+            incidents: new EventsModule(this.goSDKMap._eventsProxy, this.incidents),
+            ferries: new EventsModule(this.goSDKMap._eventsProxy, this.ferries),
+            tollRoads: new EventsModule(this.goSDKMap._eventsProxy, this.tollRoads),
+            tunnels: new EventsModule(this.goSDKMap._eventsProxy, this.tunnels)
         };
     }
 }

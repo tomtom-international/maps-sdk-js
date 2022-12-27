@@ -1,7 +1,8 @@
 import { Map, Point2D, MapGeoJSONFeature, LngLat, MapMouseEvent } from "maplibre-gl";
-import { StyleSourceWithLayers } from "./SourceWithLayers";
+import { POI_SOURCE_ID } from "../pois";
 import { AbstractEventProxy } from "./AbstractEventProxy";
 import { ClickEvent } from "./types/EventProxy";
+import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
 
 const toPaddedBounds = (point: Point2D): [[number, number], [number, number]] => {
     return [
@@ -16,13 +17,13 @@ const toPaddedBounds = (point: Point2D): [[number, number], [number, number]] =>
  * This is the place where we handle the user events on the map (mousemove/hover and click mostly).
  * To have full control on hovers and clicks when multiple overlapping layers are present, that logic must be centralized here.
  */
-export class EventProxy extends AbstractEventProxy {
+export class EventsProxy extends AbstractEventProxy {
     private map: Map;
     private enabled = true;
     private hoveringLngLat?: LngLat;
     private hoveringPoint?: Point2D;
     private hoveringFeature?: MapGeoJSONFeature;
-    private hoveringSourceWithLayers?: StyleSourceWithLayers;
+    private hoveringSourceWithLayers?: SourceWithLayers;
     // delayed hover control:
     // The first hover we do after the map moves is longer:
     private firstHoverAfterMapMoveDelayMS = 800;
@@ -32,7 +33,7 @@ export class EventProxy extends AbstractEventProxy {
     // Control flag to indicate that the coming hover is the first one since the map is "quiet" again:
     private firstDelayedHoverSinceMapMove = true;
     private lastClickedFeature?: MapGeoJSONFeature;
-    private lastClickedSourceWithLayers?: StyleSourceWithLayers;
+    private lastClickedSourceWithLayers?: SourceWithLayers;
     private lastCursorStyle = "default";
 
     constructor(map: Map) {
@@ -77,7 +78,6 @@ export class EventProxy extends AbstractEventProxy {
 
     private onMouseDown = () => {
         this.lastCursorStyle = this.map.getCanvas().style.cursor;
-        this.lastCursorStyle = this.map.getCanvas().style.cursor;
         this.map.getCanvas().style.cursor = "grabbing";
     };
 
@@ -103,7 +103,7 @@ export class EventProxy extends AbstractEventProxy {
 
         if (hoveredTopFeature) {
             // Workaround/hack to avoid listening to map style POIs without ID (bad data):
-            if (hoveredTopFeature.source === "poiTiles" && !hoveredTopFeature.properties?.id) {
+            if (hoveredTopFeature.source === POI_SOURCE_ID && !hoveredTopFeature.properties?.id) {
                 return;
             }
 
@@ -141,9 +141,9 @@ export class EventProxy extends AbstractEventProxy {
             : undefined;
 
         if (hoverChangeDetected) {
-            if (this.listeners[listenerId]) {
+            if (this.handlers[listenerId]) {
                 // (If de-hovering this should fire undefined, undefined):
-                this.listeners[listenerId].forEach((cb) =>
+                this.handlers[listenerId].forEach((cb) =>
                     cb(ev.lngLat, this.hoveringFeature, this.hoveringSourceWithLayers)
                 );
             }
@@ -180,8 +180,8 @@ export class EventProxy extends AbstractEventProxy {
             this.firstDelayedHoverSinceMapMove = false;
             if (this.hoveringSourceWithLayers) {
                 const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
-                if (this.listeners[listenerId]) {
-                    this.listeners[listenerId].forEach((cb) =>
+                if (this.handlers[listenerId]) {
+                    this.handlers[listenerId].forEach((cb) =>
                         cb(this.hoveringLngLat, this.hoveringFeature, this.hoveringSourceWithLayers)
                     );
                 }
@@ -203,9 +203,9 @@ export class EventProxy extends AbstractEventProxy {
 
         if (
             this.lastClickedSourceWithLayers &&
-            this.listeners[this.lastClickedSourceWithLayers.source.id + `_${clickType}`]
+            this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`]
         ) {
-            this.listeners[this.lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb) => {
+            this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb) => {
                 cb(ev.lngLat, this.lastClickedFeature, this.lastClickedSourceWithLayers);
             });
         }

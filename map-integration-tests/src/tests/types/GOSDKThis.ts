@@ -22,8 +22,14 @@ export type GOSDKThis = typeof globalThis & {
     places?: GeoJSONPlaces;
     geometry?: GeometryModule;
     routing?: RoutingModule;
+    // These properties are used for testing events in a map
+    // It's initialized by 0 and you can assert the count of:
+    // Hovers
     _numOfHovers: number;
+    // Clicks
     _numOfClicks: number;
+    // Right click
     _numOfContextmenuClicks: number;
+    // Long-hover (The cursor stops for long period at the same layer)
     _numOfLongHovers: number;
 };

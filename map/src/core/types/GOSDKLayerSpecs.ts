@@ -1,4 +1,6 @@
+import { FeatureCollection } from "geojson";
 import { BackgroundLayerSpecification, LayerSpecification } from "maplibre-gl";
+import { GeoJSONSourceWithLayers, StyleSourceWithLayers } from "../SourceWithLayers";
 
 /**
  * Layer specification that supports a data source.
@@ -41,3 +43,9 @@ export type LayerSpecTemplate<L extends LayerSpecification> = Omit<L, "id" | "so
  * @ignore
  */
 export type LayerSpecFilter = (layerSpec: LayerSpecification) => boolean;
+
+/**
+ * GO SDK layer specifications template, without ID nor source, to be still initialized in some map module.
+ * @ignore
+ */
+export type SourceWithLayers = StyleSourceWithLayers | GeoJSONSourceWithLayers<FeatureCollection>;

@@ -1,13 +1,13 @@
-import { EventModule } from "../EventModule";
+import { EventsModule } from "../EventsModule";
 import { EventProxy } from "../EventProxy";
 import { StyleSourceWithLayers } from "../SourceWithLayers";
 
 const mockedMapModule = { source: { id: "testModule" } } as StyleSourceWithLayers;
 const mockConsoleError = jest.spyOn(global.console, "error").mockImplementation();
 
-describe("EventModule tests", () => {
+describe("EventsModule tests", () => {
     const MockEventProxy = {
-        addEventListener: jest.fn(),
+        addEventHandler: jest.fn(),
         remove: jest.fn()
     } as unknown as EventProxy;
 
@@ -16,16 +16,16 @@ describe("EventModule tests", () => {
     });
 
     test("Add an event", () => {
-        const event = new EventModule(MockEventProxy, mockedMapModule);
+        const event = new EventsModule(MockEventProxy, mockedMapModule);
         const callback = jest.fn();
 
         event.on("click", callback);
 
-        expect(MockEventProxy.addEventListener).toHaveBeenCalledWith(mockedMapModule, callback, "click");
+        expect(MockEventProxy.addEventHandler).toHaveBeenCalledWith(mockedMapModule, callback, "click");
     });
 
     test("Add an event without mapModule", () => {
-        const event = new EventModule(MockEventProxy);
+        const event = new EventsModule(MockEventProxy);
         const callback = jest.fn();
 
         event.on("click", callback);
@@ -34,7 +34,7 @@ describe("EventModule tests", () => {
     });
 
     test("Remove an event", () => {
-        const event = new EventModule(MockEventProxy, mockedMapModule);
+        const event = new EventsModule(MockEventProxy, mockedMapModule);
 
         event.off("click");
 
@@ -42,7 +42,7 @@ describe("EventModule tests", () => {
     });
 
     test("Remove an event without mapModule", () => {
-        const event = new EventModule(MockEventProxy);
+        const event = new EventsModule(MockEventProxy);
         event.off("click");
         expect(console.error).toHaveBeenCalledWith("mapModule can't be undefined.");
     });

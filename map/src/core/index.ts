@@ -5,4 +5,5 @@ export * from "./SourceWithLayers";
 export * from "./AbstractMapModule";
 export * from "./GOSDKSource";
 export * from "./TimeUtils";
-export * from "./EventProxy";
+export * from "./EventsProxy";
+export * from "./EventsModule";
