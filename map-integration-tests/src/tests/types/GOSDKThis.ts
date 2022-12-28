@@ -1,9 +1,10 @@
-import { Map } from "maplibre-gl";
+import { Map, LngLatLike, MapGeoJSONFeature } from "maplibre-gl";
 import {
     GeoJSONPlaces,
     GeometryModule,
     GOSDKMap,
     RoutingModule,
+    SourceWithLayers,
     VectorTilePOIs,
     VectorTilesHillshade,
     VectorTilesTraffic
@@ -32,4 +33,9 @@ export type GOSDKThis = typeof globalThis & {
     _numOfContextmenuClicks: number;
     // Long-hover (The cursor stops for long period at the same layer)
     _numOfLongHovers: number;
+    // These properties are used for testing the parameters returned
+    // to the callback handler
+    _clickedLngLat?: LngLatLike;
+    _clickedFeature?: MapGeoJSONFeature;
+    _clickedSourceWithLayers?: SourceWithLayers;
 };

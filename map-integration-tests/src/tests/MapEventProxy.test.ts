@@ -34,14 +34,13 @@ describe("EventProxy integration tests", () => {
             (globalThis as GOSDKThis)._numOfHovers = 0;
             (globalThis as GOSDKThis)._numOfLongHovers = 0;
         });
-    });
 
-    test("Add click and contextmenu events for POI", async () => {
         await mapEnv.loadMap({
             zoom: 10,
             // Amsterdam center
             center: [4.89067, 52.37313]
         });
+
         await page.evaluate(() => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
@@ -50,6 +49,9 @@ describe("EventProxy integration tests", () => {
 
         await showPlaces(POIs as Places);
         await waitForRenderedPlaces(POIs.features.length);
+    });
+
+    test("Add click and contextmenu events for POI", async () => {
         await page.evaluate(() => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.places?.events.on("click", () => goSDKThis._numOfClicks++);
@@ -71,20 +73,6 @@ describe("EventProxy integration tests", () => {
     });
 
     test("Add hover and long hover events for POI", async () => {
-        await mapEnv.loadMap({
-            zoom: 10,
-            // Amsterdam center
-            center: [4.89067, 52.37313]
-        });
-
-        await page.evaluate(() => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
-        });
-        await waitForMapStyleToLoad();
-
-        await showPlaces(POIs as Places);
-        await waitForRenderedPlaces(POIs.features.length);
         await page.evaluate(() => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.places?.events.on("hover", () => goSDKThis._numOfHovers++);
@@ -128,6 +116,37 @@ describe("EventProxy integration tests", () => {
 
         expect(numOfHovers).toBe(3);
         expect(numOfLongHovers).toBe(2);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Callback handler arguments defined", async () => {
+        await page.evaluate(() => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.places?.events.on("click", (lnglat, feature, sourceWithLayers) => {
+                goSDKThis._clickedLngLat = lnglat;
+                goSDKThis._clickedFeature = feature;
+                goSDKThis._clickedSourceWithLayers = sourceWithLayers;
+            });
+        });
+        const POIPosition = await page.evaluate(
+            (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
+            poiCoordinates
+        );
+        await page.mouse.click(POIPosition.x, POIPosition.y);
+
+        const lntlat = await page.evaluate(() => (globalThis as GOSDKThis)._clickedLngLat);
+        const feature = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeature);
+        const sourceWithLayers = await page.evaluate(
+            () => (globalThis as GOSDKThis)._clickedSourceWithLayers?.layerSpecs
+        );
+
+        expect(lntlat).toMatchObject({
+            lng: expect.any(Number),
+            lat: expect.any(Number)
+        });
+        expect(feature).toHaveProperty("type", "Feature");
+        expect(sourceWithLayers).toHaveLength(1);
+        expect(sourceWithLayers).toContainEqual(expect.objectContaining({ source: "places", id: "placesSymbols" }));
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });
