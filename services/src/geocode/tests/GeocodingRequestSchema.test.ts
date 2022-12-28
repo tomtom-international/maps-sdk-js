@@ -9,7 +9,7 @@ describe("Geocoding schema validation", () => {
     const apiKey = "APIKEY";
     const commonBaseURL = "https://api-test.tomtom.com";
 
-    test("it should fail when view is an invalid param", async () => {
+    test("it should fail when view is an invalid param", () => {
         const invalidParams: GeocodingParams = {
             query: "amsterdam",
             //@ts-ignore
@@ -36,7 +36,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when limit is invalid", async () => {
+    test("it should fail when limit is invalid", () => {
         const invalidParams: GeocodingParams = {
             query: "amsterdam",
             typeahead: true,
@@ -62,7 +62,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when offset is invalid", async () => {
+    test("it should fail when offset is invalid", () => {
         const invalidParams: GeocodingParams = {
             query: "amsterdam",
             offset: 1901, // Invalid value, offset <= 1900
@@ -87,7 +87,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when country format is invalid", async () => {
+    test("it should fail when country format is invalid", () => {
         const invalidParams: GeocodingParams = {
             query: "amsterdam",
             // @ts-ignore
@@ -111,7 +111,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when query is missing in the request", async () => {
+    test("it should fail when query is missing in the request", () => {
         // @ts-ignore
         const invalidParams: GeocodingParams = {
             limit: 100,
@@ -134,7 +134,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when query is in an invalid format", async () => {
+    test("it should fail when query is in an invalid format", () => {
         const invalidParams: GeocodingParams = {
             // @ts-ignore
             query: 33601,
@@ -156,7 +156,7 @@ describe("Geocoding schema validation", () => {
             })
         );
     });
-    test("it should fail when radius is incorrect", async () => {
+    test("it should fail when radius is incorrect", () => {
         const invalidParams: GeocodingParams = {
             query: "London",
             boundingBox: {
@@ -192,7 +192,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when extendedPostalCodesFor format is incorrect", async () => {
+    test("it should fail when extendedPostalCodesFor format is incorrect", () => {
         const invalidParams: GeocodingParams = {
             query: "London",
             // @ts-ignore
@@ -216,7 +216,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when mapcode format is incorrect", async () => {
+    test("it should fail when mapcode format is incorrect", () => {
         const invalidParams: GeocodingParams = {
             query: "London",
             // @ts-ignore
@@ -240,7 +240,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when geographyTypes format is incorrect", async () => {
+    test("it should fail when geographyTypes format is incorrect", () => {
         const invalidParams: GeocodingParams = {
             query: "London",
             // @ts-ignore
@@ -264,7 +264,7 @@ describe("Geocoding schema validation", () => {
         );
     });
 
-    test("it should fail when position lat/lon is out of range", async () => {
+    test("it should fail when position lat/lon is out of range", () => {
         const invalidParams: GeocodingParams = {
             query: "Minnesota",
             position: [46.6144, -93.1432], //Inverted coords for Minnesota

@@ -1,4 +1,4 @@
-import EVChargingStationsAvailability, { evChargingStationsAvailability } from "../EVChargingStationsAvailability";
+import { evChargingStationsAvailability } from "../EVChargingStationsAvailability";
 import { EVChargingStationsAvailabilityParams } from "../types/EVChargingStationsAvailabilityParams";
 import requestObjects from "./RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
@@ -9,7 +9,7 @@ describe("EV Charging Stations availability schema validation", () => {
     const apiKey = "APIKEY";
     const commonBaseURL = "https://api-test.tomtom.com";
 
-    test("it should fail when id is an invalid param", async () => {
+    test("it should fail when id is an invalid param", () => {
         const invalidParams: EVChargingStationsAvailabilityParams = {
             //@ts-ignore
             id: 555,
@@ -52,7 +52,7 @@ describe("EV Charging Stations availability schema validation", () => {
         }
     );
 
-    test("it should fail when connectorTypes is invalid and id is missing", async () => {
+    test("it should fail when connectorTypes is invalid and id is missing", () => {
         const invalidParams: EVChargingStationsAvailabilityParams = {
             //@ts-ignore
             connectorTypes: "Tesla",
@@ -82,7 +82,7 @@ describe("EV Charging Stations availability schema validation", () => {
             })
         );
     });
-    test("it should fail when connectorTypes is array of invalid values", async () => {
+    test("it should fail when connectorTypes is array of invalid values", () => {
         const invalidParams: EVChargingStationsAvailabilityParams = {
             id: "abc",
             //@ts-ignore
@@ -127,7 +127,7 @@ describe("EV Charging Stations availability schema validation", () => {
         );
     });
 
-    test("it should fail when max or min PowerKW is invalid", async () => {
+    test("it should fail when max or min PowerKW is invalid", () => {
         const invalidParams: EVChargingStationsAvailabilityParams = {
             id: "abc",
             //@ts-ignore

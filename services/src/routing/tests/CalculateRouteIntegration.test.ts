@@ -113,28 +113,29 @@ describe("Calculate route integration tests", () => {
                     }
                 },
                 [4.47059, 51.92291]
-            ],
-            vehicle: {
-                dimensions: {
-                    weightKG: 3500
-                },
-                consumption: {
-                    engineType: "electric",
-                    speedsToConsumptionsKWH: [
-                        { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                        { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                    ],
-                    auxiliaryPowerInkW: 1.7,
-                    currentChargeKWH: 43,
-                    maxChargeKWH: 85,
-                    efficiency: {
-                        acceleration: 0.66,
-                        deceleration: 0.91,
-                        uphill: 0.74,
-                        downhill: 0.73
-                    }
-                }
-            }
+            ]
+
+            // vehicle: {
+            //     dimensions: {
+            //         weightKG: 3500
+            //     },
+            //     consumption: {
+            //         engineType: "electric",
+            //         speedsToConsumptionsKWH: [
+            //             { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //             { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //         ],
+            //         auxiliaryPowerInkW: 1.7,
+            //         currentChargeKWH: 43,
+            //         maxChargeKWH: 85,
+            //         efficiency: {
+            //             acceleration: 0.66,
+            //             deceleration: 0.91,
+            //             uphill: 0.74,
+            //             downhill: 0.73
+            //         }
+            //     }
+            // }
         });
         expect(result?.features?.length).toEqual(1);
         const routeFeature = result.features[0];

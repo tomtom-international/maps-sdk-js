@@ -1,4 +1,3 @@
-import reverseGeocode from "../ReverseGeocoding";
 import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 import revGeoReqObjects from "../../revgeo/tests/RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
@@ -6,335 +5,352 @@ import { validateRequestSchema } from "../../shared/Validation";
 import { revGeocodeRequestSchema } from "../RevGeocodeRequestSchema";
 
 describe("ReverseGeocoding schema validation", () => {
-    test("it should fail when position is an invalid param - case 1", async () => {
+    const apiKey = "APIKEY";
+    const commonBaseURL = "https://api-test.tomtom.com";
+    test("it should fail when position is an invalid param - case 1", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             // @ts-ignore
             position: { lon: -122.420679, lat: 37.772537 }
         };
-
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["position"],
-                    message: "Invalid input"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
     });
 
-    test("it should fail when latitude/longitude is out of range", async () => {
-        await expect(
-            reverseGeocode({
-                position: [200, -95]
-            })
-        ).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
+    test("it should fail when latitude/longitude is out of range", () => {
+        expect(() =>
+            validateRequestSchema(
                 {
-                    code: "too_big",
-                    maximum: 180,
-                    type: "number",
-                    inclusive: true,
-                    message: "Number must be less than or equal to 180",
-                    path: ["position", 0]
+                    apiKey,
+                    commonBaseURL,
+                    position: [200, -95]
                 },
-                {
-                    code: "too_small",
-                    minimum: -90,
-                    type: "number",
-                    inclusive: true,
-                    message: "Number must be greater than or equal to -90",
-                    path: ["position", 1]
-                }
-            ]
-        });
+                revGeocodeRequestSchema
+            )
+        ).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "too_big",
+                        maximum: 180,
+                        type: "number",
+                        inclusive: true,
+                        exact: false,
+                        message: "Number must be less than or equal to 180",
+                        path: ["position", 0]
+                    },
+                    {
+                        code: "too_small",
+                        minimum: -90,
+                        type: "number",
+                        inclusive: true,
+                        exact: false,
+                        message: "Number must be greater than or equal to -90",
+                        path: ["position", 1]
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when position is an invalid param - case 2", async () => {
+    test("it should fail when position is an invalid param - case 2", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             // @ts-ignore
             position: (-122.420679, 37.772537)
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["position"],
-                    message: "Invalid input"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
     });
 
-    test("it should fail when position is an invalid param - case 3", async () => {
+    test("it should fail when position is an invalid param - case 3", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             // @ts-ignore
             position: "-122.420679, 37.772537"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["position"],
-                    message: "Invalid input"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
     });
 
-    test("it should fail when position is absent", async () => {
+    test("it should fail when position is absent", () => {
         // @ts-ignore
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             geographyType: ["Country"]
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_union",
-                    path: ["position"],
-                    message: "Invalid input"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
     });
 
-    test("it should fail when heading isn't less than or equal to 360", async () => {
+    test("it should fail when heading isn't less than or equal to 360", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             heading: 361
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "too_big",
-                    path: ["heading"],
-                    message: "Number must be less than or equal to 360"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "too_big",
+                        maximum: 360,
+                        type: "number",
+                        inclusive: true,
+                        exact: false,
+                        message: "Number must be less than or equal to 360",
+                        path: ["heading"]
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when heading isn't greater than or equal to -360", async () => {
+    test("it should fail when heading isn't in number format", () => {
         const invalidParams: ReverseGeocodingParams = {
-            position: [-122.420679, 37.772537],
-            // @ts-ignore
-            heading: -361
-        };
-
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "too_small",
-                    path: ["heading"],
-                    message: "Number must be greater than or equal to -360"
-                }
-            ]
-        });
-    });
-
-    test("it should fail when heading isn't in number format", async () => {
-        const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             heading: "180"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["heading"],
-                    message: "Expected number, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "number",
+                        received: "string",
+                        path: ["heading"],
+                        message: "Expected number, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when mapcode isn't of type string array", async () => {
+    test("it should fail when mapcode isn't of type string array", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             mapcodes: "Local"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["mapcodes"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["mapcodes"],
+                        message: "Expected array, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when param number isn't in string format", async () => {
+    test("it should fail when param number isn't in string format", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             number: 36
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["number"],
-                    message: "Expected string, received number"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "string",
+                        received: "number",
+                        path: ["number"],
+                        message: "Expected string, received number"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when param radius isn't in number format", async () => {
+    test("it should fail when param radius isn't in number format", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             radiusMeters: "2000"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["radiusMeters"],
-                    message: "Expected number, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "number",
+                        received: "string",
+                        path: ["radiusMeters"],
+                        message: "Expected number, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when param geography isn't a string array", async () => {
+    test("it should fail when param geography isn't a string array", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             geographyType: "Country"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["geographyType"],
-                    message: "Expected array, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "string",
+                        path: ["geographyType"],
+                        message: "Expected array, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when param returnRoadUse isn't of type string array", async () => {
+    test("it should fail when param returnRoadUse isn't of type string array", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             returnRoadUse: "LimitedAccess"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["returnRoadUse"],
-                    message: "Expected boolean, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "boolean",
+                        received: "string",
+                        path: ["returnRoadUse"],
+                        message: "Expected boolean, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when param allowFreeformNewline isn't of type boolean", async () => {
+    test("it should fail when param allowFreeformNewline isn't of type boolean", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             allowFreeformNewline: "true"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["allowFreeformNewline"],
-                    message: "Expected boolean, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "boolean",
+                        received: "string",
+                        path: ["allowFreeformNewline"],
+                        message: "Expected boolean, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when param returnSpeedLimit isn't of type boolean", async () => {
+    test("it should fail when param returnSpeedLimit isn't of type boolean", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             returnSpeedLimit: "true"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["returnSpeedLimit"],
-                    message: "Expected boolean, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "boolean",
+                        received: "string",
+                        path: ["returnSpeedLimit"],
+                        message: "Expected boolean, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when param returnMatchType isn't of type boolean", async () => {
+    test("it should fail when param returnMatchType isn't of type boolean", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             returnMatchType: "true"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_type",
-                    path: ["returnMatchType"],
-                    message: "Expected boolean, received string"
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "boolean",
+                        received: "string",
+                        path: ["returnMatchType"],
+                        message: "Expected boolean, received string"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should fail when view is an invalid param", async () => {
+    test("it should fail when view is an invalid param", () => {
         const invalidParams: ReverseGeocodingParams = {
+            apiKey,
+            commonBaseURL,
             position: [-122.420679, 37.772537],
             //@ts-ignore
             view: "MAA"
         };
 
-        await expect(reverseGeocode(invalidParams)).rejects.toMatchObject({
-            service: "ReverseGeocode",
-            errors: [
-                {
-                    code: "invalid_enum_value",
-                    message:
-                        "Invalid enum value. " +
-                        "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', " +
-                        "received 'MAA'",
-                    path: ["view"]
-                }
-            ]
-        });
+        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        received: "MAA",
+                        code: "invalid_enum_value",
+                        options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
+                        path: ["view"],
+                        message:
+                            "Invalid enum value. Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'"
+                    }
+                ]
+            })
+        );
     });
 });
 

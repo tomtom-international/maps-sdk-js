@@ -47,7 +47,7 @@ describe("GeometrySearch Schema Validation", () => {
         ).toMatchObject({ query: "restaurant", poiCategories: ["ITALIAN_RESTAURANT", "FRENCH_RESTAURANT"] });
     });
 
-    test("it should fail when missing coordinates property", async () => {
+    test("it should fail when missing coordinates property", () => {
         const query = "cafe";
         const incorrectGeometry = [{ type: "Circle", radius: 6000 }];
 
@@ -69,7 +69,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when missing type property", async () => {
+    test("it should fail when missing type property", () => {
         const query = "cafe";
         const incorrectGeometry = [{ radius: 6000, coordinates: [37.71205, -121.36434] }];
         // @ts-ignore
@@ -90,7 +90,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when geometryList property is missing", async () => {
+    test("it should fail when geometryList property is missing", () => {
         const query = "cafe";
         // @ts-ignore
         const validationResult = () =>
@@ -110,7 +110,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when type Circle is missing radius property", async () => {
+    test("it should fail when type Circle is missing radius property", () => {
         const query = "cafe";
         const incorrectGeometry = [
             {
@@ -137,7 +137,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when query is missing", async () => {
+    test("it should fail when query is missing", () => {
         // @ts-ignore
         const validationResult = () =>
             validateRequestSchema({ geometries, apiKey, commonBaseURL }, geometrySearchRequestSchema);
@@ -156,7 +156,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when query is not of type string", async () => {
+    test("it should fail when query is not of type string", () => {
         const query = undefined;
         // @ts-ignore
         const validationResult = () =>
@@ -176,7 +176,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when map-code is not of type array", async () => {
+    test("it should fail when map-code is not of type array", () => {
         const query = "Fuel Station";
         const mapcodes = "Local";
 
@@ -198,7 +198,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when view is not amongst the defined enums", async () => {
+    test("it should fail when view is not amongst the defined enums", () => {
         const query = "POI";
         const view = "CH";
         //@ts-ignore
@@ -221,7 +221,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when index is not of type array", async () => {
+    test("it should fail when index is not of type array", () => {
         const query = "Noe Valley, San Francisco";
         const indexes = "STR";
 
@@ -243,7 +243,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when POI categories are not of type array", async () => {
+    test("it should fail when POI categories are not of type array", () => {
         const query = "Restaurant";
         const poiCategories = 7315025;
 
@@ -281,7 +281,7 @@ describe("GeometrySearch Schema Validation", () => {
         expect(schema.success).toEqual(false);
     });
 
-    test("it should fail when POI brands is of type string", async () => {
+    test("it should fail when POI brands is of type string", () => {
         const query = "Restaurant";
         const poiBrands = "TomTom";
 
@@ -302,7 +302,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when connectors is of type string", async () => {
+    test("it should fail when connectors is of type string", () => {
         const query = "EV";
         const connectors = "IEC62196Type1";
 
@@ -326,7 +326,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when fuel is of type string", async () => {
+    test("it should fail when fuel is of type string", () => {
         const query = "EV";
         const fuelTypes = "AdBlue";
 
@@ -347,7 +347,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when geography type is of type string", async () => {
+    test("it should fail when geography type is of type string", () => {
         const query = "EV";
         const geographyTypes = "Municipality";
 
@@ -371,7 +371,7 @@ describe("GeometrySearch Schema Validation", () => {
         );
     });
 
-    test("it should fail when lan and lon parameters are not between permitted values", async () => {
+    test("it should fail when lan and lon parameters are not between permitted values", () => {
         const query = "EV";
         const position = [-200, 95];
         const validationResult = () =>

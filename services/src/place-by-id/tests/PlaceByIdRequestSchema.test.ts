@@ -1,24 +1,22 @@
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { PlaceByIdParams } from "../types";
 import placeByIdReqObjects from "../../place-by-id/tests/RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { placeByIdRequestSchema } from "../PlaceByIdSchema";
-import placeById from "../PlaceById";
 
 describe("Place By Id API", () => {
-    beforeAll(() => {
-        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
-    });
-
+    const apiKey = "APIKEY";
+    const commonBaseURL = "https://api-test.tomtom.com";
     const entityId = 528009004250472; // Invalid value, entityId is a string
     const language = "en-GB";
     const view = "Unified";
     const timeZone = "iana";
     const openingHours = "nextSevenDays";
 
-    test("it should throw Validation error with invalid entityId", async () => {
+    test("it should throw Validation error with invalid entityId", () => {
         const invalidParams = {
+            apiKey,
+            commonBaseURL,
             entityId,
             language,
             view,
@@ -26,61 +24,50 @@ describe("Place By Id API", () => {
             openingHours
         };
 
-        await expect(
+        expect(
             // @ts-ignore
-            placeById(invalidParams)
-        ).rejects.toThrow();
-
-        await expect(
-            // @ts-ignore
-            placeById(invalidParams)
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "PlaceById",
-            errors: [
-                {
-                    code: "invalid_type",
-                    expected: "string",
-                    received: "number",
-                    path: ["entityId"],
-                    message: "Expected string, received number"
-                }
-            ]
-        });
+            () => validateRequestSchema(invalidParams, placeByIdRequestSchema)
+        ).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "string",
+                        received: "number",
+                        path: ["entityId"],
+                        message: "Expected string, received number"
+                    }
+                ]
+            })
+        );
     });
 
-    test("it should throw Validation error when missing entityId", async () => {
-        await expect(
-            // @ts-ignore
-            placeById({
-                language,
-                view,
-                timeZone,
-                openingHours
-            })
-        ).rejects.toThrow();
-
-        await expect(
-            // @ts-ignore
-            placeById({
-                language,
-                view,
-                timeZone,
-                openingHours
-            })
-        ).rejects.toMatchObject({
-            message: "Validation error",
-            service: "PlaceById",
-            errors: [
+    test("it should throw Validation error when missing entityId", () => {
+        expect(() =>
+            validateRequestSchema(
                 {
-                    code: "invalid_type",
-                    expected: "string",
-                    received: "undefined",
-                    path: ["entityId"],
-                    message: "Required"
-                }
-            ]
-        });
+                    apiKey,
+                    commonBaseURL,
+                    language,
+                    view,
+                    timeZone,
+                    openingHours
+                },
+                placeByIdRequestSchema
+            )
+        ).toThrow(
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "string",
+                        received: "undefined",
+                        path: ["entityId"],
+                        message: "Required"
+                    }
+                ]
+            })
+        );
     });
 });
 
