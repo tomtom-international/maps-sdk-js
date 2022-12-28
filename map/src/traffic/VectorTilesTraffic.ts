@@ -2,9 +2,7 @@ import isNil from "lodash/isNil";
 import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers, EventsModule } from "../core";
 import { VectorTilesTrafficConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
-
-export const VECTOR_TILES_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
-export const VECTOR_TILES_FLOW_SOURCE_ID = "vectorTilesFlow";
+import { VECTOR_TILES_INCIDENTS_SOURCE_ID, VECTOR_TILES_FLOW_SOURCE_ID } from "../core/layers/sourcesIDs";
 
 /**
  * Vector tiles traffic module.

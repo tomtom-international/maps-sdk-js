@@ -4,11 +4,7 @@ import { placesLayerSpec } from "./layers/PlacesLayers";
 import { poiClassificationToIconID } from "./poiIconIDMapping";
 import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
 import { asDefined } from "../core/AssertionUtils";
-
-/**
- * @ignore
- */
-export const PLACES_SOURCE_ID = "places";
+import { PLACES_SOURCE_ID } from "../core/layers/sourcesIDs";
 
 /**
  * Builds the title of the place to display it on the map.

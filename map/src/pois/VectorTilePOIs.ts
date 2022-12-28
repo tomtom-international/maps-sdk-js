@@ -2,8 +2,7 @@ import isNil from "lodash/isNil";
 import { AbstractMapModule, StyleSourceWithLayers, EventsModule } from "../core";
 import { VectorTilePOIsConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
-
-export const POI_SOURCE_ID = "poiTiles";
+import { POI_SOURCE_ID } from "../core/layers/sourcesIDs";
 
 /**
  * Vector tile POIs map module.

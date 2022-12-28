@@ -1,5 +1,5 @@
 import { Map, Point2D, MapGeoJSONFeature, LngLat, MapMouseEvent } from "maplibre-gl";
-import { POI_SOURCE_ID } from "../pois";
+import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { AbstractEventProxy } from "./AbstractEventProxy";
 import { ClickEvent } from "./types/EventsProxy";
 import { SourceWithLayers } from "./types/GOSDKLayerSpecs";

@@ -3,8 +3,8 @@ import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule } from "../cor
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { asDefined } from "../core/AssertionUtils";
+import { GEOMETRY_SOURCE_ID } from "../core/layers/sourcesIDs";
 
-export const GEOMETRY_SOURCE_ID = "PLACE_GEOMETRY";
 const GEOMETRY_FILL_LAYER_ID = "PLACE_GEOMETRY_FILL";
 const GEOMETRY_OUTLINE_LAYER_ID = "PLACE_GEOMETRY_OUTLINE";
 
