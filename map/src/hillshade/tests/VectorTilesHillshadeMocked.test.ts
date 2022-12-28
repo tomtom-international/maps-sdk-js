@@ -1,6 +1,7 @@
 import { Map } from "maplibre-gl";
+import { HILLSHADE_SOURCE_ID } from "../../core/layers/sourcesIDs";
 import { GOSDKMap } from "../../GOSDKMap";
-import { HILLSHADE_SOURCE_ID, VectorTilesHillshade } from "../VectorTilesHillshade";
+import { VectorTilesHillshade } from "../VectorTilesHillshade";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

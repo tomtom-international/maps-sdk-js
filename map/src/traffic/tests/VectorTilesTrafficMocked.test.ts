@@ -1,10 +1,7 @@
 import { Map } from "maplibre-gl";
+import { VECTOR_TILES_INCIDENTS_SOURCE_ID, VECTOR_TILES_FLOW_SOURCE_ID } from "../../core/layers/sourcesIDs";
 import { GOSDKMap } from "../../GOSDKMap";
-import {
-    VECTOR_TILES_FLOW_SOURCE_ID,
-    VECTOR_TILES_INCIDENTS_SOURCE_ID,
-    VectorTilesTraffic
-} from "../VectorTilesTraffic";
+import { VectorTilesTraffic } from "../VectorTilesTraffic";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

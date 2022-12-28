@@ -1,9 +1,9 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { Map } from "maplibre-gl";
-
-import { GEOMETRY_SOURCE_ID, GeometryModule } from "../GeometryModule";
+import { GeometryModule } from "../GeometryModule";
 import { GOSDKMap } from "../../GOSDKMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
+import { GEOMETRY_SOURCE_ID } from "../../core/layers/sourcesIDs";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

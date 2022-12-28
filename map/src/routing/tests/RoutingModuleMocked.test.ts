@@ -1,15 +1,15 @@
 import { Map } from "maplibre-gl";
-import { GOSDKMap } from "../../GOSDKMap";
 import {
-    ROUTE_FERRIES_SOURCE_ID,
-    ROUTE_INCIDENTS_SOURCE_ID,
-    ROUTE_TOLL_ROADS_SOURCE_ID,
-    ROUTE_TUNNELS_SOURCE_ID,
-    ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
+    WAYPOINTS_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    RoutingModule,
-    WAYPOINTS_SOURCE_ID
-} from "../RoutingModule";
+    ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
+    ROUTE_INCIDENTS_SOURCE_ID,
+    ROUTE_FERRIES_SOURCE_ID,
+    ROUTE_TOLL_ROADS_SOURCE_ID,
+    ROUTE_TUNNELS_SOURCE_ID
+} from "../../core/layers/sourcesIDs";
+import { GOSDKMap } from "../../GOSDKMap";
+import { RoutingModule } from "../RoutingModule";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

@@ -1,8 +1,8 @@
 import { Places } from "@anw/go-sdk-js/core";
 import { GeoJSONSource, Map } from "maplibre-gl";
-
-import { GeoJSONPlaces, PLACES_SOURCE_ID } from "../GeoJSONPlaces";
+import { GeoJSONPlaces } from "../GeoJSONPlaces";
 import { GOSDKMap } from "../../GOSDKMap";
+import { PLACES_SOURCE_ID } from "../../core/layers/sourcesIDs";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
