@@ -3,7 +3,7 @@
 /**
  * Geometry source id
  */
-export const GEOMETRY_SOURCE_ID = "PLACE_GEOMETRY";
+export const GEOMETRY_SOURCE_ID = "geometry";
 
 /**
  * POI source id

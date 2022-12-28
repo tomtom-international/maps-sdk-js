@@ -5,8 +5,8 @@ import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { asDefined } from "../core/AssertionUtils";
 import { GEOMETRY_SOURCE_ID } from "../core/layers/sourcesIDs";
 
-const GEOMETRY_FILL_LAYER_ID = "PLACE_GEOMETRY_FILL";
-const GEOMETRY_OUTLINE_LAYER_ID = "PLACE_GEOMETRY_OUTLINE";
+const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
+const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
 
 /**
  * Geometry data module.

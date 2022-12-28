@@ -21,7 +21,7 @@ const initGeometry = async (config?: GeometryModuleConfig) =>
         config
     );
 
-const getNumVisibleLayers = async () => getNumVisibleLayersBySource("PLACE_GEOMETRY");
+const getNumVisibleLayers = async () => getNumVisibleLayersBySource("geometry");
 
 const clearGeometry = async () => page.evaluate(() => (globalThis as GOSDKThis).geometry?.clear());
 
@@ -33,7 +33,7 @@ const showGeometry = async (geometry: GeometryDataResponse) =>
     );
 
 const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
-    waitUntilRenderedFeatures(["PLACE_GEOMETRY_FILL"], numFeatures, 3000, position);
+    waitUntilRenderedFeatures(["geometry_Fill"], numFeatures, 3000, position);
 
 describe("Geometry integration tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
