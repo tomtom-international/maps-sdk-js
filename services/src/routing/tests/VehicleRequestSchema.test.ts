@@ -217,37 +217,21 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                         code: "invalid_type",
                         expected: "number",
                         received: "string",
-                        path: [
-                            "vehicle",
-                            "consumption",
-                            "speedsToConsumptionsKWH",
-                            0,
-                            "speedKMH"
-                        ],
+                        path: ["vehicle", "consumption", "speedsToConsumptionsKWH", 0, "speedKMH"],
                         message: "Expected number, received string"
                     },
                     {
                         code: "invalid_type",
                         expected: "number",
                         received: "string",
-                        path: [
-                            "vehicle",
-                            "consumption",
-                            "speedsToConsumptionsKWH",
-                            1,
-                            "consumptionUnitsPer100KM"
-                        ],
+                        path: ["vehicle", "consumption", "speedsToConsumptionsKWH", 1, "consumptionUnitsPer100KM"],
                         message: "Expected number, received string"
                     },
                     {
                         code: "invalid_type",
                         expected: "number",
                         received: "string",
-                        path: [
-                            "vehicle",
-                            "consumption",
-                            "auxiliaryPowerInkW"
-                        ],
+                        path: ["vehicle", "consumption", "auxiliaryPowerInkW"],
                         message: "Expected number, received string"
                     },
                     {
@@ -257,43 +241,27 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                         inclusive: true,
                         exact: false,
                         message: "Number must be less than or equal to 500",
-                        path: [
-                            "vehicle",
-                            "consumption",
-                            "consumptionInKWHPerKMAltitudeGain"
-                        ]
+                        path: ["vehicle", "consumption", "consumptionInKWHPerKMAltitudeGain"]
                     },
                     {
                         code: "invalid_type",
                         expected: "number",
                         received: "string",
-                        path: [
-                            "vehicle",
-                            "consumption",
-                            "recuperationInKWHPerKMAltitudeLoss"
-                        ],
+                        path: ["vehicle", "consumption", "recuperationInKWHPerKMAltitudeLoss"],
                         message: "Expected number, received string"
                     },
                     {
                         code: "invalid_type",
                         expected: "number",
                         received: "string",
-                        path: [
-                            "vehicle",
-                            "consumption",
-                            "currentChargeKWH"
-                        ],
+                        path: ["vehicle", "consumption", "currentChargeKWH"],
                         message: "Expected number, received string"
                     },
                     {
                         code: "invalid_type",
                         expected: "number",
                         received: "string",
-                        path: [
-                            "vehicle",
-                            "consumption",
-                            "maxChargeKWH"
-                        ],
+                        path: ["vehicle", "consumption", "maxChargeKWH"],
                         message: "Expected number, received string"
                     }
                 ]
