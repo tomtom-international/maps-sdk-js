@@ -78,11 +78,11 @@ describe("EventProxy integration tests", () => {
             goSDKThis.places?.events.on("hover", () => goSDKThis._numOfHovers++);
             goSDKThis.places?.events.on("long-hover", () => goSDKThis._numOfLongHovers++);
         });
-        const POIPosition = await page.evaluate(
+        const poiPosition = await page.evaluate(
             (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
             poiCoordinates
         );
-        await page.mouse.move(POIPosition.x, POIPosition.y);
+        await page.mouse.move(poiPosition.x, poiPosition.y);
         await waitForTimeout(800);
 
         let numOfHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers);
@@ -92,12 +92,12 @@ describe("EventProxy integration tests", () => {
         expect(numOfLongHovers).toBe(1);
 
         // Moving cursor away from POI
-        await page.mouse.move(POIPosition.x + 100, POIPosition.y + 100);
+        await page.mouse.move(poiPosition.x + 100, poiPosition.y + 100);
         // Moving cursor back to POI
-        await page.mouse.move(POIPosition.x, POIPosition.y);
+        await page.mouse.move(poiPosition.x, poiPosition.y);
         await waitForTimeout(200);
         // Moving mouse away from POI
-        await page.mouse.move(POIPosition.x + 100, POIPosition.y + 100);
+        await page.mouse.move(poiPosition.x + 100, poiPosition.y + 100);
 
         numOfHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers);
         numOfLongHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfLongHovers);
@@ -106,9 +106,9 @@ describe("EventProxy integration tests", () => {
         expect(numOfLongHovers).toBe(1);
 
         // Moving cursor away from POI
-        await page.mouse.move(POIPosition.x + 100, POIPosition.y + 100);
+        await page.mouse.move(poiPosition.x + 100, poiPosition.y + 100);
         // Moving cursor back to POI
-        await page.mouse.move(POIPosition.x, POIPosition.y);
+        await page.mouse.move(poiPosition.x, poiPosition.y);
         await waitForTimeout(800);
 
         numOfHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers);
@@ -128,11 +128,11 @@ describe("EventProxy integration tests", () => {
                 goSDKThis._clickedSourceWithLayers = sourceWithLayers;
             });
         });
-        const POIPosition = await page.evaluate(
+        const poiPosition = await page.evaluate(
             (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
             poiCoordinates
         );
-        await page.mouse.click(POIPosition.x, POIPosition.y);
+        await page.mouse.click(poiPosition.x, poiPosition.y);
 
         const lntlat = await page.evaluate(() => (globalThis as GOSDKThis)._clickedLngLat);
         const feature = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeature);
