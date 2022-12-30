@@ -9,10 +9,16 @@ export const requestObjectsAndURLs = [
                 [4.49015, 52.16109]
             ]
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
-            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+            )
+        }
     ],
     [
         "Default A-B route with no sections",
@@ -25,7 +31,12 @@ export const requestObjectsAndURLs = [
             ],
             sectionTypes: []
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY"
+            )
+        }
     ],
     [
         "Default A-B route with specific sections",
@@ -38,8 +49,13 @@ export const requestObjectsAndURLs = [
             ],
             sectionTypes: ["vehicleRestricted", "traffic", "ferry"]
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-            "&sectionType=travelMode&sectionType=traffic&sectionType=ferry"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=travelMode&sectionType=traffic&sectionType=ferry"
+            )
+        }
     ],
     [
         "Default A-B-C route where B is a GeoJSON point feature",
@@ -58,10 +74,16 @@ export const requestObjectsAndURLs = [
                 [4.47059, 51.92291]
             ]
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?key=GLOBAL_API_KEY" +
-            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
-            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+            )
+        }
     ],
     [
         "Default A-s-C route where s is a soft(circle) waypoint.",
@@ -83,10 +105,16 @@ export const requestObjectsAndURLs = [
                 [4.47059, 51.92291]
             ]
         },
-        "https://api-test.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:circle(52.16109,4.49015,20):51.92291,4.47059/json?key=API_KEY_X" +
-            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
-            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api-test.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:circle(52.16109,4.49015,20):51.92291,4.47059/json?key=API_KEY_X" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+            )
+        }
     ],
     [
         "A-B route with many optional parameters set to non default values and electric vehicle params",
@@ -140,29 +168,35 @@ export const requestObjectsAndURLs = [
                 date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
             }
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/42.26297,3.1748:42.18211,2.48819/json?key=GLOBAL_API_KEY" +
-            "&language=es-ES" +
-            "&avoid=carpools&avoid=ferries&avoid=motorways&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads" +
-            "&computeTravelTimeFor=all" +
-            "&traffic=false" +
-            "&vehicleHeading=45" +
-            "&arriveAt=2022-09-16T15%3A48%3A15.400Z" +
-            "&instructionsType=tagged" +
-            "&maxAlternatives=2" +
-            "&routeRepresentation=summaryOnly" +
-            "&routeType=thrilling" +
-            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
-            "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
-            "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved" +
-            "&sectionType=carpool&hilliness=low&windingness=high" +
-            "&vehicleEngineType=electric" +
-            "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
-            "&auxiliaryPowerInkW=1.7" +
-            "&consumptionInkWhPerkmAltitudeGain=7&recuperationInkWhPerkmAltitudeLoss=3.8" +
-            "&maxChargeInkWh=85&currentChargeInkWh=43" +
-            "&vehicleLength=20&vehicleHeight=4&vehicleWidth=5&vehicleWeight=3500&vehicleAxleWeight=500" +
-            "&vehicleLoadType=otherHazmatExplosive&vehicleLoadType=otherHazmatHarmfulToWater" +
-            "&vehicleAdrTunnelRestrictionCode=B&vehicleCommercial=true&vehicleMaxSpeed=60"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/42.26297,3.1748:42.18211,2.48819/json?key=GLOBAL_API_KEY" +
+                    "&language=es-ES" +
+                    "&avoid=carpools&avoid=ferries&avoid=motorways" +
+                    "&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads" +
+                    "&computeTravelTimeFor=all" +
+                    "&traffic=false" +
+                    "&vehicleHeading=45" +
+                    "&arriveAt=2022-09-16T15%3A48%3A15.400Z" +
+                    "&instructionsType=tagged" +
+                    "&maxAlternatives=2" +
+                    "&routeRepresentation=summaryOnly" +
+                    "&routeType=thrilling" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
+                    "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved" +
+                    "&sectionType=carpool&hilliness=low&windingness=high" +
+                    "&vehicleEngineType=electric" +
+                    "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
+                    "&auxiliaryPowerInkW=1.7" +
+                    "&consumptionInkWhPerkmAltitudeGain=7&recuperationInkWhPerkmAltitudeLoss=3.8" +
+                    "&maxChargeInkWh=85&currentChargeInkWh=43" +
+                    "&vehicleLength=20&vehicleHeight=4&vehicleWidth=5&vehicleWeight=3500&vehicleAxleWeight=500" +
+                    "&vehicleLoadType=otherHazmatExplosive&vehicleLoadType=otherHazmatHarmfulToWater" +
+                    "&vehicleAdrTunnelRestrictionCode=B&vehicleCommercial=true&vehicleMaxSpeed=60"
+            )
+        }
     ],
     [
         "A-B route with combustion vehicle parameters",
@@ -198,17 +232,24 @@ export const requestObjectsAndURLs = [
                 date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
             }
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-            "&departAt=2022-09-16T15%3A48%3A15.400Z" +
-            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
-            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-            "&accelerationEfficiency=0.33&decelerationEfficiency=0.83&uphillEfficiency=0.27&downhillEfficiency=0.51" +
-            "&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5" +
-            "&auxiliaryPowerInLitersPerHour=0.2" +
-            "&fuelEnergyDensityInMJoulesPerLiter=34.2" +
-            "&currentFuelInLiters=55" +
-            "&vehicleWeight=1500"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+                    "&departAt=2022-09-16T15%3A48%3A15.400Z" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&accelerationEfficiency=0.33&decelerationEfficiency=0.83" +
+                    "&uphillEfficiency=0.27&downhillEfficiency=0.51" +
+                    "&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5" +
+                    "&auxiliaryPowerInLitersPerHour=0.2" +
+                    "&fuelEnergyDensityInMJoulesPerLiter=34.2" +
+                    "&currentFuelInLiters=55" +
+                    "&vehicleWeight=1500"
+            )
+        }
     ],
     [
         "A-B route with electric vehicle parameters",
@@ -242,14 +283,21 @@ export const requestObjectsAndURLs = [
                 }
             }
         },
-        "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
-            "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-            "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-            "&vehicleEngineType=electric" +
-            "&accelerationEfficiency=0.66&decelerationEfficiency=0.91&uphillEfficiency=0.74&downhillEfficiency=0.73" +
-            "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
-            "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=43" +
-            "&vehicleWeight=3500&vehicleMaxSpeed=60"
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&vehicleEngineType=electric" +
+                    "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
+                    "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
+                    "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
+                    "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=43" +
+                    "&vehicleWeight=3500&vehicleMaxSpeed=60"
+            )
+        }
     ]
 ];

@@ -1,15 +1,19 @@
 import { z } from "zod";
 import { inputSectionTypes, SectionType } from "@anw/go-sdk-js/core";
-import { geometrySchema, hasLngLatSchema } from "../shared/GeometriesSchema";
+import { featureSchema, geometrySchema, hasLngLatSchema } from "../shared/GeometriesSchema";
 import { instructionsTypes } from "./types/CalculateRouteParams";
 import { vehicleParametersSchema } from "./VehicleSchema";
+import { SchemaRefinement } from "../shared/types/Validation";
 
-const calculateRouteRequestMandatory = z.object({
-    locations: z.array(z.union([hasLngLatSchema, geometrySchema])).min(2)
-});
-
-const calculateRouteRequestOptional = z
+/**
+ * @ignore
+ * @group Calculate Route
+ * @category Variables
+ */
+export const calculateRouteRequestSchema = z
     .object({
+        locations: z.array(z.union([hasLngLatSchema, geometrySchema])).min(2),
+        supportingPoints: z.union([z.number().array(), featureSchema]),
         avoid: z.string().array(),
         computeAdditionalTravelTimeFor: z.enum(["none", "all"]),
         considerTraffic: z.boolean(),
@@ -31,9 +35,8 @@ const calculateRouteRequestOptional = z
         })
     })
     .partial();
-/**
- * @ignore
- * @group Calculate Route
- * @category Variables
- */
-export const calculateRouteRequestSchema = calculateRouteRequestMandatory.merge(calculateRouteRequestOptional);
+
+export const calculateRouteRequestSchemaRefinement: SchemaRefinement = {
+    check: (data: any) => "locations" in data || "supportingPoints" in data,
+    message: "At least one of locations or supportingPoints must be defined"
+};

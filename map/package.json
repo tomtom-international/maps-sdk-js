@@ -57,7 +57,7 @@
     "entryPoint": "./index.ts"
   },
   "peerDependencies": {
-    "maplibre-gl": "^3.0.0-pre.2"
+    "maplibre-gl": "^3.0.0-pre.3"
   },
   "dependencies": {
     "lodash": "^4.17.21"

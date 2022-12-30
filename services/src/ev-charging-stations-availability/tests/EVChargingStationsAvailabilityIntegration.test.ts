@@ -1,6 +1,6 @@
 import EVChargingStationsAvailability from "../EVChargingStationsAvailability";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
-import { SDKServiceError } from "../../shared/Errors";
+import { SDKServiceError } from "../../shared";
 import { accessibility, ChargingPoint, chargingPointStatus, connectorTypes } from "@anw/go-sdk-js/core";
 import { EVChargingStationsAvailabilityResponse } from "../types/EVChargingStationsAvailabilityResponse";
 

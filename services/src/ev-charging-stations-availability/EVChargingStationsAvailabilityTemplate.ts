@@ -25,7 +25,7 @@ export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
  * @category Variables
  */
 export const evChargingStationsAvailabilityTemplate: EVChargingStationsAvailabilityTemplate = {
-    validateRequestSchema: evChargingStationsAvailabilityRequestSchema,
+    requestValidation: { schema: evChargingStationsAvailabilityRequestSchema },
     buildRequest: buildEVChargingStationsAvailabilityRequest,
     sendRequest: get,
     parseResponse: parseEVChargingStationsAvailabilityResponse,

@@ -1,6 +1,7 @@
-import { ZodError, ZodIssue, ZodObject } from "zod";
-import { CommonServiceRequestSchema } from "./CommonParamsSchema";
+import { ZodError, ZodIssue } from "zod";
+import { commonServiceRequestSchema } from "./CommonParamsSchema";
 import { CommonServiceParams } from "./ServiceTypes";
+import { RequestValidationConfig } from "./types/Validation";
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.
@@ -8,31 +9,43 @@ import { CommonServiceParams } from "./ServiceTypes";
  * @ignore
  */
 export class ValidationError extends Error {
-    errors: ZodIssue[] | undefined;
+    errors: ZodIssue[];
 
-    constructor(message: string, errors?: ZodError) {
-        super(message);
-        this.errors = errors && errors.errors;
+    constructor(error: ZodError) {
+        super(error.errors[0].message);
+        this.errors = error.errors;
     }
 }
 
 /**
  * @ignore
  * @param params
- * @param schema
+ * @param config
  */
-export const validateRequestSchema = <T extends CommonServiceParams>(params: T, schema?: ZodObject<any>): T => {
-    if (schema) {
-        const validate = CommonServiceRequestSchema.merge(schema)
-            // Check if there is commonBaseURL or customServiceBaseURL set in data
+export const validateRequestSchema = <T extends CommonServiceParams>(
+    params: T,
+    config?: RequestValidationConfig
+): T => {
+    if (config?.schema) {
+        const mergedSchema = commonServiceRequestSchema
+            .merge(config.schema)
             .refine(
                 (data) => "commonBaseURL" in data || "customServiceBaseURL" in data,
                 "commonBaseURL or customServiceBaseURL is required"
-            )
-            .safeParse(params);
+            );
 
-        if (!validate.success) {
-            throw new ValidationError("Validation error", validate.error);
+        // optional refinements:
+        let refinedMergedSchema;
+        if (config.refinements?.length) {
+            refinedMergedSchema = mergedSchema;
+            for (const refinement of config.refinements) {
+                refinedMergedSchema = refinedMergedSchema.refine(refinement.check, refinement.message);
+            }
+        }
+
+        const validation = (refinedMergedSchema || mergedSchema).safeParse(params);
+        if (!validation.success) {
+            throw new ValidationError(validation.error);
         }
     }
 

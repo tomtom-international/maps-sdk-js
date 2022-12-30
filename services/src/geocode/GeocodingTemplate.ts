@@ -20,7 +20,7 @@ export type GeocodingTemplate = ServiceTemplate<GeocodingParams, URL, GeocodingR
  * @category Variables
  */
 export const geocodingTemplate: GeocodingTemplate = {
-    validateRequestSchema: geocodingRequestSchema,
+    requestValidation: { schema: geocodingRequestSchema },
     buildRequest: buildGeocodingRequest,
     sendRequest: get,
     parseResponse: parseGeocodingResponse

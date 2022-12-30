@@ -15,7 +15,9 @@ describe("ReverseGeocoding schema validation", () => {
             // @ts-ignore
             position: { lon: -122.420679, lat: 37.772537 }
         };
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
+            "Invalid input"
+        );
     });
 
     test("it should fail when latitude/longitude is out of range", () => {
@@ -26,7 +28,7 @@ describe("ReverseGeocoding schema validation", () => {
                     commonBaseURL,
                     position: [200, -95]
                 },
-                revGeocodeRequestSchema
+                { schema: revGeocodeRequestSchema }
             )
         ).toThrow(
             expect.objectContaining({
@@ -62,7 +64,9 @@ describe("ReverseGeocoding schema validation", () => {
             position: (-122.420679, 37.772537)
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
+            "Invalid input"
+        );
     });
 
     test("it should fail when position is an invalid param - case 3", () => {
@@ -73,7 +77,9 @@ describe("ReverseGeocoding schema validation", () => {
             position: "-122.420679, 37.772537"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
+            "Invalid input"
+        );
     });
 
     test("it should fail when position is absent", () => {
@@ -84,7 +90,9 @@ describe("ReverseGeocoding schema validation", () => {
             geographyType: ["Country"]
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow("Validation error");
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
+            "Invalid input"
+        );
     });
 
     test("it should fail when heading isn't less than or equal to 360", () => {
@@ -96,7 +104,7 @@ describe("ReverseGeocoding schema validation", () => {
             heading: 361
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -122,7 +130,7 @@ describe("ReverseGeocoding schema validation", () => {
             heading: "180"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -146,7 +154,7 @@ describe("ReverseGeocoding schema validation", () => {
             mapcodes: "Local"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -170,7 +178,7 @@ describe("ReverseGeocoding schema validation", () => {
             number: 36
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -194,7 +202,7 @@ describe("ReverseGeocoding schema validation", () => {
             radiusMeters: "2000"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -218,7 +226,7 @@ describe("ReverseGeocoding schema validation", () => {
             geographyType: "Country"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -242,7 +250,7 @@ describe("ReverseGeocoding schema validation", () => {
             returnRoadUse: "LimitedAccess"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -266,7 +274,7 @@ describe("ReverseGeocoding schema validation", () => {
             allowFreeformNewline: "true"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -290,7 +298,7 @@ describe("ReverseGeocoding schema validation", () => {
             returnSpeedLimit: "true"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -314,7 +322,7 @@ describe("ReverseGeocoding schema validation", () => {
             returnMatchType: "true"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -338,7 +346,7 @@ describe("ReverseGeocoding schema validation", () => {
             view: "MAA"
         };
 
-        expect(() => validateRequestSchema(invalidParams, revGeocodeRequestSchema)).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -361,9 +369,9 @@ describe("Rev-Geo request schema performance tests", () => {
         "'%s'",
         // @ts-ignore
         (_title: string, params: ReverseGeocodingParams) => {
-            expect(bestExecutionTimeMS(() => validateRequestSchema(params, revGeocodeRequestSchema), 10)).toBeLessThan(
-                MAX_EXEC_TIMES_MS.revGeo.schemaValidation
-            );
+            expect(
+                bestExecutionTimeMS(() => validateRequestSchema(params, { schema: revGeocodeRequestSchema }), 10)
+            ).toBeLessThan(MAX_EXEC_TIMES_MS.revGeo.schemaValidation);
         }
     );
 });

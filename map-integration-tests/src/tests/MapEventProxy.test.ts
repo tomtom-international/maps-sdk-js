@@ -15,10 +15,10 @@ import { Position } from "geojson";
 const poiCoordinates = POIs.features[0].geometry.coordinates as [number, number];
 
 const getPoiPosition = async () =>
-    await page.evaluate((coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates), poiCoordinates);
+    page.evaluate((coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates), poiCoordinates);
 
 const getCursor = async () =>
-    await page.evaluate(() => {
+    page.evaluate(() => {
         const goSDKThis = globalThis as GOSDKThis;
         return goSDKThis.goSDKMap.mapLibreMap.getCanvas().style.cursor;
     });

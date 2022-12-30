@@ -23,7 +23,7 @@ export const callService = async <PARAMS extends CommonServiceParams, REQUEST, A
     const mergedParams = mergeFromGlobal(params);
     if (params.validateRequest || params.validateRequest == undefined) {
         try {
-            validateRequestSchema(mergedParams, template.validateRequestSchema);
+            validateRequestSchema(mergedParams, template.requestValidation);
         } catch (e) {
             return Promise.reject(buildValidationError(e as ValidationError, serviceName));
         }

@@ -192,4 +192,33 @@ describe("Calculate route integration tests", () => {
             }
         }
     });
+
+    test("Calculating 'Amsterdam to Leiden to Rotterdam' and then reconstructing it again", async () => {
+        const firstRoute = (
+            await calculateRoute({
+                locations: [
+                    [4.89066, 52.37317],
+                    [4.49015, 52.16109],
+                    [4.47059, 51.92291]
+                ]
+            })
+        ).features[0];
+
+        const firstRouteCoords = firstRoute.geometry.coordinates;
+        expect(firstRouteCoords.length).toBeGreaterThan(1000);
+
+        const reconstructedRouteResponse = await calculateRoute({ supportingPoints: firstRoute });
+        expect(reconstructedRouteResponse?.features?.length).toEqual(1);
+        const reconstructedRoute = reconstructedRouteResponse.features[0];
+        const reconstructedRouteCoords = reconstructedRoute.geometry.coordinates;
+
+        // checking that the first and reconstructed routes have a similar amount of points:
+        expect(Math.abs(reconstructedRouteCoords.length - firstRouteCoords.length)).toBeLessThan(50);
+
+        // checking that the first and reconstructed routes have the same origin and destination points:
+        expect(firstRouteCoords[0]).toStrictEqual(reconstructedRouteCoords[0]);
+        expect(firstRouteCoords[firstRouteCoords.length - 1]).toStrictEqual(
+            reconstructedRouteCoords[reconstructedRouteCoords.length - 1]
+        );
+    });
 });

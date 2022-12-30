@@ -4,6 +4,7 @@ import { calculateRouteRequestSchema } from "../CalculateRouteRequestSchema";
 import { routeRequestParams } from "./RequestBuilderPerf.data";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";
 import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { routeRequestValidationConfig } from "../CalculateRouteTemplate";
 
 describe("Calculate route request schema validation", () => {
     const apiKey = "APIKEY";
@@ -11,7 +12,7 @@ describe("Calculate route request schema validation", () => {
 
     test("it should fail when latitude & longitude are out of range", () => {
         // @ts-ignore
-        const validationResult = () =>
+        const validationCall = () =>
             validateRequestSchema(
                 {
                     locations: [
@@ -21,9 +22,9 @@ describe("Calculate route request schema validation", () => {
                     apiKey,
                     commonBaseURL
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             );
-        expect(validationResult).toThrow(
+        expect(validationCall).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -68,16 +69,16 @@ describe("Calculate route request schema validation", () => {
     });
 
     test("it should fail when format of location is incorrect - example 1", () => {
-        const validationResult = () =>
+        const validationCall = () =>
             validateRequestSchema(
                 {
                     locations: "4.89066,52.37317:4.49015,52.16109",
                     apiKey,
                     commonBaseURL
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             );
-        expect(validationResult).toThrow(
+        expect(validationCall).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -93,12 +94,12 @@ describe("Calculate route request schema validation", () => {
     });
 
     test("it should fail when format of location is incorrect - example 2", () => {
-        const validationResult = () =>
+        const validationCall = () =>
             validateRequestSchema(
                 { locations: [[4.89066, 52.37317]], apiKey, commonBaseURL },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             );
-        expect(validationResult).toThrow(
+        expect(validationCall).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -115,26 +116,14 @@ describe("Calculate route request schema validation", () => {
         );
     });
 
-    test("it should fail when location param is missing", () => {
-        const validationResult = () =>
-            validateRequestSchema({ sectionTypes: ["traffic"], apiKey, commonBaseURL }, calculateRouteRequestSchema);
-        expect(validationResult).toThrow(
-            expect.objectContaining({
-                errors: [
-                    {
-                        code: "invalid_type",
-                        expected: "array",
-                        received: "undefined",
-                        path: ["locations"],
-                        message: "Required"
-                    }
-                ]
-            })
+    test("it should fail when locations param is missing", () => {
+        expect(() => validateRequestSchema({ apiKey, commonBaseURL }, routeRequestValidationConfig)).toThrow(
+            "At least one of locations or supportingPoints must be defined"
         );
     });
 
     test("it should fail when format of optional params are incorrect", () => {
-        const validationResult = () =>
+        const validationCall = () =>
             validateRequestSchema(
                 {
                     locations: [
@@ -172,9 +161,9 @@ describe("Calculate route request schema validation", () => {
                     apiKey,
                     commonBaseURL
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             );
-        expect(validationResult).toThrow(
+        expect(validationCall).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -286,7 +275,10 @@ describe("Calculate route request schema performance tests", () => {
     test("Calculate route request with many waypoints, mandatory & optional params", () => {
         expect(
             bestExecutionTimeMS(
-                () => validateRequestSchema(routeRequestParams as CalculateRouteParams, calculateRouteRequestSchema),
+                () =>
+                    validateRequestSchema(routeRequestParams as CalculateRouteParams, {
+                        schema: calculateRouteRequestSchema
+                    }),
                 10
             )
         ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.schemaValidation);

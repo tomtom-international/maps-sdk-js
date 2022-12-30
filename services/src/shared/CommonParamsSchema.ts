@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * @ignore
  */
-export const CommonServiceRequestSchema = z
+export const commonServiceRequestSchema = z
     .object({
         apiKey: z.string(),
         commonBaseURL: z.string(),

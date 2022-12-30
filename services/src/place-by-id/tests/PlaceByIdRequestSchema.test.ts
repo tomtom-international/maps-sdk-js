@@ -25,10 +25,7 @@ describe("Place By Id API", () => {
             openingHours
         };
 
-        expect(
-            // @ts-ignore
-            () => validateRequestSchema(invalidParams, placeByIdRequestSchema)
-        ).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: placeByIdRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -54,7 +51,7 @@ describe("Place By Id API", () => {
                     timeZone,
                     openingHours
                 },
-                placeByIdRequestSchema
+                { schema: placeByIdRequestSchema }
             )
         ).toThrow(
             expect.objectContaining({
@@ -76,7 +73,7 @@ describe("PlaceById request schema performance tests", () => {
     test("PlaceById request schema performance test", () => {
         expect(
             bestExecutionTimeMS(
-                () => validateRequestSchema(placeByIdReqObjects as PlaceByIdParams, placeByIdRequestSchema),
+                () => validateRequestSchema(placeByIdReqObjects as PlaceByIdParams, { schema: placeByIdRequestSchema }),
                 10
             )
         ).toBeLessThan(MAX_EXEC_TIMES_MS.placeById.schemaValidation);

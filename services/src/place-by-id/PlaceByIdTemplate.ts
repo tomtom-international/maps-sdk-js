@@ -18,8 +18,8 @@ export type PlaceByIdTemplate = ServiceTemplate<PlaceByIdParams, URL, PlaceByIdR
  * @category Variables
  */
 export const placeByIdTemplate: PlaceByIdTemplate = {
+    requestValidation: { schema: placeByIdRequestSchema },
     buildRequest: buildPlaceByIdRequest,
     sendRequest: get,
-    parseResponse: parsePlaceByIdResponse,
-    validateRequestSchema: placeByIdRequestSchema
+    parseResponse: parsePlaceByIdResponse
 };

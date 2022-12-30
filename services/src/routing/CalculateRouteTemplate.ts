@@ -3,25 +3,40 @@ import { ServiceTemplate } from "../shared";
 import { CalculateRouteParams } from "./types/CalculateRouteParams";
 import { buildCalculateRouteRequest } from "./RequestBuilder";
 import { parseCalculateRouteResponse } from "./ResponseParser";
-import { get } from "../shared/Fetch";
+import { fetchWith } from "../shared/Fetch";
+import { FetchInput } from "../shared/types/Fetch";
 import { CalculateRouteResponseAPI } from "./types/APITypes";
 import { parseRoutingResponseError } from "./RoutingResponseErrorParser";
-import { calculateRouteRequestSchema } from "./CalculateRouteRequestSchema";
+import { calculateRouteRequestSchema, calculateRouteRequestSchemaRefinement } from "./CalculateRouteRequestSchema";
+import { CalculateRoutePOSTDataAPI } from "./types/APIPOSTRequestTypes";
 
 /**
  * @group Calculate Route
  * @category Types
  */
-export type CalculateRouteTemplate = ServiceTemplate<CalculateRouteParams, URL, CalculateRouteResponseAPI, Routes>;
+export type CalculateRouteTemplate = ServiceTemplate<
+    CalculateRouteParams,
+    FetchInput<CalculateRoutePOSTDataAPI>,
+    CalculateRouteResponseAPI,
+    Routes
+>;
+
+/**
+ * @ignore
+ */
+export const routeRequestValidationConfig = {
+    schema: calculateRouteRequestSchema,
+    refinements: [calculateRouteRequestSchemaRefinement]
+};
 
 /**
  * @group Calculate Route
  * @category Variables
  */
 export const calculateRouteTemplate: CalculateRouteTemplate = {
+    requestValidation: routeRequestValidationConfig,
     buildRequest: buildCalculateRouteRequest,
-    sendRequest: get,
+    sendRequest: fetchWith,
     parseResponse: parseCalculateRouteResponse,
-    parseResponseError: parseRoutingResponseError,
-    validateRequestSchema: calculateRouteRequestSchema
+    parseResponseError: parseRoutingResponseError
 };

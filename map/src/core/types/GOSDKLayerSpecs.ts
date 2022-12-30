@@ -9,7 +9,8 @@ import { GeoJSONSourceWithLayers, StyleSourceWithLayers } from "../SourceWithLay
 export type LayerSpecWithSource = Exclude<LayerSpecification, BackgroundLayerSpecification>;
 
 /**
- * Layer to be added, which may include extra config such as the ID of the layer to add it under.
+ * Layer to be added to the existing style, and may include extra config such as the ID of the layer to add it under.
+ * * e.g. GeoJSON layers.
  * @ignore
  */
 export type ToBeAddedLayerSpec<L extends LayerSpecification = LayerSpecification> = L & {

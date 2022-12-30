@@ -6,14 +6,15 @@ import { validateRequestSchema } from "../../shared/Validation";
 import { MAX_EXEC_TIMES_MS } from "../../../perfConfig";
 
 describe("Autocomplete Schema Validation", () => {
+    const commonBaseURL = "https://tomtom.com";
     const apiKey = "API_KEY";
     const query = "cafe";
     const language = "en-GB";
 
     test("it should fail when query is missing", () => {
-        // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, language }, autocompleteSearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ commonBaseURL, apiKey, language }, { schema: autocompleteSearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -29,9 +30,9 @@ describe("Autocomplete Schema Validation", () => {
     });
 
     test("it should fail when language is missing", () => {
-        // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, query }, autocompleteSearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ commonBaseURL, apiKey, query }, { schema: autocompleteSearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -48,10 +49,12 @@ describe("Autocomplete Schema Validation", () => {
 
     test("it should fail when query is a number", () => {
         const queryNum = 5;
-        // @ts-ignore
-        const validationResult = () =>
-            validateRequestSchema({ apiKey, query: queryNum, language }, autocompleteSearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(
+                { commonBaseURL, apiKey, query: queryNum, language },
+                { schema: autocompleteSearchRequestSchema }
+            )
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -68,10 +71,12 @@ describe("Autocomplete Schema Validation", () => {
 
     test("it should fail when countries is of type string", () => {
         const countries = "NL";
-
-        const validationResult = () =>
-            validateRequestSchema({ apiKey, query, language, countries }, autocompleteSearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(
+                { commonBaseURL, apiKey, query, language, countries },
+                { schema: autocompleteSearchRequestSchema }
+            )
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -88,10 +93,12 @@ describe("Autocomplete Schema Validation", () => {
 
     test("it should fail when resultType is of type number", () => {
         const resultType = 5;
-
-        const validationResult = () =>
-            validateRequestSchema({ apiKey, query, language, resultType }, autocompleteSearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(
+                { commonBaseURL, apiKey, query, language, resultType },
+                { schema: autocompleteSearchRequestSchema }
+            )
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -107,10 +114,12 @@ describe("Autocomplete Schema Validation", () => {
     });
 
     test("it should fail when radiusMeters is of type string", () => {
-        const radiusMeters = "600";
-        const validationResult = () =>
-            validateRequestSchema({ apiKey, query, language, radiusMeters }, autocompleteSearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(
+                { commonBaseURL, apiKey, query, language, radiusMeters: "600" },
+                { schema: autocompleteSearchRequestSchema }
+            )
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -131,7 +140,10 @@ describe("Autocomplete Schema Validation", () => {
             // @ts-ignore
             (_title: string, params: AutocompleteSearchParams) => {
                 expect(
-                    bestExecutionTimeMS(() => validateRequestSchema(params, autocompleteSearchRequestSchema), 10)
+                    bestExecutionTimeMS(
+                        () => validateRequestSchema(params, { schema: autocompleteSearchRequestSchema }),
+                        10
+                    )
                 ).toBeLessThan(MAX_EXEC_TIMES_MS.autocomplete.schemaValidation);
             }
         );

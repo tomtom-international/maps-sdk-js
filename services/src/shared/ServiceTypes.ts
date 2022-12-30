@@ -1,7 +1,7 @@
 import { GlobalConfig } from "@anw/go-sdk-js/core";
 import { SDKServiceError } from "./Errors";
 import { ErrorObjAPI } from "./types/APIResponseErrorTypes";
-import { ZodObject } from "zod";
+import { RequestValidationConfig } from "./types/Validation";
 
 /**
  * @group Shared
@@ -37,11 +37,9 @@ export type ParseResponseError<T> = (apiError: ErrorObjAPI<T>, serviceName: stri
  */
 export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE> = {
     /**
-     * Schema from Zod for validating input parameters.
-     * This will be compiled and used for validation.
-     * https://zod.dev/?id=basic-usage
+     * Optional configuration for request validation.
      */
-    validateRequestSchema?: ZodObject<any>;
+    requestValidation?: RequestValidationConfig;
 
     /**
      * Builds the request to be sent to the API.

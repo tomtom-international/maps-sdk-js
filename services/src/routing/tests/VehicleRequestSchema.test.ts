@@ -1,6 +1,6 @@
 import { CalculateRouteWaypointInputs } from "../types/CalculateRouteParams";
 import { validateRequestSchema } from "../../shared/Validation";
-import { calculateRouteRequestSchema } from "../CalculateRouteRequestSchema";
+import { routeRequestValidationConfig } from "../CalculateRouteTemplate";
 
 describe("Routing: Vehicle parameter request schema tests", () => {
     const apiKey = "APIKEY";
@@ -40,7 +40,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                         }
                     }
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             )
         ).toThrow(
             expect.objectContaining({
@@ -87,7 +87,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                         }
                     }
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             )
         ).toThrow(
             expect.objectContaining({
@@ -132,7 +132,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                         }
                     }
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             )
         ).toThrow(
             expect.objectContaining({
@@ -173,6 +173,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
             })
         );
     });
+
     test("it should fail when format of electric consumption model is incorrect", () => {
         expect(() =>
             validateRequestSchema(
@@ -208,7 +209,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                         }
                     }
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             )
         ).toThrow(
             expect.objectContaining({
@@ -268,7 +269,8 @@ describe("Routing: Vehicle parameter request schema tests", () => {
             })
         );
     });
-    test("it should fail when format of combustion consumption model is incorrect & efficiency object is missing", () => {
+
+    test("should fail when format of combustion consumption model is incorrect & efficiency object is missing", () => {
         expect(() =>
             validateRequestSchema(
                 {
@@ -292,7 +294,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                         }
                     }
                 },
-                calculateRouteRequestSchema
+                routeRequestValidationConfig
             )
         ).toThrow(
             expect.objectContaining({

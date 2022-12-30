@@ -22,7 +22,7 @@ export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
         }
     }
 
-    protected init(eventsProxy: EventsProxy, config: MapLanguageConfig): void {
+    protected init(_eventsProxy: EventsProxy, config: MapLanguageConfig): void {
         this.setLanguage(config.language);
     }
 

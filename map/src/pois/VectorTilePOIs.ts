@@ -1,8 +1,7 @@
 import isNil from "lodash/isNil";
-import { AbstractMapModule, StyleSourceWithLayers, EventsModule, EventsProxy } from "../core";
+import { AbstractMapModule, EventsModule, EventsProxy, POI_SOURCE_ID, StyleSourceWithLayers } from "../core";
 import { VectorTilePOIsConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
-import { POI_SOURCE_ID } from "../core/layers/sourcesIDs";
 
 /**
  * Vector tile POIs map module.

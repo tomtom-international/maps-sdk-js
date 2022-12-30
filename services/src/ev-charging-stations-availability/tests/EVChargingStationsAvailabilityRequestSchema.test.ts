@@ -19,9 +19,9 @@ describe("EV Charging Stations availability schema validation", () => {
             commonBaseURL
         };
 
-        const validationResult = () =>
-            validateRequestSchema(invalidParams, evChargingStationsAvailabilityRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(invalidParams, { schema: evChargingStationsAvailabilityRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -60,9 +60,9 @@ describe("EV Charging Stations availability schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () =>
-            validateRequestSchema(invalidParams, evChargingStationsAvailabilityRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(invalidParams, { schema: evChargingStationsAvailabilityRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -91,9 +91,9 @@ describe("EV Charging Stations availability schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () =>
-            validateRequestSchema(invalidParams, evChargingStationsAvailabilityRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(invalidParams, { schema: evChargingStationsAvailabilityRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -138,9 +138,9 @@ describe("EV Charging Stations availability schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () =>
-            validateRequestSchema(invalidParams, evChargingStationsAvailabilityRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema(invalidParams, { schema: evChargingStationsAvailabilityRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -168,10 +168,9 @@ describe("EV charging stations availability request schema performance tests", (
         expect(
             bestExecutionTimeMS(
                 () =>
-                    validateRequestSchema(
-                        requestObjects as EVChargingStationsAvailabilityParams,
-                        evChargingStationsAvailabilityRequestSchema
-                    ),
+                    validateRequestSchema(requestObjects as EVChargingStationsAvailabilityParams, {
+                        schema: evChargingStationsAvailabilityRequestSchema
+                    }),
                 10
             )
         ).toBeLessThan(MAX_EXEC_TIMES_MS.ev.schemaValidation);

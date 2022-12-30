@@ -23,7 +23,7 @@ export type AutocompleteSearchTemplate = ServiceTemplate<
  * @category Variables
  */
 export const autocompleteSearchTemplate: AutocompleteSearchTemplate = {
-    validateRequestSchema: autocompleteSearchRequestSchema,
+    requestValidation: { schema: autocompleteSearchRequestSchema },
     buildRequest: buildAutocompleteSearchRequest,
     sendRequest: get,
     parseResponse: parseAutocompleteSearchResponse

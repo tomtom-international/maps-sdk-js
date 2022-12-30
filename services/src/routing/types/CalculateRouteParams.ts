@@ -1,4 +1,5 @@
-import { Avoidable, inputSectionTypes, TravelMode, WaypointLike } from "@anw/go-sdk-js/core";
+import { Avoidable, inputSectionTypes, Route, TravelMode, WaypointLike } from "@anw/go-sdk-js/core";
+import { Position } from "geojson";
 import { CommonServiceParams } from "../../shared";
 import { VehicleParameters } from "./VehicleParams";
 
@@ -13,16 +14,11 @@ import { VehicleParameters } from "./VehicleParams";
 export type CalculateRouteWaypointInputs = [WaypointLike, WaypointLike, ...WaypointLike[]];
 
 /**
+ *
  * @group Calculate Route
  * @category Types
  */
-export type RouteMandatoryParams = {
-    /**
-     * These are the specified locations for route calculation. They are the main input and are mandatory.
-     * @default None
-     */
-    locations: CalculateRouteWaypointInputs;
-};
+export type SupportingPoints = Position[] | Route;
 
 /**
  * Specifies when to depart (start travelling) or to arrive (finish travelling).
@@ -105,7 +101,21 @@ export type InstructionsTypes = typeof instructionsTypes[number];
  * @group Calculate Route
  * @category Types
  */
-export type RouteOptionalParams = {
+export type CalculateRouteParams = CommonServiceParams & {
+    /**
+     * These are the specified locations (waypoints) for route calculation.
+     * * They are mandatory unless supportingPoints are specified.
+     * @default None
+     */
+    locations?: CalculateRouteWaypointInputs;
+
+    /**
+     * Sequence of supporting points for route path reconstruction.
+     * @see {@link https://developer.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters POST data parameters}
+     * @default None
+     */
+    supportingPoints?: SupportingPoints;
+
     /**
      * Specifies something that the route calculation should try to avoid when determining the route.
      * @default None
@@ -235,9 +245,3 @@ export type RouteOptionalParams = {
      */
     when?: DepartArriveParams;
 };
-
-/**
- * @group Calculate Route
- * @category Types
- */
-export type CalculateRouteParams = CommonServiceParams & RouteMandatoryParams & RouteOptionalParams;

@@ -8,6 +8,7 @@ import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 describe("FuzzySearch Schema Validation", () => {
     const apiKey = "API_KEY";
     const query = "restaurant";
+
     test("it should pass when poi category is of type array consisting poi category IDs", () => {
         expect(
             fuzzySearchRequestSchema.parse({
@@ -27,10 +28,7 @@ describe("FuzzySearch Schema Validation", () => {
     });
 
     test("it should fail when missing mandatory query", () => {
-        const limit = 10;
-        // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, limit }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema({ apiKey, limit: 10 }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -46,10 +44,7 @@ describe("FuzzySearch Schema Validation", () => {
     });
 
     test("it should fail when query is not of type string", () => {
-        const query = undefined;
-        // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, query }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema({ apiKey, query: undefined }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -65,10 +60,9 @@ describe("FuzzySearch Schema Validation", () => {
     });
 
     test("it should fail when typeahead has wrong value", () => {
-        const typeahead = 1;
-        // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, query, typeahead }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ apiKey, query, typeahead: 1 }, { schema: fuzzySearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -85,10 +79,9 @@ describe("FuzzySearch Schema Validation", () => {
 
     test("it should fail when minFuzzyLevel has invalid number", () => {
         const minFuzzyLevel = 6;
-        // @ts-ignore
-        const validationResult = () =>
-            validateRequestSchema({ apiKey, query, minFuzzyLevel }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ apiKey, query, minFuzzyLevel }, { schema: fuzzySearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -112,11 +105,10 @@ describe("FuzzySearch Schema Validation", () => {
 
     //
     test("it should fail when map-code is not of type array", () => {
-        const query = "Fuel Station";
         const mapcodes = "Local";
-        // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, query, mapcodes }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ apiKey, query: "Fuel Station", mapcodes }, { schema: fuzzySearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -133,9 +125,7 @@ describe("FuzzySearch Schema Validation", () => {
 
     test("it should fail when view is not amongst the defined enums", () => {
         const view = "CH";
-        //@ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, query, view }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema({ apiKey, query, view }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -154,9 +144,7 @@ describe("FuzzySearch Schema Validation", () => {
 
     test("it should fail when index is not of type array", () => {
         const indexes = "STR";
-        // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, query, indexes }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema({ apiKey, query, indexes }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -173,11 +161,9 @@ describe("FuzzySearch Schema Validation", () => {
     //
     test("it should fail when POI categories are not of type array", () => {
         const poiCategories = 7315025;
-
-        // @ts-ignore
-        const validationResult = () =>
-            validateRequestSchema({ apiKey, query, poiCategories }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ apiKey, query, poiCategories }, { schema: fuzzySearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -194,9 +180,7 @@ describe("FuzzySearch Schema Validation", () => {
 
     test("it should fail when POI brands is of type string", () => {
         const poiBrands = "TomTom";
-
-        const validationResult = () => validateRequestSchema({ apiKey, query, poiBrands }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema({ apiKey, query, poiBrands }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -212,10 +196,10 @@ describe("FuzzySearch Schema Validation", () => {
     });
 
     test("it should fail when connectors is of type string", () => {
-        const query = "EV";
         const connectors = "IEC62196Type1";
-        const validationResult = () => validateRequestSchema({ apiKey, query, connectors }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ apiKey, query: "EV", connectors }, { schema: fuzzySearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -231,11 +215,11 @@ describe("FuzzySearch Schema Validation", () => {
     });
 
     test("it should fail when fuel is of type string", () => {
-        const query = "Fuel";
         const fuelTypes = "AdBlue";
 
-        const validationResult = () => validateRequestSchema({ apiKey, query, fuelTypes }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ apiKey, query: "Fuel", fuelTypes }, { schema: fuzzySearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -252,9 +236,9 @@ describe("FuzzySearch Schema Validation", () => {
 
     test("it should fail when geography type is of type string", () => {
         const geographyTypes = "Municipality";
-        const validationResult = () =>
-            validateRequestSchema({ apiKey, query, geographyTypes }, fuzzySearchRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() =>
+            validateRequestSchema({ apiKey, query, geographyTypes }, { schema: fuzzySearchRequestSchema })
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -270,16 +254,16 @@ describe("FuzzySearch Schema Validation", () => {
     });
 
     test("it should fail when lan and lon parameters are not between permitted values", () => {
-        const validationResult = () =>
+        const validationCall = () =>
             validateRequestSchema(
                 {
                     query,
                     position: [200, -180],
                     apiKey
                 },
-                fuzzySearchRequestSchema
+                { schema: fuzzySearchRequestSchema }
             );
-        expect(validationResult).toThrow(
+        expect(validationCall).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -315,7 +299,10 @@ describe("Fuzzy Search request schema performance tests", () => {
     test("Fuzzy Search request URL schema performance test", async () => {
         expect(
             bestExecutionTimeMS(
-                () => validateRequestSchema(fuzzySearchReqObjects as FuzzySearchParams, fuzzySearchRequestSchema),
+                () =>
+                    validateRequestSchema(fuzzySearchReqObjects as FuzzySearchParams, {
+                        schema: fuzzySearchRequestSchema
+                    }),
                 10
             )
         ).toBeLessThan(MAX_EXEC_TIMES_MS.search.fuzzySearch.schemaValidation);

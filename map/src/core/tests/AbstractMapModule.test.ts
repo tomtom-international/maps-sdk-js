@@ -10,7 +10,7 @@ describe("AbstractMapModule tests", () => {
         initCalled?: boolean;
         initConfig?: unknown;
 
-        protected init(eventsProxy: EventsProxy, config?: VectorTileMapModuleConfig): void {
+        protected init(_eventsProxy: EventsProxy, config?: VectorTileMapModuleConfig): void {
             this.initCalled = true;
             this.initConfig = config;
         }

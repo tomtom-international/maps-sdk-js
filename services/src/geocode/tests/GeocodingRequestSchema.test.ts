@@ -19,8 +19,7 @@ describe("Geocoding schema validation", () => {
             commonBaseURL
         };
 
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -45,8 +44,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -70,8 +68,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -96,8 +93,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -119,8 +115,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -142,8 +137,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -177,8 +171,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -201,8 +194,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -225,8 +217,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -249,8 +240,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -272,8 +262,7 @@ describe("Geocoding schema validation", () => {
             apiKey,
             commonBaseURL
         };
-        const validationResult = () => validateRequestSchema(invalidParams, geocodingRequestSchema);
-        expect(validationResult).toThrow(
+        expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -295,7 +284,7 @@ describe("Geocoding request schema performance tests", () => {
     test("Geocoding request schema performance test", () => {
         expect(
             bestExecutionTimeMS(
-                () => validateRequestSchema(geoCodingReqObjects as GeocodingParams, geocodingRequestSchema),
+                () => validateRequestSchema(geoCodingReqObjects as GeocodingParams, { schema: geocodingRequestSchema }),
                 10
             )
         ).toBeLessThan(MAX_EXEC_TIMES_MS.geocoding.schemaValidation);

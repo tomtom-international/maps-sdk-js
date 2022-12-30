@@ -28,7 +28,7 @@ export type GeometrySearchTemplate = ServiceTemplate<
  * @category Variables
  */
 export const geometrySearchTemplate: GeometrySearchTemplate = {
-    validateRequestSchema: geometrySearchRequestSchema,
+    requestValidation: { schema: geometrySearchRequestSchema },
     buildRequest: buildGeometrySearchRequest,
     sendRequest: post,
     parseResponse: parseGeometrySearchResponse

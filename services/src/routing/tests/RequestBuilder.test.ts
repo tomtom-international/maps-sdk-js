@@ -4,12 +4,17 @@ import { CalculateRouteParams } from "../types/CalculateRouteParams";
 import { buildCalculateRouteRequest } from "../RequestBuilder";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { FetchInput } from "../../shared/types/Fetch";
+import { CalculateRoutePOSTDataAPI } from "../types/APIPOSTRequestTypes";
 
 describe("Calculate Route request URL building functional tests", () => {
-    // @ts-ignore
-    test.each(requestObjectsAndURLs)("'%s'", (_name: string, params: CalculateRouteParams, url: string) => {
-        expect(buildCalculateRouteRequest(params).toString()).toStrictEqual(url);
-    });
+    test.each(requestObjectsAndURLs)(
+        "'%s'",
+        // @ts-ignore
+        (_name: string, params: CalculateRouteParams, fetchInput: FetchInput<CalculateRoutePOSTDataAPI>) => {
+            expect(buildCalculateRouteRequest(params)).toStrictEqual(fetchInput);
+        }
+    );
 });
 
 describe("Calculate Route request URL building performance tests", () => {

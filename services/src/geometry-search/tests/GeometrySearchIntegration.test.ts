@@ -117,7 +117,7 @@ describe("Geometry Search service", () => {
         // @ts-ignore
         await expect(search({ query, geometries: incorrectGeometry })).rejects.toMatchObject(
             expect.objectContaining({
-                message: `Validation error`
+                message: "Invalid input"
             })
         );
     });

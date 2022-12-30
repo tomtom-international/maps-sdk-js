@@ -18,7 +18,7 @@ export type FuzzySearchTemplate = ServiceTemplate<FuzzySearchParams, URL, FuzzyS
  * @category Variables
  */
 export const fuzzySearchTemplate: FuzzySearchTemplate = {
-    validateRequestSchema: fuzzySearchRequestSchema,
+    requestValidation: { schema: fuzzySearchRequestSchema },
     buildRequest: buildFuzzySearchRequest,
     sendRequest: get,
     parseResponse: parseFuzzySearchResponse

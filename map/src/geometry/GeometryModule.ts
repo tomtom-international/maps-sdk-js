@@ -1,9 +1,8 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule, EventsProxy } from "../core";
+import { AbstractMapModule, EventsModule, EventsProxy, GeoJSONSourceWithLayers, GEOMETRY_SOURCE_ID } from "../core";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { asDefined } from "../core/AssertionUtils";
-import { GEOMETRY_SOURCE_ID } from "../core/layers/sourcesIDs";
 
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";

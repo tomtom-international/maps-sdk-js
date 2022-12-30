@@ -23,7 +23,7 @@ export type GeometryDataTemplate = ServiceTemplate<
  * @category Variables
  */
 export const geometryDataTemplate: GeometryDataTemplate = {
-    validateRequestSchema: geometryDataRequestSchema,
+    requestValidation: { schema: geometryDataRequestSchema },
     buildRequest: buildGeometryDataRequest,
     sendRequest: get,
     parseResponse: parseGeometryDataResponse

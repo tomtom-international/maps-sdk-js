@@ -1,10 +1,12 @@
 import { getLngLatArray, inputSectionTypes, Waypoint, WaypointLike, WaypointProps } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
+import { Position } from "geojson";
 import {
     CalculateRouteParams,
     CalculateRouteWaypointInputs,
     DepartArriveParams,
     InputSectionTypes,
+    SupportingPoints,
     ThrillingParams
 } from "./types/CalculateRouteParams";
 import { CommonServiceParams } from "../shared";
@@ -18,6 +20,8 @@ import {
     VehicleDimensions,
     VehicleParameters
 } from "./types/VehicleParams";
+import { FetchInput } from "../shared/types/Fetch";
+import { CalculateRoutePOSTDataAPI, SupportingPointsAPI } from "./types/APIPOSTRequestTypes";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}/routing/1/calculateRoute`;
@@ -25,8 +29,8 @@ const buildURLBasePath = (params: CommonServiceParams): string =>
 const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
 
-const buildWaypointsString = (waypointInputs: CalculateRouteWaypointInputs): string => {
-    return waypointInputs
+const buildLocationsStringFromWaypoints = (waypointInputs: CalculateRouteWaypointInputs): string =>
+    waypointInputs
         .map((waypointInput: WaypointLike) => {
             const lngLat = getLngLatArray(waypointInput);
             const lngLatString = `${lngLat[1]},${lngLat[0]}`;
@@ -34,6 +38,34 @@ const buildWaypointsString = (waypointInputs: CalculateRouteWaypointInputs): str
             return radius ? `circle(${lngLatString},${radius})` : lngLatString;
         })
         .join(":");
+
+const getPositionsFromSupportingPoints = (supportingPoints?: SupportingPoints): Position[] | undefined => {
+    if (supportingPoints) {
+        if (Array.isArray(supportingPoints)) {
+            if (supportingPoints.length) {
+                return supportingPoints;
+            }
+        } else if (supportingPoints.geometry.coordinates.length) {
+            return supportingPoints.geometry.coordinates;
+        }
+    }
+    return undefined;
+};
+
+const buildLocationsString = (params: CalculateRouteParams): string => {
+    if (params.locations) {
+        return buildLocationsStringFromWaypoints(params.locations);
+    } else {
+        const positions = getPositionsFromSupportingPoints(params.supportingPoints);
+        if (positions && positions.length >= 2) {
+            // we use the first and last supporting points:
+            return buildLocationsStringFromWaypoints([
+                positions[0],
+                positions[positions.length - 1]
+            ] as CalculateRouteWaypointInputs);
+        }
+    }
+    throw Error("No locations nor supporting points defined");
 };
 
 const appendWhenParams = (urlParams: URLSearchParams, when?: DepartArriveParams): void => {
@@ -139,14 +171,17 @@ const appendVehicleParams = (urlParams: URLSearchParams, vehicleParams?: Vehicle
     }
 };
 
+const toAPISupportingPoints = (positions: Position[]): SupportingPointsAPI =>
+    positions.map((position) => ({ latitude: position[1], longitude: position[0] }));
+
 /**
  * Default method for building calculate route request from {@link CalculateRouteParams}
  * @group Calculate Route
  * @category Functions
  * @param params The calculate route parameters, with global configuration already merged into them.
  */
-export const buildCalculateRouteRequest = (params: CalculateRouteParams): URL => {
-    const url = new URL(`${buildURLBasePath(params)}/${buildWaypointsString(params.locations)}/json`);
+export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchInput<CalculateRoutePOSTDataAPI> => {
+    const url = new URL(`${buildURLBasePath(params)}/${buildLocationsString(params)}/json`);
     const urlParams: URLSearchParams = url.searchParams;
     appendCommonParams(urlParams, params);
     appendByRepeatingParamName(urlParams, "avoid", params.avoid);
@@ -165,5 +200,15 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): URL =>
         appendThrillingParams(urlParams, params.thrillingParams);
     }
     appendVehicleParams(urlParams, params.vehicle);
-    return url;
+
+    const supportingPoints = getPositionsFromSupportingPoints(params.supportingPoints);
+    if (supportingPoints) {
+        return {
+            method: "POST",
+            url,
+            data: { supportingPoints: toAPISupportingPoints(supportingPoints) }
+        };
+    } else {
+        return { method: "GET", url };
+    }
 };
