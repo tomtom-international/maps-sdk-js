@@ -7,6 +7,7 @@ import { GeometrySearchParams, GeometrySearchResponse, GeometrySearchResponseAPI
 import { IndexTypesAbbreviation } from "../../shared";
 import { baseSearchPOITestProps } from "../../shared/tests/IntegrationTestUtils";
 import realGeometryDataInput from "./RealGeometryDataInput.json";
+import hugeMultiPolygonDataInput from "./HugeMultiPolygonDataInput.json";
 import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
 
 describe("Geometry Search service", () => {
@@ -178,6 +179,12 @@ describe("Geometry Search service", () => {
     test("geometrySearch with real geometry data input from a geometry data call", async () => {
         const query = "university";
         const res = await search({ query, geometries: [realGeometryDataInput as GeometryDataResponse] });
+        expect(res).toEqual(expectWorkingResult());
+    });
+
+    test("geometrySearch with huge multipolygon geometry data input from a geometry data call", async () => {
+        const query = "university";
+        const res = await search({ query, geometries: [hugeMultiPolygonDataInput as GeometryDataResponse] });
         expect(res).toEqual(expectWorkingResult());
     });
 });
