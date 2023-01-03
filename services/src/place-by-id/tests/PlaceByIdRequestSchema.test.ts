@@ -3,6 +3,7 @@ import placeByIdReqObjects from "../../place-by-id/tests/RequestBuilderPerf.data
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { placeByIdRequestSchema } from "../PlaceByIdSchema";
+import perfConfig from "services/perfConfig.json";
 
 describe("Place By Id API", () => {
     const apiKey = "APIKEY";
@@ -72,13 +73,12 @@ describe("Place By Id API", () => {
 });
 
 describe("PlaceById request schema performance tests", () => {
-    test.each(placeByIdReqObjects)(
-        "'%s'",
-        // @ts-ignore
-        (params: PlaceByIdParams) => {
-            expect(bestExecutionTimeMS(() => validateRequestSchema(params, placeByIdRequestSchema), 10)).toBeLessThan(
-                2
-            );
-        }
-    );
+    test("PlaceById request schema performance test", () => {
+        expect(
+            bestExecutionTimeMS(
+                () => validateRequestSchema(placeByIdReqObjects as PlaceByIdParams, placeByIdRequestSchema),
+                10
+            )
+        ).toBeLessThan(perfConfig.placeById.schemaValidation);
+    });
 });

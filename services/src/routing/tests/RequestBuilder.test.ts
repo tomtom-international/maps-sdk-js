@@ -1,8 +1,9 @@
 import { requestObjectsAndURLs } from "./RequestBuilder.data";
-import { routeRequestParams } from "./RequestBuilderPerf.data";
+import { shortRouteRequestParams } from "./RequestBuilderPerf.data";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";
 import { buildCalculateRouteRequest } from "../RequestBuilder";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
+import perfConfig from "services/perfConfig.json";
 
 describe("Calculate Route request URL building functional tests", () => {
     // @ts-ignore
@@ -12,10 +13,9 @@ describe("Calculate Route request URL building functional tests", () => {
 });
 
 describe("Calculate Route request URL building performance tests", () => {
-    // @ts-ignore
     test("Calculate route request with many waypoints, mandatory & optional params", () => {
         expect(
-            bestExecutionTimeMS(() => buildCalculateRouteRequest(routeRequestParams as CalculateRouteParams), 20)
-        ).toBeLessThan(5);
+            bestExecutionTimeMS(() => buildCalculateRouteRequest(shortRouteRequestParams as CalculateRouteParams), 20)
+        ).toBeLessThan(perfConfig.routing.requestBuilding);
     });
 });

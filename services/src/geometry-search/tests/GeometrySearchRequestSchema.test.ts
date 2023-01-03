@@ -3,6 +3,7 @@ import { geometrySearchRequestSchema } from "../GeometrySearchRequestSchema";
 import geometrySearchReqObjects from "../../geometry-search/tests/RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
+import perfConfig from "services/perfConfig.json";
 
 describe("GeometrySearch Schema Validation", () => {
     const apiKey = "APIKEY";
@@ -404,13 +405,16 @@ describe("GeometrySearch Schema Validation", () => {
 });
 
 describe("Geometry Search request schema performance tests", () => {
-    test.each(geometrySearchReqObjects)(
-        "'%s'",
-        // @ts-ignore
-        (_title: string, params: GeometrySearchParams) => {
-            expect(
-                bestExecutionTimeMS(() => validateRequestSchema(params, geometrySearchRequestSchema), 10)
-            ).toBeLessThan(10);
-        }
-    );
+    test("Geometry Search request schema performance test", () => {
+        expect(
+            bestExecutionTimeMS(
+                () =>
+                    validateRequestSchema(
+                        geometrySearchReqObjects as GeometrySearchParams,
+                        geometrySearchRequestSchema
+                    ),
+                10
+            )
+        ).toBeLessThan(perfConfig.search.geometrySearch.schemaValidation);
+    });
 });

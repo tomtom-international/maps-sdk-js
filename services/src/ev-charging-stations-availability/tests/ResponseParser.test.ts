@@ -1,4 +1,5 @@
 import apiAndParsedResponses from "./ResponseParser.data.json";
+import apiResponses from "./ResponseParserPerf.data.json";
 import { parseEVChargingStationsAvailabilityResponse } from "../ResponseParser";
 import errorResponses from "../tests/ResponseError.data.json";
 import { DefaultAPIResponseError, ErrorObjAPI } from "../../shared/types/APIResponseErrorTypes";
@@ -7,6 +8,7 @@ import { SDKServiceError } from "../../shared/Errors";
 import { parseEVChargingStationsAvailabilityResponseError } from "../EVChargingStationsAvailabilityResponseErrorParser";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { EVChargingStationsAvailabilityResponse } from "../types/EVChargingStationsAvailabilityResponse";
+import perfConfig from "services/perfConfig.json";
 
 describe("Charging availability response parsing tests", () => {
     test.each(apiAndParsedResponses)(
@@ -40,13 +42,13 @@ describe("Charging availability error response parsing tests", () => {
 });
 
 describe("Charging availability response parsing performance tests", () => {
-    test.each(apiAndParsedResponses)(
+    test.each(apiResponses)(
         `'%s`,
         // @ts-ignore
         (_name: string, apiResponse: EVChargingStationsAvailabilityResponse) => {
             expect(
                 bestExecutionTimeMS(() => parseEVChargingStationsAvailabilityResponse(apiResponse), 10)
-            ).toBeLessThan(2);
+            ).toBeLessThan(perfConfig.ev.responseParsing);
         }
     );
 });

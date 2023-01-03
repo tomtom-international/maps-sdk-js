@@ -3,6 +3,7 @@ import { validateRequestSchema } from "../../shared/Validation";
 import { calculateRouteRequestSchema } from "../CalculateRouteRequestSchema";
 import { routeRequestParams } from "./RequestBuilderPerf.data";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";
+import perfConfig from "services/perfConfig.json";
 
 describe("Calculate route request schema validation", () => {
     const apiKey = "APIKEY";
@@ -286,6 +287,6 @@ describe("Calculate route request schema performance tests", () => {
                 () => validateRequestSchema(routeRequestParams as CalculateRouteParams, calculateRouteRequestSchema),
                 10
             )
-        ).toBeLessThan(2);
+        ).toBeLessThan(perfConfig.routing.schemaValidation);
     });
 });

@@ -3,6 +3,7 @@ import revGeoReqObjects from "../../revgeo/tests/RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { revGeocodeRequestSchema } from "../RevGeocodeRequestSchema";
+import perfConfig from "services/perfConfig.json";
 
 describe("ReverseGeocoding schema validation", () => {
     const apiKey = "APIKEY";
@@ -360,7 +361,7 @@ describe("Rev-Geo request schema performance tests", () => {
         // @ts-ignore
         (_title: string, params: ReverseGeocodingParams) => {
             expect(bestExecutionTimeMS(() => validateRequestSchema(params, revGeocodeRequestSchema), 10)).toBeLessThan(
-                2
+                perfConfig.revGeo.schemaValidation
             );
         }
     );

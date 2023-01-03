@@ -4,6 +4,7 @@ import geoCodingReqObjects from "../../geocode/tests/RequestBuilderPerf.data.jso
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { geocodingRequestSchema } from "../GeocodingRequestSchema";
+import perfConfig from "services/perfConfig.json";
 
 describe("Geocoding schema validation", () => {
     const apiKey = "APIKEY";
@@ -291,13 +292,12 @@ describe("Geocoding schema validation", () => {
 });
 
 describe("Geocoding request schema performance tests", () => {
-    test.each(geoCodingReqObjects)(
-        "'%s'",
-        // @ts-ignore
-        (params: GeocodingParams) => {
-            expect(bestExecutionTimeMS(() => validateRequestSchema(params, geocodingRequestSchema), 10)).toBeLessThan(
-                7
-            );
-        }
-    );
+    test("Geocoding request schema performance test", () => {
+        expect(
+            bestExecutionTimeMS(
+                () => validateRequestSchema(geoCodingReqObjects as GeocodingParams, geocodingRequestSchema),
+                10
+            )
+        ).toBeLessThan(perfConfig.geocoding.schemaValidation);
+    });
 });

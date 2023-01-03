@@ -6,7 +6,7 @@
         1.12345,
         23.45678
       ],
-      "apiKey": "GIVEN_API_KEY",
+      "apiKey": "APIKEY",
       "commonBaseURL": "https://api.tomtom.com",
       "language": "es-ES",
       "allowFreeformNewline": true,

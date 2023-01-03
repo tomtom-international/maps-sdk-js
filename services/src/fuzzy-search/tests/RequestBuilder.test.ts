@@ -2,8 +2,8 @@ import { buildFuzzySearchRequest } from "../RequestBuilder";
 import fuzzySearchReqObjectsAndURLs from "./RequestBuilder.data.json";
 import { FuzzySearchParams } from "../types";
 import fuzzySearchReqObjects from "./RequestBuilderPerf.data.json";
-import { GeometrySearchParams } from "../../geometry-search";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
+import perfConfig from "services/perfConfig.json";
 
 describe("Calculate Fuzzy Search request URL building tests", () => {
     test.each(fuzzySearchReqObjectsAndURLs)(
@@ -16,11 +16,9 @@ describe("Calculate Fuzzy Search request URL building tests", () => {
 });
 
 describe("Fuzzy Search request URL builder performance tests", () => {
-    test.each(fuzzySearchReqObjects)(
-        "'%s'",
-        // @ts-ignore
-        (_title: string, params: GeometrySearchParams) => {
-            expect(bestExecutionTimeMS(() => buildFuzzySearchRequest(params), 10)).toBeLessThan(2);
-        }
-    );
+    test("Fuzzy Search request URL builder tests", async () => {
+        expect(
+            bestExecutionTimeMS(() => buildFuzzySearchRequest(fuzzySearchReqObjects as FuzzySearchParams), 10)
+        ).toBeLessThan(perfConfig.search.fuzzySearch.requestBuilding);
+    });
 });

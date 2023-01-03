@@ -4,6 +4,7 @@ import requestObjects from "./RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { evChargingStationsAvailabilityRequestSchema } from "../EVChargingStationsAvailabilityRequestSchema";
 import { validateRequestSchema } from "../../shared/Validation";
+import perfConfig from "services/perfConfig.json";
 
 describe("EV Charging Stations availability schema validation", () => {
     const apiKey = "APIKEY";
@@ -163,16 +164,16 @@ describe("EV Charging Stations availability schema validation", () => {
 });
 
 describe("EV charging stations availability request schema performance tests", () => {
-    test.each(requestObjects)(
-        "'%s'",
-        //@ts-ignore
-        (_title: string, params: EVChargingStationsAvailabilityParams) => {
-            expect(
-                bestExecutionTimeMS(
-                    () => validateRequestSchema(params, evChargingStationsAvailabilityRequestSchema),
-                    10
-                )
-            ).toBeLessThan(1);
-        }
-    );
+    test("EV charging stations availability request schema performance test", async () => {
+        expect(
+            bestExecutionTimeMS(
+                () =>
+                    validateRequestSchema(
+                        requestObjects as EVChargingStationsAvailabilityParams,
+                        evChargingStationsAvailabilityRequestSchema
+                    ),
+                10
+            )
+        ).toBeLessThan(perfConfig.ev.schemaValidation);
+    });
 });

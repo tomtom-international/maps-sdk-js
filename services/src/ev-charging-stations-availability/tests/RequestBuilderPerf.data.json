@@ -1,8 +1,5 @@
-[
-  [
-    "EV Charging Stations Availability URL with all params",
-    {
-      "apiKey": "API_KEY",
+{
+      "apiKey": "APIKEY",
       "commonBaseURL": "https://api.tomtom.com",
       "language": "en-GB",
       "id": "528009002413828",
@@ -25,5 +22,3 @@
       "minPowerKW": 6,
       "maxPowerKW": 60
     }
-  ]
-]

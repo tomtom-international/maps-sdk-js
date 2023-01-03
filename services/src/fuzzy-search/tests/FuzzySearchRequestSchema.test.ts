@@ -3,6 +3,7 @@ import { fuzzySearchRequestSchema } from "../FuzzySearchRequestSchema";
 import { FuzzySearchParams } from "../types";
 import fuzzySearchReqObjects from "./RequestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/Validation";
+import perfConfig from "services/perfConfig.json";
 
 describe("FuzzySearch Schema Validation", () => {
     const apiKey = "API_KEY";
@@ -311,13 +312,12 @@ describe("FuzzySearch Schema Validation", () => {
 });
 
 describe("Fuzzy Search request schema performance tests", () => {
-    test.each(fuzzySearchReqObjects)(
-        "'%s'",
-        // @ts-ignore
-        (_title: string, params: FuzzySearchParams) => {
-            expect(bestExecutionTimeMS(() => validateRequestSchema(params, fuzzySearchRequestSchema), 10)).toBeLessThan(
-                7
-            );
-        }
-    );
+    test("Fuzzy Search request URL schema performance test", async () => {
+        expect(
+            bestExecutionTimeMS(
+                () => validateRequestSchema(fuzzySearchReqObjects as FuzzySearchParams, fuzzySearchRequestSchema),
+                10
+            )
+        ).toBeLessThan(perfConfig.search.fuzzySearch.schemaValidation);
+    });
 });

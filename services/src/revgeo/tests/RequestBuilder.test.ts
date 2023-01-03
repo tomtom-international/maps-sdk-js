@@ -3,6 +3,7 @@ import reverseGeocodeReqObjects from "./RequestBuilderPerf.data.json";
 import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 import { buildRevGeoRequest } from "../RequestBuilder";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
+import perfConfig from "services/perfConfig.json";
 
 describe("Reverse Geocoding request URL building functional tests", () => {
     test.each(reverseGeocodeReqObjectsAndURLS)(
@@ -19,7 +20,9 @@ describe("Reverse Geocoding request URL building performance test", () => {
         "'%s'",
         // @ts-ignore
         (_title: string, params: ReverseGeocodingParams) => {
-            expect(bestExecutionTimeMS(() => buildRevGeoRequest(params), 10)).toBeLessThan(2);
+            expect(bestExecutionTimeMS(() => buildRevGeoRequest(params), 10)).toBeLessThan(
+                perfConfig.revGeo.requestBuilding
+            );
         }
     );
 });

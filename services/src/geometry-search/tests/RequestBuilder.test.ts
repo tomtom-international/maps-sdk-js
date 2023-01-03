@@ -3,6 +3,7 @@ import geometrySearchReqObjectsAndURLs from "./RequestBuilder.data.json";
 import geometrySearchReqObjects from "./RequestBuilderPerf.data.json";
 import { GeometrySearchParams, SearchByGeometryPayloadAPI } from "../types";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
+import perfConfig from "services/perfConfig.json";
 
 describe("Calculate Geometry Search request URL building tests", () => {
     test.each(geometrySearchReqObjectsAndURLs)(
@@ -37,11 +38,9 @@ describe("Calculate Geometry Search request URL building tests", () => {
 });
 
 describe("Geometry Search request URL builder performance tests", () => {
-    test.each(geometrySearchReqObjects)(
-        "'%s'",
-        // @ts-ignore
-        (_title: string, params: GeometrySearchParams) => {
-            expect(bestExecutionTimeMS(() => buildGeometrySearchRequest(params), 10)).toBeLessThan(2);
-        }
-    );
+    test("Geometry Search request URL builder performance test", () => {
+        expect(
+            bestExecutionTimeMS(() => buildGeometrySearchRequest(geometrySearchReqObjects as GeometrySearchParams), 10)
+        ).toBeLessThan(perfConfig.search.geometrySearch.requestBuilding);
+    });
 });
