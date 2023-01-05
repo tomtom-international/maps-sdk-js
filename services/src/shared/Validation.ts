@@ -23,8 +23,7 @@ export class ValidationError extends Error {
  */
 export const validateRequestSchema = <T extends CommonServiceParams>(params: T, schema?: ZodObject<any>): T => {
     if (schema) {
-        const validate = schema
-            .merge(CommonServiceRequestSchema)
+        const validate = CommonServiceRequestSchema.merge(schema)
             // Check if there is commonBaseURL or customServiceBaseURL set in data
             .refine(
                 (data) => "commonBaseURL" in data || "customServiceBaseURL" in data,

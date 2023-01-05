@@ -1,0 +1,30 @@
+import { AutocompleteParams } from "./types";
+import {
+    appendByJoiningParamValue,
+    appendCommonParams,
+    appendLatLonParamsFromPosition,
+    appendOptionalParam
+} from "../shared/RequestBuildingUtils";
+
+const buildURLBasePath = (mergedOptions: AutocompleteParams): string =>
+    mergedOptions.customServiceBaseURL ||
+    `${mergedOptions.commonBaseURL}/search/2/autocomplete/${mergedOptions.query}.json`;
+
+/**
+ * Default function for building autocomplete request from {@link AutocompleteParams}
+ * @group Autocomplete
+ * @category Functions
+ * @param params The autocomplete parameters, with global configuration already merged into them.
+ */
+export const buildAutocompleteRequest = (params: AutocompleteParams): URL => {
+    const url = new URL(`${buildURLBasePath(params)}`);
+    const urlParams = url.searchParams;
+    appendCommonParams(urlParams, params);
+    appendOptionalParam(urlParams, "limit", params.limit);
+    appendLatLonParamsFromPosition(urlParams, params.position);
+    appendByJoiningParamValue(urlParams, "countrySet", params.countries);
+    appendOptionalParam(urlParams, "radius", params.radiusMeters);
+    appendByJoiningParamValue(urlParams, "resultSet", params.resultType);
+
+    return url;
+};

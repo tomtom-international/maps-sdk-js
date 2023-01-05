@@ -1,0 +1,22 @@
+[
+  [
+    "Autocomplete Response Parser Performance Test",
+    {
+      "context": {
+        "inputQuery": "McDonald's",
+        "geoBias": { "position": { "lat": 52.43312, "lon": 4.68998 }, "radius": 500000 }
+      },
+      "results": [
+        {
+          "segments": [
+            {
+              "type": "brand",
+              "value": "McDonald's",
+              "matches": { "inputQuery": [{ "offset": 0, "length": 10 }] }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+]
