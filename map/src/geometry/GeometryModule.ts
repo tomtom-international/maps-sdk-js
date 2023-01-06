@@ -19,12 +19,12 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
             { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
             { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
         ]);
-
-        this.goSDKMap._eventsProxy.add([this.geometry]);
     }
 
     protected loadLayersToEventProxy(event: EventsProxy): void {
-        event.add([asDefined(this.geometry)]);
+        if (this.geometry) {
+            event.add(this.geometry);
+        }
     }
 
     /**

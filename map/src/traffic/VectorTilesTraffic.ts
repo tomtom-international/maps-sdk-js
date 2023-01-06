@@ -3,7 +3,6 @@ import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers, EventsModule
 import { VectorTilesTrafficConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 import { VECTOR_TILES_INCIDENTS_SOURCE_ID, VECTOR_TILES_FLOW_SOURCE_ID } from "../core/layers/sourcesIDs";
-import { asDefined } from "../core/AssertionUtils";
 
 /**
  * Vector tiles traffic module.
@@ -30,14 +29,12 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     }
 
     protected loadLayersToEventProxy(event: EventsProxy): void {
-        // As the layers traffic_flow and traffic_incidents can be removed from source
-        // We make sure the value exists before attempt to add the layers to be interactive
-        if (this.flow) {
-            event.add([this.flow]);
-        }
+        const trafficLayers = [this.flow, this.incidents];
 
-        if (this.incidents) {
-            event.add([this.incidents]);
+        for (const layer of trafficLayers) {
+            if (layer) {
+                event.add(layer);
+            }
         }
     }
 

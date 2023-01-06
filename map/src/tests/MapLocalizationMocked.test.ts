@@ -5,8 +5,14 @@ jest.mock("maplibre-gl", () => ({
     Map: jest.fn().mockReturnValue({
         getStyle: jest.fn().mockReturnValue({ layers: [{}] }),
         isStyleLoaded: jest.fn().mockReturnValue(true),
+        getCanvas: jest.fn().mockReturnValue({
+            style: {
+                cursor: ""
+            }
+        }),
         once: jest.fn(),
-        on: jest.fn()
+        on: jest.fn(),
+        getZoom: jest.fn()
     }),
     setRTLTextPlugin: jest.fn(),
     getRTLTextPluginStatus: jest.fn()

@@ -54,7 +54,9 @@ export class GeoJSONPlaces extends AbstractMapModule {
     }
 
     protected loadLayersToEventProxy(event: EventsProxy): void {
-        event.add([asDefined(this.places)]);
+        if (this.places) {
+            event.add(this.places);
+        }
     }
 
     /**

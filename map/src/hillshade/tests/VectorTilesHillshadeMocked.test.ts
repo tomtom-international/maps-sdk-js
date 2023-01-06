@@ -14,8 +14,11 @@ describe("Vector tiles Hillshade module tests", () => {
                 getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
 
         const hillshade = new VectorTilesHillshade(goSDKMapMock, {
             visible: false
@@ -38,8 +41,11 @@ describe("Vector tiles Hillshade module tests", () => {
                 getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
 
         const hillshade = new VectorTilesHillshade(goSDKMapMock);
         expect(hillshade).toBeDefined();

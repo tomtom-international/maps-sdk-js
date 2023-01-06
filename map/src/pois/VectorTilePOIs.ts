@@ -3,7 +3,6 @@ import { AbstractMapModule, StyleSourceWithLayers, EventsModule, EventsProxy } f
 import { VectorTilePOIsConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 import { POI_SOURCE_ID } from "../core/layers/sourcesIDs";
-import { asDefined } from "../core/AssertionUtils";
 
 /**
  * Vector tile POIs map module.
@@ -24,7 +23,9 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     }
 
     protected loadLayersToEventProxy(event: EventsProxy): void {
-        event.add([asDefined(this.poi)]);
+        if (this.poi) {
+            event.add(this.poi);
+        }
     }
 
     applyConfig(config: VectorTilePOIsConfig): void {

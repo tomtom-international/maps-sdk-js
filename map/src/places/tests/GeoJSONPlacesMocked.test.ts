@@ -18,8 +18,12 @@ describe("GeoJSON Places module tests", () => {
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn()
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
+
         const testPlaces = {
             type: "FeatureCollection",
             features: [{ properties: { address: { freeformAddress: "TEST_ADDRESS" } } }]

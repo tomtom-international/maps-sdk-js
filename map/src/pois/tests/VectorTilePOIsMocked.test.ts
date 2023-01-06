@@ -14,8 +14,11 @@ describe("Vector tiles POI module tests", () => {
                 getSource: jest.fn().mockReturnValueOnce(poiSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
 
         const pois = new VectorTilePOIs(goSDKMapMock, {
             visible: false
@@ -38,8 +41,11 @@ describe("Vector tiles POI module tests", () => {
                 getSource: jest.fn().mockReturnValueOnce(poiSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
 
         const pois = new VectorTilePOIs(goSDKMapMock);
         expect(pois).toBeDefined();

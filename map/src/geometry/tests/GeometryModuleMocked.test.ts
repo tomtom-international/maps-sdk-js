@@ -20,8 +20,12 @@ describe("Geometry module tests", () => {
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn()
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
+
         const testGeometryData = amsterdamGeometryData as GeometryDataResponse;
         let geometry = new GeometryModule(goSDKMapMock);
         geometry.show(testGeometryData);

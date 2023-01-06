@@ -138,15 +138,21 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     }
 
     protected loadLayersToEventProxy(event: EventsProxy): void {
-        event.add([
-            asDefined(this.waypoints),
-            asDefined(this.routeLines),
-            asDefined(this.vehicleRestricted),
-            asDefined(this.incidents),
-            asDefined(this.ferries),
-            asDefined(this.tollRoads),
-            asDefined(this.tunnels)
-        ]);
+        const routingLayers = [
+            this.waypoints,
+            this.routeLines,
+            this.vehicleRestricted,
+            this.incidents,
+            this.ferries,
+            this.tollRoads,
+            this.tunnels
+        ];
+
+        for (const layer of routingLayers) {
+            if (layer) {
+                event.add(layer);
+            }
+        }
     }
 
     private addImageIfNotExisting(imageID: string, path: string) {

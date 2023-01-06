@@ -17,8 +17,11 @@ describe("Vector tiles traffic module tests", () => {
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
 
         const traffic = new VectorTilesTraffic(goSDKMapMock, {
             incidents: { visible: true, icons: { visible: false } },
@@ -53,8 +56,11 @@ describe("Vector tiles traffic module tests", () => {
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
 
         const traffic = new VectorTilesTraffic(goSDKMapMock);
         expect(traffic).toBeDefined();

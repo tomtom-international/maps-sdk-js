@@ -16,20 +16,14 @@ export abstract class AbstractEventProxy {
      * Adds the given sources and layers as interactive, so we'll listen to them for hover and click.
      * @param sourcesWithLayers The sources and layers to listen to.
      */
-    public add = (sourcesWithLayers: StyleSourceWithLayers[]) => {
-        if (!Array.isArray(sourcesWithLayers)) {
-            throw new Error("parameter must be an Array.");
-        }
-
-        for (const sourceWithLayers of sourcesWithLayers) {
-            const sourceID = sourceWithLayers.source.id;
-            this.interactiveSourcesAndLayers[sourceID] = sourceWithLayers;
-            sourceWithLayers.layerSpecs.forEach((layerSpec) => {
-                if (!this.interactiveLayerIDs.includes(layerSpec.id)) {
-                    this.interactiveLayerIDs.push(layerSpec.id);
-                }
-            });
-        }
+    public add = (sourcesWithLayers: StyleSourceWithLayers) => {
+        const sourceID = sourcesWithLayers.source.id;
+        this.interactiveSourcesAndLayers[sourceID] = sourcesWithLayers;
+        sourcesWithLayers.layerSpecs.forEach((layerSpec) => {
+            if (!this.interactiveLayerIDs.includes(layerSpec.id)) {
+                this.interactiveLayerIDs.push(layerSpec.id);
+            }
+        });
     };
 
     /**
@@ -40,7 +34,7 @@ export abstract class AbstractEventProxy {
      */
     public addEventHandler = (sourceWithLayers: StyleSourceWithLayers, handler: HoverClickHandler, type: EventType) => {
         if (!this.has(sourceWithLayers)) {
-            this.add([sourceWithLayers]);
+            this.add(sourceWithLayers);
         }
 
         const handlerId = `${sourceWithLayers.source.id}_${type}`;

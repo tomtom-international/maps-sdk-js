@@ -48,8 +48,11 @@ describe("Routing module tests", () => {
                 hasImage: jest.fn().mockReturnValue(false),
                 loadImage: jest.fn(),
                 setLayoutProperty: jest.fn()
-            } as unknown as Map
-        } as GOSDKMap;
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn()
+            }
+        } as unknown as GOSDKMap;
 
         const routing = new RoutingModule(goSDKMapMock);
         routing.showRoutes({ type: "FeatureCollection", features: [] });
