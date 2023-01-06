@@ -1,5 +1,5 @@
 import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule } from "../core";
+import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule, EventsProxy } from "../core";
 import { placesLayerSpec } from "./layers/PlacesLayers";
 import { poiClassificationToIconID } from "./poiIconIDMapping";
 import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
@@ -51,6 +51,10 @@ export class GeoJSONPlaces extends AbstractMapModule {
         this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
             { ...placesLayerSpec, id: placesLayerID }
         ]);
+    }
+
+    protected loadLayersToEventProxy(event: EventsProxy): void {
+        event.add([asDefined(this.places)]);
     }
 
     /**

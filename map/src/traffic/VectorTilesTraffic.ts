@@ -1,8 +1,9 @@
 import isNil from "lodash/isNil";
-import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers, EventsModule } from "../core";
+import { AbstractMapModule, LayerSpecFilter, StyleSourceWithLayers, EventsModule, EventsProxy } from "../core";
 import { VectorTilesTrafficConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 import { VECTOR_TILES_INCIDENTS_SOURCE_ID, VECTOR_TILES_FLOW_SOURCE_ID } from "../core/layers/sourcesIDs";
+import { asDefined } from "../core/AssertionUtils";
 
 /**
  * Vector tiles traffic module.
@@ -25,6 +26,18 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
 
         if (config) {
             this.applyConfig(config);
+        }
+    }
+
+    protected loadLayersToEventProxy(event: EventsProxy): void {
+        // As the layers traffic_flow and traffic_incidents can be removed from source
+        // We make sure the value exists before attempt to add the layers to be interactive
+        if (this.flow) {
+            event.add([this.flow]);
+        }
+
+        if (this.incidents) {
+            event.add([this.incidents]);
         }
     }
 

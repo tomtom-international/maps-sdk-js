@@ -1,6 +1,7 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
-import { AbstractMapModule, StyleSourceWithLayers, EventsModule } from "../core";
+import { AbstractMapModule, StyleSourceWithLayers, EventsModule, EventsProxy } from "../core";
+import { asDefined } from "../core/AssertionUtils";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 import { HILLSHADE_SOURCE_ID } from "../core/layers/sourcesIDs";
 
@@ -20,6 +21,10 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
         if (config) {
             this.applyConfig(config);
         }
+    }
+
+    protected loadLayersToEventProxy(event: EventsProxy): void {
+        event.add([asDefined(this.hillshade)]);
     }
 
     applyConfig(config: VectorTilesHillshadeConfig): void {

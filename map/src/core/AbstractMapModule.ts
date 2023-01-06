@@ -1,6 +1,7 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../GOSDKMap";
 import { EventsModule } from "./EventsModule";
+import { EventsProxy } from "./EventsProxy";
 
 /**
  * Base class for all GO SDK map modules.
@@ -20,7 +21,10 @@ export abstract class AbstractMapModule<CFG = undefined> {
         this.goSDKMap = goSDKMap;
         this.mapLibreMap = goSDKMap.mapLibreMap;
         this.config = config;
-        this.callWhenMapReady(() => this.init(config));
+        this.callWhenMapReady(() => {
+            this.init(config);
+            this.loadLayersToEventProxy(this.goSDKMap._eventsProxy);
+        });
     }
 
     protected callWhenMapReady(func: () => void) {
@@ -39,6 +43,15 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * @ignore
      */
     protected abstract init(config?: CFG): void;
+
+    /**
+     * Add the layers to be interactive once the module it is initiated.
+     * * Called when the map is ensured to be ready.
+     * @param event The instance of EventsProxy initialized on the GOSDKMap.
+     * @protected
+     * @ignore
+     */
+    protected abstract loadLayersToEventProxy(event: EventsProxy): void;
 
     /**
      * Initializes the module events and allows to register handlers to them

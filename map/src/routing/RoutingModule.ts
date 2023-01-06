@@ -1,5 +1,5 @@
 import { Routes, Waypoints } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule } from "../core";
+import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule, EventsProxy } from "../core";
 import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
@@ -135,6 +135,18 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
+    }
+
+    protected loadLayersToEventProxy(event: EventsProxy): void {
+        event.add([
+            asDefined(this.waypoints),
+            asDefined(this.routeLines),
+            asDefined(this.vehicleRestricted),
+            asDefined(this.incidents),
+            asDefined(this.ferries),
+            asDefined(this.tollRoads),
+            asDefined(this.tunnels)
+        ]);
     }
 
     private addImageIfNotExisting(imageID: string, path: string) {

@@ -1,4 +1,4 @@
-import { AbstractMapModule, EventsModule } from "../core";
+import { AbstractMapModule, EventsModule, EventsProxy } from "../core";
 import { isLayerLocalizable } from "./localization";
 import { MapLanguageConfig } from "./types/MapLanguageConfig";
 import { GOSDKMap } from "../GOSDKMap";
@@ -24,6 +24,11 @@ export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
 
     protected init(config: MapLanguageConfig): void {
         this.setLanguage(config.language);
+    }
+
+    // No implementation needed for MapLanguage module
+    protected loadLayersToEventProxy(): void {
+        return;
     }
 
     setLanguage(language: string) {

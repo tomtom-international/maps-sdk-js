@@ -1,5 +1,6 @@
 import { GlobalConfig } from "@anw/go-sdk-js/core";
 import { MapOptions, StyleSpecification } from "maplibre-gl";
+import { MapEventsConfig } from "./MapEventsConfig";
 
 export const publishedStyleIDs = [
     "standardLight",
@@ -85,6 +86,11 @@ export type GOSDKMapParams = Partial<GlobalConfig> & {
      * Exclude traffic incidents, traffic flow, poi and hillshade modules when loading styles.
      */
     exclude?: StyleModules[];
+
+    /**
+     * Event configuration
+     */
+    events?: MapEventsConfig;
 };
 
 export type MapLibreOptions = Omit<MapOptions, "style" | "attributionControl">;

@@ -25,7 +25,7 @@ export class GOSDKMap {
         this.goSDKParams = mergeFromGlobal(goSDKParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
         this.mapLibreMap.once("styledata", () => (this.mapReady = true));
-        this._eventsProxy = new EventsProxy(this.mapLibreMap);
+        this._eventsProxy = new EventsProxy(this.mapLibreMap, goSDKParams?.events);
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",

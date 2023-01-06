@@ -1,8 +1,9 @@
 import isNil from "lodash/isNil";
-import { AbstractMapModule, StyleSourceWithLayers, EventsModule } from "../core";
+import { AbstractMapModule, StyleSourceWithLayers, EventsModule, EventsProxy } from "../core";
 import { VectorTilePOIsConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 import { POI_SOURCE_ID } from "../core/layers/sourcesIDs";
+import { asDefined } from "../core/AssertionUtils";
 
 /**
  * Vector tile POIs map module.
@@ -20,6 +21,10 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         if (config) {
             this.applyConfig(config);
         }
+    }
+
+    protected loadLayersToEventProxy(event: EventsProxy): void {
+        event.add([asDefined(this.poi)]);
     }
 
     applyConfig(config: VectorTilePOIsConfig): void {

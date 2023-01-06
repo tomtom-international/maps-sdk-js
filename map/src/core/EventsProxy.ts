@@ -3,14 +3,21 @@ import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { AbstractEventProxy } from "./AbstractEventProxy";
 import { ClickEvent } from "./types/EventsProxy";
 import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
+import { MapEventsConfig } from "../init/types/MapEventsConfig";
 
-const toPaddedBounds = (point: Point2D): [[number, number], [number, number]] => {
-    return [
-        // sw:
-        [point.x - 5, point.y + 5],
-        // ne:
-        [point.x + 5, point.y - 5]
-    ];
+// Default values for events
+const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
+    paddingBox: 5,
+    paddingBoxUpdateOnZoom: true,
+    cursorOnHover: "pointer",
+    cursorOnMouseDown: "grabbing",
+    cursorOnMap: "default",
+    /** Delayed hover control:
+     *  The first hover we do after the map moves is longer
+     */
+    hoverDelayOnMapMove: 800,
+    /* Followup hovers with the same non-moving map are quicker ("hovering around mode") */
+    hoverDelayOnMapStop: 300
 };
 
 /**
@@ -24,21 +31,24 @@ export class EventsProxy extends AbstractEventProxy {
     private hoveringPoint?: Point2D;
     private hoveringFeature?: MapGeoJSONFeature;
     private hoveringSourceWithLayers?: SourceWithLayers;
-    // delayed hover control:
-    // The first hover we do after the map moves is longer:
-    private firstHoverAfterMapMoveDelayMS = 800;
-    // Followup hovers with the same non-moving map are quicker ("hovering around mode"):
-    private followupHoverWithStaticMapDelayMS = 300;
     private longHoverTimeoutHandlerID?: number;
     // Control flag to indicate that the coming hover is the first one since the map is "quiet" again:
     private firstDelayedHoverSinceMapMove = true;
     private lastClickedFeature?: MapGeoJSONFeature;
     private lastClickedSourceWithLayers?: SourceWithLayers;
-    private lastCursorStyle = "default";
+    private lastCursorStyle: string;
+    // Configuration
+    private config: Required<MapEventsConfig>;
+    private paddingBoxOnZoom: number | null = null;
+    private defaultZoomLevel: number;
 
-    constructor(map: Map) {
+    constructor(map: Map, config: MapEventsConfig = {}) {
         super();
         this.map = map;
+        this.config = { ...eventsProxyDefaultConfig, ...config };
+        this.map.getCanvas().style.cursor = this.config.cursorOnMap;
+        this.lastCursorStyle = this.config.cursorOnMap;
+        this.defaultZoomLevel = Math.round(this.map.getZoom());
         this.listenToDefaultEvents();
         this.listenToMapClicks();
     }
@@ -50,6 +60,7 @@ export class EventsProxy extends AbstractEventProxy {
         this.map.on("mouseover", this.onMouseMove);
         this.map.on("mousedown", this.onMouseDown);
         this.map.on("mouseup", this.onMouseUp);
+        this.map.on("zoom", this.onZoom);
     };
 
     private listenToMapClicks = () => {
@@ -62,6 +73,33 @@ export class EventsProxy extends AbstractEventProxy {
         this.enabled = enabled;
         if (!enabled) {
             window.clearTimeout(this.longHoverTimeoutHandlerID);
+        }
+    };
+
+    private toPaddedBounds(point: Point2D): [[number, number], [number, number]] {
+        const paddingBox = this.paddingBoxOnZoom || this.config.paddingBox;
+
+        return [
+            // sw:
+            [point.x - paddingBox, point.y + paddingBox],
+            // ne:
+            [point.x + paddingBox, point.y - paddingBox]
+        ];
+    }
+
+    private onZoom = () => {
+        if (!this.config.paddingBoxUpdateOnZoom) {
+            return;
+        }
+        const paddedBoundsOnZoom = Math.round(this.config.paddingBox * Math.round(this.map.getZoom())) / 10;
+
+        // Keep the given paddingBox during the same default zoom level
+        if (Math.round(this.map.getZoom()) === this.defaultZoomLevel) {
+            this.paddingBoxOnZoom = this.config.paddingBox;
+        } else if (this.map.getZoom() > this.defaultZoomLevel) {
+            this.paddingBoxOnZoom = Math.ceil(this.config.paddingBox + paddedBoundsOnZoom) - this.config.paddingBox;
+        } else {
+            this.paddingBoxOnZoom = this.config.paddingBox - Math.floor(this.config.paddingBox - paddedBoundsOnZoom);
         }
     };
 
@@ -78,7 +116,7 @@ export class EventsProxy extends AbstractEventProxy {
 
     private onMouseDown = () => {
         this.lastCursorStyle = this.map.getCanvas().style.cursor;
-        this.map.getCanvas().style.cursor = "grabbing";
+        this.map.getCanvas().style.cursor = this.config.cursorOnMouseDown;
     };
 
     private onMouseUp = () => {
@@ -91,7 +129,7 @@ export class EventsProxy extends AbstractEventProxy {
             return;
         }
 
-        const hoveredTopFeature = this.map.queryRenderedFeatures(toPaddedBounds(ev.point), {
+        const hoveredTopFeature = this.map.queryRenderedFeatures(this.toPaddedBounds(ev.point), {
             layers: this.interactiveLayerIDs
         })?.[0];
         const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
@@ -109,7 +147,7 @@ export class EventsProxy extends AbstractEventProxy {
 
             if (!this.hoveringFeature) {
                 // no hover -> hover
-                this.map.getCanvas().style.cursor = "pointer";
+                this.map.getCanvas().style.cursor = this.config.cursorOnHover;
                 hoverChangeDetected = true;
             } else if (hoveredTopFeature.id !== this.hoveringFeature.id) {
                 // hovering from one feature to another one (from the same or different layer/source):
@@ -128,7 +166,7 @@ export class EventsProxy extends AbstractEventProxy {
         } else {
             if (this.hoveringFeature) {
                 // hover -> no hover (un-hover)
-                this.map.getCanvas().style.cursor = "default";
+                this.map.getCanvas().style.cursor = this.config.cursorOnMap;
                 hoverChangeDetected = true;
             }
         }
@@ -158,9 +196,7 @@ export class EventsProxy extends AbstractEventProxy {
         window.clearTimeout(this.longHoverTimeoutHandlerID);
         this.longHoverTimeoutHandlerID = window.setTimeout(
             this.handleLongHoverTimeout,
-            this.firstDelayedHoverSinceMapMove
-                ? this.firstHoverAfterMapMoveDelayMS
-                : this.followupHoverWithStaticMapDelayMS
+            this.firstDelayedHoverSinceMapMove ? this.config.hoverDelayOnMapMove : this.config.hoverDelayOnMapStop
         );
     };
 
@@ -194,19 +230,25 @@ export class EventsProxy extends AbstractEventProxy {
             // We avoid any accidental click handling while the map moves
             return;
         }
-        this.lastClickedFeature = this.map.queryRenderedFeatures(toPaddedBounds(ev.point), {
+
+        const clickedFeatures = this.map.queryRenderedFeatures(this.toPaddedBounds(ev.point), {
             layers: this.interactiveLayerIDs
-        })?.[0];
+        });
+
+        this.lastClickedFeature = clickedFeatures[0];
+
         this.lastClickedSourceWithLayers = this.lastClickedFeature
             ? this.interactiveSourcesAndLayers[this.lastClickedFeature.source]
             : undefined;
+
+        const featuresToCallback = clickedFeatures.length > 1 ? clickedFeatures.slice(0, 2) : this.lastClickedFeature;
 
         if (
             this.lastClickedSourceWithLayers &&
             this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`]
         ) {
             this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb) => {
-                cb(ev.lngLat, this.lastClickedFeature, this.lastClickedSourceWithLayers);
+                cb(ev.lngLat, featuresToCallback, this.lastClickedSourceWithLayers);
             });
         }
     };
