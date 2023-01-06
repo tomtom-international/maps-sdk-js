@@ -14,6 +14,10 @@ describe("AbstractMapModule tests", () => {
             this.initConfig = config;
         }
 
+        protected loadLayersToEventProxy(): void {
+            return;
+        }
+
         // exposing protected method for testing:
         getMergedConfig(config?: VectorTileMapModuleConfig): VectorTileMapModuleConfig | undefined {
             return super.getMergedConfig(config);
