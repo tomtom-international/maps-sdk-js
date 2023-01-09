@@ -1,5 +1,10 @@
 import { HasLngLat } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSegmentType = "brand" | "category" | "plaintext";
 
 /**
  * @group Autocomplete
@@ -57,5 +62,5 @@ export type AutocompleteParams = Omit<CommonServiceParams, "language"> & {
      * resultType=brand
      * resultType=category,brand
      */
-    resultType?: string[];
+    resultType?: AutocompleteSegmentType[];
 };

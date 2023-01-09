@@ -1,4 +1,5 @@
 import { Position } from "geojson";
+import { AutocompleteSegmentType } from "./AutocompleteParams";
 
 /**
  * @group Autocomplete
@@ -32,9 +33,9 @@ export type AutocompleteResultGeoBias = {
      */
     position?: Position;
     /**
-     * The optional radius request parameter passed by the user.
+     * The optional radius request parameter passed by the user to constrain the results defined area.
      */
-    radius?: number;
+    radiusMeters?: number;
 };
 
 export type AutocompleteResult = {
@@ -51,7 +52,7 @@ export type AutocompleteGenericSegment = {
      * The type of detected entity.
      * Currently, we can detect: category, brand, and plaintext, but more types can appear in the future.
      */
-    type: "brand" | "category" | "plaintext";
+    type: AutocompleteSegmentType;
     /**
      * The value of the detected entity.
      * It may be a category name, brand name, or a part of unrecognized text.

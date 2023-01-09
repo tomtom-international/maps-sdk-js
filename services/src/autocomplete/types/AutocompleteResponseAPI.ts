@@ -1,4 +1,4 @@
-import { AutocompleteContext, AutocompleteResultGeoBias, AutocompleteResult } from "./AutocompleteResponse";
+import { AutocompleteContext, AutocompleteResult } from "./AutocompleteResponse";
 import { LatLonAPI } from "../../shared";
 
 /**
@@ -14,6 +14,7 @@ export type AutocompleteContextAPI = Omit<AutocompleteContext, "geoBias"> & {
     geoBias?: AutocompleteResultGeoBiasAPI;
 };
 
-export type AutocompleteResultGeoBiasAPI = Omit<AutocompleteResultGeoBias, "position"> & {
+export type AutocompleteResultGeoBiasAPI = {
     position?: LatLonAPI;
+    radius?: number;
 };

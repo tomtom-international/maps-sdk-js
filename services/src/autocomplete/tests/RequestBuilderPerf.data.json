@@ -15,7 +15,8 @@
         "NLD",
         "BEL"
       ],
-      "language": "nl-NL"
+      "language": "nl-NL",
+      "resultSet": ["brand", "category"]
     }
   ]
 ]

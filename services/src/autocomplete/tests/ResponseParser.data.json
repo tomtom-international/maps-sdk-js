@@ -21,7 +21,7 @@
         {
             "context": {
                 "inputQuery": "McDonald's",
-                "geoBias": { "position": [4.68998, 52.43312], "radius": 500000 }
+                "geoBias": { "position": [4.68998, 52.43312], "radiusMeters": 500000 }
             },
             "results": [
                 {
@@ -69,7 +69,7 @@
         {
             "context": {
                 "inputQuery": "cafe",
-                "geoBias": { "position": [4.81875, 51.85335], "radius": 3000 }
+                "geoBias": { "position": [4.81875, 51.85335], "radiusMeters": 3000 }
             },
             "results": [
                 {

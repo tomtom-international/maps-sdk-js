@@ -38,5 +38,10 @@ export const MAX_EXEC_TIMES_MS = {
             requestBuilding: 2,
             responseParsing: 5
         }
+    },
+    autocomplete: {
+        schemaValidation: 1,
+        requestBuilding: 1,
+        responseParsing: 1
     }
 };

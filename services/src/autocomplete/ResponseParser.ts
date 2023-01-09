@@ -14,8 +14,8 @@ export const parseAutocompleteResponse = (apiResponse: AutocompleteResponseAPI):
         context: {
             ...apiResponse.context,
             geoBias: {
-                ...geoBias,
-                ...(position && { position: latLonAPIToPosition(position) })
+                ...(position && { position: latLonAPIToPosition(position) }),
+                radiusMeters: geoBias.radius
             }
         }
     };

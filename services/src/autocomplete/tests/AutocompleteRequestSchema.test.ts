@@ -3,6 +3,7 @@ import { autocompleteRequestSchema } from "../AutocompleteRequestSchema";
 import { AutocompleteParams } from "../types";
 import autocompleteReqObjects from "./RequestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/Validation";
+import { MAX_EXEC_TIMES_MS } from "../../../perfConfig";
 
 describe("Autocomplete Schema Validation", () => {
     const apiKey = "API_KEY";
@@ -131,7 +132,7 @@ describe("Autocomplete Schema Validation", () => {
             (_title: string, params: AutocompleteParams) => {
                 expect(
                     bestExecutionTimeMS(() => validateRequestSchema(params, autocompleteRequestSchema), 10)
-                ).toBeLessThan(7);
+                ).toBeLessThan(MAX_EXEC_TIMES_MS.autocomplete.schemaValidation);
             }
         );
     });

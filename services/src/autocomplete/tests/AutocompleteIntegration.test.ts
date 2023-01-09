@@ -1,5 +1,5 @@
 import { GOSDKConfig } from "@anw/go-sdk-js/core";
-import { AutocompleteResponse } from "../types";
+import { AutocompleteResponse, AutocompleteSegmentType } from "../types";
 import autocomplete from "../Autocomplete";
 
 const expectedResults = expect.arrayContaining([
@@ -79,7 +79,7 @@ describe("Autocomplete service", () => {
     test("autocomplete with strict brand result type", async () => {
         const query = "pizza";
         const language = "en-GB";
-        const resultType = ["brand"];
+        const resultType: AutocompleteSegmentType[] = ["brand"];
         const response = await autocomplete({
             query,
             language,

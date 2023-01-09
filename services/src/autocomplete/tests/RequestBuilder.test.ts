@@ -3,6 +3,7 @@ import autocompleteReqObjectsAndURLs from "./RequestBuilder.data.json";
 import { AutocompleteParams } from "../types";
 import autocompleteReqObjects from "./RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Autocomplete Search request URL building tests", () => {
     test.each(autocompleteReqObjectsAndURLs)(
@@ -19,7 +20,9 @@ describe("Autocomplete request URL builder performance tests", () => {
         "'%s'",
         // @ts-ignore
         (_title: string, params: AutocompleteParams) => {
-            expect(bestExecutionTimeMS(() => buildAutocompleteRequest(params), 10)).toBeLessThan(2);
+            expect(bestExecutionTimeMS(() => buildAutocompleteRequest(params), 10)).toBeLessThan(
+                MAX_EXEC_TIMES_MS.autocomplete.requestBuilding
+            );
         }
     );
 });
