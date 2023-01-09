@@ -22,8 +22,7 @@ export abstract class AbstractMapModule<CFG = undefined> {
         this.mapLibreMap = goSDKMap.mapLibreMap;
         this.config = config;
         this.callWhenMapReady(() => {
-            this.init(config);
-            this.loadLayersToEventProxy(this.goSDKMap._eventsProxy);
+            this.init(this.goSDKMap._eventsProxy, config);
         });
     }
 
@@ -38,20 +37,12 @@ export abstract class AbstractMapModule<CFG = undefined> {
     /**
      * Initializes the module.
      * * Called when the map is ensured to be ready.
+     * @param eventsProxy The instance of the Map EventsProxy.
      * @param config The optional configuration to apply.
      * @protected
      * @ignore
      */
-    protected abstract init(config?: CFG): void;
-
-    /**
-     * Add the layers to be interactive once the module it is initiated.
-     * * Called when the map is ensured to be ready.
-     * @param event The instance of EventsProxy initialized on the GOSDKMap.
-     * @protected
-     * @ignore
-     */
-    protected abstract loadLayersToEventProxy(event: EventsProxy): void;
+    protected abstract init(eventsProxy?: EventsProxy, config?: CFG): void;
 
     /**
      * Initializes the module events and allows to register handlers to them

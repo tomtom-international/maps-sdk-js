@@ -12,7 +12,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     private incidents?: StyleSourceWithLayers;
     private flow?: StyleSourceWithLayers;
 
-    protected init(config?: VectorTilesTrafficConfig): void {
+    protected init(eventsProxy: EventsProxy, config?: VectorTilesTrafficConfig): void {
         const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
         if (incidentsRuntimeSource) {
             this.incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
@@ -25,15 +25,15 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
 
         if (config) {
             this.applyConfig(config);
-        }
-    }
 
-    protected loadLayersToEventProxy(event: EventsProxy): void {
-        const trafficLayers = [this.flow, this.incidents];
+            if (config.interactive) {
+                if (this.flow) {
+                    eventsProxy.add(this.flow);
+                }
 
-        for (const layer of trafficLayers) {
-            if (layer) {
-                event.add(layer);
+                if (this.incidents) {
+                    eventsProxy.add(this.incidents);
+                }
             }
         }
     }

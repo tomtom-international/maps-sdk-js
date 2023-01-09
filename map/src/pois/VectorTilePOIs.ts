@@ -11,7 +11,7 @@ import { POI_SOURCE_ID } from "../core/layers/sourcesIDs";
 export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     private poi?: StyleSourceWithLayers;
 
-    protected init(config?: VectorTilePOIsConfig): void {
+    protected init(eventsProxy: EventsProxy, config?: VectorTilePOIsConfig): void {
         const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (poiRuntimeSource) {
             this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
@@ -19,12 +19,10 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
 
         if (config) {
             this.applyConfig(config);
-        }
-    }
 
-    protected loadLayersToEventProxy(event: EventsProxy): void {
-        if (this.poi) {
-            event.add(this.poi);
+            if (config.interactive && this.poi) {
+                eventsProxy.add(this.poi);
+            }
         }
     }
 

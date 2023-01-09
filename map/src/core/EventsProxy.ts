@@ -30,6 +30,7 @@ export class EventsProxy extends AbstractEventProxy {
     private hoveringLngLat?: LngLat;
     private hoveringPoint?: Point2D;
     private hoveringFeature?: MapGeoJSONFeature;
+    private hoveredFeatures?: MapGeoJSONFeature[];
     private hoveringSourceWithLayers?: SourceWithLayers;
     private longHoverTimeoutHandlerID?: number;
     // Control flag to indicate that the coming hover is the first one since the map is "quiet" again:
@@ -51,6 +52,7 @@ export class EventsProxy extends AbstractEventProxy {
         this.defaultZoomLevel = Math.round(this.map.getZoom());
         this.listenToDefaultEvents();
         this.listenToMapClicks();
+        console.log(config.cursorOnHover);
     }
 
     private listenToDefaultEvents = () => {
@@ -129,9 +131,11 @@ export class EventsProxy extends AbstractEventProxy {
             return;
         }
 
-        const hoveredTopFeature = this.map.queryRenderedFeatures(this.toPaddedBounds(ev.point), {
+        this.hoveredFeatures = this.map.queryRenderedFeatures(this.toPaddedBounds(ev.point), {
             layers: this.interactiveLayerIDs
-        })?.[0];
+        });
+
+        const hoveredTopFeature = this.hoveredFeatures[0];
         const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
 
         // flag to determine whether a change happened, such as no-hover -> hover or vice-versa:
@@ -182,7 +186,7 @@ export class EventsProxy extends AbstractEventProxy {
             if (this.handlers[listenerId]) {
                 // (If de-hovering this should fire undefined, undefined):
                 this.handlers[listenerId].forEach((cb) =>
-                    cb(ev.lngLat, this.hoveringFeature, this.hoveringSourceWithLayers)
+                    cb(ev.lngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
                 );
             }
         }
@@ -218,7 +222,7 @@ export class EventsProxy extends AbstractEventProxy {
                 const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
                 if (this.handlers[listenerId]) {
                     this.handlers[listenerId].forEach((cb) =>
-                        cb(this.hoveringLngLat, this.hoveringFeature, this.hoveringSourceWithLayers)
+                        cb(this.hoveringLngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
                     );
                 }
             }
@@ -241,14 +245,12 @@ export class EventsProxy extends AbstractEventProxy {
             ? this.interactiveSourcesAndLayers[this.lastClickedFeature.source]
             : undefined;
 
-        const featuresToCallback = clickedFeatures.length > 1 ? clickedFeatures.slice(0, 2) : this.lastClickedFeature;
-
         if (
             this.lastClickedSourceWithLayers &&
             this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`]
         ) {
             this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb) => {
-                cb(ev.lngLat, featuresToCallback, this.lastClickedSourceWithLayers);
+                cb(ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
             });
         }
     };

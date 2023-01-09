@@ -5,6 +5,7 @@ import { poiClassificationToIconID } from "./poiIconIDMapping";
 import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
 import { asDefined } from "../core/AssertionUtils";
 import { PLACES_SOURCE_ID } from "../core/layers/sourcesIDs";
+import { VectorTilesPlaceModuleConfig } from "./types/PlaceModuleConfig";
 
 /**
  * Builds the title of the place to display it on the map.
@@ -43,19 +44,17 @@ const prepareForDisplay = (places: Places): Places<PlaceDisplayProps & CommonPla
  * @group MapPlaces
  * @category Functions
  */
-export class GeoJSONPlaces extends AbstractMapModule {
+export class GeoJSONPlaces extends AbstractMapModule<VectorTilesPlaceModuleConfig> {
     private places?: GeoJSONSourceWithLayers<Places>;
 
-    protected init(): void {
+    protected init(eventsProxy: EventsProxy, config?: VectorTilesPlaceModuleConfig): void {
         const placesLayerID = "placesSymbols";
         this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
             { ...placesLayerSpec, id: placesLayerID }
         ]);
-    }
 
-    protected loadLayersToEventProxy(event: EventsProxy): void {
-        if (this.places) {
-            event.add(this.places);
+        if (config?.interactive) {
+            eventsProxy.add(this.places);
         }
     }
 

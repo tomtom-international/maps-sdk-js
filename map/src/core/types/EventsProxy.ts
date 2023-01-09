@@ -13,7 +13,7 @@ export type EventType = ClickEvent | HoverEvent;
  */
 export type HoverClickHandler = (
     lngLat?: LngLat,
-    feature?: MapGeoJSONFeature | MapGeoJSONFeature[],
+    feature?: MapGeoJSONFeature[],
     sourceWithLayers?: SourceWithLayers
 ) => void;
 

@@ -3,19 +3,16 @@ import { AbstractMapModule } from "../AbstractMapModule";
 import { VectorTileMapModuleConfig } from "../types/VectorTileMapModuleConfig";
 import { GOSDKMap } from "../../GOSDKMap";
 import Mock = jest.Mock;
+import { EventsProxy } from "../EventsProxy";
 
 describe("AbstractMapModule tests", () => {
     class TestModule extends AbstractMapModule<VectorTileMapModuleConfig> {
         initCalled?: boolean;
         initConfig?: unknown;
 
-        protected init(config?: VectorTileMapModuleConfig): void {
+        protected init(eventsProxy: EventsProxy, config?: VectorTileMapModuleConfig): void {
             this.initCalled = true;
             this.initConfig = config;
-        }
-
-        protected loadLayersToEventProxy(): void {
-            return;
         }
 
         // exposing protected method for testing:

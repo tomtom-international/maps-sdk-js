@@ -22,13 +22,8 @@ export class MapLanguage extends AbstractMapModule<MapLanguageConfig> {
         }
     }
 
-    protected init(config: MapLanguageConfig): void {
+    protected init(eventsProxy: EventsProxy, config: MapLanguageConfig): void {
         this.setLanguage(config.language);
-    }
-
-    // No implementation needed for MapLanguage module
-    protected loadLayersToEventProxy(): void {
-        return;
     }
 
     setLanguage(language: string) {

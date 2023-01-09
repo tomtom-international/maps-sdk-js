@@ -77,7 +77,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     private tollRoads?: GeoJSONSourceWithLayers<RouteSections>;
     private tunnels?: GeoJSONSourceWithLayers<RouteSections>;
 
-    protected init(): void {
+    protected init(eventsProxy: EventsProxy, config?: RoutingModuleConfig): void {
         this.waypoints = new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
             { ...waypointSymbols, id: WAYPOINT_SYMBOLS_LAYER_ID },
             { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
@@ -135,22 +135,23 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
-    }
 
-    protected loadLayersToEventProxy(event: EventsProxy): void {
-        const routingLayers = [
-            this.waypoints,
-            this.routeLines,
-            this.vehicleRestricted,
-            this.incidents,
-            this.ferries,
-            this.tollRoads,
-            this.tunnels
-        ];
+        // If interactive set, we add all layers to be interactive
+        if (config?.interactive) {
+            const routingLayers = [
+                this.waypoints,
+                this.routeLines,
+                this.vehicleRestricted,
+                this.incidents,
+                this.ferries,
+                this.tollRoads,
+                this.tunnels
+            ];
 
-        for (const layer of routingLayers) {
-            if (layer) {
-                event.add(layer);
+            for (const layer of routingLayers) {
+                if (layer) {
+                    eventsProxy.add(layer);
+                }
             }
         }
     }

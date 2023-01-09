@@ -11,7 +11,7 @@ import { HILLSHADE_SOURCE_ID } from "../core/layers/sourcesIDs";
 export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshadeConfig> {
     private hillshade?: StyleSourceWithLayers;
 
-    protected init(config?: VectorTilesHillshadeConfig): void {
+    protected init(eventsProxy: EventsProxy, config?: VectorTilesHillshadeConfig): void {
         const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
         if (hillshadeSource) {
             this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
@@ -19,12 +19,10 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
 
         if (config) {
             this.applyConfig(config);
-        }
-    }
 
-    protected loadLayersToEventProxy(event: EventsProxy): void {
-        if (this.hillshade) {
-            event.add(this.hillshade);
+            if (config.interactive && this.hillshade) {
+                eventsProxy.add(this.hillshade);
+            }
         }
     }
 

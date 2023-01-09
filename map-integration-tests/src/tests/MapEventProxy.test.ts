@@ -147,7 +147,8 @@ describe("EventProxy integration tests", () => {
             lng: expect.any(Number),
             lat: expect.any(Number)
         });
-        expect(feature).toHaveProperty("type", "Feature");
+        expect(feature).toHaveLength(1);
+        expect(feature).toContainEqual(expect.objectContaining({ type: "Feature" }));
         expect(sourceWithLayers).toHaveLength(1);
         expect(sourceWithLayers).toContainEqual(expect.objectContaining({ source: "places", id: "placesSymbols" }));
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -197,6 +198,7 @@ describe("Events Configuration", () => {
         const poiPosition = await getPoiPosition();
         await page.mouse.move(poiPosition.x, poiPosition.y);
         cursor = await getCursor();
+        await waitForTimeout(20000);
         expect(cursor).toBe("wait");
     });
 });
