@@ -1,4 +1,4 @@
-import { AutocompleteParams } from "./types";
+import { AutocompleteSearchParams } from "./types";
 import {
     appendByJoiningParamValue,
     appendCommonParams,
@@ -6,17 +6,17 @@ import {
     appendOptionalParam
 } from "../shared/RequestBuildingUtils";
 
-const buildURLBasePath = (mergedOptions: AutocompleteParams): string =>
+const buildURLBasePath = (mergedOptions: AutocompleteSearchParams): string =>
     mergedOptions.customServiceBaseURL ||
     `${mergedOptions.commonBaseURL}/search/2/autocomplete/${mergedOptions.query}.json`;
 
 /**
- * Default function for building autocomplete request from {@link AutocompleteParams}
+ * Default function for building autocomplete request from {@link AutocompleteSearchParams}
  * @group Autocomplete
  * @category Functions
  * @param params The autocomplete parameters, with global configuration already merged into them.
  */
-export const buildAutocompleteRequest = (params: AutocompleteParams): URL => {
+export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);

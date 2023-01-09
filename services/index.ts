@@ -9,7 +9,7 @@ import geometrySearchCustomize from "./src/geometry-search/customize";
 import routingCustomize from "./src/routing/customize";
 import evChargingStationsAvailabilityCustomize from "./src/ev-charging-stations-availability/customize";
 import placeByIDCustomize from "./src/place-by-id/customize";
-import autocompleteCustomize from "./src/autocomplete/customize";
+import autocompleteCustomize from "./src/autocomplete-search/customize";
 
 export * from "./src/shared/ServiceTemplate";
 export * from "./src/shared/ServiceTypes";
@@ -23,7 +23,7 @@ export * from "./src/routing";
 export * from "./src/ev-charging-stations-availability";
 export * from "./src/place-by-id";
 export * from "./src/search";
-export * from "./src/autocomplete";
+export * from "./src/autocomplete-search";
 /**
  * @group Shared
  * @category Variables
@@ -36,5 +36,5 @@ export const customizeService = {
     calculateRoute: routingCustomize,
     evChargingStationsAvailability: evChargingStationsAvailabilityCustomize,
     placeByID: placeByIDCustomize,
-    autocomplete: autocompleteCustomize
+    autocompleteSearch: autocompleteCustomize
 };

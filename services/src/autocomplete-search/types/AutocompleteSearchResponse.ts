@@ -1,22 +1,26 @@
 import { Position } from "geojson";
-import { AutocompleteSegmentType } from "./AutocompleteParams";
+import { AutocompleteSearchSegmentType } from "./AutocompleteSearchParams";
 
 /**
  * @group Autocomplete
  * @category Types
  */
-export type AutocompleteResponse = {
+export type AutocompleteSearchResponse = {
     /**
      * Information about the autocomplete request that was performed.
      */
-    context: AutocompleteContext;
+    context: AutocompleteSearchContext;
     /**
      * List of the results returned by the autocomplete engine.
      */
-    results: AutocompleteResult[];
+    results: AutocompleteSearchResult[];
 };
 
-export type AutocompleteContext = {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchContext = {
     /**
      * Query passed to the autocomplete engine.
      */
@@ -24,10 +28,14 @@ export type AutocompleteContext = {
     /**
      * The geo bias passed to the autocomplete engine by setting the position and radius parameters.
      */
-    geoBias?: AutocompleteResultGeoBias;
+    geoBias?: AutocompleteSearchResultGeoBias;
 };
 
-export type AutocompleteResultGeoBias = {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchResultGeoBias = {
     /**
      * Position used to bias the results by setting the optional position request parameters.
      */
@@ -38,21 +46,36 @@ export type AutocompleteResultGeoBias = {
     radiusMeters?: number;
 };
 
-export type AutocompleteResult = {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchResult = {
     /**
      * Describes recognized entities of the result.
      */
-    segments: AutocompleteSegment[];
+    segments: AutocompleteSearchSegment[];
 };
 
-export type AutocompleteSegment = AutocompleteBrandSegment | AutocompleteCategorySegment | AutocompletePlaintextSegment;
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchSegment =
+    | AutocompleteSearchBrandSegment
+    | AutocompleteSearchCategorySegment
+    | AutocompleteSearchPlaintextSegment;
 
-export type AutocompleteGenericSegment = {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteGenericSearchSegment = {
     /**
      * The type of detected entity.
      * Currently, we can detect: category, brand, and plaintext, but more types can appear in the future.
      */
-    type: AutocompleteSegmentType;
+    type: AutocompleteSearchSegmentType;
     /**
      * The value of the detected entity.
      * It may be a category name, brand name, or a part of unrecognized text.
@@ -63,18 +86,26 @@ export type AutocompleteGenericSegment = {
     /**
      * Defines a mapping between the inputQuery and segment.
      */
-    matches: AutocompleteMatches;
+    matches: AutocompleteSearchMatches;
 };
 
-export type AutocompleteMatches = {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchMatches = {
     /**
      * Informs which part of the input query is represented by segment.
      * Input query matching may not be continuous, so the mapping is defined by an array of matched substrings.
      */
-    inputQuery: AutocompleteMatch[];
+    inputQuery: AutocompleteSearchMatch[];
 };
 
-export type AutocompleteMatch = {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchMatch = {
     /**
      * Starting offset of the inputQuery substring matching the segment.
      */
@@ -85,11 +116,19 @@ export type AutocompleteMatch = {
     length: number;
 };
 
-export type AutocompleteBrandSegment = AutocompleteGenericSegment & {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchBrandSegment = AutocompleteGenericSearchSegment & {
     type: "brand";
 };
 
-export type AutocompleteCategorySegment = AutocompleteGenericSegment & {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchCategorySegment = AutocompleteGenericSearchSegment & {
     type: "category";
     /**
      * This can be used to restrict the results of other search endpoints to the Points Of Interest (POI) of specific categories.
@@ -104,6 +143,10 @@ export type AutocompleteCategorySegment = AutocompleteGenericSegment & {
     matchedAlternativeName?: string;
 };
 
-export type AutocompletePlaintextSegment = AutocompleteGenericSegment & {
+/**
+ * @group Autocomplete
+ * @category Types
+ */
+export type AutocompleteSearchPlaintextSegment = AutocompleteGenericSearchSegment & {
     type: "plaintext";
 };

@@ -1,7 +1,7 @@
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
-import { autocompleteRequestSchema } from "../AutocompleteRequestSchema";
-import { AutocompleteParams } from "../types";
-import autocompleteReqObjects from "./RequestBuilderPerf.data.json";
+import { autocompleteSearchRequestSchema } from "../AutocompleteSearchRequestSchema";
+import { AutocompleteSearchParams } from "../types";
+import autocompleteSearchReqObjects from "./RequestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/Validation";
 import { MAX_EXEC_TIMES_MS } from "../../../perfConfig";
 
@@ -12,7 +12,7 @@ describe("Autocomplete Schema Validation", () => {
 
     test("it should fail when query is missing", () => {
         // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, language }, autocompleteRequestSchema);
+        const validationResult = () => validateRequestSchema({ apiKey, language }, autocompleteSearchRequestSchema);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
@@ -30,7 +30,7 @@ describe("Autocomplete Schema Validation", () => {
 
     test("it should fail when language is missing", () => {
         // @ts-ignore
-        const validationResult = () => validateRequestSchema({ apiKey, query }, autocompleteRequestSchema);
+        const validationResult = () => validateRequestSchema({ apiKey, query }, autocompleteSearchRequestSchema);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
@@ -50,7 +50,7 @@ describe("Autocomplete Schema Validation", () => {
         const queryNum = 5;
         // @ts-ignore
         const validationResult = () =>
-            validateRequestSchema({ apiKey, query: queryNum, language }, autocompleteRequestSchema);
+            validateRequestSchema({ apiKey, query: queryNum, language }, autocompleteSearchRequestSchema);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
@@ -70,7 +70,7 @@ describe("Autocomplete Schema Validation", () => {
         const countries = "NL";
 
         const validationResult = () =>
-            validateRequestSchema({ apiKey, query, language, countries }, autocompleteRequestSchema);
+            validateRequestSchema({ apiKey, query, language, countries }, autocompleteSearchRequestSchema);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
@@ -90,7 +90,7 @@ describe("Autocomplete Schema Validation", () => {
         const resultType = 5;
 
         const validationResult = () =>
-            validateRequestSchema({ apiKey, query, language, resultType }, autocompleteRequestSchema);
+            validateRequestSchema({ apiKey, query, language, resultType }, autocompleteSearchRequestSchema);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
@@ -109,7 +109,7 @@ describe("Autocomplete Schema Validation", () => {
     test("it should fail when radiusMeters is of type string", () => {
         const radiusMeters = "600";
         const validationResult = () =>
-            validateRequestSchema({ apiKey, query, language, radiusMeters }, autocompleteRequestSchema);
+            validateRequestSchema({ apiKey, query, language, radiusMeters }, autocompleteSearchRequestSchema);
         expect(validationResult).toThrow(
             expect.objectContaining({
                 errors: [
@@ -126,12 +126,12 @@ describe("Autocomplete Schema Validation", () => {
     });
 
     describe("Autocomplete request schema performance tests", () => {
-        test.each(autocompleteReqObjects)(
+        test.each(autocompleteSearchReqObjects)(
             "'%s'",
             // @ts-ignore
-            (_title: string, params: AutocompleteParams) => {
+            (_title: string, params: AutocompleteSearchParams) => {
                 expect(
-                    bestExecutionTimeMS(() => validateRequestSchema(params, autocompleteRequestSchema), 10)
+                    bestExecutionTimeMS(() => validateRequestSchema(params, autocompleteSearchRequestSchema), 10)
                 ).toBeLessThan(MAX_EXEC_TIMES_MS.autocomplete.schemaValidation);
             }
         );

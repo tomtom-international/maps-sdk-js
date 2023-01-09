@@ -1,5 +1,5 @@
-import { AutocompleteParams, AutocompleteResponse } from "./types";
-import { autocompleteTemplate, AutocompleteTemplate } from "./AutocompleteTemplate";
+import { AutocompleteSearchParams, AutocompleteSearchResponse } from "./types";
+import { autocompleteSearchTemplate, AutocompleteSearchTemplate } from "./AutocompleteSearchTemplate";
 import { callService } from "../shared/ServiceTemplate";
 
 /**
@@ -10,11 +10,11 @@ import { callService } from "../shared/ServiceTemplate";
  * @group Autocomplete
  * @category Functions
  */
-export const autocomplete = async (
-    params: AutocompleteParams,
-    customTemplate?: Partial<AutocompleteTemplate>
-): Promise<AutocompleteResponse> => {
-    return callService(params, { ...autocompleteTemplate, ...customTemplate }, "Autocomplete");
+export const autocompleteSearch = async (
+    params: AutocompleteSearchParams,
+    customTemplate?: Partial<AutocompleteSearchTemplate>
+): Promise<AutocompleteSearchResponse> => {
+    return callService(params, { ...autocompleteSearchTemplate, ...customTemplate }, "Autocomplete");
 };
 
-export default autocomplete;
+export default autocompleteSearch;

@@ -4,15 +4,15 @@ import { CommonServiceParams } from "../../shared";
  * @group Autocomplete
  * @category Types
  */
-export type AutocompleteSegmentType = "brand" | "category" | "plaintext";
+export type AutocompleteSearchSegmentType = "brand" | "category" | "plaintext";
 
 /**
  * @group Autocomplete
  * @category Types
  */
-export type AutocompleteParams = Omit<CommonServiceParams, "language"> & {
+export type AutocompleteSearchParams = Omit<CommonServiceParams, "language"> & {
     /**
-     * Query string. Must be properly URL encoded (mandatory).
+     * Query string. Must be properly URL encoded (Mandatory).
      */
     query: string;
 
@@ -55,12 +55,10 @@ export type AutocompleteParams = Omit<CommonServiceParams, "language"> & {
     /**
      * Restricts the result space based on their segment types.
      * A result is only included if it contains a segment of the indicated types.
-     * Value: A comma-separated list that consists of the types of segments.
+     * Value: An array that consists of the types of segments.
      *
      * Usage examples:
-     * resultType=category
-     * resultType=brand
-     * resultType=category,brand
+     * ["category"], ["brand"], ["category", "brand"]
      */
-    resultType?: AutocompleteSegmentType[];
+    resultType?: AutocompleteSearchSegmentType[];
 };

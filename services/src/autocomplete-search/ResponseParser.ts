@@ -1,4 +1,4 @@
-import { AutocompleteResponse, AutocompleteResponseAPI } from "./types";
+import { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from "./types";
 import { latLonAPIToPosition } from "../shared/Geometry";
 
 /**
@@ -7,7 +7,9 @@ import { latLonAPIToPosition } from "../shared/Geometry";
  * @category Functions
  * @param apiResponse The API response.
  */
-export const parseAutocompleteResponse = (apiResponse: AutocompleteResponseAPI): AutocompleteResponse => {
+export const parseAutocompleteSearchResponse = (
+    apiResponse: AutocompleteSearchResponseAPI
+): AutocompleteSearchResponse => {
     const { position, ...geoBias } = apiResponse.context.geoBias || {};
     return {
         ...apiResponse,

@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { hasLngLatSchema } from "../shared/GeometriesSchema";
 
-const autocompleteRequestMandatory = z.object({
+const autocompleteSearchRequestMandatory = z.object({
     query: z.string(),
     language: z.string()
 });
 
-const autocompleteRequestOptional = z
+const autocompleteSearchRequestOptional = z
     .object({
         position: hasLngLatSchema,
         limit: z.number().max(100),
@@ -21,4 +21,6 @@ const autocompleteRequestOptional = z
  * @group Autocomplete
  * @category Types
  */
-export const autocompleteRequestSchema = autocompleteRequestMandatory.merge(autocompleteRequestOptional);
+export const autocompleteSearchRequestSchema = autocompleteSearchRequestMandatory.merge(
+    autocompleteSearchRequestOptional
+);

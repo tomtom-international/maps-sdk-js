@@ -1,6 +1,6 @@
 import { GOSDKConfig } from "@anw/go-sdk-js/core";
-import { AutocompleteResponse, AutocompleteSegmentType } from "../types";
-import autocomplete from "../Autocomplete";
+import { AutocompleteSearchResponse, AutocompleteSearchSegmentType } from "../types";
+import autocompleteSearch from "../AutocompleteSearch";
 
 const expectedResults = expect.arrayContaining([
     expect.objectContaining({
@@ -13,7 +13,7 @@ const expectedResults = expect.arrayContaining([
         ])
     })
 ]);
-const basicResponse = expect.objectContaining<AutocompleteResponse>({
+const basicResponse = expect.objectContaining<AutocompleteSearchResponse>({
     context: {
         inputQuery: expect.any(String),
         geoBias: {}
@@ -54,7 +54,7 @@ describe("Autocomplete service", () => {
     test("autocomplete call with required parameters", async () => {
         const query = "cafe";
         const language = "en-GB";
-        const res = await autocomplete({ query, language });
+        const res = await autocompleteSearch({ query, language });
         expect(res).toEqual(basicResponse);
     });
 
@@ -64,7 +64,7 @@ describe("Autocomplete service", () => {
         const position = [4.81875, 51.85335];
         const limit = 5;
         const countries = ["NL", "FR"];
-        const response = await autocomplete({
+        const response = await autocompleteSearch({
             query,
             language,
             position,
@@ -79,8 +79,8 @@ describe("Autocomplete service", () => {
     test("autocomplete with strict brand result type", async () => {
         const query = "pizza";
         const language = "en-GB";
-        const resultType: AutocompleteSegmentType[] = ["brand"];
-        const response = await autocomplete({
+        const resultType: AutocompleteSearchSegmentType[] = ["brand"];
+        const response = await autocompleteSearch({
             query,
             language,
             resultType
