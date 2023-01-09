@@ -20,14 +20,8 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
             { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
         ]);
 
-        if (config?.interactive) {
+        if (config?.interactive && this.geometry) {
             eventsProxy.add(this.geometry);
-        }
-    }
-
-    protected loadLayersToEventProxy(event: EventsProxy): void {
-        if (this.geometry) {
-            event.add(this.geometry);
         }
     }
 

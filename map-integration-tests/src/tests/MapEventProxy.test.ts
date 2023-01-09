@@ -198,7 +198,6 @@ describe("Events Configuration", () => {
         const poiPosition = await getPoiPosition();
         await page.mouse.move(poiPosition.x, poiPosition.y);
         cursor = await getCursor();
-        await waitForTimeout(20000);
         expect(cursor).toBe("wait");
     });
 });

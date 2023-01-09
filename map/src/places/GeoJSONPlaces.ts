@@ -53,7 +53,7 @@ export class GeoJSONPlaces extends AbstractMapModule<VectorTilesPlaceModuleConfi
             { ...placesLayerSpec, id: placesLayerID }
         ]);
 
-        if (config?.interactive) {
+        if (config?.interactive && this.places) {
             eventsProxy.add(this.places);
         }
     }
