@@ -3,7 +3,7 @@ import apiResponse from "../../place-by-id/tests/ResponseParserPerf.data.json";
 import { PlaceByIdResponse, PlaceByIdResponseAPI } from "../types";
 import { parsePlaceByIdResponse } from "../ResponseParser";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Place By Id response parser tests", () => {
     test.each(apiAndParsedResponses)(
@@ -18,7 +18,7 @@ describe("Place By Id response parser tests", () => {
 describe("Place By Id response parser performance tests", () => {
     test("Place By Id response parser performance test", () => {
         expect(bestExecutionTimeMS(() => parsePlaceByIdResponse(apiResponse as PlaceByIdResponseAPI), 3)).toBeLessThan(
-            perfConfig.placeById.responseParsing
+            MAX_EXEC_TIMES_MS.placeById.responseParsing
         );
     });
 });

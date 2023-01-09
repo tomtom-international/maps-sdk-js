@@ -4,7 +4,7 @@ import { GeocodingResponseAPI } from "../types/APITypes";
 import { GeocodingResponse } from "../types/GeocodingResponse";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import geocodingAPIResponses from "./ResponseParserPerf.data.json";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Geocode response parsing tests", () => {
     test.each(apiAndParsedResponses)(
@@ -22,7 +22,7 @@ describe("Geocoding service response parser performance tests", () => {
         // @ts-ignore
         (apiResponse: GeocodingResponseAPI) => {
             expect(bestExecutionTimeMS(() => parseGeocodingResponse(apiResponse), 10)).toBeLessThan(
-                perfConfig.geocoding.responseParsing
+                MAX_EXEC_TIMES_MS.geocoding.responseParsing
             );
         }
     );

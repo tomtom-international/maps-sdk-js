@@ -8,7 +8,7 @@ import { parseRoutingResponseError } from "../RoutingResponseErrorParser";
 import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
 import { SDKServiceError } from "../../shared";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Calculate Route response parsing functional tests", () => {
     // Functional tests:
@@ -31,7 +31,7 @@ describe("Calculate Route response parsing performance tests", () => {
         () => {
             expect(
                 bestExecutionTimeMS(() => parseCalculateRouteResponse(longAPIResponse as CalculateRouteResponseAPI), 20)
-            ).toBeLessThan(perfConfig.routing.responseParsing);
+            ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.responseParsing);
         }
     );
 });

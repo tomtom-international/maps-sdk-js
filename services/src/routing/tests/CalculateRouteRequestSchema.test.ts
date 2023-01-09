@@ -3,7 +3,7 @@ import { validateRequestSchema } from "../../shared/Validation";
 import { calculateRouteRequestSchema } from "../CalculateRouteRequestSchema";
 import { routeRequestParams } from "./RequestBuilderPerf.data";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Calculate route request schema validation", () => {
     const apiKey = "APIKEY";
@@ -250,7 +250,9 @@ describe("Calculate route request schema validation", () => {
                         ],
                         path: ["sectionTypes", 1],
                         message:
-                            "Invalid enum value. Expected 'carTrain' | 'ferry' | 'tunnel' | 'motorway' | 'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | 'vehicleRestricted' | 'traffic' | 'urban' | 'unpaved' | 'carpool', received 'motorways'"
+                            "Invalid enum value. Expected 'carTrain' | 'ferry' | 'tunnel' | 'motorway' | " +
+                            "'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | 'vehicleRestricted' | " +
+                            "'traffic' | 'urban' | 'unpaved' | 'carpool', received 'motorways'"
                     },
                     {
                         received: "medium",
@@ -287,6 +289,6 @@ describe("Calculate route request schema performance tests", () => {
                 () => validateRequestSchema(routeRequestParams as CalculateRouteParams, calculateRouteRequestSchema),
                 10
             )
-        ).toBeLessThan(perfConfig.routing.schemaValidation);
+        ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.schemaValidation);
     });
 });

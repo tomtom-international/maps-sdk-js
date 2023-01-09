@@ -3,7 +3,7 @@ import apiAndParsedResponses from "../../geometry-search/tests/ResponseParser.da
 import apiResponses from "../../geometry-search/tests/ResponseParserPerf.data.json";
 import { parseGeometrySearchResponse } from "../ResponseParser";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Geometry Search response parser tests", () => {
     test.each(apiAndParsedResponses)(
@@ -21,7 +21,7 @@ describe("Geometry Search response parser performance tests", () => {
         // @ts-ignore
         (_title: string, apiResponse: GeometrySearchResponseAPI) => {
             expect(bestExecutionTimeMS(() => parseGeometrySearchResponse(apiResponse), 10)).toBeLessThan(
-                perfConfig.search.geometrySearch.responseParsing
+                MAX_EXEC_TIMES_MS.search.geometrySearch.responseParsing
             );
         }
     );

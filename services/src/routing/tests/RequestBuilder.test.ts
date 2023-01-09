@@ -3,7 +3,7 @@ import { shortRouteRequestParams } from "./RequestBuilderPerf.data";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";
 import { buildCalculateRouteRequest } from "../RequestBuilder";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Calculate Route request URL building functional tests", () => {
     // @ts-ignore
@@ -16,6 +16,6 @@ describe("Calculate Route request URL building performance tests", () => {
     test("Calculate route request with many waypoints, mandatory & optional params", () => {
         expect(
             bestExecutionTimeMS(() => buildCalculateRouteRequest(shortRouteRequestParams as CalculateRouteParams), 20)
-        ).toBeLessThan(perfConfig.routing.requestBuilding);
+        ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.requestBuilding);
     });
 });

@@ -2,7 +2,7 @@ import { buildPlaceByIdRequest } from "../RequestBuilder";
 import placeByIdReqObjects from "./RequestBuilderPerf.data.json";
 import { PlaceByIdParams } from "../types";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Place by ID request URL building functional tests", () => {
     test("Place by ID request URL building mandatory parameters request", () => {
@@ -37,6 +37,6 @@ describe("PlaceById request URL performance tests", () => {
     test("PlaceById request URL performance test", () => {
         expect(
             bestExecutionTimeMS(() => buildPlaceByIdRequest(placeByIdReqObjects as PlaceByIdParams), 10)
-        ).toBeLessThan(perfConfig.placeById.requestBuilding);
+        ).toBeLessThan(MAX_EXEC_TIMES_MS.placeById.requestBuilding);
     });
 });

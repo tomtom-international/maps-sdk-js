@@ -6,7 +6,7 @@ import { ReverseGeocodingParams } from "../types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "../ReverseGeocoding";
 import { ReverseGeocodingResponseAPI } from "../types/APITypes";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("ReverseGeocode response parsing tests", () => {
     test.each(apiAndParsedResponses)(
@@ -33,7 +33,7 @@ describe("ReverseGeocode response parsing performance tests", () => {
         // @ts-ignore
         (_title: string, params: ReverseGeocodingParams, apiResponse: ReverseGeocodingResponseAPI) => {
             expect(bestExecutionTimeMS(() => parseRevGeoResponse(apiResponse, params), 10)).toBeLessThan(
-                perfConfig.revGeo.responseParsing
+                MAX_EXEC_TIMES_MS.revGeo.responseParsing
             );
         }
     );

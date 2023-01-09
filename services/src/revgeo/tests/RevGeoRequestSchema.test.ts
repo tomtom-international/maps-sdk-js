@@ -3,7 +3,7 @@ import revGeoReqObjects from "../../revgeo/tests/RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
 import { revGeocodeRequestSchema } from "../RevGeocodeRequestSchema";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("ReverseGeocoding schema validation", () => {
     const apiKey = "APIKEY";
@@ -347,7 +347,8 @@ describe("ReverseGeocoding schema validation", () => {
                         options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
                         path: ["view"],
                         message:
-                            "Invalid enum value. Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'"
+                            "Invalid enum value. Expected 'Unified' | " +
+                            "'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'"
                     }
                 ]
             })
@@ -361,7 +362,7 @@ describe("Rev-Geo request schema performance tests", () => {
         // @ts-ignore
         (_title: string, params: ReverseGeocodingParams) => {
             expect(bestExecutionTimeMS(() => validateRequestSchema(params, revGeocodeRequestSchema), 10)).toBeLessThan(
-                perfConfig.revGeo.schemaValidation
+                MAX_EXEC_TIMES_MS.revGeo.schemaValidation
             );
         }
     );

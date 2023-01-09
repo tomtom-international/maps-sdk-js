@@ -3,12 +3,11 @@ import apiResponses from "./ResponseParserPerf.data.json";
 import { parseEVChargingStationsAvailabilityResponse } from "../ResponseParser";
 import errorResponses from "../tests/ResponseError.data.json";
 import { DefaultAPIResponseError, ErrorObjAPI } from "../../shared/types/APIResponseErrorTypes";
-import { ServiceName } from "../../shared/types/ServicesTypes";
-import { SDKServiceError } from "../../shared/Errors";
+import { SDKServiceError, ServiceName } from "../../shared";
 import { parseEVChargingStationsAvailabilityResponseError } from "../EVChargingStationsAvailabilityResponseErrorParser";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { EVChargingStationsAvailabilityResponse } from "../types/EVChargingStationsAvailabilityResponse";
-import perfConfig from "services/perfConfig.json";
+import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 
 describe("Charging availability response parsing tests", () => {
     test.each(apiAndParsedResponses)(
@@ -48,7 +47,7 @@ describe("Charging availability response parsing performance tests", () => {
         (_name: string, apiResponse: EVChargingStationsAvailabilityResponse) => {
             expect(
                 bestExecutionTimeMS(() => parseEVChargingStationsAvailabilityResponse(apiResponse), 10)
-            ).toBeLessThan(perfConfig.ev.responseParsing);
+            ).toBeLessThan(MAX_EXEC_TIMES_MS.ev.responseParsing);
         }
     );
 });
