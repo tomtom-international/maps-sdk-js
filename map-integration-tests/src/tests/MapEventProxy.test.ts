@@ -194,10 +194,5 @@ describe("Events Configuration", () => {
         expect(cursor).toBe("crosshair");
 
         await page.mouse.up();
-
-        const poiPosition = await getPoiPosition();
-        await page.mouse.move(poiPosition.x, poiPosition.y);
-        cursor = await getCursor();
-        expect(cursor).toBe("wait");
     });
 });

@@ -52,7 +52,6 @@ export class EventsProxy extends AbstractEventProxy {
         this.defaultZoomLevel = Math.round(this.map.getZoom());
         this.listenToDefaultEvents();
         this.listenToMapClicks();
-        console.log(config.cursorOnHover);
     }
 
     private listenToDefaultEvents = () => {
