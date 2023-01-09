@@ -10,6 +10,15 @@ import POIs from "./MapEventProxy.test.data.json";
 
 const poiCoordinates = POIs.features[0].geometry.coordinates as [number, number];
 
+const getPoiPosition = async () =>
+    await page.evaluate((coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates), poiCoordinates);
+
+const getCursor = async () =>
+    await page.evaluate(() => {
+        const goSDKThis = globalThis as GOSDKThis;
+        return goSDKThis.goSDKMap.mapLibreMap.getCanvas().style.cursor;
+    });
+
 const showPlaces = async (places: Places) =>
     page.evaluate((inputPlaces: Places) => {
         (globalThis as GOSDKThis).places?.show(inputPlaces);
@@ -57,10 +66,8 @@ describe("EventProxy integration tests", () => {
             goSDKThis.places?.events.on("click", () => goSDKThis._numOfClicks++);
             goSDKThis.places?.events.on("contextmenu", () => goSDKThis._numOfContextmenuClicks++);
         });
-        const POIPosition = await page.evaluate(
-            (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
-            poiCoordinates
-        );
+
+        const POIPosition = await getPoiPosition();
         await page.mouse.click(POIPosition.x, POIPosition.y);
         await page.mouse.click(POIPosition.x, POIPosition.y, { button: "right" });
 
@@ -78,10 +85,8 @@ describe("EventProxy integration tests", () => {
             goSDKThis.places?.events.on("hover", () => goSDKThis._numOfHovers++);
             goSDKThis.places?.events.on("long-hover", () => goSDKThis._numOfLongHovers++);
         });
-        const poiPosition = await page.evaluate(
-            (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
-            poiCoordinates
-        );
+
+        const poiPosition = await getPoiPosition();
         await page.mouse.move(poiPosition.x, poiPosition.y);
         await waitForTimeout(800);
 
@@ -128,10 +133,8 @@ describe("EventProxy integration tests", () => {
                 goSDKThis._clickedSourceWithLayers = sourceWithLayers;
             });
         });
-        const poiPosition = await page.evaluate(
-            (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
-            poiCoordinates
-        );
+
+        const poiPosition = await getPoiPosition();
         await page.mouse.click(poiPosition.x, poiPosition.y);
 
         const lntlat = await page.evaluate(() => (globalThis as GOSDKThis)._clickedLngLat);
@@ -148,5 +151,52 @@ describe("EventProxy integration tests", () => {
         expect(sourceWithLayers).toHaveLength(1);
         expect(sourceWithLayers).toContainEqual(expect.objectContaining({ source: "places", id: "placesSymbols" }));
         expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+});
+
+describe("Events Configuration", () => {
+    const mapEnv = new MapIntegrationTestEnv();
+
+    test("Load custom event configuration", async () => {
+        await mapEnv.loadPage();
+        await mapEnv.loadMap(
+            {
+                zoom: 10,
+                // Amsterdam center
+                center: [4.89067, 52.37313]
+            },
+            {
+                events: {
+                    paddingBox: 20,
+                    cursorOnMap: "help",
+                    cursorOnMouseDown: "crosshair",
+                    cursorOnHover: "wait"
+                }
+            }
+        );
+
+        await page.evaluate(() => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
+        });
+
+        await waitForMapStyleToLoad();
+        await showPlaces(POIs as Places);
+        await waitForRenderedPlaces(POIs.features.length);
+
+        let cursor = await getCursor();
+        expect(cursor).toBe("help");
+
+        await page.mouse.down();
+
+        cursor = await getCursor();
+        expect(cursor).toBe("crosshair");
+
+        await page.mouse.up();
+
+        const poiPosition = await getPoiPosition();
+        await page.mouse.move(poiPosition.x, poiPosition.y);
+        cursor = await getCursor();
+        expect(cursor).toBe("wait");
     });
 });
