@@ -7,9 +7,11 @@ import { POI_SOURCE_ID } from "../../core/layers/sourcesIDs";
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles POI module tests", () => {
-    test("Constructor with config", () => {
+    let goSDKMapMock: GOSDKMap;
+
+    beforeEach(() => {
         const poiSource = { id: POI_SOURCE_ID };
-        const goSDKMapMock = {
+        goSDKMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(poiSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
@@ -19,7 +21,9 @@ describe("Vector tiles POI module tests", () => {
                 add: jest.fn()
             }
         } as unknown as GOSDKMap;
+    });
 
+    test("Constructor with config", () => {
         const pois = new VectorTilePOIs(goSDKMapMock, {
             visible: false
         });
@@ -35,18 +39,6 @@ describe("Vector tiles POI module tests", () => {
     });
 
     test("Constructor with no config", () => {
-        const poiSource = { id: POI_SOURCE_ID };
-        const goSDKMapMock = {
-            mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(poiSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map,
-            _eventsProxy: {
-                add: jest.fn()
-            }
-        } as unknown as GOSDKMap;
-
         const pois = new VectorTilePOIs(goSDKMapMock);
         expect(pois).toBeDefined();
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
