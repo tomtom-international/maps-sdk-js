@@ -15,9 +15,9 @@ const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
     /** Delayed hover control:
      *  The first hover we do after the map moves is longer
      */
-    hoverDelayOnMapMove: 800,
+    hoverDelayMsOnMapMove: 800,
     /* Followup hovers with the same non-moving map are quicker ("hovering around mode") */
-    hoverDelayOnMapStop: 300
+    hoverDelayMsOnMapStop: 300
 };
 
 /**
@@ -199,7 +199,7 @@ export class EventsProxy extends AbstractEventProxy {
         window.clearTimeout(this.longHoverTimeoutHandlerID);
         this.longHoverTimeoutHandlerID = window.setTimeout(
             this.handleLongHoverTimeout,
-            this.firstDelayedHoverSinceMapMove ? this.config.hoverDelayOnMapMove : this.config.hoverDelayOnMapStop
+            this.firstDelayedHoverSinceMapMove ? this.config.hoverDelayMsOnMapMove : this.config.hoverDelayMsOnMapStop
         );
     };
 

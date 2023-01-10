@@ -1,7 +1,7 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, GeoJSONSourceWithLayers, EventsModule, EventsProxy } from "../core";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
-import { GeometryModuleConfig, VectorTilesGeometryModuleConfig } from "./types/GeometryModuleConfig";
+import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { asDefined } from "../core/AssertionUtils";
 import { GEOMETRY_SOURCE_ID } from "../core/layers/sourcesIDs";
 
@@ -14,7 +14,7 @@ const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
 export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
     private geometry?: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
-    init(eventsProxy: EventsProxy, config?: VectorTilesGeometryModuleConfig): void {
+    init(eventsProxy: EventsProxy, config?: GeometryModuleConfig): void {
         this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
             { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
             { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
