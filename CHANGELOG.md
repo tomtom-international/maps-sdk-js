@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.69](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.68...v0.1.69) (2023-01-10)
+
+
+### Features
+
+* add autocomplete service ([3b76260](https://github.com/tomtom-international/go-sdk-js/commit/3b762605fe4bf00ec5ff4aec0e29bf0462c29a10))
+
 ### [0.1.68](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.67...v0.1.68) (2023-01-04)
 
 
