@@ -247,12 +247,10 @@ describe("EventProxy Configuration", () => {
         const poiPosition = await getPoiPosition();
         await page.mouse.click(poiPosition.x, poiPosition.y);
 
-        const features = await page.evaluate(() => {
-            console.log((globalThis as GOSDKThis)._clickedFeatures);
-            return (globalThis as GOSDKThis)._clickedFeatures;
-        });
+        const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
 
         expect(features).toHaveLength(1);
+        expect(features?.[0].layer.id).toEqual("placesSymbols");
     });
 
     test("Return layer if interactive flag is enabled", async () => {
@@ -276,11 +274,9 @@ describe("EventProxy Configuration", () => {
         const poiPosition = await getPoiPosition();
         await page.mouse.click(poiPosition.x, poiPosition.y);
 
-        const features = await page.evaluate(() => {
-            console.log((globalThis as GOSDKThis)._clickedFeatures);
-            return (globalThis as GOSDKThis)._clickedFeatures;
-        });
-
+        const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
         expect(features).toHaveLength(3);
+        expect(features?.[0].layer.id).toEqual("placesSymbols");
+        expect(features?.[1].layer.id).toEqual("geometry_Fill");
     });
 });

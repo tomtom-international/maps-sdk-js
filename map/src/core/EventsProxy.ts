@@ -69,8 +69,12 @@ export class EventsProxy extends AbstractEventProxy {
         this.map.on("contextmenu", this.onMapClick("contextmenu"));
     };
 
+    /**
+     * Private utility methods
+     */
+
     // Enable/Disable Events
-    public enable = (enabled: boolean) => {
+    private enable = (enabled: boolean) => {
         this.enabled = enabled;
         if (!enabled) {
             window.clearTimeout(this.longHoverTimeoutHandlerID);
@@ -87,6 +91,53 @@ export class EventsProxy extends AbstractEventProxy {
             [point.x + paddingBox, point.y - paddingBox]
         ];
     }
+
+    private isEventsProxyEnabled = () => {
+        return !this.enabled || this.map.isMoving();
+    };
+
+    private getRenderedFeatures = (point: Point2D) => {
+        return this.map.queryRenderedFeatures(this.toPaddedBounds(point), {
+            layers: this.interactiveLayerIDs
+        });
+    };
+
+    private restartLongHoverTimeout = () => {
+        window.clearTimeout(this.longHoverTimeoutHandlerID);
+        this.longHoverTimeoutHandlerID = window.setTimeout(
+            this.handleLongHoverTimeout,
+            this.firstDelayedHoverSinceMapMove ? this.config.hoverDelayMsOnMapMove : this.config.hoverDelayMsOnMapStop
+        );
+    };
+
+    private handleLongHoverTimeout = () => {
+        // We try to avoid firing long hovers when the feature was just clicked
+        // (requires a safe-ish efficient way to compare features coming from different events, like IDs):
+        if (
+            !this.hoveringFeature ||
+            !this.lastClickedFeature ||
+            // properties IDs, if any, are expected to be most reliable for comparison:
+            this.lastClickedFeature.properties.id !== this.hoveringFeature.properties.id ||
+            (!this.lastClickedFeature.properties.id &&
+                !this.hoveringFeature.properties.id &&
+                // otherwise (auto-generated) IDs are used next, but they could potentially be different for essentially the same core item:
+                this.lastClickedFeature.id !== this.hoveringFeature.id)
+        ) {
+            this.firstDelayedHoverSinceMapMove = false;
+            if (this.hoveringSourceWithLayers) {
+                const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
+                if (this.handlers[listenerId]) {
+                    this.handlers[listenerId].forEach((cb) =>
+                        cb(this.hoveringLngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
+                    );
+                }
+            }
+        }
+    };
+
+    /**
+     * Private event handlers for Maplibre events.
+     */
 
     private onZoom = () => {
         if (!this.config.paddingBoxUpdateOnZoom) {
@@ -125,15 +176,12 @@ export class EventsProxy extends AbstractEventProxy {
     };
 
     private onMouseMove = (ev: MapMouseEvent) => {
-        if (!this.enabled || this.map.isMoving()) {
+        if (this.isEventsProxyEnabled()) {
             // We ensure no unwanted hover handling while the map moves
             return;
         }
 
-        this.hoveredFeatures = this.map.queryRenderedFeatures(this.toPaddedBounds(ev.point), {
-            layers: this.interactiveLayerIDs
-        });
-
+        this.hoveredFeatures = this.getRenderedFeatures(ev.point);
         const hoveredTopFeature = this.hoveredFeatures[0];
         const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
 
@@ -195,51 +243,14 @@ export class EventsProxy extends AbstractEventProxy {
         }
     };
 
-    private restartLongHoverTimeout = () => {
-        window.clearTimeout(this.longHoverTimeoutHandlerID);
-        this.longHoverTimeoutHandlerID = window.setTimeout(
-            this.handleLongHoverTimeout,
-            this.firstDelayedHoverSinceMapMove ? this.config.hoverDelayMsOnMapMove : this.config.hoverDelayMsOnMapStop
-        );
-    };
-
-    private handleLongHoverTimeout = () => {
-        // We try to avoid firing long hovers when the feature was just clicked
-        // (requires a safe-ish efficient way to compare features coming from different events, like IDs):
-        if (
-            !this.hoveringFeature ||
-            !this.lastClickedFeature ||
-            // properties IDs, if any, are expected to be most reliable for comparison:
-            this.lastClickedFeature.properties.id !== this.hoveringFeature.properties.id ||
-            (!this.lastClickedFeature.properties.id &&
-                !this.hoveringFeature.properties.id &&
-                // otherwise (auto-generated) IDs are used next, but they could potentially be different for essentially the same core item:
-                this.lastClickedFeature.id !== this.hoveringFeature.id)
-        ) {
-            this.firstDelayedHoverSinceMapMove = false;
-            if (this.hoveringSourceWithLayers) {
-                const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
-                if (this.handlers[listenerId]) {
-                    this.handlers[listenerId].forEach((cb) =>
-                        cb(this.hoveringLngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
-                    );
-                }
-            }
-        }
-    };
-
     private onMapClick = (clickType: ClickEvent) => (ev: MapMouseEvent) => {
-        if (!this.enabled || this.map.isMoving()) {
+        if (this.isEventsProxyEnabled()) {
             // We avoid any accidental click handling while the map moves
             return;
         }
 
-        const clickedFeatures = this.map.queryRenderedFeatures(this.toPaddedBounds(ev.point), {
-            layers: this.interactiveLayerIDs
-        });
-
+        const clickedFeatures = this.getRenderedFeatures(ev.point);
         this.lastClickedFeature = clickedFeatures[0];
-
         this.lastClickedSourceWithLayers = this.lastClickedFeature
             ? this.interactiveSourcesAndLayers[this.lastClickedFeature.source]
             : undefined;
