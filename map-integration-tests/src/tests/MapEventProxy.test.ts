@@ -63,6 +63,26 @@ const initGeometry = async (config: GeometryModuleConfig) =>
         config
     );
 
+const setupGeoJSONModuleAndPlacesEvents = async () => {
+    await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
+
+    // Initiating Places module
+    await page.evaluate(() => {
+        const goSDKThis = globalThis as GOSDKThis;
+        goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
+    });
+    await waitForMapStyleToLoad();
+    await showPlaces(POIs as Places);
+    await waitForRenderedPlaces(POIs.features.length);
+
+    // Setting up events - We click in the POI and should not have geometry module returned
+    // in features parameter
+    await setupEventCallbacks("click");
+
+    const poiPosition = await getPoiPosition();
+    await page.mouse.click(poiPosition.x, poiPosition.y);
+};
+
 describe("EventProxy integration tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
@@ -228,51 +248,16 @@ describe("EventProxy Configuration", () => {
     test("Not return layer if interactive flag is disabled", async () => {
         // Initiating Geometry module
         await initGeometry({ interactive: false });
-        // Amsterdam center position
-        await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
-
-        // Initiating Places module
-        await page.evaluate(() => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
-        });
-        await waitForMapStyleToLoad();
-        await showPlaces(POIs as Places);
-        await waitForRenderedPlaces(POIs.features.length);
-
-        // Setting up events - We click in the POI and should not have geometry module returned
-        // in features parameter
-        await setupEventCallbacks("click");
-
-        const poiPosition = await getPoiPosition();
-        await page.mouse.click(poiPosition.x, poiPosition.y);
+        await setupGeoJSONModuleAndPlacesEvents();
 
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
-
         expect(features).toHaveLength(1);
         expect(features?.[0].layer.id).toEqual("placesSymbols");
     });
 
     test("Return layer if interactive flag is enabled", async () => {
         await initGeometry({ interactive: true });
-        // Amsterdam center position
-        await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
-
-        // Initiating Places module
-        await page.evaluate(() => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
-        });
-        await waitForMapStyleToLoad();
-        await showPlaces(POIs as Places);
-        await waitForRenderedPlaces(POIs.features.length);
-
-        // Setting up events - We click in the POI and should not have geometry module returned
-        // in features parameter
-        await setupEventCallbacks("click");
-
-        const poiPosition = await getPoiPosition();
-        await page.mouse.click(poiPosition.x, poiPosition.y);
+        await setupGeoJSONModuleAndPlacesEvents();
 
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
         expect(features).toHaveLength(3);
