@@ -30,7 +30,7 @@ const showPlaces = async (places: Places) =>
     }, places);
 
 const setupEventCallbacks = async (eventType: EventType) =>
-    await page.evaluate(
+    page.evaluate(
         (inputEventType: EventType) => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.places?.events.on(inputEventType, (lnglat, features, sourceWithLayers) => {
@@ -52,7 +52,7 @@ const waitUntilRenderedGeometry = async (numFeatures: number, position: Position
 const geometryData = amsterdamGeometryData as GeometryDataResponse;
 
 const initGeometry = async (config: GeometryModuleConfig) =>
-    await page.evaluate(
+    page.evaluate(
         (inputGeometry: GeometryDataResponse, inputConfig: GeometryModuleConfig) => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.geometry = new goSDKThis.GOSDK.GeometryModule(goSDKThis.goSDKMap, inputConfig);
