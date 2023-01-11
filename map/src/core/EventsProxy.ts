@@ -69,17 +69,17 @@ export class EventsProxy extends AbstractEventProxy {
         this.map.on("contextmenu", this.onMapClick("contextmenu"));
     };
 
-    /**
-     * Private utility methods
-     */
-
     // Enable/Disable Events
-    private enable = (enabled: boolean) => {
+    public enable = (enabled: boolean) => {
         this.enabled = enabled;
         if (!enabled) {
             window.clearTimeout(this.longHoverTimeoutHandlerID);
         }
     };
+
+    /**
+     * Private utility methods
+     */
 
     private toPaddedBounds(point: Point2D): [[number, number], [number, number]] {
         const paddingBox = this.paddingBoxOnZoom || this.config.paddingBox;
