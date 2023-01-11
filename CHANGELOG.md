@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.70](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.69...v0.1.70) (2023-01-11)
+
+
+### Bug Fixes
+
+* **map:** Set EventsProxy enable method to public ([af25af2](https://github.com/tomtom-international/go-sdk-js/commit/af25af289cc57b307479131a37a664918d4d306d))
+
 ### [0.1.69](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.68...v0.1.69) (2023-01-10)
 
 
