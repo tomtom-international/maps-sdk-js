@@ -36,14 +36,12 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         if (config) {
             this.applyConfig(config);
 
-            if (config.interactive) {
-                if (this.flow) {
-                    goSDKMap._eventsProxy.add(this.flow);
-                }
+            if (config.flow?.interactive && this.flow) {
+                goSDKMap._eventsProxy.add(this.flow);
+            }
 
-                if (this.incidents) {
-                    goSDKMap._eventsProxy.add(this.incidents);
-                }
+            if (config.incidents?.interactive && this.incidents) {
+                goSDKMap._eventsProxy.add(this.incidents);
             }
         }
     }
