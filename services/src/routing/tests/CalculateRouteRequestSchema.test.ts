@@ -1,8 +1,6 @@
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { validateRequestSchema } from "../../shared/Validation";
-import { calculateRouteRequestSchema } from "../CalculateRouteRequestSchema";
 import { routeRequestParams } from "./RequestBuilderPerf.data";
-import { CalculateRouteParams } from "../types/CalculateRouteParams";
 import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
 import { routeRequestValidationConfig } from "../CalculateRouteTemplate";
 
@@ -11,11 +9,10 @@ describe("Calculate route request schema validation", () => {
     const commonBaseURL = "https://api-test.tomtom.com";
 
     test("it should fail when latitude & longitude are out of range", () => {
-        // @ts-ignore
         const validationCall = () =>
             validateRequestSchema(
                 {
-                    locations: [
+                    geoInputs: [
                         [200, 180],
                         [-200, -180]
                     ],
@@ -33,7 +30,7 @@ describe("Calculate route request schema validation", () => {
                         inclusive: true,
                         exact: false,
                         message: "Number must be less than or equal to 180",
-                        path: ["locations", 0, 0],
+                        path: ["geoInputs", 0, 0],
                         type: "number"
                     },
                     {
@@ -42,7 +39,7 @@ describe("Calculate route request schema validation", () => {
                         inclusive: true,
                         exact: false,
                         message: "Number must be less than or equal to 90",
-                        path: ["locations", 0, 1],
+                        path: ["geoInputs", 0, 1],
                         type: "number"
                     },
                     {
@@ -51,7 +48,7 @@ describe("Calculate route request schema validation", () => {
                         inclusive: true,
                         exact: false,
                         message: "Number must be greater than or equal to -180",
-                        path: ["locations", 1, 0],
+                        path: ["geoInputs", 1, 0],
                         type: "number"
                     },
                     {
@@ -60,7 +57,7 @@ describe("Calculate route request schema validation", () => {
                         inclusive: true,
                         exact: false,
                         message: "Number must be greater than or equal to -90",
-                        path: ["locations", 1, 1],
+                        path: ["geoInputs", 1, 1],
                         type: "number"
                     }
                 ]
@@ -72,7 +69,7 @@ describe("Calculate route request schema validation", () => {
         const validationCall = () =>
             validateRequestSchema(
                 {
-                    locations: "4.89066,52.37317:4.49015,52.16109",
+                    geoInputs: "4.89066,52.37317:4.49015,52.16109",
                     apiKey,
                     commonBaseURL
                 },
@@ -85,7 +82,7 @@ describe("Calculate route request schema validation", () => {
                         code: "invalid_type",
                         expected: "array",
                         received: "string",
-                        path: ["locations"],
+                        path: ["geoInputs"],
                         message: "Expected array, received string"
                     }
                 ]
@@ -93,32 +90,37 @@ describe("Calculate route request schema validation", () => {
         );
     });
 
-    test("it should fail when format of location is incorrect - example 2", () => {
-        const validationCall = () =>
+    test("it should fail when there are not enough waypoints - none sent", () => {
+        expect(() =>
+            validateRequestSchema({ geoInputs: [], apiKey, commonBaseURL }, routeRequestValidationConfig)
+        ).toThrow("Array must contain at least 1 element(s)");
+    });
+
+    test("it should fail when there are not enough waypoints - one sent", () => {
+        expect(() =>
             validateRequestSchema(
-                { locations: [[4.89066, 52.37317]], apiKey, commonBaseURL },
+                { geoInputs: [[4.89066, 52.37317]], apiKey, commonBaseURL },
                 routeRequestValidationConfig
-            );
-        expect(validationCall).toThrow(
-            expect.objectContaining({
-                errors: [
-                    {
-                        code: "too_small",
-                        minimum: 2,
-                        type: "array",
-                        inclusive: true,
-                        exact: false,
-                        message: "Array must contain at least 2 element(s)",
-                        path: ["locations"]
-                    }
-                ]
-            })
+            )
+        ).toThrow(
+            "When passing waypoints only: at least 2 must be defined. " +
+                "If passing also paths, at least one path must be defined"
         );
     });
 
-    test("it should fail when locations param is missing", () => {
+    test("it should fail when geoInputs param is missing", () => {
         expect(() => validateRequestSchema({ apiKey, commonBaseURL }, routeRequestValidationConfig)).toThrow(
-            "At least one of locations or supportingPoints must be defined"
+            expect.objectContaining({
+                errors: [
+                    {
+                        code: "invalid_type",
+                        expected: "array",
+                        received: "undefined",
+                        path: ["geoInputs"],
+                        message: "Required"
+                    }
+                ]
+            })
         );
     });
 
@@ -126,37 +128,26 @@ describe("Calculate route request schema validation", () => {
         const validationCall = () =>
             validateRequestSchema(
                 {
-                    locations: [
+                    geoInputs: [
                         [4.89066, 52.37317],
                         [4.4906, 51.37317]
                     ],
-                    //@ts-ignore
                     avoid: "tollRoads",
-                    //@ts-ignore
                     computeAdditionalTravelTimeFor: "first",
-                    //@ts-ignore
                     considerTraffic: "true",
-                    //@ts-ignore
                     currentHeading: 360,
-                    //@ts-ignore
                     instructionsType: "Coded",
-                    //@ts-ignore
                     maxAlternatives: 6,
-                    //@ts-ignore
                     routeRepresentation: "summary",
                     thrillingParams: {
                         hilliness: "low",
-                        //@ts-ignore
                         windingness: "medium"
                     },
-                    //@ts-ignore
                     travelMode: 2,
                     when: {
-                        //@ts-ignore
                         option: "arriveAt",
                         date: new Date()
                     },
-                    //@ts-ignore
                     sectionTypes: ["tunnel", "motorways"],
                     apiKey,
                     commonBaseURL
@@ -271,16 +262,9 @@ describe("Calculate route request schema validation", () => {
 });
 
 describe("Calculate route request schema performance tests", () => {
-    // @ts-ignore
     test("Calculate route request with many waypoints, mandatory & optional params", () => {
         expect(
-            bestExecutionTimeMS(
-                () =>
-                    validateRequestSchema(routeRequestParams as CalculateRouteParams, {
-                        schema: calculateRouteRequestSchema
-                    }),
-                10
-            )
+            bestExecutionTimeMS(() => validateRequestSchema(routeRequestParams, routeRequestValidationConfig), 10)
         ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.schemaValidation);
     });
 });

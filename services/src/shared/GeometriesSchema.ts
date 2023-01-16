@@ -3,6 +3,11 @@ import { z } from "zod";
 /**
  * @ignore
  */
+export const lineStringCoordsSchema = z.array(z.array(z.number()));
+
+/**
+ * @ignore
+ */
 export const geometrySchema = z
     .object({
         type: z.enum([
@@ -17,7 +22,7 @@ export const geometrySchema = z
         ]),
         coordinates: z.union([
             z.array(z.number()),
-            z.array(z.array(z.number())),
+            lineStringCoordsSchema,
             z.array(z.array(z.array(z.number()))),
             z.array(z.array(z.array(z.array(z.number()))))
         ]),

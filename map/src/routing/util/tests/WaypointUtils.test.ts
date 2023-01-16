@@ -18,7 +18,7 @@ const buildTestWaypoint = (properties: WaypointProps & Anything, coordinates: Po
     properties
 });
 
-describe("Waypoint util tests", () => {
+describe("GeoInputs util tests", () => {
     test("Build waypoint title", () => {
         expect(buildWaypointTitle(null as never)).toBeUndefined();
         expect(buildWaypointTitle(buildTestWaypoint({}, [1, 2]))).toBeUndefined();

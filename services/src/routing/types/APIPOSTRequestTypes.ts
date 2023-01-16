@@ -3,11 +3,6 @@ import { LatLngPointAPI } from "./APITypes";
 /**
  * @ignore
  */
-export type SupportingPointsAPI = LatLngPointAPI[];
-
-/**
- * @ignore
- */
 export type PointWaypointAPI = {
     waypointSourceType: "User_Defined";
     supportingPointIndex: number;
@@ -17,6 +12,6 @@ export type PointWaypointAPI = {
  * @ignore
  */
 export type CalculateRoutePOSTDataAPI = {
-    supportingPoints: SupportingPointsAPI;
+    supportingPoints: LatLngPointAPI[];
     pointWaypoints?: PointWaypointAPI[];
 };

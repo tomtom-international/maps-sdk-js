@@ -6,7 +6,7 @@ describe("Using customize obj", () => {
             customizeService.calculateRoute.buildCalculateRouteRequest({
                 apiKey: "API_KEY",
                 commonBaseURL: "https://api.tomtom.com",
-                locations: [
+                geoInputs: [
                     [4.88066, 52.37319],
                     [4.49015, 52.16109]
                 ]

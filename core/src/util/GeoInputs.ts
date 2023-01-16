@@ -1,5 +1,5 @@
 import { Feature, GeoJsonObject, Point } from "geojson";
-import { HasLngLat, Waypoint } from "../types";
+import { GeoInput, GeoInputType, HasLngLat, Waypoint } from "../types";
 import { getLngLatArray, toPointFeature } from "./LngLat";
 
 /**
@@ -23,4 +23,27 @@ export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Wayp
             radiusMeters
         }
     };
+};
+
+/**
+ * @group Route
+ * @category Functions
+ */
+export const getGeoInputType = (geoInput: GeoInput): GeoInputType => {
+    if (Array.isArray(geoInput)) {
+        if (Array.isArray(geoInput[0])) {
+            return "path";
+        } else {
+            return "waypoint";
+        }
+    } else if (geoInput.type === "Feature") {
+        if (geoInput.geometry.type === "LineString") {
+            return "path";
+        } else {
+            return "waypoint";
+        }
+    } else {
+        // assuming Point geometries:
+        return "waypoint";
+    }
 };

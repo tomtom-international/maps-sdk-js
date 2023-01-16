@@ -40,7 +40,7 @@ describe("Calculate route integration tests", () => {
             const testInputSectionTypes: SectionType[] = ["carTrain", "motorway", "tollRoad", "tollVignette", "urban"];
 
             const result = await calculateRoute({
-                locations: [
+                geoInputs: [
                     [7.675106, 46.490793],
                     [7.74328, 46.403849],
                     [1.32248, 51.111645]
@@ -98,7 +98,7 @@ describe("Calculate route integration tests", () => {
 
     test("Amsterdam to Leiden to Rotterdam with electric vehicle parameters", async () => {
         const result = await calculateRoute({
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
                 // Dragged point in Pijnacker
@@ -153,7 +153,7 @@ describe("Calculate route integration tests", () => {
     test("Roses to Olot thrilling route with alternatives", async () => {
         const result = await calculateRoute({
             language: "es-ES",
-            locations: [
+            geoInputs: [
                 [3.1748, 42.26297],
                 [2.48819, 42.18211]
             ],
@@ -193,10 +193,11 @@ describe("Calculate route integration tests", () => {
         }
     });
 
-    test("Calculating 'Amsterdam to Leiden to Rotterdam' and then reconstructing it again", async () => {
+    test("Route reconstruction flows", async () => {
         const firstRoute = (
             await calculateRoute({
-                locations: [
+                // Amsterdam to Leiden to Rotterdam
+                geoInputs: [
                     [4.89066, 52.37317],
                     [4.49015, 52.16109],
                     [4.47059, 51.92291]
@@ -207,7 +208,7 @@ describe("Calculate route integration tests", () => {
         const firstRouteCoords = firstRoute.geometry.coordinates;
         expect(firstRouteCoords.length).toBeGreaterThan(1000);
 
-        const reconstructedRouteResponse = await calculateRoute({ supportingPoints: firstRoute });
+        const reconstructedRouteResponse = await calculateRoute({ geoInputs: [firstRoute] });
         expect(reconstructedRouteResponse?.features?.length).toEqual(1);
         const reconstructedRoute = reconstructedRouteResponse.features[0];
         const reconstructedRouteCoords = reconstructedRoute.geometry.coordinates;
@@ -219,6 +220,35 @@ describe("Calculate route integration tests", () => {
         expect(firstRouteCoords[0]).toStrictEqual(reconstructedRouteCoords[0]);
         expect(firstRouteCoords[firstRouteCoords.length - 1]).toStrictEqual(
             reconstructedRouteCoords[reconstructedRouteCoords.length - 1]
+        );
+
+        // comparing sections (the amount of sections for each type should be the same):
+        const firstRouteSections = firstRoute.properties.sections;
+        const reconstructedRouteSections = reconstructedRoute.properties.sections;
+        expect(reconstructedRouteSections.leg).toHaveLength(firstRouteSections.leg.length);
+        expect(reconstructedRouteSections.urban).toHaveLength(firstRouteSections.urban?.length || 0);
+        expect(reconstructedRouteSections.motorway).toHaveLength(firstRouteSections.motorway?.length || 0);
+        expect(reconstructedRouteSections.ferry).toBeUndefined();
+
+        // appending the entire reconstructed route into a larger context
+        // with new origin in Almere and new destination in Rosendaal
+        const routeWithEmbeddedRoute = (
+            await calculateRoute({
+                geoInputs: [[5.21671, 52.37196], reconstructedRoute, [4.45986, 51.53157]]
+            })
+        ).features[0];
+
+        const routeWithEmbeddedRouteCoords = routeWithEmbeddedRoute.geometry.coordinates;
+        // the new route should be significantly longer:
+        expect(routeWithEmbeddedRouteCoords.length).toBeGreaterThan(reconstructedRouteCoords.length + 500);
+
+        const routeWithEmbeddedRouteSections = routeWithEmbeddedRoute.properties.sections;
+
+        // comparing sections (the amount of sections for the new expanded route should be higher)
+        // 2 more legs expected before and after the embedded route:
+        expect(routeWithEmbeddedRouteSections.leg).toHaveLength(reconstructedRouteSections.leg.length + 2);
+        expect(routeWithEmbeddedRouteSections.urban?.length).toBeGreaterThan(
+            reconstructedRouteSections.urban?.length || 0
         );
     });
 });

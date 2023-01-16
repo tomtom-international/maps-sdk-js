@@ -17,5 +17,5 @@ export * from "./route/Guidance";
 export * from "./route/Route";
 export * from "./route/Sections";
 export * from "./route/Summary";
-export * from "./route/Waypoint";
+export * from "./route/GeoInputs";
 export * from "./View";

@@ -1,24 +1,6 @@
-import { Avoidable, inputSectionTypes, Route, TravelMode, WaypointLike } from "@anw/go-sdk-js/core";
-import { Position } from "geojson";
+import { Avoidable, GeoInput, inputSectionTypes, TravelMode } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 import { VehicleParameters } from "./VehicleParams";
-
-/**
- * List of waypoint inputs, including origin and destination at the edges.
- * * They must at least contain origin and destination, with any further waypoints ordered in between them.
- * * Origin and destination must be default waypoints without radius (point type, not circle).
- * * All the locations in the array are to be traversed in sequence (e.g. [origin, waypoint1, waypoint2, destination])
- * @group Calculate Route
- * @category Types
- */
-export type CalculateRouteWaypointInputs = [WaypointLike, WaypointLike, ...WaypointLike[]];
-
-/**
- *
- * @group Calculate Route
- * @category Types
- */
-export type SupportingPoints = Position[] | Route;
 
 /**
  * Specifies when to depart (start travelling) or to arrive (finish travelling).
@@ -103,18 +85,16 @@ export type InstructionsTypes = typeof instructionsTypes[number];
  */
 export type CalculateRouteParams = CommonServiceParams & {
     /**
-     * These are the specified locations (waypoints) for route calculation.
-     * * They are mandatory unless supportingPoints are specified.
+     * These are the specified locations (waypoints) and/or path points (supporting points) for route calculation.
+     * They are to be supplied in the order the route should go through.
+     * * They are mandatory.
+     * * If only supplying waypoints, at least 2 must be specified, corresponding to the route origin and destination.
+     * * If using path points, at least 1 path must be specified with at least 2 points inside for origin and destination.
+     * * Waypoints and path points can be combined, except circle (soft) waypoints.
+     * @see For path points in the API: {@link https://developer.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters POST data parameters}
      * @default None
      */
-    locations?: CalculateRouteWaypointInputs;
-
-    /**
-     * Sequence of supporting points for route path reconstruction.
-     * @see {@link https://developer.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters POST data parameters}
-     * @default None
-     */
-    supportingPoints?: SupportingPoints;
+    geoInputs: GeoInput[];
 
     /**
      * Specifies something that the route calculation should try to avoid when determining the route.

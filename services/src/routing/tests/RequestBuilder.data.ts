@@ -1,10 +1,10 @@
-export const requestObjectsAndURLs = [
+export const sdkAndAPIRequests = [
     [
         "Default A-B route",
         {
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ]
@@ -25,7 +25,7 @@ export const requestObjectsAndURLs = [
         {
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ],
@@ -43,7 +43,7 @@ export const requestObjectsAndURLs = [
         {
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ],
@@ -62,7 +62,7 @@ export const requestObjectsAndURLs = [
         {
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 {
                     type: "Feature",
@@ -90,7 +90,7 @@ export const requestObjectsAndURLs = [
         {
             apiKey: "API_KEY_X",
             commonBaseURL: "https://api-test.tomtom.com",
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 {
                     type: "Feature",
@@ -122,7 +122,7 @@ export const requestObjectsAndURLs = [
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
             language: "es-ES",
-            locations: [
+            geoInputs: [
                 [3.1748, 42.26297],
                 [2.48819, 42.18211]
             ],
@@ -203,7 +203,7 @@ export const requestObjectsAndURLs = [
         {
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ],
@@ -256,7 +256,7 @@ export const requestObjectsAndURLs = [
         {
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
-            locations: [
+            geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ],
@@ -298,6 +298,380 @@ export const requestObjectsAndURLs = [
                     "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=43" +
                     "&vehicleWeight=3500&vehicleMaxSpeed=60"
             )
+        }
+    ],
+    [
+        "Route based on a path to reconstruct",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            commonBaseURL: "https://api.tomtom.com",
+            geoInputs: [
+                [
+                    [4.89066, 52.37317],
+                    [4.88, 52.27317],
+                    [4.87, 52.20317],
+                    [4.86, 52.17317],
+                    [4.49015, 52.16109]
+                ]
+            ]
+        },
+        {
+            method: "POST",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+            ),
+            data: {
+                supportingPoints: [
+                    {
+                        latitude: 52.37317,
+                        longitude: 4.89066
+                    },
+                    {
+                        latitude: 52.27317,
+                        longitude: 4.88
+                    },
+                    {
+                        latitude: 52.20317,
+                        longitude: 4.87
+                    },
+                    {
+                        latitude: 52.17317,
+                        longitude: 4.86
+                    },
+                    {
+                        latitude: 52.16109,
+                        longitude: 4.49015
+                    }
+                ]
+            }
+        }
+    ],
+    [
+        "Route calculated with waypointA - routeToEmbedB - waypointC",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            commonBaseURL: "https://api.tomtom.com",
+            geoInputs: [
+                [0, 0],
+                {
+                    type: "Feature",
+                    geometry: {
+                        type: "LineString",
+                        coordinates: [
+                            [1, 0],
+                            [1, 1],
+                            [1, 2],
+                            [1, 3],
+                            [1, 4],
+                            [1, 5]
+                        ]
+                    },
+                    properties: {
+                        sections: {
+                            leg: [
+                                {
+                                    startPointIndex: 0,
+                                    endPointIndex: 2
+                                },
+                                {
+                                    startPointIndex: 2,
+                                    endPointIndex: 4
+                                },
+                                {
+                                    startPointIndex: 4,
+                                    endPointIndex: 5
+                                }
+                            ]
+                        }
+                    }
+                },
+                [2, 0]
+            ]
+        },
+        {
+            method: "POST",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/0,0:0,2/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+            ),
+            data: {
+                supportingPoints: [
+                    {
+                        latitude: 0,
+                        longitude: 0
+                    },
+                    {
+                        latitude: 0,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 1,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 2,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 3,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 4,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 5,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 0,
+                        longitude: 2
+                    }
+                ],
+                pointWaypoints: [
+                    {
+                        supportingPointIndex: 1,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 3,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 5,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 6,
+                        waypointSourceType: "User_Defined"
+                    }
+                ]
+            }
+        }
+    ],
+    [
+        "Route calculated with pathToEmbedA - routeToEmbedB",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            commonBaseURL: "https://api.tomtom.com",
+            geoInputs: [
+                [
+                    [0, 0],
+                    [0, 1],
+                    [0, 2]
+                ],
+                {
+                    type: "Feature",
+                    geometry: {
+                        type: "LineString",
+                        coordinates: [
+                            [1, 0],
+                            [1, 1],
+                            [1, 2],
+                            [1, 3],
+                            [1, 4],
+                            [1, 5]
+                        ]
+                    },
+                    properties: {
+                        sections: {
+                            leg: [
+                                {
+                                    startPointIndex: 0,
+                                    endPointIndex: 2
+                                },
+                                {
+                                    startPointIndex: 2,
+                                    endPointIndex: 4
+                                },
+                                {
+                                    startPointIndex: 4,
+                                    endPointIndex: 5
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            method: "POST",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/0,0:5,1/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+            ),
+            data: {
+                supportingPoints: [
+                    {
+                        latitude: 0,
+                        longitude: 0
+                    },
+                    {
+                        latitude: 1,
+                        longitude: 0
+                    },
+                    {
+                        latitude: 2,
+                        longitude: 0
+                    },
+                    {
+                        latitude: 0,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 1,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 2,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 3,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 4,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 5,
+                        longitude: 1
+                    }
+                ],
+                pointWaypoints: [
+                    {
+                        supportingPointIndex: 3,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 5,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 7,
+                        waypointSourceType: "User_Defined"
+                    }
+                ]
+            }
+        }
+    ],
+    [
+        "Route calculated with routeToEmbedA - waypointB - waypointC",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            commonBaseURL: "https://api.tomtom.com",
+            geoInputs: [
+                {
+                    type: "Feature",
+                    geometry: {
+                        type: "LineString",
+                        coordinates: [
+                            [1, 0],
+                            [1, 1],
+                            [1, 2],
+                            [1, 3],
+                            [1, 4],
+                            [1, 5]
+                        ]
+                    },
+                    properties: {
+                        sections: {
+                            leg: [
+                                {
+                                    startPointIndex: 0,
+                                    endPointIndex: 2
+                                },
+                                {
+                                    startPointIndex: 2,
+                                    endPointIndex: 4
+                                },
+                                {
+                                    startPointIndex: 4,
+                                    endPointIndex: 5
+                                }
+                            ]
+                        }
+                    }
+                },
+                [2, 0],
+                [3, 0]
+            ]
+        },
+        {
+            method: "POST",
+            url: new URL(
+                "https://api.tomtom.com/routing/1/calculateRoute/0,1:0,3/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+            ),
+            data: {
+                supportingPoints: [
+                    {
+                        latitude: 0,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 1,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 2,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 3,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 4,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 5,
+                        longitude: 1
+                    },
+                    {
+                        latitude: 0,
+                        longitude: 2
+                    },
+                    {
+                        latitude: 0,
+                        longitude: 3
+                    }
+                ],
+                pointWaypoints: [
+                    {
+                        supportingPointIndex: 2,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 4,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 5,
+                        waypointSourceType: "User_Defined"
+                    },
+                    {
+                        supportingPointIndex: 6,
+                        waypointSourceType: "User_Defined"
+                    }
+                ]
+            }
         }
     ]
 ];

@@ -39,7 +39,7 @@ export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RES
     /**
      * Optional configuration for request validation.
      */
-    requestValidation?: RequestValidationConfig;
+    requestValidation?: RequestValidationConfig<PARAMS>;
 
     /**
      * Builds the request to be sent to the API.

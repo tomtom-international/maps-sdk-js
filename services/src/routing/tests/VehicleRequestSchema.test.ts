@@ -1,11 +1,11 @@
-import { CalculateRouteWaypointInputs } from "../types/CalculateRouteParams";
+import { GeoInput } from "@anw/go-sdk-js/core";
 import { validateRequestSchema } from "../../shared/Validation";
 import { routeRequestValidationConfig } from "../CalculateRouteTemplate";
 
 describe("Routing: Vehicle parameter request schema tests", () => {
     const apiKey = "APIKEY";
     const commonBaseURL = "https://api-test.tomtom.com";
-    const locations: CalculateRouteWaypointInputs = [
+    const geoInputs: GeoInput[] = [
         [4.89066, 52.37317],
         [4.49015, 52.16109],
         [4.47059, 51.92291]
@@ -16,10 +16,9 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                 {
                     apiKey,
                     commonBaseURL,
-                    locations,
+                    geoInputs,
                     vehicle: {
                         dimensions: {
-                            //@ts-ignore
                             weightKG: "1900"
                         },
                         consumption: {
@@ -63,13 +62,12 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                 {
                     apiKey,
                     commonBaseURL,
-                    locations,
+                    geoInputs,
                     vehicle: {
                         dimensions: {
                             weightKG: 1900
                         },
                         consumption: {
-                            // @ts-ignore
                             engineType: "EV",
                             speedsToConsumptionsKWH: [
                                 { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
@@ -110,7 +108,7 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                 {
                     apiKey,
                     commonBaseURL,
-                    locations,
+                    geoInputs,
                     vehicle: {
                         consumption: {
                             engineType: "electric",
@@ -122,11 +120,9 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                             currentChargeKWH: 43,
                             maxChargeKWH: 85,
                             efficiency: {
-                                // @ts-ignore
                                 acceleration: "0.66",
                                 deceleration: 1.2,
                                 uphill: -0.1,
-                                // @ts-ignore
                                 downhill: "0.73"
                             }
                         }
@@ -180,25 +176,18 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                 {
                     apiKey,
                     commonBaseURL,
-                    locations,
+                    geoInputs,
                     vehicle: {
                         consumption: {
                             engineType: "electric",
                             speedsToConsumptionsKWH: [
-                                // @ts-ignore
                                 { speedKMH: "50", consumptionUnitsPer100KM: 8.2 },
-                                // @ts-ignore
                                 { speedKMH: 130, consumptionUnitsPer100KM: "21.3" }
                             ],
-                            // @ts-ignore
                             auxiliaryPowerInkW: "1.7",
-                            // @ts-ignore
                             consumptionInKWHPerKMAltitudeGain: 501,
-                            // @ts-ignore
                             recuperationInKWHPerKMAltitudeLoss: "3.8",
-                            // @ts-ignore
                             currentChargeKWH: "43",
-                            // @ts-ignore
                             maxChargeKWH: "85",
                             efficiency: {
                                 acceleration: 0.66,
@@ -276,20 +265,15 @@ describe("Routing: Vehicle parameter request schema tests", () => {
                 {
                     apiKey,
                     commonBaseURL,
-                    locations,
+                    geoInputs,
                     vehicle: {
                         consumption: {
                             speedsToConsumptionsLiters: [
-                                // @ts-ignore
                                 { speedKMH: "50", consumptionUnitsPer100KM: 8.2 },
-                                // @ts-ignore
                                 { speedKMH: 130, consumptionUnitsPer100KM: "21.3" }
                             ],
-                            // @ts-ignore
                             auxiliaryPowerInLitersPerHour: "1.7",
-                            // @ts-ignore
                             currentFuelLiters: "43",
-                            // @ts-ignore
                             fuelEnergyDensityInMJoulesPerLiter: "85"
                         }
                     }

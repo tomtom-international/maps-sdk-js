@@ -1,9 +1,10 @@
-import { Feature, FeatureCollection, Point } from "geojson";
+import { Feature, FeatureCollection, Point, Position } from "geojson";
 import { Anything } from "../Generic";
 import { HasLngLat } from "../Geometry";
+import { Route } from "./Route";
 
 /**
- * Waypoint-specific properties.
+ * GeoInputs-specific properties.
  * @group Route
  * @category Types
  */
@@ -26,7 +27,7 @@ export type WaypointProps = {
 };
 
 /**
- * GeoJSON Waypoint type.
+ * GeoJSON waypoint type.
  *
  * Consists of a Point Feature with waypoint and other optional properties.
  * @group Route
@@ -35,7 +36,7 @@ export type WaypointProps = {
 export type Waypoint<T extends Anything = Anything> = Feature<Point, WaypointProps & T>;
 
 /**
- * GeoJSON collection of a Waypoint type.
+ * GeoJSON collection of waypoints.
  * @group Route
  * @category Types
  */
@@ -49,3 +50,24 @@ export type Waypoints<T extends Anything = Anything> = FeatureCollection<Point, 
  * @category Types
  */
 export type WaypointLike = Waypoint | HasLngLat;
+
+/**
+ * A route or a route path.
+ * @group Route
+ * @category Types
+ */
+export type PathLike = Position[] | Route;
+
+/**
+ * A GeoInput is a location-like input for route planning. It can be either:
+ * * a waypoint: an individual place.
+ * * a path: a path or route to follow.
+ */
+export type GeoInput = WaypointLike | PathLike;
+
+/**
+ * The overall type of a GeoInput.
+ * * "waypoint" refers to WaypointLike inputs.
+ * * "path" refers to PathLike inputs.
+ */
+export type GeoInputType = "waypoint" | "path";

@@ -7,7 +7,7 @@ import { fetchWith } from "../shared/Fetch";
 import { FetchInput } from "../shared/types/Fetch";
 import { CalculateRouteResponseAPI } from "./types/APITypes";
 import { parseRoutingResponseError } from "./RoutingResponseErrorParser";
-import { calculateRouteRequestSchema, calculateRouteRequestSchemaRefinement } from "./CalculateRouteRequestSchema";
+import { calculateRouteRequestSchema, calculateRouteGeoInputsRefinement } from "./CalculateRouteRequestSchema";
 import { CalculateRoutePOSTDataAPI } from "./types/APIPOSTRequestTypes";
 
 /**
@@ -26,7 +26,7 @@ export type CalculateRouteTemplate = ServiceTemplate<
  */
 export const routeRequestValidationConfig = {
     schema: calculateRouteRequestSchema,
-    refinements: [calculateRouteRequestSchemaRefinement]
+    refinements: [calculateRouteGeoInputsRefinement]
 };
 
 /**
