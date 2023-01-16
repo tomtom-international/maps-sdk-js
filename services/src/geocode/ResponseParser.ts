@@ -40,7 +40,7 @@ const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
  */
 export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): GeocodingResponse => {
     const results = apiResponse.results;
-    const features = results.map((result) => parseAPIResult(result));
+    const features = results.map(parseAPIResult);
     const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
     return {
         type: "FeatureCollection",

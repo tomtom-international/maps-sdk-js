@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { HILLSHADE_SOURCE_ID } from "../../core/layers/sourcesIDs";
+import { HILLSHADE_SOURCE_ID } from "../../core";
 import { GOSDKMap } from "../../GOSDKMap";
 import { VectorTilesHillshade } from "../VectorTilesHillshade";
 

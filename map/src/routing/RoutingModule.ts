@@ -252,4 +252,13 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
             tunnels: new EventsModule(this.goSDKMap._eventsProxy, this.tunnels)
         };
     }
+
+    /**
+     * Returns the map style layer under which route lines are rendered.
+     * * Useful if you want to render extra layers just above the route ones but not on top of everything else.
+     * * It might differ depending on the loaded style/version.
+     */
+    getLayerToRenderLinesUnder(): string {
+        return LAYER_TO_RENDER_LINES_UNDER;
+    }
 }

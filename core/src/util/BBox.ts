@@ -145,11 +145,9 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
         case "Feature":
             return bboxFromGeoJSON((geoJSON as Feature).geometry);
         case "FeatureCollection":
-            return bboxFromBBoxes((geoJSON as FeatureCollection).features.map((feature) => bboxFromGeoJSON(feature)));
+            return bboxFromBBoxes((geoJSON as FeatureCollection).features.map(bboxFromGeoJSON));
         case "GeometryCollection":
-            return bboxFromBBoxes(
-                (geoJSON as GeometryCollection).geometries.map((geometry) => bboxFromGeoJSON(geometry))
-            );
+            return bboxFromBBoxes((geoJSON as GeometryCollection).geometries.map(bboxFromGeoJSON));
         case "Point":
             return bboxExpandedWithPosition((geoJSON as Point).coordinates);
         case "LineString":
@@ -159,12 +157,10 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
         case "MultiLineString":
         case "Polygon":
             // (MultiLineString and Polygon both have the same coordinates type)
-            return bboxFromBBoxes((geoJSON as Polygon).coordinates.map((coords) => bboxFromCoordsArray(coords)));
+            return bboxFromBBoxes((geoJSON as Polygon).coordinates.map(bboxFromCoordsArray));
         case "MultiPolygon":
             return bboxFromBBoxes(
-                (geoJSON as MultiPolygon).coordinates.flatMap((polygon) =>
-                    polygon.map((coords) => bboxFromCoordsArray(coords))
-                )
+                (geoJSON as MultiPolygon).coordinates.flatMap((polygon) => polygon.map(bboxFromCoordsArray))
             );
         default:
             return undefined;
