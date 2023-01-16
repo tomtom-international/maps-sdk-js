@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.72](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.70...v0.1.72) (2023-01-16)
+
+
+### Features
+
+* notify slack only on veracode scan failure ([932abed](https://github.com/tomtom-international/go-sdk-js/commit/932abed3692d6d474711d7367357f001ebda960d))
+* notify slack with veracode scan result ([1711f90](https://github.com/tomtom-international/go-sdk-js/commit/1711f90d8ec4f8461ae0a9ce88d5327cce643e25))
+* **routing:** exporting new function for layers context plus minor non-functional improvements ([638b6aa](https://github.com/tomtom-international/go-sdk-js/commit/638b6aac562482d7afae7ef68115d68aa2ef73df))
+* **routing:** route reconstruction ([50c5cb6](https://github.com/tomtom-international/go-sdk-js/commit/50c5cb6bd11e4426d3803e16bf5248c5dd19fd14))
+* run main scans in a sandbox, move pull request  scans to pipeline ([12a7071](https://github.com/tomtom-international/go-sdk-js/commit/12a707141a51b1dd4a048663ba368ff0bbc10451))
+* run veracode pipeline scan for push ([5492c64](https://github.com/tomtom-international/go-sdk-js/commit/5492c64d34cf11e5d02ee7130ec3f18b7b60a65b))
+
 ### [0.1.71](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.70...v0.1.71) (2023-01-15)
 
 ### [0.1.70](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.69...v0.1.70) (2023-01-11)
