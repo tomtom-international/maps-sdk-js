@@ -1,11 +1,11 @@
-import mapLibreExported, { Map } from "maplibre-gl";
-import { BBox } from "geojson";
-import { mergeFromGlobal } from "@anw/go-sdk-js/core";
-import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
-import { buildMapOptions } from "./init/BuildMapOptions";
-import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
-import { MapLanguage } from "./language";
-import { EventsProxy } from "./core";
+import mapLibreExported, {Map} from "maplibre-gl";
+import {BBox} from "geojson";
+import {mergeFromGlobal} from "@anw/go-sdk-js/core";
+import {GOSDKMapParams, MapLibreOptions, StyleInput} from "./init/types/MapInit";
+import {buildMapOptions} from "./init/BuildMapOptions";
+import {buildMapStyleInput} from "./init/MapStyleInputBuilder";
+import {MapLanguage} from "./language";
+import {EventsProxy} from "./core";
 
 /**
  * The map object displays a live map on a web application.
@@ -24,7 +24,7 @@ export class GOSDKMap {
     constructor(mapLibreOptions: MapLibreOptions, goSDKParams?: GOSDKMapParams) {
         this.goSDKParams = mergeFromGlobal(goSDKParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
-        this.mapLibreMap.once("styledata", () => (this.mapReady = true));
+        this.mapLibreMap.once("styledata", () => this.handleStyleData());
         this._eventsProxy = new EventsProxy(this.mapLibreMap, goSDKParams?.events);
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
@@ -39,9 +39,9 @@ export class GOSDKMap {
     }
 
     setStyle = (style: StyleInput): void => {
-        this.goSDKParams = { ...this.goSDKParams, style };
+        this.goSDKParams = {...this.goSDKParams, style};
         this.mapReady = false;
-        this.mapLibreMap.once("styledata", () => (this.mapReady = true));
+        this.mapLibreMap.once("styledata", () => this.handleStyleData());
         this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
     };
 
@@ -51,10 +51,20 @@ export class GOSDKMap {
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
     setLanguage(language: string) {
-        MapLanguage.setLanguage(this, { language });
+        MapLanguage.setLanguage(this, {language});
     }
 
     getBounds(): BBox {
         return this.mapLibreMap.getBounds().toArray().flat() as BBox;
+    }
+
+    private handleStyleData() {
+        this.mapReady = true;
+        /**
+         * This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style
+         */
+        if (this.goSDKParams?.exclude?.includes("poi")) {
+            this.mapLibreMap.setLayoutProperty("POI", "visibility", "none");
+        }
     }
 }
