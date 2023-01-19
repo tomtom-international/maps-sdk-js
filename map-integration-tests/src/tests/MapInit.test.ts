@@ -1,12 +1,13 @@
-import { GOSDKMapParams, MapLibreOptions } from "map";
+import {GOSDKMapParams, MapLibreOptions} from "map";
 import {
     getNumVisibleLayersBySource,
     getVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad
+    waitForMapStyleToLoad, waitUntilRenderedFeatures
 } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
+import {isError} from "lodash";
 
 describe("Map Init tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -56,7 +57,8 @@ describe("Map Init tests", () => {
     test("Should not have poi and hillshade layers source ID when module are excluded", async () => {
         await mapEnv.loadMap(
             {
-                center: [-0.12621, 51.50394]
+                center: [-0.12621, 51.50394],
+                zoom: 15
             },
             {
                 exclude: ["poi", "hillshade"]
@@ -73,6 +75,7 @@ describe("Map Init tests", () => {
         await waitForMapStyleToLoad();
         expect(await getVisibleLayersBySource("poiTiles")).toHaveLength(0);
         expect(await getVisibleLayersBySource("hillshade")).toHaveLength(0);
+        expect(await waitUntilRenderedFeatures(["POI"], 1, 5000).catch(isError)).toBeTruthy()
         expect(mapEnv.consoleErrors).toHaveLength(2);
     });
 });
