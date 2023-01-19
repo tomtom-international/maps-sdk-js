@@ -31,12 +31,12 @@ describe("Map localization mocked tests", () => {
         const goSDKMap = new GOSDKMap(
             { container: mockedContainer },
             {
-                language: "en_GB"
+                language: "en-GB"
             }
         );
         expect(goSDKMap.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
         expect(goSDKMap.setLanguage).toHaveBeenCalledTimes(1);
-        expect(goSDKMap.setLanguage).toHaveBeenCalledWith("en_GB");
+        expect(goSDKMap.setLanguage).toHaveBeenCalledWith("en-GB");
     });
 
     test("Localize map after initialization", () => {

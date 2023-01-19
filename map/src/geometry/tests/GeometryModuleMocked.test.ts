@@ -10,7 +10,7 @@ import { GEOMETRY_SOURCE_ID } from "../../core";
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Geometry module tests", () => {
     // eslint-disable-next-line jest/expect-expect
-    test("Basic flows", () => {
+    test("Basic flows", async () => {
         const geometrySource = { id: GEOMETRY_SOURCE_ID, setData: jest.fn() };
         const goSDKMapMock = {
             mapLibreMap: {
@@ -27,11 +27,11 @@ describe("Geometry module tests", () => {
         } as unknown as GOSDKMap;
 
         const testGeometryData = amsterdamGeometryData as GeometryDataResponse;
-        let geometry = new GeometryModule(goSDKMapMock);
+        let geometry = await GeometryModule.init(goSDKMapMock);
         geometry.show(testGeometryData);
         geometry.show(testGeometryData);
         geometry.clear();
-        geometry = new GeometryModule(goSDKMapMock);
+        geometry = await GeometryModule.init(goSDKMapMock);
         geometry.show(testGeometryData);
         geometry.clear();
     });

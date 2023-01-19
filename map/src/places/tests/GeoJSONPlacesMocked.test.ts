@@ -9,7 +9,7 @@ import { PLACES_SOURCE_ID } from "../../core";
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("GeoJSON Places module tests", () => {
     // eslint-disable-next-line jest/expect-expect
-    test("Basic flows", () => {
+    test("Basic flows", async () => {
         const placesSource: Partial<GeoJSONSource> = { id: PLACES_SOURCE_ID, setData: jest.fn() };
         const goSDKMapMock = {
             mapLibreMap: {
@@ -28,7 +28,7 @@ describe("GeoJSON Places module tests", () => {
             type: "FeatureCollection",
             features: [{ properties: { address: { freeformAddress: "TEST_ADDRESS" } } }]
         } as Places;
-        const places = new GeoJSONPlaces(goSDKMapMock);
+        const places = await GeoJSONPlaces.init(goSDKMapMock);
         places.show(testPlaces);
         places.clear();
     });

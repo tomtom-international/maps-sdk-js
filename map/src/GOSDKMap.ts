@@ -4,8 +4,8 @@ import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
-import { MapLanguage } from "./language";
 import { EventsProxy } from "./core";
+import { isLayerLocalizable } from "./utils/localization";
 
 /**
  * The map object displays a live map on a web application.
@@ -45,13 +45,28 @@ export class GOSDKMap {
         this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
     };
 
+    private _updateMapLanguage(language: string) {
+        this.mapLibreMap.getStyle().layers.forEach((layer) => {
+            if (layer.type == "symbol" && isLayerLocalizable(layer)) {
+                const textFieldValue = language
+                    ? ["coalesce", ["get", `name_${language}`], ["get", "name"]]
+                    : ["get", "name"];
+                this.mapLibreMap.setLayoutProperty(layer.id, "text-field", textFieldValue);
+            }
+        });
+    }
+
     /**
      * Change the map language.
      * @param language The language to be used in map translations.
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
     setLanguage(language: string) {
-        MapLanguage.setLanguage(this, { language });
+        if (this.mapReady || this.mapLibreMap.isStyleLoaded()) {
+            this._updateMapLanguage(language);
+        } else {
+            this.mapLibreMap.once("styledata", () => this._updateMapLanguage(language));
+        }
     }
 
     getBounds(): BBox {

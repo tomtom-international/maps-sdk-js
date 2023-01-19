@@ -7,7 +7,7 @@ import { VectorTilesTraffic } from "../VectorTilesTraffic";
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles traffic module tests", () => {
-    test("Constructor with config", () => {
+    test("Initializing module with config", async () => {
         const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
         const flowSource = { id: VECTOR_TILES_FLOW_SOURCE_ID };
         const goSDKMapMock = {
@@ -23,7 +23,7 @@ describe("Vector tiles traffic module tests", () => {
             }
         } as unknown as GOSDKMap;
 
-        const traffic = new VectorTilesTraffic(goSDKMapMock, {
+        const traffic = await VectorTilesTraffic.init(goSDKMapMock, {
             incidents: { visible: true, icons: { visible: false } },
             flow: { visible: false }
         });
@@ -47,7 +47,7 @@ describe("Vector tiles traffic module tests", () => {
         traffic.isFlowVisible();
     });
 
-    test("Constructor with no config and no flow in style", () => {
+    test("Initializing module with no config and no flow in style", async () => {
         const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
@@ -62,7 +62,7 @@ describe("Vector tiles traffic module tests", () => {
             }
         } as unknown as GOSDKMap;
 
-        const traffic = new VectorTilesTraffic(goSDKMapMock);
+        const traffic = await VectorTilesTraffic.init(goSDKMapMock);
         expect(traffic).toBeDefined();
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();

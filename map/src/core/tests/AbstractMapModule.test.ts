@@ -3,14 +3,15 @@ import { AbstractMapModule } from "../AbstractMapModule";
 import { VectorTileMapModuleConfig } from "../types/VectorTileMapModuleConfig";
 import { GOSDKMap } from "../../GOSDKMap";
 import Mock = jest.Mock;
-import { EventsProxy } from "../EventsProxy";
+import { waitUntilMapIsReady } from "../../utils/mapUtils";
 
 describe("AbstractMapModule tests", () => {
     class TestModule extends AbstractMapModule<VectorTileMapModuleConfig> {
         initCalled?: boolean;
         initConfig?: unknown;
 
-        protected init(_eventsProxy: EventsProxy, config?: VectorTileMapModuleConfig): void {
+        private constructor(goSDKMap: GOSDKMap, config?: VectorTileMapModuleConfig) {
+            super(goSDKMap, config);
             this.initCalled = true;
             this.initConfig = config;
         }
@@ -24,16 +25,22 @@ describe("AbstractMapModule tests", () => {
         get events(): any {
             return jest.fn();
         }
+
+        static async init(goSDKMap: GOSDKMap, config?: VectorTileMapModuleConfig): Promise<TestModule> {
+            await waitUntilMapIsReady(goSDKMap);
+            return new TestModule(goSDKMap, config);
+        }
     }
 
-    test("Constructor with style loaded", () => {
+    test("Constructor with style loaded", async () => {
         const goSDKMapMock = {
             mapLibreMap: {
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                isStyleLoaded: jest.fn().mockReturnValue(true),
+                once: jest.fn((_, callback) => callback())
             } as unknown as Map
         } as GOSDKMap;
 
-        let testModule = new TestModule(goSDKMapMock);
+        let testModule = await TestModule.init(goSDKMapMock);
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
         expect(testModule.initCalled).toStrictEqual(true);
         expect(testModule.initConfig).toBeUndefined();
@@ -41,21 +48,21 @@ describe("AbstractMapModule tests", () => {
         // Repeating test with config ----------------------:
         const testConfig = { visible: false };
         (goSDKMapMock.mapLibreMap.isStyleLoaded as Mock).mockClear();
-        testModule = new TestModule(goSDKMapMock, testConfig);
+        testModule = await TestModule.init(goSDKMapMock, testConfig);
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
         expect(testModule.initCalled).toStrictEqual(true);
         expect(testModule.initConfig).toStrictEqual(testConfig);
     });
 
-    test("Constructor with style not loaded yet", () => {
+    test("Constructor with style not loaded yet", async () => {
         const goSDKMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
-                once: jest.fn()
+                once: jest.fn((_, callback) => callback())
             } as unknown as Map
         } as GOSDKMap;
 
-        let testModule = new TestModule(goSDKMapMock);
+        let testModule = await TestModule.init(goSDKMapMock);
         let styleDataEventCallback = (goSDKMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
         styleDataEventCallback();
 
@@ -70,7 +77,7 @@ describe("AbstractMapModule tests", () => {
         (goSDKMapMock.mapLibreMap.once as Mock).mockClear();
 
         const testConfig = { visible: false };
-        testModule = new TestModule(goSDKMapMock, testConfig);
+        testModule = await TestModule.init(goSDKMapMock, testConfig);
         styleDataEventCallback = (goSDKMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
         styleDataEventCallback();
 
@@ -85,11 +92,11 @@ describe("AbstractMapModule tests", () => {
         const goSDKMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
-                once: jest.fn().mockReturnValue(new Promise((resolve) => setTimeout(resolve, 6000)))
+                once: jest.fn((_, callback) => callback())
             } as unknown as Map
         } as GOSDKMap;
 
-        const testModule = new TestModule(goSDKMapMock);
+        const testModule = await TestModule.init(goSDKMapMock);
         await new Promise((resolve) => setTimeout(resolve, 6000));
         const styleDataEventCallback = (goSDKMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
         styleDataEventCallback();
@@ -100,29 +107,39 @@ describe("AbstractMapModule tests", () => {
         expect(testModule.initConfig).toBeUndefined();
     });
 
-    test("Merge config", () => {
+    test("Merge config", async () => {
         const goSDKMapMock = {
             mapLibreMap: {
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                isStyleLoaded: jest.fn().mockReturnValue(true),
+                once: jest.fn((_, callback) => callback())
             } as unknown as Map
         } as GOSDKMap;
 
-        expect(new TestModule(goSDKMapMock).getMergedConfig()).toBeUndefined();
-        expect(new TestModule(goSDKMapMock).getMergedConfig({ visible: false })).toStrictEqual({ visible: false });
+        expect((await TestModule.init(goSDKMapMock)).getMergedConfig()).toBeUndefined();
+        expect((await TestModule.init(goSDKMapMock)).getMergedConfig({ visible: false })).toStrictEqual({
+            visible: false
+        });
         expect(
-            new TestModule(goSDKMapMock).getMergedConfig({ visible: false, foo: "bar" } as VectorTileMapModuleConfig)
+            (await TestModule.init(goSDKMapMock)).getMergedConfig({
+                visible: false,
+                foo: "bar"
+            } as VectorTileMapModuleConfig)
         ).toStrictEqual({ visible: false, foo: "bar" });
-        expect(new TestModule(goSDKMapMock, { visible: true }).getMergedConfig()).toStrictEqual({ visible: true });
-        expect(new TestModule(goSDKMapMock, { visible: true }).getMergedConfig({ visible: false })).toStrictEqual({
+        expect((await TestModule.init(goSDKMapMock, { visible: true })).getMergedConfig()).toStrictEqual({
+            visible: true
+        });
+        expect(
+            (await TestModule.init(goSDKMapMock, { visible: true })).getMergedConfig({ visible: false })
+        ).toStrictEqual({
             visible: false
         });
 
         // Similar testing but keeping instance:
-        const testModuleWithoutConfig = new TestModule(goSDKMapMock);
+        const testModuleWithoutConfig = await TestModule.init(goSDKMapMock);
         expect(testModuleWithoutConfig.getMergedConfig({ visible: false })).toStrictEqual({ visible: false });
         expect(testModuleWithoutConfig.getMergedConfig()).toBeUndefined();
 
-        const testModuleWithConfig = new TestModule(goSDKMapMock, { visible: false });
+        const testModuleWithConfig = await TestModule.init(goSDKMapMock, { visible: false });
         expect(testModuleWithConfig.getMergedConfig({ visible: false })).toStrictEqual({ visible: false });
         expect(testModuleWithConfig.getMergedConfig({ visible: true })).toStrictEqual({ visible: true });
         expect(testModuleWithConfig.getMergedConfig()).toStrictEqual({ visible: false });

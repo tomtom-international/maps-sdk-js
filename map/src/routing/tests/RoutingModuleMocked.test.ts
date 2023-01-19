@@ -16,7 +16,7 @@ import { RoutingModule } from "../RoutingModule";
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Routing module tests", () => {
     // eslint-disable-next-line jest/expect-expect
-    test("Basic flows", () => {
+    test("Basic flows", async () => {
         const waypointsSource = { id: WAYPOINTS_SOURCE_ID, setData: jest.fn() };
         const routesSource = { id: ROUTES_SOURCE_ID, setData: jest.fn() };
         const vehicleRestrictedSource = { id: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, setData: jest.fn() };
@@ -54,7 +54,7 @@ describe("Routing module tests", () => {
             }
         } as unknown as GOSDKMap;
 
-        const routing = new RoutingModule(goSDKMapMock);
+        const routing = await RoutingModule.init(goSDKMapMock);
         routing.showRoutes({ type: "FeatureCollection", features: [] });
         routing.selectRoute(0);
         routing.clearRoutes();

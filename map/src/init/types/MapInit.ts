@@ -91,6 +91,11 @@ export type GOSDKMapParams = Partial<GlobalConfig> & {
      * Event configuration
      */
     events?: MapEventsConfig;
+
+    /**
+     * Set default language
+     */
+    // language: string;
 };
 
 export type MapLibreOptions = Omit<MapOptions, "style" | "attributionControl">;

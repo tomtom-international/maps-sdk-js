@@ -10,6 +10,8 @@ import {
 } from "../core";
 import { VectorTilesTrafficConfig } from ".";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
+import { GOSDKMap } from "../GOSDKMap";
+import { waitUntilMapIsReady } from "../utils/mapUtils";
 
 /**
  * Vector tiles traffic module.
@@ -19,7 +21,9 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     private incidents?: StyleSourceWithLayers;
     private flow?: StyleSourceWithLayers;
 
-    protected init(eventsProxy: EventsProxy, config?: VectorTilesTrafficConfig): void {
+    private constructor(goSDKMap: GOSDKMap, config?: VectorTilesTrafficConfig) {
+        super(goSDKMap, config);
+
         const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
         if (incidentsRuntimeSource) {
             this.incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
@@ -35,11 +39,11 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
 
             if (config.interactive) {
                 if (this.flow) {
-                    eventsProxy.add(this.flow);
+                    goSDKMap._eventsProxy.add(this.flow);
                 }
 
                 if (this.incidents) {
-                    eventsProxy.add(this.incidents);
+                    goSDKMap._eventsProxy.add(this.incidents);
                 }
             }
         }
@@ -107,13 +111,11 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     }
 
     setIncidentsVisible(visible: boolean, filter?: LayerSpecFilter): void {
-        this.callWhenMapReady(() => {
-            if (this.incidents) {
-                this.incidents.setAllLayersVisible(visible, filter);
-            } else {
-                console.error(changingWhileNotInTheStyle("traffic incidents visibility"));
-            }
-        });
+        if (this.incidents) {
+            this.incidents.setAllLayersVisible(visible, filter);
+        } else {
+            console.error(changingWhileNotInTheStyle("traffic incidents visibility"));
+        }
     }
 
     setIncidentIconsVisible(visible: boolean): void {
@@ -121,19 +123,32 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     }
 
     setFlowVisible(visible: boolean): void {
-        this.callWhenMapReady(() => {
-            if (this.flow) {
-                this.flow.setAllLayersVisible(visible);
-            } else {
-                console.error(changingWhileNotInTheStyle("traffic flow visibility"));
-            }
-        });
+        if (this.flow) {
+            this.flow.setAllLayersVisible(visible);
+        } else {
+            console.error(changingWhileNotInTheStyle("traffic flow visibility"));
+        }
     }
 
+    /**
+     * Create the events on/off for this module
+     * @returns An object with instances of EventsModule for each layer
+     */
     get events() {
         return {
             incidents: new EventsModule(this.goSDKMap._eventsProxy, this.incidents),
             flow: new EventsModule(this.goSDKMap._eventsProxy, this.flow)
         };
+    }
+
+    /**
+     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * @param goSDKMap The GOSDKMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async init(goSDKMap: GOSDKMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
+        await waitUntilMapIsReady(goSDKMap);
+        return new VectorTilesTraffic(goSDKMap, config);
     }
 }

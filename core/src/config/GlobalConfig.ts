@@ -1,3 +1,5 @@
+import { MapLanguagesAvailable } from "../types/MapLanguageConfig";
+
 /**
  * Global configuration containing basic parameters.
  * @group Configuration
@@ -22,7 +24,7 @@ export type GlobalConfig = {
      * @see Search: https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
      * @see Routing: https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
      */
-    language?: string;
+    language?: MapLanguagesAvailable;
 
     /**
      * Common base domain URL for all services, unless overwritten by any of them.

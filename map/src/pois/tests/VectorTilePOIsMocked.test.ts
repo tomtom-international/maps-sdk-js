@@ -23,8 +23,8 @@ describe("Vector tiles POI module tests", () => {
         } as unknown as GOSDKMap;
     });
 
-    test("Constructor with config", () => {
-        const pois = new VectorTilePOIs(goSDKMapMock, {
+    test("Initializing module with config", async () => {
+        const pois = await VectorTilePOIs.init(goSDKMapMock, {
             visible: false
         });
         expect(pois).toBeDefined();
@@ -38,8 +38,8 @@ describe("Vector tiles POI module tests", () => {
         pois.isVisible();
     });
 
-    test("Constructor with no config", () => {
-        const pois = new VectorTilePOIs(goSDKMapMock);
+    test("Initializing module with no config", async () => {
+        const pois = await VectorTilePOIs.init(goSDKMapMock);
         expect(pois).toBeDefined();
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();

@@ -7,7 +7,7 @@ import { VectorTilesHillshade } from "../VectorTilesHillshade";
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles Hillshade module tests", () => {
-    test("Constructor with config", () => {
+    test("Initializing module with config", async () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
@@ -20,7 +20,7 @@ describe("Vector tiles Hillshade module tests", () => {
             }
         } as unknown as GOSDKMap;
 
-        const hillshade = new VectorTilesHillshade(goSDKMapMock, {
+        const hillshade = await VectorTilesHillshade.init(goSDKMapMock, {
             visible: false
         });
         expect(hillshade).toBeDefined();
@@ -34,7 +34,7 @@ describe("Vector tiles Hillshade module tests", () => {
         hillshade.isVisible();
     });
 
-    test("Constructor with no config", () => {
+    test("Initializing module with no config", async () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const goSDKMapMock = {
             mapLibreMap: {
@@ -47,7 +47,7 @@ describe("Vector tiles Hillshade module tests", () => {
             }
         } as unknown as GOSDKMap;
 
-        const hillshade = new VectorTilesHillshade(goSDKMapMock);
+        const hillshade = await VectorTilesHillshade.init(goSDKMapMock);
         expect(hillshade).toBeDefined();
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();

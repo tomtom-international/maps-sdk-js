@@ -2,7 +2,6 @@ import { Routes, Waypoints } from "@anw/go-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
-    EventsProxy,
     GeoJSONSourceWithLayers,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_DESELECTED_OUTLINE_LAYER_ID,
@@ -59,8 +58,9 @@ import {
 } from "./layers/routeVehicleRestrictedLayers";
 import { buildDisplayRoutes } from "./util/Routes";
 import { DisplayRouteProps } from "./types/DisplayRoutes";
-import { asDefined, assertDefined } from "../core/AssertionUtils";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
+import { waitUntilMapIsReady } from "../utils/mapUtils";
+import { GOSDKMap } from "../GOSDKMap";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
@@ -71,16 +71,18 @@ const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
  * @category Functions
  */
 export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
-    private waypoints?: GeoJSONSourceWithLayers<Waypoints>;
-    private routeLines?: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
+    private waypoints: GeoJSONSourceWithLayers<Waypoints>;
+    private routeLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
-    private vehicleRestricted?: GeoJSONSourceWithLayers<RouteSections>;
-    private incidents?: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
-    private ferries?: GeoJSONSourceWithLayers<RouteSections>;
-    private tollRoads?: GeoJSONSourceWithLayers<RouteSections>;
-    private tunnels?: GeoJSONSourceWithLayers<RouteSections>;
+    private vehicleRestricted: GeoJSONSourceWithLayers<RouteSections>;
+    private incidents: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
+    private ferries: GeoJSONSourceWithLayers<RouteSections>;
+    private tollRoads: GeoJSONSourceWithLayers<RouteSections>;
+    private tunnels: GeoJSONSourceWithLayers<RouteSections>;
 
-    protected init(eventsProxy: EventsProxy, config?: RoutingModuleConfig): void {
+    private constructor(goSDKMap: GOSDKMap, config?: RoutingModuleConfig) {
+        super(goSDKMap, config);
+
         this.waypoints = new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
             { ...waypointSymbols, id: WAYPOINT_SYMBOLS_LAYER_ID },
             { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
@@ -153,7 +155,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
 
             for (const layer of routingLayers) {
                 if (layer) {
-                    eventsProxy.add(layer);
+                    goSDKMap._eventsProxy.add(layer);
                 }
             }
         }
@@ -174,17 +176,13 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      * Defaults to 0 (first/recommended route).
      */
     showRoutes(routes: Routes, options?: ShowRoutesOptions) {
-        this.callWhenMapReady(() => {
-            const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
-            asDefined(this.routeLines).show(displayRoutes);
-            asDefined(this.vehicleRestricted).show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
-            asDefined(this.incidents).show(
-                buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
-            );
-            asDefined(this.ferries).show(buildDisplayRouteSections(displayRoutes, "ferry"));
-            asDefined(this.tollRoads).show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
-            asDefined(this.tunnels).show(buildDisplayRouteSections(displayRoutes, "tunnel"));
-        });
+        const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
+        this.routeLines.show(displayRoutes);
+        this.vehicleRestricted.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
+        this.incidents.show(buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps));
+        this.ferries.show(buildDisplayRouteSections(displayRoutes, "ferry"));
+        this.tunnels.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
+        this.tollRoads.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
     }
 
     /**
@@ -192,14 +190,12 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      * * If nothing was shown before, nothing happens.
      */
     clearRoutes() {
-        this.callWhenMapReady(() => {
-            asDefined(this.routeLines).clear();
-            asDefined(this.vehicleRestricted).clear();
-            asDefined(this.incidents).clear();
-            asDefined(this.ferries).clear();
-            asDefined(this.tollRoads).clear();
-            asDefined(this.tunnels).clear();
-        });
+        this.routeLines.clear();
+        this.vehicleRestricted.clear();
+        this.incidents.clear();
+        this.ferries.clear();
+        this.tollRoads.clear();
+        this.tunnels.clear();
     }
 
     /**
@@ -208,17 +204,14 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      * @param index The route index to select. Must be within the existing rendered routes.
      */
     selectRoute(index: number) {
-        this.callWhenMapReady(() => {
-            assertDefined(this.routeLines);
-            const updatedRoutes = buildDisplayRoutes(this.routeLines.shownFeatures, index);
-            this.routeLines.show(updatedRoutes);
+        const updatedRoutes = buildDisplayRoutes(this.routeLines.shownFeatures, index);
 
-            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.vehicleRestricted));
-            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.incidents));
-            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.ferries));
-            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.tollRoads));
-            showSectionsWithRouteSelection(updatedRoutes, asDefined(this.tunnels));
-        });
+        this.routeLines.show(updatedRoutes);
+        showSectionsWithRouteSelection(updatedRoutes, this.vehicleRestricted);
+        showSectionsWithRouteSelection(updatedRoutes, this.incidents);
+        showSectionsWithRouteSelection(updatedRoutes, this.ferries);
+        showSectionsWithRouteSelection(updatedRoutes, this.tollRoads);
+        showSectionsWithRouteSelection(updatedRoutes, this.tunnels);
     }
 
     /**
@@ -230,7 +223,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
             ? toDisplayWaypoints(waypointsLike)
             : // FeatureCollection expected:
               toDisplayWaypoints(waypointsLike.features as PlanningWaypoint[]);
-        this.callWhenMapReady(() => this.waypoints?.show(waypoints));
+        this.waypoints.show(waypoints);
     }
 
     /**
@@ -238,9 +231,13 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      * * If nothing was shown before, nothing happens.
      */
     clearWaypoints() {
-        this.callWhenMapReady(() => this.waypoints?.clear());
+        this.waypoints.clear();
     }
 
+    /**
+     * Create the events on/off for this module
+     * @returns An instance of EventsModule
+     */
     get events() {
         return {
             routeLines: new EventsModule(this.goSDKMap._eventsProxy, this.routeLines),
@@ -260,5 +257,16 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      */
     getLayerToRenderLinesUnder(): string {
         return LAYER_TO_RENDER_LINES_UNDER;
+    }
+
+    /**
+     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * @param goSDKMap The GOSDKMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async init(goSDKMap: GOSDKMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
+        await waitUntilMapIsReady(goSDKMap);
+        return new RoutingModule(goSDKMap, config);
     }
 }
