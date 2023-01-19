@@ -1,6 +1,6 @@
 import { GOSDKMapParams, MapLibreOptions } from "map";
 import {
-    getLayerVisibility,
+    isLayerVisible,
     getNumVisibleLayersBySource,
     getVisibleLayersBySource,
     MapIntegrationTestEnv,
@@ -54,7 +54,7 @@ describe("Map Init tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(2);
     });
 
-    test("Should not have poi and hillshade layers source ID when module are excluded", async () => {
+    test("Should not have poi and hillshade layers when they are excluded from the style", async () => {
         await mapEnv.loadMap(
             {
                 center: [-0.12621, 51.50394],
@@ -75,7 +75,7 @@ describe("Map Init tests", () => {
         await waitForMapStyleToLoad();
         expect(await getVisibleLayersBySource("poiTiles")).toHaveLength(0);
         expect(await getVisibleLayersBySource("hillshade")).toHaveLength(0);
-        expect(await getLayerVisibility("POI")).toHaveLength(0);
+        expect(await isLayerVisible("POI")).toStrictEqual(false);
         expect(mapEnv.consoleErrors).toHaveLength(2);
     });
 });
