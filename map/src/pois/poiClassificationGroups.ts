@@ -1,18 +1,18 @@
 import { poiClassificationToIconID } from "../places";
 
 export const poiClassificationGroups = {
-    food_drink: [
+    FOOD_DRINKS_GROUP: [
         poiClassificationToIconID.RESTAURANT,
         poiClassificationToIconID.CAFE_PUB,
         poiClassificationToIconID.WINERY
     ],
-    shopping: [
+    SHOPPING_GROUP: [
         poiClassificationToIconID.SHOP,
         poiClassificationToIconID.SHOPPING_CENTER,
         poiClassificationToIconID.MARKET,
         poiClassificationToIconID.DEPARTMENT_STORE
     ],
-    transportation: [
+    TRANSPORTATION_GROUP: [
         poiClassificationToIconID.AIRPORT,
         poiClassificationToIconID.FERRY_TERMINAL,
         poiClassificationToIconID.HELIPAD,
@@ -21,7 +21,7 @@ export const poiClassificationGroups = {
         poiClassificationToIconID.RAILWAY_STATION,
         poiClassificationToIconID.RAILROAD_STATION
     ],
-    health: [
+    HEALTH_GROUP: [
         poiClassificationToIconID.DOCTOR,
         poiClassificationToIconID.EMERGENCY_MEDICAL_SERVICE,
         poiClassificationToIconID.EMERGENCY_ROOM,
@@ -32,8 +32,8 @@ export const poiClassificationGroups = {
         poiClassificationToIconID.DENTIST,
         poiClassificationToIconID.WELFARE_ORGANIZATION
     ],
-    parking: [poiClassificationToIconID.PARKING_GARAGE, poiClassificationToIconID.OPEN_PARKING_AREA],
-    holiday_tourism: [
+    PARKING_GROUP: [poiClassificationToIconID.PARKING_GARAGE, poiClassificationToIconID.OPEN_PARKING_AREA],
+    HOLIDAY_TOURISM_GROUP: [
         poiClassificationToIconID.AMUSEMENT_PARK,
         poiClassificationToIconID.BEACH,
         poiClassificationToIconID.HOLIDAY_RENTAL,
@@ -46,14 +46,14 @@ export const poiClassificationGroups = {
         poiClassificationToIconID.SCENIC_PANORAMIC_VIEW,
         poiClassificationToIconID.TOURIST_INFORMATION_OFFICE
     ],
-    ev_charging_stations: [poiClassificationToIconID.ELECTRIC_VEHICLE_STATION],
-    gas_stations: [poiClassificationToIconID.GAS_STATION, poiClassificationToIconID.PETROL_STATION],
-    accommodation: [
+    EV_CHARGING_STATIONS_GROUP: [poiClassificationToIconID.ELECTRIC_VEHICLE_STATION],
+    GAS_STATIONS_GROUP: [poiClassificationToIconID.GAS_STATION, poiClassificationToIconID.PETROL_STATION],
+    ACCOMMODATION_GROUP: [
         poiClassificationToIconID.CAMPING_GROUND,
         poiClassificationToIconID.HOTEL_MOTEL,
         poiClassificationToIconID.HOLIDAY_RENTAL
     ],
-    entertainment: [
+    ENTERTAINMENT_GROUP: [
         poiClassificationToIconID.CINEMA,
         poiClassificationToIconID.THEATER,
         poiClassificationToIconID.MOVIE_THEATER,
@@ -63,7 +63,7 @@ export const poiClassificationGroups = {
         poiClassificationToIconID.CLUB_ASSOCIATION,
         poiClassificationToIconID.CASINO
     ],
-    sports_leisure: [
+    SPORTS_LEISURE_GROUP: [
         poiClassificationToIconID.SPORTS_CENTER,
         poiClassificationToIconID.WATER_SPORT,
         poiClassificationToIconID.SWIMMING_POOL,
@@ -75,12 +75,12 @@ export const poiClassificationGroups = {
         poiClassificationToIconID.MOUNTAIN_PASS,
         poiClassificationToIconID.MOUNTAIN_PEAK
     ],
-    education: [
+    EDUCATION_GROUP: [
         poiClassificationToIconID.SCHOOL,
         poiClassificationToIconID.COLLEGE_UNIVERSITY,
         poiClassificationToIconID.LIBRARY
     ],
-    government: [
+    GOVERNMENT_GROUP: [
         poiClassificationToIconID.GOVERNMENT_OFFICE,
         poiClassificationToIconID.COURTHOUSE,
         poiClassificationToIconID.EMBASSY,
