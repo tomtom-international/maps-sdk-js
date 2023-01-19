@@ -5,7 +5,7 @@ import {
     buildIncludeIconArrayFilterExpression
 } from "../filterExpressions";
 
-describe("build filter expression ", () => {
+describe("build filter expression", () => {
     test("filter out single icon ID", () => {
         expect(buildExcludeIconFilterExpression(231)).toEqual(["!=", ["get", "icon"], 231]);
     });

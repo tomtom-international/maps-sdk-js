@@ -15,7 +15,7 @@ import { POIClassificationGroup, poiClassificationGroups } from "./poiClassifica
 
 const getCategoryIcons = (categories: FilteredPOICategories): number[] => {
     const categoryIds: number[] = [];
-    categories.map((category) => {
+    categories.forEach((category) => {
         if (category in poiClassificationGroups) {
             categoryIds.push(...poiClassificationGroups[category as POIClassificationGroup]);
         } else if (category in poiClassificationToIconID) {
