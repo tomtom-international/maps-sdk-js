@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.74](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.73...v0.1.74) (2023-01-19)
+
+
+### Features
+
+* **routing:** route reconstruction second iteration ([3b02b3b](https://github.com/tomtom-international/go-sdk-js/commit/3b02b3b8ab81541c8badc530d1bd55ad1ba41be2))
+
+
+### Bug Fixes
+
+* **#604:** exclude poi from base map when configured as part of Map style ([62e1777](https://github.com/tomtom-international/go-sdk-js/commit/62e1777dc8717a86f5424183c82de328fc0392a6)), closes [#604](https://github.com/tomtom-international/go-sdk-js/issues/604)
+* add timestamp to veracode version to avoid duplicates ([917a5ca](https://github.com/tomtom-international/go-sdk-js/commit/917a5ca5938f51a5e7282dfc21f66cd4942ff0a3))
+
 ### [0.1.73](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.70...v0.1.73) (2023-01-16)
 
 
