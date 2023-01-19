@@ -36,7 +36,7 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * @protected
      * @ignore
      */
-    protected getMergedConfig(config: CFG = undefined as CFG): CFG | undefined {
+    protected getMergedConfig(config: CFG | undefined = undefined): CFG | undefined {
         return this.config
             ? {
                   ...this.config,

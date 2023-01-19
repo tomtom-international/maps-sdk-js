@@ -1,7 +1,7 @@
 import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_ID } from "../core";
 import { placesLayerSpec } from "./layers/PlacesLayers";
-import { poiClassificationToIconID } from "./poiIconIDMapping";
+import { POIClassification, poiClassificationToIconID } from "./poiIconIDMapping";
 import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
 import { PlaceModuleConfig } from "./types/PlaceModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
@@ -23,7 +23,7 @@ export const buildPlaceTitle = (place: Place): string =>
  * @category Functions
  */
 export const getImageIDForPlace = (place: Place): string => {
-    const classificationCode = place.properties.poi?.classifications?.[0]?.code;
+    const classificationCode = place.properties.poi?.classifications?.[0]?.code as POIClassification;
     const iconID = (classificationCode && poiClassificationToIconID[classificationCode]?.toString()) || "default";
     return `${iconID}_pin`;
 };

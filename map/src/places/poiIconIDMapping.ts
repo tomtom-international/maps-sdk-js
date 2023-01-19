@@ -1,7 +1,7 @@
 /**
  * @ignore
  */
-export const poiClassificationToIconID: Record<string, number> = {
+export const poiClassificationToIconID = {
     ACCESS_GATEWAY: 310,
     ADVENTURE_SPORTS_VENUE: 322,
     AGRICULTURE: 307,
@@ -135,5 +135,9 @@ export const poiClassificationToIconID: Record<string, number> = {
  * @ignore
  */
 export const poiClassificationFromIconID = (iconID: number) => {
-    return Object.keys(poiClassificationToIconID).find((key) => poiClassificationToIconID[key] === iconID);
+    return Object.keys(poiClassificationToIconID).find(
+        (key) => poiClassificationToIconID[key as POIClassification] === iconID
+    );
 };
+
+export type POIClassification = keyof typeof poiClassificationToIconID;
