@@ -1,3 +1,4 @@
+import { MapLanguagesAvailable } from "@anw/go-sdk-js/core";
 import { PlaceByIdParams } from "../types";
 import placeByIdReqObjects from "../../place-by-id/tests/RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
@@ -9,7 +10,7 @@ describe("Place By Id API", () => {
     const apiKey = "APIKEY";
     const commonBaseURL = "https://api-test.tomtom.com";
     const entityId = 528009004250472; // Invalid value, entityId is a string
-    const language = "en-GB";
+    const language: MapLanguagesAvailable = "en-GB";
     const view = "Unified";
     const timeZone = "iana";
     const openingHours = "nextSevenDays";

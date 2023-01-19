@@ -19,3 +19,4 @@ export * from "./route/Sections";
 export * from "./route/Summary";
 export * from "./route/GeoInputs";
 export * from "./View";
+export * from "./MapLanguageConfig";
