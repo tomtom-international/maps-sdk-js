@@ -109,3 +109,11 @@ export const getSymbolLayersByID = async (layerID: string): Promise<SymbolLayerS
             .layers.filter((layer) => layer.id === symbolLayerID)[0] as SymbolLayerSpecification;
     }, layerID);
 };
+
+export const getLayerVisibility = async (layerID: string): Promise<any> => {
+    return page.evaluate((layerID) => {
+        return (globalThis as GOSDKThis).mapLibreMap
+            .getStyle()
+            .layers.filter((layer) => layer.id === layerID && layer.layout?.visibility !== "none") as any;
+    }, layerID);
+};

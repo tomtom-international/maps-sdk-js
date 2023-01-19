@@ -1,14 +1,13 @@
 import { GOSDKMapParams, MapLibreOptions } from "map";
 import {
+    getLayerVisibility,
     getNumVisibleLayersBySource,
     getVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad,
-    waitUntilRenderedFeatures
+    waitForMapStyleToLoad
 } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
-import { isError } from "lodash";
 
 describe("Map Init tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -76,7 +75,7 @@ describe("Map Init tests", () => {
         await waitForMapStyleToLoad();
         expect(await getVisibleLayersBySource("poiTiles")).toHaveLength(0);
         expect(await getVisibleLayersBySource("hillshade")).toHaveLength(0);
-        expect(await waitUntilRenderedFeatures(["POI"], 1, 5000).catch(isError)).toBeTruthy()
+        expect(await getLayerVisibility("POI")).toHaveLength(0);
         expect(mapEnv.consoleErrors).toHaveLength(2);
     });
 });
