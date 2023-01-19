@@ -1,13 +1,14 @@
-import {GOSDKMapParams, MapLibreOptions} from "map";
+import { GOSDKMapParams, MapLibreOptions } from "map";
 import {
     getNumVisibleLayersBySource,
     getVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad, waitUntilRenderedFeatures
+    waitForMapStyleToLoad,
+    waitUntilRenderedFeatures
 } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
-import {isError} from "lodash";
+import { isError } from "lodash";
 
 describe("Map Init tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
