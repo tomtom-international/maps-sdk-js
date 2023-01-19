@@ -53,9 +53,9 @@ const geometryData = amsterdamGeometryData as GeometryDataResponse;
 
 const initGeometry = async (config: GeometryModuleConfig) =>
     page.evaluate(
-        (inputGeometry: GeometryDataResponse, inputConfig: GeometryModuleConfig) => {
+        async (inputGeometry: GeometryDataResponse, inputConfig: GeometryModuleConfig) => {
             const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.geometry = new goSDKThis.GOSDK.GeometryModule(goSDKThis.goSDKMap, inputConfig);
+            goSDKThis.geometry = await goSDKThis.GOSDK.GeometryModule.init(goSDKThis.goSDKMap, inputConfig);
             goSDKThis.geometry?.show(inputGeometry);
         },
         // @ts-ignore
@@ -67,9 +67,9 @@ const setupGeoJSONModuleAndPlacesEvents = async () => {
     await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
 
     // Initiating Places module
-    await page.evaluate(() => {
+    await page.evaluate(async () => {
         const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
+        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap);
     });
     await waitForMapStyleToLoad();
     await showPlaces(POIs as Places);
@@ -105,9 +105,9 @@ describe("EventProxy integration tests", () => {
             center: [4.89067, 52.37313]
         });
 
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
+            goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap);
         });
         await waitForMapStyleToLoad();
 
@@ -226,9 +226,9 @@ describe("EventProxy Configuration", () => {
     });
 
     test("Load custom event configuration", async () => {
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
+            goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap);
         });
         await waitForMapStyleToLoad();
         await showPlaces(POIs as Places);

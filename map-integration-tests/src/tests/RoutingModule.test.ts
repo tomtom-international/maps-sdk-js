@@ -24,9 +24,9 @@ import {
 import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
 
 const initRouting = async () =>
-    page.evaluate(() => {
+    page.evaluate(async () => {
         const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.routing = new goSDKThis.GOSDK.RoutingModule(goSDKThis.goSDKMap);
+        goSDKThis.routing = await goSDKThis.GOSDK.RoutingModule.init(goSDKThis.goSDKMap);
     });
 
 const showRoutes = async (routes: Routes) =>

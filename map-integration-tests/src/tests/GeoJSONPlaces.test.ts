@@ -12,9 +12,9 @@ import { GOSDKThis } from "./types/GOSDKThis";
 import sortBy from "lodash/sortBy";
 
 const initPlaces = async () =>
-    page.evaluate(() => {
+    page.evaluate(async () => {
         const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.places = new goSDKThis.GOSDK.GeoJSONPlaces(goSDKThis.goSDKMap);
+        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap);
     });
 
 const showPlaces = async (places: Places) =>

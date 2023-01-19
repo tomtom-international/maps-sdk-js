@@ -13,9 +13,9 @@ import { Position } from "geojson";
 
 const initGeometry = async (config?: GeometryModuleConfig) =>
     page.evaluate(
-        (inputConfig: GeometryModuleConfig) => {
+        async (inputConfig: GeometryModuleConfig) => {
             const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.geometry = new goSDKThis.GOSDK.GeometryModule(goSDKThis.goSDKMap, inputConfig);
+            goSDKThis.geometry = await goSDKThis.GOSDK.GeometryModule.init(goSDKThis.goSDKMap, inputConfig);
         },
         // @ts-ignore
         config

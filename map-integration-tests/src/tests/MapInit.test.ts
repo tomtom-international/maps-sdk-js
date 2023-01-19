@@ -40,10 +40,10 @@ describe("Map Init tests", () => {
             }
         );
 
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             const goSDKThis = globalThis as GOSDKThis;
             /* This will trigger a console.error. Here we are trying to load modules that has been excluded.*/
-            goSDKThis.traffic = new goSDKThis.GOSDK.VectorTilesTraffic(goSDKThis.goSDKMap, { visible: true });
+            goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, { visible: true });
         });
 
         await waitForMapStyleToLoad();
@@ -65,11 +65,13 @@ describe("Map Init tests", () => {
             }
         );
 
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             const goSDKThis = globalThis as GOSDKThis;
             /* This will trigger a console.error. Here we are trying to load modules that has been excluded.*/
-            goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap, { visible: false });
-            goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap, { visible: false });
+            goSDKThis.hillshade = await goSDKThis.GOSDK.VectorTilesHillshade.init(goSDKThis.goSDKMap, {
+                visible: false
+            });
+            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, { visible: false });
         });
 
         await waitForMapStyleToLoad();

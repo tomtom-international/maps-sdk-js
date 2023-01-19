@@ -43,11 +43,13 @@ describe("Map vector layer tests", () => {
             zoom: 14,
             center: [-0.12621, 51.50394]
         });
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.traffic = new goSDKThis.GOSDK.VectorTilesTraffic(goSDKThis.goSDKMap, { visible: false });
-            goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap, { visible: false });
-            goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap, { visible: false });
+            goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, { visible: false });
+            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, { visible: false });
+            goSDKThis.hillshade = await goSDKThis.GOSDK.VectorTilesHillshade.init(goSDKThis.goSDKMap, {
+                visible: false
+            });
         });
         await waitForMapStyleToLoad();
         await assertTrafficVisibility(false, false);
@@ -94,11 +96,13 @@ describe("Map vector layer tests", () => {
             zoom: 14,
             center: [-0.12621, 51.50394]
         });
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.traffic = new goSDKThis.GOSDK.VectorTilesTraffic(goSDKThis.goSDKMap).setVisible(false);
-            goSDKThis.pois = new goSDKThis.GOSDK.VectorTilePOIs(goSDKThis.goSDKMap).setVisible(false);
-            goSDKThis.hillshade = new goSDKThis.GOSDK.VectorTilesHillshade(goSDKThis.goSDKMap).setVisible(false);
+            goSDKThis.traffic = (await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap)).setVisible(false);
+            goSDKThis.pois = (await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap)).setVisible(false);
+            goSDKThis.hillshade = (await goSDKThis.GOSDK.VectorTilesHillshade.init(goSDKThis.goSDKMap)).setVisible(
+                false
+            );
         });
         await waitForMapStyleToLoad();
         await assertTrafficVisibility(false, false);
