@@ -1,0 +1,6 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "words": ["GOSDK"],
+    "ignorePaths": ["**/dist/**", "package.json", "package-lock.json", "**/coverage/**"]
+}

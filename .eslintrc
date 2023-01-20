@@ -1,0 +1,71 @@
+{
+  "env": {
+    "browser": true,
+    "jest": true,
+    "node": true,
+    "es2020": true
+  },
+  "extends": [
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "prettier",
+    "@typescript-eslint",
+    "jest"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "ignorePatterns": [
+    "*.scss"
+  ],
+  "rules": {
+    "prettier/prettier": "warn",
+    "quotes": ["warn", "double", {
+      "allowTemplateLiterals": true,
+      "avoidEscape": true
+    }],
+    "import/no-extraneous-dependencies": 0,
+    "eol-last": "off",
+    "object-curly-spacing": ["warn", "always", {
+      "objectsInObjects": true
+    }],
+    "array-bracket-spacing": "warn",
+    "comma-dangle": "warn",
+    "keyword-spacing": "warn",
+    "key-spacing": "warn",
+    "space-infix-ops": "warn",
+    "max-len": ["warn", {
+      "code": 120,
+      "ignoreComments": true,
+      "ignoreTrailingComments": true,
+      "ignoreUrls": true
+    }],
+    "space-before-blocks": "warn",
+    "arrow-spacing": "warn",
+    "no-console": "off",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "@typescript-eslint/prefer-interface": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "@typescript-eslint/no-use-before-define": "warn",
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/no-empty-interface": "warn",
+    "@typescript-eslint/no-var-requires": "warn",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/switch-exhaustiveness-check": "warn"
+  },
+  "globals": {
+    "DEBUG": true
+  }
+}

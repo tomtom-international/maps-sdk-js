@@ -1,0 +1,3 @@
+{
+    "*.{ts,js,json,md}": ["prettier --check", "eslint --cache", "cspell"]
+}

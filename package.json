@@ -12,7 +12,9 @@
     "type-check": "npm run type-check -ws",
     "lint": "npm run lint -ws",
     "test": "npm run test -ws",
-    "build-theme": "rimraf ./documentation/go-sdk-theme/dist && tsc -p ./documentation/go-sdk-theme && cp -R ./documentation/go-sdk-theme/src/resources ./documentation/go-sdk-theme/dist"
+    "build-theme": "rimraf ./documentation/go-sdk-theme/dist && tsc -p ./documentation/go-sdk-theme && cp -R ./documentation/go-sdk-theme/src/resources ./documentation/go-sdk-theme/dist",
+    "prepare": "husky install",
+    "pre-commit": "lint-staged"
   },
   "publishConfig": {
     "registry": "https://tomtom.jfrog.io/artifactory/api/npm/go-sdk-js-npm-local/"
@@ -69,8 +71,16 @@
   "devDependencies": {
     "@size-limit/file": "^8.1.0",
     "@size-limit/preset-app": "^8.1.0",
+    "cspell": "^6.19.2",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-prettier": "^4.2.1",
     "handlebars": "^4.7.7",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
     "map": "file:map",
+    "prettier": "^2.8.3",
     "services": "file:services",
     "size-limit": "^8.1.0",
     "typedoc": "^0.23.23",
