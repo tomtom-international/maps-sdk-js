@@ -30,6 +30,17 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
         }
     }
 
+    /**
+     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * @param goSDKMap The GOSDKMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async init(goSDKMap: GOSDKMap, config?: VectorTilesHillshadeConfig): Promise<VectorTilesHillshade> {
+        await waitUntilMapIsReady(goSDKMap);
+        return new VectorTilesHillshade(goSDKMap, config);
+    }
+
     applyConfig(config: VectorTilesHillshadeConfig): void {
         if (!isNil(config.visible)) {
             this.setVisible(config.visible);
@@ -58,16 +69,5 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
      */
     get events() {
         return new EventsModule(this.goSDKMap._eventsProxy, this.hillshade);
-    }
-
-    /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
-     */
-    static async init(goSDKMap: GOSDKMap, config?: VectorTilesHillshadeConfig): Promise<VectorTilesHillshade> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilesHillshade(goSDKMap, config);
     }
 }

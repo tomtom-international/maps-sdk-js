@@ -2,7 +2,6 @@ import isNil from "lodash/isNil";
 import {
     AbstractMapModule,
     EventsModule,
-    EventsProxy,
     LayerSpecFilter,
     StyleSourceWithLayers,
     VECTOR_TILES_FLOW_SOURCE_ID,
@@ -47,6 +46,17 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
                 }
             }
         }
+    }
+
+    /**
+     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * @param goSDKMap The GOSDKMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async init(goSDKMap: GOSDKMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
+        await waitUntilMapIsReady(goSDKMap);
+        return new VectorTilesTraffic(goSDKMap, config);
     }
 
     applyConfig(config: VectorTilesTrafficConfig): void {
@@ -139,16 +149,5 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             incidents: new EventsModule(this.goSDKMap._eventsProxy, this.incidents),
             flow: new EventsModule(this.goSDKMap._eventsProxy, this.flow)
         };
-    }
-
-    /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
-     */
-    static async init(goSDKMap: GOSDKMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilesTraffic(goSDKMap, config);
     }
 }

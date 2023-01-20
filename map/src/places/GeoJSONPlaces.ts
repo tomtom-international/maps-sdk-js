@@ -61,6 +61,17 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     }
 
     /**
+     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * @param goSDKMap The GOSDKMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async init(goSDKMap: GOSDKMap, config?: PlaceModuleConfig): Promise<GeoJSONPlaces> {
+        await waitUntilMapIsReady(goSDKMap);
+        return new GeoJSONPlaces(goSDKMap, config);
+    }
+
+    /**
      * Shows the given places on the map.
      * @param places
      */
@@ -81,16 +92,5 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
      */
     get events() {
         return new EventsModule(this.goSDKMap._eventsProxy, this.places);
-    }
-
-    /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
-     */
-    static async init(goSDKMap: GOSDKMap, config?: PlaceModuleConfig): Promise<GeoJSONPlaces> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new GeoJSONPlaces(goSDKMap, config);
     }
 }

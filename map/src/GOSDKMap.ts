@@ -45,7 +45,7 @@ export class GOSDKMap {
         this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
     };
 
-    private _updateMapLanguage(language: string) {
+    private updateMapLanguage(language: string) {
         this.mapLibreMap.getStyle().layers.forEach((layer) => {
             if (layer.type == "symbol" && isLayerLocalizable(layer)) {
                 const textFieldValue = language
@@ -63,9 +63,9 @@ export class GOSDKMap {
      */
     setLanguage(language: string) {
         if (this.mapReady || this.mapLibreMap.isStyleLoaded()) {
-            this._updateMapLanguage(language);
+            this.updateMapLanguage(language);
         } else {
-            this.mapLibreMap.once("styledata", () => this._updateMapLanguage(language));
+            this.mapLibreMap.once("styledata", () => this.updateMapLanguage(language));
         }
     }
 

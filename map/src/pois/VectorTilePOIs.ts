@@ -29,6 +29,17 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         }
     }
 
+    /**
+     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * @param goSDKMap The GOSDKMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async init(goSDKMap: GOSDKMap, config?: VectorTilePOIsConfig): Promise<VectorTilePOIs> {
+        await waitUntilMapIsReady(goSDKMap);
+        return new VectorTilePOIs(goSDKMap, config);
+    }
+
     applyConfig(config: VectorTilePOIsConfig): void {
         if (!isNil(config.visible)) {
             this.setVisible(config.visible);
@@ -57,16 +68,5 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
      */
     get events() {
         return new EventsModule(this.goSDKMap._eventsProxy, this.poi);
-    }
-
-    /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
-     */
-    static async init(goSDKMap: GOSDKMap, config?: VectorTilePOIsConfig): Promise<VectorTilePOIs> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilePOIs(goSDKMap, config);
     }
 }
