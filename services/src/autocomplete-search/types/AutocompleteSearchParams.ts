@@ -1,4 +1,4 @@
-import { HasLngLat, MapLanguagesAvailable } from "@anw/go-sdk-js/core";
+import { HasLngLat, Languange } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 /**
  * @group Autocomplete
@@ -21,7 +21,7 @@ export type AutocompleteSearchParams = Omit<CommonServiceParams, "language"> & {
      * Value: One of the TomTom IETF Supported Language Tags.
      * @see Supported Language https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
      */
-    language: MapLanguagesAvailable;
+    language: Languange;
 
     /**
      * Position where results should be biased.

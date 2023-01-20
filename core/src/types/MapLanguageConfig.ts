@@ -2,7 +2,7 @@
  * Languages available.
  * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
  */
-const LanguagesAvailable = [
+const Languages = [
     // Neutral Ground Truth (custom)
     "ngt",
     // Latin script will be used if available.
@@ -84,4 +84,4 @@ const LanguagesAvailable = [
     "tr-TR"
 ] as const;
 
-export type MapLanguagesAvailable = typeof LanguagesAvailable[number];
+export type Languange = typeof Languages[number];
