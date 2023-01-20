@@ -12,3 +12,5 @@ node_modules/
 *.tgz
 **/*.tsbuildinfo
 documentation/dev-portal/web/maps/documentation/api-reference/
+
+.eslintcache
