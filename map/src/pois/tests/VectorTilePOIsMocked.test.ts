@@ -15,7 +15,9 @@ describe("Vector tiles POI module tests", () => {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(poiSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                isStyleLoaded: jest.fn().mockReturnValue(true),
+                setFilter: jest.fn(),
+                getFilter: jest.fn()
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn()
@@ -44,5 +46,27 @@ describe("Vector tiles POI module tests", () => {
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+    });
+
+    test("filter methods while initalizing module with filter config", async () => {
+        const pois = await VectorTilePOIs.init(goSDKMapMock, {
+            categoriesFilter: {
+                mode: "exclude",
+                categories: ["FOOD_DRINKS_GROUP", "ENTERTAINMENT"]
+            }
+        });
+        jest.spyOn(pois, "addCategoriesFilter");
+        jest.spyOn(pois, "removeCategoriesFilter");
+        jest.spyOn(pois, "setCategoriesFilterMode");
+        expect(pois).toBeDefined();
+        pois.addCategoriesFilter(["ACCOMMODATION_GROUP"]);
+        pois.removeCategoriesFilter(["ACCOMMODATION_GROUP"]);
+        pois.setCategoriesFilterMode("include");
+        expect(pois.addCategoriesFilter).toHaveBeenCalledTimes(1);
+        expect(pois.addCategoriesFilter).toHaveBeenCalledWith(["ACCOMMODATION_GROUP"]);
+        expect(pois.removeCategoriesFilter).toHaveBeenCalledTimes(1);
+        expect(pois.removeCategoriesFilter).toHaveBeenCalledWith(["ACCOMMODATION_GROUP"]);
+        expect(pois.setCategoriesFilterMode).toHaveBeenCalledTimes(1);
+        expect(pois.setCategoriesFilterMode).toHaveBeenCalledWith("include");
     });
 });

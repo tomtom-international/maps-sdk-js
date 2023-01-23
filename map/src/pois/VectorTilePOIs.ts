@@ -41,7 +41,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (poiRuntimeSource) {
             this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
-            const existingFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0].id);
+            const existingFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id);
             if (existingFilter) {
                 this.layerFilter = existingFilter;
             }
