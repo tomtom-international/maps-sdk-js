@@ -1,17 +1,12 @@
-import {
-    buildExcludeIconFilterExpression,
-    buildExcludeIconArrayFilterExpression,
-    buildIncludeIconFilterExpression,
-    buildIncludeIconArrayFilterExpression
-} from "../filterExpressions";
+import { buildIconFilterExpression, buildIconArrayFilterExpression } from "../filterExpressions";
 
 describe("build filter expression", () => {
     test("filter out single icon ID", () => {
-        expect(buildExcludeIconFilterExpression(231)).toEqual(["!=", ["get", "icon"], 231]);
+        expect(buildIconFilterExpression(231, "exclude")).toEqual(["!=", ["get", "icon"], 231]);
     });
 
     test("filter out array of icon IDs", () => {
-        expect(buildExcludeIconArrayFilterExpression([231, 130, 55])).toEqual([
+        expect(buildIconArrayFilterExpression([231, 130, 55], "exclude")).toEqual([
             "all",
             ["!=", ["get", "icon"], 231],
             ["!=", ["get", "icon"], 130],
@@ -20,11 +15,11 @@ describe("build filter expression", () => {
     });
 
     test("include single icon ID", () => {
-        expect(buildIncludeIconFilterExpression(123)).toEqual(["==", ["get", "icon"], 123]);
+        expect(buildIconFilterExpression(123, "include")).toEqual(["==", ["get", "icon"], 123]);
     });
 
     test("include array of icon IDs", () => {
-        expect(buildIncludeIconArrayFilterExpression([231, 130, 55])).toEqual([
+        expect(buildIconArrayFilterExpression([231, 130, 55], "include")).toEqual([
             "any",
             ["==", ["get", "icon"], 231],
             ["==", ["get", "icon"], 130],
