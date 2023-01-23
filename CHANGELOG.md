@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.75](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.74...v0.1.75) (2023-01-23)
+
+
+### Bug Fixes
+
+* **maps:** Fix typo ([9ebed6f](https://github.com/tomtom-international/go-sdk-js/commit/9ebed6f96e06df8bbbed5178f90f69ba4e101a0c))
+
 ### [0.1.74](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.73...v0.1.74) (2023-01-19)
 
 
