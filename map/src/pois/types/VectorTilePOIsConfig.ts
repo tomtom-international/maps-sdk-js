@@ -13,7 +13,7 @@ export type CategoriesFilter = {
      * use include mode to only include some categories/groups and hide everything else
      */
     mode: POICategoriesFilterMode;
-    categories: (POIClassification | POIClassificationGroup)[];
+    categories: FilteredPOICategories;
 };
 
 export type VectorTilePOIsConfig = VectorTileMapModuleConfig & {

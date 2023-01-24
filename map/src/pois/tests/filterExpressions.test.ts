@@ -1,4 +1,8 @@
-import { buildIconFilterExpression, buildIconArrayFilterExpression } from "../filterExpressions";
+import {
+    buildIconFilterExpression,
+    buildIconArrayFilterExpression,
+    combineWithExistingFilter
+} from "../filterExpressions";
 
 describe("build filter expression", () => {
     test("filter out single icon ID", () => {
@@ -24,6 +28,14 @@ describe("build filter expression", () => {
             ["==", ["get", "icon"], 231],
             ["==", ["get", "icon"], 130],
             ["==", ["get", "icon"], 55]
+        ]);
+    });
+
+    test("combine category filter with existing layer filter", () => {
+        expect(combineWithExistingFilter([231, 130, 55], "include", ["==", ["get", "name"], "test"])).toEqual([
+            "all",
+            ["any", ["==", ["get", "icon"], 231], ["==", ["get", "icon"], 130], ["==", ["get", "icon"], 55]],
+            ["==", ["get", "name"], "test"]
         ]);
     });
 });

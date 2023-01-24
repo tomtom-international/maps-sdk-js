@@ -74,6 +74,25 @@ export const waitUntilRenderedFeatures = async (
     );
 };
 
+export const waitForAnyRenderedFeatures = async (
+    layerIDs: string[],
+    timeoutMS: number,
+    lngLat?: Position
+): Promise<MapGeoJSONFeature[]> => {
+    let currentFeatures: MapGeoJSONFeature[] = [];
+    return tryBeforeTimeout(
+        async (): Promise<MapGeoJSONFeature[]> => {
+            while (currentFeatures.length == 0) {
+                await waitForTimeout(500);
+                currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
+            }
+            return currentFeatures;
+        },
+        `Did not get any features for layers ${layerIDs}.`,
+        timeoutMS
+    );
+};
+
 export class MapIntegrationTestEnv {
     consoleErrors: unknown[] = [];
 

@@ -48,7 +48,7 @@ describe("Vector tiles POI module tests", () => {
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });
 
-    test("filter methods while initalizing module with filter config", async () => {
+    test("filter methods while initializing module with filter config", async () => {
         const pois = await VectorTilePOIs.init(goSDKMapMock, {
             categoriesFilter: {
                 mode: "exclude",
@@ -68,5 +68,23 @@ describe("Vector tiles POI module tests", () => {
         expect(pois.removeCategoriesFilter).toHaveBeenCalledWith(["ACCOMMODATION_GROUP"]);
         expect(pois.setCategoriesFilterMode).toHaveBeenCalledTimes(1);
         expect(pois.setCategoriesFilterMode).toHaveBeenCalledWith("include");
+    });
+
+    test("calling removeCategoriesFilter while initializing module without filter config should log an error", async () => {
+        const pois = await VectorTilePOIs.init(goSDKMapMock);
+        jest.spyOn(pois, "removeCategoriesFilter");
+        jest.spyOn(console, "error");
+        pois.removeCategoriesFilter(["ACCOMMODATION_GROUP"]);
+        expect(pois.removeCategoriesFilter).toHaveBeenCalledTimes(1);
+        expect(pois.removeCategoriesFilter).toHaveBeenCalledWith(["ACCOMMODATION_GROUP"]);
+        expect(console.error).toHaveBeenCalledTimes(1);
+    });
+
+    test("calling addCategoriesFilter while initializing module without filter config", async () => {
+        const pois = await VectorTilePOIs.init(goSDKMapMock);
+        jest.spyOn(pois, "addCategoriesFilter");
+        pois.addCategoriesFilter(["ACCOMMODATION_GROUP"]);
+        expect(pois.addCategoriesFilter).toHaveBeenCalledTimes(1);
+        expect(pois.addCategoriesFilter).toHaveBeenCalledWith(["ACCOMMODATION_GROUP"]);
     });
 });
