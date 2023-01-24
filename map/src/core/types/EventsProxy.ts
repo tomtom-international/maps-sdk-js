@@ -11,8 +11,10 @@ export type EventType = ClickEvent | HoverEvent;
  * @param features Features (Layers) interative when the event occurred.
  * @param sourceWithLayers The source with layers to which the feature belongs to.
  */
-export interface HoverClickHandler {
-    (lngLat: LngLat, features: MapGeoJSONFeature[], sourceWithLayers?: SourceWithLayers): void;
-}
+export type HoverClickHandler = (
+    lngLat: LngLat,
+    features: MapGeoJSONFeature[],
+    sourceWithLayers?: SourceWithLayers
+) => void;
 
 export type EventHandlers = Record<string, Array<HoverClickHandler>>;
