@@ -1,3 +1,4 @@
+import { MapGeoJSONFeature } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
 import { deserializeFeatures, waitUntilMapIsReady } from "../mapUtils";
 import featureData from "./featureDeserialization.test.data.json";
@@ -75,8 +76,7 @@ const deserializedResult = {
 
 describe("Map utils - deserializeFeatures", () => {
     it("Should parse MapGeoJSONFeature", () => {
-        // @ts-ignore
-        deserializeFeatures(featureData);
+        deserializeFeatures(featureData as unknown as MapGeoJSONFeature[]);
         const [topFeature] = featureData;
         expect(topFeature.properties).toMatchObject(deserializedResult);
     });

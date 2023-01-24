@@ -32,7 +32,6 @@ export abstract class AbstractEventProxy {
      * @param handler Function that will handle the event.
      * @param type Type of event to listen to.
      */
-    // @ts-ignore
     public addEventHandler(sourceWithLayers: StyleSourceWithLayers, handler: HoverClickHandler, type: EventType) {
         if (!this.has(sourceWithLayers)) {
             this.add(sourceWithLayers);

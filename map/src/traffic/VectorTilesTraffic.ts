@@ -142,7 +142,6 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
      * Create the events on/off for this module
      * @returns An object with instances of EventsModule for each layer
      */
-    // @ts-ignore
     get events() {
         return {
             incidents: new EventsModule(this.goSDKMap._eventsProxy, this.incidents),
