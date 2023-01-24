@@ -249,6 +249,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      * Create the events on/off for this module
      * @returns An instance of EventsModule
      */
+    // @ts-ignore
     get events() {
         return {
             routeLines: new EventsModule(this.goSDKMap._eventsProxy, this.routeLines),

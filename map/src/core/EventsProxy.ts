@@ -1,9 +1,10 @@
 import { Map, Point2D, MapGeoJSONFeature, LngLat, MapMouseEvent } from "maplibre-gl";
 import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { AbstractEventProxy } from "./AbstractEventProxy";
-import { ClickEvent } from "./types/EventsProxy";
+import { ClickEvent, HoverClickHandler } from "./types/EventsProxy";
 import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
 import { MapEventsConfig } from "../init/types/MapEventsConfig";
+import { deserializeFeatures } from "../utils/mapUtils";
 
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
@@ -27,16 +28,15 @@ const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
 export class EventsProxy extends AbstractEventProxy {
     private map: Map;
     private enabled = true;
-    private hoveringLngLat?: LngLat;
+    private hoveringLngLat!: LngLat;
     private hoveringPoint?: Point2D;
     private hoveringFeature?: MapGeoJSONFeature;
-    private hoveredFeatures?: MapGeoJSONFeature[];
+    private hoveredFeatures!: MapGeoJSONFeature[];
     private hoveringSourceWithLayers?: SourceWithLayers;
     private longHoverTimeoutHandlerID?: number;
     // Control flag to indicate that the coming hover is the first one since the map is "quiet" again:
     private firstDelayedHoverSinceMapMove = true;
     private lastClickedFeature?: MapGeoJSONFeature;
-    private lastClickedSourceWithLayers?: SourceWithLayers;
     private lastCursorStyle: string;
     // Configuration
     private config: Required<MapEventsConfig>;
@@ -127,7 +127,7 @@ export class EventsProxy extends AbstractEventProxy {
             if (this.hoveringSourceWithLayers) {
                 const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
                 if (this.handlers[listenerId]) {
-                    this.handlers[listenerId].forEach((cb) =>
+                    this.handlers[listenerId].forEach((cb: HoverClickHandler) =>
                         cb(this.hoveringLngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
                     );
                 }
@@ -182,6 +182,7 @@ export class EventsProxy extends AbstractEventProxy {
         }
 
         this.hoveredFeatures = this.getRenderedFeatures(ev.point);
+        deserializeFeatures(this.hoveredFeatures);
         const hoveredTopFeature = this.hoveredFeatures[0];
         const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
 
@@ -232,7 +233,7 @@ export class EventsProxy extends AbstractEventProxy {
         if (hoverChangeDetected) {
             if (this.handlers[listenerId]) {
                 // (If de-hovering this should fire undefined, undefined):
-                this.handlers[listenerId].forEach((cb) =>
+                this.handlers[listenerId].forEach((cb: HoverClickHandler) =>
                     cb(ev.lngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
                 );
             }
@@ -250,17 +251,18 @@ export class EventsProxy extends AbstractEventProxy {
         }
 
         const clickedFeatures = this.getRenderedFeatures(ev.point);
+
+        // Deserialize Features from maplibre queryRenderedFeatures response
+        deserializeFeatures(clickedFeatures);
+
         this.lastClickedFeature = clickedFeatures[0];
-        this.lastClickedSourceWithLayers = this.lastClickedFeature
+        const lastClickedSourceWithLayers = this.lastClickedFeature
             ? this.interactiveSourcesAndLayers[this.lastClickedFeature.source]
             : undefined;
 
-        if (
-            this.lastClickedSourceWithLayers &&
-            this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`]
-        ) {
-            this.handlers[this.lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb) => {
-                cb(ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
+        if (lastClickedSourceWithLayers && this.handlers[lastClickedSourceWithLayers.source.id + `_${clickType}`]) {
+            this.handlers[lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb: HoverClickHandler) => {
+                cb(ev.lngLat, clickedFeatures, lastClickedSourceWithLayers);
             });
         }
     };

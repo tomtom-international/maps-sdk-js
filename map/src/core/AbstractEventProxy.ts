@@ -32,7 +32,8 @@ export abstract class AbstractEventProxy {
      * @param handler Function that will handle the event.
      * @param type Type of event to listen to.
      */
-    public addEventHandler = (sourceWithLayers: StyleSourceWithLayers, handler: HoverClickHandler, type: EventType) => {
+    // @ts-ignore
+    public addEventHandler(sourceWithLayers: StyleSourceWithLayers, handler: HoverClickHandler, type: EventType) {
         if (!this.has(sourceWithLayers)) {
             this.add(sourceWithLayers);
         }
@@ -44,7 +45,7 @@ export abstract class AbstractEventProxy {
             this.handlers[handlerId] = this.handlers[handlerId] || [];
             this.handlers[handlerId].push(handler);
         }
-    };
+    }
 
     /**
      * Removes the given sources and layers from the interactive list. When not present, nothing happens.

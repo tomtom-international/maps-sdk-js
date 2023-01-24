@@ -11,6 +11,7 @@ export class EventsModule {
      * @ignore
      */
     private addToEventProxy(type: EventType, handler: HoverClickHandler) {
+        console.log(this.mapModule);
         if (this.mapModule) {
             this.eventProxy.addEventHandler(this.mapModule, handler, type);
         } else {
