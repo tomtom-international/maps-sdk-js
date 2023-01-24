@@ -26,8 +26,8 @@ const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
  * To have full control on hovers and clicks when multiple overlapping layers are present, that logic must be centralized here.
  */
 export class EventsProxy extends AbstractEventProxy {
-    private map: Map;
     private enabled = true;
+    private readonly map: Map;
     private hoveringLngLat!: LngLat;
     private hoveringPoint?: Point2D;
     private hoveringFeature?: MapGeoJSONFeature;
@@ -39,9 +39,9 @@ export class EventsProxy extends AbstractEventProxy {
     private lastClickedFeature?: MapGeoJSONFeature;
     private lastCursorStyle: string;
     // Configuration
-    private config: Required<MapEventsConfig>;
+    private readonly config: Required<MapEventsConfig>;
     private paddingBoxOnZoom: number | null = null;
-    private defaultZoomLevel: number;
+    private readonly defaultZoomLevel: number;
 
     constructor(map: Map, config: MapEventsConfig = {}) {
         super();

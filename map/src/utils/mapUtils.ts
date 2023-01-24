@@ -27,10 +27,10 @@ export async function waitUntilMapIsReady(goSDKMap: GOSDKMap): Promise<boolean> 
  * @ignore
  * @param features An Array with MapGeoJSONFeatures objects
  */
-export function deserializeFeatures(features: MapGeoJSONFeature[]) {
+export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
     for (const feature of features) {
         if (!feature || Object.keys(feature.properties).length === 0) {
-            return feature;
+            return;
         }
 
         for (const key in feature.properties) {
@@ -44,5 +44,5 @@ export function deserializeFeatures(features: MapGeoJSONFeature[]) {
             }
         }
     }
-    return features;
-}
+    return;
+};

@@ -6,8 +6,8 @@ import { VectorTileMapModuleConfig } from "../../core";
 export type VectorTilesTrafficConfig = VectorTileMapModuleConfig & {
     incidents?: {
         visible?: boolean;
-        icons?: { visible: boolean; interactive?: boolean };
         interactive?: boolean;
+        icons?: { visible: boolean; interactive?: boolean };
     };
     flow?: {
         visible: boolean;
