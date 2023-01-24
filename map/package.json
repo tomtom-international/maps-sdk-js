@@ -60,7 +60,6 @@
     "maplibre-gl": "^3.0.0-pre.3"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
-    "superjson": "^1.12.2"
+    "lodash": "^4.17.21"
   }
 }
