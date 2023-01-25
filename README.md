@@ -138,17 +138,9 @@ Read more about NVM here: [https://github.com/nvm-sh/nvm](https://github.com/nvm
 
   ```sh
     npm i
-    npm ci
   ```
   This is necessary for documentation generation and git hooks to work properly.
 
-  After install the required packages from the root folder, install packages for all workspaces:
-
-   ```sh
-    npm i -ws
-    npm ci -ws
-   ```
-   
   You can also install packages for a certain workspace:
   ```sh
         # specific workspaces
