@@ -3,7 +3,7 @@ import { CommonServiceParams } from "../../shared";
 import { VehicleParameters } from "./VehicleParams";
 
 /**
- * Specifies when to depart (start travelling) or to arrive (finish travelling).
+ * Specifies when to depart (start traveling) or to arrive (finish traveling).
  * @group Calculate Route
  * @category Types
  */
@@ -15,7 +15,7 @@ export type DepartArriveParams = { option: "departAt" | "arriveBy"; date: Date }
  * @group Calculate Route
  * @category Types
  */
-export type InputSectionType = typeof inputSectionTypes[number];
+export type InputSectionType = (typeof inputSectionTypes)[number];
 
 /**
  * Possible input section types that can be requested to the routing API.
@@ -77,7 +77,7 @@ export const instructionsTypes = ["coded", "text", "tagged"] as const;
  * @group Calculate Route
  * @category Types
  */
-export type InstructionsTypes = typeof instructionsTypes[number];
+export type InstructionsTypes = (typeof instructionsTypes)[number];
 
 /**
  * @group Calculate Route

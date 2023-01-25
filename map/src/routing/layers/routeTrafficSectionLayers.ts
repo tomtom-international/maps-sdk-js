@@ -30,11 +30,11 @@ export const routeIncidentsBGLine: LayerSpecTemplate<LineLayerSpecification> = {
         "line-color": [
             "match",
             ["get", "magnitudeOfDelay"],
-            "MINOR",
+            "minor",
             "#FFC105",
-            "MODERATE",
+            "moderate",
             "#FB2D09",
-            "MAJOR",
+            "major",
             "#AD0000",
             // other
             "#C7D2D8"
@@ -47,7 +47,7 @@ export const routeIncidentsBGLine: LayerSpecTemplate<LineLayerSpecification> = {
  */
 export const routeIncidentsDashedLine: LayerSpecTemplate<LineLayerSpecification> = {
     type: "line",
-    filter: ["in", "magnitudeOfDelay", "UNKNOWN", "UNDEFINED"],
+    filter: ["in", ["get", "magnitudeOfDelay"], ["literal", ["unknown", "indefinite"]]],
     layout: {
         "line-join": "round"
     },
@@ -56,7 +56,7 @@ export const routeIncidentsDashedLine: LayerSpecTemplate<LineLayerSpecification>
         "line-color": [
             "match",
             ["get", "magnitudeOfDelay"],
-            "UNKNOWN",
+            "unknown",
             "rgba(190, 39, 27, 1)",
             // other (undefined):
             "rgba(137, 150, 168, 1)"
@@ -70,7 +70,7 @@ export const routeIncidentsDashedLine: LayerSpecTemplate<LineLayerSpecification>
  */
 export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification> = {
     type: "line",
-    filter: ["in", "magnitudeOfDelay", "MINOR", "MODERATE", "MAJOR"],
+    filter: ["in", ["get", "magnitudeOfDelay"], ["literal", ["minor", "moderate", "major"]]],
     layout: {
         "line-join": "round"
     },
@@ -79,11 +79,11 @@ export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification
         "line-pattern": [
             "match",
             ["get", "magnitudeOfDelay"],
-            "MINOR",
+            "minor",
             "traffic-incidents-slow",
-            "MODERATE",
+            "moderate",
             "traffic-incidents-queueing",
-            "MAJOR",
+            "major",
             "traffic-incidents-stationary",
             // other
             "traffic-diagonal-unknown"
@@ -115,13 +115,13 @@ export const routeIncidentsSymbol: LayerSpecTemplate<SymbolLayerSpecification> =
         "text-color": [
             "match",
             ["get", "magnitudeOfDelay"],
-            "MINOR",
+            "minor",
             "#f58240",
-            "MODERATE",
+            "moderate",
             "#FB2D09",
-            "MAJOR",
+            "major",
             "#AD0000",
-            "UNDEFINED",
+            "indefinite",
             "#666666",
             //other
             "#000000"

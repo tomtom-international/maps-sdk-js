@@ -1,12 +1,12 @@
 import { Map } from "maplibre-gl";
 import {
-    WAYPOINTS_SOURCE_ID,
-    ROUTES_SOURCE_ID,
-    ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
-    ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_FERRIES_SOURCE_ID,
+    ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
-    ROUTE_TUNNELS_SOURCE_ID
+    ROUTE_TUNNELS_SOURCE_ID,
+    ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
+    ROUTES_SOURCE_ID,
+    WAYPOINTS_SOURCE_ID
 } from "../../core";
 import { GOSDKMap } from "../../GOSDKMap";
 import { RoutingModule } from "../RoutingModule";

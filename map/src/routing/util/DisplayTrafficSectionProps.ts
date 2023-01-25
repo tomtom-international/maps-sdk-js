@@ -1,13 +1,13 @@
-import { TrafficSectionProps } from "@anw/go-sdk-js/core";
+import { DelayMagnitude, TrafficSectionProps } from "@anw/go-sdk-js/core";
 import { DisplayTrafficSectionProps } from "../types/RouteSections";
 import { formatDuration } from "../../core";
 
-const delayMagnitudeToIconPrefix = {
-    MINOR: "traffic_slow",
-    MODERATE: "traffic_queueing",
-    MAJOR: "traffic_stationary",
-    UNKNOWN: "traffic_no_delay",
-    UNDEFINED: "traffic_no_delay"
+const delayMagnitudeToIconPrefix: Record<DelayMagnitude, string> = {
+    unknown: "traffic_no_delay",
+    minor: "traffic_slow",
+    moderate: "traffic_queueing",
+    major: "traffic_stationary",
+    indefinite: "traffic_no_delay"
 };
 
 const tecCauseToIconSuffix: Record<number, string> = {
@@ -35,7 +35,7 @@ export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): strin
         // ("traffic_road_closed" is an exception)
         tecIconSuffix === "road_closed"
             ? "traffic"
-            : delayMagnitudeToIconPrefix[sectionProps.magnitudeOfDelay || "UNKNOWN"];
+            : delayMagnitudeToIconPrefix[sectionProps.magnitudeOfDelay || "unknown"];
     return `${magnitudePrefix}_${tecIconSuffix}`;
 };
 

@@ -23,7 +23,7 @@ export const connectorTypes = [
  * @group Place
  * @category Types
  */
-export type ConnectorType = typeof connectorTypes[number];
+export type ConnectorType = (typeof connectorTypes)[number];
 
 /**
  * @group Place

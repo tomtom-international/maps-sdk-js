@@ -1,7 +1,7 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
 import { deserializeFeatures, waitUntilMapIsReady } from "../mapUtils";
-import { serializedFeatureData, deserializedFeatureData } from "./featureDeserialization.test.data";
+import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
 
 const getGOSDKMapMock = async (flag: boolean) =>
     ({

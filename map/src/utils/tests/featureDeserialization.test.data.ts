@@ -10,9 +10,15 @@ export const serializedFeatureData = [
             score: 2.1455004215,
             info: "search:ta:826009035916969-GB",
             address:
-                '{"streetNumber":"9","streetName":"Broadway","municipalitySubdivision":"Westminster","municipality":"London","countrySecondarySubdivision":"London","countrySubdivision":"ENG","countrySubdivisionName":"England","postalCode":"SW1H","extendedPostalCode":"SW1H 0AZ","countryCode":"GB","country":"United Kingdom","countryCodeISO3":"GBR","freeformAddress":"9 Broadway, Westminster, London, SW1H 0AZ","localName":"London"}',
+                '{"streetNumber":"9","streetName":"Broadway","municipalitySubdivision":"Westminster",' +
+                '"municipality":"London","countrySecondarySubdivision":"London","countrySubdivision":"ENG",' +
+                '"countrySubdivisionName":"England","postalCode":"SW1H","extendedPostalCode":"SW1H 0AZ",' +
+                '"countryCode":"GB","country":"United Kingdom","countryCodeISO3":"GBR",' +
+                '"freeformAddress":"9 Broadway, Westminster, London, SW1H 0AZ","localName":"London"}',
             entryPoints: '[{"type":"main","position":[-0.13356,51.49898]}]',
-            poi: '{"name":"Dolphins Pharmacy","categories":["pharmacy"],"classifications":[{"code":"PHARMACY","names":[{"nameLocale":"en-US","name":"pharmacy"}]}],"brands":[],"categoryIds":[7326]}',
+            poi:
+                '{"name":"Dolphins Pharmacy","categories":["pharmacy"],"classifications":[{"code":"PHARMACY",' +
+                '"names":[{"nameLocale":"en-US","name":"pharmacy"}]}],"brands":[],"categoryIds":[7326]}',
             title: "Dolphins Pharmacy",
             iconID: "254_pin"
         },

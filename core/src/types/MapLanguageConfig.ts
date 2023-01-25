@@ -84,4 +84,4 @@ const Languages = [
     "tr-TR"
 ] as const;
 
-export type Language = typeof Languages[number];
+export type Language = (typeof Languages)[number];

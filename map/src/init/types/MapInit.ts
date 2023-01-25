@@ -14,7 +14,7 @@ export const publishedStyleIDs = [
 /**
  * ID for a published style.
  */
-export type PublishedStyleID = typeof publishedStyleIDs[number];
+export type PublishedStyleID = (typeof publishedStyleIDs)[number];
 
 /**
  * A published style represents a style which is officially hosted by TomTom and easily accessible by its name/ID.
@@ -47,7 +47,7 @@ export type CustomStyle = {
 };
 
 /**
- * Optinal parameter to exclude modules when loading styles.
+ * Optional parameter to exclude modules when loading styles.
  * * trafficIncidents: Exclude traffic incidents
  * * trafficFlow: Exclude traffic flow
  * * pois: Exclude POIs (Points of Interest)

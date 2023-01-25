@@ -12,7 +12,7 @@ const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
  * Geometry data module.
  */
 export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
-    private geometry: GeoJSONSourceWithLayers<GeometryDataResponse>;
+    private readonly geometry: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     private constructor(goSDKMap: GOSDKMap, config?: GeometryModuleConfig) {
         super(goSDKMap, config);

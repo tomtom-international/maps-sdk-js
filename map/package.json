@@ -1,6 +1,5 @@
 {
   "name": "map",
-  "version": "0.1.0",
   "description": "",
   "main": "main.js",
   "module": "./dist/map.es.js",
@@ -41,7 +40,7 @@
     "@types/lodash": "^4.14.191",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
-    "eslint": "^8.30.0",
+    "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.7",
     "eslint-plugin-prettier": "^4.2.1",

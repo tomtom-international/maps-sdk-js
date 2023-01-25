@@ -33,14 +33,14 @@ export type CountrySectionProps = SectionProps & {
  * @group Route
  * @category Types
  */
-export type TrafficCategory = "JAM" | "ROAD_WORK" | "ROAD_CLOSURE" | "OTHER";
+export type TrafficCategory = "jam" | "road_work" | "road_closure" | "other";
 
 /**
  * The magnitude of the delay for the traffic incident.
  * @group Route
  * @category Types
  */
-export type DelayMagnitude = "UNKNOWN" | "MINOR" | "MODERATE" | "MAJOR" | "UNDEFINED";
+export type DelayMagnitude = "unknown" | "minor" | "moderate" | "major" | "indefinite";
 
 /**
  * Describes what caused a traffic incident, based on TPEG2-TEC standard.

@@ -71,14 +71,14 @@ const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
  * @category Functions
  */
 export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
-    private waypoints: GeoJSONSourceWithLayers<Waypoints>;
-    private routeLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
+    private readonly waypoints: GeoJSONSourceWithLayers<Waypoints>;
+    private readonly routeLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
-    private vehicleRestricted: GeoJSONSourceWithLayers<RouteSections>;
-    private incidents: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
-    private ferries: GeoJSONSourceWithLayers<RouteSections>;
-    private tollRoads: GeoJSONSourceWithLayers<RouteSections>;
-    private tunnels: GeoJSONSourceWithLayers<RouteSections>;
+    private readonly vehicleRestricted: GeoJSONSourceWithLayers<RouteSections>;
+    private readonly incidents: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
+    private readonly ferries: GeoJSONSourceWithLayers<RouteSections>;
+    private readonly tollRoads: GeoJSONSourceWithLayers<RouteSections>;
+    private readonly tunnels: GeoJSONSourceWithLayers<RouteSections>;
 
     private constructor(goSDKMap: GOSDKMap, config?: RoutingModuleConfig) {
         super(goSDKMap, config);
@@ -183,7 +183,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     /**
      * Shows the given routes on the map.
      * @param routes The routes to show.
-     * @param options An optional selected index from the array of routes. Will make that route appear seleected.
+     * @param options An optional selected index from the array of routes. Will make that route appear selected.
      * Defaults to 0 (first/recommended route).
      */
     showRoutes(routes: Routes, options?: ShowRoutesOptions) {

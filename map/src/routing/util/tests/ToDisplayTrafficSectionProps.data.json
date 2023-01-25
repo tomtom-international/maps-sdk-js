@@ -2,7 +2,7 @@
   [
     "Moderate jam with some delay",
     {
-      "magnitudeOfDelay": "MODERATE",
+      "magnitudeOfDelay": "moderate",
       "delayInSeconds": 170,
       "tec": {
         "causes": [
@@ -13,7 +13,7 @@
       }
     },
     {
-      "magnitudeOfDelay": "MODERATE",
+      "magnitudeOfDelay": "moderate",
       "delayInSeconds": 170,
       "tec": {
         "causes": [
@@ -51,7 +51,7 @@
   [
     "Major rain with extra jam code with big delay",
     {
-      "magnitudeOfDelay": "MAJOR",
+      "magnitudeOfDelay": "major",
       "delayInSeconds": 580,
       "tec": {
         "causes": [
@@ -65,7 +65,7 @@
       }
     },
     {
-      "magnitudeOfDelay": "MAJOR",
+      "magnitudeOfDelay": "major",
       "delayInSeconds": 580,
       "tec": {
         "causes": [

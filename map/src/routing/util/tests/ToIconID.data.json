@@ -36,7 +36,7 @@
   [
     "Undefined (via code) delay magnitude jam",
     {
-      "magnitudeOfDelay": "UNDEFINED",
+      "magnitudeOfDelay": "indefinite",
       "tec": {
         "causes": [
           {
@@ -50,7 +50,7 @@
   [
     "Unknown delay magnitude jam",
     {
-      "magnitudeOfDelay": "UNKNOWN",
+      "magnitudeOfDelay": "unknown",
       "tec": {
         "causes": [
           {
@@ -64,7 +64,7 @@
   [
     "Minor jam",
     {
-      "magnitudeOfDelay": "MINOR",
+      "magnitudeOfDelay": "minor",
       "tec": {
         "causes": [
           {
@@ -78,7 +78,7 @@
   [
     "Major danger",
     {
-      "magnitudeOfDelay": "MAJOR",
+      "magnitudeOfDelay": "major",
       "tec": {
         "causes": [
           {
@@ -92,7 +92,7 @@
   [
     "Road closed with minor magnitude",
     {
-      "magnitudeOfDelay": "MINOR",
+      "magnitudeOfDelay": "minor",
       "tec": {
         "causes": [
           {
@@ -106,7 +106,7 @@
   [
     "Road closed with major magnitude",
     {
-      "magnitudeOfDelay": "MAJOR",
+      "magnitudeOfDelay": "major",
       "tec": {
         "causes": [
           {

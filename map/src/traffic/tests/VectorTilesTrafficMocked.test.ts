@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { VECTOR_TILES_INCIDENTS_SOURCE_ID, VECTOR_TILES_FLOW_SOURCE_ID } from "../../core";
+import { VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "../../core";
 import { GOSDKMap } from "../../GOSDKMap";
 import { VectorTilesTraffic } from "../VectorTilesTraffic";
 
@@ -24,8 +24,19 @@ describe("Vector tiles traffic module tests", () => {
         } as unknown as GOSDKMap;
 
         const traffic = await VectorTilesTraffic.init(goSDKMapMock, {
-            incidents: { visible: true, icons: { visible: false } },
-            flow: { visible: false }
+            incidents: {
+                visible: true,
+                filters: { any: [{ roadCategories: { show: "only", values: ["motorway", "trunk"] } }] },
+                icons: {
+                    visible: false,
+                    filters: { any: [{ roadCategories: { show: "only", values: ["motorway"] } }] }
+                }
+            },
+
+            flow: {
+                visible: false,
+                filters: { any: [{ roadCategories: { show: "only", values: ["motorway", "trunk"] } }] }
+            }
         });
         expect(traffic).toBeDefined();
         expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();

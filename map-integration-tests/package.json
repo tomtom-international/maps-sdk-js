@@ -1,6 +1,5 @@
 {
   "name": "map-integration-tests",
-  "version": "0.1.0",
   "description": "Runs integration tests by starting a local web server with a page that contains the SDK code.",
   "scripts": {
     "test": "jest",
@@ -35,7 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "dotenv": "^16.0.3",
-    "eslint": "^8.30.0",
+    "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.7",
     "eslint-plugin-prettier": "^4.2.1",

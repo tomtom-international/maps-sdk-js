@@ -1,4 +1,4 @@
-import { Guidance, Instruction, Summary, TrafficCategory, TrafficIncidentTEC, TravelMode } from "@anw/go-sdk-js/core";
+import { Guidance, Instruction, Summary, TrafficIncidentTEC, TravelMode } from "@anw/go-sdk-js/core";
 
 /**
  * @ignore
@@ -28,13 +28,18 @@ export type SectionTypeAPI =
 /**
  * @ignore
  */
+export type TrafficCategoryAPI = "JAM" | "ROAD_WORK" | "ROAD_CLOSURE" | "OTHER";
+
+/**
+ * @ignore
+ */
 export type SectionAPI = {
     sectionType: SectionTypeAPI;
     startPointIndex: number;
     endPointIndex: number;
     travelMode?: TravelMode | "other";
     countryCode?: string;
-    simpleCategory?: TrafficCategory;
+    simpleCategory?: TrafficCategoryAPI;
     magnitudeOfDelay?: number;
     effectiveSpeedInKmh?: number;
     delayInSeconds?: number;

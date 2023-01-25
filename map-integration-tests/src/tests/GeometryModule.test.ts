@@ -38,9 +38,7 @@ const waitUntilRenderedGeometry = async (numFeatures: number, position: Position
 describe("Geometry integration tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
-    beforeAll(async () => {
-        await mapEnv.loadPage();
-    });
+    beforeAll(async () => mapEnv.loadPage());
 
     const geometryData = amsterdamGeometryData as GeometryDataResponse;
 

@@ -1,13 +1,13 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from "../core";
-import { combineWithExistingFilter } from "./filterExpressions";
-import { CategoriesFilter, FilteredPOICategories, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
+import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../core";
+import { FilterablePOICategory, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
 import { POIClassification, poiClassificationToIconID } from "../places";
 import { POIClassificationGroup, poiClassificationGroups } from "./poiClassificationGroups";
+import { buildMappedValuesFilter, getMergedAllFilter } from "../core/MapLibreUtils";
 
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.
@@ -15,7 +15,7 @@ import { POIClassificationGroup, poiClassificationGroups } from "./poiClassifica
  * @group MapPOIs
  * @category Functions
  */
-export const getCategoryIcons = (categories: FilteredPOICategories): number[] => {
+export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] => {
     const categoryIds: number[] = [];
     categories.forEach((category) => {
         if (category in poiClassificationGroups) {
@@ -35,8 +35,8 @@ export const getCategoryIcons = (categories: FilteredPOICategories): number[] =>
  */
 export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     private readonly poi?: StyleSourceWithLayers;
-    private categoriesFilter?: CategoriesFilter;
-    private readonly layerFilter?: FilterSpecification;
+    private categoriesFilter?: ValuesFilter<FilterablePOICategory>;
+    private readonly originalFilter?: FilterSpecification;
 
     private constructor(goSDKMap: GOSDKMap, config?: VectorTilePOIsConfig) {
         super(goSDKMap, config);
@@ -46,7 +46,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
             this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
             const existingFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id);
             if (existingFilter) {
-                this.layerFilter = existingFilter;
+                this.originalFilter = existingFilter;
             }
         }
 
@@ -98,14 +98,18 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
 
     private filterCategories(): void {
         if (this.categoriesFilter) {
-            const { values, show } = this.categoriesFilter;
-            const categoryIcons = getCategoryIcons(values);
-            const filterExpression = combineWithExistingFilter(categoryIcons, show, this.layerFilter);
-            this.mapLibreMap.setFilter("POI", filterExpression);
+            const poiFilter = buildMappedValuesFilter(
+                "icon",
+                this.categoriesFilter.show,
+                getCategoryIcons(this.categoriesFilter.values)
+            );
+
+            const mergedFilter = getMergedAllFilter(poiFilter, this.originalFilter);
+            this.mapLibreMap.setFilter("POI", mergedFilter);
         }
     }
 
-    setCategoriesFilterAndApply(categoriesFilter: CategoriesFilter): void {
+    applyCategoriesFilter(categoriesFilter: ValuesFilter<FilterablePOICategory>): void {
         this.categoriesFilter = categoriesFilter;
         this.filterCategories();
     }

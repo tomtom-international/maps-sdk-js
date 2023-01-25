@@ -18,7 +18,7 @@ export const accessibility = [
  * @group Place
  * @category Types
  */
-export type Accessibility = typeof accessibility[number];
+export type Accessibility = (typeof accessibility)[number];
 
 /**
  * @group Place
@@ -30,7 +30,7 @@ export const chargingPointStatus = ["Available", "Reserved", "Occupied", "OutOfS
  * @group Place
  * @category Types
  */
-export type ChargingPointStatus = typeof chargingPointStatus[number];
+export type ChargingPointStatus = (typeof chargingPointStatus)[number];
 
 /**
  * @group Place

@@ -1,6 +1,5 @@
 {
   "name": "services",
-  "version": "0.1.0",
   "description": "",
   "main": "main.js",
   "module": "./dist/services.es.js",
@@ -46,7 +45,7 @@
     "@typescript-eslint/parser": "^5.47.0",
     "axios-mock-adapter": "^1.21.2",
     "dotenv": "^16.0.3",
-    "eslint": "^8.30.0",
+    "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.7",
     "eslint-plugin-prettier": "^4.2.1",

@@ -80,13 +80,13 @@ export const waitUntilRenderedFeaturesChange = async (
     timeoutMS: number,
     lngLat?: Position
 ): Promise<MapGeoJSONFeature[]> => {
-    let currentFeatures: MapGeoJSONFeature[] = [];
+    let currentFeatures: MapGeoJSONFeature[];
     return tryBeforeTimeout(
         async (): Promise<MapGeoJSONFeature[]> => {
-            while (currentFeatures.length == previousNumFeatures || currentFeatures.length == 0) {
+            do {
                 await waitForTimeout(500);
                 currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
-            }
+            } while (currentFeatures.length == previousNumFeatures);
             return currentFeatures;
         },
         `Features for layers ${layerIDs} didn't change.`,
@@ -122,13 +122,12 @@ export class MapIntegrationTestEnv {
     }
 }
 
-export const getSymbolLayersByID = async (layerID: string): Promise<SymbolLayerSpecification> => {
-    return page.evaluate((symbolLayerID) => {
+export const getSymbolLayersByID = async (layerID: string): Promise<SymbolLayerSpecification> =>
+    page.evaluate((symbolLayerID) => {
         return (globalThis as GOSDKThis).mapLibreMap
             .getStyle()
             .layers.filter((layer) => layer.id === symbolLayerID)[0] as SymbolLayerSpecification;
     }, layerID);
-};
 
 export const isLayerVisible = async (layerID: string): Promise<boolean> =>
     page.evaluate((inputLayerID) => {

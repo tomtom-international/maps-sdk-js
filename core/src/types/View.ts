@@ -7,4 +7,4 @@ export const views = ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"]
  * @group Shared
  * @category Types
  */
-export type View = typeof views[number];
+export type View = (typeof views)[number];

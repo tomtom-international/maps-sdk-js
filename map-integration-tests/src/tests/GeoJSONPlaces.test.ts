@@ -48,9 +48,7 @@ const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisp
 describe("GeoJSON Places tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
-    beforeAll(async () => {
-        await mapEnv.loadPage();
-    });
+    beforeAll(async () => mapEnv.loadPage());
 
     test.each(placesTestData)(
         `'%s`,

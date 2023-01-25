@@ -68,7 +68,7 @@ describe("Tests about building route sections", () => {
                     properties: {
                         startPointIndex: 3,
                         endPointIndex: 5,
-                        magnitudeOfDelay: "MODERATE",
+                        magnitudeOfDelay: "moderate",
                         delayInSeconds: 350,
                         tec: {
                             causes: [
@@ -100,7 +100,7 @@ describe("Tests about building route sections", () => {
                     properties: {
                         startPointIndex: 3,
                         endPointIndex: 5,
-                        magnitudeOfDelay: "MODERATE",
+                        magnitudeOfDelay: "moderate",
                         delayInSeconds: 350,
                         tec: {
                             causes: [

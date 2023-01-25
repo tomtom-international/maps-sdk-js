@@ -45,7 +45,7 @@ const prepareForDisplay = (places: Places): Places<PlaceDisplayProps & CommonPla
  * @category Functions
  */
 export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
-    private places: GeoJSONSourceWithLayers<Places>;
+    private readonly places: GeoJSONSourceWithLayers<Places>;
 
     private constructor(goSDKMap: GOSDKMap, config?: PlaceModuleConfig) {
         super(goSDKMap, config);

@@ -58,14 +58,14 @@ describe("Vector tiles POI module tests", () => {
             }
         });
 
-        jest.spyOn(pois, "setCategoriesFilterAndApply");
+        jest.spyOn(pois, "applyCategoriesFilter");
         expect(pois).toBeDefined();
-        pois.setCategoriesFilterAndApply({
+        pois.applyCategoriesFilter({
             show: "all_except",
             values: ["ACCOMMODATION_GROUP"]
         });
-        expect(pois.setCategoriesFilterAndApply).toHaveBeenCalledTimes(1);
-        expect(pois.setCategoriesFilterAndApply).toHaveBeenCalledWith({
+        expect(pois.applyCategoriesFilter).toHaveBeenCalledTimes(1);
+        expect(pois.applyCategoriesFilter).toHaveBeenCalledWith({
             show: "all_except",
             values: ["ACCOMMODATION_GROUP"]
         });

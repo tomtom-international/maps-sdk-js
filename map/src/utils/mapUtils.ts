@@ -39,7 +39,6 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
                     feature.properties[key] = JSON.parse(feature.properties[key] as string);
                 } catch (e) {
                     // We ignore the error if the object can't be parsed and continue.
-                    continue;
                 }
             }
         }

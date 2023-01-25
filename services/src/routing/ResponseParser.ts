@@ -1,8 +1,8 @@
 import {
     bboxFromGeoJSON,
     CountrySectionProps,
-    DelayMagnitude,
     Guidance,
+    indexedMagnitudes,
     LegSectionProps,
     Route,
     Routes,
@@ -17,7 +17,15 @@ import {
 import isNil from "lodash/isNil";
 import { LineString } from "geojson";
 
-import { CalculateRouteResponseAPI, GuidanceAPI, LegAPI, RouteAPI, SectionAPI, SummaryAPI } from "./types/APITypes";
+import {
+    CalculateRouteResponseAPI,
+    GuidanceAPI,
+    LegAPI,
+    RouteAPI,
+    SectionAPI,
+    SummaryAPI,
+    TrafficCategoryAPI
+} from "./types/APITypes";
 
 const parseSummary = (apiSummary: SummaryAPI): Summary => ({
     ...apiSummary,
@@ -66,27 +74,12 @@ const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => (
 const toVehicleRestrictedSectionProps = (apiSection: SectionAPI): SectionProps | null =>
     apiSection.travelMode === "other" ? toSectionProps(apiSection) : null;
 
-const parseMagnitudeOfDelay = (apiDelayMagnitude?: number): DelayMagnitude => {
-    switch (apiDelayMagnitude) {
-        case 0:
-            return "UNKNOWN";
-        case 1:
-            return "MINOR";
-        case 2:
-            return "MODERATE";
-        case 3:
-            return "MAJOR";
-        default:
-            return "UNDEFINED";
-    }
-};
-
 const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => ({
     ...toSectionProps(apiSection),
     delayInSeconds: apiSection.delayInSeconds,
     effectiveSpeedInKmh: apiSection.effectiveSpeedInKmh,
-    simpleCategory: apiSection.simpleCategory as TrafficCategory,
-    magnitudeOfDelay: parseMagnitudeOfDelay(apiSection.magnitudeOfDelay),
+    simpleCategory: (apiSection.simpleCategory as TrafficCategoryAPI).toLowerCase() as TrafficCategory,
+    magnitudeOfDelay: indexedMagnitudes[apiSection.magnitudeOfDelay as number],
     tec: apiSection.tec as TrafficIncidentTEC
 });
 

@@ -5,12 +5,11 @@ const calculateLocalizedTextFieldExpression = (lang: string) => ["coalesce", ["g
 
 describe("Map localization tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
+
+    beforeAll(async () => mapEnv.loadPage());
+
     const countryLayerID = "Places - Country name";
     const largeCityLayerID = "Places - Large city";
-
-    beforeEach(async () => {
-        await mapEnv.loadPage();
-    });
 
     test("default map localization with language value in sdk config", async () => {
         await mapEnv.loadMap(

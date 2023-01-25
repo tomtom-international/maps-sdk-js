@@ -86,9 +86,7 @@ const setupGeoJSONModuleAndPlacesEvents = async () => {
 describe("EventProxy integration tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
-    beforeAll(async () => {
-        await mapEnv.loadPage();
-    });
+    beforeAll(async () => mapEnv.loadPage());
 
     // Reset test variables for each test
     beforeEach(async () => {

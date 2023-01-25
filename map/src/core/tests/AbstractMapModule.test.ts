@@ -1,9 +1,9 @@
 import { Map } from "maplibre-gl";
 import { AbstractMapModule } from "../AbstractMapModule";
-import { VectorTileMapModuleConfig } from "../types/VectorTileMapModuleConfig";
+import { VectorTileMapModuleConfig } from "../types";
 import { GOSDKMap } from "../../GOSDKMap";
-import Mock = jest.Mock;
 import { waitUntilMapIsReady } from "../../utils/mapUtils";
+import Mock = jest.Mock;
 
 describe("AbstractMapModule tests", () => {
     class TestModule extends AbstractMapModule<VectorTileMapModuleConfig> {

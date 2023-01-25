@@ -87,7 +87,7 @@ export const loadTypes = [
  * @group Calculate Route
  * @category Types
  */
-export type LoadType = typeof loadTypes[number];
+export type LoadType = (typeof loadTypes)[number];
 
 /**
  * Specifies the speed-dependent component of consumption.

@@ -1,6 +1,6 @@
 import remove from "lodash/remove";
 import { StyleSourceWithLayers } from "./SourceWithLayers";
-import { EventHandlers, EventType, HoverClickHandler } from "./types/EventsProxy";
+import { EventHandlers, EventType, HoverClickHandler } from "./types";
 
 interface SourceWithLayersMap {
     [sourceID: string]: StyleSourceWithLayers;
@@ -17,8 +17,7 @@ export abstract class AbstractEventProxy {
      * @param sourcesWithLayers The sources and layers to listen to.
      */
     public add = (sourcesWithLayers: StyleSourceWithLayers) => {
-        const sourceID = sourcesWithLayers.source.id;
-        this.interactiveSourcesAndLayers[sourceID] = sourcesWithLayers;
+        this.interactiveSourcesAndLayers[sourcesWithLayers.source.id] = sourcesWithLayers;
         sourcesWithLayers.layerSpecs.forEach((layerSpec) => {
             if (!this.interactiveLayerIDs.includes(layerSpec.id)) {
                 this.interactiveLayerIDs.push(layerSpec.id);
@@ -28,7 +27,7 @@ export abstract class AbstractEventProxy {
 
     /**
      * Register an event listener to the list.
-     * @param sourcesWithLayers The sources and layers to added.
+     * @param sourceWithLayers The sources and layers to added.
      * @param handler Function that will handle the event.
      * @param type Type of event to listen to.
      */
@@ -49,7 +48,7 @@ export abstract class AbstractEventProxy {
     /**
      * Removes the given sources and layers from the interactive list. When not present, nothing happens.
      * @param type The event type to be removed.
-     * @param sourcesWithLayers The sources and layers to remove, matched by source and layer IDs.
+     * @param sourceWithLayers The sources and layers to remove, matched by source and layer IDs.
      */
     public remove = (type: EventType, sourceWithLayers: StyleSourceWithLayers) => {
         delete this.handlers[`${sourceWithLayers.source.id}_${type}`];

@@ -1,8 +1,7 @@
-import { Map, Point2D, MapGeoJSONFeature, LngLat, MapMouseEvent } from "maplibre-gl";
+import { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D } from "maplibre-gl";
 import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { AbstractEventProxy } from "./AbstractEventProxy";
-import { ClickEvent, HoverClickHandler } from "./types/EventsProxy";
-import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
+import { ClickEvent, HoverClickHandler, SourceWithLayers } from "./types";
 import { MapEventsConfig } from "../init/types/MapEventsConfig";
 import { deserializeFeatures } from "../utils/mapUtils";
 
@@ -92,8 +91,8 @@ export class EventsProxy extends AbstractEventProxy {
         ];
     }
 
-    private isEventsProxyEnabled = () => {
-        return !this.enabled || this.map.isMoving();
+    private isEnabled = () => {
+        return this.enabled && !this.map.isMoving();
     };
 
     private getRenderedFeatures = (point: Point2D) => {
@@ -176,8 +175,8 @@ export class EventsProxy extends AbstractEventProxy {
     };
 
     private onMouseMove = (ev: MapMouseEvent) => {
-        if (this.isEventsProxyEnabled()) {
-            // We ensure no unwanted hover handling while the map moves
+        if (!this.isEnabled()) {
+            // We ensure no unwanted hover handling while disabled or the map moves
             return;
         }
 
@@ -245,8 +244,8 @@ export class EventsProxy extends AbstractEventProxy {
     };
 
     private onMapClick = (clickType: ClickEvent) => (ev: MapMouseEvent) => {
-        if (this.isEventsProxyEnabled()) {
-            // We avoid any accidental click handling while the map moves
+        if (!this.isEnabled()) {
+            // We avoid any accidental click handling while disabled or the map moves
             return;
         }
 

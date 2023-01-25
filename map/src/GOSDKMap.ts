@@ -29,9 +29,7 @@ export class GOSDKMap {
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
-                (error) => {
-                    console.error("Something went wrong when setting RTL plugin", error);
-                },
+                (error) => console.error("Something went wrong when setting RTL plugin", error),
                 true
             );
         }

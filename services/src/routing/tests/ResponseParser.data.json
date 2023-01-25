@@ -4556,8 +4556,8 @@
                   "endPointIndex": 69,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 29,
-                  "simpleCategory": "ROAD_WORK",
-                  "magnitudeOfDelay": "UNDEFINED",
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
                   "tec": {
                     "causes": [
                       {
@@ -4572,8 +4572,8 @@
                   "endPointIndex": 213,
                   "delayInSeconds": 139,
                   "effectiveSpeedInKmh": 8,
-                  "simpleCategory": "JAM",
-                  "magnitudeOfDelay": "MODERATE",
+                  "simpleCategory": "jam",
+                  "magnitudeOfDelay": "moderate",
                   "tec": {
                     "causes": [
                       {
@@ -4588,8 +4588,8 @@
                   "endPointIndex": 256,
                   "delayInSeconds": 57,
                   "effectiveSpeedInKmh": 3,
-                  "simpleCategory": "JAM",
-                  "magnitudeOfDelay": "MODERATE",
+                  "simpleCategory": "jam",
+                  "magnitudeOfDelay": "moderate",
                   "tec": {
                     "causes": [
                       {
@@ -4604,8 +4604,8 @@
                   "endPointIndex": 388,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 44,
-                  "simpleCategory": "OTHER",
-                  "magnitudeOfDelay": "UNDEFINED",
+                  "simpleCategory": "other",
+                  "magnitudeOfDelay": "indefinite",
                   "tec": {
                     "causes": [
                       {
@@ -4620,8 +4620,8 @@
                   "endPointIndex": 464,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 25,
-                  "simpleCategory": "ROAD_WORK",
-                  "magnitudeOfDelay": "UNDEFINED",
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
                   "tec": {
                     "causes": [
                       {
@@ -4636,8 +4636,8 @@
                   "endPointIndex": 685,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 53,
-                  "simpleCategory": "ROAD_WORK",
-                  "magnitudeOfDelay": "UNDEFINED",
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
                   "tec": {
                     "causes": [
                       {
@@ -4652,8 +4652,8 @@
                   "endPointIndex": 707,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 62,
-                  "simpleCategory": "ROAD_WORK",
-                  "magnitudeOfDelay": "UNDEFINED",
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
                   "tec": {
                     "causes": [
                       {

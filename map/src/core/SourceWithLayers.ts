@@ -7,12 +7,7 @@ import {
     SourceSpecification
 } from "maplibre-gl";
 import { GOSDKSource } from "./GOSDKSource";
-import {
-    LayerSpecFilter,
-    LayerSpecWithSource,
-    ToBeAddedLayerSpec,
-    ToBeAddedLayerSpecWithoutSource
-} from "./types/GOSDKLayerSpecs";
+import { LayerSpecFilter, LayerSpecWithSource, ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
 import { FeatureCollection } from "geojson";
 import { asDefined } from "./AssertionUtils";
 

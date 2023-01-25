@@ -1,4 +1,11 @@
-import { GOSDKMapParams, MapLibreOptions } from "map";
+import {
+    GOSDKMapParams,
+    HILLSHADE_SOURCE_ID,
+    MapLibreOptions,
+    POI_SOURCE_ID,
+    VECTOR_TILES_FLOW_SOURCE_ID,
+    VECTOR_TILES_INCIDENTS_SOURCE_ID
+} from "map";
 import {
     isLayerVisible,
     getNumVisibleLayersBySource,
@@ -12,9 +19,7 @@ import { GOSDKThis } from "./types/GOSDKThis";
 describe("Map Init tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
-    beforeAll(async () => {
-        await mapEnv.loadPage();
-    });
+    beforeAll(async () => mapEnv.loadPage());
 
     test.each(mapInitTestData)(
         `'%s`,
@@ -22,10 +27,10 @@ describe("Map Init tests", () => {
         async (_name: string, mapLibreOptions: MapLibreOptions, goSDKParams: GOSDKMapParams) => {
             await mapEnv.loadMap(mapLibreOptions, goSDKParams);
             await waitForMapReady();
-            expect(await getNumVisibleLayersBySource("vectorTilesIncidents")).toBeGreaterThan(0);
-            expect(await getNumVisibleLayersBySource("vectorTilesFlow")).toBeGreaterThan(0);
-            expect(await getNumVisibleLayersBySource("poiTiles")).toBeGreaterThan(0);
-            expect(await getNumVisibleLayersBySource("hillshade")).toBeGreaterThan(0);
+            expect(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
+            expect(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toBeGreaterThan(0);
+            expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+            expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
@@ -48,8 +53,8 @@ describe("Map Init tests", () => {
 
         await waitForMapReady();
 
-        expect(await getVisibleLayersBySource("vectorTilesIncidents")).toHaveLength(0);
-        expect(await getVisibleLayersBySource("vectorTilesFlow")).toHaveLength(0);
+        expect(await getVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).toHaveLength(0);
+        expect(await getVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toHaveLength(0);
         /* The two errors are due to the two modules excluded: traffic_flow and traffic_incidents */
         expect(mapEnv.consoleErrors).toHaveLength(2);
     });
@@ -75,8 +80,8 @@ describe("Map Init tests", () => {
         });
 
         await waitForMapReady();
-        expect(await getVisibleLayersBySource("poiTiles")).toHaveLength(0);
-        expect(await getVisibleLayersBySource("hillshade")).toHaveLength(0);
+        expect(await getVisibleLayersBySource(POI_SOURCE_ID)).toHaveLength(0);
+        expect(await getVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toHaveLength(0);
         expect(await isLayerVisible("POI")).toStrictEqual(false);
         expect(mapEnv.consoleErrors).toHaveLength(2);
     });

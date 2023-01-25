@@ -10,7 +10,7 @@ import { waitUntilMapIsReady } from "../utils/mapUtils";
  * * Hillshade refers to the semi-transparent terrain layer.
  */
 export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshadeConfig> {
-    private hillshade?: StyleSourceWithLayers;
+    private readonly hillshade?: StyleSourceWithLayers;
 
     private constructor(goSDKMap: GOSDKMap, config?: VectorTilesHillshadeConfig) {
         super(goSDKMap, config);

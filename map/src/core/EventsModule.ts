@@ -1,6 +1,5 @@
 import { EventsProxy } from "./EventsProxy";
-import { EventType, HoverClickHandler } from "./types/EventsProxy";
-import { SourceWithLayers } from "./types/GOSDKLayerSpecs";
+import { EventType, HoverClickHandler, SourceWithLayers } from "./types";
 
 export class EventsModule {
     constructor(private eventProxy: EventsProxy, private mapModule?: SourceWithLayers) {}
@@ -34,7 +33,7 @@ export class EventsModule {
     /**
      * Add event handler of an event type
      * @param type
-     * @param callback
+     * @param handler
      */
     on(type: EventType, handler: HoverClickHandler) {
         this.addToEventProxy(type, handler);

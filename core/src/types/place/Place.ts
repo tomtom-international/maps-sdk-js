@@ -27,7 +27,7 @@ export type GeographyType =
  * (for example, when an application is designed to be used inside just one European country or US state).
  * Note that the code element of a Local mapcode is ambiguous when used without the territory element
  * e.g.,: the "4J.P2" mapcode can mean the Eiffel Tower location (48.858380, 2.294440)
- * (with the territory set to FRA), but also some place in Amsterdam-Noord, Netherlands (52.382184, 4.911021)
+ * (with the territory set to FRA), but also some place in Amsterdam, Netherlands (52.382184, 4.911021)
  * (with the territory set to NLD).
  * * International:
  * This mapcode is unambiguous. It is also the longest.
@@ -125,7 +125,7 @@ export const placeTypes = ["POI", "Street", "Geography", "Point Address", "Addre
  * @group Place
  * @category Types
  */
-export type PlaceType = typeof placeTypes[number];
+export type PlaceType = (typeof placeTypes)[number];
 
 /**
  * @group Place
@@ -280,7 +280,7 @@ export type RevGeoAddressProps = CommonPlaceProps & {
     originalPosition: Position;
     /**
      * The offset position coordinates of the location. Might only be returned if number parameter was defined.
-     * TODO: clarify behaviour and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
+     * TODO: clarify behavior and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
      */
     offsetPosition?: Position;
     /**
@@ -304,7 +304,7 @@ export type SearchPlaceProps = CommonPlaceProps & {
      */
     score?: number;
     /**
-     * Unit: meters. This is the distance to an object if geobias was provided.
+     * Unit: meters. This is the distance to an object if geoBias was provided.
      */
     distance?: number;
 };

@@ -68,9 +68,7 @@ const NUM_TOLL_ROAD_LAYERS = 2;
 describe("Routing tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
-    beforeAll(async () => {
-        await mapEnv.loadPage();
-    });
+    beforeAll(async () => mapEnv.loadPage());
 
     test("Show and clear flows", async () => {
         await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox });
