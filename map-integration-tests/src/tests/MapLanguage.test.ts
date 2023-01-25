@@ -1,4 +1,4 @@
-import { getSymbolLayersByID, MapIntegrationTestEnv, waitForMapStyleToLoad } from "./util/MapIntegrationTestEnv";
+import { getSymbolLayersByID, MapIntegrationTestEnv, waitForMapReady } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 
 const calculateLocalizedTextFieldExpression = (lang: string) => ["coalesce", ["get", `name_${lang}`], ["get", "name"]];
@@ -23,7 +23,7 @@ describe("Map localization tests", () => {
                 language: "ar"
             }
         );
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
 
         const countryLayerWithARText = await getSymbolLayersByID(countryLayerID);
         const largeCityLayerWithARText = await getSymbolLayersByID(largeCityLayerID);
@@ -44,7 +44,7 @@ describe("Map localization tests", () => {
             zoom: 14,
             center: [-0.12621, 51.50394]
         });
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
 
         await page.evaluate(() => (globalThis as GOSDKThis).goSDKMap.setLanguage("en-GB"));
         const countryLayerWithENText = await getSymbolLayersByID(countryLayerID);

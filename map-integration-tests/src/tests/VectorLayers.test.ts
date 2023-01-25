@@ -2,8 +2,9 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad,
-    waitForAnyRenderedFeatures
+    waitForMapReady,
+    waitUntilRenderedFeaturesChange,
+    waitForTimeout
 } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 import { getCategoryIcons, FilteredPOICategories } from "map";
@@ -40,7 +41,8 @@ describe("Map vector layer tests", () => {
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.toggleVisibility());
     };
 
-    const waitForRenderedPOIs = async () => await waitForAnyRenderedFeatures(["POI"], 20000);
+    const waitForRenderedPOIs = async (previousFeaturesCount: number) =>
+        waitUntilRenderedFeaturesChange(["POI"], previousFeaturesCount, 20000);
     const areSomeIconsIncluded = (renderedPOIs: MapGeoJSONFeature[], filteredCategories: FilteredPOICategories) => {
         return renderedPOIs
             .map((poi) => poi.properties.icon)
@@ -66,7 +68,7 @@ describe("Map vector layer tests", () => {
                 visible: false
             });
         });
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
@@ -119,7 +121,7 @@ describe("Map vector layer tests", () => {
                 false
             );
         });
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
         await assertTrafficVisibility(false, false);
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
@@ -136,7 +138,7 @@ describe("Map vector layer tests", () => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
         });
-        let renderedPOIs = await waitForRenderedPOIs();
+        let renderedPOIs = await waitForRenderedPOIs(0);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.removeCategoriesFilter(["RESTAURANT"]));
@@ -149,7 +151,8 @@ describe("Map vector layer tests", () => {
                 "IMPORTANT_TOURIST_ATTRACTION"
             ])
         );
-        renderedPOIs = await waitForRenderedPOIs();
+        await waitForTimeout(3000);
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(
             false
         );
@@ -158,17 +161,17 @@ describe("Map vector layer tests", () => {
         await page.evaluate(() =>
             (globalThis as GOSDKThis).pois?.removeCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
         );
-        renderedPOIs = await waitForRenderedPOIs();
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
         // change filter mode to "include" and expect all features to be from TRANSPORTATION_GROUP
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("include"));
-        renderedPOIs = await waitForRenderedPOIs();
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
         // add GOVERNMENT_OFFICE filter and expect all features to be from TRANSPORTATION_GROUP or GOVERNMENT_OFFICE
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.addCategoriesFilter(["GOVERNMENT_OFFICE"]));
-        renderedPOIs = await waitForRenderedPOIs();
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "GOVERNMENT_OFFICE"])).toBe(true);
     });
 
@@ -177,6 +180,7 @@ describe("Map vector layer tests", () => {
             zoom: 14,
             center: [-0.12621, 51.50394]
         });
+        // config poi layer to only include TRANSPORTATION_GROUP categories and expect all features to be from TRANSPORTATION_GROUP
         await page.evaluate(async () => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, {
@@ -186,28 +190,27 @@ describe("Map vector layer tests", () => {
                 }
             });
         });
-        await waitForMapStyleToLoad();
-        let renderedPOIs = await waitForRenderedPOIs();
-        console.log(
-            "renderedPOIs",
-            renderedPOIs.map((poi) => poi.properties.icon)
-        );
+        let renderedPOIs = await waitForRenderedPOIs(0);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
+        // add IMPORTANT_TOURIST_ATTRACTION filter and expect all features to be from TRANSPORTATION_GROUP or IMPORTANT_TOURIST_ATTRACTION
         await page.evaluate(() =>
             (globalThis as GOSDKThis).pois?.addCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
         );
-        renderedPOIs = await waitForRenderedPOIs();
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
+        // remove IMPORTANT_TOURIST_ATTRACTION filter and expect all features to be from TRANSPORTATION_GROUP again
         await page.evaluate(() =>
             (globalThis as GOSDKThis).pois?.removeCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
         );
-        renderedPOIs = await waitForRenderedPOIs();
-        expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
+        await waitForTimeout(3000);
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
+        expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
+        // change filter mode and  expect to not find any features from TRANSPORTATION_GROUP
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("exclude"));
-        renderedPOIs = await waitForRenderedPOIs();
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
     });
 
@@ -220,7 +223,6 @@ describe("Map vector layer tests", () => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
         });
-        await waitForMapStyleToLoad();
         // manually override existing POI layer filter to be able to verify it's combined with categories filter
         await page.evaluate(() =>
             (globalThis as GOSDKThis).mapLibreMap.setFilter("POI", [
@@ -243,13 +245,14 @@ describe("Map vector layer tests", () => {
                     ["==", ["get", "icon"], 147]
                 ])
         );
-        let renderedPOIs = await waitForRenderedPOIs();
+        await waitForTimeout(3000);
+        let renderedPOIs = await waitForRenderedPOIs(0);
         expect(areAllIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION", "RAILROAD_STATION"])).toBe(true);
 
         await page.evaluate(() =>
             (globalThis as GOSDKThis).pois?.addCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
         );
-        renderedPOIs = await waitForRenderedPOIs();
+        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["RAILROAD_STATION"])).toBe(true);
     });
 });

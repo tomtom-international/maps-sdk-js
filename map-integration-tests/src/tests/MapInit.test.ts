@@ -4,7 +4,7 @@ import {
     getNumVisibleLayersBySource,
     getVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad
+    waitForMapReady
 } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
@@ -21,7 +21,7 @@ describe("Map Init tests", () => {
         // @ts-ignore
         async (_name: string, mapLibreOptions: MapLibreOptions, goSDKParams: GOSDKMapParams) => {
             await mapEnv.loadMap(mapLibreOptions, goSDKParams);
-            await waitForMapStyleToLoad();
+            await waitForMapReady();
             expect(await getNumVisibleLayersBySource("vectorTilesIncidents")).toBeGreaterThan(0);
             expect(await getNumVisibleLayersBySource("vectorTilesFlow")).toBeGreaterThan(0);
             expect(await getNumVisibleLayersBySource("poiTiles")).toBeGreaterThan(0);
@@ -46,7 +46,7 @@ describe("Map Init tests", () => {
             goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, { visible: true });
         });
 
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
 
         expect(await getVisibleLayersBySource("vectorTilesIncidents")).toHaveLength(0);
         expect(await getVisibleLayersBySource("vectorTilesFlow")).toHaveLength(0);
@@ -74,7 +74,7 @@ describe("Map Init tests", () => {
             goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, { visible: false });
         });
 
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
         expect(await getVisibleLayersBySource("poiTiles")).toHaveLength(0);
         expect(await getVisibleLayersBySource("hillshade")).toHaveLength(0);
         expect(await isLayerVisible("POI")).toStrictEqual(false);

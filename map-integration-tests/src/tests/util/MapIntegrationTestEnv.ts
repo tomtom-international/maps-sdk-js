@@ -8,7 +8,7 @@ const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, tim
 
 export const waitForTimeout = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const waitForMapStyleToLoad = async () =>
+export const waitForMapReady = async () =>
     tryBeforeTimeout(
         () =>
             page.evaluate((): Promise<boolean> => {
@@ -74,21 +74,22 @@ export const waitUntilRenderedFeatures = async (
     );
 };
 
-export const waitForAnyRenderedFeatures = async (
+export const waitUntilRenderedFeaturesChange = async (
     layerIDs: string[],
+    previousNumFeatures: number,
     timeoutMS: number,
     lngLat?: Position
 ): Promise<MapGeoJSONFeature[]> => {
     let currentFeatures: MapGeoJSONFeature[] = [];
     return tryBeforeTimeout(
         async (): Promise<MapGeoJSONFeature[]> => {
-            while (currentFeatures.length == 0) {
+            while (currentFeatures.length == previousNumFeatures || currentFeatures.length == 0) {
                 await waitForTimeout(500);
                 currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
             }
             return currentFeatures;
         },
-        `Did not get any features for layers ${layerIDs}.`,
+        `Features for layers ${layerIDs} didn't change.`,
         timeoutMS
     );
 };

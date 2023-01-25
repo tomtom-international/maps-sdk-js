@@ -4,7 +4,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad,
+    waitForMapReady,
     waitUntilRenderedFeatures
 } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
@@ -59,7 +59,7 @@ describe("GeoJSON Places tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlaces();
-            await waitForMapStyleToLoad();
+            await waitForMapReady();
             expect(await getNumVisibleLayers()).toStrictEqual(0);
 
             await showPlaces(testPlaces);

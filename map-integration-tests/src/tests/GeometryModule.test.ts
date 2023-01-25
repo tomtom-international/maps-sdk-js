@@ -4,7 +4,7 @@ import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad,
+    waitForMapReady,
     waitUntilRenderedFeatures
 } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
@@ -53,7 +53,7 @@ describe("Geometry integration tests", () => {
     test("Show geometry in the map, default module config", async () => {
         await mapEnv.loadMap({ bounds: geometryData.bbox as LngLatBoundsLike });
         await initGeometry();
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
         expect(await getNumVisibleLayers()).toStrictEqual(0);
 
         await showGeometry(geometryData);

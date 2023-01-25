@@ -18,7 +18,7 @@ import { GOSDKThis } from "./types/GOSDKThis";
 import {
     getNumVisibleLayersBySource,
     MapIntegrationTestEnv,
-    waitForMapStyleToLoad,
+    waitForMapReady,
     waitUntilRenderedFeatures
 } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
@@ -81,7 +81,7 @@ describe("Routing tests", () => {
             [4.88951, 52.37229]
         ]);
         await showRoutes(parsedTestRoutes);
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
 
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toStrictEqual(NUM_ROUTE_LAYERS);
@@ -163,7 +163,7 @@ describe("Routing tests", () => {
         await initRouting();
 
         await showWaypoints(waypoints);
-        await waitForMapStyleToLoad();
+        await waitForMapReady();
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toStrictEqual(NUM_WAYPOINT_LAYERS);
         const renderedWaypoints = await waitForRenderedWaypoints(4);
 
