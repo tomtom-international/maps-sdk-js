@@ -140,7 +140,7 @@ Read more about NVM here: [https://github.com/nvm-sh/nvm](https://github.com/nvm
     npm i
     npm ci
   ```
-  This is necessary for documentation generation and git hooks work properly.
+  This is necessary for documentation generation and git hooks to work properly.
 
   After install the required packages from the root folder, install packages for all workspaces:
 
