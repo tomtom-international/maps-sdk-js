@@ -143,15 +143,12 @@ describe("Map vector layer tests", () => {
         let renderedPOIs = await waitForRenderedPOIs(0);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.removeCategoriesFilter(["RESTAURANT"]));
-        expect(mapEnv.consoleErrors).toHaveLength(1);
-
         // exclude TRANSPORTATION_GROUP, IMPORTANT_TOURIST_ATTRACTION expect to not find them in rendered features
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.addCategoriesFilter([
-                "TRANSPORTATION_GROUP",
-                "IMPORTANT_TOURIST_ATTRACTION"
-            ])
+            (globalThis as GOSDKThis).pois?.setCategoriesFilter({
+                show: "all_except",
+                categories: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
+            })
         );
         await waitForTimeout(3000);
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
@@ -159,22 +156,25 @@ describe("Map vector layer tests", () => {
             false
         );
 
-        // remove IMPORTANT_TOURIST_ATTRACTION filter and expect to find it in rendered features
+        // change the filter to include IMPORTANT_TOURIST_ATTRACTION again and expect to find it in rendered features
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.removeCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
+            (globalThis as GOSDKThis).pois?.setCategoriesFilter({
+                show: "all_except",
+                categories: ["TRANSPORTATION_GROUP"]
+            })
         );
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
         // change filter show mode to "only" and expect all features to be from TRANSPORTATION_GROUP
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("only"));
+        await page.evaluate(() =>
+            (globalThis as GOSDKThis).pois?.setCategoriesFilter({
+                show: "only",
+                categories: ["TRANSPORTATION_GROUP"]
+            })
+        );
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
-
-        // add GOVERNMENT_OFFICE filter and expect all features to be from TRANSPORTATION_GROUP or GOVERNMENT_OFFICE
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.addCategoriesFilter(["GOVERNMENT_OFFICE"]));
-        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
-        expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "GOVERNMENT_OFFICE"])).toBe(true);
     });
 
     test("Vector tiles pois filter while initializing with config", async () => {
@@ -197,21 +197,21 @@ describe("Map vector layer tests", () => {
 
         // add IMPORTANT_TOURIST_ATTRACTION filter and expect all features to be from TRANSPORTATION_GROUP or IMPORTANT_TOURIST_ATTRACTION
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.addCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
+            (globalThis as GOSDKThis).pois?.setCategoriesFilter({
+                show: "only",
+                categories: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
+            })
         );
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
-        // remove IMPORTANT_TOURIST_ATTRACTION filter and expect all features to be from TRANSPORTATION_GROUP again
-        await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.removeCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
-        );
-        await waitForTimeout(3000);
-        renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
-        expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
-
         // change filter show mode and  expect to not find any features from TRANSPORTATION_GROUP
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("all_except"));
+        await page.evaluate(() =>
+            (globalThis as GOSDKThis).pois?.setCategoriesFilter({
+                show: "all_except",
+                categories: ["TRANSPORTATION_GROUP"]
+            })
+        );
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
     });
@@ -249,7 +249,10 @@ describe("Map vector layer tests", () => {
         expect(areAllIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION", "RAILROAD_STATION"])).toBe(true);
 
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.addCategoriesFilter(["IMPORTANT_TOURIST_ATTRACTION"])
+            (globalThis as GOSDKThis).pois?.setCategoriesFilter({
+                show: "all_except",
+                categories: ["IMPORTANT_TOURIST_ATTRACTION"]
+            })
         );
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["RAILROAD_STATION"])).toBe(true);

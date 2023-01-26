@@ -2,12 +2,7 @@ import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
 import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from "../core";
 import { combineWithExistingFilter } from "./filterExpressions";
-import {
-    CategoriesFilter,
-    FilteredPOICategories,
-    POICategoriesFilterMode,
-    VectorTilePOIsConfig
-} from "./types/VectorTilePOIsConfig";
+import { CategoriesFilter, FilteredPOICategories, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
 import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
@@ -110,43 +105,9 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         }
     }
 
-    setCategoriesFilterMode(showMode: POICategoriesFilterMode): void {
-        if (!isNil(this.categoriesFilter)) {
-            this.categoriesFilter.show = showMode;
-        } else {
-            this.categoriesFilter = {
-                show: showMode,
-                categories: []
-            };
-        }
+    setCategoriesFilterAndApply(categoriesFilter: CategoriesFilter): void {
+        this.categoriesFilter = categoriesFilter;
         this.filterCategories();
-    }
-
-    addCategoriesFilter(categories: FilteredPOICategories): void {
-        if (!isNil(this.categoriesFilter)) {
-            categories.forEach(
-                (category) =>
-                    !this.categoriesFilter?.categories.includes(category) &&
-                    this.categoriesFilter?.categories.push(category)
-            );
-        } else {
-            this.categoriesFilter = {
-                show: "all_except",
-                categories
-            };
-        }
-        this.filterCategories();
-    }
-
-    removeCategoriesFilter(categories: FilteredPOICategories): void {
-        if (!isNil(this.categoriesFilter)) {
-            this.categoriesFilter.categories = this.categoriesFilter?.categories.filter(
-                (category) => !categories.includes(category)
-            );
-            this.filterCategories();
-        } else {
-            console.error("There are no filters applied");
-        }
     }
 
     /**
