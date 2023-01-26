@@ -1,6 +1,6 @@
 {
     "version": "0.2",
     "language": "en",
-    "words": ["GOSDK", "hillshade", "maplibre", "bbox", "lnglat", "reparse", "pois", "styledata"],
+    "words": ["GOSDK", "hillshade", "maplibre", "bbox", "lnglat", "reparse", "pois", "styledata", "evse", "Chademo"],
     "ignorePaths": ["**/dist/**", "package.json", "package-lock.json", "**/coverage/**"]
 }

@@ -13,7 +13,7 @@ export type CategoriesFilter = {
      * use only mode to only show some categories/groups and hide everything else
      */
     show: POICategoriesFilterMode;
-    categories: FilteredPOICategories;
+    values: FilteredPOICategories;
 };
 
 export type VectorTilePOIsConfig = VectorTileMapModuleConfig & {
@@ -23,5 +23,7 @@ export type VectorTilePOIsConfig = VectorTileMapModuleConfig & {
      * @default false
      */
     interactive?: boolean;
-    categoriesFilter?: CategoriesFilter;
+    filters?: {
+        categories: CategoriesFilter;
+    };
 };

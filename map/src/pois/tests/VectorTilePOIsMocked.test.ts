@@ -50,9 +50,11 @@ describe("Vector tiles POI module tests", () => {
 
     test("filter methods while initializing module with filter config", async () => {
         const pois = await VectorTilePOIs.init(goSDKMapMock, {
-            categoriesFilter: {
-                show: "all_except",
-                categories: ["FOOD_DRINKS_GROUP", "ENTERTAINMENT"]
+            filters: {
+                categories: {
+                    show: "all_except",
+                    values: ["FOOD_DRINKS_GROUP", "ENTERTAINMENT"]
+                }
             }
         });
 
@@ -60,12 +62,12 @@ describe("Vector tiles POI module tests", () => {
         expect(pois).toBeDefined();
         pois.setCategoriesFilterAndApply({
             show: "all_except",
-            categories: ["ACCOMMODATION_GROUP"]
+            values: ["ACCOMMODATION_GROUP"]
         });
         expect(pois.setCategoriesFilterAndApply).toHaveBeenCalledTimes(1);
         expect(pois.setCategoriesFilterAndApply).toHaveBeenCalledWith({
             show: "all_except",
-            categories: ["ACCOMMODATION_GROUP"]
+            values: ["ACCOMMODATION_GROUP"]
         });
     });
 });

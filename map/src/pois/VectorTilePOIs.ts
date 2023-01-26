@@ -74,8 +74,8 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         if (!isNil(config.visible)) {
             this.setVisible(config.visible);
         }
-        if (!isNil(config.categoriesFilter)) {
-            this.categoriesFilter = config.categoriesFilter;
+        if (!isNil(config.filters?.categories)) {
+            this.categoriesFilter = config.filters?.categories;
             this.filterCategories();
         }
     }
@@ -98,8 +98,8 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
 
     private filterCategories(): void {
         if (this.categoriesFilter) {
-            const { categories, show } = this.categoriesFilter;
-            const categoryIcons = getCategoryIcons(categories);
+            const { values, show } = this.categoriesFilter;
+            const categoryIcons = getCategoryIcons(values);
             const filterExpression = combineWithExistingFilter(categoryIcons, show, this.layerFilter);
             this.mapLibreMap.setFilter("POI", filterExpression);
         }
