@@ -43,15 +43,17 @@ describe("Map vector layer tests", () => {
 
     const waitForRenderedPOIs = async (previousFeaturesCount: number) =>
         waitUntilRenderedFeaturesChange(["POI"], previousFeaturesCount, 20000);
+
     const areSomeIconsIncluded = (renderedPOIs: MapGeoJSONFeature[], filteredCategories: FilteredPOICategories) => {
         return renderedPOIs
             .map((poi) => poi.properties.icon)
-            .some((POIIcon) => getCategoryIcons(filteredCategories).includes(POIIcon));
+            .some((poiIcon) => getCategoryIcons(filteredCategories).includes(poiIcon));
     };
+
     const areAllIconsIncluded = (renderedPOIs: MapGeoJSONFeature[], filteredCategories: FilteredPOICategories) => {
         return renderedPOIs
             .map((poi) => poi.properties.icon)
-            .every((POIIcon) => getCategoryIcons(filteredCategories).includes(POIIcon));
+            .every((poiIcon) => getCategoryIcons(filteredCategories).includes(poiIcon));
     };
 
     // eslint-disable-next-line jest/expect-expect
@@ -164,8 +166,8 @@ describe("Map vector layer tests", () => {
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
-        // change filter mode to "include" and expect all features to be from TRANSPORTATION_GROUP
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("include"));
+        // change filter show mode to "only" and expect all features to be from TRANSPORTATION_GROUP
+        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("only"));
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
@@ -185,7 +187,7 @@ describe("Map vector layer tests", () => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, {
                 categoriesFilter: {
-                    mode: "include",
+                    show: "only",
                     categories: ["TRANSPORTATION_GROUP"]
                 }
             });
@@ -208,13 +210,20 @@ describe("Map vector layer tests", () => {
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
-        // change filter mode and  expect to not find any features from TRANSPORTATION_GROUP
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("exclude"));
+        // change filter show mode and  expect to not find any features from TRANSPORTATION_GROUP
+        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setCategoriesFilterMode("all_except"));
         renderedPOIs = await waitForRenderedPOIs(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
     });
 
     test("Vector tiles pois filter with manual set filter before category filter", async () => {
+        const existingFilter = [
+            "any",
+            //IMPORTANT_TOURIST_ATTRACTION
+            ["==", ["get", "icon"], 154],
+            //RAILROAD_STATION
+            ["==", ["get", "icon"], 147]
+        ];
         await mapEnv.loadMap({
             zoom: 14,
             center: [-0.12621, 51.50394]
@@ -224,26 +233,16 @@ describe("Map vector layer tests", () => {
             goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
         });
         // manually override existing POI layer filter to be able to verify it's combined with categories filter
-        await page.evaluate(() =>
-            (globalThis as GOSDKThis).mapLibreMap.setFilter("POI", [
-                "any",
-                //IMPORTANT_TOURIST_ATTRACTION
-                ["==", ["get", "icon"], 154],
-                //RAILROAD_STATION
-                ["==", ["get", "icon"], 147]
-            ])
+        await page.evaluate(
+            (inputExistingFilter) => (globalThis as GOSDKThis).mapLibreMap.setFilter("POI", inputExistingFilter),
+            existingFilter
         );
         await page.evaluate(
-            () =>
+            (inputExistingFilter) =>
                 // overriding existing layerFilter with the applied filters only for test purposes
                 //@ts-ignore
-                ((globalThis as GOSDKThis).pois.layerFilter = [
-                    "any",
-                    //IMPORTANT_TOURIST_ATTRACTION
-                    ["==", ["get", "icon"], 154],
-                    //RAILROAD_STATION
-                    ["==", ["get", "icon"], 147]
-                ])
+                ((globalThis as GOSDKThis).pois.layerFilter = inputExistingFilter),
+            existingFilter
         );
         await waitForTimeout(3000);
         let renderedPOIs = await waitForRenderedPOIs(0);

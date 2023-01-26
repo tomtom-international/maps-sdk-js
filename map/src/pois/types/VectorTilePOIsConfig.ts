@@ -4,15 +4,15 @@ import { POIClassificationGroup } from "../poiClassificationGroups";
 
 export type FilteredPOICategories = (POIClassification | POIClassificationGroup)[];
 
-export type POICategoriesFilterMode = "include" | "exclude";
+export type POICategoriesFilterMode = "only" | "all_except";
 
 export type CategoriesFilter = {
     /**
      * by default all categories are included in the map,
-     * use exclude mode to hide some categories/groups,
-     * use include mode to only include some categories/groups and hide everything else
+     * use all_except show mode to hide some categories/groups,
+     * use only mode to only show some categories/groups and hide everything else
      */
-    mode: POICategoriesFilterMode;
+    show: POICategoriesFilterMode;
     categories: FilteredPOICategories;
 };
 

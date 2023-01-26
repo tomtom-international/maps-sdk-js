@@ -51,7 +51,7 @@ describe("Vector tiles POI module tests", () => {
     test("filter methods while initializing module with filter config", async () => {
         const pois = await VectorTilePOIs.init(goSDKMapMock, {
             categoriesFilter: {
-                mode: "exclude",
+                show: "all_except",
                 categories: ["FOOD_DRINKS_GROUP", "ENTERTAINMENT"]
             }
         });
@@ -61,13 +61,13 @@ describe("Vector tiles POI module tests", () => {
         expect(pois).toBeDefined();
         pois.addCategoriesFilter(["ACCOMMODATION_GROUP"]);
         pois.removeCategoriesFilter(["ACCOMMODATION_GROUP"]);
-        pois.setCategoriesFilterMode("include");
+        pois.setCategoriesFilterMode("only");
         expect(pois.addCategoriesFilter).toHaveBeenCalledTimes(1);
         expect(pois.addCategoriesFilter).toHaveBeenCalledWith(["ACCOMMODATION_GROUP"]);
         expect(pois.removeCategoriesFilter).toHaveBeenCalledTimes(1);
         expect(pois.removeCategoriesFilter).toHaveBeenCalledWith(["ACCOMMODATION_GROUP"]);
         expect(pois.setCategoriesFilterMode).toHaveBeenCalledTimes(1);
-        expect(pois.setCategoriesFilterMode).toHaveBeenCalledWith("include");
+        expect(pois.setCategoriesFilterMode).toHaveBeenCalledWith("only");
     });
 
     test("calling removeCategoriesFilter while initializing module without filter config should log an error", async () => {

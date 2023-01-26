@@ -14,6 +14,12 @@ import { GOSDKMap } from "../GOSDKMap";
 import { POIClassification, poiClassificationToIconID } from "../places";
 import { POIClassificationGroup, poiClassificationGroups } from "./poiClassificationGroups";
 
+/**
+ * Gets the specified filtered categories icon IDs to be used in map filtering.
+ * @param categories list of filtered categories.
+ * @group MapPOIs
+ * @category Functions
+ */
 export const getCategoryIcons = (categories: FilteredPOICategories): number[] => {
     const categoryIds: number[] = [];
     categories.forEach((category) => {
@@ -29,6 +35,8 @@ export const getCategoryIcons = (categories: FilteredPOICategories): number[] =>
 /**
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
+ * @group MapPOIs
+ * @category Functions
  */
 export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     private readonly poi?: StyleSourceWithLayers;
@@ -95,19 +103,19 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
 
     private filterCategories(): void {
         if (this.categoriesFilter) {
-            const { categories, mode } = this.categoriesFilter;
+            const { categories, show } = this.categoriesFilter;
             const categoryIcons = getCategoryIcons(categories);
-            const filterExpression = combineWithExistingFilter(categoryIcons, mode, this.layerFilter);
+            const filterExpression = combineWithExistingFilter(categoryIcons, show, this.layerFilter);
             this.mapLibreMap.setFilter("POI", filterExpression);
         }
     }
 
-    setCategoriesFilterMode(mode: POICategoriesFilterMode): void {
+    setCategoriesFilterMode(showMode: POICategoriesFilterMode): void {
         if (!isNil(this.categoriesFilter)) {
-            this.categoriesFilter.mode = mode;
+            this.categoriesFilter.show = showMode;
         } else {
             this.categoriesFilter = {
-                mode,
+                show: showMode,
                 categories: []
             };
         }
@@ -123,7 +131,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
             );
         } else {
             this.categoriesFilter = {
-                mode: "exclude",
+                show: "all_except",
                 categories
             };
         }
