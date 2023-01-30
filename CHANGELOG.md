@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.77](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.76...v0.1.77) (2023-01-30)
+
+
+### Features
+
+* allow filtering pois to include or exclude categories ([22adc8a](https://github.com/tomtom-international/go-sdk-js/commit/22adc8abde6ecf99689aa43b9bb7a31744e4ff34))
+* consider existing poi layer filters ([6b7e8d0](https://github.com/tomtom-international/go-sdk-js/commit/6b7e8d08ba69371daea5c36d24bfc1012ab975c9))
+
+
+### Bug Fixes
+
+* use proper expression type ([6ecb984](https://github.com/tomtom-international/go-sdk-js/commit/6ecb984cf759bb0379b1fb609caab47b85e4ceb2))
+* wait until previous features count change ([2a87bf6](https://github.com/tomtom-international/go-sdk-js/commit/2a87bf62165258056458f1571580708b4083255c))
+
 ### [0.1.76](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.75...v0.1.76) (2023-01-24)
 
 ### [0.1.75](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.74...v0.1.75) (2023-01-23)
