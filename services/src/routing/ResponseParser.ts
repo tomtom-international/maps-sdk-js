@@ -35,7 +35,16 @@ const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
 const parseLegSectionProps = (apiLegs: LegAPI[]): LegSectionProps[] =>
     apiLegs.reduce<LegSectionProps[]>((accumulatedParsedLegs, nextApiLeg, currentIndex) => {
         const lastLegEndPointIndex = currentIndex === 0 ? 0 : accumulatedParsedLegs[currentIndex - 1]?.endPointIndex;
-        const endPointIndex = !isNil(lastLegEndPointIndex) && lastLegEndPointIndex + nextApiLeg.points?.length;
+        let endPointIndex;
+        if (!isNil(lastLegEndPointIndex)) {
+            if (lastLegEndPointIndex === 0) {
+                // in case of first or only leg, we reduce the length by one to be consistent with other sections
+                // endPointIndex is inclusive
+                endPointIndex = nextApiLeg.points ? nextApiLeg.points.length - 1 : 0;
+            } else {
+                endPointIndex = lastLegEndPointIndex + nextApiLeg.points?.length;
+            }
+        }
         accumulatedParsedLegs.push({
             ...(!isNil(lastLegEndPointIndex) && { startPointIndex: lastLegEndPointIndex }),
             ...(endPointIndex && { endPointIndex }),
@@ -166,7 +175,7 @@ const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[]): R
 };
 
 /**
- * Default method for parsing calculate route request from {@link CalculateRouteResponse}
+ * Default method for parsing calculate route request from {@link CalculateRouteResponseAPI}
  * @group Calculate Route
  * @category Functions
  * @param apiResponse
