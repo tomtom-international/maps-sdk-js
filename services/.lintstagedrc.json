@@ -1,4 +1,8 @@
 {
-  "*.{ts,js}": ["prettier --check", "eslint --cache", "cspell"],
-  "*.{json,md}": ["prettier --check", "cspell"]
+  "*.{ts,js}": [
+    "prettier --check",
+    "eslint --cache",
+    "cspell --no-must-find-files"
+  ],
+  "*.{json,md}": ["prettier --check", "cspell --no-must-find-files"]
 }
