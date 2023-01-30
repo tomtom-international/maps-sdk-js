@@ -40,7 +40,7 @@ const parseLegSectionProps = (apiLegs: LegAPI[]): LegSectionProps[] =>
             if (lastLegEndPointIndex === 0) {
                 // in case of first or only leg, we reduce the length by one to be consistent with other sections
                 // endPointIndex is inclusive
-                endPointIndex = nextApiLeg.points ? nextApiLeg.points.length - 1 : 0;
+                endPointIndex = nextApiLeg.points?.length > 0 ? nextApiLeg.points.length - 1 : 0;
             } else {
                 endPointIndex = lastLegEndPointIndex + nextApiLeg.points?.length;
             }
@@ -175,7 +175,7 @@ const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[]): R
 };
 
 /**
- * Default method for parsing calculate route request from {@link CalculateRouteResponseAPI}
+ * Default method for parsing calculate route response from {@link CalculateRouteResponseAPI}
  * @group Calculate Route
  * @category Functions
  * @param apiResponse
