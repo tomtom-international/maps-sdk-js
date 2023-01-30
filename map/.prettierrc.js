@@ -5,7 +5,7 @@ module.exports = {
     arrowParens: "always",
     overrides: [
         {
-            files: "*.scss",
+            files: "*.json",
             options: {
                 tabWidth: 2,
                 printWidth: 80

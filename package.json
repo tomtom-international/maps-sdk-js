@@ -11,6 +11,7 @@
     "build": "npm run build -ws",
     "type-check": "npm run type-check -ws",
     "lint": "npm run lint -ws",
+    "format": "npm run format -ws",
     "test": "npm run test -ws",
     "build-theme": "rimraf ./documentation/go-sdk-theme/dist && tsc -p ./documentation/go-sdk-theme && cp -R ./documentation/go-sdk-theme/src/resources ./documentation/go-sdk-theme/dist",
     "prepare": "node scripts/prepare.js",

@@ -12,6 +12,8 @@
     "build:full": "npm run type-check && npm run build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "format": "prettier --check \"src/**/*\"",
+    "format:fix": "prettier --write \"src/**/*\"",
     "type-check": "tsc --noEmit",
     "update-dependencies": "npx npm-check-updates -u --packageFile package.json",
     "clean:dist": "rimraf ./dist",
