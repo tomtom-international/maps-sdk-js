@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-dotenv.config({ path: "../test-env-config/.env" });
+dotenv.config({ path: "../test-config/.env" });
 
 module.exports = {
     testTimeout: 30000,

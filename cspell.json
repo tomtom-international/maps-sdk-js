@@ -28,7 +28,9 @@
     "maxzoom",
     "windingness",
     "movestart",
-    "Noto"
+    "Noto",
+    "uuidv", 
+    "tomtom"
   ],
   "ignorePaths": [
     "**/dist/**",

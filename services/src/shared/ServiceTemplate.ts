@@ -3,6 +3,7 @@ import { buildResponseError, buildValidationError } from "./Errors";
 import { ServiceName } from "./types/ServicesTypes";
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
 import { validateRequestSchema, ValidationError } from "./Validation";
+import { injectCustomHeaders } from "./CustomHeaders";
 
 /**
  * @ignore
@@ -29,6 +30,8 @@ export const callService = async <PARAMS extends CommonServiceParams, REQUEST, A
         }
     }
     const request = template.buildRequest(mergedParams);
+
+    injectCustomHeaders(mergedParams);
 
     let apiResponse;
     try {

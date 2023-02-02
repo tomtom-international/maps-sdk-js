@@ -34,7 +34,8 @@ describe("Map initialization mocked tests", () => {
                 "https://api.tomtom.com/style/1/style/24.0.*/?key=TEST_KEY&map=2/basic_street-light" +
                 "&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light" +
                 "&hillshade=2-test/hillshade_rgb-light",
-            attributionControl: false
+            attributionControl: false,
+            transformRequest: expect.any(Function)
         });
     });
 
@@ -58,7 +59,8 @@ describe("Map initialization mocked tests", () => {
             style: "https://custom-style.test.tomtom.com/foo/bar?key=TEST_KEY_2",
             zoom: 3,
             center: [10, 20],
-            attributionControl: false
+            attributionControl: false,
+            transformRequest: expect.any(Function)
         });
     });
 });

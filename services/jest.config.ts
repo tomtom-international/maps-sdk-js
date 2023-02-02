@@ -1,10 +1,12 @@
 import path from "path";
 import dotenv from "dotenv";
+import jestBaseConfig from "../test-config/jest.config.base";
 
-dotenv.config({ path: path.resolve("../test-env-config/.env") });
+dotenv.config({ path: path.resolve("../test-config/.env") });
 
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
+    ...jestBaseConfig,
     testTimeout: 10000,
     preset: "ts-jest",
     testEnvironment: "node",

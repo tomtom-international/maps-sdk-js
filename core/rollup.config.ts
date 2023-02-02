@@ -1,8 +1,20 @@
+import fs from "fs";
+import path from "path";
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import analyze from "rollup-plugin-analyzer";
+import replace from "@rollup/plugin-replace";
+
+const getSDKVersion = () => {
+    const fileContent = fs.readFileSync(path.resolve("..", "./package.json"), { encoding: "utf-8", flag: "r" });
+    const fileContentSerialized = JSON.parse(fileContent);
+
+    return (fileContentSerialized as any).version as string;
+};
+
+const SDK_VERSION = getSDKVersion();
 
 const typescriptOptions = {
     tsconfig: "./tsconfig.json",
@@ -22,6 +34,10 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
+                replace({
+                    preventAssignment: true,
+                    __SDK_VERSION__: SDK_VERSION
+                }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 terser()
@@ -41,6 +57,10 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
+                replace({
+                    preventAssignment: true,
+                    __SDK_VERSION__: SDK_VERSION
+                }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs()
             ]
@@ -59,6 +79,10 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
+                replace({
+                    preventAssignment: true,
+                    __SDK_VERSION__: SDK_VERSION
+                }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 analyze({ summaryOnly: true, limit: 10 })

@@ -8,7 +8,10 @@ describe("Renderer init params tests", () => {
         `'%s`,
         // @ts-ignore
         (_name: string, mapLibreOptions: MapLibreOptions, goSDKParams: GOSDKMapParams, rendererOptions: MapOptions) => {
-            expect(buildMapOptions(mapLibreOptions, goSDKParams)).toStrictEqual(rendererOptions);
+            expect(buildMapOptions(mapLibreOptions, goSDKParams)).toStrictEqual({
+                ...rendererOptions,
+                transformRequest: expect.any(Function)
+            });
         }
     );
 });

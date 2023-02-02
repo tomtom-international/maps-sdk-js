@@ -30,11 +30,13 @@
   },
   "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
   "dependencies": {
-    "geojson": "^0.5.0"
+    "geojson": "^0.5.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^11.0.0",
     "@types/geojson": "^7946.0.10",
@@ -44,6 +46,7 @@
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-jest": "^27.2.1",
+    "@types/uuid": "^9.0.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^29.4.1",
     "prettier": "^2.8.3",

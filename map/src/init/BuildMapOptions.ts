@@ -1,6 +1,7 @@
 import { MapOptions } from "maplibre-gl";
 import { GOSDKMapParams, MapLibreOptions } from "./types/MapInit";
 import { buildMapStyleInput } from "./MapStyleInputBuilder";
+import { injectCustomHeaders } from "../utils/mapUtils";
 
 /**
  * @ignore
@@ -11,6 +12,7 @@ export const buildMapOptions = (mapLibreOptions: MapLibreOptions, goSDKParams: G
     return {
         ...mapLibreOptions,
         style: buildMapStyleInput(goSDKParams),
-        attributionControl: false
+        attributionControl: false,
+        transformRequest: injectCustomHeaders(goSDKParams)
     };
 };

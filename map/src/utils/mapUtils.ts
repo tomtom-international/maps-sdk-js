@@ -1,5 +1,7 @@
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { MapGeoJSONFeature, RequestParameters, ResourceTypeEnum } from "maplibre-gl";
+import { generateTomTomCustomHeaders } from "core";
 import { GOSDKMap } from "../GOSDKMap";
+import { GOSDKMapParams } from "../init/types/MapInit";
 
 /**
  * Wait until the map is ready
@@ -45,3 +47,20 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
     }
     return;
 };
+
+export const injectCustomHeaders =
+    (goSDKParams: GOSDKMapParams) =>
+    (url: string, resourceType?: ResourceTypeEnum): RequestParameters => {
+        const tomtomHeaders = generateTomTomCustomHeaders(goSDKParams);
+
+        if (resourceType === "Image") {
+            return { url };
+        }
+
+        return {
+            url,
+            headers: {
+                ...tomtomHeaders
+            }
+        };
+    };
