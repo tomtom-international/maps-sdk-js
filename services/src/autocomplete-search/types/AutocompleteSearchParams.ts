@@ -1,4 +1,4 @@
-import { HasLngLat, Language } from "@anw/go-sdk-js/core";
+import { HasLngLat } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 /**
  * @group Autocomplete
@@ -10,18 +10,11 @@ export type AutocompleteSearchSegmentType = "brand" | "category" | "plaintext";
  * @group Autocomplete
  * @category Types
  */
-export type AutocompleteSearchParams = Omit<CommonServiceParams, "language"> & {
+export type AutocompleteSearchParams = CommonServiceParams & {
     /**
      * Query string. Must be properly URL encoded (Mandatory).
      */
     query: string;
-
-    /**
-     * Language in which autocomplete results should be returned (Mandatory).
-     * Value: One of the TomTom IETF Supported Language Tags.
-     * @see Supported Language https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
-     */
-    language: Language;
 
     /**
      * Position where results should be biased.

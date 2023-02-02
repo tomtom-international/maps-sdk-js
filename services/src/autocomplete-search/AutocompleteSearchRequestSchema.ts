@@ -2,8 +2,7 @@ import { z } from "zod";
 import { hasLngLatSchema } from "../shared/GeometriesSchema";
 
 const autocompleteSearchRequestMandatory = z.object({
-    query: z.string(),
-    language: z.string()
+    query: z.string()
 });
 
 const autocompleteSearchRequestOptional = z

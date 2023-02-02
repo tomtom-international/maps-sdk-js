@@ -4,16 +4,22 @@ import { AutocompleteSearchParams } from "../types";
 import autocompleteSearchReqObjects from "./RequestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/Validation";
 import { MAX_EXEC_TIMES_MS } from "../../../perfConfig";
+import { GOSDKConfig, Language } from "core";
 
 describe("Autocomplete Schema Validation", () => {
+    beforeAll(() => {
+        GOSDKConfig.instance.put({
+            language: process.env.LANGUAGE as Language
+        });
+    });
+
     const commonBaseURL = "https://tomtom.com";
     const apiKey = "API_KEY";
     const query = "cafe";
-    const language = "en-GB";
 
     test("it should fail when query is missing", () => {
         expect(() =>
-            validateRequestSchema({ commonBaseURL, apiKey, language }, { schema: autocompleteSearchRequestSchema })
+            validateRequestSchema({ commonBaseURL, apiKey }, { schema: autocompleteSearchRequestSchema })
         ).toThrow(
             expect.objectContaining({
                 errors: [
@@ -29,29 +35,11 @@ describe("Autocomplete Schema Validation", () => {
         );
     });
 
-    test("it should fail when language is missing", () => {
-        expect(() =>
-            validateRequestSchema({ commonBaseURL, apiKey, query }, { schema: autocompleteSearchRequestSchema })
-        ).toThrow(
-            expect.objectContaining({
-                errors: [
-                    {
-                        code: "invalid_type",
-                        expected: "string",
-                        received: "undefined",
-                        path: ["language"],
-                        message: "Required"
-                    }
-                ]
-            })
-        );
-    });
-
     test("it should fail when query is a number", () => {
         const queryNum = 5;
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query: queryNum, language },
+                { commonBaseURL, apiKey, query: queryNum },
                 { schema: autocompleteSearchRequestSchema }
             )
         ).toThrow(
@@ -73,7 +61,7 @@ describe("Autocomplete Schema Validation", () => {
         const countries = "NL";
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query, language, countries },
+                { commonBaseURL, apiKey, query, countries },
                 { schema: autocompleteSearchRequestSchema }
             )
         ).toThrow(
@@ -95,7 +83,7 @@ describe("Autocomplete Schema Validation", () => {
         const resultType = 5;
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query, language, resultType },
+                { commonBaseURL, apiKey, query, resultType },
                 { schema: autocompleteSearchRequestSchema }
             )
         ).toThrow(
@@ -116,7 +104,7 @@ describe("Autocomplete Schema Validation", () => {
     test("it should fail when radiusMeters is of type string", () => {
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query, language, radiusMeters: "600" },
+                { commonBaseURL, apiKey, query, radiusMeters: "600" },
                 { schema: autocompleteSearchRequestSchema }
             )
         ).toThrow(

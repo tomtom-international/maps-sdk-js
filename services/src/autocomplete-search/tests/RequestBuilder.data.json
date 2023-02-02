@@ -4,8 +4,7 @@
     {
       "apiKey": "GLOBAL_API_KEY",
       "commonBaseURL": "https://api.tomtom.com",
-      "query": "gas",
-      "language": "en-GB"
+      "query": "gas"
     },
     "https://api.tomtom.com/search/2/autocomplete/gas.json?key=GLOBAL_API_KEY&language=en-GB"
   ],
@@ -27,10 +26,8 @@
       "commonBaseURL": "https://api.tomtom.com",
       "query": "Starbucks",
       "resultType": ["brand"],
-      "countries": [
-        "NL","BE"
-      ]
+      "countries": ["NL", "BE"]
     },
-     "https://api.tomtom.com/search/2/autocomplete/Starbucks.json?key=GLOBAL_API_KEY&countrySet=NL%2CBE&resultSet=brand"
+    "https://api.tomtom.com/search/2/autocomplete/Starbucks.json?key=GLOBAL_API_KEY&language=en-GB&countrySet=NL%2CBE&resultSet=brand"
   ]
 ]

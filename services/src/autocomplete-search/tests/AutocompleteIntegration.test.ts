@@ -1,6 +1,7 @@
 import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { AutocompleteSearchResponse, AutocompleteSearchSegmentType } from "../types";
 import autocompleteSearch from "../AutocompleteSearch";
+import { Language } from "core";
 
 const expectedResults = expect.arrayContaining([
     expect.objectContaining({
@@ -48,7 +49,10 @@ const responseWithStrictBrandType = {
 
 describe("Autocomplete service", () => {
     beforeAll(() => {
-        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
+        GOSDKConfig.instance.put({
+            apiKey: process.env.API_KEY,
+            language: process.env.LANGUAGE as Language
+        });
     });
 
     test("autocomplete call with required parameters", async () => {
@@ -59,14 +63,12 @@ describe("Autocomplete service", () => {
     });
 
     test("autocomplete with option parameters", async () => {
-        const query = "cafe";
-        const language = "en-GB";
+        const query = "Indiaas restaurant";
         const position = [4.81875, 51.85335];
         const limit = 5;
         const countries = ["NL", "FR"];
         const response = await autocompleteSearch({
             query,
-            language,
             position,
             limit,
             countries
