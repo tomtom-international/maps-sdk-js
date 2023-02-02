@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.78](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.77...v0.1.78) (2023-02-02)
+
+
+### Features
+
+* **traffic:** filtering options for vector tiles traffic ([a6867e7](https://github.com/tomtom-international/go-sdk-js/commit/a6867e7fc4954e201213b8bcb230a561811336e2))
+
+
+### Bug Fixes
+
+* **520:** making sure all sections use endIndex inclusively ([bc654cf](https://github.com/tomtom-international/go-sdk-js/commit/bc654cf25b91f91ce55f195606829163386636eb))
+* **520:** making sure all sections use endIndex inclusively ([aad40ca](https://github.com/tomtom-international/go-sdk-js/commit/aad40caf4a6f6e5d01998dde06aec9fbff2e9333))
+* veracode sandboxname parameter to add release scans out of sandbox ([1deecc8](https://github.com/tomtom-international/go-sdk-js/commit/1deecc81b19ebd072fb693dd50ca00202fb89f35))
+
 ### [0.1.77](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.76...v0.1.77) (2023-01-30)
 
 
