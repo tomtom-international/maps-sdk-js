@@ -3,20 +3,14 @@
     "Reverse geocoding with mandatory Params",
     {
       "commonBaseURL": "https://api.tomtom.com",
-      "position": [
-        1.12345,
-        23.45678
-      ]
+      "position": [1.12345, 23.45678]
     },
     "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=undefined"
   ],
   [
     "Reverse geocoding using custom URL",
     {
-      "position": [
-        -100.12345,
-        -23.45678
-      ],
+      "position": [-100.12345, -23.45678],
       "apiKey": "ANOTHER_API_KEY",
       "commonBaseURL": "https://api.tomtom.com",
       "customServiceBaseURL": "https://api.tomtom.com/search/10/reverseGeocodeTest",
@@ -25,10 +19,7 @@
       "number": "10A",
       "radiusMeters": 30,
       "returnRoadUse": true,
-      "roadUses": [
-        "LimitedAccess",
-        "Arterial"
-      ],
+      "roadUses": ["LimitedAccess", "Arterial"],
       "view": "AR"
     },
     "https://api.tomtom.com/search/10/reverseGeocodeTest/-23.45678,-100.12345.json?key=ANOTHER_API_KEY&language=en-US&heading=30&number=10A&radius=30&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"
@@ -36,10 +27,7 @@
   [
     "Reverse geocoding with mandatory Params and an optional param - example 1",
     {
-      "position": [
-        1.12345,
-        23.45678
-      ],
+      "position": [1.12345, 23.45678],
       "apiKey": "GIVEN_API_KEY",
       "commonBaseURL": "https://api.tomtom.com",
       "language": "en-GB"
@@ -52,41 +40,26 @@
       "apiKey": "GLOBAL_API_KEY",
       "commonBaseURL": "https://api-test.tomtom.com",
       "language": "es-ES",
-      "position": [
-        1.12345,
-        23.45678
-      ]
+      "position": [1.12345, 23.45678]
     },
     "https://api-test.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GLOBAL_API_KEY&language=es-ES"
   ],
   [
     "Reverse geocoding with a combination of mandatory & optional params",
     {
-      "position": [
-        1.12345,
-        23.45678
-      ],
+      "position": [1.12345, 23.45678],
       "apiKey": "GIVEN_API_KEY",
       "commonBaseURL": "https://api.tomtom.com",
       "language": "es-ES",
       "allowFreeformNewline": true,
-      "geographyType": [
-        "Country",
-        "Municipality"
-      ],
-      "mapcodes": [
-        "Local",
-        "International"
-      ],
+      "geographyType": ["Country", "Municipality"],
+      "mapcodes": ["Local", "International"],
       "heading": 30,
       "number": "10A",
       "radiusMeters": 30,
       "returnRoadUse": true,
       "returnSpeedLimit": true,
-      "roadUses": [
-        "LimitedAccess",
-        "Arterial"
-      ],
+      "roadUses": ["LimitedAccess", "Arterial"],
       "view": "AR"
     },
     "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=es-ES&allowFreeformNewline=true&entityType=Country%2CMunicipality&heading=30&mapcodes=Local%2CInternational&number=10A&radius=30&returnSpeedLimit=true&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"

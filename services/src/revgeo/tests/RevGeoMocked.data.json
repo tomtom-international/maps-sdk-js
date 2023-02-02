@@ -2,10 +2,7 @@
   [
     "Default reverse geocoding",
     {
-      "position": [
-        5.72884,
-        52.33499
-      ]
+      "position": [5.72884, 52.33499]
     },
     {
       "summary": {
@@ -41,17 +38,9 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          5.72884,
-          52.33499
-        ]
+        "coordinates": [5.72884, 52.33499]
       },
-      "bbox": [
-        5.722876,
-        52.334605,
-        5.73938,
-        52.336436
-      ],
+      "bbox": [5.722876, 52.334605, 5.73938, 52.336436],
       "properties": {
         "type": "Street",
         "address": {
@@ -68,20 +57,14 @@
           "freeformAddress": "Hierderweg, 8077 Hulshorst",
           "localName": "Hulshorst"
         },
-        "originalPosition": [
-          5.728785,
-          52.335152
-        ]
+        "originalPosition": [5.728785, 52.335152]
       }
     }
   ],
   [
     "Default reverse geocoding - Korea",
     {
-      "position": [
-        126.97367,
-        37.57435
-      ],
+      "position": [126.97367, 37.57435],
       "customServiceBaseURL": "https://kr-api.tomtom.com/search/2/reverseGeocode/"
     },
     {
@@ -142,17 +125,9 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          126.97367,
-          37.57435
-        ]
+        "coordinates": [126.97367, 37.57435]
       },
-      "bbox": [
-        126.973232,
-        37.57406,
-        126.973443,
-        37.574619
-      ],
+      "bbox": [126.973232, 37.57406, 126.973443, 37.574619],
       "properties": {
         "type": "Point Address",
         "address": {
@@ -172,20 +147,14 @@
           "freeformAddress": "03170 서울특별시 서울특별시 새문안로5가길 28 종로구",
           "localName": "종로구"
         },
-        "originalPosition": [
-          126.97332,
-          37.574394
-        ]
+        "originalPosition": [126.97332, 37.574394]
       }
     }
   ],
   [
     "Reverse geocoding for coordinates in middle of an ocean with a radius of 80Kms",
     {
-      "position": [
-        -36.491432,
-        -54.283085
-      ],
+      "position": [-36.491432, -54.283085],
       "radius": 80000
     },
     {
@@ -217,17 +186,9 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -36.491432,
-          -54.283085
-        ]
+        "coordinates": [-36.491432, -54.283085]
       },
-      "bbox": [
-        -36.492804,
-        -54.283191,
-        -36.491432,
-        -54.283083
-      ],
+      "bbox": [-36.492804, -54.283191, -36.491432, -54.283083],
       "properties": {
         "type": "Street",
         "address": {
@@ -239,20 +200,14 @@
           "freeformAddress": "Islas Georgias Del Sur",
           "localName": "Islas Georgias Del Sur"
         },
-        "originalPosition": [
-          -36.491432,
-          -54.283085
-        ]
+        "originalPosition": [-36.491432, -54.283085]
       }
     }
   ],
   [
     "Reverse geocoding with house number, return road-use & return speed limit input",
     {
-      "position": [
-        5.149537,
-        52.352848
-      ],
+      "position": [5.149537, 52.352848],
       "number": "22",
       "returnRoadUse": true,
       "returnSpeedLimit": true
@@ -290,9 +245,7 @@
             "localName": "Almere"
           },
           "position": "52.352848,5.149537",
-          "roadUse": [
-            "LocalStreet"
-          ]
+          "roadUse": ["LocalStreet"]
         }
       ]
     },
@@ -300,17 +253,9 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          5.149537,
-          52.352848
-        ]
+        "coordinates": [5.149537, 52.352848]
       },
-      "bbox": [
-        5.149238,
-        52.352759,
-        5.149829,
-        52.352932
-      ],
+      "bbox": [5.149238, 52.352759, 5.149829, 52.352932],
       "properties": {
         "type": "Point Address",
         "address": {
@@ -332,30 +277,17 @@
           "localName": "Almere"
         },
         "sideOfStreet": "R",
-        "offsetPosition": [
-          5.149493,
-          52.352901
-        ],
-        "originalPosition": [
-          5.149537,
-          52.352848
-        ]
+        "offsetPosition": [5.149493, 52.352901],
+        "originalPosition": [5.149537, 52.352848]
       }
     }
   ],
   [
     "Localized municipality reverse geocoding with map-codes",
     {
-      "position": [
-        -3.140351,
-        55.947106
-      ],
-      "geographyType": [
-        "Municipality"
-      ],
-      "mapcodes": [
-        "International"
-      ]
+      "position": [-3.140351, 55.947106],
+      "geographyType": ["Municipality"],
+      "mapcodes": ["International"]
     },
     {
       "summary": {
@@ -400,17 +332,9 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -3.140351,
-          55.947106
-        ]
+        "coordinates": [-3.140351, 55.947106]
       },
-      "bbox": [
-        -3.383767,
-        55.873118,
-        -3.075637,
-        56.02467
-      ],
+      "bbox": [-3.383767, 55.873118, -3.075637, 56.02467],
       "properties": {
         "type": "Geography",
         "address": {
@@ -435,10 +359,7 @@
             "id": "00004732-3100-3c00-0000-0000240fa19a"
           }
         },
-        "originalPosition": [
-          -3.140351,
-          55.947105
-        ]
+        "originalPosition": [-3.140351, 55.947105]
       }
     }
   ]

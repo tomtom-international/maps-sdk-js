@@ -26,10 +26,7 @@
               }
             ],
             "url": "www.topcafeinc.com/",
-            "categories": [
-              "chinese",
-              "restaurant"
-            ],
+            "categories": ["chinese", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -100,10 +97,7 @@
               }
             ],
             "url": "thelittlechihuahua.com",
-            "categories": [
-              "mexican",
-              "restaurant"
-            ],
+            "categories": ["mexican", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -179,10 +173,7 @@
               }
             ],
             "url": "https://ordering.roundtablepizza.com/Site/rtsf",
-            "categories": [
-              "pizza",
-              "restaurant"
-            ],
+            "categories": ["pizza", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -253,10 +244,7 @@
               }
             ],
             "url": "www.rinconperuanosf.com/",
-            "categories": [
-              "peruvian",
-              "restaurant"
-            ],
+            "categories": ["peruvian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -327,10 +315,7 @@
               }
             ],
             "url": "cuisineofnepal.com",
-            "categories": [
-              "indian",
-              "restaurant"
-            ],
+            "categories": ["indian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -400,9 +385,7 @@
                 "id": 7315
               }
             ],
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -468,9 +451,7 @@
                 "id": 7315
               }
             ],
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -537,10 +518,7 @@
               }
             ],
             "url": "www.thepizzahacker.com",
-            "categories": [
-              "pizza",
-              "restaurant"
-            ],
+            "categories": ["pizza", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -615,10 +593,7 @@
                 "id": 7315015
               }
             ],
-            "categories": [
-              "fast food",
-              "restaurant"
-            ],
+            "categories": ["fast food", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -689,10 +664,7 @@
               }
             ],
             "url": "www.laciccia.com/",
-            "categories": [
-              "italian",
-              "restaurant"
-            ],
+            "categories": ["italian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -762,9 +734,7 @@
                 "id": 7315
               }
             ],
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -831,10 +801,7 @@
               }
             ],
             "url": "www.elpipila.com",
-            "categories": [
-              "mexican",
-              "restaurant"
-            ],
+            "categories": ["mexican", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -904,10 +871,7 @@
                 "id": 7315012
               }
             ],
-            "categories": [
-              "chinese",
-              "restaurant"
-            ],
+            "categories": ["chinese", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -978,9 +942,7 @@
               }
             ],
             "url": "www.sfmead.com",
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1047,10 +1009,7 @@
               }
             ],
             "url": "https://www.squareup.com/market/bayshore-taqueria",
-            "categories": [
-              "mexican",
-              "restaurant"
-            ],
+            "categories": ["mexican", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1119,10 +1078,7 @@
                 "id": 7315034
               }
             ],
-            "categories": [
-              "middle eastern",
-              "restaurant"
-            ],
+            "categories": ["middle eastern", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1192,10 +1148,7 @@
                 "id": 7315073
               }
             ],
-            "categories": [
-              "international",
-              "restaurant"
-            ],
+            "categories": ["international", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1266,10 +1219,7 @@
               }
             ],
             "url": "www.thegoldcorner.com",
-            "categories": [
-              "chinese",
-              "restaurant"
-            ],
+            "categories": ["chinese", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1340,10 +1290,7 @@
               }
             ],
             "url": "www.atarantinoandsons.com",
-            "categories": [
-              "restaurant",
-              "seafood"
-            ],
+            "categories": ["restaurant", "seafood"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1414,10 +1361,7 @@
               }
             ],
             "url": "www.vegapizzasf.com",
-            "categories": [
-              "italian",
-              "restaurant"
-            ],
+            "categories": ["italian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1488,10 +1432,7 @@
               }
             ],
             "url": "www.emmysspaghettishack.com/",
-            "categories": [
-              "italian",
-              "restaurant"
-            ],
+            "categories": ["italian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1561,10 +1502,7 @@
                 "id": 7315049
               }
             ],
-            "categories": [
-              "restaurant",
-              "turkish"
-            ],
+            "categories": ["restaurant", "turkish"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1634,10 +1572,7 @@
                 "id": 7315051
               }
             ],
-            "categories": [
-              "restaurant",
-              "vietnamese"
-            ],
+            "categories": ["restaurant", "vietnamese"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1708,10 +1643,7 @@
               }
             ],
             "url": "www.nulitekitchen.com/",
-            "categories": [
-              "asian (other)",
-              "restaurant"
-            ],
+            "categories": ["asian (other)", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1782,10 +1714,7 @@
               }
             ],
             "url": "www.elaztecataqueria.com",
-            "categories": [
-              "mexican",
-              "restaurant"
-            ],
+            "categories": ["mexican", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1855,9 +1784,7 @@
                 "id": 7315
               }
             ],
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1924,10 +1851,7 @@
               }
             ],
             "url": "basaseafood.com",
-            "categories": [
-              "restaurant",
-              "seafood"
-            ],
+            "categories": ["restaurant", "seafood"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -1997,10 +1921,7 @@
                 "id": 7315025
               }
             ],
-            "categories": [
-              "italian",
-              "restaurant"
-            ],
+            "categories": ["italian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2070,9 +1991,7 @@
                 "id": 7315
               }
             ],
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2138,10 +2057,7 @@
                 "id": 7315012
               }
             ],
-            "categories": [
-              "chinese",
-              "restaurant"
-            ],
+            "categories": ["chinese", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2211,10 +2127,7 @@
                 "id": 7315073
               }
             ],
-            "categories": [
-              "international",
-              "restaurant"
-            ],
+            "categories": ["international", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2283,10 +2196,7 @@
                 "id": 7315036
               }
             ],
-            "categories": [
-              "pizza",
-              "restaurant"
-            ],
+            "categories": ["pizza", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2357,10 +2267,7 @@
               }
             ],
             "url": "www.manatt.com",
-            "categories": [
-              "international",
-              "restaurant"
-            ],
+            "categories": ["international", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2430,10 +2337,7 @@
                 "id": 7315033
               }
             ],
-            "categories": [
-              "mexican",
-              "restaurant"
-            ],
+            "categories": ["mexican", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2503,9 +2407,7 @@
                 "id": 7315
               }
             ],
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2571,10 +2473,7 @@
                 "id": 7315042
               }
             ],
-            "categories": [
-              "restaurant",
-              "sandwich"
-            ],
+            "categories": ["restaurant", "sandwich"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2645,9 +2544,7 @@
               }
             ],
             "url": "www.threebabesbakeshop.com",
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2713,10 +2610,7 @@
                 "id": 7315033
               }
             ],
-            "categories": [
-              "mexican",
-              "restaurant"
-            ],
+            "categories": ["mexican", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2793,10 +2687,7 @@
                 "id": 7315036
               }
             ],
-            "categories": [
-              "pizza",
-              "restaurant"
-            ],
+            "categories": ["pizza", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2867,10 +2758,7 @@
               }
             ],
             "url": "chinaexpresstysons.com/",
-            "categories": [
-              "chinese",
-              "restaurant"
-            ],
+            "categories": ["chinese", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -2939,10 +2827,7 @@
                 "id": 7315032
               }
             ],
-            "categories": [
-              "mediterranean",
-              "restaurant"
-            ],
+            "categories": ["mediterranean", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3011,10 +2896,7 @@
               }
             ],
             "url": "www.phat-philly.com",
-            "categories": [
-              "fast food",
-              "restaurant"
-            ],
+            "categories": ["fast food", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3084,10 +2966,7 @@
                 "id": 7315005
               }
             ],
-            "categories": [
-              "barbecue",
-              "restaurant"
-            ],
+            "categories": ["barbecue", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3157,10 +3036,7 @@
                 "id": 7315049
               }
             ],
-            "categories": [
-              "restaurant",
-              "turkish"
-            ],
+            "categories": ["restaurant", "turkish"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3231,10 +3107,7 @@
               }
             ],
             "url": "www.bestbeverage.com/",
-            "categories": [
-              "international",
-              "restaurant"
-            ],
+            "categories": ["international", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3305,10 +3178,7 @@
               }
             ],
             "url": "manzonirestaurant.com",
-            "categories": [
-              "italian",
-              "restaurant"
-            ],
+            "categories": ["italian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3378,10 +3248,7 @@
                 "id": 7315148
               }
             ],
-            "categories": [
-              "restaurant",
-              "sushi"
-            ],
+            "categories": ["restaurant", "sushi"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3451,10 +3318,7 @@
               }
             ],
             "url": "www.baianopizzeria.com",
-            "categories": [
-              "pizza",
-              "restaurant"
-            ],
+            "categories": ["pizza", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3525,9 +3389,7 @@
               }
             ],
             "url": "www.pandaboba.com",
-            "categories": [
-              "restaurant"
-            ],
+            "categories": ["restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -3593,10 +3455,7 @@
                 "id": 7315036
               }
             ],
-            "categories": [
-              "pizza",
-              "restaurant"
-            ],
+            "categories": ["pizza", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",

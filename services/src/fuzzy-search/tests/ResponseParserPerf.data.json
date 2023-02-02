@@ -32,10 +32,7 @@
               }
             ],
             "url": "thegrasshopper.com",
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -102,9 +99,7 @@
                 "id": 9376
               }
             ],
-            "categories": [
-              "café/pub"
-            ],
+            "categories": ["café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -168,10 +163,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -239,10 +231,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -308,10 +297,7 @@
                 "id": 9376007
               }
             ],
-            "categories": [
-              "café/pub",
-              "microbrewery/beer garden"
-            ],
+            "categories": ["café/pub", "microbrewery/beer garden"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -377,10 +363,7 @@
               }
             ],
             "url": "www.nakedespresso.nl",
-            "categories": [
-              "café/pub",
-              "coffee shop"
-            ],
+            "categories": ["café/pub", "coffee shop"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -449,10 +432,7 @@
               }
             ],
             "url": "www.hill-street-blues.nl",
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -520,9 +500,7 @@
                 "id": 9376
               }
             ],
-            "categories": [
-              "café/pub"
-            ],
+            "categories": ["café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -587,10 +565,7 @@
               }
             ],
             "url": "www.heffer.nl/zalen_baantjermuseumcafe.html",
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -658,9 +633,7 @@
                 "id": 9376
               }
             ],
-            "categories": [
-              "café/pub"
-            ],
+            "categories": ["café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -725,10 +698,7 @@
               }
             ],
             "url": "www.amsterdamredbars.nl",
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -795,10 +765,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -867,10 +834,7 @@
               }
             ],
             "url": "drinknsink.com",
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -937,10 +901,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -1007,10 +968,7 @@
                 "id": 9376006
               }
             ],
-            "categories": [
-              "café/pub",
-              "coffee shop"
-            ],
+            "categories": ["café/pub", "coffee shop"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1077,9 +1035,7 @@
                 "id": 9376
               }
             ],
-            "categories": [
-              "café/pub"
-            ],
+            "categories": ["café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1142,10 +1098,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1212,10 +1165,7 @@
                 "id": 9376006
               }
             ],
-            "categories": [
-              "café/pub",
-              "coffee shop"
-            ],
+            "categories": ["café/pub", "coffee shop"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1283,10 +1233,7 @@
               }
             ],
             "url": "www.hunters-coffeeshop.com",
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -1354,10 +1301,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -1425,9 +1369,7 @@
                 "id": 9376
               }
             ],
-            "categories": [
-              "café/pub"
-            ],
+            "categories": ["café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1490,10 +1432,7 @@
                 "id": 9376006
               }
             ],
-            "categories": [
-              "café/pub",
-              "coffee shop"
-            ],
+            "categories": ["café/pub", "coffee shop"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1560,10 +1499,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -1631,10 +1567,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -1702,10 +1635,7 @@
                 "id": 9376006
               }
             ],
-            "categories": [
-              "café/pub",
-              "coffee shop"
-            ],
+            "categories": ["café/pub", "coffee shop"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1773,10 +1703,7 @@
               }
             ],
             "url": "coffeeshopdekroon.com",
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1844,10 +1771,7 @@
               }
             ],
             "url": "prixdami.nl",
-            "categories": [
-              "café/pub",
-              "coffee shop"
-            ],
+            "categories": ["café/pub", "coffee shop"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1922,10 +1846,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -1993,10 +1914,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2071,10 +1989,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2142,10 +2057,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2214,10 +2126,7 @@
               }
             ],
             "url": "smokingbull.nl",
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2284,10 +2193,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2355,10 +2261,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2425,10 +2328,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2495,10 +2395,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -2565,10 +2462,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2635,10 +2529,7 @@
                 "id": 9376007
               }
             ],
-            "categories": [
-              "café/pub",
-              "microbrewery/beer garden"
-            ],
+            "categories": ["café/pub", "microbrewery/beer garden"],
             "classifications": [
               {
                 "code": "CAFE_PUB",
@@ -2712,10 +2603,7 @@
                 "id": 9379004
               }
             ],
-            "categories": [
-              "bar",
-              "nightlife"
-            ],
+            "categories": ["bar", "nightlife"],
             "classifications": [
               {
                 "code": "NIGHTLIFE",
@@ -2782,10 +2670,7 @@
                 "id": 9376002
               }
             ],
-            "categories": [
-              "café",
-              "café/pub"
-            ],
+            "categories": ["café", "café/pub"],
             "classifications": [
               {
                 "code": "CAFE_PUB",

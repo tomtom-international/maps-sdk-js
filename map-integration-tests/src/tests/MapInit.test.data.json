@@ -1,17 +1,10 @@
 [
-  [
-    "All defaults",
-    {},
-    {}
-  ],
+  ["All defaults", {}, {}],
   [
     "Dark map",
     {
       "zoom": 6,
-      "center": [
-        -0.12621,
-        51.50394
-      ]
+      "center": [-0.12621, 51.50394]
     },
     {
       "style": "standardDark"
@@ -22,10 +15,7 @@
     {
       "zoom": 14,
       "minZoom": 2,
-      "center": [
-        -0.12621,
-        51.50394
-      ]
+      "center": [-0.12621, 51.50394]
     },
     {
       "style": "monoLight"
@@ -35,10 +25,7 @@
     "Driving light map",
     {
       "zoom": 8,
-      "center": [
-        -0.12621,
-        51.50394
-      ]
+      "center": [-0.12621, 51.50394]
     },
     {
       "style": "drivingLight"
@@ -48,10 +35,7 @@
     "Driving dark map",
     {
       "zoom": 8,
-      "center": [
-        -0.12621,
-        51.50394
-      ]
+      "center": [-0.12621, 51.50394]
     },
     {
       "style": "drivingDark"
@@ -62,10 +46,7 @@
     {
       "zoom": 12,
       "minZoom": 2,
-      "center": [
-        -0.12621,
-        51.50394
-      ]
+      "center": [-0.12621, 51.50394]
     },
     {
       "style": "satellite"

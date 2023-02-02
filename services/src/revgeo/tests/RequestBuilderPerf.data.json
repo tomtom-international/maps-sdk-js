@@ -2,10 +2,7 @@
   [
     "Performance Test",
     {
-      "position": [
-        1.12345,
-        23.45678
-      ],
+      "position": [1.12345, 23.45678],
       "apiKey": "APIKEY",
       "commonBaseURL": "https://api.tomtom.com",
       "language": "es-ES",
@@ -19,10 +16,7 @@
         "CountrySecondarySubdivision",
         "PostalCodeArea"
       ],
-      "mapcodes": [
-        "Local",
-        "International"
-      ],
+      "mapcodes": ["Local", "International"],
       "heading": 30,
       "number": "10A",
       "radiusMeters": 30,

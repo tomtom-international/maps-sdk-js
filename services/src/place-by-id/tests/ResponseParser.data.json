@@ -24,9 +24,7 @@
                 "id": 7309
               }
             ],
-            "categories": [
-              "electric vehicle station"
-            ],
+            "categories": ["electric vehicle station"],
             "classifications": [
               {
                 "code": "ELECTRIC_VEHICLE_STATION",
@@ -108,10 +106,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              2.32707,
-              48.83353
-            ]
+            "coordinates": [2.32707, 48.83353]
           },
           "id": "250009044730934",
           "properties": {
@@ -157,17 +152,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  2.32755,
-                  48.83308
-                ]
+                "position": [2.32755, 48.83308]
               }
             ],
             "poi": {
               "name": "Saemes 14ème Arrondissement Rue Saillard",
-              "categories": [
-                "electric vehicle station"
-              ],
+              "categories": ["electric vehicle station"],
               "classifications": [
                 {
                   "code": "ELECTRIC_VEHICLE_STATION",
@@ -180,9 +170,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7309
-              ]
+              "categoryIds": [7309]
             }
           }
         }
@@ -216,10 +204,7 @@
               }
             ],
             "url": "guymartinitalia.com",
-            "categories": [
-              "italian",
-              "restaurant"
-            ],
+            "categories": ["italian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -313,10 +298,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              2.33007,
-              48.84287
-            ]
+            "coordinates": [2.33007, 48.84287]
           },
           "id": "250007000178386",
           "properties": {
@@ -370,20 +352,14 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  2.32994,
-                  48.84291
-                ]
+                "position": [2.32994, 48.84291]
               }
             ],
             "poi": {
               "name": "Guy Martin Italia",
               "phone": "+33 1 43 27 08 80",
               "url": "guymartinitalia.com",
-              "categories": [
-                "italian",
-                "restaurant"
-              ],
+              "categories": ["italian", "restaurant"],
               "classifications": [
                 {
                   "code": "RESTAURANT",
@@ -400,9 +376,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7315025
-              ]
+              "categoryIds": [7315025]
             }
           }
         }

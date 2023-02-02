@@ -113,31 +113,15 @@
       "style": {
         "custom": {
           "json": {
-            "sources": [
-              "bar",
-              "foo"
-            ],
-            "layers": [
-              1,
-              2,
-              3,
-              4
-            ]
+            "sources": ["bar", "foo"],
+            "layers": [1, 2, 3, 4]
           }
         }
       }
     },
     {
-      "sources": [
-        "bar",
-        "foo"
-      ],
-      "layers": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "sources": ["bar", "foo"],
+      "layers": [1, 2, 3, 4]
     }
   ]
 ]

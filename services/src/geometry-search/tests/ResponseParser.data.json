@@ -24,9 +24,7 @@
                 "id": 7309
               }
             ],
-            "categories": [
-              "electric vehicle station"
-            ],
+            "categories": ["electric vehicle station"],
             "classifications": [
               {
                 "code": "ELECTRIC_VEHICLE_STATION",
@@ -108,10 +106,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              2.32707,
-              48.83353
-            ]
+            "coordinates": [2.32707, 48.83353]
           },
           "id": "250009044730934",
           "properties": {
@@ -157,17 +152,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  2.32755,
-                  48.83308
-                ]
+                "position": [2.32755, 48.83308]
               }
             ],
             "poi": {
               "name": "Saemes 14ème Arrondissement Rue Saillard",
-              "categories": [
-                "electric vehicle station"
-              ],
+              "categories": ["electric vehicle station"],
               "classifications": [
                 {
                   "code": "ELECTRIC_VEHICLE_STATION",
@@ -180,9 +170,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7309
-              ]
+              "categoryIds": [7309]
             }
           }
         }
@@ -216,10 +204,7 @@
               }
             ],
             "url": "guymartinitalia.com",
-            "categories": [
-              "italian",
-              "restaurant"
-            ],
+            "categories": ["italian", "restaurant"],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -313,10 +298,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              2.33007,
-              48.84287
-            ]
+            "coordinates": [2.33007, 48.84287]
           },
           "id": "250007000178386",
           "properties": {
@@ -370,20 +352,14 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  2.32994,
-                  48.84291
-                ]
+                "position": [2.32994, 48.84291]
               }
             ],
             "poi": {
               "name": "Guy Martin Italia",
               "phone": "+33 1 43 27 08 80",
               "url": "guymartinitalia.com",
-              "categories": [
-                "italian",
-                "restaurant"
-              ],
+              "categories": ["italian", "restaurant"],
               "classifications": [
                 {
                   "code": "RESTAURANT",
@@ -400,9 +376,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7315025
-              ]
+              "categoryIds": [7315025]
             }
           }
         }
@@ -476,10 +450,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              -0.12624,
-              51.50015
-            ]
+            "coordinates": [-0.12624, 51.50015]
           },
           "id": "GB/GEO/p0/37894",
           "properties": {
@@ -546,9 +517,7 @@
                 "id": 7309
               }
             ],
-            "categories": [
-              "electric vehicle station"
-            ],
+            "categories": ["electric vehicle station"],
             "classifications": [
               {
                 "code": "ELECTRIC_VEHICLE_STATION",
@@ -619,10 +588,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              7.80076,
-              46.28515
-            ]
+            "coordinates": [7.80076, 46.28515]
           },
           "id": "756009003511328",
           "properties": {
@@ -657,18 +623,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  7.80065,
-                  46.28554
-                ]
+                "position": [7.80065, 46.28554]
               }
             ],
             "poi": {
               "name": "Energiedienst Unterbäch Wiispilweg",
               "phone": "+41 27 945 75 00",
-              "categories": [
-                "electric vehicle station"
-              ],
+              "categories": ["electric vehicle station"],
               "classifications": [
                 {
                   "code": "ELECTRIC_VEHICLE_STATION",
@@ -681,9 +642,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7309
-              ]
+              "categoryIds": [7309]
             }
           }
         }
@@ -720,9 +679,7 @@
                 "id": 7311
               }
             ],
-            "categories": [
-              "petrol station"
-            ],
+            "categories": ["petrol station"],
             "classifications": [
               {
                 "code": "PETROL_STATION",
@@ -789,9 +746,7 @@
                 "id": 7311
               }
             ],
-            "categories": [
-              "petrol station"
-            ],
+            "categories": ["petrol station"],
             "classifications": [
               {
                 "code": "PETROL_STATION",
@@ -826,21 +781,13 @@
     },
     {
       "type": "FeatureCollection",
-      "bbox": [
-        -6.88878,
-        53.73118,
-        -5.12343,
-        54.73118
-      ],
+      "bbox": [-6.88878, 53.73118, -5.12343, 54.73118],
       "features": [
         {
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              -6.88878,
-              53.73118
-            ]
+            "coordinates": [-6.88878, 53.73118]
           },
           "id": "372008000031461",
           "properties": {
@@ -863,20 +810,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  -6.88953,
-                  53.73119
-                ]
+                "position": [-6.88953, 53.73119]
               }
             ],
             "poi": {
               "name": "Circle K Fuel Station",
-              "brands": [
-                "Circle K"
-              ],
-              "categories": [
-                "petrol station"
-              ],
+              "brands": ["Circle K"],
+              "categories": ["petrol station"],
               "classifications": [
                 {
                   "code": "PETROL_STATION",
@@ -888,9 +828,7 @@
                   ]
                 }
               ],
-              "categoryIds": [
-                7311
-              ]
+              "categoryIds": [7311]
             }
           }
         },
@@ -898,10 +836,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              -5.12343,
-              54.73118
-            ]
+            "coordinates": [-5.12343, 54.73118]
           },
           "id": "372008000031461",
           "properties": {
@@ -923,12 +858,8 @@
             },
             "poi": {
               "name": "Circle K Fuel Station",
-              "brands": [
-                "Circle K"
-              ],
-              "categories": [
-                "petrol station"
-              ],
+              "brands": ["Circle K"],
+              "categories": ["petrol station"],
               "classifications": [
                 {
                   "code": "PETROL_STATION",
@@ -940,9 +871,7 @@
                   ]
                 }
               ],
-              "categoryIds": [
-                7311
-              ]
+              "categoryIds": [7311]
             }
           }
         }

@@ -9,14 +9,8 @@
           "geometry": {
             "type": "LineString",
             "coordinates": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
+              [0, 0],
+              [0, 1]
             ]
           },
           "properties": {
@@ -36,14 +30,8 @@
           "geometry": {
             "type": "LineString",
             "coordinates": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
+              [0, 0],
+              [0, 1]
             ]
           },
           "properties": {
@@ -66,14 +54,8 @@
           "geometry": {
             "type": "LineString",
             "coordinates": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
+              [0, 0],
+              [0, 1]
             ]
           },
           "properties": {
@@ -88,14 +70,8 @@
           "geometry": {
             "type": "LineString",
             "coordinates": [
-              [
-                1,
-                0
-              ],
-              [
-                1,
-                1
-              ]
+              [1, 0],
+              [1, 1]
             ]
           },
           "properties": {
@@ -115,14 +91,8 @@
           "geometry": {
             "type": "LineString",
             "coordinates": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
+              [0, 0],
+              [0, 1]
             ]
           },
           "properties": {
@@ -137,14 +107,8 @@
           "geometry": {
             "type": "LineString",
             "coordinates": [
-              [
-                1,
-                0
-              ],
-              [
-                1,
-                1
-              ]
+              [1, 0],
+              [1, 1]
             ]
           },
           "properties": {

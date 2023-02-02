@@ -2,10 +2,7 @@
   [
     "Address example 0",
     {
-      "position": [
-        5.72884,
-        52.33499
-      ]
+      "position": [5.72884, 52.33499]
     },
     {
       "addresses": [
@@ -57,17 +54,9 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          5.72884,
-          52.33499
-        ]
+        "coordinates": [5.72884, 52.33499]
       },
-      "bbox": [
-        5.722876,
-        52.334605,
-        5.73938,
-        52.336436
-      ],
+      "bbox": [5.722876, 52.334605, 5.73938, 52.336436],
       "properties": {
         "type": "Street",
         "address": {
@@ -103,27 +92,16 @@
           }
         ],
         "sideOfStreet": "R",
-        "offsetPosition": [
-          5.72879,
-          52.33516
-        ],
-        "originalPosition": [
-          5.728785,
-          52.335152
-        ]
+        "offsetPosition": [5.72879, 52.33516],
+        "originalPosition": [5.728785, 52.335152]
       }
     }
   ],
   [
     "Country example 0",
     {
-      "position": [
-        5.72884,
-        52.33499
-      ],
-      "geographyType": [
-        "Country"
-      ]
+      "position": [5.72884, 52.33499],
+      "geographyType": ["Country"]
     },
     {
       "summary": {
@@ -158,17 +136,9 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          5.72884,
-          52.33499
-        ]
+        "coordinates": [5.72884, 52.33499]
       },
-      "bbox": [
-        3.358334,
-        50.750449,
-        7.227545,
-        53.555013
-      ],
+      "bbox": [3.358334, 50.750449, 7.227545, 53.555013],
       "properties": {
         "type": "Geography",
         "address": {
@@ -183,10 +153,7 @@
             "id": "00005858-5800-1200-0000-0000773670cd"
           }
         },
-        "originalPosition": [
-          5.72884,
-          52.334991
-        ]
+        "originalPosition": [5.72884, 52.334991]
       }
     }
   ]

@@ -15,20 +15,11 @@
       "commonBaseURL": "https://api-test.tomtom.com",
       "query": "restaurant",
       "limit": 25,
-      "extendedPostalCodesFor": [
-        "POI"
-      ],
-      "mapcodes": [
-        "Local",
-        "Alternative",
-        "International"
-      ],
+      "extendedPostalCodesFor": ["POI"],
+      "mapcodes": ["Local", "Alternative", "International"],
       "view": "Unified",
       "language": "fr-FR",
-      "poiCategories": [
-        7315148,
-        7315025
-      ],
+      "poiCategories": [7315148, 7315025],
       "openingHours": "nextSevenDays",
       "timeZone": "iana"
     },
@@ -41,10 +32,7 @@
       "commonBaseURL": "https://test.api.tomtom.com",
       "query": "London",
       "limit": 20,
-      "indexes": [
-        "Geo",
-        "Str"
-      ],
+      "indexes": ["Geo", "Str"],
       "geographyTypes": [
         "Municipality",
         "MunicipalitySubdivision",
@@ -90,13 +78,8 @@
         "AdBlue",
         "DieselForCommercialVehicles"
       ],
-      "poiBrands": [
-        "Circle K",
-        "X Fuel",
-        "Sia Fuel",
-        "Easy Fuel"
-      ]
+      "poiBrands": ["Circle K", "X Fuel", "Sia Fuel", "Easy Fuel"]
     },
-     "https://test.api.tomtom.com/search/2/search/Fuel%20Station.json?key=GLOBAL_API_KEY&fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel"
+    "https://test.api.tomtom.com/search/2/search/Fuel%20Station.json?key=GLOBAL_API_KEY&fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel"
   ]
 ]

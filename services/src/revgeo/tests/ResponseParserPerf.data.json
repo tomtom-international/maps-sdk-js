@@ -2,23 +2,14 @@
   [
     "Performance Test",
     {
-      "position": [
-        -121.974762,
-        36.988159
-      ],
+      "position": [-121.974762, 36.988159],
       "language": "fr-FR",
       "returnSpeedLimit": true,
       "returnMatchType": true,
       "number": "2525",
-      "roadUses": [
-        "Arterial"
-      ],
+      "roadUses": ["Arterial"],
       "allowFreeformNewline": true,
-      "mapcodes": [
-        "Local",
-        "International",
-        "Alternative"
-      ]
+      "mapcodes": ["Local", "International", "Alternative"]
     },
     {
       "summary": {
@@ -56,9 +47,7 @@
             "localName": "Santa Cruz"
           },
           "position": "36.988159,-121.974762",
-          "roadUse": [
-            "Arterial"
-          ],
+          "roadUse": ["Arterial"],
           "matchType": "AddressPoint",
           "mapcodes": [
             {

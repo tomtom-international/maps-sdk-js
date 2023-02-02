@@ -65,36 +65,21 @@
     },
     {
       "type": "FeatureCollection",
-      "bbox": [
-        4.78348,
-        52.42248,
-        4.81969,
-        52.45513
-      ],
+      "bbox": [4.78348, 52.42248, 4.81969, 52.45513],
       "features": [
         {
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.80221,
-              52.4388
-            ]
+            "coordinates": [4.80221, 52.4388]
           },
-          "bbox": [
-            4.78348,
-            52.42248,
-            4.81969,
-            52.45513
-          ],
+          "bbox": [4.78348, 52.42248, 4.81969, 52.45513],
           "id": "NL/GEO/p0/7133",
           "properties": {
             "type": "Geography",
             "score": 4.4519996643,
             "distance": 300,
-            "geographyType": [
-              "PostalCodeArea"
-            ],
+            "geographyType": ["PostalCodeArea"],
             "matchConfidence": {
               "score": 1
             },
@@ -184,10 +169,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              6.09283,
-              52.51322
-            ]
+            "coordinates": [6.09283, 52.51322]
           },
           "id": "NL/PAD/p0/2492368",
           "properties": {
@@ -212,10 +194,7 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  6.09268,
-                  52.51301
-                ]
+                "position": [6.09268, 52.51301]
               }
             ]
           }
@@ -300,35 +279,20 @@
     },
     {
       "type": "FeatureCollection",
-      "bbox": [
-        4.78348,
-        52.42248,
-        4.81969,
-        52.45513
-      ],
+      "bbox": [4.78348, 52.42248, 4.81969, 52.45513],
       "features": [
         {
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.80221,
-              52.4388
-            ]
+            "coordinates": [4.80221, 52.4388]
           },
-          "bbox": [
-            4.78348,
-            52.42248,
-            4.81969,
-            52.45513
-          ],
+          "bbox": [4.78348, 52.42248, 4.81969, 52.45513],
           "id": "NL/GEO/p0/7133",
           "properties": {
             "type": "Geography",
             "score": 4.4519996643,
-            "geographyType": [
-              "PostalCodeArea"
-            ],
+            "geographyType": ["PostalCodeArea"],
             "matchConfidence": {
               "score": 1
             },
@@ -348,14 +312,8 @@
               }
             },
             "addressRanges": {
-              "from": [
-                4.78348,
-                52.45513
-              ],
-              "to": [
-                4.81969,
-                52.42248
-              ],
+              "from": [4.78348, 52.45513],
+              "to": [4.81969, 52.42248],
               "rangeLeft": "1 - 3",
               "rangeRight": "2 - 12"
             }

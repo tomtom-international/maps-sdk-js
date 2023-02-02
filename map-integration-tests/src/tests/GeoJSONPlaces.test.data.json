@@ -8,10 +8,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.92811,
-              52.35606
-            ]
+            "coordinates": [4.92811, 52.35606]
           },
           "properties": {
             "type": "POI",
@@ -33,17 +30,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.9282,
-                  52.35594
-                ]
+                "position": [4.9282, 52.35594]
               }
             ],
             "poi": {
               "name": "H32 Sportfondsenbad Amsterdam-Oost",
-              "categories": [
-                "open parking area"
-              ],
+              "categories": ["open parking area"],
               "classifications": [
                 {
                   "code": "OPEN_PARKING_AREA",
@@ -56,9 +48,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7369
-              ]
+              "categoryIds": [7369]
             }
           },
           "id": "528007000009400"
@@ -67,10 +57,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.90124,
-              52.369
-            ]
+            "coordinates": [4.90124, 52.369]
           },
           "properties": {
             "type": "POI",
@@ -92,18 +79,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.90116,
-                  52.36892
-                ]
+                "position": [4.90116, 52.36892]
               }
             ],
             "poi": {
               "name": "Parkeergarage Stadhuis-Muziektheater",
               "url": "amsterdam.nl",
-              "categories": [
-                "parking garage"
-              ],
+              "categories": ["parking garage"],
               "classifications": [
                 {
                   "code": "PARKING_GARAGE",
@@ -116,9 +98,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7313
-              ]
+              "categoryIds": [7313]
             }
           },
           "id": "528009005860320"
@@ -127,10 +107,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.89474,
-              52.38467
-            ]
+            "coordinates": [4.89474, 52.38467]
           },
           "properties": {
             "type": "POI",
@@ -152,26 +129,18 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.89459,
-                  52.38461
-                ]
+                "position": [4.89459, 52.38461]
               },
               {
                 "type": "main",
-                "position": [
-                  4.89459,
-                  52.38461
-                ]
+                "position": [4.89459, 52.38461]
               }
             ],
             "poi": {
               "name": "Parkeergarage Ijdock",
               "phone": "+31 88 002 1498",
               "url": "parkereninijdock.nl/",
-              "categories": [
-                "parking garage"
-              ],
+              "categories": ["parking garage"],
               "classifications": [
                 {
                   "code": "PARKING_GARAGE",
@@ -184,9 +153,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7313
-              ]
+              "categoryIds": [7313]
             }
           },
           "id": "528009005853456"
@@ -195,10 +162,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.85504,
-              52.35892
-            ]
+            "coordinates": [4.85504, 52.35892]
           },
           "properties": {
             "type": "POI",
@@ -220,18 +184,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.8551,
-                  52.35901
-                ]
+                "position": [4.8551, 52.35901]
               }
             ],
             "poi": {
               "name": "Stalling Amsterdam",
               "url": "www.stallingamsterdam.nl",
-              "categories": [
-                "parking garage"
-              ],
+              "categories": ["parking garage"],
               "classifications": [
                 {
                   "code": "PARKING_GARAGE",
@@ -244,9 +203,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7313
-              ]
+              "categoryIds": [7313]
             }
           },
           "id": "528009007891165"
@@ -255,10 +212,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.8946,
-              52.37641
-            ]
+            "coordinates": [4.8946, 52.37641]
           },
           "properties": {
             "type": "POI",
@@ -280,21 +234,14 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.89459,
-                  52.37632
-                ]
+                "position": [4.89459, 52.37632]
               }
             ],
             "poi": {
               "name": "Q-Park Amsterdam Nieuwendijk",
-              "brands": [
-                "Q-Park"
-              ],
+              "brands": ["Q-Park"],
               "url": "q-park.nl",
-              "categories": [
-                "parking garage"
-              ],
+              "categories": ["parking garage"],
               "classifications": [
                 {
                   "code": "PARKING_GARAGE",
@@ -306,9 +253,7 @@
                   ]
                 }
               ],
-              "categoryIds": [
-                7313
-              ]
+              "categoryIds": [7313]
             }
           },
           "id": "528009001852275"
@@ -317,10 +262,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.8785,
-              52.33616
-            ]
+            "coordinates": [4.8785, 52.33616]
           },
           "properties": {
             "type": "POI",
@@ -346,17 +288,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.87787,
-                  52.33611
-                ]
+                "position": [4.87787, 52.33611]
               }
             ],
             "poi": {
               "name": "De Boelenlaan",
-              "categories": [
-                "open parking area"
-              ],
+              "categories": ["open parking area"],
               "classifications": [
                 {
                   "code": "OPEN_PARKING_AREA",
@@ -369,9 +306,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7369
-              ]
+              "categoryIds": [7369]
             }
           },
           "id": "528009001881315"
@@ -380,10 +315,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.85596,
-              52.38557
-            ]
+            "coordinates": [4.85596, 52.38557]
           },
           "properties": {
             "type": "POI",
@@ -402,17 +334,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.85599,
-                  52.38579
-                ]
+                "position": [4.85599, 52.38579]
               }
             ],
             "poi": {
               "name": "Parkeerplaats",
-              "categories": [
-                "open parking area"
-              ],
+              "categories": ["open parking area"],
               "classifications": [
                 {
                   "code": "OPEN_PARKING_AREA",
@@ -425,9 +352,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7369
-              ]
+              "categoryIds": [7369]
             }
           },
           "id": "528007000009625"
@@ -436,10 +361,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.8954,
-              52.35781
-            ]
+            "coordinates": [4.8954, 52.35781]
           },
           "properties": {
             "type": "POI",
@@ -459,17 +381,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.89831,
-                  52.35766
-                ]
+                "position": [4.89831, 52.35766]
               }
             ],
             "poi": {
               "name": "Stadhouderskade",
-              "categories": [
-                "open parking area"
-              ],
+              "categories": ["open parking area"],
               "classifications": [
                 {
                   "code": "OPEN_PARKING_AREA",
@@ -482,9 +399,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7369
-              ]
+              "categoryIds": [7369]
             }
           },
           "id": "528009001795372"
@@ -493,10 +408,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.9041,
-              52.36731
-            ]
+            "coordinates": [4.9041, 52.36731]
           },
           "properties": {
             "type": "POI",
@@ -517,17 +429,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.90422,
-                  52.36734
-                ]
+                "position": [4.90422, 52.36734]
               }
             ],
             "poi": {
               "name": "H10 Joods Historisch Museum",
-              "categories": [
-                "open parking area"
-              ],
+              "categories": ["open parking area"],
               "classifications": [
                 {
                   "code": "OPEN_PARKING_AREA",
@@ -540,9 +447,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                7369
-              ]
+              "categoryIds": [7369]
             }
           },
           "id": "528009005777796"
@@ -551,10 +456,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.85711,
-              52.34459
-            ]
+            "coordinates": [4.85711, 52.34459]
           },
           "properties": {
             "type": "POI",
@@ -576,28 +478,18 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.8582,
-                  52.34436
-                ]
+                "position": [4.8582, 52.34436]
               },
               {
                 "type": "main",
-                "position": [
-                  4.85678,
-                  52.34454
-                ]
+                "position": [4.85678, 52.34454]
               }
             ],
             "poi": {
               "name": "Parkeergarage Ah Stadionplein",
-              "brands": [
-                "P1"
-              ],
+              "brands": ["P1"],
               "url": "www.p1.nl",
-              "categories": [
-                "parking garage"
-              ],
+              "categories": ["parking garage"],
               "classifications": [
                 {
                   "code": "PARKING_GARAGE",
@@ -609,20 +501,13 @@
                   ]
                 }
               ],
-              "categoryIds": [
-                7313
-              ]
+              "categoryIds": [7313]
             }
           },
           "id": "528009001822598"
         }
       ],
-      "bbox": [
-        4.85504,
-        52.33616,
-        4.92811,
-        52.38557
-      ]
+      "bbox": [4.85504, 52.33616, 4.92811, 52.38557]
     },
     [
       {
@@ -676,10 +561,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.88564,
-              52.37041
-            ]
+            "coordinates": [4.88564, 52.37041]
           },
           "properties": {
             "type": "POI",
@@ -700,17 +582,12 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.88565,
-                  52.37032
-                ]
+                "position": [4.88565, 52.37032]
               }
             ],
             "poi": {
               "name": "Tandarts Tideman",
-              "categories": [
-                "dentist"
-              ],
+              "categories": ["dentist"],
               "classifications": [
                 {
                   "code": "DENTIST",
@@ -723,9 +600,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                9374
-              ]
+              "categoryIds": [9374]
             }
           },
           "id": "528009008943953"
@@ -734,10 +609,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.88419,
-              52.37093
-            ]
+            "coordinates": [4.88419, 52.37093]
           },
           "properties": {
             "type": "POI",
@@ -759,18 +631,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.88446,
-                  52.37092
-                ]
+                "position": [4.88446, 52.37092]
               }
             ],
             "poi": {
               "name": "Identified",
               "phone": "+31 6 53972278",
-              "categories": [
-                "dentist"
-              ],
+              "categories": ["dentist"],
               "classifications": [
                 {
                   "code": "DENTIST",
@@ -783,9 +650,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                9374
-              ]
+              "categoryIds": [9374]
             }
           },
           "id": "528009005724901"
@@ -794,10 +659,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.88609,
-              52.38005
-            ]
+            "coordinates": [4.88609, 52.38005]
           },
           "properties": {
             "type": "POI",
@@ -819,18 +681,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.88592,
-                  52.3801
-                ]
+                "position": [4.88592, 52.3801]
               }
             ],
             "poi": {
               "name": "JorDent",
               "phone": "+31 20 638 7211",
-              "categories": [
-                "dentist"
-              ],
+              "categories": ["dentist"],
               "classifications": [
                 {
                   "code": "DENTIST",
@@ -843,9 +700,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                9374
-              ]
+              "categoryIds": [9374]
             }
           },
           "id": "528009001569756"
@@ -854,10 +709,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.8852,
-              52.37504
-            ]
+            "coordinates": [4.8852, 52.37504]
           },
           "properties": {
             "type": "POI",
@@ -879,18 +731,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.8853,
-                  52.37501
-                ]
+                "position": [4.8853, 52.37501]
               }
             ],
             "poi": {
               "name": "TC De With En QJMC Jessen",
               "phone": "+31 20 624 0572",
-              "categories": [
-                "dentist"
-              ],
+              "categories": ["dentist"],
               "classifications": [
                 {
                   "code": "DENTIST",
@@ -903,9 +750,7 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                9374
-              ]
+              "categoryIds": [9374]
             }
           },
           "id": "528009002710147"
@@ -914,10 +759,7 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [
-              4.88631,
-              52.37629
-            ]
+            "coordinates": [4.88631, 52.37629]
           },
           "properties": {
             "type": "POI",
@@ -938,18 +780,13 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [
-                  4.88646,
-                  52.37627
-                ]
+                "position": [4.88646, 52.37627]
               }
             ],
             "poi": {
               "name": "Tandarts Buisman",
               "phone": "+31 20 627 4162",
-              "categories": [
-                "dentist"
-              ],
+              "categories": ["dentist"],
               "classifications": [
                 {
                   "code": "DENTIST",
@@ -962,20 +799,13 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [
-                9374
-              ]
+              "categoryIds": [9374]
             }
           },
           "id": "528009007794854"
         }
       ],
-      "bbox": [
-        4.88419,
-        52.37041,
-        4.88631,
-        52.38005
-      ]
+      "bbox": [4.88419, 52.37041, 4.88631, 52.38005]
     },
     [
       {

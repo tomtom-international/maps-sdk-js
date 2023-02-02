@@ -19,10 +19,7 @@
     {
       "container": "<div id='map'></div>",
       "zoom": 7,
-      "center": [
-        10,
-        20
-      ],
+      "center": [10, 20],
       "minZoom": 2,
       "maxZoom": 20,
       "bearing": 90
@@ -40,10 +37,7 @@
       "container": "<div id='map'></div>",
       "style": "https://test_url/?key=TEST_API_KEY",
       "zoom": 7,
-      "center": [
-        10,
-        20
-      ],
+      "center": [10, 20],
       "minZoom": 2,
       "maxZoom": 20,
       "bearing": 90,
@@ -65,21 +59,21 @@
       "style": "https://api-test.tomtom.com/style/1/style/24.0.*/?key=TEST_API_KEY&map=2/basic_street-light&poi=2/poi_dynamic-light&hillshade=2-test/hillshade_rgb-light",
       "attributionControl": false
     }
-],
-[
-  "Map init hidding traffic flow, traffic incidents, poi and hillshade using hide options",
-  {
-    "container": "<div id='map'></div>"
-  },
-  {
-    "commonBaseURL": "https://api-test.tomtom.com",
-    "apiKey": "TEST_API_KEY",
-    "exclude": [ "traffic_flow", "traffic_incidents", "poi", "hillshade"]
-  },
-  {
-    "container": "<div id='map'></div>",
-    "style": "https://api-test.tomtom.com/style/1/style/24.0.*/?key=TEST_API_KEY&map=2/basic_street-light",
-    "attributionControl": false
-  }
-]
+  ],
+  [
+    "Map init hidding traffic flow, traffic incidents, poi and hillshade using hide options",
+    {
+      "container": "<div id='map'></div>"
+    },
+    {
+      "commonBaseURL": "https://api-test.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "exclude": ["traffic_flow", "traffic_incidents", "poi", "hillshade"]
+    },
+    {
+      "container": "<div id='map'></div>",
+      "style": "https://api-test.tomtom.com/style/1/style/24.0.*/?key=TEST_API_KEY&map=2/basic_street-light",
+      "attributionControl": false
+    }
+  ]
 ]

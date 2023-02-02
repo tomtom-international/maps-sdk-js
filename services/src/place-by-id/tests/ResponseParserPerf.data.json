@@ -23,10 +23,7 @@
           }
         ],
         "url": "guymartinitalia.com",
-        "categories": [
-          "italian",
-          "restaurant"
-        ],
+        "categories": ["italian", "restaurant"],
         "classifications": [
           {
             "code": "RESTAURANT",

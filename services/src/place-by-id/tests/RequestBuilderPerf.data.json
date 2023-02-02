@@ -3,11 +3,7 @@
   "apiKey": "APIKEY",
   "language": "es-ES",
   "entityId": "528009004250472",
-  "mapcodes": [
-    "Local",
-    "International",
-    "Alternative"
-  ],
+  "mapcodes": ["Local", "International", "Alternative"],
   "openingHours": "nextSevenDays",
   "timeZone": "iana",
   "relatedPois": "off"
