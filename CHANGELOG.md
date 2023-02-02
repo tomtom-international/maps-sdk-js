@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.79](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.78...v0.1.79) (2023-02-02)
+
+
+### Bug Fixes
+
+* **#660:** make language param optional in auto-complete search ([8e368b2](https://github.com/tomtom-international/go-sdk-js/commit/8e368b2a33e473db8749603f85a05a5596935537)), closes [#660](https://github.com/tomtom-international/go-sdk-js/issues/660)
+* **#660:** make language param optional in auto-complete search ([57f036b](https://github.com/tomtom-international/go-sdk-js/commit/57f036bbd1a404c8eaa718386cb8c70ce6813900)), closes [#660](https://github.com/tomtom-international/go-sdk-js/issues/660)
+
 ### [0.1.78](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.77...v0.1.78) (2023-02-02)
 
 
