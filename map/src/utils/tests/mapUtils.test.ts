@@ -37,14 +37,14 @@ describe("Map utils - deserializeFeatures", () => {
 
 describe("Map utils - injectCustomHeaders", () => {
     test("Return only url if it is not TomTom domain", () => {
-        const url = "http://test.com";
+        const url = "https://test.com";
         const transformRequestFn = injectCustomHeaders({});
 
         expect(transformRequestFn(url)).toStrictEqual({ url });
     });
 
     test("Return custom headers if url if it is TomTom domain", () => {
-        const url = "http://tomtom.com";
+        const url = "https://tomtom.com";
         const transformRequestFn = injectCustomHeaders({});
         const headers = transformRequestFn(url);
 
@@ -58,7 +58,7 @@ describe("Map utils - injectCustomHeaders", () => {
     });
 
     test("Return only url if it is TomTom domain but an image resource", () => {
-        const url = "http://tomtom.com";
+        const url = "https://tomtom.com";
         const transformRequestFn = injectCustomHeaders({});
 
         expect(transformRequestFn(url, "Image")).toStrictEqual({ url });
