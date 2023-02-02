@@ -1,7 +1,6 @@
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
+import { GOSDKConfig, Language } from "@anw/go-sdk-js/core";
 import { AutocompleteSearchResponse, AutocompleteSearchSegmentType } from "../types";
 import autocompleteSearch from "../AutocompleteSearch";
-import { Language } from "core";
 
 const expectedResults = expect.arrayContaining([
     expect.objectContaining({
