@@ -48,19 +48,29 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
     return;
 };
 
+/**
+ * Inject TomTom custom headers to requests to TomTom.
+ *
+ * @ignore
+ * @param goSDKParams Global SDK Map configuration
+ */
 export const injectCustomHeaders =
     (goSDKParams: GOSDKMapParams) =>
     (url: string, resourceType?: ResourceTypeEnum): RequestParameters => {
-        const tomtomHeaders = generateTomTomCustomHeaders(goSDKParams);
+        if (url.includes("tomtom.com")) {
+            if (resourceType === "Image") {
+                return { url };
+            }
 
-        if (resourceType === "Image") {
+            const tomtomHeaders = generateTomTomCustomHeaders(goSDKParams);
+
+            return {
+                url,
+                headers: {
+                    ...tomtomHeaders
+                }
+            };
+        } else {
             return { url };
         }
-
-        return {
-            url,
-            headers: {
-                ...tomtomHeaders
-            }
-        };
     };

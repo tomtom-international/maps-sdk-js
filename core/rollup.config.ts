@@ -11,7 +11,7 @@ const getSDKVersion = () => {
     const fileContent = fs.readFileSync(path.resolve("..", "./package.json"), { encoding: "utf-8", flag: "r" });
     const fileContentSerialized = JSON.parse(fileContent);
 
-    return (fileContentSerialized as any).version as string;
+    return fileContentSerialized.version;
 };
 
 const SDK_VERSION = getSDKVersion();
@@ -34,11 +34,11 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
+                typescript(typescriptOptions), //needed for correct order
                 replace({
                     preventAssignment: true,
                     __SDK_VERSION__: SDK_VERSION
                 }),
-                typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 terser()
             ]
@@ -57,11 +57,11 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
+                typescript(typescriptOptions), //needed for correct order
                 replace({
                     preventAssignment: true,
                     __SDK_VERSION__: SDK_VERSION
                 }),
-                typescript(typescriptOptions), //needed for correct order
                 commonjs()
             ]
         },
@@ -79,11 +79,11 @@ export default () => {
             plugins: [
                 // has to be before typescript plugin
                 nodeResolve({ browser: true }),
+                typescript(typescriptOptions), //needed for correct order
                 replace({
                     preventAssignment: true,
                     __SDK_VERSION__: SDK_VERSION
                 }),
-                typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 analyze({ summaryOnly: true, limit: 10 })
             ]
