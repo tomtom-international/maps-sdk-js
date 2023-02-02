@@ -1,6 +1,6 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
-import { deserializeFeatures, waitUntilMapIsReady } from "../mapUtils";
+import { deserializeFeatures, injectCustomHeaders, waitUntilMapIsReady } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
 
 const getGOSDKMapMock = async (flag: boolean) =>
@@ -28,9 +28,39 @@ describe("Map utils - waitUntilMapIsReady", () => {
 });
 
 describe("Map utils - deserializeFeatures", () => {
-    it("Should parse MapGeoJSONFeature", () => {
+    test("Should parse MapGeoJSONFeature", () => {
         deserializeFeatures(serializedFeatureData as unknown as MapGeoJSONFeature[]);
         const [topFeature] = serializedFeatureData;
         expect(topFeature.properties).toMatchObject(deserializedFeatureData);
+    });
+});
+
+describe("Map utils - injectCustomHeaders", () => {
+    test("Return only url if it is not TomTom domain", () => {
+        const url = "http://test.com";
+        const transformRequestFn = injectCustomHeaders({});
+
+        expect(transformRequestFn(url)).toStrictEqual({ url });
+    });
+
+    test("Return custom headers if url if it is TomTom domain", () => {
+        const url = "http://tomtom.com";
+        const transformRequestFn = injectCustomHeaders({});
+        const headers = transformRequestFn(url);
+
+        expect(headers).toMatchObject({
+            url,
+            headers: {
+                "Tracking-ID": expect.any(String),
+                "TomTom-User-Agent": expect.stringContaining("WebGoSDK/")
+            }
+        });
+    });
+
+    test("Return only url if it is TomTom domain but an image resource", () => {
+        const url = "http://tomtom.com";
+        const transformRequestFn = injectCustomHeaders({});
+
+        expect(transformRequestFn(url, "Image")).toStrictEqual({ url });
     });
 });
