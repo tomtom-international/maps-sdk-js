@@ -5,6 +5,9 @@ const config: Config = {
     testEnvironment: "node",
     extensionsToTreatAsEsm: [".ts"],
     setupFiles: ["<rootDir>/../test-config/setupFile.js"],
+    moduleNameMapper: {
+        uuid: require.resolve("uuid")
+    },
     testPathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/node_modules/", "<rootDir>/.rollup.cache/"]
 };
 
