@@ -1,7 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { GlobalConfig } from "../config/GlobalConfig";
 
-const SDK_NAME = "WebGoSDK";
+/**
+ * SDK name used TomTom custom header TomTom-User-Agent
+ * @ignore
+ */
+export const SDK_NAME = "MapsSDKJS";
 // Rollup replace plugin will literally replace __SDK_VERSION__ to the actual root package
 // version in build time
 const SDK_VERSION = "__SDK_VERSION__";
@@ -9,7 +13,7 @@ const SDK_VERSION = "__SDK_VERSION__";
 /**
  * Validate if the string to be used in the Tracking-ID header is valid.
  * The value must match the regular expression '^[a-zA-Z0-9-]{1,100}$'.
- * @see Tracking-ID: https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-response
+ * @see Tracking-ID: https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
  *
  * @param trackingId String to be validate
  */
@@ -25,6 +29,13 @@ const validateTrackingId = (trackingId: string): void => {
     }
 };
 
+/**
+ * Interface for TomTom custom headers
+ * Those headers are added in every request to TomTom services
+ * Tracking-ID - @see https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
+ * TomTom-User-Agent - Name and version of this SDK
+ * @ignore
+ */
 export interface TomTomCustomHeaders {
     "Tracking-ID": string;
     "TomTom-User-Agent": string;

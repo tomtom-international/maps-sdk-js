@@ -52,7 +52,7 @@ describe("Map utils - injectCustomHeaders", () => {
             url,
             headers: {
                 "Tracking-ID": expect.any(String),
-                "TomTom-User-Agent": expect.stringContaining("WebGoSDK/")
+                "TomTom-User-Agent": expect.stringContaining("MapsSDKJS")
             }
         });
     });

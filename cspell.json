@@ -30,7 +30,8 @@
     "movestart",
     "Noto",
     "uuidv", 
-    "tomtom"
+    "tomtom",
+    "SDKJS"
   ],
   "ignorePaths": [
     "**/dist/**",

@@ -1,9 +1,22 @@
-import { mergeFromGlobal } from "@anw/go-sdk-js/core";
+import axios from "axios";
+import { mergeFromGlobal, generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
 import { buildResponseError, buildValidationError } from "./Errors";
 import { ServiceName } from "./types/ServicesTypes";
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";
 import { validateRequestSchema, ValidationError } from "./Validation";
-import { injectCustomHeaders } from "./CustomHeaders";
+
+/**
+ * Inject custom headers to axios requests
+ * @param params -  Common Service parameters configuration
+ */
+const injectCustomHeaders = (params: CommonServiceParams): void => {
+    const tomtomHeaders = generateTomTomCustomHeaders(params);
+
+    // Injecting custom headers to axios
+    axios.defaults.headers.common = {
+        ...tomtomHeaders
+    };
+};
 
 /**
  * @ignore
