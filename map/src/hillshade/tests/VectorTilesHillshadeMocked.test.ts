@@ -29,7 +29,6 @@ describe("Vector tiles Hillshade module tests", () => {
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         // (see note on top of test file)
-        hillshade.toggleVisibility();
         hillshade.setVisible(false);
         hillshade.isVisible();
     });

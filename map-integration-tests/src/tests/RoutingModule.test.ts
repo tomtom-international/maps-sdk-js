@@ -15,13 +15,9 @@ import {
 } from "map";
 import { Routes, WaypointLike } from "@anw/go-sdk-js/core";
 import { GOSDKThis } from "./types/GOSDKThis";
-import {
-    getNumVisibleLayersBySource,
-    MapIntegrationTestEnv,
-    waitForMapReady,
-    waitUntilRenderedFeatures
-} from "./util/MapIntegrationTestEnv";
+import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
+import { getNumVisibleLayersBySource, waitForMapReady, waitUntilRenderedFeatures } from "./util/TestUtils";
 
 const initRouting = async () =>
     page.evaluate(async () => {

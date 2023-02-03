@@ -6,15 +6,14 @@ import {
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
 } from "map";
+import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
+import mapInitTestData from "./MapInit.test.data.json";
 import {
-    isLayerVisible,
     getNumVisibleLayersBySource,
     getVisibleLayersBySource,
-    MapIntegrationTestEnv,
+    isLayerVisible,
     waitForMapReady
-} from "./util/MapIntegrationTestEnv";
-import mapInitTestData from "./MapInit.test.data.json";
-import { GOSDKThis } from "./types/GOSDKThis";
+} from "./util/TestUtils";
 
 describe("Map Init tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -35,7 +34,7 @@ describe("Map Init tests", () => {
         }
     );
 
-    test("Should not have traffic flow and traffic incidents layers source ID when module are excluded", async () => {
+    test("Excluding all traffic from the style", async () => {
         await mapEnv.loadMap(
             {
                 center: [-0.12621, 51.50394]
@@ -45,21 +44,35 @@ describe("Map Init tests", () => {
             }
         );
 
-        await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            /* This will trigger a console.error. Here we are trying to load modules that has been excluded.*/
-            goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, { visible: true });
-        });
-
         await waitForMapReady();
 
         expect(await getVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).toHaveLength(0);
         expect(await getVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toHaveLength(0);
-        /* The two errors are due to the two modules excluded: traffic_flow and traffic_incidents */
-        expect(mapEnv.consoleErrors).toHaveLength(2);
+        expect((await getVisibleLayersBySource(POI_SOURCE_ID)).length).toBeGreaterThan(0);
+        expect((await getVisibleLayersBySource(HILLSHADE_SOURCE_ID)).length).toBeGreaterThan(0);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Should not have poi and hillshade layers when they are excluded from the style", async () => {
+    test("Excluding traffic flow from the style", async () => {
+        await mapEnv.loadMap(
+            {
+                center: [-0.12621, 51.50394]
+            },
+            {
+                exclude: ["traffic_flow"]
+            }
+        );
+
+        await waitForMapReady();
+
+        expect((await getVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).length).toBeGreaterThan(0);
+        expect(await getVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toHaveLength(0);
+        expect((await getVisibleLayersBySource(POI_SOURCE_ID)).length).toBeGreaterThan(0);
+        expect((await getVisibleLayersBySource(HILLSHADE_SOURCE_ID)).length).toBeGreaterThan(0);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Excluding POIs and hillshade from the style", async () => {
         await mapEnv.loadMap(
             {
                 center: [-0.12621, 51.50394],
@@ -70,19 +83,12 @@ describe("Map Init tests", () => {
             }
         );
 
-        await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            /* This will trigger a console.error. Here we are trying to load modules that has been excluded.*/
-            goSDKThis.hillshade = await goSDKThis.GOSDK.VectorTilesHillshade.init(goSDKThis.goSDKMap, {
-                visible: false
-            });
-            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, { visible: false });
-        });
-
         await waitForMapReady();
         expect(await getVisibleLayersBySource(POI_SOURCE_ID)).toHaveLength(0);
         expect(await getVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toHaveLength(0);
+        expect((await getVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).length).toBeGreaterThan(0);
+        expect((await getVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).length).toBeGreaterThan(0);
         expect(await isLayerVisible("POI")).toStrictEqual(false);
-        expect(mapEnv.consoleErrors).toHaveLength(2);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

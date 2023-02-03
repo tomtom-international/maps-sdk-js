@@ -44,10 +44,6 @@ describe("Vector tiles traffic module tests", () => {
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         // (see note on top of test file)
-        traffic.toggleVisibility();
-        traffic.toggleIncidentIconsVisibility();
-        traffic.toggleIncidentsVisibility();
-        traffic.toggleFlowVisibility();
         traffic.setVisible(false);
         traffic.setIncidentsVisible(true);
         traffic.setIncidentIconsVisible(true);

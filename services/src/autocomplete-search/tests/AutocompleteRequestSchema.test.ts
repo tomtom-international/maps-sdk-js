@@ -1,10 +1,10 @@
+import { GOSDKConfig, Language } from "@anw/go-sdk-js/core";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { autocompleteSearchRequestSchema } from "../AutocompleteSearchRequestSchema";
 import { AutocompleteSearchParams } from "../types";
 import autocompleteSearchReqObjects from "./RequestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/Validation";
 import { MAX_EXEC_TIMES_MS } from "../../../perfConfig";
-import { GOSDKConfig, Language } from "core";
 
 describe("Autocomplete Schema Validation", () => {
     beforeAll(() => {

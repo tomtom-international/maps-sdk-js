@@ -1,4 +1,4 @@
-import { Map, LngLatLike, MapGeoJSONFeature } from "maplibre-gl";
+import { LngLatLike, Map, MapGeoJSONFeature } from "maplibre-gl";
 import {
     GeoJSONPlaces,
     GeometryModule,

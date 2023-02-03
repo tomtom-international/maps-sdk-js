@@ -1,16 +1,12 @@
 import { GeometryDataResponse, Places } from "@anw/go-sdk-js/core";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import {
-    MapIntegrationTestEnv,
-    waitForMapReady,
-    waitForTimeout,
-    waitUntilRenderedFeatures
-} from "./util/MapIntegrationTestEnv";
+import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 import POIs from "./MapEventProxy.test.data.json";
 import amsterdamGeometryData from "./GeometryModule.test.data.json";
 import { EventType, GeometryModuleConfig } from "map";
 import { Position } from "geojson";
+import { waitForMapReady, waitForTimeout, waitUntilRenderedFeatures } from "./util/TestUtils";
 
 const poiCoordinates = POIs.features[0].geometry.coordinates as [number, number];
 
@@ -62,26 +58,6 @@ const initGeometry = async (config: GeometryModuleConfig) =>
         geometryData,
         config
     );
-
-const setupGeoJSONModuleAndPlacesEvents = async () => {
-    await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
-
-    // Initiating Places module
-    await page.evaluate(async () => {
-        const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap);
-    });
-    await waitForMapReady();
-    await showPlaces(POIs as Places);
-    await waitForRenderedPlaces(POIs.features.length);
-
-    // Setting up events - We click in the POI and should not have geometry module returned
-    // in features parameter
-    await setupEventCallbacks("click");
-
-    const poiPosition = await getPoiPosition();
-    await page.mouse.click(poiPosition.x, poiPosition.y);
-};
 
 describe("EventProxy integration tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -141,39 +117,34 @@ describe("EventProxy integration tests", () => {
 
         const poiPosition = await getPoiPosition();
         await page.mouse.move(poiPosition.x, poiPosition.y);
+        // Waiting enough for a long hover:
         await waitForTimeout(800);
 
-        let numOfHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers);
-        let numOfLongHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfLongHovers);
-
-        expect(numOfHovers).toBe(1);
-        expect(numOfLongHovers).toBe(1);
+        expect(await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers)).toBe(1);
+        expect(await page.evaluate(() => (globalThis as GOSDKThis)._numOfLongHovers)).toBe(1);
 
         // Moving cursor away from POI
         await page.mouse.move(poiPosition.x + 100, poiPosition.y + 100);
         // Moving cursor back to POI
         await page.mouse.move(poiPosition.x, poiPosition.y);
+        // Waiting briefly, not enough for a long hover:
         await waitForTimeout(200);
         // Moving mouse away from POI
         await page.mouse.move(poiPosition.x + 100, poiPosition.y + 100);
 
-        numOfHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers);
-        numOfLongHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfLongHovers);
-
-        expect(numOfHovers).toBe(2);
-        expect(numOfLongHovers).toBe(1);
+        expect(await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers)).toBe(2);
+        expect(await page.evaluate(() => (globalThis as GOSDKThis)._numOfLongHovers)).toBe(1);
 
         // Moving cursor away from POI
         await page.mouse.move(poiPosition.x + 100, poiPosition.y + 100);
         // Moving cursor back to POI
         await page.mouse.move(poiPosition.x, poiPosition.y);
+        // Waiting enough for a long hover:
         await waitForTimeout(800);
 
-        numOfHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers);
-        numOfLongHovers = await page.evaluate(() => (globalThis as GOSDKThis)._numOfLongHovers);
+        expect(await page.evaluate(() => (globalThis as GOSDKThis)._numOfHovers)).toBe(3);
+        expect(await page.evaluate(() => (globalThis as GOSDKThis)._numOfLongHovers)).toBe(2);
 
-        expect(numOfHovers).toBe(3);
-        expect(numOfLongHovers).toBe(2);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
@@ -183,13 +154,13 @@ describe("EventProxy integration tests", () => {
         const poiPosition = await getPoiPosition();
         await page.mouse.click(poiPosition.x, poiPosition.y);
 
-        const lnglat = await page.evaluate(() => (globalThis as GOSDKThis)._clickedLngLat);
+        const lngLat = await page.evaluate(() => (globalThis as GOSDKThis)._clickedLngLat);
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
         const sourceWithLayers = await page.evaluate(
             () => (globalThis as GOSDKThis)._clickedSourceWithLayers?.layerSpecs
         );
 
-        expect(lnglat).toMatchObject({
+        expect(lngLat).toMatchObject({
             lng: expect.any(Number),
             lat: expect.any(Number)
         });
@@ -200,6 +171,26 @@ describe("EventProxy integration tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });
+
+const setupPlacesModuleAndEvents = async () => {
+    await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
+
+    // Initiating Places module
+    await page.evaluate(async () => {
+        const goSDKThis = globalThis as GOSDKThis;
+        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap);
+    });
+    await waitForMapReady();
+    await showPlaces(POIs as Places);
+    await waitForRenderedPlaces(POIs.features.length);
+
+    // Setting up events - We click in the POI and should not have geometry module returned
+    // in features parameter
+    await setupEventCallbacks("click");
+
+    const poiPosition = await getPoiPosition();
+    await page.mouse.click(poiPosition.x, poiPosition.y);
+};
 
 describe("EventProxy Configuration", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -246,7 +237,7 @@ describe("EventProxy Configuration", () => {
     test("Not return layer if interactive flag is disabled", async () => {
         // Initiating Geometry module
         await initGeometry({ interactive: false });
-        await setupGeoJSONModuleAndPlacesEvents();
+        await setupPlacesModuleAndEvents();
 
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
         expect(features).toHaveLength(1);
@@ -255,7 +246,7 @@ describe("EventProxy Configuration", () => {
 
     test("Return layer if interactive flag is enabled", async () => {
         await initGeometry({ interactive: true });
-        await setupGeoJSONModuleAndPlacesEvents();
+        await setupPlacesModuleAndEvents();
 
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
         expect(features).toHaveLength(3);

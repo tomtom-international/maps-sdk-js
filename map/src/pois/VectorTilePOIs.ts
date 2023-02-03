@@ -2,7 +2,7 @@ import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
 import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../core";
 import { FilterablePOICategory, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
-import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
+import { notInTheStyle } from "../core/ErrorMessages";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
 import { POIClassification, poiClassificationToIconID } from "../places";
@@ -34,30 +34,9 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
  * @category Functions
  */
 export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
-    private readonly poi?: StyleSourceWithLayers;
-    private categoriesFilter?: ValuesFilter<FilterablePOICategory>;
-    private readonly originalFilter?: FilterSpecification;
-
-    private constructor(goSDKMap: GOSDKMap, config?: VectorTilePOIsConfig) {
-        super(goSDKMap, config);
-
-        const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
-        if (poiRuntimeSource) {
-            this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
-            const existingFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id);
-            if (existingFilter) {
-                this.originalFilter = existingFilter;
-            }
-        }
-
-        if (config) {
-            this.applyConfig(config);
-
-            if (config.interactive && this.poi) {
-                goSDKMap._eventsProxy.add(this.poi);
-            }
-        }
-    }
+    private poi!: StyleSourceWithLayers;
+    private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
+    private originalFilter?: FilterSpecification;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -70,48 +49,52 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         return new VectorTilePOIs(goSDKMap, config);
     }
 
-    applyConfig(config: VectorTilePOIsConfig): void {
-        if (!isNil(config.visible)) {
-            this.setVisible(config.visible);
+    protected initSourcesWithLayers() {
+        const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
+        if (!poiRuntimeSource) {
+            throw notInTheStyle(`init ${VectorTilePOIs.name} with source ID ${POI_SOURCE_ID}`);
         }
-        if (!isNil(config.filters?.categories)) {
-            this.categoriesFilter = config.filters?.categories;
-            this.filterCategories();
+        this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
+        this.originalFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id) as FilterSpecification;
+    }
+
+    protected _applyConfig(config: VectorTilePOIsConfig | null): void {
+        if (config && !isNil(config.visible)) {
+            this.setVisible(config.visible);
+        } else if (!this.isVisible()) {
+            // applying default:
+            this.setVisible(true);
+        }
+
+        this.filterCategories(config?.filters?.categories);
+
+        if (config?.interactive) {
+            this.goSDKMap._eventsProxy.ensureAdded(this.poi);
         }
     }
 
     isVisible(): boolean {
-        return !!this.poi?.isAnyLayerVisible();
+        return this.poi.isAnyLayerVisible();
     }
 
     setVisible(visible: boolean): void {
-        if (this.poi) {
-            this.poi.setAllLayersVisible(visible);
-        } else {
-            console.error(changingWhileNotInTheStyle("POIs visibility"));
-        }
+        this.poi.setAllLayersVisible(visible);
     }
 
-    toggleVisibility(): void {
-        this.setVisible(!this.isVisible());
-    }
-
-    private filterCategories(): void {
-        if (this.categoriesFilter) {
+    filterCategories(categoriesFilter?: ValuesFilter<FilterablePOICategory> | null): void {
+        if (categoriesFilter) {
             const poiFilter = buildMappedValuesFilter(
                 "icon",
-                this.categoriesFilter.show,
-                getCategoryIcons(this.categoriesFilter.values)
+                categoriesFilter.show,
+                getCategoryIcons(categoriesFilter.values)
             );
-
-            const mergedFilter = getMergedAllFilter(poiFilter, this.originalFilter);
-            this.mapLibreMap.setFilter("POI", mergedFilter);
+            this.mapLibreMap.setFilter("POI", getMergedAllFilter(poiFilter, this.originalFilter));
+        } else if (this.categoriesFilter) {
+            // Applies default:
+            this.mapLibreMap.setFilter("POI", this.originalFilter);
         }
-    }
 
-    applyCategoriesFilter(categoriesFilter: ValuesFilter<FilterablePOICategory>): void {
         this.categoriesFilter = categoriesFilter;
-        this.filterCategories();
     }
 
     /**

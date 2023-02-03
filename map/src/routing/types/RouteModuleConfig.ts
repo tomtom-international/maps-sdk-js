@@ -8,12 +8,4 @@ export type RoutingModuleConfig = {
      * @default false
      */
     interactive?: boolean;
-    sections?: {
-        traffic?: {
-            visible?: boolean;
-            icons?: {
-                visible?: boolean;
-            };
-        };
-    };
 };

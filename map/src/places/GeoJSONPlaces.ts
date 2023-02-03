@@ -17,22 +17,7 @@ import { changePlacesLayerSpecs, getPlacesLayerSpec, preparePlacesForDisplay } f
  * @category Functions
  */
 export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
-    private readonly places: GeoJSONSourceWithLayers<Places>;
-
-    private constructor(goSDKMap: GOSDKMap, config?: PlaceModuleConfig) {
-        super(goSDKMap, config);
-        const layerSpec = getPlacesLayerSpec(config?.iconConfig, this.mapLibreMap);
-        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
-            layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
-        ]);
-
-        if (config) {
-            this.applyConfig(config);
-        }
-        if (config?.interactive && this.places) {
-            goSDKMap._eventsProxy.add(this.places);
-        }
-    }
+    private places!: GeoJSONSourceWithLayers<Places>;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -45,15 +30,21 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
         return new GeoJSONPlaces(goSDKMap, config);
     }
 
-    applyConfig(config: PlaceModuleConfig): void {
-        this.config = config;
-        if (config.iconConfig) {
-            this.applyIconConfig(config.iconConfig);
-        }
+    protected initSourcesWithLayers() {
+        const layerSpec = getPlacesLayerSpec(config?.iconConfig, this.mapLibreMap);
+        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
+            layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
+        ]);
     }
 
-    resetConfig(): void {
-        this.applyConfig({});
+    protected _applyConfig(config: PlaceModuleConfig | undefined) {
+        if (config?.iconConfig) {
+            this.applyIconConfig(config.iconConfig);
+        }
+
+        if (config?.interactive) {
+            this.goSDKMap._eventsProxy.ensureAdded(this.places);
+        }
     }
 
     /**

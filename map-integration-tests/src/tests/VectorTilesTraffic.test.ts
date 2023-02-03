@@ -5,16 +5,18 @@ import {
     incidentCategoriesMapping,
     IncidentCategory,
     RoadCategory,
+    VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID,
-    VectorTilesTrafficConfig,
-    VECTOR_TILES_FLOW_SOURCE_ID
+    VectorTilesTrafficConfig
 } from "map";
-import {
-    getVisibleLayersBySource,
-    MapIntegrationTestEnv,
-    waitUntilRenderedFeaturesChange
-} from "./util/MapIntegrationTestEnv";
+import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
+import {
+    assertTrafficVisibility,
+    getVisibleLayersBySource,
+    waitForTimeout,
+    waitUntilRenderedFeaturesChange
+} from "./util/TestUtils";
 
 const waitForRenderedFlowChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(
@@ -50,14 +52,73 @@ const initTraffic = async (config?: VectorTilesTrafficConfig) =>
         goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, inputConfig);
     }, config as VectorTilesTrafficConfig);
 
-describe("Map vector tile traffic config tests", () => {
+describe("Map vector tile traffic module tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
 
+    test("Failing to initialize if fully excluded from the style", async () => {
+        await mapEnv.loadMap(
+            {
+                center: [-0.12621, 51.50394],
+                zoom: 15
+            },
+            {
+                exclude: ["traffic_incidents", "traffic_flow"]
+            }
+        );
+
+        await expect(
+            page.evaluate(async () => {
+                const goSDKThis = globalThis as GOSDKThis;
+                await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap);
+            })
+        ).rejects.toBeDefined();
+    });
+
+    test("Vector tiles traffic visibility changes in different ways", async () => {
+        await mapEnv.loadMap({
+            zoom: 14,
+            center: [-0.12621, 51.50394]
+        });
+
+        await page.evaluate(async () => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, { visible: false });
+        });
+        await assertTrafficVisibility(false, false);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
+        await assertTrafficVisibility(true, true);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
+        await assertTrafficVisibility(false, false);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(true));
+        await assertTrafficVisibility(false, true);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.applyConfig({ visible: true }));
+        await assertTrafficVisibility(true, true);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.applyConfig({ incidents: { visible: false } }));
+        await assertTrafficVisibility(false, true);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.applyConfig({ flow: { visible: false } }));
+        await assertTrafficVisibility(true, false);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+        await assertTrafficVisibility(true, true);
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+        await assertTrafficVisibility(true, true);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
     test("Traffic incidents filtering with config changes", async () => {
         await mapEnv.loadMap(
             {
+                // London:
                 zoom: 12,
                 center: [-0.12621, 51.50394]
             },
@@ -66,10 +127,11 @@ describe("Map vector tile traffic config tests", () => {
             }
         );
         await initTraffic();
+        await waitForTimeout(3000);
 
-        const originalRenderedIncidents = await waitForRenderedIncidentsChange(0);
-        expect(originalRenderedIncidents.length).toBeGreaterThan(5);
-        expect(getByIncidentCategories(originalRenderedIncidents, ["road_closed"]).length).toBeGreaterThan(0);
+        const defaultIncidents = await waitForRenderedIncidentsChange(0);
+        expect(defaultIncidents.length).toBeGreaterThan(4);
+        expect(getByIncidentCategories(defaultIncidents, ["road_closed"]).length).toBeGreaterThan(0);
 
         // Showing road closures only:
         await page.evaluate(async () =>
@@ -89,9 +151,7 @@ describe("Map vector tile traffic config tests", () => {
             })
         );
 
-        const originalIncidentsCount = originalRenderedIncidents.length;
-        const roadClosedIncidents = await waitForRenderedIncidentsChange(originalIncidentsCount);
-
+        const roadClosedIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
         // we check that all the rendered incidents are of road_closed category:
         expect(getByIncidentCategories(roadClosedIncidents, ["road_closed"])).toHaveLength(roadClosedIncidents.length);
         expect(
@@ -101,7 +161,7 @@ describe("Map vector tile traffic config tests", () => {
             )
         ).toHaveLength(0);
 
-        // Changing filter to show road_closures, or major/trunk roads:
+        // Changing filter to show road closures and major roads:
         await page.evaluate(async () =>
             (globalThis as GOSDKThis).traffic?.applyConfig({
                 incidents: {
@@ -116,7 +176,7 @@ describe("Map vector tile traffic config tests", () => {
                             {
                                 roadCategories: {
                                     show: "only",
-                                    values: ["motorway", "trunk"]
+                                    values: ["motorway", "trunk", "primary"]
                                 }
                             }
                         ]
@@ -125,18 +185,24 @@ describe("Map vector tile traffic config tests", () => {
             })
         );
 
-        const roadClosedOrMajorRoadsIncidents = await waitForRenderedIncidentsChange(originalIncidentsCount);
-        // The addition of motorway-trunk and road_closed incidents should be greater or equal than the total
+        const roadClosedAndMajorRoadIncidents = await waitForRenderedIncidentsChange(roadClosedIncidents.length);
+        expect(roadClosedAndMajorRoadIncidents.length).toBeLessThan(defaultIncidents.length);
+        // The addition of major road and road_closed incidents should be greater or equal than the total
         // (since there can be overlap due to the "any"/"or" filter)
         expect(
-            getByRoadCategories(roadClosedOrMajorRoadsIncidents, ["motorway", "trunk"]).length +
-                getByIncidentCategories(roadClosedOrMajorRoadsIncidents, ["road_closed"]).length
-        ).toBeGreaterThanOrEqual(roadClosedOrMajorRoadsIncidents.length);
+            getByRoadCategories(roadClosedAndMajorRoadIncidents, ["motorway", "trunk", "primary"]).length +
+                getByIncidentCategories(roadClosedAndMajorRoadIncidents, ["road_closed"]).length
+        ).toBeGreaterThanOrEqual(roadClosedAndMajorRoadIncidents.length);
+
+        // We reset the config and assert that we have the same amount of incidents as the beginning:
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+        const resetIncidents = await waitForRenderedIncidentsChange(roadClosedAndMajorRoadIncidents.length);
+        expect(resetIncidents).toHaveLength(defaultIncidents.length);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Traffic incidents and flow filtering with initial config", async () => {
+    test("Traffic incidents and flow filtering with complex initial config", async () => {
         await mapEnv.loadMap(
             {
                 zoom: 13,

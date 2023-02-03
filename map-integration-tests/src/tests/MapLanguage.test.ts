@@ -1,5 +1,6 @@
-import { getSymbolLayersByID, MapIntegrationTestEnv, waitForMapReady } from "./util/MapIntegrationTestEnv";
+import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
+import { getSymbolLayersByID, waitForMapReady } from "./util/TestUtils";
 
 const calculateLocalizedTextFieldExpression = (lang: string) => ["coalesce", ["get", `name_${lang}`], ["get", "name"]];
 

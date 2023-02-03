@@ -1,7 +1,7 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
 import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../core";
-import { changingWhileNotInTheStyle } from "../core/ErrorMessages";
+import { notInTheStyle } from "../core/ErrorMessages";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 
@@ -10,25 +10,7 @@ import { waitUntilMapIsReady } from "../utils/mapUtils";
  * * Hillshade refers to the semi-transparent terrain layer.
  */
 export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshadeConfig> {
-    private readonly hillshade?: StyleSourceWithLayers;
-
-    private constructor(goSDKMap: GOSDKMap, config?: VectorTilesHillshadeConfig) {
-        super(goSDKMap, config);
-
-        const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
-
-        if (hillshadeSource) {
-            this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
-        }
-
-        if (config) {
-            this.applyConfig(config);
-
-            if (config.interactive && this.hillshade) {
-                goSDKMap._eventsProxy.add(this.hillshade);
-            }
-        }
-    }
+    private hillshade!: StyleSourceWithLayers;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -41,26 +23,33 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
         return new VectorTilesHillshade(goSDKMap, config);
     }
 
-    applyConfig(config: VectorTilesHillshadeConfig): void {
-        if (!isNil(config.visible)) {
+    protected initSourcesWithLayers() {
+        const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
+        if (!hillshadeSource) {
+            throw notInTheStyle(`init ${VectorTilesHillshade.name} with source ID ${HILLSHADE_SOURCE_ID}`);
+        }
+        this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
+    }
+
+    _applyConfig(config: VectorTilesHillshadeConfig | null): void {
+        if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
+        } else if (!this.isVisible()) {
+            // applying default:
+            this.setVisible(true);
+        }
+
+        if (config?.interactive && this.hillshade) {
+            this.goSDKMap._eventsProxy.ensureAdded(this.hillshade);
         }
     }
 
     setVisible(visible: boolean): void {
-        if (this.hillshade) {
-            this.hillshade.setAllLayersVisible(visible);
-        } else {
-            console.error(changingWhileNotInTheStyle("hillshade visibility"));
-        }
+        this.hillshade.setAllLayersVisible(visible);
     }
 
     isVisible(): boolean {
-        return !!this.hillshade?.isAnyLayerVisible();
-    }
-
-    toggleVisibility(): void {
-        this.setVisible(!this.isVisible());
+        return this.hillshade.isAnyLayerVisible();
     }
 
     /**

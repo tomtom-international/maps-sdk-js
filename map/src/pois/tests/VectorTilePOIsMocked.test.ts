@@ -35,7 +35,6 @@ describe("Vector tiles POI module tests", () => {
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         // (see note on top of test file)
-        pois.toggleVisibility();
         pois.setVisible(false);
         pois.isVisible();
     });
@@ -58,14 +57,14 @@ describe("Vector tiles POI module tests", () => {
             }
         });
 
-        jest.spyOn(pois, "applyCategoriesFilter");
+        jest.spyOn(pois, "filterCategories");
         expect(pois).toBeDefined();
-        pois.applyCategoriesFilter({
+        pois.filterCategories({
             show: "all_except",
             values: ["ACCOMMODATION_GROUP"]
         });
-        expect(pois.applyCategoriesFilter).toHaveBeenCalledTimes(1);
-        expect(pois.applyCategoriesFilter).toHaveBeenCalledWith({
+        expect(pois.filterCategories).toHaveBeenCalledTimes(1);
+        expect(pois.filterCategories).toHaveBeenCalledWith({
             show: "all_except",
             values: ["ACCOMMODATION_GROUP"]
         });

@@ -1,7 +1,7 @@
 import { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D } from "maplibre-gl";
 import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { AbstractEventProxy } from "./AbstractEventProxy";
-import { ClickEvent, HoverClickHandler, SourceWithLayers } from "./types";
+import { ClickEventType, HoverClickHandler, SourceWithLayers } from "./types";
 import { MapEventsConfig } from "../init/types/MapEventsConfig";
 import { deserializeFeatures } from "../utils/mapUtils";
 
@@ -25,12 +25,12 @@ const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
  * To have full control on hovers and clicks when multiple overlapping layers are present, that logic must be centralized here.
  */
 export class EventsProxy extends AbstractEventProxy {
-    private enabled = true;
     private readonly map: Map;
-    private hoveringLngLat!: LngLat;
+    private enabled = true;
+    private hoveringLngLat?: LngLat;
     private hoveringPoint?: Point2D;
     private hoveringFeature?: MapGeoJSONFeature;
-    private hoveredFeatures!: MapGeoJSONFeature[];
+    private hoveredFeatures?: MapGeoJSONFeature[];
     private hoveringSourceWithLayers?: SourceWithLayers;
     private longHoverTimeoutHandlerID?: number;
     // Control flag to indicate that the coming hover is the first one since the map is "quiet" again:
@@ -49,32 +49,28 @@ export class EventsProxy extends AbstractEventProxy {
         this.map.getCanvas().style.cursor = this.config.cursorOnMap;
         this.lastCursorStyle = this.config.cursorOnMap;
         this.defaultZoomLevel = Math.round(this.map.getZoom());
-        this.listenToDefaultEvents();
-        this.listenToMapClicks();
+        this.listenToEvents();
     }
 
-    private listenToDefaultEvents = () => {
-        this.map.on("mousemove", this.onMouseMove);
-        this.map.on("movestart", this.onMouseStart);
-        this.map.on("mouseout", this.onMouseOut);
-        this.map.on("mouseover", this.onMouseMove);
-        this.map.on("mousedown", this.onMouseDown);
-        this.map.on("mouseup", this.onMouseUp);
-        this.map.on("zoom", this.onZoom);
-    };
-
-    private listenToMapClicks = () => {
-        this.map.on("click", this.onMapClick("click"));
-        this.map.on("contextmenu", this.onMapClick("contextmenu"));
-    };
+    private listenToEvents() {
+        this.map.on("mousemove", (ev) => this.onMouseMove(ev));
+        this.map.on("movestart", () => this.onMouseStart());
+        this.map.on("mouseout", () => this.onMouseOut());
+        this.map.on("mouseover", (ev) => this.onMouseMove(ev));
+        this.map.on("mousedown", () => this.onMouseDown());
+        this.map.on("mouseup", () => this.onMouseUp());
+        this.map.on("zoom", () => this.onZoom());
+        this.map.on("click", (ev) => this.onMapClick("click", ev));
+        this.map.on("contextmenu", (ev) => this.onMapClick("contextmenu", ev));
+    }
 
     // Enable/Disable Events
-    public enable = (enabled: boolean) => {
+    public enable(enabled: boolean) {
         this.enabled = enabled;
         if (!enabled) {
             window.clearTimeout(this.longHoverTimeoutHandlerID);
         }
-    };
+    }
 
     /**
      * Private utility methods
@@ -82,7 +78,6 @@ export class EventsProxy extends AbstractEventProxy {
 
     private toPaddedBounds(point: Point2D): [[number, number], [number, number]] {
         const paddingBox = this.paddingBoxOnZoom || this.config.paddingBox;
-
         return [
             // sw:
             [point.x - paddingBox, point.y + paddingBox],
@@ -91,25 +86,25 @@ export class EventsProxy extends AbstractEventProxy {
         ];
     }
 
-    private isEnabled = () => {
+    private isEnabled() {
         return this.enabled && !this.map.isMoving();
-    };
+    }
 
-    private getRenderedFeatures = (point: Point2D) => {
+    private getRenderedFeatures(point: Point2D): MapGeoJSONFeature[] {
         return this.map.queryRenderedFeatures(this.toPaddedBounds(point), {
             layers: this.interactiveLayerIDs
         });
-    };
+    }
 
-    private restartLongHoverTimeout = () => {
+    private restartLongHoverTimeout() {
         window.clearTimeout(this.longHoverTimeoutHandlerID);
         this.longHoverTimeoutHandlerID = window.setTimeout(
-            this.handleLongHoverTimeout,
+            () => this.handleLongHoverTimeout(),
             this.firstDelayedHoverSinceMapMove ? this.config.hoverDelayMsOnMapMove : this.config.hoverDelayMsOnMapStop
         );
-    };
+    }
 
-    private handleLongHoverTimeout = () => {
+    private handleLongHoverTimeout() {
         // We try to avoid firing long hovers when the feature was just clicked
         // (requires a safe-ish efficient way to compare features coming from different events, like IDs):
         if (
@@ -125,20 +120,22 @@ export class EventsProxy extends AbstractEventProxy {
             this.firstDelayedHoverSinceMapMove = false;
             if (this.hoveringSourceWithLayers) {
                 const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
-                if (this.handlers[listenerId]) {
-                    this.handlers[listenerId].forEach((cb: HoverClickHandler) =>
-                        cb(this.hoveringLngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
-                    );
-                }
+                this.handlers[listenerId]?.forEach((handler: HoverClickHandler) =>
+                    handler(
+                        this.hoveringLngLat as LngLat,
+                        this.hoveredFeatures as MapGeoJSONFeature[],
+                        this.hoveringSourceWithLayers
+                    )
+                );
             }
         }
-    };
+    }
 
     /**
      * Private event handlers for Maplibre events.
      */
 
-    private onZoom = () => {
+    private onZoom() {
         if (!this.config.paddingBoxUpdateOnZoom) {
             return;
         }
@@ -152,29 +149,29 @@ export class EventsProxy extends AbstractEventProxy {
         } else {
             this.paddingBoxOnZoom = this.config.paddingBox - Math.floor(this.config.paddingBox - paddedBoundsOnZoom);
         }
-    };
+    }
 
-    private onMouseStart = () => {
+    private onMouseStart() {
         this.firstDelayedHoverSinceMapMove = true;
         window.clearTimeout(this.longHoverTimeoutHandlerID);
-    };
+    }
 
-    private onMouseOut = () => {
+    private onMouseOut() {
         // Preventing accidental de-hover event if we actually leave the map canvas.
         // Since this could potentially be about jumping into a map popup, so we leave that up to the caller.
         window.clearTimeout(this.longHoverTimeoutHandlerID);
-    };
+    }
 
-    private onMouseDown = () => {
+    private onMouseDown() {
         this.lastCursorStyle = this.map.getCanvas().style.cursor;
         this.map.getCanvas().style.cursor = this.config.cursorOnMouseDown;
-    };
+    }
 
-    private onMouseUp = () => {
+    private onMouseUp() {
         this.map.getCanvas().style.cursor = this.lastCursorStyle;
-    };
+    }
 
-    private onMouseMove = (ev: MapMouseEvent) => {
+    private onMouseMove(ev: MapMouseEvent) {
         if (!this.isEnabled()) {
             // We ensure no unwanted hover handling while disabled or the map moves
             return;
@@ -214,12 +211,10 @@ export class EventsProxy extends AbstractEventProxy {
                     }
                 }
             }
-        } else {
-            if (this.hoveringFeature) {
-                // hover -> no hover (un-hover)
-                this.map.getCanvas().style.cursor = this.config.cursorOnMap;
-                hoverChangeDetected = true;
-            }
+        } else if (this.hoveringFeature) {
+            // hover -> no hover (un-hover)
+            this.map.getCanvas().style.cursor = this.config.cursorOnMap;
+            hoverChangeDetected = true;
         }
 
         this.hoveringLngLat = ev.lngLat;
@@ -232,8 +227,8 @@ export class EventsProxy extends AbstractEventProxy {
         if (hoverChangeDetected) {
             if (this.handlers[listenerId]) {
                 // (If de-hovering this should fire undefined, undefined):
-                this.handlers[listenerId].forEach((cb: HoverClickHandler) =>
-                    cb(ev.lngLat, this.hoveredFeatures, this.hoveringSourceWithLayers)
+                this.handlers[listenerId].forEach((handler: HoverClickHandler) =>
+                    handler(ev.lngLat, this.hoveredFeatures as MapGeoJSONFeature[], this.hoveringSourceWithLayers)
                 );
             }
         }
@@ -241,9 +236,9 @@ export class EventsProxy extends AbstractEventProxy {
         if (hoverChangeDetected || mouseInMotionOverHoveredFeature) {
             this.restartLongHoverTimeout();
         }
-    };
+    }
 
-    private onMapClick = (clickType: ClickEvent) => (ev: MapMouseEvent) => {
+    private onMapClick(clickType: ClickEventType, ev: MapMouseEvent) {
         if (!this.isEnabled()) {
             // We avoid any accidental click handling while disabled or the map moves
             return;
@@ -264,5 +259,5 @@ export class EventsProxy extends AbstractEventProxy {
                 cb(ev.lngLat, clickedFeatures, lastClickedSourceWithLayers);
             });
         }
-    };
+    }
 }

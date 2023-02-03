@@ -71,18 +71,27 @@ const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
  * @category Functions
  */
 export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
-    private readonly waypoints: GeoJSONSourceWithLayers<Waypoints>;
-    private readonly routeLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
+    private waypoints!: GeoJSONSourceWithLayers<Waypoints>;
+    private routeLines!: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
-    private readonly vehicleRestricted: GeoJSONSourceWithLayers<RouteSections>;
-    private readonly incidents: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
-    private readonly ferries: GeoJSONSourceWithLayers<RouteSections>;
-    private readonly tollRoads: GeoJSONSourceWithLayers<RouteSections>;
-    private readonly tunnels: GeoJSONSourceWithLayers<RouteSections>;
+    private vehicleRestricted!: GeoJSONSourceWithLayers<RouteSections>;
+    private incidents!: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
+    private ferries!: GeoJSONSourceWithLayers<RouteSections>;
+    private tollRoads!: GeoJSONSourceWithLayers<RouteSections>;
+    private tunnels!: GeoJSONSourceWithLayers<RouteSections>;
 
-    private constructor(goSDKMap: GOSDKMap, config?: RoutingModuleConfig) {
-        super(goSDKMap, config);
+    /**
+     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * @param goSDKMap The GOSDKMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async init(goSDKMap: GOSDKMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
+        await waitUntilMapIsReady(goSDKMap);
+        return new RoutingModule(goSDKMap, config);
+    }
 
+    protected initSourcesWithLayers() {
         this.waypoints = new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
             { ...waypointSymbols, id: WAYPOINT_SYMBOLS_LAYER_ID },
             { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
@@ -140,7 +149,9 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
+    }
 
+    protected _applyConfig(config: RoutingModuleConfig | null): void {
         // If interactive set, we add all layers to be interactive
         if (config?.interactive) {
             const routingLayers = [
@@ -155,21 +166,10 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
 
             for (const layer of routingLayers) {
                 if (layer) {
-                    goSDKMap._eventsProxy.add(layer);
+                    this.goSDKMap._eventsProxy.ensureAdded(layer);
                 }
             }
         }
-    }
-
-    /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
-     */
-    static async init(goSDKMap: GOSDKMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new RoutingModule(goSDKMap, config);
     }
 
     private addImageIfNotExisting(imageID: string, path: string) {

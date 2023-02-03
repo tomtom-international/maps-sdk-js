@@ -46,11 +46,12 @@ export abstract class AbstractSourceWithLayers<
 /**
  * @ignore
  * @param loadedMap
- * @param sourceID
+ * @param sourceIDs
  */
-export const filterLayersBySource = (loadedMap: Map, sourceID: string): LayerSpecification[] => {
-    return loadedMap.getStyle().layers.filter((layer) => (layer as LayerSpecWithSource).source === sourceID);
-};
+export const filterLayersBySources = (loadedMap: Map, sourceIDs: string[]): LayerSpecWithSource[] =>
+    loadedMap
+        .getStyle()
+        .layers.filter((layer) => sourceIDs.includes((layer as LayerSpecWithSource)?.source)) as LayerSpecWithSource[];
 
 /**
  * Source with layers which are coming from the downloaded TT map style.
@@ -68,7 +69,7 @@ export class StyleSourceWithLayers<
                 map.getStyle().sources[runtimeSource.id] as SOURCE_SPEC,
                 runtimeSource
             ),
-            filterLayersBySource(map, runtimeSource.id)
+            filterLayersBySources(map, [runtimeSource.id])
         );
     }
 }

@@ -1,15 +1,11 @@
 import { HasBBox, Places } from "@anw/go-sdk-js/core";
-import { PlaceDisplayProps } from "map";
+import { PlaceDisplayProps, PLACES_SOURCE_ID } from "map";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import {
-    getNumVisibleLayersBySource,
-    MapIntegrationTestEnv,
-    waitForMapReady,
-    waitUntilRenderedFeatures
-} from "./util/MapIntegrationTestEnv";
+import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
 import sortBy from "lodash/sortBy";
+import { getNumVisibleLayersBySource, waitForMapReady, waitUntilRenderedFeatures } from "./util/TestUtils";
 
 const initPlaces = async () =>
     page.evaluate(async () => {
@@ -35,7 +31,7 @@ const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).pl
 const waitForRenderedPlaces = async (numPlaces: number) =>
     waitUntilRenderedFeatures(["placesSymbols"], numPlaces, 20000);
 
-const getNumVisibleLayers = async () => getNumVisibleLayersBySource("places");
+const getNumVisibleLayers = async () => getNumVisibleLayersBySource(PLACES_SOURCE_ID);
 
 const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: PlaceDisplayProps[]) =>
     expect(

@@ -8,7 +8,7 @@ import { EventsModule } from "./EventsModule";
 export abstract class AbstractMapModule<CFG = undefined> {
     protected readonly goSDKMap: GOSDKMap;
     protected readonly mapLibreMap: Map;
-    protected config?: CFG;
+    protected config: CFG | undefined | null;
 
     /**
      * Builds this module based on a given GO SDK map.
@@ -19,7 +19,48 @@ export abstract class AbstractMapModule<CFG = undefined> {
     protected constructor(goSDKMap: GOSDKMap, config?: CFG) {
         this.goSDKMap = goSDKMap;
         this.mapLibreMap = goSDKMap.mapLibreMap;
+        this.initSourcesWithLayers();
+        if (config) {
+            this.applyConfig(config);
+        }
+    }
+
+    /**
+     * Initializes the sources with layers for the specific module.
+     * @protected
+     */
+    protected abstract initSourcesWithLayers(): void;
+
+    /**
+     * Applies the configuration to this module.
+     * @param config The configuration to apply. If null, the configuration will be reset to defaults.
+     */
+    applyConfig(config: CFG | null): void {
+        this._applyConfig(config);
         this.config = config;
+    }
+
+    /**
+     * Internal implementation to apply config for the specific module.
+     * @param config The config to apply. this.config contains the previous configuration (if any).
+     * Once the method returns, it will be assigned to this.config.
+     * @protected
+     */
+    protected abstract _applyConfig(config: CFG | null): void;
+
+    /**
+     * Resets the configuration of this module to default values and has them applied if necessary.
+     * * Any previously applied configuration gets removed.
+     */
+    resetConfig(): void {
+        this.applyConfig(null);
+    }
+
+    /**
+     * Gets a copy of the current module config, if defined.
+     */
+    getConfig() {
+        return this.config && { ...this.config };
     }
 
     /**
@@ -28,20 +69,4 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * @ignore
      */
     protected abstract get events(): EventsModule | Record<string, EventsModule>;
-
-    /**
-     * Merges the given optional config with the module optional config and returns it.
-     * * Does not change the module config itself.
-     * * Intended for individual usages that override or extend on the module config.
-     * @protected
-     * @ignore
-     */
-    protected getMergedConfig(config: CFG | undefined = undefined): CFG | undefined {
-        return this.config
-            ? {
-                  ...this.config,
-                  ...(config || {})
-              }
-            : config;
-    }
 }

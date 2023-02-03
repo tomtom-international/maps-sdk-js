@@ -1,15 +1,11 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
-import { GeometryModuleConfig } from "map";
+import { GEOMETRY_SOURCE_ID, GeometryModuleConfig } from "map";
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
-import {
-    getNumVisibleLayersBySource,
-    MapIntegrationTestEnv,
-    waitForMapReady,
-    waitUntilRenderedFeatures
-} from "./util/MapIntegrationTestEnv";
+import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
 import amsterdamGeometryData from "./GeometryModule.test.data.json";
 import { Position } from "geojson";
+import { getNumVisibleLayersBySource, waitForMapReady, waitUntilRenderedFeatures } from "./util/TestUtils";
 
 const initGeometry = async (config?: GeometryModuleConfig) =>
     page.evaluate(
@@ -21,7 +17,7 @@ const initGeometry = async (config?: GeometryModuleConfig) =>
         config
     );
 
-const getNumVisibleLayers = async () => getNumVisibleLayersBySource("geometry");
+const getNumVisibleLayers = async () => getNumVisibleLayersBySource(GEOMETRY_SOURCE_ID);
 
 const clearGeometry = async () => page.evaluate(() => (globalThis as GOSDKThis).geometry?.clear());
 

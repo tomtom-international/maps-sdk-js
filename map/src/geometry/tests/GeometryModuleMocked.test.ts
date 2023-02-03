@@ -34,5 +34,6 @@ describe("Geometry module tests", () => {
         geometry = await GeometryModule.init(goSDKMapMock);
         geometry.show(testGeometryData);
         geometry.clear();
+        expect(geometry.events).toBeDefined();
     });
 });

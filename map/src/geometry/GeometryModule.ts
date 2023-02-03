@@ -12,20 +12,7 @@ const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
  * Geometry data module.
  */
 export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
-    private readonly geometry: GeoJSONSourceWithLayers<GeometryDataResponse>;
-
-    private constructor(goSDKMap: GOSDKMap, config?: GeometryModuleConfig) {
-        super(goSDKMap, config);
-
-        this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
-            { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
-            { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
-        ]);
-
-        if (config?.interactive && this.geometry) {
-            goSDKMap._eventsProxy.add(this.geometry);
-        }
-    }
+    private geometry!: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -36,6 +23,19 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
     static async init(goSDKMap: GOSDKMap, config?: GeometryModuleConfig): Promise<GeometryModule> {
         await waitUntilMapIsReady(goSDKMap);
         return new GeometryModule(goSDKMap, config);
+    }
+
+    protected initSourcesWithLayers() {
+        this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
+            { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
+            { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
+        ]);
+    }
+
+    protected _applyConfig(config: GeometryModuleConfig | null) {
+        if (config?.interactive) {
+            this.goSDKMap._eventsProxy.ensureAdded(this.geometry);
+        }
     }
 
     /**
