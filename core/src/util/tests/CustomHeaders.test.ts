@@ -1,6 +1,5 @@
 import { validate } from "uuid";
-import { generateTomTomCustomHeaders } from "../CustomHeaders";
-import { SDK_NAME } from "../CustomHeaders";
+import { generateTomTomCustomHeaders, SDK_NAME } from "../CustomHeaders";
 
 describe("CustomHeaders", () => {
     test("Generate default TomTom Headers", () => {
