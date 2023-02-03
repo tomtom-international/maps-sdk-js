@@ -1,5 +1,5 @@
 import { MapGeoJSONFeature, RequestParameters, ResourceTypeEnum } from "maplibre-gl";
-import { generateTomTomCustomHeaders } from "core";
+import { generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
 import { GOSDKMap } from "../GOSDKMap";
 import { GOSDKMapParams } from "../init/types/MapInit";
 
