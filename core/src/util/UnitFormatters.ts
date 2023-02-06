@@ -180,7 +180,7 @@ const formatUK = (meters: number): string => {
  * @group Shared
  * @category Functions
  */
-export const formatMeters = (meters: number, unitsType: UnitsType): string => {
+export const formatDistance = (meters: number, unitsType: UnitsType): string => {
     if (isNil(meters)) {
         return "";
     }
