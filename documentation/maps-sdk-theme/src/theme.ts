@@ -1,50 +1,37 @@
-import { DeclarationReflection, PageEvent, Reflection, Renderer } from "typedoc";
-import { MarkdownTheme } from "typedoc-plugin-markdown";
-import { basename, join } from "path";
-import { readdirSync, readFileSync } from "fs";
-import * as Handlebars from "handlebars";
+import { ProjectReflection, UrlMapping } from "typedoc";
+import { MarkdownTheme, MarkdownThemeRenderContext } from "typedoc-plugin-markdown";
+import { customPartials } from "./resources/resources";
+import { MarkdownThemeConverterContext } from "typedoc-plugin-markdown/dist/theme-converter-context";
+
+export class MapsSDKThemeConverterContext extends MarkdownThemeConverterContext {
+    getUrls(project: ProjectReflection): UrlMapping[] {
+        const mapping = super.getUrls(project);
+        mapping.forEach((url) => (url.url = url.url.replace(/\.md$/, ".mdx")));
+        return mapping;
+    }
+}
+
+export class MapsSDKThemeRenderContext extends MarkdownThemeRenderContext {
+    relativeURL = (url: string | undefined): string | null => super.getRelativeUrl(url)?.replace(/\.mdx?/, "") ?? null;
+
+    partials = customPartials(this);
+}
 
 export class MapsSDKTheme extends MarkdownTheme {
-    constructor(renderer: Renderer) {
-        super(renderer);
-        this.registerPartials();
+    private renderContext?: MapsSDKThemeRenderContext;
+    private converterContext?: MapsSDKThemeConverterContext;
+
+    override getConverterContext(): MarkdownThemeConverterContext {
+        if (!this.converterContext) {
+            this.converterContext = new MapsSDKThemeConverterContext(this, this.application.options);
+        }
+        return this.converterContext;
     }
 
-    /**
-     * Workaround for escaping characters in the output, since the plugin
-     * doesn't allow customizing which characters are escaped (yet)
-     */
-    render(page: PageEvent<Reflection>): string {
-        return super
-            .render(page)
-            .replace(/<(?!(\/?)(Accordion|a))/g, "\\<") // matches all < except in Accordion and a tags
-            .replace(/(?<!{){(?!(<a|{))/g, "\\{"); //matches all { except in {{ and {<a
-    }
-
-    /**
-     * Removing `.mdx` extension from relative links (developer portal requirement).
-     */
-    getRelativeUrl(url: string) {
-        return super.getRelativeUrl(url).replace(/\.mdx/, "");
-    }
-
-    /**
-     * Output `.mdx` urls instead of '.md' (developer portal requirement).
-     */
-    toUrl(mapping: any, reflection: DeclarationReflection) {
-        return mapping.directory + "/" + this.getUrl(reflection) + ".mdx";
-    }
-
-    /**
-     * Overwrites the partials defined by typedoc-plugin-markdowns with the partials we have defined in `./resources/partials`
-     */
-    registerPartials() {
-        const partialsFolder = join(__dirname, "resources", "partials");
-        const partialFiles = readdirSync(partialsFolder);
-        partialFiles.forEach((partialFile) => {
-            const partialName = basename(partialFile, ".hbs");
-            const partialContent = readFileSync(partialsFolder + "/" + partialFile).toString();
-            Handlebars.registerPartial(partialName, partialContent);
-        });
+    override getRenderContext(): MarkdownThemeRenderContext {
+        if (!this.renderContext) {
+            this.renderContext = new MapsSDKThemeRenderContext(this, this.application.options);
+        }
+        return this.renderContext;
     }
 }

@@ -76,49 +76,49 @@ menu:
         title: Home
       - title: Modules
         items:
-          - fileId: /api-reference/modules/core
+          - fileId: /api-reference/module.core
             title: Core
           - title: Map
             items:
-              - fileId: /api-reference/modules/map_geometry
+              - fileId: /api-reference/module.map-geometry
                 title: Geometry
-              - fileId: /api-reference/modules/map_hillshade
+              - fileId: /api-reference/module.map-hillshade
                 title: Hill shading
-              - fileId: /api-reference/modules/map_places
+              - fileId: /api-reference/module.map-places
                 title: Places
-              - fileId: /api-reference/modules/map_init
+              - fileId: /api-reference/module.map-init
                 title: Init
-              - fileId: /api-reference/modules/map_POIs
+              - fileId: /api-reference/module.map-POIs
                 title: Points of Interest
-              - fileId: /api-reference/modules/map_routes
+              - fileId: /api-reference/module.map-routes
                 title: Routes
-              - fileId: /api-reference/modules/map_traffic
+              - fileId: /api-reference/module.map-traffic
                 title: Traffic
-              - fileId: /api-reference/modules/map_shared
+              - fileId: /api-reference/module.map-shared
                 title: Shared
           - title: Services
             items:
-              - fileId: /api-reference/modules/autocomplete
+              - fileId: /api-reference/module.autocomplete
                 title: Autocomplete
-              - fileId: /api-reference/modules/calculate_route
+              - fileId: /api-reference/module.calculate-route
                 title: Calculate Route
-              - fileId: /api-reference/modules/fuzzy_search
+              - fileId: /api-reference/module.fuzzy-search
                 title: Fuzzy Search
-              - fileId: /api-reference/modules/geocoding
+              - fileId: /api-reference/module.geocoding
                 title: Geocoding
-              - fileId: /api-reference/modules/geometry_data
+              - fileId: /api-reference/module.geometry-data
                 title: Geometry Data
-              - fileId: /api-reference/modules/geometry_search
+              - fileId: /api-reference/module.geometry-search
                 title: Geometry Search
-              - fileId: /api-reference/modules/place_by_id
+              - fileId: /api-reference/module.place-by-id
                 title: Place By Id
-              - fileId: /api-reference/modules/reverse_geocoding
+              - fileId: /api-reference/module.reverse-geocoding
                 title: Reverse Geocoding
-              - fileId: /api-reference/modules/search
+              - fileId: /api-reference/module.search
                 title: Search
-              - fileId: /api-reference/modules/services_shared
+              - fileId: /api-reference/module.services-shared
                 title: Shared
-              - fileId: /api-reference/modules/services_customization
+              - fileId: /api-reference/module.services-customization
                 title: Customization
       - title: Extra pages
         isHidden: true

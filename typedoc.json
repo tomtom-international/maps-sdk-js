@@ -11,7 +11,7 @@
     "./map/src/traffic",
 
     "./services/src/fuzzy-search",
-    "./services/src/ev-charging-station-availability",
+    "./services/src/ev-charging-stations-availability",
     "./services/src/geocode",
     "./services/src/geometry-data",
     "./services/src/geometry-search",
@@ -32,7 +32,6 @@
   "excludeExternals": true,
   "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports", "./documentation/maps-sdk-theme/dist"],
   "theme": "maps-sdk-theme",
-  "preserveAnchorCasing": true,
   "externalSymbolLinkMappings": {
     "maplibre-gl": {
       "Map": "https://maplibre.org/maplibre-gl-js-docs/api/map/",
@@ -43,7 +42,13 @@
       "*": "https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts"
     }
   },
-  "objectLiteralTypeDeclarationStyle": "list",
   "excludePrivate": true,
-  "githubPages": false
+  "githubPages": false,
+  "kindsWithOwnFile": "none",
+  "enableFrontmatter": true,
+  "hidePageTitle": true,
+  "hideBreadcrumbs": true,
+  "indexPageTitle": "Maps SDK for JavaScript - API Reference",
+  "preserveAnchorCasing": true,
+  "anchorFormat": "none"
 }

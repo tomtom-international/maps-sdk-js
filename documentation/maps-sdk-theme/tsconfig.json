@@ -14,5 +14,6 @@
     "target": "es2018",
     "esModuleInterop": true
   },
-  "exclude": ["./dist", "./test", "**/*.spec.ts"]
+  "exclude": ["./dist", "./test", "**/*.spec.ts"],
+  "include": ["./.eslintrc.js", "**/*.ts"]
 }

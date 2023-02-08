@@ -142,8 +142,8 @@ export type Instruction = {
      * * [1, 179] = Right turn
      *
      * If junctionType indicates a bifurcation instruction:
-     * * <0 - keep left
-     * * \>0 - keep right
+     * * less than 0 - keep left
+     * * more than 0 - keep right
      */
     turnAngleInDecimalDegrees?: number;
     /**
@@ -194,7 +194,7 @@ export type InstructionGroup = {
      */
     lastInstructionIndex: number;
     /**
-     * Overall travelled length of the group in meters.
+     * Overall traveled length of the group in meters.
      */
     groupLengthInMeters?: number;
 

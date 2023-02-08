@@ -51,7 +51,8 @@
     "sourcedata",
     "revgeo",
     "UTURN",
-    "travelled"
+    "travelled",
+    "devportal"
   ],
   "ignorePaths": [
     "**/dist/**",
