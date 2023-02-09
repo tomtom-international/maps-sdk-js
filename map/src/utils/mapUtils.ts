@@ -1,4 +1,4 @@
-import { MapGeoJSONFeature, RequestParameters, ResourceTypeEnum } from "maplibre-gl";
+import { MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
 import { generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
 import { GOSDKMap } from "../GOSDKMap";
 import { GOSDKMapParams } from "../init/types/MapInit";
@@ -56,7 +56,7 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
  */
 export const injectCustomHeaders =
     (goSDKParams: GOSDKMapParams) =>
-    (url: string, resourceType?: ResourceTypeEnum): RequestParameters => {
+    (url: string, resourceType?: ResourceType): RequestParameters => {
         if (url.includes("tomtom.com")) {
             if (resourceType === "Image") {
                 return { url };

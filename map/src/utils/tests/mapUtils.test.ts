@@ -1,4 +1,4 @@
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { MapGeoJSONFeature, ResourceType } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
 import { deserializeFeatures, injectCustomHeaders, waitUntilMapIsReady } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
@@ -61,6 +61,6 @@ describe("Map utils - injectCustomHeaders", () => {
         const url = "https://tomtom.com";
         const transformRequestFn = injectCustomHeaders({});
 
-        expect(transformRequestFn(url, "Image")).toStrictEqual({ url });
+        expect(transformRequestFn(url, "Image" as ResourceType)).toStrictEqual({ url });
     });
 });
