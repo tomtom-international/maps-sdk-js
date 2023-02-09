@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.80](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.79...v0.1.80) (2023-02-09)
+
+
+### Features
+
+* **589:** adding formatting utility functions ([3b1a3dd](https://github.com/tomtom-international/go-sdk-js/commit/3b1a3dd0db9c04aef775f5d8de6ee6854fdf512f))
+* **589:** naming refactoring ([48ff932](https://github.com/tomtom-international/go-sdk-js/commit/48ff932e427a5d2e9875f85fafec87389f8f9376))
+* custom place layer icons ([de95b85](https://github.com/tomtom-international/go-sdk-js/commit/de95b850a6f52a9e6eb97b5a19c5747d126a5f31))
+* **map:** allowing direct traffic filter changes, adding tests and misc improvements ([4a673d2](https://github.com/tomtom-international/go-sdk-js/commit/4a673d20f91520d77e973cf18ea9cd1388b34d09))
+* **map:** improving how configs are applied ([14ee8d8](https://github.com/tomtom-international/go-sdk-js/commit/14ee8d8533145d8ba05c74dda2458132cd50cae9))
+
+
+### Bug Fixes
+
+* Update import ([f161f60](https://github.com/tomtom-international/go-sdk-js/commit/f161f6096befc9636fdca065356b7db10d24cfc0))
+
 ### [0.1.79](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.78...v0.1.79) (2023-02-02)
 
 
