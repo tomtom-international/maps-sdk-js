@@ -58,7 +58,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         this.originalFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id) as FilterSpecification;
     }
 
-    protected _applyConfig(config: VectorTilePOIsConfig | null): void {
+    protected _applyConfig(config: VectorTilePOIsConfig | undefined): void {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {
@@ -81,7 +81,12 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         this.poi.setAllLayersVisible(visible);
     }
 
-    filterCategories(categoriesFilter?: ValuesFilter<FilterablePOICategory> | null): void {
+    /**
+     * Applies the given categories filter to the POI layer (showing/hiding certain categories).
+     * * Other configurations (such as visibility) remain untouched.
+     * @param categoriesFilter The filter to apply. If undefined, the default will be applied.
+     */
+    filterCategories(categoriesFilter?: ValuesFilter<FilterablePOICategory> | undefined): void {
         if (categoriesFilter) {
             const poiFilter = buildMappedValuesFilter(
                 "icon",

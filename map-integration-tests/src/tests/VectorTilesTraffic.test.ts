@@ -68,12 +68,7 @@ describe("Map vector tile traffic module tests", () => {
             }
         );
 
-        await expect(
-            page.evaluate(async () => {
-                const goSDKThis = globalThis as GOSDKThis;
-                await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap);
-            })
-        ).rejects.toBeDefined();
+        await expect(initTraffic()).rejects.toBeDefined();
     });
 
     test("Vector tiles traffic visibility changes in different ways", async () => {
@@ -202,6 +197,61 @@ describe("Map vector tile traffic module tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    test("Traffic flow filtering with initial config", async () => {
+        await mapEnv.loadMap(
+            {
+                zoom: 12,
+                center: [2.37327, 48.85903]
+            },
+            {
+                exclude: ["traffic_incidents", "hillshade", "poi"]
+            }
+        );
+
+        await initTraffic({
+            flow: {
+                filters: {
+                    any: [
+                        {
+                            roadCategories: {
+                                show: "only",
+                                values: ["motorway"]
+                            },
+                            showRoadClosures: "all_except"
+                        }
+                    ]
+                }
+            }
+        });
+
+        await waitForTimeout(3000);
+        // (incidents excluded above)
+        await assertTrafficVisibility(false, true);
+        const renderedFlowSegments = await waitForRenderedFlowChange(0);
+
+        // We only show for: "motorway", "trunk":
+        expect(getByRoadCategories(renderedFlowSegments, ["motorway"])).toHaveLength(renderedFlowSegments.length);
+        expect(renderedFlowSegments.filter((segment) => segment.properties["road_closure"] === true)).toHaveLength(0);
+
+        // Showing flow in road closures only:
+        await page.evaluate(async () =>
+            (globalThis as GOSDKThis).traffic?.filterFlow({
+                any: [
+                    {
+                        showRoadClosures: "only"
+                    }
+                ]
+            })
+        );
+
+        const renderedRoadClosures = await waitForRenderedFlowChange(renderedFlowSegments.length);
+        expect(renderedRoadClosures.filter((segment) => segment.properties["road_closure"] === true)).toHaveLength(
+            renderedRoadClosures.length
+        );
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
     test("Traffic incidents and flow filtering with complex initial config", async () => {
         await mapEnv.loadMap(
             {
@@ -275,9 +325,71 @@ describe("Map vector tile traffic module tests", () => {
         expect(renderedFlowSegments.length).toBeGreaterThan(5);
 
         // We only show for: "motorway", "trunk", "primary"
-        expect(getByRoadCategories(renderedFlowSegments, ["motorway", "trunk", "primary"]).length).toBeGreaterThan(0);
+        expect(getByRoadCategories(renderedFlowSegments, ["motorway", "trunk", "primary"])).toHaveLength(
+            renderedFlowSegments.length
+        );
         expect(getByRoadCategories(renderedFlowSegments, ["secondary", "tertiary", "street"])).toHaveLength(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    // (We'll verify that using dedicated methods for filtering and visibility do not affect each other)
+    test("Traffic visibility and filtering with dedicated methods", async () => {
+        await mapEnv.loadMap(
+            {
+                // London:
+                zoom: 12,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                exclude: ["hillshade", "poi"]
+            }
+        );
+
+        await initTraffic();
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(false));
+        // Showing road closures only:
+        await page.evaluate(async () =>
+            (globalThis as GOSDKThis).traffic?.filterIncidents({
+                any: [
+                    {
+                        incidentCategories: {
+                            show: "only",
+                            values: ["road_closed"]
+                        }
+                    }
+                ]
+            })
+        );
+
+        await waitForTimeout(3000);
+
+        const roadClosedIncidents = await waitForRenderedIncidentsChange(0);
+        // we check that all the rendered incidents are of road_closed category:
+        expect(getByIncidentCategories(roadClosedIncidents, ["road_closed"])).toHaveLength(roadClosedIncidents.length);
+        // (changing incidents filter directly shouldn't affect flow visibility):
+        await assertTrafficVisibility(true, false);
+
+        // Showing flow in primary roads only:
+        await page.evaluate(async () =>
+            (globalThis as GOSDKThis).traffic?.filterFlow({
+                any: [
+                    {
+                        roadCategories: {
+                            show: "only",
+                            values: ["primary"]
+                        }
+                    }
+                ]
+            })
+        );
+
+        // (changing flow filter directly shouldn't affect flow visibility):
+        await assertTrafficVisibility(true, false);
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(true));
+        await waitForTimeout(3000);
+
+        await assertTrafficVisibility(true, true);
     });
 });

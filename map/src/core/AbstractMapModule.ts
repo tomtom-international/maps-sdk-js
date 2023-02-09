@@ -8,7 +8,7 @@ import { EventsModule } from "./EventsModule";
 export abstract class AbstractMapModule<CFG = undefined> {
     protected readonly goSDKMap: GOSDKMap;
     protected readonly mapLibreMap: Map;
-    protected config: CFG | undefined | null;
+    protected config?: CFG;
 
     /**
      * Builds this module based on a given GO SDK map.
@@ -19,7 +19,7 @@ export abstract class AbstractMapModule<CFG = undefined> {
     protected constructor(goSDKMap: GOSDKMap, config?: CFG) {
         this.goSDKMap = goSDKMap;
         this.mapLibreMap = goSDKMap.mapLibreMap;
-        this.initSourcesWithLayers();
+        this.initSourcesWithLayers(config);
         if (config) {
             this.applyConfig(config);
         }
@@ -29,13 +29,13 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * Initializes the sources with layers for the specific module.
      * @protected
      */
-    protected abstract initSourcesWithLayers(): void;
+    protected abstract initSourcesWithLayers(config?: CFG): void;
 
     /**
      * Applies the configuration to this module.
-     * @param config The configuration to apply. If null, the configuration will be reset to defaults.
+     * @param config The configuration to apply. If undefined, the configuration will be reset to defaults.
      */
-    applyConfig(config: CFG | null): void {
+    applyConfig(config: CFG | undefined): void {
         this._applyConfig(config);
         this.config = config;
     }
@@ -46,14 +46,14 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * Once the method returns, it will be assigned to this.config.
      * @protected
      */
-    protected abstract _applyConfig(config: CFG | null): void;
+    protected abstract _applyConfig(config: CFG | undefined): void;
 
     /**
      * Resets the configuration of this module to default values and has them applied if necessary.
      * * Any previously applied configuration gets removed.
      */
     resetConfig(): void {
-        this.applyConfig(null);
+        this.applyConfig(undefined);
     }
 
     /**

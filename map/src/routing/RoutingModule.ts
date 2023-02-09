@@ -151,10 +151,10 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
     }
 
-    protected _applyConfig(config: RoutingModuleConfig | null): void {
+    protected _applyConfig(config: RoutingModuleConfig | undefined): void {
         // If interactive set, we add all layers to be interactive
         if (config?.interactive) {
-            const routingLayers = [
+            const routingSourcesWithLayers = [
                 this.waypoints,
                 this.routeLines,
                 this.vehicleRestricted,
@@ -164,10 +164,8 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
                 this.tunnels
             ];
 
-            for (const layer of routingLayers) {
-                if (layer) {
-                    this.goSDKMap._eventsProxy.ensureAdded(layer);
-                }
+            for (const sourceWithLayers of routingSourcesWithLayers) {
+                this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayers);
             }
         }
     }

@@ -32,7 +32,7 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
         ]);
     }
 
-    protected _applyConfig(config: GeometryModuleConfig | null) {
+    protected _applyConfig(config: GeometryModuleConfig | undefined) {
         if (config?.interactive) {
             this.goSDKMap._eventsProxy.ensureAdded(this.geometry);
         }

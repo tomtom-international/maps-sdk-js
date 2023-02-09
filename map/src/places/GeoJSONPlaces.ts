@@ -30,7 +30,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
         return new GeoJSONPlaces(goSDKMap, config);
     }
 
-    protected initSourcesWithLayers() {
+    protected initSourcesWithLayers(config?: PlaceModuleConfig) {
         const layerSpec = getPlacesLayerSpec(config?.iconConfig, this.mapLibreMap);
         this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
             layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>

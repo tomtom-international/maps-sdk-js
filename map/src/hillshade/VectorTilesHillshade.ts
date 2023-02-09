@@ -31,7 +31,7 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
         this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
     }
 
-    _applyConfig(config: VectorTilesHillshadeConfig | null): void {
+    _applyConfig(config: VectorTilesHillshadeConfig | undefined): void {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {

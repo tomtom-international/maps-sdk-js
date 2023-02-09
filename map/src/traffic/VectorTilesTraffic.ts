@@ -12,7 +12,7 @@ import {
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
 } from "../core";
-import { IncidentsCommonConfig, VectorTilesTrafficConfig } from ".";
+import { TrafficFlowFilters, TrafficIncidentsFilters, VectorTilesTrafficConfig } from ".";
 import { notInTheStyle } from "../core/ErrorMessages";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
@@ -50,23 +50,23 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             this.flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
         }
 
-        if (incidentsRuntimeSource || flowRuntimeSource) {
-            this.originalFilters = {};
-            for (const layer of filterLayersBySources(this.goSDKMap.mapLibreMap, [
-                VECTOR_TILES_INCIDENTS_SOURCE_ID,
-                VECTOR_TILES_FLOW_SOURCE_ID
-            ])) {
-                this.originalFilters[layer.id] = layer.filter;
-            }
-        } else {
+        if (!incidentsRuntimeSource && !flowRuntimeSource) {
             throw notInTheStyle(
                 `init ${VectorTilesTraffic.name} with at least one of these source IDs: 
                 ${VECTOR_TILES_INCIDENTS_SOURCE_ID} ${VECTOR_TILES_FLOW_SOURCE_ID}`
             );
         }
+        // else
+        this.originalFilters = {};
+        for (const layer of filterLayersBySources(this.goSDKMap.mapLibreMap, [
+            VECTOR_TILES_INCIDENTS_SOURCE_ID,
+            VECTOR_TILES_FLOW_SOURCE_ID
+        ])) {
+            this.originalFilters[layer.id] = layer.filter;
+        }
     }
 
-    protected _applyConfig(config: VectorTilesTrafficConfig | null): void {
+    protected _applyConfig(config: VectorTilesTrafficConfig | undefined): void {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {
@@ -77,7 +77,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         this.applyFlowConfig(config);
     }
 
-    private applyIncidentsConfig(config: VectorTilesTrafficConfig | null) {
+    private applyIncidentsConfig(config: VectorTilesTrafficConfig | undefined) {
         const incidents = config?.incidents;
         if (incidents && !isNil(incidents.visible)) {
             this.setIncidentsVisible(incidents.visible);
@@ -85,32 +85,41 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             // applying default
             this.setIncidentsVisible(true);
         }
-
-        if (incidents?.filters?.any?.length) {
-            const incidentsFilterExpression = buildMapLibreIncidentFilters(incidents.filters);
-            if (incidentsFilterExpression) {
-                const layers = incidents.icons?.filters ? this.getIncidentNonSymbolLayers() : this.getIncidentLayers();
-                this.applyFilter(incidentsFilterExpression, layers);
-            }
-        } else if (this.config?.incidents?.filters?.any?.length) {
-            this.applyDefaultFilter(this.getIncidentLayers());
+        if (incidents?.icons && !isNil(incidents.icons.visible)) {
+            this.setIncidentIconsVisible(incidents.icons.visible);
         }
+        // else: default incidents visibility has been set already if necessary
 
-        incidents?.icons && this.applyIncidentIconsConfig(incidents.icons);
+        this.filterIncidents(incidents?.filters, incidents?.icons?.filters);
 
         if (incidents?.interactive) {
             this.goSDKMap._eventsProxy.ensureAdded(this.incidents as SourceWithLayers);
         }
     }
 
-    private applyIncidentIconsConfig(icons: IncidentsCommonConfig) {
-        if (!isNil(icons.visible)) {
-            this.setIncidentIconsVisible(icons.visible);
+    /**
+     * Applies the given filters to traffic incidents, and optionally also icons.
+     * * Any other configurations remain untouched.
+     * @param incidentFilters The filters to apply to all incident layers, unless icon filters are supplied for the symbol ones.
+     * @param iconFilters If specified, symbol layers will get these filters instead of incidentFilters.
+     */
+    filterIncidents(incidentFilters?: TrafficIncidentsFilters, iconFilters?: TrafficIncidentsFilters) {
+        if (incidentFilters?.any?.length) {
+            const incidentsFilterExpression = buildMapLibreIncidentFilters(incidentFilters);
+            if (incidentsFilterExpression) {
+                const layers = iconFilters ? this.getIncidentNonSymbolLayers() : this.getIncidentLayers();
+                this.applyFilter(incidentsFilterExpression, layers);
+            }
+        } else if (this.config?.incidents?.filters?.any?.length) {
+            this.applyDefaultFilter(this.getIncidentLayers());
         }
-        // else: default incidents visibility has been set already if necessary
 
-        if (icons.filters?.any?.length) {
-            const iconsFilterExpression = buildMapLibreIncidentFilters(icons.filters);
+        this.filterIncidentIcons(iconFilters);
+    }
+
+    private filterIncidentIcons(iconsFilters?: TrafficIncidentsFilters) {
+        if (iconsFilters?.any?.length) {
+            const iconsFilterExpression = buildMapLibreIncidentFilters(iconsFilters);
             if (iconsFilterExpression) {
                 this.applyFilter(iconsFilterExpression, this.getIncidentSymbolLayers());
             }
@@ -118,7 +127,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         // else: default incident filters have been set already if necessary
     }
 
-    private applyFlowConfig(config: VectorTilesTrafficConfig | null) {
+    private applyFlowConfig(config: VectorTilesTrafficConfig | undefined) {
         const flow = config?.flow;
         if (flow && !isNil(flow.visible)) {
             this.setFlowVisible(flow.visible);
@@ -127,17 +136,26 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             this.setFlowVisible(true);
         }
 
-        if (flow?.filters?.any?.length) {
-            const flowFilterExpression = buildMapLibreFlowFilters(flow.filters);
+        this.filterFlow(flow?.filters);
+
+        if (flow?.interactive) {
+            this.goSDKMap._eventsProxy.ensureAdded(this.flow as SourceWithLayers);
+        }
+    }
+
+    /**
+     * Applies the given filters to traffic flow.
+     * * Any other configurations remain untouched.
+     * @param flowFilters
+     */
+    filterFlow(flowFilters?: TrafficFlowFilters) {
+        if (flowFilters?.any?.length) {
+            const flowFilterExpression = buildMapLibreFlowFilters(flowFilters);
             if (flowFilterExpression) {
                 this.applyFilter(flowFilterExpression, this.getFlowLayers());
             }
         } else if (this.config?.incidents?.filters?.any?.length) {
             this.applyDefaultFilter(this.getFlowLayers());
-        }
-
-        if (flow?.interactive) {
-            this.goSDKMap._eventsProxy.ensureAdded(this.flow as SourceWithLayers);
         }
     }
 

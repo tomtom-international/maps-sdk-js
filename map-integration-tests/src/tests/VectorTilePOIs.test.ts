@@ -173,6 +173,7 @@ describe("Map vector tile POI filtering tests", () => {
                 values: ["TRANSPORTATION_GROUP"]
             })
         );
+        await waitForTimeout(3000);
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
 

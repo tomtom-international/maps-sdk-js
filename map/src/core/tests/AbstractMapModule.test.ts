@@ -20,7 +20,7 @@ describe("AbstractMapModule tests", () => {
             this.initCalled = true;
         }
 
-        protected _applyConfig(config: VectorTileMapModuleConfig | null): void {
+        protected _applyConfig(config: VectorTileMapModuleConfig | undefined): void {
             this.configApplied = config;
         }
 

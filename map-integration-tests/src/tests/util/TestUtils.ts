@@ -111,7 +111,7 @@ export const waitUntilRenderedFeaturesChange = async (
             } while (currentFeatures.length == previousNumFeatures);
             return currentFeatures;
         },
-        `Features for layers ${layerIDs} didn't change.`,
+        `Features didn't change for layers: ${layerIDs}.`,
         timeoutMS
     );
 };
