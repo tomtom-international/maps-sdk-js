@@ -154,7 +154,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             if (flowFilterExpression) {
                 this.applyFilter(flowFilterExpression, this.getFlowLayers());
             }
-        } else if (this.config?.incidents?.filters?.any?.length) {
+        } else if (this.config?.flow?.filters?.any?.length) {
             this.applyDefaultFilter(this.getFlowLayers());
         }
     }
