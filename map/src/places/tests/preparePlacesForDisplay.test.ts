@@ -6,7 +6,9 @@ import {
     getCategoryForPlace,
     getIconIDForPlace,
     getPlacesLayerSpec,
-    getTextSizeSpec
+    getTextSizeSpec,
+    addMapIcon,
+    changePlacesLayerSpecs
 } from "../preparePlacesForDisplay";
 
 const placesTextSizeSpec = [
@@ -17,8 +19,8 @@ const placesTextSizeSpec = [
     ["/", 16, ["log10", ["max", ["length", ["get", "title"]], 30]]]
 ];
 
-describe("Get Image ID for a given Place tests", () => {
-    test("Get Image ID for a given Place", () => {
+describe("Get Icon ID for a given Place tests", () => {
+    test("Get Icon ID for a given Place", () => {
         expect(getIconIDForPlace({ properties: {} } as Place)).toStrictEqual("default_pin");
         expect(
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: "HOSPITAL" }] } } } as Place)
@@ -28,11 +30,11 @@ describe("Get Image ID for a given Place tests", () => {
         ).toStrictEqual("default_pin");
     });
 
-    test("Get Image ID for a given Place with custom config", () => {
+    test("Get Icon ID for a given Place with custom config", () => {
         const mapLibreMock = {
             loadImage: jest.fn(),
             addImage: jest.fn(),
-            getImage: jest.fn().mockReturnValue(false)
+            hasImage: jest.fn().mockReturnValue(false)
         } as unknown as Map;
 
         expect(
@@ -62,15 +64,21 @@ describe("Get Image ID for a given Place tests", () => {
                 iconConfig: { customIcons: [{ iconUrl: "https://test.com", category: "RESTAURANT" }] }
             })
         ).toStrictEqual("231_pin");
+
+        expect(
+            getIconIDForPlace({ properties: { poi: { classifications: [{ code: "CAFE_PUB" }] } } } as Place, {
+                iconConfig: { customIcons: [{ iconUrl: "https://test.com", category: "RESTAURANT" }] }
+            })
+        ).toStrictEqual("320_pin");
     });
 
-    test("add custom category icon while map load image has an error", () => {
+    test("Add custom category icon while map load image has an error", () => {
         const mapLibreMock = {
             loadImage: jest.fn().mockImplementation((url: string, callBack: (err?: Error) => void) => {
                 callBack(new Error("image not found"));
             }),
             addImage: jest.fn(),
-            getImage: jest.fn().mockReturnValue(false)
+            hasImage: jest.fn().mockReturnValue(false)
         } as unknown as Map;
 
         expect(() =>
@@ -82,6 +90,37 @@ describe("Get Image ID for a given Place tests", () => {
                 mapLibreMock
             )
         ).toThrow("image not found");
+    });
+});
+
+describe("Add map icon tests", () => {
+    test("Add custom icon while map already has it", () => {
+        const mapLibreMock = {
+            loadImage: jest.fn().mockImplementation((url: string, callBack: () => void) => {
+                callBack();
+            }),
+            addImage: jest.fn(),
+            hasImage: jest.fn().mockReturnValue(true)
+        } as unknown as Map;
+
+        jest.spyOn(mapLibreMock, "addImage");
+        addMapIcon(mapLibreMock, "RESTAURANT", { iconUrl: "https://test.com", category: "RESTAURANT" });
+        expect(mapLibreMock.addImage).toHaveBeenCalledTimes(0);
+    });
+
+    test("Add custom icon to map successfully", () => {
+        const mapLibreMock = {
+            loadImage: jest.fn().mockImplementation((url: string, callBack: (err?: Error, img?: unknown) => void) => {
+                callBack(undefined, "img");
+            }),
+            addImage: jest.fn(),
+            hasImage: jest.fn().mockReturnValue(false)
+        } as unknown as Map;
+        jest.spyOn(mapLibreMock, "addImage");
+        expect(() =>
+            addMapIcon(mapLibreMock, "RESTAURANT", { iconUrl: "https://test.com", category: "RESTAURANT" })
+        ).not.toThrow();
+        expect(mapLibreMock.addImage).toHaveBeenCalledTimes(1);
     });
 });
 
@@ -139,6 +178,21 @@ describe("Get places layer spec with poi-like icon style config", () => {
                 "text-size": placesTextSizeSpec
             }
         });
+    });
+});
+
+describe("Change places layer spec", () => {
+    const mapLibreMock = {
+        getStyle: jest.fn().mockReturnValue({ layers: [poiLayerSpec] }),
+        setLayoutProperty: jest.fn(),
+        setPaintProperty: jest.fn()
+    } as unknown as Map;
+
+    test("Change places layer spec with poi-like icon style config", () => {
+        jest.spyOn(mapLibreMock, "setLayoutProperty");
+        changePlacesLayerSpecs({ iconStyle: "poi-like" }, mapLibreMock);
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(9);
+        expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(3);
     });
 });
 

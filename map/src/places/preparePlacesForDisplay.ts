@@ -23,7 +23,7 @@ export const buildPlaceTitle = (place: Place): string =>
 /**
  * @ignore
  */
-const addMapIcon = (map: Map, classificationCode: POIClassification, customIcon: CustomIcon) => {
+export const addMapIcon = (map: Map, classificationCode: POIClassification, customIcon: CustomIcon) => {
     map.loadImage(customIcon.iconUrl, (e, image) => {
         if (e) {
             throw e;
