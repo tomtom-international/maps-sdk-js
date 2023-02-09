@@ -74,7 +74,7 @@ describe("Get Icon ID for a given Place tests", () => {
 
     test("Add custom category icon while map load image has an error", () => {
         const mapLibreMock = {
-            loadImage: jest.fn().mockImplementation((url: string, callBack: (err?: Error) => void) => {
+            loadImage: jest.fn().mockImplementation((_url: string, callBack: (err?: Error) => void) => {
                 callBack(new Error("image not found"));
             }),
             addImage: jest.fn(),
@@ -96,7 +96,7 @@ describe("Get Icon ID for a given Place tests", () => {
 describe("Add map icon tests", () => {
     test("Add custom icon while map already has it", () => {
         const mapLibreMock = {
-            loadImage: jest.fn().mockImplementation((url: string, callBack: () => void) => {
+            loadImage: jest.fn().mockImplementation((_url: string, callBack: () => void) => {
                 callBack();
             }),
             addImage: jest.fn(),
@@ -110,7 +110,7 @@ describe("Add map icon tests", () => {
 
     test("Add custom icon to map successfully", () => {
         const mapLibreMock = {
-            loadImage: jest.fn().mockImplementation((url: string, callBack: (err?: Error, img?: unknown) => void) => {
+            loadImage: jest.fn().mockImplementation((_url: string, callBack: (err?: Error, img?: unknown) => void) => {
                 callBack(undefined, "img");
             }),
             addImage: jest.fn(),

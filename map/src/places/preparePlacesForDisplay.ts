@@ -143,6 +143,13 @@ export const changePlacesLayerSpecs = (iconConfig: PlaceIconConfig, map: Map) =>
     }
 };
 
+/**
+ * prepare places features to be displayed on map by adding needed  properties for title, icon and style
+ * @ignore
+ * @param places
+ * @param map
+ * @param config
+ */
 export const preparePlacesForDisplay = (
     places: Places,
     map: Map,

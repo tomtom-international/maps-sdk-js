@@ -13,7 +13,6 @@ export const poiClassificationToIconID = {
     AUTOMOTIVE_DEALER: 314,
     BANK: 277,
     BEACH: 243,
-    BUILDING_POINT: 132, // no 132 icon mapping in map sprites
     BUSINESS_PARK: 302,
     CAFE_PUB: 320,
     CAMPING_GROUND: 258,
@@ -22,7 +21,6 @@ export const poiClassificationToIconID = {
     CASINO: 209,
     CHURCH: 155,
     CINEMA: 211,
-    CITY_CENTER: 12, // no 12 icon mapping in map sprites
     CLUB_ASSOCIATION: 331,
     COLLEGE_UNIVERSITY: 156,
     COMMERCIAL_BUILDING: 298,
@@ -87,7 +85,6 @@ export const poiClassificationToIconID = {
     PLACE_OF_WORSHIP: 155,
     POLICE_STATION: 161,
     PORT_WAREHOUSE_FACILITY: 305,
-    POST_CODE: 63, // no 63 icon mapping in map sprites
     POST_OFFICE: 165,
     PRIMARY_RESOURCE_UTILITY: 308,
     PRISON_CORRECTIONAL_FACILITY: 167,
@@ -116,9 +113,7 @@ export const poiClassificationToIconID = {
     THEATER: 235,
     TOLL_GATE: 284,
     TOURIST_INFORMATION_OFFICE: 236,
-    TRAFFIC_LIGHT: 129, // no 129 icon mapping in map sprites
     TRAFFIC_SERVICE_CENTER: 326,
-    TRAFFIC_SIGN: 128, // no 128 icon mapping in map sprites
     TRAIL_SYSTEM: 324,
     TRANSPORT_AUTHORITY_VEHICLE_REGISTRATION: 313,
     TRUCK_STOP: 312,
@@ -131,6 +126,11 @@ export const poiClassificationToIconID = {
     ZOOS_ARBORETA_BOTANICAL_GARDEN: 168
 };
 
+/**
+ * @ignore
+ * mapping from search classification for poi to its category in poi layer
+ * used to add category property for a place feature, so it is styled the same as a poi from the same category
+ */
 export const searchToPOILayerClassificationMapping: Record<string, string> = {
     cafe_pub: "cafe_or_pub",
     exhibition_convention_center: "exhibition_and_convention_center",
