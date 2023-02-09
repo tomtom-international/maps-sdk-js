@@ -1,3 +1,14 @@
+import { POIClassification } from "../poiIconIDMapping";
+
+export type IconStyle = "pin" | "circle" | "poi-like";
+export type CustomIcon = {
+    category: POIClassification;
+    iconUrl: string;
+};
+export type PlaceIconConfig = {
+    iconStyle?: IconStyle;
+    customIcons?: CustomIcon[];
+};
 export type PlaceModuleConfig = {
     /**
      * Whether the layers for this module are to be interactive.
@@ -5,4 +16,5 @@ export type PlaceModuleConfig = {
      * @default false
      */
     interactive?: boolean;
+    iconConfig?: PlaceIconConfig;
 };

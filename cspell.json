@@ -31,7 +31,9 @@
     "Noto",
     "uuidv", 
     "tomtom",
-    "SDKJS"
+    "SDKJS",
+    "GURUDWARA",
+    "gurudwara"
   ],
   "ignorePaths": [
     "**/dist/**",

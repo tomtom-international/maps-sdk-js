@@ -13,7 +13,7 @@ export const poiClassificationToIconID = {
     AUTOMOTIVE_DEALER: 314,
     BANK: 277,
     BEACH: 243,
-    BUILDING_POINT: 132,
+    BUILDING_POINT: 132, // no 132 icon mapping in map sprites
     BUSINESS_PARK: 302,
     CAFE_PUB: 320,
     CAMPING_GROUND: 258,
@@ -22,7 +22,7 @@ export const poiClassificationToIconID = {
     CASINO: 209,
     CHURCH: 155,
     CINEMA: 211,
-    CITY_CENTER: 12,
+    CITY_CENTER: 12, // no 12 icon mapping in map sprites
     CLUB_ASSOCIATION: 331,
     COLLEGE_UNIVERSITY: 156,
     COMMERCIAL_BUILDING: 298,
@@ -54,7 +54,7 @@ export const poiClassificationToIconID = {
     HELIPAD: 323,
     HELIPAD_HELICOPTER_LANDING: 323,
     HILL: 158,
-    HOLIDAY_RENTAL: 130,
+    HOLIDAY_RENTAL: 330,
     HOSPITAL: 157,
     HOSPITAL_POLYCLINIC: 157,
     HOTEL_MOTEL: 222,
@@ -78,7 +78,7 @@ export const poiClassificationToIconID = {
     NIGHTLIFE: 250,
     NON_GOVERNMENTAL_ORGANIZATION: 334,
     OPEN_PARKING_AREA: 159,
-    OPERA: 26,
+    OPERA: 235,
     PAGODA: 160,
     PARK_RECREATION_AREA: 169,
     PARKING_GARAGE: 203,
@@ -87,7 +87,7 @@ export const poiClassificationToIconID = {
     PLACE_OF_WORSHIP: 155,
     POLICE_STATION: 161,
     PORT_WAREHOUSE_FACILITY: 305,
-    POST_CODE: 63,
+    POST_CODE: 63, // no 63 icon mapping in map sprites
     POST_OFFICE: 165,
     PRIMARY_RESOURCE_UTILITY: 308,
     PRISON_CORRECTIONAL_FACILITY: 167,
@@ -116,9 +116,9 @@ export const poiClassificationToIconID = {
     THEATER: 235,
     TOLL_GATE: 284,
     TOURIST_INFORMATION_OFFICE: 236,
-    TRAFFIC_LIGHT: 129,
+    TRAFFIC_LIGHT: 129, // no 129 icon mapping in map sprites
     TRAFFIC_SERVICE_CENTER: 326,
-    TRAFFIC_SIGN: 128,
+    TRAFFIC_SIGN: 128, // no 128 icon mapping in map sprites
     TRAIL_SYSTEM: 324,
     TRANSPORT_AUTHORITY_VEHICLE_REGISTRATION: 313,
     TRUCK_STOP: 312,
@@ -129,6 +129,45 @@ export const poiClassificationToIconID = {
     WELFARE_ORGANIZATION: 317,
     WINERY: 257,
     ZOOS_ARBORETA_BOTANICAL_GARDEN: 168
+};
+
+export const searchToPOILayerClassificationMapping: Record<string, string> = {
+    cafe_pub: "cafe_or_pub",
+    exhibition_convention_center: "exhibition_and_convention_center",
+    college_university: "college_or_university",
+    fire_station_brigade: "fire_station_or_brigade",
+    primary_resource_utility: "primary_resource_or_utility",
+    prison_correctional_facility: "prison_or_correctional_facility",
+    transport_authority_vehicle_registration: "transport_authority_or_vehicle_registration",
+    club_association: "club_and_association",
+    park_recreation_area: "park_and_recreation_area",
+    zoos_arboreta_botanical_garden: "zoo_arboreta_and_botanical_garden",
+    hotel_motel: "hotel_or_motel",
+    residential_accommodation: "residential_accommodations",
+    important_tourist_attraction: "tourist_attraction",
+    scenic_panoramic_view: "scenic_or_panoramic_view",
+    port_warehouse_facility: "port_or_warehouse_facility",
+    public_transport_stop: "public_transportation_stop",
+    ashram: "place_of_worship",
+    church: "place_of_worship",
+    gurudwara: "place_of_worship",
+    mosque: "place_of_worship",
+    pagoda: "place_of_worship",
+    synagog: "place_of_worship",
+    temple: "place_of_worship",
+    mountain_peak: "geographic_feature",
+    hill: "geographic_feature",
+    railway_station: "railroad_station",
+    petrol_station: "gas_station",
+    fuel_facilities: "gas_station",
+    cash_dispenser: "atm",
+    cinema: "movie_theater",
+    agriculture: "agriculture_business",
+    concert_hall: "nightlife",
+    helipad_helicopter_landing: "helipad",
+    opera: "theater",
+    holiday_rental: "vacation_rental",
+    hospital_polyclinic: "hospital"
 };
 
 /**

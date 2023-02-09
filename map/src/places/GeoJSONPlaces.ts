@@ -1,44 +1,16 @@
-import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_ID } from "../core";
-import { placesLayerSpec } from "./layers/PlacesLayers";
-import { POIClassification, poiClassificationToIconID } from "./poiIconIDMapping";
-import { PlaceDisplayProps } from "./types/PlaceDisplayProps";
-import { PlaceModuleConfig } from "./types/PlaceModuleConfig";
+import { Places } from "@anw/go-sdk-js/core";
+import {
+    AbstractMapModule,
+    EventsModule,
+    GeoJSONSourceWithLayers,
+    PLACES_SOURCE_ID,
+    ToBeAddedLayerSpec
+} from "../core";
+import { PlaceIconConfig, PlaceModuleConfig } from "./types/PlaceModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
-
-/**
- * Builds the title of the place to display it on the map.
- * @param place The place to display.
- * @group MapPlaces
- * @category Functions
- */
-export const buildPlaceTitle = (place: Place): string =>
-    place.properties.poi?.name || place.properties.address.freeformAddress;
-
-/**
- * Gets the map style sprite image ID to display on the map for the give place.
- * @param place The place to display.
- * @group MapPlaces
- * @category Functions
- */
-export const getImageIDForPlace = (place: Place): string => {
-    const classificationCode = place.properties.poi?.classifications?.[0]?.code as POIClassification;
-    const iconID = (classificationCode && poiClassificationToIconID[classificationCode]?.toString()) || "default";
-    return `${iconID}_pin`;
-};
-
-const prepareForDisplay = (places: Places): Places<PlaceDisplayProps & CommonPlaceProps> => ({
-    ...places,
-    features: places.features.map((place) => ({
-        ...place,
-        properties: {
-            ...place.properties,
-            title: buildPlaceTitle(place),
-            iconID: getImageIDForPlace(place)
-        }
-    }))
-});
+import { SymbolLayerSpecification } from "maplibre-gl";
+import { changePlacesLayerSpecs, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
 /**
  * @group MapPlaces
@@ -49,12 +21,14 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
 
     private constructor(goSDKMap: GOSDKMap, config?: PlaceModuleConfig) {
         super(goSDKMap, config);
-
-        const placesLayerID = "placesSymbols";
+        const layerSpec = getPlacesLayerSpec(config?.iconConfig, this.mapLibreMap);
         this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
-            { ...placesLayerSpec, id: placesLayerID }
+            layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
         ]);
 
+        if (config) {
+            this.applyConfig(config);
+        }
         if (config?.interactive && this.places) {
             goSDKMap._eventsProxy.add(this.places);
         }
@@ -71,12 +45,36 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
         return new GeoJSONPlaces(goSDKMap, config);
     }
 
+    applyConfig(config: PlaceModuleConfig): void {
+        this.config = config;
+        if (config.iconConfig) {
+            this.applyIconConfig(config.iconConfig);
+        }
+    }
+
+    resetConfig(): void {
+        this.applyConfig({});
+    }
+
+    /**
+     * Apply icon configuration on shown features.
+     * @param iconConfig the icon config to apply
+     */
+    applyIconConfig(iconConfig: PlaceIconConfig): void {
+        this.config = {
+            ...this.config,
+            iconConfig
+        };
+        changePlacesLayerSpecs(iconConfig, this.mapLibreMap);
+        this.show(this.places.shownFeatures);
+    }
+
     /**
      * Shows the given places on the map.
      * @param places
      */
     show(places: Places): void {
-        this.places.show(prepareForDisplay(places));
+        this.places.show(preparePlacesForDisplay(places, this.mapLibreMap, this.config));
     }
 
     /**
