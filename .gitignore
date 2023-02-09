@@ -11,6 +11,6 @@ node_modules/
 .DS_Store
 *.tgz
 **/*.tsbuildinfo
-documentation/dev-portal/web/maps/documentation/api-reference/
+documentation/dev-portal/javascript/maps/documentation/api-reference/
 
 .eslintcache

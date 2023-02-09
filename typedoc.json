@@ -15,7 +15,7 @@
   ],
   "entryPointStrategy": "resolve",
   "entryDocument": "home.mdx",
-  "out": "documentation/dev-portal/web/maps/documentation/api-reference",
+  "out": "documentation/dev-portal/javascript/maps/documentation/api-reference",
   "readme": "none",
   "name": "GO-SDK-JS",
   "internalModule": "internal",
