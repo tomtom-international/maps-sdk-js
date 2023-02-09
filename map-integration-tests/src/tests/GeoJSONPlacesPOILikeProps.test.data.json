@@ -1,0 +1,81 @@
+{
+  "Amsterdam parkings": [
+    {
+      "title": "Q-Park Amsterdam Nieuwendijk",
+      "iconID": "203",
+      "category": "parking_garage"
+    },
+    {
+      "title": "Parkeergarage Ijdock",
+      "iconID": "203",
+      "category": "parking_garage"
+    },
+    {
+      "title": "Parkeerplaats",
+      "iconID": "159",
+      "category": "open_parking_area"
+    },
+    {
+      "title": "De Boelenlaan",
+      "iconID": "159",
+      "category": "open_parking_area"
+    },
+    {
+      "title": "Parkeergarage Ah Stadionplein",
+      "iconID": "203",
+      "category": "parking_garage"
+    },
+    {
+      "title": "Stadhouderskade",
+      "iconID": "159",
+      "category": "open_parking_area"
+    },
+    {
+      "title": "Stalling Amsterdam",
+      "iconID": "203",
+      "category": "parking_garage"
+    },
+    {
+      "title": "H10 Joods Historisch Museum",
+      "iconID": "159",
+      "category": "open_parking_area"
+    },
+    {
+      "title": "Parkeergarage Stadhuis-Muziektheater",
+      "iconID": "203",
+      "category": "parking_garage"
+    },
+    {
+      "title": "H32 Sportfondsenbad Amsterdam-Oost",
+      "iconID": "159",
+      "category": "open_parking_area"
+    }
+  ],
+  "Amsterdam dentists": [
+    {
+      "title": "Tandarts Buisman",
+      "iconID": "248",
+      "category": "dentist"
+    },
+    {
+      "title": "JorDent",
+      "iconID": "248",
+      "category": "dentist"
+    },
+    {
+      "title": "Tandarts Tideman",
+      "iconID": "248",
+      "category": "dentist"
+    },
+    {
+      "title": "Identified",
+      "iconID": "248",
+      "category": "dentist"
+    },
+    {
+      "title": "TC De With En QJMC Jessen",
+      "iconID": "248",
+      "category": "dentist"
+    }
+  ]
+}

@@ -550,6 +550,48 @@
         "title": "H32 Sportfondsenbad Amsterdam-Oost",
         "iconID": "159_pin"
       }
+    ],
+    [
+      {
+        "title": "Q-Park Amsterdam Nieuwendijk",
+        "iconID": "203"
+      },
+      {
+        "title": "Parkeergarage Ijdock",
+        "iconID": "203"
+      },
+      {
+        "title": "Parkeerplaats",
+        "iconID": "159"
+      },
+      {
+        "title": "De Boelenlaan",
+        "iconID": "159"
+      },
+      {
+        "title": "Parkeergarage Ah Stadionplein",
+        "iconID": "203"
+      },
+      {
+        "title": "Stadhouderskade",
+        "iconID": "159"
+      },
+      {
+        "title": "Stalling Amsterdam",
+        "iconID": "203"
+      },
+      {
+        "title": "H10 Joods Historisch Museum",
+        "iconID": "159"
+      },
+      {
+        "title": "Parkeergarage Stadhuis-Muziektheater",
+        "iconID": "203"
+      },
+      {
+        "title": "H32 Sportfondsenbad Amsterdam-Oost",
+        "iconID": "159"
+      }
     ]
   ],
   [
@@ -827,6 +869,28 @@
       {
         "title": "TC De With En QJMC Jessen",
         "iconID": "248_pin"
+      }
+    ],
+    [
+      {
+        "title": "Tandarts Buisman",
+        "iconID": "248"
+      },
+      {
+        "title": "JorDent",
+        "iconID": "248"
+      },
+      {
+        "title": "Tandarts Tideman",
+        "iconID": "248"
+      },
+      {
+        "title": "Identified",
+        "iconID": "248"
+      },
+      {
+        "title": "TC De With En QJMC Jessen",
+        "iconID": "248"
       }
     ]
   ]

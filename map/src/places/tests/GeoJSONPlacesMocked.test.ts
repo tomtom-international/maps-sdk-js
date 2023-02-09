@@ -15,6 +15,7 @@ describe("GeoJSON Places module tests", () => {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValue(placesSource),
                 getLayer: jest.fn(),
+                getStyle: jest.fn().mockReturnValue({ layers: [] }),
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn()
@@ -30,6 +31,13 @@ describe("GeoJSON Places module tests", () => {
         } as Places;
         const places = await GeoJSONPlaces.init(goSDKMapMock);
         places.show(testPlaces);
+        jest.spyOn(goSDKMapMock.mapLibreMap, "getStyle");
+        places.applyConfig({
+            iconConfig: {
+                iconStyle: "poi-like"
+            }
+        });
+        expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
         places.clear();
     });
 });

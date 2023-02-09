@@ -71,7 +71,7 @@ export const getIconIDForPlace = (place: Place, config: PlaceModuleConfig = {}, 
  * @ignore
  */
 export const getCategoryForPlace = (place: Place): string => {
-    let category = (place.properties.poi?.classifications?.[0]?.code as POIClassification).toLowerCase();
+    let category = (place.properties.poi?.classifications?.[0]?.code as POIClassification)?.toLowerCase();
     // if it's one of the different categories between search and poi layer, use poi layer category
     if (category in searchToPOILayerClassificationMapping) {
         category = searchToPOILayerClassificationMapping[category];
