@@ -84,4 +84,8 @@ const Languages = [
     "tr-TR"
 ] as const;
 
+/**
+ * @group Shared
+ * @category Types
+ */
 export type Language = (typeof Languages)[number];

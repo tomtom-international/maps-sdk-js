@@ -1,3 +1,5 @@
+import isNil from "lodash/isNil";
+
 /**
  * Returns a display-friendly version, in minutes and hours if needed, of the given duration in seconds.
  * * Examples:
@@ -15,8 +17,6 @@
  * @group Shared
  * @category Functions
  */
-import isNil from "lodash/isNil";
-
 export const formatDuration = (seconds: number | undefined): string | null => {
     if (seconds) {
         // get the absolute value for seconds to calculate the right formatting
@@ -39,7 +39,7 @@ export const formatDuration = (seconds: number | undefined): string | null => {
 /**
  * Types of units SDK formatters work with.
  * @group Shared
- * @category Type
+ * @category Types
  */
 export type UnitsType = "metric" | "imperial_us" | "imperial_uk";
 

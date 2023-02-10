@@ -12,8 +12,16 @@ type FuzzySearchFeatureCollectionProps = {
     totalResults: number;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type QueryIntent = CoordinateIntent | NearbyIntent | W3WIntent | BookmarkIntent;
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type CoordinateIntent = {
     /**
      * the query is a coordinate in one of the supported formats (e.g., "48.858380, 2.294440").
@@ -22,6 +30,10 @@ export type CoordinateIntent = {
     details: CoordinateIntentDetails;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type NearbyIntent = {
     /**
      * the query asks for some entity in the proximity of another entity (e.g., "hotel near Lyon").
@@ -30,6 +42,10 @@ export type NearbyIntent = {
     details: NearbyIntentDetails;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type W3WIntent = {
     /**
      * the query contains a (likely) what3words code (e.g., "///classic.calls.replace").
@@ -38,6 +54,10 @@ export type W3WIntent = {
     details: W3WIntentDetails;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type BookmarkIntent = {
     /**
      * the query contains one or more keywords that can refer to saved locations (e.g., "home").
@@ -46,6 +66,10 @@ export type BookmarkIntent = {
     details: BookmarkIntentDetails;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type CoordinateIntentDetails = {
     /**
      * position of the (parsed) user input coordinate. The results will be places nearby this coordinate.
@@ -54,6 +78,10 @@ export type CoordinateIntentDetails = {
     position: Position;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type NearbyIntentDetails = {
     /**
      * position of the place, near which the user searches for something.
@@ -74,6 +102,10 @@ export type NearbyIntentDetails = {
     text: string;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type W3WIntentDetails = {
     /**
      * What3words address. For example, for the query classic.calls.replace the address is ///classic.calls.replace.
@@ -82,6 +114,10 @@ export type W3WIntentDetails = {
     address: string;
 };
 
+/**
+ * @group Fuzzy Search
+ * @category Types
+ */
 export type BookmarkIntentDetails = {
     /**
      * One of: HOME, WORK. The user possibly searched for a bookmark in your application.

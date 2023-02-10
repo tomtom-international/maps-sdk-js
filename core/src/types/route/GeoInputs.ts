@@ -62,6 +62,8 @@ export type PathLike = Position[] | Route;
  * A GeoInput is a location-like input for route planning. It can be either:
  * * a waypoint: an individual place.
  * * a path: a path or route to follow.
+ * @group Route
+ * @category Types
  */
 export type GeoInput = WaypointLike | PathLike;
 
@@ -69,5 +71,7 @@ export type GeoInput = WaypointLike | PathLike;
  * The overall type of a GeoInput.
  * * "waypoint" refers to WaypointLike inputs.
  * * "path" refers to PathLike inputs.
+ * @group Route
+ * @category Types
  */
 export type GeoInputType = "waypoint" | "path";

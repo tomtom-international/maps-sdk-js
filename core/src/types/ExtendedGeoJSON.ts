@@ -1,7 +1,9 @@
 import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 
 /**
- * type that extends FeatureCollection and adding `properties` property to it.
+ * Type that extends FeatureCollection and adding `properties` property to it.
+ * @group Shared
+ * @category Types
  */
 export interface FeatureCollectionWithProperties<
     G extends Geometry | null = Geometry,
