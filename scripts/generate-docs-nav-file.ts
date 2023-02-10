@@ -26,6 +26,7 @@ const getAllExtraFiles = () => {
             }
         })
         .filter((item) => item !== undefined) as string[];
+    console.log(`Found the API reference directories: ${allDirsInApiRefDir}`);
 
     const allExtraFiles: string[] = [];
     allDirsInApiRefDir.forEach((dirName) => {
@@ -53,6 +54,9 @@ const writeToOutputNavFile = (extraFileNavEntries: string) => {
     writeFileSync(outputNavFilePath, outStr);
 };
 
+console.log("Starting navigation.yml generation...");
 const extraFiles = getAllExtraFiles();
 const navEntryString = createNavFileEntries(extraFiles);
+console.log(`Extra page entries:\n${navEntryString}`);
 writeToOutputNavFile(navEntryString);
+console.log("Successfully generated navigation.yml file");
