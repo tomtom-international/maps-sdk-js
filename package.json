@@ -6,7 +6,7 @@
     "clean": "npm run clean:dist -ws && npm run clean:cache -ws",
     "release:dry": "npx standard-version --dry-run",
     "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi",
-    "documentation": "npm run build-theme && typedoc",
+    "documentation": "npm run build-theme && typedoc && npx ts-node scripts/generate-docs-nav-file.ts",
     "build:full": "npm run build:full -ws",
     "build": "npm run build -ws",
     "type-check": "npm run type-check -ws",
