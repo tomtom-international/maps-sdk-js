@@ -26,14 +26,20 @@ export abstract class AbstractSourceWithLayers<
         readonly layerSpecs: LAYER_SPEC[]
     ) {}
 
+    isAnyLayerVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
+        return this.getLayerSpecs(filter).some((layer) => this.isLayerVisible(layer));
+    }
+
+    areAllLayersVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
+        return this.getLayerSpecs(filter).every((layer) => this.isLayerVisible(layer));
+    }
+
     private getLayerSpecs(filter?: LayerSpecFilter) {
         return filter ? this.layerSpecs.filter(filter) : this.layerSpecs;
     }
 
-    isAnyLayerVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
-        return this.getLayerSpecs(filter).some(
-            (layer) => this.map.getLayoutProperty(layer.id, "visibility") !== "none"
-        );
+    private isLayerVisible(layer: LayerSpecification): boolean {
+        return this.map.getLayoutProperty(layer.id, "visibility") !== "none";
     }
 
     setAllLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {

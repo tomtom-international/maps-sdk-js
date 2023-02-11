@@ -48,10 +48,10 @@ describe("Vector tiles traffic module tests", () => {
         traffic.setIncidentsVisible(true);
         traffic.setIncidentIconsVisible(true);
         traffic.setFlowVisible(true);
-        traffic.isVisible();
-        traffic.isIncidentsVisible();
-        traffic.isIncidentIconsVisible();
-        traffic.isFlowVisible();
+        traffic.anyLayersVisible();
+        traffic.anyIncidentLayersVisible();
+        traffic.anyIncidentIconLayersVisible();
+        traffic.anyFlowLayersVisible();
     });
 
     test("Initializing module with no config and no flow in style", async () => {

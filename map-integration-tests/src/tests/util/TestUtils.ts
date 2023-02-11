@@ -45,18 +45,27 @@ export const assertNumber = (value: number, positiveVsZero: boolean) => {
     }
 };
 
-export const assertTrafficVisibility = async (incidentsVisible: boolean, flowVisible: boolean) => {
-    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.isIncidentsVisible())).toBe(incidentsVisible);
-    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.isFlowVisible())).toBe(flowVisible);
-    if (incidentsVisible && flowVisible) {
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.isVisible())).toBe(true);
-    } else if (!incidentsVisible && !flowVisible) {
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.isVisible())).toBe(false);
+export const assertTrafficVisibility = async (visibility: {
+    incidents: boolean;
+    incidentIcons: boolean;
+    flow: boolean;
+}) => {
+    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyIncidentLayersVisible())).toBe(
+        visibility.incidents
+    );
+    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyIncidentIconLayersVisible())).toBe(
+        visibility.incidentIcons
+    );
+    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyFlowLayersVisible())).toBe(visibility.flow);
+    if (visibility.incidents && visibility.flow) {
+        expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyLayersVisible())).toBe(true);
+    } else if (!visibility.incidents && !visibility.flow) {
+        expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyLayersVisible())).toBe(false);
     }
 
     // we double-check against maplibre directly as well:
-    assertNumber(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID), incidentsVisible);
-    assertNumber(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID), flowVisible);
+    assertNumber(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID), visibility.incidents);
+    assertNumber(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID), visibility.flow);
 };
 
 export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Position): Promise<MapGeoJSONFeature[]> =>

@@ -28,36 +28,40 @@ describe("Vector tile modules combined visibility tests, to ensure one module do
             });
         });
 
-        await assertTrafficVisibility(false, false);
+        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(true));
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.setVisible(true));
-        await assertTrafficVisibility(true, true);
+        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
         await assertPOIsVisibility(true);
         await assertHillshadeVisibility(true);
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(false));
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.setVisible(false));
-        await assertTrafficVisibility(false, false);
+        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentsVisible(false));
-        await assertTrafficVisibility(false, true);
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentIconsVisible(false));
+        await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: true });
+        await assertPOIsVisibility(false);
+        await assertHillshadeVisibility(false);
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(false));
-        await assertTrafficVisibility(false, false);
+        await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: false });
+        await assertPOIsVisibility(false);
+        await assertHillshadeVisibility(false);
 
         // re-setting configs (thus expecting default to be re-applied)
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.resetConfig());
         await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.resetConfig());
-        await assertTrafficVisibility(true, true);
+        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
         await assertPOIsVisibility(true);
         await assertHillshadeVisibility(true);
 

@@ -31,32 +31,21 @@ describe("AbstractSourceWithLayers tests", () => {
         const mapLibreMock = {
             getLayoutProperty: jest.fn().mockReturnValueOnce("visible").mockReturnValueOnce("none")
         } as unknown as Map;
-
-        let sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
-        expect(sourceWithLayers.isAnyLayerVisible()).toStrictEqual(true);
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility");
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledTimes(1);
-        // (First layer was visible, so no more need to query layers)
+        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).isAnyLayerVisible()).toBe(true);
 
         // ----------------------
-        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("none").mockReturnValueOnce(undefined); // defaults to visible
-
-        sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
-        expect(sourceWithLayers.isAnyLayerVisible()).toStrictEqual(true);
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility");
-        // First layer was invisible, so we expect the second one to be queried too:
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility");
+        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("none").mockReturnValueOnce(undefined); // undefined defaults to visible
+        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).isAnyLayerVisible()).toBe(true);
     });
 
-    test("isAnyLayerVisible true with filter", () => {
+    test("isAnyLayerVisible with filter", () => {
         const mapLibreMock = {
             getLayoutProperty: jest.fn().mockReturnValueOnce("visible")
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
-        expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toStrictEqual(true);
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility");
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledTimes(1);
+        expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toBe(true);
+        expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === "not-there")).toBe(false);
     });
 
     test("isAnyLayerVisible false", () => {
@@ -66,8 +55,6 @@ describe("AbstractSourceWithLayers tests", () => {
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
         expect(sourceWithLayers.isAnyLayerVisible()).toStrictEqual(false);
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility");
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility");
     });
 
     test("isAnyLayerVisible false with filter", () => {
@@ -76,9 +63,55 @@ describe("AbstractSourceWithLayers tests", () => {
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
-        expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toStrictEqual(false);
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility");
-        expect(mapLibreMock.getLayoutProperty).toHaveBeenCalledTimes(1);
+        expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toBe(false);
+    });
+
+    test("areAllLayersVisible true", () => {
+        const mapLibreMock = {
+            getLayoutProperty: jest.fn().mockReturnValueOnce("visible").mockReturnValueOnce("visible")
+        } as unknown as Map;
+        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+            true
+        );
+
+        // ----------------------
+        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("visible").mockReturnValueOnce(undefined); // undefined defaults to visible
+        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+            true
+        );
+    });
+
+    test("areAllLayersVisible false", () => {
+        const mapLibreMock = {
+            getLayoutProperty: jest.fn().mockReturnValueOnce("none").mockReturnValueOnce("none")
+        } as unknown as Map;
+        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+            false
+        );
+
+        // ----------------------
+        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("none").mockReturnValueOnce(undefined); // undefined defaults to visible
+        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+            false
+        );
+    });
+
+    test("areAllLayersVisible with filter", () => {
+        const mapLibreMock = {
+            // layer0 visible, layer1 hidden:
+            getLayoutProperty: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce("none")
+        } as unknown as Map;
+        expect(
+            new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible(
+                (layer) => layer.id === layer0.id
+            )
+        ).toBe(true);
+
+        expect(
+            new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible(
+                (layer) => layer.id === layer1.id
+            )
+        ).toBe(false);
     });
 
     test("setAllLayersVisible true", () => {

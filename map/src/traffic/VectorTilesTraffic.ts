@@ -69,7 +69,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     protected _applyConfig(config: VectorTilesTrafficConfig | undefined): void {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
-        } else if (!this.isVisible()) {
+        } else if (!this.anyLayersVisible()) {
             // applying default:
             this.setVisible(true);
         }
@@ -81,7 +81,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         const incidents = config?.incidents;
         if (incidents && !isNil(incidents.visible)) {
             this.setIncidentsVisible(incidents.visible);
-        } else if (isNil(config?.visible) && !this.isIncidentsVisible()) {
+        } else if (isNil(config?.visible) && !this.incidents?.areAllLayersVisible()) {
             // applying default
             this.setIncidentsVisible(true);
         }
@@ -131,7 +131,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         const flow = config?.flow;
         if (flow && !isNil(flow.visible)) {
             this.setFlowVisible(flow.visible);
-        } else if (isNil(config?.visible) && !this.isFlowVisible()) {
+        } else if (isNil(config?.visible) && !this.flow?.areAllLayersVisible()) {
             // applying default:
             this.setFlowVisible(true);
         }
@@ -187,19 +187,31 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         }
     }
 
-    isVisible(): boolean {
-        return this.isIncidentsVisible() || this.isFlowVisible();
+    /**
+     * Returns whether any traffic layers are visible.
+     */
+    anyLayersVisible(): boolean {
+        return this.anyIncidentLayersVisible() || this.anyFlowLayersVisible();
     }
 
-    isIncidentsVisible(): boolean {
+    /**
+     * Returns whether any traffic incident layers are visible.
+     */
+    anyIncidentLayersVisible(): boolean {
         return !!this.incidents?.isAnyLayerVisible();
     }
 
-    isIncidentIconsVisible(): boolean {
+    /**
+     * Returns whether any traffic incident symbol layers are visible.
+     */
+    anyIncidentIconLayersVisible(): boolean {
         return !!this.incidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === "symbol");
     }
 
-    isFlowVisible(): boolean {
+    /**
+     * Returns whether any traffic flow layers are visible.
+     */
+    anyFlowLayersVisible(): boolean {
         return !!this.flow?.isAnyLayerVisible();
     }
 
