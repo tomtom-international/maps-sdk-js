@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.81](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.80...v0.1.81) (2023-02-11)
+
+
+### Bug Fixes
+
+* **traffic:** fixing flow filtering bug ([3c68645](https://github.com/tomtom-international/go-sdk-js/commit/3c686452115069a4648eb8438bf890ee9d35c0cd))
+
 ### [0.1.80](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.79...v0.1.80) (2023-02-09)
 
 
