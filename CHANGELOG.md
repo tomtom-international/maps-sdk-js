@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.82](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.81...v0.1.82) (2023-02-13)
+
+
+### Bug Fixes
+
+* **traffic:** fixing icon vs default visibility logic, renaming methods, adding tests ([390e351](https://github.com/tomtom-international/go-sdk-js/commit/390e351ae35bb33f60ba4a4f54c54469ec1cfb57))
+
 ### [0.1.81](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.80...v0.1.81) (2023-02-11)
 
 
