@@ -1,16 +1,11 @@
 import { HasBBox, Places } from "@anw/go-sdk-js/core";
 import { PlaceDisplayProps, PLACES_SOURCE_ID } from "map";
 import { MapGeoJSONFeature } from "maplibre-gl";
+import sortBy from "lodash/sortBy";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
-import sortBy from "lodash/sortBy";
-import {
-    getNumVisibleLayersBySource,
-    waitForMapReady,
-    waitForTimeout,
-    waitUntilRenderedFeatures
-} from "./util/TestUtils";
+import { getNumVisibleLayersBySource, waitForTimeout, waitUntilRenderedFeatures } from "./util/TestUtils";
 import expectedCustomIcon from "./GeoJSONPlacesCustomIcon.test.data.json";
 import expectedPOILikeFeatureProps from "./GeoJSONPlacesPOILikeProps.test.data.json";
 
@@ -85,7 +80,6 @@ describe("GeoJSON Places tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlaces();
-            await waitForMapReady();
             expect(await getNumVisibleLayers()).toStrictEqual(0);
 
             await showPlaces(testPlaces);
@@ -135,11 +129,11 @@ describe("GeoJSON Places with init config tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlacesWithConfig();
-            await waitForMapReady();
             await showPlaces(testPlaces);
             const numTestPlaces = testPlaces.features.length;
             const renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCustomProps);
+            expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
 });
@@ -161,7 +155,6 @@ describe("GeoJSON Places apply icon config tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlaces();
-            await waitForMapReady();
             await showPlaces(testPlaces);
 
             const numTestPlaces = testPlaces.features.length;
@@ -200,6 +193,8 @@ describe("GeoJSON Places apply icon config tests", () => {
                 renderedPlaces,
                 expectedPOILikeFeatureProps[name as "Amsterdam dentists" | "Amsterdam parkings"]
             );
+
+            expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
 });
