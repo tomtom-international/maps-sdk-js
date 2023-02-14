@@ -141,7 +141,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedS
         this.show(emptyFeatureCollection as T);
     }
 
-    getFeatureById(rawFeature: MapGeoJSONFeature) {
+    getFeature(rawFeature: MapGeoJSONFeature) {
         return this.shownFeatures.features.find((feature) => feature.id === rawFeature.id);
     }
 }

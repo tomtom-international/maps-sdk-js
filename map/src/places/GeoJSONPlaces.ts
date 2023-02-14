@@ -81,7 +81,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
      */
     get events() {
         return new EventsModule<Place>(this.goSDKMap._eventsProxy, this.places, (rawFeature: MapGeoJSONFeature) =>
-            this.places.getFeatureById(rawFeature)
+            this.places.getFeature(rawFeature)
         );
     }
 }

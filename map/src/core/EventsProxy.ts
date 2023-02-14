@@ -118,14 +118,14 @@ export class EventsProxy extends AbstractEventProxy {
                 this.lastClickedFeature.id !== this.hoveringFeature.id)
         ) {
             this.firstDelayedHoverSinceMapMove = false;
-            const [topHoveredFeature, ...hoveredFeatures] = this.hoveredFeatures as MapGeoJSONFeature[];
+            const [topHoveredFeature] = this.hoveredFeatures as MapGeoJSONFeature[];
             if (this.hoveringSourceWithLayers) {
                 const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
                 this.handlers[listenerId]?.forEach((handler) =>
                     handler(
                         this.hoveringLngLat as LngLat,
                         topHoveredFeature,
-                        hoveredFeatures,
+                        this.hoveredFeatures,
                         this.hoveringSourceWithLayers
                     )
                 );
@@ -181,7 +181,7 @@ export class EventsProxy extends AbstractEventProxy {
 
         this.hoveredFeatures = this.getRenderedFeatures(ev.point);
         deserializeFeatures(this.hoveredFeatures);
-        const [hoveredTopFeature, ...hoveredFeatures] = this.hoveredFeatures;
+        const [hoveredTopFeature] = this.hoveredFeatures;
         const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
 
         // flag to determine whether a change happened, such as no-hover -> hover or vice-versa:
@@ -230,7 +230,7 @@ export class EventsProxy extends AbstractEventProxy {
             if (this.handlers[listenerId]) {
                 // (If de-hovering this should fire undefined, undefined):
                 this.handlers[listenerId].forEach((handler) =>
-                    handler(ev.lngLat, hoveredTopFeature, hoveredFeatures, this.hoveringSourceWithLayers)
+                    handler(ev.lngLat, hoveredTopFeature, this.hoveredFeatures, this.hoveringSourceWithLayers)
                 );
             }
         }
