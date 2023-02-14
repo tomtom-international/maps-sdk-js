@@ -25,9 +25,9 @@ describe("AbstractMapModule tests", () => {
         }
 
         // Implement events, however it is not tested here.
-        get events(): EventsModule {
-            return jest.fn() as unknown as EventsModule;
-        }
+        // get events(): EventsModule {
+        //     return jest.fn() as unknown as EventsModule;
+        // }
     }
 
     test("Constructor with style loaded", async () => {

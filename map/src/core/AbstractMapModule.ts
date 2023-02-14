@@ -1,6 +1,5 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../GOSDKMap";
-import { EventsModule } from "./EventsModule";
 
 /**
  * Base class for all GO SDK map modules.
@@ -62,11 +61,4 @@ export abstract class AbstractMapModule<CFG = undefined> {
     getConfig() {
         return this.config && { ...this.config };
     }
-
-    /**
-     * Initializes the module events and allows to register handlers to them
-     * @protected
-     * @ignore
-     */
-    protected abstract get events(): EventsModule | Record<string, EventsModule>;
 }

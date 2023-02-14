@@ -1,4 +1,5 @@
 import remove from "lodash/remove";
+import { MapGeoJSONFeature } from "maplibre-gl";
 import { EventHandlers, EventType, HoverClickHandler, SourceWithLayers } from "./types";
 
 interface SourceWithLayersMap {
@@ -30,7 +31,11 @@ export abstract class AbstractEventProxy {
      * @param handler Function that will handle the event.
      * @param type Type of event to listen to.
      */
-    addEventHandler(sourceWithLayers: SourceWithLayers, handler: HoverClickHandler, type: EventType) {
+    addEventHandler(
+        sourceWithLayers: SourceWithLayers,
+        handler: HoverClickHandler<MapGeoJSONFeature>,
+        type: EventType
+    ) {
         if (!this.has(sourceWithLayers)) {
             this.ensureAdded(sourceWithLayers);
         }

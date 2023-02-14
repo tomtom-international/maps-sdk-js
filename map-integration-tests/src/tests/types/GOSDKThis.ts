@@ -36,6 +36,7 @@ export type GOSDKThis = typeof globalThis & {
     // These properties are used for testing the parameters returned
     // to the callback handler
     _clickedLngLat?: LngLatLike;
+    _clickedTopFeature?: unknown;
     _clickedFeatures?: MapGeoJSONFeature[];
     _clickedSourceWithLayers?: SourceWithLayers;
 };

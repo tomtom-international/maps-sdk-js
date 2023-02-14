@@ -1,4 +1,4 @@
-import { Places } from "@anw/go-sdk-js/core";
+import { Places, Place } from "@anw/go-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
@@ -9,7 +9,7 @@ import {
 import { PlaceIconConfig, PlaceModuleConfig } from "./types/PlaceModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
-import { SymbolLayerSpecification } from "maplibre-gl";
+import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
 import { changePlacesLayerSpecs, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
 /**
@@ -80,6 +80,8 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.goSDKMap._eventsProxy, this.places);
+        return new EventsModule<Place>(this.goSDKMap._eventsProxy, this.places, (rawFeature: MapGeoJSONFeature) =>
+            this.places.getFeatureById(rawFeature)
+        );
     }
 }

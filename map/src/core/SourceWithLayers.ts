@@ -3,6 +3,7 @@ import {
     GeoJSONSourceSpecification,
     LayerSpecification,
     Map,
+    MapGeoJSONFeature,
     Source,
     SourceSpecification
 } from "maplibre-gl";
@@ -126,7 +127,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedS
     shownFeatures: T = emptyFeatureCollection as T;
 
     constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
-        super(map, sourceID, { type: "geojson", data: emptyFeatureCollection }, layerSpecs);
+        super(map, sourceID, { type: "geojson", data: emptyFeatureCollection, promoteId: "id" }, layerSpecs);
         this.ensureAddedToMapWithVisibility(false);
     }
 
@@ -138,5 +139,9 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedS
 
     clear(): void {
         this.show(emptyFeatureCollection as T);
+    }
+
+    getFeatureById(rawFeature: MapGeoJSONFeature) {
+        return this.shownFeatures.features.find((feature) => feature.id === rawFeature.id);
     }
 }

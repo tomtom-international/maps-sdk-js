@@ -21,7 +21,7 @@ describe("EventsModule tests", () => {
 
         event.on("click", callback);
 
-        expect(MockEventProxy.addEventHandler).toHaveBeenCalledWith(mockedMapModule, callback, "click");
+        expect(MockEventProxy.addEventHandler).toHaveBeenCalledWith(mockedMapModule, expect.any(Function), "click");
     });
 
     test("Add an event without mapModule", () => {

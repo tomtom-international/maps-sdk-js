@@ -29,8 +29,9 @@ const setupEventCallbacks = async (eventType: EventType) =>
     page.evaluate(
         (inputEventType: EventType) => {
             const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.places?.events.on(inputEventType, (lnglat, features, sourceWithLayers) => {
+            goSDKThis.places?.events.on(inputEventType, (lnglat, topFeature, features, sourceWithLayers) => {
                 goSDKThis._clickedLngLat = lnglat;
+                goSDKThis._clickedTopFeature = topFeature;
                 goSDKThis._clickedFeatures = features;
                 goSDKThis._clickedSourceWithLayers = sourceWithLayers;
             });

@@ -234,7 +234,8 @@ describe("GeoJSONSourceWithLayers", () => {
         expect(sourceWithLayers.source.id).toStrictEqual(testSourceID);
         expect(sourceWithLayers.source.spec).toStrictEqual({
             type: "geojson",
-            data: { type: "FeatureCollection", features: [] }
+            data: { type: "FeatureCollection", features: [] },
+            promoteId: "id"
         });
         expect(sourceWithLayers.source.runtimeSource).toStrictEqual({ id: testSourceID });
         expect(sourceWithLayers.layerSpecs).toStrictEqual(testLayerSpecs);

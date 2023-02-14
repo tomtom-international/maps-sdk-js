@@ -1,7 +1,7 @@
 import { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D } from "maplibre-gl";
 import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { AbstractEventProxy } from "./AbstractEventProxy";
-import { ClickEventType, HoverClickHandler, SourceWithLayers } from "./types";
+import { ClickEventType, SourceWithLayers } from "./types";
 import { MapEventsConfig } from "../init/types/MapEventsConfig";
 import { deserializeFeatures } from "../utils/mapUtils";
 
@@ -118,12 +118,14 @@ export class EventsProxy extends AbstractEventProxy {
                 this.lastClickedFeature.id !== this.hoveringFeature.id)
         ) {
             this.firstDelayedHoverSinceMapMove = false;
+            const [topHoveredFeature, ...hoveredFeatures] = this.hoveredFeatures as MapGeoJSONFeature[];
             if (this.hoveringSourceWithLayers) {
                 const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
-                this.handlers[listenerId]?.forEach((handler: HoverClickHandler) =>
+                this.handlers[listenerId]?.forEach((handler) =>
                     handler(
                         this.hoveringLngLat as LngLat,
-                        this.hoveredFeatures as MapGeoJSONFeature[],
+                        topHoveredFeature,
+                        hoveredFeatures,
                         this.hoveringSourceWithLayers
                     )
                 );
@@ -179,7 +181,7 @@ export class EventsProxy extends AbstractEventProxy {
 
         this.hoveredFeatures = this.getRenderedFeatures(ev.point);
         deserializeFeatures(this.hoveredFeatures);
-        const hoveredTopFeature = this.hoveredFeatures[0];
+        const [hoveredTopFeature, ...hoveredFeatures] = this.hoveredFeatures;
         const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
 
         // flag to determine whether a change happened, such as no-hover -> hover or vice-versa:
@@ -227,8 +229,8 @@ export class EventsProxy extends AbstractEventProxy {
         if (hoverChangeDetected) {
             if (this.handlers[listenerId]) {
                 // (If de-hovering this should fire undefined, undefined):
-                this.handlers[listenerId].forEach((handler: HoverClickHandler) =>
-                    handler(ev.lngLat, this.hoveredFeatures as MapGeoJSONFeature[], this.hoveringSourceWithLayers)
+                this.handlers[listenerId].forEach((handler) =>
+                    handler(ev.lngLat, hoveredTopFeature, hoveredFeatures, this.hoveringSourceWithLayers)
                 );
             }
         }
@@ -245,18 +247,23 @@ export class EventsProxy extends AbstractEventProxy {
         }
 
         const clickedFeatures = this.getRenderedFeatures(ev.point);
-
         // Deserialize Features from maplibre queryRenderedFeatures response
         deserializeFeatures(clickedFeatures);
 
         this.lastClickedFeature = clickedFeatures[0];
+
         const lastClickedSourceWithLayers = this.lastClickedFeature
             ? this.interactiveSourcesAndLayers[this.lastClickedFeature.source]
             : undefined;
 
         if (lastClickedSourceWithLayers && this.handlers[lastClickedSourceWithLayers.source.id + `_${clickType}`]) {
-            this.handlers[lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((cb: HoverClickHandler) => {
-                cb(ev.lngLat, clickedFeatures, lastClickedSourceWithLayers);
+            this.handlers[lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((handler) => {
+                handler(
+                    ev.lngLat,
+                    this.lastClickedFeature as MapGeoJSONFeature,
+                    clickedFeatures,
+                    lastClickedSourceWithLayers
+                );
             });
         }
     }

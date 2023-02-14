@@ -158,8 +158,13 @@ export const preparePlacesForDisplay = (
     ...places,
     features: places.features.map((place) => ({
         ...place,
+        geometry: {
+            ...place.geometry,
+            bbox: place.bbox
+        },
         properties: {
             ...place.properties,
+            id: place.id,
             title: buildPlaceTitle(place),
             iconID: getIconIDForPlace(place, config, map),
             ...(config?.iconConfig?.iconStyle == "poi-like" && { category: getCategoryForPlace(place) })
