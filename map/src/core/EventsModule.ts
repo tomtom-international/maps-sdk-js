@@ -44,14 +44,13 @@ export class EventsModule<T = MapGeoJSONFeature> {
      * @param handler
      */
     on(type: EventType, handler: HoverClickHandler<T>) {
-        // Wrapping the original handler inside a function that will filter
-        // the feature by id and return the feature before handled by MapLibre as a second parameter
+        // Wrapping the original handler inside a function that for GeoJSON modules will filter
+        // the feature by id and return the feature before being handled by MapLibre as a second parameter
+        // For Vector tiles we will be casting to the map geojson feature itself.
         // All features returned by Maplibre are included in the argument "features"
         this.addToEventProxy(type, (latLng, feature, features, sourceAndLayers) => {
             if (this.mapToInternalFeature && features) {
-                const topFeature = this.mapToInternalFeature(features[0]) as T;
-
-                return handler(latLng, topFeature, features, sourceAndLayers);
+                return handler(latLng, this.mapToInternalFeature(features[0]) as T, features, sourceAndLayers);
             } else {
                 return handler(latLng, feature as T, features, sourceAndLayers);
             }

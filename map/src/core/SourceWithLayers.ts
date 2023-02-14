@@ -127,6 +127,8 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedS
     shownFeatures: T = emptyFeatureCollection as T;
 
     constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
+        // MapLibre does not reuse the given feature ID. Either we generate it on the fly or use the one from properties via promotedId value.
+        // We must generate "id" property based on the feature id on the fly on "prepareForDisplay" functions.
         super(map, sourceID, { type: "geojson", data: emptyFeatureCollection, promoteId: "id" }, layerSpecs);
         this.ensureAddedToMapWithVisibility(false);
     }
