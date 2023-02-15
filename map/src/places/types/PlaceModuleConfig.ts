@@ -1,4 +1,4 @@
-import { POIClassification } from "../poiIconIDMapping";
+import { MapStylePOIClassification } from "../poiIconIDMapping";
 
 /**
  * Possible options for places icon style
@@ -14,7 +14,7 @@ export type IconStyle = "pin" | "circle" | "poi-like";
  * @category Types
  */
 export type CustomIcon = {
-    category: POIClassification;
+    category: MapStylePOIClassification;
     iconUrl: string;
 };
 

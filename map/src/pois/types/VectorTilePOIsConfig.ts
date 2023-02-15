@@ -1,11 +1,11 @@
 import { ValuesFilter, VectorTileMapModuleConfig } from "../../core";
-import { POIClassification } from "../../places";
+import { MapStylePOIClassification } from "../../places";
 import { POIClassificationGroup } from "../poiClassificationGroups";
 
 /**
  * A POI classification or group which can be filtered.
  */
-export type FilterablePOICategory = POIClassification | POIClassificationGroup;
+export type FilterablePOICategory = MapStylePOIClassification | POIClassificationGroup;
 
 export type VectorTilePOIsConfig = VectorTileMapModuleConfig & {
     /**

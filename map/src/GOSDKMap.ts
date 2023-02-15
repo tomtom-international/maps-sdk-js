@@ -49,7 +49,7 @@ export class GOSDKMap {
                 const textFieldValue = language
                     ? ["coalesce", ["get", `name_${language}`], ["get", "name"]]
                     : ["get", "name"];
-                this.mapLibreMap.setLayoutProperty(layer.id, "text-field", textFieldValue);
+                this.mapLibreMap.setLayoutProperty(layer.id, "text-field", textFieldValue, { validate: false });
             }
         });
     }
@@ -77,7 +77,7 @@ export class GOSDKMap {
          * This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style
          */
         if (this.goSDKParams?.exclude?.includes("poi")) {
-            this.mapLibreMap.setLayoutProperty("POI", "visibility", "none");
+            this.mapLibreMap.setLayoutProperty("POI", "visibility", "none", { validate: false });
         }
     }
 }

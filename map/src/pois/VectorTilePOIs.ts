@@ -5,7 +5,7 @@ import { FilterablePOICategory, VectorTilePOIsConfig } from "./types/VectorTileP
 import { notInTheStyle } from "../core/ErrorMessages";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
-import { POIClassification, poiClassificationToIconID } from "../places";
+import { MapStylePOIClassification, poiClassificationToIconID } from "../places";
 import { POIClassificationGroup, poiClassificationGroups } from "./poiClassificationGroups";
 import { buildMappedValuesFilter, getMergedAllFilter } from "../core/MapLibreUtils";
 
@@ -21,7 +21,7 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
         if (category in poiClassificationGroups) {
             categoryIds.push(...poiClassificationGroups[category as POIClassificationGroup]);
         } else if (category in poiClassificationToIconID) {
-            categoryIds.push(poiClassificationToIconID[category as POIClassification]);
+            categoryIds.push(poiClassificationToIconID[category as MapStylePOIClassification]);
         }
     });
     return [...new Set(categoryIds)];

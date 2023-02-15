@@ -122,8 +122,12 @@ describe("AbstractSourceWithLayers tests", () => {
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(true);
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "visible");
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible");
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "visible", {
+            validate: false
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible", {
+            validate: false
+        });
     });
 
     test("setAllLayersVisible true with filter", () => {
@@ -133,7 +137,9 @@ describe("AbstractSourceWithLayers tests", () => {
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(true, (layer) => layer.id === layer1.id);
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible");
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible", {
+            validate: false
+        });
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
     });
 
@@ -144,8 +150,12 @@ describe("AbstractSourceWithLayers tests", () => {
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(false);
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "none");
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "none");
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "none", {
+            validate: false
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "none", {
+            validate: false
+        });
     });
 
     test("setVisible false with filter", () => {
@@ -155,7 +165,9 @@ describe("AbstractSourceWithLayers tests", () => {
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(false, (layer) => layer.id === layer1.id);
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "none");
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "none", {
+            validate: false
+        });
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
     });
 });
@@ -217,8 +229,12 @@ describe("AddedSourceWithLayers tests", () => {
         expect(mapLibreMock.addLayer).toHaveBeenCalledWith({ ...layer0, source: testSourceID }, undefined);
         expect(mapLibreMock.addLayer).toHaveBeenCalledTimes(1);
 
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "visible");
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible");
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "visible", {
+            validate: false
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible", {
+            validate: false
+        });
     });
 });
 

@@ -18,7 +18,8 @@ describe("GeoJSON Places module tests", () => {
                 getStyle: jest.fn().mockReturnValue({ layers: [] }),
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
-                setLayoutProperty: jest.fn()
+                setLayoutProperty: jest.fn(),
+                setPaintProperty: jest.fn()
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn()

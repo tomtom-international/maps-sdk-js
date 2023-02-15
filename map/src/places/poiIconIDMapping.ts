@@ -126,57 +126,56 @@ export const poiClassificationToIconID = {
     ZOOS_ARBORETA_BOTANICAL_GARDEN: 168
 };
 
-/**
- * @ignore
- * mapping from search classification for poi to its category in poi layer
- * used to add category property for a place feature, so it is styled the same as a poi from the same category
- */
-export const searchToPOILayerClassificationMapping: Record<string, string> = {
-    cafe_pub: "cafe_or_pub",
-    exhibition_convention_center: "exhibition_and_convention_center",
-    college_university: "college_or_university",
-    fire_station_brigade: "fire_station_or_brigade",
-    primary_resource_utility: "primary_resource_or_utility",
-    prison_correctional_facility: "prison_or_correctional_facility",
-    transport_authority_vehicle_registration: "transport_authority_or_vehicle_registration",
-    club_association: "club_and_association",
-    park_recreation_area: "park_and_recreation_area",
-    zoos_arboreta_botanical_garden: "zoo_arboreta_and_botanical_garden",
-    hotel_motel: "hotel_or_motel",
-    residential_accommodation: "residential_accommodations",
-    important_tourist_attraction: "tourist_attraction",
-    scenic_panoramic_view: "scenic_or_panoramic_view",
-    port_warehouse_facility: "port_or_warehouse_facility",
-    public_transport_stop: "public_transportation_stop",
-    ashram: "place_of_worship",
-    church: "place_of_worship",
-    gurudwara: "place_of_worship",
-    mosque: "place_of_worship",
-    pagoda: "place_of_worship",
-    synagog: "place_of_worship",
-    temple: "place_of_worship",
-    mountain_peak: "geographic_feature",
-    hill: "geographic_feature",
-    railway_station: "railroad_station",
-    petrol_station: "gas_station",
-    fuel_facilities: "gas_station",
-    cash_dispenser: "atm",
-    cinema: "movie_theater",
-    agriculture: "agriculture_business",
-    concert_hall: "nightlife",
-    helipad_helicopter_landing: "helipad",
-    opera: "theater",
-    holiday_rental: "vacation_rental",
-    hospital_polyclinic: "hospital"
-};
+export type MapStylePOIClassification = keyof typeof poiClassificationToIconID;
 
 /**
  * @ignore
  */
-export const poiClassificationFromIconID = (iconID: number) => {
-    return Object.keys(poiClassificationToIconID).find(
-        (key) => poiClassificationToIconID[key as POIClassification] === iconID
-    );
-};
+export const poiClassificationFromIconID = (iconID: number): MapStylePOIClassification =>
+    Object.keys(poiClassificationToIconID).find(
+        (key) => poiClassificationToIconID[key as MapStylePOIClassification] === iconID
+    ) as MapStylePOIClassification;
 
-export type POIClassification = keyof typeof poiClassificationToIconID;
+/**
+ * @ignore
+ * Mapping from lowercase Place (search) poi classification to its category in poi layer
+ * Used to add category property for a place feature, so it is styled the same as a poi from the same category
+ */
+export const placeToPOILayerClassificationMapping: Partial<Record<MapStylePOIClassification, string>> = {
+    CAFE_PUB: "cafe_or_pub",
+    EXHIBITION_CONVENTION_CENTER: "exhibition_and_convention_center",
+    COLLEGE_UNIVERSITY: "college_or_university",
+    FIRE_STATION_BRIGADE: "fire_station_or_brigade",
+    PRIMARY_RESOURCE_UTILITY: "primary_resource_or_utility",
+    PRISON_CORRECTIONAL_FACILITY: "prison_or_correctional_facility",
+    TRANSPORT_AUTHORITY_VEHICLE_REGISTRATION: "transport_authority_or_vehicle_registration",
+    CLUB_ASSOCIATION: "club_and_association",
+    PARK_RECREATION_AREA: "park_and_recreation_area",
+    ZOOS_ARBORETA_BOTANICAL_GARDEN: "zoo_arboreta_and_botanical_garden",
+    HOTEL_MOTEL: "hotel_or_motel",
+    RESIDENTIAL_ACCOMMODATION: "residential_accommodations",
+    IMPORTANT_TOURIST_ATTRACTION: "tourist_attraction",
+    SCENIC_PANORAMIC_VIEW: "scenic_or_panoramic_view",
+    PORT_WAREHOUSE_FACILITY: "port_or_warehouse_facility",
+    PUBLIC_TRANSPORT_STOP: "public_transportation_stop",
+    ASHRAM: "place_of_worship",
+    CHURCH: "place_of_worship",
+    GURUDWARA: "place_of_worship",
+    MOSQUE: "place_of_worship",
+    PAGODA: "place_of_worship",
+    SYNAGOG: "place_of_worship",
+    TEMPLE: "place_of_worship",
+    MOUNTAIN_PEAK: "geographic_feature",
+    HILL: "geographic_feature",
+    RAILWAY_STATION: "railroad_station",
+    PETROL_STATION: "gas_station",
+    FUEL_FACILITIES: "gas_station",
+    CASH_DISPENSER: "atm",
+    CINEMA: "movie_theater",
+    AGRICULTURE: "agriculture_business",
+    CONCERT_HALL: "nightlife",
+    HELIPAD_HELICOPTER_LANDING: "helipad",
+    OPERA: "theater",
+    HOLIDAY_RENTAL: "vacation_rental",
+    HOSPITAL_POLYCLINIC: "hospital"
+};

@@ -1,29 +1,30 @@
 import { HasBBox, Places } from "@anw/go-sdk-js/core";
-import { PlaceDisplayProps, PLACES_SOURCE_ID } from "map";
+import { PlaceDisplayProps, PlaceIconConfig, PlaceModuleConfig, PLACES_SOURCE_ID } from "map";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
-import { getNumVisibleLayersBySource, waitForTimeout, waitUntilRenderedFeatures } from "./util/TestUtils";
+import {
+    getNumVisibleLayersBySource,
+    queryRenderedFeatures,
+    waitForMapIdle,
+    waitUntilRenderedFeatures
+} from "./util/TestUtils";
 import expectedCustomIcon from "./GeoJSONPlacesCustomIcon.test.data.json";
 import expectedPOILikeFeatureProps from "./GeoJSONPlacesPOILikeProps.test.data.json";
 
-const initPlaces = async () =>
-    page.evaluate(async () => {
+const initPlaces = async (config?: PlaceModuleConfig) =>
+    page.evaluate(async (inputConfig) => {
         const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap);
-    });
+        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap, inputConfig);
+    }, config as never);
 
-const initPlacesWithConfig = async () =>
-    page.evaluate(async () => {
-        const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap, {
-            iconConfig: {
-                iconStyle: "circle"
-            }
-        });
-    });
+const applyIconConfig = async (iconConfig?: PlaceIconConfig) =>
+    page.evaluate(
+        async (inputConfig) => (globalThis as GOSDKThis).places?.applyIconConfig(inputConfig),
+        iconConfig as never
+    );
 
 const showPlaces = async (places: Places) =>
     page.evaluate((inputPlaces: Places) => {
@@ -41,7 +42,7 @@ const getBBox = async (places: HasBBox) =>
 const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
 
 const waitForRenderedPlaces = async (numPlaces: number) =>
-    waitUntilRenderedFeatures(["placesSymbols"], numPlaces, 20000);
+    waitUntilRenderedFeatures(["placesSymbols"], numPlaces, 10000);
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource(PLACES_SOURCE_ID);
 
@@ -53,20 +54,19 @@ const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisp
         )
     ).toEqual(sortBy(expectedDisplayProps, "title"));
 
-const compareToExpectedDisplayPropsWithCategory = (
+const compareToExpectedPOILikeDisplayProps = (
     places: MapGeoJSONFeature[],
     expectedDisplayProps: PlaceDisplayProps[]
-) =>
-    expect(
-        sortBy(
-            places.map((place) => ({
-                title: place.properties.title,
-                iconID: place.properties.iconID,
-                category: place.properties.category
-            })),
-            "title"
-        )
-    ).toEqual(sortBy(expectedDisplayProps, "title"));
+) => {
+    for (const place of places) {
+        const expectedDisplayProp = expectedDisplayProps.find((props) => props.title == place.properties.title);
+        expect({
+            title: place.properties.title,
+            iconID: place.properties.iconID,
+            category: place.properties.category
+        }).toEqual(expectedDisplayProp);
+    }
+};
 
 describe("GeoJSON Places tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -128,7 +128,7 @@ describe("GeoJSON Places with init config tests", () => {
         ) => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
-            await initPlacesWithConfig();
+            await initPlaces({ iconConfig: { iconStyle: "circle" } });
             await showPlaces(testPlaces);
             const numTestPlaces = testPlaces.features.length;
             const renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
@@ -158,42 +158,23 @@ describe("GeoJSON Places apply icon config tests", () => {
             await showPlaces(testPlaces);
 
             const numTestPlaces = testPlaces.features.length;
-            await page.evaluate(async () =>
-                (globalThis as GOSDKThis).places?.applyIconConfig({
-                    iconStyle: "circle"
-                })
-            );
-            await waitForTimeout(5000);
+            await applyIconConfig({ iconStyle: "circle" });
+            await waitForMapIdle();
             let renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
-
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCustomProps);
 
-            await page.evaluate(async () =>
-                (globalThis as GOSDKThis).places?.applyIconConfig({
-                    customIcons: [{ category: "PARKING_GARAGE", iconUrl: "https://dummyimage.com/30x20/4137ce/fff" }]
-                })
-            );
-
-            await waitForTimeout(3000);
+            await applyIconConfig({
+                customIcons: [{ category: "PARKING_GARAGE", iconUrl: "https://dummyimage.com/30x20/4137ce/fff" }]
+            });
+            await waitForMapIdle();
             renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
-            compareToExpectedDisplayProps(
-                renderedPlaces,
-                expectedCustomIcon[name as "Amsterdam dentists" | "Amsterdam parkings"]
-            );
+            compareToExpectedDisplayProps(renderedPlaces, expectedCustomIcon[name as never]);
 
-            await page.evaluate(async () =>
-                (globalThis as GOSDKThis).places?.applyIconConfig({
-                    iconStyle: "poi-like"
-                })
-            );
-            await waitForTimeout(5000);
-            renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
-
-            compareToExpectedDisplayPropsWithCategory(
-                renderedPlaces,
-                expectedPOILikeFeatureProps[name as "Amsterdam dentists" | "Amsterdam parkings"]
-            );
-
+            await applyIconConfig({ iconStyle: "poi-like" });
+            await waitForMapIdle();
+            // poi-like places avoid collisions, thus likely resulting in less num of rendered features:
+            renderedPlaces = await queryRenderedFeatures(["placesSymbols"]);
+            compareToExpectedPOILikeDisplayProps(renderedPlaces, expectedPOILikeFeatureProps[name as never]);
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );

@@ -10,7 +10,7 @@ import { PlaceIconConfig, PlaceModuleConfig } from "./types/PlaceModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
-import { changePlacesLayerSpecs, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
+import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
 /**
  * @group MapPlaces
@@ -18,6 +18,7 @@ import { changePlacesLayerSpecs, getPlacesLayerSpec, preparePlacesForDisplay } f
  */
 export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     private places!: GeoJSONSourceWithLayers<Places>;
+    private layerSpec!: Omit<SymbolLayerSpecification, "source">;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -35,6 +36,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
         this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
             layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
         ]);
+        this.layerSpec = layerSpec;
     }
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {
@@ -52,11 +54,13 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
      * @param iconConfig the icon config to apply
      */
     applyIconConfig(iconConfig: PlaceIconConfig): void {
+        const newLayerSpec = getPlacesLayerSpec(iconConfig, this.mapLibreMap);
+        changeLayoutAndPaintProps(newLayerSpec, this.layerSpec, this.mapLibreMap);
         this.config = {
             ...this.config,
             iconConfig
         };
-        changePlacesLayerSpecs(iconConfig, this.mapLibreMap);
+        this.layerSpec = newLayerSpec;
         this.show(this.places.shownFeatures);
     }
 

@@ -3,12 +3,12 @@ import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import { placesLayerSpec } from "../layers/PlacesLayers";
 import poiLayerSpec from "./poiLayerSpec.data.json";
 import {
-    getCategoryForPlace,
+    getPOILayerCategoryForPlace,
     getIconIDForPlace,
     getPlacesLayerSpec,
     getTextSizeSpec,
     addMapIcon,
-    changePlacesLayerSpecs
+    changeLayoutAndPaintProps
 } from "../preparePlacesForDisplay";
 
 const placesTextSizeSpec = [
@@ -127,34 +127,48 @@ describe("Add map icon tests", () => {
 describe("Get mapped poi layer category for a place", () => {
     test("Get mapped poi layer category for a place", () => {
         expect(
-            getCategoryForPlace({ properties: { poi: { classifications: [{ code: "RESTAURANT" }] } } } as Place)
-        ).toStrictEqual("restaurant");
+            getPOILayerCategoryForPlace({
+                properties: { poi: { classifications: [{ code: "RESTAURANT" }] } }
+            } as Place)
+        ).toBe("restaurant");
         expect(
-            getCategoryForPlace({ properties: { poi: { classifications: [{ code: "CAFE_PUB" }] } } } as Place)
-        ).toStrictEqual("cafe_or_pub");
+            getPOILayerCategoryForPlace({
+                properties: { poi: { classifications: [{ code: "CAFE_PUB" }] } }
+            } as Place)
+        ).toBe("cafe_or_pub");
         expect(
-            getCategoryForPlace({ properties: { poi: { classifications: [{ code: "PHARMACY" }] } } } as Place)
-        ).toStrictEqual("pharmacy");
+            getPOILayerCategoryForPlace({
+                properties: { poi: { classifications: [{ code: "PHARMACY" }] } }
+            } as Place)
+        ).toBe("pharmacy");
         expect(
-            getCategoryForPlace({ properties: { poi: { classifications: [{ code: "HOTEL_MOTEL" }] } } } as Place)
-        ).toStrictEqual("hotel_or_motel");
+            getPOILayerCategoryForPlace({
+                properties: { poi: { classifications: [{ code: "HOTEL_MOTEL" }] } }
+            } as Place)
+        ).toBe("hotel_or_motel");
+        expect(getPOILayerCategoryForPlace({ properties: {} } as Place)).toBeUndefined();
     });
 });
 
 describe("Get places layer spec with circle or pin icon style config", () => {
+    const mapLibreMock = jest.fn() as unknown as Map;
+
     test("Get places layer spec no config", () => {
-        expect(getPlacesLayerSpec()).toStrictEqual({ ...placesLayerSpec, id: "placesSymbols" });
+        expect(getPlacesLayerSpec(undefined, mapLibreMock)).toStrictEqual({
+            ...placesLayerSpec,
+            id: "placesSymbols"
+        });
     });
 
     test("Get places layer spec with circle icon style config", () => {
-        expect(getPlacesLayerSpec({ iconStyle: "circle" })).toStrictEqual({
+        expect(getPlacesLayerSpec({ iconStyle: "circle" }, mapLibreMock)).toStrictEqual({
             ...placesLayerSpec,
             id: "placesSymbols"
         });
     });
 
     test("Get places layer spec with pin icon style config", () => {
-        expect(getPlacesLayerSpec({ iconStyle: "pin" })).toStrictEqual({
+        expect(getPlacesLayerSpec({ iconStyle: "pin" }, mapLibreMock)).toStrictEqual({
             ...placesLayerSpec,
             id: "placesSymbols"
         });
@@ -181,25 +195,57 @@ describe("Get places layer spec with poi-like icon style config", () => {
     });
 });
 
-describe("Change places layer spec", () => {
-    const mapLibreMock = {
-        getStyle: jest.fn().mockReturnValue({ layers: [poiLayerSpec] }),
-        setLayoutProperty: jest.fn(),
-        setPaintProperty: jest.fn()
-    } as unknown as Map;
+test("changeLayoutAndPaintProps", () => {
+    const newMapMock = (): Map =>
+        ({
+            getStyle: jest.fn().mockReturnValue({ layers: [poiLayerSpec] }),
+            setLayoutProperty: jest.fn(),
+            setPaintProperty: jest.fn()
+        } as unknown as Map);
 
-    test("Change places layer spec with poi-like icon style config", () => {
-        jest.spyOn(mapLibreMock, "setLayoutProperty");
-        changePlacesLayerSpecs({ iconStyle: "poi-like" }, mapLibreMock);
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(9);
-        expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(3);
+    let mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps({ layout: { prop0: "value0" } }, {}, mapLibreMock);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
+
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps({ layout: { prop0: "a", prop1: "b" } }, {}, mapLibreMock);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(2);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
+
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps({ layout: { prop0: "a", prop1: "b" } }, { layout: { prop0: "old-a" } }, mapLibreMock);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(2);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("placesSymbols", "prop0", "a", { validate: false });
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("placesSymbols", "prop1", "b", { validate: false });
+
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps({ layout: { prop0: "a", prop1: "b" } }, { layout: { prop5: "old-a" } }, mapLibreMock);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("placesSymbols", "prop5", undefined, {
+        validate: false
     });
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(3);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("placesSymbols", "prop0", "a", { validate: false });
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("placesSymbols", "prop1", "b", { validate: false });
+
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps(
+        { layout: { prop0: "value0" }, paint: { propA: "10" } },
+        { paint: { propC: "20" } },
+        mapLibreMock
+    );
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(2);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith("placesSymbols", "propC", undefined, {
+        validate: false
+    });
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith("placesSymbols", "propA", "10", { validate: false });
 });
 
-describe("Get places text size specs from poi layer", () => {
-    test("Get places text size specs from poi layer", () => {
-        expect(
-            getTextSizeSpec(poiLayerSpec.layout["text-size"] as DataDrivenPropertyValueSpecification<number>)
-        ).toStrictEqual(placesTextSizeSpec);
-    });
+test("Get places text size specs from poi layer", () => {
+    expect(
+        getTextSizeSpec(poiLayerSpec.layout["text-size"] as DataDrivenPropertyValueSpecification<number>)
+    ).toStrictEqual(placesTextSizeSpec);
 });

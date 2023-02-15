@@ -2,7 +2,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import { FilterablePOICategory, getCategoryIcons, POI_SOURCE_ID } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
-import { getNumVisibleLayersBySource, waitForTimeout, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
+import { getNumVisibleLayersBySource, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
 
 const waitForRenderedPOIsChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(["POI"], previousFeaturesCount, 10000);
@@ -95,8 +95,7 @@ describe("Map vector tile POI filtering tests", () => {
             const goSDKThis = globalThis as GOSDKThis;
             goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
         });
-        await waitForTimeout(3000);
-
+        await waitForMapIdle();
         let renderedPOIs = await waitForRenderedPOIsChange(0);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
@@ -107,7 +106,7 @@ describe("Map vector tile POI filtering tests", () => {
                 values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
             })
         );
-        await waitForTimeout(3000);
+        await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(
             false
@@ -120,12 +119,14 @@ describe("Map vector tile POI filtering tests", () => {
                 values: ["TRANSPORTATION_GROUP"]
             })
         );
-        await waitForTimeout(3000);
+        await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
         // resetting config:
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.resetConfig());
+        await waitForMapIdle();
+
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
@@ -150,7 +151,7 @@ describe("Map vector tile POI filtering tests", () => {
                 }
             });
         });
-        await waitForTimeout(3000);
+        await waitForMapIdle();
 
         let renderedPOIs = await waitForRenderedPOIsChange(0);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
@@ -162,7 +163,7 @@ describe("Map vector tile POI filtering tests", () => {
                 values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
             })
         );
-        await waitForTimeout(3000);
+        await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
@@ -173,19 +174,21 @@ describe("Map vector tile POI filtering tests", () => {
                 values: ["TRANSPORTATION_GROUP"]
             })
         );
-        await waitForTimeout(3000);
+        await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
 
         // setting visibility to false:
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(false));
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
+        await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(renderedPOIs).toHaveLength(0);
 
         // re-setting config:
         await page.evaluate(() => (globalThis as GOSDKThis).pois?.resetConfig());
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(1);
+        await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(renderedPOIs.length).toBeGreaterThan(0);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
@@ -222,7 +225,7 @@ describe("Map vector tile POI filtering tests", () => {
                 ((globalThis as GOSDKThis).pois.originalFilter = inputExistingFilter),
             existingFilter
         );
-        await waitForTimeout(3000);
+        await waitForMapIdle();
         let renderedPOIs = await waitForRenderedPOIsChange(0);
         expect(areAllIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION", "RAILROAD_STATION"])).toBe(true);
 
@@ -232,7 +235,7 @@ describe("Map vector tile POI filtering tests", () => {
                 values: ["IMPORTANT_TOURIST_ATTRACTION"]
             })
         );
-        await waitForTimeout(3000);
+        await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["RAILROAD_STATION"])).toBe(true);
 

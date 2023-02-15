@@ -25,6 +25,8 @@ export const waitForMapReady = async () =>
         10000
     );
 
+export const waitForMapIdle = async () => page.evaluate(async () => (globalThis as GOSDKThis).mapLibreMap.once("idle"));
+
 export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceID) => {
         return (globalThis as GOSDKThis).mapLibreMap

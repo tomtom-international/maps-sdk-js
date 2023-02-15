@@ -45,7 +45,7 @@ export abstract class AbstractSourceWithLayers<
 
     setAllLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {
         for (const layerSpec of this.getLayerSpecs(filter)) {
-            this.map.setLayoutProperty(layerSpec.id, "visibility", visible ? "visible" : "none");
+            this.map.setLayoutProperty(layerSpec.id, "visibility", visible ? "visible" : "none", { validate: false });
         }
     }
 }
