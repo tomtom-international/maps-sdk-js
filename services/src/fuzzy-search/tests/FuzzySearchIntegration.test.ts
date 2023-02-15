@@ -69,7 +69,8 @@ describe("Fuzzy Search service", () => {
             query,
             poiCategories,
             language,
-            indexes
+            indexes,
+            limit: 50
         });
 
         expect(res.features).toEqual(
