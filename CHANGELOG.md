@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.84](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.83...v0.1.84) (2023-02-17)
+
+
+### Features
+
+* **traffic:** ensuring traffic module config stays up to date ([f3bf830](https://github.com/tomtom-international/go-sdk-js/commit/f3bf830e8525dd31adc1d63b443a9ebe629fe02f))
+
+
+### Bug Fixes
+
+* **places:** fixing how a layer paint and layout props are changed ([ff6c657](https://github.com/tomtom-international/go-sdk-js/commit/ff6c6575edd69e5b8817a399b086c02a084402af))
+* sandbox run condition ([f736aeb](https://github.com/tomtom-international/go-sdk-js/commit/f736aeb52a095dac173c577290d61ca0b030944d))
+
 ### [0.1.83](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.82...v0.1.83) (2023-02-15)
 
 ### [0.1.82](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.81...v0.1.82) (2023-02-13)
