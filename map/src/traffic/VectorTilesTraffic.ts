@@ -1,10 +1,11 @@
 import { FilterSpecification, LayerSpecification } from "maplibre-gl";
 import isNil from "lodash/isNil";
+import omitBy from "lodash/omitBy";
+import isEmpty from "lodash/isEmpty";
 import {
     AbstractMapModule,
     EventsModule,
     filterLayersBySources,
-    LayerSpecFilter,
     LayerSpecWithSource,
     MultiSyntaxFilter,
     SourceWithLayers,
@@ -18,6 +19,10 @@ import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from "./filters/TrafficFilters";
 import { getMergedAllFilter } from "../core/MapLibreUtils";
+
+type ChangeOptions = {
+    updateConfig: boolean;
+};
 
 /**
  * Vector tiles traffic module.
@@ -68,10 +73,10 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
 
     protected _applyConfig(config: VectorTilesTrafficConfig | undefined): void {
         if (config && !isNil(config.visible)) {
-            this.setVisible(config.visible);
+            this._setVisible(config.visible, { updateConfig: false });
         } else if (!this.anyLayersVisible()) {
             // applying default:
-            this.setVisible(true);
+            this._setVisible(true, { updateConfig: false });
         }
         this.applyIncidentsConfig(config);
         this.applyFlowConfig(config);
@@ -80,17 +85,17 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     private applyIncidentsConfig(config: VectorTilesTrafficConfig | undefined) {
         const incidents = config?.incidents;
         if (incidents && !isNil(incidents.visible)) {
-            this.setIncidentsVisible(incidents.visible);
+            this._setIncidentsVisible(incidents.visible, { updateConfig: false });
         } else if (isNil(config?.visible) && !this.incidents?.areAllLayersVisible()) {
             // applying default
-            this.setIncidentsVisible(true);
+            this._setIncidentsVisible(true, { updateConfig: false });
         }
         if (incidents?.icons && !isNil(incidents.icons.visible)) {
             this.setIncidentIconsVisible(incidents.icons.visible);
         }
         // else: default incidents visibility has been set already if necessary
 
-        this.filterIncidents(incidents?.filters, incidents?.icons?.filters);
+        this._filterIncidents(incidents?.filters, incidents?.icons?.filters, { updateConfig: false });
 
         if (incidents?.interactive) {
             this.goSDKMap._eventsProxy.ensureAdded(this.incidents as SourceWithLayers);
@@ -101,9 +106,18 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
      * Applies the given filters to traffic incidents, and optionally also icons.
      * * Any other configurations remain untouched.
      * @param incidentFilters The filters to apply to all incident layers, unless icon filters are supplied for the symbol ones.
+     * If undefined, defaults will be ensured.
      * @param iconFilters If specified, symbol layers will get these filters instead of incidentFilters.
      */
     filterIncidents(incidentFilters?: TrafficIncidentsFilters, iconFilters?: TrafficIncidentsFilters) {
+        this._filterIncidents(incidentFilters, iconFilters, { updateConfig: true });
+    }
+
+    private _filterIncidents(
+        incidentFilters: TrafficIncidentsFilters | undefined,
+        iconFilters: TrafficIncidentsFilters | undefined,
+        options: ChangeOptions
+    ) {
         if (incidentFilters?.any?.length) {
             const incidentsFilterExpression = buildMapLibreIncidentFilters(incidentFilters);
             if (incidentsFilterExpression) {
@@ -115,6 +129,20 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         }
 
         this.filterIncidentIcons(iconFilters);
+
+        if (options.updateConfig) {
+            this.config = omitBy(
+                {
+                    ...this.config,
+                    incidents: {
+                        ...this.config?.incidents,
+                        filters: incidentFilters,
+                        icons: { ...this.config?.incidents?.icons, filters: iconFilters }
+                    }
+                },
+                isNil
+            );
+        }
     }
 
     private filterIncidentIcons(iconsFilters?: TrafficIncidentsFilters) {
@@ -130,13 +158,13 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     private applyFlowConfig(config: VectorTilesTrafficConfig | undefined) {
         const flow = config?.flow;
         if (flow && !isNil(flow.visible)) {
-            this.setFlowVisible(flow.visible);
+            this._setFlowVisible(flow.visible, { updateConfig: false });
         } else if (isNil(config?.visible) && !this.flow?.areAllLayersVisible()) {
             // applying default:
-            this.setFlowVisible(true);
+            this._setFlowVisible(true, { updateConfig: false });
         }
 
-        this.filterFlow(flow?.filters);
+        this._filterFlow(flow?.filters, { updateConfig: false });
 
         if (flow?.interactive) {
             this.goSDKMap._eventsProxy.ensureAdded(this.flow as SourceWithLayers);
@@ -146,9 +174,13 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     /**
      * Applies the given filters to traffic flow.
      * * Any other configurations remain untouched.
-     * @param flowFilters
+     * @param flowFilters The filters to apply. If undefined, defaults will be ensured.
      */
     filterFlow(flowFilters?: TrafficFlowFilters) {
+        this._filterFlow(flowFilters, { updateConfig: true });
+    }
+
+    private _filterFlow(flowFilters: TrafficFlowFilters | undefined, options: ChangeOptions) {
         if (flowFilters?.any?.length) {
             const flowFilterExpression = buildMapLibreFlowFilters(flowFilters);
             if (flowFilterExpression) {
@@ -156,6 +188,19 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
             }
         } else if (this.config?.flow?.filters?.any?.length) {
             this.applyDefaultFilter(this.getFlowLayers());
+        }
+
+        if (options.updateConfig) {
+            this.config = omitBy(
+                {
+                    ...this.config,
+                    flow: {
+                        ...this.config?.flow,
+                        filters: flowFilters
+                    }
+                },
+                isNil
+            );
         }
     }
 
@@ -216,23 +261,61 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
     }
 
     setVisible(visible: boolean): void {
-        this.setIncidentsVisible(visible);
-        this.setFlowVisible(visible);
+        this._setVisible(visible, { updateConfig: true });
     }
 
-    setIncidentsVisible(visible: boolean, filter?: LayerSpecFilter): void {
+    private _setVisible(visible: boolean, options: ChangeOptions): void {
+        this._setIncidentsVisible(visible, { updateConfig: false });
+        this._setFlowVisible(visible, { updateConfig: false });
+        if (options.updateConfig) {
+            delete this.config?.incidents?.visible;
+            delete this.config?.incidents?.icons?.visible;
+            delete this.config?.flow?.visible;
+            this.config = { ...omitBy({ ...this.config }, isEmpty), visible };
+        }
+    }
+
+    setIncidentsVisible(visible: boolean): void {
+        this._setIncidentsVisible(visible, { updateConfig: true });
+    }
+
+    private _setIncidentsVisible(visible: boolean, options: ChangeOptions): void {
         if (this.incidents) {
-            this.incidents.setAllLayersVisible(visible, filter);
+            this.incidents.setAllLayersVisible(visible);
+            if (options.updateConfig) {
+                delete this.config?.incidents?.icons?.visible;
+                this.config = {
+                    ...this.config,
+                    incidents: {
+                        ...omitBy(this.config?.incidents, isEmpty),
+                        visible
+                    }
+                };
+            }
         }
     }
 
     setIncidentIconsVisible(visible: boolean): void {
-        this.setIncidentsVisible(visible, (layerSpec) => layerSpec.type === "symbol");
+        if (this.incidents) {
+            this.incidents.setAllLayersVisible(visible, (layerSpec) => layerSpec.type === "symbol");
+            // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
+            this.config = {
+                ...this.config,
+                incidents: { ...this.config?.incidents, icons: { ...this.config?.incidents?.icons, visible } }
+            };
+        }
     }
 
     setFlowVisible(visible: boolean): void {
+        this._setFlowVisible(visible, { updateConfig: true });
+    }
+
+    private _setFlowVisible(visible: boolean, options: ChangeOptions): void {
         if (this.flow) {
             this.flow.setAllLayersVisible(visible);
+            if (options.updateConfig) {
+                this.config = { ...this.config, flow: { ...this.config?.flow, visible } };
+            }
         }
     }
 

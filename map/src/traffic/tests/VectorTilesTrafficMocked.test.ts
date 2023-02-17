@@ -44,14 +44,25 @@ describe("Vector tiles traffic module tests", () => {
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         // (see note on top of test file)
-        traffic.setVisible(false);
+        traffic.setVisible(true);
         traffic.setIncidentsVisible(true);
         traffic.setIncidentIconsVisible(true);
         traffic.setFlowVisible(true);
+        traffic.setVisible(false);
+        traffic.setIncidentsVisible(false);
+        traffic.setIncidentIconsVisible(false);
+        traffic.setFlowVisible(false);
         traffic.anyLayersVisible();
         traffic.anyIncidentLayersVisible();
         traffic.anyIncidentIconLayersVisible();
         traffic.anyFlowLayersVisible();
+
+        // (see note on top of test file)
+        traffic.applyConfig(undefined);
+        traffic.applyConfig({});
+        traffic.applyConfig({ visible: true });
+        traffic.applyConfig({ incidents: { visible: false }, flow: { visible: true } });
+        traffic.applyConfig({ visible: false, incidents: { visible: false, icons: { visible: true } } });
     });
 
     test("Initializing module with no config and no flow in style", async () => {

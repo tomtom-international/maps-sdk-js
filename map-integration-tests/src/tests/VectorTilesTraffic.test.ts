@@ -14,7 +14,7 @@ import { GOSDKThis } from "./types/GOSDKThis";
 import {
     assertTrafficVisibility,
     getVisibleLayersBySource,
-    waitForTimeout,
+    waitForMapIdle,
     waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
 
@@ -52,6 +52,17 @@ const initTraffic = async (config?: VectorTilesTrafficConfig) =>
         goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, inputConfig);
     }, config as VectorTilesTrafficConfig);
 
+const getConfig = async (): Promise<VectorTilesTrafficConfig | undefined> =>
+    page.evaluate(async () => (globalThis as GOSDKThis).traffic?.getConfig());
+
+const applyConfig = async (config: VectorTilesTrafficConfig | undefined) =>
+    page.evaluate(
+        (inputConfig) => (globalThis as GOSDKThis).traffic?.applyConfig(inputConfig),
+        config as VectorTilesTrafficConfig
+    );
+
+const resetConfig = async () => page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+
 describe("Map vector tile traffic module tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
@@ -76,53 +87,114 @@ describe("Map vector tile traffic module tests", () => {
             zoom: 14,
             center: [-0.12621, 51.50394]
         });
+        expect(await getConfig()).toBeUndefined();
 
-        await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.traffic = await goSDKThis.GOSDK.VectorTilesTraffic.init(goSDKThis.goSDKMap, { visible: false });
-        });
+        await initTraffic({ visible: false });
+        expect(await getConfig()).toEqual({ visible: false });
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
+        expect(await getConfig()).toEqual({ visible: true });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
+        expect(await getConfig()).toEqual({ visible: false });
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentIconsVisible(true));
+        expect(await getConfig()).toEqual({ visible: false, incidents: { icons: { visible: true } } });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
+
+        // re-applying config again:
+        await applyConfig(await getConfig());
+        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
+        expect(await getConfig()).toEqual({ visible: false, incidents: { icons: { visible: true } } });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(true));
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { icons: { visible: true } },
+            flow: { visible: true }
+        });
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentsVisible(false));
+        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: true });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { visible: false },
+            flow: { visible: true }
+        });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentIconsVisible(false));
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: true });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { visible: false, icons: { visible: false } },
+            flow: { visible: true }
+        });
 
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.applyConfig({ visible: true }));
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
+        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
+        // (setVisible will cancel incident and flow visibility properties):
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { icons: {} }
+        });
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(true));
+        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: true });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { icons: {} },
+            flow: { visible: true }
+        });
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
+        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { icons: {} }
+        });
+
+        await applyConfig({ visible: undefined });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+
+        await applyConfig({ visible: true });
+        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+        expect(await getConfig()).toEqual({ visible: true });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentIconsVisible(false));
         await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: true });
+        expect(await getConfig()).toEqual({ visible: true, incidents: { icons: { visible: false } } });
 
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentsVisible(true));
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+        expect(await getConfig()).toEqual({ visible: true, incidents: { visible: true } });
 
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.applyConfig({ incidents: { visible: false } }));
+        await resetConfig();
+        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+        expect(await getConfig()).toBeUndefined();
+
+        await applyConfig({ incidents: { visible: false } });
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: true });
+        expect(await getConfig()).toEqual({ incidents: { visible: false } });
 
-        await page.evaluate(() =>
-            (globalThis as GOSDKThis).traffic?.applyConfig({ incidents: { icons: { visible: false } } })
-        );
+        await applyConfig({ incidents: { icons: { visible: false } } });
         await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: true });
+        expect(await getConfig()).toEqual({ incidents: { icons: { visible: false } } });
 
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.applyConfig({ flow: { visible: false } }));
+        await applyConfig({ flow: { visible: false } });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
+        expect(await getConfig()).toEqual({ flow: { visible: false } });
 
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+        await resetConfig();
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+        expect(await getConfig()).toBeUndefined();
 
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+        await resetConfig();
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+        expect(await getConfig()).toBeUndefined();
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -139,29 +211,31 @@ describe("Map vector tile traffic module tests", () => {
             }
         );
         await initTraffic();
-        await waitForTimeout(3000);
+        expect(await getConfig()).toBeUndefined();
+        await waitForMapIdle();
 
         const defaultIncidents = await waitForRenderedIncidentsChange(0);
         expect(defaultIncidents.length).toBeGreaterThan(4);
         expect(getByIncidentCategories(defaultIncidents, ["road_closed"]).length).toBeGreaterThan(0);
 
-        // Showing road closures only:
-        await page.evaluate(async () =>
-            (globalThis as GOSDKThis).traffic?.applyConfig({
-                incidents: {
-                    filters: {
-                        any: [
-                            {
-                                incidentCategories: {
-                                    show: "only",
-                                    values: ["road_closed"]
-                                }
+        let config: VectorTilesTrafficConfig = {
+            incidents: {
+                filters: {
+                    any: [
+                        {
+                            incidentCategories: {
+                                show: "only",
+                                values: ["road_closed"]
                             }
-                        ]
-                    }
+                        }
+                    ]
                 }
-            })
-        );
+            }
+        };
+
+        // Showing road closures only:
+        await applyConfig(config);
+        expect(await getConfig()).toEqual(config);
 
         const roadClosedIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
         // we check that all the rendered incidents are of road_closed category:
@@ -173,29 +247,30 @@ describe("Map vector tile traffic module tests", () => {
             )
         ).toHaveLength(0);
 
-        // Changing filter to show road closures and major roads:
-        await page.evaluate(async () =>
-            (globalThis as GOSDKThis).traffic?.applyConfig({
-                incidents: {
-                    filters: {
-                        any: [
-                            {
-                                incidentCategories: {
-                                    show: "only",
-                                    values: ["road_closed"]
-                                }
-                            },
-                            {
-                                roadCategories: {
-                                    show: "only",
-                                    values: ["motorway", "trunk", "primary"]
-                                }
+        config = {
+            incidents: {
+                filters: {
+                    any: [
+                        {
+                            incidentCategories: {
+                                show: "only",
+                                values: ["road_closed"]
                             }
-                        ]
-                    }
+                        },
+                        {
+                            roadCategories: {
+                                show: "only",
+                                values: ["motorway", "trunk", "primary"]
+                            }
+                        }
+                    ]
                 }
-            })
-        );
+            }
+        };
+
+        // Changing filter to show road closures and major roads:
+        await applyConfig(config);
+        expect(await getConfig()).toEqual(config);
 
         const roadClosedAndMajorRoadIncidents = await waitForRenderedIncidentsChange(roadClosedIncidents.length);
         expect(roadClosedAndMajorRoadIncidents.length).toBeLessThan(defaultIncidents.length);
@@ -207,7 +282,7 @@ describe("Map vector tile traffic module tests", () => {
         ).toBeGreaterThanOrEqual(roadClosedAndMajorRoadIncidents.length);
 
         // We reset the config and assert that we have the same amount of incidents as the beginning:
-        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.resetConfig());
+        await resetConfig();
         const resetIncidents = await waitForRenderedIncidentsChange(roadClosedAndMajorRoadIncidents.length);
         expect(resetIncidents).toHaveLength(defaultIncidents.length);
 
@@ -225,7 +300,7 @@ describe("Map vector tile traffic module tests", () => {
             }
         );
 
-        await initTraffic({
+        const config: VectorTilesTrafficConfig = {
             flow: {
                 filters: {
                     any: [
@@ -239,11 +314,13 @@ describe("Map vector tile traffic module tests", () => {
                     ]
                 }
             }
-        });
+        };
 
-        await waitForTimeout(3000);
+        await initTraffic(config);
+        expect(await getConfig()).toEqual(config);
         // (incidents excluded above)
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: true });
+        await waitForMapIdle();
         const renderedFlowSegments = await waitForRenderedFlowChange(0);
 
         // We only show for: "motorway", "trunk":
@@ -251,15 +328,19 @@ describe("Map vector tile traffic module tests", () => {
         expect(renderedFlowSegments.filter((segment) => segment.properties["road_closure"] === true)).toHaveLength(0);
 
         // Showing flow in road closures only:
-        await page.evaluate(async () =>
-            (globalThis as GOSDKThis).traffic?.filterFlow({
-                any: [
-                    {
-                        showRoadClosures: "only"
-                    }
-                ]
-            })
+        const flowFilters = {
+            any: [
+                {
+                    showRoadClosures: "only"
+                }
+            ]
+        };
+        await page.evaluate(
+            async (inputFlowFilters) => (globalThis as GOSDKThis).traffic?.filterFlow(inputFlowFilters),
+            flowFilters
         );
+        expect(await getConfig()).toEqual({ flow: { filters: flowFilters } });
+        await waitForMapIdle();
 
         const renderedRoadClosures = await waitForRenderedFlowChange(renderedFlowSegments.length);
         expect(renderedRoadClosures.filter((segment) => segment.properties["road_closure"] === true)).toHaveLength(
@@ -280,7 +361,7 @@ describe("Map vector tile traffic module tests", () => {
             }
         );
 
-        await initTraffic({
+        const config: VectorTilesTrafficConfig = {
             incidents: {
                 filters: {
                     any: [
@@ -315,9 +396,11 @@ describe("Map vector tile traffic module tests", () => {
                     ]
                 }
             }
-        });
+        };
 
-        await waitForTimeout(3000);
+        await initTraffic(config);
+        expect(await getConfig()).toEqual(config);
+        await waitForMapIdle();
 
         // INCIDENTS assertions:
         const renderedIncidents = await waitForRenderedIncidentsChange(0);
@@ -368,47 +451,137 @@ describe("Map vector tile traffic module tests", () => {
         await initTraffic();
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(false));
-        // Showing road closures only:
-        await page.evaluate(async () =>
-            (globalThis as GOSDKThis).traffic?.filterIncidents({
-                any: [
-                    {
-                        incidentCategories: {
-                            show: "only",
-                            values: ["road_closed"]
-                        }
+        const incidentFilters = {
+            any: [
+                {
+                    incidentCategories: {
+                        show: "only",
+                        values: ["road_closed"]
                     }
-                ]
-            })
+                }
+            ]
+        };
+        // Showing road closures only:
+        await page.evaluate(
+            async (inputIncidentFilters) => (globalThis as GOSDKThis).traffic?.filterIncidents(inputIncidentFilters),
+            incidentFilters
         );
-        await waitForTimeout(3000);
-
+        expect(await getConfig()).toEqual({
+            incidents: {
+                filters: incidentFilters,
+                icons: {}
+            },
+            flow: {
+                visible: false
+            }
+        });
+        // (changing incidents filter directly shouldn't affect flow visibility):
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
+        await waitForMapIdle();
         const roadClosedIncidents = await waitForRenderedIncidentsChange(0);
         // we check that all the rendered incidents are of road_closed category:
         expect(getByIncidentCategories(roadClosedIncidents, ["road_closed"])).toHaveLength(roadClosedIncidents.length);
-        // (changing incidents filter directly shouldn't affect flow visibility):
-        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
 
-        // Showing flow in primary roads only:
-        await page.evaluate(async () =>
-            (globalThis as GOSDKThis).traffic?.filterFlow({
-                any: [
-                    {
-                        roadCategories: {
-                            show: "only",
-                            values: ["primary"]
-                        }
+        const flowFilters = {
+            any: [
+                {
+                    roadCategories: {
+                        show: "only",
+                        values: ["primary"]
                     }
-                ]
-            })
+                }
+            ]
+        };
+        // Showing flow in primary roads only:
+        await page.evaluate(
+            async (inputFlowFilters) => (globalThis as GOSDKThis).traffic?.filterFlow(inputFlowFilters),
+            flowFilters
         );
+        expect(await getConfig()).toEqual({
+            incidents: {
+                filters: incidentFilters,
+                icons: {}
+            },
+            flow: {
+                visible: false,
+                filters: flowFilters
+            }
+        });
 
         // (changing flow filter directly shouldn't affect flow visibility):
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(true));
-        await waitForTimeout(3000);
-
+        expect(await getConfig()).toEqual({
+            incidents: {
+                filters: incidentFilters,
+                icons: {}
+            },
+            flow: {
+                visible: true,
+                filters: flowFilters
+            }
+        });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: {
+                filters: incidentFilters,
+                icons: {}
+            },
+            flow: {
+                filters: flowFilters
+            }
+        });
+
+        await page.evaluate(
+            async (inputIncidentFilters) =>
+                (globalThis as GOSDKThis).traffic?.filterIncidents(inputIncidentFilters, inputIncidentFilters),
+            incidentFilters
+        );
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: {
+                filters: incidentFilters,
+                icons: { filters: incidentFilters }
+            },
+            flow: {
+                filters: flowFilters
+            }
+        });
+
+        await page.evaluate(async () => (globalThis as GOSDKThis).traffic?.filterFlow(undefined));
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: {
+                filters: incidentFilters,
+                icons: { filters: incidentFilters }
+            },
+            flow: {}
+        });
+
+        await page.evaluate(
+            async (inputIncidentFilters) => (globalThis as GOSDKThis).traffic?.filterIncidents(inputIncidentFilters),
+            incidentFilters
+        );
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: {
+                filters: incidentFilters,
+                icons: {}
+            },
+            flow: {}
+        });
+
+        await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
+        expect(await getConfig()).toEqual({
+            visible: true,
+            incidents: {
+                filters: incidentFilters,
+                icons: {}
+            },
+            flow: {}
+        });
     });
 });
