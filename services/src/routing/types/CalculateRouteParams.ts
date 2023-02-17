@@ -3,6 +3,54 @@ import { CommonServiceParams } from "../../shared";
 import { VehicleParameters } from "./VehicleParams";
 
 /**
+ * Criteria that specifies what paths to prefer during routing.
+ */
+export type CostModel = {
+    /**
+     * Specifies something that the route calculation should try to avoid when determining the route.
+     * @default None
+     */
+    avoid?: Avoidable[];
+
+    /**
+     * Determines if live traffic data should be used to calculate the route.
+     * It does not affect the returned traffic information for the calculated route.
+     *
+     * Possible values:
+     * * true (do consider all available traffic information during routing)
+     * * false (ignores current traffic data during routing) Note that although the current traffic data is
+     * ignored during routing, the effect of historic traffic on effective road speeds is still incorporated.
+     * @default true
+     */
+    considerTraffic?: boolean;
+
+    /**
+     * Specifies the type of optimization used when calculating routes.
+     *
+     * * fastest: Route calculation is optimized by travel time, while keeping the routes sensible.
+     * For example, the calculation may avoid shortcuts along inconvenient
+     * side roads or long detours that only save very little time.
+     * * shortest: Route calculation is optimized by travel distance, while keeping the routes sensible.
+     * For example, straight routes are preferred over those incurring turns.
+     * * short: Route calculation is optimized such that a good compromise between
+     * small travel time and short travel distance is achieved.
+     * * eco: Route calculation is optimized such that a good compromise between small travel time
+     * and low fuel or energy consumption is achieved.
+     * * thrilling: Route calculation is optimized such that routes include interesting or challenging roads
+     * and use as few motorways as possible. You can choose the level of turns included and also the degree of hilliness.
+     * See "thrillingPreferences" parameters to set this.
+     * There is a limit of 900km on routes planned with routeType=thrilling.
+     * @default fastest
+     */
+    routeType?: "fastest" | "shortest" | "short" | "eco" | "thrilling";
+
+    /**
+     * Optional parameters if the route type is "thrilling" to indicate how curvy and hilly the route should be.
+     */
+    thrillingParams?: ThrillingParams;
+};
+
+/**
  * Specifies when to depart (start traveling) or to arrive (finish traveling).
  * @group Calculate Route
  * @category Types
@@ -97,10 +145,9 @@ export type CalculateRouteParams = CommonServiceParams & {
     geoInputs: GeoInput[];
 
     /**
-     * Specifies something that the route calculation should try to avoid when determining the route.
-     * @default None
+     * Criteria that specifies what paths to prefer during routing.
      */
-    avoid?: Avoidable[];
+    costModel?: CostModel;
 
     /**
      * Specifies whether to return additional travel times using different types of traffic information (none,
@@ -114,18 +161,6 @@ export type CalculateRouteParams = CommonServiceParams & {
      * @default None
      */
     computeAdditionalTravelTimeFor?: "none" | "all";
-
-    /**
-     * Determines if live traffic data should be used to calculate the route.
-     * It does not affect the returned traffic information for the calculated route.
-     *
-     * Possible values:
-     * * true (do consider all available traffic information during routing)
-     * * false (ignores current traffic data during routing) Note that although the current traffic data is
-     * ignored during routing, the effect of historic traffic on effective road speeds is still incorporated.
-     * @default true
-     */
-    considerTraffic?: boolean;
 
     /**
      * The current heading at the starting point, in degrees starting at true North and continuing in a clockwise direction.
@@ -171,35 +206,10 @@ export type CalculateRouteParams = CommonServiceParams & {
     routeRepresentation?: "polyline" | "summaryOnly";
 
     /**
-     * Specifies the type of optimization used when calculating routes.
-     *
-     * * fastest: Route calculation is optimized by travel time, while keeping the routes sensible.
-     * For example, the calculation may avoid shortcuts along inconvenient
-     * side roads or long detours that only save very little time.
-     * * shortest: Route calculation is optimized by travel distance, while keeping the routes sensible.
-     * For example, straight routes are preferred over those incurring turns.
-     * * short: Route calculation is optimized such that a good compromise between
-     * small travel time and short travel distance is achieved.
-     * * eco: Route calculation is optimized such that a good compromise between small travel time
-     * and low fuel or energy consumption is achieved.
-     * * thrilling: Route calculation is optimized such that routes include interesting or challenging roads
-     * and use as few motorways as possible. You can choose the level of turns included and also the degree of hilliness.
-     * See "thrillingPreferences" parameters to set this.
-     * There is a limit of 900km on routes planned with routeType=thrilling.
-     * @default fastest
-     */
-    routeType?: "fastest" | "shortest" | "short" | "eco" | "thrilling";
-
-    /**
      * Specifies which of the section types is reported in the route response.
      * @default travelMode
      */
     sectionTypes?: InputSectionTypes;
-
-    /**
-     * Optional parameters if the route type is "thrilling" to indicate how curvy and hilly the route should be.
-     */
-    thrillingParams?: ThrillingParams;
 
     /**
      * The primary means of transportation to be used while routing.

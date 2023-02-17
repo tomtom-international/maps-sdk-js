@@ -126,18 +126,20 @@ export const sdkAndAPIRequests = [
                 [3.1748, 42.26297],
                 [2.48819, 42.18211]
             ],
-            avoid: ["carpools", "ferries", "motorways", "alreadyUsedRoads", "tollRoads", "unpavedRoads"],
+            costModel: {
+                avoid: ["carpools", "ferries", "motorways", "alreadyUsedRoads", "tollRoads", "unpavedRoads"],
+                considerTraffic: false,
+                routeType: "thrilling",
+                thrillingParams: {
+                    hilliness: "low",
+                    windingness: "high"
+                }
+            },
             computeAdditionalTravelTimeFor: "all",
-            considerTraffic: false,
             currentHeading: 45,
             instructionsType: "tagged",
             maxAlternatives: 2,
             routeRepresentation: "summaryOnly",
-            routeType: "thrilling",
-            thrillingParams: {
-                hilliness: "low",
-                windingness: "high"
-            },
             vehicle: {
                 commercial: true,
                 dimensions: {

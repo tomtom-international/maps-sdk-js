@@ -102,12 +102,14 @@ export const shortRouteRequestParams: CalculateRouteParams = {
         },
         [3.72227, 51.05382]
     ],
-    avoid: ["tollRoads"],
-    considerTraffic: true,
+    costModel: {
+        avoid: ["tollRoads"],
+        considerTraffic: true,
+        routeType: "fastest"
+    },
     instructionsType: "text",
     maxAlternatives: 3,
     routeRepresentation: "summaryOnly",
-    routeType: "fastest",
     sectionTypes: [
         "carTrain",
         "ferry",

@@ -132,17 +132,19 @@ describe("Calculate route request schema validation", () => {
                         [4.89066, 52.37317],
                         [4.4906, 51.37317]
                     ],
-                    avoid: "tollRoads",
+                    costModel: {
+                        avoid: "tollRoads",
+                        considerTraffic: "true",
+                        thrillingParams: {
+                            hilliness: "low",
+                            windingness: "medium"
+                        }
+                    },
                     computeAdditionalTravelTimeFor: "first",
-                    considerTraffic: "true",
                     currentHeading: 360,
                     instructionsType: "Coded",
                     maxAlternatives: 6,
                     routeRepresentation: "summary",
-                    thrillingParams: {
-                        hilliness: "low",
-                        windingness: "medium"
-                    },
                     travelMode: 2,
                     when: {
                         option: "arriveAt",
@@ -154,6 +156,7 @@ describe("Calculate route request schema validation", () => {
                 },
                 routeRequestValidationConfig
             );
+
         expect(validationCall).toThrow(
             expect.objectContaining({
                 errors: [
@@ -161,8 +164,22 @@ describe("Calculate route request schema validation", () => {
                         code: "invalid_type",
                         expected: "array",
                         received: "string",
-                        path: ["avoid"],
+                        path: ["costModel", "avoid"],
                         message: "Expected array, received string"
+                    },
+                    {
+                        code: "invalid_type",
+                        expected: "boolean",
+                        received: "string",
+                        path: ["costModel", "considerTraffic"],
+                        message: "Expected boolean, received string"
+                    },
+                    {
+                        received: "medium",
+                        code: "invalid_enum_value",
+                        options: ["low", "normal", "high"],
+                        path: ["costModel", "thrillingParams", "windingness"],
+                        message: "Invalid enum value. Expected 'low' | 'normal' | 'high', received 'medium'"
                     },
                     {
                         received: "first",
@@ -170,13 +187,6 @@ describe("Calculate route request schema validation", () => {
                         options: ["none", "all"],
                         path: ["computeAdditionalTravelTimeFor"],
                         message: "Invalid enum value. Expected 'none' | 'all', received 'first'"
-                    },
-                    {
-                        code: "invalid_type",
-                        expected: "boolean",
-                        received: "string",
-                        path: ["considerTraffic"],
-                        message: "Expected boolean, received string"
                     },
                     {
                         code: "too_big",
@@ -230,16 +240,10 @@ describe("Calculate route request schema validation", () => {
                         ],
                         path: ["sectionTypes", 1],
                         message:
-                            "Invalid enum value. Expected 'carTrain' | 'ferry' | 'tunnel' | 'motorway' | " +
-                            "'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | 'vehicleRestricted' | " +
-                            "'traffic' | 'urban' | 'unpaved' | 'carpool', received 'motorways'"
-                    },
-                    {
-                        received: "medium",
-                        code: "invalid_enum_value",
-                        options: ["low", "normal", "high"],
-                        path: ["thrillingParams", "windingness"],
-                        message: "Invalid enum value. Expected 'low' | 'normal' | 'high', received 'medium'"
+                            "Invalid enum value. Expected 'carTrain' | 'ferry' | " +
+                            "'tunnel' | 'motorway' | 'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | " +
+                            "'vehicleRestricted' | 'traffic' | 'urban' | " +
+                            "'unpaved' | 'carpool', received 'motorways'"
                     },
                     {
                         code: "invalid_type",

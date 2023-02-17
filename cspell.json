@@ -29,11 +29,14 @@
     "windingness",
     "movestart",
     "Noto",
-    "uuidv", 
+    "uuidv",
     "tomtom",
     "SDKJS",
     "GURUDWARA",
-    "gurudwara"
+    "gurudwara",
+    "APIPOST",
+    "Hundredkm",
+    "Perkm"
   ],
   "ignorePaths": [
     "**/dist/**",

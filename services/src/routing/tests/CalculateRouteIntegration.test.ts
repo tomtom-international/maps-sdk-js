@@ -157,18 +157,20 @@ describe("Calculate route integration tests", () => {
                 [3.1748, 42.26297],
                 [2.48819, 42.18211]
             ],
-            avoid: ["carpools", "ferries"],
+            costModel: {
+                avoid: ["carpools", "ferries"],
+                considerTraffic: false,
+                routeType: "thrilling",
+                thrillingParams: {
+                    hilliness: "low",
+                    windingness: "high"
+                }
+            },
             computeAdditionalTravelTimeFor: "all",
-            considerTraffic: false,
             instructionsType: "tagged",
             maxAlternatives: 2,
-            routeType: "thrilling",
             sectionTypes: ["traffic", "ferry", "tollRoad"],
             travelMode: "motorcycle",
-            thrillingParams: {
-                hilliness: "low",
-                windingness: "high"
-            },
             when: {
                 option: "arriveBy",
                 date: new Date()

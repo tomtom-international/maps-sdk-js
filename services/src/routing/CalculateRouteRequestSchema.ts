@@ -20,19 +20,23 @@ const calculateRouteRequestSchemaMandatory = z.object({
 export const calculateRouteRequestSchema = calculateRouteRequestSchemaMandatory.merge(
     z
         .object({
-            avoid: z.string().array(),
+            costModel: z.object({
+                avoid: z.string().array().optional(),
+                considerTraffic: z.boolean().optional(),
+                routeType: z.string().optional(),
+                thrillingParams: z
+                    .object({
+                        hilliness: z.enum(["low", "normal", "high"]).optional(),
+                        windingness: z.enum(["low", "normal", "high"]).optional()
+                    })
+                    .optional()
+            }),
             computeAdditionalTravelTimeFor: z.enum(["none", "all"]),
-            considerTraffic: z.boolean(),
             currentHeading: z.number().min(0).max(359.5),
             instructionsType: z.enum(instructionsTypes),
             maxAlternatives: z.number().min(1).max(5),
             routeRepresentation: z.enum(["polyline", "summaryOnly"]),
-            routeType: z.string(),
             sectionTypes: z.array(z.enum(inputSectionTypes as [SectionType, ...SectionType[]])),
-            thrillingParams: z.object({
-                hilliness: z.enum(["low", "normal", "high"]).optional(),
-                windingness: z.enum(["low", "normal", "high"]).optional()
-            }),
             travelMode: z.string(),
             vehicle: vehicleParametersSchema,
             when: z.object({

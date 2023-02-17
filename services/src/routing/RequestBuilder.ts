@@ -196,7 +196,7 @@ const appendPathPOSTData = (
     supportingPoints: LatLngPointAPI[],
     pointWaypoints: PointWaypointAPI[]
 ): void => {
-    // first we add the supportingPoints from the path coordinats:
+    // first we add the supportingPoints from the path coordinates:
     const supportingPointsLengthBeforePath = supportingPoints.length;
     for (const position of getPositionsFromPath(pathGeoInput)) {
         supportingPoints.push(toLatLngPointAPI(position));
@@ -284,20 +284,21 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     const url = new URL(`${buildURLBasePath(params)}/${buildLocationsString(params.geoInputs, geoInputTypes)}/json`);
     const urlParams: URLSearchParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    appendByRepeatingParamName(urlParams, "avoid", params.avoid);
+    const costModel = params.costModel;
+    appendByRepeatingParamName(urlParams, "avoid", costModel?.avoid);
     params.computeAdditionalTravelTimeFor &&
         urlParams.append("computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
-    !isNil(params.considerTraffic) && urlParams.append("traffic", String(params.considerTraffic));
+    !isNil(costModel?.considerTraffic) && urlParams.append("traffic", String(costModel?.considerTraffic));
     params.currentHeading && urlParams.append("vehicleHeading", String(params.currentHeading));
     appendWhenParams(urlParams, params.when);
     params.instructionsType && urlParams.append("instructionsType", params.instructionsType);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
     params.routeRepresentation && urlParams.append("routeRepresentation", params.routeRepresentation);
-    params.routeType && urlParams.append("routeType", params.routeType);
+    costModel?.routeType && urlParams.append("routeType", costModel.routeType);
     appendSectionTypes(urlParams, params.sectionTypes);
     params.travelMode && urlParams.append("travelMode", params.travelMode);
-    if (params.routeType == "thrilling") {
-        appendThrillingParams(urlParams, params.thrillingParams);
+    if (costModel?.routeType == "thrilling") {
+        appendThrillingParams(urlParams, costModel.thrillingParams);
     }
     appendVehicleParams(urlParams, params.vehicle);
 
