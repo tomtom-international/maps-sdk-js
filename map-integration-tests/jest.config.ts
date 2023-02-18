@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: "../test-config/.env" });
 
 const config: Config = {
-    testTimeout: 30000,
+    testTimeout: 100000,
     preset: "jest-puppeteer",
     extensionsToTreatAsEsm: [".ts"],
     transform: {

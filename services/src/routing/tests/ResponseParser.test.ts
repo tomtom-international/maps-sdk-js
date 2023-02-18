@@ -18,7 +18,7 @@ describe("Calculate Route response parsing functional tests", () => {
         (_name: string, apiResponse: CalculateRouteResponseAPI, parsedResponse: Routes) => {
             // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
             // (We reparse the objects to compare them ignoring the order of properties)
-            expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse)))).toStrictEqual(
+            expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse)))).toMatchObject(
                 JSON.parse(JSON.stringify(parsedResponse))
             );
         }

@@ -301,24 +301,4 @@ describe("GeoJSONSourceWithLayers", () => {
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
         sourceWithLayers.clear();
     });
-
-    test("getFeature", () => {
-        const [mockedFeature, rawMapFeature] = featuresTest;
-
-        const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn()
-        } as unknown as Map;
-        const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
-        const features = {
-            type: "FeatureCollection",
-            features: [mockedFeature]
-        } as FeatureCollection;
-        sourceWithLayers.show(features);
-
-        const feature = sourceWithLayers.getFeature(rawMapFeature as unknown as MapGeoJSONFeature);
-        expect(feature).toEqual(mockedFeature);
-    });
 });

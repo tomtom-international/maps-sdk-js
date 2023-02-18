@@ -19,12 +19,14 @@
         "sections": {
           "ferry": [
             {
+              "id": "123",
               "startPointIndex": 1,
               "endPointIndex": 3
             }
           ],
           "motorway": [
             {
+              "id": "123",
               "startPointIndex": 3,
               "endPointIndex": 5
             }
@@ -51,12 +53,14 @@
         "sections": {
           "ferry": [
             {
+              "id": "123",
               "startPointIndex": 2,
               "endPointIndex": 3
             }
           ],
           "traffic": [
             {
+              "id": "123",
               "startPointIndex": 3,
               "endPointIndex": 5,
               "magnitudeOfDelay": "moderate",

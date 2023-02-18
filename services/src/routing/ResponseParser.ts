@@ -26,6 +26,7 @@ import {
     SummaryAPI,
     TrafficCategoryAPI
 } from "./types/APITypes";
+import { generateId } from "../shared/generateId";
 
 const parseSummary = (apiSummary: SummaryAPI): Summary => ({
     ...apiSummary,
@@ -56,12 +57,14 @@ const parseLegSectionProps = (apiLegs: LegAPI[]): LegSectionProps[] =>
         accumulatedParsedLegs.push({
             ...(!isNil(lastLegEndPointIndex) && { startPointIndex: lastLegEndPointIndex }),
             ...(endPointIndex && { endPointIndex }),
-            summary: parseSummary(nextApiLeg.summary)
+            summary: parseSummary(nextApiLeg.summary),
+            id: generateId()
         });
         return accumulatedParsedLegs;
     }, []);
 
 const toSectionProps = (apiSection: SectionAPI): SectionProps => ({
+    id: generateId(),
     startPointIndex: apiSection.startPointIndex,
     endPointIndex: apiSection.endPointIndex
 });
@@ -154,11 +157,14 @@ const parseGuidance = (apiGuidance: GuidanceAPI): Guidance => ({
 const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[]): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
     const bbox = bboxFromGeoJSON(geometry);
+    const id = generateId();
     return {
         type: "Feature",
         geometry,
+        id,
         ...(bbox && { bbox }),
         properties: {
+            id,
             summary: parseSummary(apiRoute.summary),
             sections: parseSections(apiRoute),
             ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance) }),

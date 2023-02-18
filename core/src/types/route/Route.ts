@@ -31,6 +31,10 @@ export type TravelMode = "car" | "truck" | "taxi" | "bus" | "van" | "motorcycle"
  */
 export type RouteProps = {
     /**
+     * Random generated id.
+     */
+    id: string;
+    /**
      * Common summary type for the route.
      * * Contains departure/arrival times, lengths and durations.
      */

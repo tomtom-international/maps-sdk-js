@@ -1,16 +1,11 @@
-import { GeoJsonProperties, Geometry, Feature } from "geojson";
 import { MapGeoJSONFeature } from "maplibre-gl";
+import { mapToInternalFeatures } from "../utils/mapUtils";
 import { EventsProxy } from "./EventsProxy";
+import { GeoJSONSourceWithLayers } from "./SourceWithLayers";
 import { EventType, HoverClickHandler, SourceWithLayers } from "./types";
 
 export class EventsModule<T = MapGeoJSONFeature> {
-    constructor(
-        private eventProxy: EventsProxy,
-        private mapModule?: SourceWithLayers,
-        private mapToInternalFeature?: (
-            rawFeature: MapGeoJSONFeature
-        ) => Feature<Geometry, GeoJsonProperties> | undefined
-    ) {}
+    constructor(private eventProxy: EventsProxy, private mapModule?: SourceWithLayers) {}
 
     /**
      * Add Event to the EventProxy list
@@ -49,8 +44,13 @@ export class EventsModule<T = MapGeoJSONFeature> {
         // For Vector tiles we will be casting to the map geojson feature itself.
         // All features returned by Maplibre are included in the argument "features"
         this.addToEventProxy(type, (latLng, feature, features, sourceAndLayers) => {
-            if (this.mapToInternalFeature && features) {
-                return handler(latLng, this.mapToInternalFeature(features[0]) as T, features, sourceAndLayers);
+            if (this.mapModule instanceof GeoJSONSourceWithLayers && features) {
+                return handler(
+                    latLng,
+                    mapToInternalFeatures(this.mapModule, features[0]) as T,
+                    features,
+                    sourceAndLayers
+                );
             } else {
                 return handler(latLng, feature as T, features, sourceAndLayers);
             }

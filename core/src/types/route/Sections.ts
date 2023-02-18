@@ -7,6 +7,10 @@ import { Summary } from "./Summary";
  */
 export type SectionProps = {
     /**
+     * Random generated id.
+     */
+    id: string;
+    /**
      * The route path point index where this section starts.
      */
     startPointIndex: number;

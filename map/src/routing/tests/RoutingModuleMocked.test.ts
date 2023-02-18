@@ -6,7 +6,8 @@ import {
     ROUTE_TUNNELS_SOURCE_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    WAYPOINTS_SOURCE_ID
+    WAYPOINTS_SOURCE_ID,
+    EventsModule
 } from "../../core";
 import { GOSDKMap } from "../../GOSDKMap";
 import { RoutingModule } from "../RoutingModule";
@@ -62,5 +63,13 @@ describe("Routing module tests", () => {
         routing.showWaypoints({ type: "FeatureCollection", features: [] });
         routing.clearWaypoints();
         expect(routing.getLayerToRenderLinesUnder()).toStrictEqual("TransitLabels - Ferry");
+
+        expect(routing.events.routeLines).toBeInstanceOf(EventsModule);
+        expect(routing.events.waypoints).toBeInstanceOf(EventsModule);
+        expect(routing.events.vehicleRestricted).toBeInstanceOf(EventsModule);
+        expect(routing.events.incidents).toBeInstanceOf(EventsModule);
+        expect(routing.events.ferries).toBeInstanceOf(EventsModule);
+        expect(routing.events.tollRoads).toBeInstanceOf(EventsModule);
+        expect(routing.events.tunnels).toBeInstanceOf(EventsModule);
     });
 });

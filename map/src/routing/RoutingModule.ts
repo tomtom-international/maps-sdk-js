@@ -1,4 +1,4 @@
-import { Routes, Waypoints } from "@anw/go-sdk-js/core";
+import { Route, Routes, Waypoint, Waypoints } from "@anw/go-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
@@ -48,7 +48,7 @@ import {
 import { RoutingModuleConfig } from "./types/RouteModuleConfig";
 import { buildDisplayRouteSections, showSectionsWithRouteSelection } from "./util/RouteSections";
 import { toDisplayTrafficSectionProps } from "./util/DisplayTrafficSectionProps";
-import { DisplayTrafficSectionProps, RouteSections } from "./types/RouteSections";
+import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/RouteSections";
 import { routeFerriesLine, routeFerriesSymbol } from "./layers/routeFerrySectionLayers";
 import { routeTunnelsLine } from "./layers/routeTunnelSectionLayers";
 import { routeTollRoadsOutline, routeTollRoadsSymbol } from "./layers/routeTollRoadLayers";
@@ -61,6 +61,7 @@ import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
+import { MapGeoJSONFeature } from "maplibre-gl";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
@@ -249,13 +250,16 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      */
     get events() {
         return {
-            routeLines: new EventsModule(this.goSDKMap._eventsProxy, this.routeLines),
-            waypoints: new EventsModule(this.goSDKMap._eventsProxy, this.waypoints),
-            vehicleRestricted: new EventsModule(this.goSDKMap._eventsProxy, this.vehicleRestricted),
-            incidents: new EventsModule(this.goSDKMap._eventsProxy, this.incidents),
-            ferries: new EventsModule(this.goSDKMap._eventsProxy, this.ferries),
-            tollRoads: new EventsModule(this.goSDKMap._eventsProxy, this.tollRoads),
-            tunnels: new EventsModule(this.goSDKMap._eventsProxy, this.tunnels)
+            routeLines: new EventsModule<Route<DisplayRouteProps>>(this.goSDKMap._eventsProxy, this.routeLines),
+            waypoints: new EventsModule<Waypoint>(this.goSDKMap._eventsProxy, this.waypoints),
+            vehicleRestricted: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.vehicleRestricted),
+            incidents: new EventsModule<RouteSections<DisplayTrafficSectionProps>>(
+                this.goSDKMap._eventsProxy,
+                this.incidents
+            ),
+            ferries: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.ferries),
+            tollRoads: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.tollRoads),
+            tunnels: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.tunnels)
         };
     }
 

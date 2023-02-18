@@ -2,6 +2,8 @@ import { MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl"
 import { generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
 import { GOSDKMap } from "../GOSDKMap";
 import { GOSDKMapParams } from "../init/types/MapInit";
+import { GeoJSONSourceWithLayers, SourceWithLayers } from "../core";
+import { FeatureCollection } from "geojson";
 
 /**
  * Wait until the map is ready
@@ -74,3 +76,17 @@ export const injectCustomHeaders =
             return { url };
         }
     };
+
+/**
+ * Map features processed from Maplibre to.
+ *
+ * @ignore
+ * @param mapModule An instance of GeoJSONSourceWithLayers.
+ * @param rawFeature Feature returned by Maplibre queryRenderedFeatures method
+ */
+export const mapToInternalFeatures = <T extends FeatureCollection>(
+    mapModule: GeoJSONSourceWithLayers<T>,
+    rawFeature: MapGeoJSONFeature
+) => {
+    return mapModule.shownFeatures.features.find((feature) => feature.id === rawFeature.id);
+};

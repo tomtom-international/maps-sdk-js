@@ -93,18 +93,10 @@ export const waitUntilRenderedFeatures = async (
     lngLat?: Position
 ): Promise<MapGeoJSONFeature[]> => {
     let currentFeatures: MapGeoJSONFeature[] = [];
-    return tryBeforeTimeout(
-        async (): Promise<MapGeoJSONFeature[]> => {
-            while (currentFeatures.length !== expectNumFeatures) {
-                await waitForTimeout(500);
-                currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
-            }
-            return currentFeatures;
-        },
-        `Did not get the expected map features for layers ${layerIDs}. 
-        Expected is ${expectNumFeatures} but got ${currentFeatures.length}`,
-        timeoutMS
-    );
+    while (currentFeatures.length !== expectNumFeatures) {
+        currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
+    }
+    return currentFeatures;
 };
 
 export const waitUntilRenderedFeaturesChange = async (

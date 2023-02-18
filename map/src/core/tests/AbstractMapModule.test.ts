@@ -4,7 +4,6 @@ import { VectorTileMapModuleConfig } from "../types";
 import { GOSDKMap } from "../../GOSDKMap";
 import { waitUntilMapIsReady } from "../../utils/mapUtils";
 import Mock = jest.Mock;
-import { EventsModule } from "../EventsModule";
 
 describe("AbstractMapModule tests", () => {
     class TestModule extends AbstractMapModule<VectorTileMapModuleConfig> {

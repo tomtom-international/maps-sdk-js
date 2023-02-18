@@ -17,6 +17,7 @@ const buildRouteSectionsFromRoute = <
 ): RouteSection<D>[] =>
     (route.properties.sections[sectionType] as S[])?.map((sectionProps) => ({
         type: "Feature",
+        id: sectionProps.id,
         geometry: {
             type: "LineString",
             coordinates: route.geometry.coordinates.slice(sectionProps.startPointIndex, sectionProps.endPointIndex)
