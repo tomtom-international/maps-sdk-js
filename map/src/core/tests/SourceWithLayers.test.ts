@@ -1,4 +1,4 @@
-import { LayerSpecification, Map, MapGeoJSONFeature, Source, VectorSourceSpecification } from "maplibre-gl";
+import { LayerSpecification, Map, Source, VectorSourceSpecification } from "maplibre-gl";
 import { GOSDKSource } from "../GOSDKSource";
 import {
     AbstractSourceWithLayers,
@@ -8,7 +8,6 @@ import {
 } from "../SourceWithLayers";
 import omit from "lodash/omit";
 import { FeatureCollection } from "geojson";
-import featuresTest from "./SourceWithLayers.test.data.json";
 
 const testSourceID = "SOURCE_ID";
 const layer0 = { id: "layer0", type: "symbol", source: testSourceID } as LayerSpecification;

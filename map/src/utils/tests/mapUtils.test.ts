@@ -1,7 +1,11 @@
-import { MapGeoJSONFeature, ResourceType } from "maplibre-gl";
+import { FeatureCollection } from "geojson";
+import { omit } from "lodash";
+import { LayerSpecification, Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
+import { GeoJSONSourceWithLayers } from "../../core";
 import { GOSDKMap } from "../../GOSDKMap";
-import { deserializeFeatures, injectCustomHeaders, waitUntilMapIsReady } from "../mapUtils";
+import { deserializeFeatures, injectCustomHeaders, mapToInternalFeatures, waitUntilMapIsReady } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
+import mockedFeatures from "./mapToInternalFeature.test.data.json";
 
 const getGOSDKMapMock = async (flag: boolean) =>
     ({
@@ -62,5 +66,32 @@ describe("Map utils - injectCustomHeaders", () => {
         const transformRequestFn = injectCustomHeaders({});
 
         expect(transformRequestFn(url, "Image" as ResourceType)).toStrictEqual({ url });
+    });
+});
+
+describe("Map utils - mapToInternalFeature", () => {
+    const testSourceID = "SOURCE_ID";
+    const layer0 = { id: "layer0", type: "symbol", source: testSourceID } as LayerSpecification;
+    const layer1 = { id: "layer1", type: "symbol", source: testSourceID } as LayerSpecification;
+    const testToBeAddedLayerSpecs = [omit(layer0, "source"), omit(layer1, "source")];
+    const [mockedFeature, rawMapFeature] = mockedFeatures;
+
+    test("Map raw features to internal features", () => {
+        const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
+            setLayoutProperty: jest.fn()
+        } as unknown as Map;
+        const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
+        const features = {
+            type: "FeatureCollection",
+            features: [mockedFeature]
+        } as FeatureCollection;
+        sourceWithLayers.show(features);
+
+        expect(mapToInternalFeatures(sourceWithLayers, rawMapFeature as unknown as MapGeoJSONFeature)).toEqual(
+            mockedFeature
+        );
     });
 });

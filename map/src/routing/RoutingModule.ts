@@ -61,7 +61,6 @@ import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
-import { MapGeoJSONFeature } from "maplibre-gl";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";

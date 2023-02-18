@@ -2,7 +2,7 @@ import { MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl"
 import { generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
 import { GOSDKMap } from "../GOSDKMap";
 import { GOSDKMapParams } from "../init/types/MapInit";
-import { GeoJSONSourceWithLayers, SourceWithLayers } from "../core";
+import { GeoJSONSourceWithLayers } from "../core";
 import { FeatureCollection } from "geojson";
 
 /**
