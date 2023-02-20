@@ -3,7 +3,6 @@ import {
     GeoJSONSourceSpecification,
     LayerSpecification,
     Map,
-    MapGeoJSONFeature,
     Source,
     SourceSpecification
 } from "maplibre-gl";

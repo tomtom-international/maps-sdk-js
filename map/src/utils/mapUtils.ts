@@ -47,7 +47,6 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
             }
         }
     }
-    return;
 };
 
 /**
