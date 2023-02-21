@@ -22,5 +22,15 @@
   "excludeExternals": true,
   "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports", "./documentation/go-sdk-theme/dist"],
   "theme": "go-sdk-theme",
-  "preserveAnchorCasing": true
+  "preserveAnchorCasing": true,
+  "externalSymbolLinkMappings": {
+    "maplibre-gl": {
+      "Map": "https://maplibre.org/maplibre-gl-js-docs/api/map/",
+      "MapOptions": "https://maplibre.org/maplibre-gl-js-docs/api/map/",
+      "*": "https://maplibre.org/maplibre-gl-js-docs/api/"
+    },
+    "@types/geojson": {
+      "*": "https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts"
+    }
+  }
 }
