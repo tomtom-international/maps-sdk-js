@@ -22,7 +22,7 @@ No POIs (Points of Interest) will be returned.
 
 </Blockquote>
 
-To make the request, you need to call the [`geocode`](/web/maps/documentation/api-reference/modules/services/#geocode) function with your [`GeocodingParams`](/web/maps/documentation/api-reference/modules/services/#geocodingparams), provided with a (mandatory) `query`. Additionally, [`GeocodingParams`](/web/maps/documentation/api-reference/modules/services/#geocodingparams) accepts optional parameters, such as a `limit` or `countries`. For a full list of optional parameters, take a look at the [`GeocodingParams`](/web/maps/documentation/api-reference/modules/services/#geocodingparams) definition or visit the [`Geocoding API documentation`](https://developer.tomtom.com/geocoding-api/documentation/geocode#request-parameters).
+To make the request, you need to call the [`geocode`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geocode) function with your [`GeocodingParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geocodingparams), provided with a (mandatory) `query`. Additionally, [`GeocodingParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geocodingparams) accepts optional parameters, such as a `limit` or `countries`. For a full list of optional parameters, take a look at the [`GeocodingParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geocodingparams) definition or visit the [`Geocoding API documentation`](https://developer.tomtom.com/geocoding-api/documentation/geocode#request-parameters).
 
 <Code>
 
@@ -46,7 +46,7 @@ const geocodingParams = {
 
 </Code>
 
-A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeocodingResponse`](/web/maps/documentation/api-reference/modules/services/#geocodingresponse)>.
+A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeocodingResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geocodingresponse)>.
 
 ```javascript
 try {
@@ -101,7 +101,7 @@ There are two basic types of geometries that are supported:
 
     </Code>
 
--   [`Circle`](/web/maps/documentation/api-reference/interfaces/services.Circle) - center coordinates and a radius in meters.
+-   [`Circle`](/maps-sdk-js/javascript/maps/documentation/api-reference/interfaces/services.Circle) - center coordinates and a radius in meters.
 
     <Code>
 
@@ -124,9 +124,9 @@ There are two basic types of geometries that are supported:
     ```
     </Code>
 
-Besides these two basic supported geometries, there are a few additional types which are supported as geometry inputs for convenience purposes. The full list of supported input geometries can be found in ['SearchGeometryInput'](/web/maps/documentation/api-reference/modules/services/#searchgeometryinput).
+Besides these two basic supported geometries, there are a few additional types which are supported as geometry inputs for convenience purposes. The full list of supported input geometries can be found in ['SearchGeometryInput'](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#searchgeometryinput).
 
-Provide the geometries and query to the [`GeometrySearchParams`](/web/maps/documentation/api-reference/modules/services/#geometrysearchparams) and call the [`geometrySearch`](/web/maps/documentation/api-reference/modules/services/#geometrysearch) function to make a request. You can also define optional parameters such as the number of results to return, language, and various constraints on what is searched for. More information about optional parameters and the geometry search can be found in the [Search API Geometry Search documentation](https://developer.tomtom.com/search-api/search-api-documentation-search/geometry-search).
+Provide the geometries and query to the [`GeometrySearchParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geometrysearchparams) and call the [`geometrySearch`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geometrysearch) function to make a request. You can also define optional parameters such as the number of results to return, language, and various constraints on what is searched for. More information about optional parameters and the geometry search can be found in the [Search API Geometry Search documentation](https://developer.tomtom.com/search-api/search-api-documentation-search/geometry-search).
 
 <Code>
 
@@ -148,7 +148,7 @@ const geometrySearchParams = {
 
 </Code>
 
-The response is presented as a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeometrySearchResponse`](/web/maps/documentation/api-reference/modules/services/#geometrysearchresponse)>.
+The response is presented as a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeometrySearchResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geometrysearchresponse)>.
 
 ``` javascript
 try {
@@ -163,7 +163,7 @@ try {
 
 # Geometry data search
 
-Geometry data search is used to obtain geometries to represent the outline of a city, county, or land area. It supports batch requests for up to 20 identifiers per call. To make the Geometry Data search request, use the [`geometryData`](/web/maps/documentation/api-reference/modules/services/#geometrydata) function and provide it [`GeometryDataParams`](/web/maps/documentation/api-reference/modules/services/#geometrydataparams). The only required parameter is a list of identifiers you want to get geometries for. Such identifiers can be found in Search results.
+Geometry data search is used to obtain geometries to represent the outline of a city, county, or land area. It supports batch requests for up to 20 identifiers per call. To make the Geometry Data search request, use the [`geometryData`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geometrydata) function and provide it [`GeometryDataParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geometrydataparams). The only required parameter is a list of identifiers you want to get geometries for. Such identifiers can be found in Search results.
 
 <Blockquote>
 
@@ -171,7 +171,7 @@ Not every Search result contains these geometry identifiers.
 
 </Blockquote>
 
-To get the identifiers, first get the [`PlaceDataSources`](/web/maps/documentation/api-reference/modules/core/#placedatasources) in the `properties` ([`CommonPlaceProps`](/web/maps/documentation/api-reference/modules/core/#commonplaceprops)) of a Search result. Then use its [`GeometryDataSource`](/web/maps/documentation/api-reference/modules/core/#geometrydatasource) property to get the geometry ID.
+To get the identifiers, first get the [`PlaceDataSources`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#placedatasources) in the `properties` ([`CommonPlaceProps`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#commonplaceprops)) of a Search result. Then use its [`GeometryDataSource`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#geometrydatasource) property to get the geometry ID.
 
 ```javascript
 // Get geometry IDs from all the Places in a Geocoding response
@@ -179,7 +179,7 @@ const geocodingResponse = await geocode({ query: "paris", limit: 1 });
 const geometryIds = geocodingResponse.features.map((a) => a.properties.dataSources?.geometry?.id);
 ```
 
-You can provide an optional zoom level parameter, which defines the precision of the returned geometries. For more information about the additional data search, see [`GeometryDataParams`](/web/maps/documentation/api-reference/modules/services/#geometrydataparams) and the [Search API Additional Data Search documentation](https://developer.tomtom.com/search-api/search-api-documentation/additional-data).
+You can provide an optional zoom level parameter, which defines the precision of the returned geometries. For more information about the additional data search, see [`GeometryDataParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#geometrydataparams) and the [Search API Additional Data Search documentation](https://developer.tomtom.com/search-api/search-api-documentation/additional-data).
 ```javascript
 const geometryDataParams = {
     geometries: geometryIds,
@@ -195,7 +195,7 @@ const geometryDataParams = {
 };
 ```
 
-The request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeometryDataResponse`](/web/maps/documentation/api-reference/modules/core/#geometrydataresponse)>.
+The request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`GeometryDataResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#geometrydataresponse)>.
 
 ``` javascript
 try {
@@ -210,7 +210,7 @@ try {
 
 # EV Charging station availability search
 
-The EV charging stations availability search checks the availability of Electric Vehicle (EV) charging points at a specific charging station. To make the request, you need to call [`EVChargingStationsAvailability`](/web/maps/documentation/api-reference/modules/services/#evchargingstationsavailability) and provide the corresponding [`EVChargingStationsAvailabilityParams`](/web/maps/documentation/api-reference/modules/services/#evchargingstationsavailabilityparams). The only mandatory parameter is the charging station identifier. You can get this identifier from the [`CommonPlaceProps`](/web/maps/documentation/api-reference/modules/core/#commonplaceprops) in the result of a Search. The identifier is in the [`PlaceDataSources`](/web/maps/documentation/api-reference/modules/core/#placedatasources) of a Search result, labeled [`ChargingAvailabilityDataSource`](/web/maps/documentation/api-reference/modules/core/#chargingavailabilitydatasource).
+The EV charging stations availability search checks the availability of Electric Vehicle (EV) charging points at a specific charging station. To make the request, you need to call [`EVChargingStationsAvailability`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#evchargingstationsavailability) and provide the corresponding [`EVChargingStationsAvailabilityParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#evchargingstationsavailabilityparams). The only mandatory parameter is the charging station identifier. You can get this identifier from the [`CommonPlaceProps`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#commonplaceprops) in the result of a Search. The identifier is in the [`PlaceDataSources`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#placedatasources) of a Search result, labeled [`ChargingAvailabilityDataSource`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#chargingavailabilitydatasource).
 
 <Blockquote>
 
@@ -218,7 +218,7 @@ Not every Search result contains charging station information.
 
 </Blockquote>
 
-You can add optional restrictions to the request (see [`EVChargingStationsAvailabilityParams`](/web/maps/documentation/api-reference/modules/services/#evchargingstationsavailabilityparams)): [connector type](https://developer.tomtom.com/search-api/search-api-documentation/supported-connector-types), minimum power (expressed in kilowatts) and maximum power (expressed in kilowatts).
+You can add optional restrictions to the request (see [`EVChargingStationsAvailabilityParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#evchargingstationsavailabilityparams)): [connector type](https://developer.tomtom.com/search-api/search-api-documentation/supported-connector-types), minimum power (expressed in kilowatts) and maximum power (expressed in kilowatts).
 
 <Code>
 
@@ -248,7 +248,7 @@ const evChargingStationsAvailabilityParams = {
 
 </Code>
 
-A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ChargingAvailabilityResponse`](/web/maps/documentation/api-reference/modules/services/#chargingavailabilityresponse)> object.
+A request returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ChargingAvailabilityResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#chargingavailabilityresponse)> object.
 
 ``` javascript
 try {
@@ -271,7 +271,7 @@ Place by ID only supports POI (Points of Interest) ids.
 
 </Blockquote>
 
-A request can be made by calling the [`placeById`](/web/maps/documentation/api-reference/modules/services/#placebyid) function and supplying the [`PlaceByIdParams`](/web/maps/documentation/api-reference/modules/services/#placebyidparams). The service only has one mandatory parameter, which is the unique `entityId` of the POI being requested. There are several optional parameters, which can be found on the [`PlaceByIdParams`](/web/maps/documentation/api-reference/modules/services/#placebyidparams) definition or on the [Place by ID documentation](https://developer.tomtom.com/search-api/documentation/place-by-id-service/place-by-id).
+A request can be made by calling the [`placeById`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#placebyid) function and supplying the [`PlaceByIdParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#placebyidparams). The service only has one mandatory parameter, which is the unique `entityId` of the POI being requested. There are several optional parameters, which can be found on the [`PlaceByIdParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#placebyidparams) definition or on the [Place by ID documentation](https://developer.tomtom.com/search-api/documentation/place-by-id-service/place-by-id).
 
 <Code>
 
@@ -291,7 +291,7 @@ const placebyIdParams = {
 
 </Code>
 
-A request will return a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlaceByIdResponse`](/web/maps/documentation/api-reference/modules/services/#placebyidresponse).
+A request will return a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlaceByIdResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#placebyidresponse).
 
 ```javascript
 try {

@@ -19,14 +19,14 @@ The type of response depends on the available data:
 -   `street element`: Less detailed; returned when there is no address data.
 -   `geography`: Returns the smallest available geographic data.
   -   This is returned when there is no address or street element data.
-  -   You can specify the level of geography to get a geometry (see the [`PlaceType`](/web/maps/documentation/api-reference/modules/core#placetype) parameter).
+  -   You can specify the level of geography to get a geometry (see the [`PlaceType`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#placetype) parameter).
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_initializing"></a>}
 
 # Initializing
 
 To use the Reverse Geocoding SDK, you need to configure its credentials and add the SDK reverse geocoding module as a dependency:
-1.  Get your TomTom API Key and configure the project as described in the [Project setup guide (TODO)](/web/maps/documentation/overview/project-set-up).
+1.  Get your TomTom API Key and configure the project as described in the [Project setup guide (TODO)](/maps-sdk-js/javascript/maps/documentation/overview/project-set-up).
 2.  Add the `Reverse Geocoding` module dependency
     - for NodeJS add dependency in `main.js`
        ``` javascript
@@ -51,13 +51,13 @@ To use the Reverse Geocoding SDK, you need to configure its credentials and add 
 
 # Making a reverse geocoding call
 
-Specify the reverse geocoding request parameters with the [`ReverseGeocodingParams`](/web/maps/documentation/api-reference/modules/services#reversegeocodingparams).
+Specify the reverse geocoding request parameters with the [`ReverseGeocodingParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services#reversegeocodingparams).
 
 ``` javascript
 const reverseGeocodeParams = { position: [37.786505, -122.3862] };
 ```
 
-Once you have a [`ReverseGeocodingParams`](/web/maps/documentation/api-reference/modules/services#reversegeocodingparams).
+Once you have a [`ReverseGeocodingParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services#reversegeocodingparams).
 
 ``` javascript
 reverseGeocode(reverseGeocodeParams)
@@ -70,6 +70,6 @@ reverseGeocode(reverseGeocodeParams)
 
 Since you have learned how to reverse geocode, here are recommendations for the next steps:
 
--   [Autocomplete and fuzzy search (TODO)](/web/maps/documentation/guides/search/autocomplete-and-fuzzy-search)
--   [Specialized search types (TODO)](/web/maps/documentation/guides/search/specialized-search)
--   [Adding markers to the map (TODO)](/web/maps/documentation/guides/map-display/markers)
+-   [Autocomplete and fuzzy search (TODO)](/maps-sdk-js/javascript/maps/documentation/guides/search/autocomplete-and-fuzzy-search)
+-   [Specialized search types (TODO)](/maps-sdk-js/javascript/maps/documentation/guides/search/specialized-search)
+-   [Adding markers to the map (TODO)](/maps-sdk-js/javascript/maps/documentation/guides/map-display/markers)
