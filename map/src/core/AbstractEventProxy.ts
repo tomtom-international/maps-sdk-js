@@ -17,10 +17,6 @@ export abstract class AbstractEventProxy {
      * @param sourcesWithLayers The sources and layers to listen to.
      */
     ensureAdded(sourceWithLayers: SourceWithLayers, interactive = true) {
-        if (!sourceWithLayers) {
-            return;
-        }
-
         this.interactiveSourcesAndLayers[sourceWithLayers.source.id] = {
             sourceWithLayers,
             interactive

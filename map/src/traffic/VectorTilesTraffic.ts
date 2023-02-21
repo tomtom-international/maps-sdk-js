@@ -24,11 +24,6 @@ type ChangeOptions = {
     updateConfig: boolean;
 };
 
-const defaultVectorTilesTrafficConfig: VectorTilesTrafficConfig = {
-    incidents: { interactive: true },
-    flow: { interactive: true }
-};
-
 /**
  * Vector tiles traffic module.
  * * Controls both incidents and flow vector traffic sources and layers.
@@ -46,8 +41,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
      */
     static async init(goSDKMap: GOSDKMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
         await waitUntilMapIsReady(goSDKMap);
-        const configMergedWithDefault = { ...defaultVectorTilesTrafficConfig, ...config };
-        return new VectorTilesTraffic(goSDKMap, configMergedWithDefault);
+        return new VectorTilesTraffic(goSDKMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -103,7 +97,12 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         // else: default incidents visibility has been set already if necessary
 
         this._filterIncidents(incidents?.filters, incidents?.icons?.filters, { updateConfig: false });
-        this.goSDKMap._eventsProxy.ensureAdded(this.incidents as SourceWithLayers, incidents?.interactive);
+
+        if (this.incidents && incidents && !isNil(incidents.interactive)) {
+            this._addModuleToEventsProxy(this.incidents as SourceWithLayers, incidents.interactive);
+        } else if (this.incidents) {
+            this._addModuleToEventsProxy(this.incidents as SourceWithLayers, true);
+        }
     }
 
     /**
@@ -169,7 +168,12 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         }
 
         this._filterFlow(flow?.filters, { updateConfig: false });
-        this.goSDKMap._eventsProxy.ensureAdded(this.flow as SourceWithLayers, flow?.interactive);
+
+        if (this.flow && flow && !isNil(flow.interactive)) {
+            this._addModuleToEventsProxy(this.flow as SourceWithLayers, flow.interactive);
+        } else if (this.flow) {
+            this._addModuleToEventsProxy(this.flow as SourceWithLayers, true);
+        }
     }
 
     /**
@@ -203,6 +207,10 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
                 isNil
             );
         }
+    }
+
+    private _addModuleToEventsProxy(sourceWithLayer: SourceWithLayers, interactive: boolean) {
+        this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayer, interactive);
     }
 
     private getIncidentLayers(): LayerSpecWithSource[] {

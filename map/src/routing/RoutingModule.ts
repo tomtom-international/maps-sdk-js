@@ -26,7 +26,8 @@ import {
     ROUTES_SOURCE_ID,
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
-    WAYPOINTS_SOURCE_ID
+    WAYPOINTS_SOURCE_ID,
+    SourceWithLayers
 } from "../core";
 import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./layers/routeMainLineLayers";
 import {
@@ -61,11 +62,10 @@ import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
+import { isNil } from "lodash";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
-
-const defaultRoutingModuleConfig: RoutingModuleConfig = { interactive: true };
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
@@ -90,8 +90,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      */
     static async init(goSDKMap: GOSDKMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
         await waitUntilMapIsReady(goSDKMap);
-        const mergedWithDefaultConfig = { ...defaultRoutingModuleConfig, ...config };
-        return new RoutingModule(goSDKMap, mergedWithDefaultConfig);
+        return new RoutingModule(goSDKMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -155,6 +154,11 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     }
 
     protected _applyConfig(config: RoutingModuleConfig | undefined): void {
+        let interactive = true;
+
+        if (config && !isNil(config.interactive)) {
+            interactive = config.interactive;
+        }
         // If interactive set, we add all layers to be interactive
         const routingSourcesWithLayers = [
             this.waypoints,
@@ -167,8 +171,12 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
         ];
 
         for (const sourceWithLayers of routingSourcesWithLayers) {
-            this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayers, config?.interactive);
+            this._addModuleToEventsProxy(sourceWithLayers, interactive);
         }
+    }
+
+    private _addModuleToEventsProxy(sourceWithLayer: SourceWithLayers, interactive: boolean) {
+        this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayer, interactive);
     }
 
     private addImageIfNotExisting(imageID: string, path: string) {

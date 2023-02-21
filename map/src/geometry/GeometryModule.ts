@@ -4,11 +4,10 @@ import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
+import { isNil } from "lodash";
 
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
-
-const defaultGeometryModuleConfig: GeometryModuleConfig = { interactive: true };
 
 /**
  * Geometry data module.
@@ -24,8 +23,7 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
      */
     static async init(goSDKMap: GOSDKMap, config?: GeometryModuleConfig): Promise<GeometryModule> {
         await waitUntilMapIsReady(goSDKMap);
-        const configMergedWithDefault = { ...defaultGeometryModuleConfig, ...config };
-        return new GeometryModule(goSDKMap, configMergedWithDefault);
+        return new GeometryModule(goSDKMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -36,7 +34,15 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {
-        this.goSDKMap._eventsProxy.ensureAdded(this.geometry, config?.interactive);
+        if (config && !isNil(config.interactive)) {
+            this._addModuleToEventsProxy(config.interactive);
+        } else {
+            this._addModuleToEventsProxy(true);
+        }
+    }
+
+    private _addModuleToEventsProxy(interactive: boolean) {
+        this.goSDKMap._eventsProxy.ensureAdded(this.geometry, interactive);
     }
 
     /**

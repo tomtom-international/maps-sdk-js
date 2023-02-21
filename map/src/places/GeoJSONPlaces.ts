@@ -11,8 +11,7 @@ import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
-
-const defaultPlaceModuleConfig: PlaceModuleConfig = { interactive: true };
+import { isNil } from "lodash";
 
 /**
  * @group MapPlaces
@@ -30,8 +29,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
      */
     static async init(goSDKMap: GOSDKMap, config?: PlaceModuleConfig): Promise<GeoJSONPlaces> {
         await waitUntilMapIsReady(goSDKMap);
-        const configMergedWithDefault = { ...defaultPlaceModuleConfig, ...config };
-        return new GeoJSONPlaces(goSDKMap, configMergedWithDefault);
+        return new GeoJSONPlaces(goSDKMap, config);
     }
 
     protected initSourcesWithLayers(config?: PlaceModuleConfig) {
@@ -47,7 +45,15 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
             this.applyIconConfig(config.iconConfig);
         }
 
-        this.goSDKMap._eventsProxy.ensureAdded(this.places, config?.interactive);
+        if (config && !isNil(config.interactive)) {
+            this._addModuleToEventsProxy(config.interactive);
+        } else {
+            this._addModuleToEventsProxy(true);
+        }
+    }
+
+    private _addModuleToEventsProxy(interactive: boolean) {
+        this.goSDKMap._eventsProxy.ensureAdded(this.places, interactive);
     }
 
     /**
