@@ -27,6 +27,10 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
     return [...new Set(categoryIds)];
 };
 
+const defaultVectorTilePOIsConfig: VectorTilePOIsConfig = {
+    interactive: true
+};
+
 /**
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
@@ -46,7 +50,8 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
      */
     static async init(goSDKMap: GOSDKMap, config?: VectorTilePOIsConfig): Promise<VectorTilePOIs> {
         await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilePOIs(goSDKMap, config);
+        const mergedWithDefaultConfig = { ...defaultVectorTilePOIsConfig, ...config };
+        return new VectorTilePOIs(goSDKMap, mergedWithDefaultConfig);
     }
 
     protected initSourcesWithLayers() {
@@ -68,9 +73,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
 
         this.filterCategories(config?.filters?.categories);
 
-        if (config?.interactive) {
-            this.goSDKMap._eventsProxy.ensureAdded(this.poi);
-        }
+        this.goSDKMap._eventsProxy.ensureAdded(this.poi, config?.interactive);
     }
 
     isVisible(): boolean {

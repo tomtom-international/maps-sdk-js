@@ -241,7 +241,7 @@ describe("EventProxy Configuration", () => {
         await setupPlacesModuleAndEvents();
 
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
-        expect(features).toHaveLength(1);
+        expect(features).toHaveLength(3);
         expect(features?.[0].layer.id).toEqual("placesSymbols");
     });
 

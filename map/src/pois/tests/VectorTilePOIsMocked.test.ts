@@ -20,7 +20,8 @@ describe("Vector tiles POI module tests", () => {
                 getFilter: jest.fn()
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn()
+                add: jest.fn(),
+                ensureAdded: jest.fn()
             }
         } as unknown as GOSDKMap;
     });

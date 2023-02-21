@@ -90,32 +90,52 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toBeUndefined();
 
         await initTraffic({ visible: false });
-        expect(await getConfig()).toEqual({ visible: false });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            flow: { interactive: true },
+            incidents: { interactive: true }
+        });
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
-        expect(await getConfig()).toEqual({ visible: true });
+        expect(await getConfig()).toEqual({
+            visible: true,
+            flow: { interactive: true },
+            incidents: { interactive: true }
+        });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
-        expect(await getConfig()).toEqual({ visible: false });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            flow: { interactive: true },
+            incidents: { interactive: true }
+        });
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentIconsVisible(true));
-        expect(await getConfig()).toEqual({ visible: false, incidents: { icons: { visible: true } } });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { icons: { visible: true }, interactive: true },
+            flow: { interactive: true }
+        });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
 
         // re-applying config again:
         await applyConfig(await getConfig());
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
-        expect(await getConfig()).toEqual({ visible: false, incidents: { icons: { visible: true } } });
+        expect(await getConfig()).toEqual({
+            visible: false,
+            incidents: { icons: { visible: true }, interactive: true },
+            flow: { interactive: true }
+        });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(true));
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
         expect(await getConfig()).toEqual({
             visible: false,
-            incidents: { icons: { visible: true } },
-            flow: { visible: true }
+            incidents: { icons: { visible: true }, interactive: true },
+            flow: { visible: true, interactive: true }
         });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentsVisible(false));
@@ -123,7 +143,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual({
             visible: false,
             incidents: { visible: false },
-            flow: { visible: true }
+            flow: { visible: true, interactive: true }
         });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentIconsVisible(false));
@@ -131,7 +151,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual({
             visible: false,
             incidents: { visible: false, icons: { visible: false } },
-            flow: { visible: true }
+            flow: { visible: true, interactive: true }
         });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
@@ -139,7 +159,8 @@ describe("Map vector tile traffic module tests", () => {
         // (setVisible will cancel incident and flow visibility properties):
         expect(await getConfig()).toEqual({
             visible: false,
-            incidents: { icons: {} }
+            incidents: { icons: {} },
+            flow: { interactive: true }
         });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setFlowVisible(true));
@@ -147,14 +168,15 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual({
             visible: false,
             incidents: { icons: {} },
-            flow: { visible: true }
+            flow: { visible: true, interactive: true }
         });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(false));
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
         expect(await getConfig()).toEqual({
             visible: false,
-            incidents: { icons: {} }
+            incidents: { icons: {} },
+            flow: { interactive: true }
         });
 
         await applyConfig({ visible: undefined });
@@ -166,11 +188,17 @@ describe("Map vector tile traffic module tests", () => {
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentIconsVisible(false));
         await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: true });
-        expect(await getConfig()).toEqual({ visible: true, incidents: { icons: { visible: false } } });
+        expect(await getConfig()).toEqual({
+            visible: true,
+            incidents: { icons: { visible: false } }
+        });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setIncidentsVisible(true));
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
-        expect(await getConfig()).toEqual({ visible: true, incidents: { visible: true } });
+        expect(await getConfig()).toEqual({
+            visible: true,
+            incidents: { visible: true }
+        });
 
         await resetConfig();
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
@@ -182,11 +210,15 @@ describe("Map vector tile traffic module tests", () => {
 
         await applyConfig({ incidents: { icons: { visible: false } } });
         await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: true });
-        expect(await getConfig()).toEqual({ incidents: { icons: { visible: false } } });
+        expect(await getConfig()).toEqual({
+            incidents: { icons: { visible: false } }
+        });
 
         await applyConfig({ flow: { visible: false } });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
-        expect(await getConfig()).toEqual({ flow: { visible: false } });
+        expect(await getConfig()).toEqual({
+            flow: { visible: false }
+        });
 
         await resetConfig();
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
@@ -211,7 +243,10 @@ describe("Map vector tile traffic module tests", () => {
             }
         );
         await initTraffic();
-        expect(await getConfig()).toBeUndefined();
+        expect(await getConfig()).toEqual({
+            incidents: { interactive: true },
+            flow: { interactive: true }
+        });
         await waitForMapIdle();
 
         const defaultIncidents = await waitForRenderedIncidentsChange(0);
@@ -235,7 +270,10 @@ describe("Map vector tile traffic module tests", () => {
 
         // Showing road closures only:
         await applyConfig(config);
-        expect(await getConfig()).toEqual(config);
+        expect(await getConfig()).toEqual({
+            incidents: { interactive: true },
+            ...config
+        });
 
         const roadClosedIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
         // we check that all the rendered incidents are of road_closed category:
@@ -317,7 +355,11 @@ describe("Map vector tile traffic module tests", () => {
         };
 
         await initTraffic(config);
-        expect(await getConfig()).toEqual(config);
+        expect(await getConfig()).toEqual({
+            incidents: { interactive: true },
+            flow: { interactive: true },
+            ...config
+        });
         // (incidents excluded above)
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: true });
         await waitForMapIdle();
@@ -339,7 +381,7 @@ describe("Map vector tile traffic module tests", () => {
             async (inputFlowFilters) => (globalThis as GOSDKThis).traffic?.filterFlow(inputFlowFilters),
             flowFilters
         );
-        expect(await getConfig()).toEqual({ flow: { filters: flowFilters } });
+        expect(await getConfig()).toEqual({ flow: { filters: flowFilters }, incidents: { interactive: true } });
         await waitForMapIdle();
 
         const renderedRoadClosures = await waitForRenderedFlowChange(renderedFlowSegments.length);
@@ -469,10 +511,12 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual({
             incidents: {
                 filters: incidentFilters,
-                icons: {}
+                icons: {},
+                interactive: true
             },
             flow: {
-                visible: false
+                visible: false,
+                interactive: true
             }
         });
         // (changing incidents filter directly shouldn't affect flow visibility):
@@ -500,11 +544,13 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual({
             incidents: {
                 filters: incidentFilters,
-                icons: {}
+                icons: {},
+                interactive: true
             },
             flow: {
                 visible: false,
-                filters: flowFilters
+                filters: flowFilters,
+                interactive: true
             }
         });
 
@@ -514,11 +560,13 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual({
             incidents: {
                 filters: incidentFilters,
-                icons: {}
+                icons: {},
+                interactive: true
             },
             flow: {
                 visible: true,
-                filters: flowFilters
+                filters: flowFilters,
+                interactive: true
             }
         });
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
@@ -528,10 +576,12 @@ describe("Map vector tile traffic module tests", () => {
             visible: false,
             incidents: {
                 filters: incidentFilters,
-                icons: {}
+                icons: {},
+                interactive: true
             },
             flow: {
-                filters: flowFilters
+                filters: flowFilters,
+                interactive: true
             }
         });
 
@@ -544,10 +594,12 @@ describe("Map vector tile traffic module tests", () => {
             visible: false,
             incidents: {
                 filters: incidentFilters,
-                icons: { filters: incidentFilters }
+                icons: { filters: incidentFilters },
+                interactive: true
             },
             flow: {
-                filters: flowFilters
+                filters: flowFilters,
+                interactive: true
             }
         });
 
@@ -556,9 +608,10 @@ describe("Map vector tile traffic module tests", () => {
             visible: false,
             incidents: {
                 filters: incidentFilters,
-                icons: { filters: incidentFilters }
+                icons: { filters: incidentFilters },
+                interactive: true
             },
-            flow: {}
+            flow: { interactive: true }
         });
 
         await page.evaluate(
@@ -569,9 +622,10 @@ describe("Map vector tile traffic module tests", () => {
             visible: false,
             incidents: {
                 filters: incidentFilters,
-                icons: {}
+                icons: {},
+                interactive: true
             },
-            flow: {}
+            flow: { interactive: true }
         });
 
         await page.evaluate(() => (globalThis as GOSDKThis).traffic?.setVisible(true));
@@ -579,9 +633,10 @@ describe("Map vector tile traffic module tests", () => {
             visible: true,
             incidents: {
                 filters: incidentFilters,
-                icons: {}
+                icons: {},
+                interactive: true
             },
-            flow: {}
+            flow: { interactive: true }
         });
     });
 });

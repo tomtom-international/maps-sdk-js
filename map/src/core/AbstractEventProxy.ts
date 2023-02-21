@@ -3,7 +3,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import { EventHandlers, EventType, HoverClickHandler, SourceWithLayers } from "./types";
 
 interface SourceWithLayersMap {
-    [sourceID: string]: SourceWithLayers;
+    [sourceID: string]: { sourceWithLayers: SourceWithLayers; interactive: boolean };
 }
 
 export abstract class AbstractEventProxy {
@@ -16,9 +16,17 @@ export abstract class AbstractEventProxy {
      * Adds the given sources and layers as interactive, so we'll listen to them for hover and click.
      * @param sourcesWithLayers The sources and layers to listen to.
      */
-    ensureAdded(sourcesWithLayers: SourceWithLayers) {
-        this.interactiveSourcesAndLayers[sourcesWithLayers.source.id] = sourcesWithLayers;
-        sourcesWithLayers.layerSpecs.forEach((layerSpec) => {
+    ensureAdded(sourceWithLayers: SourceWithLayers, interactive = true) {
+        if (!sourceWithLayers) {
+            return;
+        }
+
+        this.interactiveSourcesAndLayers[sourceWithLayers.source.id] = {
+            sourceWithLayers,
+            interactive
+        };
+
+        sourceWithLayers.layerSpecs.forEach((layerSpec) => {
             if (!this.interactiveLayerIDs.includes(layerSpec.id)) {
                 this.interactiveLayerIDs.push(layerSpec.id);
             }
@@ -77,5 +85,13 @@ export abstract class AbstractEventProxy {
      */
     has(sourcesWithLayers: SourceWithLayers): boolean {
         return Boolean(this.interactiveSourcesAndLayers[sourcesWithLayers.source.id]);
+    }
+
+    /**
+     * Check if there is any handler registered with a source Id.
+     * @param sourceId The source id from SourceWithLayers instance
+     */
+    hasAnyHandlerRegistered(sourceId: string) {
+        return Object.keys(this.handlers).some((handlerId) => handlerId.includes(sourceId));
     }
 }

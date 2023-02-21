@@ -188,10 +188,14 @@ export class EventsProxy extends AbstractEventProxy {
         let hoverChangeDetected = false;
         // flag to detect whether the mouse is moving along the hovered feature (not stopped on it):
         let mouseInMotionOverHoveredFeature = false;
-
         if (hoveredTopFeature) {
             // Workaround/hack to avoid listening to map style POIs without ID (bad data):
             if (hoveredTopFeature.source === POI_SOURCE_ID && !hoveredTopFeature.properties?.id) {
+                return;
+            }
+            // Check if the layer is interactive
+            const { sourceWithLayers, interactive } = this.interactiveSourcesAndLayers[hoveredTopFeature.source];
+            if (!interactive || (interactive && !this.hasAnyHandlerRegistered(sourceWithLayers.source.id))) {
                 return;
             }
 
@@ -223,7 +227,7 @@ export class EventsProxy extends AbstractEventProxy {
         this.hoveringPoint = ev.point;
         this.hoveringFeature = hoveredTopFeature;
         this.hoveringSourceWithLayers = hoveredTopFeature
-            ? this.interactiveSourcesAndLayers[hoveredTopFeature.source]
+            ? this.interactiveSourcesAndLayers[hoveredTopFeature.source].sourceWithLayers
             : undefined;
 
         if (hoverChangeDetected) {
@@ -256,15 +260,21 @@ export class EventsProxy extends AbstractEventProxy {
             ? this.interactiveSourcesAndLayers[this.lastClickedFeature.source]
             : undefined;
 
-        if (lastClickedSourceWithLayers && this.handlers[lastClickedSourceWithLayers.source.id + `_${clickType}`]) {
-            this.handlers[lastClickedSourceWithLayers.source.id + `_${clickType}`].forEach((handler) => {
-                handler(
-                    ev.lngLat,
-                    this.lastClickedFeature as MapGeoJSONFeature,
-                    clickedFeatures,
-                    lastClickedSourceWithLayers
-                );
-            });
+        if (
+            lastClickedSourceWithLayers &&
+            lastClickedSourceWithLayers.interactive &&
+            this.handlers[lastClickedSourceWithLayers.sourceWithLayers.source.id + `_${clickType}`]
+        ) {
+            this.handlers[lastClickedSourceWithLayers.sourceWithLayers.source.id + `_${clickType}`].forEach(
+                (handler) => {
+                    handler(
+                        ev.lngLat,
+                        this.lastClickedFeature as MapGeoJSONFeature,
+                        clickedFeatures,
+                        lastClickedSourceWithLayers.sourceWithLayers
+                    );
+                }
+            );
         }
     }
 }

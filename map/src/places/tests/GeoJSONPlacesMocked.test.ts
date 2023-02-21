@@ -22,7 +22,8 @@ describe("GeoJSON Places module tests", () => {
                 setPaintProperty: jest.fn()
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn()
+                add: jest.fn(),
+                ensureAdded: jest.fn()
             }
         } as unknown as GOSDKMap;
 

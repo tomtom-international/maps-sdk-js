@@ -24,6 +24,11 @@ type ChangeOptions = {
     updateConfig: boolean;
 };
 
+const defaultVectorTilesTrafficConfig: VectorTilesTrafficConfig = {
+    incidents: { interactive: true },
+    flow: { interactive: true }
+};
+
 /**
  * Vector tiles traffic module.
  * * Controls both incidents and flow vector traffic sources and layers.
@@ -41,7 +46,8 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
      */
     static async init(goSDKMap: GOSDKMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
         await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilesTraffic(goSDKMap, config);
+        const configMergedWithDefault = { ...defaultVectorTilesTrafficConfig, ...config };
+        return new VectorTilesTraffic(goSDKMap, configMergedWithDefault);
     }
 
     protected initSourcesWithLayers() {
@@ -84,6 +90,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
 
     private applyIncidentsConfig(config: VectorTilesTrafficConfig | undefined) {
         const incidents = config?.incidents;
+
         if (incidents && !isNil(incidents.visible)) {
             this._setIncidentsVisible(incidents.visible, { updateConfig: false });
         } else if (isNil(config?.visible) && !this.incidents?.areAllLayersVisible()) {
@@ -96,10 +103,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         // else: default incidents visibility has been set already if necessary
 
         this._filterIncidents(incidents?.filters, incidents?.icons?.filters, { updateConfig: false });
-
-        if (incidents?.interactive) {
-            this.goSDKMap._eventsProxy.ensureAdded(this.incidents as SourceWithLayers);
-        }
+        this.goSDKMap._eventsProxy.ensureAdded(this.incidents as SourceWithLayers, incidents?.interactive);
     }
 
     /**
@@ -165,10 +169,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         }
 
         this._filterFlow(flow?.filters, { updateConfig: false });
-
-        if (flow?.interactive) {
-            this.goSDKMap._eventsProxy.ensureAdded(this.flow as SourceWithLayers);
-        }
+        this.goSDKMap._eventsProxy.ensureAdded(this.flow as SourceWithLayers, flow?.interactive);
     }
 
     /**

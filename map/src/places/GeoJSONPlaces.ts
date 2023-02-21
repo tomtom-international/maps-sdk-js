@@ -12,6 +12,8 @@ import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
+const defaultPlaceModuleConfig: PlaceModuleConfig = { interactive: true };
+
 /**
  * @group MapPlaces
  * @category Functions
@@ -28,7 +30,8 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
      */
     static async init(goSDKMap: GOSDKMap, config?: PlaceModuleConfig): Promise<GeoJSONPlaces> {
         await waitUntilMapIsReady(goSDKMap);
-        return new GeoJSONPlaces(goSDKMap, config);
+        const configMergedWithDefault = { ...defaultPlaceModuleConfig, ...config };
+        return new GeoJSONPlaces(goSDKMap, configMergedWithDefault);
     }
 
     protected initSourcesWithLayers(config?: PlaceModuleConfig) {
@@ -44,9 +47,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
             this.applyIconConfig(config.iconConfig);
         }
 
-        if (config?.interactive) {
-            this.goSDKMap._eventsProxy.ensureAdded(this.places);
-        }
+        this.goSDKMap._eventsProxy.ensureAdded(this.places, config?.interactive);
     }
 
     /**

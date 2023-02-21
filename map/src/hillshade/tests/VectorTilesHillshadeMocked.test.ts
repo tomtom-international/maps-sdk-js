@@ -16,7 +16,8 @@ describe("Vector tiles Hillshade module tests", () => {
                 isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn()
+                add: jest.fn(),
+                ensureAdded: jest.fn()
             }
         } as unknown as GOSDKMap;
 
@@ -42,7 +43,8 @@ describe("Vector tiles Hillshade module tests", () => {
                 isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn()
+                add: jest.fn(),
+                ensureAdded: jest.fn()
             }
         } as unknown as GOSDKMap;
 

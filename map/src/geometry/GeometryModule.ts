@@ -8,6 +8,8 @@ import { waitUntilMapIsReady } from "../utils/mapUtils";
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
 
+const defaultGeometryModuleConfig: GeometryModuleConfig = { interactive: true };
+
 /**
  * Geometry data module.
  */
@@ -22,7 +24,8 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
      */
     static async init(goSDKMap: GOSDKMap, config?: GeometryModuleConfig): Promise<GeometryModule> {
         await waitUntilMapIsReady(goSDKMap);
-        return new GeometryModule(goSDKMap, config);
+        const configMergedWithDefault = { ...defaultGeometryModuleConfig, ...config };
+        return new GeometryModule(goSDKMap, configMergedWithDefault);
     }
 
     protected initSourcesWithLayers() {
@@ -33,9 +36,7 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {
-        if (config?.interactive) {
-            this.goSDKMap._eventsProxy.ensureAdded(this.geometry);
-        }
+        this.goSDKMap._eventsProxy.ensureAdded(this.geometry, config?.interactive);
     }
 
     /**

@@ -65,6 +65,8 @@ import { GOSDKMap } from "../GOSDKMap";
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
+const defaultRoutingModuleConfig: RoutingModuleConfig = { interactive: true };
+
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
  * @group MapRoutes
@@ -88,7 +90,8 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
      */
     static async init(goSDKMap: GOSDKMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
         await waitUntilMapIsReady(goSDKMap);
-        return new RoutingModule(goSDKMap, config);
+        const mergedWithDefaultConfig = { ...defaultRoutingModuleConfig, ...config };
+        return new RoutingModule(goSDKMap, mergedWithDefaultConfig);
     }
 
     protected initSourcesWithLayers() {
@@ -153,20 +156,18 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
 
     protected _applyConfig(config: RoutingModuleConfig | undefined): void {
         // If interactive set, we add all layers to be interactive
-        if (config?.interactive) {
-            const routingSourcesWithLayers = [
-                this.waypoints,
-                this.routeLines,
-                this.vehicleRestricted,
-                this.incidents,
-                this.ferries,
-                this.tollRoads,
-                this.tunnels
-            ];
+        const routingSourcesWithLayers = [
+            this.waypoints,
+            this.routeLines,
+            this.vehicleRestricted,
+            this.incidents,
+            this.ferries,
+            this.tollRoads,
+            this.tunnels
+        ];
 
-            for (const sourceWithLayers of routingSourcesWithLayers) {
-                this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayers);
-            }
+        for (const sourceWithLayers of routingSourcesWithLayers) {
+            this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayers, config?.interactive);
         }
     }
 

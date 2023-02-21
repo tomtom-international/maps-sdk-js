@@ -5,6 +5,8 @@ import { notInTheStyle } from "../core/ErrorMessages";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 
+const defaultVectorTilesHillshadeConfig: VectorTilesHillshadeConfig = { interactive: true };
+
 /**
  * Vector tiles hillshade module.
  * * Hillshade refers to the semi-transparent terrain layer.
@@ -20,7 +22,8 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
      */
     static async init(goSDKMap: GOSDKMap, config?: VectorTilesHillshadeConfig): Promise<VectorTilesHillshade> {
         await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilesHillshade(goSDKMap, config);
+        const mergedWithDefaultConfig = { ...defaultVectorTilesHillshadeConfig, ...config };
+        return new VectorTilesHillshade(goSDKMap, mergedWithDefaultConfig);
     }
 
     protected initSourcesWithLayers() {
@@ -39,8 +42,8 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
             this.setVisible(true);
         }
 
-        if (config?.interactive && this.hillshade) {
-            this.goSDKMap._eventsProxy.ensureAdded(this.hillshade);
+        if (this.hillshade) {
+            this.goSDKMap._eventsProxy.ensureAdded(this.hillshade, config?.interactive);
         }
     }
 
