@@ -15,6 +15,19 @@ describe("AbstractEventProxy tests", () => {
 
         testModule.addEventHandler(sourceWithLayersMock, () => "test", "click");
         expect(testModule.has(sourceWithLayersMock)).toStrictEqual(true);
+
+        // @ts-ignore
+        expect(testModule.ensureAdded(undefined)).toBeUndefined();
+    });
+
+    test("Check if has any handler registered", () => {
+        const testModule = new TestModule();
+
+        testModule.addEventHandler(sourceWithLayersMock, () => "test", "click");
+        expect(testModule.hasAnyHandlerRegistered(sourceWithLayersMock.source.id)).toBeTruthy();
+
+        testModule.removeAll();
+        expect(testModule.hasAnyHandlerRegistered(sourceWithLayersMock.source.id)).toBeFalsy();
     });
 
     test("Remove event handler", () => {
