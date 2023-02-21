@@ -29,6 +29,10 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
             throw notInTheStyle(`init ${VectorTilesHillshade.name} with source ID ${HILLSHADE_SOURCE_ID}`);
         }
         this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
+
+        if (this.hillshade) {
+            this._addModuleToEventsProxy(true);
+        }
     }
 
     _applyConfig(config: VectorTilesHillshadeConfig | undefined): void {
@@ -41,8 +45,6 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
 
         if (this.hillshade && config && !isNil(config.interactive)) {
             this._addModuleToEventsProxy(config.interactive);
-        } else if (this.hillshade) {
-            this._addModuleToEventsProxy(true);
         }
     }
 

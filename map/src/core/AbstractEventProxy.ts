@@ -15,6 +15,7 @@ export abstract class AbstractEventProxy {
     /**
      * Adds the given sources and layers as interactive, so we'll listen to them for hover and click.
      * @param sourcesWithLayers The sources and layers to listen to.
+     * @param interactive Boolean to indicate if the source will be interactive.
      */
     ensureAdded(sourceWithLayers: SourceWithLayers, interactive = true) {
         this.interactiveSourcesAndLayers[sourceWithLayers.source.id] = {

@@ -56,6 +56,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         }
         this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
         this.originalFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id) as FilterSpecification;
+        this._addModuleToEventsProxy(true);
     }
 
     protected _applyConfig(config: VectorTilePOIsConfig | undefined): void {
@@ -70,8 +71,6 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
 
         if (config && !isNil(config.interactive)) {
             this._addModuleToEventsProxy(config.interactive);
-        } else {
-            this._addModuleToEventsProxy(true);
         }
     }
 

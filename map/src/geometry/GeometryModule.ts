@@ -4,7 +4,7 @@ import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
@@ -31,13 +31,12 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
             { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
             { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
         ]);
+        this._addModuleToEventsProxy(true);
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {
         if (config && !isNil(config.interactive)) {
             this._addModuleToEventsProxy(config.interactive);
-        } else {
-            this._addModuleToEventsProxy(true);
         }
     }
 

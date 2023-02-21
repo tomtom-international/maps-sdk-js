@@ -1,3 +1,4 @@
+import isNil from "lodash/isNil";
 import { Route, Routes, Waypoint, Waypoints } from "@anw/go-sdk-js/core";
 import {
     AbstractMapModule,
@@ -62,7 +63,6 @@ import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
-import { isNil } from "lodash";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
@@ -151,14 +151,18 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
+
+        // Adding module to EventsProxy
+        this._addModuleToEventsProxy(true);
     }
 
     protected _applyConfig(config: RoutingModuleConfig | undefined): void {
-        let interactive = true;
-
         if (config && !isNil(config.interactive)) {
-            interactive = config.interactive;
+            this._addModuleToEventsProxy(config.interactive);
         }
+    }
+
+    private _addModuleToEventsProxy(interactive: boolean) {
         // If interactive set, we add all layers to be interactive
         const routingSourcesWithLayers = [
             this.waypoints,
@@ -171,12 +175,8 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
         ];
 
         for (const sourceWithLayers of routingSourcesWithLayers) {
-            this._addModuleToEventsProxy(sourceWithLayers, interactive);
+            this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayers, interactive);
         }
-    }
-
-    private _addModuleToEventsProxy(sourceWithLayer: SourceWithLayers, interactive: boolean) {
-        this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayer, interactive);
     }
 
     private addImageIfNotExisting(imageID: string, path: string) {

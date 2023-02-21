@@ -1,3 +1,4 @@
+import isNil from "lodash/isNil";
 import { Places, Place } from "@anw/go-sdk-js/core";
 import {
     AbstractMapModule,
@@ -11,7 +12,6 @@ import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
-import { isNil } from "lodash";
 
 /**
  * @group MapPlaces
@@ -38,6 +38,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
             layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
         ]);
         this.layerSpec = layerSpec;
+        this._addModuleToEventsProxy(true);
     }
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {
@@ -47,8 +48,6 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
 
         if (config && !isNil(config.interactive)) {
             this._addModuleToEventsProxy(config.interactive);
-        } else {
-            this._addModuleToEventsProxy(true);
         }
     }
 
