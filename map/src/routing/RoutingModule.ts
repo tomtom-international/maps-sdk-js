@@ -27,8 +27,7 @@ import {
     ROUTES_SOURCE_ID,
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
-    WAYPOINTS_SOURCE_ID,
-    SourceWithLayers
+    WAYPOINTS_SOURCE_ID
 } from "../core";
 import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./layers/routeMainLineLayers";
 import {
