@@ -1,6 +1,9 @@
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
+import { GOSDKConfig } from "@anw/go-sdk-js/core";
 import { fetchWith, get, post } from "../Fetch";
+import { geocode } from "../../geocode";
+import { search } from "../../search";
 
 const axiosMock = new MockAdapter(axios);
 
@@ -76,6 +79,38 @@ describe("Fetch utility tests", () => {
             await expect(
                 fetchWith({ method: "UNSUPPORTED" as never, url: new URL("https://blah.com") })
             ).rejects.toHaveProperty("message", "Unsupported HTTP method received: UNSUPPORTED");
+        });
+    });
+
+    describe("Tracking-ID header", () => {
+        test("Set tracking-ID header per service", async () => {
+            axiosMock.onGet().replyOnce(200, { summary: {}, results: [] });
+            await geocode({ query: "teakhout", trackingId: "geocode-id" });
+            expect(axios.defaults.headers.common["Tracking-ID"]).toEqual("geocode-id");
+        });
+
+        test("Default Tracking-ID as uuid", async () => {
+            axiosMock.onGet().replyOnce(200, { summary: {}, results: [] });
+            await geocode({ query: "teakhout" });
+            // This only checked if the header has a uuid v4 format, not check for a valid UUID v4.
+            const trackingId = axios.defaults.headers.common["Tracking-ID"]
+                ?.toString()
+                .match("^.{8}-.{4}-.{4}-.{4}-.{12}");
+            expect(trackingId).toBeTruthy();
+        });
+
+        test("Set global and per service trackingId header", async () => {
+            GOSDKConfig.instance.put({
+                trackingId: "global-id"
+            });
+            axiosMock.onGet().reply(200, { summary: {}, results: [] });
+            axiosMock.onPost().reply(200, { summary: {}, results: [] });
+
+            await geocode({ query: "teakhout", trackingId: "geocode-id" });
+            expect(axios.defaults.headers.common["Tracking-ID"]).toEqual("geocode-id");
+
+            await search({ query: "cafe", geometries: [] });
+            expect(axios.defaults.headers.common["Tracking-ID"]).toEqual("global-id");
         });
     });
 });
