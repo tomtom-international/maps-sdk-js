@@ -30,13 +30,13 @@ The Map Display module comes with two pre-defined styles, but it also supports l
 
 # Pre-defined styles
 
-The Map module provides pre-defined styles that can be used in the application.
-They are provided in the [`StyleInput`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#StyleInput) as [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle)s.
+The Map Display module provides pre-defined styles that can be used in the application.
+They are provided in the [`StyleInput`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#StyleInput) as [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle).
 A [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle) represents a style which is officially hosted by TomTom and easily accessible by its name.
 
 These are the available [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle):
 
--   `standardLight` and `standardDark` - Styles made for browsing the map in light and dark mode respectively. The `standardLight` style is the default style used by the Map module.
+-   `standardLight` and `standardDark` - Styles made for browsing the map in light and dark mode respectively. The `standardLight` style is the default style used by the Map Display module.
 -   `drivingLight` and `drivingDark` - Styles to use during navigation in light and dark mode respectively. These styles render routes in gray and show traffic flow and road shields.
 -   `satellite` - This style uses satellite imagery to draw the map.
 -   `monoLight`
@@ -152,9 +152,11 @@ as a [`CustomStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/mo
 
 # Adding hill shading
 
-The Map module allows you to add style layers such as hill shading to the map style.
+The Map Display module allows you to add style layers such as hill shading to the map style.
 
 <img src="images/ss_hillshade.png" alt="Map with hill shading" />
+
+<br/>
 
 Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams).
 For more information about the `exclude` property, see the [Map Configuration](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-configuration) guide.
