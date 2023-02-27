@@ -28,12 +28,12 @@ export type MapEventsConfig = {
      */
     cursorOnMap?: string;
     /**
-     * Optional configuration to delay hover when map moves (milliseconds).
+     * Optional configuration to delay long-hover when map moves (milliseconds).
      * @default 800
      */
     hoverDelayMsOnMapMove?: number;
     /**
-     * Optional configuration to delay hover when map stops (milliseconds).
+     * Optional configuration to delay long-hover when map stops (milliseconds).
      * @default 300
      */
     hoverDelayMsOnMapStop?: number;

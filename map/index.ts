@@ -4,6 +4,7 @@
  */
 export * from "./src/shared";
 export * from "./src/init/types/MapInit";
+export * from "./src/init/types/MapEventsConfig";
 export * from "./src/GOSDKMap";
 export * from "./src/hillshade";
 export * from "./src/pois";
