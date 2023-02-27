@@ -161,14 +161,14 @@ describe("Get places layer spec with circle or pin icon style config", () => {
     });
 
     test("Get places layer spec with circle icon style config", () => {
-        expect(getPlacesLayerSpec({ iconStyle: "circle" }, mapLibreMock)).toStrictEqual({
+        expect(getPlacesLayerSpec({ iconConfig: { iconStyle: "circle" } }, mapLibreMock)).toStrictEqual({
             ...placesLayerSpec,
             id: "placesSymbols"
         });
     });
 
     test("Get places layer spec with pin icon style config", () => {
-        expect(getPlacesLayerSpec({ iconStyle: "pin" }, mapLibreMock)).toStrictEqual({
+        expect(getPlacesLayerSpec({ iconConfig: { iconStyle: "pin" } }, mapLibreMock)).toStrictEqual({
             ...placesLayerSpec,
             id: "placesSymbols"
         });
@@ -181,7 +181,7 @@ describe("Get places layer spec with poi-like icon style config", () => {
     } as unknown as Map;
 
     test("Get places layer spec with poi-like icon style config", () => {
-        expect(getPlacesLayerSpec({ iconStyle: "poi-like" }, mapLibreMock)).toStrictEqual({
+        expect(getPlacesLayerSpec({ iconConfig: { iconStyle: "poi-like" } }, mapLibreMock)).toStrictEqual({
             id: "placesSymbols",
             type: "symbol",
             paint: { ...poiLayerSpec.paint },

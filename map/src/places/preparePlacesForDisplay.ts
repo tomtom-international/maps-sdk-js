@@ -1,12 +1,12 @@
 import { DataDrivenPropertyValueSpecification, Map, SymbolLayerSpecification } from "maplibre-gl";
-import { Place, Places, CommonPlaceProps } from "@anw/go-sdk-js/core";
+import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
 import { ICON_ID, PlaceDisplayProps, TITLE } from "./types/PlaceDisplayProps";
-import { CustomIcon, PlaceIconConfig, PlaceModuleConfig } from "./types/PlaceModuleConfig";
+import { CustomIcon, PlaceModuleConfig } from "./types/PlaceModuleConfig";
 import { placesLayerSpec } from "./layers/PlacesLayers";
 import {
     MapStylePOIClassification,
-    poiClassificationToIconID,
-    placeToPOILayerClassificationMapping
+    placeToPOILayerClassificationMapping,
+    poiClassificationToIconID
 } from "./poiIconIDMapping";
 
 const placesLayerID = "placesSymbols";
@@ -111,14 +111,43 @@ const getPOILayerSpecs = (map: Map): Omit<SymbolLayerSpecification, "source"> =>
 
 /**
  * @ignore
- * @param iconConfig
+ * @param config
  * @param map
  */
 export const getPlacesLayerSpec = (
-    iconConfig: PlaceIconConfig | undefined,
+    config: PlaceModuleConfig | undefined,
     map: Map
-): Omit<SymbolLayerSpecification, "source"> =>
-    iconConfig?.iconStyle == "poi-like" ? getPOILayerSpecs(map) : { ...placesLayerSpec, id: placesLayerID };
+): Omit<SymbolLayerSpecification, "source"> => {
+    let basicLayerSpec;
+    const isPOILikeStyle = config?.iconConfig?.iconStyle == "poi-like";
+    if (isPOILikeStyle) {
+        basicLayerSpec = getPOILayerSpecs(map);
+    } else {
+        basicLayerSpec = {
+            ...placesLayerSpec,
+            id: placesLayerID
+        };
+    }
+    return {
+        ...basicLayerSpec,
+        layout: {
+            ...basicLayerSpec.layout,
+            ...(config?.textConfig?.textSize && { "text-size": config.textConfig.textSize }),
+            ...(config?.textConfig?.textFont && { "text-font": config.textConfig.textFont }),
+            ...(config?.textConfig?.textOffset && { "text-offset": config.textConfig.textOffset }),
+            ...(config?.textConfig?.textField &&
+                typeof config?.textConfig?.textField !== "function" && {
+                    "text-field": config?.textConfig?.textField
+                })
+        },
+        paint: {
+            ...basicLayerSpec.paint,
+            ...(config?.textConfig?.textColor && { "text-color": config.textConfig.textColor }),
+            ...(config?.textConfig?.textHaloColor && { "text-halo-color": config.textConfig.textHaloColor }),
+            ...(config?.textConfig?.textHaloWidth && { "text-halo-width": config.textConfig.textHaloWidth })
+        }
+    };
+};
 
 type LayoutPaint = { layout?: any; paint?: any };
 
@@ -164,18 +193,38 @@ export const preparePlacesForDisplay = (
     config: PlaceModuleConfig = {}
 ): Places<PlaceDisplayProps & CommonPlaceProps> => ({
     ...places,
-    features: places.features.map((place) => ({
-        ...place,
-        geometry: {
-            ...place.geometry,
-            bbox: place.bbox
-        },
-        properties: {
-            ...place.properties,
-            id: place.id,
-            title: buildPlaceTitle(place),
-            iconID: getIconIDForPlace(place, config, map),
-            ...(config?.iconConfig?.iconStyle == "poi-like" && { category: getPOILayerCategoryForPlace(place) })
-        }
-    }))
+    features: places.features.map((place) => {
+        const title =
+            typeof config?.textConfig?.textField === "function"
+                ? config?.textConfig?.textField(place)
+                : buildPlaceTitle(place);
+
+        const extraFeatureProps = config.extraFeatureProps
+            ? Object.keys(config.extraFeatureProps).reduce(
+                  (acc, prop) => ({
+                      ...acc,
+                      [prop]:
+                          typeof config.extraFeatureProps?.[prop] === "function"
+                              ? config.extraFeatureProps?.[prop](place)
+                              : config.extraFeatureProps?.[prop]
+                  }),
+                  {}
+              )
+            : {};
+        return {
+            ...place,
+            geometry: {
+                ...place.geometry,
+                bbox: place.bbox
+            },
+            properties: {
+                ...place.properties,
+                id: place.id,
+                title,
+                iconID: getIconIDForPlace(place, config, map),
+                ...(config?.iconConfig?.iconStyle == "poi-like" && { category: getPOILayerCategoryForPlace(place) }),
+                ...extraFeatureProps
+            }
+        };
+    })
 });

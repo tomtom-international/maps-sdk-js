@@ -5,3 +5,4 @@ export * from "./GOSDKSource";
 export * from "./EventsProxy";
 export * from "./EventsModule";
 export * from "./layers/sourcesIDs";
+export { MapFont } from "./layers/CommonLayerProps";

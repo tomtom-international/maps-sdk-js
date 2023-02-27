@@ -1,7 +1,7 @@
 /**
  * Properties to display a place on the map.
  */
-export type PlaceDisplayProps = { title?: string; iconID: string };
+export type PlaceDisplayProps = { title?: string; iconID: string; category?: string; [key: string]: any };
 
 /**
  * @ignore

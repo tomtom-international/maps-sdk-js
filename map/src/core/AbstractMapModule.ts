@@ -35,8 +35,8 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * @param config The configuration to apply. If undefined, the configuration will be reset to defaults.
      */
     applyConfig(config: CFG | undefined): void {
-        this._applyConfig(config);
         this.config = config;
+        this._applyConfig(config);
     }
 
     /**

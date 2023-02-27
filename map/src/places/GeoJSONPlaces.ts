@@ -7,7 +7,7 @@ import {
     PLACES_SOURCE_ID,
     ToBeAddedLayerSpec
 } from "../core";
-import { PlaceIconConfig, PlaceModuleConfig } from "./types/PlaceModuleConfig";
+import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
@@ -33,7 +33,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     }
 
     protected initSourcesWithLayers(config?: PlaceModuleConfig) {
-        const layerSpec = getPlacesLayerSpec(config?.iconConfig, this.mapLibreMap);
+        const layerSpec = getPlacesLayerSpec(config, this.mapLibreMap);
         this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
             layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
         ]);
@@ -42,8 +42,11 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     }
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {
-        if (config?.iconConfig) {
-            this.applyIconConfig(config.iconConfig);
+        if (config?.iconConfig || config?.textConfig) {
+            this.updateLayerSpecsAndData();
+        }
+        if (config?.extraFeatureProps) {
+            this.setExtraFeatureProps(config.extraFeatureProps);
         }
 
         if (config && !isNil(config.interactive)) {
@@ -57,17 +60,44 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
 
     /**
      * Apply icon configuration on shown features.
+     * Other config remains untouched
      * @param iconConfig the icon config to apply
      */
     applyIconConfig(iconConfig: PlaceIconConfig): void {
-        const newLayerSpec = getPlacesLayerSpec(iconConfig, this.mapLibreMap);
-        changeLayoutAndPaintProps(newLayerSpec, this.layerSpec, this.mapLibreMap);
         this.config = {
             ...this.config,
             iconConfig
         };
+        this.updateLayerSpecsAndData();
+    }
+
+    applyTextConfig(textConfig: PlaceTextConfig): void {
+        this.config = {
+            ...this.config,
+            textConfig
+        };
+        this.updateLayerSpecsAndData();
+    }
+
+    private updateLayerSpecsAndData(): void {
+        const newLayerSpec = getPlacesLayerSpec(this.config, this.mapLibreMap);
+        changeLayoutAndPaintProps(newLayerSpec, this.layerSpec, this.mapLibreMap);
         this.layerSpec = newLayerSpec;
-        this.show(this.places.shownFeatures);
+        this.updateSourceData();
+    }
+
+    setExtraFeatureProps(extraFeatureProps: { [key: string]: any }): void {
+        this.config = {
+            ...this.config,
+            extraFeatureProps
+        };
+        this.updateSourceData();
+    }
+
+    private updateSourceData(): void {
+        this.places.source.runtimeSource?.setData(
+            preparePlacesForDisplay(this.places.shownFeatures, this.mapLibreMap, this.config)
+        );
     }
 
     /**
