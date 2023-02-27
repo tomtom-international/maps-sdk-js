@@ -43,10 +43,9 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {
         if (config?.iconConfig || config?.textConfig) {
-            this.updateLayerSpecsAndData();
-        }
-        if (config?.extraFeatureProps) {
-            this.setExtraFeatureProps(config.extraFeatureProps);
+            this.updateLayerSpecsAndData(config);
+        } else if (config?.extraFeatureProps) {
+            this.updateSourceData(config);
         }
 
         if (config && !isNil(config.interactive)) {
@@ -64,39 +63,42 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
      * @param iconConfig the icon config to apply
      */
     applyIconConfig(iconConfig: PlaceIconConfig): void {
-        this.config = {
+        const config = {
             ...this.config,
             iconConfig
         };
-        this.updateLayerSpecsAndData();
+        this.updateLayerSpecsAndData(config);
+        this.config = config;
     }
 
     applyTextConfig(textConfig: PlaceTextConfig): void {
-        this.config = {
+        const config = {
             ...this.config,
             textConfig
         };
-        this.updateLayerSpecsAndData();
+        this.updateLayerSpecsAndData(config);
+        this.config = config;
     }
 
-    private updateLayerSpecsAndData(): void {
-        const newLayerSpec = getPlacesLayerSpec(this.config, this.mapLibreMap);
+    private updateLayerSpecsAndData(config: PlaceModuleConfig): void {
+        const newLayerSpec = getPlacesLayerSpec(config, this.mapLibreMap);
         changeLayoutAndPaintProps(newLayerSpec, this.layerSpec, this.mapLibreMap);
         this.layerSpec = newLayerSpec;
-        this.updateSourceData();
+        this.updateSourceData(config);
     }
 
     setExtraFeatureProps(extraFeatureProps: { [key: string]: any }): void {
-        this.config = {
+        const config = {
             ...this.config,
             extraFeatureProps
         };
-        this.updateSourceData();
+        this.updateSourceData(config);
+        this.config = config;
     }
 
-    private updateSourceData(): void {
+    private updateSourceData(config: PlaceModuleConfig): void {
         this.places.source.runtimeSource?.setData(
-            preparePlacesForDisplay(this.places.shownFeatures, this.mapLibreMap, this.config)
+            preparePlacesForDisplay(this.places.shownFeatures, this.mapLibreMap, config)
         );
     }
 
