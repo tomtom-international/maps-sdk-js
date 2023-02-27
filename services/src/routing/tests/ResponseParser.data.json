@@ -2554,6 +2554,7 @@
         }
       ]
     },
+    {},
     {
       "type": "FeatureCollection",
       "bbox": [4.86944, 52.37768, 4.90126, 52.38686],
@@ -4466,6 +4467,7 @@
         }
       ]
     },
+    {},
     {
       "type": "FeatureCollection",
       "features": [
@@ -5553,6 +5555,7 @@
         }
       ]
     },
+    {},
     {
       "type": "FeatureCollection",
       "bbox": [4.81034, 52.47137, 4.82346, 52.47554],
@@ -5779,6 +5782,2551 @@
                   "lastInstructionIndex": 4,
                   "groupMessage": "From <street>Leeghwaterweg</street>/<roadNumber>N515</roadNumber> continue to your destination",
                   "groupLengthInMeters": 612
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  [
+    "LDEVR route",
+    {
+      "formatVersion": "0.0.12",
+      "routes": [
+        {
+          "summary": {
+            "lengthInMeters": 599414,
+            "travelTimeInSeconds": 23689,
+            "trafficDelayInSeconds": 110,
+            "trafficLengthInMeters": 2974,
+            "departureTime": "2023-03-01T11:31:32+01:00",
+            "arrivalTime": "2023-03-01T18:06:17+01:00",
+            "batteryConsumptionInkWh": 148.41163526666668,
+            "remainingChargeAtArrivalInkWh": 20.0708598726,
+            "totalChargingTimeInSeconds": 3126
+          },
+          "legs": [
+            {
+              "summary": {
+                "lengthInMeters": 86901,
+                "travelTimeInSeconds": 3595,
+                "trafficDelayInSeconds": 31,
+                "trafficLengthInMeters": 2129,
+                "departureTime": "2023-03-01T11:31:32+01:00",
+                "arrivalTime": "2023-03-01T12:31:26+01:00",
+                "batteryConsumptionInkWh": 19.246312746666668,
+                "remainingChargeAtArrivalInkWh": 12.753687253333332,
+                "chargingInformationAtEndOfLeg": {
+                  "chargingConnectionInfo": {
+                    "chargingVoltageInV": 800,
+                    "chargingCurrentInA": 438,
+                    "chargingCurrentType": "Alternating_Current_1_Phase",
+                    "chargingPowerInkW": 350,
+                    "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base"
+                  },
+                  "targetChargeInkWh": 25.599999999999998,
+                  "chargingTimeInSeconds": 316,
+                  "chargingParkUuid": "47273291-4c0e-3697-1702-836c00153b86",
+                  "chargingParkExternalId": "276009024813089",
+                  "chargingParkName": "IONITY",
+                  "chargingParkLocation": {
+                    "city": "Schwerte",
+                    "postalCode": "58239",
+                    "countryCode": "DE"
+                  },
+                  "chargingParkPaymentOptions": [
+                    {
+                      "method": "Subscription",
+                      "brands": [
+                        "Plugsurfing",
+                        "MyEasyCharge",
+                        "Eneco",
+                        "eSolutions Charging",
+                        "Shell Recharge",
+                        "Maserati Charge"
+                      ]
+                    }
+                  ],
+                  "chargingParkPowerInkW": 350,
+                  "chargingStopType": "Auto_Generated"
+                }
+              },
+              "points": [
+                {
+                  "latitude": 50.9542,
+                  "longitude": 6.90852
+                },
+                {
+                  "latitude": 50.95434,
+                  "longitude": 6.90936
+                },
+                {
+                  "latitude": 50.95435,
+                  "longitude": 6.90954
+                },
+                {
+                  "latitude": 50.95434,
+                  "longitude": 6.90961
+                },
+                {
+                  "latitude": 50.95432,
+                  "longitude": 6.90967
+                },
+                {
+                  "latitude": 50.95425,
+                  "longitude": 6.90978
+                },
+                {
+                  "latitude": 50.95444,
+                  "longitude": 6.90996
+                },
+                {
+                  "latitude": 50.95459,
+                  "longitude": 6.91008
+                },
+                {
+                  "latitude": 50.95471,
+                  "longitude": 6.91019
+                },
+                {
+                  "latitude": 50.95511,
+                  "longitude": 6.91054
+                },
+                {
+                  "latitude": 50.95521,
+                  "longitude": 6.91066
+                },
+                {
+                  "latitude": 50.95591,
+                  "longitude": 6.91186
+                },
+                {
+                  "latitude": 50.95621,
+                  "longitude": 6.91237
+                },
+                {
+                  "latitude": 50.95645,
+                  "longitude": 6.91274
+                },
+                {
+                  "latitude": 50.95648,
+                  "longitude": 6.9128
+                },
+                {
+                  "latitude": 50.95658,
+                  "longitude": 6.91299
+                },
+                {
+                  "latitude": 50.9566,
+                  "longitude": 6.91304
+                }
+              ]
+            },
+            {
+              "summary": {
+                "lengthInMeters": 76376,
+                "travelTimeInSeconds": 2439,
+                "trafficDelayInSeconds": 79,
+                "trafficLengthInMeters": 845,
+                "departureTime": "2023-03-01T12:36:42+01:00",
+                "arrivalTime": "2023-03-01T13:17:21+01:00",
+                "batteryConsumptionInkWh": 19.951183940000004,
+                "remainingChargeAtArrivalInkWh": 5.648816059999994,
+                "chargingInformationAtEndOfLeg": {
+                  "chargingConnectionInfo": {
+                    "chargingVoltageInV": 500,
+                    "chargingCurrentInA": 600,
+                    "chargingCurrentType": "Alternating_Current_3_Phase",
+                    "chargingPowerInkW": 300,
+                    "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base"
+                  },
+                  "targetChargeInkWh": 39.64,
+                  "chargingTimeInSeconds": 739,
+                  "chargingParkUuid": "79b2c492-3c7f-3260-be19-32f100153b86",
+                  "chargingParkExternalId": "276009026349976",
+                  "chargingParkName": "E.ON",
+                  "chargingParkLocation": {
+                    "city": "Gütersloh",
+                    "postalCode": "33334",
+                    "countryCode": "DE"
+                  },
+                  "chargingParkPaymentOptions": [
+                    {
+                      "method": "Direct"
+                    },
+                    {
+                      "method": "Subscription",
+                      "brands": [
+                        "Plugsurfing",
+                        "MyEasyCharge",
+                        "Eneco",
+                        "eSolutions Charging",
+                        "Shell Recharge",
+                        "Maserati Charge"
+                      ]
+                    }
+                  ],
+                  "chargingParkPowerInkW": 300,
+                  "chargingStopType": "Auto_Generated"
+                }
+              },
+              "points": [
+                {
+                  "latitude": 51.4678,
+                  "longitude": 7.5969
+                },
+                {
+                  "latitude": 51.46786,
+                  "longitude": 7.59701
+                },
+                {
+                  "latitude": 51.46805,
+                  "longitude": 7.59734
+                },
+                {
+                  "latitude": 51.46813,
+                  "longitude": 7.59745
+                },
+                {
+                  "latitude": 51.46827,
+                  "longitude": 7.59758
+                },
+                {
+                  "latitude": 51.46844,
+                  "longitude": 7.59767
+                },
+                {
+                  "latitude": 51.46874,
+                  "longitude": 7.5978
+                },
+                {
+                  "latitude": 51.46888,
+                  "longitude": 7.59782
+                },
+                {
+                  "latitude": 51.46898,
+                  "longitude": 7.59783
+                },
+                {
+                  "latitude": 51.4693,
+                  "longitude": 7.59782
+                },
+                {
+                  "latitude": 51.46959,
+                  "longitude": 7.59818
+                },
+                {
+                  "latitude": 51.46975,
+                  "longitude": 7.5984
+                },
+                {
+                  "latitude": 51.46989,
+                  "longitude": 7.5985
+                },
+                {
+                  "latitude": 51.47022,
+                  "longitude": 7.599
+                },
+                {
+                  "latitude": 51.47061,
+                  "longitude": 7.59953
+                },
+                {
+                  "latitude": 51.47089,
+                  "longitude": 7.59989
+                },
+                {
+                  "latitude": 51.47154,
+                  "longitude": 7.60068
+                },
+                {
+                  "latitude": 51.47211,
+                  "longitude": 7.60132
+                },
+                {
+                  "latitude": 51.47259,
+                  "longitude": 7.60183
+                },
+                {
+                  "latitude": 51.47333,
+                  "longitude": 7.60254
+                },
+                {
+                  "latitude": 51.47354,
+                  "longitude": 7.60275
+                },
+                {
+                  "latitude": 51.47446,
+                  "longitude": 7.6036
+                },
+                {
+                  "latitude": 51.47562,
+                  "longitude": 7.60469
+                },
+                {
+                  "latitude": 51.47601,
+                  "longitude": 7.60507
+                },
+                {
+                  "latitude": 51.4763,
+                  "longitude": 7.60539
+                },
+                {
+                  "latitude": 51.47678,
+                  "longitude": 7.60589
+                },
+                {
+                  "latitude": 51.47731,
+                  "longitude": 7.60651
+                }
+              ]
+            },
+            {
+              "summary": {
+                "lengthInMeters": 120003,
+                "travelTimeInSeconds": 3724,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2023-03-01T13:29:40+01:00",
+                "arrivalTime": "2023-03-01T14:31:43+01:00",
+                "batteryConsumptionInkWh": 30.526617746666673,
+                "remainingChargeAtArrivalInkWh": 9.113382253333327,
+                "chargingInformationAtEndOfLeg": {
+                  "chargingConnectionInfo": {
+                    "chargingVoltageInV": 800,
+                    "chargingCurrentInA": 375,
+                    "chargingCurrentType": "Direct_Current",
+                    "chargingPowerInkW": 300,
+                    "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base"
+                  },
+                  "targetChargeInkWh": 34.959999999999994,
+                  "chargingTimeInSeconds": 576,
+                  "chargingParkUuid": "0fb21743-880d-35e1-a224-de3f00153b86",
+                  "chargingParkExternalId": "276009026302797",
+                  "chargingParkName": "Aral pulse",
+                  "chargingParkLocation": {
+                    "street": "Am Leineufer",
+                    "houseNumber": "52",
+                    "city": "Stöcken",
+                    "postalCode": "30419",
+                    "countryCode": "DE"
+                  },
+                  "chargingParkPaymentOptions": [
+                    {
+                      "method": "Direct"
+                    },
+                    {
+                      "method": "Subscription",
+                      "brands": [
+                        "MyEasyCharge",
+                        "Eneco",
+                        "eSolutions Charging",
+                        "Shell Recharge",
+                        "Maserati Charge"
+                      ]
+                    }
+                  ],
+                  "chargingParkPowerInkW": 300,
+                  "chargingStopType": "Auto_Generated"
+                }
+              },
+              "points": [
+                {
+                  "latitude": 51.86492,
+                  "longitude": 8.36963
+                },
+                {
+                  "latitude": 51.8649,
+                  "longitude": 8.36958
+                },
+                {
+                  "latitude": 51.8649,
+                  "longitude": 8.36943
+                },
+                {
+                  "latitude": 51.86497,
+                  "longitude": 8.36941
+                },
+                {
+                  "latitude": 51.86505,
+                  "longitude": 8.36944
+                },
+                {
+                  "latitude": 51.86507,
+                  "longitude": 8.36952
+                },
+                {
+                  "latitude": 51.86512,
+                  "longitude": 8.36967
+                },
+                {
+                  "latitude": 51.86529,
+                  "longitude": 8.37031
+                },
+                {
+                  "latitude": 51.86542,
+                  "longitude": 8.37081
+                },
+                {
+                  "latitude": 51.86546,
+                  "longitude": 8.37086
+                },
+                {
+                  "latitude": 51.86565,
+                  "longitude": 8.37096
+                },
+                {
+                  "latitude": 51.86569,
+                  "longitude": 8.37109
+                },
+                {
+                  "latitude": 51.86575,
+                  "longitude": 8.37121
+                },
+                {
+                  "latitude": 51.86577,
+                  "longitude": 8.37123
+                },
+                {
+                  "latitude": 51.86579,
+                  "longitude": 8.37126
+                },
+                {
+                  "latitude": 51.86582,
+                  "longitude": 8.37129
+                },
+                {
+                  "latitude": 51.86588,
+                  "longitude": 8.37133
+                },
+                {
+                  "latitude": 51.86591,
+                  "longitude": 8.37134
+                },
+                {
+                  "latitude": 51.86602,
+                  "longitude": 8.37139
+                },
+                {
+                  "latitude": 51.86607,
+                  "longitude": 8.37158
+                },
+                {
+                  "latitude": 51.86617,
+                  "longitude": 8.37195
+                },
+                {
+                  "latitude": 51.86641,
+                  "longitude": 8.37276
+                },
+                {
+                  "latitude": 51.86659,
+                  "longitude": 8.37337
+                },
+                {
+                  "latitude": 51.86669,
+                  "longitude": 8.37362
+                },
+                {
+                  "latitude": 51.8669,
+                  "longitude": 8.37436
+                },
+                {
+                  "latitude": 51.86699,
+                  "longitude": 8.37448
+                },
+                {
+                  "latitude": 51.86702,
+                  "longitude": 8.37452
+                },
+                {
+                  "latitude": 51.86725,
+                  "longitude": 8.37539
+                }
+              ]
+            },
+            {
+              "summary": {
+                "lengthInMeters": 60922,
+                "travelTimeInSeconds": 1995,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2023-03-01T14:41:19+01:00",
+                "arrivalTime": "2023-03-01T15:14:34+01:00",
+                "batteryConsumptionInkWh": 14.414117373333335,
+                "remainingChargeAtArrivalInkWh": 20.54588262666666,
+                "chargingInformationAtEndOfLeg": {
+                  "chargingConnectionInfo": {
+                    "chargingVoltageInV": 800,
+                    "chargingCurrentInA": 375,
+                    "chargingCurrentType": "Direct_Current",
+                    "chargingPowerInkW": 300,
+                    "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base"
+                  },
+                  "targetChargeInkWh": 34.599999999999994,
+                  "chargingTimeInSeconds": 341,
+                  "chargingParkUuid": "6fd821e1-9dd1-332b-4398-40e000153b86",
+                  "chargingParkExternalId": "276009026290908",
+                  "chargingParkName": "Aral pulse",
+                  "chargingParkLocation": {
+                    "street": "Hansestraße",
+                    "houseNumber": "47",
+                    "city": "Veltenhof-Rühme",
+                    "postalCode": "38112",
+                    "countryCode": "DE"
+                  },
+                  "chargingParkPaymentOptions": [
+                    {
+                      "method": "Direct"
+                    },
+                    {
+                      "method": "Subscription",
+                      "brands": [
+                        "MyEasyCharge",
+                        "Eneco",
+                        "eSolutions Charging",
+                        "Shell Recharge",
+                        "Maserati Charge"
+                      ]
+                    }
+                  ],
+                  "chargingParkPowerInkW": 300,
+                  "chargingStopType": "Auto_Generated"
+                }
+              },
+              "points": [
+                {
+                  "latitude": 52.41822,
+                  "longitude": 9.63539
+                },
+                {
+                  "latitude": 52.41866,
+                  "longitude": 9.6347
+                },
+                {
+                  "latitude": 52.41877,
+                  "longitude": 9.63455
+                },
+                {
+                  "latitude": 52.41889,
+                  "longitude": 9.63443
+                },
+                {
+                  "latitude": 52.41896,
+                  "longitude": 9.63438
+                },
+                {
+                  "latitude": 52.41914,
+                  "longitude": 9.6343
+                },
+                {
+                  "latitude": 52.41923,
+                  "longitude": 9.63429
+                },
+                {
+                  "latitude": 52.41944,
+                  "longitude": 9.63433
+                },
+                {
+                  "latitude": 52.41953,
+                  "longitude": 9.63431
+                },
+                {
+                  "latitude": 52.41966,
+                  "longitude": 9.63437
+                },
+                {
+                  "latitude": 52.41988,
+                  "longitude": 9.63446
+                },
+                {
+                  "latitude": 52.42005,
+                  "longitude": 9.63453
+                },
+                {
+                  "latitude": 52.42033,
+                  "longitude": 9.63464
+                },
+                {
+                  "latitude": 52.42039,
+                  "longitude": 9.63469
+                },
+                {
+                  "latitude": 52.42044,
+                  "longitude": 9.63473
+                },
+                {
+                  "latitude": 52.42051,
+                  "longitude": 9.63476
+                },
+                {
+                  "latitude": 52.42055,
+                  "longitude": 9.63478
+                },
+                {
+                  "latitude": 52.42077,
+                  "longitude": 9.6349
+                },
+                {
+                  "latitude": 52.42088,
+                  "longitude": 9.635
+                },
+                {
+                  "latitude": 52.42092,
+                  "longitude": 9.63505
+                },
+                {
+                  "latitude": 52.42098,
+                  "longitude": 9.63516
+                },
+                {
+                  "latitude": 52.42102,
+                  "longitude": 9.63525
+                },
+                {
+                  "latitude": 52.42112,
+                  "longitude": 9.63552
+                },
+                {
+                  "latitude": 52.42144,
+                  "longitude": 9.6368
+                },
+                {
+                  "latitude": 52.42151,
+                  "longitude": 9.63719
+                },
+                {
+                  "latitude": 52.42185,
+                  "longitude": 9.63851
+                },
+                {
+                  "latitude": 52.42198,
+                  "longitude": 9.63909
+                },
+                {
+                  "latitude": 52.42227,
+                  "longitude": 9.6405
+                },
+                {
+                  "latitude": 52.4223,
+                  "longitude": 9.64061
+                },
+                {
+                  "latitude": 52.42232,
+                  "longitude": 9.64067
+                },
+                {
+                  "latitude": 52.42232,
+                  "longitude": 9.6407
+                },
+                {
+                  "latitude": 52.42235,
+                  "longitude": 9.64074
+                }
+              ]
+            },
+            {
+              "summary": {
+                "lengthInMeters": 116835,
+                "travelTimeInSeconds": 3388,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2023-03-01T15:20:15+01:00",
+                "arrivalTime": "2023-03-01T16:16:42+01:00",
+                "batteryConsumptionInkWh": 30.426066713333338,
+                "remainingChargeAtArrivalInkWh": 4.1739332866666565,
+                "chargingInformationAtEndOfLeg": {
+                  "chargingConnectionInfo": {
+                    "chargingVoltageInV": 600,
+                    "chargingCurrentInA": 500,
+                    "chargingCurrentType": "Direct_Current",
+                    "chargingPowerInkW": 300,
+                    "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base"
+                  },
+                  "targetChargeInkWh": 40,
+                  "chargingTimeInSeconds": 776,
+                  "chargingParkUuid": "174b79be-c5d0-30ef-5cad-22a900153b86",
+                  "chargingParkExternalId": "276009007344171",
+                  "chargingParkName": "Allego",
+                  "chargingParkLocation": {
+                    "street": "Gewerbestraße",
+                    "houseNumber": "1",
+                    "city": "Möckern",
+                    "postalCode": "39291",
+                    "countryCode": "DE"
+                  },
+                  "chargingParkPaymentOptions": [
+                    {
+                      "method": "Direct"
+                    },
+                    {
+                      "method": "Subscription",
+                      "brands": [
+                        "Plugsurfing",
+                        "MyEasyCharge",
+                        "Eneco",
+                        "eSolutions Charging",
+                        "Shell Recharge",
+                        "Maserati Charge"
+                      ]
+                    }
+                  ],
+                  "chargingParkPowerInkW": 300,
+                  "chargingStopType": "Auto_Generated"
+                }
+              },
+              "points": [
+                {
+                  "latitude": 52.32188,
+                  "longitude": 10.47753
+                },
+                {
+                  "latitude": 52.32196,
+                  "longitude": 10.4774
+                },
+                {
+                  "latitude": 52.32263,
+                  "longitude": 10.47632
+                },
+                {
+                  "latitude": 52.32271,
+                  "longitude": 10.47626
+                },
+                {
+                  "latitude": 52.3229,
+                  "longitude": 10.47597
+                },
+                {
+                  "latitude": 52.32313,
+                  "longitude": 10.47558
+                },
+                {
+                  "latitude": 52.32332,
+                  "longitude": 10.47525
+                },
+                {
+                  "latitude": 52.32383,
+                  "longitude": 10.47437
+                },
+                {
+                  "latitude": 52.32401,
+                  "longitude": 10.47434
+                },
+                {
+                  "latitude": 52.3241,
+                  "longitude": 10.47434
+                },
+                {
+                  "latitude": 52.32419,
+                  "longitude": 10.47448
+                },
+                {
+                  "latitude": 52.32426,
+                  "longitude": 10.47462
+                },
+                {
+                  "latitude": 52.3243,
+                  "longitude": 10.4747
+                },
+                {
+                  "latitude": 52.32432,
+                  "longitude": 10.47477
+                },
+                {
+                  "latitude": 52.32436,
+                  "longitude": 10.47503
+                },
+                {
+                  "latitude": 52.32438,
+                  "longitude": 10.47514
+                },
+                {
+                  "latitude": 52.32439,
+                  "longitude": 10.47546
+                },
+                {
+                  "latitude": 52.32439,
+                  "longitude": 10.47553
+                },
+                {
+                  "latitude": 52.32438,
+                  "longitude": 10.47565
+                },
+                {
+                  "latitude": 52.32368,
+                  "longitude": 10.47855
+                },
+                {
+                  "latitude": 52.3231,
+                  "longitude": 10.48096
+                },
+                {
+                  "latitude": 52.32198,
+                  "longitude": 10.48561
+                },
+                {
+                  "latitude": 52.3216,
+                  "longitude": 10.48716
+                },
+                {
+                  "latitude": 52.32142,
+                  "longitude": 10.48793
+                },
+                {
+                  "latitude": 52.32094,
+                  "longitude": 10.4899
+                }
+              ]
+            },
+            {
+              "summary": {
+                "lengthInMeters": 70967,
+                "travelTimeInSeconds": 2089,
+                "trafficDelayInSeconds": 0,
+                "trafficLengthInMeters": 0,
+                "departureTime": "2023-03-01T16:29:38+01:00",
+                "arrivalTime": "2023-03-01T17:04:26+01:00",
+                "batteryConsumptionInkWh": 18.67139742666667,
+                "remainingChargeAtArrivalInkWh": 21.32860257333333,
+                "chargingInformationAtEndOfLeg": {
+                  "chargingConnectionInfo": {
+                    "chargingVoltageInV": 500,
+                    "chargingCurrentInA": 350,
+                    "chargingCurrentType": "Direct_Current",
+                    "chargingPowerInkW": 175,
+                    "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base"
+                  },
+                  "targetChargeInkWh": 35.2467991926,
+                  "chargingTimeInSeconds": 378,
+                  "chargingParkUuid": "2fa2db41-d8ab-332b-990d-579d00153b86",
+                  "chargingParkExternalId": "276009026310522",
+                  "chargingParkName": "TotalEnergies",
+                  "chargingParkLocation": {
+                    "street": "Am Bahnhof Lienewitz",
+                    "city": "Schwielowsee",
+                    "postalCode": "14548",
+                    "countryCode": "DE"
+                  },
+                  "chargingParkPaymentOptions": [
+                    {
+                      "method": "Subscription",
+                      "brands": [
+                        "Plugsurfing",
+                        "MyEasyCharge",
+                        "Eneco",
+                        "eSolutions Charging",
+                        "Shell Recharge",
+                        "Maserati Charge"
+                      ]
+                    }
+                  ],
+                  "chargingParkPowerInkW": 175,
+                  "chargingStopType": "Auto_Generated"
+                }
+              },
+              "points": [
+                {
+                  "latitude": 52.23701,
+                  "longitude": 12.05894
+                },
+                {
+                  "latitude": 52.23646,
+                  "longitude": 12.05839
+                },
+                {
+                  "latitude": 52.23627,
+                  "longitude": 12.05885
+                },
+                {
+                  "latitude": 52.236,
+                  "longitude": 12.0595
+                },
+                {
+                  "latitude": 52.23566,
+                  "longitude": 12.06041
+                },
+                {
+                  "latitude": 52.23533,
+                  "longitude": 12.06126
+                },
+                {
+                  "latitude": 52.23515,
+                  "longitude": 12.06179
+                },
+                {
+                  "latitude": 52.23501,
+                  "longitude": 12.06211
+                },
+                {
+                  "latitude": 52.23483,
+                  "longitude": 12.06259
+                },
+                {
+                  "latitude": 52.2347,
+                  "longitude": 12.06295
+                },
+                {
+                  "latitude": 52.23468,
+                  "longitude": 12.06299
+                },
+                {
+                  "latitude": 52.23453,
+                  "longitude": 12.06342
+                },
+                {
+                  "latitude": 52.23422,
+                  "longitude": 12.06429
+                },
+                {
+                  "latitude": 52.23414,
+                  "longitude": 12.06451
+                },
+                {
+                  "latitude": 52.23382,
+                  "longitude": 12.06535
+                },
+                {
+                  "latitude": 52.23372,
+                  "longitude": 12.06568
+                }
+              ]
+            }
+          ],
+          "sections": [
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 103,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 165,
+              "endPointIndex": 206,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 218,
+              "endPointIndex": 253,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 281,
+              "endPointIndex": 374,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 378,
+              "endPointIndex": 379,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 427,
+              "endPointIndex": 436,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 439,
+              "endPointIndex": 444,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 523,
+              "endPointIndex": 540,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 604,
+              "endPointIndex": 606,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 693,
+              "endPointIndex": 699,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 760,
+              "endPointIndex": 778,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 780,
+              "endPointIndex": 781,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 789,
+              "endPointIndex": 855,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 932,
+              "endPointIndex": 941,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 993,
+              "endPointIndex": 995,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1088,
+              "endPointIndex": 1090,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1096,
+              "endPointIndex": 1112,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1110,
+              "endPointIndex": 1113,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 1147,
+              "endPointIndex": 1149,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1160,
+              "endPointIndex": 1181,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1206,
+              "endPointIndex": 1209,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 98,
+              "endPointIndex": 1310,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 1437,
+              "endPointIndex": 1453,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1471,
+              "endPointIndex": 1495,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1573,
+              "endPointIndex": 1574,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1579,
+              "endPointIndex": 1594,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1597,
+              "endPointIndex": 1602,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1630,
+              "endPointIndex": 1644,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1761,
+              "endPointIndex": 1762,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1823,
+              "endPointIndex": 1825,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1948,
+              "endPointIndex": 1952,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 1338,
+              "endPointIndex": 2006,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 2100,
+              "endPointIndex": 2106,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 2263,
+              "endPointIndex": 2269,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 2288,
+              "endPointIndex": 2298,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 2305,
+              "endPointIndex": 2320,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 2371,
+              "endPointIndex": 2374,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 2441,
+              "endPointIndex": 2450,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 2896,
+              "endPointIndex": 2899,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 3045,
+              "endPointIndex": 3051,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 3072,
+              "endPointIndex": 3075,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 2051,
+              "endPointIndex": 3388,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 3352,
+              "endPointIndex": 3471,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 3546,
+              "endPointIndex": 3561,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 3605,
+              "endPointIndex": 3647,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 3491,
+              "endPointIndex": 4024,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 4029,
+              "endPointIndex": 4068,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 4163,
+              "endPointIndex": 4165,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 4444,
+              "endPointIndex": 4451,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 4846,
+              "endPointIndex": 4862,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 4073,
+              "endPointIndex": 5053,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 5454,
+              "endPointIndex": 5458,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 5497,
+              "endPointIndex": 5504,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 5132,
+              "endPointIndex": 5679,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 5736,
+              "endPointIndex": 5745,
+              "sectionType": "UNPAVED"
+            },
+            {
+              "startPointIndex": 6001,
+              "endPointIndex": 6010,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 6305,
+              "endPointIndex": 6306,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 6315,
+              "endPointIndex": 6325,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 6336,
+              "endPointIndex": 6349,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 6344,
+              "endPointIndex": 6352,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 6362,
+              "endPointIndex": 6376,
+              "sectionType": "TUNNEL"
+            },
+            {
+              "startPointIndex": 5797,
+              "endPointIndex": 6485,
+              "sectionType": "MOTORWAY"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 6646,
+              "sectionType": "COUNTRY",
+              "countryCode": "DEU"
+            },
+            {
+              "startPointIndex": 0,
+              "endPointIndex": 6646,
+              "sectionType": "TRAVEL_MODE",
+              "travelMode": "car"
+            },
+            {
+              "startPointIndex": 6357,
+              "endPointIndex": 6646,
+              "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 206,
+              "endPointIndex": 212,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 54,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 230,
+              "endPointIndex": 232,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 64,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 266,
+              "endPointIndex": 305,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 75,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 4
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 266,
+              "endPointIndex": 305,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 75,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 852,
+              "endPointIndex": 856,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 73,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 1121,
+              "endPointIndex": 1153,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 73,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 1276,
+              "endPointIndex": 1295,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 82,
+              "delayInSeconds": 31,
+              "magnitudeOfDelay": 1,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 1338,
+              "endPointIndex": 1342,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 126,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 1397,
+              "endPointIndex": 1416,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 89,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 1397,
+              "endPointIndex": 1411,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "JAM",
+              "effectiveSpeedInKmh": 27,
+              "delayInSeconds": 79,
+              "magnitudeOfDelay": 1,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 1
+                  }
+                ],
+                "effectCode": 5
+              }
+            },
+            {
+              "startPointIndex": 1440,
+              "endPointIndex": 1453,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 91,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 3032,
+              "endPointIndex": 3038,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 138,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 25,
+                    "subCauseCode": 1
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 3032,
+              "endPointIndex": 3038,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 138,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 6484,
+              "endPointIndex": 6485,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 45,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 4
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 6484,
+              "endPointIndex": 6485,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 45,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 6586,
+              "endPointIndex": 6589,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 33,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 4
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 6586,
+              "endPointIndex": 6589,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 33,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  },
+                  {
+                    "mainCauseCode": 22
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 6594,
+              "endPointIndex": 6608,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "OTHER",
+              "effectiveSpeedInKmh": 26,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 4
+                  },
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            },
+            {
+              "startPointIndex": 6594,
+              "endPointIndex": 6608,
+              "sectionType": "TRAFFIC",
+              "simpleCategory": "ROAD_WORK",
+              "effectiveSpeedInKmh": 26,
+              "delayInSeconds": 0,
+              "magnitudeOfDelay": 4,
+              "tec": {
+                "causes": [
+                  {
+                    "mainCauseCode": 3
+                  }
+                ],
+                "effectCode": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "vehicle": {
+        "engine": {
+          "model": {
+            "charging": {
+              "maxChargeKWH": 85
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "FeatureCollection",
+      "bbox": [6.90852, 50.9542, 12.06568, 52.42235],
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [6.90852, 50.9542],
+              [6.90936, 50.95434],
+              [6.90954, 50.95435],
+              [6.90961, 50.95434],
+              [6.90967, 50.95432],
+              [6.90978, 50.95425],
+              [6.90996, 50.95444],
+              [6.91008, 50.95459],
+              [6.91019, 50.95471],
+              [6.91054, 50.95511],
+              [6.91066, 50.95521],
+              [6.91186, 50.95591],
+              [6.91237, 50.95621],
+              [6.91274, 50.95645],
+              [6.9128, 50.95648],
+              [6.91299, 50.95658],
+              [6.91304, 50.9566],
+              [7.5969, 51.4678],
+              [7.59701, 51.46786],
+              [7.59734, 51.46805],
+              [7.59745, 51.46813],
+              [7.59758, 51.46827],
+              [7.59767, 51.46844],
+              [7.5978, 51.46874],
+              [7.59782, 51.46888],
+              [7.59783, 51.46898],
+              [7.59782, 51.4693],
+              [7.59818, 51.46959],
+              [7.5984, 51.46975],
+              [7.5985, 51.46989],
+              [7.599, 51.47022],
+              [7.59953, 51.47061],
+              [7.59989, 51.47089],
+              [7.60068, 51.47154],
+              [7.60132, 51.47211],
+              [7.60183, 51.47259],
+              [7.60254, 51.47333],
+              [7.60275, 51.47354],
+              [7.6036, 51.47446],
+              [7.60469, 51.47562],
+              [7.60507, 51.47601],
+              [7.60539, 51.4763],
+              [7.60589, 51.47678],
+              [7.60651, 51.47731],
+              [8.36963, 51.86492],
+              [8.36958, 51.8649],
+              [8.36943, 51.8649],
+              [8.36941, 51.86497],
+              [8.36944, 51.86505],
+              [8.36952, 51.86507],
+              [8.36967, 51.86512],
+              [8.37031, 51.86529],
+              [8.37081, 51.86542],
+              [8.37086, 51.86546],
+              [8.37096, 51.86565],
+              [8.37109, 51.86569],
+              [8.37121, 51.86575],
+              [8.37123, 51.86577],
+              [8.37126, 51.86579],
+              [8.37129, 51.86582],
+              [8.37133, 51.86588],
+              [8.37134, 51.86591],
+              [8.37139, 51.86602],
+              [8.37158, 51.86607],
+              [8.37195, 51.86617],
+              [8.37276, 51.86641],
+              [8.37337, 51.86659],
+              [8.37362, 51.86669],
+              [8.37436, 51.8669],
+              [8.37448, 51.86699],
+              [8.37452, 51.86702],
+              [8.37539, 51.86725],
+              [9.63539, 52.41822],
+              [9.6347, 52.41866],
+              [9.63455, 52.41877],
+              [9.63443, 52.41889],
+              [9.63438, 52.41896],
+              [9.6343, 52.41914],
+              [9.63429, 52.41923],
+              [9.63433, 52.41944],
+              [9.63431, 52.41953],
+              [9.63437, 52.41966],
+              [9.63446, 52.41988],
+              [9.63453, 52.42005],
+              [9.63464, 52.42033],
+              [9.63469, 52.42039],
+              [9.63473, 52.42044],
+              [9.63476, 52.42051],
+              [9.63478, 52.42055],
+              [9.6349, 52.42077],
+              [9.635, 52.42088],
+              [9.63505, 52.42092],
+              [9.63516, 52.42098],
+              [9.63525, 52.42102],
+              [9.63552, 52.42112],
+              [9.6368, 52.42144],
+              [9.63719, 52.42151],
+              [9.63851, 52.42185],
+              [9.63909, 52.42198],
+              [9.6405, 52.42227],
+              [9.64061, 52.4223],
+              [9.64067, 52.42232],
+              [9.6407, 52.42232],
+              [9.64074, 52.42235],
+              [10.47753, 52.32188],
+              [10.4774, 52.32196],
+              [10.47632, 52.32263],
+              [10.47626, 52.32271],
+              [10.47597, 52.3229],
+              [10.47558, 52.32313],
+              [10.47525, 52.32332],
+              [10.47437, 52.32383],
+              [10.47434, 52.32401],
+              [10.47434, 52.3241],
+              [10.47448, 52.32419],
+              [10.47462, 52.32426],
+              [10.4747, 52.3243],
+              [10.47477, 52.32432],
+              [10.47503, 52.32436],
+              [10.47514, 52.32438],
+              [10.47546, 52.32439],
+              [10.47553, 52.32439],
+              [10.47565, 52.32438],
+              [10.47855, 52.32368],
+              [10.48096, 52.3231],
+              [10.48561, 52.32198],
+              [10.48716, 52.3216],
+              [10.48793, 52.32142],
+              [10.4899, 52.32094],
+              [12.05894, 52.23701],
+              [12.05839, 52.23646],
+              [12.05885, 52.23627],
+              [12.0595, 52.236],
+              [12.06041, 52.23566],
+              [12.06126, 52.23533],
+              [12.06179, 52.23515],
+              [12.06211, 52.23501],
+              [12.06259, 52.23483],
+              [12.06295, 52.2347],
+              [12.06299, 52.23468],
+              [12.06342, 52.23453],
+              [12.06429, 52.23422],
+              [12.06451, 52.23414],
+              [12.06535, 52.23382],
+              [12.06568, 52.23372]
+            ]
+          },
+          "bbox": [6.90852, 50.9542, 12.06568, 52.42235],
+          "properties": {
+            "summary": {
+              "lengthInMeters": 599414,
+              "travelTimeInSeconds": 23689,
+              "trafficDelayInSeconds": 110,
+              "trafficLengthInMeters": 2974,
+              "departureTime": "2023-03-01T10:31:32.000Z",
+              "arrivalTime": "2023-03-01T17:06:17.000Z",
+              "batteryConsumptionInkWh": 148.41163526666668,
+              "remainingChargeAtArrivalInkWh": 20.0708598726,
+              "totalChargingTimeInSeconds": 3126,
+              "batteryConsumptionInPCT": 174.60192384313726,
+              "remainingChargeAtArrivalInPCT": 23.61277632070588
+            },
+            "sections": {
+              "leg": [
+                {
+                  "startPointIndex": 0,
+                  "endPointIndex": 16,
+                  "summary": {
+                    "lengthInMeters": 86901,
+                    "travelTimeInSeconds": 3595,
+                    "trafficDelayInSeconds": 31,
+                    "trafficLengthInMeters": 2129,
+                    "departureTime": "2023-03-01T10:31:32.000Z",
+                    "arrivalTime": "2023-03-01T11:31:26.000Z",
+                    "batteryConsumptionInkWh": 19.246312746666668,
+                    "remainingChargeAtArrivalInkWh": 12.753687253333332,
+                    "chargingInformationAtEndOfLeg": {
+                      "chargingConnectionInfo": {
+                        "voltageInV": 800,
+                        "currentInA": 438,
+                        "currentType": "AC1",
+                        "chargingPowerInkW": 350,
+                        "plugType": "Combo_to_IEC_62196_Type_2_Base"
+                      },
+                      "targetChargeInkWh": 25.599999999999998,
+                      "chargingTimeInSeconds": 316,
+                      "chargingParkUuid": "47273291-4c0e-3697-1702-836c00153b86",
+                      "chargingParkExternalId": "276009024813089",
+                      "chargingParkName": "IONITY",
+                      "chargingParkLocation": {
+                        "city": "Schwerte",
+                        "postalCode": "58239",
+                        "countryCode": "DE"
+                      },
+                      "chargingParkPaymentOptions": [
+                        {
+                          "method": "Subscription",
+                          "brands": [
+                            "Plugsurfing",
+                            "MyEasyCharge",
+                            "Eneco",
+                            "eSolutions Charging",
+                            "Shell Recharge",
+                            "Maserati Charge"
+                          ]
+                        }
+                      ],
+                      "chargingParkPowerInkW": 350,
+                      "chargingStopType": "Auto_Generated",
+                      "targetChargePCT": 30.11764705882353
+                    },
+                    "batteryConsumptionInPCT": 22.642720878431373,
+                    "remainingChargeAtArrivalInPCT": 15.004337945098039
+                  }
+                },
+                {
+                  "startPointIndex": 16,
+                  "endPointIndex": 43,
+                  "summary": {
+                    "lengthInMeters": 76376,
+                    "travelTimeInSeconds": 2439,
+                    "trafficDelayInSeconds": 79,
+                    "trafficLengthInMeters": 845,
+                    "departureTime": "2023-03-01T11:36:42.000Z",
+                    "arrivalTime": "2023-03-01T12:17:21.000Z",
+                    "batteryConsumptionInkWh": 19.951183940000004,
+                    "remainingChargeAtArrivalInkWh": 5.648816059999994,
+                    "chargingInformationAtEndOfLeg": {
+                      "chargingConnectionInfo": {
+                        "voltageInV": 500,
+                        "currentInA": 600,
+                        "currentType": "AC3",
+                        "chargingPowerInkW": 300,
+                        "plugType": "Combo_to_IEC_62196_Type_2_Base"
+                      },
+                      "targetChargeInkWh": 39.64,
+                      "chargingTimeInSeconds": 739,
+                      "chargingParkUuid": "79b2c492-3c7f-3260-be19-32f100153b86",
+                      "chargingParkExternalId": "276009026349976",
+                      "chargingParkName": "E.ON",
+                      "chargingParkLocation": {
+                        "city": "Gütersloh",
+                        "postalCode": "33334",
+                        "countryCode": "DE"
+                      },
+                      "chargingParkPaymentOptions": [
+                        { "method": "Direct" },
+                        {
+                          "method": "Subscription",
+                          "brands": [
+                            "Plugsurfing",
+                            "MyEasyCharge",
+                            "Eneco",
+                            "eSolutions Charging",
+                            "Shell Recharge",
+                            "Maserati Charge"
+                          ]
+                        }
+                      ],
+                      "chargingParkPowerInkW": 300,
+                      "chargingStopType": "Auto_Generated",
+                      "targetChargePCT": 46.63529411764706
+                    },
+                    "batteryConsumptionInPCT": 23.471981105882357,
+                    "remainingChargeAtArrivalInPCT": 6.645665952941171
+                  }
+                },
+                {
+                  "startPointIndex": 43,
+                  "endPointIndex": 71,
+                  "summary": {
+                    "lengthInMeters": 120003,
+                    "travelTimeInSeconds": 3724,
+                    "trafficDelayInSeconds": 0,
+                    "trafficLengthInMeters": 0,
+                    "departureTime": "2023-03-01T12:29:40.000Z",
+                    "arrivalTime": "2023-03-01T13:31:43.000Z",
+                    "batteryConsumptionInkWh": 30.526617746666673,
+                    "remainingChargeAtArrivalInkWh": 9.113382253333327,
+                    "chargingInformationAtEndOfLeg": {
+                      "chargingConnectionInfo": {
+                        "voltageInV": 800,
+                        "currentInA": 375,
+                        "currentType": "DC",
+                        "chargingPowerInkW": 300,
+                        "plugType": "Combo_to_IEC_62196_Type_2_Base"
+                      },
+                      "targetChargeInkWh": 34.959999999999994,
+                      "chargingTimeInSeconds": 576,
+                      "chargingParkUuid": "0fb21743-880d-35e1-a224-de3f00153b86",
+                      "chargingParkExternalId": "276009026302797",
+                      "chargingParkName": "Aral pulse",
+                      "chargingParkLocation": {
+                        "street": "Am Leineufer",
+                        "houseNumber": "52",
+                        "city": "Stöcken",
+                        "postalCode": "30419",
+                        "countryCode": "DE"
+                      },
+                      "chargingParkPaymentOptions": [
+                        { "method": "Direct" },
+                        {
+                          "method": "Subscription",
+                          "brands": [
+                            "MyEasyCharge",
+                            "Eneco",
+                            "eSolutions Charging",
+                            "Shell Recharge",
+                            "Maserati Charge"
+                          ]
+                        }
+                      ],
+                      "chargingParkPowerInkW": 300,
+                      "chargingStopType": "Auto_Generated",
+                      "targetChargePCT": 41.12941176470588
+                    },
+                    "batteryConsumptionInPCT": 35.913667937254914,
+                    "remainingChargeAtArrivalInPCT": 10.72162618039215
+                  }
+                },
+                {
+                  "startPointIndex": 71,
+                  "endPointIndex": 103,
+                  "summary": {
+                    "lengthInMeters": 60922,
+                    "travelTimeInSeconds": 1995,
+                    "trafficDelayInSeconds": 0,
+                    "trafficLengthInMeters": 0,
+                    "departureTime": "2023-03-01T13:41:19.000Z",
+                    "arrivalTime": "2023-03-01T14:14:34.000Z",
+                    "batteryConsumptionInkWh": 14.414117373333335,
+                    "remainingChargeAtArrivalInkWh": 20.54588262666666,
+                    "chargingInformationAtEndOfLeg": {
+                      "chargingConnectionInfo": {
+                        "voltageInV": 800,
+                        "currentInA": 375,
+                        "currentType": "DC",
+                        "chargingPowerInkW": 300,
+                        "plugType": "Combo_to_IEC_62196_Type_2_Base"
+                      },
+                      "targetChargeInkWh": 34.599999999999994,
+                      "chargingTimeInSeconds": 341,
+                      "chargingParkUuid": "6fd821e1-9dd1-332b-4398-40e000153b86",
+                      "chargingParkExternalId": "276009026290908",
+                      "chargingParkName": "Aral pulse",
+                      "chargingParkLocation": {
+                        "street": "Hansestraße",
+                        "houseNumber": "47",
+                        "city": "Veltenhof-Rühme",
+                        "postalCode": "38112",
+                        "countryCode": "DE"
+                      },
+                      "chargingParkPaymentOptions": [
+                        { "method": "Direct" },
+                        {
+                          "method": "Subscription",
+                          "brands": [
+                            "MyEasyCharge",
+                            "Eneco",
+                            "eSolutions Charging",
+                            "Shell Recharge",
+                            "Maserati Charge"
+                          ]
+                        }
+                      ],
+                      "chargingParkPowerInkW": 300,
+                      "chargingStopType": "Auto_Generated",
+                      "targetChargePCT": 40.705882352941174
+                    },
+                    "batteryConsumptionInPCT": 16.957785145098043,
+                    "remainingChargeAtArrivalInPCT": 24.17162661960784
+                  }
+                },
+                {
+                  "startPointIndex": 103,
+                  "endPointIndex": 128,
+                  "summary": {
+                    "lengthInMeters": 116835,
+                    "travelTimeInSeconds": 3388,
+                    "trafficDelayInSeconds": 0,
+                    "trafficLengthInMeters": 0,
+                    "departureTime": "2023-03-01T14:20:15.000Z",
+                    "arrivalTime": "2023-03-01T15:16:42.000Z",
+                    "batteryConsumptionInkWh": 30.426066713333338,
+                    "remainingChargeAtArrivalInkWh": 4.1739332866666565,
+                    "chargingInformationAtEndOfLeg": {
+                      "chargingConnectionInfo": {
+                        "voltageInV": 600,
+                        "currentInA": 500,
+                        "currentType": "DC",
+                        "chargingPowerInkW": 300,
+                        "plugType": "Combo_to_IEC_62196_Type_2_Base"
+                      },
+                      "targetChargeInkWh": 40,
+                      "chargingTimeInSeconds": 776,
+                      "chargingParkUuid": "174b79be-c5d0-30ef-5cad-22a900153b86",
+                      "chargingParkExternalId": "276009007344171",
+                      "chargingParkName": "Allego",
+                      "chargingParkLocation": {
+                        "street": "Gewerbestraße",
+                        "houseNumber": "1",
+                        "city": "Möckern",
+                        "postalCode": "39291",
+                        "countryCode": "DE"
+                      },
+                      "chargingParkPaymentOptions": [
+                        { "method": "Direct" },
+                        {
+                          "method": "Subscription",
+                          "brands": [
+                            "Plugsurfing",
+                            "MyEasyCharge",
+                            "Eneco",
+                            "eSolutions Charging",
+                            "Shell Recharge",
+                            "Maserati Charge"
+                          ]
+                        }
+                      ],
+                      "chargingParkPowerInkW": 300,
+                      "chargingStopType": "Auto_Generated",
+                      "targetChargePCT": 47.05882352941177
+                    },
+                    "batteryConsumptionInPCT": 35.79537260392158,
+                    "remainingChargeAtArrivalInPCT": 4.910509749019596
+                  }
+                },
+                {
+                  "startPointIndex": 128,
+                  "endPointIndex": 144,
+                  "summary": {
+                    "lengthInMeters": 70967,
+                    "travelTimeInSeconds": 2089,
+                    "trafficDelayInSeconds": 0,
+                    "trafficLengthInMeters": 0,
+                    "departureTime": "2023-03-01T15:29:38.000Z",
+                    "arrivalTime": "2023-03-01T16:04:26.000Z",
+                    "batteryConsumptionInkWh": 18.67139742666667,
+                    "remainingChargeAtArrivalInkWh": 21.32860257333333,
+                    "chargingInformationAtEndOfLeg": {
+                      "chargingConnectionInfo": {
+                        "voltageInV": 500,
+                        "currentInA": 350,
+                        "currentType": "DC",
+                        "chargingPowerInkW": 175,
+                        "plugType": "Combo_to_IEC_62196_Type_2_Base"
+                      },
+                      "targetChargeInkWh": 35.2467991926,
+                      "chargingTimeInSeconds": 378,
+                      "chargingParkUuid": "2fa2db41-d8ab-332b-990d-579d00153b86",
+                      "chargingParkExternalId": "276009026310522",
+                      "chargingParkName": "TotalEnergies",
+                      "chargingParkLocation": {
+                        "street": "Am Bahnhof Lienewitz",
+                        "city": "Schwielowsee",
+                        "postalCode": "14548",
+                        "countryCode": "DE"
+                      },
+                      "chargingParkPaymentOptions": [
+                        {
+                          "method": "Subscription",
+                          "brands": [
+                            "Plugsurfing",
+                            "MyEasyCharge",
+                            "Eneco",
+                            "eSolutions Charging",
+                            "Shell Recharge",
+                            "Maserati Charge"
+                          ]
+                        }
+                      ],
+                      "chargingParkPowerInkW": 175,
+                      "chargingStopType": "Auto_Generated",
+                      "targetChargePCT": 41.46682257952941
+                    },
+                    "batteryConsumptionInPCT": 21.966349913725495,
+                    "remainingChargeAtArrivalInPCT": 25.092473615686274
+                  }
+                }
+              ],
+              "urban": [
+                {
+                  "startPointIndex": 0,
+                  "endPointIndex": 103
+                },
+                {
+                  "startPointIndex": 165,
+                  "endPointIndex": 206
+                },
+                {
+                  "startPointIndex": 218,
+                  "endPointIndex": 253
+                },
+                {
+                  "startPointIndex": 281,
+                  "endPointIndex": 374
+                },
+                {
+                  "startPointIndex": 378,
+                  "endPointIndex": 379
+                },
+                {
+                  "startPointIndex": 427,
+                  "endPointIndex": 436
+                },
+                {
+                  "startPointIndex": 439,
+                  "endPointIndex": 444
+                },
+                {
+                  "startPointIndex": 523,
+                  "endPointIndex": 540
+                },
+                {
+                  "startPointIndex": 604,
+                  "endPointIndex": 606
+                },
+                {
+                  "startPointIndex": 693,
+                  "endPointIndex": 699
+                },
+                {
+                  "startPointIndex": 760,
+                  "endPointIndex": 778
+                },
+                {
+                  "startPointIndex": 780,
+                  "endPointIndex": 781
+                },
+                {
+                  "startPointIndex": 789,
+                  "endPointIndex": 855
+                },
+                {
+                  "startPointIndex": 932,
+                  "endPointIndex": 941
+                },
+                {
+                  "startPointIndex": 993,
+                  "endPointIndex": 995
+                },
+                {
+                  "startPointIndex": 1088,
+                  "endPointIndex": 1090
+                },
+                {
+                  "startPointIndex": 1096,
+                  "endPointIndex": 1112
+                },
+                {
+                  "startPointIndex": 1147,
+                  "endPointIndex": 1149
+                },
+                {
+                  "startPointIndex": 1160,
+                  "endPointIndex": 1181
+                },
+                {
+                  "startPointIndex": 1206,
+                  "endPointIndex": 1209
+                },
+                {
+                  "startPointIndex": 1437,
+                  "endPointIndex": 1453
+                },
+                {
+                  "startPointIndex": 1471,
+                  "endPointIndex": 1495
+                },
+                {
+                  "startPointIndex": 1573,
+                  "endPointIndex": 1574
+                },
+                {
+                  "startPointIndex": 1579,
+                  "endPointIndex": 1594
+                },
+                {
+                  "startPointIndex": 1597,
+                  "endPointIndex": 1602
+                },
+                {
+                  "startPointIndex": 1630,
+                  "endPointIndex": 1644
+                },
+                {
+                  "startPointIndex": 1761,
+                  "endPointIndex": 1762
+                },
+                {
+                  "startPointIndex": 1823,
+                  "endPointIndex": 1825
+                },
+                {
+                  "startPointIndex": 1948,
+                  "endPointIndex": 1952
+                },
+                {
+                  "startPointIndex": 2100,
+                  "endPointIndex": 2106
+                },
+                {
+                  "startPointIndex": 2263,
+                  "endPointIndex": 2269
+                },
+                {
+                  "startPointIndex": 2288,
+                  "endPointIndex": 2298
+                },
+                {
+                  "startPointIndex": 2305,
+                  "endPointIndex": 2320
+                },
+                {
+                  "startPointIndex": 2371,
+                  "endPointIndex": 2374
+                },
+                {
+                  "startPointIndex": 2441,
+                  "endPointIndex": 2450
+                },
+                {
+                  "startPointIndex": 2896,
+                  "endPointIndex": 2899
+                },
+                {
+                  "startPointIndex": 3045,
+                  "endPointIndex": 3051
+                },
+                {
+                  "startPointIndex": 3072,
+                  "endPointIndex": 3075
+                },
+                {
+                  "startPointIndex": 3352,
+                  "endPointIndex": 3471
+                },
+                {
+                  "startPointIndex": 3546,
+                  "endPointIndex": 3561
+                },
+                {
+                  "startPointIndex": 3605,
+                  "endPointIndex": 3647
+                },
+                {
+                  "startPointIndex": 4029,
+                  "endPointIndex": 4068
+                },
+                {
+                  "startPointIndex": 4163,
+                  "endPointIndex": 4165
+                },
+                {
+                  "startPointIndex": 4444,
+                  "endPointIndex": 4451
+                },
+                {
+                  "startPointIndex": 4846,
+                  "endPointIndex": 4862
+                },
+                {
+                  "startPointIndex": 5454,
+                  "endPointIndex": 5458
+                },
+                {
+                  "startPointIndex": 5497,
+                  "endPointIndex": 5504
+                },
+                {
+                  "startPointIndex": 6001,
+                  "endPointIndex": 6010
+                },
+                {
+                  "startPointIndex": 6305,
+                  "endPointIndex": 6306
+                },
+                {
+                  "startPointIndex": 6315,
+                  "endPointIndex": 6325
+                },
+                {
+                  "startPointIndex": 6336,
+                  "endPointIndex": 6349
+                },
+                {
+                  "startPointIndex": 6357,
+                  "endPointIndex": 6646
+                }
+              ],
+              "tunnel": [
+                {
+                  "startPointIndex": 1110,
+                  "endPointIndex": 1113
+                },
+                {
+                  "startPointIndex": 6344,
+                  "endPointIndex": 6352
+                },
+                {
+                  "startPointIndex": 6362,
+                  "endPointIndex": 6376
+                }
+              ],
+              "motorway": [
+                {
+                  "startPointIndex": 98,
+                  "endPointIndex": 1310
+                },
+                {
+                  "startPointIndex": 1338,
+                  "endPointIndex": 2006
+                },
+                {
+                  "startPointIndex": 2051,
+                  "endPointIndex": 3388
+                },
+                {
+                  "startPointIndex": 3491,
+                  "endPointIndex": 4024
+                },
+                {
+                  "startPointIndex": 4073,
+                  "endPointIndex": 5053
+                },
+                {
+                  "startPointIndex": 5132,
+                  "endPointIndex": 5679
+                },
+                {
+                  "startPointIndex": 5797,
+                  "endPointIndex": 6485
+                }
+              ],
+              "unpaved": [
+                {
+                  "startPointIndex": 5736,
+                  "endPointIndex": 5745
+                }
+              ],
+              "country": [
+                {
+                  "startPointIndex": 0,
+                  "endPointIndex": 6646,
+                  "countryCodeISO3": "DEU"
+                }
+              ],
+              "traffic": [
+                {
+                  "startPointIndex": 206,
+                  "endPointIndex": 212,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 54,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 230,
+                  "endPointIndex": 232,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 64,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": {
+                    "causes": [{ "mainCauseCode": 3 }, { "mainCauseCode": 22 }],
+                    "effectCode": 1
+                  }
+                },
+                {
+                  "startPointIndex": 266,
+                  "endPointIndex": 305,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 75,
+                  "simpleCategory": "other",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 4 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 266,
+                  "endPointIndex": 305,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 75,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": {
+                    "causes": [{ "mainCauseCode": 3 }, { "mainCauseCode": 22 }],
+                    "effectCode": 1
+                  }
+                },
+                {
+                  "startPointIndex": 852,
+                  "endPointIndex": 856,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 73,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 1121,
+                  "endPointIndex": 1153,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 73,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": {
+                    "causes": [{ "mainCauseCode": 3 }, { "mainCauseCode": 22 }],
+                    "effectCode": 1
+                  }
+                },
+                {
+                  "startPointIndex": 1276,
+                  "endPointIndex": 1295,
+                  "delayInSeconds": 31,
+                  "effectiveSpeedInKmh": 82,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "minor",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 1338,
+                  "endPointIndex": 1342,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 126,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 1397,
+                  "endPointIndex": 1416,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 89,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 1397,
+                  "endPointIndex": 1411,
+                  "delayInSeconds": 79,
+                  "effectiveSpeedInKmh": 27,
+                  "simpleCategory": "jam",
+                  "magnitudeOfDelay": "minor",
+                  "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 5 }
+                },
+                {
+                  "startPointIndex": 1440,
+                  "endPointIndex": 1453,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 91,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 3032,
+                  "endPointIndex": 3038,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 138,
+                  "simpleCategory": "other",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": {
+                    "causes": [{ "mainCauseCode": 25, "subCauseCode": 1 }],
+                    "effectCode": 1
+                  }
+                },
+                {
+                  "startPointIndex": 3032,
+                  "endPointIndex": 3038,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 138,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 6484,
+                  "endPointIndex": 6485,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 45,
+                  "simpleCategory": "other",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 4 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 6484,
+                  "endPointIndex": 6485,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 45,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": {
+                    "causes": [{ "mainCauseCode": 3 }, { "mainCauseCode": 22 }],
+                    "effectCode": 1
+                  }
+                },
+                {
+                  "startPointIndex": 6586,
+                  "endPointIndex": 6589,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 33,
+                  "simpleCategory": "other",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 4 }], "effectCode": 1 }
+                },
+                {
+                  "startPointIndex": 6586,
+                  "endPointIndex": 6589,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 33,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": {
+                    "causes": [{ "mainCauseCode": 3 }, { "mainCauseCode": 22 }],
+                    "effectCode": 1
+                  }
+                },
+                {
+                  "startPointIndex": 6594,
+                  "endPointIndex": 6608,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 26,
+                  "simpleCategory": "other",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": {
+                    "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
+                    "effectCode": 1
+                  }
+                },
+                {
+                  "startPointIndex": 6594,
+                  "endPointIndex": 6608,
+                  "delayInSeconds": 0,
+                  "effectiveSpeedInKmh": 26,
+                  "simpleCategory": "road_work",
+                  "magnitudeOfDelay": "indefinite",
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
                 }
               ]
             }

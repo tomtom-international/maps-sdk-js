@@ -1,17 +1,22 @@
-import { LatLngPointAPI } from "./APITypes";
+import { LatLngPointAPI } from "./APIResponseTypes";
+import { ChargingModel } from "./VehicleEngineParams";
 
 /**
  * @ignore
  */
 export type PointWaypointAPI = {
-    waypointSourceType: "User_Defined";
+    waypointSourceType: "USER_DEFINED" | "AUTO_GENERATED";
     supportingPointIndex: number;
 };
+
+export type ChargingParametersAPI = Omit<ChargingModel, "maxChargeKWH">;
 
 /**
  * @ignore
  */
 export type CalculateRoutePOSTDataAPI = {
-    supportingPoints: LatLngPointAPI[];
+    supportingPoints?: LatLngPointAPI[];
     pointWaypoints?: PointWaypointAPI[];
+    // only used for LDEVR:
+    chargingParameters?: ChargingParametersAPI;
 };

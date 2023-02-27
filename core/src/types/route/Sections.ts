@@ -1,4 +1,4 @@
-import { Summary } from "./Summary";
+import { LegSummary } from "./Summary";
 
 /**
  * Base type for all route section properties.
@@ -126,7 +126,7 @@ export type LegSectionProps = Omit<SectionProps, "startPointIndex" | "endPointIn
     /**
      * Summary information for this specific leg.
      */
-    summary: Summary;
+    summary: LegSummary;
 };
 
 /**

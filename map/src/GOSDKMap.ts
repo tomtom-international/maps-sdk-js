@@ -8,10 +8,17 @@ import { EventsProxy } from "./core";
 import { isLayerLocalizable } from "./utils/localization";
 
 /**
- * The map object displays a live map on a web application.
+ * The map object displays the TomTom live map on a web application and allows to easily integrate its services on it.
+ * * It uses MapLibre and exposes its Map instance via a "mapLibreMap" property.
  */
 export class GOSDKMap {
     mapReady = false;
+    /**
+     * The MapLibre Map instance.
+     * * Once the SDK Map is constructed, this object is ready to be used.
+     * * Use it whenever you want to leverage MapLibre's power directly.
+     * @see https://maplibre.org/maplibre-gl-js-docs/api/map/#map-instance-members
+     */
     readonly mapLibreMap: Map;
     private goSDKParams: GOSDKMapParams;
     _eventsProxy: EventsProxy;
@@ -36,6 +43,10 @@ export class GOSDKMap {
         goSDKParams?.language && this.setLanguage(goSDKParams?.language);
     }
 
+    /**
+     * Changes the map style on the fly, without reloading the map.
+     * @param style The new style to set.
+     */
     setStyle = (style: StyleInput): void => {
         this.goSDKParams = { ...this.goSDKParams, style };
         this.mapReady = false;

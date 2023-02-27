@@ -10,6 +10,7 @@ import {
     WaypointProps
 } from "@anw/go-sdk-js/core";
 import isNil from "lodash/isNil";
+import omit from "lodash/omit";
 import { Position } from "geojson";
 import {
     CalculateRouteParams,
@@ -17,23 +18,28 @@ import {
     InputSectionTypes,
     ThrillingParams
 } from "./types/CalculateRouteParams";
-import { CommonServiceParams } from "../shared";
 import { appendByRepeatingParamName, appendCommonParams } from "../shared/RequestBuildingUtils";
+import { VehicleDimensions, VehicleParameters } from "./types/VehicleParams";
 import {
-    CombustionConsumptionModel,
     ConsumptionModelEfficiency,
     ElectricConsumptionModel,
     SpeedToConsumptionRate,
-    VehicleConsumption,
-    VehicleDimensions,
-    VehicleParameters
-} from "./types/VehicleParams";
+    VehicleEngine,
+    ChargingPreferences,
+    ElectricVehicleEngine,
+    CombustionVehicleEngine
+} from "./types/VehicleEngineParams";
 import { FetchInput } from "../shared/types/Fetch";
 import { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/APIPOSTRequestTypes";
-import { LatLngPointAPI } from "./types/APITypes";
+import { LatLngPointAPI } from "./types/APIResponseTypes";
 
-const buildURLBasePath = (params: CommonServiceParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}/routing/1/calculateRoute`;
+// Are these params about Long Distance EV Routing:
+const isLDEVR = (params: CalculateRouteParams): boolean =>
+    params.vehicle?.engine?.type == "electric" && !!params.vehicle.engine.chargingPreferences;
+
+const buildURLBasePath = (params: CalculateRouteParams): string =>
+    params.customServiceBaseURL ||
+    `${params.commonBaseURL}/routing/1/${isLDEVR(params) ? "calculateLongDistanceEVRoute" : "calculateRoute"}`;
 
 const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
@@ -123,17 +129,22 @@ const buildSpeedToConsumptionString = (speedsToConsumptions: SpeedToConsumptionR
         .map((speedToConsumption) => `${speedToConsumption.speedKMH},${speedToConsumption.consumptionUnitsPer100KM}`)
         .join(":");
 
-const appendCombustionConsumptionModel = (urlParams: URLSearchParams, model: CombustionConsumptionModel): void => {
-    model.speedsToConsumptionsLiters &&
+const appendCombustionEngine = (urlParams: URLSearchParams, engine: CombustionVehicleEngine): void => {
+    // (no need to append combustion vehicleEngineType since it's the default)
+    const consumptionModel = engine.model.consumption;
+    consumptionModel.speedsToConsumptionsLiters &&
         urlParams.append(
             "constantSpeedConsumptionInLitersPerHundredkm",
-            buildSpeedToConsumptionString(model.speedsToConsumptionsLiters)
+            buildSpeedToConsumptionString(consumptionModel.speedsToConsumptionsLiters)
         );
-    !isNil(model.auxiliaryPowerInLitersPerHour) &&
-        urlParams.append("auxiliaryPowerInLitersPerHour", String(model.auxiliaryPowerInLitersPerHour));
-    !isNil(model.fuelEnergyDensityInMJoulesPerLiter) &&
-        urlParams.append("fuelEnergyDensityInMJoulesPerLiter", String(model.fuelEnergyDensityInMJoulesPerLiter));
-    !isNil(model.currentFuelLiters) && urlParams.append("currentFuelInLiters", String(model.currentFuelLiters));
+    !isNil(consumptionModel.auxiliaryPowerInLitersPerHour) &&
+        urlParams.append("auxiliaryPowerInLitersPerHour", String(consumptionModel.auxiliaryPowerInLitersPerHour));
+    !isNil(consumptionModel.fuelEnergyDensityInMJoulesPerLiter) &&
+        urlParams.append(
+            "fuelEnergyDensityInMJoulesPerLiter",
+            String(consumptionModel.fuelEnergyDensityInMJoulesPerLiter)
+        );
+    engine.currentFuelInLiters && urlParams.append("currentFuelInLiters", String(engine.currentFuelInLiters));
 };
 
 const appendElectricConsumptionModel = (urlParams: URLSearchParams, model: ElectricConsumptionModel): void => {
@@ -147,18 +158,54 @@ const appendElectricConsumptionModel = (urlParams: URLSearchParams, model: Elect
         urlParams.append("consumptionInkWhPerkmAltitudeGain", String(model.consumptionInKWHPerKMAltitudeGain));
     !isNil(model.recuperationInKWHPerKMAltitudeLoss) &&
         urlParams.append("recuperationInkWhPerkmAltitudeLoss", String(model.recuperationInKWHPerKMAltitudeLoss));
-    !isNil(model.maxChargeKWH) && urlParams.append("maxChargeInkWh", String(model.maxChargeKWH));
-    !isNil(model.currentChargeKWH) && urlParams.append("currentChargeInkWh", String(model.currentChargeKWH));
 };
 
-const appendVehicleConsumption = (urlParams: URLSearchParams, consumption?: VehicleConsumption): void => {
-    if (consumption) {
-        consumption.engineType && urlParams.append("vehicleEngineType", consumption.engineType);
-        appendConsumptionEfficiency(urlParams, consumption.efficiency);
-        if (consumption.engineType === "electric") {
-            appendElectricConsumptionModel(urlParams, consumption as ElectricConsumptionModel);
+const appendChargingPreferences = (
+    urlParams: URLSearchParams,
+    preferences: ChargingPreferences | undefined,
+    maxChargeKWH: number
+): void => {
+    if (!preferences) {
+        return;
+    }
+    urlParams.append(
+        "minChargeAtDestinationInkWh",
+        String((maxChargeKWH * preferences.minChargeAtDestinationPCT) / 100)
+    );
+    urlParams.append(
+        "minChargeAtChargingStopsInkWh",
+        String((maxChargeKWH * preferences.minChargeAtChargingStopsPCT) / 100)
+    );
+};
+
+const appendElectricCharging = (urlParams: URLSearchParams, engine: ElectricVehicleEngine): void => {
+    const chargingModel = engine.model.charging;
+    if (chargingModel?.maxChargeKWH) {
+        urlParams.append("maxChargeInkWh", String(chargingModel.maxChargeKWH));
+        engine.currentChargePCT &&
+            urlParams.append(
+                "currentChargeInkWh",
+                String((chargingModel.maxChargeKWH * engine.currentChargePCT) / 100)
+            );
+        appendChargingPreferences(urlParams, engine.chargingPreferences, chargingModel.maxChargeKWH);
+    }
+    // (the rest of the charging model goes as POST data)
+};
+
+const appendElectricEngine = (urlParams: URLSearchParams, engine: ElectricVehicleEngine): void => {
+    urlParams.append("vehicleEngineType", "electric");
+    appendElectricConsumptionModel(urlParams, engine.model.consumption);
+    appendElectricCharging(urlParams, engine);
+};
+
+const appendVehicleEngine = (urlParams: URLSearchParams, engine?: VehicleEngine): void => {
+    if (engine) {
+        // (efficiency params have the same names between engine types)
+        appendConsumptionEfficiency(urlParams, engine.model.consumption.efficiency);
+        if (engine.type === "electric") {
+            appendElectricEngine(urlParams, engine);
         } else {
-            appendCombustionConsumptionModel(urlParams, consumption as CombustionConsumptionModel);
+            appendCombustionEngine(urlParams, engine);
         }
     }
 };
@@ -176,7 +223,7 @@ const appendVehicleDimensions = (urlParams: URLSearchParams, dimensions?: Vehicl
 
 const appendVehicleParams = (urlParams: URLSearchParams, vehicleParams?: VehicleParameters): void => {
     if (vehicleParams) {
-        appendVehicleConsumption(urlParams, vehicleParams.consumption);
+        appendVehicleEngine(urlParams, vehicleParams.engine);
         appendVehicleDimensions(urlParams, vehicleParams.dimensions);
         appendByRepeatingParamName(urlParams, "vehicleLoadType", vehicleParams.loadTypes);
         vehicleParams.adrCode && urlParams.append("vehicleAdrTunnelRestrictionCode", vehicleParams.adrCode);
@@ -212,7 +259,7 @@ const appendPathPOSTData = (
             if (geoInputIndex > 0 || legIndex > 0) {
                 pointWaypoints.push({
                     supportingPointIndex: supportingPointsLengthBeforePath + (leg.startPointIndex as number),
-                    waypointSourceType: "User_Defined"
+                    waypointSourceType: "USER_DEFINED"
                 });
             }
         });
@@ -222,7 +269,7 @@ const appendPathPOSTData = (
         if (geoInputIndex < geoInputs.length - 1) {
             pointWaypoints.push({
                 supportingPointIndex: supportingPointsLengthBeforePath + pathGeoInput.geometry.coordinates.length - 1,
-                waypointSourceType: "User_Defined"
+                waypointSourceType: "USER_DEFINED"
             });
         }
     }
@@ -242,17 +289,15 @@ const appendWaypointPOSTData = (
     if (geoInputIndex > 0 && geoInputIndex < geoInputs.length - 1) {
         pointWaypoints.push({
             supportingPointIndex: supportingPoints.length - 1,
-            waypointSourceType: "User_Defined"
+            waypointSourceType: "USER_DEFINED"
         });
     }
 };
 
-const buildPOSTData = (geoInputs: GeoInput[], types: GeoInputType[]): CalculateRoutePOSTDataAPI | null => {
-    if (!types.includes("path")) {
-        // (if no paths in the given geoInputs, there'll be no POST data, which will trigger a GET call)
-        return null;
-    }
-
+const buildGeoInputsPOSTData = (
+    geoInputs: GeoInput[],
+    types: GeoInputType[]
+): { supportingPoints: LatLngPointAPI[]; pointWaypoints?: PointWaypointAPI[] } => {
     const supportingPoints: LatLngPointAPI[] = [];
     const pointWaypoints: PointWaypointAPI[] = [];
 
@@ -271,6 +316,21 @@ const buildPOSTData = (geoInputs: GeoInput[], types: GeoInputType[]): CalculateR
     });
 
     return { supportingPoints, ...(pointWaypoints.length && { pointWaypoints }) };
+};
+
+const buildPOSTData = (params: CalculateRouteParams, types: GeoInputType[]): CalculateRoutePOSTDataAPI | null => {
+    const pathsIncluded = types.includes("path");
+    const ldevr = isLDEVR(params);
+    if (!pathsIncluded && !ldevr) {
+        // (if no paths in the given geoInputs nor LDEVR, there'll be no POST data, which will trigger a GET call)
+        return null;
+    }
+
+    const chargingModel = (params.vehicle?.engine as ElectricVehicleEngine)?.model.charging;
+    return {
+        ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types)),
+        ...(ldevr && chargingModel && { chargingParameters: omit(chargingModel, "maxChargeKWH") })
+    };
 };
 
 /**
@@ -302,7 +362,7 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     }
     appendVehicleParams(urlParams, params.vehicle);
 
-    const postData = buildPOSTData(params.geoInputs, geoInputTypes);
+    const postData = buildPOSTData(params, geoInputTypes);
     if (postData) {
         return {
             method: "POST",

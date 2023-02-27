@@ -1,3 +1,5 @@
+import { VehicleEngine } from "./VehicleEngineParams";
+
 /**
  * Physical properties of the vehicle (sizes and weights).
  * @group Calculate Route
@@ -47,6 +49,7 @@ export type VehicleDimensions = {
      */
     axleWeightKG?: number;
 };
+
 /**
  * @group Calculate Route
  * @category Variables
@@ -90,211 +93,6 @@ export const loadTypes = [
 export type LoadType = (typeof loadTypes)[number];
 
 /**
- * Specifies the speed-dependent component of consumption.
- * Provided as an unordered list of speed/consumption-rate pairs.
- * The list defines points on a consumption curve.
- *
- * Consumption rates for speeds not in the list are found as follows:
- * By linear interpolation, if the given speed lies in between two speeds in the list.
- * By linear extrapolation otherwise, assuming a constant (&ΔConsumption/&ΔSpeed) determined by the nearest two points in the list.
- *
- * The list must contain between 1 and 25 points (inclusive), and may not contain duplicate points for the same speed.
- * If it only contains a single point, then the consumption rate of that point is used without further processing.
- * Consumption specified for the largest speed must be greater than or equal to that of the penultimate largest speed. This ensures that extrapolation does not lead to negative consumption rates.
- * Similarly, consumption values specified for the two smallest speeds in the list cannot lead to a negative consumption rate for any smaller speed. The minimum and maximum values described here refer to the valid range for the consumption values (expressed in kWh/100km).
- *
- * Value type: Colon-delimited list of ElectricConstantSpeedConsumptionPair.
- * Minimum value: 01
- * Maximum value: 100000.0
- * @group Calculate Route
- * @category Types
- */
-export type SpeedToConsumptionRate = { speedKMH: number; consumptionUnitsPer100KM: number };
-
-/**
- * Parameters related to consumption efficiency.
- * @group Calculate Route
- * @category Types
- */
-export type ConsumptionModelEfficiency = {
-    /**
-     * Specifies the efficiency of converting stored to kinetic energy when the vehicle accelerates.
-     * * For combustion, stored energy is in the form of fuel (KineticEnergyGained/ChemicalEnergyConsumed).
-     * ChemicalEnergyConsumed is obtained by converting consumed fuel to chemical energy using fuelEnergyDensityInMJoulesPerLiter.
-     * * For electric, stored energy is energy stored in batteries (KineticEnergyGained/ElectricEnergyConsumed).
-     * * Note: This must be paired with deceleration efficiency.
-     *
-     * Minimum value: 0
-     *
-     * Maximum value: 1/deceleration
-     */
-    acceleration?: number;
-
-    /**
-     * Specifies the efficiency of converting kinetic energy to stored or not consumed energy when the vehicle decelerates.
-     * * For combustion, the energy gain is about not consuming fuel (ChemicalEnergySaved/PotentialEnergyLost).
-     * * For electric, the energy gain is about not consuming but also recharging batteries (ElectricEnergyGained/PotentialEnergyLost).
-     * (i.e., ChemicalEnergySaved/KineticEnergyLost).
-     * * ChemicalEnergySaved is obtained by converting saved (not consumed) fuel to energy using fuelEnergyDensityInMJoulesPerLiter.
-     * * Note: This must be paired with acceleration efficiency.
-     *
-     * Minimum value: 0
-     *
-     * Maximum value: 1/acceleration
-     */
-    deceleration?: number;
-
-    /**
-     * Specifies the efficiency of converting stored to potential energy when the vehicle gains elevation.
-     * * For combustion, stored energy is chemical energy stored in fuel (PotentialEnergyGained/ChemicalEnergyConsumed).
-     * ChemicalEnergyConsumed is obtained by converting consumed fuel to chemical energy using fuelEnergyDensityInMJoulesPerLiter.
-     * * For electric, stored energy is energy stored in batteries (PotentialEnergyGained/ElectricEnergyConsumed).
-     *
-     * Note: This must be paired with downhill efficiency.
-     *
-     * Minimum value: 0
-     *
-     * Maximum value: 1/downhill
-     */
-    uphill?: number;
-
-    /**
-     * Specifies the efficiency of converting potential to stored or not consumed energy when the vehicle loses elevation,
-     * * For combustion, the energy gain is about not consuming fuel (ChemicalEnergySaved/PotentialEnergyLost).
-     * ChemicalEnergySaved is obtained by converting saved (not consumed) fuel to energy using fuelEnergyDensityInMJoulesPerLiter.
-     * * For electric, the energy gain is about not consuming but also recharging batteries (ElectricEnergyGained/PotentialEnergyLost).
-     *
-     * * Note: This must be paired with uphill efficiency.
-     *
-     * Minimum value: 0
-     *
-     * Maximum value: 1/uphill
-     */
-    downhill?: number;
-};
-
-/**
- * The Combustion consumption model is used when the vehicleEngineType value is set to "combustion".
- * @group Calculate Route
- * @category Types
- */
-export type CombustionConsumptionModel = {
-    /**
-     * Specifies the speed-dependent component of consumption based on km/h and liters.
-     */
-    speedsToConsumptionsLiters: SpeedToConsumptionRate[];
-
-    /**
-     * Specifies the amount of fuel consumed for sustaining auxiliary systems of the vehicle, in liters per hour.
-     *
-     * It can be used to specify consumption due to devices and systems such as AC systems, radio, heating, etc.
-     *
-     * Minimum value: 0
-     */
-    auxiliaryPowerInLitersPerHour?: number;
-
-    /**
-     * Specifies the amount of chemical energy stored in one liter of fuel in megajoules (MJ).
-     * * It is used in conjunction with the Efficiency parameters for conversions between saved or consumed energy and fuel.
-     * * For example, energy density is 34.2 MJ/l for gasoline, and 35.8 MJ/l for Diesel fuel.
-     * * This parameter must be used/required if any *Efficiency parameter is set.
-     *
-     * Minimum value: 1.0
-     */
-    fuelEnergyDensityInMJoulesPerLiter?: number;
-
-    /**
-     * Specifies the current supply of fuel in liters.
-     *
-     * Minimum value: 0
-     */
-    currentFuelLiters?: number;
-};
-
-/**
- * @group Calculate Route
- * @category Types
- */
-export type ElectricConsumptionModel = {
-    /**
-     * Specifies the speed-dependent component of consumption based on km/h and kW/h.
-     */
-    speedsToConsumptionsKWH: SpeedToConsumptionRate[];
-    /**
-     * Specifies the amount of power consumed for sustaining auxiliary systems, in kilowatts (kW).
-     * * It can be used to specify consumption due to devices and systems such as AC systems, radio, heating, etc.
-     *
-     * Minimum value: 0
-     */
-    auxiliaryPowerInkW?: number;
-    /**
-     * Specifies the electric energy in kWh consumed by the vehicle through gaining 1000 meters of elevation.
-     * * Note: It must be paired with recuperationInkWhPerKMAltitudeLoss.
-     * * Note: It cannot be used with any efficiency parameters.
-     *
-     * Minimum value: recuperationInkWhPerKMAltitudeLoss
-     *
-     * Maximum value: 500.0
-     */
-    consumptionInKWHPerKMAltitudeGain?: number;
-    /**
-     * Specifies the electric energy in kWh gained by the vehicle through losing 1000 meters of elevation.
-     * Note: It must be paired with consumptionInkWhPerKMAltitudeGain.
-     * Note: It cannot be used with accelerationEfficiency, decelerationEfficiency, uphillEfficiency or downhillEfficiency.
-     *
-     * Minimum value: 0.0
-     * Maximum value: consumptionInkWhPerKMAltitudeGain
-     */
-    recuperationInKWHPerKMAltitudeLoss?: number;
-    /**
-     * Specifies the current electric energy supply in kilowatt-hours (kWh).
-     * * Note: Requires maxChargeInkWh to be set.
-     *
-     * Minimum value: 0
-     *
-     * Maximum value: maxChargeInkWh
-     */
-    currentChargeKWH?: number;
-    /**
-     * Specifies the maximum electric energy supply in kilowatt-hours (kWh) that may be stored in the vehicle's battery.
-     * * Note: Requires currentChargeInkWh to be set.
-     *
-     * Minimum value: currentChargeInkWh
-     */
-    maxChargeKWH?: number;
-};
-
-/**
- * The engine type of the vehicle.
- * * When a detailed Consumption model is specified, it must be consistent with the provided engine type.
- * @group Calculate Route
- * @category Types
- * @default combustion
- */
-export type VehicleEngineType = "combustion" | "electric";
-
-/**
- * The consumption model describes vehicle energy (fuel/electricity) consumption attributes.
- * * "combustion" vehicles can contain a combustion consumption model
- * * "electric" vehicles (EVs) can contain an EV consumption model
- * @group Calculate Route
- * @category Types
- */
-export type VehicleConsumption<MODEL = CombustionConsumptionModel | ElectricConsumptionModel> = MODEL & {
-    /**
-     * The engine type of the vehicle.
-     * * When a detailed consumption model is specified, it must be consistent with the value of engineType.
-     *
-     * @default combustion
-     */
-    engineType?: VehicleEngineType;
-    /**
-     * Parameters related to consumption efficiency.
-     */
-    efficiency: ConsumptionModelEfficiency;
-};
-
-/**
  *  Object describing vehicle details
  *  @group Calculate Route
  *  @category Types
@@ -303,7 +101,7 @@ export type VehicleParameters = {
     /**
      * Vehicle energy consumption attributes.
      */
-    consumption?: VehicleConsumption;
+    engine?: VehicleEngine;
     /**
      * Physical properties of the vehicle (sizes and weights).
      */

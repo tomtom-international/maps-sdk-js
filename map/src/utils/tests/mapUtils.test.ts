@@ -1,5 +1,5 @@
 import { FeatureCollection } from "geojson";
-import { omit } from "lodash";
+import omit from "lodash/omit";
 import { LayerSpecification, Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
 import { GeoJSONSourceWithLayers } from "../../core";
 import { GOSDKMap } from "../../GOSDKMap";

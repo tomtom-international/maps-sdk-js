@@ -1,4 +1,13 @@
-import { Guidance, Instruction, Summary, TrafficIncidentTEC, TravelMode } from "@anw/go-sdk-js/core";
+import {
+    BatteryCharging,
+    Guidance,
+    Instruction,
+    LegSummary,
+    PlugType,
+    RouteSummary,
+    TrafficIncidentTEC,
+    TravelMode
+} from "@anw/go-sdk-js/core";
 
 /**
  * @ignore
@@ -49,9 +58,32 @@ export type SectionAPI = {
 /**
  * @ignore
  */
-export type SummaryAPI = Omit<Summary, "arrivalTime" | "departureTime"> & {
+export type CurrentTypeAPI = "Direct_Current" | "Alternating_Current_1_Phase" | "Alternating_Current_3_Phase";
+
+// We focus on defining the (internal) API type reusing as much as possible from the SDK one.
+// This helps to track how the parsing logic "forwards" all the API parts which are the same in SDK.
+/**
+ * @ignore
+ */
+export type SummaryAPI = Omit<
+    RouteSummary & LegSummary,
+    | "arrivalTime"
+    | "departureTime"
+    | "batteryConsumptionInPCT"
+    | "remainingChargeAtArrivalInPCT"
+    | "chargingInformationAtEndOfLeg"
+> & {
     arrivalTime: string;
     departureTime: string;
+    chargingInformationAtEndOfLeg?: Omit<BatteryCharging, "targetChargePCT" | "chargingConnectionInfo"> & {
+        chargingConnectionInfo: {
+            chargingVoltageInV: number;
+            chargingCurrentInA: number;
+            chargingCurrentType: CurrentTypeAPI;
+            chargingPlugType: PlugType;
+            chargingPowerInkW: number;
+        };
+    };
 };
 
 /**

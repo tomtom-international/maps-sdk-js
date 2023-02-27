@@ -36,7 +36,13 @@
     "gurudwara",
     "APIPOST",
     "Hundredkm",
-    "Perkm"
+    "Perkm",
+    "LDEVR",
+    "Schuko",
+    "AVCON",
+    "NEMA",
+    "TEPCO",
+    "Marechal"
   ],
   "ignorePaths": [
     "**/dist/**",

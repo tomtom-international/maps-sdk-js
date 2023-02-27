@@ -13,6 +13,7 @@ export * from "./TimeZone";
 export * from "./place/poi/Fuel";
 
 export * from "./Generic";
+export * from "./route/BatteryCharging";
 export * from "./route/Guidance";
 export * from "./route/Route";
 export * from "./route/Sections";

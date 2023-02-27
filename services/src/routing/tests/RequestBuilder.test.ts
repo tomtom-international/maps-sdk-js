@@ -10,7 +10,6 @@ import { CalculateRoutePOSTDataAPI } from "../types/APIPOSTRequestTypes";
 describe("Calculate Route request URL building functional tests", () => {
     test.each(sdkAndAPIRequests)(
         "'%s'",
-        // @ts-ignore
         (_name: string, params: CalculateRouteParams, fetchInput: FetchInput<CalculateRoutePOSTDataAPI>) => {
             expect(buildCalculateRouteRequest(params)).toStrictEqual(fetchInput);
         }

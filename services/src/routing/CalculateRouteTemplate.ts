@@ -5,7 +5,7 @@ import { buildCalculateRouteRequest } from "./RequestBuilder";
 import { parseCalculateRouteResponse } from "./ResponseParser";
 import { fetchWith } from "../shared/Fetch";
 import { FetchInput } from "../shared/types/Fetch";
-import { CalculateRouteResponseAPI } from "./types/APITypes";
+import { CalculateRouteResponseAPI } from "./types/APIResponseTypes";
 import { parseRoutingResponseError } from "./RoutingResponseErrorParser";
 import { calculateRouteRequestSchema, calculateRouteGeoInputsRefinement } from "./CalculateRouteRequestSchema";
 import { CalculateRoutePOSTDataAPI } from "./types/APIPOSTRequestTypes";

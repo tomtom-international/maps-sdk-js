@@ -1,10 +1,12 @@
+import { BatteryCharging } from "./BatteryCharging";
+
 /**
  * Common summary type for a route or route leg.
  * Contains departure/arrival times, lengths and durations.
  * @group Route
  * @category Types
  */
-export type Summary = {
+export type SummaryBase = {
     /**
      * The arrival time at the end of the route or leg.
      */
@@ -47,6 +49,13 @@ export type Summary = {
      * Included if requested using the computeTravelTimeFor parameter.
      */
     liveTrafficIncidentsTravelTimeInSeconds?: number;
+};
+
+/**
+ * @group Route
+ * @category Types
+ */
+export type CombustionSummary = SummaryBase & {
     /**
      * The estimated fuel consumption in liters using the Combustion Consumption Model.
      *
@@ -57,7 +66,13 @@ export type Summary = {
      * The value will be positive.
      */
     fuelConsumptionInLiters?: number;
+};
 
+/**
+ * @group Route
+ * @category Types
+ */
+export type ElectricSummary = SummaryBase & {
     /**
      * The estimated electric energy consumption in kilowatt-hours (kWh) using the Electric Consumption Model.
      *
@@ -73,4 +88,53 @@ export type Summary = {
      * unconstrained recuperation is assumed in the consumption calculation.
      */
     batteryConsumptionInkWh?: number;
+
+    /**
+     * The estimated electric energy consumption in battery %.
+     * * Present only if maxChargeInkWh was set in request and batteryConsumptionInkWh is available in summary.
+     */
+    batteryConsumptionInPCT?: number;
+
+    /**
+     * LDEVR (Long Distance EV Routing) - only
+     * The estimated battery charge in kWh upon arrival at the end of the leg or the route.
+     */
+    remainingChargeAtArrivalInkWh?: number;
+    /**
+     * LDEVR (Long Distance EV Routing) - only
+     * The estimated battery charge in % upon arrival at the end of the leg or the route.
+     */
+    remainingChargeAtArrivalInPCT?: number;
+};
+
+/**
+ * @group Route
+ * @category Types
+ */
+export type SummaryWithConsumption = CombustionSummary & ElectricSummary;
+
+/**
+ * Summary for the whole route.
+ * @group Route
+ * @category Types
+ */
+export type RouteSummary = SummaryWithConsumption & {
+    /**
+     * The estimated time spent at all charging stops in the route.
+     * * The travelTimeInSeconds of the route includes the totalChargingTimeInSeconds value.
+     */
+    totalChargingTimeInSeconds?: number;
+};
+
+/**
+ * Summary for a route leg.
+ * @group Route
+ * @category Types
+ */
+export type LegSummary = SummaryWithConsumption & {
+    /**
+     * Charging information at the end of a leg.
+     * * It is contained in the leg summary if and only if the leg ends at a charging stop.
+     */
+    chargingInformationAtEndOfLeg?: BatteryCharging;
 };

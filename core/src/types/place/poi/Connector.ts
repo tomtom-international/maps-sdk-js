@@ -25,6 +25,16 @@ export const connectorTypes = [
  */
 export type ConnectorType = (typeof connectorTypes)[number];
 
+export const currentTypes = ["AC1", "AC3", "DC"] as const;
+
+/**
+ * Current types.
+ * * AC1: Alternating_Current_1_Phase
+ * * AC3: Alternating_Current_3_Phase
+ * * DC: Direct_Current
+ */
+export type CurrentType = (typeof currentTypes)[number];
+
 /**
  * @group Place
  * @category Types
@@ -33,6 +43,6 @@ export type Connector = {
     type: ConnectorType;
     ratedPowerKW: number;
     currentA: number;
-    currentType: string;
+    currentType: CurrentType;
     voltageV: number;
 };

@@ -1,7 +1,7 @@
+import { Feature, LineString } from "geojson";
 import { Guidance } from "./Guidance";
 import { SectionsProps } from "./Sections";
-import { Summary } from "./Summary";
-import { Feature, LineString } from "geojson";
+import { RouteSummary } from "./Summary";
 import { FeatureCollectionWithProperties } from "../ExtendedGeoJSON";
 
 /**
@@ -38,7 +38,7 @@ export type RouteProps = {
      * Common summary type for the route.
      * * Contains departure/arrival times, lengths and durations.
      */
-    summary: Summary;
+    summary: RouteSummary;
     /**
      * Route sections are parts of the planned route that have specific characteristics.
      */

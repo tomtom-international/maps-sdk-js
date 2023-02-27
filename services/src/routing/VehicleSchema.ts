@@ -1,38 +1,8 @@
 import { z } from "zod";
+import { currentTypes, plugTypes } from "@anw/go-sdk-js/core";
 
-const combustionConsumptionModelSchema = z.object({
-    speedsToConsumptionsLiters: z
-        .array(
-            z.object({
-                speedKMH: z.number(),
-                consumptionUnitsPer100KM: z.number()
-            })
-        )
-        .optional(),
-    auxiliaryPowerInLitersPerHour: z.number().optional(),
-    fuelEnergyDensityInMJoulesPerLiter: z.number().optional(),
-    currentFuelLiters: z.number().optional()
-});
-
-const electricConsumptionModelSchema = z.object({
-    speedsToConsumptionsKWH: z
-        .array(
-            z.object({
-                speedKMH: z.number(),
-                consumptionUnitsPer100KM: z.number()
-            })
-        )
-        .optional(),
-    auxiliaryPowerInkW: z.number().optional(),
-    consumptionInKWHPerKMAltitudeGain: z.number().max(500.0).optional(),
-    recuperationInKWHPerKMAltitudeLoss: z.number().optional(),
-    currentChargeKWH: z.number().optional(),
-    maxChargeKWH: z.number().optional()
-});
-
-const vehicleConsumptionSchema = z
+const efficiencySchema = z
     .object({
-        engineType: z.enum(["combustion", "electric"]).optional(),
         efficiency: z
             .object({
                 acceleration: z.number().min(0).max(1),
@@ -42,9 +12,90 @@ const vehicleConsumptionSchema = z
             })
             .partial()
     })
-    .merge(combustionConsumptionModelSchema)
-    .merge(electricConsumptionModelSchema)
-    .refine((data) => Boolean(data.speedsToConsumptionsLiters) || Boolean(data.speedsToConsumptionsKWH));
+    .partial();
+
+const combustionModelSchema = z.object({
+    consumption: efficiencySchema.merge(
+        z.object({
+            speedsToConsumptionsLiters: z
+                .array(
+                    z.object({
+                        speedKMH: z.number(),
+                        consumptionUnitsPer100KM: z.number()
+                    })
+                )
+                .optional(),
+            auxiliaryPowerInLitersPerHour: z.number().optional(),
+            fuelEnergyDensityInMJoulesPerLiter: z.number().optional()
+        })
+    )
+});
+
+const chargingConnectorSchema = z.object({
+    currentType: z.enum(currentTypes),
+    plugTypes: z.array(z.enum(plugTypes)).min(1),
+    efficiency: z.number().optional(),
+    baseLoadInkW: z.number().optional(),
+    maxPowerInkW: z.number().optional(),
+    maxVoltageInV: z.number().optional(),
+    maxCurrentInA: z.number().optional(),
+    voltageRange: z
+        .object({
+            minVoltageInV: z.number().optional(),
+            maxVoltageInV: z.number().optional()
+        })
+        .optional()
+});
+
+const batteryCurveSchema = z.object({
+    stateOfChargeInkWh: z.number().min(0),
+    maxPowerInkW: z.number().positive()
+});
+
+const electricEngineModelSchema = z.object({
+    consumption: efficiencySchema.merge(
+        z.object({
+            speedsToConsumptionsKWH: z
+                .array(
+                    z.object({
+                        speedKMH: z.number(),
+                        consumptionUnitsPer100KM: z.number()
+                    })
+                )
+                .optional(),
+            auxiliaryPowerInkW: z.number().optional(),
+            consumptionInKWHPerKMAltitudeGain: z.number().max(500.0).optional(),
+            recuperationInKWHPerKMAltitudeLoss: z.number().optional()
+        })
+    ),
+    charging: z
+        .object({
+            maxChargeKWH: z.number(),
+            batteryCurve: z.array(batteryCurveSchema).optional(),
+            connectors: z.array(chargingConnectorSchema).min(1).optional()
+        })
+        .optional()
+});
+
+const combustionEngineSchema = z.object({
+    type: z.literal("combustion"),
+    currentFuelInLiters: z.number().optional(),
+    model: combustionModelSchema
+});
+
+const pct = z.number().min(0).max(100);
+
+const electricEngineSchema = z.object({
+    type: z.literal("electric"),
+    currentChargePCT: pct.optional(),
+    model: electricEngineModelSchema,
+    chargingPreferences: z
+        .object({
+            minChargeAtDestinationPCT: pct,
+            minChargeAtChargingStopsPCT: pct
+        })
+        .optional()
+});
 
 const vehicleDimensionsSchema = z
     .object({
@@ -55,6 +106,7 @@ const vehicleDimensionsSchema = z
         axleWeightKG: z.number()
     })
     .partial();
+
 /**
  * @ignore
  * @group Calculate Route
@@ -62,7 +114,7 @@ const vehicleDimensionsSchema = z
  */
 export const vehicleParametersSchema = z
     .object({
-        consumption: vehicleConsumptionSchema,
+        engine: z.discriminatedUnion("type", [combustionEngineSchema, electricEngineSchema]),
         dimensions: vehicleDimensionsSchema,
         loadTypes: z.string().array(),
         maxSpeedKMH: z.number().min(0).max(250),

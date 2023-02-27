@@ -1,8 +1,9 @@
 import { Routes } from "@anw/go-sdk-js/core";
+import { CalculateRouteParams } from "..";
 import apiAndParsedResponses from "./ResponseParser.data.json";
 import longAPIResponse from "./ResponseParserPerf.data.json";
 import { parseCalculateRouteResponse } from "../ResponseParser";
-import { CalculateRouteResponseAPI } from "../types/APITypes";
+import { CalculateRouteResponseAPI } from "../types/APIResponseTypes";
 import errorResponses from "./ResponseParserError.data.json";
 import { parseRoutingResponseError } from "../RoutingResponseErrorParser";
 import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/APIResponseErrorTypes";
@@ -15,10 +16,15 @@ describe("Calculate Route response parsing functional tests", () => {
     test.each(apiAndParsedResponses)(
         "'%s'",
         // @ts-ignore
-        (_name: string, apiResponse: CalculateRouteResponseAPI, parsedResponse: Routes) => {
+        (
+            _name: string,
+            apiResponse: CalculateRouteResponseAPI,
+            params: CalculateRouteParams,
+            parsedResponse: Routes
+        ) => {
             // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
             // (We reparse the objects to compare them ignoring the order of properties)
-            expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse)))).toMatchObject(
+            expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse, params)))).toMatchObject(
                 JSON.parse(JSON.stringify(parsedResponse))
             );
         }
@@ -30,7 +36,10 @@ describe("Calculate Route response parsing performance tests", () => {
         "Parsing a very long API response " + "(e.g. Lisbon - Moscow with sections, instructions and alternatives)",
         () => {
             expect(
-                bestExecutionTimeMS(() => parseCalculateRouteResponse(longAPIResponse as CalculateRouteResponseAPI), 20)
+                bestExecutionTimeMS(
+                    () => parseCalculateRouteResponse(longAPIResponse as CalculateRouteResponseAPI, {} as never),
+                    20
+                )
             ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.responseParsing);
         }
     );
