@@ -1,4 +1,4 @@
-import { Places } from "@anw/go-sdk-js/core";
+import { Places, Place } from "@anw/go-sdk-js/core";
 import { GeoJSONSource, Map } from "maplibre-gl";
 import { GeoJSONPlaces } from "../GeoJSONPlaces";
 import { GOSDKMap } from "../../GOSDKMap";
@@ -31,8 +31,20 @@ describe("GeoJSON Places module tests", () => {
             type: "FeatureCollection",
             features: [{ properties: { address: { freeformAddress: "TEST_ADDRESS" } } }]
         } as Places;
-        const places = await GeoJSONPlaces.init(goSDKMapMock);
+        const places = await GeoJSONPlaces.init(goSDKMapMock, {
+            iconConfig: {
+                iconStyle: "circle"
+            },
+            textConfig: {
+                textColor: "green"
+            },
+            extraFeatureProps: { prop1: (place: Place) => `Address: ${place.properties.address}` }
+        });
         places.show(testPlaces);
+        // to be able to spy on private methods
+        const placesAny: any = places;
+        jest.spyOn(placesAny, "updateLayerSpecsAndData");
+        jest.spyOn(placesAny, "updateSourceData");
         jest.spyOn(goSDKMapMock.mapLibreMap, "getStyle");
         places.applyConfig({
             iconConfig: {
@@ -40,8 +52,28 @@ describe("GeoJSON Places module tests", () => {
             }
         });
         expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
-        places.clear();
+        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(1);
+        expect(placesAny.updateLayerSpecsAndData).toHaveBeenCalledTimes(1);
 
+        places.setExtraFeatureProps({
+            prop: "static"
+        });
+        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(2);
+
+        places.applyTextConfig({
+            textFont: ["Noto-Medium"],
+            textSize: 16
+        });
+        expect(placesAny.updateLayerSpecsAndData).toHaveBeenCalledTimes(2);
+        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(3);
+
+        places.applyIconConfig({
+            iconStyle: "poi-like"
+        });
+        expect(placesAny.updateLayerSpecsAndData).toHaveBeenCalledTimes(3);
+        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(4);
+
+        places.clear();
         expect(places.events).toBeInstanceOf(EventsModule);
     });
 });

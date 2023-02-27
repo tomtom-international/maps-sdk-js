@@ -1,4 +1,4 @@
-import { Place } from "@anw/go-sdk-js/core";
+import { Place, Places } from "@anw/go-sdk-js/core";
 import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import { placesLayerSpec } from "../layers/PlacesLayers";
 import poiLayerSpec from "./poiLayerSpec.data.json";
@@ -8,7 +8,8 @@ import {
     getPlacesLayerSpec,
     getTextSizeSpec,
     addMapIcon,
-    changeLayoutAndPaintProps
+    changeLayoutAndPaintProps,
+    preparePlacesForDisplay
 } from "../preparePlacesForDisplay";
 
 const placesTextSizeSpec = [
@@ -173,6 +174,63 @@ describe("Get places layer spec with circle or pin icon style config", () => {
             id: "placesSymbols"
         });
     });
+
+    test("Get places layer spec with text config", () => {
+        expect(
+            getPlacesLayerSpec(
+                {
+                    iconConfig: { iconStyle: "pin" },
+                    textConfig: {
+                        textSize: 5,
+                        textField: ["get", "name"],
+                        textFont: ["Noto-Medium"],
+                        textOffset: [0, 1],
+                        textColor: "red",
+                        textHaloColor: "white",
+                        textHaloWidth: 1
+                    }
+                },
+                mapLibreMock
+            )
+        ).toStrictEqual({
+            ...placesLayerSpec,
+            id: "placesSymbols",
+            layout: {
+                ...placesLayerSpec.layout,
+                "text-size": 5,
+                "text-font": ["Noto-Medium"],
+                "text-offset": [0, 1],
+                "text-field": ["get", "name"]
+            },
+            paint: {
+                ...placesLayerSpec.paint,
+                "text-color": "red",
+                "text-halo-color": "white",
+                "text-halo-width": 1
+            }
+        });
+    });
+
+    test("Get places layer spec with function test field config", () => {
+        expect(
+            getPlacesLayerSpec(
+                {
+                    textConfig: {
+                        textField: (place) => place.properties.poi?.name || "No name found",
+                        textColor: "green"
+                    }
+                },
+                mapLibreMock
+            )
+        ).toStrictEqual({
+            ...placesLayerSpec,
+            id: "placesSymbols",
+            paint: {
+                ...placesLayerSpec.paint,
+                "text-color": "green"
+            }
+        });
+    });
 });
 
 describe("Get places layer spec with poi-like icon style config", () => {
@@ -248,4 +306,117 @@ test("Get places text size specs from poi layer", () => {
     expect(
         getTextSizeSpec(poiLayerSpec.layout["text-size"] as DataDrivenPropertyValueSpecification<number>)
     ).toStrictEqual(placesTextSizeSpec);
+});
+
+describe("test prepare places for display", () => {
+    const mapLibreMock = jest.fn() as unknown as Map;
+    const places: Places = {
+        type: "FeatureCollection",
+        features: [
+            {
+                id: "123",
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: [0, 0]
+                },
+                properties: {
+                    type: "POI",
+                    poi: {
+                        name: "test",
+                        phone: "+31000099999"
+                    },
+                    address: {
+                        freeformAddress: "address test"
+                    }
+                }
+            }
+        ]
+    };
+    const getPhoneFun = (place: Place) => place.properties.poi?.phone;
+
+    test("prepare places for display with config", () => {
+        expect(
+            preparePlacesForDisplay(places, mapLibreMock, {
+                iconConfig: { iconStyle: "pin" },
+                textConfig: {
+                    textSize: 5,
+                    textField: ["get", "name"],
+                    textFont: ["Noto-Medium"]
+                },
+                extraFeatureProps: {
+                    phone: getPhoneFun,
+                    staticProp: "Static text"
+                }
+            })
+        ).toStrictEqual({
+            type: "FeatureCollection",
+            features: [
+                {
+                    id: "123",
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [0, 0],
+                        bbox: undefined
+                    },
+                    properties: {
+                        id: "123",
+                        iconID: "default_pin",
+                        title: "test",
+                        phone: "+31000099999",
+                        staticProp: "Static text",
+                        type: "POI",
+                        poi: {
+                            name: "test",
+                            phone: "+31000099999"
+                        },
+                        address: {
+                            freeformAddress: "address test"
+                        }
+                    }
+                }
+            ]
+        });
+    });
+
+    test("prepare places for display with function text field config", () => {
+        expect(
+            preparePlacesForDisplay(places, mapLibreMock, {
+                iconConfig: { iconStyle: "poi-like" },
+                textConfig: {
+                    textSize: 5,
+                    textField: (place) => place.properties.poi?.url || "No url found",
+                    textFont: ["Noto-Medium"]
+                }
+            })
+        ).toStrictEqual({
+            type: "FeatureCollection",
+            features: [
+                {
+                    id: "123",
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [0, 0],
+                        bbox: undefined
+                    },
+                    properties: {
+                        id: "123",
+                        iconID: "default",
+                        title: "No url found",
+                        category: undefined,
+                        type: "POI",
+                        poi: {
+                            name: "test",
+                            phone: "+31000099999"
+                        },
+                        address: {
+                            freeformAddress: "address test"
+                        }
+                    }
+                }
+            ]
+        });
+    });
 });
