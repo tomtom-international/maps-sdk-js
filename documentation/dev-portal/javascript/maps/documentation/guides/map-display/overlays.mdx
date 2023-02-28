@@ -10,4 +10,37 @@ titleTags:
   color: "grey5"
 ---
 
-TODO
+The Map Display module allows you to draw various shapes on the map.
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_polygons"></a>}
+
+# Polygons
+
+The Map Display module supports drawing polygons on the map through the [`GeometryModule`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GeometryModule) class.
+This module takes a [`GeometryDataResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#GeometryDataResponse) object and draws the geometry on the map.
+
+> A [`GeometryDataResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#GeometryDataResponse) is returned by the Geometry Data service.
+Read more about this service [here](/maps-sdk-js/javascript/maps/documentation/guides/search/specialized-search#_geometry_data_search).
+
+```javascript
+import { GeometryModule } from "@anw/go-sdk-js/map";
+import { geocode, geometryData } from "@anw/go-sdk-js/services";
+
+const areaToSearch = await geocode({ query: "paris", limit: 1 });
+const areaGeometry = await geometryData({ geometries: areaToSearch });
+const geometryModule = await GeometryModule.init(sdkMap);
+geometryModule.show(areaGeometry);
+```
+
+See [Map Geometry Search Playground](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-geometry-search-playground) for a working example.
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
+
+# Next steps
+
+Since you have learned how to draw shapes on the map, here are the recommended next steps:
+
+-   [Example: Map Geometry Search Playground](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-geometry-search-playground)
+-   [Add a marker](/android/maps/documentation/guides/map-display/markers)
+-   [Route planning](/android/maps/documentation/guides/map-display/routes)
+-   [Working with traffic](/android/maps/documentation/guides/map-display/traffic)
