@@ -32,5 +32,7 @@
     "@types/geojson": {
       "*": "https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts"
     }
-  }
+  },
+  "objectLiteralTypeDeclarationStyle": "list",
+  "excludePrivate": true
 }

@@ -15,7 +15,7 @@ import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay 
 
 /**
  * @group MapPlaces
- * @category Functions
+ * @category Classes
  */
 export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     private places!: GeoJSONSourceWithLayers<Places>;

@@ -31,7 +31,7 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
  * @group MapPOIs
- * @category Functions
+ * @category Classes
  */
 export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     private poi!: StyleSourceWithLayers;

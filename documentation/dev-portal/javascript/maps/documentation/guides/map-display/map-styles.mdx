@@ -150,6 +150,25 @@ as a [`CustomStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/mo
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_hill_shading"></a>}
 
+# Adding and filtering Points of Interest
+
+The Map Display module contains a Points of Interest (POIs) layer, which is enabled by default. This layer can be excluded from the
+map style with the `exclude` property of the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams).
+
+> For more information about the `exclude` property, see the [Map Configuration](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-configuration) guide.
+
+The POI layer can be controlled during runtime with the [`VectorTilePOI`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilePOIs) module.
+
+```javascript
+import { VectorTilePOIs } from "@anw/go-sdk-js/map";
+
+const pois = await VectorTilePOIs.init(goSDKMap);
+pois.setVisible(false);
+```
+
+It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`VectorTilePOI`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilePOIs).
+See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-poi-filters) example for this functionality.
+
 # Adding hill shading
 
 The Map Display module allows you to add style layers such as hill shading to the map style.
@@ -159,7 +178,8 @@ The Map Display module allows you to add style layers such as hill shading to th
 <br/>
 
 Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams).
-For more information about the `exclude` property, see the [Map Configuration](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-configuration) guide.
+
+> For more information about the `exclude` property, see the [Map Configuration](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-configuration) guide.
 
 <Code>
 

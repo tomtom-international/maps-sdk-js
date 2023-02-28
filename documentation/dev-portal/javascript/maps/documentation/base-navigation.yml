@@ -21,23 +21,23 @@ menu:
           - fileId: guides/map-display/map-configuration
             title: Map configuration (TODO)
           - fileId: guides/map-display/map-styles
-            title: Map styles
+            title: Map styles (WIP)
           - fileId: guides/map-display/user-location
             title: User location (TODO)
           - fileId: guides/map-display/events-and-gestures
-            title: Events and gestures (TODO)
+            title: Events and gestures (WIP)
           - fileId: guides/map-display/camera-and-animations
             title: Camera and animations (WIP)
           - fileId: guides/map-display/markers
-            title: Markers (TODO)
+            title: Markers (WIP)
           - fileId: guides/map-display/overlays
-            title: Overlays (TODO)
+            title: Overlays (WIP)
           - fileId: guides/map-display/traffic
             title: Traffic (WIP)
           - fileId: guides/map-display/ui-controls
             title: UI controls (TODO)
           - fileId: guides/map-display/routes
-            title: Routes
+            title: Routes (WIP)
       - title: Search
         items:
           - fileId: guides/search/quickstart
