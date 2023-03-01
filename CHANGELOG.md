@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.86](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.85...v0.1.86) (2023-03-01)
+
+
+### Features
+
+* allow customizing places text ([6dcb600](https://github.com/tomtom-international/go-sdk-js/commit/6dcb600fefbe5b7b307b283ff6efc283506573bf))
+* blackduck setup ([bc43727](https://github.com/tomtom-international/go-sdk-js/commit/bc43727acb6f9d1a102a2faf05a18b75682c7a47))
+* **routing:** ldevr support ([6c65e27](https://github.com/tomtom-international/go-sdk-js/commit/6c65e271c71a2d85aff1ea7d60913f1c702c92bf))
+
+
+### Bug Fixes
+
+* **map:** Fix code smells ([b7ad8de](https://github.com/tomtom-international/go-sdk-js/commit/b7ad8debf37f24a98d11ff7027ee8078ee9ea4fc))
+* use config parameter in places module methods instead of this.config ([94c467a](https://github.com/tomtom-international/go-sdk-js/commit/94c467a8c5f67f4f194099a4914f98da6e9ba35a))
+
 ### [0.1.85](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.84...v0.1.85) (2023-02-20)
 
 ### [0.1.84](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.83...v0.1.84) (2023-02-17)
