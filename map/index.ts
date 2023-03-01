@@ -2,7 +2,7 @@
  * This module contains functions that enable showing and interacting with the map in web page.
  * @module
  */
-export * from "./src/core";
+export * from "./src/shared";
 export * from "./src/init/types/MapInit";
 export * from "./src/GOSDKMap";
 export * from "./src/hillshade";

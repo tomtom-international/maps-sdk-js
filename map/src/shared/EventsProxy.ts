@@ -3,7 +3,7 @@ import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { AbstractEventProxy } from "./AbstractEventProxy";
 import { ClickEventType, SourceWithLayers } from "./types";
 import { MapEventsConfig } from "../init/types/MapEventsConfig";
-import { deserializeFeatures } from "../utils/mapUtils";
+import { deserializeFeatures } from "./mapUtils";
 
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {

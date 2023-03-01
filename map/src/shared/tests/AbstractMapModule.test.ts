@@ -2,7 +2,7 @@ import { Map } from "maplibre-gl";
 import { AbstractMapModule } from "../AbstractMapModule";
 import { VectorTileMapModuleConfig } from "../types";
 import { GOSDKMap } from "../../GOSDKMap";
-import { waitUntilMapIsReady } from "../../utils/mapUtils";
+import { waitUntilMapIsReady } from "../mapUtils";
 import Mock = jest.Mock;
 
 describe("AbstractMapModule tests", () => {

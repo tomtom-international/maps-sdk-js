@@ -4,8 +4,8 @@ import { mergeFromGlobal } from "@anw/go-sdk-js/core";
 import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
-import { EventsProxy } from "./core";
-import { isLayerLocalizable } from "./utils/localization";
+import { EventsProxy } from "./shared";
+import { isLayerLocalizable } from "./shared/localization";
 
 /**
  * The map object displays the TomTom live map on a web application and allows to easily integrate its services on it.

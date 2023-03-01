@@ -1,6 +1,6 @@
 import { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { MAP_BOLD_FONT } from "../../core/layers/CommonLayerProps";
-import { LayerSpecTemplate } from "../../core";
+import { MAP_BOLD_FONT } from "../../shared/layers/CommonLayerProps";
+import { LayerSpecTemplate } from "../../shared";
 import { SELECTED_ROUTE_FILTER } from "./shared";
 
 const EXTRA_FOREGROUND_LINE_WIDTH: ExpressionSpecification = [

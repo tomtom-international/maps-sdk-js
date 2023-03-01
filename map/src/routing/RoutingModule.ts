@@ -28,7 +28,7 @@ import {
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
-} from "../core";
+} from "../shared";
 import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
@@ -60,7 +60,7 @@ import {
 import { buildDisplayRoutes } from "./util/Routes";
 import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
-import { waitUntilMapIsReady } from "../utils/mapUtils";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";

@@ -10,8 +10,8 @@ import {
     TrafficIncidentsFilter,
     TrafficIncidentsFilters
 } from "../types/VectorTilesTrafficConfig";
-import { MultiSyntaxFilter, ValuesFilter } from "../../core";
-import { getMergedAnyFilter, buildValuesFilter } from "../../core/MapLibreUtils";
+import { MultiSyntaxFilter, ValuesFilter } from "../../shared";
+import { getMergedAnyFilter, buildValuesFilter } from "../../shared/MapLibreFilterUtils";
 
 const toMultiSyntaxAllFilter = (
     newSyntaxExpressions: unknown[],

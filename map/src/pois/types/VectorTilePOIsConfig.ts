@@ -1,4 +1,4 @@
-import { ValuesFilter, VectorTileMapModuleConfig } from "../../core";
+import { ValuesFilter, VectorTileMapModuleConfig } from "../../shared";
 import { MapStylePOIClassification } from "../../places";
 import { POIClassificationGroup } from "../poiClassificationGroups";
 

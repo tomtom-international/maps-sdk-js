@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "../../core";
+import { VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "../../shared";
 import { GOSDKMap } from "../../GOSDKMap";
 import { VectorTilesTraffic } from "../VectorTilesTraffic";
 

@@ -1,7 +1,7 @@
 import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
 import { Place } from "@anw/go-sdk-js/core";
 import { MapStylePOIClassification } from "../poiIconIDMapping";
-import { MapFont } from "../../core";
+import { MapFont } from "../../shared";
 
 /**
  * Possible options for places icon style

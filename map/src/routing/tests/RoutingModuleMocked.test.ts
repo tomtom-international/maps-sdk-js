@@ -8,7 +8,7 @@ import {
     ROUTES_SOURCE_ID,
     WAYPOINTS_SOURCE_ID,
     EventsModule
-} from "../../core";
+} from "../../shared";
 import { GOSDKMap } from "../../GOSDKMap";
 import { RoutingModule } from "../RoutingModule";
 

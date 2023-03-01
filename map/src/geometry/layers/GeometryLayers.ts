@@ -1,5 +1,5 @@
 import { FillLayerSpecification, LineLayerSpecification } from "maplibre-gl";
-import { LayerSpecTemplate } from "../../core";
+import { LayerSpecTemplate } from "../../shared";
 
 const color = "#0A3653";
 

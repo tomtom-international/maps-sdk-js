@@ -1,7 +1,7 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../../GOSDKMap";
 import { VectorTilePOIs } from "../VectorTilePOIs";
-import { POI_SOURCE_ID } from "../../core";
+import { POI_SOURCE_ID } from "../../shared";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

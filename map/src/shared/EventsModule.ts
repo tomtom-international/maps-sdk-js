@@ -1,5 +1,5 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { mapToInternalFeatures } from "../utils/mapUtils";
+import { mapToInternalFeatures } from "./mapUtils";
 import { EventsProxy } from "./EventsProxy";
 import { GeoJSONSourceWithLayers } from "./SourceWithLayers";
 import { EventType, HoverClickHandler, SourceWithLayers } from "./types";

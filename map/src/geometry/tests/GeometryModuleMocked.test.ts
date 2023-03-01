@@ -3,7 +3,7 @@ import { Map } from "maplibre-gl";
 import { GeometryModule } from "../GeometryModule";
 import { GOSDKMap } from "../../GOSDKMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
-import { GEOMETRY_SOURCE_ID } from "../../core";
+import { GEOMETRY_SOURCE_ID } from "../../shared";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

@@ -1,4 +1,4 @@
-import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter, getSyntaxVersion } from "../MapLibreUtils";
+import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter, getSyntaxVersion } from "../MapLibreFilterUtils";
 
 describe("MapLibreUtils tests", () => {
     // Ported from https://github.com/maplibre/maplibre-gl-js/blob/main/src/style-spec/feature_filter/feature_filter.test.ts

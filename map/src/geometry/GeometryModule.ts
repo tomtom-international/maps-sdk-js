@@ -1,9 +1,9 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, GEOMETRY_SOURCE_ID } from "../core";
+import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, GEOMETRY_SOURCE_ID } from "../shared";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
-import { waitUntilMapIsReady } from "../utils/mapUtils";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 import isNil from "lodash/isNil";
 
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";

@@ -1,6 +1,6 @@
 import { SymbolLayerSpecification } from "maplibre-gl";
-import { LayerSpecTemplate } from "../../core";
-import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from "../../core/layers/CommonLayerProps";
+import { LayerSpecTemplate } from "../../shared";
+import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from "../../shared/layers/CommonLayerProps";
 import { INDEX_TYPE, MIDDLE_INDEX, STOP_DISPLAY_INDEX } from "../types/WaypointDisplayProps";
 import { ICON_ID, TITLE } from "../../places";
 

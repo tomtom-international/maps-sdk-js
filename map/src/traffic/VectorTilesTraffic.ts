@@ -12,13 +12,13 @@ import {
     StyleSourceWithLayers,
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
-} from "../core";
+} from "../shared";
 import { TrafficFlowFilters, TrafficIncidentsFilters, VectorTilesTrafficConfig } from ".";
-import { notInTheStyle } from "../core/ErrorMessages";
+import { notInTheStyle } from "../shared/ErrorMessages";
 import { GOSDKMap } from "../GOSDKMap";
-import { waitUntilMapIsReady } from "../utils/mapUtils";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from "./filters/TrafficFilters";
-import { getMergedAllFilter } from "../core/MapLibreUtils";
+import { getMergedAllFilter } from "../shared/MapLibreFilterUtils";
 
 type ChangeOptions = {
     updateConfig: boolean;

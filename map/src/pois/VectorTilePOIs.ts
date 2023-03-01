@@ -1,13 +1,13 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../core";
+import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
 import { FilterablePOICategory, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
-import { notInTheStyle } from "../core/ErrorMessages";
-import { waitUntilMapIsReady } from "../utils/mapUtils";
+import { notInTheStyle } from "../shared/ErrorMessages";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
 import { MapStylePOIClassification, poiClassificationToIconID } from "../places";
 import { POIClassificationGroup, poiClassificationGroups } from "./poiClassificationGroups";
-import { buildMappedValuesFilter, getMergedAllFilter } from "../core/MapLibreUtils";
+import { buildMappedValuesFilter, getMergedAllFilter } from "../shared/MapLibreFilterUtils";
 
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.

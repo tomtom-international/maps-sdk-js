@@ -6,10 +6,10 @@ import {
     GeoJSONSourceWithLayers,
     PLACES_SOURCE_ID,
     ToBeAddedLayerSpec
-} from "../core";
+} from "../shared";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
-import { waitUntilMapIsReady } from "../utils/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 

@@ -1,4 +1,4 @@
-import { LayerSpecTemplate } from "../../core";
+import { LayerSpecTemplate } from "../../shared";
 import { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { SELECTED_ROUTE_FILTER } from "./shared";
 

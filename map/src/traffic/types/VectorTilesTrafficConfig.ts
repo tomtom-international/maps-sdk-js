@@ -1,5 +1,5 @@
 import { DelayMagnitude } from "@anw/go-sdk-js/core";
-import { FilterShowMode, ValuesFilter, VectorTileMapModuleConfig } from "../../core";
+import { FilterShowMode, ValuesFilter, VectorTileMapModuleConfig } from "../../shared";
 
 /**
  * Available incident categories.

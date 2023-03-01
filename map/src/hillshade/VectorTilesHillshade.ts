@@ -1,9 +1,9 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
-import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../core";
-import { notInTheStyle } from "../core/ErrorMessages";
+import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
+import { notInTheStyle } from "../shared/ErrorMessages";
 import { GOSDKMap } from "../GOSDKMap";
-import { waitUntilMapIsReady } from "../utils/mapUtils";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 
 /**
  * Vector tiles hillshade module.

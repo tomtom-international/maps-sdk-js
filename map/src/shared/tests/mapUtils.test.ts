@@ -1,7 +1,7 @@
 import { FeatureCollection } from "geojson";
 import omit from "lodash/omit";
 import { LayerSpecification, Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
-import { GeoJSONSourceWithLayers } from "../../core";
+import { GeoJSONSourceWithLayers } from "../index";
 import { GOSDKMap } from "../../GOSDKMap";
 import { deserializeFeatures, injectCustomHeaders, mapToInternalFeatures, waitUntilMapIsReady } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";

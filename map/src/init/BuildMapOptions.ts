@@ -1,7 +1,7 @@
 import { MapOptions } from "maplibre-gl";
 import { GOSDKMapParams, MapLibreOptions } from "./types/MapInit";
 import { buildMapStyleInput } from "./MapStyleInputBuilder";
-import { injectCustomHeaders } from "../utils/mapUtils";
+import { injectCustomHeaders } from "../shared/mapUtils";
 
 /**
  * @ignore
