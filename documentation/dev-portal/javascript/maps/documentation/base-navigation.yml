@@ -1,7 +1,7 @@
-group: tomtom-sdk-for-web
+group: tomtom-sdk-for-javascript
 isPrivate: false
 noIndex: false
-productName: TomTom SDK for Web
+productName: TomTom SDK for JavaScript
 isMenuOpened: false
 menu:
   - title: Overview
@@ -17,15 +17,13 @@ menu:
       - title: Map Display
         items:
           - fileId: guides/map-display/quickstart
-            title: Quickstart (TODO)
-          - fileId: guides/map-display/map-configuration
-            title: Map configuration (TODO)
+            title: Quickstart
           - fileId: guides/map-display/map-styles
             title: Map styles (WIP)
           - fileId: guides/map-display/user-location
             title: User location (TODO)
           - fileId: guides/map-display/events-and-gestures
-            title: Events and gestures (WIP)
+            title: Events (WIP)
           - fileId: guides/map-display/camera-and-animations
             title: Camera and animations (WIP)
           - fileId: guides/map-display/markers
@@ -45,7 +43,7 @@ menu:
           - fileId: guides/search/autocomplete-and-fuzzy-search
             title: Autocomplete and fuzzy search (TODO)
           - fileId: guides/search/specialized-search
-            title: Specialized search
+            title: Specialized search (WIP)
           - fileId: guides/search/reverse-geocoding
             title: Reverse geocoding (WIP)
           - fileId: guides/search/ui-components

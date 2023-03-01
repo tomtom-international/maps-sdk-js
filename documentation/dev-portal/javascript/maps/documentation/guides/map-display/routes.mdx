@@ -28,6 +28,9 @@ To show [`Routes`](/maps-sdk-js/javascript/maps/documentation/api-reference/modu
 and an instance of [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) is initialized,
 then the [`RoutingModule`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.RoutingModule) class can be used to show routes and waypoints.
 
+> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) instance in your project.
+Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
+
 ```javascript
 import { RoutingModule } from "@anw/go-sdk-js/map";
 import { calculateRoute } from "@anw/go-sdk-js/services";
@@ -40,9 +43,11 @@ routingModule.showWaypoints(waypoints);
 routingModule.showRoutes(await calculateRoute({ geoInputs: waypoints }));
 ```
 
-<img src="images/ss_hillshade.png" alt="Map with a route displayed" />
+<img src="images/ss_adding_a_route.png" alt="Map with a route displayed" />
 
-<br/>
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_removing_routes"></a>}
+
+# Removing routes
 
 All routes and waypoints added to the map can be removed using the `clearRoutes()` and `clearWaypoints()` methods.
 
@@ -50,6 +55,10 @@ All routes and waypoints added to the map can be removed using the `clearRoutes(
 routingModule.clearRoutes();
 routingModule.clearWaypoints();
 ```
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_highlighting_routes"></a>}
+
+# Highlighting routes
 
 Between the shown routes, one of the routes can be selected and highlighted using the `selectRoute()` method.
 

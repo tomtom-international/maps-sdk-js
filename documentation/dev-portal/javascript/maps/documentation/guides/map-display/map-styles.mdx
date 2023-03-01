@@ -34,14 +34,12 @@ The Map Display module provides pre-defined styles that can be used in the appli
 They are provided in the [`StyleInput`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#StyleInput) as [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle).
 A [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle) represents a style which is officially hosted by TomTom and easily accessible by its name.
 
-These are the available [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle):
+The available [`PublishedStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#PublishedStyle) are:
 
 -   `standardLight` and `standardDark` - Styles made for browsing the map in light and dark mode respectively. The `standardLight` style is the default style used by the Map Display module.
 -   `drivingLight` and `drivingDark` - Styles to use during navigation in light and dark mode respectively. These styles render routes in gray and show traffic flow and road shields.
 -   `satellite` - This style uses satellite imagery to draw the map.
 -   `monoLight`
-
-[//]: # (Add images per style here or link/embed example?)
 
 These styles are showcased in the [Map Config Playground](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-config-playground/) example.
 
@@ -53,85 +51,28 @@ The style can be loaded when the map is initialized by specifying the `style` pr
 the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams) when initializing
 an instance of [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap).
 
-<Code>
-
-```typescript
-import { GOSDKMap, GOSDKMapParams } from "@anw/go-sdk-js/map";
-
-const goSDKMapParams: GOSDKMapParams = {
-    style: "standardDark"
-}
-
-const goSDKMap = new GOSDKMap(
-    {
-        // Container element defined in the corresponding HTML file
-        container: document.getElementById("map") as HTMLElement,
-        zoom: 14,
-        minZoom: 2,
-        center: [-0.12621, 51.50394]
-    },
-    goSDKMapParams
-);
-  ```
-
-```javascript
-import { GOSDKMap } from "@anw/go-sdk-js/map";
-
-const goSDKMapParams: GOSDKMapParams = {
-    style: "standardDark"
-}
-
-const goSDKMap = new GOSDKMap(
-    {
-        // Container element defined in the corresponding HTML file
-        container: document.getElementById("map"),
-        zoom: 14,
-        minZoom: 2,
-        center: [-0.12621, 51.50394]
-    },
-    goSDKMapParams
-);
-```
-
-</Code>
-
-You can also change the style of the map at runtime using the [`setStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap#setStyle) method on the [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) class.
-
-<Code>
-
-```typescript
-import { GOSDKMap } from "@anw/go-sdk-js/map";
-
-const goSDKMap = new GOSDKMap(
-    {
-        // Container element defined in the corresponding HTML file
-        container: document.getElementById("map") as HTMLElement,
-        zoom: 14,
-        minZoom: 2,
-        center: [-0.12621, 51.50394]
-    }
-);
-
-goSDKMap.setStyle("standardDark");
-```
-
 ```javascript
 import { GOSDKMap } from "@anw/go-sdk-js/map";
 
 const goSDKMap = new GOSDKMap(
     {
         // Container element defined in the corresponding HTML file
-        container: document.getElementById("map"),
+        container: "map",
         zoom: 14,
         minZoom: 2,
         center: [-0.12621, 51.50394]
+    },
+    {
+        style: "standardDark"
     }
 );
-
-goSDKMap.setStyle("standardDark");
 ```
 
-</Code>
+Additionally, you can change the style of the map at runtime using the [`setStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap#setStyle) method on the [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) class.
+
+```javascript
+goSDKMap.setStyle("drivingDark");
+```
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_customizing_a_style"></a>}
 
@@ -148,16 +89,40 @@ You can also create your own style to suit your application.
 Custom styles can be provided to the application in the [`StyleInput`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#StyleInput)
 as a [`CustomStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#CustomStyle).
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_hill_shading"></a>}
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_excluding_modules_from_a_style"></a>}
+
+# Excluding modules from a style
+
+When initializing a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap), you can exclude modules from the
+loaded map style with the `exclude` property in [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams).
+For example, excluding [hill shading](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_adding_hill_shading) and [traffic flow](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic) from the map style:
+
+```javascript
+import { GOSDKMap } from "@anw/go-sdk-js/map";
+
+const goSDKMap = new GOSDKMap(
+    {
+        // Container element defined in the corresponding HTML file
+        container: "map",
+        zoom: 14,
+        minZoom: 2,
+        center: [-0.12621, 51.50394]
+    },
+    {
+        exclude: ["hillshade", "traffic_flow"]
+        // other params...
+    }
+);
+```
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_and_filtering_POIs"></a>}
 
 # Adding and filtering Points of Interest
 
-The Map Display module contains a Points of Interest (POIs) layer, which is enabled by default. This layer can be excluded from the
+The styles from the Map Display module contain a Points of Interest (POIs) layer. This layer is enabled by default, but can be excluded from the
 map style with the `exclude` property of the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams).
 
-> For more information about the `exclude` property, see the [Map Configuration](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-configuration) guide.
-
-The POI layer can be controlled during runtime with the [`VectorTilePOI`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilePOIs) module.
+The POI layer visibility can be controlled during runtime with the [`VectorTilePOIs`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilePOIs) module.
 
 ```javascript
 import { VectorTilePOIs } from "@anw/go-sdk-js/map";
@@ -166,8 +131,14 @@ const pois = await VectorTilePOIs.init(goSDKMap);
 pois.setVisible(false);
 ```
 
-It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`VectorTilePOI`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilePOIs).
+<img src="images/ss_poi_layer.png" alt="Map with POI layer enabled" />
+
+<br/>
+
+It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`VectorTilePOIs`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilePOIs).
 See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-poi-filters) example for this functionality.
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_hill_shading"></a>}
 
 # Adding hill shading
 
@@ -178,52 +149,6 @@ The Map Display module allows you to add style layers such as hill shading to th
 <br/>
 
 Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams).
-
-> For more information about the `exclude` property, see the [Map Configuration](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-configuration) guide.
-
-<Code>
-
-```typescript
-import { GOSDKMap, GOSDKMapParams } from "@anw/go-sdk-js/map";
-
-const goSDKMapParams: GOSDKMapParams = {
-    exclude: ["hillshade"]
-    // other params...
-};
-
-const goSDKMap = new GOSDKMap(
-    {
-        // Container element defined in the corresponding HTML file
-        container: document.getElementById("map") as HTMLElement,
-        zoom: 14,
-        minZoom: 2,
-        center: [-0.12621, 51.50394]
-    },
-    goSDKMapParams
-);
-```
-
-```javascript
-import { GOSDKMap, GOSDKMapParams } from "@anw/go-sdk-js/map";
-
-const goSDKMapParams: GOSDKMapParams = {
-    exclude: ["hillshade"]
-    // other params...
-};
-
-const goSDKMap = new GOSDKMap(
-    {
-        // Container element defined in the corresponding HTML file
-        container: document.getElementById("map"),
-        zoom: 14,
-        minZoom: 2,
-        center: [-0.12621, 51.50394]
-    },
-    goSDKMapParams
-);
-```
-
-</Code>
 
 To show or hide hill shading on runtime, use the [`VectorTilesHillshade`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilesHillshade) class:
 

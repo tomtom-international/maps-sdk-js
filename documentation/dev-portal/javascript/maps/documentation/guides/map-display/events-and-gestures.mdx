@@ -31,6 +31,9 @@ Event handlers can be registered per individual module in the Map Display module
 on traffic incidents ([`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilesTraffic) module)
 can be registered with:
 
+> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) instance in your project.
+Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
+
 ```javascript
 const traffic = await VectorTilesTraffic.init(sdkMap);
 traffic.events.incidents.on("hover", eventHandler);

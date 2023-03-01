@@ -21,12 +21,16 @@ The traffic flow layer shows congestion on the main route network and the traffi
 These traffic layers are visible by default in the standard map styles and can be controlled at runtime by the [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilesTraffic)
 module.
 
-> If these layers are unnecessary in your application, they can be completely excluded from the map style through the `exclude` property in
-[`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams) when initializing a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap).
-For more information on the `exclude` property, see the [Map Configuration](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-configuration) guide.
+<img src="images/ss_traffic_layer.png" alt="Map with traffic layer enabled" />
 
-After enabling your API key and initializing a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap),
-the [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilesTraffic) module can be initialized.
+<br/>
+
+> If these layers are unnecessary in your application, they can be completely excluded from the map style through the [`exclude`](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_excluding_modules_from_a_style) property in `GOSDKMapParams`.
+
+The [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilesTraffic) module can be initialized with:
+
+> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) instance in your project.
+Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
 import { VectorTilesTraffic } from "@anw/go-sdk-js/map";

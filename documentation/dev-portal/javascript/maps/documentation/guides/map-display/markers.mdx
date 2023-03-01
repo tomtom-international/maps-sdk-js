@@ -20,16 +20,19 @@ The [`GeoJSONPlaces`](/maps-sdk-js/javascript/maps/documentation/api-reference/c
 [`Places`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Places) on the map, which are returned from the services of the Services module.
 For example, showing places from a Search result:
 
+> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) instance in your project.
+Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
+
 ```javascript
 import { GeoJSONPlaces } from "@anw/go-sdk-js/map";
 import { search } from "@anw/go-sdk-js/services";
 
-const placesModule = await GeoJSONPlaces.init(sdkMap);
+const placesModule = await GeoJSONPlaces.init(goSDKMap);
 
 const places = await search({
     query: "pharmacy",
     limit: 35,
-    boundingBox: sdkMap.getBounds()
+    boundingBox: goSDKMap.getBounds()
 });
 
 placesModule.show(places);
@@ -39,7 +42,11 @@ placesModule.show(places);
 
 <br/>
 
-It's possible to customize the Places marker icons in the [`GeoJSONPlaces`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GeoJSONPlaces) module
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_customizing_icons"></a>}
+
+# Customizing icons (WIP)
+
+You can customize the Places marker icons in the [`GeoJSONPlaces`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GeoJSONPlaces) module
 using the `applyIconConfig()` method. See the [Map Places Customize](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize) example.
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
