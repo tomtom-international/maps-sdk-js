@@ -10,4 +10,87 @@ titleTags:
   color: "grey5"
 ---
 
-TODO
+The Map Display module provides a set of tools that enable embedding the TomTom map in web applications.
+It makes it easy to add visual components to the map, such as [routes](/maps-sdk-js/javascript/maps/documentation/guides/map-display/routes#_adding_a_route) and [markers](/maps-sdk-js/javascript/maps/documentation/guides/map-display/markers).
+You can also control [map interactions](/maps-sdk-js/javascript/maps/documentation/guides/map-display/events-and-gestures) and the [camera position](/maps-sdk-js/javascript/maps/documentation/guides/map-display/camera-and-animations).
+In this guide you will see how to set up the project to show a map in your application.
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_project_set_up"></a>}
+
+# Project set up
+1.  Get your TomTom API key from the [Developer Portal](https://developer.tomtom.com/). You can find instructions on how to do that [here](https://developer.tomtom.com/how-to-get-tomtom-api-key).
+2.  Configure the project as described in [Project setup guide](/maps-sdk-js/javascript/maps/documentation/overview/project-set-up).
+3.  Add the Maps SDK for JavaScript to your project dependencies.
+    ``` shell
+    npm install @anw/go-sdk-js
+    ```
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_a_map"></a>}
+
+# Adding a map
+
+The Map Display module provides the [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) class to add a map to your application.
+The [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) is built upon and exposes a MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/).
+In addition to the map itself, the Map Display module contains several individual modules that add visual layers to your map:
+
+-   [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilesTraffic) - controls the traffic layer on the map. See the [Traffic](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic) guide.
+-   [`VectorTilePOIs`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilePOIs) - controls the POI layer on the map. See the [Map styles](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles) guide.
+-   [`RoutingModule`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.RoutingModule) - enables drawing routes on the map. See the [Routes](/maps-sdk-js/javascript/maps/documentation/guides/map-display/routes) guide.
+-   [`VectorTilesHillshade`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.VectorTilesHillshade) - controls the hill shading layer. See the [Map styles](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles) guide.
+-   [`GeoJSONPlaces`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GeoJSONPlaces) - shows [`Places`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Places) on the map. See the [Markers](/maps-sdk-js/javascript/maps/documentation/guides/map-display/markers) guide
+-   [`GeometryModule`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GeometryModule) - enables drawing polygons on the map. See the [Overlays](/maps-sdk-js/javascript/maps/documentation/guides/map-display/overlays) guide.
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_init_mapfragment"></a>}
+
+# Initializing GOSDKMap
+
+The [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) is initialized with two parameters:
+
+-   [`MapLibreOptions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#MapLibreOptions) - a required parameter based on the options for a MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/) and used to initialize the MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/) inside the [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap).
+-   [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams) - an optional parameter used to customize the map style and map event configuration.
+
+To initialize a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) in your project:
+
+1.  Add your API key to your project:
+    ```javascript
+    GOSDKConfig.instance.put({
+        // (Set your own API key when working in your own environment)
+        apiKey: process.env.API_KEY
+    });
+    ```
+2.  Add a container with an `id` for the map to the HTML file where you want to display it.
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+      <body>
+          <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"></div>
+      </body>
+    </html>
+    ```
+3.  Initialize a basic [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map.GOSDKMap) using the `id` from the container.
+    The `container` property of the [`MapLibreOptions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#MapLibreOptions) is the only required parameter for initializing a basic map.
+    More options for changing the initial state of the map and map control, like `zoom` and `center`, can also be found in [`MapLibreOptions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#MapLibreOptions).
+    The optional [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map#GOSDKMapParams) provide options for styling the map and event configuration.
+    Read more about these topic in the [Map styles](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles) and [Events](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles) guides.
+    ```javascript
+    import { GOSDKMap } from "@anw/go-sdk-js/map";
+
+    const goSDKMap = new GOSDKMap(
+        {
+            container: "map",
+            zoom: 14,
+            minZoom: 2,
+            center: [-0.12621, 51.50394]
+        }
+    );
+    ```
+
+{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
+
+# Next steps
+
+Since you have learned how to do the basics, here are recommendations for the next steps:
+
+-   [Styling the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles)
+-   [Showing traffic on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic)
+-   [Showing and following routes on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/routes)
