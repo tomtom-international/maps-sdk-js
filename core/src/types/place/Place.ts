@@ -7,17 +7,24 @@ import { FeatureCollectionWithProperties } from "../ExtendedGeoJSON";
 
 /**
  * @group Place
+ * @category Variables
+ */
+export const geographyTypes = [
+    "Country",
+    "CountrySubdivision",
+    "CountrySecondarySubdivision",
+    "CountryTertiarySubdivision",
+    "Municipality",
+    "MunicipalitySubdivision",
+    "Neighbourhood",
+    "PostalCodeArea"
+] as const;
+
+/**
+ * @group Place
  * @category Types
  */
-export type GeographyType =
-    | "Country"
-    | "CountrySubdivision"
-    | "CountrySecondarySubdivision"
-    | "CountryTertiarySubdivision"
-    | "Municipality"
-    | "MunicipalitySubdivision"
-    | "Neighbourhood"
-    | "PostalCodeArea";
+export type GeographyType = (typeof geographyTypes)[number];
 
 /**
  * Type of mapcode. Possible values:
@@ -216,6 +223,14 @@ export type AddressProperties = {
  * @group Place
  * @category Types
  */
+export type ChargingPark = {
+    connectors: Connector[];
+};
+
+/**
+ * @group Place
+ * @category Types
+ */
 export type CommonPlaceProps = {
     /**
      * Type of this place.
@@ -252,11 +267,10 @@ export type CommonPlaceProps = {
      */
     relatedPois?: RelatedPOI[];
     /**
-     * A list of chargingPark objects. Present only when the Points of Interest are of the Electric Vehicle Station type.
+     * Charging park information.
+     * * Present only when the Points of Interest are of the Electric Vehicle Station type.
      */
-    chargingPark?: {
-        connectors: Connector[];
-    };
+    chargingPark?: ChargingPark;
     /**
      * An optional section. These are unique reference ids for use with the Additional Data service.
      */

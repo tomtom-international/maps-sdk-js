@@ -1,5 +1,5 @@
 import { HasBBox, Places } from "@anw/go-sdk-js/core";
-import { PlaceDisplayProps, PlaceIconConfig, PlaceModuleConfig, PLACES_SOURCE_ID } from "map";
+import { PlaceDisplayProps, PlaceIconConfig, PlaceModuleConfig } from "map";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
@@ -7,6 +7,7 @@ import placesTestData from "./GeoJSONPlaces.test.data.json";
 import { GOSDKThis } from "./types/GOSDKThis";
 import {
     getNumVisibleLayersBySource,
+    getPlacesSourceAndLayerIDs,
     queryRenderedFeatures,
     waitForMapIdle,
     waitUntilRenderedFeatures
@@ -41,10 +42,7 @@ const getBBox = async (places: HasBBox) =>
 
 const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
 
-const waitForRenderedPlaces = async (numPlaces: number) =>
-    waitUntilRenderedFeatures(["placesSymbols"], numPlaces, 10000);
-
-const getNumVisibleLayers = async () => getNumVisibleLayersBySource(PLACES_SOURCE_ID);
+const getNumVisibleLayers = async (sourceID: string) => getNumVisibleLayersBySource(sourceID);
 
 const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: PlaceDisplayProps[]) =>
     expect(
@@ -80,31 +78,33 @@ describe("GeoJSON Places tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlaces();
-            expect(await getNumVisibleLayers()).toStrictEqual(0);
+            const { sourceID, layerID } = await getPlacesSourceAndLayerIDs();
+            expect(await getNumVisibleLayers("places-")).toStrictEqual(0);
 
             await showPlaces(testPlaces);
             const numTestPlaces = testPlaces.features.length;
-            let renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
+            let renderedPlaces = await waitUntilRenderedFeatures([layerID], numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
-            expect(await getNumVisibleLayers()).toStrictEqual(1);
+            expect(await getNumVisibleLayers(sourceID)).toStrictEqual(1);
             // once more:
             await showPlaces(testPlaces);
-            renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
+            renderedPlaces = await waitUntilRenderedFeatures([layerID], numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
-            expect(await getNumVisibleLayers()).toStrictEqual(1);
+            expect(await getNumVisibleLayers(sourceID)).toStrictEqual(1);
 
             await clearPlaces();
-            renderedPlaces = await waitForRenderedPlaces(0);
+            renderedPlaces = await waitUntilRenderedFeatures([layerID], 0, 10000);
             expect(renderedPlaces).toHaveLength(0);
-            expect(await getNumVisibleLayers()).toStrictEqual(0);
+            expect(await getNumVisibleLayers(sourceID)).toStrictEqual(0);
 
             expect(mapEnv.consoleErrors).toHaveLength(0);
 
             // once more, reloading the map and this time showing places before waiting for it to load:
             await mapEnv.loadMap({ bounds });
             await initPlaces();
+            const { layerID: nextLayerID } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
-            renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
+            renderedPlaces = await waitUntilRenderedFeatures([nextLayerID], numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
 
             expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -129,9 +129,10 @@ describe("GeoJSON Places with init config tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlaces({ iconConfig: { iconStyle: "circle" } });
+            const { layerID } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
             const numTestPlaces = testPlaces.features.length;
-            const renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
+            const renderedPlaces = await waitUntilRenderedFeatures([layerID], numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCustomProps);
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
@@ -155,25 +156,26 @@ describe("GeoJSON Places apply icon config tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap({ bounds });
             await initPlaces();
+            const { layerID } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
 
             const numTestPlaces = testPlaces.features.length;
             await applyIconConfig({ iconStyle: "circle" });
             await waitForMapIdle();
-            let renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
+            let renderedPlaces = await waitUntilRenderedFeatures([layerID], numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCustomProps);
 
             await applyIconConfig({
                 customIcons: [{ category: "PARKING_GARAGE", iconUrl: "https://dummyimage.com/30x20/4137ce/fff" }]
             });
             await waitForMapIdle();
-            renderedPlaces = await waitForRenderedPlaces(numTestPlaces);
+            renderedPlaces = await waitUntilRenderedFeatures([layerID], numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedCustomIcon[name as never]);
 
             await applyIconConfig({ iconStyle: "poi-like" });
             await waitForMapIdle();
             // poi-like places avoid collisions, thus likely resulting in less num of rendered features:
-            renderedPlaces = await queryRenderedFeatures(["placesSymbols"]);
+            renderedPlaces = await queryRenderedFeatures([layerID]);
             compareToExpectedPOILikeDisplayProps(renderedPlaces, expectedPOILikeFeatureProps[name as never]);
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }

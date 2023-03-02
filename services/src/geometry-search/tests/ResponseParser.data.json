@@ -445,9 +445,11 @@
     },
     {
       "type": "FeatureCollection",
+      "bbox": [-0.35137, 51.38474, 0.14471, 51.67235],
       "features": [
         {
           "type": "Feature",
+          "bbox": [-0.35137, 51.38474, 0.14471, 51.67235],
           "geometry": {
             "type": "Point",
             "coordinates": [-0.12624, 51.50015]
@@ -466,16 +468,6 @@
               "country": "United Kingdom",
               "countryCodeISO3": "GBR",
               "freeformAddress": "London"
-            },
-            "boundingBox": {
-              "topLeftPoint": {
-                "lat": 51.67235,
-                "lon": -0.35137
-              },
-              "btmRightPoint": {
-                "lat": 51.38474,
-                "lon": 0.14471
-              }
             },
             "dataSources": {
               "geometry": {

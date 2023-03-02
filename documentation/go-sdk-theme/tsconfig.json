@@ -11,7 +11,8 @@
     "removeComments": true,
     "sourceMap": false,
     "strictNullChecks": true,
-    "target": "es2018"
+    "target": "es2018",
+    "esModuleInterop": true
   },
   "exclude": ["./dist", "./test", "**/*.spec.ts"]
 }

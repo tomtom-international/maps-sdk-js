@@ -130,3 +130,9 @@ export const isLayerVisible = async (layerID: string): Promise<boolean> =>
     page.evaluate((inputLayerID) => {
         return (globalThis as GOSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, "visibility") !== "none";
     }, layerID);
+
+export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; layerID: string }> =>
+    page.evaluate(() => {
+        const places = (globalThis as GOSDKThis).places;
+        return { sourceID: places?.sourceID as string, layerID: places?.layerID as string };
+    });

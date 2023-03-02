@@ -1,4 +1,4 @@
-import { Places, Place } from "@anw/go-sdk-js/core";
+import { Place, Places } from "@anw/go-sdk-js/core";
 import { GeoJSONSource, Map } from "maplibre-gl";
 import { GeoJSONPlaces } from "../GeoJSONPlaces";
 import { GOSDKMap } from "../../GOSDKMap";

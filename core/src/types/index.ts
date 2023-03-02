@@ -9,6 +9,7 @@ export * from "./place/poi/Brand";
 export * from "./place/poi/Classification";
 export * from "./place/poi/OpeningHours";
 export * from "./place/poi/POI";
+export * from "./place/ev/EVChargingStationsAvailability";
 export * from "./TimeZone";
 export * from "./place/poi/Fuel";
 

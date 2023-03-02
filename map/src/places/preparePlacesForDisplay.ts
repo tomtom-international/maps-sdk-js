@@ -8,8 +8,8 @@ import {
     placeToPOILayerClassificationMapping,
     poiClassificationToIconID
 } from "./poiIconIDMapping";
+import { LayerSpecTemplate } from "../shared";
 
-const placesLayerID = "placesSymbols";
 /**
  * Builds the title of the place to display it on the map.
  * @param place The place to display.
@@ -86,14 +86,10 @@ export const getTextSizeSpec = (
     return JSON.parse(JSON.stringify(textSize)?.replace(/name/g, TITLE));
 };
 
-/**
- * @ignore
- */
-const getPOILayerSpecs = (map: Map): Omit<SymbolLayerSpecification, "source"> => {
+const buildPOILikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecification> => {
     const layer = (map.getStyle().layers.filter((layer) => layer.id == "POI")[0] as SymbolLayerSpecification) || {};
     const textSize = (layer.layout as SymbolLayerSpecification["layout"])?.["text-size"];
     return {
-        id: placesLayerID,
         type: "symbol",
         paint: layer.paint,
         layout: {
@@ -107,72 +103,67 @@ const getPOILayerSpecs = (map: Map): Omit<SymbolLayerSpecification, "source"> =>
 
 /**
  * @ignore
- * @param config
- * @param map
  */
-export const getPlacesLayerSpec = (
+export const buildPlacesLayerSpec = (
     config: PlaceModuleConfig | undefined,
+    id: string,
     map: Map
 ): Omit<SymbolLayerSpecification, "source"> => {
-    let basicLayerSpec;
-    const isPOILikeStyle = config?.iconConfig?.iconStyle == "poi-like";
-    if (isPOILikeStyle) {
-        basicLayerSpec = getPOILayerSpecs(map);
-    } else {
-        basicLayerSpec = {
-            ...placesLayerSpec,
-            id: placesLayerID
-        };
-    }
+    const basicLayerSpec = {
+        ...(config?.iconConfig?.iconStyle == "poi-like" ? buildPOILikeLayerSpec(map) : placesLayerSpec),
+        id
+    };
+    const textConfig = config?.textConfig;
     return {
         ...basicLayerSpec,
         layout: {
             ...basicLayerSpec.layout,
-            ...(config?.textConfig?.textSize && { "text-size": config.textConfig.textSize }),
-            ...(config?.textConfig?.textFont && { "text-font": config.textConfig.textFont }),
-            ...(config?.textConfig?.textOffset && { "text-offset": config.textConfig.textOffset }),
-            ...(config?.textConfig?.textField &&
+            ...(textConfig?.textSize && { "text-size": textConfig.textSize }),
+            ...(textConfig?.textFont && { "text-font": textConfig.textFont }),
+            ...(textConfig?.textOffset && { "text-offset": textConfig.textOffset }),
+            ...(textConfig?.textField &&
                 typeof config?.textConfig?.textField !== "function" && {
                     "text-field": config?.textConfig?.textField
                 })
         },
         paint: {
             ...basicLayerSpec.paint,
-            ...(config?.textConfig?.textColor && { "text-color": config.textConfig.textColor }),
-            ...(config?.textConfig?.textHaloColor && { "text-halo-color": config.textConfig.textHaloColor }),
-            ...(config?.textConfig?.textHaloWidth && { "text-halo-width": config.textConfig.textHaloWidth })
+            ...(textConfig?.textColor && { "text-color": textConfig.textColor }),
+            ...(textConfig?.textHaloColor && { "text-halo-color": textConfig.textHaloColor }),
+            ...(textConfig?.textHaloWidth && { "text-halo-width": textConfig.textHaloWidth })
         }
     };
 };
 
-type LayoutPaint = { layout?: any; paint?: any };
+type LayoutPaint = { id: string; layout?: any; paint?: any };
 
 /**
- * Applies the layout and paint properties from layerSpec
- * while unsetting (setting as undefined) the ones from previousSpec which no longer exist in layerSpec.
+ * Applies the layout and paint properties from newLayoutPaint
+ * while unsetting (setting as undefined) the ones from previousSpec which no longer exist in newLayoutPaint.
  * * This allows for a quick change of a layer visuals without removing-re-adding the layer.
  * @ignore
- * @param layerSpec The new layer from which to apply layout/pain props.
- * @param prevLayerSpec The previous layer to ensure layout/paint props are removed.
+ * @param newLayoutPaint The new layer from which to apply layout/pain props.
+ * @param prevLayoutPaint The previous layer to ensure layout/paint props are removed.
  * @param map
  */
-export const changeLayoutAndPaintProps = (layerSpec: LayoutPaint, prevLayerSpec: LayoutPaint, map: Map) => {
-    for (const property of Object.keys(prevLayerSpec.layout || [])) {
-        if (!layerSpec.layout?.[property]) {
-            map.setLayoutProperty(placesLayerID, property, undefined, { validate: false });
+export const changeLayoutAndPaintProps = (newLayoutPaint: LayoutPaint, prevLayoutPaint: LayoutPaint, map: Map) => {
+    const layerID = newLayoutPaint.id;
+    for (const property of Object.keys(prevLayoutPaint.layout || [])) {
+        if (!newLayoutPaint.layout?.[property]) {
+            map.setLayoutProperty(layerID, property, undefined, { validate: false });
         }
     }
-    for (const property of Object.keys(prevLayerSpec.paint || [])) {
-        if (!layerSpec.paint?.[property as never]) {
-            map.setPaintProperty(placesLayerID, property, undefined, { validate: false });
+    for (const property of Object.keys(prevLayoutPaint.paint || [])) {
+        if (!newLayoutPaint.paint?.[property]) {
+            map.setPaintProperty(layerID, property, undefined, { validate: false });
         }
     }
-    for (const [property, value] of Object.entries(layerSpec.paint || [])) {
-        map.setPaintProperty(placesLayerID, property, value, { validate: false });
+    for (const [property, value] of Object.entries(newLayoutPaint.paint || [])) {
+        map.setPaintProperty(layerID, property, value, { validate: false });
     }
 
-    for (const [property, value] of Object.entries(layerSpec.layout || [])) {
-        map.setLayoutProperty(placesLayerID, property, value, { validate: false });
+    for (const [property, value] of Object.entries(newLayoutPaint.layout || [])) {
+        map.setLayoutProperty(layerID, property, value, { validate: false });
     }
 };
 

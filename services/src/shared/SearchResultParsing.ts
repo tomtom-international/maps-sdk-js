@@ -1,6 +1,6 @@
 import { Brand, Place, SearchPlaceProps, toPointFeature } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
-import { latLonAPIToPosition } from "./Geometry";
+import { apiToGeoJSONBBox, latLonAPIToPosition } from "./Geometry";
 import { CommonSearchPlaceResultAPI } from "./types/APIPlacesResponseTypes";
 
 /**
@@ -8,9 +8,10 @@ import { CommonSearchPlaceResultAPI } from "./types/APIPlacesResponseTypes";
  * @ignore
  */
 export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<SearchPlaceProps> => {
-    const { position, entryPoints, poi, id, dist, ...rest } = result;
+    const { position, entryPoints, poi, id, dist, boundingBox, ...rest } = result;
     return {
         ...toPointFeature(latLonAPIToPosition(position)),
+        ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         id,
         properties: {
             ...omit(rest, "viewport"),

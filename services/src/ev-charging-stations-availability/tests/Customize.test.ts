@@ -1,4 +1,4 @@
-import { customizeService } from "../../../index";
+import { customizeService } from "../../..";
 
 describe("Using customize obj", () => {
     test("Charging availability request URL building tests using customize obj", () => {

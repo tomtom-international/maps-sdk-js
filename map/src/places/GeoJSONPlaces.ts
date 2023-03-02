@@ -7,13 +7,24 @@ import {
     PLACES_SOURCE_ID,
     ToBeAddedLayerSpec
 } from "../shared";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
-import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
+import { changeLayoutAndPaintProps, buildPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
 export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
+    /**
+     * The source ID used in this Places module.
+     * * Use it if you want to leverage MapLibre directly.
+     */
+    sourceID!: string;
+    /**
+     * The layer ID used in this Places module.
+     * * Use it if you want to leverage MapLibre directly.
+     */
+    layerID!: string;
+    private static lastInstanceIndex = -1;
     private places!: GeoJSONSourceWithLayers<Places>;
     private layerSpec!: Omit<SymbolLayerSpecification, "source">;
 
@@ -29,8 +40,11 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     }
 
     protected initSourcesWithLayers(config?: PlaceModuleConfig) {
-        const layerSpec = getPlacesLayerSpec(config, this.mapLibreMap);
-        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, PLACES_SOURCE_ID, [
+        GeoJSONPlaces.lastInstanceIndex++;
+        this.layerID = `placesSymbols-${GeoJSONPlaces.lastInstanceIndex}`;
+        this.sourceID = `${PLACES_SOURCE_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
+        const layerSpec = buildPlacesLayerSpec(config, this.layerID, this.mapLibreMap);
+        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, [
             layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
         ]);
         this.layerSpec = layerSpec;
@@ -77,7 +91,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     }
 
     private updateLayerSpecsAndData(config: PlaceModuleConfig): void {
-        const newLayerSpec = getPlacesLayerSpec(config, this.mapLibreMap);
+        const newLayerSpec = buildPlacesLayerSpec(config, this.layerID, this.mapLibreMap);
         changeLayoutAndPaintProps(newLayerSpec, this.layerSpec, this.mapLibreMap);
         this.layerSpec = newLayerSpec;
         this.updateSourceData(config);

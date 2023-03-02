@@ -1,6 +1,6 @@
+import { EVChargingStationsAvailability } from "@anw/go-sdk-js/core";
 import { ServiceTemplate } from "../shared";
 import { EVChargingStationsAvailabilityParams } from "./types/EVChargingStationsAvailabilityParams";
-import { EVChargingStationsAvailabilityResponse } from "./types/EVChargingStationsAvailabilityResponse";
 import { buildEVChargingStationsAvailabilityRequest } from "./RequestBuilder";
 import { parseEVChargingStationsAvailabilityResponse } from "./ResponseParser";
 import { get } from "../shared/Fetch";
@@ -13,8 +13,8 @@ import { parseEVChargingStationsAvailabilityResponseError } from "./EVChargingSt
 export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
     EVChargingStationsAvailabilityParams,
     URL,
-    EVChargingStationsAvailabilityResponse,
-    EVChargingStationsAvailabilityResponse
+    EVChargingStationsAvailability,
+    EVChargingStationsAvailability
 >;
 
 /**

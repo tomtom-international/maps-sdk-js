@@ -1,13 +1,19 @@
-import EVChargingStationsAvailability from "../EVChargingStationsAvailability";
+import {
+    accessibility,
+    EVChargingStationsAvailability,
+    ChargingPoint,
+    chargingPointStatus,
+    connectorTypes
+} from "@anw/go-sdk-js/core";
+import evChargingStationsAvailability, { buildPlacesWithEVAvailability } from "../EVChargingStationsAvailability";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { SDKServiceError } from "../../shared";
-import { accessibility, ChargingPoint, chargingPointStatus, connectorTypes } from "@anw/go-sdk-js/core";
-import { EVChargingStationsAvailabilityResponse } from "../types/EVChargingStationsAvailabilityResponse";
+import { search } from "../../search";
 
 describe("charging availability errors", () => {
     test("charging availability test without API key", async () => {
-        await expect(EVChargingStationsAvailability({ id: "1234" })).rejects.toBeInstanceOf(SDKServiceError);
-        await expect(EVChargingStationsAvailability({ id: "1234" })).rejects.toMatchObject({
+        await expect(evChargingStationsAvailability({ id: "1234" })).rejects.toBeInstanceOf(SDKServiceError);
+        await expect(evChargingStationsAvailability({ id: "1234" })).rejects.toMatchObject({
             service: "EVChargingStationsAvailability",
             message: "Request failed with status code 403",
             status: 403
@@ -15,13 +21,13 @@ describe("charging availability errors", () => {
     });
 });
 
-describe("EVChargingStationsAvailability integration tests", () => {
+describe("evChargingStationsAvailability integration tests", () => {
     const statusRegex = new RegExp(chargingPointStatus.join("|"));
     const accessibilityRegex = new RegExp(accessibility.join("|"));
     const connectorTypeRegex = new RegExp(connectorTypes.join("|"));
     beforeAll(() => putIntegrationTestsAPIKey());
 
-    test("EVChargingStationsAvailability with required params", async () => {
+    test("evChargingStationsAvailability with required params", async () => {
         const chargingPointObj: ChargingPoint = {
             evseId: expect.any(String),
             status: expect.stringMatching(statusRegex),
@@ -35,7 +41,7 @@ describe("EVChargingStationsAvailability integration tests", () => {
                 }
             ]
         };
-        const expectedResult: EVChargingStationsAvailabilityResponse = {
+        const expectedResult: EVChargingStationsAvailability = {
             chargingParkId: "528009010069650",
             chargingStations: [
                 {
@@ -43,10 +49,15 @@ describe("EVChargingStationsAvailability integration tests", () => {
                     accessibility: expect.stringMatching(accessibilityRegex),
                     chargingPoints: expect.arrayContaining([chargingPointObj])
                 }
-            ]
+            ],
+            chargingPointAvailability: {
+                count: expect.any(Number),
+                statusCounts: expect.any(Object)
+            },
+            connectorAvailabilities: expect.any(Array)
         };
 
-        const result = await EVChargingStationsAvailability({ id: "528009010069650" });
+        const result = await evChargingStationsAvailability({ id: "528009010069650" });
         expect(result).toMatchObject(expectedResult);
         expect(result.chargingStations[0].chargingPoints.length).toBeGreaterThan(0);
     });
@@ -70,7 +81,22 @@ describe("EVChargingStationsAvailability integration tests", () => {
             chargingStations: [chargingStationObj, chargingStationObj]
         };
 
-        const result = await EVChargingStationsAvailability({ id: "840479002976741", connectorTypes: ["Chademo"] });
+        const result = await evChargingStationsAvailability({ id: "840479002976741", connectorTypes: ["Chademo"] });
         expect(result).toMatchObject(expectedResult);
+    });
+
+    test("search combined with buildPlacesWithEVAvailability", async () => {
+        const evStationsWithoutAvailability = await search({
+            query: "",
+            poiCategories: ["ELECTRIC_VEHICLE_CHARGING_STATION"],
+            position: [13.41273, 52.52308], // Berlin
+            limit: 3
+        });
+
+        const evStationsWithAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability);
+        const resultFeatures = evStationsWithAvailability.features;
+        expect(resultFeatures).toHaveLength(evStationsWithoutAvailability.features.length);
+        expect(resultFeatures.every((feature) => feature.properties.chargingPark?.connectors)).toBeTruthy();
+        expect(resultFeatures.some((feature) => feature.properties.chargingPark?.availability)).toBeTruthy();
     });
 });

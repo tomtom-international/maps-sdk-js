@@ -6,7 +6,12 @@ import POIs from "./MapEventProxy.test.data.json";
 import amsterdamGeometryData from "./GeometryModule.test.data.json";
 import { EventType, GeometryModuleConfig } from "map";
 import { Position } from "geojson";
-import { waitForMapReady, waitForTimeout, waitUntilRenderedFeatures } from "./util/TestUtils";
+import {
+    getPlacesSourceAndLayerIDs,
+    waitForMapReady,
+    waitForTimeout,
+    waitUntilRenderedFeatures
+} from "./util/TestUtils";
 
 const poiCoordinates = POIs.features[0].geometry.coordinates as [number, number];
 
@@ -39,9 +44,6 @@ const setupEventCallbacks = async (eventType: EventType) =>
         // @ts-ignore
         eventType
     );
-
-const waitForRenderedPlaces = async (numPlaces: number) =>
-    waitUntilRenderedFeatures(["placesSymbols"], numPlaces, 20000);
 
 const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeatures(["geometry_Fill"], numFeatures, 3000, position);
@@ -87,7 +89,7 @@ describe("EventProxy integration tests", () => {
         await waitForMapReady();
 
         await showPlaces(POIs as Places);
-        await waitForRenderedPlaces(POIs.features.length);
+        await waitUntilRenderedFeatures([(await getPlacesSourceAndLayerIDs()).layerID], POIs.features.length, 10000);
     });
 
     test("Add click and contextmenu events for POI", async () => {
@@ -168,7 +170,8 @@ describe("EventProxy integration tests", () => {
         expect(features).toHaveLength(1);
         expect(features).toContainEqual(expect.objectContaining({ type: "Feature" }));
         expect(sourceWithLayers).toHaveLength(1);
-        expect(sourceWithLayers).toContainEqual(expect.objectContaining({ source: "places", id: "placesSymbols" }));
+        const { sourceID, layerID } = await getPlacesSourceAndLayerIDs();
+        expect(sourceWithLayers).toContainEqual(expect.objectContaining({ source: sourceID, id: layerID }));
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });
@@ -183,7 +186,7 @@ const setupPlacesModuleAndEvents = async () => {
     });
     await waitForMapReady();
     await showPlaces(POIs as Places);
-    await waitForRenderedPlaces(POIs.features.length);
+    await waitUntilRenderedFeatures([(await getPlacesSourceAndLayerIDs()).layerID], POIs.features.length, 10000);
 
     // Setting up events - We click in the POI and should not have geometry module returned
     // in features parameter
@@ -222,7 +225,7 @@ describe("EventProxy Configuration", () => {
         });
         await waitForMapReady();
         await showPlaces(POIs as Places);
-        await waitForRenderedPlaces(POIs.features.length);
+        await waitUntilRenderedFeatures([(await getPlacesSourceAndLayerIDs()).layerID], POIs.features.length, 15000);
 
         let cursor = await getCursor();
         expect(cursor).toBe("help");
@@ -242,7 +245,7 @@ describe("EventProxy Configuration", () => {
 
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
         expect(features).toHaveLength(3);
-        expect(features?.[0].layer.id).toEqual("placesSymbols");
+        expect(features?.[0].layer.id).toEqual((await getPlacesSourceAndLayerIDs()).layerID);
     });
 
     test("Return layer if interactive flag is enabled", async () => {
@@ -251,7 +254,7 @@ describe("EventProxy Configuration", () => {
 
         const features = await page.evaluate(() => (globalThis as GOSDKThis)._clickedFeatures);
         expect(features).toHaveLength(3);
-        expect(features?.[0].layer.id).toEqual("placesSymbols");
+        expect(features?.[0].layer.id).toEqual((await getPlacesSourceAndLayerIDs()).layerID);
         expect(features?.[1].layer.id).toEqual("geometry_Fill");
     });
 });

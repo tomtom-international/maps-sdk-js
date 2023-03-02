@@ -161,6 +161,7 @@ export type CommonSearchPlaceResultAPI = Omit<
     position: LatLonAPI;
     dist?: number;
     viewport?: ViewportAPI;
+    boundingBox?: BoundingBoxAPI;
     entryPoints?: EntryPointAPI[];
     address?: AddressProperties;
     poi?: POIAPI;

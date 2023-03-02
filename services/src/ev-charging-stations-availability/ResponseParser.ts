@@ -1,12 +1,14 @@
-import { EVChargingStationsAvailabilityResponse } from "./types/EVChargingStationsAvailabilityResponse";
+import { EVChargingStationsAvailability } from "@anw/go-sdk-js/core";
+import { toChargingPointAvailability, toConnectorBasedAvailabilities } from "./connectorAvailability";
 
 /**
- * Default method for parsing ev charging stations availability from {@link EVChargingStationsAvailabilityResponse}
+ * Default method for parsing ev charging stations availability from {@link EVChargingStationsAvailability}
  * @param apiResponse
  */
 export const parseEVChargingStationsAvailabilityResponse = (
-    apiResponse: EVChargingStationsAvailabilityResponse
-): EVChargingStationsAvailabilityResponse => {
-    // Nothing to do for now, return it as-is
-    return apiResponse;
-};
+    apiResponse: EVChargingStationsAvailability
+): EVChargingStationsAvailability => ({
+    ...apiResponse,
+    chargingPointAvailability: toChargingPointAvailability(apiResponse.chargingStations),
+    connectorAvailabilities: toConnectorBasedAvailabilities(apiResponse.chargingStations)
+});

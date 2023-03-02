@@ -11,7 +11,7 @@ import {
     TrafficIncidentsFilters
 } from "../types/VectorTilesTrafficConfig";
 import { MultiSyntaxFilter, ValuesFilter } from "../../shared";
-import { getMergedAnyFilter, buildValuesFilter } from "../../shared/MapLibreFilterUtils";
+import { buildValuesFilter, getMergedAnyFilter } from "../../shared/MapLibreFilterUtils";
 
 const toMultiSyntaxAllFilter = (
     newSyntaxExpressions: unknown[],

@@ -373,6 +373,16 @@
             "lat": 48.85679,
             "lon": 2.35102
           },
+          "boundingBox": {
+            "topLeftPoint": {
+              "lat": 48.85769,
+              "lon": 2.34965
+            },
+            "btmRightPoint": {
+              "lat": 48.85589,
+              "lon": 2.35239
+            }
+          },
           "viewport": {
             "topLeftPoint": {
               "lat": 48.85769,
@@ -410,9 +420,11 @@
         ],
         "totalResults": 1816776
       },
+      "bbox": [2.34965, 48.85589, 2.35239, 48.85769],
       "features": [
         {
           "type": "Feature",
+          "bbox": [2.34965, 48.85589, 2.35239, 48.85769],
           "geometry": {
             "type": "Point",
             "coordinates": [2.35102, 48.85679]

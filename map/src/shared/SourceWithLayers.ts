@@ -20,11 +20,14 @@ export abstract class AbstractSourceWithLayers<
     RUNTIME_SOURCE extends Source = Source,
     LAYER_SPEC extends LayerSpecification = LayerSpecification
 > {
+    layerSpecs: LAYER_SPEC[];
     constructor(
         readonly map: Map,
         readonly source: GOSDKSource<SOURCE_SPEC, RUNTIME_SOURCE>,
-        readonly layerSpecs: LAYER_SPEC[]
-    ) {}
+        layerSpecs: LAYER_SPEC[]
+    ) {
+        this.layerSpecs = layerSpecs;
+    }
 
     isAnyLayerVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
         return this.getLayerSpecs(filter).some((layer) => this.isLayerVisible(layer));
