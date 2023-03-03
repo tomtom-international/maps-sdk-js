@@ -1,3 +1,8 @@
+/**
+ * @module map-places
+ * @category Map
+ */
+
 export * from "./types/PlaceDisplayProps";
 export * from "./types/PlaceModuleConfig";
 export * from "./preparePlacesForDisplay";

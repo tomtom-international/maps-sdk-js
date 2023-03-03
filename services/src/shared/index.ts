@@ -1,5 +1,6 @@
 /**
- * @module shared
+ * @module services-shared
+ * @category Service
  */
 
 export * from "./types/APIPlacesResponseTypes";

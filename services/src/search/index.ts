@@ -1,5 +1,6 @@
 /**
  * @module search
+ * @category Service
  */
 
 export * from "./Search";

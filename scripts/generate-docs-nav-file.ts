@@ -46,7 +46,7 @@ const createNavFileEntries = (extraFilesArray: string[]) =>
 
 // Take content from base nav file, append extra file entries to it and output to output nav file
 const writeToOutputNavFile = (extraFileNavEntries: string) => {
-    const baseNavFilePath = resolve(DOCUMENTATION_DIR_PATH, BASE_NAV_FILE_NAME);
+    const baseNavFilePath = resolve(DOCUMENTATION_DIR_PATH, "../../..", BASE_NAV_FILE_NAME);
     const outputNavFilePath = resolve(DOCUMENTATION_DIR_PATH, OUTPUT_NAV_FILE_NAME);
 
     const baseNavFileContent = readFileSync(baseNavFilePath, { encoding: "utf8" });

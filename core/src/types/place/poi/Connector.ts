@@ -25,6 +25,10 @@ export const connectorTypes = [
  */
 export type ConnectorType = (typeof connectorTypes)[number];
 
+/**
+ * @group Place
+ * @category Variables
+ */
 export const currentTypes = ["AC1", "AC3", "DC"] as const;
 
 /**
@@ -32,6 +36,8 @@ export const currentTypes = ["AC1", "AC3", "DC"] as const;
  * * AC1: Alternating_Current_1_Phase
  * * AC3: Alternating_Current_3_Phase
  * * DC: Direct_Current
+ * @group Place
+ * @category Types
  */
 export type CurrentType = (typeof currentTypes)[number];
 

@@ -1,3 +1,8 @@
+/**
+ * @module map-shared
+ * @category Map
+ */
+
 export * from "./types";
 export * from "./SourceWithLayers";
 export * from "./AbstractMapModule";

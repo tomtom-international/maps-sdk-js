@@ -13,8 +13,6 @@ const placesLayerID = "placesSymbols";
 /**
  * Builds the title of the place to display it on the map.
  * @param place The place to display.
- * @group MapPlaces
- * @category Functions
  */
 export const buildPlaceTitle = (place: Place): string =>
     place.properties.poi?.name || place.properties.address.freeformAddress;
@@ -40,8 +38,6 @@ export const addMapIcon = (map: Map, classificationCode: MapStylePOIClassificati
  * @param place The place to display.
  * @param map
  * @param config
- * @group MapPlaces
- * @category Functions
  */
 export const getIconIDForPlace = (place: Place, config: PlaceModuleConfig = {}, map?: Map): string => {
     const { iconConfig } = config;

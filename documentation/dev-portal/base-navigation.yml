@@ -66,10 +66,28 @@ menu:
         items:
           - fileId: /api-reference/modules/core
             title: Core
-          - fileId: /api-reference/modules/map
-            title: Map
+          - title: Map
+            items:
+              - fileId: /api-reference/modules/map_geometry
+                title: Geometry
+              - fileId: /api-reference/modules/map_hillshade
+                title: Hill shading
+              - fileId: /api-reference/modules/map_places
+                title: Places
+              - fileId: /api-reference/modules/map_init
+                title: Init
+              - fileId: /api-reference/modules/map_POIs
+                title: Points of Interest
+              - fileId: /api-reference/modules/map_routes
+                title: Routes
+              - fileId: /api-reference/modules/map_traffic
+                title: Traffic
+              - fileId: /api-reference/modules/map_shared
+                title: Shared
           - title: Services
             items:
+              - fileId: /api-reference/modules/autocomplete
+                title: Autocomplete
               - fileId: /api-reference/modules/calculate_route
                 title: Calculate Route
               - fileId: /api-reference/modules/fuzzy_search
@@ -86,7 +104,7 @@ menu:
                 title: Reverse Geocoding
               - fileId: /api-reference/modules/search
                 title: Search
-              - fileId: /api-reference/modules/shared
+              - fileId: /api-reference/modules/services_shared
                 title: Shared
       - title: Extra pages
         isHidden: true

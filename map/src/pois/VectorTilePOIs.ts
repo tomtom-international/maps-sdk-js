@@ -12,8 +12,6 @@ import { buildMappedValuesFilter, getMergedAllFilter } from "../shared/MapLibreF
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.
  * @param categories list of filtered categories.
- * @group MapPOIs
- * @category Functions
  */
 export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] => {
     const categoryIds: number[] = [];
@@ -30,8 +28,6 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
 /**
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
- * @group MapPOIs
- * @category Classes
  */
 export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
     private poi!: StyleSourceWithLayers;

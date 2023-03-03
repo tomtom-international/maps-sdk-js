@@ -1,5 +1,6 @@
 /**
  * @module calculate-route
+ * @category Service
  */
 
 export * from "./types/CalculateRouteParams";

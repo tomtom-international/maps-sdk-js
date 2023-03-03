@@ -68,8 +68,6 @@ const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
- * @group MapRoutes
- * @category Classes
  */
 export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
     private waypoints!: GeoJSONSourceWithLayers<Waypoints>;

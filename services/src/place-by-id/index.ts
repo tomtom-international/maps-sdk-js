@@ -1,5 +1,6 @@
 /**
  * @module place-by-id
+ * @category Service
  */
 
 export * from "./PlaceById";

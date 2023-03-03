@@ -1,5 +1,6 @@
 /**
- * @module Autocomplete
+ * @module autocomplete
+ * @category Service
  */
 
 export * from "./types";

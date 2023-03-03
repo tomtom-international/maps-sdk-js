@@ -1,17 +1,27 @@
 {
   "entryPoints": [
     "./core",
-    "./map",
-    "./services/src/fuzzy-search/index.ts",
-    "./services/src/ev-charging-station-availability/index.ts",
-    "./services/src/geocode/index.ts",
-    "./services/src/geometry-data/index.ts",
-    "./services/src/geometry-search/index.ts",
-    "./services/src/place-by-id/index.ts",
-    "./services/src/revgeo/index.ts",
-    "./services/src/routing/index.ts",
-    "./services/src/search/index.ts",
-    "./services/src/shared/index.ts"
+    "./map/src/init",
+    "./map/src/geometry",
+    "./map/src/hillshade",
+    "./map/src/places",
+    "./map/src/pois",
+    "./map/src/routing",
+    "./map/src/shared",
+    "./map/src/traffic",
+
+
+    "./services/src/fuzzy-search",
+    "./services/src/ev-charging-station-availability",
+    "./services/src/geocode",
+    "./services/src/geometry-data",
+    "./services/src/geometry-search",
+    "./services/src/place-by-id",
+    "./services/src/revgeo",
+    "./services/src/routing",
+    "./services/src/search",
+    "./services/src/shared",
+    "./services/src/autocomplete-search"
   ],
   "entryPointStrategy": "resolve",
   "entryDocument": "home.mdx",

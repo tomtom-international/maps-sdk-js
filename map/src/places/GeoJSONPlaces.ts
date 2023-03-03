@@ -13,10 +13,6 @@ import { GOSDKMap } from "../GOSDKMap";
 import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, getPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
-/**
- * @group MapPlaces
- * @category Classes
- */
 export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
     private places!: GeoJSONSourceWithLayers<Places>;
     private layerSpec!: Omit<SymbolLayerSpecification, "source">;
