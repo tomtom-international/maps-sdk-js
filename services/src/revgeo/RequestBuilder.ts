@@ -11,8 +11,6 @@ const buildURLBasePath = (params: CommonServiceParams): string =>
 
 /**
  * Default function for building a reverse geocoding request from {@link ReverseGeocodingParams}
- * @group Reverse Geocoding
- * @category Functions
  * @param params The reverse geocoding parameters, with global configuration already merged into them.
  */
 export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {

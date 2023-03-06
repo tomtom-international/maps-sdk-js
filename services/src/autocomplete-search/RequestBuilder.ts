@@ -12,8 +12,6 @@ const buildURLBasePath = (mergedOptions: AutocompleteSearchParams): string =>
 
 /**
  * Default function for building autocomplete request from {@link AutocompleteSearchParams}
- * @group Autocomplete
- * @category Functions
  * @param params The autocomplete parameters, with global configuration already merged into them.
  */
 export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams): URL => {

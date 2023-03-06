@@ -12,8 +12,6 @@ import { geometrySearchRequestSchema } from "./GeometrySearchRequestSchema";
 
 /**
  * Geometry search service template type.
- * @group Geometry Search
- * @category Types
  */
 export type GeometrySearchTemplate = ServiceTemplate<
     GeometrySearchParams,
@@ -24,8 +22,6 @@ export type GeometrySearchTemplate = ServiceTemplate<
 
 /**
  * Geometry search service template main implementation.
- * @group Geometry Search
- * @category Variables
  */
 export const geometrySearchTemplate: GeometrySearchTemplate = {
     requestValidation: { schema: geometrySearchRequestSchema },

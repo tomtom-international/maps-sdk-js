@@ -34,8 +34,6 @@ const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
 
 /**
  * Default method for parsing geocoding request from {@link GeocodingResponse}
- * @group Geocoding
- * @category Functions
  * @param apiResponse
  */
 export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): GeocodingResponse => {

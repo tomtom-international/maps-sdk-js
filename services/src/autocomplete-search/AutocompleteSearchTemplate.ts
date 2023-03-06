@@ -7,8 +7,6 @@ import { autocompleteSearchRequestSchema } from "./AutocompleteSearchRequestSche
 
 /**
  * Autocomplete service template type.
- * @group Autocomplete
- * @category Types
  */
 export type AutocompleteSearchTemplate = ServiceTemplate<
     AutocompleteSearchParams,
@@ -19,8 +17,6 @@ export type AutocompleteSearchTemplate = ServiceTemplate<
 
 /**
  * Autocomplete service template main implementation.
- * @group Autocomplete
- * @category Variables
  */
 export const autocompleteSearchTemplate: AutocompleteSearchTemplate = {
     requestValidation: { schema: autocompleteSearchRequestSchema },

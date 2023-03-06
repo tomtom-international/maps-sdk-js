@@ -2,8 +2,6 @@ import { VehicleEngine } from "./VehicleEngineParams";
 
 /**
  * Physical properties of the vehicle (sizes and weights).
- * @group Calculate Route
- * @category Types
  */
 export type VehicleDimensions = {
     /**
@@ -50,10 +48,6 @@ export type VehicleDimensions = {
     axleWeightKG?: number;
 };
 
-/**
- * @group Calculate Route
- * @category Variables
- */
 export const loadTypes = [
     "USHazmatClass1",
     "USHazmatClass2",
@@ -87,15 +81,11 @@ export const loadTypes = [
  * * otherHazmatExplosive: Explosives
  * * otherHazmatGeneral: Miscellaneous
  * * otherHazmatHarmfulToWater: Harmful to water
- * @group Calculate Route
- * @category Types
  */
 export type LoadType = (typeof loadTypes)[number];
 
 /**
- *  Object describing vehicle details
- *  @group Calculate Route
- *  @category Types
+ * Object describing vehicle details
  */
 export type VehicleParameters = {
     /**

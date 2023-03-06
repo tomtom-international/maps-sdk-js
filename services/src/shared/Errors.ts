@@ -11,8 +11,6 @@ import { ZodIssue } from "zod";
  *  1. Programming errors: These are programming and configuration errors in the user application, like incorrect usage of the SDK(such as passing wrong type to parameter/function)
  *  2. API errors: These include recoverable errors that occur within the SDK implementation.
  *
- * @group Shared
- * @category Types
  */
 export class SDKError extends Error {
     constructor(message: string, private service: string, private errors?: ZodIssue[]) {
@@ -24,10 +22,6 @@ export class SDKError extends Error {
     }
 }
 
-/**
- * @group Shared
- * @category Variables
- */
 export const APIErrorCode: { readonly [K in APICode as number]: string } = {
     [APICode.TOO_MANY_REQUESTS]: "Too Many Requests: The API Key is over QPS (Queries per second)",
     [APICode.FORBIDDEN]: "Request failed with status code 403"
@@ -35,8 +29,6 @@ export const APIErrorCode: { readonly [K in APICode as number]: string } = {
 
 /**
  * API Response Error Class for the handle API error responses.
- * @group Shared
- * @category Types
  */
 export class SDKServiceError extends SDKError {
     status?: number;

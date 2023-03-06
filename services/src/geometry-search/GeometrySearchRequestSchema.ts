@@ -8,7 +8,5 @@ const geometrySearchRequestMandatory = z.object({
 
 /**
  * @ignore
- * @group Geometry Search
- * @category Types
  */
 export const geometrySearchRequestSchema = commonSearchParamsSchema.merge(geometrySearchRequestMandatory);

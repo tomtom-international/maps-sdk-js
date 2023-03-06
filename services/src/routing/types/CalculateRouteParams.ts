@@ -52,16 +52,12 @@ export type CostModel = {
 
 /**
  * Specifies when to depart (start traveling) or to arrive (finish traveling).
- * @group Calculate Route
- * @category Types
  */
 export type DepartArriveParams = { option: "departAt" | "arriveBy"; date: Date };
 
 /**
  * Section type which can be requested in the route parameters.
  * * (Other section types such as "leg" might be automatically calculated regardless of these inputs).
- * @group Calculate Route
- * @category Types
  */
 export type InputSectionType = (typeof inputSectionTypes)[number];
 
@@ -78,22 +74,16 @@ export type InputSectionType = (typeof inputSectionTypes)[number];
  * * country: countries the route has parts in.
  * * travelMode: sections in relation to the request parameter 'travelMode'.
  * @default All of them (If you want none, pass an empty array).
- * @group Calculate Route
- * @category Types
  */
 export type InputSectionTypes = InputSectionType[];
 
 /**
  * Basic low/normal/high option.
- * @group Calculate Route
- * @category Types
  */
 export type LNH = "low" | "normal" | "high";
 
 /**
  * Options applicable to the thrilling route type.
- * @group Calculate Route
- * @category Types
  */
 export type ThrillingParams = {
     /**
@@ -114,23 +104,13 @@ export type ThrillingParams = {
     windingness?: LNH;
 };
 
-/**
- * @group Calculate Route
- * @category Variables
- */
 export const instructionsTypes = ["coded", "text", "tagged"] as const;
 
 /**
  * Basic coded/text/tagged values.
- * @group Calculate Route
- * @category Types
  */
 export type InstructionsTypes = (typeof instructionsTypes)[number];
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type CalculateRouteParams = CommonServiceParams & {
     /**
      * These are the specified locations (waypoints) and/or path points (supporting points) for route calculation.

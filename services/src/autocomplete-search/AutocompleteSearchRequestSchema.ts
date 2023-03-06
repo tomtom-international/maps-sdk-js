@@ -17,8 +17,6 @@ const autocompleteSearchRequestOptional = z
 
 /**
  * @ignore
- * @group Autocomplete
- * @category Types
  */
 export const autocompleteSearchRequestSchema = autocompleteSearchRequestMandatory.merge(
     autocompleteSearchRequestOptional

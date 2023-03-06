@@ -3,8 +3,6 @@ import { GeocodingProps } from "./GeocodingResponse";
 
 /**
  * @ignore
- * @group Geocoding
- * @category Types
  */
 export type GeocodingResultAPI = Omit<
     GeocodingProps,
@@ -22,8 +20,6 @@ export type GeocodingResultAPI = Omit<
 
 /**
  * @ignore
- * @group Geocoding
- * @category Types
  */
 export type GeocodingResponseAPI = {
     /**

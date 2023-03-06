@@ -2,8 +2,6 @@ import { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet }
 
 /**
  * @ignore
- * @group Reverse Geocoding
- * @category Types
  */
 export type ReverseGeocodingResponseAPI = {
     summary: {

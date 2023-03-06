@@ -29,8 +29,6 @@ const queryIntentAPIToSDK = (intentAPI: QueryIntentAPI): QueryIntent => {
 
 /**
  * Default function to parse a fuzzy search response.
- * @group Fuzzy Search
- * @category Functions
  * @param apiResponse The API response.
  */
 export const parseFuzzySearchResponse = (apiResponse: FuzzySearchResponseAPI): FuzzySearchResponse => {

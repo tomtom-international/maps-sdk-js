@@ -30,8 +30,6 @@ const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInpu
 
 /**
  * Default function for building a geometry data request from {@link GeometryDataParams}
- * @group Geometry Data
- * @category Functions
  * @param params The geometry data parameters, with global configuration already merged into them.
  */
 export const buildGeometryDataRequest = (params: GeometryDataParams): URL => {

@@ -2,8 +2,6 @@ import { HasBBox } from "@anw/go-sdk-js/core";
 
 /**
  * Common parameters between fuzzy search and geocoding.
- * @group Shared
- * @category Types
  */
 export type CommonGeocodeAndFuzzySearchParams = {
     /**

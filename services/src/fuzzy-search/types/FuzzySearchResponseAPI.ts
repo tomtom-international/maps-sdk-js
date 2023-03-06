@@ -3,15 +3,11 @@ import { BookmarkIntent, NearbyIntentDetails, W3WIntent } from "./FuzzySearchRes
 
 /**
  * @ignore
- * @group Fuzzy Search
- * @category Types
  */
 export type FuzzySearchResultAPI = CommonSearchPlaceResultAPI;
 
 /**
  * @ignore
- * @group Fuzzy Search
- * @category Types
  */
 export type FuzzySearchResponseAPI = {
     /**

@@ -9,8 +9,6 @@ import { parseEVChargingStationsAvailabilityResponseError } from "./EVChargingSt
 
 /**
  * EV Charging Stations Availability service template type.
- * @group EV Charging Stations Availability
- * @category Types
  */
 export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
     EVChargingStationsAvailabilityParams,
@@ -21,8 +19,6 @@ export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
 
 /**
  * EV Charging Stations Availability service template main implementation.
- * @group EV Charging Stations Availability
- * @category Variables
  */
 export const evChargingStationsAvailabilityTemplate: EVChargingStationsAvailabilityTemplate = {
     requestValidation: { schema: evChargingStationsAvailabilityRequestSchema },

@@ -67,8 +67,6 @@ const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
 
 /**
  * Default function for building a geometry search request from {@link GeometrySearchParams}
- * @group Geometry Search
- * @category Functions
  * @param params The geometry search parameters, with global configuration already merged into them.
  */
 export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostObject<SearchByGeometryPayloadAPI> => {

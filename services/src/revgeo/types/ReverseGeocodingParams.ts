@@ -4,15 +4,9 @@ import { CommonServiceParams } from "../../shared";
 
 /**
  * @enum
- * @group Reverse Geocoding
- * @category Types
  */
 export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rotary" | "LocalStreet";
 
-/**
- * @group Reverse Geocoding
- * @category Types
- */
 export type ReverseGeocodingMandatoryParams = {
     /**
      * Main reverse geocoding parameter (mandatory).
@@ -21,10 +15,6 @@ export type ReverseGeocodingMandatoryParams = {
     position: HasLngLat;
 };
 
-/**
- * @group Reverse Geocoding
- * @category Types
- */
 export type ReverseGeocodingOptionalParams = {
     /**
      * Format of newlines in the formatted address.
@@ -59,7 +49,7 @@ export type ReverseGeocodingOptionalParams = {
     heading?: number;
 
     /**
-     * Enables the return of a comma-separted mapcodes list.
+     * Enables the return of a comma-separated mapcodes list.
      * It can also filter the response to only show selected mapcode types. See Mapcodes in the response.
      * Values: One or more of:
      * * `Local`
@@ -101,7 +91,7 @@ export type ReverseGeocodingOptionalParams = {
     /**
      * Enable or disable the feature.
      *
-     * Requires including a road use array for reversegeocodes at street level.
+     * Requires including a road use array for reverse geocode at street level.
      * @default None
      */
     returnRoadUse?: boolean;
@@ -148,10 +138,6 @@ export type ReverseGeocodingOptionalParams = {
     view?: View;
 };
 
-/**
- * @group Reverse Geocoding
- * @category Types
- */
 export type ReverseGeocodingParams = CommonServiceParams &
     ReverseGeocodingMandatoryParams &
     ReverseGeocodingOptionalParams;

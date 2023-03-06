@@ -13,8 +13,6 @@ import { callService } from "../shared/ServiceTemplate";
  * Note that the geocoder is very tolerant of typos and incomplete addresses.
  * It will also handle everything from exact street addresses, streets, or intersections
  * as well as higher-level geographies such as city centers, counties, states, etc.
- * @group Geocoding
- * @category Functions
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/search-api/documentation/geocoding-service/geocode

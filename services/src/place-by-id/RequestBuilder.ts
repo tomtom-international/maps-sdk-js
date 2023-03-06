@@ -7,8 +7,6 @@ const buildURLBasePath = (params: CommonServiceParams): string =>
 
 /**
  * Default method for building place by id request from {@link PlaceByIdParams}
- * @group Place By Id
- * @category Functions
  * @param params The place by id parameters, with global configuration already merged into them.
  */
 export const buildPlaceByIdRequest = (params: PlaceByIdParams): URL => {

@@ -1,10 +1,6 @@
 import { Position } from "geojson";
 import { AutocompleteSearchSegmentType } from "./AutocompleteSearchParams";
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchResponse = {
     /**
      * Information about the autocomplete request that was performed.
@@ -16,10 +12,6 @@ export type AutocompleteSearchResponse = {
     results: AutocompleteSearchResult[];
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchContext = {
     /**
      * Query passed to the autocomplete engine.
@@ -31,10 +23,6 @@ export type AutocompleteSearchContext = {
     geoBias?: AutocompleteSearchResultGeoBias;
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchResultGeoBias = {
     /**
      * Position used to bias the results by setting the optional position request parameters.
@@ -46,10 +34,6 @@ export type AutocompleteSearchResultGeoBias = {
     radiusMeters?: number;
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchResult = {
     /**
      * Describes recognized entities of the result.
@@ -57,19 +41,11 @@ export type AutocompleteSearchResult = {
     segments: AutocompleteSearchSegment[];
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchSegment =
     | AutocompleteSearchBrandSegment
     | AutocompleteSearchCategorySegment
     | AutocompleteSearchPlaintextSegment;
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteGenericSearchSegment = {
     /**
      * The type of detected entity.
@@ -89,10 +65,6 @@ export type AutocompleteGenericSearchSegment = {
     matches: AutocompleteSearchMatches;
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchMatches = {
     /**
      * Informs which part of the input query is represented by segment.
@@ -101,10 +73,6 @@ export type AutocompleteSearchMatches = {
     inputQuery: AutocompleteSearchMatch[];
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchMatch = {
     /**
      * Starting offset of the inputQuery substring matching the segment.
@@ -116,18 +84,10 @@ export type AutocompleteSearchMatch = {
     length: number;
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchBrandSegment = AutocompleteGenericSearchSegment & {
     type: "brand";
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchCategorySegment = AutocompleteGenericSearchSegment & {
     type: "category";
     /**
@@ -143,10 +103,6 @@ export type AutocompleteSearchCategorySegment = AutocompleteGenericSearchSegment
     matchedAlternativeName?: string;
 };
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchPlaintextSegment = AutocompleteGenericSearchSegment & {
     type: "plaintext";
 };

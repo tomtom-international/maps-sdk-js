@@ -9,8 +9,6 @@ const buildURLBasePath = (mergedOptions: FuzzySearchParams): string =>
 
 /**
  * Default function for building a fuzzy search request from {@link FuzzySearchParams}
- * @group Fuzzy Search
- * @category Functions
  * @param params The fuzzy search parameters, with global configuration already merged into them.
  */
 export const buildFuzzySearchRequest = (params: FuzzySearchParams): URL => {

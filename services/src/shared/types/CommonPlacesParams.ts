@@ -4,8 +4,6 @@ import { IndexTypesAbbreviation } from "./APIPlacesResponseTypes";
 
 /**
  * Common parameters to services related to places services (search, geocoding, reverse geocoding).
- * @group Shared
- * @category Types
  */
 export type CommonPlacesParams = CommonServiceParams & {
     /**

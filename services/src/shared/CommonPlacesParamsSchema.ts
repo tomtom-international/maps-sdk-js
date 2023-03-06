@@ -19,7 +19,5 @@ const placesParamsOptional = z
 
 /**
  * @ignore
- * @group Search
- * @category Types
  */
 export const commonPlacesParamsSchema = placesParamsMandatory.merge(placesParamsOptional);

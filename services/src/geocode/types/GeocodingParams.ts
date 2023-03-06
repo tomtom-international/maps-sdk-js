@@ -2,10 +2,6 @@ import { CommonPlacesParams, CommonGeocodeAndFuzzySearchParams, IndexTypesAbbrev
 
 type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
 
-/**
- * @group Geocoding
- * @category Types
- */
 export type GeocodingParams = Omit<CommonPlacesParams & CommonGeocodeAndFuzzySearchParams, "extendedPostalCodesFor"> & {
     /**
      * Indexes for which extended postal codes should be included in the results.

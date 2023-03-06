@@ -2,8 +2,6 @@ import { EVChargingStationsAvailabilityResponse } from "./types/EVChargingStatio
 
 /**
  * Default method for parsing ev charging stations availability from {@link EVChargingStationsAvailabilityResponse}
- * @group EV Charging Stations Availability
- * @category Functions
  * @param apiResponse
  */
 export const parseEVChargingStationsAvailabilityResponse = (

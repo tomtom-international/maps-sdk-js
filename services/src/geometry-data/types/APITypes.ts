@@ -2,8 +2,6 @@ import { GeoJsonObject } from "geojson";
 
 /**
  * @ignore
- * @group Geometry Data
- * @category Types
  */
 export type AdditionalDataAPI = {
     providerID: string;
@@ -13,8 +11,6 @@ export type AdditionalDataAPI = {
 
 /**
  * @ignore
- * @group Geometry Data
- * @category Types
  */
 export type GeometryDataResponseAPI = {
     additionalData: AdditionalDataAPI[];

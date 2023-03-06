@@ -6,8 +6,6 @@ import { ReverseGeocodingResponseAPI } from "./types/APITypes";
 
 /**
  * Default method for parsing reverse geocoding request from {@link ReverseGeocodingResponse}
- * @group Reverse Geocoding
- * @category Functions
  * @param params
  * @param apiResponse
  */

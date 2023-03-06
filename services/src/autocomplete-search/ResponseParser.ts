@@ -3,8 +3,6 @@ import { latLonAPIToPosition } from "../shared/Geometry";
 
 /**
  * Default function to parse autocomplete response.
- * @group Autocomplete
- * @category Functions
  * @param apiResponse The API response.
  */
 export const parseAutocompleteSearchResponse = (

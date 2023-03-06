@@ -10,8 +10,6 @@ const buildURLBasePath = (params: GeocodingParams): string =>
 
 /**
  * Default method for building geocoding request from {@link GeocodingParams}
- * @group Geocoding
- * @category Functions
  * @param params The geocoding parameters, with global configuration already merged into them.
  */
 export const buildGeocodingRequest = (params: GeocodingParams): URL => {

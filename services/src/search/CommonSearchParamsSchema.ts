@@ -24,7 +24,5 @@ const searchExtraParamsOptional = z
 
 /**
  * @ignore
- * @group Search
- * @category Types
  */
 export const commonSearchParamsSchema = commonPlacesParamsSchema.merge(searchExtraParamsOptional);

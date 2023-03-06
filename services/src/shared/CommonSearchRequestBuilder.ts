@@ -11,8 +11,6 @@ import { GeometrySearchParams } from "../geometry-search";
 /**
  * Appends request parameters common to search APIs such as fuzzy + geometry search.
  * * Mutates the given searchURL with the appended parameters.
- * @group Search
- * @category Functions
  * @param searchURL The search URL to append parameters to. Should come without any parameters at this point.
  * @param params The search parameters, with global configuration already merged into them.
  */

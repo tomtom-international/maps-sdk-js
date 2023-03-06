@@ -16,15 +16,11 @@ import { CurrentType, PlugType } from "@anw/go-sdk-js/core";
  *
  * Minimum value: 01
  * Maximum value: 100000.0
- * @group Calculate Route
- * @category Types
  */
 export type SpeedToConsumptionRate = { speedKMH: number; consumptionUnitsPer100KM: number };
 
 /**
  * Parameters related to consumption efficiency.
- * @group Calculate Route
- * @category Types
  */
 export type ConsumptionModelEfficiency = {
     /**
@@ -83,10 +79,6 @@ export type ConsumptionModelEfficiency = {
     downhill?: number;
 };
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type ConsumptionModelBase = {
     /**
      * Parameters related to consumption efficiency.
@@ -94,10 +86,6 @@ export type ConsumptionModelBase = {
     efficiency?: ConsumptionModelEfficiency;
 };
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type CombustionEngineModel = {
     /**
      * The consumption model for the combustion engine.
@@ -108,8 +96,6 @@ export type CombustionEngineModel = {
 
 /**
  * The combustion consumption model is used when the engine type is set to "combustion".
- * @group Calculate Route
- * @category Types
  */
 export type CombustionConsumptionModel = ConsumptionModelBase & {
     /**
@@ -137,10 +123,6 @@ export type CombustionConsumptionModel = ConsumptionModelBase & {
     fuelEnergyDensityInMJoulesPerLiter?: number;
 };
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type BatteryCurve = {
     /**
      * Minimum: 0
@@ -152,10 +134,6 @@ export type BatteryCurve = {
     maxPowerInkW: number;
 };
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type ChargingConnector = {
     /**
      * One of the values AC1, AC3 for single- or three-phase alternating current, or DC for direct current.
@@ -247,8 +225,6 @@ export type ChargingModel = {
 
 /**
  * The electric consumption model is used when the engine type is set to "combustion".
- * @group Calculate Route
- * @category Types
  */
 export type ElectricConsumptionModel = ConsumptionModelBase & {
     /**
@@ -304,23 +280,15 @@ export type ChargingPreferences = {
 
 /**
  * The available engine types.
- * @group Calculate Route
- * @category Variables
  */
 export const engineTypes = ["combustion", "electric"] as const;
 
 /**
  * The engine type of the vehicle.
  * * When a detailed Consumption model is specified, it must be consistent with the provided engine type.
- * @group Calculate Route
- * @category Types
  */
 export type VehicleEngineType = (typeof engineTypes)[number];
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type VehicleEngineBase<E extends VehicleEngineType, M extends CombustionEngineModel | ElectricEngineModel> = {
     /**
      * The engine type of the vehicle.
@@ -335,10 +303,6 @@ export type VehicleEngineBase<E extends VehicleEngineType, M extends CombustionE
     model: M;
 };
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type CombustionVehicleEngine = VehicleEngineBase<"combustion", CombustionEngineModel> & {
     /**
      * Specifies the current supply of fuel in liters.
@@ -348,10 +312,6 @@ export type CombustionVehicleEngine = VehicleEngineBase<"combustion", Combustion
     currentFuelInLiters: number;
 };
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type ElectricEngineModel = {
     /**
      * Electric engine consumption model.
@@ -363,10 +323,6 @@ export type ElectricEngineModel = {
     charging?: ChargingModel;
 };
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type ElectricVehicleEngine = VehicleEngineBase<"electric", ElectricEngineModel> & {
     /**
      * Specifies the current battery charge in %.
@@ -387,7 +343,5 @@ export type ElectricVehicleEngine = VehicleEngineBase<"electric", ElectricEngine
  * The consumption model describes vehicle energy (fuel/electricity) consumption attributes.
  * * "combustion" vehicles can contain a combustion consumption model
  * * "electric" vehicles (EVs) can contain an EV consumption model
- * @group Calculate Route
- * @category Types
  */
 export type VehicleEngine = CombustionVehicleEngine | ElectricVehicleEngine;

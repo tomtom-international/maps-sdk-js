@@ -2,15 +2,11 @@ import { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared";
 
 /**
  * @ignore
- * @group Geometry Search
- * @category Types
  */
 export type GeometrySearchResultAPI = CommonSearchPlaceResultAPI;
 
 /**
  * @ignore
- * @group Geometry Search
- * @category Types
  */
 export type GeometrySearchResponseAPI = {
     /**

@@ -5,8 +5,6 @@ import { parseSearchAPIResult } from "../shared/SearchResultParsing";
 
 /**
  * Default function to parse a geometry search response.
- * @group Geometry Search
- * @category Functions
  * @param apiResponse The API response.
  */
 export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseAPI): GeometrySearchResponse => {

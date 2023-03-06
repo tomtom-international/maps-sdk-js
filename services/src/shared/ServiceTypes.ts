@@ -3,10 +3,6 @@ import { SDKServiceError } from "./Errors";
 import { ErrorObjAPI } from "./types/APIResponseErrorTypes";
 import { RequestValidationConfig } from "./types/Validation";
 
-/**
- * @group Shared
- * @category Types
- */
 export type CommonServiceParams = Partial<GlobalConfig> & {
     /**
      * Optional, custom base URL for the service.
@@ -24,16 +20,10 @@ export type CommonServiceParams = Partial<GlobalConfig> & {
     validateRequest?: boolean;
 };
 
-/**
- * @group Shared
- * @category Types
- */
 export type ParseResponseError<T> = (apiError: ErrorObjAPI<T>, serviceName: string) => SDKServiceError;
 
 /**
  * Template functions for any service.
- * @group Shared
- * @category Types
  */
 export type ServiceTemplate<PARAMS extends CommonServiceParams, REQUEST, API_RESPONSE, RESPONSE> = {
     /**

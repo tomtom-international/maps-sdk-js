@@ -3,15 +3,11 @@ import { CommonServiceParams } from "../../shared";
 
 /**
  * Geometry IDs or places containing them.
- * @group Geometry Data
- * @category Types
  */
 export type GeometriesInput = string[] | Place[] | Places;
 
 /**
  * Input parameters to fetch geometry data for given IDs or places.
- * @group Geometry Data
- * @category Types
  */
 export type GeometryDataParams = CommonServiceParams & {
     /**

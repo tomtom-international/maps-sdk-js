@@ -9,8 +9,6 @@ const buildURLBasePath = (params: EVChargingStationsAvailabilityParams): string 
 
 /**
  * Default method for building ev charging stations availability request from {@link EVChargingStationsAvailabilityParams}
- * @group EV Charging Stations Availability
- * @category Functions
  * @param params The charging availability parameters, with global configuration already merged into them.
  */
 export const buildEVChargingStationsAvailabilityRequest = (params: EVChargingStationsAvailabilityParams): URL => {

@@ -5,8 +5,6 @@ import { CommonSearchPlaceResultAPI } from "./types/APIPlacesResponseTypes";
 
 /**
  * Shared response parsing between geometry search and place by id service.
- * @group Shared
- * @category Functions
  * @ignore
  */
 export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<SearchPlaceProps> => {

@@ -10,10 +10,6 @@ import { parseRoutingResponseError } from "./RoutingResponseErrorParser";
 import { calculateRouteRequestSchema, calculateRouteGeoInputsRefinement } from "./CalculateRouteRequestSchema";
 import { CalculateRoutePOSTDataAPI } from "./types/APIPOSTRequestTypes";
 
-/**
- * @group Calculate Route
- * @category Types
- */
 export type CalculateRouteTemplate = ServiceTemplate<
     CalculateRouteParams,
     FetchInput<CalculateRoutePOSTDataAPI>,
@@ -29,10 +25,6 @@ export const routeRequestValidationConfig = {
     refinements: [calculateRouteGeoInputsRefinement]
 };
 
-/**
- * @group Calculate Route
- * @category Variables
- */
 export const calculateRouteTemplate: CalculateRouteTemplate = {
     requestValidation: routeRequestValidationConfig,
     buildRequest: buildCalculateRouteRequest,

@@ -14,8 +14,6 @@ const calculateRouteRequestSchemaMandatory = z.object({
 
 /**
  * @ignore
- * @group Calculate Route
- * @category Variables
  */
 export const calculateRouteRequestSchema = calculateRouteRequestSchemaMandatory.merge(
     z
@@ -49,8 +47,6 @@ export const calculateRouteRequestSchema = calculateRouteRequestSchemaMandatory.
 
 /**
  * @ignore
- * @group Calculate Route
- * @category Variables
  */
 export const calculateRouteGeoInputsRefinement: SchemaRefinement<CalculateRouteParams> = {
     check: (data: CalculateRouteParams): boolean => {

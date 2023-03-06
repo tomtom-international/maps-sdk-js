@@ -11,8 +11,6 @@ const fuzzySearchRequestOptional = z
 
 /**
  * @ignore
- * @group Fuzzy Search
- * @category Types
  */
 export const fuzzySearchRequestSchema = commonSearchParamsSchema.merge(
     commonGeocodeAndFuzzySearchParamsSchema.merge(fuzzySearchRequestOptional)

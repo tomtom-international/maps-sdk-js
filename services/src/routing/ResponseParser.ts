@@ -222,8 +222,6 @@ const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[], pa
 
 /**
  * Default method for parsing calculate route response from {@link CalculateRouteResponseAPI}
- * @group Calculate Route
- * @category Functions
  * @param apiResponse The Routing API response.
  * @param params The params used to calculate this route.
  */

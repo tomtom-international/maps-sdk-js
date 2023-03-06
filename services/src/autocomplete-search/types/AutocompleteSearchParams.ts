@@ -1,15 +1,7 @@
 import { HasLngLat } from "@anw/go-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchSegmentType = "brand" | "category" | "plaintext";
 
-/**
- * @group Autocomplete
- * @category Types
- */
 export type AutocompleteSearchParams = CommonServiceParams & {
     /**
      * Query string. Must be properly URL encoded (Mandatory).

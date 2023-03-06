@@ -42,7 +42,9 @@
     "AVCON",
     "NEMA",
     "TEPCO",
-    "Marechal"
+    "Marechal",
+    "POIAPI",
+    "typeahead"
   ],
   "ignorePaths": [
     "**/dist/**",

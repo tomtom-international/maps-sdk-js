@@ -109,8 +109,6 @@ const vehicleDimensionsSchema = z
 
 /**
  * @ignore
- * @group Calculate Route
- * @category Variables
  */
 export const vehicleParametersSchema = z
     .object({

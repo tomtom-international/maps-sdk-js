@@ -9,8 +9,6 @@ import { revGeocodeRequestSchema } from "./RevGeocodeRequestSchema";
 
 /**
  * Reverse Geocoding service template type.
- * @group Reverse Geocoding
- * @category Types
  */
 export type ReverseGeocodingTemplate = ServiceTemplate<
     ReverseGeocodingParams,
@@ -21,8 +19,6 @@ export type ReverseGeocodingTemplate = ServiceTemplate<
 
 /**
  * Reverse Geocoding service template main implementation.
- * @group Reverse Geocoding
- * @category Variables
  */
 export const reverseGeocodingTemplate: ReverseGeocodingTemplate = {
     requestValidation: { schema: revGeocodeRequestSchema },

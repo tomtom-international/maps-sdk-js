@@ -1,10 +1,6 @@
 import { CommonServiceParams, OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared";
 import { MapcodeType, View } from "@anw/go-sdk-js/core";
 
-/**
- * @group Place By Id
- * @category Types
- */
 export type PlaceByIdOptionalParams = {
     /**
      * Enables the return of a comma-separated mapcodes list.
@@ -53,10 +49,6 @@ export type PlaceByIdOptionalParams = {
     relatedPois?: RelatedPoisRequest;
 };
 
-/**
- * @group Place By Id
- * @category Types
- */
 export type PlaceByIdMandatoryParams = {
     /**
      * The unique POI identifier (mandatory).
@@ -64,8 +56,4 @@ export type PlaceByIdMandatoryParams = {
     entityId: string;
 };
 
-/**
- * @group Place By Id
- * @category Types
- */
 export type PlaceByIdParams = CommonServiceParams & PlaceByIdMandatoryParams & PlaceByIdOptionalParams;

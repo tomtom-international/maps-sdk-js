@@ -6,8 +6,6 @@ import { GeometryDataResponseAPI } from "./types/APITypes";
  * * The API response consists of an array, with a FeatureCollection (with only one feature) for each geometry.
  * * The parsed response consists of a fully-GeoJSON-compatible FeatureCollection with a Feature for each geometry.
  * * Each geometry ID is included in each GeoJSON feature "id" field.
- * @group Reverse Geocoding
- * @category Functions
  * @param apiResponse
  */
 export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI): GeometryDataResponse => {

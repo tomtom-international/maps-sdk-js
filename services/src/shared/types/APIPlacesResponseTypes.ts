@@ -11,15 +11,11 @@ import {
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type IndexTypesAbbreviation = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type LatLonAPI = {
     /**
@@ -34,8 +30,6 @@ export type LatLonAPI = {
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type ViewportAPI = {
     /**
@@ -50,29 +44,21 @@ export type ViewportAPI = {
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type BoundingBoxTopLeftAPI = ViewportAPI;
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type BoundingBoxSouthWestAPI = { southWest: string; northEast: string };
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type BoundingBoxAPI = BoundingBoxTopLeftAPI | BoundingBoxSouthWestAPI;
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type EntryPointAPI = Omit<EntryPoint, "position"> & {
     /**
@@ -83,8 +69,6 @@ export type EntryPointAPI = Omit<EntryPoint, "position"> & {
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type AddressRangesAPI = {
     /**
@@ -107,15 +91,11 @@ export type AddressRangesAPI = {
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 type SummaryQueryType = "NEARBY" | "NON_NEAR";
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type SummaryAPI = {
     /**
@@ -155,8 +135,6 @@ export type SummaryAPI = {
 /**
  * @ignore
  * place of interest api type.
- * @group Shared
- * @category Types
  */
 export type POIAPI = {
     name: string;
@@ -174,8 +152,6 @@ export type POIAPI = {
 
 /**
  * @ignore
- * @group Shared
- * @category Types
  */
 export type CommonSearchPlaceResultAPI = Omit<
     SearchPlaceProps,

@@ -2,15 +2,11 @@ import { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared";
 
 /**
  * @ignore
- * @group Place By Id
- * @category Types
  */
 export type PlaceByIdResultAPI = CommonSearchPlaceResultAPI;
 
 /**
  * @ignore
- * @group Place By Id
- * @category Types
  */
 export type PlaceByIdResponseAPI = {
     /**

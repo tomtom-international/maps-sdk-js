@@ -1,10 +1,6 @@
 import { CommonServiceParams } from "../../shared";
 import { ConnectorType } from "@anw/go-sdk-js/core";
 
-/**
- * @group EV Charging Stations Availability
- * @category Types
- */
 export type EVChargingStationsAvailabilityParams = CommonServiceParams & {
     /**
      * The chargingAvailability ID, previously retrieved from a Search request.
