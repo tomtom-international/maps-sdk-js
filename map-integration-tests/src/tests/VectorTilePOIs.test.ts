@@ -1,7 +1,8 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { FilterablePOICategory, getCategoryIcons, POI_SOURCE_ID } from "map";
+import { FilterablePOICategory, getCategoryIcons, POI_SOURCE_ID, VectorTilePOIsFeature } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { GOSDKThis } from "./types/GOSDKThis";
+import { Point } from "geojson";
 import { getNumVisibleLayersBySource, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
 
 const waitForRenderedPOIsChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
@@ -240,5 +241,53 @@ describe("Map vector tile POI filtering tests", () => {
         expect(areAllIconsIncluded(renderedPOIs, ["RAILROAD_STATION"])).toBe(true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+});
+
+describe("Map vector tile POI feature tests", () => {
+    const mapEnv = new MapIntegrationTestEnv();
+
+    beforeAll(async () => mapEnv.loadPage());
+
+    test("Ensure required feature properties are defined", async () => {
+        await mapEnv.loadMap({
+            zoom: 14,
+            center: [-0.12621, 51.50394]
+        });
+
+        await page.evaluate(async () => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
+        });
+        await waitForMapIdle();
+
+        const poiCoordinates = await page.evaluate(async () => {
+            const goSDKThis = globalThis as GOSDKThis;
+            const geometry = goSDKThis.mapLibreMap.queryRenderedFeatures({ layers: ["POI"] })[0].geometry as Point;
+            return geometry.coordinates;
+        });
+
+        await page.evaluate(async () => {
+            const goSDKThis = globalThis as GOSDKThis;
+            goSDKThis.pois?.events.on("click", (lngLat, topFeature) => (goSDKThis._clickedTopFeature = topFeature));
+        });
+
+        const mapLibreCoordinates = await page.evaluate(
+            (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
+            poiCoordinates
+        );
+
+        await page.mouse.click(mapLibreCoordinates.x, mapLibreCoordinates.y);
+
+        const clickedFeature = (await page.evaluate(
+            async () => (globalThis as GOSDKThis)._clickedTopFeature
+        )) as VectorTilePOIsFeature;
+
+        expect(clickedFeature.properties.name).toBeDefined();
+        expect(clickedFeature.properties.id).toBeDefined();
+        expect(clickedFeature.properties.icon).toBeDefined();
+        expect(clickedFeature.properties.category).toBeDefined();
+        expect(clickedFeature.properties.category_id).toBeDefined();
+        expect(clickedFeature.properties.priority).toBeDefined();
     });
 });

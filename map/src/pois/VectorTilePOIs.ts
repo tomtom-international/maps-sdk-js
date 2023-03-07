@@ -1,7 +1,7 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
 import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
-import { FilterablePOICategory, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
+import { FilterablePOICategory, VectorTilePOIsFeature, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { GOSDKMap } from "../GOSDKMap";
@@ -108,6 +108,6 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.goSDKMap._eventsProxy, this.poi);
+        return new EventsModule<VectorTilePOIsFeature>(this.goSDKMap._eventsProxy, this.poi);
     }
 }
