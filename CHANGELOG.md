@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.90](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.89...v0.1.90) (2023-03-08)
+
+
+### Features
+
+* **places:** allowing multiple place modules to coexist and adding ev availability convenience functions ([b81b012](https://github.com/tomtom-international/go-sdk-js/commit/b81b0123b52c35a6837808e61c5ca1c2b14d2f14))
+
 ### [0.1.89](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.87...v0.1.89) (2023-03-02)
 
 ### [0.1.86](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.85...v0.1.86) (2023-03-01)
