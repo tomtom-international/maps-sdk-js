@@ -1,14 +1,6 @@
-import { validate } from "uuid";
 import { generateTomTomCustomHeaders, SDK_NAME } from "../CustomHeaders";
 
 describe("CustomHeaders", () => {
-    test("Generate default TomTom Headers", () => {
-        const headers = generateTomTomCustomHeaders({});
-
-        expect(validate(headers["Tracking-ID"])).toBeTruthy();
-        expect(headers["TomTom-User-Agent"]).toContain(SDK_NAME);
-    });
-
     test("Generate custom Tracking-ID", () => {
         const trackingId = "My-Tracking-ID";
         const headers = generateTomTomCustomHeaders({ trackingId });

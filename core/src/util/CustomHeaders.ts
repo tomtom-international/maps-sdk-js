@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { GlobalConfig } from "../config/GlobalConfig";
 
 /**
@@ -17,7 +16,7 @@ const SDK_VERSION = "__SDK_VERSION__";
  *
  * @param trackingId String to be validate
  */
-const validateTrackingId = (trackingId: string): void => {
+const validateTrackingId = (trackingId: string): string => {
     if (!/^[a-zA-Z0-9-]{1,100}$/.test(trackingId)) {
         // If we send a invalid Tracking-ID value, a HTTP Bad Request 400 status code is
         // returned and the request will fail. To avoid this issue, we throw an error before
@@ -27,6 +26,8 @@ const validateTrackingId = (trackingId: string): void => {
             `a string matching regular expression ^[a-zA-Z0-9-]{1,100}$ is expected, but ${trackingId} ['${typeof trackingId}'] given`
         );
     }
+
+    return trackingId;
 };
 
 /**
@@ -37,8 +38,8 @@ const validateTrackingId = (trackingId: string): void => {
  * @ignore
  */
 export interface TomTomCustomHeaders {
-    "Tracking-ID": string;
     "TomTom-User-Agent": string;
+    "Tracking-ID"?: string;
 }
 
 /**
@@ -48,15 +49,13 @@ export interface TomTomCustomHeaders {
  * @param config Global SDK configuration
  */
 export const generateTomTomCustomHeaders = (config: Partial<GlobalConfig>): TomTomCustomHeaders => {
-    if (!config.trackingId) {
-        // Generating a new Tracking-ID
-        config.trackingId = uuidv4();
-    } else {
-        validateTrackingId(config.trackingId);
-    }
-
-    return {
-        "Tracking-ID": config.trackingId,
+    const tomtomHeaders: TomTomCustomHeaders = {
         "TomTom-User-Agent": `${SDK_NAME}/${SDK_VERSION}`
     };
+
+    if (config.trackingId) {
+        tomtomHeaders["Tracking-ID"] = validateTrackingId(config.trackingId);
+    }
+
+    return tomtomHeaders;
 };
