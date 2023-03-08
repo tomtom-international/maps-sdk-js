@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.93](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.92...v0.1.93) (2023-03-08)
+
+
+### Features
+
+* **ev:** fixing search ev poi parsing and adding non-real time connector counts ([7c3f01c](https://github.com/tomtom-international/go-sdk-js/commit/7c3f01cb98167262515059d58ccee4db2c6cfcc2))
+
 ### [0.1.92](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.90...v0.1.92) (2023-03-08)
 
 
