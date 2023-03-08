@@ -41,7 +41,7 @@ export type VectorTilePOIsFeature = Omit<MapGeoJSONFeature, "properties"> & {
         /**
          * A unique Point of Interest identifier that can be used across other TomTom services.
          */
-        id: number;
+        id: string;
         /**
          * A feature name in an NGT (Neutral Ground Truth) language; the native language of each country, respectively.
          */
