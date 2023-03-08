@@ -1,5 +1,5 @@
 /**
- * Generate random Id
+ * Generate random id for layers
  * @ignore
  */
-export const generateId = (): string => crypto.getRandomValues(new Uint32Array(3)).join("-");
+export const generateId = () => Date.now().toString(36) + Math.random().toString(36).substring(2);
