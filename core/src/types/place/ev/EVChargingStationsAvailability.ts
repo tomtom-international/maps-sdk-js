@@ -5,7 +5,14 @@ import { ChargingPark, ChargingPointStatus, ChargingStation, CommonPlaceProps, C
  * @category Types
  */
 export type ChargingPointAvailability = {
+    /**
+     * The number of charging points or connectors, depending on the context of this object.
+     */
     count: number;
+    /**
+     * The counts of charging points or connectors for each charging point status,
+     * depending on the context of this object.
+     */
     statusCounts: Partial<Record<ChargingPointStatus, number>>;
 };
 
@@ -18,6 +25,7 @@ export type ConnectorAvailability = ChargingPointAvailability & {
 };
 
 /**
+ * Real-time EV charging station availability information.
  * @group Place
  * @category Types
  */
@@ -52,15 +60,21 @@ export type EVChargingStationsAvailability = {
  * @group Place
  * @category Types
  */
+export type ChargingParkWithAvailability = ChargingPark & {
+    /**
+     * EV Charging Station Availability.
+     * * Usually coming from a call to the EV Charging Station Availability service.
+     */
+    availability?: EVChargingStationsAvailability;
+};
+
+/**
+ * @group Place
+ * @category Types
+ */
 export type EVChargingStationPlaceProps = Omit<CommonPlaceProps, "chargingPark"> & {
     /**
      * Charging park with charging availability information, when available.
      */
-    chargingPark?: ChargingPark & {
-        /**
-         * EV Charging Station Availability.
-         * * Usually coming from a call to the EV Charging Station Availability service.
-         */
-        availability?: EVChargingStationsAvailability;
-    };
+    chargingPark?: ChargingParkWithAvailability;
 };

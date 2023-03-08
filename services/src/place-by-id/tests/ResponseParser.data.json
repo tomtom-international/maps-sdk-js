@@ -129,18 +129,42 @@
             "chargingPark": {
               "connectors": [
                 {
-                  "connectorType": "IEC62196Type2Outlet",
+                  "type": "IEC62196Type2Outlet",
                   "ratedPowerKW": 7.4,
                   "voltageV": 230,
                   "currentA": 32,
                   "currentType": "AC1"
                 },
                 {
-                  "connectorType": "StandardHouseholdCountrySpecific",
+                  "type": "StandardHouseholdCountrySpecific",
                   "ratedPowerKW": 7.4,
                   "voltageV": 230,
                   "currentA": 32,
                   "currentType": "AC1"
+                }
+              ],
+              "connectorCounts": [
+                {
+                  "connector": {
+                    "currentA": 32,
+                    "currentType": "AC1",
+                    "ratedPowerKW": 7.4,
+                    "type": "IEC62196Type2Outlet",
+                    "voltageV": 230
+                  },
+                  "count": 1,
+                  "statusCounts": {}
+                },
+                {
+                  "connector": {
+                    "currentA": 32,
+                    "currentType": "AC1",
+                    "ratedPowerKW": 7.4,
+                    "type": "StandardHouseholdCountrySpecific",
+                    "voltageV": 230
+                  },
+                  "count": 1,
+                  "statusCounts": {}
                 }
               ]
             },

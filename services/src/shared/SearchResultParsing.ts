@@ -2,13 +2,18 @@ import { Brand, Place, SearchPlaceProps, toPointFeature } from "@anw/go-sdk-js/c
 import omit from "lodash/omit";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "./Geometry";
 import { CommonSearchPlaceResultAPI } from "./types/APIPlacesResponseTypes";
+import { toConnectorCounts } from "../ev-charging-stations-availability/connectorAvailability";
 
 /**
  * Shared response parsing between geometry search and place by id service.
  * @ignore
  */
 export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<SearchPlaceProps> => {
-    const { position, entryPoints, poi, id, dist, boundingBox, ...rest } = result;
+    const { position, entryPoints, poi, id, dist, boundingBox, chargingPark, ...rest } = result;
+    const connectors = chargingPark?.connectors.map((connector) => ({
+        ...omit(connector, "connectorType"),
+        type: connector.connectorType
+    }));
     return {
         ...toPointFeature(latLonAPIToPosition(position)),
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
@@ -21,6 +26,13 @@ export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<
                     ...entrypoint,
                     position: latLonAPIToPosition(entrypoint.position)
                 }))
+            }),
+            ...(connectors && {
+                chargingPark: {
+                    ...chargingPark,
+                    connectors,
+                    connectorCounts: toConnectorCounts(connectors)
+                }
             }),
             poi: {
                 ...omit(poi, "categorySet"),

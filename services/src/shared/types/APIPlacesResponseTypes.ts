@@ -2,7 +2,10 @@ import {
     AddressProperties,
     Brand,
     Category,
+    ChargingPark,
     Classification,
+    Connector,
+    ConnectorType,
     EntryPoint,
     OpeningHours,
     SearchPlaceProps,
@@ -153,9 +156,23 @@ export type POIAPI = {
 /**
  * @ignore
  */
+export type ConnectorAPI = Omit<Connector, "type"> & {
+    connectorType: ConnectorType;
+};
+
+/**
+ * @ignore
+ */
+export type ChargingParkAPI = Omit<ChargingPark, "connectors" | "connectorCounts"> & {
+    connectors: ConnectorAPI[];
+};
+
+/**
+ * @ignore
+ */
 export type CommonSearchPlaceResultAPI = Omit<
     SearchPlaceProps,
-    "distance" | "position" | "addressRanges" | "geographyType" | "entryPoints"
+    "distance" | "position" | "addressRanges" | "geographyType" | "entryPoints" | "chargingPark"
 > & {
     id: string;
     position: LatLonAPI;
@@ -165,4 +182,5 @@ export type CommonSearchPlaceResultAPI = Omit<
     entryPoints?: EntryPointAPI[];
     address?: AddressProperties;
     poi?: POIAPI;
+    chargingPark?: ChargingParkAPI;
 };

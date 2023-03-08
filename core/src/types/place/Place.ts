@@ -4,6 +4,7 @@ import { HasLngLat } from "../Geometry";
 import { POI, RelatedPOI } from "./poi/POI";
 import { Connector } from "./poi/Connector";
 import { FeatureCollectionWithProperties } from "../ExtendedGeoJSON";
+import { ConnectorAvailability } from "./ev/EVChargingStationsAvailability";
 
 /**
  * @group Place
@@ -224,7 +225,17 @@ export type AddressProperties = {
  * @category Types
  */
 export type ChargingPark = {
+    /**
+     * The connectors offered in this charging park.
+     */
     connectors: Connector[];
+    /**
+     * Counts per connector+power combinations. Useful to quickly display the available connectors.
+     *
+     * They do not contain real time availability.
+     * * When EV real time availability is present, use it instead of this one.
+     */
+    connectorCounts: Omit<ConnectorAvailability, "statusCounts">[];
 };
 
 /**

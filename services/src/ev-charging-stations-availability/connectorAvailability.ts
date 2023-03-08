@@ -1,4 +1,10 @@
-import { ChargingPointAvailability, ConnectorAvailability, ChargingStation } from "@anw/go-sdk-js/core";
+import {
+    ChargingPointAvailability,
+    ConnectorAvailability,
+    ChargingStation,
+    Connector,
+    ChargingPointStatus
+} from "@anw/go-sdk-js/core";
 
 /**
  * @ignore
@@ -15,6 +21,48 @@ export const toChargingPointAvailability = (chargingStations: ChargingStation[])
     return availability;
 };
 
+// Two connectors can be considered equal when they have the same type and power:
+const areEqual = (connectorA: Connector, connectorB: Connector) =>
+    connectorA.type == connectorB.type && connectorA.ratedPowerKW == connectorB.ratedPowerKW;
+
+const addConnectorStatus = (
+    connectors: Connector[],
+    status: ChargingPointStatus | undefined,
+    availabilities: ConnectorAvailability[]
+): void => {
+    for (const connector of connectors) {
+        const existingAvailability = availabilities.find((connectorAvailability) =>
+            areEqual(connector, connectorAvailability.connector)
+        );
+        if (existingAvailability) {
+            existingAvailability.count++;
+            if (status) {
+                const statusCounts = existingAvailability.statusCounts;
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+            }
+        } else {
+            availabilities.push({
+                connector,
+                count: 1,
+                statusCounts: status
+                    ? {
+                          [status]: 1
+                      }
+                    : {}
+            });
+        }
+    }
+};
+
+/**
+ * @ignore
+ */
+export const toConnectorCounts = (connectors: Connector[]): ConnectorAvailability[] => {
+    const availabilities: ConnectorAvailability[] = [];
+    addConnectorStatus(connectors, undefined, availabilities);
+    return availabilities;
+};
+
 /**
  * @ignore
  */
@@ -22,26 +70,7 @@ export const toConnectorBasedAvailabilities = (chargingStations: ChargingStation
     const availabilities: ConnectorAvailability[] = [];
     for (const station of chargingStations) {
         for (const chargingPoint of station.chargingPoints) {
-            for (const connector of chargingPoint.connectors) {
-                const existingAvailability = availabilities.find(
-                    (connectorAvailability) =>
-                        connector.type == connectorAvailability.connector.type &&
-                        connector.ratedPowerKW == connectorAvailability.connector.ratedPowerKW
-                );
-                if (existingAvailability) {
-                    existingAvailability.count++;
-                    const statusCounts = existingAvailability.statusCounts;
-                    statusCounts[chargingPoint.status] = (statusCounts[chargingPoint.status] || 0) + 1;
-                } else {
-                    availabilities.push({
-                        connector,
-                        count: 1,
-                        statusCounts: {
-                            [chargingPoint.status]: 1
-                        }
-                    });
-                }
-            }
+            addConnectorStatus(chargingPoint.connectors, chargingPoint.status, availabilities);
         }
     }
     return availabilities;
