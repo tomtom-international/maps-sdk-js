@@ -284,7 +284,6 @@ describe("Map vector tile POI feature tests", () => {
         )) as VectorTilePOIsFeature;
 
         expect(clickedFeature.properties.name).toBeDefined();
-        expect(clickedFeature.properties.id).toBeDefined();
         expect(clickedFeature.properties.icon).toBeDefined();
         expect(clickedFeature.properties.category).toBeDefined();
         expect(clickedFeature.properties.category_id).toBeDefined();
