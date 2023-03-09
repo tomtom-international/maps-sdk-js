@@ -4,9 +4,6 @@ const config: Config = {
     preset: "ts-jest",
     testEnvironment: "node",
     extensionsToTreatAsEsm: [".ts"],
-    moduleNameMapper: {
-        uuid: require.resolve("uuid")
-    },
     testPathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/node_modules/", "<rootDir>/.rollup.cache/"]
 };
 
