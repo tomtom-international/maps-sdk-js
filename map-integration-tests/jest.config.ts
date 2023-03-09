@@ -11,7 +11,6 @@ const config: Config = {
         "^.+\\.ts?$": "ts-jest"
     },
     testPathIgnorePatterns: ["<rootDir>/node_modules/"],
-    setupFiles: ["<rootDir>/../test-config/setupFile.js"],
     moduleNameMapper: {
         "@anw/go-sdk-js/core": "<rootDir>/../core/dist/core.cjs.min.js"
     }

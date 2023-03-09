@@ -55,7 +55,6 @@ describe("Map utils - injectCustomHeaders", () => {
         expect(headers).toMatchObject({
             url,
             headers: {
-                "Tracking-ID": expect.any(String),
                 "TomTom-User-Agent": expect.stringContaining("MapsSDKJS")
             }
         });

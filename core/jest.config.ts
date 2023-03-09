@@ -4,7 +4,6 @@ const config: Config = {
     preset: "ts-jest",
     testEnvironment: "node",
     extensionsToTreatAsEsm: [".ts"],
-    setupFiles: ["<rootDir>/../test-config/setupFile.js"],
     moduleNameMapper: {
         uuid: require.resolve("uuid")
     },

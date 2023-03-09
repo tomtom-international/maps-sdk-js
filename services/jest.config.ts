@@ -9,7 +9,6 @@ const config: Config = {
     preset: "ts-jest",
     testEnvironment: "node",
     extensionsToTreatAsEsm: [".ts"],
-    setupFiles: ["<rootDir>/../test-config/setupFile.js"],
     testPathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/node_modules/", "<rootDir>/.rollup.cache/"],
     moduleNameMapper: {
         "@anw/go-sdk-js/core": "core"
