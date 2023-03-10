@@ -1,9 +1,17 @@
-import { GeometrySearchParams, GeometrySearchResponse } from "../geometry-search";
+import { GeometrySearchParams } from "../geometry-search";
 import { geometrySearch } from "../geometry-search/GeometrySearch";
 import { GeometrySearchTemplate } from "../geometry-search/GeometrySearchTemplate";
-import { FuzzySearchParams, FuzzySearchResponse } from "../fuzzy-search";
+import { FuzzySearchParams, QueryIntent } from "../fuzzy-search";
 import { fuzzySearch } from "../fuzzy-search/FuzzySearch";
 import { FuzzySearchTemplate } from "../fuzzy-search/FuzzySearchTemplate";
+import { Places, SearchPlaceProps } from "core";
+import { Summary } from "../shared";
+
+type SearchFeatureCollectionProps = Summary & {
+    queryIntent?: QueryIntent[];
+};
+
+export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionProps>;
 
 /**
  *
@@ -14,7 +22,7 @@ import { FuzzySearchTemplate } from "../fuzzy-search/FuzzySearchTemplate";
 export const search = async (
     params: GeometrySearchParams | FuzzySearchParams,
     customTemplate?: Partial<GeometrySearchTemplate | FuzzySearchTemplate>
-): Promise<GeometrySearchResponse | FuzzySearchResponse> => {
+): Promise<SearchResponse> => {
     if ("geometries" in params) {
         return geometrySearch(params, customTemplate as GeometrySearchTemplate);
     } else {

@@ -1,7 +1,7 @@
 import { bboxFromGeoJSON, bboxOnlyIfWithArea } from "@anw/go-sdk-js/core";
 
 import { FuzzySearchResponse, FuzzySearchResponseAPI, QueryIntent, QueryIntentAPI } from "./types";
-import { parseSearchAPIResult } from "../shared/SearchResultParsing";
+import { parseSearchAPIResult, parseSummaryAPI } from "../shared/SearchResultParsing";
 import { latLonAPIToPosition } from "../shared/Geometry";
 
 const queryIntentAPIToSDK = (intentAPI: QueryIntentAPI): QueryIntent => {
@@ -37,8 +37,8 @@ export const parseFuzzySearchResponse = (apiResponse: FuzzySearchResponseAPI): F
     return {
         type: "FeatureCollection",
         properties: {
-            queryIntent: apiResponse.summary.queryIntent.map(queryIntentAPIToSDK),
-            totalResults: apiResponse.summary.totalResults
+            ...parseSummaryAPI(apiResponse.summary),
+            queryIntent: apiResponse.summary.queryIntent.map(queryIntentAPIToSDK)
         },
         features,
         ...(bbox && { bbox })

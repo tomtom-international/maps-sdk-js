@@ -171,6 +171,13 @@
     {
       "type": "FeatureCollection",
       "properties": {
+        "fuzzyLevel": 1,
+        "geoBias": [-121.89, 37.337],
+        "numResults": 2,
+        "offset": 0,
+        "query": "hotel",
+        "queryTime": 206,
+        "queryType": "NON_NEAR",
         "queryIntent": [],
         "totalResults": 1528897
       },
@@ -408,6 +415,13 @@
     {
       "type": "FeatureCollection",
       "properties": {
+        "fuzzyLevel": 1,
+        "numResults": 1,
+        "geoBias": [4.8975, 52.3759],
+        "offset": 0,
+        "query": "cafe near paris",
+        "queryTime": 233,
+        "queryType": "NEARBY",
         "queryIntent": [
           {
             "details": {
@@ -499,6 +513,12 @@
     {
       "type": "FeatureCollection",
       "properties": {
+        "fuzzyLevel": 2,
+        "numResults": 0,
+        "offset": 0,
+        "query": "ams",
+        "queryTime": 161,
+        "queryType": "NON_NEAR",
         "queryIntent": [],
         "totalResults": 0
       },

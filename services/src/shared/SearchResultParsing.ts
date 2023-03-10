@@ -1,8 +1,9 @@
 import { Brand, Place, SearchPlaceProps, toPointFeature } from "@anw/go-sdk-js/core";
 import omit from "lodash/omit";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "./Geometry";
-import { CommonSearchPlaceResultAPI } from "./types/APIPlacesResponseTypes";
+import { CommonSearchPlaceResultAPI, SummaryAPI } from "./types/APIPlacesResponseTypes";
 import { toConnectorCounts } from "../ev-charging-stations-availability/connectorAvailability";
+import { Summary } from "./types/Summary";
 
 /**
  * Shared response parsing between geometry search and place by id service.
@@ -40,5 +41,14 @@ export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<
                 categoryIds: poi?.categorySet?.map((category) => category.id) ?? []
             }
         }
+    };
+};
+
+export const parseSummaryAPI = (summary: SummaryAPI): Summary => {
+    const { geoBias, ...rest } = summary;
+
+    return {
+        ...(geoBias && { geoBias: latLonAPIToPosition(geoBias) }),
+        ...rest
     };
 };

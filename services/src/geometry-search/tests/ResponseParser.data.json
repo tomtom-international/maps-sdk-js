@@ -101,6 +101,15 @@
     },
     {
       "type": "FeatureCollection",
+      "properties": {
+        "fuzzyLevel": 1,
+        "numResults": 1,
+        "offset": 0,
+        "query": "electric charging station",
+        "queryTime": 48,
+        "queryType": "NON_NEAR",
+        "totalResults": 420
+      },
       "features": [
         {
           "type": "Feature",
@@ -317,6 +326,15 @@
     },
     {
       "type": "FeatureCollection",
+      "properties": {
+        "fuzzyLevel": 2,
+        "numResults": 1,
+        "offset": 0,
+        "query": "24x7 restaurant",
+        "queryTime": 95,
+        "queryType": "NON_NEAR",
+        "totalResults": 1158
+      },
       "features": [
         {
           "type": "Feature",
@@ -469,6 +487,15 @@
     },
     {
       "type": "FeatureCollection",
+      "properties": {
+        "fuzzyLevel": 1,
+        "numResults": 1,
+        "offset": 0,
+        "query": "london",
+        "queryTime": 56,
+        "queryType": "NON_NEAR",
+        "totalResults": 16
+      },
       "bbox": [-0.35137, 51.38474, 0.14471, 51.67235],
       "features": [
         {
@@ -599,6 +626,15 @@
     },
     {
       "type": "FeatureCollection",
+      "properties": {
+        "fuzzyLevel": 1,
+        "numResults": 1,
+        "offset": 0,
+        "query": "charging points",
+        "queryTime": 74,
+        "queryType": "NON_NEAR",
+        "totalResults": 79110
+      },
       "features": [
         {
           "type": "Feature",
@@ -810,6 +846,15 @@
     },
     {
       "type": "FeatureCollection",
+      "properties": {
+        "fuzzyLevel": 1,
+        "numResults": 2,
+        "offset": 0,
+        "query": "fuel station",
+        "queryTime": 64,
+        "queryType": "NON_NEAR",
+        "totalResults": 94
+      },
       "bbox": [-6.88878, 53.73118, -5.12343, 54.73118],
       "features": [
         {
@@ -923,6 +968,15 @@
     },
     {
       "type": "FeatureCollection",
+      "properties": {
+        "fuzzyLevel": 2,
+        "numResults": 0,
+        "offset": 0,
+        "query": "ams",
+        "queryTime": 161,
+        "queryType": "NON_NEAR",
+        "totalResults": 0
+      },
       "features": []
     }
   ]

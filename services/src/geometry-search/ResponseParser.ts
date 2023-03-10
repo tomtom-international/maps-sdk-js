@@ -1,7 +1,7 @@
 import { bboxFromGeoJSON, bboxOnlyIfWithArea } from "@anw/go-sdk-js/core";
 
 import { GeometrySearchResponse, GeometrySearchResponseAPI } from "./types";
-import { parseSearchAPIResult } from "../shared/SearchResultParsing";
+import { parseSearchAPIResult, parseSummaryAPI } from "../shared/SearchResultParsing";
 
 /**
  * Default function to parse a geometry search response.
@@ -12,6 +12,9 @@ export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseA
     const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
     return {
         type: "FeatureCollection",
+        properties: {
+            ...parseSummaryAPI(apiResponse.summary)
+        },
         features,
         ...(bbox && { bbox })
     };
