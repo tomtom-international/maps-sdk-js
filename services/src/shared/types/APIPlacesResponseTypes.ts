@@ -11,7 +11,7 @@ import {
     SearchPlaceProps,
     TimeZone
 } from "@anw/go-sdk-js/core";
-import { Summary } from "./Summary";
+import { SearchSummary } from "./SearchSummary";
 
 /**
  * @ignore
@@ -96,7 +96,7 @@ export type AddressRangesAPI = {
 /**
  * @ignore
  */
-export type SummaryAPI = Omit<Summary, "geoBias"> & {
+export type SummaryAPI = Omit<SearchSummary, "geoBias"> & {
     geoBias?: LatLonAPI;
 };
 

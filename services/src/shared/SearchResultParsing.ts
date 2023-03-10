@@ -3,7 +3,7 @@ import omit from "lodash/omit";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "./Geometry";
 import { CommonSearchPlaceResultAPI, SummaryAPI } from "./types/APIPlacesResponseTypes";
 import { toConnectorCounts } from "../ev-charging-stations-availability/connectorAvailability";
-import { Summary } from "./types/Summary";
+import { SearchSummary } from "./types/SearchSummary";
 
 /**
  * Shared response parsing between geometry search and place by id service.
@@ -44,7 +44,7 @@ export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<
     };
 };
 
-export const parseSummaryAPI = (summary: SummaryAPI): Summary => {
+export const parseSummaryAPI = (summary: SummaryAPI): SearchSummary => {
     const { geoBias, ...rest } = summary;
 
     return {

@@ -1,10 +1,10 @@
 import { Places, SearchPlaceProps } from "@anw/go-sdk-js/core";
 import { Position } from "geojson";
-import { Summary } from "../../shared";
+import { SearchSummary } from "../../shared";
 
 export type FuzzySearchResponse = Places<SearchPlaceProps, FuzzySearchFeatureCollectionProps>;
 
-type FuzzySearchFeatureCollectionProps = Summary & {
+type FuzzySearchFeatureCollectionProps = SearchSummary & {
     queryIntent: QueryIntent[];
 };
 

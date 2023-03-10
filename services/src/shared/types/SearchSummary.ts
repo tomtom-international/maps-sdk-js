@@ -5,7 +5,7 @@ import { Position } from "geojson";
  */
 type SummaryQueryType = "NEARBY" | "NON_NEAR";
 
-export type Summary = {
+export type SearchSummary = {
     /**
      *  The query as interpreted by the search engine.
      */

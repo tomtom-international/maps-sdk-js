@@ -1,6 +1,6 @@
 import { Places, SearchPlaceProps } from "@anw/go-sdk-js/core";
-import { Summary } from "../../shared";
+import { SearchSummary } from "../../shared";
 
 export type GeometrySearchResponse = Places<SearchPlaceProps, GeometrySearchFeatureCollectionProps>;
 
-export type GeometrySearchFeatureCollectionProps = Summary;
+export type GeometrySearchFeatureCollectionProps = SearchSummary;

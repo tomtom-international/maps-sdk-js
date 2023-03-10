@@ -5,9 +5,9 @@ import { FuzzySearchParams, QueryIntent } from "../fuzzy-search";
 import { fuzzySearch } from "../fuzzy-search/FuzzySearch";
 import { FuzzySearchTemplate } from "../fuzzy-search/FuzzySearchTemplate";
 import { Places, SearchPlaceProps } from "core";
-import { Summary } from "../shared";
+import { SearchSummary } from "../shared";
 
-type SearchFeatureCollectionProps = Summary & {
+type SearchFeatureCollectionProps = SearchSummary & {
     queryIntent?: QueryIntent[];
 };
 
