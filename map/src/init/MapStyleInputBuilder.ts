@@ -106,8 +106,9 @@ export const buildMapStyleInput = (mapParams: GOSDKMapParams): StyleSpecificatio
         mapStyleUrl = buildPublishedStyleURL({ id: "standardLight" }, baseURL, apiKey);
     }
 
-    if (typeof style === "object" && !isEmpty(style.exclude))
+    if (typeof style === "object" && !isEmpty(style.exclude)) {
         return excludeModulesOptions(mapStyleUrl as string, style.exclude);
+    }
 
     return mapStyleUrl;
 };

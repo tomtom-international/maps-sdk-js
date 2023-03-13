@@ -25,6 +25,7 @@
     "*.scss"
   ],
   "rules": {
+    "curly": "warn",
     "prettier/prettier": "warn",
     "quotes": ["warn", "double", {
       "allowTemplateLiterals": true,
