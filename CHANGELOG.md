@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.94](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.93...v0.1.94) (2023-03-13)
+
+
+### Bug Fixes
+
+* id isn't required in POIs ([6646de0](https://github.com/tomtom-international/go-sdk-js/commit/6646de02c83b7233952380633e954dc1f71df23a))
+* **service:** update generateId function ([d3484cd](https://github.com/tomtom-international/go-sdk-js/commit/d3484cd1475830713320cbffc01a0b44d439f96f))
+
 ### [0.1.93](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.92...v0.1.93) (2023-03-08)
 
 
