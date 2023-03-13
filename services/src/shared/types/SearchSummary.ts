@@ -1,18 +1,18 @@
 import { Position } from "geojson";
 
-/**
- * @ignore
- */
 type SummaryQueryType = "NEARBY" | "NON_NEAR";
 
+/**
+ * Common summary object returned from Search API calls.
+ */
 export type SearchSummary = {
     /**
      *  The query as interpreted by the search engine.
      */
     query: string;
     /**
-   Response type. Can be NEARBY or NON_NEAR.
-   */
+     * Response type. Can be NEARBY or NON_NEAR.
+     */
     queryType: SummaryQueryType;
     /**
      * Time spent on resolving the query.
