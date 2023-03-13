@@ -45,14 +45,16 @@
     }
   ],
   [
-    "Map init hidding traffic flow & traffic incidents using hide options",
+    "Map init hiding traffic flow & traffic incidents using hide options",
     {
       "container": "<div id='map'></div>"
     },
     {
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
-      "exclude": ["traffic_flow", "traffic_incidents"]
+      "style": {
+        "exclude": ["traffic_flow", "traffic_incidents"]
+      }
     },
     {
       "container": "<div id='map'></div>",
@@ -61,14 +63,16 @@
     }
   ],
   [
-    "Map init hidding traffic flow, traffic incidents, poi and hillshade using hide options",
+    "Map init hiding traffic flow, traffic incidents, poi and hillshade using hide options",
     {
       "container": "<div id='map'></div>"
     },
     {
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
-      "exclude": ["traffic_flow", "traffic_incidents", "poi", "hillshade"]
+      "style": {
+        "exclude": ["traffic_flow", "traffic_incidents", "poi", "hillshade"]
+      }
     },
     {
       "container": "<div id='map'></div>",

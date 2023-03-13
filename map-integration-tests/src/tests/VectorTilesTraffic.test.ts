@@ -75,7 +75,7 @@ describe("Map vector tile traffic module tests", () => {
                 zoom: 15
             },
             {
-                exclude: ["traffic_incidents", "traffic_flow"]
+                style: { exclude: ["traffic_incidents", "traffic_flow"] }
             }
         );
 
@@ -222,7 +222,7 @@ describe("Map vector tile traffic module tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                exclude: ["traffic_flow", "hillshade", "poi"]
+                style: { exclude: ["traffic_flow", "hillshade", "poi"] }
             }
         );
         await initTraffic();
@@ -314,7 +314,7 @@ describe("Map vector tile traffic module tests", () => {
                 center: [2.37327, 48.85903]
             },
             {
-                exclude: ["traffic_incidents", "hillshade", "poi"]
+                style: { exclude: ["traffic_incidents", "hillshade", "poi"] }
             }
         );
 
@@ -378,7 +378,7 @@ describe("Map vector tile traffic module tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                exclude: ["hillshade"]
+                style: { exclude: ["hillshade"] }
             }
         );
 
@@ -465,7 +465,7 @@ describe("Map vector tile traffic module tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                exclude: ["hillshade", "poi"]
+                style: { exclude: ["hillshade", "poi"] }
             }
         );
 

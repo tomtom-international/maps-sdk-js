@@ -75,6 +75,10 @@ export type StyleInput =
            * * Mutually exclusive with published style.
            */
           custom?: CustomStyle;
+          /**
+           * Exclude traffic incidents, traffic flow, poi and hillshade modules when loading styles.
+           */
+          exclude?: StyleModules[];
       };
 
 export type GOSDKMapParams = Partial<GlobalConfig> & {
@@ -82,10 +86,6 @@ export type GOSDKMapParams = Partial<GlobalConfig> & {
      * Optional style to load for the map.
      */
     style?: StyleInput;
-    /**
-     * Exclude traffic incidents, traffic flow, poi and hillshade modules when loading styles.
-     */
-    exclude?: StyleModules[];
 
     /**
      * Event configuration

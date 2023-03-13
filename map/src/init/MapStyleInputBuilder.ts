@@ -93,7 +93,6 @@ export const buildMapStyleInput = (mapParams: GOSDKMapParams): StyleSpecificatio
     const style = mapParams.style;
     const baseURL = mapParams.commonBaseURL as string;
     const apiKey = mapParams.apiKey as string;
-    const isExcludeEmpty = isEmpty(mapParams.exclude);
 
     if (typeof style === "string") {
         mapStyleUrl = buildPublishedStyleURL({ id: style }, baseURL, apiKey);
@@ -107,5 +106,8 @@ export const buildMapStyleInput = (mapParams: GOSDKMapParams): StyleSpecificatio
         mapStyleUrl = buildPublishedStyleURL({ id: "standardLight" }, baseURL, apiKey);
     }
 
-    return isExcludeEmpty ? mapStyleUrl : excludeModulesOptions(mapStyleUrl as string, mapParams.exclude);
+    if (typeof style === "object" && !isEmpty(style.exclude))
+        return excludeModulesOptions(mapStyleUrl as string, style.exclude);
+
+    return mapStyleUrl;
 };
