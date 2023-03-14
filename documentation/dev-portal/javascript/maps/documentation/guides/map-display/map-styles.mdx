@@ -93,8 +93,7 @@ as a [`CustomStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/mo
 
 # Excluding modules from a style
 
-When initializing a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap), you can exclude modules from the
-loaded map style with the `exclude` property in [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams).
+When setting the map style, you can exclude modules from the loaded map style with the `exclude` property in [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams).
 For example, excluding [hill shading](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_adding_hill_shading) and [traffic flow](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic) from the map style:
 
 ```javascript
@@ -109,8 +108,10 @@ const goSDKMap = new GOSDKMap(
         center: [-0.12621, 51.50394]
     },
     {
-        exclude: ["hillshade", "traffic_flow"]
-        // other params...
+        style: {
+          type: "published",
+          exclude: ["hillshade", "traffic_flow"]
+        }
     }
 );
 ```

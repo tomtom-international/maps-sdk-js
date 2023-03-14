@@ -32,7 +32,7 @@ describe("Map vector tile POI filtering tests", () => {
                 zoom: 15
             },
             {
-                style: { exclude: ["poi"] }
+                style: { type: "published", exclude: ["poi"] }
             }
         );
 

@@ -58,7 +58,7 @@ export const defaultConfig: GlobalConfig = {
  * GO SDK Global configuration singleton class.
  * It initializes to a default basic configuration.
  * @group Configuration
- * @category Types
+ * @category Classes
  */
 export class GOSDKConfig {
     static readonly instance = new GOSDKConfig();

@@ -28,9 +28,8 @@
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
-        "custom": {
-          "url": "https://test_url"
-        }
+        "type": "custom",
+        "url": "https://test_url"
       }
     },
     {
@@ -53,6 +52,7 @@
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
+        "type": "published",
         "exclude": ["traffic_flow", "traffic_incidents"]
       }
     },
@@ -71,6 +71,7 @@
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
+        "type": "published",
         "exclude": ["traffic_flow", "traffic_incidents", "poi", "hillshade"]
       }
     },

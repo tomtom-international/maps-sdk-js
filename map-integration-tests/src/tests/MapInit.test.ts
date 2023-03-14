@@ -40,7 +40,7 @@ describe("Map Init tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                style: { exclude: ["traffic_flow", "traffic_incidents"] }
+                style: { type: "published", exclude: ["traffic_flow", "traffic_incidents"] }
             }
         );
 
@@ -59,7 +59,7 @@ describe("Map Init tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                style: { exclude: ["traffic_flow"] }
+                style: { type: "published", exclude: ["traffic_flow"] }
             }
         );
 
@@ -79,7 +79,7 @@ describe("Map Init tests", () => {
                 zoom: 15
             },
             {
-                style: { exclude: ["poi", "hillshade"] }
+                style: { type: "published", exclude: ["poi", "hillshade"] }
             }
         );
 

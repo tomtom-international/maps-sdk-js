@@ -23,7 +23,11 @@ export type PublishedStyle = {
     /**
      * The unique id of the published style.
      */
-    id: PublishedStyleID;
+    id?: PublishedStyleID;
+    /**
+     * Exclude traffic incidents, traffic flow, poi and hillshade modules when loading styles.
+     */
+    exclude?: StyleModules[];
     /**
      * An optional version for the map style to load.
      * @default latest SDK-supported version.
@@ -59,27 +63,13 @@ export type StyleModules = "traffic_incidents" | "traffic_flow" | "poi" | "hills
  * Style to load on the map.
  * Can be either a:
  * * Published style ID from last supported version.
- * * Published style with extra options.
- * * Custom style.
+ * * Published style with optional extra configurations, such as module exclusion and style version.
+ * * Custom style input, in the form of a given URL, or the style JSON itself.
  */
 export type StyleInput =
     | PublishedStyleID
-    | {
-          /**
-           * Published style with optional extra configurations, such as version.
-           * * Mutually exclusive with custom style.
-           */
-          published?: PublishedStyle;
-          /**
-           * Custom style input, in the form of a given URL, or the style JSON itself.
-           * * Mutually exclusive with published style.
-           */
-          custom?: CustomStyle;
-          /**
-           * Exclude traffic incidents, traffic flow, poi and hillshade modules when loading styles.
-           */
-          exclude?: StyleModules[];
-      };
+    | (PublishedStyle & { type: "published" })
+    | (CustomStyle & { type: "custom" });
 
 export type GOSDKMapParams = Partial<GlobalConfig> & {
     /**

@@ -152,7 +152,7 @@ describe("Routing tests", () => {
 
         await mapEnv.loadMap(
             { fitBoundsOptions: { padding: 100 }, center: [4.8806, 52.40316], zoom: 12 },
-            { style: { exclude: ["traffic_flow"] } }
+            { style: { type: "published", exclude: ["traffic_flow"] } }
         );
         await initRouting();
 

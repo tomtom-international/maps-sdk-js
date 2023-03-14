@@ -7,6 +7,8 @@ export const TRAFFIC_FLOW = "traffic_flow";
 export const POI = "poi";
 export const HILLSHADE = "hillshade";
 
+const DEFAULT_PUBLISHED_STYLE = "standardLight";
+
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
     standardLight:
         "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
@@ -53,7 +55,7 @@ const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
 };
 
 const buildPublishedStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
-    publishedStyleURLTemplates[publishedStyle.id]
+    publishedStyleURLTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
         .replace("${baseURL}", baseURL)
         .replace("${version}", publishedStyle.version || "24.0.*")
         .replace("${apiKey}", apiKey);
@@ -90,25 +92,25 @@ export const excludeModulesOptions = (url: string, modules: StyleModules[] | und
  */
 export const buildMapStyleInput = (mapParams: GOSDKMapParams): StyleSpecification | string => {
     let mapStyleUrl: StyleSpecification | string;
+    let isExcludeEmpty = true;
     const style = mapParams.style;
     const baseURL = mapParams.commonBaseURL as string;
     const apiKey = mapParams.apiKey as string;
 
     if (typeof style === "string") {
         mapStyleUrl = buildPublishedStyleURL({ id: style }, baseURL, apiKey);
-    } else if (style?.published) {
-        mapStyleUrl = buildPublishedStyleURL(style.published, baseURL, apiKey);
-    } else if (style?.custom?.url) {
-        mapStyleUrl = withAPIKey(style.custom.url, apiKey);
-    } else if (style?.custom?.json) {
-        mapStyleUrl = style?.custom.json;
+    } else if (style?.type === "published") {
+        mapStyleUrl = buildPublishedStyleURL(style, baseURL, apiKey);
+        isExcludeEmpty = isEmpty(style.exclude);
+    } else if (style?.type === "custom" && style?.url) {
+        mapStyleUrl = withAPIKey(style.url, apiKey);
+    } else if (style?.type === "custom" && style?.json) {
+        mapStyleUrl = style.json;
     } else {
-        mapStyleUrl = buildPublishedStyleURL({ id: "standardLight" }, baseURL, apiKey);
+        mapStyleUrl = buildPublishedStyleURL({ id: DEFAULT_PUBLISHED_STYLE }, baseURL, apiKey);
     }
 
-    if (typeof style === "object" && !isEmpty(style.exclude)) {
-        return excludeModulesOptions(mapStyleUrl as string, style.exclude);
-    }
-
-    return mapStyleUrl;
+    return isExcludeEmpty
+        ? mapStyleUrl
+        : excludeModulesOptions(mapStyleUrl as string, (style as PublishedStyle).exclude);
 };

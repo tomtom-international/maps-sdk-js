@@ -15,7 +15,7 @@ describe("Map vector tiles hillshade module tests", () => {
                 zoom: 15
             },
             {
-                style: { exclude: ["hillshade"] }
+                style: { type: "published", exclude: ["hillshade"] }
             }
         );
 

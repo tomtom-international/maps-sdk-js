@@ -47,9 +47,8 @@ describe("Map initialization mocked tests", () => {
                 apiKey: "TEST_KEY_2",
                 commonBaseURL: "https://api-test.tomtom.com",
                 style: {
-                    custom: {
-                        url: "https://custom-style.test.tomtom.com/foo/bar"
-                    }
+                    type: "custom",
+                    url: "https://custom-style.test.tomtom.com/foo/bar"
                 }
             }
         );
