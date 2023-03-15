@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.95](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.94...v0.1.95) (2023-03-15)
+
+
+### Features
+
+* **services:** add summary properties to search ([f83ec26](https://github.com/tomtom-international/go-sdk-js/commit/f83ec26a31f6fa036a19a6872f5e628bdc7746ae))
+
 ### [0.1.94](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.93...v0.1.94) (2023-03-13)
 
 
