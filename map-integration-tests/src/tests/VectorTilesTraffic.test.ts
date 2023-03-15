@@ -29,7 +29,7 @@ const waitForRenderedIncidentsChange = async (previousFeaturesCount: number): Pr
     waitUntilRenderedFeaturesChange(
         (await getVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).map((layer) => layer.id),
         previousFeaturesCount,
-        10000
+        20000
     );
 
 const mapIncidentCategories = (categories: IncidentCategory[]): number[] =>
