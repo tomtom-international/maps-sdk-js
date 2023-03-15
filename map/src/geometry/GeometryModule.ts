@@ -6,7 +6,6 @@ import {
     EventsModule,
     GeoJSONSourceWithLayers,
     GEOMETRY_SOURCE_ID,
-    SourceWithLayerIDs,
     GEOMETRY_TITLE_SOURCE_ID,
     ToBeAddedLayerSpec
 } from "../shared";
@@ -27,20 +26,15 @@ const GEOMETRY_TITLE_LAYER_ID = "geometry_Title";
 /**
  * IDs of sources and layers for geometry module.
  */
-export type GeometryModuleSourcesAndLayersIds = {
-    /**
-     * Geometry source id with corresponding layers ids.
-     */
-    geometry: SourceWithLayerIDs;
+type GeometrySourcesWithLayers = {
+    geometry: GeoJSONSourceWithLayers<Geometries<GeoJsonProperties>>;
+    geometryLabel: GeoJSONSourceWithLayers<FeatureCollection<Point>>;
 };
 
 /**
  * Geometry data module.
  */
-export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLayersIds, GeometryModuleConfig> {
-    private geometry!: GeoJSONSourceWithLayers<Geometries<GeoJsonProperties>>;
-    private geometryLabel!: GeoJSONSourceWithLayers<FeatureCollection<Point>>;
-
+export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometryModuleConfig> {
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
      * @param tomtomMap The TomTomMap instance.
@@ -52,23 +46,18 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
         return new GeometryModule(tomtomMap, config);
     }
 
-    protected initSourcesWithLayers(config?: GeometryModuleConfig) {
+    protected _initSourcesWithLayers(config?: GeometryModuleConfig): GeometrySourcesWithLayers {
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
-        this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
-            { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID } as ToBeAddedLayerSpec<FillLayerSpecification>,
-            { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID } as ToBeAddedLayerSpec<LineLayerSpecification>
-        ]);
         const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
-        this.geometryLabel = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_TITLE_SOURCE_ID, [
-            titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
-        ]);
-
         return {
-            geometry: {
-                sourceID: GEOMETRY_SOURCE_ID,
-                layerIDs: [GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID, GEOMETRY_TITLE_LAYER_ID]
-            }
-        };
+            geometry: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
+                { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID } as ToBeAddedLayerSpec<FillLayerSpecification>,
+                { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID } as ToBeAddedLayerSpec<LineLayerSpecification>
+            ]),
+            geometryLabel: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_TITLE_SOURCE_ID, [
+                titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
+            ])
+        }
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {
@@ -78,26 +67,32 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
     }
 
     applyTextConfig(textConfig: GeometryTextConfig) {
-        if (textConfig && this.geometry.shownFeatures) {
-            this.geometryLabel.show(prepareTitleForDisplay(this.geometry.shownFeatures));
+        if (textConfig && this.sourcesWithLayers.geometry.shownFeatures) {
+            this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(this.sourcesWithLayers.geometry.shownFeatures));
         }
+    }
+
+    protected restoreDataAndConfig() {
+        const previousShownFeatures = this.sourcesWithLayers.geometry.shownFeatures;
+        this.initSourcesWithLayers();
+        this.config && this._applyConfig(this.config);
+        this.show(previousShownFeatures);
     }
 
     /**
      * Shows the given Geometry on the map.
      * @param geometry
-     * @param options
      */
     show(geometry: Geometries<GeoJsonProperties>): void {
-        this.geometry.show(prepareGeometryForDisplay(geometry, this.config));
-        this.geometryLabel.show(prepareTitleForDisplay(this.geometry.shownFeatures));
+        this.sourcesWithLayers.geometry.show(prepareGeometryForDisplay(geometry, this.config));
+        this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(this.geometry.sourcesWithLayers.shownFeatures));
     }
 
     /**
      * Clears the Geometry from the map.
      */
     clear(): void {
-        this.geometry.clear();
+        this.sourcesWithLayers.geometry.clear();
     }
 
     /**
@@ -105,6 +100,6 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.geometry);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.geometry);
     }
 }

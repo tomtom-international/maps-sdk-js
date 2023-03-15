@@ -24,7 +24,6 @@ import {
     ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    SourceWithLayerIDs,
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
@@ -66,53 +65,21 @@ import { TomTomMap } from "../TomTomMap";
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
-/**
- * IDs of sources and layers for routing module.
- */
-export type RoutingModuleSourcesAndLayersIds = {
-    /**
-     * Waypoints source id with corresponding layers ids.
-     */
-    waypoints: SourceWithLayerIDs;
-    /**
-     * Route lines source id with corresponding layers ids.
-     */
-    routeLines: SourceWithLayerIDs;
-    /**
-     * Vehicle restricted source id with corresponding layers ids.
-     */
-    vehicleRestricted: SourceWithLayerIDs;
-    /**
-     * Incidents source id with corresponding layers ids.
-     */
-    incidents: SourceWithLayerIDs;
-    /**
-     * Ferries source id with corresponding layers ids.
-     */
-    ferries: SourceWithLayerIDs;
-    /**
-     * Toll roads source id with corresponding layers ids.
-     */
-    tollRoads: SourceWithLayerIDs;
-    /**
-     * Tunnels source id with corresponding layers ids.
-     */
-    tunnels: SourceWithLayerIDs;
+type RoutingSourcesWitLayers = {
+    waypoints: GeoJSONSourceWithLayers<Waypoints>;
+    routeLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
+    // route sections:
+    vehicleRestricted: GeoJSONSourceWithLayers<RouteSections>;
+    incidents: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
+    ferries: GeoJSONSourceWithLayers<RouteSections>;
+    tollRoads: GeoJSONSourceWithLayers<RouteSections>;
+    tunnels: GeoJSONSourceWithLayers<RouteSections>;
 };
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
  */
-export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLayersIds, RoutingModuleConfig> {
-    private waypoints!: GeoJSONSourceWithLayers<Waypoints>;
-    private routeLines!: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
-    // route sections:
-    private vehicleRestricted!: GeoJSONSourceWithLayers<RouteSections>;
-    private incidents!: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
-    private ferries!: GeoJSONSourceWithLayers<RouteSections>;
-    private tollRoads!: GeoJSONSourceWithLayers<RouteSections>;
-    private tunnels!: GeoJSONSourceWithLayers<RouteSections>;
-
+export class RoutingModule extends AbstractMapModule<RoutingSourcesWitLayers, RoutingModuleConfig> {
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
      * @param tomtomMap The TomTomMap instance.
@@ -124,59 +91,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
         return new RoutingModule(tomtomMap, config);
     }
 
-    protected initSourcesWithLayers() {
-        this.waypoints = new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
-            { ...waypointSymbols, id: WAYPOINT_SYMBOLS_LAYER_ID },
-            { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
-        ]);
-        this.routeLines = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, [
-            { ...routeDeselectedOutline, id: ROUTE_DESELECTED_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-            { ...routeDeselectedLine, id: ROUTE_DESELECTED_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-            { ...routeOutline, id: ROUTE_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-            { ...routeMainLine, id: ROUTE_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
-        ]);
-        this.vehicleRestricted = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, [
-            {
-                ...routeVehicleRestrictedBackgroundLine,
-                id: ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID,
-                beforeID: LAYER_TO_RENDER_LINES_UNDER
-            },
-            {
-                ...routeVehicleRestrictedDottedLine,
-                id: ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
-                beforeID: LAYER_TO_RENDER_LINES_UNDER
-            }
-        ]);
-        this.incidents = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_INCIDENTS_SOURCE_ID, [
-            { ...routeIncidentsBGLine, id: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-            {
-                ...routeIncidentsDashedLine,
-                id: ROUTE_INCIDENTS_DASHED_LINE_LAYER_ID,
-                beforeID: LAYER_TO_RENDER_LINES_UNDER
-            },
-            {
-                ...routeIncidentsPatternLine,
-                id: ROUTE_INCIDENTS_PATTERN_LINE_LAYER_ID,
-                beforeID: LAYER_TO_RENDER_LINES_UNDER
-            },
-            { ...routeIncidentsSymbol, id: ROUTE_INCIDENTS_SYMBOL_LAYER_ID, beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
-        ]);
-        this.ferries = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_FERRIES_SOURCE_ID, [
-            { ...routeFerriesLine, id: ROUTE_FERRIES_LINE_LAYER_ID, beforeID: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID },
-            { ...routeFerriesSymbol, id: ROUTE_FERRIES_SYMBOL_LAYER_ID, beforeID: ROUTE_INCIDENTS_SYMBOL_LAYER_ID }
-        ]);
-        this.tollRoads = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_TOLL_ROADS_SOURCE_ID, [
-            {
-                ...routeTollRoadsOutline,
-                id: ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
-                beforeID: ROUTE_DESELECTED_OUTLINE_LAYER_ID
-            },
-            { ...routeTollRoadsSymbol, id: ROUTE_TOLL_ROADS_SYMBOL, beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
-        ]);
-        this.tunnels = new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_TUNNELS_SOURCE_ID, [
-            { ...routeTunnelsLine, id: ROUTE_TUNNELS_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
-        ]);
-
+    protected _initSourcesWithLayers(): RoutingSourcesWitLayers {
         // loading of extra assets not present in the map style:
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
@@ -184,18 +99,93 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
 
         return {
-            waypoints: this.waypoints.sourceAndLayerIDs,
-            routeLines: this.routeLines.sourceAndLayerIDs,
-            vehicleRestricted: this.vehicleRestricted.sourceAndLayerIDs,
-            incidents: this.incidents.sourceAndLayerIDs,
-            ferries: this.ferries.sourceAndLayerIDs,
-            tollRoads: this.tollRoads.sourceAndLayerIDs,
-            tunnels: this.tunnels.sourceAndLayerIDs
+            waypoints: new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
+                { ...waypointSymbols, id: WAYPOINT_SYMBOLS_LAYER_ID },
+                { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
+            ]),
+            routeLines: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, [
+                {
+                    ...routeDeselectedOutline,
+                    id: ROUTE_DESELECTED_OUTLINE_LAYER_ID,
+                    beforeID: LAYER_TO_RENDER_LINES_UNDER
+                },
+                { ...routeDeselectedLine, id: ROUTE_DESELECTED_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
+                { ...routeOutline, id: ROUTE_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
+                { ...routeMainLine, id: ROUTE_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
+            ]),
+            vehicleRestricted: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, [
+                {
+                    ...routeVehicleRestrictedBackgroundLine,
+                    id: ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID,
+                    beforeID: LAYER_TO_RENDER_LINES_UNDER
+                },
+                {
+                    ...routeVehicleRestrictedDottedLine,
+                    id: ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
+                    beforeID: LAYER_TO_RENDER_LINES_UNDER
+                }
+            ]),
+            incidents: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_INCIDENTS_SOURCE_ID, [
+                {
+                    ...routeIncidentsBGLine,
+                    id: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID,
+                    beforeID: LAYER_TO_RENDER_LINES_UNDER
+                },
+                {
+                    ...routeIncidentsDashedLine,
+                    id: ROUTE_INCIDENTS_DASHED_LINE_LAYER_ID,
+                    beforeID: LAYER_TO_RENDER_LINES_UNDER
+                },
+                {
+                    ...routeIncidentsPatternLine,
+                    id: ROUTE_INCIDENTS_PATTERN_LINE_LAYER_ID,
+                    beforeID: LAYER_TO_RENDER_LINES_UNDER
+                },
+                { ...routeIncidentsSymbol, id: ROUTE_INCIDENTS_SYMBOL_LAYER_ID, beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
+            ]),
+            ferries: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_FERRIES_SOURCE_ID, [
+                { ...routeFerriesLine, id: ROUTE_FERRIES_LINE_LAYER_ID, beforeID: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID },
+                { ...routeFerriesSymbol, id: ROUTE_FERRIES_SYMBOL_LAYER_ID, beforeID: ROUTE_INCIDENTS_SYMBOL_LAYER_ID }
+            ]),
+            tollRoads: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_TOLL_ROADS_SOURCE_ID, [
+                {
+                    ...routeTollRoadsOutline,
+                    id: ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
+                    beforeID: ROUTE_DESELECTED_OUTLINE_LAYER_ID
+                },
+                { ...routeTollRoadsSymbol, id: ROUTE_TOLL_ROADS_SYMBOL, beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
+            ]),
+            tunnels: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_TUNNELS_SOURCE_ID, [
+                { ...routeTunnelsLine, id: ROUTE_TUNNELS_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
+            ])
         };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    protected _applyConfig(): void {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
+    protected _applyConfig(config: RoutingModuleConfig): void {}
+
+    protected restoreDataAndConfig() {
+        const previouslyShown = {
+            waypoints: this.sourcesWithLayers.waypoints.shownFeatures,
+            routeLines: this.sourcesWithLayers.routeLines.shownFeatures,
+            vehicleRestricted: this.sourcesWithLayers.vehicleRestricted.shownFeatures,
+            incidents: this.sourcesWithLayers.incidents.shownFeatures,
+            ferries: this.sourcesWithLayers.ferries.shownFeatures,
+            tunnels: this.sourcesWithLayers.tunnels.shownFeatures,
+            tollRoads: this.sourcesWithLayers.tollRoads.shownFeatures
+        };
+
+        this.initSourcesWithLayers();
+        this.config && this._applyConfig(this.config);
+
+        this.sourcesWithLayers.waypoints.show(previouslyShown.waypoints);
+        this.sourcesWithLayers.routeLines.show(previouslyShown.routeLines);
+        this.sourcesWithLayers.vehicleRestricted.show(previouslyShown.vehicleRestricted);
+        this.sourcesWithLayers.incidents.show(previouslyShown.incidents);
+        this.sourcesWithLayers.ferries.show(previouslyShown.ferries);
+        this.sourcesWithLayers.tunnels.show(previouslyShown.tunnels);
+        this.sourcesWithLayers.tollRoads.show(previouslyShown.tollRoads);
+    }
 
     private addImageIfNotExisting(imageID: string, path: string) {
         if (!this.mapLibreMap.hasImage(imageID)) {
@@ -213,12 +203,14 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
      */
     showRoutes(routes: Routes, options?: ShowRoutesOptions) {
         const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
-        this.routeLines.show(displayRoutes);
-        this.vehicleRestricted.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
-        this.incidents.show(buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps));
-        this.ferries.show(buildDisplayRouteSections(displayRoutes, "ferry"));
-        this.tunnels.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
-        this.tollRoads.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
+        this.sourcesWithLayers.routeLines.show(displayRoutes);
+        this.sourcesWithLayers.vehicleRestricted.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
+        this.sourcesWithLayers.incidents.show(
+            buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
+        );
+        this.sourcesWithLayers.ferries.show(buildDisplayRouteSections(displayRoutes, "ferry"));
+        this.sourcesWithLayers.tunnels.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
+        this.sourcesWithLayers.tollRoads.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
     }
 
     /**
@@ -226,12 +218,12 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
      * * If nothing was shown before, nothing happens.
      */
     clearRoutes() {
-        this.routeLines.clear();
-        this.vehicleRestricted.clear();
-        this.incidents.clear();
-        this.ferries.clear();
-        this.tollRoads.clear();
-        this.tunnels.clear();
+        this.sourcesWithLayers.routeLines.clear();
+        this.sourcesWithLayers.vehicleRestricted.clear();
+        this.sourcesWithLayers.incidents.clear();
+        this.sourcesWithLayers.ferries.clear();
+        this.sourcesWithLayers.tollRoads.clear();
+        this.sourcesWithLayers.tunnels.clear();
     }
 
     /**
@@ -240,14 +232,14 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
      * @param index The route index to select. Must be within the existing rendered routes.
      */
     selectRoute(index: number) {
-        const updatedRoutes = buildDisplayRoutes(this.routeLines.shownFeatures, index);
+        const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.routeLines.shownFeatures, index);
 
-        this.routeLines.show(updatedRoutes);
-        showSectionsWithRouteSelection(updatedRoutes, this.vehicleRestricted);
-        showSectionsWithRouteSelection(updatedRoutes, this.incidents);
-        showSectionsWithRouteSelection(updatedRoutes, this.ferries);
-        showSectionsWithRouteSelection(updatedRoutes, this.tollRoads);
-        showSectionsWithRouteSelection(updatedRoutes, this.tunnels);
+        this.sourcesWithLayers.routeLines.show(updatedRoutes);
+        showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.vehicleRestricted);
+        showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.incidents);
+        showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.ferries);
+        showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.tollRoads);
+        showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.tunnels);
     }
 
     /**
@@ -259,7 +251,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
             ? toDisplayWaypoints(waypointsLike)
             : // FeatureCollection expected:
               toDisplayWaypoints(waypointsLike.features as PlanningWaypoint[]);
-        this.waypoints.show(waypoints);
+        this.sourcesWithLayers.waypoints.show(waypoints);
     }
 
     /**
@@ -267,7 +259,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
      * * If nothing was shown before, nothing happens.
      */
     clearWaypoints() {
-        this.waypoints.clear();
+        this.sourcesWithLayers.waypoints.clear();
     }
 
     /**
@@ -276,16 +268,22 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
      */
     get events() {
         return {
-            routeLines: new EventsModule<Route<DisplayRouteProps>>(this.tomtomMap._eventsProxy, this.routeLines),
-            waypoints: new EventsModule<Waypoint>(this.tomtomMap._eventsProxy, this.waypoints),
-            vehicleRestricted: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.vehicleRestricted),
+            routeLines: new EventsModule<Route<DisplayRouteProps>>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.routeLines
+            ),
+            waypoints: new EventsModule<Waypoint>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.waypoints),
+            vehicleRestricted: new EventsModule<RouteSection>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.vehicleRestricted
+            ),
             incidents: new EventsModule<RouteSections<DisplayTrafficSectionProps>>(
                 this.tomtomMap._eventsProxy,
-                this.incidents
+                this.sourcesWithLayers.incidents
             ),
-            ferries: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.ferries),
-            tollRoads: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.tollRoads),
-            tunnels: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.tunnels)
+            ferries: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.ferries),
+            tollRoads: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.tollRoads),
+            tunnels: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.tunnels)
         };
     }
 

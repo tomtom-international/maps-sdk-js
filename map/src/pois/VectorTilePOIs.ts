@@ -1,14 +1,7 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
-import {
-    AbstractMapModule,
-    EventsModule,
-    POI_SOURCE_ID,
-    SourceWithLayerIDs,
-    StyleSourceWithLayers,
-    ValuesFilter
-} from "../shared";
-import { FilterablePOICategory, VectorTilePOIsFeature, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
+import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
+import { FilterablePOICategory, VectorTilePOIsConfig, VectorTilePOIsFeature } from "./types/VectorTilePOIsConfig";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
@@ -35,19 +28,18 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
 /**
  * IDs of sources and layers for places of interest module.
  */
-export type POIsModuleSourcesAndLayersIds = {
+type POIsSourcesAndLayers = {
     /**
      * Places of interest source id with corresponding layers ids.
      */
-    poi: SourceWithLayerIDs;
+    poi: StyleSourceWithLayers;
 };
 
 /**
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
  */
-export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayersIds, VectorTilePOIsConfig> {
-    private poi!: StyleSourceWithLayers;
+export class VectorTilePOIs extends AbstractMapModule<POIsSourcesAndLayers, VectorTilePOIsConfig> {
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
     private originalFilter?: FilterSpecification;
 
@@ -62,15 +54,14 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
         return new VectorTilePOIs(tomtomMap, config);
     }
 
-    protected initSourcesWithLayers() {
+    protected _initSourcesWithLayers() {
         const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (!poiRuntimeSource) {
             throw notInTheStyle(`init ${VectorTilePOIs.name} with source ID ${POI_SOURCE_ID}`);
         }
-        this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
-        const sourceAndLayerIDs = this.poi.sourceAndLayerIDs;
-        this.originalFilter = this.mapLibreMap.getFilter(sourceAndLayerIDs.layerIDs[0]) as FilterSpecification;
-        return { poi: sourceAndLayerIDs };
+        const poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
+        this.originalFilter = this.mapLibreMap.getFilter(poi.sourceAndLayerIDs.layerIDs[0]) as FilterSpecification;
+        return { poi };
     }
 
     protected _applyConfig(config: VectorTilePOIsConfig | undefined): void {
@@ -85,11 +76,15 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
     }
 
     isVisible(): boolean {
-        return this.poi.isAnyLayerVisible();
+        return this.sourcesWithLayers.poi.isAnyLayerVisible();
     }
 
     setVisible(visible: boolean): void {
-        this.poi.setAllLayersVisible(visible);
+        this.sourcesWithLayers.poi.setAllLayersVisible(visible);
+        this.config = {
+            ...this.config,
+            visible
+        };
     }
 
     /**
@@ -105,7 +100,23 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
                 getCategoryIcons(categoriesFilter.values)
             );
             this.mapLibreMap.setFilter("POI", getMergedAllFilter(poiFilter, this.originalFilter));
+            this.config = {
+                ...this.config,
+                filters: {
+                    categories: categoriesFilter
+                }
+            };
         } else if (this.categoriesFilter) {
+            // reset categories config to default
+            this.config = {
+                ...this.config,
+                filters: {
+                    categories: {
+                        show: "all_except",
+                        values: []
+                    }
+                }
+            };
             // Applies default:
             this.mapLibreMap.setFilter("POI", this.originalFilter);
         }
@@ -118,6 +129,6 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule<VectorTilePOIsFeature>(this.tomtomMap._eventsProxy, this.poi);
+        return new EventsModule<VectorTilePOIsFeature>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.poi);
     }
 }

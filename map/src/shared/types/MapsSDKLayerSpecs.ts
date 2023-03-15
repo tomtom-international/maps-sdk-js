@@ -54,3 +54,17 @@ export type LayerSpecFilter = (layerSpec: LayerSpecification) => boolean;
  * @ignore
  */
 export type SourceWithLayers = StyleSourceWithLayers | GeoJSONSourceWithLayers;
+
+/**
+ * @ignore
+ */
+export type SourcesWithLayers = { [name: string]: SourceWithLayers };
+
+/**
+ * Contains the IDs of a source and its related layers.
+ * * Using source and layer ids you can customize them using MapLibre.
+ */
+export type SourceWithLayerIDs = {
+    sourceID: string;
+    layerIDs: string[];
+};

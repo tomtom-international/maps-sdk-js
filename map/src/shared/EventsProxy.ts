@@ -171,7 +171,7 @@ export class EventsProxy extends AbstractEventProxy {
         // Check if the layer has any handlers registered.
         // Since hover is the "lowest" event type, having a handler for any event type justifies supporting hover state.
         // However, we'll only fire the hover events if there are handlers for hover specifically.
-        if (hoveredTopFeature && !this.hasAnyHandlerRegistered(hoveredTopFeature.source)) {
+        if (hoveredTopFeature && !this.hasSourceID(hoveredTopFeature.source)) {
             return;
         }
 

@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import { StyleSpecification } from "maplibre-gl";
-import { TomTomMapParams, PublishedStyle, PublishedStyleID, StyleModules } from "./types/MapInit";
+import { PublishedStyle, PublishedStyleID, StyleModules, TomTomMapParams } from "./types/MapInit";
 
 export const TRAFFIC_INCIDENTS = "traffic_incidents";
 export const TRAFFIC_FLOW = "traffic_flow";

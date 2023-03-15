@@ -7,10 +7,15 @@ import {
     SourceSpecification
 } from "maplibre-gl";
 import { TomTomMapSource } from "./TomTomMapSource";
-import { LayerSpecFilter, LayerSpecWithSource, ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
+import {
+    LayerSpecFilter,
+    LayerSpecWithSource,
+    SourceWithLayerIDs,
+    ToBeAddedLayerSpec,
+    ToBeAddedLayerSpecWithoutSource
+} from "./types";
 import { FeatureCollection } from "geojson";
 import { asDefined } from "./AssertionUtils";
-import { SourceWithLayerIDs } from "./AbstractMapModule";
 
 /**
  * Contains a source and the layers to render its data.

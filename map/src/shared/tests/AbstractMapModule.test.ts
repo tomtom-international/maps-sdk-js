@@ -9,19 +9,25 @@ describe("AbstractMapModule tests", () => {
     class TestModule extends AbstractMapModule<Record<string, never>, VectorTileMapModuleConfig> {
         initCalled?: boolean;
         configApplied?: VectorTileMapModuleConfig | null;
+        restored?: boolean;
 
         static async init(tomtomMap: TomTomMap, config?: VectorTileMapModuleConfig): Promise<TestModule> {
             await waitUntilMapIsReady(tomtomMap);
             return new TestModule(tomtomMap, config);
         }
 
-        protected initSourcesWithLayers(): Record<string, never> {
+        protected _initSourcesWithLayers(): Record<string, never> {
             this.initCalled = true;
             return {};
         }
 
         protected _applyConfig(config: VectorTileMapModuleConfig | undefined): void {
             this.configApplied = config;
+        }
+
+        protected restoreDataAndConfig() {
+            this.restored = true;
+            this.config && this._applyConfig(this.config);
         }
 
         // Implement events, however it is not tested here.
@@ -35,8 +41,9 @@ describe("AbstractMapModule tests", () => {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 once: jest.fn((_, callback) => callback())
-            } as unknown as Map
-        } as TomTomMap;
+            } as unknown as Map,
+            _addStyleChangeHandler: jest.fn()
+        } as unknown as TomTomMap;
 
         let testModule = await TestModule.init(tomtomMapMock);
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
@@ -60,8 +67,9 @@ describe("AbstractMapModule tests", () => {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
                 once: jest.fn((_, callback) => callback())
-            } as unknown as Map
-        } as TomTomMap;
+            } as unknown as Map,
+            _addStyleChangeHandler: jest.fn()
+        } as unknown as TomTomMap;
 
         let testModule = await TestModule.init(tomtomMapMock);
         let styleDataEventCallback = (tomtomMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
@@ -96,8 +104,9 @@ describe("AbstractMapModule tests", () => {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
                 once: jest.fn((_, callback) => callback())
-            } as unknown as Map
-        } as TomTomMap;
+            } as unknown as Map,
+            _addStyleChangeHandler: jest.fn()
+        } as unknown as TomTomMap;
 
         const testModule = await TestModule.init(tomtomMapMock);
         await new Promise((resolve) => setTimeout(resolve, 6000));

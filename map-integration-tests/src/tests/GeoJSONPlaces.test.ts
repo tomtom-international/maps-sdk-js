@@ -10,6 +10,7 @@ import {
     getPlacesSourceAndLayerIDs,
     initPlaces,
     queryRenderedFeatures,
+    setStyle,
     showPlaces,
     waitForMapIdle,
     waitUntilRenderedFeatures
@@ -94,6 +95,12 @@ describe("GeoJSON Places tests", () => {
             await initPlaces();
             const { layerIDs: nextLayerIDs } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
+            renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 10000);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+
+            // finally, changing the map style: verifying the places are still shown (state restoration):
+            await setStyle("standardDark");
+            await waitForMapIdle();
             renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
 

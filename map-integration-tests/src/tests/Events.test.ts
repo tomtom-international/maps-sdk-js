@@ -97,7 +97,7 @@ describe("Tests with user events", () => {
                 center: [4.89067, 52.37313]
             },
             // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-            { events: { longHoverDelayAfterMapMoveMS: 2000, longHoverDelayOnStillMapMS: 1500 } }
+            { events: { longHoverDelayAfterMapMoveMS: 2500, longHoverDelayOnStillMapMS: 2000 } }
         );
 
         await initPlaces();

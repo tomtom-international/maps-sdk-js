@@ -1,6 +1,6 @@
 import remove from "lodash/remove";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { EventType, SourceWithLayers, UserEventHandler } from "./types";
+import { EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from "./types";
 
 type SourceWithLayersMap = { [sourceID: string]: SourceWithLayers };
 
@@ -40,9 +40,7 @@ export abstract class AbstractEventProxy {
         handler: UserEventHandler<T>,
         type: EventType
     ) {
-        if (!this.has(sourceWithLayers)) {
-            this.ensureAdded(sourceWithLayers);
-        }
+        this.ensureAdded(sourceWithLayers);
 
         const handlerId = `${sourceWithLayers.source.id}_${type}`;
         const handlerExists = this.handlers[handlerId] && this.handlers[handlerId].indexOf(handler) !== -1;
@@ -76,18 +74,31 @@ export abstract class AbstractEventProxy {
     }
 
     /**
-     * Returns a boolean if sources and layers are registered.
+     * Returns whether this sourceWithLayers is registered for events (has handlers attached).
      * @param sourcesWithLayers The sources and layers to listen to.
      */
     has(sourcesWithLayers: SourceWithLayers): boolean {
-        return Boolean(this.interactiveSourcesAndLayers[sourcesWithLayers.source.id]);
+        return this.hasSourceID(sourcesWithLayers.source.id);
     }
 
     /**
-     * Check if there is any handler registered with a source Id.
-     * @param sourceId The source id from SourceWithLayers instance
+     * Returns whether this source is registered for events (has handlers attached).
+     * @param sourceId The source id (should be linked to a SourceWithLayers instance).
      */
-    hasAnyHandlerRegistered(sourceId: string) {
-        return Object.keys(this.handlers).some((handlerId) => handlerId.includes(sourceId));
+    hasSourceID(sourceId: string): boolean {
+        return !!this.interactiveSourcesAndLayers[sourceId];
+    }
+
+    /**
+     * Updates the given sourcesWithLayers, if they have any handlers.
+     * * (This is typically called to refresh an existing, stale sourceWithLayers after a map style has changed).
+     * @param sourcesWithLayers The new sources with layers to replace existing ones.
+     */
+    updateIfRegistered(sourcesWithLayers: SourcesWithLayers): void {
+        for (const sourceWithLayers of Object.values(sourcesWithLayers)) {
+            if (sourceWithLayers && this.has(sourceWithLayers)) {
+                this.ensureAdded(sourceWithLayers);
+            }
+        }
     }
 }

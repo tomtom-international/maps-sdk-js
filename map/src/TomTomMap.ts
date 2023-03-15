@@ -1,7 +1,7 @@
 import mapLibreExported, { Map } from "maplibre-gl";
 import { BBox } from "geojson";
 import { mergeFromGlobal } from "@anw/maps-sdk-js/core";
-import { TomTomMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
+import { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
 import { EventsProxy } from "./shared";
@@ -22,6 +22,7 @@ export class TomTomMap {
     readonly mapLibreMap: Map;
     private params: TomTomMapParams;
     _eventsProxy: EventsProxy;
+    styleChangeHandlers: (() => void)[] = [];
 
     /**
      * Builds the map object and attaches it to an element of the web application.
@@ -31,7 +32,7 @@ export class TomTomMap {
     constructor(mapLibreOptions: MapLibreOptions, mapParams?: TomTomMapParams) {
         this.params = mergeFromGlobal(mapParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.params));
-        this.mapLibreMap.once("styledata", () => this.handleStyleData());
+        this.mapLibreMap.once("styledata", () => this.handleStyleData(false));
         this._eventsProxy = new EventsProxy(this.mapLibreMap, mapParams?.events);
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
@@ -46,11 +47,12 @@ export class TomTomMap {
     /**
      * Changes the map style on the fly, without reloading the map.
      * @param style The new style to set.
+     * @param keepState flag to specify whether to restore map style changes and added layers in the new style.
      */
-    setStyle = (style: StyleInput): void => {
+    setStyle = (style: StyleInput, keepState = true): void => {
         this.params = { ...this.params, style };
         this.mapReady = false;
-        this.mapLibreMap.once("styledata", () => this.handleStyleData());
+        this.mapLibreMap.once("styledata", () => this.handleStyleData(keepState));
         this.mapLibreMap.setStyle(buildMapStyleInput(this.params));
     };
 
@@ -82,14 +84,19 @@ export class TomTomMap {
         return this.mapLibreMap.getBounds().toArray().flat() as BBox;
     }
 
-    private handleStyleData() {
+    private handleStyleData(keepState: boolean) {
         this.mapReady = true;
-        /**
-         * This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style
-         */
+        // (We use setTimeout to compensate for a MapLibre glitch where symbol layers can't get added right after
+        // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
+        keepState && setTimeout(() => this.styleChangeHandlers.forEach((handler) => handler()));
+        // This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style:
         const style = this.params?.style;
         if (typeof style === "object" && style.type == "published" && style.exclude?.includes("poi")) {
             this.mapLibreMap.setLayoutProperty("POI", "visibility", "none", { validate: false });
         }
+    }
+
+    _addStyleChangeHandler(handler: () => void): void {
+        this.styleChangeHandlers.push(handler);
     }
 }

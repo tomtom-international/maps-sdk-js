@@ -53,7 +53,8 @@ describe("Routing module tests", () => {
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
-            }
+            },
+            _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const routing = await RoutingModule.init(tomtomMapMock);

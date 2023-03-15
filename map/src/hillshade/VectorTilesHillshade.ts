@@ -1,12 +1,6 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
-import {
-    AbstractMapModule,
-    EventsModule,
-    HILLSHADE_SOURCE_ID,
-    SourceWithLayerIDs,
-    StyleSourceWithLayers
-} from "../shared";
+import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
@@ -14,23 +8,15 @@ import { waitUntilMapIsReady } from "../shared/mapUtils";
 /**
  * IDs of sources and layers for hillshade module.
  */
-export type HillshadeModuleSourcesAndLayersIds = {
-    /**
-     * Hillshade source id with corresponding layers ids.
-     */
-    hillshade: SourceWithLayerIDs;
+type HillshadeSourcesWithLayers = {
+    hillshade: StyleSourceWithLayers;
 };
 
 /**
  * Vector tiles hillshade module.
  * * Hillshade refers to the semi-transparent terrain layer.
  */
-export class VectorTilesHillshade extends AbstractMapModule<
-    HillshadeModuleSourcesAndLayersIds,
-    VectorTilesHillshadeConfig
-> {
-    private hillshade!: StyleSourceWithLayers;
-
+export class VectorTilesHillshade extends AbstractMapModule<HillshadeSourcesWithLayers, VectorTilesHillshadeConfig> {
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
      * @param tomtomMap The TomTomMap instance.
@@ -42,13 +28,12 @@ export class VectorTilesHillshade extends AbstractMapModule<
         return new VectorTilesHillshade(tomtomMap, config);
     }
 
-    protected initSourcesWithLayers() {
+    protected _initSourcesWithLayers() {
         const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
         if (!hillshadeSource) {
             throw notInTheStyle(`init ${VectorTilesHillshade.name} with source ID ${HILLSHADE_SOURCE_ID}`);
         }
-        this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
-        return { hillshade: this.hillshade.sourceAndLayerIDs };
+        return { hillshade: new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource) };
     }
 
     _applyConfig(config: VectorTilesHillshadeConfig | undefined): void {
@@ -61,11 +46,15 @@ export class VectorTilesHillshade extends AbstractMapModule<
     }
 
     setVisible(visible: boolean): void {
-        this.hillshade.setAllLayersVisible(visible);
+        this.sourcesWithLayers.hillshade.setAllLayersVisible(visible);
+        this.config = {
+            ...this.config,
+            visible
+        };
     }
 
     isVisible(): boolean {
-        return this.hillshade.isAnyLayerVisible();
+        return this.sourcesWithLayers.hillshade.isAnyLayerVisible();
     }
 
     /**
@@ -73,6 +62,6 @@ export class VectorTilesHillshade extends AbstractMapModule<
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.hillshade);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.hillshade);
     }
 }

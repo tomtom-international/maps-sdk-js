@@ -5,6 +5,7 @@ import {
     GeometryModuleConfig,
     LayerSpecWithSource,
     PlaceModuleConfig,
+    StyleInput,
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
 } from "map";
@@ -183,3 +184,8 @@ export const showGeometry = async (geometry: Geometries<GeoJsonProperties>) =>
         // @ts-ignore
         geometry
     );
+
+export const setStyle = async (style: StyleInput) =>
+    page.evaluate((pageStyleInput) => {
+        (globalThis as MapsSDKThis).tomtomMap.setStyle(pageStyleInput);
+    }, style as any);

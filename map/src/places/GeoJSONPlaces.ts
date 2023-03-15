@@ -4,7 +4,6 @@ import {
     EventsModule,
     GeoJSONSourceWithLayers,
     PLACES_SOURCE_PREFIX_ID,
-    SourceWithLayerIDs,
     SymbolLayerSpecWithoutSource
 } from "../shared";
 import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
@@ -17,17 +16,17 @@ import { DisplayPlaceProps } from "./types/PlaceDisplayProps";
 /**
  * IDs of sources and layers for places module.
  */
-export type PlacesModuleSourcesAndLayersIds = {
+type PlacesSourcesAndLayers = {
     /**
      * Places source id with corresponding layers ids.
      */
-    places: SourceWithLayerIDs;
+    places: GeoJSONSourceWithLayers<Places<DisplayPlaceProps>>;
 };
 
-export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayersIds, PlaceModuleConfig> {
+export class GeoJSONPlaces extends AbstractMapModule<PlacesSourcesAndLayers, PlaceModuleConfig> {
     private static lastInstanceIndex = -1;
-    private places!: GeoJSONSourceWithLayers<Places<DisplayPlaceProps>>;
     private layerSpecs!: [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource];
+    private sourceID!: string;
     private layerIDPrefix!: string;
 
     /**
@@ -41,14 +40,15 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
         return new GeoJSONPlaces(tomtomMap, config);
     }
 
-    protected initSourcesWithLayers(config?: PlaceModuleConfig) {
-        GeoJSONPlaces.lastInstanceIndex++;
-        const sourceID = `${PLACES_SOURCE_PREFIX_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
-        this.layerIDPrefix = `placesSymbols-${GeoJSONPlaces.lastInstanceIndex}`;
+    protected _initSourcesWithLayers(config?: PlaceModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
+        if (!restore) {
+            GeoJSONPlaces.lastInstanceIndex++;
+            this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
+            this.layerIDPrefix = `placesSymbols-${GeoJSONPlaces.lastInstanceIndex}`;
+        }
         const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
-        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, sourceID, layerSpecs);
         this.layerSpecs = layerSpecs;
-        return { places: this.places.sourceAndLayerIDs };
+        return { places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, layerSpecs) };
     }
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {
@@ -57,6 +57,13 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
         } else if (config?.extraFeatureProps) {
             this.updateData(config);
         }
+    }
+
+    protected restoreDataAndConfig() {
+        const previousShownFeatures = this.sourcesWithLayers.places.shownFeatures;
+        this.initSourcesWithLayers(this.config, true);
+        this.config && this._applyConfig(this.config);
+        this.show(previousShownFeatures);
     }
 
     /**
@@ -99,8 +106,8 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
     }
 
     private updateData(config: PlaceModuleConfig): void {
-        this.places.source.runtimeSource?.setData(
-            preparePlacesForDisplay(this.places.shownFeatures, this.mapLibreMap, config)
+        this.sourcesWithLayers.places.source.runtimeSource?.setData(
+            preparePlacesForDisplay(this.sourcesWithLayers.places.shownFeatures, this.mapLibreMap, config)
         );
     }
 
@@ -109,14 +116,14 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
      * @param places
      */
     show(places: Places): void {
-        this.places.show(preparePlacesForDisplay(places, this.mapLibreMap, this.config));
+        this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.mapLibreMap, this.config));
     }
 
     /**
      * Clears the places from the map.
      */
     clear(): void {
-        this.places.clear();
+        this.sourcesWithLayers.places.clear();
     }
 
     /**
@@ -124,6 +131,6 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule<Place<DisplayPlaceProps>>(this.tomtomMap._eventsProxy, this.places);
+        return new EventsModule<Place<DisplayPlaceProps>>(this.eventsProxy, this.sourcesWithLayers.places);
     }
 }

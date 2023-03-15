@@ -1,26 +1,18 @@
 import { Map } from "maplibre-gl";
 import { TomTomMap } from "../TomTomMap";
-
-/**
- * Contains the IDs of a source and its related layers.
- * * Using source and layer ids you can customize them using MapLibre.
- */
-export type SourceWithLayerIDs = {
-    sourceID: string;
-    layerIDs: string[];
-};
+import { EventsProxy } from "./EventsProxy";
+import { SourcesWithLayers, SourceWithLayerIDs } from "./types";
 
 /**
  * Base class for all Maps SDK map modules.
  */
-export abstract class AbstractMapModule<
-    SOURCE_AND_LAYER_IDS extends Record<string, SourceWithLayerIDs>,
-    CFG = undefined
-> {
+export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithLayers, CFG = undefined> {
     protected readonly tomtomMap: TomTomMap;
+    protected readonly eventsProxy: EventsProxy;
     protected readonly mapLibreMap: Map;
+    protected sourcesWithLayers!: SOURCES_WITH_LAYERS;
+    protected _sourceAndLayerIDs!: Record<keyof SOURCES_WITH_LAYERS, SourceWithLayerIDs>;
     protected config?: CFG;
-    protected readonly _sourceAndLayerIDs: SOURCE_AND_LAYER_IDS;
 
     /**
      * Builds this module based on a given Maps SDK map.
@@ -30,10 +22,26 @@ export abstract class AbstractMapModule<
      */
     protected constructor(tomtomMap: TomTomMap, config?: CFG) {
         this.tomtomMap = tomtomMap;
+        this.eventsProxy = tomtomMap._eventsProxy;
+        this.tomtomMap._addStyleChangeHandler(() => this.restoreDataAndConfig());
         this.mapLibreMap = tomtomMap.mapLibreMap;
-        this._sourceAndLayerIDs = this.initSourcesWithLayers(config);
+        this.initSourcesWithLayers(config);
+
         if (config) {
             this.applyConfig(config);
+        }
+    }
+
+    protected initSourcesWithLayers(config?: CFG, restore?: boolean): void {
+        this.sourcesWithLayers = this._initSourcesWithLayers(config, restore);
+        this._sourceAndLayerIDs = Object.fromEntries(
+            Object.entries(this.sourcesWithLayers).map(([name, sourceWithLayers]) => [
+                name,
+                sourceWithLayers.sourceAndLayerIDs
+            ])
+        ) as Record<keyof SOURCES_WITH_LAYERS, SourceWithLayerIDs>;
+        if (restore) {
+            this.eventsProxy.updateIfRegistered(this.sourcesWithLayers);
         }
     }
 
@@ -41,7 +49,7 @@ export abstract class AbstractMapModule<
      * Initializes the sources with layers for the specific module.
      * @protected
      */
-    protected abstract initSourcesWithLayers(config?: CFG): SOURCE_AND_LAYER_IDS;
+    protected abstract _initSourcesWithLayers(config?: CFG, restore?: boolean): SOURCES_WITH_LAYERS;
 
     /**
      * Applies the configuration to this module.
@@ -69,6 +77,16 @@ export abstract class AbstractMapModule<
     }
 
     /**
+     * implementation needed to restore the module state (data and config applied to the module).
+     * to be used to restore module state after map style change
+     * @protected
+     */
+    protected restoreDataAndConfig(): void {
+        this.initSourcesWithLayers(this.config, true);
+        this.config && this._applyConfig(this.config);
+    }
+
+    /**
      * Gets a copy of the current module config, if defined.
      */
     getConfig() {
@@ -78,7 +96,7 @@ export abstract class AbstractMapModule<
     /**
      * Returns sources and layers IDs.
      */
-    get sourceAndLayerIDs() {
+    get sourceAndLayerIDs(): Record<keyof SOURCES_WITH_LAYERS, SourceWithLayerIDs> {
         return this._sourceAndLayerIDs;
     }
 }

@@ -3,43 +3,95 @@ import { AbstractEventProxy } from "../AbstractEventProxy";
 import { StyleSourceWithLayers } from "../SourceWithLayers";
 
 const sourceWithLayersMock = {
-    source: { id: "SOURCE_ID" },
-    _layerSpecs: [{ id: "layer0", type: "symbol", source: "SOURCE_ID" } as LayerSpecification]
-} as StyleSourceWithLayers;
+    places: {
+        source: { id: "SOURCE_ID" },
+        _layerSpecs: [{ id: "layer0", type: "symbol", source: "SOURCE_ID" } as LayerSpecification]
+    } as StyleSourceWithLayers,
+    placesStats: {
+        source: { id: "SOURCE_ID_2" },
+        _layerSpecs: [{ id: "layer5", type: "symbol", source: "SOURCE_ID_2" } as LayerSpecification]
+    } as StyleSourceWithLayers
+};
 
-class TestModule extends AbstractEventProxy {}
+const sourceWithLayersMock2 = {
+    places: {
+        source: { id: "SOURCE_ID" },
+        _layerSpecs: [{ id: "layer0", type: "line", source: "SOURCE_ID", minzoom: 5 } as LayerSpecification]
+    } as StyleSourceWithLayers
+};
+
+const sourceWithLayersMock3 = {
+    otherThings: {
+        source: { id: "SOURCE_ID_456" },
+        _layerSpecs: [{ id: "layer0", type: "circle", source: "SOURCE_ID_456", minzoom: 7 } as LayerSpecification]
+    } as StyleSourceWithLayers
+};
+
+class TestEventProxy extends AbstractEventProxy {
+    getInteractiveSourcesAndLayers() {
+        return this.interactiveSourcesAndLayers;
+    }
+}
 
 describe("AbstractEventProxy tests", () => {
-    test("Add one event handler", () => {
-        const testModule = new TestModule();
+    let eventsProxy: TestEventProxy;
+    beforeEach(() => (eventsProxy = new TestEventProxy()));
 
-        testModule.addEventHandler(sourceWithLayersMock, () => "test", "click");
-        expect(testModule.has(sourceWithLayersMock)).toStrictEqual(true);
+    test("Add one event handler", () => {
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => "test", "click");
+        expect(eventsProxy.has(sourceWithLayersMock.places)).toStrictEqual(true);
+        expect(eventsProxy.has(sourceWithLayersMock.placesStats)).toStrictEqual(false);
     });
 
     test("Check if has any handler registered", () => {
-        const testModule = new TestModule();
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => "test", "click");
+        expect(eventsProxy.hasSourceID(sourceWithLayersMock.places.source.id)).toBeTruthy();
 
-        testModule.addEventHandler(sourceWithLayersMock, () => "test", "click");
-        expect(testModule.hasAnyHandlerRegistered(sourceWithLayersMock.source.id)).toBeTruthy();
-
-        testModule.removeAll();
-        expect(testModule.hasAnyHandlerRegistered(sourceWithLayersMock.source.id)).toBeFalsy();
+        eventsProxy.removeAll();
+        expect(eventsProxy.hasSourceID(sourceWithLayersMock.places.source.id)).toBeFalsy();
     });
 
     test("Remove event handler", () => {
-        const testModule = new TestModule();
-
-        testModule.addEventHandler(sourceWithLayersMock, () => "test", "click");
-        testModule.remove("click", sourceWithLayersMock);
-        expect(testModule.has(sourceWithLayersMock)).toStrictEqual(false);
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => "test", "click");
+        eventsProxy.remove("click", sourceWithLayersMock.places);
+        expect(eventsProxy.has(sourceWithLayersMock.places)).toStrictEqual(false);
     });
 
     test("Remove all event handlers", () => {
-        const testModule = new TestModule();
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => "test", "click");
+        eventsProxy.removeAll();
+        expect(eventsProxy.has(sourceWithLayersMock.places)).toStrictEqual(false);
+    });
 
-        testModule.addEventHandler(sourceWithLayersMock, () => "test", "click");
-        testModule.removeAll();
-        expect(testModule.has(sourceWithLayersMock)).toStrictEqual(false);
+    test("Update sources with layers", () => {
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => "test", "click");
+        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({ SOURCE_ID: sourceWithLayersMock.places });
+
+        // Happy flow: updating with sourceWithLayers of same source ID:
+        eventsProxy.updateIfRegistered(sourceWithLayersMock2);
+        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({ SOURCE_ID: sourceWithLayersMock2.places });
+
+        // updating while not registered yet:
+        eventsProxy.updateIfRegistered(sourceWithLayersMock3);
+        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({ SOURCE_ID: sourceWithLayersMock2.places });
+
+        eventsProxy.addEventHandler(sourceWithLayersMock3.otherThings, () => "test", "click");
+        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({
+            SOURCE_ID: sourceWithLayersMock2.places,
+            SOURCE_ID_456: sourceWithLayersMock3.otherThings
+        });
+
+        eventsProxy.updateIfRegistered(sourceWithLayersMock);
+        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({
+            SOURCE_ID: sourceWithLayersMock.places,
+            SOURCE_ID_456: sourceWithLayersMock3.otherThings
+        });
+
+        eventsProxy.addEventHandler(sourceWithLayersMock.placesStats, () => "test", "click");
+        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({
+            SOURCE_ID: sourceWithLayersMock.places,
+            SOURCE_ID_2: sourceWithLayersMock.placesStats,
+            SOURCE_ID_456: sourceWithLayersMock3.otherThings
+        });
     });
 });

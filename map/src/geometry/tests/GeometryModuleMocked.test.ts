@@ -25,7 +25,8 @@ describe("Geometry module tests", () => {
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
-            }
+            },
+            _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const testGeometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;

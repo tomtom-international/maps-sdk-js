@@ -48,5 +48,5 @@ export type PlaceTextConfig = {
 export type PlaceModuleConfig = {
     iconConfig?: PlaceIconConfig;
     textConfig?: PlaceTextConfig;
-    extraFeatureProps?: { [key: string]: any };
+    extraFeatureProps?: { [key: string]: ((place: Place) => any) | any };
 };

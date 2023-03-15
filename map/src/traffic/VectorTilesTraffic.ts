@@ -8,7 +8,6 @@ import {
     filterLayersBySources,
     LayerSpecWithSource,
     MultiSyntaxFilter,
-    SourceWithLayerIDs,
     StyleSourceWithLayers,
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
@@ -24,27 +23,16 @@ type ChangeOptions = {
     updateConfig: boolean;
 };
 
-/**
- * IDs of sources and layers for traffic module.
- */
-export type TrafficModuleSourcesAndLayersIds = {
-    /**
-     * Traffic incident source id with corresponding layers ids.
-     */
-    incidents?: SourceWithLayerIDs;
-    /**
-     * Traffic flow source id with corresponding layers ids.
-     */
-    flow?: SourceWithLayerIDs;
+type TrafficSourcesAndLayers = {
+    incidents?: StyleSourceWithLayers;
+    flow?: StyleSourceWithLayers;
 };
 
 /**
  * Vector tiles traffic module.
  * * Controls both incidents and flow vector traffic sources and layers.
  */
-export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAndLayersIds, VectorTilesTrafficConfig> {
-    private incidents?: StyleSourceWithLayers;
-    private flow?: StyleSourceWithLayers;
+export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayers, VectorTilesTrafficConfig> {
     private originalFilters!: Record<string, FilterSpecification | undefined>;
 
     /**
@@ -58,18 +46,17 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
         return new VectorTilesTraffic(tomtomMap, config);
     }
 
-    protected initSourcesWithLayers() {
-        const sourcesAndLayersIds: TrafficModuleSourcesAndLayersIds = {};
+    protected _initSourcesWithLayers(): TrafficSourcesAndLayers {
         const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
+        let incidents: StyleSourceWithLayers | undefined;
         if (incidentsRuntimeSource) {
-            this.incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
-            sourcesAndLayersIds.incidents = this.incidents.sourceAndLayerIDs;
+            incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
         }
 
+        let flow: StyleSourceWithLayers | undefined;
         const flowRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_FLOW_SOURCE_ID);
         if (flowRuntimeSource) {
-            this.flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
-            sourcesAndLayersIds.flow = this.flow.sourceAndLayerIDs;
+            flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
         }
 
         if (!incidentsRuntimeSource && !flowRuntimeSource) {
@@ -86,7 +73,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
         ])) {
             this.originalFilters[layer.id] = layer.filter;
         }
-        return sourcesAndLayersIds;
+        return { ...(incidents && { incidents }), ...(flow && { flow }) };
     }
 
     protected _applyConfig(config: VectorTilesTrafficConfig | undefined): void {
@@ -105,7 +92,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
 
         if (incidents && !isNil(incidents.visible)) {
             this._setIncidentsVisible(incidents.visible, { updateConfig: false });
-        } else if (isNil(config?.visible) && !this.incidents?.areAllLayersVisible()) {
+        } else if (isNil(config?.visible) && !this.sourcesWithLayers.incidents?.areAllLayersVisible()) {
             // applying default
             this._setIncidentsVisible(true, { updateConfig: false });
         }
@@ -174,7 +161,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
         const flow = config?.flow;
         if (flow && !isNil(flow.visible)) {
             this._setFlowVisible(flow.visible, { updateConfig: false });
-        } else if (isNil(config?.visible) && !this.flow?.areAllLayersVisible()) {
+        } else if (isNil(config?.visible) && !this.sourcesWithLayers.flow?.areAllLayersVisible()) {
             // applying default:
             this._setFlowVisible(true, { updateConfig: false });
         }
@@ -254,21 +241,21 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
      * Returns whether any traffic incident layers are visible.
      */
     anyIncidentLayersVisible(): boolean {
-        return !!this.incidents?.isAnyLayerVisible();
+        return !!this.sourcesWithLayers.incidents?.isAnyLayerVisible();
     }
 
     /**
      * Returns whether any traffic incident symbol layers are visible.
      */
     anyIncidentIconLayersVisible(): boolean {
-        return !!this.incidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === "symbol");
+        return !!this.sourcesWithLayers.incidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === "symbol");
     }
 
     /**
      * Returns whether any traffic flow layers are visible.
      */
     anyFlowLayersVisible(): boolean {
-        return !!this.flow?.isAnyLayerVisible();
+        return !!this.sourcesWithLayers.flow?.isAnyLayerVisible();
     }
 
     setVisible(visible: boolean): void {
@@ -291,8 +278,8 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
     }
 
     private _setIncidentsVisible(visible: boolean, options: ChangeOptions): void {
-        if (this.incidents) {
-            this.incidents.setAllLayersVisible(visible);
+        if (this.sourcesWithLayers.incidents) {
+            this.sourcesWithLayers.incidents.setAllLayersVisible(visible);
             if (options.updateConfig) {
                 delete this.config?.incidents?.icons?.visible;
                 this.config = {
@@ -307,8 +294,8 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
     }
 
     setIncidentIconsVisible(visible: boolean): void {
-        if (this.incidents) {
-            this.incidents.setAllLayersVisible(visible, (layerSpec) => layerSpec.type === "symbol");
+        if (this.sourcesWithLayers.incidents) {
+            this.sourcesWithLayers.incidents.setAllLayersVisible(visible, (layerSpec) => layerSpec.type === "symbol");
             // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
             this.config = {
                 ...this.config,
@@ -322,8 +309,8 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
     }
 
     private _setFlowVisible(visible: boolean, options: ChangeOptions): void {
-        if (this.flow) {
-            this.flow.setAllLayersVisible(visible);
+        if (this.sourcesWithLayers.flow) {
+            this.sourcesWithLayers.flow.setAllLayersVisible(visible);
             if (options.updateConfig) {
                 this.config = { ...this.config, flow: { ...this.config?.flow, visible } };
             }
@@ -337,8 +324,11 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
      */
     get events() {
         return {
-            incidents: new EventsModule(this.tomtomMap._eventsProxy, this.incidents as StyleSourceWithLayers),
-            flow: new EventsModule(this.tomtomMap._eventsProxy, this.flow as StyleSourceWithLayers)
+            incidents: new EventsModule(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.incidents as StyleSourceWithLayers
+            ),
+            flow: new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.flow as StyleSourceWithLayers)
         };
     }
 }
