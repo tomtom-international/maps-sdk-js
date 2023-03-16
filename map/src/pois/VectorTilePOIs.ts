@@ -26,10 +26,20 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
 };
 
 /**
+ * Enabling access to places of interest module sources and layers for easy customization.
+ */
+export type POIsModuleSourcesWithLayers = {
+    /**
+     * Places of interest source with corresponding layers.
+     */
+    poisSourceWithLayers: StyleSourceWithLayers;
+};
+
+/**
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
  */
-export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
+export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesWithLayers, VectorTilePOIsConfig> {
     private poi!: StyleSourceWithLayers;
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
     private originalFilter?: FilterSpecification;
@@ -53,6 +63,7 @@ export class VectorTilePOIs extends AbstractMapModule<VectorTilePOIsConfig> {
         this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
         this.originalFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id) as FilterSpecification;
         this._addModuleToEventsProxy(true);
+        return { poisSourceWithLayers: this.poi };
     }
 
     protected _applyConfig(config: VectorTilePOIsConfig | undefined): void {

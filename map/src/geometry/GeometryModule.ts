@@ -10,9 +10,19 @@ const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
 
 /**
+ * Enabling access to geometry module sources and layers for easy customization.
+ */
+export type GeometryModuleSourcesWithLayers = {
+    /**
+     * Geometry source with corresponding layers.
+     */
+    geometrySourceWithLayers: GeoJSONSourceWithLayers<GeometryDataResponse>;
+};
+
+/**
  * Geometry data module.
  */
-export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
+export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesWithLayers, GeometryModuleConfig> {
     private geometry!: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     /**
@@ -32,6 +42,7 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleConfig> {
             { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
         ]);
         this._addModuleToEventsProxy(true);
+        return { geometrySourceWithLayers: this.geometry };
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {

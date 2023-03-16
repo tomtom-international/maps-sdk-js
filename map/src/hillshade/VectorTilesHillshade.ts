@@ -6,10 +6,23 @@ import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 
 /**
+ * Enabling access to hillshade module sources and layers for easy customization.
+ */
+export type HillshadeModuleSourcesWithLayers = {
+    /**
+     * Hillshade source with corresponding layers.
+     */
+    hillshadeSourceWithLayers: StyleSourceWithLayers;
+};
+
+/**
  * Vector tiles hillshade module.
  * * Hillshade refers to the semi-transparent terrain layer.
  */
-export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshadeConfig> {
+export class VectorTilesHillshade extends AbstractMapModule<
+    HillshadeModuleSourcesWithLayers,
+    VectorTilesHillshadeConfig
+> {
     private hillshade!: StyleSourceWithLayers;
 
     /**
@@ -33,6 +46,7 @@ export class VectorTilesHillshade extends AbstractMapModule<VectorTilesHillshade
         if (this.hillshade) {
             this._addModuleToEventsProxy(true);
         }
+        return { hillshadeSourceWithLayers: this.hillshade };
     }
 
     _applyConfig(config: VectorTilesHillshadeConfig | undefined): void {

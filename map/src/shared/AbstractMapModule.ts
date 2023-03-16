@@ -1,13 +1,18 @@
 import { Map } from "maplibre-gl";
 import { GOSDKMap } from "../GOSDKMap";
+import { AbstractSourceWithLayers } from "./SourceWithLayers";
 
 /**
  * Base class for all GO SDK map modules.
  */
-export abstract class AbstractMapModule<CFG = undefined> {
+export abstract class AbstractMapModule<
+    SOURCES_WITH_LAYERS extends Record<string, AbstractSourceWithLayers>,
+    CFG = undefined
+> {
     protected readonly goSDKMap: GOSDKMap;
     protected readonly mapLibreMap: Map;
     protected config?: CFG;
+    protected readonly _sourcesWithLayers: SOURCES_WITH_LAYERS;
 
     /**
      * Builds this module based on a given GO SDK map.
@@ -18,7 +23,7 @@ export abstract class AbstractMapModule<CFG = undefined> {
     protected constructor(goSDKMap: GOSDKMap, config?: CFG) {
         this.goSDKMap = goSDKMap;
         this.mapLibreMap = goSDKMap.mapLibreMap;
-        this.initSourcesWithLayers(config);
+        this._sourcesWithLayers = this.initSourcesWithLayers(config);
         if (config) {
             this.applyConfig(config);
         }
@@ -28,7 +33,7 @@ export abstract class AbstractMapModule<CFG = undefined> {
      * Initializes the sources with layers for the specific module.
      * @protected
      */
-    protected abstract initSourcesWithLayers(config?: CFG): void;
+    protected abstract initSourcesWithLayers(config?: CFG): SOURCES_WITH_LAYERS;
 
     /**
      * Applies the configuration to this module.
@@ -60,5 +65,12 @@ export abstract class AbstractMapModule<CFG = undefined> {
      */
     getConfig() {
         return this.config && { ...this.config };
+    }
+
+    /**
+     * Allows access to sources and layers used in this module.
+     */
+    get sourcesWithLayers() {
+        return this._sourcesWithLayers;
     }
 }

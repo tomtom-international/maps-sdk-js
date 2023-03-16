@@ -25,10 +25,24 @@ type ChangeOptions = {
 };
 
 /**
+ * Enabling access to traffic module sources and layers for easy customization.
+ */
+export type TrafficModuleSourcesWithLayers = {
+    /**
+     * Traffic incident source with corresponding layers.
+     */
+    incidentsSourceWithLayers?: StyleSourceWithLayers;
+    /**
+     * Traffic flow source with corresponding layers.
+     */
+    flowSourceWithLayers?: StyleSourceWithLayers;
+};
+
+/**
  * Vector tiles traffic module.
  * * Controls both incidents and flow vector traffic sources and layers.
  */
-export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConfig> {
+export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesWithLayers, VectorTilesTrafficConfig> {
     private incidents?: StyleSourceWithLayers;
     private flow?: StyleSourceWithLayers;
     private originalFilters!: Record<string, FilterSpecification | undefined>;
@@ -69,6 +83,7 @@ export class VectorTilesTraffic extends AbstractMapModule<VectorTilesTrafficConf
         ])) {
             this.originalFilters[layer.id] = layer.filter;
         }
+        return { incidentsSourceWithLayers: this.incidents, flowSourceWithLayers: this.flow };
     }
 
     protected _applyConfig(config: VectorTilesTrafficConfig | undefined): void {

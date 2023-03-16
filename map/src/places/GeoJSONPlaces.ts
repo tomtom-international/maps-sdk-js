@@ -13,7 +13,17 @@ import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, buildPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
-export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
+/**
+ * Enabling access to places module sources and layers for easy customization.
+ */
+export type PlacesModuleSourcesWithLayers = {
+    /**
+     * Places source with corresponding layers.
+     */
+    placesSourceWithLayers: GeoJSONSourceWithLayers<Places>;
+};
+
+export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesWithLayers, PlaceModuleConfig> {
     /**
      * The source ID used in this Places module.
      * * Use it if you want to leverage MapLibre directly.
@@ -49,6 +59,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlaceModuleConfig> {
         ]);
         this.layerSpec = layerSpec;
         this._addModuleToEventsProxy(true);
+        return { placesSourceWithLayers: this.places };
     }
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {

@@ -6,7 +6,7 @@ import { waitUntilMapIsReady } from "../mapUtils";
 import Mock = jest.Mock;
 
 describe("AbstractMapModule tests", () => {
-    class TestModule extends AbstractMapModule<VectorTileMapModuleConfig> {
+    class TestModule extends AbstractMapModule<Record<string, never>, VectorTileMapModuleConfig> {
         initCalled?: boolean;
         configApplied?: VectorTileMapModuleConfig | null;
 
@@ -15,8 +15,9 @@ describe("AbstractMapModule tests", () => {
             return new TestModule(goSDKMap, config);
         }
 
-        protected initSourcesWithLayers(): void {
+        protected initSourcesWithLayers(): Record<string, never> {
             this.initCalled = true;
+            return {};
         }
 
         protected _applyConfig(config: VectorTileMapModuleConfig | undefined): void {
@@ -42,6 +43,7 @@ describe("AbstractMapModule tests", () => {
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
         expect(testModule.getConfig()).toBeUndefined();
+        expect(testModule.sourcesWithLayers).toStrictEqual({});
 
         // Repeating test with config ----------------------:
         const testConfig = { visible: false };

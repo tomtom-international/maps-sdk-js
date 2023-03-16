@@ -67,9 +67,43 @@ const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
 /**
+ * Enabling access to routing module sources and layers for easy customization.
+ */
+export type RoutingModuleSourcesWithLayers = {
+    /**
+     * Waypoints source with corresponding layers.
+     */
+    waypointsSourceWithLayers: GeoJSONSourceWithLayers<Waypoints>;
+    /**
+     * Route lines source with corresponding layers.
+     */
+    routeLinesSourceWithLayers: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
+    /**
+     * Vehicle restricted source with corresponding layers.
+     */
+    vehicleRestrictedSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+    /**
+     * Incidents source with corresponding layers.
+     */
+    incidentsSourceWithLayers: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
+    /**
+     * Ferries source with corresponding layers.
+     */
+    ferriesSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+    /**
+     * Toll roads source with corresponding layers.
+     */
+    tollRoadsSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+    /**
+     * Tunnels source with corresponding layers.
+     */
+    tunnelsSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+};
+
+/**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
  */
-export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
+export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesWithLayers, RoutingModuleConfig> {
     private waypoints!: GeoJSONSourceWithLayers<Waypoints>;
     private routeLines!: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
@@ -151,6 +185,16 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleConfig> {
 
         // Adding module to EventsProxy
         this._addModuleToEventsProxy(true);
+
+        return {
+            waypointsSourceWithLayers: this.waypoints,
+            routeLinesSourceWithLayers: this.routeLines,
+            vehicleRestrictedSourceWithLayers: this.vehicleRestricted,
+            incidentsSourceWithLayers: this.incidents,
+            ferriesSourceWithLayers: this.ferries,
+            tollRoadsSourceWithLayers: this.tollRoads,
+            tunnelsSourceWithLayers: this.tunnels
+        };
     }
 
     protected _applyConfig(config: RoutingModuleConfig | undefined): void {
