@@ -1,4 +1,4 @@
-import { PlaceDisplayProps } from "../../places";
+import { LocationDisplayProps } from "../../places";
 
 export const START_INDEX = "start";
 export const MIDDLE_INDEX = "middle";
@@ -12,7 +12,7 @@ export type IndexType = typeof START_INDEX | typeof MIDDLE_INDEX | typeof FINISH
 /**
  * Display properties for a waypoint.
  */
-export type WaypointDisplayProps = PlaceDisplayProps & {
+export type WaypointDisplayProps = LocationDisplayProps & {
     /**
      * The index of the waypoint in relation to the other waypoints.
      */

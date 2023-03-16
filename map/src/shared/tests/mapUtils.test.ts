@@ -1,11 +1,8 @@
-import { FeatureCollection } from "geojson";
-import omit from "lodash/omit";
-import { LayerSpecification, Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
-import { GeoJSONSourceWithLayers } from "../index";
+import { Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
 import { TomTomMap } from "../../TomTomMap";
-import { deserializeFeatures, injectCustomHeaders, mapToInternalFeatures, waitUntilMapIsReady } from "../mapUtils";
+import { changeLayoutAndPaintProps, deserializeFeatures, injectCustomHeaders, waitUntilMapIsReady } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
-import mockedFeatures from "./mapToInternalFeature.test.data.json";
+import poiLayerSpec from "../../places/tests/poiLayerSpec.data.json";
 
 const getTomTomMapMock = async (flag: boolean) =>
     ({
@@ -68,29 +65,59 @@ describe("Map utils - injectCustomHeaders", () => {
     });
 });
 
-describe("Map utils - mapToInternalFeature", () => {
-    const testSourceID = "SOURCE_ID";
-    const layer0 = { id: "layer0", type: "symbol", source: testSourceID } as LayerSpecification;
-    const layer1 = { id: "layer1", type: "symbol", source: testSourceID } as LayerSpecification;
-    const testToBeAddedLayerSpecs = [omit(layer0, "source"), omit(layer1, "source")];
-    const [mockedFeature, rawMapFeature] = mockedFeatures;
+test("changeLayoutAndPaintProps", () => {
+    const newMapMock = (): Map =>
+        ({
+            getStyle: jest.fn().mockReturnValue({ layers: [poiLayerSpec] }),
+            setLayoutProperty: jest.fn(),
+            setPaintProperty: jest.fn()
+        } as unknown as Map);
 
-    test("Map raw features to internal features", () => {
-        const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn()
-        } as unknown as Map;
-        const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
-        const features = {
-            type: "FeatureCollection",
-            features: [mockedFeature]
-        } as FeatureCollection;
-        sourceWithLayers.show(features);
+    let mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps({ id: "layerX", layout: { prop0: "value0" } }, { id: "layerX" }, mapLibreMock);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
 
-        expect(mapToInternalFeatures(sourceWithLayers, rawMapFeature as unknown as MapGeoJSONFeature)).toEqual(
-            mockedFeature
-        );
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps({ id: "layerX", layout: { prop0: "a", prop1: "b" } }, { id: "layerX" }, mapLibreMock);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(2);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
+
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps(
+        { id: "layerX", layout: { prop0: "a", prop1: "b" } },
+        { id: "layerX", layout: { prop0: "old-a" } },
+        mapLibreMock
+    );
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(2);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("layerX", "prop0", "a", { validate: false });
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("layerX", "prop1", "b", { validate: false });
+
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps(
+        { id: "layerX", layout: { prop0: "a", prop1: "b" } },
+        { id: "layerX", layout: { prop5: "old-a" } },
+        mapLibreMock
+    );
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("layerX", "prop5", undefined, {
+        validate: false
     });
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(3);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("layerX", "prop0", "a", { validate: false });
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith("layerX", "prop1", "b", { validate: false });
+
+    mapLibreMock = newMapMock();
+    changeLayoutAndPaintProps(
+        { id: "layerY", layout: { prop0: "value0" }, paint: { propA: "10" } },
+        { id: "layerY", paint: { propC: "20" } },
+        mapLibreMock
+    );
+    expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(2);
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith("layerY", "propC", undefined, {
+        validate: false
+    });
+    expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith("layerY", "propA", "10", { validate: false });
 });

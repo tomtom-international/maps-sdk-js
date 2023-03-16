@@ -24,26 +24,11 @@ describe("EventsModule tests", () => {
         expect(MockEventProxy.addEventHandler).toHaveBeenCalledWith(mockedMapModule, expect.any(Function), "click");
     });
 
-    test("Add an event without mapModule", () => {
-        const event = new EventsModule(MockEventProxy);
-        const callback = jest.fn();
-
-        event.on("click", callback);
-
-        expect(console.error).toHaveBeenCalledWith("mapModule can't be undefined.");
-    });
-
     test("Remove an event", () => {
         const event = new EventsModule(MockEventProxy, mockedMapModule);
 
         event.off("click");
 
         expect(MockEventProxy.remove).toHaveBeenCalledWith("click", mockedMapModule);
-    });
-
-    test("Remove an event without mapModule", () => {
-        const event = new EventsModule(MockEventProxy);
-        event.off("click");
-        expect(console.error).toHaveBeenCalledWith("mapModule can't be undefined.");
     });
 });

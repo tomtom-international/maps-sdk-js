@@ -157,7 +157,6 @@ export type IncidentsConfig = IncidentsCommonConfig & {
 export type IncidentsCommonConfig = {
     visible?: boolean;
     filters?: TrafficIncidentsFilters;
-    interactive?: boolean;
 };
 
 /**
@@ -165,7 +164,6 @@ export type IncidentsCommonConfig = {
  */
 export type FlowConfig = {
     visible?: boolean;
-    interactive?: boolean;
     filters?: TrafficFlowFilters;
 };
 

@@ -1,10 +1,10 @@
+import { Places, SearchPlaceProps } from "@anw/go-sdk-js/core";
 import { GeometrySearchParams } from "../geometry-search";
 import { geometrySearch } from "../geometry-search/GeometrySearch";
 import { GeometrySearchTemplate } from "../geometry-search/GeometrySearchTemplate";
 import { FuzzySearchParams, QueryIntent } from "../fuzzy-search";
 import { fuzzySearch } from "../fuzzy-search/FuzzySearch";
 import { FuzzySearchTemplate } from "../fuzzy-search/FuzzySearchTemplate";
-import { Places, SearchPlaceProps } from "core";
 import { SearchSummary } from "../shared";
 
 type SearchFeatureCollectionProps = SearchSummary & {

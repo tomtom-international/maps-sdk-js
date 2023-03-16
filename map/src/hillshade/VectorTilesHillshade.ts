@@ -4,7 +4,7 @@ import {
     AbstractMapModule,
     EventsModule,
     HILLSHADE_SOURCE_ID,
-    SourceAndLayerIDs,
+    SourceWithLayerIDs,
     StyleSourceWithLayers
 } from "../shared";
 import { notInTheStyle } from "../shared/ErrorMessages";
@@ -18,7 +18,7 @@ export type HillshadeModuleSourcesAndLayersIds = {
     /**
      * Hillshade source id with corresponding layers ids.
      */
-    hillshadeIDs: SourceAndLayerIDs;
+    hillshade: SourceWithLayerIDs;
 };
 
 /**
@@ -48,16 +48,7 @@ export class VectorTilesHillshade extends AbstractMapModule<
             throw notInTheStyle(`init ${VectorTilesHillshade.name} with source ID ${HILLSHADE_SOURCE_ID}`);
         }
         this.hillshade = new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource);
-
-        if (this.hillshade) {
-            this._addModuleToEventsProxy(true);
-        }
-        return {
-            hillshadeIDs: {
-                sourceID: HILLSHADE_SOURCE_ID,
-                layerIDs: this.hillshade.layerSpecs.map((layerSpec) => layerSpec.id)
-            }
-        };
+        return { hillshade: this.hillshade.sourceAndLayerIDs };
     }
 
     _applyConfig(config: VectorTilesHillshadeConfig | undefined): void {
@@ -67,14 +58,6 @@ export class VectorTilesHillshade extends AbstractMapModule<
             // applying default:
             this.setVisible(true);
         }
-
-        if (this.hillshade && config && !isNil(config.interactive)) {
-            this._addModuleToEventsProxy(config.interactive);
-        }
-    }
-
-    private _addModuleToEventsProxy(interactive: boolean) {
-        this.tomtomMap._eventsProxy.ensureAdded(this.hillshade, interactive);
     }
 
     setVisible(visible: boolean): void {

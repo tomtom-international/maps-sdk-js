@@ -10,6 +10,7 @@ import { TomTomMapSource } from "./TomTomMapSource";
 import { LayerSpecFilter, LayerSpecWithSource, ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
 import { FeatureCollection } from "geojson";
 import { asDefined } from "./AssertionUtils";
+import { SourceWithLayerIDs } from "./AbstractMapModule";
 
 /**
  * Contains a source and the layers to render its data.
@@ -20,13 +21,14 @@ export abstract class AbstractSourceWithLayers<
     RUNTIME_SOURCE extends Source = Source,
     LAYER_SPEC extends LayerSpecification = LayerSpecification
 > {
-    layerSpecs: LAYER_SPEC[];
+    _layerSpecs: LAYER_SPEC[];
+
     constructor(
         readonly map: Map,
         readonly source: TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>,
         layerSpecs: LAYER_SPEC[]
     ) {
-        this.layerSpecs = layerSpecs;
+        this._layerSpecs = layerSpecs;
     }
 
     isAnyLayerVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
@@ -38,7 +40,7 @@ export abstract class AbstractSourceWithLayers<
     }
 
     private getLayerSpecs(filter?: LayerSpecFilter) {
-        return filter ? this.layerSpecs.filter(filter) : this.layerSpecs;
+        return filter ? this._layerSpecs.filter(filter) : this._layerSpecs;
     }
 
     private isLayerVisible(layer: LayerSpecification): boolean {
@@ -49,6 +51,10 @@ export abstract class AbstractSourceWithLayers<
         for (const layerSpec of this.getLayerSpecs(filter)) {
             this.map.setLayoutProperty(layerSpec.id, "visibility", visible ? "visible" : "none", { validate: false });
         }
+    }
+
+    get sourceAndLayerIDs(): SourceWithLayerIDs {
+        return { sourceID: this.source.id, layerIDs: this._layerSpecs.map((layer) => layer.id) };
     }
 }
 
@@ -101,7 +107,7 @@ export class AddedSourceWithLayers<
 
     private ensureAddedToMap(): void {
         this.source.ensureAddedToMap(this.map);
-        for (const layerSpec of this.layerSpecs) {
+        for (const layerSpec of this._layerSpecs) {
             if (!this.map.getLayer(layerSpec.id)) {
                 this.map.addLayer(layerSpec, layerSpec.beforeID);
             }
@@ -122,7 +128,7 @@ const emptyFeatureCollection: FeatureCollection = {
 /**
  * @ignore
  */
-export class GeoJSONSourceWithLayers<T extends FeatureCollection> extends AddedSourceWithLayers<
+export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollection> extends AddedSourceWithLayers<
     GeoJSONSourceSpecification,
     GeoJSONSource
 > {

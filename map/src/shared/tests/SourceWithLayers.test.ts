@@ -24,7 +24,7 @@ describe("AbstractSourceWithLayers tests", () => {
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
         expect(sourceWithLayers.source).toStrictEqual(testTomTomMapSource);
-        expect(sourceWithLayers.layerSpecs).toStrictEqual(testLayerSpecs);
+        expect(sourceWithLayers._layerSpecs).toStrictEqual(testLayerSpecs);
     });
 
     test("isAnyLayerVisible true", () => {
@@ -188,7 +188,7 @@ describe("StyleSourceWithLayers tests", () => {
         expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
         expect(sourceWithLayers.source.id).toStrictEqual(testSourceID);
         expect(sourceWithLayers.source.runtimeSource).toStrictEqual(source);
-        expect(sourceWithLayers.layerSpecs).toStrictEqual(testLayerSpecs);
+        expect(sourceWithLayers._layerSpecs).toStrictEqual(testLayerSpecs);
     });
 });
 
@@ -258,7 +258,7 @@ describe("GeoJSONSourceWithLayers", () => {
             promoteId: "id"
         });
         expect(sourceWithLayers.source.runtimeSource).toStrictEqual({ id: testSourceID });
-        expect(sourceWithLayers.layerSpecs).toStrictEqual(testLayerSpecs);
+        expect(sourceWithLayers._layerSpecs).toStrictEqual(testLayerSpecs);
     });
 
     // eslint-disable-next-line jest/expect-expect

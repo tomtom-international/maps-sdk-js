@@ -2,10 +2,10 @@ import { Map } from "maplibre-gl";
 import { TomTomMap } from "../TomTomMap";
 
 /**
- * Contains ids of source and layers used in map module.
- * Using ids you can customize source and layers using MapLibre.
+ * Contains the IDs of a source and its related layers.
+ * * Using source and layer ids you can customize them using MapLibre.
  */
-export type SourceAndLayerIDs = {
+export type SourceWithLayerIDs = {
     sourceID: string;
     layerIDs: string[];
 };
@@ -14,13 +14,13 @@ export type SourceAndLayerIDs = {
  * Base class for all Maps SDK map modules.
  */
 export abstract class AbstractMapModule<
-    SOURCES_AND_LAYERS_IDS extends Record<string, SourceAndLayerIDs>,
+    SOURCE_AND_LAYER_IDS extends Record<string, SourceWithLayerIDs>,
     CFG = undefined
 > {
     protected readonly tomtomMap: TomTomMap;
     protected readonly mapLibreMap: Map;
     protected config?: CFG;
-    protected readonly _sourcesAndLayersIDs: SOURCES_AND_LAYERS_IDS;
+    protected readonly _sourceAndLayerIDs: SOURCE_AND_LAYER_IDS;
 
     /**
      * Builds this module based on a given Maps SDK map.
@@ -31,7 +31,7 @@ export abstract class AbstractMapModule<
     protected constructor(tomtomMap: TomTomMap, config?: CFG) {
         this.tomtomMap = tomtomMap;
         this.mapLibreMap = tomtomMap.mapLibreMap;
-        this._sourcesAndLayersIDs = this.initSourcesWithLayers(config);
+        this._sourceAndLayerIDs = this.initSourcesWithLayers(config);
         if (config) {
             this.applyConfig(config);
         }
@@ -41,7 +41,7 @@ export abstract class AbstractMapModule<
      * Initializes the sources with layers for the specific module.
      * @protected
      */
-    protected abstract initSourcesWithLayers(config?: CFG): SOURCES_AND_LAYERS_IDS;
+    protected abstract initSourcesWithLayers(config?: CFG): SOURCE_AND_LAYER_IDS;
 
     /**
      * Applies the configuration to this module.
@@ -78,7 +78,7 @@ export abstract class AbstractMapModule<
     /**
      * Returns sources and layers IDs.
      */
-    get sourcesAndLayersIDs() {
-        return this._sourcesAndLayersIDs;
+    get sourceAndLayerIDs() {
+        return this._sourceAndLayerIDs;
     }
 }

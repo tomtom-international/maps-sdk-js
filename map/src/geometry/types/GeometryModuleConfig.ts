@@ -1,1 +1,1 @@
-export type GeometryModuleConfig = { interactive: boolean } & Record<string, unknown>;
+export type GeometryModuleConfig = Record<string, unknown>;

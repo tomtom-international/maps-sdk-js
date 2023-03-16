@@ -1,14 +1,12 @@
-import { DataDrivenPropertyValueSpecification, Map, SymbolLayerSpecification } from "maplibre-gl";
-import { CommonPlaceProps, Place, Places } from "@anw/go-sdk-js/core";
-import { ICON_ID, PlaceDisplayProps, TITLE } from "./types/PlaceDisplayProps";
+import { Map } from "maplibre-gl";
+import { Place, Places } from "@anw/go-sdk-js/core";
+import { DisplayPlaceProps } from "./types/PlaceDisplayProps";
 import { CustomIcon, PlaceModuleConfig } from "./types/PlaceModuleConfig";
-import { placesLayerSpec } from "./layers/PlacesLayers";
 import {
     MapStylePOIClassification,
     placeToPOILayerClassificationMapping,
     poiClassificationToIconID
 } from "./poiIconIDMapping";
-import { LayerSpecTemplate } from "../shared";
 
 /**
  * Builds the title of the place to display it on the map.
@@ -61,8 +59,7 @@ export const getIconIDForPlace = (place: Place, config: PlaceModuleConfig = {}, 
 };
 
 /**
- * function to get category of a place mapped to poi layer categories so the poi layer style apply to it.
- * @param place
+ * Maps a Place category to the poi layer one, so the latter's style can apply it.
  * @ignore
  */
 export const getPOILayerCategoryForPlace = (place: Place): string | undefined => {
@@ -77,97 +74,6 @@ export const getPOILayerCategoryForPlace = (place: Place): string | undefined =>
 };
 
 /**
- * @ignore
- * @param textSize
- */
-export const getTextSizeSpec = (
-    textSize?: DataDrivenPropertyValueSpecification<number>
-): DataDrivenPropertyValueSpecification<number> => {
-    return JSON.parse(JSON.stringify(textSize)?.replace(/name/g, TITLE));
-};
-
-const buildPOILikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecification> => {
-    const layer = (map.getStyle().layers.filter((layer) => layer.id == "POI")[0] as SymbolLayerSpecification) || {};
-    const textSize = (layer.layout as SymbolLayerSpecification["layout"])?.["text-size"];
-    return {
-        type: "symbol",
-        paint: layer.paint,
-        layout: {
-            ...layer.layout,
-            "text-field": ["get", TITLE],
-            "icon-image": ["get", ICON_ID],
-            ...(textSize && { "text-size": getTextSizeSpec(textSize) })
-        }
-    };
-};
-
-/**
- * @ignore
- */
-export const buildPlacesLayerSpec = (
-    config: PlaceModuleConfig | undefined,
-    id: string,
-    map: Map
-): Omit<SymbolLayerSpecification, "source"> => {
-    const basicLayerSpec = {
-        ...(config?.iconConfig?.iconStyle == "poi-like" ? buildPOILikeLayerSpec(map) : placesLayerSpec),
-        id
-    };
-    const textConfig = config?.textConfig;
-    return {
-        ...basicLayerSpec,
-        layout: {
-            ...basicLayerSpec.layout,
-            ...(textConfig?.textSize && { "text-size": textConfig.textSize }),
-            ...(textConfig?.textFont && { "text-font": textConfig.textFont }),
-            ...(textConfig?.textOffset && { "text-offset": textConfig.textOffset }),
-            ...(textConfig?.textField &&
-                typeof config?.textConfig?.textField !== "function" && {
-                    "text-field": config?.textConfig?.textField
-                })
-        },
-        paint: {
-            ...basicLayerSpec.paint,
-            ...(textConfig?.textColor && { "text-color": textConfig.textColor }),
-            ...(textConfig?.textHaloColor && { "text-halo-color": textConfig.textHaloColor }),
-            ...(textConfig?.textHaloWidth && { "text-halo-width": textConfig.textHaloWidth })
-        }
-    };
-};
-
-type LayoutPaint = { id: string; layout?: any; paint?: any };
-
-/**
- * Applies the layout and paint properties from newLayoutPaint
- * while unsetting (setting as undefined) the ones from previousSpec which no longer exist in newLayoutPaint.
- * * This allows for a quick change of a layer visuals without removing-re-adding the layer.
- * @ignore
- * @param newLayoutPaint The new layer from which to apply layout/pain props.
- * @param prevLayoutPaint The previous layer to ensure layout/paint props are removed.
- * @param map
- */
-export const changeLayoutAndPaintProps = (newLayoutPaint: LayoutPaint, prevLayoutPaint: LayoutPaint, map: Map) => {
-    const layerID = newLayoutPaint.id;
-    for (const property of Object.keys(prevLayoutPaint.layout || [])) {
-        if (!newLayoutPaint.layout?.[property]) {
-            map.setLayoutProperty(layerID, property, undefined, { validate: false });
-        }
-    }
-    for (const property of Object.keys(prevLayoutPaint.paint || [])) {
-        if (!newLayoutPaint.paint?.[property]) {
-            map.setPaintProperty(layerID, property, undefined, { validate: false });
-        }
-    }
-    for (const [property, value] of Object.entries(newLayoutPaint.paint || [])) {
-        map.setPaintProperty(layerID, property, value, { validate: false });
-    }
-
-    for (const [property, value] of Object.entries(newLayoutPaint.layout || [])) {
-        map.setLayoutProperty(layerID, property, value, { validate: false });
-    }
-};
-
-/**
  * prepare places features to be displayed on map by adding needed  properties for title, icon and style
  * @ignore
  * @param places
@@ -178,7 +84,7 @@ export const preparePlacesForDisplay = (
     places: Places,
     map: Map,
     config: PlaceModuleConfig = {}
-): Places<PlaceDisplayProps & CommonPlaceProps> => ({
+): Places<DisplayPlaceProps> => ({
     ...places,
     features: places.features.map((place) => {
         const title =

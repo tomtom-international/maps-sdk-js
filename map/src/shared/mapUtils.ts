@@ -1,17 +1,15 @@
-import { MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
+import { Map, MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
 import { generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
 import { TomTomMap } from "../TomTomMap";
-import { TomTomMapParams } from "../init/types/MapInit";
-import { GeoJSONSourceWithLayers } from "./index";
-import { FeatureCollection } from "geojson";
+import { TomTomMapParams } from "../init";
 
 /**
  * Wait until the map is ready
  * @param tomtomMap The TomTomMap instance.
  * @returns {Promise<boolean>} Returns a Promise<boolean>
  */
-export async function waitUntilMapIsReady(tomtomMap: TomTomMap): Promise<boolean> {
-    return new Promise((resolve) => {
+export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<boolean> =>
+    new Promise((resolve) => {
         if (tomtomMap.mapReady || tomtomMap.mapLibreMap.isStyleLoaded()) {
             resolve(true);
         } else {
@@ -20,12 +18,10 @@ export async function waitUntilMapIsReady(tomtomMap: TomTomMap): Promise<boolean
             });
         }
     });
-}
 
 /**
- * Deserialize the features properties queried by Maplibre.
- * Maplibre has a bug where all properties from a feature are stringified and not
- * serialized correct when queried.
+ * Deserializes the properties from MapLibre features.
+ * * Maplibre has a bug where all properties from a feature are stringified.
  * See: {@link} https://github.com/maplibre/maplibre-gl-js/issues/1325
  *
  * @ignore
@@ -77,15 +73,60 @@ export const injectCustomHeaders =
     };
 
 /**
- * Map features processed from Maplibre to.
- *
+ * Compares two MapLibre features by reference or ID.
  * @ignore
- * @param mapModule An instance of GeoJSONSourceWithLayers.
- * @param rawFeature Feature returned by Maplibre queryRenderedFeatures method
  */
-export const mapToInternalFeatures = <T extends FeatureCollection>(
-    mapModule: GeoJSONSourceWithLayers<T>,
-    rawFeature: MapGeoJSONFeature
+export const areBothDefinedAndEqual = (
+    featureA: MapGeoJSONFeature | undefined,
+    featureB: MapGeoJSONFeature | undefined
+): boolean => !!featureA && !!featureB && featureA.id == featureB.id;
+
+type LayoutPaint = { id: string; layout?: any; paint?: any };
+
+/**
+ * Applies the layout and paint properties from newLayoutPaint
+ * while unsetting (setting as undefined) the ones from previousSpec which no longer exist in newLayoutPaint.
+ * * This allows for a quick change of a layer visuals without removing-re-adding the layer.
+ * @ignore
+ * @param newLayoutPaint The new layer from which to apply layout/pain props.
+ * @param prevLayoutPaint The previous layer to ensure layout/paint props are removed.
+ * @param map
+ */
+export const changeLayoutAndPaintProps = (newLayoutPaint: LayoutPaint, prevLayoutPaint: LayoutPaint, map: Map) => {
+    const layerID = newLayoutPaint.id;
+    for (const property of Object.keys(prevLayoutPaint.layout || [])) {
+        if (!newLayoutPaint.layout?.[property]) {
+            map.setLayoutProperty(layerID, property, undefined, { validate: false });
+        }
+    }
+    for (const property of Object.keys(prevLayoutPaint.paint || [])) {
+        if (!newLayoutPaint.paint?.[property]) {
+            map.setPaintProperty(layerID, property, undefined, { validate: false });
+        }
+    }
+    for (const [property, value] of Object.entries(newLayoutPaint.paint || [])) {
+        map.setPaintProperty(layerID, property, value, { validate: false });
+    }
+
+    for (const [property, value] of Object.entries(newLayoutPaint.layout || [])) {
+        map.setLayoutProperty(layerID, property, value, { validate: false });
+    }
+};
+
+/**
+ * Applies the layout and paint properties from each layer of newLayoutPaints
+ * while unsetting (setting as undefined) the ones from the corresponding layer from prevLayoutPaints
+ * which no longer exist in the new one.
+ * * The two layer inputs are expected to be parallel arrays.
+ * * This allows for quick changes of layer visuals without removing-re-adding the layers.
+ * @ignore
+ */
+export const changeLayoutsAndPaintsProps = (
+    newLayoutPaints: LayoutPaint[],
+    prevLayoutPaints: LayoutPaint[],
+    map: Map
 ) => {
-    return mapModule.shownFeatures.features.find((feature) => feature.id === rawFeature.id);
+    newLayoutPaints.forEach((layoutPaint, index) =>
+        changeLayoutAndPaintProps(layoutPaint, prevLayoutPaints[index], map)
+    );
 };

@@ -57,6 +57,10 @@ describe("Vector tiles traffic module tests", () => {
         traffic.anyIncidentLayersVisible();
         traffic.anyIncidentIconLayersVisible();
         traffic.anyFlowLayersVisible();
+        traffic.filterIncidents();
+        traffic.filterIncidents({ any: [{ roadCategories: { show: "only", values: ["primary"] } }] });
+        traffic.filterFlow();
+        traffic.filterFlow({ any: [{ roadCategories: { show: "only", values: ["primary"] } }] });
 
         // (see note on top of test file)
         traffic.applyConfig(undefined);

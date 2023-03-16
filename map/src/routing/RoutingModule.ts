@@ -1,4 +1,3 @@
-import isNil from "lodash/isNil";
 import { Route, Routes, Waypoint, Waypoints } from "@anw/go-sdk-js/core";
 import {
     AbstractMapModule,
@@ -25,7 +24,7 @@ import {
     ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    SourceAndLayerIDs,
+    SourceWithLayerIDs,
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
@@ -74,31 +73,31 @@ export type RoutingModuleSourcesAndLayersIds = {
     /**
      * Waypoints source id with corresponding layers ids.
      */
-    waypointsIDs: SourceAndLayerIDs;
+    waypoints: SourceWithLayerIDs;
     /**
      * Route lines source id with corresponding layers ids.
      */
-    routeLinesIDs: SourceAndLayerIDs;
+    routeLines: SourceWithLayerIDs;
     /**
      * Vehicle restricted source id with corresponding layers ids.
      */
-    vehicleRestrictedIDs: SourceAndLayerIDs;
+    vehicleRestricted: SourceWithLayerIDs;
     /**
      * Incidents source id with corresponding layers ids.
      */
-    incidentsIDs: SourceAndLayerIDs;
+    incidents: SourceWithLayerIDs;
     /**
      * Ferries source id with corresponding layers ids.
      */
-    ferriesIDs: SourceAndLayerIDs;
+    ferries: SourceWithLayerIDs;
     /**
      * Toll roads source id with corresponding layers ids.
      */
-    tollRoadsIDs: SourceAndLayerIDs;
+    tollRoads: SourceWithLayerIDs;
     /**
      * Tunnels source id with corresponding layers ids.
      */
-    tunnelsIDs: SourceAndLayerIDs;
+    tunnels: SourceWithLayerIDs;
 };
 
 /**
@@ -184,63 +183,19 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
 
-        // Adding module to EventsProxy
-        this._addModuleToEventsProxy(true);
-
         return {
-            waypointsIDs: {
-                sourceID: WAYPOINTS_SOURCE_ID,
-                layerIDs: this.waypoints.layerSpecs.map((layerSpec) => layerSpec.id)
-            },
-            routeLinesIDs: {
-                sourceID: ROUTES_SOURCE_ID,
-                layerIDs: this.routeLines.layerSpecs.map((layerSpec) => layerSpec.id)
-            },
-            vehicleRestrictedIDs: {
-                sourceID: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
-                layerIDs: this.vehicleRestricted.layerSpecs.map((layerSpec) => layerSpec.id)
-            },
-            incidentsIDs: {
-                sourceID: ROUTE_INCIDENTS_SOURCE_ID,
-                layerIDs: this.incidents.layerSpecs.map((layerSpec) => layerSpec.id)
-            },
-            ferriesIDs: {
-                sourceID: ROUTE_FERRIES_SOURCE_ID,
-                layerIDs: this.ferries.layerSpecs.map((layerSpec) => layerSpec.id)
-            },
-            tollRoadsIDs: {
-                sourceID: ROUTE_TOLL_ROADS_SOURCE_ID,
-                layerIDs: this.tollRoads.layerSpecs.map((layerSpec) => layerSpec.id)
-            },
-            tunnelsIDs: {
-                sourceID: ROUTE_TUNNELS_SOURCE_ID,
-                layerIDs: this.tunnels.layerSpecs.map((layerSpec) => layerSpec.id)
-            }
+            waypoints: this.waypoints.sourceAndLayerIDs,
+            routeLines: this.routeLines.sourceAndLayerIDs,
+            vehicleRestricted: this.vehicleRestricted.sourceAndLayerIDs,
+            incidents: this.incidents.sourceAndLayerIDs,
+            ferries: this.ferries.sourceAndLayerIDs,
+            tollRoads: this.tollRoads.sourceAndLayerIDs,
+            tunnels: this.tunnels.sourceAndLayerIDs
         };
     }
 
-    protected _applyConfig(config: RoutingModuleConfig | undefined): void {
-        if (config && !isNil(config.interactive)) {
-            this._addModuleToEventsProxy(config.interactive);
-        }
-    }
-
-    private _addModuleToEventsProxy(interactive: boolean) {
-        // If interactive set, we add all layers to be interactive
-        const routingSourcesWithLayers = [
-            this.waypoints,
-            this.routeLines,
-            this.vehicleRestricted,
-            this.incidents,
-            this.ferries,
-            this.tollRoads,
-            this.tunnels
-        ];
-
-        for (const sourceWithLayers of routingSourcesWithLayers) {
-            this.tomtomMap._eventsProxy.ensureAdded(sourceWithLayers, interactive);
-        }
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    protected _applyConfig(): void {}
 
     private addImageIfNotExisting(imageID: string, path: string) {
         if (!this.mapLibreMap.hasImage(imageID)) {

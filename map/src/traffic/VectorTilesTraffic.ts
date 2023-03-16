@@ -8,8 +8,7 @@ import {
     filterLayersBySources,
     LayerSpecWithSource,
     MultiSyntaxFilter,
-    SourceAndLayerIDs,
-    SourceWithLayers,
+    SourceWithLayerIDs,
     StyleSourceWithLayers,
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
@@ -32,11 +31,11 @@ export type TrafficModuleSourcesAndLayersIds = {
     /**
      * Traffic incident source id with corresponding layers ids.
      */
-    incidentsIDs?: SourceAndLayerIDs;
+    incidents?: SourceWithLayerIDs;
     /**
      * Traffic flow source id with corresponding layers ids.
      */
-    flowIDs?: SourceAndLayerIDs;
+    flow?: SourceWithLayerIDs;
 };
 
 /**
@@ -64,19 +63,13 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
         const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
         if (incidentsRuntimeSource) {
             this.incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
-            sourcesAndLayersIds.incidentsIDs = {
-                sourceID: VECTOR_TILES_INCIDENTS_SOURCE_ID,
-                layerIDs: this.incidents.layerSpecs.map((layerSpec) => layerSpec.id)
-            };
+            sourcesAndLayersIds.incidents = this.incidents.sourceAndLayerIDs;
         }
 
         const flowRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_FLOW_SOURCE_ID);
         if (flowRuntimeSource) {
             this.flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
-            sourcesAndLayersIds.flowIDs = {
-                sourceID: VECTOR_TILES_FLOW_SOURCE_ID,
-                layerIDs: this.flow.layerSpecs.map((layerSpec) => layerSpec.id)
-            };
+            sourcesAndLayersIds.flow = this.flow.sourceAndLayerIDs;
         }
 
         if (!incidentsRuntimeSource && !flowRuntimeSource) {
@@ -122,12 +115,6 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
         // else: default incidents visibility has been set already if necessary
 
         this._filterIncidents(incidents?.filters, incidents?.icons?.filters, { updateConfig: false });
-
-        if (this.incidents && incidents && !isNil(incidents.interactive)) {
-            this._addModuleToEventsProxy(this.incidents as SourceWithLayers, incidents.interactive);
-        } else if (this.incidents) {
-            this._addModuleToEventsProxy(this.incidents as SourceWithLayers, true);
-        }
     }
 
     /**
@@ -193,12 +180,6 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
         }
 
         this._filterFlow(flow?.filters, { updateConfig: false });
-
-        if (this.flow && flow && !isNil(flow.interactive)) {
-            this._addModuleToEventsProxy(this.flow as SourceWithLayers, flow.interactive);
-        } else if (this.flow) {
-            this._addModuleToEventsProxy(this.flow as SourceWithLayers, true);
-        }
     }
 
     /**
@@ -232,10 +213,6 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
                 isNil
             );
         }
-    }
-
-    private _addModuleToEventsProxy(sourceWithLayer: SourceWithLayers, interactive: boolean) {
-        this.tomtomMap._eventsProxy.ensureAdded(sourceWithLayer, interactive);
     }
 
     private getIncidentLayers(): LayerSpecWithSource[] {
@@ -354,13 +331,14 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
     }
 
     /**
-     * Create the events on/off for this module
+     * Create the events on/off for this module.
+     * * If either incidents or flow were excluded from the style, their events object will be undefined.
      * @returns An object with instances of EventsModule for each layer
      */
     get events() {
         return {
-            incidents: new EventsModule(this.tomtomMap._eventsProxy, this.incidents),
-            flow: new EventsModule(this.tomtomMap._eventsProxy, this.flow)
+            incidents: new EventsModule(this.tomtomMap._eventsProxy, this.incidents as StyleSourceWithLayers),
+            flow: new EventsModule(this.tomtomMap._eventsProxy, this.flow as StyleSourceWithLayers)
         };
     }
 }

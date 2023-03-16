@@ -4,7 +4,7 @@ import { StyleSourceWithLayers } from "../SourceWithLayers";
 
 const sourceWithLayersMock = {
     source: { id: "SOURCE_ID" },
-    layerSpecs: [{ id: "layer0", type: "symbol", source: "SOURCE_ID" } as LayerSpecification]
+    _layerSpecs: [{ id: "layer0", type: "symbol", source: "SOURCE_ID" } as LayerSpecification]
 } as StyleSourceWithLayers;
 
 class TestModule extends AbstractEventProxy {}

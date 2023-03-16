@@ -30,7 +30,7 @@ export const buildWaypointTitle = (waypoint: Waypoint): string | undefined => {
 export const getImageIDForWaypoint = (waypoint: Waypoint, indexType: IndexType): string => {
     if (waypoint.properties.radiusMeters) {
         return WAYPOINT_SOFT_IMAGE_ID;
-    } else
+    } else {
         switch (indexType) {
             case "start":
                 return WAYPOINT_START_IMAGE_ID;
@@ -39,6 +39,7 @@ export const getImageIDForWaypoint = (waypoint: Waypoint, indexType: IndexType):
             default:
                 return WAYPOINT_STOP_IMAGE_ID;
         }
+    }
 };
 
 const toWaypointFromPosition = (position: Position): Waypoint => ({

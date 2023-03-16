@@ -4,7 +4,7 @@ import {
     AbstractMapModule,
     EventsModule,
     POI_SOURCE_ID,
-    SourceAndLayerIDs,
+    SourceWithLayerIDs,
     StyleSourceWithLayers,
     ValuesFilter
 } from "../shared";
@@ -39,7 +39,7 @@ export type POIsModuleSourcesAndLayersIds = {
     /**
      * Places of interest source id with corresponding layers ids.
      */
-    poisIDs: SourceAndLayerIDs;
+    poi: SourceWithLayerIDs;
 };
 
 /**
@@ -68,9 +68,9 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
             throw notInTheStyle(`init ${VectorTilePOIs.name} with source ID ${POI_SOURCE_ID}`);
         }
         this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
-        this.originalFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id) as FilterSpecification;
-        this._addModuleToEventsProxy(true);
-        return { poisIDs: { sourceID: POI_SOURCE_ID, layerIDs: this.poi.layerSpecs.map((layerSpec) => layerSpec.id) } };
+        const sourceAndLayerIDs = this.poi.sourceAndLayerIDs;
+        this.originalFilter = this.mapLibreMap.getFilter(sourceAndLayerIDs.layerIDs[0]) as FilterSpecification;
+        return { poi: sourceAndLayerIDs };
     }
 
     protected _applyConfig(config: VectorTilePOIsConfig | undefined): void {
@@ -82,14 +82,6 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
         }
 
         this.filterCategories(config?.filters?.categories);
-
-        if (config && !isNil(config.interactive)) {
-            this._addModuleToEventsProxy(config.interactive);
-        }
-    }
-
-    private _addModuleToEventsProxy(interactive: boolean) {
-        this.tomtomMap._eventsProxy.ensureAdded(this.poi, interactive);
     }
 
     isVisible(): boolean {

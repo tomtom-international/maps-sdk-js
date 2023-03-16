@@ -4,13 +4,12 @@ import {
     EventsModule,
     GeoJSONSourceWithLayers,
     GEOMETRY_SOURCE_ID,
-    SourceAndLayerIDs
+    SourceWithLayerIDs
 } from "../shared";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
-import isNil from "lodash/isNil";
 
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
@@ -22,7 +21,7 @@ export type GeometryModuleSourcesAndLayersIds = {
     /**
      * Geometry source id with corresponding layers ids.
      */
-    geometryIDs: SourceAndLayerIDs;
+    geometry: SourceWithLayerIDs;
 };
 
 /**
@@ -47,21 +46,13 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
             { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
             { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
         ]);
-        this._addModuleToEventsProxy(true);
         return {
-            geometryIDs: { sourceID: GEOMETRY_SOURCE_ID, layerIDs: [GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID] }
+            geometry: { sourceID: GEOMETRY_SOURCE_ID, layerIDs: [GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID] }
         };
     }
 
-    protected _applyConfig(config: GeometryModuleConfig | undefined) {
-        if (config && !isNil(config.interactive)) {
-            this._addModuleToEventsProxy(config.interactive);
-        }
-    }
-
-    private _addModuleToEventsProxy(interactive: boolean) {
-        this.tomtomMap._eventsProxy.ensureAdded(this.geometry, interactive);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    protected _applyConfig() {}
 
     /**
      * Shows the given Geometry on the map.

@@ -10,12 +10,6 @@ import { Language } from "@anw/go-sdk-js/core";
 export type FilterablePOICategory = MapStylePOIClassification | POIClassificationGroup;
 
 export type VectorTilePOIsConfig = VectorTileMapModuleConfig & {
-    /**
-     * Whether the layers for this module are to be interactive.
-     * * The user can interact with the layers from this module.
-     * @default true
-     */
-    interactive?: boolean;
     filters?: {
         /**
          * By default, all categories are included in the map.

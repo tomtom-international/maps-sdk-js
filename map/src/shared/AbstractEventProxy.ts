@@ -1,11 +1,14 @@
 import remove from "lodash/remove";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { EventHandlers, EventType, HoverClickHandler, SourceWithLayers } from "./types";
+import { EventType, SourceWithLayers, UserEventHandler } from "./types";
 
-interface SourceWithLayersMap {
-    [sourceID: string]: { sourceWithLayers: SourceWithLayers; interactive: boolean };
-}
+type SourceWithLayersMap = { [sourceID: string]: SourceWithLayers };
 
+type EventHandlers = Record<string, UserEventHandler<any>[]>;
+
+/**
+ * @ignore
+ */
 export abstract class AbstractEventProxy {
     // This is the list of all sources/layers we listen to:
     protected interactiveSourcesAndLayers: SourceWithLayersMap = {};
@@ -14,16 +17,12 @@ export abstract class AbstractEventProxy {
 
     /**
      * Adds the given sources and layers as interactive, so we'll listen to them for hover and click.
-     * @param sourcesWithLayers The sources and layers to listen to.
-     * @param interactive Boolean to indicate if the source will be interactive.
+     * @param sourceWithLayers The sources and layers to listen to.
      */
-    ensureAdded(sourceWithLayers: SourceWithLayers, interactive = true) {
-        this.interactiveSourcesAndLayers[sourceWithLayers.source.id] = {
-            sourceWithLayers,
-            interactive
-        };
+    ensureAdded(sourceWithLayers: SourceWithLayers) {
+        this.interactiveSourcesAndLayers[sourceWithLayers.source.id] = sourceWithLayers;
 
-        sourceWithLayers.layerSpecs.forEach((layerSpec) => {
+        sourceWithLayers._layerSpecs.forEach((layerSpec) => {
             if (!this.interactiveLayerIDs.includes(layerSpec.id)) {
                 this.interactiveLayerIDs.push(layerSpec.id);
             }
@@ -36,9 +35,9 @@ export abstract class AbstractEventProxy {
      * @param handler Function that will handle the event.
      * @param type Type of event to listen to.
      */
-    addEventHandler(
+    addEventHandler<T = MapGeoJSONFeature>(
         sourceWithLayers: SourceWithLayers,
-        handler: HoverClickHandler<MapGeoJSONFeature>,
+        handler: UserEventHandler<T>,
         type: EventType
     ) {
         if (!this.has(sourceWithLayers)) {
@@ -62,7 +61,7 @@ export abstract class AbstractEventProxy {
     remove(type: EventType, sourceWithLayers: SourceWithLayers) {
         delete this.handlers[`${sourceWithLayers.source.id}_${type}`];
         delete this.interactiveSourcesAndLayers[sourceWithLayers.source.id];
-        sourceWithLayers.layerSpecs.forEach((layer) => {
+        sourceWithLayers._layerSpecs.forEach((layer) => {
             remove(this.interactiveLayerIDs, (item) => layer.id.includes(item));
         });
     }

@@ -43,35 +43,24 @@ describe("GeoJSON Places module tests", () => {
         places.show(testPlaces);
         // to be able to spy on private methods
         const placesAny: any = places;
-        jest.spyOn(placesAny, "updateLayerSpecsAndData");
-        jest.spyOn(placesAny, "updateSourceData");
+        jest.spyOn(placesAny, "updateLayersAndData");
+        jest.spyOn(placesAny, "updateData");
         jest.spyOn(tomtomMapMock.mapLibreMap, "getStyle");
-        places.applyConfig({
-            iconConfig: {
-                iconStyle: "poi-like"
-            }
-        });
+        places.applyConfig({ iconConfig: { iconStyle: "poi-like" } });
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
-        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(1);
-        expect(placesAny.updateLayerSpecsAndData).toHaveBeenCalledTimes(1);
+        expect(placesAny.updateData).toHaveBeenCalledTimes(1);
+        expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(1);
 
-        places.setExtraFeatureProps({
-            prop: "static"
-        });
-        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(2);
+        places.setExtraFeatureProps({ prop: "static" });
+        expect(placesAny.updateData).toHaveBeenCalledTimes(2);
 
-        places.applyTextConfig({
-            textFont: ["Noto-Medium"],
-            textSize: 16
-        });
-        expect(placesAny.updateLayerSpecsAndData).toHaveBeenCalledTimes(2);
-        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(3);
+        places.applyTextConfig({ textFont: ["Noto-Medium"], textSize: 16 });
+        expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(2);
+        expect(placesAny.updateData).toHaveBeenCalledTimes(3);
 
-        places.applyIconConfig({
-            iconStyle: "poi-like"
-        });
-        expect(placesAny.updateLayerSpecsAndData).toHaveBeenCalledTimes(3);
-        expect(placesAny.updateSourceData).toHaveBeenCalledTimes(4);
+        places.applyIconConfig({ iconStyle: "poi-like" });
+        expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(3);
+        expect(placesAny.updateData).toHaveBeenCalledTimes(4);
 
         places.clear();
         expect(places.events).toBeInstanceOf(EventsModule);

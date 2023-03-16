@@ -46,12 +46,6 @@ export type PlaceTextConfig = {
  * Places layer configuration
  */
 export type PlaceModuleConfig = {
-    /**
-     * Whether the layers for this module are to be interactive.
-     * * The user can interact with the layers from this module.
-     * @default true
-     */
-    interactive?: boolean;
     iconConfig?: PlaceIconConfig;
     textConfig?: PlaceTextConfig;
     extraFeatureProps?: { [key: string]: any };

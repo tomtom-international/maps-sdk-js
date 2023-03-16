@@ -1,6 +1,13 @@
+import { GeometryDataResponse, Places } from "@anw/go-sdk-js/core";
+import {
+    GeometryModuleConfig,
+    LayerSpecWithSource,
+    PlaceModuleConfig,
+    VECTOR_TILES_FLOW_SOURCE_ID,
+    VECTOR_TILES_INCIDENTS_SOURCE_ID
+} from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
-import { LayerSpecWithSource, VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "map";
 import { Position } from "geojson";
 
 const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
@@ -134,11 +141,40 @@ export const isLayerVisible = async (layerID: string): Promise<boolean> =>
         return (globalThis as MapsSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, "visibility") !== "none";
     }, layerID);
 
-export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; layerID: string }> =>
+export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; layerIDs: string[] }> =>
     page.evaluate(() => {
         const places = (globalThis as MapsSDKThis).places;
         return {
-            sourceID: places?.sourcesAndLayersIDs.placesIDs.sourceID as string,
-            layerID: places?.sourcesAndLayersIDs.placesIDs.layerIDs[0] as string
+            sourceID: places?.sourceAndLayerIDs.places.sourceID as string,
+            layerIDs: places?.sourceAndLayerIDs.places.layerIDs as string[]
         };
     });
+
+export const initPlaces = async (config?: PlaceModuleConfig) =>
+    page.evaluate(async (inputConfig) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.places = await mapsSDKThis.MapsSDK.GeoJSONPlaces.init(mapsSDKThis.tomtomMap, inputConfig);
+    }, config as never);
+
+export const showPlaces = async (places: Places) =>
+    page.evaluate((inputPlaces: Places) => {
+        (globalThis as MapsSDKThis).places?.show(inputPlaces);
+        // @ts-ignore
+    }, places);
+
+export const initGeometry = async (config?: GeometryModuleConfig) =>
+    page.evaluate(
+        async (inputConfig: GeometryModuleConfig) => {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.geometry = await mapsSDKThis.MapsSDK.GeometryModule.init(mapsSDKThis.tomtomMap, inputConfig);
+        },
+        // @ts-ignore
+        config
+    );
+
+export const showGeometry = async (geometry: GeometryDataResponse) =>
+    page.evaluate(
+        (inputGeometry: GeometryDataResponse) => (globalThis as MapsSDKThis).geometry?.show(inputGeometry),
+        // @ts-ignore
+        geometry
+    );

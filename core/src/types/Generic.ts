@@ -2,4 +2,4 @@
  * @group Shared
  * @category Types
  */
-export type Anything = { [x: string | number | symbol]: unknown };
+export type Anything = { [x: string]: unknown };

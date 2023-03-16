@@ -1,7 +1,20 @@
+import { Anything, CommonPlaceProps } from "@anw/go-sdk-js/core";
+import { SupportsEvents } from "../../shared";
+
 /**
  * Properties to display a place on the map.
  */
-export type PlaceDisplayProps = { title?: string; iconID: string; category?: string; [key: string]: any };
+export type LocationDisplayProps = {
+    title?: string;
+    iconID: string;
+    category?: string;
+} & SupportsEvents &
+    Anything;
+
+/**
+ * Place base and display properties.
+ */
+export type DisplayPlaceProps = CommonPlaceProps & LocationDisplayProps;
 
 /**
  * @ignore

@@ -1,19 +1,18 @@
-import isNil from "lodash/isNil";
-import { Places, Place } from "@anw/go-sdk-js/core";
+import { Place, Places } from "@anw/go-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
     GeoJSONSourceWithLayers,
     PLACES_SOURCE_PREFIX_ID,
-    PLACES_SYMBOL_LAYER_PREFIX_ID,
-    SourceAndLayerIDs,
-    ToBeAddedLayerSpec
+    SourceWithLayerIDs,
+    SymbolLayerSpecWithoutSource
 } from "../shared";
 import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
 import { TomTomMap } from "../TomTomMap";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
-import { SymbolLayerSpecification } from "maplibre-gl";
-import { changeLayoutAndPaintProps, buildPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
+import { changeLayoutsAndPaintsProps, waitUntilMapIsReady } from "../shared/mapUtils";
+import { preparePlacesForDisplay } from "./preparePlacesForDisplay";
+import { buildPlacesLayerSpecs } from "./layers/PlacesLayers";
+import { DisplayPlaceProps } from "./types/PlaceDisplayProps";
 
 /**
  * IDs of sources and layers for places module.
@@ -22,13 +21,14 @@ export type PlacesModuleSourcesAndLayersIds = {
     /**
      * Places source id with corresponding layers ids.
      */
-    placesIDs: SourceAndLayerIDs;
+    places: SourceWithLayerIDs;
 };
 
 export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayersIds, PlaceModuleConfig> {
     private static lastInstanceIndex = -1;
-    private places!: GeoJSONSourceWithLayers<Places>;
-    private layerSpec!: Omit<SymbolLayerSpecification, "source">;
+    private places!: GeoJSONSourceWithLayers<Places<DisplayPlaceProps>>;
+    private layerSpecs!: [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource];
+    private layerIDPrefix!: string;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -43,31 +43,20 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
 
     protected initSourcesWithLayers(config?: PlaceModuleConfig) {
         GeoJSONPlaces.lastInstanceIndex++;
-        const layerID = `${PLACES_SYMBOL_LAYER_PREFIX_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
         const sourceID = `${PLACES_SOURCE_PREFIX_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
-        const layerSpec = buildPlacesLayerSpec(config, layerID, this.mapLibreMap);
-        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, sourceID, [
-            layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
-        ]);
-        this.layerSpec = layerSpec;
-        this._addModuleToEventsProxy(true);
-        return { placesIDs: { sourceID, layerIDs: [layerID] } };
+        this.layerIDPrefix = `placesSymbols-${GeoJSONPlaces.lastInstanceIndex}`;
+        const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
+        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, sourceID, layerSpecs);
+        this.layerSpecs = layerSpecs;
+        return { places: this.places.sourceAndLayerIDs };
     }
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {
         if (config?.iconConfig || config?.textConfig) {
-            this.updateLayerSpecsAndData(config);
+            this.updateLayersAndData(config);
         } else if (config?.extraFeatureProps) {
-            this.updateSourceData(config);
+            this.updateData(config);
         }
-
-        if (config && !isNil(config.interactive)) {
-            this._addModuleToEventsProxy(config.interactive);
-        }
-    }
-
-    private _addModuleToEventsProxy(interactive: boolean) {
-        this.tomtomMap._eventsProxy.ensureAdded(this.places, interactive);
     }
 
     /**
@@ -80,7 +69,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
             ...this.config,
             iconConfig
         };
-        this.updateLayerSpecsAndData(config);
+        this.updateLayersAndData(config);
         this.config = config;
     }
 
@@ -89,19 +78,15 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
             ...this.config,
             textConfig
         };
-        this.updateLayerSpecsAndData(config);
+        this.updateLayersAndData(config);
         this.config = config;
     }
 
-    private updateLayerSpecsAndData(config: PlaceModuleConfig): void {
-        const newLayerSpec = buildPlacesLayerSpec(
-            config,
-            this.sourcesAndLayersIDs.placesIDs.layerIDs[0],
-            this.mapLibreMap
-        );
-        changeLayoutAndPaintProps(newLayerSpec, this.layerSpec, this.mapLibreMap);
-        this.layerSpec = newLayerSpec;
-        this.updateSourceData(config);
+    private updateLayersAndData(config: PlaceModuleConfig): void {
+        const newLayerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
+        changeLayoutsAndPaintsProps(newLayerSpecs, this.layerSpecs, this.mapLibreMap);
+        this.layerSpecs = newLayerSpecs;
+        this.updateData(config);
     }
 
     setExtraFeatureProps(extraFeatureProps: { [key: string]: any }): void {
@@ -109,11 +94,11 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
             ...this.config,
             extraFeatureProps
         };
-        this.updateSourceData(config);
+        this.updateData(config);
         this.config = config;
     }
 
-    private updateSourceData(config: PlaceModuleConfig): void {
+    private updateData(config: PlaceModuleConfig): void {
         this.places.source.runtimeSource?.setData(
             preparePlacesForDisplay(this.places.shownFeatures, this.mapLibreMap, config)
         );
@@ -139,6 +124,6 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule<Place>(this.tomtomMap._eventsProxy, this.places);
+        return new EventsModule<Place<DisplayPlaceProps>>(this.tomtomMap._eventsProxy, this.places);
     }
 }
