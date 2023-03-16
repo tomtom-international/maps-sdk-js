@@ -1,5 +1,11 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, GEOMETRY_SOURCE_ID } from "../shared";
+import {
+    AbstractMapModule,
+    EventsModule,
+    GeoJSONSourceWithLayers,
+    GEOMETRY_SOURCE_ID,
+    SourceAndLayerIDs
+} from "../shared";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { GOSDKMap } from "../GOSDKMap";
@@ -10,19 +16,19 @@ const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
 
 /**
- * Enabling access to geometry module sources and layers for easy customization.
+ * IDs of sources and layers for geometry module.
  */
-export type GeometryModuleSourcesWithLayers = {
+export type GeometryModuleSourcesAndLayersIds = {
     /**
-     * Geometry source with corresponding layers.
+     * Geometry source id with corresponding layers ids.
      */
-    geometrySourceWithLayers: GeoJSONSourceWithLayers<GeometryDataResponse>;
+    geometryIDs: SourceAndLayerIDs;
 };
 
 /**
  * Geometry data module.
  */
-export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesWithLayers, GeometryModuleConfig> {
+export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLayersIds, GeometryModuleConfig> {
     private geometry!: GeoJSONSourceWithLayers<GeometryDataResponse>;
 
     /**
@@ -42,7 +48,9 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesWithL
             { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
         ]);
         this._addModuleToEventsProxy(true);
-        return { geometrySourceWithLayers: this.geometry };
+        return {
+            geometryIDs: { sourceID: GEOMETRY_SOURCE_ID, layerIDs: [GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID] }
+        };
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {

@@ -43,7 +43,7 @@ describe("AbstractMapModule tests", () => {
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
         expect(testModule.getConfig()).toBeUndefined();
-        expect(testModule.sourcesWithLayers).toStrictEqual({});
+        expect(testModule.sourcesAndLayersIDs).toStrictEqual({});
 
         // Repeating test with config ----------------------:
         const testConfig = { visible: false };

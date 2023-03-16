@@ -25,6 +25,7 @@ import {
     ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
+    SourceAndLayerIDs,
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
@@ -67,43 +68,43 @@ const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
 /**
- * Enabling access to routing module sources and layers for easy customization.
+ * IDs of sources and layers for routing module.
  */
-export type RoutingModuleSourcesWithLayers = {
+export type RoutingModuleSourcesAndLayersIds = {
     /**
-     * Waypoints source with corresponding layers.
+     * Waypoints source id with corresponding layers ids.
      */
-    waypointsSourceWithLayers: GeoJSONSourceWithLayers<Waypoints>;
+    waypointsIDs: SourceAndLayerIDs;
     /**
-     * Route lines source with corresponding layers.
+     * Route lines source id with corresponding layers ids.
      */
-    routeLinesSourceWithLayers: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
+    routeLinesIDs: SourceAndLayerIDs;
     /**
-     * Vehicle restricted source with corresponding layers.
+     * Vehicle restricted source id with corresponding layers ids.
      */
-    vehicleRestrictedSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+    vehicleRestrictedIDs: SourceAndLayerIDs;
     /**
-     * Incidents source with corresponding layers.
+     * Incidents source id with corresponding layers ids.
      */
-    incidentsSourceWithLayers: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
+    incidentsIDs: SourceAndLayerIDs;
     /**
-     * Ferries source with corresponding layers.
+     * Ferries source id with corresponding layers ids.
      */
-    ferriesSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+    ferriesIDs: SourceAndLayerIDs;
     /**
-     * Toll roads source with corresponding layers.
+     * Toll roads source id with corresponding layers ids.
      */
-    tollRoadsSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+    tollRoadsIDs: SourceAndLayerIDs;
     /**
-     * Tunnels source with corresponding layers.
+     * Tunnels source id with corresponding layers ids.
      */
-    tunnelsSourceWithLayers: GeoJSONSourceWithLayers<RouteSections>;
+    tunnelsIDs: SourceAndLayerIDs;
 };
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
  */
-export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesWithLayers, RoutingModuleConfig> {
+export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLayersIds, RoutingModuleConfig> {
     private waypoints!: GeoJSONSourceWithLayers<Waypoints>;
     private routeLines!: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
@@ -187,13 +188,34 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesWithLay
         this._addModuleToEventsProxy(true);
 
         return {
-            waypointsSourceWithLayers: this.waypoints,
-            routeLinesSourceWithLayers: this.routeLines,
-            vehicleRestrictedSourceWithLayers: this.vehicleRestricted,
-            incidentsSourceWithLayers: this.incidents,
-            ferriesSourceWithLayers: this.ferries,
-            tollRoadsSourceWithLayers: this.tollRoads,
-            tunnelsSourceWithLayers: this.tunnels
+            waypointsIDs: {
+                sourceID: WAYPOINTS_SOURCE_ID,
+                layerIDs: this.waypoints.layerSpecs.map((layerSpec) => layerSpec.id)
+            },
+            routeLinesIDs: {
+                sourceID: ROUTES_SOURCE_ID,
+                layerIDs: this.routeLines.layerSpecs.map((layerSpec) => layerSpec.id)
+            },
+            vehicleRestrictedIDs: {
+                sourceID: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
+                layerIDs: this.vehicleRestricted.layerSpecs.map((layerSpec) => layerSpec.id)
+            },
+            incidentsIDs: {
+                sourceID: ROUTE_INCIDENTS_SOURCE_ID,
+                layerIDs: this.incidents.layerSpecs.map((layerSpec) => layerSpec.id)
+            },
+            ferriesIDs: {
+                sourceID: ROUTE_FERRIES_SOURCE_ID,
+                layerIDs: this.ferries.layerSpecs.map((layerSpec) => layerSpec.id)
+            },
+            tollRoadsIDs: {
+                sourceID: ROUTE_TOLL_ROADS_SOURCE_ID,
+                layerIDs: this.tollRoads.layerSpecs.map((layerSpec) => layerSpec.id)
+            },
+            tunnelsIDs: {
+                sourceID: ROUTE_TUNNELS_SOURCE_ID,
+                layerIDs: this.tunnels.layerSpecs.map((layerSpec) => layerSpec.id)
+            }
         };
     }
 

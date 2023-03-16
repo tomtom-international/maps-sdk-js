@@ -4,7 +4,9 @@ import {
     AbstractMapModule,
     EventsModule,
     GeoJSONSourceWithLayers,
-    PLACES_SOURCE_ID,
+    PLACES_SOURCE_PREFIX_ID,
+    PLACES_SYMBOL_LAYER_PREFIX_ID,
+    SourceAndLayerIDs,
     ToBeAddedLayerSpec
 } from "../shared";
 import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
@@ -14,26 +16,16 @@ import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, buildPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
 
 /**
- * Enabling access to places module sources and layers for easy customization.
+ * IDs of sources and layers for places module.
  */
-export type PlacesModuleSourcesWithLayers = {
+export type PlacesModuleSourcesAndLayersIds = {
     /**
-     * Places source with corresponding layers.
+     * Places source id with corresponding layers ids.
      */
-    placesSourceWithLayers: GeoJSONSourceWithLayers<Places>;
+    placesIDs: SourceAndLayerIDs;
 };
 
-export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesWithLayers, PlaceModuleConfig> {
-    /**
-     * The source ID used in this Places module.
-     * * Use it if you want to leverage MapLibre directly.
-     */
-    sourceID!: string;
-    /**
-     * The layer ID used in this Places module.
-     * * Use it if you want to leverage MapLibre directly.
-     */
-    layerID!: string;
+export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayersIds, PlaceModuleConfig> {
     private static lastInstanceIndex = -1;
     private places!: GeoJSONSourceWithLayers<Places>;
     private layerSpec!: Omit<SymbolLayerSpecification, "source">;
@@ -51,15 +43,15 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesWithLaye
 
     protected initSourcesWithLayers(config?: PlaceModuleConfig) {
         GeoJSONPlaces.lastInstanceIndex++;
-        this.layerID = `placesSymbols-${GeoJSONPlaces.lastInstanceIndex}`;
-        this.sourceID = `${PLACES_SOURCE_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
-        const layerSpec = buildPlacesLayerSpec(config, this.layerID, this.mapLibreMap);
-        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, [
+        const layerID = `${PLACES_SYMBOL_LAYER_PREFIX_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
+        const sourceID = `${PLACES_SOURCE_PREFIX_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
+        const layerSpec = buildPlacesLayerSpec(config, layerID, this.mapLibreMap);
+        this.places = new GeoJSONSourceWithLayers(this.mapLibreMap, sourceID, [
             layerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
         ]);
         this.layerSpec = layerSpec;
         this._addModuleToEventsProxy(true);
-        return { placesSourceWithLayers: this.places };
+        return { placesIDs: { sourceID, layerIDs: [layerID] } };
     }
 
     protected _applyConfig(config: PlaceModuleConfig | undefined) {
@@ -102,7 +94,11 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesWithLaye
     }
 
     private updateLayerSpecsAndData(config: PlaceModuleConfig): void {
-        const newLayerSpec = buildPlacesLayerSpec(config, this.layerID, this.mapLibreMap);
+        const newLayerSpec = buildPlacesLayerSpec(
+            config,
+            this.sourcesAndLayersIDs.placesIDs.layerIDs[0],
+            this.mapLibreMap
+        );
         changeLayoutAndPaintProps(newLayerSpec, this.layerSpec, this.mapLibreMap);
         this.layerSpec = newLayerSpec;
         this.updateSourceData(config);

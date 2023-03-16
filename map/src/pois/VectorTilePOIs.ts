@@ -1,6 +1,13 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
+import {
+    AbstractMapModule,
+    EventsModule,
+    POI_SOURCE_ID,
+    SourceAndLayerIDs,
+    StyleSourceWithLayers,
+    ValuesFilter
+} from "../shared";
 import { FilterablePOICategory, VectorTilePOIsFeature, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
@@ -26,20 +33,20 @@ export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] 
 };
 
 /**
- * Enabling access to places of interest module sources and layers for easy customization.
+ * IDs of sources and layers for places of interest module.
  */
-export type POIsModuleSourcesWithLayers = {
+export type POIsModuleSourcesAndLayersIds = {
     /**
-     * Places of interest source with corresponding layers.
+     * Places of interest source id with corresponding layers ids.
      */
-    poisSourceWithLayers: StyleSourceWithLayers;
+    poisIDs: SourceAndLayerIDs;
 };
 
 /**
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
  */
-export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesWithLayers, VectorTilePOIsConfig> {
+export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayersIds, VectorTilePOIsConfig> {
     private poi!: StyleSourceWithLayers;
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
     private originalFilter?: FilterSpecification;
@@ -63,7 +70,7 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesWithLayer
         this.poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
         this.originalFilter = this.mapLibreMap.getFilter(this.poi.layerSpecs[0]?.id) as FilterSpecification;
         this._addModuleToEventsProxy(true);
-        return { poisSourceWithLayers: this.poi };
+        return { poisIDs: { sourceID: POI_SOURCE_ID, layerIDs: this.poi.layerSpecs.map((layerSpec) => layerSpec.id) } };
     }
 
     protected _applyConfig(config: VectorTilePOIsConfig | undefined): void {

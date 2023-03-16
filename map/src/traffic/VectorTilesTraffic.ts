@@ -8,6 +8,7 @@ import {
     filterLayersBySources,
     LayerSpecWithSource,
     MultiSyntaxFilter,
+    SourceAndLayerIDs,
     SourceWithLayers,
     StyleSourceWithLayers,
     VECTOR_TILES_FLOW_SOURCE_ID,
@@ -25,24 +26,24 @@ type ChangeOptions = {
 };
 
 /**
- * Enabling access to traffic module sources and layers for easy customization.
+ * IDs of sources and layers for traffic module.
  */
-export type TrafficModuleSourcesWithLayers = {
+export type TrafficModuleSourcesAndLayersIds = {
     /**
-     * Traffic incident source with corresponding layers.
+     * Traffic incident source id with corresponding layers ids.
      */
-    incidentsSourceWithLayers?: StyleSourceWithLayers;
+    incidentsIDs?: SourceAndLayerIDs;
     /**
-     * Traffic flow source with corresponding layers.
+     * Traffic flow source id with corresponding layers ids.
      */
-    flowSourceWithLayers?: StyleSourceWithLayers;
+    flowIDs?: SourceAndLayerIDs;
 };
 
 /**
  * Vector tiles traffic module.
  * * Controls both incidents and flow vector traffic sources and layers.
  */
-export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesWithLayers, VectorTilesTrafficConfig> {
+export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAndLayersIds, VectorTilesTrafficConfig> {
     private incidents?: StyleSourceWithLayers;
     private flow?: StyleSourceWithLayers;
     private originalFilters!: Record<string, FilterSpecification | undefined>;
@@ -59,14 +60,23 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesWi
     }
 
     protected initSourcesWithLayers() {
+        const sourcesAndLayersIds: TrafficModuleSourcesAndLayersIds = {};
         const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
         if (incidentsRuntimeSource) {
             this.incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
+            sourcesAndLayersIds.incidentsIDs = {
+                sourceID: VECTOR_TILES_INCIDENTS_SOURCE_ID,
+                layerIDs: this.incidents.layerSpecs.map((layerSpec) => layerSpec.id)
+            };
         }
 
         const flowRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_FLOW_SOURCE_ID);
         if (flowRuntimeSource) {
             this.flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
+            sourcesAndLayersIds.flowIDs = {
+                sourceID: VECTOR_TILES_FLOW_SOURCE_ID,
+                layerIDs: this.flow.layerSpecs.map((layerSpec) => layerSpec.id)
+            };
         }
 
         if (!incidentsRuntimeSource && !flowRuntimeSource) {
@@ -83,7 +93,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesWi
         ])) {
             this.originalFilters[layer.id] = layer.filter;
         }
-        return { incidentsSourceWithLayers: this.incidents, flowSourceWithLayers: this.flow };
+        return sourcesAndLayersIds;
     }
 
     protected _applyConfig(config: VectorTilesTrafficConfig | undefined): void {

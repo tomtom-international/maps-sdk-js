@@ -134,5 +134,8 @@ export const isLayerVisible = async (layerID: string): Promise<boolean> =>
 export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; layerID: string }> =>
     page.evaluate(() => {
         const places = (globalThis as GOSDKThis).places;
-        return { sourceID: places?.sourceID as string, layerID: places?.layerID as string };
+        return {
+            sourceID: places?.sourcesAndLayersIDs.placesIDs.sourceID as string,
+            layerID: places?.sourcesAndLayersIDs.placesIDs.layerIDs[0] as string
+        };
     });

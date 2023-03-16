@@ -1,18 +1,24 @@
 import isNil from "lodash/isNil";
 import { VectorTilesHillshadeConfig } from ".";
-import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
+import {
+    AbstractMapModule,
+    EventsModule,
+    HILLSHADE_SOURCE_ID,
+    SourceAndLayerIDs,
+    StyleSourceWithLayers
+} from "../shared";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { GOSDKMap } from "../GOSDKMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 
 /**
- * Enabling access to hillshade module sources and layers for easy customization.
+ * IDs of sources and layers for hillshade module.
  */
-export type HillshadeModuleSourcesWithLayers = {
+export type HillshadeModuleSourcesAndLayersIds = {
     /**
-     * Hillshade source with corresponding layers.
+     * Hillshade source id with corresponding layers ids.
      */
-    hillshadeSourceWithLayers: StyleSourceWithLayers;
+    hillshadeIDs: SourceAndLayerIDs;
 };
 
 /**
@@ -20,7 +26,7 @@ export type HillshadeModuleSourcesWithLayers = {
  * * Hillshade refers to the semi-transparent terrain layer.
  */
 export class VectorTilesHillshade extends AbstractMapModule<
-    HillshadeModuleSourcesWithLayers,
+    HillshadeModuleSourcesAndLayersIds,
     VectorTilesHillshadeConfig
 > {
     private hillshade!: StyleSourceWithLayers;
@@ -46,7 +52,12 @@ export class VectorTilesHillshade extends AbstractMapModule<
         if (this.hillshade) {
             this._addModuleToEventsProxy(true);
         }
-        return { hillshadeSourceWithLayers: this.hillshade };
+        return {
+            hillshadeIDs: {
+                sourceID: HILLSHADE_SOURCE_ID,
+                layerIDs: this.hillshade.layerSpecs.map((layerSpec) => layerSpec.id)
+            }
+        };
     }
 
     _applyConfig(config: VectorTilesHillshadeConfig | undefined): void {
