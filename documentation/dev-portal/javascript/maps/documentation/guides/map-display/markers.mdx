@@ -20,19 +20,19 @@ The [`GeoJSONPlaces`](/maps-sdk-js/javascript/maps/documentation/api-reference/c
 [`Places`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Places) on the map, which are returned from the services of the Services module.
 For example, showing places from a Search result:
 
-> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) instance in your project.
+> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
 Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
 import { GeoJSONPlaces } from "@anw/go-sdk-js/map";
 import { search } from "@anw/go-sdk-js/services";
 
-const placesModule = await GeoJSONPlaces.init(goSDKMap);
+const placesModule = await GeoJSONPlaces.init(map);
 
 const places = await search({
     query: "pharmacy",
     limit: 35,
-    boundingBox: goSDKMap.getBounds()
+    boundingBox: map.getBounds()
 });
 
 placesModule.show(places);

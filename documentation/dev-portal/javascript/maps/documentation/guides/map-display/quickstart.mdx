@@ -29,8 +29,8 @@ In this guide you will see how to set up the project to show a map in your appli
 
 # Adding a map
 
-The Map Display module provides the [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) class to add a map to your application.
-The [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) is built upon and exposes a MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/).
+The Map Display module provides the [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) class to add a map to your application.
+The [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) is built upon and exposes a MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/).
 In addition to the map itself, the Map Display module contains several individual modules that add visual layers to your map:
 
 -   [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.VectorTilesTraffic) - controls the traffic layer on the map. See the [Traffic](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic) guide.
@@ -42,18 +42,18 @@ In addition to the map itself, the Map Display module contains several individua
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_init_mapfragment"></a>}
 
-# Initializing GOSDKMap
+# Initializing TomTomMap
 
-The [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) is initialized with two parameters:
+The [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) is initialized with two parameters:
 
--   [`MapLibreOptions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#MapLibreOptions) - a required parameter based on the options for a MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/) and used to initialize the MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/) inside the [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap).
--   [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams) - an optional parameter used to customize the map style and map event configuration.
+-   [`MapLibreOptions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#MapLibreOptions) - a required parameter based on the options for a MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/) and used to initialize the MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/) inside the [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
+-   [`TomTomMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams) - an optional parameter used to customize the map style and map event configuration.
 
-To initialize a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) in your project:
+To initialize a [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) in your project:
 
 1.  Add your API key to your project:
     ```javascript
-    GOSDKConfig.instance.put({
+    TomTomConfig.instance.put({
         // (Set your own API key when working in your own environment)
         apiKey: process.env.API_KEY
     });
@@ -67,15 +67,15 @@ To initialize a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-refe
       </body>
     </html>
     ```
-3.  Initialize a basic [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) using the `id` from the container.
+3.  Initialize a basic [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) using the `id` from the container.
     The `container` property of the [`MapLibreOptions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#MapLibreOptions) is the only required parameter for initializing a basic map.
     More options for changing the initial state of the map and map control, like `zoom` and `center`, can also be found in [`MapLibreOptions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#MapLibreOptions).
-    The optional [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams) provide options for styling the map and event configuration.
+    The optional [`TomTomMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams) provide options for styling the map and event configuration.
     Read more about these topic in the [Map styles](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles) and [Events](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles) guides.
     ```javascript
-    import { GOSDKMap } from "@anw/go-sdk-js/map";
+    import { TomTomMap } from "@anw/go-sdk-js/map";
 
-    const goSDKMap = new GOSDKMap(
+    const map = new TomTomMap(
         {
             container: "map",
             zoom: 14,

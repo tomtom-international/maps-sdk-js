@@ -1,18 +1,18 @@
 import { MapOptions } from "maplibre-gl";
-import { GOSDKMapParams, MapLibreOptions } from "./types/MapInit";
+import { TomTomMapParams, MapLibreOptions } from "./types/MapInit";
 import { buildMapStyleInput } from "./MapStyleInputBuilder";
 import { injectCustomHeaders } from "../shared/mapUtils";
 
 /**
  * @ignore
  * @param mapLibreOptions
- * @param goSDKParams
+ * @param tomtomMapParams
  */
-export const buildMapOptions = (mapLibreOptions: MapLibreOptions, goSDKParams: GOSDKMapParams): MapOptions => {
+export const buildMapOptions = (mapLibreOptions: MapLibreOptions, tomtomMapParams: TomTomMapParams): MapOptions => {
     return {
         ...mapLibreOptions,
-        style: buildMapStyleInput(goSDKParams),
+        style: buildMapStyleInput(tomtomMapParams),
         attributionControl: false,
-        transformRequest: injectCustomHeaders(goSDKParams)
+        transformRequest: injectCustomHeaders(tomtomMapParams)
     };
 };

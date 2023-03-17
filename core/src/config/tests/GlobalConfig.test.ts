@@ -1,20 +1,20 @@
-import { GlobalConfig, GOSDKConfig, mergeFromGlobal } from "../GlobalConfig";
+import { GlobalConfig, TomTomConfig, mergeFromGlobal } from "../GlobalConfig";
 
 describe("GlobalConfig", () => {
     afterEach(() => {
-        GOSDKConfig.instance.reset();
+        TomTomConfig.instance.reset();
     });
 
-    test("GOSDKConfig is a singleton", () => {
+    test("TomTomConfig is a singleton", () => {
         // @ts-ignore
-        const newInstance = new GOSDKConfig();
-        const staticInstance = GOSDKConfig.instance;
+        const newInstance = new TomTomConfig();
+        const staticInstance = TomTomConfig.instance;
 
         expect(newInstance).toBe(staticInstance);
     });
 
-    test("GOSDKConfig contains default config", () => {
-        expect(GOSDKConfig.instance.get()).toEqual(
+    test("TomTomConfig contains default config", () => {
+        expect(TomTomConfig.instance.get()).toEqual(
             expect.objectContaining({
                 commonBaseURL: expect.any(String),
                 apiKey: ""
@@ -22,12 +22,12 @@ describe("GlobalConfig", () => {
         );
     });
 
-    test("GOSDKConfig config can be modified", () => {
+    test("TomTomConfig config can be modified", () => {
         const apiKey = "TEST_KEY";
 
-        GOSDKConfig.instance.put({ apiKey });
+        TomTomConfig.instance.put({ apiKey });
 
-        expect(GOSDKConfig.instance.get()).toEqual(
+        expect(TomTomConfig.instance.get()).toEqual(
             expect.objectContaining({
                 commonBaseURL: expect.any(String),
                 apiKey
@@ -35,22 +35,22 @@ describe("GlobalConfig", () => {
         );
     });
 
-    test("GOSDKConfig config can be completely overwritten", () => {
+    test("TomTomConfig config can be completely overwritten", () => {
         const cfg: GlobalConfig = {
             apiKey: "TEST_KEY",
             language: "nl-NL",
             commonBaseURL: "https://example.com"
         };
 
-        GOSDKConfig.instance.put(cfg);
+        TomTomConfig.instance.put(cfg);
 
-        expect(GOSDKConfig.instance.get()).toEqual(cfg);
+        expect(TomTomConfig.instance.get()).toEqual(cfg);
     });
 });
 
 describe("mergeFromGlobal tests", () => {
     beforeEach(() => {
-        GOSDKConfig.instance.reset();
+        TomTomConfig.instance.reset();
     });
 
     test("mergeFromGlobal with default global config", () => {
@@ -63,7 +63,7 @@ describe("mergeFromGlobal tests", () => {
     });
 
     test("mergeFromGlobal with given global config", () => {
-        GOSDKConfig.instance.put({
+        TomTomConfig.instance.put({
             apiKey: "GLOBAL_API_KEY",
             language: "it-IT"
         });

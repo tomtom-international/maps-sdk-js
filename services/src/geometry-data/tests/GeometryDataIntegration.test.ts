@@ -1,5 +1,5 @@
 import { geometryData } from "../GeometryData";
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
+import { TomTomConfig } from "@anw/go-sdk-js/core";
 
 describe("Geometry data errors", () => {
     test("Geometry data test without API key", async () => {
@@ -28,7 +28,7 @@ describe("Geometry data errors", () => {
 
 describe("Geometry data integration tests", () => {
     beforeAll(() => {
-        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
+        TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
     });
 
     test("Geometry data of Schiphol airport", async () => {

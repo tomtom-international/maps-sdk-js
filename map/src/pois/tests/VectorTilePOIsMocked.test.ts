@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { GOSDKMap } from "../../GOSDKMap";
+import { TomTomMap } from "../../TomTomMap";
 import { VectorTilePOIs } from "../VectorTilePOIs";
 import { POI_SOURCE_ID } from "../../shared";
 
@@ -7,11 +7,11 @@ import { POI_SOURCE_ID } from "../../shared";
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles POI module tests", () => {
-    let goSDKMapMock: GOSDKMap;
+    let tomtomMapMock: TomTomMap;
 
     beforeEach(() => {
         const poiSource = { id: POI_SOURCE_ID };
-        goSDKMapMock = {
+        tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(poiSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
@@ -23,17 +23,17 @@ describe("Vector tiles POI module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             }
-        } as unknown as GOSDKMap;
+        } as unknown as TomTomMap;
     });
 
     test("Initializing module with config", async () => {
-        const pois = await VectorTilePOIs.init(goSDKMapMock, {
+        const pois = await VectorTilePOIs.init(tomtomMapMock, {
             visible: false
         });
         expect(pois).toBeDefined();
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         // (see note on top of test file)
         pois.setVisible(false);
@@ -41,15 +41,15 @@ describe("Vector tiles POI module tests", () => {
     });
 
     test("Initializing module with no config", async () => {
-        const pois = await VectorTilePOIs.init(goSDKMapMock);
+        const pois = await VectorTilePOIs.init(tomtomMapMock);
         expect(pois).toBeDefined();
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });
 
     test("filter methods while initializing module with filter config", async () => {
-        const pois = await VectorTilePOIs.init(goSDKMapMock, {
+        const pois = await VectorTilePOIs.init(tomtomMapMock, {
             filters: {
                 categories: {
                     show: "all_except",

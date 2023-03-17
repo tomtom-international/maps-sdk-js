@@ -8,7 +8,7 @@ import {
 } from "../shared";
 import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import isNil from "lodash/isNil";
 
@@ -33,13 +33,13 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
+     * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(goSDKMap: GOSDKMap, config?: GeometryModuleConfig): Promise<GeometryModule> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new GeometryModule(goSDKMap, config);
+    static async init(tomtomMap: TomTomMap, config?: GeometryModuleConfig): Promise<GeometryModule> {
+        await waitUntilMapIsReady(tomtomMap);
+        return new GeometryModule(tomtomMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -60,7 +60,7 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
     }
 
     private _addModuleToEventsProxy(interactive: boolean) {
-        this.goSDKMap._eventsProxy.ensureAdded(this.geometry, interactive);
+        this.tomtomMap._eventsProxy.ensureAdded(this.geometry, interactive);
     }
 
     /**
@@ -83,6 +83,6 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.goSDKMap._eventsProxy, this.geometry);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.geometry);
     }
 }

@@ -1,21 +1,21 @@
 import { MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
 import { generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
-import { GOSDKMap } from "../GOSDKMap";
-import { GOSDKMapParams } from "../init/types/MapInit";
+import { TomTomMap } from "../TomTomMap";
+import { TomTomMapParams } from "../init/types/MapInit";
 import { GeoJSONSourceWithLayers } from "./index";
 import { FeatureCollection } from "geojson";
 
 /**
  * Wait until the map is ready
- * @param goSDKMap The GOSDKMap instance.
+ * @param tomtomMap The TomTomMap instance.
  * @returns {Promise<boolean>} Returns a Promise<boolean>
  */
-export async function waitUntilMapIsReady(goSDKMap: GOSDKMap): Promise<boolean> {
+export async function waitUntilMapIsReady(tomtomMap: TomTomMap): Promise<boolean> {
     return new Promise((resolve) => {
-        if (goSDKMap.mapReady || goSDKMap.mapLibreMap.isStyleLoaded()) {
+        if (tomtomMap.mapReady || tomtomMap.mapLibreMap.isStyleLoaded()) {
             resolve(true);
         } else {
-            goSDKMap.mapLibreMap.once("styledata", () => {
+            tomtomMap.mapLibreMap.once("styledata", () => {
                 resolve(true);
             });
         }
@@ -53,17 +53,17 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
  * Inject TomTom custom headers to requests to TomTom.
  *
  * @ignore
- * @param goSDKParams Global SDK Map configuration
+ * @param tomtomMapParams Global SDK Map configuration
  */
 export const injectCustomHeaders =
-    (goSDKParams: GOSDKMapParams) =>
+    (tomtomMapParams: TomTomMapParams) =>
     (url: string, resourceType?: ResourceType): RequestParameters => {
         if (url.includes("tomtom.com")) {
             if (resourceType === "Image") {
                 return { url };
             }
 
-            const tomtomHeaders = generateTomTomCustomHeaders(goSDKParams);
+            const tomtomHeaders = generateTomTomCustomHeaders(tomtomMapParams);
 
             return {
                 url,

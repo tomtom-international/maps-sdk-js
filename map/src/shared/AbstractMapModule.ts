@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomMap } from "../TomTomMap";
 
 /**
  * Contains ids of source and layers used in map module.
@@ -11,26 +11,26 @@ export type SourceAndLayerIDs = {
 };
 
 /**
- * Base class for all GO SDK map modules.
+ * Base class for all Maps SDK map modules.
  */
 export abstract class AbstractMapModule<
     SOURCES_AND_LAYERS_IDS extends Record<string, SourceAndLayerIDs>,
     CFG = undefined
 > {
-    protected readonly goSDKMap: GOSDKMap;
+    protected readonly tomtomMap: TomTomMap;
     protected readonly mapLibreMap: Map;
     protected config?: CFG;
     protected readonly _sourcesAndLayersIDs: SOURCES_AND_LAYERS_IDS;
 
     /**
-     * Builds this module based on a given GO SDK map.
-     * @param goSDKMap The map. It may or may not be initialized at this stage,
+     * Builds this module based on a given Maps SDK map.
+     * @param tomtomMap The map. It may or may not be initialized at this stage,
      * but the module ensures to initialize itself once it is.
      * @param config Optional configuration to initialize directly as soon as the map is ready.
      */
-    protected constructor(goSDKMap: GOSDKMap, config?: CFG) {
-        this.goSDKMap = goSDKMap;
-        this.mapLibreMap = goSDKMap.mapLibreMap;
+    protected constructor(tomtomMap: TomTomMap, config?: CFG) {
+        this.tomtomMap = tomtomMap;
+        this.mapLibreMap = tomtomMap.mapLibreMap;
         this._sourcesAndLayersIDs = this.initSourcesWithLayers(config);
         if (config) {
             this.applyConfig(config);

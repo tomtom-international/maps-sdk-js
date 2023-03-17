@@ -1,4 +1,4 @@
-import { Fuel, GeometryDataResponse, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { Fuel, GeometryDataResponse, TomTomConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../ResponseParser";
@@ -31,7 +31,7 @@ describe("Geometry Search service", () => {
     ];
 
     beforeAll(() => {
-        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
+        TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
     });
 
     const expectWorkingResult = () =>

@@ -1,5 +1,5 @@
 /**
- * List of all services managed by go-sdk-js
+ * List of all services managed by maps-sdk-js
  */
 export type ServiceName = string;
 

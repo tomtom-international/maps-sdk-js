@@ -13,7 +13,7 @@
     "lint": "npm run lint -ws",
     "format": "npm run format -ws",
     "test": "npm run test -ws",
-    "build-theme": "rimraf ./documentation/go-sdk-theme/dist && tsc -p ./documentation/go-sdk-theme && cp -R ./documentation/go-sdk-theme/src/resources ./documentation/go-sdk-theme/dist",
+    "build-theme": "rimraf ./documentation/maps-sdk-theme/dist && tsc -p ./documentation/maps-sdk-theme && cp -R ./documentation/maps-sdk-theme/src/resources ./documentation/maps-sdk-theme/dist",
     "prepare": "node scripts/prepare.js",
     "pre-commit": "lint-staged"
   },

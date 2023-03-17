@@ -1,7 +1,7 @@
 import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { Map } from "maplibre-gl";
 import { GeometryModule } from "../GeometryModule";
-import { GOSDKMap } from "../../GOSDKMap";
+import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 import { GEOMETRY_SOURCE_ID } from "../../shared";
 
@@ -12,7 +12,7 @@ describe("Geometry module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", async () => {
         const geometrySource = { id: GEOMETRY_SOURCE_ID, setData: jest.fn() };
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValue(geometrySource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { geometrySourceID: {} } }),
@@ -25,14 +25,14 @@ describe("Geometry module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             }
-        } as unknown as GOSDKMap;
+        } as unknown as TomTomMap;
 
         const testGeometryData = amsterdamGeometryData as GeometryDataResponse;
-        let geometry = await GeometryModule.init(goSDKMapMock);
+        let geometry = await GeometryModule.init(tomtomMapMock);
         geometry.show(testGeometryData);
         geometry.show(testGeometryData);
         geometry.clear();
-        geometry = await GeometryModule.init(goSDKMapMock);
+        geometry = await GeometryModule.init(tomtomMapMock);
         geometry.show(testGeometryData);
         geometry.clear();
         expect(geometry.events).toBeDefined();

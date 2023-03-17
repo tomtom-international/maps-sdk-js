@@ -1,5 +1,5 @@
 import {
-    GOSDKMapParams,
+    TomTomMapParams,
     HILLSHADE_SOURCE_ID,
     MapLibreOptions,
     POI_SOURCE_ID,
@@ -23,8 +23,8 @@ describe("Map Init tests", () => {
     test.each(mapInitTestData)(
         `'%s`,
         // @ts-ignore
-        async (_name: string, mapLibreOptions: MapLibreOptions, goSDKParams: GOSDKMapParams) => {
-            await mapEnv.loadMap(mapLibreOptions, goSDKParams);
+        async (_name: string, mapLibreOptions: MapLibreOptions, tomtomMapParams: TomTomMapParams) => {
+            await mapEnv.loadMap(mapLibreOptions, tomtomMapParams);
             await waitForMapReady();
             expect(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
             expect(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toBeGreaterThan(0);

@@ -9,7 +9,7 @@ import {
     ROUTES_SOURCE_ID,
     WAYPOINTS_SOURCE_ID
 } from "../../shared";
-import { GOSDKMap } from "../../GOSDKMap";
+import { TomTomMap } from "../../TomTomMap";
 import { RoutingModule } from "../RoutingModule";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
@@ -25,7 +25,7 @@ describe("Routing module tests", () => {
         const ferriesSource = { id: ROUTE_FERRIES_SOURCE_ID, setData: jest.fn() };
         const tollRoadsSource = { id: ROUTE_TOLL_ROADS_SOURCE_ID, setData: jest.fn() };
         const tunnelsSource = { id: ROUTE_TUNNELS_SOURCE_ID, setData: jest.fn() };
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest
                     .fn()
@@ -54,9 +54,9 @@ describe("Routing module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             }
-        } as unknown as GOSDKMap;
+        } as unknown as TomTomMap;
 
-        const routing = await RoutingModule.init(goSDKMapMock);
+        const routing = await RoutingModule.init(tomtomMapMock);
         routing.showRoutes({ type: "FeatureCollection", features: [] });
         routing.selectRoute(0);
         routing.clearRoutes();

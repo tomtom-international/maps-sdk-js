@@ -5,4 +5,4 @@
 
 export * from "./types/MapInit";
 export * from "./types/MapEventsConfig";
-export * from "../GOSDKMap";
+export * from "../TomTomMap";

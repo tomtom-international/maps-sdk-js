@@ -1,6 +1,6 @@
 import { Map } from "maplibre-gl";
 import { HILLSHADE_SOURCE_ID } from "../../shared";
-import { GOSDKMap } from "../../GOSDKMap";
+import { TomTomMap } from "../../TomTomMap";
 import { VectorTilesHillshade } from "../VectorTilesHillshade";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
@@ -9,7 +9,7 @@ import { VectorTilesHillshade } from "../VectorTilesHillshade";
 describe("Vector tiles Hillshade module tests", () => {
     test("Initializing module with config", async () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
@@ -19,15 +19,15 @@ describe("Vector tiles Hillshade module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             }
-        } as unknown as GOSDKMap;
+        } as unknown as TomTomMap;
 
-        const hillshade = await VectorTilesHillshade.init(goSDKMapMock, {
+        const hillshade = await VectorTilesHillshade.init(tomtomMapMock, {
             visible: false
         });
         expect(hillshade).toBeDefined();
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         // (see note on top of test file)
         hillshade.setVisible(false);
@@ -36,7 +36,7 @@ describe("Vector tiles Hillshade module tests", () => {
 
     test("Initializing module with no config", async () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
@@ -46,12 +46,12 @@ describe("Vector tiles Hillshade module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             }
-        } as unknown as GOSDKMap;
+        } as unknown as TomTomMap;
 
-        const hillshade = await VectorTilesHillshade.init(goSDKMapMock);
+        const hillshade = await VectorTilesHillshade.init(tomtomMapMock);
         expect(hillshade).toBeDefined();
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });
 });

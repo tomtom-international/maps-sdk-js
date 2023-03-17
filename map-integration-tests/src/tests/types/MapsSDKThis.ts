@@ -2,7 +2,7 @@ import { LngLatLike, Map, MapGeoJSONFeature } from "maplibre-gl";
 import {
     GeoJSONPlaces,
     GeometryModule,
-    GOSDKMap,
+    TomTomMap,
     RoutingModule,
     SourceWithLayers,
     VectorTilePOIs,
@@ -10,12 +10,12 @@ import {
     VectorTilesTraffic
 } from "map";
 
-export type GOSDKThis = typeof globalThis & {
+export type MapsSDKThis = typeof globalThis & {
     // @ts-ignore
-    GOSDK: typeof globalThis.GOSDK;
+    MapsSDK: typeof globalThis.MapsSDK;
     // @ts-ignore
-    GOSDKCore: typeof globalThis.GOSDKCore;
-    goSDKMap: GOSDKMap;
+    MapsSDKCore: typeof globalThis.MapsSDKCore;
+    tomtomMap: TomTomMap;
     mapLibreMap: Map;
     traffic?: VectorTilesTraffic;
     pois?: VectorTilePOIs;

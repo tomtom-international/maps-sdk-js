@@ -1,4 +1,4 @@
-import { GOSDKThis } from "../types/GOSDKThis";
+import { MapsSDKThis } from "../types/MapsSDKThis";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
 import { LayerSpecWithSource, VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "map";
 import { Position } from "geojson";
@@ -13,11 +13,11 @@ export const waitForMapReady = async () =>
         () =>
             page.evaluate((): Promise<boolean> => {
                 return new Promise((resolve) => {
-                    const goSDKThis = globalThis as GOSDKThis;
-                    if (goSDKThis.goSDKMap.mapReady) {
+                    const mapsSDKThis = globalThis as MapsSDKThis;
+                    if (mapsSDKThis.tomtomMap.mapReady) {
                         resolve(true);
                     } else {
-                        goSDKThis.mapLibreMap.once("styledata", () => resolve(true));
+                        mapsSDKThis.mapLibreMap.once("styledata", () => resolve(true));
                     }
                 });
             }),
@@ -25,11 +25,12 @@ export const waitForMapReady = async () =>
         10000
     );
 
-export const waitForMapIdle = async () => page.evaluate(async () => (globalThis as GOSDKThis).mapLibreMap.once("idle"));
+export const waitForMapIdle = async () =>
+    page.evaluate(async () => (globalThis as MapsSDKThis).mapLibreMap.once("idle"));
 
 export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceID) => {
-        return (globalThis as GOSDKThis).mapLibreMap
+        return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
             .layers.filter(
                 (layer) => (layer as LayerSpecWithSource).source === pageSourceID && layer.layout?.visibility !== "none"
@@ -52,17 +53,19 @@ export const assertTrafficVisibility = async (visibility: {
     incidentIcons: boolean;
     flow: boolean;
 }) => {
-    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyIncidentLayersVisible())).toBe(
+    expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyIncidentLayersVisible())).toBe(
         visibility.incidents
     );
-    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyIncidentIconLayersVisible())).toBe(
+    expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyIncidentIconLayersVisible())).toBe(
         visibility.incidentIcons
     );
-    expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyFlowLayersVisible())).toBe(visibility.flow);
+    expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyFlowLayersVisible())).toBe(
+        visibility.flow
+    );
     if (visibility.incidents && visibility.flow) {
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyLayersVisible())).toBe(true);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyLayersVisible())).toBe(true);
     } else if (!visibility.incidents && !visibility.flow) {
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).traffic?.anyLayersVisible())).toBe(false);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyLayersVisible())).toBe(false);
     }
 
     // we double-check against maplibre directly as well:
@@ -73,7 +76,7 @@ export const assertTrafficVisibility = async (visibility: {
 export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Position): Promise<MapGeoJSONFeature[]> =>
     page.evaluate(
         (inputLayerIDs, inputLngLat) => {
-            const mapLibreMap = (globalThis as GOSDKThis).mapLibreMap;
+            const mapLibreMap = (globalThis as MapsSDKThis).mapLibreMap;
             return mapLibreMap.queryRenderedFeatures(
                 inputLngLat && mapLibreMap.project(inputLngLat as [number, number]),
                 {
@@ -121,19 +124,19 @@ export const waitUntilRenderedFeaturesChange = async (
 
 export const getSymbolLayersByID = async (layerID: string): Promise<SymbolLayerSpecification> =>
     page.evaluate((symbolLayerID) => {
-        return (globalThis as GOSDKThis).mapLibreMap
+        return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
             .layers.filter((layer) => layer.id === symbolLayerID)[0] as SymbolLayerSpecification;
     }, layerID);
 
 export const isLayerVisible = async (layerID: string): Promise<boolean> =>
     page.evaluate((inputLayerID) => {
-        return (globalThis as GOSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, "visibility") !== "none";
+        return (globalThis as MapsSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, "visibility") !== "none";
     }, layerID);
 
 export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; layerID: string }> =>
     page.evaluate(() => {
-        const places = (globalThis as GOSDKThis).places;
+        const places = (globalThis as MapsSDKThis).places;
         return {
             sourceID: places?.sourcesAndLayersIDs.placesIDs.sourceID as string,
             layerID: places?.sourcesAndLayersIDs.placesIDs.layerIDs[0] as string

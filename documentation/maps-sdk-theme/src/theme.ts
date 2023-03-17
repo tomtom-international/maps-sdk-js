@@ -4,7 +4,7 @@ import { basename, join } from "path";
 import { readdirSync, readFileSync } from "fs";
 import * as Handlebars from "handlebars";
 
-export class GOSDKTheme extends MarkdownTheme {
+export class MapsSDKTheme extends MarkdownTheme {
     constructor(renderer: Renderer) {
         super(renderer);
         this.registerPartials();
@@ -22,14 +22,14 @@ export class GOSDKTheme extends MarkdownTheme {
     }
 
     /**
-     * Removing `.mdx` extension from relative links (devportal requirement).
+     * Removing `.mdx` extension from relative links (developer portal requirement).
      */
     getRelativeUrl(url: string) {
         return super.getRelativeUrl(url).replace(/\.mdx/, "");
     }
 
     /**
-     * Output `.mdx` urls instead of '.md' (devportal requirement).
+     * Output `.mdx` urls instead of '.md' (developer portal requirement).
      */
     toUrl(mapping: any, reflection: DeclarationReflection) {
         return mapping.directory + "/" + this.getUrl(reflection) + ".mdx";

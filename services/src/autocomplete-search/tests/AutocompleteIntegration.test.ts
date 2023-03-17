@@ -1,4 +1,4 @@
-import { GOSDKConfig, Language } from "@anw/go-sdk-js/core";
+import { TomTomConfig, Language } from "@anw/go-sdk-js/core";
 import { AutocompleteSearchResponse, AutocompleteSearchSegmentType } from "../types";
 import autocompleteSearch from "../AutocompleteSearch";
 
@@ -48,7 +48,7 @@ const responseWithStrictBrandType = {
 
 describe("Autocomplete service", () => {
     beforeAll(() => {
-        GOSDKConfig.instance.put({
+        TomTomConfig.instance.put({
             apiKey: process.env.API_KEY,
             language: process.env.LANGUAGE as Language
         });

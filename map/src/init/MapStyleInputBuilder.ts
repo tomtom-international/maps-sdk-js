@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import { StyleSpecification } from "maplibre-gl";
-import { GOSDKMapParams, PublishedStyle, PublishedStyleID, StyleModules } from "./types/MapInit";
+import { TomTomMapParams, PublishedStyle, PublishedStyleID, StyleModules } from "./types/MapInit";
 
 export const TRAFFIC_INCIDENTS = "traffic_incidents";
 export const TRAFFIC_FLOW = "traffic_flow";
@@ -90,7 +90,7 @@ export const excludeModulesOptions = (url: string, modules: StyleModules[] | und
  * @param mapParams The SDK parameters to convert to input renderer style.
  * @return The map style to load into the renderer.
  */
-export const buildMapStyleInput = (mapParams: GOSDKMapParams): StyleSpecification | string => {
+export const buildMapStyleInput = (mapParams: TomTomMapParams): StyleSpecification | string => {
     let mapStyleUrl: StyleSpecification | string;
     let isExcludeEmpty = true;
     const style = mapParams.style;

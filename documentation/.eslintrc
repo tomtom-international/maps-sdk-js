@@ -19,7 +19,7 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./maps-sdk-theme/tsconfig.json"
   },
   "ignorePatterns": [
     "*.scss"

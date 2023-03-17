@@ -4,7 +4,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import placesTestData from "./GeoJSONPlaces.test.data.json";
-import { GOSDKThis } from "./types/GOSDKThis";
+import { MapsSDKThis } from "./types/MapsSDKThis";
 import {
     getNumVisibleLayersBySource,
     getPlacesSourceAndLayerIDs,
@@ -17,30 +17,30 @@ import expectedPOILikeFeatureProps from "./GeoJSONPlacesPOILikeProps.test.data.j
 
 const initPlaces = async (config?: PlaceModuleConfig) =>
     page.evaluate(async (inputConfig) => {
-        const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.places = await goSDKThis.GOSDK.GeoJSONPlaces.init(goSDKThis.goSDKMap, inputConfig);
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.places = await mapsSDKThis.MapsSDK.GeoJSONPlaces.init(mapsSDKThis.tomtomMap, inputConfig);
     }, config as never);
 
 const applyIconConfig = async (iconConfig?: PlaceIconConfig) =>
     page.evaluate(
-        async (inputConfig) => (globalThis as GOSDKThis).places?.applyIconConfig(inputConfig),
+        async (inputConfig) => (globalThis as MapsSDKThis).places?.applyIconConfig(inputConfig),
         iconConfig as never
     );
 
 const showPlaces = async (places: Places) =>
     page.evaluate((inputPlaces: Places) => {
-        (globalThis as GOSDKThis).places?.show(inputPlaces);
+        (globalThis as MapsSDKThis).places?.show(inputPlaces);
         // @ts-ignore
     }, places);
 
 const getBBox = async (places: HasBBox) =>
     page.evaluate(
-        (inputPlaces) => (globalThis as GOSDKThis).GOSDKCore.bboxFromGeoJSON(inputPlaces),
+        (inputPlaces) => (globalThis as MapsSDKThis).MapsSDKCore.bboxFromGeoJSON(inputPlaces),
         // @ts-ignore
         places
     );
 
-const clearPlaces = async () => page.evaluate(() => (globalThis as GOSDKThis).places?.clear());
+const clearPlaces = async () => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
 
 const getNumVisibleLayers = async (sourceID: string) => getNumVisibleLayersBySource(sourceID);
 

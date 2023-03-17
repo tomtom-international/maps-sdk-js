@@ -1,7 +1,7 @@
 import mapLibreExported, { Map } from "maplibre-gl";
 import { BBox } from "geojson";
 import { mergeFromGlobal } from "@anw/go-sdk-js/core";
-import { GOSDKMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
+import { TomTomMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
 import { EventsProxy } from "./shared";
@@ -11,7 +11,7 @@ import { isLayerLocalizable } from "./shared/localization";
  * The map object displays the TomTom live map on a web application and allows to easily integrate its services on it.
  * * It uses MapLibre and exposes its Map instance via a "mapLibreMap" property.
  */
-export class GOSDKMap {
+export class TomTomMap {
     mapReady = false;
     /**
      * The MapLibre Map instance.
@@ -20,19 +20,19 @@ export class GOSDKMap {
      * @see https://maplibre.org/maplibre-gl-js-docs/api/map/#map-instance-members
      */
     readonly mapLibreMap: Map;
-    private goSDKParams: GOSDKMapParams;
+    private params: TomTomMapParams;
     _eventsProxy: EventsProxy;
 
     /**
      * Builds the map object and attaches it to an element of the web application.
      * @param mapLibreOptions A subset of MapLibre options for MapLibre initialization.
-     * @param goSDKParams The parameters to initialize the GO SDK map.
+     * @param mapParams The parameters to initialize the TomTom Maps SDK map.
      */
-    constructor(mapLibreOptions: MapLibreOptions, goSDKParams?: GOSDKMapParams) {
-        this.goSDKParams = mergeFromGlobal(goSDKParams);
-        this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.goSDKParams));
+    constructor(mapLibreOptions: MapLibreOptions, mapParams?: TomTomMapParams) {
+        this.params = mergeFromGlobal(mapParams);
+        this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.params));
         this.mapLibreMap.once("styledata", () => this.handleStyleData());
-        this._eventsProxy = new EventsProxy(this.mapLibreMap, goSDKParams?.events);
+        this._eventsProxy = new EventsProxy(this.mapLibreMap, mapParams?.events);
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
@@ -40,7 +40,7 @@ export class GOSDKMap {
                 true
             );
         }
-        goSDKParams?.language && this.setLanguage(goSDKParams?.language);
+        mapParams?.language && this.setLanguage(mapParams?.language);
     }
 
     /**
@@ -48,10 +48,10 @@ export class GOSDKMap {
      * @param style The new style to set.
      */
     setStyle = (style: StyleInput): void => {
-        this.goSDKParams = { ...this.goSDKParams, style };
+        this.params = { ...this.params, style };
         this.mapReady = false;
         this.mapLibreMap.once("styledata", () => this.handleStyleData());
-        this.mapLibreMap.setStyle(buildMapStyleInput(this.goSDKParams));
+        this.mapLibreMap.setStyle(buildMapStyleInput(this.params));
     };
 
     private updateMapLanguage(language: string) {
@@ -87,7 +87,7 @@ export class GOSDKMap {
         /**
          * This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style
          */
-        const style = this.goSDKParams?.style;
+        const style = this.params?.style;
         if (typeof style === "object" && style.type == "published" && style.exclude?.includes("poi")) {
             this.mapLibreMap.setLayoutProperty("POI", "visibility", "none", { validate: false });
         }

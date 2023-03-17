@@ -71,7 +71,7 @@ export type StyleInput =
     | (PublishedStyle & { type: "published" })
     | (CustomStyle & { type: "custom" });
 
-export type GOSDKMapParams = Partial<GlobalConfig> & {
+export type TomTomMapParams = Partial<GlobalConfig> & {
     /**
      * Optional style to load for the map.
      */

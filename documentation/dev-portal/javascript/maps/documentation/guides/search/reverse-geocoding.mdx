@@ -31,17 +31,17 @@ To use the Reverse Geocoding SDK, you need to configure its credentials and add 
     - for NodeJS add dependency in `main.js`
        ``` javascript
        const reverseGeocode = require("@anw/go-sdk-js/services").reverseGeocode;
-       const GOSDKConfig = require("@anw/go-sdk-js/core").GOSDKConfig;
+       const TomTomConfig = require("@anw/go-sdk-js/core").TomTomConfig;
        ```
     - for Web add dependency in `index.js`
        ```javascript
        import { reverseGeocode } from "@anw/go-sdk-js/services";
-       import { GOSDKConfig } from "@anw/go-sdk-js/core";
+       import { TomTomConfig } from "@anw/go-sdk-js/core";
        ```
 
 3. To enable your API key
     ``` javascript
-    GOSDKConfig.instance.put({
+    TomTomConfig.instance.put({
         // (Set your own API key when working in your own environment)
         apiKey: process.env.API_KEY
     });

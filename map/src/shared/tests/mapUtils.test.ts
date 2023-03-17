@@ -2,12 +2,12 @@ import { FeatureCollection } from "geojson";
 import omit from "lodash/omit";
 import { LayerSpecification, Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
 import { GeoJSONSourceWithLayers } from "../index";
-import { GOSDKMap } from "../../GOSDKMap";
+import { TomTomMap } from "../../TomTomMap";
 import { deserializeFeatures, injectCustomHeaders, mapToInternalFeatures, waitUntilMapIsReady } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
 import mockedFeatures from "./mapToInternalFeature.test.data.json";
 
-const getGOSDKMapMock = async (flag: boolean) =>
+const getTomTomMapMock = async (flag: boolean) =>
     ({
         mapReady: flag,
         mapLibreMap: {
@@ -17,17 +17,17 @@ const getGOSDKMapMock = async (flag: boolean) =>
         _eventsProxy: {
             add: jest.fn()
         }
-    } as unknown as GOSDKMap);
+    } as unknown as TomTomMap);
 
 describe("Map utils - waitUntilMapIsReady", () => {
     test("waitUntilMapIsReady resolve promise when mapReady or maplibre.isStyleLoaded are true", async () => {
-        const goSDKMapMock = await getGOSDKMapMock(true);
-        await expect(waitUntilMapIsReady(goSDKMapMock)).resolves.toBeTruthy();
+        const tomtomMapMock = await getTomTomMapMock(true);
+        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.toBeTruthy();
     });
 
     test('waitUntilMapIsReady resolve promise from mapLibre event once("styledata")', async () => {
-        const goSDKMapMock = await getGOSDKMapMock(false);
-        await expect(waitUntilMapIsReady(goSDKMapMock)).resolves.toBeTruthy();
+        const tomtomMapMock = await getTomTomMapMock(false);
+        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.toBeTruthy();
     });
 });
 

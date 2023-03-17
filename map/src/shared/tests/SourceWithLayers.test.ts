@@ -1,5 +1,5 @@
 import { LayerSpecification, Map, Source, VectorSourceSpecification } from "maplibre-gl";
-import { GOSDKSource } from "../GOSDKSource";
+import { TomTomMapSource } from "../TomTomMapSource";
 import {
     AbstractSourceWithLayers,
     AddedSourceWithLayers,
@@ -17,13 +17,13 @@ const testToBeAddedLayerSpecs = [omit(layer0, "source"), omit(layer1, "source")]
 
 describe("AbstractSourceWithLayers tests", () => {
     class TestSourceWithLayers extends AbstractSourceWithLayers {}
-    const testGOSDKSource = { id: testSourceID } as GOSDKSource;
+    const testTomTomMapSource = { id: testSourceID } as TomTomMapSource;
 
     test("Constructor", () => {
         const mapLibreMock = jest.fn() as unknown as Map;
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
-        expect(sourceWithLayers.source).toStrictEqual(testGOSDKSource);
+        expect(sourceWithLayers.source).toStrictEqual(testTomTomMapSource);
         expect(sourceWithLayers.layerSpecs).toStrictEqual(testLayerSpecs);
     });
 
@@ -31,11 +31,15 @@ describe("AbstractSourceWithLayers tests", () => {
         const mapLibreMock = {
             getLayoutProperty: jest.fn().mockReturnValueOnce("visible").mockReturnValueOnce("none")
         } as unknown as Map;
-        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).isAnyLayerVisible()).toBe(true);
+        expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).isAnyLayerVisible()).toBe(
+            true
+        );
 
         // ----------------------
         mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("none").mockReturnValueOnce(undefined); // undefined defaults to visible
-        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).isAnyLayerVisible()).toBe(true);
+        expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).isAnyLayerVisible()).toBe(
+            true
+        );
     });
 
     test("isAnyLayerVisible with filter", () => {
@@ -43,7 +47,7 @@ describe("AbstractSourceWithLayers tests", () => {
             getLayoutProperty: jest.fn().mockReturnValueOnce("visible")
         } as unknown as Map;
 
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toBe(true);
         expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === "not-there")).toBe(false);
     });
@@ -53,7 +57,7 @@ describe("AbstractSourceWithLayers tests", () => {
             getLayoutProperty: jest.fn().mockReturnValueOnce("none").mockReturnValueOnce("none")
         } as unknown as Map;
 
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         expect(sourceWithLayers.isAnyLayerVisible()).toStrictEqual(false);
     });
 
@@ -62,7 +66,7 @@ describe("AbstractSourceWithLayers tests", () => {
             getLayoutProperty: jest.fn().mockReturnValueOnce("none")
         } as unknown as Map;
 
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toBe(false);
     });
 
@@ -70,13 +74,13 @@ describe("AbstractSourceWithLayers tests", () => {
         const mapLibreMock = {
             getLayoutProperty: jest.fn().mockReturnValueOnce("visible").mockReturnValueOnce("visible")
         } as unknown as Map;
-        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+        expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             true
         );
 
         // ----------------------
         mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("visible").mockReturnValueOnce(undefined); // undefined defaults to visible
-        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+        expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             true
         );
     });
@@ -85,13 +89,13 @@ describe("AbstractSourceWithLayers tests", () => {
         const mapLibreMock = {
             getLayoutProperty: jest.fn().mockReturnValueOnce("none").mockReturnValueOnce("none")
         } as unknown as Map;
-        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+        expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             false
         );
 
         // ----------------------
         mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce("none").mockReturnValueOnce(undefined); // undefined defaults to visible
-        expect(new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible()).toBe(
+        expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             false
         );
     });
@@ -102,13 +106,13 @@ describe("AbstractSourceWithLayers tests", () => {
             getLayoutProperty: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce("none")
         } as unknown as Map;
         expect(
-            new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible(
+            new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible(
                 (layer) => layer.id === layer0.id
             )
         ).toBe(true);
 
         expect(
-            new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs).areAllLayersVisible(
+            new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible(
                 (layer) => layer.id === layer1.id
             )
         ).toBe(false);
@@ -119,7 +123,7 @@ describe("AbstractSourceWithLayers tests", () => {
             setLayoutProperty: jest.fn()
         } as unknown as Map;
 
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(true);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "visible", {
             validate: false
@@ -134,7 +138,7 @@ describe("AbstractSourceWithLayers tests", () => {
             setLayoutProperty: jest.fn()
         } as unknown as Map;
 
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(true, (layer) => layer.id === layer1.id);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible", {
             validate: false
@@ -147,7 +151,7 @@ describe("AbstractSourceWithLayers tests", () => {
             setLayoutProperty: jest.fn()
         } as unknown as Map;
 
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(false);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "none", {
             validate: false
@@ -162,7 +166,7 @@ describe("AbstractSourceWithLayers tests", () => {
             setLayoutProperty: jest.fn()
         } as unknown as Map;
 
-        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testGOSDKSource, testLayerSpecs);
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         sourceWithLayers.setAllLayersVisible(false, (layer) => layer.id === layer1.id);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "none", {
             validate: false

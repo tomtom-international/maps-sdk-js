@@ -1,5 +1,5 @@
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomConfig } from "@anw/go-sdk-js/core";
+import { TomTomMap } from "../TomTomMap";
 
 jest.mock("maplibre-gl", () => ({
     Map: jest.fn().mockReturnValue({
@@ -20,30 +20,30 @@ jest.mock("maplibre-gl", () => ({
 
 describe("Map localization mocked tests", () => {
     const mockedContainer = jest.fn() as unknown as HTMLElement;
-    GOSDKConfig.instance.put({ apiKey: "TEST_KEY" });
+    TomTomConfig.instance.put({ apiKey: "TEST_KEY" });
 
     afterEach(() => {
         jest.clearAllMocks();
     });
 
     test("Map init with given language in sdk config", () => {
-        jest.spyOn(GOSDKMap.prototype, "setLanguage");
-        const goSDKMap = new GOSDKMap(
+        jest.spyOn(TomTomMap.prototype, "setLanguage");
+        const tomtomMap = new TomTomMap(
             { container: mockedContainer },
             {
                 language: "en-GB"
             }
         );
-        expect(goSDKMap.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
-        expect(goSDKMap.setLanguage).toHaveBeenCalledTimes(1);
-        expect(goSDKMap.setLanguage).toHaveBeenCalledWith("en-GB");
+        expect(tomtomMap.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
+        expect(tomtomMap.setLanguage).toHaveBeenCalledTimes(1);
+        expect(tomtomMap.setLanguage).toHaveBeenCalledWith("en-GB");
     });
 
     test("Localize map after initialization", () => {
-        const goSDKMap = new GOSDKMap({ container: mockedContainer });
-        jest.spyOn(goSDKMap, "setLanguage");
-        goSDKMap.setLanguage("ar");
-        expect(goSDKMap.setLanguage).toHaveBeenCalledTimes(1);
-        expect(goSDKMap.setLanguage).toHaveBeenCalledWith("ar");
+        const tomtomMap = new TomTomMap({ container: mockedContainer });
+        jest.spyOn(tomtomMap, "setLanguage");
+        tomtomMap.setLanguage("ar");
+        expect(tomtomMap.setLanguage).toHaveBeenCalledTimes(1);
+        expect(tomtomMap.setLanguage).toHaveBeenCalledWith("ar");
     });
 });

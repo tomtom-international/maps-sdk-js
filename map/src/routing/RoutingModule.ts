@@ -62,7 +62,7 @@ import { buildDisplayRoutes } from "./util/Routes";
 import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomMap } from "../TomTomMap";
 
 const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
@@ -116,13 +116,13 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
+     * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(goSDKMap: GOSDKMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new RoutingModule(goSDKMap, config);
+    static async init(tomtomMap: TomTomMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
+        await waitUntilMapIsReady(tomtomMap);
+        return new RoutingModule(tomtomMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -238,7 +238,7 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
         ];
 
         for (const sourceWithLayers of routingSourcesWithLayers) {
-            this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayers, interactive);
+            this.tomtomMap._eventsProxy.ensureAdded(sourceWithLayers, interactive);
         }
     }
 
@@ -321,16 +321,16 @@ export class RoutingModule extends AbstractMapModule<RoutingModuleSourcesAndLaye
      */
     get events() {
         return {
-            routeLines: new EventsModule<Route<DisplayRouteProps>>(this.goSDKMap._eventsProxy, this.routeLines),
-            waypoints: new EventsModule<Waypoint>(this.goSDKMap._eventsProxy, this.waypoints),
-            vehicleRestricted: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.vehicleRestricted),
+            routeLines: new EventsModule<Route<DisplayRouteProps>>(this.tomtomMap._eventsProxy, this.routeLines),
+            waypoints: new EventsModule<Waypoint>(this.tomtomMap._eventsProxy, this.waypoints),
+            vehicleRestricted: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.vehicleRestricted),
             incidents: new EventsModule<RouteSections<DisplayTrafficSectionProps>>(
-                this.goSDKMap._eventsProxy,
+                this.tomtomMap._eventsProxy,
                 this.incidents
             ),
-            ferries: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.ferries),
-            tollRoads: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.tollRoads),
-            tunnels: new EventsModule<RouteSection>(this.goSDKMap._eventsProxy, this.tunnels)
+            ferries: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.ferries),
+            tollRoads: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.tollRoads),
+            tunnels: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.tunnels)
         };
     }
 

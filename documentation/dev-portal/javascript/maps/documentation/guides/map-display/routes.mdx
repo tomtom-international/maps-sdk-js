@@ -26,10 +26,10 @@ and [`Waypoints`](/maps-sdk-js/javascript/maps/documentation/api-reference/modul
 # Adding a route
 
 To show [`Routes`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Routes) on the map, make sure your API key is enabled
-and an instance of [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) is initialized,
+and an instance of [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) is initialized,
 then the [`RoutingModule`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_routes.RoutingModule) class can be used to show routes and waypoints.
 
-> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) instance in your project.
+> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
 Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
@@ -39,7 +39,7 @@ import { calculateRoute } from "@anw/go-sdk-js/services";
 // Given an array of `Waypoint`
 const waypoints = ...
 
-const routingModule = await RoutingModule.init(goSDKMap);
+const routingModule = await RoutingModule.init(map);
 routingModule.showWaypoints(waypoints);
 routingModule.showRoutes(await calculateRoute({ geoInputs: waypoints }));
 ```

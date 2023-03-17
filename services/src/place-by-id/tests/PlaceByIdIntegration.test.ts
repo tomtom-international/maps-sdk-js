@@ -1,11 +1,11 @@
-import { GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { TomTomConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 import { placeById, PlaceByIdResponse } from "..";
 import { baseSearchPOITestProps } from "../../shared/tests/IntegrationTestUtils";
 
 describe("Place By Id API", () => {
     beforeAll(() => {
-        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
+        TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
     });
 
     test("placeById works", async () => {

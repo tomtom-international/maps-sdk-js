@@ -8,7 +8,7 @@ import {
     StyleSourceWithLayers
 } from "../shared";
 import { notInTheStyle } from "../shared/ErrorMessages";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 
 /**
@@ -33,13 +33,13 @@ export class VectorTilesHillshade extends AbstractMapModule<
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
+     * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(goSDKMap: GOSDKMap, config?: VectorTilesHillshadeConfig): Promise<VectorTilesHillshade> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilesHillshade(goSDKMap, config);
+    static async init(tomtomMap: TomTomMap, config?: VectorTilesHillshadeConfig): Promise<VectorTilesHillshade> {
+        await waitUntilMapIsReady(tomtomMap);
+        return new VectorTilesHillshade(tomtomMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -74,7 +74,7 @@ export class VectorTilesHillshade extends AbstractMapModule<
     }
 
     private _addModuleToEventsProxy(interactive: boolean) {
-        this.goSDKMap._eventsProxy.ensureAdded(this.hillshade, interactive);
+        this.tomtomMap._eventsProxy.ensureAdded(this.hillshade, interactive);
     }
 
     setVisible(visible: boolean): void {
@@ -90,6 +90,6 @@ export class VectorTilesHillshade extends AbstractMapModule<
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.goSDKMap._eventsProxy, this.hillshade);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.hillshade);
     }
 }

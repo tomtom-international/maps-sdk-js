@@ -18,7 +18,7 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            localGOSDKJSMap: path.resolve("../map/dist/map.cjs.min.js"),
+            localMapsSDKJSMap: path.resolve("../map/dist/map.cjs.min.js"),
             "@anw/go-sdk-js/core": path.resolve("../core/dist/core.cjs.min.js")
         }
     }

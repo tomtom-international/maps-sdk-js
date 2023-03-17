@@ -1,7 +1,7 @@
-import { GOSDKConfig, placeTypes, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { TomTomConfig, placeTypes, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 export const putIntegrationTestsAPIKey = () => {
-    GOSDKConfig.instance.put({
+    TomTomConfig.instance.put({
         apiKey: process.env.API_KEY_TESTS
     });
 };

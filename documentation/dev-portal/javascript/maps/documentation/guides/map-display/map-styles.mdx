@@ -24,7 +24,7 @@ Map style is used to define the look and feel of a map. It’s written in JSON f
 
 Different applications may require different styles, so map visualisation can be aligned with brand identity or with specific use cases.
 For example, the map in a tourist app will show POIs like museums and restaurants, while a truck navigation app will include road shields.
-The Map Display module comes with two pre-defined styles, but it also supports loading custom styles.
+The Map Display module comes with multiple pre-defined styles, but it also supports loading custom styles.
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_pre_defined_styles"></a>}
 
@@ -48,13 +48,13 @@ These styles are showcased in the [Map Config Playground](https://hosted-example
 # Loading a style
 
 The style can be loaded when the map is initialized by specifying the `style` property of
-the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams) when initializing
-an instance of [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap).
+the [`TomTomMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams) when initializing
+an instance of [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
 
 ```javascript
-import { GOSDKMap } from "@anw/go-sdk-js/map";
+import { TomTomMap } from "@anw/go-sdk-js/map";
 
-const goSDKMap = new GOSDKMap(
+const map = new TomTomMap(
     {
         // Container element defined in the corresponding HTML file
         container: "map",
@@ -68,10 +68,10 @@ const goSDKMap = new GOSDKMap(
 );
 ```
 
-Additionally, you can change the style of the map at runtime using the [`setStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap#setStyle) method on the GOSDKMap class.
+Additionally, you can change the style of the map at runtime using the [`setStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap#setStyle) method on the TomTomMap class.
 
 ```javascript
-goSDKMap.setStyle("drivingDark");
+map.setStyle("drivingDark");
 ```
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_customizing_a_style"></a>}
@@ -93,13 +93,13 @@ as a [`CustomStyle`](/maps-sdk-js/javascript/maps/documentation/api-reference/mo
 
 # Excluding modules from a style
 
-When setting the map style, you can exclude modules from the loaded map style with the `exclude` property in [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams).
+When setting the map style, you can exclude modules from the loaded map style with the `exclude` property in [`TomTomMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
 For example, excluding [hill shading](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_adding_hill_shading) and [traffic flow](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic) from the map style:
 
 ```javascript
-import { GOSDKMap } from "@anw/go-sdk-js/map";
+import { TomTomMap } from "@anw/go-sdk-js/map";
 
-const goSDKMap = new GOSDKMap(
+const map = new TomTomMap(
     {
         // Container element defined in the corresponding HTML file
         container: "map",
@@ -121,20 +121,20 @@ const goSDKMap = new GOSDKMap(
 # Adding and filtering Points of Interest
 
 The styles from the Map Display module contain a Points of Interest (POIs) layer. This layer is enabled by default, but can be excluded from the
-map style with the `exclude` property of the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams).
+map style with the `exclude` property of the [`TomTomMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
+
+<img src="images/ss_poi_layer.png" alt="Map with POI layer enabled" />
+
+<br/>
 
 The POI layer visibility can be controlled during runtime with the [`VectorTilePOIs`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_POIs.VectorTilePOIs) module.
 
 ```javascript
 import { VectorTilePOIs } from "@anw/go-sdk-js/map";
 
-const pois = await VectorTilePOIs.init(goSDKMap);
+const pois = await VectorTilePOIs.init(map);
 pois.setVisible(false);
 ```
-
-<img src="images/ss_poi_layer.png" alt="Map with POI layer enabled" />
-
-<br/>
 
 It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`VectorTilePOIs`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_POIs.VectorTilePOIs).
 See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-poi-filters) example for this functionality.
@@ -149,12 +149,12 @@ The Map Display module allows you to add style layers such as hill shading to th
 
 <br/>
 
-Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`GOSDKMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#GOSDKMapParams).
+Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`TomTomMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
 
 To show or hide hill shading on runtime, use the [`VectorTilesHillshade`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_hillshade.VectorTilesHillshade) class:
 
 ``` javascript
-const hillshade = await VectorTilesHillshade.init(goSDKMap);
+const hillshade = await VectorTilesHillshade.init(map);
 hillshade.setVisible(false);
 ```
 

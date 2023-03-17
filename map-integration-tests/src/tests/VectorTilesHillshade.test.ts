@@ -1,4 +1,4 @@
-import { GOSDKThis } from "./types/GOSDKThis";
+import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { getNumVisibleLayersBySource } from "./util/TestUtils";
 import { HILLSHADE_SOURCE_ID } from "map";
@@ -21,8 +21,8 @@ describe("Map vector tiles hillshade module tests", () => {
 
         await expect(
             page.evaluate(async () => {
-                const goSDKThis = globalThis as GOSDKThis;
-                await goSDKThis.GOSDK.VectorTilesHillshade.init(goSDKThis.goSDKMap);
+                const mapsSDKThis = globalThis as MapsSDKThis;
+                await mapsSDKThis.MapsSDK.VectorTilesHillshade.init(mapsSDKThis.tomtomMap);
             })
         ).rejects.toBeDefined();
     });
@@ -34,39 +34,39 @@ describe("Map vector tiles hillshade module tests", () => {
         });
 
         await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.hillshade = await goSDKThis.GOSDK.VectorTilesHillshade.init(goSDKThis.goSDKMap, {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.VectorTilesHillshade.init(mapsSDKThis.tomtomMap, {
                 visible: false
             });
         });
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.setVisible(true));
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.isVisible())).toBe(true);
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(true));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(true);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.setVisible(false));
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.isVisible())).toBe(false);
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(false));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(false);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.resetConfig());
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.isVisible())).toBe(true);
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(true);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.applyConfig({ visible: false }));
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.isVisible())).toBe(false);
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.applyConfig({ visible: false }));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(false);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.applyConfig({ visible: true }));
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.applyConfig({ visible: true }));
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.applyConfig({ visible: false }));
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.applyConfig({ visible: false }));
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.applyConfig({}));
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.applyConfig({}));
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).hillshade?.resetConfig());
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);

@@ -14,38 +14,38 @@ import {
     WAYPOINTS_SOURCE_ID
 } from "map";
 import { Routes, WaypointLike } from "@anw/go-sdk-js/core";
-import { GOSDKThis } from "./types/GOSDKThis";
+import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
 import { getNumVisibleLayersBySource, waitForMapReady, waitUntilRenderedFeatures } from "./util/TestUtils";
 
 const initRouting = async () =>
     page.evaluate(async () => {
-        const goSDKThis = globalThis as GOSDKThis;
-        goSDKThis.routing = await goSDKThis.GOSDK.RoutingModule.init(goSDKThis.goSDKMap);
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.routing = await mapsSDKThis.MapsSDK.RoutingModule.init(mapsSDKThis.tomtomMap);
     });
 
 const showRoutes = async (routes: Routes) =>
     page.evaluate((inputRoutes: Routes) => {
-        (globalThis as GOSDKThis).routing?.showRoutes(inputRoutes);
+        (globalThis as MapsSDKThis).routing?.showRoutes(inputRoutes);
         // @ts-ignore
     }, routes);
 
 const selectRoute = async (index: number) =>
     page.evaluate((inputIndex: number) => {
-        (globalThis as GOSDKThis).routing?.selectRoute(inputIndex);
+        (globalThis as MapsSDKThis).routing?.selectRoute(inputIndex);
         // @ts-ignore
     }, index);
 
-const clearRoutes = async () => page.evaluate(() => (globalThis as GOSDKThis).routing?.clearRoutes());
+const clearRoutes = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearRoutes());
 
 const showWaypoints = async (waypoints: WaypointLike[]) =>
     page.evaluate((inputWaypoints) => {
-        (globalThis as GOSDKThis).routing?.showWaypoints(inputWaypoints);
+        (globalThis as MapsSDKThis).routing?.showWaypoints(inputWaypoints);
         // @ts-ignore
     }, waypoints);
 
-const clearWaypoints = async () => page.evaluate(() => (globalThis as GOSDKThis).routing?.clearWaypoints());
+const clearWaypoints = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
 
 const waitForRenderedWaypoints = async (numWaypoint: number) =>
     waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 10000);

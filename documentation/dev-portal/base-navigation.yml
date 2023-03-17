@@ -46,8 +46,8 @@ menu:
             title: Specialized search (WIP)
           - fileId: guides/search/reverse-geocoding
             title: Reverse geocoding (WIP)
-          - fileId: guides/search/ui-components
-            title: UI Components (TODO)
+#          - fileId: guides/search/ui-components
+#            title: UI Components
       - title: Routing
         items:
           - fileId: guides/routing/quickstart

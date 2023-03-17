@@ -16,7 +16,7 @@ import {
 } from "../shared";
 import { TrafficFlowFilters, TrafficIncidentsFilters, VectorTilesTrafficConfig } from ".";
 import { notInTheStyle } from "../shared/ErrorMessages";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from "./filters/TrafficFilters";
 import { getMergedAllFilter } from "../shared/MapLibreFilterUtils";
@@ -50,13 +50,13 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
+     * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(goSDKMap: GOSDKMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilesTraffic(goSDKMap, config);
+    static async init(tomtomMap: TomTomMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
+        await waitUntilMapIsReady(tomtomMap);
+        return new VectorTilesTraffic(tomtomMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -87,7 +87,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
         }
         // else
         this.originalFilters = {};
-        for (const layer of filterLayersBySources(this.goSDKMap.mapLibreMap, [
+        for (const layer of filterLayersBySources(this.tomtomMap.mapLibreMap, [
             VECTOR_TILES_INCIDENTS_SOURCE_ID,
             VECTOR_TILES_FLOW_SOURCE_ID
         ])) {
@@ -235,11 +235,11 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
     }
 
     private _addModuleToEventsProxy(sourceWithLayer: SourceWithLayers, interactive: boolean) {
-        this.goSDKMap._eventsProxy.ensureAdded(sourceWithLayer, interactive);
+        this.tomtomMap._eventsProxy.ensureAdded(sourceWithLayer, interactive);
     }
 
     private getIncidentLayers(): LayerSpecWithSource[] {
-        return filterLayersBySources(this.goSDKMap.mapLibreMap, [VECTOR_TILES_INCIDENTS_SOURCE_ID]);
+        return filterLayersBySources(this.tomtomMap.mapLibreMap, [VECTOR_TILES_INCIDENTS_SOURCE_ID]);
     }
 
     private getIncidentSymbolLayers(): LayerSpecWithSource[] {
@@ -251,7 +251,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
     }
 
     private getFlowLayers(): LayerSpecWithSource[] {
-        return filterLayersBySources(this.goSDKMap.mapLibreMap, [VECTOR_TILES_FLOW_SOURCE_ID]);
+        return filterLayersBySources(this.tomtomMap.mapLibreMap, [VECTOR_TILES_FLOW_SOURCE_ID]);
     }
 
     private applyFilter(filter: MultiSyntaxFilter, layers: LayerSpecification[]) {
@@ -359,8 +359,8 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficModuleSourcesAn
      */
     get events() {
         return {
-            incidents: new EventsModule(this.goSDKMap._eventsProxy, this.incidents),
-            flow: new EventsModule(this.goSDKMap._eventsProxy, this.flow)
+            incidents: new EventsModule(this.tomtomMap._eventsProxy, this.incidents),
+            flow: new EventsModule(this.tomtomMap._eventsProxy, this.flow)
         };
     }
 }

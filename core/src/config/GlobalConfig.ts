@@ -55,17 +55,17 @@ export const defaultConfig: GlobalConfig = {
 };
 
 /**
- * GO SDK Global configuration singleton class.
+ * TomTom Maps SDK Global configuration singleton class.
  * It initializes to a default basic configuration.
  * @group Configuration
  * @category Classes
  */
-export class GOSDKConfig {
-    static readonly instance = new GOSDKConfig();
+export class TomTomConfig {
+    static readonly instance = new TomTomConfig();
     private config: GlobalConfig = { ...defaultConfig };
 
     private constructor() {
-        return GOSDKConfig.instance;
+        return TomTomConfig.instance;
     }
 
     /**
@@ -96,6 +96,6 @@ export class GOSDKConfig {
  * @ignore
  */
 export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(givenConfig: T = {} as T): T => ({
-    ...GOSDKConfig.instance.get(),
+    ...TomTomConfig.instance.get(),
     ...givenConfig
 });

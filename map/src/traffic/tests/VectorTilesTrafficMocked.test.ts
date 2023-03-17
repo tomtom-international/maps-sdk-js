@@ -1,6 +1,6 @@
 import { Map } from "maplibre-gl";
 import { VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "../../shared";
-import { GOSDKMap } from "../../GOSDKMap";
+import { TomTomMap } from "../../TomTomMap";
 import { VectorTilesTraffic } from "../VectorTilesTraffic";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
@@ -10,7 +10,7 @@ describe("Vector tiles traffic module tests", () => {
     test("Initializing module with config", async () => {
         const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
         const flowSource = { id: VECTOR_TILES_FLOW_SOURCE_ID };
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(flowSource),
                 getStyle: jest
@@ -22,9 +22,9 @@ describe("Vector tiles traffic module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             }
-        } as unknown as GOSDKMap;
+        } as unknown as TomTomMap;
 
-        const traffic = await VectorTilesTraffic.init(goSDKMapMock, {
+        const traffic = await VectorTilesTraffic.init(tomtomMapMock, {
             incidents: {
                 visible: true,
                 filters: { any: [{ roadCategories: { show: "only", values: ["motorway", "trunk"] } }] },
@@ -40,9 +40,9 @@ describe("Vector tiles traffic module tests", () => {
             }
         });
         expect(traffic).toBeDefined();
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         // (see note on top of test file)
         traffic.setVisible(true);
@@ -68,7 +68,7 @@ describe("Vector tiles traffic module tests", () => {
 
     test("Initializing module with no config and no flow in style", async () => {
         const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(undefined),
                 getStyle: jest
@@ -80,12 +80,12 @@ describe("Vector tiles traffic module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             }
-        } as unknown as GOSDKMap;
+        } as unknown as TomTomMap;
 
-        const traffic = await VectorTilesTraffic.init(goSDKMapMock);
+        const traffic = await VectorTilesTraffic.init(tomtomMapMock);
         expect(traffic).toBeDefined();
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getSource).toHaveBeenCalled();
-        expect(goSDKMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });
 });

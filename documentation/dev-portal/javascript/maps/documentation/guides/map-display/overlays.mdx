@@ -22,7 +22,7 @@ This module takes a [`GeometryDataResponse`](/maps-sdk-js/javascript/maps/docume
 > A [`GeometryDataResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#GeometryDataResponse) is returned by the Geometry Data service.
 Read more about this service [here](/maps-sdk-js/javascript/maps/documentation/guides/search/specialized-search#_geometry_data_search).
 
-> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) instance in your project.
+> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
 Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
@@ -31,7 +31,7 @@ import { geocode, geometryData } from "@anw/go-sdk-js/services";
 
 const areaToSearch = await geocode({ query: "paris", limit: 1 });
 const areaGeometry = await geometryData({ geometries: areaToSearch });
-const geometryModule = await GeometryModule.init(sdkMap);
+const geometryModule = await GeometryModule.init(map);
 geometryModule.show(areaGeometry);
 ```
 

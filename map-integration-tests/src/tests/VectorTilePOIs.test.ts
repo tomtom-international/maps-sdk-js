@@ -1,7 +1,7 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { FilterablePOICategory, getCategoryIcons, POI_SOURCE_ID, VectorTilePOIsFeature } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { GOSDKThis } from "./types/GOSDKThis";
+import { MapsSDKThis } from "./types/MapsSDKThis";
 import { Point } from "geojson";
 import { getNumVisibleLayersBySource, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
 
@@ -38,8 +38,8 @@ describe("Map vector tile POI filtering tests", () => {
 
         await expect(
             page.evaluate(async () => {
-                const goSDKThis = globalThis as GOSDKThis;
-                await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
+                const mapsSDKThis = globalThis as MapsSDKThis;
+                await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
             })
         ).rejects.toBeDefined();
     });
@@ -51,37 +51,39 @@ describe("Map vector tile POI filtering tests", () => {
         });
 
         await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, { visible: false });
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap, {
+                visible: false
+            });
         });
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(true));
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).pois?.isVisible())).toBe(true);
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(true));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).pois?.isVisible())).toBe(true);
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(false));
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).pois?.isVisible())).toBe(false);
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(false));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).pois?.isVisible())).toBe(false);
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.resetConfig());
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).pois?.isVisible())).toBe(true);
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).pois?.isVisible())).toBe(true);
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.applyConfig({ visible: false }));
-        expect(await page.evaluate(() => (globalThis as GOSDKThis).pois?.isVisible())).toBe(false);
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.applyConfig({ visible: false }));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).pois?.isVisible())).toBe(false);
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.applyConfig({ visible: true }));
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.applyConfig({ visible: true }));
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.applyConfig({ visible: false }));
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.applyConfig({ visible: false }));
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.applyConfig({}));
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.applyConfig({}));
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.resetConfig());
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(1);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -93,8 +95,8 @@ describe("Map vector tile POI filtering tests", () => {
             center: [-0.12621, 51.50394]
         });
         await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
         });
         await waitForMapIdle();
         let renderedPOIs = await waitForRenderedPOIsChange(0);
@@ -102,7 +104,7 @@ describe("Map vector tile POI filtering tests", () => {
 
         // exclude TRANSPORTATION_GROUP, IMPORTANT_TOURIST_ATTRACTION, expect to not find them in rendered features
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.filterCategories({
+            (globalThis as MapsSDKThis).pois?.filterCategories({
                 show: "all_except",
                 values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
             })
@@ -115,7 +117,7 @@ describe("Map vector tile POI filtering tests", () => {
 
         // change filter config to show "only" TRANSPORTATION_GROUP and expect all features to be from TRANSPORTATION_GROUP
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.filterCategories({
+            (globalThis as MapsSDKThis).pois?.filterCategories({
                 show: "only",
                 values: ["TRANSPORTATION_GROUP"]
             })
@@ -125,7 +127,7 @@ describe("Map vector tile POI filtering tests", () => {
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
         // resetting config:
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.resetConfig());
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         await waitForMapIdle();
 
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
@@ -142,8 +144,8 @@ describe("Map vector tile POI filtering tests", () => {
         });
         // config poi layer to only include TRANSPORTATION_GROUP categories and expect all features to be from TRANSPORTATION_GROUP
         await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap, {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap, {
                 filters: {
                     categories: {
                         show: "only",
@@ -159,7 +161,7 @@ describe("Map vector tile POI filtering tests", () => {
 
         // set filter to include only and expect all features to be from the included category values
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.filterCategories({
+            (globalThis as MapsSDKThis).pois?.filterCategories({
                 show: "only",
                 values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
             })
@@ -170,7 +172,7 @@ describe("Map vector tile POI filtering tests", () => {
 
         // change filter settings to exclude TRANSPORTATION_GROUP and expect to not find any features from TRANSPORTATION_GROUP
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.filterCategories({
+            (globalThis as MapsSDKThis).pois?.filterCategories({
                 show: "all_except",
                 values: ["TRANSPORTATION_GROUP"]
             })
@@ -180,14 +182,14 @@ describe("Map vector tile POI filtering tests", () => {
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(false);
 
         // setting visibility to false:
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.setVisible(false));
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(false));
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
         await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(renderedPOIs).toHaveLength(0);
 
         // re-setting config:
-        await page.evaluate(() => (globalThis as GOSDKThis).pois?.resetConfig());
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(1);
         await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
@@ -210,20 +212,20 @@ describe("Map vector tile POI filtering tests", () => {
             center: [-0.12621, 51.50394]
         });
         await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
         });
 
         // manually override existing POI layer filter to be able to verify it's combined with categories filter
         await page.evaluate(
-            (inputExistingFilter) => (globalThis as GOSDKThis).mapLibreMap.setFilter("POI", inputExistingFilter),
+            (inputExistingFilter) => (globalThis as MapsSDKThis).mapLibreMap.setFilter("POI", inputExistingFilter),
             existingFilter
         );
         await page.evaluate(
             (inputExistingFilter) =>
                 // overriding existing layerFilter with the applied filters only for test purposes
                 // @ts-ignore
-                ((globalThis as GOSDKThis).pois.originalFilter = inputExistingFilter),
+                ((globalThis as MapsSDKThis).pois.originalFilter = inputExistingFilter),
             existingFilter
         );
         await waitForMapIdle();
@@ -231,7 +233,7 @@ describe("Map vector tile POI filtering tests", () => {
         expect(areAllIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION", "RAILROAD_STATION"])).toBe(true);
 
         await page.evaluate(() =>
-            (globalThis as GOSDKThis).pois?.filterCategories({
+            (globalThis as MapsSDKThis).pois?.filterCategories({
                 show: "all_except",
                 values: ["IMPORTANT_TOURIST_ATTRACTION"]
             })
@@ -256,31 +258,34 @@ describe("Map vector tile POI feature tests", () => {
         });
 
         await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.pois = await goSDKThis.GOSDK.VectorTilePOIs.init(goSDKThis.goSDKMap);
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
         });
         await waitForMapIdle();
 
         const poiCoordinates = await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            const geometry = goSDKThis.mapLibreMap.queryRenderedFeatures({ layers: ["POI"] })[0].geometry as Point;
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            const geometry = mapsSDKThis.mapLibreMap.queryRenderedFeatures({ layers: ["POI"] })[0].geometry as Point;
             return geometry.coordinates;
         });
 
         await page.evaluate(async () => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.pois?.events.on("click", (_lngLat, topFeature) => (goSDKThis._clickedTopFeature = topFeature));
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.pois?.events.on(
+                "click",
+                (_lngLat, topFeature) => (mapsSDKThis._clickedTopFeature = topFeature)
+            );
         });
 
         const mapLibreCoordinates = await page.evaluate(
-            (coordinates) => (globalThis as GOSDKThis).mapLibreMap.project(coordinates),
+            (coordinates) => (globalThis as MapsSDKThis).mapLibreMap.project(coordinates),
             poiCoordinates
         );
 
         await page.mouse.click(mapLibreCoordinates.x, mapLibreCoordinates.y);
 
         const clickedFeature = (await page.evaluate(
-            async () => (globalThis as GOSDKThis)._clickedTopFeature
+            async () => (globalThis as MapsSDKThis)._clickedTopFeature
         )) as VectorTilePOIsFeature;
 
         expect(clickedFeature.properties.name).toBeDefined();

@@ -1,11 +1,11 @@
 import { Map, Source, SourceSpecification } from "maplibre-gl";
 
 /**
- * Contains a source relevant for GO SDK JS.
+ * Contains a source relevant for TomTom Maps SDK JS.
  * * The source might already be initialized from the map style, or it might be initialized here.
  * @ignore
  */
-export class GOSDKSource<
+export class TomTomMapSource<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
     RUNTIME_SOURCE extends Source = Source
 > {

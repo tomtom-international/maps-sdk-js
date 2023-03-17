@@ -25,7 +25,7 @@ export type ToBeAddedLayerSpec<L extends LayerSpecification = LayerSpecification
 };
 
 /**
- * GO SDK layer specifications do not come with the source ID initialized yet.
+ * TomTom Maps SDK layer specifications do not come with the source ID initialized yet.
  * @ignore
  */
 export type ToBeAddedLayerSpecWithoutSource<L extends LayerSpecification = LayerSpecification> = Omit<
@@ -34,7 +34,7 @@ export type ToBeAddedLayerSpecWithoutSource<L extends LayerSpecification = Layer
 >;
 
 /**
- * GO SDK layer specifications template, without ID nor source, to be still initialized in some map module.
+ * TomTom Maps SDK layer specifications template, without ID nor source, to be still initialized in some map module.
  * @ignore
  */
 export type LayerSpecTemplate<L extends LayerSpecification> = Omit<L, "id" | "source">;
@@ -46,7 +46,7 @@ export type LayerSpecTemplate<L extends LayerSpecification> = Omit<L, "id" | "so
 export type LayerSpecFilter = (layerSpec: LayerSpecification) => boolean;
 
 /**
- * GO SDK layer specifications template, without ID nor source, to be still initialized in some map module.
+ * TomTom Maps SDK layer specifications template, without ID nor source, to be still initialized in some map module.
  * @ignore
  */
 export type SourceWithLayers = StyleSourceWithLayers | GeoJSONSourceWithLayers<FeatureCollection>;

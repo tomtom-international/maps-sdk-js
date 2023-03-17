@@ -1,7 +1,7 @@
 import { Map } from "maplibre-gl";
 import { AbstractMapModule } from "../AbstractMapModule";
 import { VectorTileMapModuleConfig } from "../types";
-import { GOSDKMap } from "../../GOSDKMap";
+import { TomTomMap } from "../../TomTomMap";
 import { waitUntilMapIsReady } from "../mapUtils";
 import Mock = jest.Mock;
 
@@ -10,9 +10,9 @@ describe("AbstractMapModule tests", () => {
         initCalled?: boolean;
         configApplied?: VectorTileMapModuleConfig | null;
 
-        static async init(goSDKMap: GOSDKMap, config?: VectorTileMapModuleConfig): Promise<TestModule> {
-            await waitUntilMapIsReady(goSDKMap);
-            return new TestModule(goSDKMap, config);
+        static async init(tomtomMap: TomTomMap, config?: VectorTileMapModuleConfig): Promise<TestModule> {
+            await waitUntilMapIsReady(tomtomMap);
+            return new TestModule(tomtomMap, config);
         }
 
         protected initSourcesWithLayers(): Record<string, never> {
@@ -31,15 +31,15 @@ describe("AbstractMapModule tests", () => {
     }
 
     test("Constructor with style loaded", async () => {
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 once: jest.fn((_, callback) => callback())
             } as unknown as Map
-        } as GOSDKMap;
+        } as TomTomMap;
 
-        let testModule = await TestModule.init(goSDKMapMock);
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
+        let testModule = await TestModule.init(tomtomMapMock);
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
         expect(testModule.getConfig()).toBeUndefined();
@@ -47,44 +47,44 @@ describe("AbstractMapModule tests", () => {
 
         // Repeating test with config ----------------------:
         const testConfig = { visible: false };
-        (goSDKMapMock.mapLibreMap.isStyleLoaded as Mock).mockClear();
-        testModule = await TestModule.init(goSDKMapMock, testConfig);
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
+        (tomtomMapMock.mapLibreMap.isStyleLoaded as Mock).mockClear();
+        testModule = await TestModule.init(tomtomMapMock, testConfig);
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toStrictEqual(testConfig);
         expect(testModule.getConfig()).toStrictEqual(testConfig);
     });
 
     test("Constructor with style not loaded yet", async () => {
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
                 once: jest.fn((_, callback) => callback())
             } as unknown as Map
-        } as GOSDKMap;
+        } as TomTomMap;
 
-        let testModule = await TestModule.init(goSDKMapMock);
-        let styleDataEventCallback = (goSDKMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
+        let testModule = await TestModule.init(tomtomMapMock);
+        let styleDataEventCallback = (tomtomMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
         styleDataEventCallback();
 
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
-        expect(goSDKMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata", styleDataEventCallback);
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
+        expect(tomtomMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata", styleDataEventCallback);
 
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
         expect(testModule.getConfig()).toBeUndefined();
 
         // Repeating test with config -----------------------:
-        (goSDKMapMock.mapLibreMap.isStyleLoaded as Mock).mockClear();
-        (goSDKMapMock.mapLibreMap.once as Mock).mockClear();
+        (tomtomMapMock.mapLibreMap.isStyleLoaded as Mock).mockClear();
+        (tomtomMapMock.mapLibreMap.once as Mock).mockClear();
 
         const testConfig = { visible: false };
-        testModule = await TestModule.init(goSDKMapMock, testConfig);
-        styleDataEventCallback = (goSDKMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
+        testModule = await TestModule.init(tomtomMapMock, testConfig);
+        styleDataEventCallback = (tomtomMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
         styleDataEventCallback();
 
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
-        expect(goSDKMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata", styleDataEventCallback);
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
+        expect(tomtomMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata", styleDataEventCallback);
 
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toStrictEqual(testConfig);
@@ -92,19 +92,19 @@ describe("AbstractMapModule tests", () => {
     });
 
     test("Constructor with style not loaded yet and style data timeout", async () => {
-        const goSDKMapMock = {
+        const tomtomMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
                 once: jest.fn((_, callback) => callback())
             } as unknown as Map
-        } as GOSDKMap;
+        } as TomTomMap;
 
-        const testModule = await TestModule.init(goSDKMapMock);
+        const testModule = await TestModule.init(tomtomMapMock);
         await new Promise((resolve) => setTimeout(resolve, 6000));
-        const styleDataEventCallback = (goSDKMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
+        const styleDataEventCallback = (tomtomMapMock.mapLibreMap.once as Mock).mock.calls[0][1];
         styleDataEventCallback();
-        expect(goSDKMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
-        expect(goSDKMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata", styleDataEventCallback);
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
+        expect(tomtomMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata", styleDataEventCallback);
 
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();

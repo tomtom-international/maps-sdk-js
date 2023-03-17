@@ -1,6 +1,6 @@
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
+import { TomTomConfig } from "@anw/go-sdk-js/core";
 import { fetchWith, get, post } from "../Fetch";
 import { geocode } from "../../geocode";
 import { search } from "../../search";
@@ -90,7 +90,7 @@ describe("Fetch utility tests", () => {
         });
 
         test("Set global and per service trackingId header", async () => {
-            GOSDKConfig.instance.put({
+            TomTomConfig.instance.put({
                 trackingId: "global-id"
             });
             axiosMock.onGet().reply(200, { summary: {}, results: [] });

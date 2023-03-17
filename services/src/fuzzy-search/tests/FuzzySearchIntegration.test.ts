@@ -1,4 +1,4 @@
-import { Fuel, GOSDKConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { Fuel, TomTomConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
 
 import { search } from "../../search";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
@@ -10,7 +10,7 @@ import { parseFuzzySearchResponse } from "../ResponseParser";
 
 describe("Fuzzy Search service", () => {
     beforeAll(() => {
-        GOSDKConfig.instance.put({ apiKey: process.env.API_KEY });
+        TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
     });
 
     const expectWorkingResult = expect.objectContaining<FuzzySearchResponse>({

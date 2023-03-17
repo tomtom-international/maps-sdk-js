@@ -2,7 +2,7 @@ import { GeometryDataResponse } from "@anw/go-sdk-js/core";
 import { GEOMETRY_SOURCE_ID, GeometryModuleConfig } from "map";
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { GOSDKThis } from "./types/GOSDKThis";
+import { MapsSDKThis } from "./types/MapsSDKThis";
 import amsterdamGeometryData from "./GeometryModule.test.data.json";
 import { Position } from "geojson";
 import { getNumVisibleLayersBySource, waitForMapReady, waitUntilRenderedFeatures } from "./util/TestUtils";
@@ -10,8 +10,8 @@ import { getNumVisibleLayersBySource, waitForMapReady, waitUntilRenderedFeatures
 const initGeometry = async (config?: GeometryModuleConfig) =>
     page.evaluate(
         async (inputConfig: GeometryModuleConfig) => {
-            const goSDKThis = globalThis as GOSDKThis;
-            goSDKThis.geometry = await goSDKThis.GOSDK.GeometryModule.init(goSDKThis.goSDKMap, inputConfig);
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.geometry = await mapsSDKThis.MapsSDK.GeometryModule.init(mapsSDKThis.tomtomMap, inputConfig);
         },
         // @ts-ignore
         config
@@ -19,11 +19,11 @@ const initGeometry = async (config?: GeometryModuleConfig) =>
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource(GEOMETRY_SOURCE_ID);
 
-const clearGeometry = async () => page.evaluate(() => (globalThis as GOSDKThis).geometry?.clear());
+const clearGeometry = async () => page.evaluate(() => (globalThis as MapsSDKThis).geometry?.clear());
 
 const showGeometry = async (geometry: GeometryDataResponse) =>
     page.evaluate(
-        (inputGeometry: GeometryDataResponse) => (globalThis as GOSDKThis).geometry?.show(inputGeometry),
+        (inputGeometry: GeometryDataResponse) => (globalThis as MapsSDKThis).geometry?.show(inputGeometry),
         // @ts-ignore
         geometry
     );

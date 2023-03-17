@@ -12,10 +12,10 @@
     <img src="documentation/images/tomtom-logo.svg" alt="Logo" width="400" height="90">
   </a>
 
-  <h3 align="center">go-sdk-js</h3>
+  <h3 align="center">maps-sdk-js</h3>
 
   <p align="center">
-    GO SDK JS is a JavaScript library for building web applications using TomTom maps and location services
+    Maps SDK JS is a JavaScript library for building web applications using TomTom maps and location services
     <br />
     <a href="https://github.com/tomtom-international/go-sdk-js/tree/main/documentation"><strong>Explore the docs »</strong></a>
     <br />
@@ -33,7 +33,7 @@
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
-      <li><a href="#what-is-go-sdk-for-web">What is GO-SDK for Web?</a></li>
+      <li><a href="#what-is-maps-sdk-for-javascript">What is Maps SDK for JavaScript?</a></li>
       </ul>
     </li>
     <li>
@@ -56,13 +56,13 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-GO SDK JS is a JavaScript library for building web applications using TomTom maps and location services. With GO SDK JS you can build powerful web applications that seamlessly integrate TomTom's
+Maps SDK JS is a JavaScript library for building web applications using TomTom maps and location services. With Maps SDK JS you can build powerful web applications that seamlessly integrate TomTom's
 mapping and service technologies including map display and interaction, search, routing, and traffic.
 
 <br />
 
-<!-- WHAT IS GO SDK WEB -->
-## What is GO-SDK for Web?
+<!-- WHAT IS MAPS SDK JAVASCRIPT -->
+## What is Maps SDK for JavaScript?
 
 Easily integrate TomTom services into your web application with this convenient client library that hides the complexity of bare RESTful service calls from developers. Boost your productivity with fully styleable and easily customized components. Check out the examples page for the most common use cases for your web application.
 
@@ -71,7 +71,7 @@ Easily integrate TomTom services into your web application with this convenient 
 
 **TODO**: Explain how to install the sdk for normal usage of it.
 
-To get start to contributing to **GO-SDK-WEB**, please follow the steps bellow.
+To get start to contributing to **MAPS-SDK-JS**, please follow the steps below.
 
 <br />
 
@@ -154,7 +154,7 @@ Read more about NVM here: [https://github.com/nvm-sh/nvm](https://github.com/nvm
 
 >```node_modules``` directory appears not in workspaces, but in the root directory. This is how it should be.
 
-## Development of go-sdk-js
+## Development of maps-sdk-js
 
 * [Introduction](documentation/product-information/introduction.md)
 * [Getting development started](documentation/development/getting-development-started.md)
@@ -165,7 +165,7 @@ Read more about NVM here: [https://github.com/nvm-sh/nvm](https://github.com/nvm
 * [Quality control](documentation/development/quality-control.md)
 * [Generating documentation](documentation/development/docs.md)
 
-## Parts of go-sdk-js
+## Parts of maps-sdk-js
 
 ### Core
 

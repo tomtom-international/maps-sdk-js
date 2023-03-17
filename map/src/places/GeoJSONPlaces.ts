@@ -10,7 +10,7 @@ import {
     ToBeAddedLayerSpec
 } from "../shared";
 import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { SymbolLayerSpecification } from "maplibre-gl";
 import { changeLayoutAndPaintProps, buildPlacesLayerSpec, preparePlacesForDisplay } from "./preparePlacesForDisplay";
@@ -32,13 +32,13 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
+     * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(goSDKMap: GOSDKMap, config?: PlaceModuleConfig): Promise<GeoJSONPlaces> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new GeoJSONPlaces(goSDKMap, config);
+    static async init(tomtomMap: TomTomMap, config?: PlaceModuleConfig): Promise<GeoJSONPlaces> {
+        await waitUntilMapIsReady(tomtomMap);
+        return new GeoJSONPlaces(tomtomMap, config);
     }
 
     protected initSourcesWithLayers(config?: PlaceModuleConfig) {
@@ -67,7 +67,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
     }
 
     private _addModuleToEventsProxy(interactive: boolean) {
-        this.goSDKMap._eventsProxy.ensureAdded(this.places, interactive);
+        this.tomtomMap._eventsProxy.ensureAdded(this.places, interactive);
     }
 
     /**
@@ -139,6 +139,6 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesModuleSourcesAndLayer
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule<Place>(this.goSDKMap._eventsProxy, this.places);
+        return new EventsModule<Place>(this.tomtomMap._eventsProxy, this.places);
     }
 }

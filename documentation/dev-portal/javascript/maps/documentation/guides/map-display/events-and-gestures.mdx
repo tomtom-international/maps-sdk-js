@@ -18,10 +18,10 @@ The Map Display module allows events to be detected on the TomTom map layers. By
 -   `"long-hover"` - a long-hover event gets fired when the user's pointer is hovering over a layer for a longer period of time
 
 These events can be customized through the [`MapEventsConfig`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
-when initializing a [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap).
+when initializing a [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
 
 > If, instead of events on the TomTom map layers, you're interested in defining events directly on the MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/)
-contained by the [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap), take a look at [MapLibre Events](https://maplibre.org/maplibre-gl-js-docs/api/events/).
+contained by the [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap), take a look at [MapLibre Events](https://maplibre.org/maplibre-gl-js-docs/api/events/).
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_listening_for_events"></a>}
 
@@ -31,11 +31,11 @@ Event handlers can be registered per individual module in the Map Display module
 on traffic incidents ([`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module)
 can be registered with:
 
-> Make sure you have an initialized [`GOSDKMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.GOSDKMap) instance in your project.
+> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
 Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
-const traffic = await VectorTilesTraffic.init(sdkMap);
+const traffic = await VectorTilesTraffic.init(map);
 traffic.events.incidents.on("hover", eventHandler);
 ```
 

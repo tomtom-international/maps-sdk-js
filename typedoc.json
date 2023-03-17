@@ -10,7 +10,6 @@
     "./map/src/shared",
     "./map/src/traffic",
 
-
     "./services/src/fuzzy-search",
     "./services/src/ev-charging-station-availability",
     "./services/src/geocode",
@@ -27,11 +26,11 @@
   "entryDocument": "home.mdx",
   "out": "documentation/dev-portal/javascript/maps/documentation/api-reference",
   "readme": "none",
-  "name": "GO-SDK-JS",
+  "name": "Maps SDK for JavaScript",
   "internalModule": "internal",
   "excludeExternals": true,
-  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports", "./documentation/go-sdk-theme/dist"],
-  "theme": "go-sdk-theme",
+  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports", "./documentation/maps-sdk-theme/dist"],
+  "theme": "maps-sdk-theme",
   "preserveAnchorCasing": true,
   "externalSymbolLinkMappings": {
     "maplibre-gl": {

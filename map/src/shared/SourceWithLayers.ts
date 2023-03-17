@@ -6,7 +6,7 @@ import {
     Source,
     SourceSpecification
 } from "maplibre-gl";
-import { GOSDKSource } from "./GOSDKSource";
+import { TomTomMapSource } from "./TomTomMapSource";
 import { LayerSpecFilter, LayerSpecWithSource, ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
 import { FeatureCollection } from "geojson";
 import { asDefined } from "./AssertionUtils";
@@ -23,7 +23,7 @@ export abstract class AbstractSourceWithLayers<
     layerSpecs: LAYER_SPEC[];
     constructor(
         readonly map: Map,
-        readonly source: GOSDKSource<SOURCE_SPEC, RUNTIME_SOURCE>,
+        readonly source: TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>,
         layerSpecs: LAYER_SPEC[]
     ) {
         this.layerSpecs = layerSpecs;
@@ -73,7 +73,7 @@ export class StyleSourceWithLayers<
     constructor(map: Map, runtimeSource: RUNTIME_SOURCE) {
         super(
             map,
-            new GOSDKSource<SOURCE_SPEC, RUNTIME_SOURCE>(
+            new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(
                 runtimeSource.id,
                 map.getStyle().sources[runtimeSource.id] as SOURCE_SPEC,
                 runtimeSource
@@ -93,7 +93,7 @@ export class AddedSourceWithLayers<
     constructor(map: Map, sourceID: string, sourceSpec: SOURCE_SPEC, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
         super(
             map,
-            new GOSDKSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceID, sourceSpec),
+            new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceID, sourceSpec),
             // We ensure the source ID is assigned to the layers:
             layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID } as ToBeAddedLayerSpec))
         );

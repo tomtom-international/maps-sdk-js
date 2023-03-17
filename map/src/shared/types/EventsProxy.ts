@@ -1,5 +1,5 @@
 import { LngLat, MapGeoJSONFeature } from "maplibre-gl";
-import { SourceWithLayers } from "./GOSDKLayerSpecs";
+import { SourceWithLayers } from "./MapsSDKLayerSpecs";
 
 export type ClickEventType = "click" | "contextmenu";
 export type HoverEventType = "hover" | "long-hover";

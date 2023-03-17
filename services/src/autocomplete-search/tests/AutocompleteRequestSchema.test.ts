@@ -1,4 +1,4 @@
-import { GOSDKConfig, Language } from "@anw/go-sdk-js/core";
+import { TomTomConfig, Language } from "@anw/go-sdk-js/core";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { autocompleteSearchRequestSchema } from "../AutocompleteSearchRequestSchema";
 import { AutocompleteSearchParams } from "../types";
@@ -8,7 +8,7 @@ import { MAX_EXEC_TIMES_MS } from "../../../perfConfig";
 
 describe("Autocomplete Schema Validation", () => {
     beforeAll(() => {
-        GOSDKConfig.instance.put({
+        TomTomConfig.instance.put({
             language: process.env.LANGUAGE as Language
         });
     });

@@ -1,6 +1,6 @@
 import { Map } from "maplibre-gl";
-import { GOSDKConfig } from "@anw/go-sdk-js/core";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomConfig } from "@anw/go-sdk-js/core";
+import { TomTomMap } from "../TomTomMap";
 
 jest.mock("maplibre-gl", () => ({
     Map: jest.fn().mockReturnValue({
@@ -22,12 +22,12 @@ jest.mock("maplibre-gl", () => ({
 describe("Map initialization mocked tests", () => {
     const mockedContainer = jest.fn() as unknown as HTMLElement;
 
-    beforeEach(() => GOSDKConfig.instance.reset());
+    beforeEach(() => TomTomConfig.instance.reset());
 
     test("Map init with mostly default parameters", () => {
-        GOSDKConfig.instance.put({ apiKey: "TEST_KEY" });
-        const goSDKMap = new GOSDKMap({ container: mockedContainer });
-        expect(goSDKMap).toBeDefined();
+        TomTomConfig.instance.put({ apiKey: "TEST_KEY" });
+        const tomtomMap = new TomTomMap({ container: mockedContainer });
+        expect(tomtomMap).toBeDefined();
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
             style:
@@ -40,8 +40,8 @@ describe("Map initialization mocked tests", () => {
     });
 
     test("Map init with some given parameters", () => {
-        GOSDKConfig.instance.put({ apiKey: "TEST_KEY" });
-        const goSDKMap = new GOSDKMap(
+        TomTomConfig.instance.put({ apiKey: "TEST_KEY" });
+        const tomtomMap = new TomTomMap(
             { container: mockedContainer, zoom: 3, center: [10, 20] },
             {
                 apiKey: "TEST_KEY_2",
@@ -52,7 +52,7 @@ describe("Map initialization mocked tests", () => {
                 }
             }
         );
-        expect(goSDKMap).toBeDefined();
+        expect(tomtomMap).toBeDefined();
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
             style: "https://custom-style.test.tomtom.com/foo/bar?key=TEST_KEY_2",

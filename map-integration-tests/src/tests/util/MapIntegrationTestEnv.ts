@@ -1,5 +1,5 @@
-import { GOSDKMapParams, MapLibreOptions } from "map";
-import { GOSDKThis } from "../types/GOSDKThis";
+import { TomTomMapParams, MapLibreOptions } from "map";
+import { MapsSDKThis } from "../types/MapsSDKThis";
 
 export class MapIntegrationTestEnv {
     consoleErrors: unknown[] = [];
@@ -9,21 +9,21 @@ export class MapIntegrationTestEnv {
         page.on("console", (message) => message.type() === "error" && this.consoleErrors.push(message));
     }
 
-    async loadMap(mapLibreOptions: Partial<MapLibreOptions>, goSDKParams?: GOSDKMapParams) {
+    async loadMap(mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: TomTomMapParams) {
         this.consoleErrors = [];
         return page.evaluate(
-            (pageMapLibreOptions, pageGOSDKParams, pageAPIKey) => {
+            (pageMapLibreOptions, pageTomTomMapParams, pageAPIKey) => {
                 document.querySelector("canvas")?.remove();
-                const goSDKThis = globalThis as GOSDKThis;
-                goSDKThis.goSDKMap = new goSDKThis.GOSDK.GOSDKMap(
+                const mapsSDKThis = globalThis as MapsSDKThis;
+                mapsSDKThis.tomtomMap = new mapsSDKThis.MapsSDK.TomTomMap(
                     { ...pageMapLibreOptions, container: document.getElementById("map") },
-                    { ...pageGOSDKParams, apiKey: pageAPIKey }
+                    { ...pageTomTomMapParams, apiKey: pageAPIKey }
                 );
-                goSDKThis.mapLibreMap = goSDKThis.goSDKMap.mapLibreMap;
+                mapsSDKThis.mapLibreMap = mapsSDKThis.tomtomMap.mapLibreMap;
             },
             // @ts-ignore
             mapLibreOptions,
-            goSDKParams,
+            tomtomMapParams,
             process.env.API_KEY
         );
     }

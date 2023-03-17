@@ -11,7 +11,7 @@ import {
 import { FilterablePOICategory, VectorTilePOIsFeature, VectorTilePOIsConfig } from "./types/VectorTilePOIsConfig";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
-import { GOSDKMap } from "../GOSDKMap";
+import { TomTomMap } from "../TomTomMap";
 import { MapStylePOIClassification, poiClassificationToIconID } from "../places";
 import { POIClassificationGroup, poiClassificationGroups } from "./poiClassificationGroups";
 import { buildMappedValuesFilter, getMergedAllFilter } from "../shared/MapLibreFilterUtils";
@@ -53,13 +53,13 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
-     * @param goSDKMap The GOSDKMap instance.
+     * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(goSDKMap: GOSDKMap, config?: VectorTilePOIsConfig): Promise<VectorTilePOIs> {
-        await waitUntilMapIsReady(goSDKMap);
-        return new VectorTilePOIs(goSDKMap, config);
+    static async init(tomtomMap: TomTomMap, config?: VectorTilePOIsConfig): Promise<VectorTilePOIs> {
+        await waitUntilMapIsReady(tomtomMap);
+        return new VectorTilePOIs(tomtomMap, config);
     }
 
     protected initSourcesWithLayers() {
@@ -89,7 +89,7 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
     }
 
     private _addModuleToEventsProxy(interactive: boolean) {
-        this.goSDKMap._eventsProxy.ensureAdded(this.poi, interactive);
+        this.tomtomMap._eventsProxy.ensureAdded(this.poi, interactive);
     }
 
     isVisible(): boolean {
@@ -126,6 +126,6 @@ export class VectorTilePOIs extends AbstractMapModule<POIsModuleSourcesAndLayers
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule<VectorTilePOIsFeature>(this.goSDKMap._eventsProxy, this.poi);
+        return new EventsModule<VectorTilePOIsFeature>(this.tomtomMap._eventsProxy, this.poi);
     }
 }
