@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.96](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.95...v0.1.96) (2023-03-20)
+
+
+### Features
+
+* **743:** exposing sources and layers from modules ([a8099e2](https://github.com/tomtom-international/go-sdk-js/commit/a8099e238826111f65a00a4a2f871c1e12ceff0e))
+* **743:** refactoring to only expose ids ([446437f](https://github.com/tomtom-international/go-sdk-js/commit/446437f1a11eba225f363c3f3c0102a557e8a315))
+
 ### [0.1.95](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.94...v0.1.95) (2023-03-15)
 
 
