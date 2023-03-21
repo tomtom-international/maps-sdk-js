@@ -11,7 +11,7 @@ const config: Config = {
     extensionsToTreatAsEsm: [".ts"],
     testPathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/node_modules/", "<rootDir>/.rollup.cache/"],
     moduleNameMapper: {
-        "@anw/go-sdk-js/core": "core"
+        "@anw/maps-sdk-js/core": "core"
     }
 };
 

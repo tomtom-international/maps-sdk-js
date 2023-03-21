@@ -1,4 +1,4 @@
-import { HasBBox, Places } from "@anw/go-sdk-js/core";
+import { HasBBox, Places } from "@anw/maps-sdk-js/core";
 import { LocationDisplayProps, PlaceIconConfig } from "map";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import sortBy from "lodash/sortBy";

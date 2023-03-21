@@ -1,4 +1,4 @@
-import { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from "@anw/go-sdk-js/core";
+import { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from "@anw/maps-sdk-js/core";
 
 /**
  * @ignore

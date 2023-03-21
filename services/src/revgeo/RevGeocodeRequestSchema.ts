@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { views } from "@anw/go-sdk-js/core";
+import { views } from "@anw/maps-sdk-js/core";
 import { hasLngLatSchema } from "../shared/GeometriesSchema";
 
 const revGeocodeRequestMandatory = z.object({

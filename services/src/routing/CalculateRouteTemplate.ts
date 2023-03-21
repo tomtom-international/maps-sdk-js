@@ -1,4 +1,4 @@
-import { Routes } from "@anw/go-sdk-js/core";
+import { Routes } from "@anw/maps-sdk-js/core";
 import { ServiceTemplate } from "../shared";
 import { CalculateRouteParams } from "./types/CalculateRouteParams";
 import { buildCalculateRouteRequest } from "./RequestBuilder";

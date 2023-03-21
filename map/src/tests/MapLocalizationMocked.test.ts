@@ -1,4 +1,4 @@
-import { TomTomConfig } from "@anw/go-sdk-js/core";
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
 import { TomTomMap } from "../TomTomMap";
 
 jest.mock("maplibre-gl", () => ({

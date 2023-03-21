@@ -1,4 +1,4 @@
-import { Avoidable, GeoInput, inputSectionTypes, TravelMode } from "@anw/go-sdk-js/core";
+import { Avoidable, GeoInput, inputSectionTypes, TravelMode } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 import { VehicleParameters } from "./VehicleParams";
 

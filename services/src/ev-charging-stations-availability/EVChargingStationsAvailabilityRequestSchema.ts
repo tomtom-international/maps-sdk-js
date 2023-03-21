@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { connectorTypes } from "@anw/go-sdk-js/core";
+import { connectorTypes } from "@anw/maps-sdk-js/core";
 
 const evChargingStationsAvailabilityRequestMandatory = z.object({
     id: z.string()

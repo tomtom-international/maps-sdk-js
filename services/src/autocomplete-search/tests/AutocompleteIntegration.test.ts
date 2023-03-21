@@ -1,4 +1,4 @@
-import { TomTomConfig, Language } from "@anw/go-sdk-js/core";
+import { TomTomConfig, Language } from "@anw/maps-sdk-js/core";
 import { AutocompleteSearchResponse, AutocompleteSearchSegmentType } from "../types";
 import autocompleteSearch from "../AutocompleteSearch";
 

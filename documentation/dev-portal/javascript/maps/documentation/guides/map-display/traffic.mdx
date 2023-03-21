@@ -21,11 +21,11 @@ The traffic flow layer shows congestion on the main route network and the traffi
 These traffic layers are visible by default in the standard map styles and can be controlled at runtime by the [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic)
 module.
 
+> If these layers are unnecessary in your application, they can be completely excluded from the map style through the [`exclude`](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_excluding_modules_from_a_style) property of a `PublishedStyle`.
+
 <img src="images/ss_traffic_layer.png" alt="Map with traffic layer enabled" />
 
 <br/>
-
-> If these layers are unnecessary in your application, they can be completely excluded from the map style through the [`exclude`](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_excluding_modules_from_a_style) property of a `PublishedStyle`.
 
 The [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module can be initialized with:
 
@@ -33,13 +33,13 @@ The [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-refere
 Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
-import { VectorTilesTraffic } from "@anw/go-sdk-js/map";
+import { VectorTilesTraffic } from "@anw/maps-sdk-js/map";
 
 const traffic = await VectorTilesTraffic.init(map);
 ```
 
 Then, several methods on the [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module
-can be used change the visibility of the traffic layers. For example:
+can be used to change the visibility of the traffic layers. For example:
 
 ```javascript
 // Show traffic incidents without their icons.

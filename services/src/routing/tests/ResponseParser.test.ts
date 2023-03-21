@@ -1,4 +1,4 @@
-import { Routes } from "@anw/go-sdk-js/core";
+import { Routes } from "@anw/maps-sdk-js/core";
 import { CalculateRouteParams } from "..";
 import apiAndParsedResponses from "./ResponseParser.data.json";
 import longAPIResponse from "./ResponseParserPerf.data.json";

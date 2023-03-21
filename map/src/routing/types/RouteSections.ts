@@ -1,4 +1,4 @@
-import { SectionProps, TrafficSectionProps } from "@anw/go-sdk-js/core";
+import { SectionProps, TrafficSectionProps } from "@anw/maps-sdk-js/core";
 import { Feature, FeatureCollection, LineString } from "geojson";
 import { RouteStyleProps } from "./DisplayRoutes";
 

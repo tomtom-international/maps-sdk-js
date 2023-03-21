@@ -1,4 +1,4 @@
-import { ConnectorType, Fuel } from "@anw/go-sdk-js/core";
+import { ConnectorType, Fuel } from "@anw/maps-sdk-js/core";
 import { CommonPlacesParams } from "./CommonPlacesParams";
 import { IndexTypesAbbreviation } from "./APIPlacesResponseTypes";
 import { POICategory } from "../../poi-categories/poiCategoriesToID";

@@ -1,4 +1,4 @@
-import { TrafficSectionProps } from "@anw/go-sdk-js/core";
+import { TrafficSectionProps } from "@anw/maps-sdk-js/core";
 import { toDisplayTrafficSectionProps, trafficSectionToIconID } from "../DisplayTrafficSectionProps";
 import { DisplayTrafficSectionProps } from "../../types/RouteSections";
 import toIconIDTestData from "./ToIconID.data.json";

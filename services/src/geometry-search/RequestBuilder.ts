@@ -3,7 +3,7 @@ import { GeometryAPI, GeometrySearchParams, SearchByGeometryPayloadAPI, SearchGe
 import { positionToCSVLatLon } from "../shared/Geometry";
 import { sampleWithinMaxLength } from "../shared/Arrays";
 import { appendCommonSearchParams } from "../shared/CommonSearchRequestBuilder";
-import { bboxFromCoordsArray } from "@anw/go-sdk-js/core";
+import { bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
 import { MultiPolygon, Position } from "geojson";
 
 const findFiftyLargestPolygons = (searchGeometry: MultiPolygon): Position[][][] => {

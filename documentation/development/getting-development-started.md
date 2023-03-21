@@ -25,12 +25,12 @@ nvm alias default 16
 
 ## Check out
 
-Check out the repository https://github.com/tomtom-international/go-sdk-js:
+Check out the repository https://github.com/tomtom-international/maps-sdk-js:
 
 ```shell
-git clone git@github.com:tomtom-international/go-sdk-js.git
+git clone git@github.com:tomtom-international/maps-sdk-js.git
 # or
-git clone https://github.com/tomtom-international/go-sdk-js.git
+git clone https://github.com/tomtom-international/maps-sdk-js.git
 ```
 
 ## Installation

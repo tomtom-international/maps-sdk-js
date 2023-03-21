@@ -1,4 +1,4 @@
-import { Route } from "@anw/go-sdk-js/core";
+import { Route } from "@anw/maps-sdk-js/core";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";
 import { FetchInput } from "../../shared/types/Fetch";
 import { CalculateRoutePOSTDataAPI } from "../types/APIPOSTRequestTypes";

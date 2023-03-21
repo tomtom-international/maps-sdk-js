@@ -1,4 +1,4 @@
-import { RouteProps } from "@anw/go-sdk-js/core";
+import { RouteProps } from "@anw/maps-sdk-js/core";
 import { SupportsEvents } from "../../shared";
 
 export type RouteStyleProps = {

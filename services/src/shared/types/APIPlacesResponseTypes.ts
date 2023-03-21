@@ -10,7 +10,7 @@ import {
     OpeningHours,
     SearchPlaceProps,
     TimeZone
-} from "@anw/go-sdk-js/core";
+} from "@anw/maps-sdk-js/core";
 import { SearchSummary } from "./SearchSummary";
 
 /**

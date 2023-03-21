@@ -1,4 +1,4 @@
-import { Route, Routes, Waypoint, Waypoints } from "@anw/go-sdk-js/core";
+import { Route, Routes, Waypoint, Waypoints } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,

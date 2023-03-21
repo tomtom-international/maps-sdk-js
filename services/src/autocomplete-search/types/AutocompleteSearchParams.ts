@@ -1,4 +1,4 @@
-import { HasLngLat } from "@anw/go-sdk-js/core";
+import { HasLngLat } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 export type AutocompleteSearchSegmentType = "brand" | "category" | "plaintext";
 

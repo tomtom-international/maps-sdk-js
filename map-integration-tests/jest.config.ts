@@ -12,7 +12,7 @@ const config: Config = {
     },
     testPathIgnorePatterns: ["<rootDir>/node_modules/"],
     moduleNameMapper: {
-        "@anw/go-sdk-js/core": "<rootDir>/../core/dist/core.cjs.min.js"
+        "@anw/maps-sdk-js/core": "<rootDir>/../core/dist/core.cjs.min.js"
     }
 };
 

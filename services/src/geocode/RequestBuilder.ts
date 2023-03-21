@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
 
 import { GeocodingParams } from "./types/GeocodingParams";

@@ -1,5 +1,5 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { indexedMagnitudes } from "@anw/go-sdk-js/core";
+import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
 import {
     incidentCategories as availableIncidentCategories,
     incidentCategoriesMapping,

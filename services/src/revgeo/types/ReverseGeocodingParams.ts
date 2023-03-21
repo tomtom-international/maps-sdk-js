@@ -1,4 +1,4 @@
-import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/go-sdk-js/core";
+import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
 
 import { CommonServiceParams } from "../../shared";
 

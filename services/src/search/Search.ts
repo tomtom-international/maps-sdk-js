@@ -1,4 +1,4 @@
-import { Places, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 import { GeometrySearchParams } from "../geometry-search";
 import { geometrySearch } from "../geometry-search/GeometrySearch";
 import { GeometrySearchTemplate } from "../geometry-search/GeometrySearchTemplate";

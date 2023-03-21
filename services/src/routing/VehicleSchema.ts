@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { currentTypes, plugTypes } from "@anw/go-sdk-js/core";
+import { currentTypes, plugTypes } from "@anw/maps-sdk-js/core";
 
 const efficiencySchema = z
     .object({

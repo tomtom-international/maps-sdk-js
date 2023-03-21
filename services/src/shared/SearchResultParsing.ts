@@ -1,4 +1,4 @@
-import { Brand, Place, SearchPlaceProps, toPointFeature } from "@anw/go-sdk-js/core";
+import { Brand, Place, SearchPlaceProps, toPointFeature } from "@anw/maps-sdk-js/core";
 import omit from "lodash/omit";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "./Geometry";
 import { CommonSearchPlaceResultAPI, SummaryAPI } from "./types/APIPlacesResponseTypes";

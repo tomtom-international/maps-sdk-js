@@ -1,6 +1,6 @@
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import { TomTomConfig } from "@anw/go-sdk-js/core";
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
 import { fetchWith, get, post } from "../Fetch";
 import { geocode } from "../../geocode";
 import { search } from "../../search";

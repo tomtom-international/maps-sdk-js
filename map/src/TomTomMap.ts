@@ -1,6 +1,6 @@
 import mapLibreExported, { Map } from "maplibre-gl";
 import { BBox } from "geojson";
-import { mergeFromGlobal } from "@anw/go-sdk-js/core";
+import { mergeFromGlobal } from "@anw/maps-sdk-js/core";
 import { TomTomMapParams, MapLibreOptions, StyleInput } from "./init/types/MapInit";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";

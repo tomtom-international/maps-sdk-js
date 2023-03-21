@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, GeometryDataResponse } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON, GeometryDataResponse } from "@anw/maps-sdk-js/core";
 import { GeometryDataResponseAPI } from "./types/APITypes";
 
 /**

@@ -1,4 +1,4 @@
-import { HasBBox } from "@anw/go-sdk-js/core";
+import { HasBBox } from "@anw/maps-sdk-js/core";
 
 /**
  * Common parameters between fuzzy search and geocoding.

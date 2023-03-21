@@ -1,6 +1,6 @@
 import isNil from "lodash/isNil";
 
-import { getLngLatArray } from "@anw/go-sdk-js/core";
+import { getLngLatArray } from "@anw/maps-sdk-js/core";
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { arrayToCSV } from "../shared/Arrays";
 import { CommonServiceParams } from "../shared/ServiceTypes";

@@ -1,4 +1,4 @@
-import { CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from "@anw/go-sdk-js/core";
+import { CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from "@anw/maps-sdk-js/core";
 import { Point, Position } from "geojson";
 import {
     FINISH_INDEX,

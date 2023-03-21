@@ -1,5 +1,5 @@
 import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
-import { Place } from "@anw/go-sdk-js/core";
+import { Place } from "@anw/maps-sdk-js/core";
 import { MapStylePOIClassification } from "../poiIconIDMapping";
 import { MapFont } from "../../shared";
 

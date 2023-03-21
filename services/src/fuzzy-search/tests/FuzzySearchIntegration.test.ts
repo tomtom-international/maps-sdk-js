@@ -1,4 +1,4 @@
-import { Fuel, TomTomConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { Fuel, TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 
 import { search } from "../../search";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";

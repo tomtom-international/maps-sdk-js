@@ -52,7 +52,7 @@ the [`TomTomMapParams`](/maps-sdk-js/javascript/maps/documentation/api-reference
 an instance of [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
 
 ```javascript
-import { TomTomMap } from "@anw/go-sdk-js/map";
+import { TomTomMap } from "@anw/maps-sdk-js/map";
 
 const map = new TomTomMap(
     {
@@ -97,7 +97,7 @@ When setting the map style, you can exclude modules from the loaded map style wi
 For example, excluding [hill shading](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_adding_hill_shading) and [traffic flow](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic) from the map style:
 
 ```javascript
-import { TomTomMap } from "@anw/go-sdk-js/map";
+import { TomTomMap } from "@anw/maps-sdk-js/map";
 
 const map = new TomTomMap(
     {
@@ -130,7 +130,7 @@ map style with the `exclude` property of the [`TomTomMapParams`](/maps-sdk-js/ja
 The POI layer visibility can be controlled during runtime with the [`VectorTilePOIs`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_POIs.VectorTilePOIs) module.
 
 ```javascript
-import { VectorTilePOIs } from "@anw/go-sdk-js/map";
+import { VectorTilePOIs } from "@anw/maps-sdk-js/map";
 
 const pois = await VectorTilePOIs.init(map);
 pois.setVisible(false);

@@ -1,4 +1,4 @@
-import { GeometryDataResponse } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
 import { GeometryDataParams } from "./types/GeometryDataParams";
 import { geometryDataTemplate, GeometryDataTemplate } from "./GeometryDataTemplate";
 import { callService } from "../shared/ServiceTemplate";

@@ -1,4 +1,4 @@
-import { DelayMagnitude, formatDuration, TrafficSectionProps } from "@anw/go-sdk-js/core";
+import { DelayMagnitude, formatDuration, TrafficSectionProps } from "@anw/maps-sdk-js/core";
 import { DisplayTrafficSectionProps } from "../types/RouteSections";
 
 const delayMagnitudeToIconPrefix: Record<DelayMagnitude, string> = {

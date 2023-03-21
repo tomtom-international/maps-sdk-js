@@ -1,4 +1,4 @@
-import { GeoInput } from "@anw/go-sdk-js/core";
+import { GeoInput } from "@anw/maps-sdk-js/core";
 import { validateRequestSchema } from "../../shared/Validation";
 import { routeRequestValidationConfig } from "../CalculateRouteTemplate";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";

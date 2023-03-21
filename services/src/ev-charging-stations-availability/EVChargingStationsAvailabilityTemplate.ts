@@ -1,4 +1,4 @@
-import { EVChargingStationsAvailability } from "@anw/go-sdk-js/core";
+import { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
 import { ServiceTemplate } from "../shared";
 import { EVChargingStationsAvailabilityParams } from "./types/EVChargingStationsAvailabilityParams";
 import { buildEVChargingStationsAvailabilityRequest } from "./RequestBuilder";

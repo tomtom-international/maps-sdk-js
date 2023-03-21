@@ -1,5 +1,5 @@
 import axios from "axios";
-import { mergeFromGlobal, generateTomTomCustomHeaders } from "@anw/go-sdk-js/core";
+import { mergeFromGlobal, generateTomTomCustomHeaders } from "@anw/maps-sdk-js/core";
 import { buildResponseError, buildValidationError } from "./Errors";
 import { ServiceName } from "./types/ServicesTypes";
 import { CommonServiceParams, ServiceTemplate } from "./ServiceTypes";

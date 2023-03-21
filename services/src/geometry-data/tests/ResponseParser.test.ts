@@ -1,4 +1,4 @@
-import { GeometryDataResponse } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
 import apiAndParsedResponses from "./ResponseParser.data.json";
 import { GeometryDataResponseAPI } from "../types/APITypes";
 import { parseGeometryDataResponse } from "../ResponseParser";

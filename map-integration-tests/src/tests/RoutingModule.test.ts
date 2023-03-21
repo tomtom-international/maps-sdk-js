@@ -13,7 +13,7 @@ import {
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
 } from "map";
-import { Routes, WaypointLike } from "@anw/go-sdk-js/core";
+import { Routes, WaypointLike } from "@anw/maps-sdk-js/core";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";

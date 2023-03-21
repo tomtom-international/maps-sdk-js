@@ -1,5 +1,5 @@
 import omit from "lodash/omit";
-import { bboxFromGeoJSON, bboxOnlyIfWithArea, GeographyType, Place, toPointFeature } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON, bboxOnlyIfWithArea, GeographyType, Place, toPointFeature } from "@anw/maps-sdk-js/core";
 import { GeocodingProps, GeocodingResponse } from "./types/GeocodingResponse";
 import { GeocodingResponseAPI, GeocodingResultAPI } from "./types/APITypes";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "../shared/Geometry";

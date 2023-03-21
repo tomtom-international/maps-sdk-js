@@ -1,4 +1,4 @@
-import { TomTomConfig, Language } from "@anw/go-sdk-js/core";
+import { TomTomConfig, Language } from "@anw/maps-sdk-js/core";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";
 import { autocompleteSearchRequestSchema } from "../AutocompleteSearchRequestSchema";
 import { AutocompleteSearchParams } from "../types";

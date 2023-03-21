@@ -1,4 +1,4 @@
-import { EVChargingStationsAvailability } from "@anw/go-sdk-js/core";
+import { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
 import apiAndParsedResponses from "./ResponseParser.data.json";
 import apiResponses from "./ResponseParserPerf.data.json";
 import { parseEVChargingStationsAvailabilityResponse } from "../ResponseParser";

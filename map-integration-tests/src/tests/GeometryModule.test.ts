@@ -1,4 +1,4 @@
-import { GeometryDataResponse } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
 import { GEOMETRY_SOURCE_ID } from "map";
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";

@@ -1,5 +1,5 @@
 {
-  "name": "@anw/go-sdk-js",
+  "name": "@anw/maps-sdk-js",
   "version": "0.1.96",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
@@ -18,11 +18,11 @@
     "pre-commit": "lint-staged"
   },
   "publishConfig": {
-    "registry": "https://tomtom.jfrog.io/artifactory/api/npm/go-sdk-js-npm-local/"
+    "registry": "https://tomtom.jfrog.io/artifactory/api/npm/maps-sdk-js-npm-local/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tomtom-international/go-sdk-js.git"
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
   },
   "keywords": [
     "tomtom",
@@ -37,9 +37,9 @@
   "author": "GO SDK JS Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tomtom-international/go-sdk-js/issues"
+    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
-  "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "workspaces": [
     "core",
     "services",

@@ -1,4 +1,4 @@
-import { Routes } from "@anw/go-sdk-js/core";
+import { Routes } from "@anw/maps-sdk-js/core";
 import { buildDisplayRoutes } from "../Routes";
 
 describe("Tests to test building display routes", () => {

@@ -1,4 +1,4 @@
-import { Language } from "@anw/go-sdk-js/core";
+import { Language } from "@anw/maps-sdk-js/core";
 import { PlaceByIdParams } from "../types";
 import placeByIdReqObjects from "../../place-by-id/tests/RequestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/PerformanceTestUtils";

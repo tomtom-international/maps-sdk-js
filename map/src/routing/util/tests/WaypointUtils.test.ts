@@ -1,5 +1,5 @@
 import { Position } from "geojson";
-import { Anything, Waypoint, WaypointProps } from "@anw/go-sdk-js/core";
+import { Anything, Waypoint, WaypointProps } from "@anw/maps-sdk-js/core";
 import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from "../WaypointUtils";
 import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from "../../types/WaypointDisplayProps";
 import {

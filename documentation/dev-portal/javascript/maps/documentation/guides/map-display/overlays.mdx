@@ -26,8 +26,8 @@ Read more about this service [here](/maps-sdk-js/javascript/maps/documentation/g
 Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
-import { GeometryModule } from "@anw/go-sdk-js/map";
-import { geocode, geometryData } from "@anw/go-sdk-js/services";
+import { GeometryModule } from "@anw/maps-sdk-js/map";
+import { geocode, geometryData } from "@anw/maps-sdk-js/services";
 
 const areaToSearch = await geocode({ query: "paris", limit: 1 });
 const areaGeometry = await geometryData({ geometries: areaToSearch });

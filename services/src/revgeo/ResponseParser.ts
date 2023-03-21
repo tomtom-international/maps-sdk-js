@@ -1,4 +1,4 @@
-import { getLngLatArray, toPointFeature } from "@anw/go-sdk-js/core";
+import { getLngLatArray, toPointFeature } from "@anw/maps-sdk-js/core";
 import { apiToGeoJSONBBox, csvLatLngToPosition } from "../shared/Geometry";
 import { ReverseGeocodingParams } from "./types/ReverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./ReverseGeocoding";

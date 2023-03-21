@@ -1,4 +1,4 @@
-import { ConnectorType } from "@anw/go-sdk-js/core";
+import { ConnectorType } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 
 export type EVChargingStationsAvailabilityParams = CommonServiceParams & {

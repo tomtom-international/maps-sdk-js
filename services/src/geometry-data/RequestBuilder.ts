@@ -1,4 +1,4 @@
-import { Place } from "@anw/go-sdk-js/core";
+import { Place } from "@anw/maps-sdk-js/core";
 import { GeometriesInput, GeometryDataParams } from "./types/GeometryDataParams";
 import { appendOptionalParam } from "../shared/RequestBuildingUtils";
 import { arrayToCSV } from "../shared/Arrays";

@@ -1,4 +1,4 @@
-import { Anything, CommonPlaceProps } from "@anw/go-sdk-js/core";
+import { Anything, CommonPlaceProps } from "@anw/maps-sdk-js/core";
 import { SupportsEvents } from "../../shared";
 
 /**

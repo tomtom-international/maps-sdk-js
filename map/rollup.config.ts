@@ -9,7 +9,7 @@ import includePaths from "rollup-plugin-includepaths";
 const includePathOptions = {
     include: {},
     paths: [],
-    external: ["@anw/go-sdk-js/core", "maplibre-gl"],
+    external: ["@anw/maps-sdk-js/core", "maplibre-gl"],
     extensions: [".js", ".json"]
 };
 

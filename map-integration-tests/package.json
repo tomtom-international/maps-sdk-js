@@ -21,12 +21,12 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tomtom-international/go-sdk-js.git"
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
   },
   "bugs": {
-    "url": "https://github.com/tomtom-international/go-sdk-js/issues"
+    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
-  "homepage": "https://github.com/tomtom-international/go-sdk-js#readme",
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "devDependencies": {
     "@types/jest": "^29.4.0",
     "@types/jest-environment-puppeteer": "^5.0.3",

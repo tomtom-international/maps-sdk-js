@@ -3,4 +3,4 @@
 // (See webpack config).
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 globalThis.MapsSDK = require("localMapsSDKJSMap");
-globalThis.MapsSDKCore = require("@anw/go-sdk-js/core");
+globalThis.MapsSDKCore = require("@anw/maps-sdk-js/core");

@@ -1,4 +1,4 @@
-import { indexedMagnitudes } from "@anw/go-sdk-js/core";
+import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
 import { ExpressionFilterSpecification, LegacyFilterSpecification } from "maplibre-gl";
 import isNil from "lodash/isNil";
 import {

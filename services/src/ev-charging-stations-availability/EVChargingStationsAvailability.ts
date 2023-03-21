@@ -4,7 +4,7 @@ import {
     EVChargingStationsAvailability,
     Place,
     Places
-} from "@anw/go-sdk-js/core";
+} from "@anw/maps-sdk-js/core";
 import { EVChargingStationsAvailabilityParams } from "./types/EVChargingStationsAvailabilityParams";
 import { callService } from "../shared/ServiceTemplate";
 import {

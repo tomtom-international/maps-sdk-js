@@ -1,4 +1,4 @@
-import { GlobalConfig } from "@anw/go-sdk-js/core";
+import { GlobalConfig } from "@anw/maps-sdk-js/core";
 import { SDKServiceError } from "./Errors";
 import { ErrorObjAPI } from "./types/APIResponseErrorTypes";
 import { RequestValidationConfig } from "./types/Validation";

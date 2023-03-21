@@ -1,4 +1,4 @@
-import { TomTomConfig, Place, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 
 import { placeById, PlaceByIdResponse } from "..";
 import { baseSearchPOITestProps } from "../../shared/tests/IntegrationTestUtils";

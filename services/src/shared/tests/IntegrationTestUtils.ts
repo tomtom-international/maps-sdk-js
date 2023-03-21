@@ -1,4 +1,4 @@
-import { TomTomConfig, placeTypes, SearchPlaceProps } from "@anw/go-sdk-js/core";
+import { TomTomConfig, placeTypes, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 
 export const putIntegrationTestsAPIKey = () => {
     TomTomConfig.instance.put({

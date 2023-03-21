@@ -1,4 +1,4 @@
-import { GeometryDataResponse, Places } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse, Places } from "@anw/maps-sdk-js/core";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";

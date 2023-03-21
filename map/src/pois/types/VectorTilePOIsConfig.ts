@@ -2,7 +2,7 @@ import { ValuesFilter, VectorTileMapModuleConfig } from "../../shared";
 import { MapStylePOIClassification } from "../../places";
 import { POIClassificationGroup } from "../poiClassificationGroups";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { Language } from "@anw/go-sdk-js/core";
+import { Language } from "@anw/maps-sdk-js/core";
 
 /**
  * A POI classification or group which can be filtered.

@@ -9,7 +9,7 @@ import analyze from "rollup-plugin-analyzer";
 const includePathOptions = {
     include: {},
     paths: [],
-    external: ["@anw/go-sdk-js/core", "axios"],
+    external: ["@anw/maps-sdk-js/core", "axios"],
     extensions: [".js", ".json"]
 };
 

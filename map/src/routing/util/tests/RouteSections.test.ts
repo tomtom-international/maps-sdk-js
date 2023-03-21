@@ -1,5 +1,5 @@
 import { FeatureCollection } from "geojson";
-import { Routes } from "@anw/go-sdk-js/core";
+import { Routes } from "@anw/maps-sdk-js/core";
 import TEST_ROUTES_DATA from "./DummyRoutesWithSections.data.json";
 import SECTIONS_WITH_SELECTION from "./RebuildSectionsWithSelection.data.json";
 import { buildDisplayRouteSections, rebuildSectionsWithSelection } from "../RouteSections";

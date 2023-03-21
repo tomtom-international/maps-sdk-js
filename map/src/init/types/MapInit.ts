@@ -1,4 +1,4 @@
-import { GlobalConfig } from "@anw/go-sdk-js/core";
+import { GlobalConfig } from "@anw/maps-sdk-js/core";
 import { MapOptions, StyleSpecification } from "maplibre-gl";
 import { MapEventsConfig } from "./MapEventsConfig";
 

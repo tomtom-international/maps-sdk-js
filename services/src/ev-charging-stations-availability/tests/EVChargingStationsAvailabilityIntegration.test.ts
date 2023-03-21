@@ -4,7 +4,7 @@ import {
     ChargingPoint,
     chargingPointStatus,
     connectorTypes
-} from "@anw/go-sdk-js/core";
+} from "@anw/maps-sdk-js/core";
 import evChargingStationsAvailability, { buildPlacesWithEVAvailability } from "../EVChargingStationsAvailability";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { SDKServiceError } from "../../shared";

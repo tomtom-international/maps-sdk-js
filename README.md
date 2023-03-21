@@ -8,7 +8,7 @@
 [![Vulnerabilities](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=vulnerabilities&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 
 <div align="center">
-  <a href="https://github.com/tomtom-international/go-sdk-js">
+  <a href="https://github.com/tomtom-international/maps-sdk-js">
     <img src="documentation/images/tomtom-logo.svg" alt="Logo" width="400" height="90">
   </a>
 
@@ -17,12 +17,12 @@
   <p align="center">
     Maps SDK JS is a JavaScript library for building web applications using TomTom maps and location services
     <br />
-    <a href="https://github.com/tomtom-international/go-sdk-js/tree/main/documentation"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/tomtom-international/maps-sdk-js/tree/main/documentation"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/tomtom-international/go-sdk-js/issues">Report Bug</a>
+    <a href="https://github.com/tomtom-international/maps-sdk-js/issues">Report Bug</a>
     ·
-    <a href="https://github.com/tomtom-international/go-sdk-js/issues">Request Feature</a>
+    <a href="https://github.com/tomtom-international/maps-sdk-js/issues">Request Feature</a>
   </p>
 </div>
 <br />
@@ -127,9 +127,9 @@ Read more about NVM here: [https://github.com/nvm-sh/nvm](https://github.com/nvm
 
 1. Clone the repo
    ```sh
-    git clone git@github.com:tomtom-international/go-sdk-js.git
+    git clone git@github.com:tomtom-international/maps-sdk-js.git
     # or
-    git clone https://github.com/tomtom-international/go-sdk-js.git
+    git clone https://github.com/tomtom-international/maps-sdk-js.git
    ```
 
 2. Install NPM packages

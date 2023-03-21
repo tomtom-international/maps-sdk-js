@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getGeoInputType, inputSectionTypes, SectionType } from "@anw/go-sdk-js/core";
+import { getGeoInputType, inputSectionTypes, SectionType } from "@anw/maps-sdk-js/core";
 import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from "../shared/GeometriesSchema";
 import { CalculateRouteParams, instructionsTypes } from "./types/CalculateRouteParams";
 import { vehicleParametersSchema } from "./VehicleSchema";

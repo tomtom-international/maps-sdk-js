@@ -8,7 +8,7 @@ import {
     Waypoint,
     WaypointLike,
     WaypointProps
-} from "@anw/go-sdk-js/core";
+} from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
 import omit from "lodash/omit";
 import { Position } from "geojson";

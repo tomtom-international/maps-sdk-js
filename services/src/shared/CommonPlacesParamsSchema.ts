@@ -1,4 +1,4 @@
-import { views } from "@anw/go-sdk-js/core";
+import { views } from "@anw/maps-sdk-js/core";
 import { z } from "zod";
 import { hasLngLatSchema } from "./GeometriesSchema";
 

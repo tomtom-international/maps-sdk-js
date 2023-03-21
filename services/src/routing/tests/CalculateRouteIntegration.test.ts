@@ -5,7 +5,7 @@ import {
     SectionProps,
     SectionsProps,
     SectionType
-} from "@anw/go-sdk-js/core";
+} from "@anw/maps-sdk-js/core";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
 import { calculateRoute } from "../CalculateRoute";
 import { CalculateRouteParams } from "../types/CalculateRouteParams";

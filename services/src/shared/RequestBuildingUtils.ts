@@ -1,4 +1,4 @@
-import { getLngLatArray, HasLngLat } from "@anw/go-sdk-js/core";
+import { getLngLatArray, HasLngLat } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "./ServiceTypes";
 import isNil from "lodash/isNil";
 import { poiCategoriesToID, POICategory } from "../poi-categories/poiCategoriesToID";

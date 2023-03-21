@@ -1,4 +1,4 @@
-import { Place, Places } from "@anw/go-sdk-js/core";
+import { Place, Places } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 
 /**

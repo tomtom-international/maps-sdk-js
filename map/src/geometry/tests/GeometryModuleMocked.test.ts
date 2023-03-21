@@ -1,4 +1,4 @@
-import { GeometryDataResponse } from "@anw/go-sdk-js/core";
+import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
 import { Map } from "maplibre-gl";
 import { GeometryModule } from "../GeometryModule";
 import { TomTomMap } from "../../TomTomMap";

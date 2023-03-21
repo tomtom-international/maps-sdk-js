@@ -1,5 +1,5 @@
 import { geometryData } from "../GeometryData";
-import { TomTomConfig } from "@anw/go-sdk-js/core";
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
 
 describe("Geometry data errors", () => {
     test("Geometry data test without API key", async () => {

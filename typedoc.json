@@ -43,5 +43,6 @@
     }
   },
   "objectLiteralTypeDeclarationStyle": "list",
-  "excludePrivate": true
+  "excludePrivate": true,
+  "githubPages": false
 }

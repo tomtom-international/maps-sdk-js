@@ -1,5 +1,5 @@
 import isNil from "lodash/isNil";
-import { Route, Routes, SectionProps, SectionType } from "@anw/go-sdk-js/core";
+import { Route, Routes, SectionProps, SectionType } from "@anw/maps-sdk-js/core";
 import { DisplaySectionProps, RouteSection, RouteSections } from "../types/RouteSections";
 import { DisplayRouteProps } from "../types/DisplayRoutes";
 import { GeoJSONSourceWithLayers } from "../../shared";

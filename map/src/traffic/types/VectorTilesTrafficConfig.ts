@@ -1,4 +1,4 @@
-import { DelayMagnitude } from "@anw/go-sdk-js/core";
+import { DelayMagnitude } from "@anw/maps-sdk-js/core";
 import { FilterShowMode, ValuesFilter, VectorTileMapModuleConfig } from "../../shared";
 
 /**

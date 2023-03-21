@@ -27,16 +27,16 @@ After publishing of such package in the NPM repository it could be installed:
 
 ```shell
 # installation using the alias "my-fix"
-npm i --save @anw/go-sdk-js@my-fix
+npm i --save @anw/maps-sdk-js@my-fix
 # installation using the exact version of alias "my-fix"
-npm i --save @anw/go-sdk-js@1.2.3-my-fix.1
+npm i --save @anw/maps-sdk-js@1.2.3-my-fix.1
 ```
 
 Basically, all you need to do is just pushing your code to branches. Everything else happens automatically.
 
 ## Releasing a new "latest" version
 
-go-sdk-js uses the "standard-version" tool for calculation of version increment. Calculation happens according to the "conventional commits". See [conventionalcommits.org](https://www.conventionalcommits.org) website for explanation.
+maps-sdk-js uses the "standard-version" tool for calculation of version increment. Calculation happens according to the "conventional commits". See [conventionalcommits.org](https://www.conventionalcommits.org) website for explanation.
 
 CHANGELOG.md file is generated and updated by the standard-version tool automatically.
 

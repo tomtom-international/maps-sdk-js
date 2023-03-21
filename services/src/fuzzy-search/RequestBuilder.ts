@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON } from "@anw/go-sdk-js/core";
+import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
 import { FuzzySearchParams } from "./types";
 import { appendByJoiningParamValue, appendOptionalParam } from "../shared/RequestBuildingUtils";
 import { appendCommonSearchParams } from "../shared/CommonSearchRequestBuilder";
