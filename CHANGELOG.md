@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.97](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.96...v0.1.97) (2023-03-23)
+
+
+### Features
+
+* **events:** setting hover/click event props and default styling for places ([22e7330](https://github.com/tomtom-international/maps-sdk-js/commit/22e7330690b7697fbb1ca66bef3039b0db03cbc5))
+
 ### [0.1.96](https://github.com/tomtom-international/go-sdk-js/compare/v0.1.95...v0.1.96) (2023-03-20)
 
 
