@@ -84,10 +84,6 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
         }
     }
 
-    private getBiggestPolygon(coordinates: Position[][][]) {
-        return coordinates.flat().reduce((result, coord) => (coord.length > result.length ? coord : result), []);
-    }
-
     /**
      * Shows the given Geometry on the map.
      * @param geometry

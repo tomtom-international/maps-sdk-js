@@ -6,6 +6,7 @@
     "hillshade",
     "maplibre",
     "bbox",
+    "bboxes",
     "lnglat",
     "reparse",
     "pois",
