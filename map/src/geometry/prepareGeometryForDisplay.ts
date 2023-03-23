@@ -112,11 +112,11 @@ export const prepareGeometryForDisplay = (
 ): FeatureCollection<Polygon | MultiPolygon> => {
     const colorConfig = config?.colorConfig;
     if (colorConfig && colorConfig.fillColor !== undefined) {
-        const color = buildGeometryFillColor(colorConfig.fillColor);
+        const fillColor = colorConfig.fillColor;
         geometry.features.forEach((feature) => {
             feature.properties = {
                 ...feature.properties,
-                color
+                color: buildGeometryFillColor(fillColor)
             };
         });
     }

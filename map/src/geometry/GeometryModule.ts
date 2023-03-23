@@ -1,4 +1,4 @@
-import { FeatureCollection, MultiPolygon, Point, Polygon, Position } from "geojson";
+import { FeatureCollection, MultiPolygon, Point, Polygon } from "geojson";
 import { FillLayerSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
 import {
