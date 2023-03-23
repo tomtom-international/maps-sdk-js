@@ -4,14 +4,28 @@ import { bboxCenter, bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
 import { ColorPaletteOptions, ColorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 
+/**
+ * Pick random color from Color Palette.
+ * @param palette - ColorPalette options
+ */
 export const pickRandomColor = (palette: ColorPaletteOptions): string =>
     ColorPalettes[palette][Math.floor(Math.random() * ColorPalettes[palette].length)];
 
+/**
+ * Build geometry fill color option.
+ * @param fillColor
+ * @returns
+ */
 export const buildGeometryFillColor = (fillColor: DataDrivenPropertyValueSpecification<string>) =>
     typeof fillColor === "string" && fillColor in ColorPalettes
         ? pickRandomColor(fillColor as ColorPaletteOptions)
         : fillColor;
 
+/**
+ * Build Geometry layer specification
+ * @param config
+ * @returns
+ */
 export const buildGeometryLayerSpec = (config?: GeometryModuleConfig) => {
     const colorConfig = config?.colorConfig;
     const lineConfig = config?.lineConfig;
@@ -38,6 +52,11 @@ export const buildGeometryLayerSpec = (config?: GeometryModuleConfig) => {
     return [fillLayerSpec, outlineLayerSpec];
 };
 
+/**
+ * Build geometry title. The type can be a string or a Maplibre expression.
+ * @param textField - Name of the field used to get the title
+ * @returns
+ */
 const buildGeometryTitle = (
     textField: DataDrivenPropertyValueSpecification<string>
 ): DataDrivenPropertyValueSpecification<string> => {
@@ -48,6 +67,12 @@ const buildGeometryTitle = (
     return textField;
 };
 
+/**
+ * Build geometry layer specification for title
+ * @param layerID
+ * @param config
+ * @returns
+ */
 export const buildGeometryTitleLayerSpec = (
     layerID: string,
     config?: GeometryModuleConfig
@@ -74,17 +99,24 @@ export const buildGeometryTitleLayerSpec = (
     };
 };
 
+/**
+ * Prepare geometry for display.
+ * If colorConfig is set, it will apply the property "color" to "properties" in each feature.
+ * @param geometry
+ * @param config
+ * @returns
+ */
 export const prepareGeometryForDisplay = (
     geometry: FeatureCollection<Polygon | MultiPolygon>,
     config?: GeometryModuleConfig
 ): FeatureCollection<Polygon | MultiPolygon> => {
     const colorConfig = config?.colorConfig;
-    if (colorConfig && colorConfig.fillColor) {
+    if (colorConfig && colorConfig.fillColor !== undefined) {
+        const color = buildGeometryFillColor(colorConfig.fillColor);
         geometry.features.forEach((feature) => {
             feature.properties = {
                 ...feature.properties,
-                // @ts-ignore
-                color: buildGeometryFillColor(colorConfig.fillColor)
+                color
             };
         });
     }
@@ -92,9 +124,23 @@ export const prepareGeometryForDisplay = (
     return geometry;
 };
 
+/**
+ * Find the biggest array length inside an array.
+ * Used to find the biggest array in a Multi-Polygon feature.
+ * @param coordinates
+ * @returns
+ */
 const getBiggestArrayLength = (coordinates: Position[][][]) =>
     coordinates.flat().reduce((result, coord) => (coord.length > result.length ? coord : result), []);
 
+/**
+ * Create a Feature<Point> with coordinates where title will be placed.
+ * If feature properties contains a coordinates value, it will use it.
+ * In case there is not coordinates value, it will get the biggest Polygon inside a feature and calculate
+ * the bounding box for those coordinates and finally calculate the bounding box center to place the title.
+ * @param geometries
+ * @returns
+ */
 export const prepareTitleForDisplay = (
     geometries: FeatureCollection<Polygon | MultiPolygon>
 ): FeatureCollection<Point> => {
