@@ -109,16 +109,21 @@ export const updateEventState = (
 };
 
 /**
+ * Detects whether there's been a hovering change with the given event and state params.
+ * @param hoveringPoint The current hovering pixel coordinates.
+ * @param hoveringFeature The current feature being hovered, if any.
+ * @param prevHoveredPoint The pixel coordinates from the previous hovering event, if any.
+ * @param prevHoveredFeature The previous feature being hovered, if any (could be the same as hoveringFeature).
  * @ignore
  */
 export const detectHoverState = (
     hoveringPoint: Point2D,
-    prevHoveringPoint: Point2D | undefined,
-    newHoveredFeature: MapGeoJSONFeature | undefined,
+    hoveringFeature: MapGeoJSONFeature | undefined,
+    prevHoveredPoint: Point2D | undefined,
     prevHoveredFeature: MapGeoJSONFeature | undefined
 ): {
     /**
-     * Whether a change happened, such as no-hover -> hover or vice-versa.
+     * Whether a hover state change happened, such as no-hover -> hover or vice-versa.
      */
     hoverChanged?: boolean;
     /**
@@ -126,20 +131,20 @@ export const detectHoverState = (
      */
     mouseInMotionOverHoveredFeature?: boolean;
 } => {
-    if (newHoveredFeature) {
+    if (hoveringFeature) {
         // Workaround/hack to avoid listening to map style POIs without ID (bad data):
-        if (newHoveredFeature.source === POI_SOURCE_ID && !newHoveredFeature.properties?.id) {
+        if (hoveringFeature.source === POI_SOURCE_ID && !hoveringFeature.properties?.id) {
             return {};
         } else if (!prevHoveredFeature) {
             return { hoverChanged: true };
-        } else if (newHoveredFeature.id !== prevHoveredFeature.id) {
+        } else if (hoveringFeature.id !== prevHoveredFeature.id) {
             // hovering from one feature to another one (from the same or different layer/source):
             return { hoverChanged: true };
         } else {
             // (else we're hovering along the same feature)
             if (
-                prevHoveringPoint &&
-                (hoveringPoint.x - prevHoveringPoint.x != 0 || hoveringPoint.y - prevHoveringPoint.y != 0)
+                prevHoveredPoint &&
+                (hoveringPoint.x - prevHoveredPoint.x != 0 || hoveringPoint.y - prevHoveredPoint.y != 0)
             ) {
                 return { mouseInMotionOverHoveredFeature: true };
             }

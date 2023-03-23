@@ -1,6 +1,8 @@
 import { EventType } from "../types";
 import { Feature } from "geojson";
-import { putEventState } from "../eventUtils";
+import { detectHoverState, putEventState } from "../eventUtils";
+import { MapGeoJSONFeature } from "maplibre-gl";
+import { POI_SOURCE_ID } from "../layers/sourcesIDs";
 
 describe("updateEventState related tests", () => {
     const testFeature = (id: string | number | undefined, eventState?: EventType): Feature =>
@@ -87,5 +89,47 @@ describe("updateEventState related tests", () => {
             { id: "A", properties: { eventState: "contextmenu" } },
             { id: "B", properties: { eventState: "hover" } }
         ]);
+    });
+});
+
+describe("detectHoverState related tests", () => {
+    test("detectHoverState", () => {
+        const featureA = { id: "A" } as MapGeoJSONFeature;
+        const featureB = { id: "B" } as MapGeoJSONFeature;
+        const featureAWithGoodPOIData = {
+            ...featureA,
+            source: POI_SOURCE_ID,
+            properties: { id: "A" } as unknown
+        } as MapGeoJSONFeature;
+        const featureAWithBadPOIData = { ...featureA, source: POI_SOURCE_ID } as MapGeoJSONFeature;
+
+        const someCoords = { x: 10, y: 20 };
+        const otherCoords = { x: 12, y: 23 };
+
+        expect(detectHoverState(someCoords, undefined, undefined, undefined)).toEqual({});
+        expect(detectHoverState(someCoords, undefined, otherCoords, undefined)).toEqual({});
+        expect(detectHoverState(someCoords, featureA, undefined, undefined)).toEqual({
+            hoverChanged: true
+        });
+        expect(detectHoverState(someCoords, featureA, otherCoords, undefined)).toEqual({
+            hoverChanged: true
+        });
+        expect(detectHoverState(someCoords, featureAWithGoodPOIData, otherCoords, undefined)).toEqual({
+            hoverChanged: true
+        });
+        expect(detectHoverState(someCoords, featureAWithBadPOIData, otherCoords, undefined)).toEqual({});
+        expect(detectHoverState(someCoords, featureA, someCoords, featureB)).toEqual({
+            hoverChanged: true
+        });
+        expect(detectHoverState(someCoords, featureA, otherCoords, featureB)).toEqual({
+            hoverChanged: true
+        });
+        expect(detectHoverState(someCoords, undefined, { x: 12, y: 22 }, featureA)).toEqual({
+            hoverChanged: true
+        });
+        expect(detectHoverState(someCoords, featureA, someCoords, featureA)).toEqual({});
+        expect(detectHoverState(someCoords, featureA, otherCoords, featureA)).toEqual({
+            mouseInMotionOverHoveredFeature: true
+        });
     });
 });

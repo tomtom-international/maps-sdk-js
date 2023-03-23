@@ -198,8 +198,8 @@ export class EventsProxy extends AbstractEventProxy {
         // mouseInMotionOverHoveredFeature: whether the mouse is moving along the hovered feature (not stopped on it):
         const { hoverChanged, mouseInMotionOverHoveredFeature } = detectHoverState(
             ev.point,
-            this.hoveringPoint,
             hoveredTopFeature,
+            this.hoveringPoint,
             this.hoveringFeature
         );
 
