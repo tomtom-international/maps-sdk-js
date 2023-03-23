@@ -365,10 +365,10 @@ describe("Calculate route integration tests", () => {
         expect(reconstructedRouteSections.ferry).toBeUndefined();
 
         // appending the entire reconstructed route into a larger context
-        // with new origin in Almere and new destination in Rosendaal
+        // with new origin in Zaandam and new destination in Dordrecht
         const routeWithEmbeddedRoute = (
             await calculateRoute({
-                geoInputs: [[5.21671, 52.37196], reconstructedRoute, [4.45986, 51.53157]]
+                geoInputs: [[4.82409, 52.43924], reconstructedRoute, [4.6684, 51.81111]]
             })
         ).features[0];
 
