@@ -1,6 +1,6 @@
 import { FeatureCollection, Feature, MultiPolygon, Point, Polygon, Position } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { bboxCenter, bboxFromCoordsArray } from "@anw/go-sdk-js/core";
+import { bboxCenter, bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
 import { ColorPaletteOptions, ColorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 
