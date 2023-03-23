@@ -1,25 +1,8 @@
 import { FeatureCollection, Feature, MultiPolygon, Point, Polygon, Position } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { bboxCenter, bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
-import { ColorPaletteOptions, ColorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
+import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
-
-/**
- * Pick random color from Color Palette.
- * @param palette - ColorPalette options
- */
-export const pickRandomColor = (palette: ColorPaletteOptions): string =>
-    ColorPalettes[palette][Math.floor(Math.random() * ColorPalettes[palette].length)];
-
-/**
- * Build geometry fill color option.
- * @param fillColor
- * @returns
- */
-export const buildGeometryFillColor = (fillColor: DataDrivenPropertyValueSpecification<string>) =>
-    typeof fillColor === "string" && fillColor in ColorPalettes
-        ? pickRandomColor(fillColor as ColorPaletteOptions)
-        : fillColor;
 
 /**
  * Build Geometry layer specification
@@ -111,12 +94,17 @@ export const prepareGeometryForDisplay = (
     config?: GeometryModuleConfig
 ): FeatureCollection<Polygon | MultiPolygon> => {
     const colorConfig = config?.colorConfig;
-    if (colorConfig && colorConfig.fillColor !== undefined) {
-        const fillColor = colorConfig.fillColor;
-        geometry.features.forEach((feature) => {
+    if (colorConfig && colorConfig.fillColor) {
+        const color = colorConfig.fillColor;
+        geometry.features.forEach((feature, index) => {
             feature.properties = {
                 ...feature.properties,
-                color: buildGeometryFillColor(fillColor)
+                color:
+                    typeof color === "string" && colorPalettes[color as ColorPaletteOptions]
+                        ? colorPalettes[color as ColorPaletteOptions][
+                              index % colorPalettes[color as ColorPaletteOptions].length
+                          ]
+                        : color
             };
         });
     }

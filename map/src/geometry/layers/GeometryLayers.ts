@@ -1,7 +1,7 @@
 import { FillLayerSpecification, LineLayerSpecification } from "maplibre-gl";
 import { LayerSpecTemplate } from "../../shared";
 
-export const ColorPalettes = {
+export const colorPalettes = {
     warm: [
         "#793F0D",
         "#AC703D",
@@ -22,7 +22,7 @@ export const ColorPalettes = {
     cold: ["#344464", "#548ca4", "#549cac", "#2c445c", "#a4ccd4", "#acbccc", "#b4c4d4", "#acd4cc", "#5c8ca4"]
 };
 
-export type ColorPaletteOptions = keyof typeof ColorPalettes;
+export type ColorPaletteOptions = keyof typeof colorPalettes;
 
 const defaultColor = "#0A3653";
 

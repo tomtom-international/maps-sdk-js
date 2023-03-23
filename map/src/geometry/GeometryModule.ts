@@ -40,7 +40,6 @@ export type GeometryModuleSourcesAndLayersIds = {
 export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLayersIds, GeometryModuleConfig> {
     private geometry!: GeoJSONSourceWithLayers<GeometryDataResponse>;
     private geometryLabel!: GeoJSONSourceWithLayers<FeatureCollection<Point>>;
-    private geometryData?: FeatureCollection<Polygon | MultiPolygon>;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -78,8 +77,8 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
     protected applyTextConfig(config: GeometryModuleConfig) {
         const textConfig = config?.textConfig;
 
-        if (textConfig?.textField && this.geometryData) {
-            const geometryTitleData = prepareTitleForDisplay(this.geometryData);
+        if (textConfig?.textField && this.geometry.shownFeatures) {
+            const geometryTitleData = prepareTitleForDisplay(this.geometry.shownFeatures);
             this.geometryLabel.show(geometryTitleData);
         }
     }
@@ -90,7 +89,6 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
      * @param options
      */
     show(geometry: FeatureCollection<Polygon | MultiPolygon>): void {
-        this.geometryData = geometry;
         this.geometry.show(prepareGeometryForDisplay(geometry, this.config));
         this._applyConfig(this.config);
     }
