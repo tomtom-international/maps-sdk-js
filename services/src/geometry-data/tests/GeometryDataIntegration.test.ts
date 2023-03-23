@@ -1,5 +1,6 @@
-import { geometryData } from "../GeometryData";
-import { TomTomConfig } from "@anw/maps-sdk-js/core";
+import { Places, TomTomConfig } from "@anw/maps-sdk-js/core";
+import { geometryData, placeGeometryData } from "../GeometryData";
+import places from "./GeometryDataIntegration.data.json";
 
 describe("Geometry data errors", () => {
     test("Geometry data test without API key", async () => {
@@ -158,4 +159,17 @@ describe("Geometry data integration tests", () => {
             });
         }
     );
+});
+
+describe("Geometry with Places", () => {
+    test("Build a geometry response with places properties - integration", async () => {
+        const result = await placeGeometryData(places as unknown as Places);
+        const azoresGeometryId = "a91ae003-75af-4d47-b27f-20947f24ea72";
+        const azoresRegion = result?.features.find((feature) => feature.id === azoresGeometryId);
+
+        expect(azoresRegion?.properties).toMatchObject({
+            ...places.features[0].properties.address,
+            coordinates: places.features[0].geometry.coordinates
+        });
+    });
 });

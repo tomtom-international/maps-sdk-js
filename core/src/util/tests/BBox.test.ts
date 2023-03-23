@@ -9,7 +9,9 @@ import {
     Polygon,
     Position
 } from "geojson";
+import { OptionalBBox } from "../../types";
 import {
+    bboxCenter,
     bboxExpandedWithBBox,
     bboxExpandedWithGeoJSON,
     bboxExpandedWithPosition,
@@ -444,5 +446,13 @@ describe("Bounding box calculation performance tests", () => {
             coordinates: [coordinates, coordinates, coordinates, coordinates]
         };
         expect(bestExecutionTimeMS(() => bboxFromGeoJSON(polygon), 20)).toBeLessThan(2);
+    });
+});
+
+describe("Bounding box center", () => {
+    test("Calculate bounding box center", () => {
+        const bbox: OptionalBBox = [2, 4, 6, 8];
+
+        expect(bboxCenter(bbox)).toEqual([4, 6]);
     });
 });

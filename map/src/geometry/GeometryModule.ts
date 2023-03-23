@@ -1,18 +1,28 @@
+import { FeatureCollection, MultiPolygon, Point, Polygon, Position } from "geojson";
+import { FillLayerSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
     GeoJSONSourceWithLayers,
     GEOMETRY_SOURCE_ID,
-    SourceWithLayerIDs
+    SourceWithLayerIDs,
+    GEOMETRY_TITLE_SOURCE_ID,
+    ToBeAddedLayerSpec
 } from "../shared";
-import { geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
+import {
+    buildGeometryLayerSpec,
+    buildGeometryTitleLayerSpec,
+    prepareGeometryForDisplay,
+    prepareTitleForDisplay
+} from "./prepareGeometryForDisplay";
 
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
+const GEOMETRY_TITLE_LAYER_ID = "geometry_Title";
 
 /**
  * IDs of sources and layers for geometry module.
@@ -29,6 +39,8 @@ export type GeometryModuleSourcesAndLayersIds = {
  */
 export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLayersIds, GeometryModuleConfig> {
     private geometry!: GeoJSONSourceWithLayers<GeometryDataResponse>;
+    private geometryLabel!: GeoJSONSourceWithLayers<FeatureCollection<Point>>;
+    private geometryData?: FeatureCollection<Polygon | MultiPolygon>;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -41,25 +53,50 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
         return new GeometryModule(tomtomMap, config);
     }
 
-    protected initSourcesWithLayers() {
+    protected initSourcesWithLayers(config?: GeometryModuleConfig) {
+        const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         this.geometry = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
-            { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID },
-            { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID }
+            { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID } as ToBeAddedLayerSpec<FillLayerSpecification>,
+            { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID } as ToBeAddedLayerSpec<LineLayerSpecification>
         ]);
+        const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
+        this.geometryLabel = new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_TITLE_SOURCE_ID, [
+            titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
+        ]);
+
         return {
             geometry: { sourceID: GEOMETRY_SOURCE_ID, layerIDs: [GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID] }
         };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    protected _applyConfig() {}
+    protected _applyConfig(config: GeometryModuleConfig | undefined) {
+        if (config?.textConfig) {
+            this.applyTextConfig(config);
+        }
+    }
+
+    protected applyTextConfig(config: GeometryModuleConfig) {
+        const textConfig = config?.textConfig;
+
+        if (textConfig?.textField && this.geometryData) {
+            const geometryTitleData = prepareTitleForDisplay(this.geometryData);
+            this.geometryLabel.show(geometryTitleData);
+        }
+    }
+
+    private getBiggestPolygon(coordinates: Position[][][]) {
+        return coordinates.flat().reduce((result, coord) => (coord.length > result.length ? coord : result), []);
+    }
 
     /**
      * Shows the given Geometry on the map.
      * @param geometry
+     * @param options
      */
-    show(geometry: GeometryDataResponse): void {
-        this.geometry.show(geometry);
+    show(geometry: FeatureCollection<Polygon | MultiPolygon>): void {
+        this.geometryData = geometry;
+        this.geometry.show(prepareGeometryForDisplay(geometry, this.config));
+        this._applyConfig(this.config);
     }
 
     /**

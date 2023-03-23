@@ -1,0 +1,92 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-25.48141, 37.7963]
+      },
+      "properties": {
+        "type": "Geography",
+        "score": 1.1275401115,
+        "address": {
+          "countrySubdivision": "Azores",
+          "countrySubdivisionCode": "20",
+          "countryCode": "PT",
+          "country": "Portugal",
+          "countryCodeISO3": "PRT",
+          "freeformAddress": "Portugal"
+        },
+        "dataSources": {
+          "geometry": {
+            "id": "a91ae003-75af-4d47-b27f-20947f24ea72"
+          }
+        },
+        "geographyType": ["CountrySubdivision"],
+        "opacity": 1,
+        "borderWidth": 1
+      },
+      "bbox": [-31.27548, 36.92776, -25.01318, 39.72618],
+      "id": "Oa87Teq_VQ32UtBz6K7ZgA"
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-7.96829, 39.6822]
+      },
+      "properties": {
+        "type": "Geography",
+        "score": 1.1275401115,
+        "address": {
+          "countrySubdivision": "Continental Portugal",
+          "countryCode": "PT",
+          "country": "Portugal",
+          "countryCodeISO3": "PRT",
+          "freeformAddress": "Portugal"
+        },
+        "dataSources": {
+          "geometry": {
+            "id": "c784a9be-f5c7-49b4-acb0-a37c2554fa36"
+          }
+        },
+        "geographyType": ["CountrySubdivision"],
+        "opacity": 1,
+        "borderWidth": 1
+      },
+      "bbox": [-9.54744, 36.95966, -6.19021, 42.1542],
+      "id": "iWRI47x1ErEeqMPxSKiH4w"
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-16.99895, 32.74652]
+      },
+      "properties": {
+        "type": "Geography",
+        "score": 1.1275401115,
+        "address": {
+          "countrySubdivision": "Madeira",
+          "countrySubdivisionCode": "30",
+          "countryCode": "PT",
+          "country": "Portugal",
+          "countryCodeISO3": "PRT",
+          "freeformAddress": "Portugal"
+        },
+        "dataSources": {
+          "geometry": {
+            "id": "d3ec5c7c-a668-4fc9-b12a-e20b759768b7"
+          }
+        },
+        "geographyType": ["CountrySubdivision"],
+        "opacity": 1,
+        "borderWidth": 1
+      },
+      "bbox": [-17.26594, 30.03028, -15.85524, 33.12816],
+      "id": "cQxcn5J2o3QCHIDIR-55uA"
+    }
+  ],
+  "bbox": [-31.27548, 30.03028, -6.19021, 42.1542]
+}

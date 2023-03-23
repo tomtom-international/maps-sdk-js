@@ -178,3 +178,10 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
  */
 export const bboxExpandedWithGeoJSON = (geoJSON: GeoJsonObject, bboxToExpand?: BBox): OptionalBBox =>
     bboxExpandedWithBBox(bboxFromGeoJSON(geoJSON), bboxToExpand);
+
+/**
+ * Calculate the center of bbox
+ * @ignore
+ * @param bbox
+ * */
+export const bboxCenter = (bbox: BBox): Position => [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2];

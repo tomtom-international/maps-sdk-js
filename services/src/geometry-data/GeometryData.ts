@@ -1,4 +1,5 @@
-import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
+import { FeatureCollection, MultiPolygon, Polygon } from "geojson";
+import { Places } from "@anw/maps-sdk-js/core";
 import { GeometryDataParams } from "./types/GeometryDataParams";
 import { geometryDataTemplate, GeometryDataTemplate } from "./GeometryDataTemplate";
 import { callService } from "../shared/ServiceTemplate";
@@ -13,6 +14,53 @@ import { callService } from "../shared/ServiceTemplate";
 export const geometryData = async (
     params: GeometryDataParams,
     customTemplate?: Partial<GeometryDataTemplate>
-): Promise<GeometryDataResponse> => {
+): Promise<FeatureCollection<Polygon | MultiPolygon>> => {
     return callService(params, { ...geometryDataTemplate, ...customTemplate }, "GeometryData");
+};
+
+/**
+ * Merge our internal Places "properties" response with Geometry data
+ * @param places
+ * @param geometries
+ * @returns FeatureCollection<Polygon | MultiPolygon>,
+ */
+const mergePlacesWithGeometries = (
+    places: Places,
+    geometries: FeatureCollection<Polygon | MultiPolygon>
+): FeatureCollection<Polygon | MultiPolygon> => {
+    const placesIdMap = places.features.reduce((acc, place) => {
+        const geometryId = place.properties.dataSources?.geometry?.id;
+
+        if (geometryId) {
+            acc[geometryId] = {
+                ...place.properties.address,
+                coordinates: place.geometry.coordinates
+            };
+        }
+        return acc;
+    }, {} as Record<string, any>);
+
+    const features = geometries.features.map((feature) => {
+        if (feature.id && placesIdMap[feature.id]) {
+            return { ...feature, properties: placesIdMap[feature.id] };
+        }
+
+        return feature;
+    });
+
+    return {
+        type: "FeatureCollection",
+        bbox: geometries.bbox,
+        features
+    };
+};
+
+/**
+ * Build geometry data with places properties
+ * Use the geometryData service.
+ * @param places
+ */
+export const placeGeometryData = async (places: Places): Promise<FeatureCollection<Polygon | MultiPolygon>> => {
+    const geometries = await geometryData({ geometries: places });
+    return mergePlacesWithGeometries(places, geometries);
 };
