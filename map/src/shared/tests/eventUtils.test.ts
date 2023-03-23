@@ -131,5 +131,11 @@ describe("detectHoverState related tests", () => {
         expect(detectHoverState(someCoords, featureA, otherCoords, featureA)).toEqual({
             mouseInMotionOverHoveredFeature: true
         });
+        expect(detectHoverState(someCoords, featureA, { ...someCoords, y: -10 }, featureA)).toEqual({
+            mouseInMotionOverHoveredFeature: true
+        });
+        expect(detectHoverState(someCoords, featureA, { ...someCoords, x: -10 }, featureA)).toEqual({
+            mouseInMotionOverHoveredFeature: true
+        });
     });
 });
