@@ -127,8 +127,8 @@ export class EventsProxy extends AbstractEventProxy {
                     undefined
                 );
 
-                const listenerId = this.hoveringSourceWithLayers.source.id + "_long-hover";
-                this.handlers[listenerId]?.forEach((handler) =>
+                const longHoverHandlers = this.handlers[this.hoveringSourceWithLayers.source.id + "_long-hover"];
+                longHoverHandlers?.forEach((handler) =>
                     handler(
                         this.hoveringLngLat as LngLat,
                         eventState?.feature,
@@ -141,21 +141,24 @@ export class EventsProxy extends AbstractEventProxy {
     }
 
     /**
-     * Private event handlers for Maplibre events.
+     * If paddingBoxUpdateOnZoom configured, it updates paddingBoxOnZoom after this zoom event.
      */
     private onZoom() {
         if (!this.config.paddingBoxUpdateOnZoom) {
             return;
         }
-        const paddedBoundsOnZoom = Math.round(this.config.paddingBox * Math.round(this.map.getZoom())) / 10;
+        const zoom = this.map.getZoom();
+        const roundedZoom = Math.round(zoom);
+        const paddingBox = this.config.paddingBox;
+        const paddedBoundsOnZoom = Math.round(paddingBox * roundedZoom) / 10;
 
         // Keep the given paddingBox during the same default zoom level
-        if (Math.round(this.map.getZoom()) === this.defaultZoomLevel) {
-            this.paddingBoxOnZoom = this.config.paddingBox;
-        } else if (this.map.getZoom() > this.defaultZoomLevel) {
-            this.paddingBoxOnZoom = Math.ceil(this.config.paddingBox + paddedBoundsOnZoom) - this.config.paddingBox;
+        if (roundedZoom === this.defaultZoomLevel) {
+            this.paddingBoxOnZoom = paddingBox;
+        } else if (zoom > this.defaultZoomLevel) {
+            this.paddingBoxOnZoom = Math.ceil(paddingBox + paddedBoundsOnZoom) - paddingBox;
         } else {
-            this.paddingBoxOnZoom = this.config.paddingBox - Math.floor(this.config.paddingBox - paddedBoundsOnZoom);
+            this.paddingBoxOnZoom = paddingBox - Math.floor(paddingBox - paddedBoundsOnZoom);
         }
     }
 
@@ -189,7 +192,9 @@ export class EventsProxy extends AbstractEventProxy {
         deserializeFeatures(this.hoveringFeatures);
         const [hoveredTopFeature] = this.hoveringFeatures;
 
-        // Check if the layer has any handlers registered:
+        // Check if the layer has any handlers registered.
+        // Since hover is the "lowest" event type, having a handler for any event type justifies supporting hover state.
+        // However, we'll only fire the hover events if there are handlers for hover specifically.
         if (hoveredTopFeature && !this.hasAnyHandlerRegistered(hoveredTopFeature.source)) {
             return;
         }
@@ -222,17 +227,10 @@ export class EventsProxy extends AbstractEventProxy {
                     prevHoveredSourceWithLayers
                 );
 
-                const listenerId = hoveredTopFeature && hoveredTopFeature.source + `_hover`;
-                if (this.handlers[listenerId]) {
-                    if (eventState && this.handlers[listenerId]) {
-                        for (const handler of this.handlers[listenerId]) {
-                            handler(
-                                ev.lngLat,
-                                eventState.feature,
-                                this.hoveringFeatures,
-                                this.hoveringSourceWithLayers
-                            );
-                        }
+                const hoverHandlers = this.handlers[hoveredTopFeature && hoveredTopFeature.source + `_hover`];
+                if (hoverHandlers && eventState) {
+                    for (const handler of hoverHandlers) {
+                        handler(ev.lngLat, eventState.feature, this.hoveringFeatures, this.hoveringSourceWithLayers);
                     }
                 }
             }
@@ -265,9 +263,9 @@ export class EventsProxy extends AbstractEventProxy {
         this.lastClickedFeature = clickedFeatures[0];
         const prevClickedSourceWithLayers = this.lastClickedSourceWithLayers;
         this.lastClickedSourceWithLayers = this.interactiveSourcesAndLayers[this.lastClickedFeature?.source];
-        const handlers = this.handlers[this.lastClickedFeature?.source + `_${clickType}`];
+        const clickHandlers = this.handlers[this.lastClickedFeature?.source + `_${clickType}`];
 
-        if (handlers || !this.lastClickedFeature) {
+        if (clickHandlers || !this.lastClickedFeature) {
             const eventState = updateEventState(
                 clickType,
                 this.lastClickedFeature,
@@ -276,8 +274,8 @@ export class EventsProxy extends AbstractEventProxy {
                 prevClickedSourceWithLayers
             );
 
-            if (handlers && eventState) {
-                for (const handler of handlers) {
+            if (clickHandlers && eventState) {
+                for (const handler of clickHandlers) {
                     handler(ev.lngLat, eventState.feature, clickedFeatures, this.lastClickedSourceWithLayers);
                 }
             }

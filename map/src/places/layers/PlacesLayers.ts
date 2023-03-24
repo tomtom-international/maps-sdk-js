@@ -125,14 +125,14 @@ export const getTextSizeSpec = (
 };
 
 const buildPOILikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecification> => {
-    const layer = (map.getStyle().layers.filter((layer) => layer.id == "POI")[0] as SymbolLayerSpecification) || {};
-    const textSize = (layer.layout as SymbolLayerSpecification["layout"])?.["text-size"];
+    const poiLayer = (map.getStyle().layers.filter((layer) => layer.id == "POI")[0] as SymbolLayerSpecification) || {};
+    const textSize = (poiLayer.layout as SymbolLayerSpecification["layout"])?.["text-size"];
     return {
         filter: ["!", isClick],
         type: "symbol",
-        paint: layer.paint,
+        paint: poiLayer.paint,
         layout: {
-            ...layer.layout,
+            ...poiLayer.layout,
             "text-field": ["get", TITLE],
             "icon-image": ["get", ICON_ID],
             ...(textSize && { "text-size": getTextSizeSpec(textSize) })
