@@ -10,7 +10,7 @@ import {
 } from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
 
-const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
+export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);
 
 export const waitForTimeout = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -101,10 +101,10 @@ export const waitUntilRenderedFeatures = async (
     expectNumFeatures: number,
     timeoutMS: number,
     lngLat?: Position
-): Promise<MapGeoJSONFeature[]> => {
-    let currentFeatures: MapGeoJSONFeature[];
-    return tryBeforeTimeout(
+): Promise<MapGeoJSONFeature[]> =>
+    tryBeforeTimeout(
         async (): Promise<MapGeoJSONFeature[]> => {
+            let currentFeatures: MapGeoJSONFeature[] = [];
             do {
                 await waitForTimeout(500);
                 currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
@@ -114,17 +114,16 @@ export const waitUntilRenderedFeatures = async (
         `Features didn't match ${expectNumFeatures} count for layers: ${layerIDs}.`,
         timeoutMS
     );
-};
 
 export const waitUntilRenderedFeaturesChange = async (
     layerIDs: string[],
     previousNumFeatures: number,
     timeoutMS: number,
     lngLat?: Position
-): Promise<MapGeoJSONFeature[]> => {
-    let currentFeatures: MapGeoJSONFeature[];
-    return tryBeforeTimeout(
+): Promise<MapGeoJSONFeature[]> =>
+    tryBeforeTimeout(
         async (): Promise<MapGeoJSONFeature[]> => {
+            let currentFeatures: MapGeoJSONFeature[];
             do {
                 await waitForTimeout(500);
                 currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
@@ -134,7 +133,6 @@ export const waitUntilRenderedFeaturesChange = async (
         `Features didn't change from ${previousNumFeatures} for layers: ${layerIDs}.`,
         timeoutMS
     );
-};
 
 export const getSymbolLayersByID = async (layerID: string): Promise<SymbolLayerSpecification> =>
     page.evaluate((symbolLayerID) => {

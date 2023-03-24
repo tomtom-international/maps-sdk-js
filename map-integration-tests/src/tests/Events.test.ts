@@ -9,11 +9,15 @@ import {
     getPlacesSourceAndLayerIDs,
     initGeometry,
     initPlaces,
+    queryRenderedFeatures,
     showGeometry,
     showPlaces,
+    tryBeforeTimeout,
+    waitForMapIdle,
     waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
+import { EventType } from "map";
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
@@ -58,6 +62,12 @@ const setupPlacesClickHandlers = async () =>
 const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeatures(["geometry_Fill"], numFeatures, 3000, position);
 
+const getNumLeftAndRightClicks = async (): Promise<[number, number]> =>
+    page.evaluate(() => {
+        const sdkThis = globalThis as MapsSDKThis;
+        return [sdkThis._numOfClicks, sdkThis._numOfContextmenuClicks] as [number, number];
+    });
+
 const getNumHoversAndLongHovers = async (): Promise<[number, number]> =>
     page.evaluate(() => {
         const sdkThis = globalThis as MapsSDKThis;
@@ -66,6 +76,7 @@ const getNumHoversAndLongHovers = async (): Promise<[number, number]> =>
 
 describe("Tests with user events", () => {
     const mapEnv = new MapIntegrationTestEnv();
+    let placesLayerIDs: string[];
 
     beforeAll(async () => mapEnv.loadPage());
 
@@ -79,73 +90,88 @@ describe("Tests with user events", () => {
             mapSDKThis._numOfLongHovers = 0;
         });
 
-        await mapEnv.loadMap({
-            zoom: 10,
-            // Amsterdam center
-            center: [4.89067, 52.37313]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 10,
+                // Amsterdam center
+                center: [4.89067, 52.37313]
+            },
+            // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
+            { events: { longHoverDelayAfterMapMoveMS: 2000, longHoverDelayOnStillMapMS: 1500 } }
+        );
 
         await initPlaces();
         await showPlaces(places);
-        await waitUntilRenderedFeatures((await getPlacesSourceAndLayerIDs()).layerIDs, places.features.length, 10000);
+        placesLayerIDs = (await getPlacesSourceAndLayerIDs()).layerIDs;
+        await waitForMapIdle();
+        await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 10000);
     });
 
-    test("Add click and contextmenu events for POI", async () => {
+    const waitForEventState = async (expectedEventState: EventType | undefined): Promise<EventType | undefined> =>
+        tryBeforeTimeout(
+            async (): Promise<EventType> => {
+                let eventState;
+                do {
+                    await waitForTimeout(100);
+                    eventState = (await queryRenderedFeatures(placesLayerIDs))[0]?.properties?.eventState;
+                } while (eventState != expectedEventState);
+                return eventState;
+            },
+            `Event state didn't match ${expectedEventState}.`,
+            3000
+        );
+
+    test("Click and contextmenu events for places", async () => {
         await setupPlacesClickHandlers();
 
         const placePixelCoords = await getPixelCoords(firstPlacePosition);
+        await waitForEventState(undefined);
+
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
+        await waitForEventState("click");
+        expect(await getNumLeftAndRightClicks()).toEqual([1, 0]);
+
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y, { button: "right" });
+        await waitForEventState("contextmenu");
+        expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
 
-        const numOfClicks = await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks);
-        const numOfContextmenuClicks = await page.evaluate(() => (globalThis as MapsSDKThis)._numOfContextmenuClicks);
+        await page.mouse.click(placePixelCoords.x - 100, placePixelCoords.y - 100);
+        await waitForEventState(undefined);
+        expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
 
-        expect(numOfClicks).toBe(1);
-        expect(numOfContextmenuClicks).toBe(1);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test("Hover and long hover states for a place", async () => {
-        const ENOUGH_FOR_LONG_HOVER_MS = 1500;
-        const NOT_ENOUGH_FOR_LONG_HOVER_MS = 100;
-
         await setupPlacesHoverHandlers();
 
         const placePosition = await getPixelCoords(firstPlacePosition);
         await page.mouse.move(placePosition.x, placePosition.y);
-        await waitForTimeout(ENOUGH_FOR_LONG_HOVER_MS);
-        expect(await getNumHoversAndLongHovers()).toEqual([1, 1]);
+        await waitForEventState("hover");
 
         // Moving cursor away from the place
-        await page.mouse.move(placePosition.x + 50, placePosition.y + 50);
-        expect(await getNumHoversAndLongHovers()).toEqual([1, 1]);
+        await page.mouse.move(placePosition.x - 100, placePosition.y - 100);
+        await waitForEventState(undefined);
+        expect(await getNumHoversAndLongHovers()).toEqual([1, 0]);
+        await waitForMapIdle();
 
         // Moving cursor back to the place
         await page.mouse.move(placePosition.x, placePosition.y);
-        await waitForTimeout(NOT_ENOUGH_FOR_LONG_HOVER_MS);
-        // Only immediate hover event expected:
+        await waitForEventState("hover");
+        // Waiting for a long-hover:
+        await waitForTimeout(1000);
+        await waitForEventState("long-hover");
         expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
-        // Waiting for long hover:
-        await waitForTimeout(ENOUGH_FOR_LONG_HOVER_MS);
-        expect(await getNumHoversAndLongHovers()).toEqual([2, 2]);
 
-        // Moving away again, verifying nothing changes:
-        await page.mouse.move(placePosition.x - 50, placePosition.y - 50);
-        expect(await getNumHoversAndLongHovers()).toEqual([2, 2]);
-        await waitForTimeout(ENOUGH_FOR_LONG_HOVER_MS);
-        expect(await getNumHoversAndLongHovers()).toEqual([2, 2]);
-
-        // Moving cursor back to the place:
-        await page.mouse.move(placePosition.x, placePosition.y);
-        await waitForTimeout(NOT_ENOUGH_FOR_LONG_HOVER_MS);
-        expect(await getNumHoversAndLongHovers()).toEqual([3, 2]);
-        await waitForTimeout(ENOUGH_FOR_LONG_HOVER_MS);
-        expect(await getNumHoversAndLongHovers()).toEqual([3, 3]);
+        // Moving away again:
+        await page.mouse.move(placePosition.x - 100, placePosition.y - 100);
+        await waitForEventState(undefined);
+        expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Callback handler arguments defined", async () => {
+    test("Callback handler arguments", async () => {
         await setupPlacesClickHandlers();
 
         const placePixelCoords = await getPixelCoords(firstPlacePosition);
@@ -220,12 +246,13 @@ describe("Events custom configuration", () => {
     test("Custom cursor", async () => {
         await initPlaces();
         await showPlaces(places);
+        await waitForMapIdle();
         await waitUntilRenderedFeatures(
             (
                 await getPlacesSourceAndLayerIDs()
             ).layerIDs,
             placesJSON.features.length,
-            15000
+            10000
         );
 
         expect(await getCursor()).toBe("help");

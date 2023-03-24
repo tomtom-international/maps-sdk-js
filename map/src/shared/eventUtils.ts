@@ -1,6 +1,7 @@
+import isNil from "lodash/isNil";
+import omit from "lodash/omit";
 import { EventType, SourceWithLayers } from "./types";
 import { Feature } from "geojson";
-import omit from "lodash/omit";
 import { MapGeoJSONFeature, Point2D } from "maplibre-gl";
 import { GeoJSONSourceWithLayers } from "./SourceWithLayers";
 import { POI_SOURCE_ID } from "./layers/sourcesIDs";
@@ -56,8 +57,8 @@ const removeEventStateAndShow = (
     sourceWithLayers: GeoJSONSourceWithLayers
 ): void => {
     const prevFeaturesToUpdate = [...sourceWithLayers.shownFeatures.features];
-    const updated = putEventState(newEventType, rawFeature.id, prevFeaturesToUpdate, "removeFromProps");
-    if (updated) {
+    const updatedIndex = putEventState(newEventType, rawFeature.id, prevFeaturesToUpdate, "removeFromProps");
+    if (!isNil(updatedIndex)) {
         sourceWithLayers.show({ ...sourceWithLayers.shownFeatures, features: prevFeaturesToUpdate });
     }
 };

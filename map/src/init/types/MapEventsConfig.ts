@@ -23,15 +23,16 @@ export type MapEventsConfig = {
      */
     cursorOnMap?: string;
     /**
-     * Optional configuration to delay long-hover when map has just moved (milliseconds).
+     * Delay to trigger a long-hover event when map has just moved (milliseconds).
      * * Right after the map has moved, the first long-hover is by default going to wait longer,
-     * to prevent unwanted hovers while panning the map
+     * to prevent unwanted hovers while panning the map.
+     * * Should be higher than longHoverDelayOnStillMapMS.
      * @default 800
      */
-    hoverDelayMsAfterMapMove?: number;
+    longHoverDelayAfterMapMoveMS?: number;
     /**
-     * Optional configuration to delay long-hover when map was still since the last long hover (milliseconds).
+     * Delay to trigger a long-hover event when map was still since the last long hover (milliseconds).
      * @default 300
      */
-    hoverDelayMsOnStillMap?: number;
+    longHoverDelayOnStillMapMS?: number;
 };
