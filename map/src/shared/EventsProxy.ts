@@ -8,7 +8,6 @@ import { detectHoverState, updateEventState } from "./eventUtils";
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
     paddingBox: 5,
-    paddingBoxUpdateOnZoom: true,
     cursorOnHover: "pointer",
     cursorOnMouseDown: "grabbing",
     cursorOnMap: "default",
@@ -64,7 +63,6 @@ export class EventsProxy extends AbstractEventProxy {
         this.map.on("mouseover", (ev) => this.onMouseMove(ev));
         this.map.on("mousedown", () => this.onMouseDown());
         this.map.on("mouseup", () => this.onMouseUp());
-        this.map.on("zoom", () => this.onZoom());
         this.map.on("click", (ev) => this.onMapClick("click", ev));
         this.map.on("contextmenu", (ev) => this.onMapClick("contextmenu", ev));
     }
@@ -137,28 +135,6 @@ export class EventsProxy extends AbstractEventProxy {
                     )
                 );
             }
-        }
-    }
-
-    /**
-     * If paddingBoxUpdateOnZoom configured, it updates paddingBoxOnZoom after this zoom event.
-     */
-    private onZoom() {
-        if (!this.config.paddingBoxUpdateOnZoom) {
-            return;
-        }
-        const zoom = this.map.getZoom();
-        const roundedZoom = Math.round(zoom);
-        const paddingBox = this.config.paddingBox;
-        const paddedBoundsOnZoom = Math.round(paddingBox * roundedZoom) / 10;
-
-        // Keep the given paddingBox during the same default zoom level
-        if (roundedZoom === this.defaultZoomLevel) {
-            this.paddingBoxOnZoom = paddingBox;
-        } else if (zoom > this.defaultZoomLevel) {
-            this.paddingBoxOnZoom = Math.ceil(paddingBox + paddedBoundsOnZoom) - paddingBox;
-        } else {
-            this.paddingBoxOnZoom = paddingBox - Math.floor(paddingBox - paddedBoundsOnZoom);
         }
     }
 

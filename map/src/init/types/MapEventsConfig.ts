@@ -5,11 +5,6 @@ export type MapEventsConfig = {
      */
     paddingBox?: number;
     /**
-     * Optional configuration to update paddingBox depending on zoom level
-     * @default true
-     */
-    paddingBoxUpdateOnZoom?: boolean;
-    /**
      * Optional configuration to show custom cursor when hovering
      * * Check out {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor}
      * @default pointer
