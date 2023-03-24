@@ -1,10 +1,10 @@
-import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
+import { Geometries } from "@anw/maps-sdk-js/core";
 import { GEOMETRY_SOURCE_ID } from "map";
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import amsterdamGeometryData from "./GeometryModule.test.data.json";
-import { Position } from "geojson";
+import { GeoJsonProperties, Position } from "geojson";
 import {
     getNumVisibleLayersBySource,
     initGeometry,
@@ -25,7 +25,7 @@ describe("Geometry integration tests", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
-    const geometryData = amsterdamGeometryData as GeometryDataResponse;
+    const geometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
 
     const amsterdamCenter = [4.89067, 52.37313];
     // point in Amsterdam South East which fits inside a separate polygon:

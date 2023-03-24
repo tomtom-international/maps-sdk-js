@@ -1,9 +1,10 @@
-import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
+import { Geometries } from "@anw/maps-sdk-js/core";
 import { Map } from "maplibre-gl";
 import { GeometryModule } from "../GeometryModule";
 import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 import { GEOMETRY_SOURCE_ID } from "../../shared";
+import { GeoJsonProperties } from "geojson";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -27,7 +28,7 @@ describe("Geometry module tests", () => {
             }
         } as unknown as TomTomMap;
 
-        const testGeometryData = amsterdamGeometryData as GeometryDataResponse;
+        const testGeometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
         let geometry = await GeometryModule.init(tomtomMapMock);
         geometry.show(testGeometryData);
         geometry.show(testGeometryData);

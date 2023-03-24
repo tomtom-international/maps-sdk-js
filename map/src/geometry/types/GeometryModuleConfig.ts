@@ -1,21 +1,36 @@
 import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
 import { ColorPaletteOptions } from "../layers/GeometryLayers";
 
-type GeometryColorConfig = {
+/**
+ * Places Color configuration
+ */
+export type GeometryColorConfig = {
+    /**
+     * fillColor could be a string with hex color value or the name of a color palette or a valid MapLibre expression to be used directly
+     */
     fillColor?: ColorPaletteOptions | DataDrivenPropertyValueSpecification<string>;
     fillOpacity?: DataDrivenPropertyValueSpecification<number>;
 };
 
-type GeometryTextConfig = {
+/**
+ * Geometry text configuration
+ */
+export type GeometryTextConfig = {
     textField: DataDrivenPropertyValueSpecification<string>;
 };
 
-type GeometryLineConfig = {
+/**
+ * Geometry line configuration
+ */
+export type GeometryLineConfig = {
     lineColor?: DataDrivenPropertyValueSpecification<string>;
     lineOpacity?: DataDrivenPropertyValueSpecification<number>;
     lineWidth?: DataDrivenPropertyValueSpecification<number>;
 };
 
+/**
+ * Geometry layer configuration
+ */
 export type GeometryModuleConfig = {
     colorConfig?: GeometryColorConfig;
     textConfig?: GeometryTextConfig;

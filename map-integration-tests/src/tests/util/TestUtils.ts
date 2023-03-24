@@ -1,4 +1,6 @@
-import { GeometryDataResponse, Places } from "@anw/maps-sdk-js/core";
+import { GeoJsonProperties, Position } from "geojson";
+import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
+import { Geometries, Places } from "@anw/maps-sdk-js/core";
 import {
     GeometryModuleConfig,
     LayerSpecWithSource,
@@ -7,8 +9,6 @@ import {
     VECTOR_TILES_INCIDENTS_SOURCE_ID
 } from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
-import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
-import { Position } from "geojson";
 
 const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);
@@ -172,9 +172,9 @@ export const initGeometry = async (config?: GeometryModuleConfig) =>
         config
     );
 
-export const showGeometry = async (geometry: GeometryDataResponse) =>
+export const showGeometry = async (geometry: Geometries<GeoJsonProperties>) =>
     page.evaluate(
-        (inputGeometry: GeometryDataResponse) => (globalThis as MapsSDKThis).geometry?.show(inputGeometry),
+        (inputGeometry: Geometries<GeoJsonProperties>) => (globalThis as MapsSDKThis).geometry?.show(inputGeometry),
         // @ts-ignore
         geometry
     );

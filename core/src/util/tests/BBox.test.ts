@@ -451,8 +451,6 @@ describe("Bounding box calculation performance tests", () => {
 
 describe("Bounding box center", () => {
     test("Calculate bounding box center", () => {
-        const bbox: OptionalBBox = [2, 4, 6, 8];
-
-        expect(bboxCenter(bbox)).toEqual([4, 6]);
+        expect(bboxCenter([2, 4, 6, 8])).toEqual([4, 6]);
     });
 });

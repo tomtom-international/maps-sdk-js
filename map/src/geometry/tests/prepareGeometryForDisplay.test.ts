@@ -111,7 +111,7 @@ describe("prepareGeometryForDisplay", () => {
                 {
                     type: "Feature",
                     properties: {
-                        coordinates: [[-7.1036325, 43.4264427]]
+                        placeCoordinates: [[-7.1036325, 43.4264427]]
                     },
                     geometry: {
                         type: "Polygon",
@@ -166,7 +166,7 @@ describe("prepareGeometryForDisplay", () => {
                 {
                     type: "Feature",
                     geometry: { type: "Point", coordinates: [[-7.1036325, 43.4264427]] },
-                    properties: { coordinates: [[-7.1036325, 43.4264427]] }
+                    properties: { placeCoordinates: [[-7.1036325, 43.4264427]] }
                 },
                 { type: "Feature", geometry: { type: "Point", coordinates: [102.5, 2.5] }, properties: {} }
             ]

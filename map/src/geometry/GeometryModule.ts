@@ -1,6 +1,6 @@
-import { FeatureCollection, MultiPolygon, Point, Polygon } from "geojson";
+import { FeatureCollection, GeoJsonProperties, Point } from "geojson";
 import { FillLayerSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
+import { Geometries } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
@@ -10,7 +10,7 @@ import {
     GEOMETRY_TITLE_SOURCE_ID,
     ToBeAddedLayerSpec
 } from "../shared";
-import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
+import { GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import {
@@ -38,7 +38,7 @@ export type GeometryModuleSourcesAndLayersIds = {
  * Geometry data module.
  */
 export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLayersIds, GeometryModuleConfig> {
-    private geometry!: GeoJSONSourceWithLayers<GeometryDataResponse>;
+    private geometry!: GeoJSONSourceWithLayers<Geometries<GeoJsonProperties>>;
     private geometryLabel!: GeoJSONSourceWithLayers<FeatureCollection<Point>>;
 
     /**
@@ -70,13 +70,11 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {
         if (config?.textConfig) {
-            this.applyTextConfig(config);
+            this.applyTextConfig(config.textConfig);
         }
     }
 
-    protected applyTextConfig(config: GeometryModuleConfig) {
-        const textConfig = config?.textConfig;
-
+    applyTextConfig(textConfig: GeometryTextConfig) {
         if (textConfig?.textField && this.geometry.shownFeatures) {
             const geometryTitleData = prepareTitleForDisplay(this.geometry.shownFeatures);
             this.geometryLabel.show(geometryTitleData);
@@ -88,7 +86,7 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
      * @param geometry
      * @param options
      */
-    show(geometry: FeatureCollection<Polygon | MultiPolygon>): void {
+    show(geometry: Geometries<GeoJsonProperties>): void {
         this.geometry.show(prepareGeometryForDisplay(geometry, this.config));
         this._applyConfig(this.config);
     }

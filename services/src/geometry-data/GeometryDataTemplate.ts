@@ -1,4 +1,4 @@
-import { GeometryDataResponse } from "@anw/maps-sdk-js/core";
+import { Geometries } from "@anw/maps-sdk-js/core";
 import { ServiceTemplate } from "../shared";
 import { GeometryDataResponseAPI } from "./types/APITypes";
 import { GeometryDataParams } from "./types/GeometryDataParams";
@@ -7,12 +7,7 @@ import { get } from "../shared/Fetch";
 import { parseGeometryDataResponse } from "./ResponseParser";
 import { geometryDataRequestSchema } from "./GeometryDataRequestSchema";
 
-export type GeometryDataTemplate = ServiceTemplate<
-    GeometryDataParams,
-    URL,
-    GeometryDataResponseAPI,
-    GeometryDataResponse
->;
+export type GeometryDataTemplate = ServiceTemplate<GeometryDataParams, URL, GeometryDataResponseAPI, Geometries>;
 
 export const geometryDataTemplate: GeometryDataTemplate = {
     requestValidation: { schema: geometryDataRequestSchema },

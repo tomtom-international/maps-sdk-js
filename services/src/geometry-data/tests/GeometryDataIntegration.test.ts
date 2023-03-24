@@ -168,8 +168,8 @@ describe("Geometry with Places", () => {
         const azoresRegion = result?.features.find((feature) => feature.id === azoresGeometryId);
 
         expect(azoresRegion?.properties).toMatchObject({
-            ...places.features[0].properties.address,
-            coordinates: places.features[0].geometry.coordinates
+            ...places.features[0].properties,
+            placeCoordinates: places.features[0].geometry.coordinates
         });
     });
 });

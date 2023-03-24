@@ -1,6 +1,6 @@
-import { FeatureCollection, Feature, MultiPolygon, Point, Polygon, Position } from "geojson";
+import { FeatureCollection, Feature, Point, Position, GeoJsonProperties } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { bboxCenter, bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
+import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
 import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 
@@ -66,7 +66,7 @@ export const buildGeometryTitleLayerSpec = (
         type: "symbol",
         id: layerID,
         layout: {
-            "text-field": ["get", "freeformAddress"],
+            "text-field": ["get", "freeformAddress", ["get", "address"]],
             ...(textConfig?.textField && { "text-field": buildGeometryTitle(textConfig.textField) }),
             "text-padding": 5,
             "text-size": 12,
@@ -90,22 +90,21 @@ export const buildGeometryTitleLayerSpec = (
  * @returns
  */
 export const prepareGeometryForDisplay = (
-    geometry: FeatureCollection<Polygon | MultiPolygon>,
+    geometry: Geometries<GeoJsonProperties>,
     config?: GeometryModuleConfig
-): FeatureCollection<Polygon | MultiPolygon> => {
-    const colorConfig = config?.colorConfig;
-    if (colorConfig && colorConfig.fillColor) {
-        const color = colorConfig.fillColor;
+): Geometries<GeoJsonProperties> => {
+    if (config?.colorConfig?.fillColor) {
+        const color = config.colorConfig.fillColor;
         geometry.features.forEach((feature, index) => {
-            feature.properties = {
-                ...feature.properties,
-                color:
-                    typeof color === "string" && colorPalettes[color as ColorPaletteOptions]
-                        ? colorPalettes[color as ColorPaletteOptions][
-                              index % colorPalettes[color as ColorPaletteOptions].length
-                          ]
-                        : color
-            };
+            feature.properties &&
+                Object.assign(feature.properties, {
+                    color:
+                        typeof color === "string" && colorPalettes[color as ColorPaletteOptions]
+                            ? colorPalettes[color as ColorPaletteOptions][
+                                  index % colorPalettes[color as ColorPaletteOptions].length
+                              ]
+                            : color
+                });
         });
     }
 
@@ -118,7 +117,7 @@ export const prepareGeometryForDisplay = (
  * @param coordinates
  * @returns
  */
-const getBiggestArrayLength = (coordinates: Position[][][]) =>
+const getLongestArray = (coordinates: Position[][][]) =>
     coordinates.flat().reduce((result, coord) => (coord.length > result.length ? coord : result), []);
 
 /**
@@ -129,16 +128,14 @@ const getBiggestArrayLength = (coordinates: Position[][][]) =>
  * @param geometries
  * @returns
  */
-export const prepareTitleForDisplay = (
-    geometries: FeatureCollection<Polygon | MultiPolygon>
-): FeatureCollection<Point> => {
+export const prepareTitleForDisplay = (geometries: Geometries<GeoJsonProperties>): FeatureCollection<Point> => {
     const features = geometries.features.map((feature) => {
         let coordinates: Position[] | Position | null;
 
-        if (feature.properties?.coordinates) {
-            coordinates = feature.properties?.coordinates;
+        if (feature.properties?.placeCoordinates) {
+            coordinates = feature.properties?.placeCoordinates;
         } else if (feature.geometry.type === "MultiPolygon") {
-            const biggestPolygon = getBiggestArrayLength(feature.geometry.coordinates);
+            const biggestPolygon = getLongestArray(feature.geometry.coordinates);
             const bbox = bboxFromCoordsArray(biggestPolygon);
             coordinates = (bbox && bboxCenter(bbox)) || null;
         } else {

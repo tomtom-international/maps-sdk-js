@@ -30,4 +30,4 @@ export type OptionalBBox = BBox | undefined;
  * @group Shared
  * @category Types
  */
-export type GeometryDataResponse = FeatureCollection<Polygon | MultiPolygon>;
+export type Geometries<P = undefined> = FeatureCollection<Polygon | MultiPolygon, P>;
