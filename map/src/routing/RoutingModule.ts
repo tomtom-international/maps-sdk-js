@@ -4,69 +4,37 @@ import {
     EventsModule,
     GeoJSONSourceWithLayers,
     mapStyleLayerIDs,
-    ROUTE_DESELECTED_LINE_LAYER_ID,
-    ROUTE_DESELECTED_OUTLINE_LAYER_ID,
-    ROUTE_FERRIES_LINE_LAYER_ID,
+    LAYER_TO_RENDER_ROUTE_LINES_UNDER,
     ROUTE_FERRIES_SOURCE_ID,
-    ROUTE_FERRIES_SYMBOL_LAYER_ID,
-    ROUTE_INCIDENTS_BACKGROUND_LAYER_ID,
-    ROUTE_INCIDENTS_DASHED_LINE_LAYER_ID,
-    ROUTE_INCIDENTS_PATTERN_LINE_LAYER_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
-    ROUTE_INCIDENTS_SYMBOL_LAYER_ID,
-    ROUTE_LINE_LAYER_ID,
-    ROUTE_OUTLINE_LAYER_ID,
-    ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
-    ROUTE_TOLL_ROADS_SYMBOL,
-    ROUTE_TUNNELS_LINE_LAYER_ID,
     ROUTE_TUNNELS_SOURCE_ID,
-    ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID,
-    ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    WAYPOINT_LABELS_LAYER_ID,
-    WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
 } from "../shared";
-import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./layers/routeMainLineLayers";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
-    WAYPOINT_STOP_IMAGE_ID,
-    waypointLabels,
-    waypointSymbols
+    WAYPOINT_STOP_IMAGE_ID
 } from "./layers/waypointLayers";
 import { toDisplayWaypoints } from "./util/WaypointUtils";
 import { PlanningWaypoint } from "./types/PlanningWaypoint";
-import {
-    routeIncidentsBGLine,
-    routeIncidentsDashedLine,
-    routeIncidentsPatternLine,
-    routeIncidentsSymbol
-} from "./layers/routeTrafficSectionLayers";
-import { RoutingModuleConfig } from "./types/RouteModuleConfig";
+import { DEFAULT_ROUTE_LAYERS_CONFIGURATION, RoutingModuleConfig } from "./types/RouteModuleConfig";
 import { buildDisplayRouteSections, showSectionsWithRouteSelection } from "./util/RouteSections";
 import { toDisplayTrafficSectionProps } from "./util/DisplayTrafficSectionProps";
 import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/RouteSections";
-import { routeFerriesLine, routeFerriesSymbol } from "./layers/routeFerrySectionLayers";
-import { routeTunnelsLine } from "./layers/routeTunnelSectionLayers";
-import { routeTollRoadsOutline, routeTollRoadsSymbol } from "./layers/routeTollRoadLayers";
-import {
-    routeVehicleRestrictedBackgroundLine,
-    routeVehicleRestrictedDottedLine
-} from "./layers/routeVehicleRestrictedLayers";
-import { buildDisplayRoutes } from "./util/Routes";
+import { buildDisplayRoutes, createLayersSpecs, mergeConfig, RoutingLayersSpecs } from "./util/Routes";
 import { DisplayRouteProps } from "./types/DisplayRoutes";
 import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
+import { addLayersInCorrectOrder, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 
 const LAYER_TO_RENDER_LINES_UNDER = mapStyleLayerIDs.lowestLabel;
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
-type RoutingSourcesWitLayers = {
+type RoutingSourcesWithLayers = {
     waypoints: GeoJSONSourceWithLayers<Waypoints>;
     routeLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
@@ -80,7 +48,9 @@ type RoutingSourcesWitLayers = {
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
  */
-export class RoutingModule extends AbstractMapModule<RoutingSourcesWitLayers, RoutingModuleConfig> {
+export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, RoutingModuleConfig> {
+    private layersSpecs!: RoutingLayersSpecs;
+
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
      * @param tomtomMap The TomTomMap instance.
@@ -92,78 +62,75 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWitLayers, Ro
         return new RoutingModule(tomtomMap, config);
     }
 
-    protected _initSourcesWithLayers(): RoutingSourcesWitLayers {
+    private createSourcesWithLayers(layersSpecs: RoutingLayersSpecs): RoutingSourcesWithLayers {
+        return {
+            routeLines: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, layersSpecs.routeLines, false),
+            waypoints: new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, layersSpecs.waypoints, false),
+            incidents: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                ROUTE_INCIDENTS_SOURCE_ID,
+                layersSpecs.incidents,
+                false
+            ),
+            ferries: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_FERRIES_SOURCE_ID, layersSpecs.ferries, false),
+            tollRoads: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                ROUTE_TOLL_ROADS_SOURCE_ID,
+                layersSpecs.tollRoads,
+                false
+            ),
+            tunnels: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_TUNNELS_SOURCE_ID, layersSpecs.tunnels, false),
+            vehicleRestricted: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
+                layersSpecs.vehicleRestricted
+            )
+        };
+    }
+
+    protected _initSourcesWithLayers(config?: RoutingModuleConfig, restore?: boolean): RoutingSourcesWithLayers {
+        // do we need restore here?
         // loading of extra assets not present in the map style:
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
-
-        return {
-            waypoints: new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, [
-                { ...waypointSymbols, id: WAYPOINT_SYMBOLS_LAYER_ID },
-                { ...waypointLabels, id: WAYPOINT_LABELS_LAYER_ID }
-            ]),
-            routeLines: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, [
-                {
-                    ...routeDeselectedOutline,
-                    id: ROUTE_DESELECTED_OUTLINE_LAYER_ID,
-                    beforeID: mapStyleLayerIDs.lowestLabel
-                },
-                { ...routeDeselectedLine, id: ROUTE_DESELECTED_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-                { ...routeOutline, id: ROUTE_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
-                { ...routeMainLine, id: ROUTE_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
-            ]),
-            vehicleRestricted: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, [
-                {
-                    ...routeVehicleRestrictedBackgroundLine,
-                    id: ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID,
-                    beforeID: LAYER_TO_RENDER_LINES_UNDER
-                },
-                {
-                    ...routeVehicleRestrictedDottedLine,
-                    id: ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
-                    beforeID: LAYER_TO_RENDER_LINES_UNDER
-                }
-            ]),
-            incidents: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_INCIDENTS_SOURCE_ID, [
-                {
-                    ...routeIncidentsBGLine,
-                    id: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID,
-                    beforeID: LAYER_TO_RENDER_LINES_UNDER
-                },
-                {
-                    ...routeIncidentsDashedLine,
-                    id: ROUTE_INCIDENTS_DASHED_LINE_LAYER_ID,
-                    beforeID: LAYER_TO_RENDER_LINES_UNDER
-                },
-                {
-                    ...routeIncidentsPatternLine,
-                    id: ROUTE_INCIDENTS_PATTERN_LINE_LAYER_ID,
-                    beforeID: LAYER_TO_RENDER_LINES_UNDER
-                },
-                { ...routeIncidentsSymbol, id: ROUTE_INCIDENTS_SYMBOL_LAYER_ID, beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
-            ]),
-            ferries: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_FERRIES_SOURCE_ID, [
-                { ...routeFerriesLine, id: ROUTE_FERRIES_LINE_LAYER_ID, beforeID: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID },
-                { ...routeFerriesSymbol, id: ROUTE_FERRIES_SYMBOL_LAYER_ID, beforeID: ROUTE_INCIDENTS_SYMBOL_LAYER_ID }
-            ]),
-            tollRoads: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_TOLL_ROADS_SOURCE_ID, [
-                {
-                    ...routeTollRoadsOutline,
-                    id: ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
-                    beforeID: ROUTE_DESELECTED_OUTLINE_LAYER_ID
-                },
-                { ...routeTollRoadsSymbol, id: ROUTE_TOLL_ROADS_SYMBOL, beforeID: WAYPOINT_SYMBOLS_LAYER_ID }
-            ]),
-            tunnels: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_TUNNELS_SOURCE_ID, [
-                { ...routeTunnelsLine, id: ROUTE_TUNNELS_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER }
-            ])
-        };
+        this.layersSpecs = createLayersSpecs(mergeConfig(config).routeLayers);
+        // because in case of routing module we need to set config even if it is empty during first initiation
+        if (!restore) {
+            // sending config, or merged config here is the same, it will be again merged in _applyConfig method
+            this.applyConfig(config);
+        }
+        const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
+        addLayersInCorrectOrder(
+            Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
+            this.mapLibreMap
+        );
+        return routingSourcesWithLayers;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-    protected _applyConfig(config: RoutingModuleConfig): void {}
+    protected _applyConfig(config?: RoutingModuleConfig) {
+        const mergedConfig = mergeConfig(config);
+
+        // If there was already some config set, we must update the changes:
+        if (this.config) {
+            // replace existing configuration with new one
+            const newLayersSpecs = createLayersSpecs(mergedConfig?.routeLayers || DEFAULT_ROUTE_LAYERS_CONFIGURATION);
+
+            // here we assume that keys for layer specs and sources are the same, please keep it that way to simplify the logic
+            Object.keys(newLayersSpecs).forEach((layersSpecs) => {
+                updateLayersAndSource(
+                    newLayersSpecs[layersSpecs as keyof RoutingLayersSpecs],
+                    this.layersSpecs[layersSpecs as keyof RoutingLayersSpecs],
+                    this.sourcesWithLayers[layersSpecs as keyof RoutingSourcesWithLayers],
+                    this.mapLibreMap
+                );
+            });
+
+            this.layersSpecs = newLayersSpecs;
+        }
+        return mergedConfig;
+    }
 
     protected restoreDataAndConfig() {
         const previouslyShown = {
@@ -177,7 +144,8 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWitLayers, Ro
         };
 
         this.initSourcesWithLayers();
-        this.config && this._applyConfig(this.config);
+        // not sure if following line is needed
+        // this.config && this._applyConfig(this.config);
 
         this.sourcesWithLayers.waypoints.show(previouslyShown.waypoints);
         this.sourcesWithLayers.routeLines.show(previouslyShown.routeLines);
@@ -294,6 +262,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWitLayers, Ro
      * * It might differ depending on the loaded style/version.
      */
     getLayerToRenderLinesUnder(): string {
-        return LAYER_TO_RENDER_LINES_UNDER;
+        return LAYER_TO_RENDER_ROUTE_LINES_UNDER;
     }
 }

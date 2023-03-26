@@ -74,3 +74,23 @@ export type SourceWithLayerIDs = {
  * Known layer ID from the TomTom map style.
  */
 export type MapStyleLayerID = keyof typeof mapStyleLayerIDs;
+
+/**
+ * Layers specification with optional before ID of the layer you want to put this layer on top.
+ */
+export type LayersSpecWithOrder<L extends LayerSpecification = LayerSpecification> = {
+    layers: {
+        /**
+         * ID of the layer.
+         */
+        id: string;
+        /**
+         * Layer specification.
+         */
+        layerSpec: LayerSpecTemplate<L>;
+        /**
+         * ID of the layer that this layer should be put on top.
+         */
+        beforeID?: string;
+    }[];
+};

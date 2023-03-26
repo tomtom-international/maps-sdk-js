@@ -5,4 +5,5 @@
 
 export * from "./types/PlanningWaypoint";
 export * from "./types/WaypointDisplayProps";
+export * from "./types/RouteModuleConfig";
 export * from "./RoutingModule";

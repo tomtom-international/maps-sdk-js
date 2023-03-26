@@ -8,7 +8,7 @@ import {
 } from "../shared";
 import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
 import { TomTomMap } from "../TomTomMap";
-import { changeLayoutsAndPaintsProps, waitUntilMapIsReady } from "../shared/mapUtils";
+import { changeLayersProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import { preparePlacesForDisplay } from "./preparePlacesForDisplay";
 import { buildPlacesLayerSpecs } from "./layers/PlacesLayers";
 import { DisplayPlaceProps } from "./types/PlaceDisplayProps";
@@ -57,6 +57,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesSourcesAndLayers, Pla
         } else if (config?.extraFeatureProps) {
             this.updateData(config);
         }
+        return config;
     }
 
     protected restoreDataAndConfig() {
@@ -91,7 +92,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesSourcesAndLayers, Pla
 
     private updateLayersAndData(config: PlaceModuleConfig): void {
         const newLayerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
-        changeLayoutsAndPaintsProps(newLayerSpecs, this.layerSpecs, this.mapLibreMap);
+        changeLayersProps(newLayerSpecs, this.layerSpecs, this.mapLibreMap);
         this.layerSpecs = newLayerSpecs;
         this.updateData(config);
     }

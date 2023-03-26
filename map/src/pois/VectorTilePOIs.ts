@@ -64,7 +64,7 @@ export class VectorTilePOIs extends AbstractMapModule<POIsSourcesAndLayers, Vect
         return { poi };
     }
 
-    protected _applyConfig(config: VectorTilePOIsConfig | undefined): void {
+    protected _applyConfig(config: VectorTilePOIsConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {
@@ -73,6 +73,7 @@ export class VectorTilePOIs extends AbstractMapModule<POIsSourcesAndLayers, Vect
         }
 
         this.filterCategories(config?.filters?.categories);
+        return config;
     }
 
     isVisible(): boolean {

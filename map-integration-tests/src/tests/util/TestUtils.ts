@@ -45,6 +45,14 @@ export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerS
             ) as LayerSpecWithSource[];
     }, sourceID);
 
+export const getLayerById = async (layerId: string): Promise<LayerSpecWithSource> =>
+    page.evaluate((pageLayerID) => {
+        return (globalThis as MapsSDKThis).mapLibreMap
+            .getStyle()
+            .layers.filter((layer) => layer.id === pageLayerID)
+            .shift() as LayerSpecWithSource;
+    }, layerId);
+
 export const getNumVisibleLayersBySource = async (sourceID: string): Promise<number> =>
     (await getVisibleLayersBySource(sourceID))?.length;
 

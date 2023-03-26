@@ -1,4 +1,5 @@
 import {
+    DEFAULT_ROUTE_LAYERS_CONFIGURATION,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_FERRIES_LINE_LAYER_ID,
     ROUTE_FERRIES_SOURCE_ID,
@@ -10,6 +11,7 @@ import {
     ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
+    RoutingModuleConfig,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
 } from "map";
@@ -18,6 +20,7 @@ import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
 import {
+    getLayerById,
     getNumVisibleLayersBySource,
     setStyle,
     waitForMapIdle,
@@ -30,6 +33,12 @@ const initRouting = async () =>
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.routing = await mapsSDKThis.MapsSDK.RoutingModule.init(mapsSDKThis.tomtomMap);
     });
+
+const applyConfig = async (config: RoutingModuleConfig) =>
+    page.evaluate((inputConfig: RoutingModuleConfig) => {
+        (globalThis as MapsSDKThis).routing?.applyConfig(inputConfig);
+        // @ts-ignore
+    }, config);
 
 const showRoutes = async (routes: Routes) =>
     page.evaluate((inputRoutes: Routes) => {
@@ -221,5 +230,50 @@ describe("Routing tests", () => {
             indexType: "start",
             iconID: "waypointStart"
         });
+    });
+
+    test("Updating configuration", async () => {
+        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox });
+        await initRouting();
+
+        await showWaypoints([
+            [4.53074, 51.95102],
+            [4.88951, 52.37229]
+        ]);
+        await showRoutes(parsedTestRoutes);
+        await waitForMapReady();
+        let mainLineLayer: any | undefined = await getLayerById(ROUTE_LINE_LAYER_ID);
+        expect(mainLineLayer?.paint["line-color"]).toStrictEqual("#3f9cd9");
+
+        const updatedLayers = DEFAULT_ROUTE_LAYERS_CONFIGURATION.mainLine?.layers.map(({ id, layerSpec, beforeID }) => {
+            if (id === ROUTE_LINE_LAYER_ID) {
+                return {
+                    id,
+                    beforeID,
+                    layerSpec: { ...layerSpec, paint: { ...layerSpec.paint, "line-color": "#ff0000" } }
+                };
+            }
+            return { id, beforeID, layerSpec };
+        });
+
+        const newConfig = {
+            routeLayers: {
+                mainLine: {
+                    layers: updatedLayers
+                }
+            }
+        } as RoutingModuleConfig;
+        await applyConfig(newConfig);
+        await waitForMapReady();
+        mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
+        expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
+
+        // Changing the style, asserting that the config stays the same:
+        await setStyle("monoLight");
+        await waitForMapIdle();
+        mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
+        expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

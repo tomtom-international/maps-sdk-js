@@ -110,8 +110,7 @@ export class AddedSourceWithLayers<
         );
     }
 
-    private ensureAddedToMap(): void {
-        this.source.ensureAddedToMap(this.map);
+    private ensureLayersAddedToMap(): void {
         for (const layerSpec of this._layerSpecs) {
             if (!this.map.getLayer(layerSpec.id)) {
                 this.map.addLayer(layerSpec, layerSpec.beforeID);
@@ -119,9 +118,12 @@ export class AddedSourceWithLayers<
         }
     }
 
-    ensureAddedToMapWithVisibility(visible: boolean): void {
-        this.ensureAddedToMap();
-        this.setAllLayersVisible(visible);
+    ensureAddedToMapWithVisibility(visible: boolean, addLayersToMap: boolean): void {
+        this.source.ensureAddedToMap(this.map);
+        if (addLayersToMap) {
+            this.ensureLayersAddedToMap();
+            this.setAllLayersVisible(visible);
+        }
     }
 }
 
@@ -139,16 +141,16 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
 > {
     shownFeatures: T = emptyFeatureCollection as T;
 
-    constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
+    constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[], addLayersToMap = true) {
         // MapLibre does not reuse the given feature ID. Either we generate it on the fly or use the one from properties via promotedId value.
         // We must generate "id" property based on the feature id on the fly on "prepareForDisplay" functions.
         super(map, sourceID, { type: "geojson", data: emptyFeatureCollection, promoteId: "id" }, layerSpecs);
-        this.ensureAddedToMapWithVisibility(false);
+        this.ensureAddedToMapWithVisibility(false, addLayersToMap);
     }
 
     show(featureCollection: T): void {
         asDefined(this.source.runtimeSource).setData(featureCollection);
-        this.setAllLayersVisible(!!featureCollection?.features?.length);
+        this.setAllLayersVisible(!!featureCollection.features.length);
         this.shownFeatures = featureCollection;
     }
 

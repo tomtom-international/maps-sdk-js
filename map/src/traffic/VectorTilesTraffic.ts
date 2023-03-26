@@ -76,7 +76,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayer
         return { ...(incidents && { incidents }), ...(flow && { flow }) };
     }
 
-    protected _applyConfig(config: VectorTilesTrafficConfig | undefined): void {
+    protected _applyConfig(config: VectorTilesTrafficConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this._setVisible(config.visible, { updateConfig: false });
         } else if (!this.anyLayersVisible()) {
@@ -85,6 +85,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayer
         }
         this.applyIncidentsConfig(config);
         this.applyFlowConfig(config);
+        return config;
     }
 
     private applyIncidentsConfig(config: VectorTilesTrafficConfig | undefined) {

@@ -1,6 +1,8 @@
-import { Map, MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
+import { FilterSpecification, Map, MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
 import { generateTomTomCustomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core";
 import { TomTomMap } from "../TomTomMap";
+import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
+import { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from "./SourceWithLayers";
 
 /**
  * Wait until the map is ready
@@ -72,52 +74,186 @@ export const areBothDefinedAndEqual = (
     featureB: MapGeoJSONFeature | undefined
 ): boolean => !!featureA && !!featureB && featureA.id == featureB.id;
 
-type LayoutPaint = { id: string; layout?: any; paint?: any };
+type LayerProps = {
+    id: string;
+    layout?: any;
+    paint?: any;
+    minzoom?: number;
+    maxzoom?: number;
+    filter?: FilterSpecification;
+};
 
 /**
  * Applies the layout and paint properties from newLayoutPaint
  * while unsetting (setting as undefined) the ones from previousSpec which no longer exist in newLayoutPaint.
  * * This allows for a quick change of a layer visuals without removing-re-adding the layer.
  * @ignore
- * @param newLayoutPaint The new layer from which to apply layout/pain props.
- * @param prevLayoutPaint The previous layer to ensure layout/paint props are removed.
+ * @param newLayerProps The new layer from which to apply layout/pain props.
+ * @param prevLayerProps The previous layer to ensure layout/paint props are removed.
  * @param map
  */
-export const changeLayoutAndPaintProps = (newLayoutPaint: LayoutPaint, prevLayoutPaint: LayoutPaint, map: Map) => {
-    const layerID = newLayoutPaint.id;
-    for (const property of Object.keys(prevLayoutPaint.layout || [])) {
-        if (!newLayoutPaint.layout?.[property]) {
+export const changeLayerProps = (newLayerProps: LayerProps, prevLayerProps: LayerProps, map: Map) => {
+    const layerID = newLayerProps.id;
+    if (newLayerProps.maxzoom !== prevLayerProps.maxzoom || newLayerProps.minzoom !== prevLayerProps.minzoom) {
+        map.setLayerZoomRange(
+            layerID,
+            newLayerProps.minzoom ? newLayerProps.minzoom : map.getMinZoom(),
+            newLayerProps.maxzoom ? newLayerProps.maxzoom : map.getMaxZoom()
+        );
+    }
+    map.setFilter(layerID, newLayerProps.filter, { validate: false });
+    for (const property of Object.keys(prevLayerProps.layout || [])) {
+        if (!newLayerProps.layout?.[property]) {
             map.setLayoutProperty(layerID, property, undefined, { validate: false });
         }
     }
-    for (const property of Object.keys(prevLayoutPaint.paint || [])) {
-        if (!newLayoutPaint.paint?.[property]) {
+    for (const property of Object.keys(prevLayerProps.paint || [])) {
+        if (!newLayerProps.paint?.[property]) {
             map.setPaintProperty(layerID, property, undefined, { validate: false });
         }
     }
-    for (const [property, value] of Object.entries(newLayoutPaint.paint || [])) {
+    for (const [property, value] of Object.entries(newLayerProps.paint || [])) {
         map.setPaintProperty(layerID, property, value, { validate: false });
     }
 
-    for (const [property, value] of Object.entries(newLayoutPaint.layout || [])) {
+    for (const [property, value] of Object.entries(newLayerProps.layout || [])) {
         map.setLayoutProperty(layerID, property, value, { validate: false });
     }
 };
 
 /**
- * Applies the layout and paint properties from each layer of newLayoutPaints
+ * Applies the layer properties from each layer of newLayoutPaints
  * while unsetting (setting as undefined) the ones from the corresponding layer from prevLayoutPaints
  * which no longer exist in the new one.
  * * The two layer inputs are expected to be parallel arrays.
  * * This allows for quick changes of layer visuals without removing-re-adding the layers.
  * @ignore
  */
-export const changeLayoutsAndPaintsProps = (
-    newLayoutPaints: LayoutPaint[],
-    prevLayoutPaints: LayoutPaint[],
+export const changeLayersProps = (newLayerProps: LayerProps[], prevLayerProps: LayerProps[], map: Map) => {
+    newLayerProps.forEach((layoutPaint, index) => changeLayerProps(layoutPaint, prevLayerProps[index], map));
+};
+
+/**
+ * Handles new layer specs for the provided source. It will remove layers no longer present, update existing layers and add new one if needed.
+ * If ID of layer to be added already is present on map, MapLibre will through exception.
+ * @param newLayersSpecs new layer specification for provided source.
+ * @param oldLayersSpecs current layer specification for provided source.
+ * @param sourceWithLayers provided source that contains layers.
+ * @param map provided map libre map object.
+ * @ignore
+ */
+export const updateLayersAndSource = (
+    newLayersSpecs: ToBeAddedLayerSpecWithoutSource[],
+    oldLayersSpecs: ToBeAddedLayerSpecWithoutSource[],
+    sourceWithLayers: AbstractSourceWithLayers,
     map: Map
-) => {
-    newLayoutPaints.forEach((layoutPaint, index) =>
-        changeLayoutAndPaintProps(layoutPaint, prevLayoutPaints[index], map)
+): void => {
+    // map layers by id in object for easier access, reduces number of loops
+    const newLayersMap: Record<string, ToBeAddedLayerSpecWithoutSource> = newLayersSpecs.reduce(
+        (acc, cur) => ({ ...acc, [cur.id]: cur }),
+        {}
     );
+    const oldLayersMap: Record<string, ToBeAddedLayerSpecWithoutSource> = oldLayersSpecs.reduce(
+        (acc, cur) => ({ ...acc, [cur.id]: cur }),
+        {}
+    );
+
+    // we need to store layers in four arrays, layers to add ID, layers to remove ID and layers to update
+    const layersToAdd: string[] = [];
+    const layersToRemove: string[] = [];
+    const newLayersToUpdate: ToBeAddedLayerSpecWithoutSource[] = [];
+    const oldLayersToUpdate: ToBeAddedLayerSpecWithoutSource[] = [];
+    Object.keys(newLayersMap).forEach((key) => {
+        if (oldLayersMap[key]) {
+            newLayersToUpdate.push(newLayersMap[key]);
+            oldLayersToUpdate.push(oldLayersMap[key]);
+        } else {
+            layersToAdd.push(key);
+        }
+    });
+    Object.keys(oldLayersMap).forEach((key) => {
+        if (!newLayersMap[key]) {
+            layersToRemove.push(key);
+        }
+    });
+
+    // remove the old layers no longer present in new layer specification
+    const layerSpecs: ToBeAddedLayerSpec[] = sourceWithLayers._layerSpecs;
+    layersToRemove.forEach((layerId) => {
+        map.removeLayer(layerId);
+        for (let i = 0; i < layerSpecs.length; i++) {
+            if (layerSpecs[i].id === layerId) {
+                layerSpecs.splice(i, 1);
+                break;
+            }
+        }
+    });
+    // add new layers
+    layersToAdd.forEach((layerId) => {
+        // add layer spec and map
+        const toBeAddedLayerSpec: ToBeAddedLayerSpec = {
+            ...newLayersMap[layerId],
+            source: sourceWithLayers.source.id
+        } as ToBeAddedLayerSpec;
+        layerSpecs.push(toBeAddedLayerSpec);
+        map.addLayer(toBeAddedLayerSpec, toBeAddedLayerSpec.beforeID);
+        if (sourceWithLayers instanceof GeoJSONSourceWithLayers) {
+            // need to hide or show the new layer based on source having features or not
+            sourceWithLayers.setAllLayersVisible(
+                !!sourceWithLayers.shownFeatures.features.length,
+                (layer) => layer.id === layerId
+            );
+        }
+    });
+    //update existing layers
+    changeLayersProps(newLayersToUpdate, oldLayersToUpdate, map);
+};
+
+/**
+ * We need to make sure that layers are added in correct order because layer may depend on another layer.
+ * @param layersToAdd
+ * @param map MapLibre map
+ * @ignore
+ */
+export const addLayersInCorrectOrder = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => {
+    const layerIdsAlreadyOnMap = new Set<string>();
+    const mapIdDependency: Record<string, ToBeAddedLayerSpec[]> = {};
+    const addLayer = (layer: ToBeAddedLayerSpec): void => {
+        // we can safely add this layer
+        if (!map.getLayer(layer.id)) {
+            map.addLayer(layer, layer.beforeID);
+            map.setLayoutProperty(layer.id, "visibility", "none", { validate: false });
+        }
+        layerIdsAlreadyOnMap.add(layer.id);
+    };
+
+    layersToAdd.forEach((layer) => {
+        if (layer.beforeID) {
+            if (layerIdsAlreadyOnMap.has(layer.beforeID) || map.getLayer(layer.beforeID)) {
+                layerIdsAlreadyOnMap.add(layer.beforeID);
+                addLayer(layer);
+            } else {
+                // we cannot add this layer yet
+                if (mapIdDependency[layer.beforeID]) {
+                    mapIdDependency[layer.beforeID].push(layer);
+                } else {
+                    mapIdDependency[layer.beforeID] = [layer];
+                }
+            }
+        } else {
+            addLayer(layer);
+        }
+    });
+
+    // try to process rest of layers
+    while (Object.keys(mapIdDependency).length > 0) {
+        const idsWeCanProcess = Object.keys(mapIdDependency).filter((id) => layerIdsAlreadyOnMap.has(id));
+        if (idsWeCanProcess.length === 0) {
+            throw Error(`Circular dependency for before Ids ${JSON.stringify(Object.keys(mapIdDependency))}`);
+        }
+        idsWeCanProcess.forEach((id) => {
+            mapIdDependency[id].forEach((layer) => addLayer(layer));
+            delete mapIdDependency[id];
+        });
+    }
 };

@@ -12,6 +12,7 @@ import {
 } from "../../shared";
 import { TomTomMap } from "../../TomTomMap";
 import { RoutingModule } from "../RoutingModule";
+import { routeDeselectedOutline } from "../layers/routeMainLineLayers";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -32,24 +33,43 @@ describe("Routing module tests", () => {
                     .fn()
                     .mockReturnValueOnce(waypointsSource)
                     .mockReturnValueOnce(waypointsSource)
+                    .mockReturnValueOnce(waypointsSource)
+                    .mockReturnValueOnce(waypointsSource)
+                    .mockReturnValueOnce(routesSource)
+                    .mockReturnValueOnce(routesSource)
                     .mockReturnValueOnce(routesSource)
                     .mockReturnValueOnce(routesSource)
                     .mockReturnValueOnce(vehicleRestrictedSource)
                     .mockReturnValueOnce(vehicleRestrictedSource)
+                    .mockReturnValueOnce(vehicleRestrictedSource)
+                    .mockReturnValueOnce(vehicleRestrictedSource)
+                    .mockReturnValueOnce(incidentsSource)
+                    .mockReturnValueOnce(incidentsSource)
                     .mockReturnValueOnce(incidentsSource)
                     .mockReturnValueOnce(incidentsSource)
                     .mockReturnValueOnce(ferriesSource)
                     .mockReturnValueOnce(ferriesSource)
+                    .mockReturnValueOnce(ferriesSource)
+                    .mockReturnValueOnce(ferriesSource)
+                    .mockReturnValueOnce(tollRoadsSource)
+                    .mockReturnValueOnce(tollRoadsSource)
                     .mockReturnValueOnce(tollRoadsSource)
                     .mockReturnValueOnce(tollRoadsSource)
                     .mockReturnValueOnce(tunnelsSource)
+                    .mockReturnValueOnce(tunnelsSource)
+                    .mockReturnValueOnce(tunnelsSource)
                     .mockReturnValueOnce(tunnelsSource),
-                getLayer: jest.fn(),
+                getLayer: jest
+                    .fn()
+                    .mockImplementation((id: string) => (id === "TransitLabels - Ferry" ? {} : undefined)),
                 addLayer: jest.fn(),
+                removeLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 hasImage: jest.fn().mockReturnValue(false),
                 loadImage: jest.fn(),
-                setLayoutProperty: jest.fn()
+                setLayoutProperty: jest.fn(),
+                setFilter: jest.fn(),
+                setPaintProperty: jest.fn()
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
@@ -66,6 +86,20 @@ describe("Routing module tests", () => {
         routing.showWaypoints({ type: "FeatureCollection", features: [] });
         routing.clearWaypoints();
         expect(routing.getLayerToRenderLinesUnder()).toStrictEqual(mapStyleLayerIDs.lowestLabel);
+        routing.applyConfig({
+            routeLayers: {
+                mainLine: {
+                    layers: [
+                        {
+                            id: "a different id",
+                            layerSpec: routeDeselectedOutline,
+                            beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                        }
+                    ]
+                }
+            }
+        });
+        expect(routing.getLayerToRenderLinesUnder()).toStrictEqual("TransitLabels - Ferry");
 
         expect(routing.events.routeLines).toBeInstanceOf(EventsModule);
         expect(routing.events.waypoints).toBeInstanceOf(EventsModule);

@@ -23,6 +23,7 @@ describe("Geometry module tests", () => {
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn(),
                 setPaintProperty: jest.fn(),
+                setFilter: jest.fn(),
                 moveLayer: jest.fn()
             } as unknown as Map,
             _eventsProxy: {

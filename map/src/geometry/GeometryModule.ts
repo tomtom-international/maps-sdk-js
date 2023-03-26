@@ -13,7 +13,7 @@ import {
 } from "../shared";
 import { GeometryBeforeLayerConfig, GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
-import { changeLayoutAndPaintProps, waitUntilMapIsReady } from "../shared/mapUtils";
+import { changeLayerProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
     buildGeometryLayerSpec,
     buildGeometryTitleLayerSpec,
@@ -74,6 +74,7 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         if (config?.beforeLayerConfig) {
             this.moveBeforeLayer(config.beforeLayerConfig);
         }
+        return config;
     }
 
     private moveBeforeLayerID(beforeLayerId?: string) {
@@ -104,9 +105,9 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         const newTitleLayerSpecs = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
 
-        changeLayoutAndPaintProps(geometryFillSpec, this.geometryFillLayerSpecs, this.mapLibreMap);
-        changeLayoutAndPaintProps(geometryOutlineSpec, this.geometryOutlineLayerSpecs, this.mapLibreMap);
-        changeLayoutAndPaintProps(newTitleLayerSpecs, this.titleLayerSpecs, this.mapLibreMap);
+        changeLayerProps(geometryFillSpec, this.geometryFillLayerSpecs, this.mapLibreMap);
+        changeLayerProps(geometryOutlineSpec, this.geometryOutlineLayerSpecs, this.mapLibreMap);
+        changeLayerProps(newTitleLayerSpecs, this.titleLayerSpecs, this.mapLibreMap);
 
         this.geometryFillLayerSpecs = geometryFillSpec;
         this.geometryOutlineLayerSpecs = geometryOutlineSpec;

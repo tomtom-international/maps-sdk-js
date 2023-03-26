@@ -225,7 +225,7 @@ describe("AddedSourceWithLayers tests", () => {
             { type: "vector" },
             testLayerSpecs
         );
-        sourceWithLayers.ensureAddedToMapWithVisibility(true);
+        sourceWithLayers.ensureAddedToMapWithVisibility(true, true);
         expect(mapLibreMock.getSource).toHaveBeenCalledTimes(2);
         expect(mapLibreMock.getLayer).toHaveBeenCalledWith(layer0.id);
         expect(mapLibreMock.getLayer).toHaveBeenCalledWith(layer1.id);

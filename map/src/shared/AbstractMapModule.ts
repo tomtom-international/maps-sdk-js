@@ -26,7 +26,6 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         this.tomtomMap._addStyleChangeHandler(() => this.restoreDataAndConfig());
         this.mapLibreMap = tomtomMap.mapLibreMap;
         this.initSourcesWithLayers(config);
-
         if (config) {
             this.applyConfig(config);
         }
@@ -56,17 +55,16 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * @param config The configuration to apply. If undefined, the configuration will be reset to defaults.
      */
     applyConfig(config: CFG | undefined): void {
-        this._applyConfig(config);
-        this.config = config;
+        this.config = this._applyConfig(config);
     }
 
     /**
      * Internal implementation to apply config for the specific module.
      * @param config The config to apply. this.config contains the previous configuration (if any).
-     * Once the method returns, it will be assigned to this.config.
+     * Once the method returns config, it will be assigned to this.config.
      * @protected
      */
-    protected abstract _applyConfig(config: CFG | undefined): void;
+    protected abstract _applyConfig(config: CFG | undefined): CFG | undefined;
 
     /**
      * Resets the configuration of this module to default values and has them applied if necessary.

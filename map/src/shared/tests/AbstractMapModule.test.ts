@@ -21,8 +21,9 @@ describe("AbstractMapModule tests", () => {
             return {};
         }
 
-        protected _applyConfig(config: VectorTileMapModuleConfig | undefined): void {
+        protected _applyConfig(config: VectorTileMapModuleConfig | undefined) {
             this.configApplied = config;
+            return config;
         }
 
         protected restoreDataAndConfig() {
