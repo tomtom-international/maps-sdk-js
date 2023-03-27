@@ -1,4 +1,5 @@
 import { BBox, Feature, FeatureCollection, GeoJsonObject, MultiPolygon, Point, Polygon, Position } from "geojson";
+import { Anything } from "./Generic";
 
 /**
  * An GeoJSON input type that consists of, or has, a [lng, lat] Position.
@@ -30,4 +31,4 @@ export type OptionalBBox = BBox | undefined;
  * @group Shared
  * @category Types
  */
-export type Geometries<P = undefined> = FeatureCollection<Polygon | MultiPolygon, P>;
+export type Geometries<P = Record<string, Anything>> = FeatureCollection<Polygon | MultiPolygon, P>;
