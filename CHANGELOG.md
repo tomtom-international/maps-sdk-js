@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.99](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.98...v0.1.99) (2023-03-27)
+
+
+### Features
+
+* **events:** removing paddingBoxUpdateOnZoom property in favor of paddingBox and existing improved behaviour for event target precision ([c55ceee](https://github.com/tomtom-international/maps-sdk-js/commit/c55ceee385dadb098ab5be0079038379114b4d2b))
+
 ### [0.1.98](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.97...v0.1.98) (2023-03-27)
 
 ### [0.1.97](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.96...v0.1.97) (2023-03-23)
