@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.100](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.99...v0.1.100) (2023-03-27)
+
+
+### Bug Fixes
+
+* **core:** Geometries default props ([904f62d](https://github.com/tomtom-international/maps-sdk-js/commit/904f62dff50a16ea97773dad1e945d65121c4b9f))
+
 ### [0.1.99](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.98...v0.1.99) (2023-03-27)
 
 
