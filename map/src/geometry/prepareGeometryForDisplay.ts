@@ -1,9 +1,8 @@
-import isNil from "lodash/isNil";
 import { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
 import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
-import { GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
+import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { DisplayGeometryProps, ExtraGeometryDisplayProps, TITLE } from "./types/GeometryDisplayProps";
 
 /**
