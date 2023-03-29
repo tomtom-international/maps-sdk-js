@@ -1,5 +1,6 @@
 import { FillLayerSpecification, LineLayerSpecification } from "maplibre-gl";
 import { LayerSpecTemplate } from "../../shared";
+import { COLOR } from "../types/GeometryDisplayProps";
 
 export const colorPalettes = {
     warm: [
@@ -29,7 +30,7 @@ const defaultColor = "#0A3653";
 export const geometryFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
     type: "fill",
     paint: {
-        "fill-color": defaultColor,
+        "fill-color": ["coalesce", ["get", COLOR], defaultColor],
         "fill-opacity": 0.15,
         "fill-antialias": false
     }

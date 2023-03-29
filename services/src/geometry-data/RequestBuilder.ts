@@ -1,16 +1,16 @@
-import { Place } from "@anw/maps-sdk-js/core";
-import { GeometriesInput, GeometryDataParams } from "./types/GeometryDataParams";
+import { Place, Places } from "@anw/maps-sdk-js/core";
+import { GeometriesInput, GeometryParams } from "./types/GeometryDataParams";
 import { appendOptionalParam } from "../shared/RequestBuildingUtils";
 import { arrayToCSV } from "../shared/Arrays";
 
-const buildURLBasePath = (params: GeometryDataParams): string =>
+const buildURLBasePath = (params: GeometryParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}/search/2/additionalData.json`;
 
 const getGeometryIDs = (placesArray: Place[]): string[] =>
     placesArray.map((place) => place.properties.dataSources?.geometry?.id as string).filter((id) => id);
 
 // (@see geometryDataRequestSchema)
-const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInput): void => {
+const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInput | Places): void => {
     let geometryIDs: string[];
 
     if (Array.isArray(geometries)) {
@@ -32,7 +32,7 @@ const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInpu
  * Default function for building a geometry data request from {@link GeometryDataParams}
  * @param params The geometry data parameters, with global configuration already merged into them.
  */
-export const buildGeometryDataRequest = (params: GeometryDataParams): URL => {
+export const buildGeometryDataRequest = (params: GeometryParams): URL => {
     const url = new URL(buildURLBasePath(params));
     const urlParams = url.searchParams;
     // (no language in this service)

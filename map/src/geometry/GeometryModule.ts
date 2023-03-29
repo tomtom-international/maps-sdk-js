@@ -64,7 +64,10 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
         ]);
 
         return {
-            geometry: { sourceID: GEOMETRY_SOURCE_ID, layerIDs: [GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID] }
+            geometry: {
+                sourceID: GEOMETRY_SOURCE_ID,
+                layerIDs: [GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID, GEOMETRY_TITLE_LAYER_ID]
+            }
         };
     }
 
@@ -75,9 +78,8 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
     }
 
     applyTextConfig(textConfig: GeometryTextConfig) {
-        if (textConfig?.textField && this.geometry.shownFeatures) {
-            const geometryTitleData = prepareTitleForDisplay(this.geometry.shownFeatures);
-            this.geometryLabel.show(geometryTitleData);
+        if (textConfig && this.geometry.shownFeatures) {
+            this.geometryLabel.show(prepareTitleForDisplay(this.geometry.shownFeatures));
         }
     }
 
@@ -88,7 +90,7 @@ export class GeometryModule extends AbstractMapModule<GeometryModuleSourcesAndLa
      */
     show(geometry: Geometries<GeoJsonProperties>): void {
         this.geometry.show(prepareGeometryForDisplay(geometry, this.config));
-        this._applyConfig(this.config);
+        this.geometryLabel.show(prepareTitleForDisplay(this.geometry.shownFeatures));
     }
 
     /**

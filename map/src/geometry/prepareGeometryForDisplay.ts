@@ -1,8 +1,10 @@
-import { FeatureCollection, Feature, Point, Position, GeoJsonProperties } from "geojson";
+import isNil from "lodash/isNil";
+import { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
 import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
-import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
+import { GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
+import { DisplayGeometryProps, ExtraGeometryDisplayProps, TITLE } from "./types/GeometryDisplayProps";
 
 /**
  * Build Geometry layer specification
@@ -51,6 +53,44 @@ const buildGeometryTitle = (
 };
 
 /**
+ * Build geometry Title. The type can be a string or a Maplibre expression.
+ * @param feature - Geometry
+ * @param config - Geometry module configuration
+ * @returns
+ */
+const buildTitle = (
+    feature: Feature<Polygon | MultiPolygon, DisplayGeometryProps | GeoJsonProperties>,
+    config: GeometryModuleConfig
+): DataDrivenPropertyValueSpecification<string> | string | undefined => {
+    if (config.textConfig?.textField) {
+        return config.textConfig.textField;
+    }
+
+    return feature.properties?.address?.freeformAddress;
+};
+
+/**
+ * Build geometry color. The type can be a string or a Maplibre expression.
+ * @param textField - Name of the field used to get the title
+ * @param config - Geometry module configuration
+ * @param index - Number to use as index to pick color from palette option
+ * @returns
+ */
+const buildColor = (
+    config: GeometryModuleConfig,
+    index: number
+): DataDrivenPropertyValueSpecification<string> | string | undefined => {
+    const color = config?.colorConfig?.fillColor;
+
+    if (typeof color === "string" && colorPalettes[color as ColorPaletteOptions]) {
+        const palette = colorPalettes[color as ColorPaletteOptions];
+        return palette[index % palette.length];
+    }
+
+    return color;
+};
+
+/**
  * Build geometry layer specification for title
  * @param layerID
  * @param config
@@ -66,7 +106,7 @@ export const buildGeometryTitleLayerSpec = (
         type: "symbol",
         id: layerID,
         layout: {
-            "text-field": ["get", "freeformAddress", ["get", "address"]],
+            "text-field": ["get", TITLE],
             ...(textConfig?.textField && { "text-field": buildGeometryTitle(textConfig.textField) }),
             "text-padding": 5,
             "text-size": 12,
@@ -90,26 +130,24 @@ export const buildGeometryTitleLayerSpec = (
  * @returns
  */
 export const prepareGeometryForDisplay = (
-    geometry: Geometries<GeoJsonProperties>,
-    config?: GeometryModuleConfig
-): Geometries<GeoJsonProperties> => {
-    if (config?.colorConfig?.fillColor) {
-        const color = config.colorConfig.fillColor;
-        geometry.features.forEach((feature, index) => {
-            feature.properties &&
-                Object.assign(feature.properties, {
-                    color:
-                        typeof color === "string" && colorPalettes[color as ColorPaletteOptions]
-                            ? colorPalettes[color as ColorPaletteOptions][
-                                  index % colorPalettes[color as ColorPaletteOptions].length
-                              ]
-                            : color
-                });
-        });
-    }
+    geometry: Geometries<GeoJsonProperties | DisplayGeometryProps>,
+    config: GeometryModuleConfig = {}
+): Geometries<ExtraGeometryDisplayProps> => ({
+    ...geometry,
+    features: geometry.features.map((feature, index) => {
+        const title = feature.properties?.title ? feature.properties.title : buildTitle(feature, config);
+        const color = feature.properties?.color ? feature.properties.color : buildColor(config, index);
 
-    return geometry;
-};
+        return {
+            ...feature,
+            properties: {
+                ...feature.properties,
+                title,
+                color
+            }
+        };
+    })
+});
 
 /**
  * Find the biggest array length inside an array.
