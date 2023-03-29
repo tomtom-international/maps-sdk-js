@@ -4,9 +4,13 @@ import { CommonServiceParams } from "../../shared";
 /**
  * Geometry IDs or places containing them.
  */
-export type GeometriesInput = string[] | Place[];
+export type GeometriesInput = string[];
 
-type CommonServiceParamsWithZoom = CommonServiceParams & {
+/**
+ * Common services params with zoom configuration
+ * This configuration is extended by GeometryDataParams and GeometryPlaceParams
+ */
+export type CommonServiceParamsWithZoom = CommonServiceParams & {
     /**
      * Optional zoom parameter.
      * * It can be an integer from 0 until 22.
@@ -36,7 +40,7 @@ export type GeometryPlaceParams = CommonServiceParamsWithZoom & {
     /**
      * Place containing geometry IDs.
      */
-    geometries: Places;
+    geometries: Place[] | Places;
 };
 
 /**

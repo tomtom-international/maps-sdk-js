@@ -10,7 +10,7 @@ const getGeometryIDs = (placesArray: Place[]): string[] =>
     placesArray.map((place) => place.properties.dataSources?.geometry?.id as string).filter((id) => id);
 
 // (@see geometryDataRequestSchema)
-const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInput | Places): void => {
+const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInput | Places | Place[]): void => {
     let geometryIDs: string[];
 
     if (Array.isArray(geometries)) {
