@@ -73,7 +73,22 @@ describe("prepareGeometryForDisplay", () => {
             features: [
                 {
                     type: "Feature",
-                    properties: {},
+                    properties: {
+                        title: "TomTom"
+                    },
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: []
+                    }
+                },
+                {
+                    type: "Feature",
+                    properties: {
+                        address: {
+                            freeformAddress: "TomTom"
+                        },
+                        color: "#00aabb"
+                    },
                     geometry: {
                         type: "Polygon",
                         coordinates: []
@@ -94,6 +109,9 @@ describe("prepareGeometryForDisplay", () => {
         expect(colorPalettes[config.colorConfig?.fillColor as ColorPaletteOptions]).toContain(
             results.features[0].properties?.color
         );
+        expect(results.features[0].properties).toHaveProperty("title", "TomTom");
+        expect(results.features[1].properties).toHaveProperty("title", "TomTom");
+        expect(results.features[1].properties).toHaveProperty("color", "#00aabb");
     });
 
     test("Prepare title for display", () => {
