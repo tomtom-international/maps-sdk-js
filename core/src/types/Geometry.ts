@@ -31,4 +31,4 @@ export type OptionalBBox = BBox | undefined;
  * @group Shared
  * @category Types
  */
-export type Geometries<P = Record<string, Anything>> = FeatureCollection<Polygon | MultiPolygon, P>;
+export type Geometries<P = Anything> = FeatureCollection<Polygon | MultiPolygon, P>;
