@@ -33,7 +33,7 @@ export class TomTomMap {
         this.params = mergeFromGlobal(mapParams);
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.params));
         this.mapLibreMap.once("styledata", () => this.handleStyleData(false));
-        this._eventsProxy = new EventsProxy(this.mapLibreMap, mapParams?.events);
+        this._eventsProxy = new EventsProxy(this.mapLibreMap, this.params?.events);
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
             mapLibreExported.setRTLTextPlugin(
                 "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
@@ -41,7 +41,7 @@ export class TomTomMap {
                 true
             );
         }
-        mapParams?.language && this.setLanguage(mapParams?.language);
+        this.params?.language && this.setLanguage(this.params?.language);
     }
 
     /**
