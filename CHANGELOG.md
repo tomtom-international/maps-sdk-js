@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.102](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.101...v0.1.102) (2023-03-30)
+
+
+### Features
+
+* **map:** restore modules state when changing map style ([8fd79ec](https://github.com/tomtom-international/maps-sdk-js/commit/8fd79ecc33961c1b9fba665338dfe50011bb14b7))
+* **state:** restoring state for map modules, rebasing on main ([9f20484](https://github.com/tomtom-international/maps-sdk-js/commit/9f204849127aeac500f7e5b17fccd329df5fd5ac))
+
 ### [0.1.101](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.100...v0.1.101) (2023-03-30)
 
 
