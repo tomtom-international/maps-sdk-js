@@ -57,7 +57,7 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
             geometryLabel: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_TITLE_SOURCE_ID, [
                 titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
             ])
-        }
+        };
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {
@@ -67,8 +67,9 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
     }
 
     applyTextConfig(textConfig: GeometryTextConfig) {
-        if (textConfig && this.sourcesWithLayers.geometry.shownFeatures) {
-            this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(this.sourcesWithLayers.geometry.shownFeatures));
+        const shownFeatures = this.sourcesWithLayers.geometry.shownFeatures;
+        if (textConfig && shownFeatures) {
+            this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(shownFeatures));
         }
     }
 
@@ -80,12 +81,13 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
     }
 
     /**
-     * Shows the given Geometry on the map.
-     * @param geometry
+     * Shows the given geometries on the map.
+     * @param geometries The geometries to display.
      */
-    show(geometry: Geometries<GeoJsonProperties>): void {
-        this.sourcesWithLayers.geometry.show(prepareGeometryForDisplay(geometry, this.config));
-        this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(this.geometry.sourcesWithLayers.shownFeatures));
+    show(geometries: Geometries<GeoJsonProperties>): void {
+        const geometry = this.sourcesWithLayers.geometry;
+        geometry.show(prepareGeometryForDisplay(geometries, this.config));
+        this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(geometry.shownFeatures));
     }
 
     /**

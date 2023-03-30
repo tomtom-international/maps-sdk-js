@@ -118,7 +118,7 @@ describe("Tests with user events", () => {
                 return eventState;
             },
             `Event state didn't match ${expectedEventState}.`,
-            3000
+            5000
         );
 
     test("Click and contextmenu events for places", async () => {

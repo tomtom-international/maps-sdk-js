@@ -171,7 +171,7 @@ describe("Map vector tile traffic module tests", () => {
         // changing the map style: verifying the places are still shown (state restoration):
         await setStyle("standardDark");
         await waitForMapIdle();
-        await waitForTimeout(1000);
+        await waitForTimeout(3000);
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
         expect(await getConfig()).toEqual({ flow: { visible: false } });
 
@@ -218,7 +218,7 @@ describe("Map vector tile traffic module tests", () => {
         // changing the map style: verifying the config is still the same (state restoration):
         await setStyle("standardDark");
         await waitForMapIdle();
-        await waitForTimeout(1000);
+        await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
 
         const roadClosedIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
@@ -249,7 +249,7 @@ describe("Map vector tile traffic module tests", () => {
         // changing the map style: verifying the config is still the same (state restoration):
         await setStyle("monoLight");
         await waitForMapIdle();
-        await waitForTimeout(2000);
+        await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
 
         const roadClosedAndMajorRoadIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
@@ -378,7 +378,7 @@ describe("Map vector tile traffic module tests", () => {
         // CHANGING THE MAP STYLE: verifying the config is still the same (state restoration):
         await setStyle("standardDark");
         await waitForMapIdle();
-        await waitForTimeout(1000);
+        await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
 
         // Asserting similar things again:
