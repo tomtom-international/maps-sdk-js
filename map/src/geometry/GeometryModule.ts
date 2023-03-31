@@ -7,11 +7,12 @@ import {
     GeoJSONSourceWithLayers,
     GEOMETRY_SOURCE_ID,
     GEOMETRY_TITLE_SOURCE_ID,
+    SymbolLayerSpecWithoutSource,
     ToBeAddedLayerSpec
 } from "../shared";
-import { GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
+import { GeometryColorConfig, GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
+import { changeLayoutAndPaintProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
     buildGeometryLayerSpec,
     buildGeometryTitleLayerSpec,
@@ -35,6 +36,8 @@ type GeometrySourcesWithLayers = {
  * Geometry data module.
  */
 export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometryModuleConfig> {
+    private titleLayerSpecs!: SymbolLayerSpecWithoutSource;
+
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
      * @param tomtomMap The TomTomMap instance.
@@ -49,6 +52,7 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
     protected _initSourcesWithLayers(config?: GeometryModuleConfig): GeometrySourcesWithLayers {
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
+        this.titleLayerSpecs = titleLayerSpec;
         return {
             geometry: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
                 { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID } as ToBeAddedLayerSpec<FillLayerSpecification>,
@@ -61,16 +65,27 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
     }
 
     protected _applyConfig(config: GeometryModuleConfig | undefined) {
-        if (config?.textConfig) {
-            this.applyTextConfig(config.textConfig);
+        if (config?.textConfig || config?.colorConfig || config?.lineConfig) {
+            this.updateLayerAndData(config);
         }
     }
 
     applyTextConfig(textConfig: GeometryTextConfig) {
-        const shownFeatures = this.sourcesWithLayers.geometry.shownFeatures;
-        if (textConfig && shownFeatures) {
-            this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(shownFeatures));
-        }
+        const config = {
+            ...this.config,
+            textConfig
+        };
+        this.updateLayerAndData(config);
+        this.sourcesWithLayers.geometryLabel.show(
+            prepareTitleForDisplay(this.sourcesWithLayers.geometry.shownFeatures)
+        );
+        this.config = config;
+    }
+
+    private updateLayerAndData(config: GeometryModuleConfig) {
+        const newLayerSpecs = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
+        changeLayoutAndPaintProps(newLayerSpecs, this.titleLayerSpecs, this.mapLibreMap);
+        this.titleLayerSpecs = newLayerSpecs;
     }
 
     protected restoreDataAndConfig() {

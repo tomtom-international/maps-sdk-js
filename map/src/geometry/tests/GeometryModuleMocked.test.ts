@@ -1,5 +1,5 @@
 import { Geometries } from "@anw/maps-sdk-js/core";
-import { Map } from "maplibre-gl";
+import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import { GeometryModule } from "../GeometryModule";
 import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
@@ -20,7 +20,8 @@ describe("Geometry module tests", () => {
                 getLayer: jest.fn(),
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
-                setLayoutProperty: jest.fn()
+                setLayoutProperty: jest.fn(),
+                setPaintProperty: jest.fn()
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
@@ -29,9 +30,26 @@ describe("Geometry module tests", () => {
             _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
+        const geometryConfig = {
+            colorConfig: { fillColor: "warm" },
+            textConfig: { textField: "title" }
+        };
+
+        const textField: DataDrivenPropertyValueSpecification<string> = ["get", "country"];
+
         const testGeometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
-        let geometry = await GeometryModule.init(tomtomMapMock);
-        geometry.show(testGeometryData);
+        let geometry = await GeometryModule.init(tomtomMapMock, geometryConfig);
+        // to be able to spy on private methods
+        const geometryAny: any = geometry;
+        jest.spyOn(geometryAny, "applyConfig");
+        jest.spyOn(geometryAny, "applyTextConfig");
+        jest.spyOn(geometryAny, "updateLayerAndData");
+        expect(geometry.getConfig()).toMatchObject(geometryConfig);
+        geometry.applyTextConfig({ textField });
+        expect(geometryAny.applyTextConfig).toHaveBeenCalledWith({ textField });
+        expect(geometryAny.updateLayerAndData).toHaveBeenCalledTimes(1);
+        expect(geometry.getConfig()).toEqual({ ...geometryConfig, textConfig: { textField } });
+
         geometry.show(testGeometryData);
         geometry.clear();
         geometry = await GeometryModule.init(tomtomMapMock);
