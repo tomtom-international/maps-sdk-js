@@ -70,6 +70,10 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         }
     }
 
+    /**
+     * Applies a new text configuration
+     * @param textConfig Geometry text configuration
+     */
     applyTextConfig(textConfig: GeometryTextConfig) {
         const config = {
             ...this.config,
