@@ -11,11 +11,8 @@ import { validateRequestSchema, ValidationError } from "./Validation";
  */
 const injectCustomHeaders = (params: CommonServiceParams): void => {
     const tomtomHeaders = generateTomTomCustomHeaders(params);
-
     // Injecting custom headers to axios
-    axios.defaults.headers.common = {
-        ...tomtomHeaders
-    };
+    axios.defaults.headers.common = { ...tomtomHeaders };
 };
 
 /**
@@ -43,14 +40,11 @@ export const callService = async <PARAMS extends CommonServiceParams, REQUEST, A
         }
     }
     const request = template.buildRequest(mergedParams);
-
     injectCustomHeaders(mergedParams);
 
-    let apiResponse;
     try {
-        apiResponse = await template.sendRequest(request);
+        return template.parseResponse(await template.sendRequest(request), mergedParams);
     } catch (e) {
         return Promise.reject(buildResponseError(e, serviceName, template.parseResponseError));
     }
-    return template.parseResponse(apiResponse, mergedParams);
 };

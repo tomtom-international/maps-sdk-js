@@ -1,7 +1,6 @@
 import { Map, MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
-import { generateTomTomCustomHeaders } from "@anw/maps-sdk-js/core";
+import { generateTomTomCustomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core";
 import { TomTomMap } from "../TomTomMap";
-import { TomTomMapParams } from "../init";
 
 /**
  * Wait until the map is ready
@@ -49,24 +48,16 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
  * Inject TomTom custom headers to requests to TomTom.
  *
  * @ignore
- * @param tomtomMapParams Global SDK Map configuration
+ * @param params Global SDK Map configuration
  */
 export const injectCustomHeaders =
-    (tomtomMapParams: TomTomMapParams) =>
+    (params: Partial<GlobalConfig>) =>
     (url: string, resourceType?: ResourceType): RequestParameters => {
         if (url.includes("tomtom.com")) {
             if (resourceType === "Image") {
                 return { url };
             }
-
-            const tomtomHeaders = generateTomTomCustomHeaders(tomtomMapParams);
-
-            return {
-                url,
-                headers: {
-                    ...tomtomHeaders
-                }
-            };
+            return { url, headers: { ...generateTomTomCustomHeaders(params) } };
         } else {
             return { url };
         }

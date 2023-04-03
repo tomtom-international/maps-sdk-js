@@ -1,6 +1,6 @@
 import { GeoJsonProperties, Position } from "geojson";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
-import { Geometries, Places } from "@anw/maps-sdk-js/core";
+import { Geometries, GlobalConfig, Language, Places } from "@anw/maps-sdk-js/core";
 import {
     GeometryModuleConfig,
     LayerSpecWithSource,
@@ -189,3 +189,13 @@ export const setStyle = async (style: StyleInput) =>
     page.evaluate((pageStyleInput) => {
         (globalThis as MapsSDKThis).tomtomMap.setStyle(pageStyleInput);
     }, style as any);
+
+export const setLanguage = async (language: Language) =>
+    page.evaluate((inputLanguage) => {
+        (globalThis as MapsSDKThis).tomtomMap.setLanguage(inputLanguage);
+    }, language);
+
+export const putGlobalConfig = async (config: Partial<GlobalConfig>) =>
+    page.evaluate((inputConfig) => {
+        (globalThis as MapsSDKThis).MapsSDKCore.TomTomConfig.instance.put(inputConfig);
+    }, config);

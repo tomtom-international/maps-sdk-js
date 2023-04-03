@@ -9,7 +9,7 @@ export class MapIntegrationTestEnv {
         page.on("console", (message) => message.type() === "error" && this.consoleErrors.push(message));
     }
 
-    async loadMap(mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: TomTomMapParams) {
+    async loadMap(mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
         this.consoleErrors = [];
         return page.evaluate(
             (pageMapLibreOptions, pageTomTomMapParams, pageAPIKey) => {

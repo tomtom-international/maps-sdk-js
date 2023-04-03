@@ -1,6 +1,6 @@
 import mapLibreExported, { Map } from "maplibre-gl";
 import { BBox } from "geojson";
-import { mergeFromGlobal } from "@anw/maps-sdk-js/core";
+import { Language, mergeFromGlobal } from "@anw/maps-sdk-js/core";
 import { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
 import { buildMapOptions } from "./init/BuildMapOptions";
 import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
@@ -29,8 +29,8 @@ export class TomTomMap {
      * @param mapLibreOptions A subset of MapLibre options for MapLibre initialization.
      * @param mapParams The parameters to initialize the TomTom Maps SDK map.
      */
-    constructor(mapLibreOptions: MapLibreOptions, mapParams?: TomTomMapParams) {
-        this.params = mergeFromGlobal(mapParams);
+    constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
+        this.params = mergeFromGlobal(mapParams) as TomTomMapParams;
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.params));
         this.mapLibreMap.once("styledata", () => this.handleStyleData(false));
         this._eventsProxy = new EventsProxy(this.mapLibreMap, this.params?.events);
@@ -56,7 +56,8 @@ export class TomTomMap {
         this.mapLibreMap.setStyle(buildMapStyleInput(this.params));
     };
 
-    private updateMapLanguage(language: string) {
+    private _setLanguage(language: Language) {
+        this.params = { ...this.params, language };
         this.mapLibreMap.getStyle().layers.forEach((layer) => {
             if (layer.type == "symbol" && isLayerLocalizable(layer)) {
                 const textFieldValue = language
@@ -72,11 +73,11 @@ export class TomTomMap {
      * @param language The language to be used in map translations.
      * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
-    setLanguage(language: string) {
+    setLanguage(language: Language) {
         if (this.mapReady || this.mapLibreMap.isStyleLoaded()) {
-            this.updateMapLanguage(language);
+            this._setLanguage(language);
         } else {
-            this.mapLibreMap.once("styledata", () => this.updateMapLanguage(language));
+            this.mapLibreMap.once("styledata", () => this._setLanguage(language));
         }
     }
 
@@ -89,6 +90,7 @@ export class TomTomMap {
         // (We use setTimeout to compensate for a MapLibre glitch where symbol layers can't get added right after
         // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
         keepState && setTimeout(() => this.styleChangeHandlers.forEach((handler) => handler()));
+        this.params.language && this._setLanguage(this.params.language);
         // This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style:
         const style = this.params?.style;
         if (typeof style === "object" && style.type == "published" && style.exclude?.includes("poi")) {
