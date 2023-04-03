@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.105](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.104...v0.1.105) (2023-04-03)
+
+
+### Features
+
+* **language:** restoring map language after changing map style ([75a7f6a](https://github.com/tomtom-international/maps-sdk-js/commit/75a7f6ad1b7ab6e16bac6d987d65f16b363b5d07))
+
+
+### Bug Fixes
+
+* **multiple-geometries:** Removing unused import ([b9fec7d](https://github.com/tomtom-international/maps-sdk-js/commit/b9fec7dbf1fca786df9c879885eda1df0856a269))
+* **multiple-geometries:** update configurations to one line. ([c7ed358](https://github.com/tomtom-international/maps-sdk-js/commit/c7ed3586e4d1efdbdd3f6aa388186899bd512d50))
+
 ### [0.1.104](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.103...v0.1.104) (2023-03-30)
 
 
