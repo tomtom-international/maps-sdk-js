@@ -30,10 +30,7 @@ describe("Geometry module tests", () => {
             _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
-        const geometryConfig = {
-            colorConfig: { fillColor: "warm" },
-            textConfig: { textField: "title" }
-        };
+        const geometryConfig = { colorConfig: { fillColor: "warm" }, textConfig: { textField: "title" } };
 
         const textField: DataDrivenPropertyValueSpecification<string> = ["get", "country"];
 
