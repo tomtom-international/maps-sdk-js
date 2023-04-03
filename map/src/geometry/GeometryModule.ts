@@ -10,7 +10,7 @@ import {
     SymbolLayerSpecWithoutSource,
     ToBeAddedLayerSpec
 } from "../shared";
-import { GeometryColorConfig, GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
+import { GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { changeLayoutAndPaintProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
