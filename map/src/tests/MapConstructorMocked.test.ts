@@ -31,7 +31,7 @@ describe("Map initialization mocked tests", () => {
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
             style:
-                "https://api.tomtom.com/style/1/style/24.0.*/?key=TEST_KEY&map=2/basic_street-light" +
+                "https://api.tomtom.com/style/1/style/24.1.*/?key=TEST_KEY&map=2/basic_street-light" +
                 "&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light" +
                 "&hillshade=2-test/hillshade_rgb-light",
             attributionControl: false,

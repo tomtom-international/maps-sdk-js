@@ -57,7 +57,7 @@ const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
 const buildPublishedStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
     publishedStyleURLTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
         .replace("${baseURL}", baseURL)
-        .replace("${version}", publishedStyle.version || "24.0.*")
+        .replace("${version}", publishedStyle.version || "24.1.*")
         .replace("${apiKey}", apiKey);
 
 const withAPIKey = (givenURL: string, apiKey: string): string => {
