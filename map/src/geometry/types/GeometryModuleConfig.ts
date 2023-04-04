@@ -1,5 +1,10 @@
 import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
-import { ColorPaletteOptions } from "../layers/GeometryLayers";
+import {
+    BELLOW_ALL_LABELS_LAYER_ID,
+    BELLOW_COUNTRIES_LAYER_ID,
+    ColorPaletteOptions,
+    GEOMETRY_TITLE_LAYER_ID
+} from "../layers/GeometryLayers";
 
 /**
  * Places Color configuration
@@ -29,11 +34,25 @@ export type GeometryLineConfig = {
 };
 
 /**
+ * Geometry layer position options
+ *  */
+export const GeometryLayerPositionOptions = {
+    top: GEOMETRY_TITLE_LAYER_ID,
+    "bellow-countries": BELLOW_COUNTRIES_LAYER_ID,
+    "bellow-all-labels": BELLOW_ALL_LABELS_LAYER_ID
+} as const;
+
+/**
+ * Geometry layer position config
+ */
+export type GeometryLayerPositionConfig = keyof typeof GeometryLayerPositionOptions | "bellow-straight-labels";
+
+/**
  * Geometry layer configuration
  */
 export type GeometryModuleConfig = {
     colorConfig?: GeometryColorConfig;
     textConfig?: GeometryTextConfig;
     lineConfig?: GeometryLineConfig;
-    layerPosition?: string;
+    layerPosition?: GeometryLayerPositionConfig;
 };

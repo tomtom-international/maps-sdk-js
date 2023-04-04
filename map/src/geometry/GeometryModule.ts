@@ -10,7 +10,12 @@ import {
     SymbolLayerSpecWithoutSource,
     ToBeAddedLayerSpec
 } from "../shared";
-import { GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
+import {
+    GeometryLayerPositionConfig,
+    GeometryLayerPositionOptions,
+    GeometryModuleConfig,
+    GeometryTextConfig
+} from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { changeLayoutAndPaintProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
@@ -19,11 +24,7 @@ import {
     prepareGeometryForDisplay,
     prepareTitleForDisplay
 } from "./prepareGeometryForDisplay";
-import { BELLOW_ALL_LABELS, BELLOW_COUNTRIES } from "./layers/GeometryLayers";
-
-const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
-const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
-const GEOMETRY_TITLE_LAYER_ID = "geometry_Title";
+import { GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID, GEOMETRY_TITLE_LAYER_ID } from "./layers/GeometryLayers";
 
 /**
  * IDs of sources and layers for geometry module.
@@ -81,24 +82,18 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         });
     }
 
-    applyLayerPositionConfig(layerPositionConfig: string) {
+    applyLayerPositionConfig(layerPositionConfig: GeometryLayerPositionConfig) {
         const config = { ...this.config, layerPositionConfig };
 
-        if (layerPositionConfig === "top") {
-            this._updateLayerPosition(GEOMETRY_TITLE_LAYER_ID);
-        } else if (layerPositionConfig === "bellow-countries") {
-            this._updateLayerPosition(BELLOW_COUNTRIES);
-        } else if (layerPositionConfig === "bellow-all-labels") {
-            this._updateLayerPosition(BELLOW_ALL_LABELS);
-        } else if (layerPositionConfig === "bellow-straight-labels") {
-            const beforeLayer = this.mapLibreMap
+        if (layerPositionConfig === "bellow-straight-labels") {
+            const layer = this.mapLibreMap
                 .getStyle()
                 .layers.find((layer) => layer.type === "symbol" && layer.layout?.["symbol-placement"] === "point");
-            if (beforeLayer?.id) {
-                this._updateLayerPosition(beforeLayer?.id);
+            if (layer?.id) {
+                this._updateLayerPosition(layer?.id);
             }
         } else {
-            this._updateLayerPosition(layerPositionConfig);
+            this._updateLayerPosition(GeometryLayerPositionOptions[layerPositionConfig]);
         }
 
         this.config = config;

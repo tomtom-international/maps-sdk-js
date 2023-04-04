@@ -159,5 +159,12 @@ export const geometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
 /**
  * Constants represent the layer position options
  */
-export const BELLOW_COUNTRIES = "Borders - Treaty label";
-export const BELLOW_ALL_LABELS = "Buildings - Underground";
+export const BELLOW_COUNTRIES_LAYER_ID = "Borders - Treaty label";
+export const BELLOW_ALL_LABELS_LAYER_ID = "Buildings - Underground";
+
+/**
+ * Geometry Layers IDs
+ */
+export const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
+export const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
+export const GEOMETRY_TITLE_LAYER_ID = "geometry_Title";

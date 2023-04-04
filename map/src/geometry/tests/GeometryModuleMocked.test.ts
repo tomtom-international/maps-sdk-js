@@ -5,7 +5,8 @@ import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 import { GEOMETRY_SOURCE_ID } from "../../shared";
 import { GeoJsonProperties } from "geojson";
-import { BELLOW_ALL_LABELS, BELLOW_COUNTRIES } from "../layers/GeometryLayers";
+import { GeometryLayerPositionOptions } from "../types/GeometryModuleConfig";
+import { GEOMETRY_TITLE_LAYER_ID } from "../layers/GeometryLayers";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -51,11 +52,13 @@ describe("Geometry module tests", () => {
         expect(geometry.getConfig()).toEqual({ ...geometryConfig, textConfig: { textField } });
 
         geometry.applyLayerPositionConfig("top");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("geometry_Title");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GEOMETRY_TITLE_LAYER_ID);
         geometry.applyLayerPositionConfig("bellow-countries");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(BELLOW_COUNTRIES);
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GeometryLayerPositionOptions["bellow-countries"]);
         geometry.applyLayerPositionConfig("bellow-all-labels");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(BELLOW_ALL_LABELS);
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(
+            GeometryLayerPositionOptions["bellow-all-labels"]
+        );
 
         // Update getStyle to return an specific layer
         tomtomMapMock.mapLibreMap.getStyle = jest
@@ -64,8 +67,6 @@ describe("Geometry module tests", () => {
 
         geometry.applyLayerPositionConfig("bellow-straight-labels");
         expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("nature");
-        geometry.applyLayerPositionConfig("custom-label");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("custom-label");
 
         geometry.show(testGeometryData);
         geometry.clear();
