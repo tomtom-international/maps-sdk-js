@@ -34,18 +34,32 @@ export type GeometryLineConfig = {
 };
 
 /**
- * Geometry layer position options
- *  */
+ * Geometry layer position options.
+ */
 export const GeometryLayerPositionOptions = {
+    /**
+     * Position the geometry layer bellow the geometry title layer ("geometry_Title").
+     */
     top: GEOMETRY_TITLE_LAYER_ID,
-    "bellow-countries": BELLOW_COUNTRIES_LAYER_ID,
-    "bellow-all-labels": BELLOW_ALL_LABELS_LAYER_ID
+    /**
+     * Position the geometry layer bellow the countries defined layer ("Borders - Treaty label").
+     */
+    bellowCountries: BELLOW_COUNTRIES_LAYER_ID,
+    /**
+     * Position the geometry layer bellow all labels layer ("Buildings - Underground")
+     */
+    bellowAllLabels: BELLOW_ALL_LABELS_LAYER_ID
 } as const;
 
 /**
- * Geometry layer position config
+ * Geometry layer position config. This option allows you to move the geometry layer position to bellow a pre-defined layer options
+ * Options are:
+ * * top - Position the geometry layer just bellow the geometry title layer ("geometry_Title").
+ * * bellowCountries - Position the geometry layer bellow the countries defined layer ("Borders - Treaty label").
+ * * bellowAllLabels - Position the geometry layer bellow all labels layer ("Buildings - Underground").
+ * * bellowStraightLabels - Position the geometry layer bellow the first layer type "symbol" with "symbol-placement" point.
  */
-export type GeometryLayerPositionConfig = keyof typeof GeometryLayerPositionOptions | "bellow-straight-labels";
+export type GeometryLayerPositionConfig = keyof typeof GeometryLayerPositionOptions | "bellowStraightLabels";
 
 /**
  * Geometry layer configuration

@@ -82,10 +82,10 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         });
     }
 
-    applyLayerPositionConfig(layerPositionConfig: GeometryLayerPositionConfig) {
-        const config = { ...this.config, layerPositionConfig };
+    applyLayerPositionConfig(layerPosition: GeometryLayerPositionConfig) {
+        this.config = { ...this.config, layerPosition };
 
-        if (layerPositionConfig === "bellow-straight-labels") {
+        if (layerPosition === "bellowStraightLabels") {
             const layer = this.mapLibreMap
                 .getStyle()
                 .layers.find((layer) => layer.type === "symbol" && layer.layout?.["symbol-placement"] === "point");
@@ -93,10 +93,8 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
                 this._updateLayerPosition(layer?.id);
             }
         } else {
-            this._updateLayerPosition(GeometryLayerPositionOptions[layerPositionConfig]);
+            this._updateLayerPosition(GeometryLayerPositionOptions[layerPosition]);
         }
-
-        this.config = config;
     }
 
     /**
