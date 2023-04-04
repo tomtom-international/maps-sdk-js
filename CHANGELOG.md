@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.106](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.105...v0.1.106) (2023-04-04)
+
+
+### Features
+
+* **geometry:**  Accept layer options typed ([0c5eeb0](https://github.com/tomtom-international/maps-sdk-js/commit/0c5eeb074b2d87618b60b02bbb196f1c94ff7971))
+* **geometry:**  Apply layer positioning ([9ff55f4](https://github.com/tomtom-international/maps-sdk-js/commit/9ff55f43e7b1ee3069f27eba4d4e14a0096c69c8))
+* **geometry:**  Update geometry position configuration ([a8fc302](https://github.com/tomtom-international/maps-sdk-js/commit/a8fc3020ec22264023b68c6cbcde4caf0a5e4540))
+
 ### [0.1.105](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.104...v0.1.105) (2023-04-03)
 
 
