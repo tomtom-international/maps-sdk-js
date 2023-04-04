@@ -19,6 +19,7 @@ import {
     prepareGeometryForDisplay,
     prepareTitleForDisplay
 } from "./prepareGeometryForDisplay";
+import { BELLOW_ALL_LABELS, BELLOW_COUNTRIES } from "./layers/GeometryLayers";
 
 const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
@@ -68,6 +69,39 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         if (config?.textConfig || config?.colorConfig || config?.lineConfig) {
             this.updateLayerAndData(config);
         }
+
+        if (config?.layerPosition) {
+            this.applyLayerPositionConfig(config.layerPosition);
+        }
+    }
+
+    private _updateLayerPosition(beforeLayerId?: string) {
+        this.sourcesWithLayers.geometry.sourceAndLayerIDs.layerIDs.forEach((layer) => {
+            this.mapLibreMap.moveLayer(layer, beforeLayerId);
+        });
+    }
+
+    applyLayerPositionConfig(layerPositionConfig: string) {
+        const config = { ...this.config, layerPositionConfig };
+
+        if (layerPositionConfig === "top") {
+            this._updateLayerPosition(GEOMETRY_TITLE_LAYER_ID);
+        } else if (layerPositionConfig === "bellow-countries") {
+            this._updateLayerPosition(BELLOW_COUNTRIES);
+        } else if (layerPositionConfig === "bellow-all-labels") {
+            this._updateLayerPosition(BELLOW_ALL_LABELS);
+        } else if (layerPositionConfig === "bellow-straight-labels") {
+            const beforeLayer = this.mapLibreMap
+                .getStyle()
+                .layers.find((layer) => layer.type === "symbol" && layer.layout?.["symbol-placement"] === "point");
+            if (beforeLayer?.id) {
+                this._updateLayerPosition(beforeLayer?.id);
+            }
+        } else {
+            this._updateLayerPosition(layerPositionConfig);
+        }
+
+        this.config = config;
     }
 
     /**

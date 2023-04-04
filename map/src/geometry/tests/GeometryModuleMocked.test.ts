@@ -5,6 +5,7 @@ import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
 import { GEOMETRY_SOURCE_ID } from "../../shared";
 import { GeoJsonProperties } from "geojson";
+import { BELLOW_ALL_LABELS, BELLOW_COUNTRIES } from "../layers/GeometryLayers";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -21,7 +22,8 @@ describe("Geometry module tests", () => {
                 addLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn(),
-                setPaintProperty: jest.fn()
+                setPaintProperty: jest.fn(),
+                moveLayer: jest.fn()
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
@@ -41,11 +43,29 @@ describe("Geometry module tests", () => {
         jest.spyOn(geometryAny, "applyConfig");
         jest.spyOn(geometryAny, "applyTextConfig");
         jest.spyOn(geometryAny, "updateLayerAndData");
+        jest.spyOn(geometryAny, "_updateLayerPosition");
         expect(geometry.getConfig()).toMatchObject(geometryConfig);
         geometry.applyTextConfig({ textField });
         expect(geometryAny.applyTextConfig).toHaveBeenCalledWith({ textField });
         expect(geometryAny.updateLayerAndData).toHaveBeenCalledTimes(1);
         expect(geometry.getConfig()).toEqual({ ...geometryConfig, textConfig: { textField } });
+
+        geometry.applyLayerPositionConfig("top");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("geometry_Title");
+        geometry.applyLayerPositionConfig("bellow-countries");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(BELLOW_COUNTRIES);
+        geometry.applyLayerPositionConfig("bellow-all-labels");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(BELLOW_ALL_LABELS);
+
+        // Update getStyle to return an specific layer
+        tomtomMapMock.mapLibreMap.getStyle = jest
+            .fn()
+            .mockReturnValue({ layers: [{ id: "nature", type: "symbol", layout: { "symbol-placement": "point" } }] });
+
+        geometry.applyLayerPositionConfig("bellow-straight-labels");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("nature");
+        geometry.applyLayerPositionConfig("custom-label");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("custom-label");
 
         geometry.show(testGeometryData);
         geometry.clear();

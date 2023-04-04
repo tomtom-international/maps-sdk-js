@@ -35,4 +35,5 @@ export type GeometryModuleConfig = {
     colorConfig?: GeometryColorConfig;
     textConfig?: GeometryTextConfig;
     lineConfig?: GeometryLineConfig;
+    layerPosition?: string;
 };

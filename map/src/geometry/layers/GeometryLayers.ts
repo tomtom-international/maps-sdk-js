@@ -155,3 +155,9 @@ export const geometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
         "line-width": 2
     }
 };
+
+/**
+ * Constants represent the layer position options
+ */
+export const BELLOW_COUNTRIES = "Borders - Treaty label";
+export const BELLOW_ALL_LABELS = "Buildings - Underground";
