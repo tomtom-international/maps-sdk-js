@@ -4,7 +4,7 @@ import { GlobalConfig } from "../config/GlobalConfig";
  * SDK name used TomTom custom header TomTom-User-Agent
  * @ignore
  */
-export const SDK_NAME = "MapsSDKJS";
+export const TOMTOM_USER_AGENT_SDK_NAME = "TomTomSDKsMapsJS";
 // Rollup replace plugin will literally replace __SDK_VERSION__ to the actual root package
 // version in build time
 const SDK_VERSION = "__SDK_VERSION__";
@@ -14,7 +14,7 @@ const SDK_VERSION = "__SDK_VERSION__";
  * The value must match the regular expression '^[a-zA-Z0-9-]{1,100}$'.
  * @see Tracking-ID: https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
  *
- * @param trackingId String to be validate
+ * @param trackingId String to be validated
  */
 const validateTrackingId = (trackingId: string): string => {
     if (!/^[a-zA-Z0-9-]{1,100}$/.test(trackingId)) {
@@ -50,7 +50,7 @@ export interface TomTomCustomHeaders {
  */
 export const generateTomTomCustomHeaders = (config: Partial<GlobalConfig>): TomTomCustomHeaders => {
     const tomtomHeaders: TomTomCustomHeaders = {
-        "TomTom-User-Agent": `${SDK_NAME}/${SDK_VERSION}`
+        "TomTom-User-Agent": `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`
     };
 
     if (config.trackingId) {

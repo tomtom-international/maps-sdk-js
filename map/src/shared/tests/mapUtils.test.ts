@@ -52,7 +52,7 @@ describe("Map utils - injectCustomHeaders", () => {
         expect(headers).toMatchObject({
             url,
             headers: {
-                "TomTom-User-Agent": expect.stringContaining("MapsSDKJS")
+                "TomTom-User-Agent": expect.stringContaining("TomTomSDKsMapsJS")
             }
         });
     });
