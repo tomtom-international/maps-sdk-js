@@ -15,7 +15,7 @@
 <br/>
 
 
-Maps SDK JS is a **JavaScript** library for building applications using **TomTom** location maps and services.
+Maps SDK JS is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://developer.tomtom.com/).
 
 <a href="https://hosted-examples.maps-sdk-js.tomtom.com/main/kitchen-sink/">
     <img src="documentation/images/sdk-examples-collage.png" style="width: 800px" alt="Example Thumbnails">
