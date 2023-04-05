@@ -3,7 +3,7 @@ import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "
 import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
 import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
-import { DisplayGeometryProps, ExtraGeometryDisplayProps, TITLE } from "./types/GeometryDisplayProps";
+import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/GeometryDisplayProps";
 
 /**
  * Build Geometry layer specification
@@ -105,8 +105,8 @@ export const buildGeometryTitleLayerSpec = (
         type: "symbol",
         id: layerID,
         layout: {
-            "text-field": ["get", TITLE],
-            ...(textConfig?.textField && { "text-field": buildGeometryTitle(textConfig.textField) }),
+            "text-field": ["get", GEOMETRY_TITLE_PROP],
+            ...(textConfig?.textField && { "text-field": textConfig.textField }),
             "text-padding": 5,
             "text-size": 12,
             "text-font": ["Noto-Bold"],

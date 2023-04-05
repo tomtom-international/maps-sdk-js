@@ -2,6 +2,9 @@ import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
 import {
     BELLOW_ALL_LABELS_LAYER_ID,
     BELLOW_COUNTRIES_LAYER_ID,
+    BELLOW_PLACE_LABELS_LAYER_ID,
+    BELLOW_PLACE_LAYER_ID,
+    BELLOW_ROADS_LAYER_ID,
     ColorPaletteOptions,
     GEOMETRY_TITLE_LAYER_ID
 } from "../layers/GeometryLayers";
@@ -42,21 +45,36 @@ export const GeometryLayerPositionOptions = {
      */
     top: GEOMETRY_TITLE_LAYER_ID,
     /**
-     * Position the geometry layer bellow the countries defined layer ("Borders - Treaty label").
+     * Position the geometry layer bellow the countries defined layer ("Places - Country name").
      */
     bellowCountries: BELLOW_COUNTRIES_LAYER_ID,
     /**
-     * Position the geometry layer bellow all labels layer ("Buildings - Underground")
+     * Position the geometry layer bellow all labels layer ("Borders - Treaty label").
      */
-    bellowAllLabels: BELLOW_ALL_LABELS_LAYER_ID
+    bellowAllLabels: BELLOW_ALL_LABELS_LAYER_ID,
+    /**
+     * Position the geometry layer bellow place labels layer ("Places - Village / Hamlet").
+     */
+    bellowPlaceLabels: BELLOW_PLACE_LABELS_LAYER_ID,
+    /**
+     * Position the geometry layer bellow place layer ("POI").
+     */
+    bellowPlaces: BELLOW_PLACE_LAYER_ID,
+    /**
+     * Position the geometry layer bellow road layer ("Tunnel - Railway outline").
+     */
+    bellowRoads: BELLOW_ROADS_LAYER_ID
 } as const;
 
 /**
  * Geometry layer position config. This option allows you to move the geometry layer position to bellow a pre-defined layer options
  * Options are:
  * * top - Position the geometry layer just bellow the geometry title layer ("geometry_Title").
- * * bellowCountries - Position the geometry layer bellow the countries defined layer ("Borders - Treaty label").
- * * bellowAllLabels - Position the geometry layer bellow all labels layer ("Buildings - Underground").
+ * * bellowCountries -  Position the geometry layer bellow the countries defined layer ("Places - Country name").
+ * * bellowAllLabels - Position the geometry layer bellow all labels layer ("Borders - Treaty label").
+ * * bellowPlaceLabels - Position the geometry layer bellow place labels layer ("Places - Village / Hamlet").
+ * * bellowPlaces - Position the geometry layer bellow place layer ("POI").
+ * * bellowRoads - Position the geometry layer bellow road layer ("Tunnel - Railway outline").
  * * bellowStraightLabels - Position the geometry layer bellow the first layer type "symbol" with "symbol-placement" point.
  */
 export type GeometryLayerPositionConfig = keyof typeof GeometryLayerPositionOptions | "bellowStraightLabels";

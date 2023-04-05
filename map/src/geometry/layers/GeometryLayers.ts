@@ -1,6 +1,6 @@
 import { FillLayerSpecification, LineLayerSpecification } from "maplibre-gl";
 import { LayerSpecTemplate } from "../../shared";
-import { COLOR } from "../types/GeometryDisplayProps";
+import { GEOMETRY_COLOR_PROP } from "../types/GeometryDisplayProps";
 
 export const colorPalettes = {
     warm: [
@@ -141,7 +141,7 @@ const defaultColor = "#0A3653";
 export const geometryFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
     type: "fill",
     paint: {
-        "fill-color": ["coalesce", ["get", COLOR], defaultColor],
+        "fill-color": ["coalesce", ["get", GEOMETRY_COLOR_PROP], defaultColor],
         "fill-opacity": 0.15,
         "fill-antialias": false
     }
@@ -159,8 +159,11 @@ export const geometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
 /**
  * Constants represent the layer position options
  */
-export const BELLOW_COUNTRIES_LAYER_ID = "Borders - Treaty label";
-export const BELLOW_ALL_LABELS_LAYER_ID = "Buildings - Underground";
+export const BELLOW_COUNTRIES_LAYER_ID = "Places - Country name";
+export const BELLOW_ALL_LABELS_LAYER_ID = "Borders - Treaty label";
+export const BELLOW_ROADS_LAYER_ID = "Tunnel - Railway outline";
+export const BELLOW_PLACE_LABELS_LAYER_ID = "Places - Village / Hamlet";
+export const BELLOW_PLACE_LAYER_ID = "POI";
 
 /**
  * Geometry Layers IDs

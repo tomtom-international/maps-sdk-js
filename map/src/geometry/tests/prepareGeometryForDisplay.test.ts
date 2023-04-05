@@ -54,7 +54,7 @@ describe("prepareGeometryForDisplay", () => {
         let geometryTitleSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_SOURCE_ID, config);
 
         expect(geometryTitleSpec).toHaveProperty("id", GEOMETRY_TITLE_SOURCE_ID);
-        expect(geometryTitleSpec.layout).toHaveProperty("text-field", ["get", config.textConfig?.textField]);
+        expect(geometryTitleSpec.layout).toHaveProperty("text-field", "title");
 
         // Using Maplibre expressions
         config = {

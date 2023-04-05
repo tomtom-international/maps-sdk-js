@@ -18,9 +18,9 @@ export type DisplayGeometryProps = CommonPlaceProps & ExtraGeometryDisplayProps;
 /**
  * @ignore
  */
-export const TITLE = "title";
+export const GEOMETRY_TITLE_PROP = "title";
 
 /**
  * @ignore
  */
-export const COLOR = "color";
+export const GEOMETRY_COLOR_PROP = "color";

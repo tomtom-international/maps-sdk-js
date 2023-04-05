@@ -1,21 +1,33 @@
 import { Geometries } from "@anw/maps-sdk-js/core";
-import { GEOMETRY_SOURCE_ID } from "map";
+
+import { GEOMETRY_SOURCE_ID, GEOMETRY_TITLE_SOURCE_ID, DisplayGeometryProps, GeometryLayerPositionConfig } from "map";
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import amsterdamGeometryData from "./GeometryModule.test.data.json";
+import netherlandsGeometryData from "./GeometryModule-Netherlands.test.data.json";
 import { GeoJsonProperties, Position } from "geojson";
 import {
     getNumVisibleLayersBySource,
+    getSymbolLayersByID,
     initGeometry,
+    queryRenderedFeatures,
     showGeometry,
+    waitForMapIdle,
     waitForMapReady,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
 
 const getNumVisibleLayers = async () => getNumVisibleLayersBySource(GEOMETRY_SOURCE_ID);
 
+const getNumVisibleTitleLayers = async () => getNumVisibleLayersBySource(GEOMETRY_TITLE_SOURCE_ID);
+
 const clearGeometry = async () => page.evaluate(() => (globalThis as MapsSDKThis).geometry?.clear());
+
+const applyLayerPositionConfig = async (config: GeometryLayerPositionConfig) =>
+    page.evaluate((inputConfig) => (globalThis as MapsSDKThis).geometry?.applyLayerPositionConfig(inputConfig), config);
+
+const getAllLayers = async () => page.evaluate(() => (globalThis as MapsSDKThis).mapLibreMap.getStyle().layers);
 
 const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeatures(["geometry_Fill"], numFeatures, 3000, position);
@@ -26,6 +38,7 @@ describe("Geometry integration tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     const geometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
+    const netherlandsData = netherlandsGeometryData as unknown as Geometries<DisplayGeometryProps>;
 
     const amsterdamCenter = [4.89067, 52.37313];
     // point in Amsterdam South East which fits inside a separate polygon:
@@ -51,5 +64,58 @@ describe("Geometry integration tests", () => {
         expect(await getNumVisibleLayers()).toStrictEqual(0);
         await showGeometry(geometryData);
         expect(await getNumVisibleLayers()).toStrictEqual(2);
+    });
+
+    test("Show multiple geometries in the map with title, default config", async () => {
+        await mapEnv.loadMap({ bounds: netherlandsData.bbox as LngLatBoundsLike });
+        await initGeometry();
+        await waitForMapReady();
+        expect(await getNumVisibleLayers()).toStrictEqual(0);
+
+        await showGeometry(netherlandsData);
+        expect(await getNumVisibleLayers()).toStrictEqual(2);
+        expect(await getNumVisibleTitleLayers()).toStrictEqual(1);
+
+        await waitForMapIdle();
+        const features = await queryRenderedFeatures(["geometry_Title"]);
+        expect(features).toHaveLength(12);
+        features.forEach((feature) => {
+            expect(feature).toMatchObject({
+                properties: { title: JSON.parse(feature.properties.address).freeformAddress }
+            });
+        });
+    });
+
+    test("Show multiple geometries in the map with title, custom config", async () => {
+        await mapEnv.loadMap({ bounds: netherlandsData.bbox as LngLatBoundsLike });
+        await initGeometry({
+            colorConfig: { fillColor: "#00ccbb", fillOpacity: 0.6 },
+            textConfig: { textField: "CustomText" }
+        });
+        await waitForMapReady();
+        expect(await getNumVisibleLayers()).toStrictEqual(0);
+
+        await showGeometry(netherlandsData);
+        expect(await getNumVisibleLayers()).toStrictEqual(2);
+        expect(await getNumVisibleTitleLayers()).toStrictEqual(1);
+
+        await waitForMapIdle();
+        const features = await queryRenderedFeatures(["geometry_Title"]);
+        expect(features).toHaveLength(12);
+        features.forEach((feature) => {
+            expect(feature).toMatchObject({
+                properties: { title: "CustomText", color: "#00ccbb" }
+            });
+        });
+
+        const geometryLayer = await getSymbolLayersByID("geometry_Fill");
+        // @ts-ignore
+        expect(geometryLayer.paint["fill-opacity"]).toBe(0.6);
+
+        await applyLayerPositionConfig("bellowRoads");
+        const layers = await getAllLayers();
+        const geometryIndex = layers.findIndex((feature) => feature.id === "geometry_Fill");
+        const bellowRoadsIndex = layers.findIndex((feature) => feature.id === "Tunnel - Railway outline");
+        expect(geometryIndex).toBeLessThan(bellowRoadsIndex);
     });
 });
