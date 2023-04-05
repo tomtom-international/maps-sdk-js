@@ -3,7 +3,7 @@
 [![Maintainability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=sqale_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Security Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=security_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 
-![TomTom Logo](documentation/images/tomtom-logo-big.svg)
+[![TomTom Logo](documentation/images/tomtom-logo-big.svg)](https://www.tomtom.com/)
 
 ## Maps SDK JS
 
