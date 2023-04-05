@@ -11,8 +11,7 @@ import { callService } from "../shared/ServiceTemplate";
 export const autocompleteSearch = async (
     params: AutocompleteSearchParams,
     customTemplate?: Partial<AutocompleteSearchTemplate>
-): Promise<AutocompleteSearchResponse> => {
-    return callService(params, { ...autocompleteSearchTemplate, ...customTemplate }, "Autocomplete");
-};
+): Promise<AutocompleteSearchResponse> =>
+    callService(params, { ...autocompleteSearchTemplate, ...customTemplate }, "Autocomplete");
 
 export default autocompleteSearch;

@@ -14,7 +14,6 @@ type SearchFeatureCollectionProps = SearchSummary & {
 export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionProps>;
 
 /**
- *
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/search-api/documentation/search-service/search-service
@@ -22,12 +21,9 @@ export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionPro
 export const search = async (
     params: GeometrySearchParams | FuzzySearchParams,
     customTemplate?: Partial<GeometrySearchTemplate | FuzzySearchTemplate>
-): Promise<SearchResponse> => {
-    if ("geometries" in params) {
-        return geometrySearch(params, customTemplate as GeometrySearchTemplate);
-    } else {
-        return fuzzySearch(params, customTemplate as FuzzySearchTemplate);
-    }
-};
+): Promise<SearchResponse> =>
+    "geometries" in params
+        ? geometrySearch(params, customTemplate as GeometrySearchTemplate)
+        : fuzzySearch(params, customTemplate as FuzzySearchTemplate);
 
 export default search;

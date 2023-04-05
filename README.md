@@ -3,179 +3,98 @@
 [![Maintainability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=sqale_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Security Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=security_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
 
-[![Coverage](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=coverage&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
-[![Bugs](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=bugs&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
-[![Vulnerabilities](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=vulnerabilities&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc)
+![TomTom Logo](documentation/images/tomtom-logo-big.svg)
 
-<div align="center">
-  <a href="https://github.com/tomtom-international/maps-sdk-js">
-    <img src="documentation/images/tomtom-logo.svg" alt="Logo" width="400" height="90">
-  </a>
+## Maps SDK JS
 
-  <h3 align="center">maps-sdk-js</h3>
+[**Examples**](https://hosted-examples.maps-sdk-js.tomtom.com/main/kitchen-sink/) |
+[**Documentation**](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/overview/introduction) |
+[Request feature](https://github.com/tomtom-international/maps-sdk-js/discussions) |
+[Report bug](https://github.com/tomtom-international/maps-sdk-js/issues)
 
-  <p align="center">
-    Maps SDK JS is a JavaScript library for building web applications using TomTom maps and location services
-    <br />
-    <a href="https://github.com/tomtom-international/maps-sdk-js/tree/main/documentation"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/tomtom-international/maps-sdk-js/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/tomtom-international/maps-sdk-js/issues">Request Feature</a>
-  </p>
-</div>
-<br />
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-      <li><a href="#what-is-maps-sdk-for-javascript">What is Maps SDK for JavaScript?</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-<br />
+![Samples](documentation/images/sdk-examples-collage.png)
+<br/>
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
 
-Maps SDK JS is a JavaScript library for building web applications using TomTom maps and location services. With Maps SDK JS you can build powerful web applications that seamlessly integrate TomTom's
-mapping and service technologies including map display and interaction, search, routing, and traffic.
+Maps SDK JS is a **JavaScript** library for building applications using **TomTom** location maps and services.\
+It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
+to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
+
+The SDK has 3 bundles:
+* [Map](#map): MapLibre-based library for readily styled, service-compatible and interactive TomTom Maps
+* [Services](#services): GeoJSON services for TomTom location APIs
+* [Core](#core): configuration, types and utilities common to Map and Services
 
 <br />
 
-<!-- WHAT IS MAPS SDK JAVASCRIPT -->
-## What is Maps SDK for JavaScript?
+### Getting Started using npm
+```
+npm i @anw/maps-sdk-js
+```
 
-Easily integrate TomTom services into your web application with this convenient client library that hides the complexity of bare RESTful service calls from developers. Boost your productivity with fully styleable and easily customized components. Check out the examples page for the most common use cases for your web application.
+Additionally:
+* If you use the map: ```npm i maplibre-gl```
+* If you use services: ```npm i axios```
 
-<!-- GETTING STARTED -->
-## Getting Started
-
-**TODO**: Explain how to install the sdk for normal usage of it.
-
-To get start to contributing to **MAPS-SDK-JS**, please follow the steps below.
-
-<br />
-
-### Prerequisites
-
-Make sure you have installed the following applications:
-
-* [Git](https://git-scm.com/) latest
-* [NodeJS 16.+ (LTS)](https://nodejs.org/) - Please check the Pre-installation section
-* NPM 8.+ (correspondent to the LTS) - Please check the Pre-installation section
-
-<br />
-
-### Pre-installation
-
-We know that handling node versions without a proper tool can be tricky. There are two tools you can use to manage node versions, [NVM](https://github.com/nvm-sh/nvm) and [Volta](https://volta.sh/).
-
-<br />
-
-**Using Volta:**
-
-Volta is a tool that automatically change the **node** and **npm** version for you and if you don't have installed, it will download automatically and setup for you.
-
-> "Volta is a hassle-free way to manage your JavaScript command-line tools."
-
-Setup Volta:
-  ```shell
-    curl https://get.volta.sh | bash
-  ```
-
-The project has already **node** and **npm** version pinned in the package.json file in the root folder.
-
-Read more about Volta here: [https://docs.volta.sh/guide/](https://docs.volta.sh/guide/)
-
-<br />
-
-**Using NVM**:
-
-Setup NodeJS/NPM via NVM
-  ```shell
-    nvm i 16
-    nvm use 16
-
-    # making 16th version the default one (optional)
-    nvm alias default 16
-  ```
-
-Read more about NVM here: [https://github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm)
-
-<br />
-
-### Installation
-
-1. Clone the repo
-   ```sh
-    git clone git@github.com:tomtom-international/maps-sdk-js.git
-    # or
-    git clone https://github.com/tomtom-international/maps-sdk-js.git
-   ```
-
-2. Install NPM packages
-
-  You will need install first the packages in the root folder:
-
-  ```sh
-    npm i
-  ```
-  This is necessary for documentation generation and git hooks to work properly.
-
-  You can also install packages for a certain workspace:
-  ```sh
-        # specific workspaces
-        npm i -w core
-        npm i -w map
-        npm i -w services
-        # or
-        npm ci -w core
-        # and so on...
-  ```
-
->```node_modules``` directory appears not in workspaces, but in the root directory. This is how it should be.
-
-## Development of maps-sdk-js
-
-* [Introduction](documentation/product-information/introduction.md)
-* [Getting development started](documentation/development/getting-development-started.md)
-* [Build workspaces](documentation/development/build-workspaces.md)
-* [CI/CD](documentation/development/ci-cd.md)
-* [Testing your changes](documentation/development/testing.md)
-* [Updating dependencies](documentation/development/dependencies-updating.md)
-* [Quality control](documentation/development/quality-control.md)
-* [Generating documentation](documentation/development/docs.md)
-
-## Parts of maps-sdk-js
-
-### Core
-
-TODO
-
-### Services
-
-* [Search](documentation/services/search/documentation.md)
-* [Reverse Geocoding](documentation/services/search/search-examples/reverse-geocoding.md)
+(Learn more below)
+<br/><br/>
 
 ### Map
 
-TODO
+The SDK Map bundle is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/), and shares it as a dependency with your app.\
+You can both use the TomTom and MapLibre SDKs together at any time.
+
+#### Feature highlights
+Readily available, yet highly customizable interactive TomTom Maps:
+* in different styles: light, dark, b&w, satellite
+* with configurable POIs and Live Traffic
+* seamlessly integrable with TomTom [Services](#services)
+* with places, routes and geometries from TomTom services or your own data
+
+#### Getting Started with Map
+##### Using npm
+The SDK Map uses [MapLibre GL JS](https://www.npmjs.com/package/maplibre-gl) as peer dependency.
+Therefore, you need to also have it installed in your project.\
+The TomTom SDK is tested against the latest stable [release  of MapLibre GL](https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md).
+```
+npm i @anw/maps-sdk-js maplibre-gl
+```
+Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/map```
+<br />
+
+### Services
+The SDK Services bundle integrates the TomTom location APIs into comprehensive [GeoJSON](https://geojson.org/) services.\
+The services can be integrated in **web**, [nodejs](https://nodejs.org/) and [React Native](https://reactnative.dev/) apps.\
+The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/) helps with further integration with geospatial tools.
+
+#### Feature highlights
+* [Search](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/search) (fuzzy search, geometry search)
+* [Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/geocoding) and [Reverse Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/reverse_geocoding)
+* [Geometry Data](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/geometry_data)
+* [Routing](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/calculate_route) with EV support
+* EV Charging Stations Availability
+
+#### Getting Started with Services
+##### Using npm
+To maximize compatibility with both web and nodejs environments of multiple versions, 
+the SDK Services uses [axios](https://www.npmjs.com/package/axios) and shares it with your project as a peer dependency.\
+The SDK is tested against the latest stable release from Axios.
+```
+npm i @anw/maps-sdk-js axios
+```
+Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/services```
+<br />
+
+### Core
+
+The SDK [Core](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core) 
+is a set of utilities and TypeScript types which are common to both [Map](#map) and [Services](#services).`
+
+#### Feature highlights
+* [Common configuration](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/classes/core.TomTomConfig)
+* Common types (such as outputs from Services which can be used as inputs to the Map)
+* Utilities (such as distance/duration formatting and bounding box calculations)
+
+#### Using the Core Bundle
+If you use Map and/or Services, there is no need to install any further packages.\
+Code imports from the SDK Core Bundle will come from ```@anw/maps-sdk-js/core```

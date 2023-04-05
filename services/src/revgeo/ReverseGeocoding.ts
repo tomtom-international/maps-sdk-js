@@ -16,8 +16,7 @@ export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
 export const reverseGeocode = async (
     params: ReverseGeocodingParams,
     customTemplate?: Partial<ReverseGeocodingTemplate>
-): Promise<ReverseGeocodingResponse> => {
-    return callService(params, { ...reverseGeocodingTemplate, ...customTemplate }, "ReverseGeocode");
-};
+): Promise<ReverseGeocodingResponse> =>
+    callService(params, { ...reverseGeocodingTemplate, ...customTemplate }, "ReverseGeocode");
 
 export default reverseGeocode;

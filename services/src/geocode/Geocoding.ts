@@ -20,8 +20,6 @@ import { callService } from "../shared/ServiceTemplate";
 export const geocode = async (
     params: GeocodingParams,
     customTemplate?: Partial<GeocodingTemplate>
-): Promise<GeocodingResponse> => {
-    return callService(params, { ...geocodingTemplate, ...customTemplate }, "Geocode");
-};
+): Promise<GeocodingResponse> => callService(params, { ...geocodingTemplate, ...customTemplate }, "Geocode");
 
 export default geocode;

@@ -20,20 +20,17 @@ import {
 export const evChargingStationsAvailability = async (
     params: EVChargingStationsAvailabilityParams,
     customTemplate?: Partial<EVChargingStationsAvailabilityTemplate>
-): Promise<EVChargingStationsAvailability> => {
-    return callService(
+): Promise<EVChargingStationsAvailability> =>
+    callService(
         params,
         { ...evChargingStationsAvailabilityTemplate, ...customTemplate },
         "EVChargingStationsAvailability"
     );
-};
 
 /**
  * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.
  *
  * This function returns the given place with EV availability aggregated in its properties, if applicable.
- * @group EV Charging Stations Availability
- * @category Functions
  * @param place The place for which to fetch EV charging availability.
  * If it's not an EV station or has no availability info, it will be returned as-is.
  */
@@ -64,8 +61,6 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
  * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.
  *
  * This function returns the given place with EV availability aggregated in its properties, if applicable.
- * @group EV Charging Stations Availability
- * @category Functions
  * @param places The places for which to fetch EV charging availability.
  * The ones which aren't EV stations or have no availability info are returned as-is.
  */

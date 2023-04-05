@@ -11,8 +11,6 @@ import { placeByIdTemplate, PlaceByIdTemplate } from "./PlaceByIdTemplate";
 export const placeById = async (
     params: PlaceByIdParams,
     customTemplate?: Partial<PlaceByIdTemplate>
-): Promise<PlaceByIdResponse> => {
-    return callService(params, { ...placeByIdTemplate, ...customTemplate }, "PlaceById");
-};
+): Promise<PlaceByIdResponse> => callService(params, { ...placeByIdTemplate, ...customTemplate }, "PlaceById");
 
 export default placeById;

@@ -19,6 +19,4 @@ import { callService } from "../shared/ServiceTemplate";
 export const calculateRoute = async (
     params: CalculateRouteParams,
     customTemplate?: Partial<CalculateRouteTemplate>
-): Promise<Routes> => {
-    return callService(params, { ...calculateRouteTemplate, ...customTemplate }, "Routing");
-};
+): Promise<Routes> => callService(params, { ...calculateRouteTemplate, ...customTemplate }, "Routing");

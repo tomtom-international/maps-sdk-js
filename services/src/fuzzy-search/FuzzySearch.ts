@@ -11,8 +11,6 @@ import { callService } from "../shared/ServiceTemplate";
 export const fuzzySearch = async (
     params: FuzzySearchParams,
     customTemplate?: Partial<FuzzySearchTemplate>
-): Promise<FuzzySearchResponse> => {
-    return callService(params, { ...fuzzySearchTemplate, ...customTemplate }, "FuzzySearch");
-};
+): Promise<FuzzySearchResponse> => callService(params, { ...fuzzySearchTemplate, ...customTemplate }, "FuzzySearch");
 
 export default fuzzySearch;

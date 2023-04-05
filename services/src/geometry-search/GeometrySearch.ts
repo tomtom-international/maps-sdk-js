@@ -11,8 +11,7 @@ import { callService } from "../shared/ServiceTemplate";
 export const geometrySearch = async (
     params: GeometrySearchParams,
     customTemplate?: Partial<GeometrySearchTemplate>
-): Promise<GeometrySearchResponse> => {
-    return callService(params, { ...geometrySearchTemplate, ...customTemplate }, "GeometrySearch");
-};
+): Promise<GeometrySearchResponse> =>
+    callService(params, { ...geometrySearchTemplate, ...customTemplate }, "GeometrySearch");
 
 export default geometrySearch;
