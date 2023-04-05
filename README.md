@@ -12,14 +12,18 @@
 [Request feature](https://github.com/tomtom-international/maps-sdk-js/discussions) |
 [Report bug](https://github.com/tomtom-international/maps-sdk-js/issues)
 
-![Samples](documentation/images/sdk-examples-collage.png)
 <br/>
 
 
-Maps SDK JS is a **JavaScript** library for building applications using **TomTom** location maps and services.\
+Maps SDK JS is a **JavaScript** library for building applications using **TomTom** location maps and services.
+
+<a href="https://hosted-examples.maps-sdk-js.tomtom.com/main/kitchen-sink/">
+    <img src="documentation/images/sdk-examples-collage.png" style="width: 800px" alt="Example Thumbnails">
+</a>
+
 It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
-
+<br/><br/>
 The SDK has 3 bundles:
 * [Map](#map): MapLibre-based library for readily styled, service-compatible and interactive TomTom Maps
 * [Services](#services): GeoJSON services for TomTom location APIs
@@ -60,7 +64,7 @@ The TomTom SDK is tested against the latest stable [release  of MapLibre GL](htt
 npm i @anw/maps-sdk-js maplibre-gl
 ```
 Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/map```
-<br />
+<br /><br />
 
 ### Services
 The SDK Services bundle integrates the TomTom location APIs into comprehensive [GeoJSON](https://geojson.org/) services.\
@@ -83,7 +87,7 @@ The SDK is tested against the latest stable release from Axios.
 npm i @anw/maps-sdk-js axios
 ```
 Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/services```
-<br />
+<br /><br />
 
 ### Core
 
