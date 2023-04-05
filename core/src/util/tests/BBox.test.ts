@@ -9,7 +9,6 @@ import {
     Polygon,
     Position
 } from "geojson";
-import { OptionalBBox } from "../../types";
 import {
     bboxCenter,
     bboxExpandedWithBBox,

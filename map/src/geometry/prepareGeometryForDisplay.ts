@@ -37,21 +37,6 @@ export const buildGeometryLayerSpec = (config?: GeometryModuleConfig) => {
 };
 
 /**
- * Build geometry title. The type can be a string or a Maplibre expression.
- * @param textField - Name of the field used to get the title
- * @returns
- */
-const buildGeometryTitle = (
-    textField: DataDrivenPropertyValueSpecification<string>
-): DataDrivenPropertyValueSpecification<string> => {
-    if (typeof textField === "string") {
-        return ["get", textField];
-    }
-
-    return textField;
-};
-
-/**
  * Build geometry Title. The type can be a string or a Maplibre expression.
  * @param feature - Geometry
  * @param config - Geometry module configuration
