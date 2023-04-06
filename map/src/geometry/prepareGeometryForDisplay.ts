@@ -1,37 +1,49 @@
 import { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
-import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/GeometryLayers";
+import {
+    ColorPaletteOptions,
+    GEOMETRY_FILL_LAYER_ID,
+    GEOMETRY_OUTLINE_LAYER_ID,
+    colorPalettes,
+    geometryFillSpec,
+    geometryOutlineSpec
+} from "./layers/GeometryLayers";
 import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
 import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/GeometryDisplayProps";
+import { SymbolLayerSpecWithoutSource } from "../shared";
 
 /**
  * Build Geometry layer specification
  * @param config
  * @returns
  */
-export const buildGeometryLayerSpec = (config?: GeometryModuleConfig) => {
+export const buildGeometryLayerSpec = (
+    config?: GeometryModuleConfig
+): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
     const colorConfig = config?.colorConfig;
     const lineConfig = config?.lineConfig;
 
     const fillLayerSpec = {
         ...geometryFillSpec,
+        id: GEOMETRY_FILL_LAYER_ID,
         paint: {
             ...geometryFillSpec.paint,
             ...(colorConfig?.fillOpacity && { "fill-opacity": colorConfig.fillOpacity }),
             ...(colorConfig?.fillColor && { "fill-color": ["get", "color"] })
         }
-    };
+    } as unknown as SymbolLayerSpecWithoutSource;
 
     const outlineLayerSpec = {
         ...geometryOutlineSpec,
+        id: GEOMETRY_OUTLINE_LAYER_ID,
         paint: {
             ...geometryOutlineSpec.paint,
             ...(lineConfig?.lineColor && { "line-color": lineConfig.lineColor }),
             ...(lineConfig?.lineWidth && { "line-width": lineConfig.lineWidth }),
             ...(lineConfig?.lineOpacity && { "line-opacity": lineConfig.lineOpacity })
         }
-    };
+    } as unknown as SymbolLayerSpecWithoutSource;
 
     return [fillLayerSpec, outlineLayerSpec];
 };

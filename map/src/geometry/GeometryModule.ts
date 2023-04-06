@@ -1,5 +1,5 @@
 import { FeatureCollection, GeoJsonProperties, Point } from "geojson";
-import { FillLayerSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import { SymbolLayerSpecification } from "maplibre-gl";
 import { Geometries } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
@@ -39,6 +39,8 @@ type GeometrySourcesWithLayers = {
  */
 export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometryModuleConfig> {
     private titleLayerSpecs!: SymbolLayerSpecWithoutSource;
+    private geometryFillLayerSpecs!: SymbolLayerSpecWithoutSource;
+    private geometryOutlineLayerSpecs!: SymbolLayerSpecWithoutSource;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -55,10 +57,13 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
         this.titleLayerSpecs = titleLayerSpec;
+        this.geometryFillLayerSpecs = geometryFillSpec;
+        this.geometryOutlineLayerSpecs = geometryOutlineSpec;
+
         return {
             geometry: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
-                { ...geometryFillSpec, id: GEOMETRY_FILL_LAYER_ID } as ToBeAddedLayerSpec<FillLayerSpecification>,
-                { ...geometryOutlineSpec, id: GEOMETRY_OUTLINE_LAYER_ID } as ToBeAddedLayerSpec<LineLayerSpecification>
+                { ...geometryFillSpec },
+                { ...geometryOutlineSpec }
             ]),
             geometryLabel: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_TITLE_SOURCE_ID, [
                 titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
@@ -111,9 +116,16 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
     }
 
     private updateLayerAndData(config: GeometryModuleConfig) {
-        const newLayerSpecs = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
-        changeLayoutAndPaintProps(newLayerSpecs, this.titleLayerSpecs, this.mapLibreMap);
-        this.titleLayerSpecs = newLayerSpecs;
+        const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
+        const newTitleLayerSpecs = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
+
+        changeLayoutAndPaintProps(geometryFillSpec, this.geometryFillLayerSpecs, this.mapLibreMap);
+        changeLayoutAndPaintProps(geometryOutlineSpec, this.geometryOutlineLayerSpecs, this.mapLibreMap);
+        changeLayoutAndPaintProps(newTitleLayerSpecs, this.titleLayerSpecs, this.mapLibreMap);
+
+        this.geometryFillLayerSpecs = geometryFillSpec;
+        this.geometryOutlineLayerSpecs = geometryOutlineSpec;
+        this.titleLayerSpecs = newTitleLayerSpecs;
     }
 
     protected restoreDataAndConfig() {
