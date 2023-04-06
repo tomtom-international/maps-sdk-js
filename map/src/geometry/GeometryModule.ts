@@ -24,7 +24,7 @@ import {
     prepareGeometryForDisplay,
     prepareTitleForDisplay
 } from "./prepareGeometryForDisplay";
-import { GEOMETRY_FILL_LAYER_ID, GEOMETRY_OUTLINE_LAYER_ID, GEOMETRY_TITLE_LAYER_ID } from "./layers/GeometryLayers";
+import { GEOMETRY_TITLE_LAYER_ID } from "./layers/GeometryLayers";
 
 /**
  * IDs of sources and layers for geometry module.
