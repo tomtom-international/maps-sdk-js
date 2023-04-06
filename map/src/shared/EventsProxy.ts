@@ -128,10 +128,10 @@ export class EventsProxy extends AbstractEventProxy {
                 const longHoverHandlers = this.handlers[this.hoveringSourceWithLayers.source.id + "_long-hover"];
                 longHoverHandlers?.forEach((handler) =>
                     handler(
-                        this.hoveringLngLat as LngLat,
                         eventState?.feature,
-                        this.hoveringFeatures,
-                        this.hoveringSourceWithLayers
+                        this.hoveringLngLat as LngLat,
+                        this.hoveringFeatures as MapGeoJSONFeature[],
+                        this.hoveringSourceWithLayers as SourceWithLayers
                     )
                 );
             }
@@ -206,7 +206,7 @@ export class EventsProxy extends AbstractEventProxy {
                 const hoverHandlers = this.handlers[hoveredTopFeature && hoveredTopFeature.source + `_hover`];
                 if (hoverHandlers && eventState) {
                     for (const handler of hoverHandlers) {
-                        handler(ev.lngLat, eventState.feature, this.hoveringFeatures, this.hoveringSourceWithLayers);
+                        handler(eventState.feature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
                     }
                 }
             }
@@ -252,7 +252,7 @@ export class EventsProxy extends AbstractEventProxy {
 
             if (clickHandlers && eventState) {
                 for (const handler of clickHandlers) {
-                    handler(ev.lngLat, eventState.feature, clickedFeatures, this.lastClickedSourceWithLayers);
+                    handler(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
                 }
             }
         }

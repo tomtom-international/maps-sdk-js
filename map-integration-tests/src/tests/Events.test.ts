@@ -49,10 +49,10 @@ const setupGeometryHoverHandlers = async () =>
 const setupPlacesClickHandlers = async () =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places?.events.on("click", (lnglat, topFeature, features, sourceWithLayers) => {
+        mapsSDKThis.places?.events.on("click", (topFeature, lnglat, features, sourceWithLayers) => {
             mapsSDKThis._numOfClicks++;
-            mapsSDKThis._clickedLngLat = lnglat;
             mapsSDKThis._clickedTopFeature = topFeature;
+            mapsSDKThis._clickedLngLat = lnglat;
             mapsSDKThis._clickedFeatures = features;
             mapsSDKThis._clickedSourceWithLayers = sourceWithLayers;
         });

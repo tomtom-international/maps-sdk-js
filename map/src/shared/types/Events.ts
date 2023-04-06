@@ -29,16 +29,16 @@ export type SupportsEvents = {
 
 /**
  * Handler for a user event (such as click or hover).
- * @param lngLat The event target coordinates. Will likely be nearby the feature but might not literally be on it (taking padding into account).
  * @param topFeature For GeoJSON modules "topFeature" will be mapped to the original feature being sent to the render and
  * for vector tile modules it will be mapped to a type derived from the map geojson feature itself.
- * @param rawFeatures  Features from MapLibre (MapGeoJSONFeatures)
+ * @param lngLat The event target coordinates. Will likely be nearby the feature but might not literally be on it (taking padding into account).
+ * @param allEventFeatures  Features from MapLibre (MapGeoJSONFeatures)
  * which includes all the interactive features related to the event, possibly across different map modules.
  * @param sourceWithLayers The source with layers to which the feature belongs to.
  */
 export type UserEventHandler<T> = (
-    lngLat: LngLat,
     topFeature: T,
-    rawFeatures?: MapGeoJSONFeature[],
-    sourceWithLayers?: SourceWithLayers
+    lngLat: LngLat,
+    allEventFeatures: MapGeoJSONFeature[],
+    sourceWithLayers: SourceWithLayers
 ) => void;

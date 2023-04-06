@@ -271,10 +271,7 @@ describe("Map vector tile POI feature tests", () => {
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois?.events.on(
-                "click",
-                (_lngLat, topFeature) => (mapsSDKThis._clickedTopFeature = topFeature)
-            );
+            mapsSDKThis.pois?.events.on("click", (topFeature) => (mapsSDKThis._clickedTopFeature = topFeature));
         });
 
         const mapLibreCoordinates = await page.evaluate(
