@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.107](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.106...v0.1.107) (2023-04-06)
+
+
+### Features
+
+* **docs:** adding imagery to readme and improving format ([06be075](https://github.com/tomtom-international/maps-sdk-js/commit/06be0756ed241a5cda58444ca5739e5afa81fcc1))
+* **docs:** adding link to TT dev portal ([f6d75ee](https://github.com/tomtom-international/maps-sdk-js/commit/f6d75ee48a4ef885fa283cfd222dc2496f56bd70))
+* **docs:** adding link to TT logo ([104ef27](https://github.com/tomtom-international/maps-sdk-js/commit/104ef276dceb73916721d7fc82f1ed1a790c58da))
+* **docs:** improving readme files and minor unrelated cleanups ([a26dac3](https://github.com/tomtom-international/maps-sdk-js/commit/a26dac352b2994dc64df35aa4cfc269559fdabfb))
+
 ### [0.1.106](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.105...v0.1.106) (2023-04-04)
 
 
