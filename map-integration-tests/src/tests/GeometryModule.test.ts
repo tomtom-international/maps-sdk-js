@@ -112,10 +112,10 @@ describe("Geometry integration tests", () => {
         // @ts-ignore
         expect(geometryLayer.paint["fill-opacity"]).toBe(0.6);
 
-        await applyLayerPositionConfig("bellowRoads");
+        await applyLayerPositionConfig("belowRoads");
         const layers = await getAllLayers();
         const geometryIndex = layers.findIndex((feature) => feature.id === "geometry_Fill");
-        const bellowRoadsIndex = layers.findIndex((feature) => feature.id === "Tunnel - Railway outline");
-        expect(geometryIndex).toBeLessThan(bellowRoadsIndex);
+        const belowRoadsIndex = layers.findIndex((feature) => feature.id === "Tunnel - Railway outline");
+        expect(geometryIndex).toBeLessThan(belowRoadsIndex);
     });
 });

@@ -1,10 +1,10 @@
 import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
 import {
-    BELLOW_ALL_LABELS_LAYER_ID,
-    BELLOW_COUNTRIES_LAYER_ID,
-    BELLOW_PLACE_LABELS_LAYER_ID,
-    BELLOW_PLACE_LAYER_ID,
-    BELLOW_ROADS_LAYER_ID,
+    BELOW_ALL_LABELS_LAYER_ID,
+    BELOW_COUNTRIES_LAYER_ID,
+    BELOW_PLACE_LABELS_LAYER_ID,
+    BELOW_PLACE_LAYER_ID,
+    BELOW_ROADS_LAYER_ID,
     ColorPaletteOptions,
     GEOMETRY_TITLE_LAYER_ID
 } from "../layers/GeometryLayers";
@@ -41,43 +41,43 @@ export type GeometryLineConfig = {
  */
 export const GeometryLayerPositionOptions = {
     /**
-     * Position the geometry layer bellow the geometry title layer ("geometry_Title").
+     * Position the geometry layer below the geometry title layer ("geometry_Title").
      */
     top: GEOMETRY_TITLE_LAYER_ID,
     /**
-     * Position the geometry layer bellow the countries defined layer ("Places - Country name").
+     * Position the geometry layer below the countries defined layer ("Places - Country name").
      */
-    bellowCountries: BELLOW_COUNTRIES_LAYER_ID,
+    belowCountries: BELOW_COUNTRIES_LAYER_ID,
     /**
-     * Position the geometry layer bellow all labels layer ("Borders - Treaty label").
+     * Position the geometry layer below all labels layer ("Borders - Treaty label").
      */
-    bellowAllLabels: BELLOW_ALL_LABELS_LAYER_ID,
+    belowAllLabels: BELOW_ALL_LABELS_LAYER_ID,
     /**
-     * Position the geometry layer bellow place labels layer ("Places - Village / Hamlet").
+     * Position the geometry layer below place labels layer ("Places - Village / Hamlet").
      */
-    bellowPlaceLabels: BELLOW_PLACE_LABELS_LAYER_ID,
+    belowPlaceLabels: BELOW_PLACE_LABELS_LAYER_ID,
     /**
-     * Position the geometry layer bellow place layer ("POI").
+     * Position the geometry layer below place layer ("POI").
      */
-    bellowPlaces: BELLOW_PLACE_LAYER_ID,
+    belowMapPOIs: BELOW_PLACE_LAYER_ID,
     /**
-     * Position the geometry layer bellow road layer ("Tunnel - Railway outline").
+     * Position the geometry layer below road layer ("Tunnel - Railway outline").
      */
-    bellowRoads: BELLOW_ROADS_LAYER_ID
+    belowRoads: BELOW_ROADS_LAYER_ID
 } as const;
 
 /**
- * Geometry layer position config. This option allows you to move the geometry layer position to bellow a pre-defined layer options
+ * Geometry layer position config. This option allows you to move the geometry layer position to below a pre-defined layer options
  * Options are:
- * * top - Position the geometry layer just bellow the geometry title layer ("geometry_Title").
- * * bellowCountries -  Position the geometry layer bellow the countries defined layer ("Places - Country name").
- * * bellowAllLabels - Position the geometry layer bellow all labels layer ("Borders - Treaty label").
- * * bellowPlaceLabels - Position the geometry layer bellow place labels layer ("Places - Village / Hamlet").
- * * bellowPlaces - Position the geometry layer bellow place layer ("POI").
- * * bellowRoads - Position the geometry layer bellow road layer ("Tunnel - Railway outline").
- * * bellowStraightLabels - Position the geometry layer bellow the first layer type "symbol" with "symbol-placement" point.
+ * * top - Position the geometry layer just below the geometry title layer ("geometry_Title").
+ * * belowCountries -  Position the geometry layer below the countries defined layer ("Places - Country name").
+ * * belowAllLabels - Position the geometry layer below all labels layer ("Borders - Treaty label").
+ * * belowPlaceLabels - Position the geometry layer below place labels layer ("Places - Village / Hamlet").
+ * * belowMapPOIs - Position the geometry layer below place layer ("POI").
+ * * belowRoads - Position the geometry layer below road layer ("Tunnel - Railway outline").
+ * * belowStraightLabels - Position the geometry layer below the first layer type "symbol" with "symbol-placement" point.
  */
-export type GeometryLayerPositionConfig = keyof typeof GeometryLayerPositionOptions | "bellowStraightLabels";
+export type GeometryLayerPositionConfig = keyof typeof GeometryLayerPositionOptions | "belowStraightLabels";
 
 /**
  * Geometry layer configuration

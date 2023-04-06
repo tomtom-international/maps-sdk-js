@@ -53,17 +53,17 @@ describe("Geometry module tests", () => {
 
         geometry.applyLayerPositionConfig("top");
         expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GEOMETRY_TITLE_LAYER_ID);
-        geometry.applyLayerPositionConfig("bellowCountries");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GeometryLayerPositionOptions.bellowCountries);
-        geometry.applyLayerPositionConfig("bellowAllLabels");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GeometryLayerPositionOptions.bellowAllLabels);
+        geometry.applyLayerPositionConfig("belowCountries");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GeometryLayerPositionOptions.belowCountries);
+        geometry.applyLayerPositionConfig("belowAllLabels");
+        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GeometryLayerPositionOptions.belowAllLabels);
 
         // Update getStyle to return an specific layer
         tomtomMapMock.mapLibreMap.getStyle = jest
             .fn()
             .mockReturnValue({ layers: [{ id: "nature", type: "symbol", layout: { "symbol-placement": "point" } }] });
 
-        geometry.applyLayerPositionConfig("bellowStraightLabels");
+        geometry.applyLayerPositionConfig("belowStraightLabels");
         expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("nature");
 
         geometry.show(testGeometryData);

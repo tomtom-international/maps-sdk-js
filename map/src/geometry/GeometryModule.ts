@@ -85,7 +85,7 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
     applyLayerPositionConfig(layerPosition: GeometryLayerPositionConfig) {
         this.config = { ...this.config, layerPosition };
 
-        if (layerPosition === "bellowStraightLabels") {
+        if (layerPosition === "belowStraightLabels") {
             const layer = this.mapLibreMap
                 .getStyle()
                 .layers.find((layer) => layer.type === "symbol" && layer.layout?.["symbol-placement"] === "point");
