@@ -25,7 +25,7 @@ It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
 <br/><br/>
 The SDK has 3 bundles:
-* [Map](#map): MapLibre-based library for readily styled, service-compatible and interactive TomTom Maps
+* [Map](#map): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps
 * [Services](#services): GeoJSON services for TomTom location APIs
 * [Core](#core): configuration, types and utilities common to Map and Services
 
@@ -45,7 +45,7 @@ Additionally:
 
 ### Map
 
-The SDK Map bundle is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/), and shares it as a dependency with your app.\
+The SDK [Map bundle](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/home#map-modules) is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/), and shares it as a dependency with your app.\
 You can both use the TomTom and MapLibre SDKs together at any time.
 
 #### Feature highlights
@@ -67,7 +67,7 @@ Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/map```
 <br /><br />
 
 ### Services
-The SDK Services bundle integrates the TomTom location APIs into comprehensive [GeoJSON](https://geojson.org/) services.\
+The SDK [Services bundle](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/home#service-modules) integrates the TomTom location APIs into comprehensive [GeoJSON](https://geojson.org/) services.\
 The services can be integrated in **web**, [nodejs](https://nodejs.org/) and [React Native](https://reactnative.dev/) apps.\
 The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/) helps with further integration with geospatial tools.
 
