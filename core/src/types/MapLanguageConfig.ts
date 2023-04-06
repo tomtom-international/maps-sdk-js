@@ -1,90 +1,50 @@
 /**
- * Languages available.
- * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
+ * [Supported languages](https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
  */
 const Languages = [
-    // Neutral Ground Truth (custom)
-    "ngt",
-    // Latin script will be used if available.
-    "ngt-Latn",
-    // Arabic
-    "ar",
-    // Bulgarian,
-    "bg-BG",
-    // Chinese (Taiwan)
-    "zh-TW",
-    // Chinese (Simplified)
-    "zh-CN",
-    // Czech
-    "cs-CZ",
-    // Danish
-    "da-DK",
-    // Dutch
-    "nl-NL",
-    // English (Australia)
-    "en-AU",
-    // English (Canada)
-    "en-CA",
-    // English (Great Britain)
-    "en-GB",
-    // English (New Zealand)
-    "en-NZ",
-    // English (USA)
-    "en-US",
-    // Finnish
-    "fi-FI",
-    // French
-    "fr-FR",
-    // German
-    "de-DE",
-    // Greek
-    "el-GR",
-    // Hungarian
-    "hu-HU",
-    // Indonesian
-    "id-ID",
-    // Italian
-    "it-IT",
-    // Korean
-    "ko-KR",
-    // Korean written in the Latin script.
-    "ko-Latn-KR",
-    // Lithuanian
-    "lt-LT",
-    // Malay
-    "ms-MY",
-    // Norwegian
-    "nb-NO",
-    // Polish
-    "pl-PL",
-    // Portuguese (Brazil)
-    "pt-BR",
-    // Portuguese (Portugal)
-    "pt-PT",
-    // Russian written in the Cyrillic script.
-    "ru-RU",
-    // Russian written in the Latin script.
-    "ru-Latn-RU",
-    // Russian written in the Cyrillic script.
-    // Cyrillic script used where possible.
-    "ru-Cyrl-RU",
-    // Slovak
-    "sk-SK",
-    // Slovenian
-    "sl-SI",
-    // Spanish (Castilian)
-    "es-ES",
-    // Spanish (Mexico)
-    "es-MX",
-    // Swedish
-    "sv-SE",
-    // Thai
-    "th-TH",
-    // Turkish
-    "tr-TR"
+    "ngt", // Neutral Ground Truth (custom)
+    "ngt-Latn", // Latin script will be used if available.
+    "ar", // Arabic
+    "bg-BG", // Bulgarian,
+    "zh-TW", // Chinese (Taiwan)
+    "zh-CN", // Chinese (Simplified)
+    "cs-CZ", // Czech
+    "da-DK", // Danish
+    "nl-NL", // Dutch
+    "en-AU", // English (Australia)
+    "en-CA", // English (Canada)
+    "en-GB", // English (Great Britain)
+    "en-NZ", // English (New Zealand)
+    "en-US", // English (USA)
+    "fi-FI", // Finnish
+    "fr-FR", // French
+    "de-DE", // German
+    "el-GR", // Greek
+    "hu-HU", // Hungarian
+    "id-ID", // Indonesian
+    "it-IT", // Italian
+    "ko-KR", // Korean
+    "ko-Latn-KR", // Korean written in the Latin script.
+    "lt-LT", // Lithuanian
+    "ms-MY", // Malay
+    "nb-NO", // Norwegian
+    "pl-PL", // Polish
+    "pt-BR", // Portuguese (Brazil)
+    "pt-PT", // Portuguese (Portugal)
+    "ru-RU", // Russian written in the Cyrillic script.
+    "ru-Latn-RU", // Russian written in the Latin script.
+    "ru-Cyrl-RU", // Russian written in the Cyrillic script. Cyrillic script used where possible.
+    "sk-SK", // Slovak
+    "sl-SI", // Slovenian
+    "es-ES", // Spanish (Castilian)
+    "es-MX", // Spanish (Mexico)
+    "sv-SE", // Swedish
+    "th-TH", // Thai
+    "tr-TR" // Turkish
 ] as const;
 
 /**
+ * [Supported language](https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
  * @group Shared
  * @category Types
  */

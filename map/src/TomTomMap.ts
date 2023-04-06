@@ -8,26 +8,37 @@ import { EventsProxy } from "./shared";
 import { isLayerLocalizable } from "./shared/localization";
 
 /**
- * The map object displays the TomTom live map on a web application and allows to easily integrate its services on it.
- * * It uses MapLibre and exposes its Map instance via a "mapLibreMap" property.
+ * The TomTom Map object is the entry point to display the TomTom live map on your web application.
+ *
+ * * It uses [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/) and exposes its
+ * [Map instance](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-instance-members) via the
+ * {@link mapLibreMap} property.
  */
 export class TomTomMap {
+    /**
+     * Whether the map style has been loaded.
+     */
     mapReady = false;
     /**
-     * The MapLibre Map instance.
+     * The MapLibre Map [instance](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-instance-members).
      * * Once the SDK Map is constructed, this object is ready to be used.
      * * Use it whenever you want to leverage MapLibre's power directly.
-     * @see https://maplibre.org/maplibre-gl-js-docs/api/map/#map-instance-members
      */
     readonly mapLibreMap: Map;
-    private params: TomTomMapParams;
     _eventsProxy: EventsProxy;
-    styleChangeHandlers: (() => void)[] = [];
+    private params: TomTomMapParams;
+    private styleChangeHandlers: (() => void)[] = [];
 
     /**
-     * Builds the map object and attaches it to an element of the web application.
-     * @param mapLibreOptions A subset of MapLibre options for MapLibre initialization.
-     * @param mapParams The parameters to initialize the TomTom Maps SDK map.
+     * This constructor is the main entry point to create a TomTom Map with the SDK.
+     *
+     * It builds the MapLibre map object and attaches it to an element of the web application.
+     * @param mapLibreOptions A subset of
+     * [MapLibre Map options](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters)
+     * for its map initialization.
+     * @param mapParams The TomTom parameters to initialize map.
+     * They will be merged from the {@link core!TomTomConfig global config}.
+     * Therefore, you must have the mandatory parameters either already set via global config, or directly set here.
      */
     constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
         this.params = mergeFromGlobal(mapParams) as TomTomMapParams;
@@ -46,8 +57,10 @@ export class TomTomMap {
 
     /**
      * Changes the map style on the fly, without reloading the map.
+     * * You can use this method to change the style at runtime.
+     * * To set the style upon {@link constructor initialization}, you can better do it via {@link TomTomMapParams}.
      * @param style The new style to set.
-     * @param keepState flag to specify whether to restore map style changes and added layers in the new style.
+     * @param keepState Whether to restore previous SDK rendered items and configurations. Defaults to true.
      */
     setStyle = (style: StyleInput, keepState = true): void => {
         this.params = { ...this.params, style };
@@ -69,9 +82,11 @@ export class TomTomMap {
     }
 
     /**
-     * Change the map language.
+     * Changes the language of the map.
+     * * You can use this method to change the language at runtime.
+     * * To set the language upon initialization, you can better do it via {@link core!TomTomConfig global config}
+     * or {@link TomTomMapParams}.
      * @param language The language to be used in map translations.
-     * @see List of supported languages: https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages
      */
     setLanguage(language: Language) {
         if (this.mapReady || this.mapLibreMap.isStyleLoaded()) {
