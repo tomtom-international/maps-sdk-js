@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.108](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.107...v0.1.108) (2023-04-07)
+
+
+### Features
+
+* **docs:** adding dev portal links to main bundles ([2b2a189](https://github.com/tomtom-international/maps-sdk-js/commit/2b2a189122db88cde8efbfb969a575d8d15847bf))
+* **geometry:**  Remove unused import ([0ef8fce](https://github.com/tomtom-international/maps-sdk-js/commit/0ef8fcee322ee3d333834cc707530d436d29b19a))
+* **geometry:**  Restore configuration ([310e881](https://github.com/tomtom-international/maps-sdk-js/commit/310e88135c7792397f3af225f7d406d4f77fdf20))
+
 ### [0.1.107](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.106...v0.1.107) (2023-04-06)
 
 
