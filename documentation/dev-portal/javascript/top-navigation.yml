@@ -1,5 +1,5 @@
-menuTopTitle: TomTom SDK for JavaScript
+menuTopTitle: TomTom Maps SDK for JavaScript
 menu:
 - items:
   - fileId: maps/documentation/overview/introduction
-    title: Maps SDK
+    title: Maps SDK JS

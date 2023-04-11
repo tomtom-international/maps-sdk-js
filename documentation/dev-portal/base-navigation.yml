@@ -16,47 +16,37 @@ menu:
     items:
       - title: Map Display
         items:
-          - fileId: guides/map-display/quickstart
+          - fileId: guides/map/quickstart
             title: Quickstart
-          - fileId: guides/map-display/map-styles
+          - fileId: guides/map/map-styles
             title: Map styles (WIP)
-          - fileId: guides/map-display/user-location
-            title: User location (TODO)
-          - fileId: guides/map-display/events-and-gestures
+          - fileId: guides/map/user-events
             title: Events (WIP)
-          - fileId: guides/map-display/camera-and-animations
-            title: Camera and animations (WIP)
-          - fileId: guides/map-display/markers
+          - fileId: guides/map/places
             title: Markers (WIP)
-          - fileId: guides/map-display/overlays
-            title: Overlays (WIP)
-          - fileId: guides/map-display/traffic
+          - fileId: guides/map/traffic
             title: Traffic (WIP)
-          - fileId: guides/map-display/ui-controls
-            title: UI controls (TODO)
-          - fileId: guides/map-display/routes
+          - fileId: guides/map/routes
             title: Routes (WIP)
       - title: Search
         items:
-          - fileId: guides/search/quickstart
+          - fileId: guides/services/search/quickstart
             title: Quickstart (TODO)
-          - fileId: guides/search/autocomplete-and-fuzzy-search
+          - fileId: guides/services/search/autocomplete-and-fuzzy-search
             title: Autocomplete and fuzzy search (TODO)
-          - fileId: guides/search/specialized-search
+          - fileId: guides/services/search/specialized-search
             title: Specialized search (WIP)
-          - fileId: guides/search/reverse-geocoding
+          - fileId: guides/services/search/reverse-geocoding
             title: Reverse geocoding (WIP)
-#          - fileId: guides/search/ui-components
-#            title: UI Components
       - title: Routing
         items:
-          - fileId: guides/routing/quickstart
+          - fileId: guides/services/routing/quickstart
             title: Quickstart
-          - fileId: guides/routing/planning-a-route
+          - fileId: guides/services/routing/planning-a-route
             title: Planning a route
-          - fileId: guides/routing/waypoints-and-reconstruction-routes
+          - fileId: guides/services/routing/waypoints-and-reconstruction-routes
             title: Waypoints and reconstruction routes (WIP)
-          - fileId: guides/routing/route-sections
+          - fileId: guides/services/routing/route-sections
             title: Route sections
   - title: API Reference (WIP)
     items:
