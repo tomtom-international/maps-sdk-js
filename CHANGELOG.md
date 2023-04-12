@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.110](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.109...v0.1.110) (2023-04-12)
+
+
+### Features
+
+* **map:** adding monoDark style ([93006e7](https://github.com/tomtom-international/maps-sdk-js/commit/93006e78ff313a8c523b1850b240bd23df8d5275))
+
 ### [0.1.109](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.108...v0.1.109) (2023-04-07)
 
 ### [0.1.108](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.107...v0.1.108) (2023-04-07)
