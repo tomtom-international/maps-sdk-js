@@ -45,6 +45,15 @@
     "https://api.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_mono-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-mono-light&hillshade=2-test/hillshade_rgb-mono-light"
   ],
   [
+    "Mono dark published style ID",
+    {
+      "commonBaseURL": "https://api.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": "monoDark"
+    },
+    "https://api.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2-test/basic_mono-dark&traffic_flow=2/flow_relative-dark&traffic_incidents=2/incidents_dark&poi=2-test/poi_dynamic-mono-dark&hillshade=2-test/hillshade_rgb-mono-dark"
+  ],
+  [
     "Satellite published style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",

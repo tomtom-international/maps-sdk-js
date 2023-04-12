@@ -2,51 +2,71 @@ import isEmpty from "lodash/isEmpty";
 import { StyleSpecification } from "maplibre-gl";
 import { PublishedStyle, PublishedStyleID, StyleModules, TomTomMapParams } from "./types/MapInit";
 
+/**
+ * @ignore
+ */
 export const TRAFFIC_INCIDENTS = "traffic_incidents";
+/**
+ * @ignore
+ */
 export const TRAFFIC_FLOW = "traffic_flow";
+/**
+ * @ignore
+ */
 export const POI = "poi";
+/**
+ * @ignore
+ */
 export const HILLSHADE = "hillshade";
 
 const DEFAULT_PUBLISHED_STYLE = "standardLight";
+const URL_PREFIX = "${baseURL}/style/1/style/${version}/?key=${apiKey}";
 
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
     standardLight:
-        "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
+        URL_PREFIX +
         "&map=2/basic_street-light" +
         `&${TRAFFIC_FLOW}=2/flow_relative-light` +
         `&${TRAFFIC_INCIDENTS}=2/incidents_light` +
         `&${POI}=2/poi_dynamic-light` +
         `&${HILLSHADE}=2-test/hillshade_rgb-light`,
     standardDark:
-        "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
+        URL_PREFIX +
         "&map=2/basic_street-dark" +
         `&${TRAFFIC_FLOW}=2/flow_relative-dark` +
         `&${TRAFFIC_INCIDENTS}=2/incidents_dark` +
         `&${POI}=2/poi_dynamic-dark` +
         `&${HILLSHADE}=2-test/hillshade_rgb-dark`,
     drivingLight:
-        "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
+        URL_PREFIX +
         "&map=2/basic_street-light-driving" +
         `&${TRAFFIC_FLOW}=2/flow_relative-light` +
         `&${TRAFFIC_INCIDENTS}=2/incidents_light` +
         `&${POI}=2/poi_dynamic-light` +
         `&${HILLSHADE}=2-test/hillshade_rgb-light`,
     drivingDark:
-        "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
+        URL_PREFIX +
         "&map=2/basic_street-dark-driving" +
         `&${TRAFFIC_FLOW}=2/flow_relative-dark` +
         `&${TRAFFIC_INCIDENTS}=2/incidents_dark` +
         `&${POI}=2/poi_dynamic-dark` +
         `&${HILLSHADE}=2-test/hillshade_rgb-dark`,
     monoLight:
-        "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
+        URL_PREFIX +
         "&map=2/basic_mono-light" +
         `&${TRAFFIC_FLOW}=2/flow_relative-light` +
         `&${TRAFFIC_INCIDENTS}=2/incidents_light` +
         `&${POI}=2/poi_dynamic-mono-light` +
         `&${HILLSHADE}=2-test/hillshade_rgb-mono-light`,
+    monoDark:
+        URL_PREFIX +
+        "&map=2-test/basic_mono-dark" +
+        `&${TRAFFIC_FLOW}=2/flow_relative-dark` +
+        `&${TRAFFIC_INCIDENTS}=2/incidents_dark` +
+        `&${POI}=2-test/poi_dynamic-mono-dark` +
+        `&${HILLSHADE}=2-test/hillshade_rgb-mono-dark`,
     satellite:
-        "${baseURL}/style/1/style/${version}/?key=${apiKey}" +
+        URL_PREFIX +
         "&map=2/basic_street-satellite" +
         `&${TRAFFIC_INCIDENTS}=2/incidents_light` +
         `&${TRAFFIC_FLOW}=2/flow_relative-light` +

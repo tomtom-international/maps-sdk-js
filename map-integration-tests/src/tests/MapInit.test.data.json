@@ -11,7 +11,7 @@
     }
   ],
   [
-    "Mono map",
+    "Mono light map",
     {
       "zoom": 14,
       "minZoom": 2,
@@ -19,6 +19,17 @@
     },
     {
       "style": "monoLight"
+    }
+  ],
+  [
+    "Mono dark map",
+    {
+      "zoom": 14,
+      "minZoom": 2,
+      "center": [-0.12621, 51.50394]
+    },
+    {
+      "style": "monoDark"
     }
   ],
   [

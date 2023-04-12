@@ -8,6 +8,7 @@ export const publishedStyleIDs = [
     "drivingLight",
     "drivingDark",
     "monoLight",
+    "monoDark",
     "satellite"
 ] as const;
 
