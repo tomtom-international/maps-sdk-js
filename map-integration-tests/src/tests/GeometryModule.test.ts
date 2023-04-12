@@ -1,6 +1,12 @@
 import { Geometries } from "@anw/maps-sdk-js/core";
 
-import { GEOMETRY_SOURCE_ID, GEOMETRY_TITLE_SOURCE_ID, DisplayGeometryProps, GeometryLayerPositionConfig } from "map";
+import {
+    DisplayGeometryProps,
+    GEOMETRY_SOURCE_ID,
+    GEOMETRY_TITLE_SOURCE_ID,
+    GeometryBeforeLayerConfig,
+    mapStyleLayerIDs
+} from "map";
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
@@ -12,6 +18,7 @@ import {
     getSymbolLayersByID,
     initGeometry,
     queryRenderedFeatures,
+    setStyle,
     showGeometry,
     waitForMapIdle,
     waitForMapReady,
@@ -24,8 +31,8 @@ const getNumVisibleTitleLayers = async () => getNumVisibleLayersBySource(GEOMETR
 
 const clearGeometry = async () => page.evaluate(() => (globalThis as MapsSDKThis).geometry?.clear());
 
-const applyLayerPositionConfig = async (config: GeometryLayerPositionConfig) =>
-    page.evaluate((inputConfig) => (globalThis as MapsSDKThis).geometry?.applyLayerPositionConfig(inputConfig), config);
+const moveBeforeLayer = async (config: GeometryBeforeLayerConfig) =>
+    page.evaluate((inputConfig) => (globalThis as MapsSDKThis).geometry?.moveBeforeLayer(inputConfig), config);
 
 const getAllLayers = async () => page.evaluate(() => (globalThis as MapsSDKThis).mapLibreMap.getStyle().layers);
 
@@ -112,10 +119,18 @@ describe("Geometry integration tests", () => {
         // @ts-ignore
         expect(geometryLayer.paint["fill-opacity"]).toBe(0.6);
 
-        await applyLayerPositionConfig("belowRoads");
-        const layers = await getAllLayers();
-        const geometryIndex = layers.findIndex((feature) => feature.id === "geometry_Fill");
-        const belowRoadsIndex = layers.findIndex((feature) => feature.id === "Tunnel - Railway outline");
-        expect(geometryIndex).toBeLessThan(belowRoadsIndex);
+        await moveBeforeLayer("lowestRoadLine");
+        let layers = await getAllLayers();
+        let geometryIndex = layers.findIndex((feature) => feature.id === "geometry_Fill");
+        let lowestRoadLineIndex = layers.findIndex((feature) => feature.id === mapStyleLayerIDs.lowestRoadLine);
+        expect(geometryIndex).toBeLessThan(lowestRoadLineIndex);
+
+        // changing map style and verifying again:
+        await setStyle("standardDark");
+        await waitForMapIdle();
+        layers = await getAllLayers();
+        geometryIndex = layers.findIndex((feature) => feature.id === "geometry_Fill");
+        lowestRoadLineIndex = layers.findIndex((feature) => feature.id === mapStyleLayerIDs.lowestRoadLine);
+        expect(geometryIndex).toBeLessThan(lowestRoadLineIndex);
     });
 });

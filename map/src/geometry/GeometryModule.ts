@@ -7,15 +7,11 @@ import {
     GeoJSONSourceWithLayers,
     GEOMETRY_SOURCE_ID,
     GEOMETRY_TITLE_SOURCE_ID,
+    mapStyleLayerIDs,
     SymbolLayerSpecWithoutSource,
     ToBeAddedLayerSpec
 } from "../shared";
-import {
-    GeometryLayerPositionConfig,
-    GeometryLayerPositionOptions,
-    GeometryModuleConfig,
-    GeometryTextConfig
-} from "./types/GeometryModuleConfig";
+import { GeometryBeforeLayerConfig, GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { changeLayoutAndPaintProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
@@ -75,31 +71,20 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         if (config?.textConfig || config?.colorConfig || config?.lineConfig) {
             this.updateLayerAndData(config);
         }
-
-        if (config?.layerPosition) {
-            this.applyLayerPositionConfig(config.layerPosition);
+        if (config?.beforeLayerConfig) {
+            this.moveBeforeLayer(config.beforeLayerConfig);
         }
     }
 
-    private _updateLayerPosition(beforeLayerId?: string) {
-        this.sourcesWithLayers.geometry.sourceAndLayerIDs.layerIDs.forEach((layer) => {
-            this.mapLibreMap.moveLayer(layer, beforeLayerId);
-        });
+    private moveBeforeLayerID(beforeLayerId?: string) {
+        this.sourcesWithLayers.geometry.sourceAndLayerIDs.layerIDs.forEach((layer) =>
+            this.mapLibreMap.moveLayer(layer, beforeLayerId)
+        );
     }
 
-    applyLayerPositionConfig(layerPosition: GeometryLayerPositionConfig) {
-        this.config = { ...this.config, layerPosition };
-
-        if (layerPosition === "belowStraightLabels") {
-            const layer = this.mapLibreMap
-                .getStyle()
-                .layers.find((layer) => layer.type === "symbol" && layer.layout?.["symbol-placement"] === "point");
-            if (layer?.id) {
-                this._updateLayerPosition(layer?.id);
-            }
-        } else {
-            this._updateLayerPosition(GeometryLayerPositionOptions[layerPosition]);
-        }
+    moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig) {
+        this.config = { ...this.config, beforeLayerConfig: layerConfig };
+        this.moveBeforeLayerID(layerConfig == "top" ? GEOMETRY_TITLE_LAYER_ID : mapStyleLayerIDs[layerConfig]);
     }
 
     /**

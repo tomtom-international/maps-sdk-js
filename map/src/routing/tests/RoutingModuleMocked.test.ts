@@ -1,6 +1,7 @@
 import { Map } from "maplibre-gl";
 import {
     EventsModule,
+    mapStyleLayerIDs,
     ROUTE_FERRIES_SOURCE_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
@@ -64,7 +65,7 @@ describe("Routing module tests", () => {
         routing.showWaypoints([]);
         routing.showWaypoints({ type: "FeatureCollection", features: [] });
         routing.clearWaypoints();
-        expect(routing.getLayerToRenderLinesUnder()).toStrictEqual("TransitLabels - Ferry");
+        expect(routing.getLayerToRenderLinesUnder()).toStrictEqual(mapStyleLayerIDs.lowestLabel);
 
         expect(routing.events.routeLines).toBeInstanceOf(EventsModule);
         expect(routing.events.waypoints).toBeInstanceOf(EventsModule);

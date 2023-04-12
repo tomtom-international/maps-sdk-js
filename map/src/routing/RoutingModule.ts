@@ -3,6 +3,7 @@ import {
     AbstractMapModule,
     EventsModule,
     GeoJSONSourceWithLayers,
+    mapStyleLayerIDs,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_DESELECTED_OUTLINE_LAYER_ID,
     ROUTE_FERRIES_LINE_LAYER_ID,
@@ -62,7 +63,7 @@ import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 
-const LAYER_TO_RENDER_LINES_UNDER = "TransitLabels - Ferry";
+const LAYER_TO_RENDER_LINES_UNDER = mapStyleLayerIDs.lowestLabel;
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
 type RoutingSourcesWitLayers = {
@@ -107,7 +108,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWitLayers, Ro
                 {
                     ...routeDeselectedOutline,
                     id: ROUTE_DESELECTED_OUTLINE_LAYER_ID,
-                    beforeID: LAYER_TO_RENDER_LINES_UNDER
+                    beforeID: mapStyleLayerIDs.lowestLabel
                 },
                 { ...routeDeselectedLine, id: ROUTE_DESELECTED_LINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },
                 { ...routeOutline, id: ROUTE_OUTLINE_LAYER_ID, beforeID: LAYER_TO_RENDER_LINES_UNDER },

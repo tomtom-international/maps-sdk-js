@@ -1,5 +1,6 @@
 import { BackgroundLayerSpecification, LayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { GeoJSONSourceWithLayers, StyleSourceWithLayers } from "../SourceWithLayers";
+import { mapStyleLayerIDs } from "../layers/layerIDs";
 
 /**
  * Layer specification that supports a data source.
@@ -68,3 +69,8 @@ export type SourceWithLayerIDs = {
     sourceID: string;
     layerIDs: string[];
 };
+
+/**
+ * Known layer ID from the TomTom map style.
+ */
+export type MapStyleLayerID = keyof typeof mapStyleLayerIDs;

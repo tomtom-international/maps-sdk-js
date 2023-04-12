@@ -10,4 +10,5 @@ export * from "./TomTomMapSource";
 export * from "./EventsProxy";
 export * from "./EventsModule";
 export * from "./layers/sourcesIDs";
+export * from "./layers/layerIDs";
 export { MapFont } from "./layers/CommonLayerProps";

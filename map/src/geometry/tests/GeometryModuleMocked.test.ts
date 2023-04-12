@@ -3,9 +3,8 @@ import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import { GeometryModule } from "../GeometryModule";
 import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
-import { GEOMETRY_SOURCE_ID } from "../../shared";
+import { GEOMETRY_SOURCE_ID, mapStyleLayerIDs } from "../../shared";
 import { GeoJsonProperties } from "geojson";
-import { GeometryLayerPositionOptions } from "../types/GeometryModuleConfig";
 import { GEOMETRY_TITLE_LAYER_ID } from "../layers/GeometryLayers";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
@@ -44,27 +43,25 @@ describe("Geometry module tests", () => {
         jest.spyOn(geometryAny, "applyConfig");
         jest.spyOn(geometryAny, "applyTextConfig");
         jest.spyOn(geometryAny, "updateLayerAndData");
-        jest.spyOn(geometryAny, "_updateLayerPosition");
+        jest.spyOn(geometryAny, "moveBeforeLayerID");
         expect(geometry.getConfig()).toMatchObject(geometryConfig);
         geometry.applyTextConfig({ textField });
         expect(geometryAny.applyTextConfig).toHaveBeenCalledWith({ textField });
         expect(geometryAny.updateLayerAndData).toHaveBeenCalledTimes(1);
         expect(geometry.getConfig()).toEqual({ ...geometryConfig, textConfig: { textField } });
 
-        geometry.applyLayerPositionConfig("top");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GEOMETRY_TITLE_LAYER_ID);
-        geometry.applyLayerPositionConfig("belowCountries");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GeometryLayerPositionOptions.belowCountries);
-        geometry.applyLayerPositionConfig("belowAllLabels");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith(GeometryLayerPositionOptions.belowAllLabels);
-
-        // Update getStyle to return an specific layer
-        tomtomMapMock.mapLibreMap.getStyle = jest
-            .fn()
-            .mockReturnValue({ layers: [{ id: "nature", type: "symbol", layout: { "symbol-placement": "point" } }] });
-
-        geometry.applyLayerPositionConfig("belowStraightLabels");
-        expect(geometryAny._updateLayerPosition).toHaveBeenCalledWith("nature");
+        geometry.moveBeforeLayer("top");
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(GEOMETRY_TITLE_LAYER_ID);
+        geometry.moveBeforeLayer("country");
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.country);
+        geometry.moveBeforeLayer("lowestPlaceLabel");
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestPlaceLabel);
+        geometry.moveBeforeLayer("poi");
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.poi);
+        geometry.moveBeforeLayer("lowestLabel");
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestLabel);
+        geometry.moveBeforeLayer("lowestRoadLine");
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestRoadLine);
 
         geometry.show(testGeometryData);
         geometry.clear();

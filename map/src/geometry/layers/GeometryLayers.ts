@@ -156,18 +156,6 @@ export const geometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
     }
 };
 
-/**
- * Constants represent the layer position options
- */
-export const BELOW_COUNTRIES_LAYER_ID = "Places - Country name";
-export const BELOW_ALL_LABELS_LAYER_ID = "Borders - Treaty label";
-export const BELOW_ROADS_LAYER_ID = "Tunnel - Railway outline";
-export const BELOW_PLACE_LABELS_LAYER_ID = "Places - Village / Hamlet";
-export const BELOW_PLACE_LAYER_ID = "POI";
-
-/**
- * Geometry Layers IDs
- */
 export const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
 export const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
 export const GEOMETRY_TITLE_LAYER_ID = "geometry_Title";
