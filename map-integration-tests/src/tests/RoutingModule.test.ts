@@ -25,6 +25,7 @@ import {
     setStyle,
     waitForMapIdle,
     waitForMapReady,
+    waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
 
@@ -90,7 +91,7 @@ describe("Routing tests", () => {
             [4.88951, 52.37229]
         ]);
         await showRoutes(parsedTestRoutes);
-        await waitForMapReady();
+        await waitForMapIdle();
 
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
@@ -159,7 +160,6 @@ describe("Routing tests", () => {
         await setStyle("standardLight");
         await waitForMapIdle();
         await waitForRenderedWaypoints(1);
-
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
@@ -241,7 +241,7 @@ describe("Routing tests", () => {
             [4.88951, 52.37229]
         ]);
         await showRoutes(parsedTestRoutes);
-        await waitForMapReady();
+        await waitForMapIdle();
         let mainLineLayer: any | undefined = await getLayerById(ROUTE_LINE_LAYER_ID);
         expect(mainLineLayer?.paint["line-color"]).toStrictEqual("#3f9cd9");
 
@@ -264,13 +264,14 @@ describe("Routing tests", () => {
             }
         } as RoutingModuleConfig;
         await applyConfig(newConfig);
-        await waitForMapReady();
+        await waitForMapIdle();
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
         expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
 
         // Changing the style, asserting that the config stays the same:
         await setStyle("monoLight");
         await waitForMapIdle();
+        await waitForTimeout(2000);
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
         expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
 

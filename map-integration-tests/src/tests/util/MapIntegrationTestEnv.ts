@@ -2,11 +2,11 @@ import { TomTomMapParams, MapLibreOptions } from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
 
 export class MapIntegrationTestEnv {
-    consoleErrors: unknown[] = [];
+    consoleErrors: string[] = [];
 
     async loadPage() {
         await page.goto("https://localhost:9001");
-        page.on("console", (message) => message.type() === "error" && this.consoleErrors.push(message));
+        page.on("console", (message) => message.type() === "error" && this.consoleErrors.push(message.text()));
     }
 
     async loadMap(mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
