@@ -89,7 +89,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         };
     }
 
-    protected _initSourcesWithLayers(config?: RoutingModuleConfig, restore?: boolean): RoutingSourcesWithLayers {
+    protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
         // loading of extra assets not present in the map style:
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
