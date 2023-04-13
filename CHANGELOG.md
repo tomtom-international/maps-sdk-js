@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.111](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.110...v0.1.111) (2023-04-13)
+
+
+### Bug Fixes
+
+* **geometry:** removing straight labels config, centralizing key map style layer ids, reusing from routing module ([5c96386](https://github.com/tomtom-international/maps-sdk-js/commit/5c96386a7ace457cbc6cf4c8fafb7ed3e01569e8))
+
 ### [0.1.110](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.109...v0.1.110) (2023-04-12)
 
 
