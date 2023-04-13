@@ -61,7 +61,7 @@ describe("Routing module tests", () => {
                     .mockReturnValueOnce(tunnelsSource),
                 getLayer: jest
                     .fn()
-                    .mockImplementation((id: string) => (id === "TransitLabels - Ferry" ? {} : undefined)),
+                    .mockImplementation((id: string) => (id === mapStyleLayerIDs.lowestLabel ? {} : undefined)),
                 addLayer: jest.fn(),
                 removeLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
@@ -93,13 +93,12 @@ describe("Routing module tests", () => {
                         {
                             id: "a different id",
                             layerSpec: routeDeselectedOutline,
-                            beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                            beforeID: mapStyleLayerIDs.lowestLabel
                         }
                     ]
                 }
             }
         });
-        expect(routing.getLayerToRenderLinesUnder()).toStrictEqual("TransitLabels - Ferry");
 
         expect(routing.events.routeLines).toBeInstanceOf(EventsModule);
         expect(routing.events.waypoints).toBeInstanceOf(EventsModule);

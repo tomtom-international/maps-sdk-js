@@ -4,7 +4,6 @@ import {
     EventsModule,
     GeoJSONSourceWithLayers,
     mapStyleLayerIDs,
-    LAYER_TO_RENDER_ROUTE_LINES_UNDER,
     ROUTE_FERRIES_SOURCE_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
@@ -31,7 +30,6 @@ import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
 import { addLayersInCorrectOrder, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 
-const LAYER_TO_RENDER_LINES_UNDER = mapStyleLayerIDs.lowestLabel;
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
 type RoutingSourcesWithLayers = {
@@ -57,7 +55,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
+    static async init(
+        tomtomMap: TomTomMap,
+        config: RoutingModuleConfig = { routeLayers: DEFAULT_ROUTE_LAYERS_CONFIGURATION }
+    ): Promise<RoutingModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new RoutingModule(tomtomMap, config);
     }
@@ -89,18 +90,13 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     protected _initSourcesWithLayers(config?: RoutingModuleConfig, restore?: boolean): RoutingSourcesWithLayers {
-        // do we need restore here?
         // loading of extra assets not present in the map style:
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
+
         this.layersSpecs = createLayersSpecs(mergeConfig(config).routeLayers);
-        // because in case of routing module we need to set config even if it is empty during first initiation
-        if (!restore) {
-            // sending config, or merged config here is the same, it will be again merged in _applyConfig method
-            this.applyConfig(config);
-        }
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
         addLayersInCorrectOrder(
             Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
@@ -144,8 +140,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         };
 
         this.initSourcesWithLayers();
-        // not sure if following line is needed
-        // this.config && this._applyConfig(this.config);
+        this._applyConfig(this.config);
 
         this.sourcesWithLayers.waypoints.show(previouslyShown.waypoints);
         this.sourcesWithLayers.routeLines.show(previouslyShown.routeLines);
@@ -262,6 +257,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * * It might differ depending on the loaded style/version.
      */
     getLayerToRenderLinesUnder(): string {
-        return LAYER_TO_RENDER_ROUTE_LINES_UNDER;
+        return mapStyleLayerIDs.lowestLabel;
     }
 }

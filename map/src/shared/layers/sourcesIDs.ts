@@ -141,10 +141,4 @@ export const ROUTE_TUNNELS_SOURCE_ID = "routeTunnels";
  * Route tunnels line layer id
  */
 export const ROUTE_TUNNELS_LINE_LAYER_ID = "routeTunnelsLine";
-/**
- * The map style layer under which route lines are rendered.
- * * Useful if you want to render extra layers just above the route ones but not on top of everything else.
- * * It might differ depending on the loaded style/version.
- */
-export const LAYER_TO_RENDER_ROUTE_LINES_UNDER = "TransitLabels - Ferry";
 /* End of Routing Source ids */

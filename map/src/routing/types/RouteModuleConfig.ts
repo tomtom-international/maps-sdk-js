@@ -1,6 +1,6 @@
 import {
-    LAYER_TO_RENDER_ROUTE_LINES_UNDER,
     LayersSpecWithOrder,
+    mapStyleLayerIDs,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_DESELECTED_OUTLINE_LAYER_ID,
     ROUTE_FERRIES_LINE_LAYER_ID,
@@ -91,15 +91,15 @@ export const DEFAULT_ROUTE_LAYERS_CONFIGURATION: RouteLayersConfig = {
             {
                 id: ROUTE_DESELECTED_OUTLINE_LAYER_ID,
                 layerSpec: routeDeselectedOutline,
-                beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                beforeID: mapStyleLayerIDs.lowestLabel
             },
             {
                 id: ROUTE_DESELECTED_LINE_LAYER_ID,
                 layerSpec: routeDeselectedLine,
-                beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                beforeID: mapStyleLayerIDs.lowestLabel
             },
-            { id: ROUTE_OUTLINE_LAYER_ID, layerSpec: routeOutline, beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER },
-            { id: ROUTE_LINE_LAYER_ID, layerSpec: routeMainLine, beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER }
+            { id: ROUTE_OUTLINE_LAYER_ID, layerSpec: routeOutline, beforeID: mapStyleLayerIDs.lowestLabel },
+            { id: ROUTE_LINE_LAYER_ID, layerSpec: routeMainLine, beforeID: mapStyleLayerIDs.lowestLabel }
         ]
     },
     waypoint: {
@@ -114,17 +114,17 @@ export const DEFAULT_ROUTE_LAYERS_CONFIGURATION: RouteLayersConfig = {
                 {
                     id: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID,
                     layerSpec: routeIncidentsBGLine,
-                    beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                    beforeID: mapStyleLayerIDs.lowestLabel
                 },
                 {
                     id: ROUTE_INCIDENTS_DASHED_LINE_LAYER_ID,
                     layerSpec: routeIncidentsDashedLine,
-                    beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                    beforeID: mapStyleLayerIDs.lowestLabel
                 },
                 {
                     id: ROUTE_INCIDENTS_PATTERN_LINE_LAYER_ID,
                     layerSpec: routeIncidentsPatternLine,
-                    beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                    beforeID: mapStyleLayerIDs.lowestLabel
                 },
                 {
                     id: ROUTE_INCIDENTS_SYMBOL_LAYER_ID,
@@ -166,7 +166,7 @@ export const DEFAULT_ROUTE_LAYERS_CONFIGURATION: RouteLayersConfig = {
                 {
                     id: ROUTE_TUNNELS_LINE_LAYER_ID,
                     layerSpec: routeTunnelsLine,
-                    beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                    beforeID: mapStyleLayerIDs.lowestLabel
                 }
             ]
         },
@@ -175,12 +175,12 @@ export const DEFAULT_ROUTE_LAYERS_CONFIGURATION: RouteLayersConfig = {
                 {
                     id: ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID,
                     layerSpec: routeVehicleRestrictedBackgroundLine,
-                    beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                    beforeID: mapStyleLayerIDs.lowestLabel
                 },
                 {
                     id: ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
                     layerSpec: routeVehicleRestrictedDottedLine,
-                    beforeID: LAYER_TO_RENDER_ROUTE_LINES_UNDER
+                    beforeID: mapStyleLayerIDs.lowestLabel
                 }
             ]
         }
