@@ -2,7 +2,7 @@ import { FilterSpecification, Map, MapGeoJSONFeature, RequestParameters, Resourc
 import { generateTomTomCustomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core";
 import { TomTomMap } from "../TomTomMap";
 import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
-import { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from "./SourceWithLayers";
+import { AbstractSourceWithLayers } from "./SourceWithLayers";
 
 /**
  * Wait until the map is ready
@@ -134,7 +134,9 @@ export const changeLayersProps = (newLayerProps: LayerProps[], prevLayerProps: L
 };
 
 /**
- * Handles new layer specs for the provided source. It will remove layers no longer present, update existing layers and add new one if needed.
+ * Handles new layer specs for the provided source. It will remove layers no longer present,
+ * update existing layers and add new one if needed to the source. Adding layers to the map needs to be done correctly
+ * so after calling this method you should call addLayersInCorrectOrder.
  * If ID of layer to be added already is present on map, MapLibre will through exception.
  * @param newLayersSpecs new layer specification for provided source.
  * @param oldLayersSpecs current layer specification for provided source.
@@ -196,14 +198,6 @@ export const updateLayersAndSource = (
             source: sourceWithLayers.source.id
         } as ToBeAddedLayerSpec;
         layerSpecs.push(toBeAddedLayerSpec);
-        map.addLayer(toBeAddedLayerSpec, toBeAddedLayerSpec.beforeID);
-        if (sourceWithLayers instanceof GeoJSONSourceWithLayers) {
-            // need to hide or show the new layer based on source having features or not
-            sourceWithLayers.setAllLayersVisible(
-                !!sourceWithLayers.shownFeatures.features.length,
-                (layer) => layer.id === layerId
-            );
-        }
     });
     //update existing layers
     changeLayersProps(newLayersToUpdate, oldLayersToUpdate, map);

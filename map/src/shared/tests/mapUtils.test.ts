@@ -165,7 +165,6 @@ describe("Map utils - updateLayersAndSource", () => {
         const newMapMock = (): Map =>
             ({
                 removeLayer: jest.fn(),
-                addLayer: jest.fn(),
                 setLayoutProperty: jest.fn(),
                 setPaintProperty: jest.fn(),
                 setFilter: jest.fn()
@@ -193,7 +192,6 @@ describe("Map utils - updateLayersAndSource", () => {
             { source: { id: "sourceId" }, _layerSpecs: [{ id: someId }] } as GeoJSONSourceWithLayers,
             mapMock
         );
-        expect(mapMock.addLayer).toHaveBeenCalledTimes(1);
 
         // update one layer
         mapMock = newMapMock();

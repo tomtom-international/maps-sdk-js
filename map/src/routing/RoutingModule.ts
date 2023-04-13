@@ -122,7 +122,14 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                     this.mapLibreMap
                 );
             });
-
+            // we need to add layers correctly
+            const listOfSources = Object.values(this.sourcesWithLayers) as GeoJSONSourceWithLayers[];
+            addLayersInCorrectOrder(
+                listOfSources.flatMap((source) => source._layerSpecs),
+                this.mapLibreMap
+            );
+            //set correct visibility if there are new layers
+            listOfSources.forEach((source) => source.setAllLayersVisible(!!source.shownFeatures.features.length));
             this.layersSpecs = newLayersSpecs;
         }
         return mergedConfig;

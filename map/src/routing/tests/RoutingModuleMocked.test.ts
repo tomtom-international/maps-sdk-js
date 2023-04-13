@@ -59,9 +59,7 @@ describe("Routing module tests", () => {
                     .mockReturnValueOnce(tunnelsSource)
                     .mockReturnValueOnce(tunnelsSource)
                     .mockReturnValueOnce(tunnelsSource),
-                getLayer: jest
-                    .fn()
-                    .mockImplementation((id: string) => (id === mapStyleLayerIDs.lowestLabel ? {} : undefined)),
+                getLayer: jest.fn().mockReturnValue({}),
                 addLayer: jest.fn(),
                 removeLayer: jest.fn(),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
