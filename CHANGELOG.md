@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.112](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.111...v0.1.112) (2023-04-14)
+
+
+### Features
+
+* **511:** first iteration of route customization ([d3d43c7](https://github.com/tomtom-international/maps-sdk-js/commit/d3d43c73ed4e152725ee27754d70dcf533c652dd))
+* **511:** more updates to the logic and tests ([6e94b7d](https://github.com/tomtom-international/maps-sdk-js/commit/6e94b7d5b7b1e8b4e26f792fc6190b69af026704))
+* **511:** more updates to the logic and tests ([3564961](https://github.com/tomtom-international/maps-sdk-js/commit/3564961797969ccc16d385feb00d085e3ce48125))
+
+
+### Bug Fixes
+
+* **routing:** improving test stability ([8ad239f](https://github.com/tomtom-international/maps-sdk-js/commit/8ad239f7eb41f6c79f7c00a16132f048f2d41412))
+
 ### [0.1.111](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.110...v0.1.111) (2023-04-13)
 
 
