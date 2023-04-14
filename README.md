@@ -22,11 +22,6 @@ Maps SDK JS is a **JavaScript** library for building applications using [**TomTo
 It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
 <br/><br/>
-The SDK has 3 bundles:
-* [Map](#map): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps
-* [Services](#services): GeoJSON services for TomTom location APIs
-* [Core](#core): configuration, types and utilities common to Map and Services
-<br/><br/>
 
 ## Getting Started using npm
 ```
@@ -39,6 +34,18 @@ Additionally:
 
 (Learn more below)
 <br/><br/><br/>
+
+## Where can you run it on?
+* **web**: display and configure a map, search for places, plan routes, and easily display and interact with them, including your own data
+* **nodejs**: (reverse)geocode locations, (re)calculate routes, and more, to enrich data before saving or returning it
+* **React Native**: leverage the power of TomTom location services from a single codebase
+  <br/><br/>
+
+## Bundles
+* [Map](#map): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps
+* [Services](#services): GeoJSON services for TomTom location APIs
+* [Core](#core): configuration, types and utilities common to Map and Services
+  <br/><br/>
 
 ## Map
 The SDK [Map bundle](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/home#map-modules) is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/), and shares it as a dependency with your app.\
@@ -76,7 +83,7 @@ The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/
 
 ### Getting Started with Services
 #### Using npm
-To maximize compatibility with both web and nodejs environments of multiple versions, 
+To maximize compatibility with both web and nodejs environments of multiple versions,
 the SDK Services uses [axios](https://www.npmjs.com/package/axios) and shares it with your project as a peer dependency.\
 The SDK is tested against the latest stable release from Axios.
 ```
@@ -86,7 +93,7 @@ Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/services
 <br/><br/>
 
 ## Core
-The SDK [Core](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core) 
+The SDK [Core](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core)
 is a set of utilities and TypeScript types which are common to both [Map](#map) and [Services](#services).`
 
 ### Feature highlights
