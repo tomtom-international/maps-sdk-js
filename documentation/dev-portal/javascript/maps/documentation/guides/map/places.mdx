@@ -1,5 +1,5 @@
 ---
-title: Markers
+title: Places Module
 hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
@@ -10,18 +10,47 @@ titleTags:
   color: "grey5"
 ---
 
-Markers are used to indicate specific places on the map. The Map Display SDK provides a default icon, but a custom icons can be used as well.
+The Places module allows you to display places modelled as GeoJSON features on the map and interact with them.
+It provides out of the box styling and interaction capabilities for TomTom places on the map.
+However, you still can configure how to display the places, and also display them from your own data.
 
-> For creating markers directly on the MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/), see [MapLibre Markers and controls](https://maplibre.org/maplibre-gl-js-docs/api/markers/).
+# When all you need is a map with one or few pins
+
+Very often all you need to do is to show a map with a single pin, or perhaps a handful of icons which won't change often. For that you might directly try to add [Markers](https://maplibre.org/maplibre-gl-js-docs/api/markers/) via MapLibre.
+See [default marker example](https://maplibre.org/maplibre-gl-js-docs/example/add-a-marker/) and
+[add popup to marker instance example](https://maplibre.org/maplibre-gl-js-docs/example/set-popup/)
+
+However, if you want to easily show TomTom places, or show your own places with richer display information and solid user events which also work well with other map parts, keep reading.
+
+
+
+
+# Initializing a Places module
+
+You can add one or multiple Places modules to your map, each with its own configuration.
+
+The places from each module will be layered on top of places from the module added before.
+
+* First Set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart)
+* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance.
+* Import the Places module class:
+```javascript
+import { GeoJSONPlaces } from "@anw/maps-sdk-js/map";
+```
+* Initialize a Places module (default config):
+```javascript
+const placesModule = await GeoJSONPlaces.init(map);
+```
+* Optionally, [configure your module](#configuring-a-places-module) in the step above
+
+
+
 
 # Showing Places on the map
 
-The [`GeoJSONPlaces`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_places.GeoJSONPlaces) module is used to show
-[`Places`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Places) on the map, which are returned from the services of the Services module.
+The Places Module is used to show [`Places`](/javascript/maps/documentation/api-reference/modules/core#Places) on the map,
+which are returned from the services of the Services module.
 For example, showing places from a Search result:
-
-> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
 import { GeoJSONPlaces } from "@anw/maps-sdk-js/map";
@@ -42,21 +71,29 @@ placesModule.show(places);
 
 <br/>
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_customizing_icons"></a>}
 
-# Customizing icons (WIP)
+
+
+# Configuring a Places module
+
+<Blockquote>
+	Coming soon
+</Blockquote>
+
+
+## Customizing icons
 
 You can customize the Places marker icons in the `GeoJSONPlaces` module
-using the [`applyIconConfig()`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_places.GeoJSONPlaces#applyConfig) method.
+using the [`applyIconConfig()`](/javascript/maps/documentation/api-reference/classes/map_places.GeoJSONPlaces#applyConfig) method.
 See the [Map Places Customize](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize) example.
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
 
-# Next steps
 
-Since you have learned how to work with markers and places, here are recommendations for the next steps:
+## Customizing text
 
--   [Example: Map Places Customize](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize)
--   [Map overlays](/maps-sdk-js/javascript/maps/documentation/guides/map-display/overlays)
--   [Showing traffic on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic)
--   [Showing routes on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/routes)
+<Blockquote>
+	Coming soon
+</Blockquote>
+
+

@@ -1,5 +1,5 @@
 ---
-title: Traffic
+title: Traffic Module
 hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
@@ -18,19 +18,19 @@ traffic flow and a layer with traffic incidents.
 # Traffic flow and incidents
 
 The traffic flow layer shows congestion on the main route network and the traffic incidents layer shows incidents on the roads, like road closures and roadworks.
-These traffic layers are visible by default in the standard map styles and can be controlled at runtime by the [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic)
+These traffic layers are visible by default in the standard map styles and can be controlled at runtime by the [`VectorTilesTraffic`](/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic)
 module.
 
-> If these layers are unnecessary in your application, they can be completely excluded from the map style through the [`exclude`](/maps-sdk-js/javascript/maps/documentation/guides/map-display/map-styles#_excluding_modules_from_a_style) property of a `PublishedStyle`.
+> If these layers are unnecessary in your application, they can be completely excluded from the map style through the [`exclude`](/javascript/maps/documentation/guides/map-display/map-styles#_excluding_modules_from_a_style) property of a `PublishedStyle`.
 
 <img src="images/ss_traffic_layer.png" alt="Map with traffic layer enabled" />
 
 <br/>
 
-The [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module can be initialized with:
+The [`VectorTilesTraffic`](/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module can be initialized with:
 
-> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
+> Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
+Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
 import { VectorTilesTraffic } from "@anw/maps-sdk-js/map";
@@ -38,7 +38,7 @@ import { VectorTilesTraffic } from "@anw/maps-sdk-js/map";
 const traffic = await VectorTilesTraffic.init(map);
 ```
 
-Then, several methods on the [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module
+Then, several methods on the [`VectorTilesTraffic`](/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module
 can be used to change the visibility of the traffic layers. For example:
 
 ```javascript
@@ -46,21 +46,10 @@ can be used to change the visibility of the traffic layers. For example:
 traffic.setIncidentsVisible(true);
 traffic.setIncidentIconsVisible(false)
 ```
-More methods can be found on the API reference definition of [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic).
+More methods can be found on the API reference definition of [`VectorTilesTraffic`](/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic).
 
 # Filtering traffic (WIP)
 
-The [`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module
-allows specific filtering of traffic flow and incidents. The module can use a [`VectorTilesTrafficConfig`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_traffic#VectorTilesTrafficConfig)
+The [`VectorTilesTraffic`](/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module
+allows specific filtering of traffic flow and incidents. The module can use a [`VectorTilesTrafficConfig`](/javascript/maps/documentation/api-reference/modules/map_traffic#VectorTilesTrafficConfig)
 object to precisely filter the visibility of certain traffic flow and incidents. See the `applyConfig` method and the [Map Traffic Config Playground](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-traffic-config-playground) example.
-
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
-
-# Next steps
-
-Since you have learned how to show and filter traffic on the map, here are recommendations for the next steps:
-
--   [Example: Map Traffic Config Playground](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-traffic-config-playground)
--   [Drawing shapes on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/overlays)
--   [Adding a marker to the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/markers)
--   [Showing and following routes on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/routes)

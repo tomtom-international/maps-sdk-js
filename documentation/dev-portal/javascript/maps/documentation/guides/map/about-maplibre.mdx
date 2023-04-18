@@ -1,0 +1,41 @@
+---
+title: About MapLibre
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.0.1"
+color: "grey5"
+- label: "PRIVATE PREVIEW"
+color: "grey5"
+---
+
+# Why MapLibre?
+
+[MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/) is an Open-source TypeScript library for publishing maps on your website.
+It is a very powerful tool to display beautiful maps, add data to them and interact with them.
+
+TomTom's strategy involves using OpenStreetMap data and working with open source communities.
+Part of that is officially [supporting MapLibre](https://www.tomtom.com/newsroom/news/tomtom-begins-supporting-maplibre/).
+
+This is why the new TomTom Maps SDK JS uses MapLibre GL JS and builds on top of it.
+
+
+# How we use MapLibre
+
+The TomTom SDK shares MapLibre as a peer dependency with your application and transparently exposes it.
+As soon as you have initialized the TomTom Map, you can access its [`mapLibreMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap#mapLibreMap)
+and start [using it](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-instance-members).
+
+MapLibre GL JS is a very powerful tool, but:
+* It's generic: you can imagine it like a powerful swiss army knife to display maps of multiple sources and types
+* Maps are rich and complex, particularly when you involve dynamic data and user interaction
+
+This is why the TomTom SDK focuses on leveraging MapLibre to help you integrate a TomTom map and TomTom services in your application,
+while giving you direct access to the full power of MapLibre if you want it.
+
+The TomTom SDK makes it easy to display the latest TomTom Map with the style and configuration you need, display places, routes and geometries on it,
+change configuration and data at runtime, and interact with them with powerful out-of-the-box event system.
+It does all that by connecting MapLibre to the TomTom map data and services for you.
+
+You can also display your own data on top of the TomTom map through the SDK modules, or via MapLibre directly.

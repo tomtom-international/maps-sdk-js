@@ -16,7 +16,7 @@ export class MapIntegrationTestEnv {
                 document.querySelector("canvas")?.remove();
                 const mapsSDKThis = globalThis as MapsSDKThis;
                 mapsSDKThis.tomtomMap = new mapsSDKThis.MapsSDK.TomTomMap(
-                    { ...pageMapLibreOptions, container: document.getElementById("map") },
+                    { ...pageMapLibreOptions, container: "map" },
                     { ...pageTomTomMapParams, apiKey: pageAPIKey }
                 );
                 mapsSDKThis.mapLibreMap = mapsSDKThis.tomtomMap.mapLibreMap;

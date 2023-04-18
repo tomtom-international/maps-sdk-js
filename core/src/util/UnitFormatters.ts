@@ -79,8 +79,7 @@ const formatFeet = (meters: number): string => {
 
 const formatYards = (meters: number): string => {
     const yards = Math.round(meters / YARD_IN_METERS);
-    const absYards = Math.abs(yards);
-    if (absYards < 10) {
+    if (Math.abs(yards) < 10) {
         return `${Math.round(yards)} yd`;
     } else {
         return `${Math.round(yards / 10) * 10} yd`;

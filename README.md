@@ -39,7 +39,7 @@ Additionally:
 * **web**: display and configure a map, search for places, plan routes, and easily display and interact with them, including your own data
 * **nodejs**: (reverse)geocode locations, (re)calculate routes, and more, to enrich data before saving or returning it
 * **React Native**: leverage the power of TomTom location services from a single codebase
-  <br/><br/>
+<br/><br/>
 
 ## Bundles
 * [Map](#map): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps

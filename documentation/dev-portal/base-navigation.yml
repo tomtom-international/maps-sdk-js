@@ -1,54 +1,72 @@
 group: tomtom-sdk-for-javascript
 isPrivate: false
 noIndex: false
-productName: TomTom SDK for JavaScript
+productName: TomTom Maps SDK for JavaScript
 isMenuOpened: false
 menu:
   - title: Overview
     items:
       - fileId: overview/introduction
-        title: Introduction (WIP)
-      - fileId: overview/project-set-up
-        title: Project set up (TODO)
+        title: Introduction
+      - fileId: overview/project-setup
+        title: Project setup
       - fileId: overview/release-notes
-        title: Release notes (TODO)
+        title: Release notes
   - title: Guides
     items:
-      - title: Map Display
+      - title: Map
         items:
           - fileId: guides/map/quickstart
             title: Quickstart
           - fileId: guides/map/map-styles
-            title: Map styles (WIP)
-          - fileId: guides/map/user-events
-            title: Events (WIP)
-          - fileId: guides/map/places
-            title: Markers (WIP)
+            title: Map styles
           - fileId: guides/map/traffic
-            title: Traffic (WIP)
+            title: Traffic
+          - fileId: guides/map/pois
+            title: POIs
+          - fileId: guides/map/places
+            title: Places
           - fileId: guides/map/routes
-            title: Routes (WIP)
-      - title: Search
+            title: Routes
+          - fileId: guides/map/user-events
+            title: User Events
+          - fileId: guides/map/about-maplibre
+            title: About MapLibre
+      - title: Services
         items:
-          - fileId: guides/services/search/quickstart
-            title: Quickstart (TODO)
-          - fileId: guides/services/search/autocomplete-and-fuzzy-search
-            title: Autocomplete and fuzzy search (TODO)
-          - fileId: guides/services/search/specialized-search
-            title: Specialized search (WIP)
-          - fileId: guides/services/search/reverse-geocoding
-            title: Reverse geocoding (WIP)
-      - title: Routing
-        items:
-          - fileId: guides/services/routing/quickstart
+          - fileId: guides/services/quickstart
             title: Quickstart
-          - fileId: guides/services/routing/planning-a-route
-            title: Planning a route
-          - fileId: guides/services/routing/waypoints-and-reconstruction-routes
-            title: Waypoints and reconstruction routes (WIP)
-          - fileId: guides/services/routing/route-sections
-            title: Route sections
-  - title: API Reference (WIP)
+          - title: Places
+            items:
+              - fileId: guides/services/places/quickstart
+                title: Overview
+              - fileId: guides/services/places/search
+                title: Search (autocomplete/fuzzy/geometry search)
+              - fileId: guides/services/places/geocoding
+                title: Geocoding
+              - fileId: guides/services/places/reverse-geocoding
+                title: Reverse geocoding
+              - fileId: guides/services/places/geometry-data
+                title: Geometry data
+              - fileId: guides/services/places/ev-charging-stations-availability
+                title: EV Charging Stations Availability
+          - title: Routing
+            items:
+              - fileId: guides/services/routing/quickstart
+                title: Quickstart
+              - fileId: guides/services/routing/planning-a-route
+                title: Planning a route
+              - fileId: guides/services/routing/waypoints-and-custom-routes
+                title: Waypoints and custom routes
+              - fileId: guides/services/routing/route-sections
+                title: Route sections
+          - fileId: guides/services/customizing-services
+            title: Customizing services
+      - title: Core
+        items:
+          - fileId: guides/core/quickstart
+            title: Quickstart
+  - title: API Reference
     items:
       - fileId: /api-reference/home
         title: Home

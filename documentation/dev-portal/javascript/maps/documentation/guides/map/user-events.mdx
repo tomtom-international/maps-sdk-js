@@ -17,31 +17,31 @@ The Map Display module allows events to be detected on the TomTom map layers. By
 -   `"hover"` - a hover event gets fired when the user's pointer is moving over a layer
 -   `"long-hover"` - a long-hover event gets fired when the user's pointer is hovering over a layer for a longer period of time
 
-These events can be customized through the [`MapEventsConfig`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
-when initializing a [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
+These events can be customized through the [`MapEventsConfig`](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
+when initializing a [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
 
 > If, instead of events on the TomTom map layers, you're interested in defining events directly on the MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/)
-contained by the [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap), take a look at [MapLibre Events](https://maplibre.org/maplibre-gl-js-docs/api/events/).
+contained by the [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap), take a look at [MapLibre Events](https://maplibre.org/maplibre-gl-js-docs/api/events/).
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_listening_for_events"></a>}
 
 # Listening for events
 
 Event handlers can be registered per individual module in the Map Display module. For example, a hover event handler
-on traffic incidents ([`VectorTilesTraffic`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module)
+on traffic incidents ([`VectorTilesTraffic`](/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module)
 can be registered with:
 
-> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
+> Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
+Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
 const traffic = await VectorTilesTraffic.init(map);
 traffic.events.incidents.on("hover", eventHandler);
 ```
 
-where `eventHandler` is a function of type [`HoverClickHandler`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/map_shared#HoverClickHandler).
+where `eventHandler` is a function of type [`HoverClickHandler`](/javascript/maps/documentation/api-reference/modules/map_shared#HoverClickHandler).
 
-Remove existing listeners by calling the `off` method on the corresponding [`EventsModule`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule).
+Remove existing listeners by calling the `off` method on the corresponding [`EventsModule`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule).
 
 ```javascript
 traffic.events.incidents.off("hover");
@@ -57,5 +57,5 @@ effectively disabling all event handlers on that map layer.
 Since you have learned how to interact with the map, here are recommendations for the next steps:
 
 -   [Example: Map events](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-events)
--   [Manipulate the camera position](/maps-sdk-js/javascript/maps/documentation/guides/map-display/camera-and-animations)
--   [Draw shapes on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/overlays)
+-   [Manipulate the camera position](/javascript/maps/documentation/guides/map-display/camera-and-animations)
+-   [Draw shapes on the map](/javascript/maps/documentation/guides/map-display/overlays)

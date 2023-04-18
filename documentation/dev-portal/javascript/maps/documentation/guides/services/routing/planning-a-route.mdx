@@ -12,7 +12,7 @@ titleTags:
 
 # Requesting routes
 
-To calculate a route from A to B, you need to first provide route planning criteria. These are built using a [`CalculateRouteParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#calculaterouteparams) object. There are multiple optional parameters that you can use to shape the route planning criteria to fit your use cases. For a detailed description of available parameters, see the [Routing API, Calculate Route documentation](https://developer.tomtom.com/routing-api/documentation/routing/calculate-route).
+To calculate a route from A to B, you need to first provide route planning criteria. These are built using a [`CalculateRouteParams`](/javascript/maps/documentation/api-reference/modules/services/#calculaterouteparams) object. There are multiple optional parameters that you can use to shape the route planning criteria to fit your use cases. For a detailed description of available parameters, see the [Routing API, Calculate Route documentation](https://developer.tomtom.com/routing-api/documentation/routing/calculate-route).
 
 <Code>
 
@@ -42,7 +42,7 @@ const routePlanningParams = {
 
 </Code>
 
-Once you've instantiated your [`CalculateRouteParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#calculaterouteparams), pass it to the [`calculateRoute`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#calculateroute) function. The result will be a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`CalculateRouteResponse`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#calculaterouteresponse)>
+Once you've instantiated your [`CalculateRouteParams`](/javascript/maps/documentation/api-reference/modules/services/#calculaterouteparams), pass it to the [`calculateRoute`](/javascript/maps/documentation/api-reference/modules/services/#calculateroute) function. The result will be a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`CalculateRouteResponse`](/javascript/maps/documentation/api-reference/modules/services/#calculaterouteresponse)>
 
 ``` javascript
 try {
@@ -57,31 +57,31 @@ try {
 
 ## Route types
 
-The [`RouteOptionalParams.routeType`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#routeoptionalparams) parameter specifies the type of optimization used when calculating routes:
+The [`RouteOptionalParams.routeType`](/javascript/maps/documentation/api-reference/modules/services/#routeoptionalparams) parameter specifies the type of optimization used when calculating routes:
 
 -   [`fastest`] - Route calculation is optimized by travel time, while keeping the routes sensible. For example, the calculation may avoid shortcuts along inconvenient side roads or long detours that only save very little time.
 -   [`shortest`] - Route calculation is optimized by travel distance, while keeping the routes sensible. For example, straight routes are preferred over those incurring turns.
 -   [`short`] - Route calculation is optimized so that a good compromise between small travel time and short travel distance is achieved.
 -   [`eco`] - Route calculation is optimized by fuel/energy consumption.
 -   [`thrilling`] - Route calculation is optimized so that routes include interesting or challenging roads and use as few motorways as possible.
-  -   You can choose the level of turns included and also the degree of hilliness. See the [`ThrillingParams`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#thrillingparams) to set this.
+  -   You can choose the level of turns included and also the degree of hilliness. See the [`ThrillingParams`](/javascript/maps/documentation/api-reference/modules/services/#thrillingparams) to set this.
   -   There is a limit of 900km on routes planned with [`routeType=thrilling`].
 
 The default value is [`fastest`].
 
 ## Avoids
 
-The [`RouteOptionalParams.avoidable`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#routeoptionalparams) parameter specifies something that the route calculation should try to avoid when determining the route. The avoid can be specified multiple times. Possible values are:
+The [`RouteOptionalParams.avoidable`](/javascript/maps/documentation/api-reference/modules/services/#routeoptionalparams) parameter specifies something that the route calculation should try to avoid when determining the route. The avoid can be specified multiple times. Possible values are:
 
--   [`tollRoads`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids toll roads.
--   [`motorways`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids motorways.
--   [`ferries`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids ferries.
--   [`unpavedRoads`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids unpaved roads.
--   [`carpools`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids routes that require the use of carpool (HOV/High Occupancy Vehicle) lanes.
--   [`alreadyUsedRoads`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids using the same road multiple times. This is important for round trips, when users may not want to use the same roads both ways. This is most useful in conjunction with [`routeType=thrilling`](https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlanner/Enums/RouteType.html).
--   [`borderCrossings`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids crossing country borders.
--   [`tunnels`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids tunnels.
--   [`carTrains`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids car trains.
+-   [`tollRoads`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids toll roads.
+-   [`motorways`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids motorways.
+-   [`ferries`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids ferries.
+-   [`unpavedRoads`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids unpaved roads.
+-   [`carpools`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids routes that require the use of carpool (HOV/High Occupancy Vehicle) lanes.
+-   [`alreadyUsedRoads`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids using the same road multiple times. This is important for round trips, when users may not want to use the same roads both ways. This is most useful in conjunction with [`routeType=thrilling`](https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlanner/Enums/RouteType.html).
+-   [`borderCrossings`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids crossing country borders.
+-   [`tunnels`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids tunnels.
+-   [`carTrains`](/javascript/maps/documentation/api-reference/modules/core/#avoidable) - Avoids car trains.
 
 ## Vehicle profile
 
@@ -89,14 +89,14 @@ Vehicle profile relates to a set of parameters that are used to provide extra in
 
 Some roads in the map have vehicle and time dependent restrictions. For example, roads may restrict traffic to pedestrians, or can only be used by electric vehicles. Various road types may prohibit vehicles carrying hazardous materials. Tunnels may only be passable by vehicles up to a maximum height, and for trucks, with the proper tunnel code. These restrictions may affect the routes that can be planned for the user’s vehicle.
 
-Key parameters defining vehicle profiles (see [`VehicleParameters`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#vehicleparameters)):
+Key parameters defining vehicle profiles (see [`VehicleParameters`](/javascript/maps/documentation/api-reference/modules/services/#vehicleparameters)):
 
--   Vehicle type, e.g., car or motorcycle (see [`TravelMode`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core/#travelmode)).
--   Engine type, e.g., [`combustion`] or [`electric`] (see [`VehicleEngineType`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#vehicleenginetype)). For pedestrians and bicycles, no engine is allowed.
--   Consumption parameters used to adjust the overall range prediction of the vehicle (see [`VehicleConsumption`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#vehicleconsumption)).
--   Vehicle dimensions (see [`VehicleDimensions`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#vehicledimensions)).
--   Hazardous payload describing the classification of carrying hazardous materials carried by the vehicle (see [`LoadType`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#loadtype)).
--   Tunnel codes describing which tunnels can be used (see [`VehicleParameters.adrCode`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/services/#vehicleparameters)).
+-   Vehicle type, e.g., car or motorcycle (see [`TravelMode`](/javascript/maps/documentation/api-reference/modules/core/#travelmode)).
+-   Engine type, e.g., [`combustion`] or [`electric`] (see [`VehicleEngineType`](/javascript/maps/documentation/api-reference/modules/services/#vehicleenginetype)). For pedestrians and bicycles, no engine is allowed.
+-   Consumption parameters used to adjust the overall range prediction of the vehicle (see [`VehicleConsumption`](/javascript/maps/documentation/api-reference/modules/services/#vehicleconsumption)).
+-   Vehicle dimensions (see [`VehicleDimensions`](/javascript/maps/documentation/api-reference/modules/services/#vehicledimensions)).
+-   Hazardous payload describing the classification of carrying hazardous materials carried by the vehicle (see [`LoadType`](/javascript/maps/documentation/api-reference/modules/services/#loadtype)).
+-   Tunnel codes describing which tunnels can be used (see [`VehicleParameters.adrCode`](/javascript/maps/documentation/api-reference/modules/services/#vehicleparameters)).
 
 <Blockquote>
 

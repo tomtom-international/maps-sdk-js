@@ -1,5 +1,5 @@
 ---
-title: Routes
+title: Routes Module
 hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
@@ -10,13 +10,13 @@ titleTags:
   color: "grey5"
 ---
 
-The Map Display module allows you to handle route planning and driving actions on the map. This guide covers how to draw [`Routes`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Routes)
-and [`Waypoints`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Waypoints) on the map.
+The Map Display module allows you to handle route planning and driving actions on the map. This guide covers how to draw [`Routes`](/javascript/maps/documentation/api-reference/modules/core#Routes)
+and [`Waypoints`](/javascript/maps/documentation/api-reference/modules/core#Waypoints) on the map.
 
 <Blockquote>
 
-  This guide does not cover how routes are planned or waypoints are created. See the [Routing guide](/maps-sdk-js/javascript/maps/documentation/guides/routing/planning-a-route)
-  and [Waypoints and reconstruction routes](/maps-sdk-js/javascript/maps/documentation/guides/routing/waypoints-and-reconstruction-routes)
+  This guide does not cover how routes are planned or waypoints are created. See the [Routing guide](/javascript/maps/documentation/guides/routing/planning-a-route)
+  and [Waypoints and reconstruction routes](/javascript/maps/documentation/guides/routing/waypoints-and-reconstruction-routes)
   for the relevant guides.
 
 </Blockquote>
@@ -25,12 +25,12 @@ and [`Waypoints`](/maps-sdk-js/javascript/maps/documentation/api-reference/modul
 
 # Adding a route
 
-To show [`Routes`](/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core#Routes) on the map, make sure your API key is enabled
-and an instance of [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) is initialized,
-then the [`RoutingModule`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_routes.RoutingModule) class can be used to show routes and waypoints.
+To show [`Routes`](/javascript/maps/documentation/api-reference/modules/core#Routes) on the map, make sure your API key is enabled
+and an instance of [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) is initialized,
+then the [`RoutingModule`](/javascript/maps/documentation/api-reference/classes/map_routes.RoutingModule) class can be used to show routes and waypoints.
 
-> Make sure you have an initialized [`TomTomMap`](/maps-sdk-js/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/maps-sdk-js/javascript/maps/documentation/guides/map-display/quickstart) guide.
+> Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
+Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
 import { RoutingModule } from "@anw/maps-sdk-js/map";
@@ -68,15 +68,3 @@ routingModule.selectRoute(index);
 ```
 
 <img src="images/ss_route_alternatives.png" alt="Map with a route and its alternatives" />
-
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
-
-# Next steps
-
-Since you have learned how to work with routes on the map, here are recommendations for the next steps:
-
--   [Example: Map route](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-route)
--   [Example: Map route with alternatives](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-route-with-alternatives)
--   [Example: Map route reconstruction playground](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-route-reconstruction-playground)
--   [Map overlays](/maps-sdk-js/javascript/maps/documentation/guides/map-display/overlays)
--   [Showing traffic on the map](/maps-sdk-js/javascript/maps/documentation/guides/map-display/traffic)
