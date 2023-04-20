@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.112...v0.2.0) (2023-04-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **map:** map module names are changed
+
+### Features
+
+* **documentation:** updating and adding guides ([ecb61a5](https://github.com/tomtom-international/maps-sdk-js/commit/ecb61a5f4d4b19b2ad60a91ac5de3fce8381667e))
+* **map:** renaming map modules ([edc0b77](https://github.com/tomtom-international/maps-sdk-js/commit/edc0b77e3d85299e62565bea409b277f28915009))
+
 ### [0.1.112](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.111...v0.1.112) (2023-04-14)
 
 
