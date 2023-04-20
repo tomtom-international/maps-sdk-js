@@ -63,6 +63,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         return new RoutingModule(tomtomMap, config);
     }
 
+    private constructor(map: TomTomMap, config?: RoutingModuleConfig) {
+        super(map, config);
+    }
+
     private createSourcesWithLayers(layersSpecs: RoutingLayersSpecs): RoutingSourcesWithLayers {
         return {
             routeLines: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, layersSpecs.routeLines, false),

@@ -49,6 +49,10 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         return new GeometriesModule(tomtomMap, config);
     }
 
+    private constructor(map: TomTomMap, config?: GeometriesModuleConfig) {
+        super(map, config);
+    }
+
     protected _initSourcesWithLayers(config?: GeometriesModuleConfig): GeometrySourcesWithLayers {
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);

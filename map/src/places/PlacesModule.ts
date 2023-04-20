@@ -40,6 +40,10 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         return new PlacesModule(tomtomMap, config);
     }
 
+    private constructor(map: TomTomMap, config?: PlacesModuleConfig) {
+        super(map, config);
+    }
+
     protected _initSourcesWithLayers(config?: PlacesModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
         if (!restore) {
             PlacesModule.lastInstanceIndex++;

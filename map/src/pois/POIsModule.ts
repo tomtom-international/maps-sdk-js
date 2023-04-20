@@ -54,6 +54,10 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
         return new POIsModule(tomtomMap, config);
     }
 
+    private constructor(tomtomMap: TomTomMap, config?: POIsModuleConfig) {
+        super(tomtomMap, config);
+    }
+
     protected _initSourcesWithLayers() {
         const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (!poiRuntimeSource) {

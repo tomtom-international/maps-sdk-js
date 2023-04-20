@@ -28,6 +28,10 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
         return new HillshadeModule(tomtomMap, config);
     }
 
+    private constructor(map: TomTomMap, config?: HillshadeModuleConfig) {
+        super(map, config);
+    }
+
     protected _initSourcesWithLayers() {
         const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
         if (!hillshadeSource) {

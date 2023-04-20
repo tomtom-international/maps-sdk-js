@@ -46,6 +46,10 @@ export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, Tr
         return new TrafficModule(tomtomMap, config);
     }
 
+    private constructor(map: TomTomMap, config?: TrafficModuleConfig) {
+        super(map, config);
+    }
+
     protected _initSourcesWithLayers(): TrafficSourcesAndLayers {
         const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
         let incidents: StyleSourceWithLayers | undefined;
