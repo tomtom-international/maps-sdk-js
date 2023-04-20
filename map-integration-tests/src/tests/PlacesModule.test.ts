@@ -3,7 +3,7 @@ import { LocationDisplayProps, PlaceIconConfig } from "map";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import placesTestData from "./GeoJSONPlaces.test.data.json";
+import placesTestData from "./PlacesModule.test.data.json";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import {
     getNumVisibleLayersBySource,
@@ -15,8 +15,8 @@ import {
     waitForMapIdle,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
-import expectedCustomIcon from "./GeoJSONPlacesCustomIcon.test.data.json";
-import expectedPOILikeFeatureProps from "./GeoJSONPlacesPOILikeProps.test.data.json";
+import expectedCustomIcon from "./PlacesModuleCustomIcon.test.data.json";
+import expectedPOILikeFeatureProps from "./PlacesModulePOILikeProps.test.data.json";
 
 const applyIconConfig = async (iconConfig?: PlaceIconConfig) =>
     page.evaluate(

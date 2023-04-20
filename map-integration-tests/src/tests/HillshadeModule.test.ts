@@ -22,7 +22,7 @@ describe("Map vector tiles hillshade module tests", () => {
         await expect(
             page.evaluate(async () => {
                 const mapsSDKThis = globalThis as MapsSDKThis;
-                await mapsSDKThis.MapsSDK.VectorTilesHillshade.init(mapsSDKThis.tomtomMap);
+                await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap);
             })
         ).rejects.toBeDefined();
     });
@@ -35,7 +35,7 @@ describe("Map vector tiles hillshade module tests", () => {
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.VectorTilesHillshade.init(mapsSDKThis.tomtomMap, {
+            mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, {
                 visible: false
             });
         });

@@ -28,14 +28,14 @@ contained by the [`TomTomMap`](/javascript/maps/documentation/api-reference/clas
 # Listening for events
 
 Event handlers can be registered per individual module in the Map Display module. For example, a hover event handler
-on traffic incidents ([`VectorTilesTraffic`](/javascript/maps/documentation/api-reference/classes/map_traffic.VectorTilesTraffic) module)
+on traffic incidents ([`TrafficModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule) module)
 can be registered with:
 
 > Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
 Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
-const traffic = await VectorTilesTraffic.init(map);
+const traffic = await TrafficModule.get(map);
 traffic.events.incidents.on("hover", eventHandler);
 ```
 

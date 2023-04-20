@@ -9,7 +9,7 @@ import { Language } from "@anw/maps-sdk-js/core";
  */
 export type FilterablePOICategory = MapStylePOIClassification | POIClassificationGroup;
 
-export type VectorTilePOIsConfig = VectorTileMapModuleConfig & {
+export type POIsModuleConfig = VectorTileMapModuleConfig & {
     filters?: {
         /**
          * By default, all categories are included in the map.
@@ -30,7 +30,7 @@ type FeatureNamesByLanguage = Partial<Record<PrependName<Language>, string>>;
 /**
  * A GeoJSON feature describing a POI vector tile on the map.
  */
-export type VectorTilePOIsFeature = Omit<MapGeoJSONFeature, "properties"> & {
+export type POIsModuleFeature = Omit<MapGeoJSONFeature, "properties"> & {
     properties: FeatureNamesByLanguage & {
         /**
          * A unique Point of Interest identifier that can be used across other TomTom services.

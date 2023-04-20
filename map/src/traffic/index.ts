@@ -3,5 +3,5 @@
  * @category Map
  */
 
-export * from "./types/VectorTilesTrafficConfig";
-export * from "./VectorTilesTraffic";
+export * from "./types/TrafficModuleConfig";
+export * from "./TrafficModule";

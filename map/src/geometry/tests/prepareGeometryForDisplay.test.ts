@@ -6,11 +6,11 @@ import {
     prepareGeometryForDisplay,
     prepareTitleForDisplay
 } from "../prepareGeometryForDisplay";
-import { GeometryModuleConfig } from "../types/GeometryModuleConfig";
+import { GeometriesModuleConfig } from "../types/GeometriesModuleConfig";
 
 describe("prepareGeometryForDisplay", () => {
     test("Build geometry spec layer", () => {
-        const config: GeometryModuleConfig = {
+        const config: GeometriesModuleConfig = {
             colorConfig: {
                 fillOpacity: 1,
                 fillColor: "#00ffaa"
@@ -45,7 +45,7 @@ describe("prepareGeometryForDisplay", () => {
 
     test("Build geometry title spec layer", () => {
         const GEOMETRY_TITLE_SOURCE_ID = "GEOMETRY_TITLE_SOURCE";
-        let config: GeometryModuleConfig = {
+        let config: GeometriesModuleConfig = {
             textConfig: {
                 textField: "title"
             }
@@ -97,7 +97,7 @@ describe("prepareGeometryForDisplay", () => {
             ]
         };
 
-        const config: GeometryModuleConfig = {
+        const config: GeometriesModuleConfig = {
             colorConfig: {
                 fillColor: "warm"
             }

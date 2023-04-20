@@ -1,7 +1,7 @@
 import { Map } from "maplibre-gl";
 import { Place, Places } from "@anw/maps-sdk-js/core";
 import { DisplayPlaceProps } from "./types/PlaceDisplayProps";
-import { CustomIcon, PlaceModuleConfig } from "./types/PlaceModuleConfig";
+import { CustomIcon, PlacesModuleConfig } from "./types/PlacesModuleConfig";
 import {
     MapStylePOIClassification,
     placeToPOILayerClassificationMapping,
@@ -37,7 +37,7 @@ export const addMapIcon = (map: Map, classificationCode: MapStylePOIClassificati
  * @param map
  * @param config
  */
-export const getIconIDForPlace = (place: Place, config: PlaceModuleConfig = {}, map?: Map): string => {
+export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {}, map?: Map): string => {
     const { iconConfig } = config;
     const iconStyle = iconConfig?.iconStyle || "pin";
     const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOIClassification;
@@ -83,7 +83,7 @@ export const getPOILayerCategoryForPlace = (place: Place): string | undefined =>
 export const preparePlacesForDisplay = (
     places: Places,
     map: Map,
-    config: PlaceModuleConfig = {}
+    config: PlacesModuleConfig = {}
 ): Places<DisplayPlaceProps> => ({
     ...places,
     features: places.features.map((place) => {

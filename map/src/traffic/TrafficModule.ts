@@ -12,7 +12,7 @@ import {
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
 } from "../shared";
-import { TrafficFlowFilters, TrafficIncidentsFilters, VectorTilesTrafficConfig } from ".";
+import { TrafficFlowFilters, TrafficIncidentsFilters, TrafficModuleConfig } from ".";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
@@ -30,20 +30,20 @@ type TrafficSourcesAndLayers = {
 
 /**
  * Vector tiles traffic module.
- * * Controls both incidents and flow vector traffic sources and layers.
+ * * Controls both incidents and flow vector traffic layers which are present in the map style.
  */
-export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayers, VectorTilesTrafficConfig> {
+export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, TrafficModuleConfig> {
     private originalFilters!: Record<string, FilterSpecification | undefined>;
 
     /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * Gets the Traffic Module for the given TomTomMap and configuration once the map is ready.
      * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: VectorTilesTrafficConfig): Promise<VectorTilesTraffic> {
+    static async get(tomtomMap: TomTomMap, config?: TrafficModuleConfig): Promise<TrafficModule> {
         await waitUntilMapIsReady(tomtomMap);
-        return new VectorTilesTraffic(tomtomMap, config);
+        return new TrafficModule(tomtomMap, config);
     }
 
     protected _initSourcesWithLayers(): TrafficSourcesAndLayers {
@@ -61,7 +61,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayer
 
         if (!incidentsRuntimeSource && !flowRuntimeSource) {
             throw notInTheStyle(
-                `init ${VectorTilesTraffic.name} with at least one of these source IDs: 
+                `init ${TrafficModule.name} with at least one of these source IDs: 
                 ${VECTOR_TILES_INCIDENTS_SOURCE_ID} ${VECTOR_TILES_FLOW_SOURCE_ID}`
             );
         }
@@ -76,7 +76,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayer
         return { ...(incidents && { incidents }), ...(flow && { flow }) };
     }
 
-    protected _applyConfig(config: VectorTilesTrafficConfig | undefined) {
+    protected _applyConfig(config: TrafficModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this._setVisible(config.visible, { updateConfig: false });
         } else if (!this.anyLayersVisible()) {
@@ -88,7 +88,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayer
         return config;
     }
 
-    private applyIncidentsConfig(config: VectorTilesTrafficConfig | undefined) {
+    private applyIncidentsConfig(config: TrafficModuleConfig | undefined) {
         const incidents = config?.incidents;
 
         if (incidents && !isNil(incidents.visible)) {
@@ -158,7 +158,7 @@ export class VectorTilesTraffic extends AbstractMapModule<TrafficSourcesAndLayer
         // else: default incident filters have been set already if necessary
     }
 
-    private applyFlowConfig(config: VectorTilesTrafficConfig | undefined) {
+    private applyFlowConfig(config: TrafficModuleConfig | undefined) {
         const flow = config?.flow;
         if (flow && !isNil(flow.visible)) {
             this._setFlowVisible(flow.visible, { updateConfig: false });

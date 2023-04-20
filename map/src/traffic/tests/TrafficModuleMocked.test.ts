@@ -1,7 +1,7 @@
 import { Map } from "maplibre-gl";
 import { VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "../../shared";
 import { TomTomMap } from "../../TomTomMap";
-import { VectorTilesTraffic } from "../VectorTilesTraffic";
+import { TrafficModule } from "../TrafficModule";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -25,7 +25,7 @@ describe("Vector tiles traffic module tests", () => {
             _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
-        const traffic = await VectorTilesTraffic.init(tomtomMapMock, {
+        const traffic = await TrafficModule.get(tomtomMapMock, {
             incidents: {
                 visible: true,
                 filters: { any: [{ roadCategories: { show: "only", values: ["motorway", "trunk"] } }] },
@@ -88,7 +88,7 @@ describe("Vector tiles traffic module tests", () => {
             _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
-        const traffic = await VectorTilesTraffic.init(tomtomMapMock);
+        const traffic = await TrafficModule.get(tomtomMapMock);
         expect(traffic).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();

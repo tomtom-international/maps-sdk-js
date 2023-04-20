@@ -20,16 +20,10 @@ describe("Vector tile modules combined visibility tests, to ensure one module do
             center: [-0.12621, 51.50394]
         });
         await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.traffic = await mapsSDKThis.MapsSDK.VectorTilesTraffic.init(mapsSDKThis.tomtomMap, {
-                visible: false
-            });
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap, {
-                visible: false
-            });
-            mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.VectorTilesHillshade.init(mapsSDKThis.tomtomMap, {
-                visible: false
-            });
+            const sdkThis = globalThis as MapsSDKThis;
+            sdkThis.traffic = await sdkThis.MapsSDK.TrafficModule.get(sdkThis.tomtomMap, { visible: false });
+            sdkThis.pois = await sdkThis.MapsSDK.POIsModule.get(sdkThis.tomtomMap, { visible: false });
+            sdkThis.hillshade = await sdkThis.MapsSDK.HillshadeModule.get(sdkThis.tomtomMap, { visible: false });
         });
 
         await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });

@@ -1,6 +1,6 @@
 import { Map } from "maplibre-gl";
 import { TomTomMap } from "../../TomTomMap";
-import { VectorTilePOIs } from "../VectorTilePOIs";
+import { POIsModule } from "../POIsModule";
 import { POI_SOURCE_ID } from "../../shared";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
@@ -28,7 +28,7 @@ describe("Vector tiles POI module tests", () => {
     });
 
     test("Initializing module with config", async () => {
-        const pois = await VectorTilePOIs.init(tomtomMapMock, {
+        const pois = await POIsModule.get(tomtomMapMock, {
             visible: false
         });
         expect(pois).toBeDefined();
@@ -42,7 +42,7 @@ describe("Vector tiles POI module tests", () => {
     });
 
     test("Initializing module with no config", async () => {
-        const pois = await VectorTilePOIs.init(tomtomMapMock);
+        const pois = await POIsModule.get(tomtomMapMock);
         expect(pois).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
@@ -50,7 +50,7 @@ describe("Vector tiles POI module tests", () => {
     });
 
     test("filter methods while initializing module with filter config", async () => {
-        const pois = await VectorTilePOIs.init(tomtomMapMock, {
+        const pois = await POIsModule.get(tomtomMapMock, {
             filters: {
                 categories: {
                     show: "all_except",

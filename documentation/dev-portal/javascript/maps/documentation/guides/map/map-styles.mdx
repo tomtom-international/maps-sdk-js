@@ -123,16 +123,16 @@ map style with the `exclude` property of the [`TomTomMapParams`](/javascript/map
 
 <br/>
 
-The POI layer visibility can be controlled during runtime with the [`VectorTilePOIs`](/javascript/maps/documentation/api-reference/classes/map_POIs.VectorTilePOIs) module.
+The POI layer visibility can be controlled during runtime with the [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule) module.
 
 ```javascript
-import { VectorTilePOIs } from "@anw/maps-sdk-js/map";
+import { POIsModule } from "@anw/maps-sdk-js/map";
 
-const pois = await VectorTilePOIs.init(map);
+const pois = await POIsModule.init(map);
 pois.setVisible(false);
 ```
 
-It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`VectorTilePOIs`](/javascript/maps/documentation/api-reference/classes/map_POIs.VectorTilePOIs).
+It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule).
 See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-poi-filters) example for this functionality.
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_hill_shading"></a>}
@@ -147,9 +147,9 @@ The Map Display module allows you to add style layers such as hill shading to th
 
 Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
 
-To show or hide hill shading on runtime, use the [`VectorTilesHillshade`](/javascript/maps/documentation/api-reference/classes/map_hillshade.VectorTilesHillshade) class:
+To show or hide hill shading on runtime, use the [`HillshadeModule`](/javascript/maps/documentation/api-reference/classes/map_hillshade.HillshadeModule) class:
 
 ``` javascript
-const hillshade = await VectorTilesHillshade.init(map);
+const hillshade = await HillshadeModule.init(map);
 hillshade.setVisible(false);
 ```

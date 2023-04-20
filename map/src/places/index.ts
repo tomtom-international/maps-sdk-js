@@ -4,7 +4,7 @@
  */
 
 export * from "./types/PlaceDisplayProps";
-export * from "./types/PlaceModuleConfig";
+export * from "./types/PlacesModuleConfig";
 export * from "./preparePlacesForDisplay";
-export * from "./GeoJSONPlaces";
+export * from "./PlacesModule";
 export * from "./poiIconIDMapping";

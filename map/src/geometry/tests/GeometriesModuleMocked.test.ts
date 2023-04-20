@@ -1,8 +1,8 @@
 import { Geometries } from "@anw/maps-sdk-js/core";
 import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
-import { GeometryModule } from "../GeometryModule";
+import { GeometriesModule } from "../GeometriesModule";
 import { TomTomMap } from "../../TomTomMap";
-import amsterdamGeometryData from "./GeometryModuleMocked.test.data.json";
+import amsterdamGeometryData from "./GeometriesModuleMocked.test.data.json";
 import { GEOMETRY_SOURCE_ID, mapStyleLayerIDs } from "../../shared";
 import { GeoJsonProperties } from "geojson";
 import { GEOMETRY_TITLE_LAYER_ID } from "../layers/GeometryLayers";
@@ -38,7 +38,7 @@ describe("Geometry module tests", () => {
         const textField: DataDrivenPropertyValueSpecification<string> = ["get", "country"];
 
         const testGeometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
-        let geometry = await GeometryModule.init(tomtomMapMock, geometryConfig);
+        let geometry = await GeometriesModule.init(tomtomMapMock, geometryConfig);
         // to be able to spy on private methods
         const geometryAny: any = geometry;
         jest.spyOn(geometryAny, "applyConfig");
@@ -66,7 +66,7 @@ describe("Geometry module tests", () => {
 
         geometry.show(testGeometryData);
         geometry.clear();
-        geometry = await GeometryModule.init(tomtomMapMock);
+        geometry = await GeometriesModule.init(tomtomMapMock);
         geometry.show(testGeometryData);
         geometry.clear();
         expect(geometry.events).toBeDefined();

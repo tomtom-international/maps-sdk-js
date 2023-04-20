@@ -1,5 +1,5 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { FilterablePOICategory, getCategoryIcons, POI_SOURCE_ID, VectorTilePOIsFeature } from "map";
+import { FilterablePOICategory, getCategoryIcons, POI_SOURCE_ID, POIsModuleFeature } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { Point } from "geojson";
@@ -39,7 +39,7 @@ describe("Map vector tile POI filtering tests", () => {
         await expect(
             page.evaluate(async () => {
                 const mapsSDKThis = globalThis as MapsSDKThis;
-                await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
+                await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
             })
         ).rejects.toBeDefined();
     });
@@ -52,7 +52,7 @@ describe("Map vector tile POI filtering tests", () => {
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap, {
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, {
                 visible: false
             });
         });
@@ -96,7 +96,7 @@ describe("Map vector tile POI filtering tests", () => {
         });
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
         });
         await waitForMapIdle();
         let renderedPOIs = await waitForRenderedPOIsChange(0);
@@ -145,7 +145,7 @@ describe("Map vector tile POI filtering tests", () => {
         // config poi layer to only include TRANSPORTATION_GROUP categories and expect all features to be from TRANSPORTATION_GROUP
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap, {
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, {
                 filters: {
                     categories: {
                         show: "only",
@@ -213,7 +213,7 @@ describe("Map vector tile POI filtering tests", () => {
         });
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
         });
 
         // manually override existing POI layer filter to be able to verify it's combined with categories filter
@@ -259,7 +259,7 @@ describe("Map vector tile POI feature tests", () => {
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.VectorTilePOIs.init(mapsSDKThis.tomtomMap);
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
         });
         await waitForMapIdle();
 
@@ -283,7 +283,7 @@ describe("Map vector tile POI feature tests", () => {
 
         const clickedFeature = (await page.evaluate(
             async () => (globalThis as MapsSDKThis)._clickedTopFeature
-        )) as VectorTilePOIsFeature;
+        )) as POIsModuleFeature;
 
         expect(clickedFeature.properties.name).toBeDefined();
         expect(clickedFeature.properties.icon).toBeDefined();

@@ -1,7 +1,7 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
 import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
-import { FilterablePOICategory, VectorTilePOIsConfig, VectorTilePOIsFeature } from "./types/VectorTilePOIsConfig";
+import { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from "./types/POIsModuleConfig";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
@@ -39,32 +39,32 @@ type POIsSourcesAndLayers = {
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
  */
-export class VectorTilePOIs extends AbstractMapModule<POIsSourcesAndLayers, VectorTilePOIsConfig> {
+export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModuleConfig> {
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
     private originalFilter?: FilterSpecification;
 
     /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * Gets the POIs Module for the given TomTomMap and configuration once the map is ready.
      * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: VectorTilePOIsConfig): Promise<VectorTilePOIs> {
+    static async get(tomtomMap: TomTomMap, config?: POIsModuleConfig): Promise<POIsModule> {
         await waitUntilMapIsReady(tomtomMap);
-        return new VectorTilePOIs(tomtomMap, config);
+        return new POIsModule(tomtomMap, config);
     }
 
     protected _initSourcesWithLayers() {
         const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (!poiRuntimeSource) {
-            throw notInTheStyle(`init ${VectorTilePOIs.name} with source ID ${POI_SOURCE_ID}`);
+            throw notInTheStyle(`init ${POIsModule.name} with source ID ${POI_SOURCE_ID}`);
         }
         const poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource);
         this.originalFilter = this.mapLibreMap.getFilter(poi.sourceAndLayerIDs.layerIDs[0]) as FilterSpecification;
         return { poi };
     }
 
-    protected _applyConfig(config: VectorTilePOIsConfig | undefined) {
+    protected _applyConfig(config: POIsModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {
@@ -130,6 +130,6 @@ export class VectorTilePOIs extends AbstractMapModule<POIsSourcesAndLayers, Vect
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule<VectorTilePOIsFeature>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.poi);
+        return new EventsModule<POIsModuleFeature>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.poi);
     }
 }

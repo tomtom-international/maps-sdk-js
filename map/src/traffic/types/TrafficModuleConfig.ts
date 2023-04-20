@@ -170,7 +170,7 @@ export type FlowConfig = {
 /**
  * Configuration for vector tiles traffic incidents and flow layers.
  */
-export type VectorTilesTrafficConfig = VectorTileMapModuleConfig & {
+export type TrafficModuleConfig = VectorTileMapModuleConfig & {
     /**
      * Optional configuration for incidents.
      */

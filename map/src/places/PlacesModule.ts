@@ -6,7 +6,7 @@ import {
     PLACES_SOURCE_PREFIX_ID,
     SymbolLayerSpecWithoutSource
 } from "../shared";
-import { PlaceIconConfig, PlaceModuleConfig, PlaceTextConfig } from "./types/PlaceModuleConfig";
+import { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from "./types/PlacesModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { changeLayersProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import { preparePlacesForDisplay } from "./preparePlacesForDisplay";
@@ -23,7 +23,7 @@ type PlacesSourcesAndLayers = {
     places: GeoJSONSourceWithLayers<Places<DisplayPlaceProps>>;
 };
 
-export class GeoJSONPlaces extends AbstractMapModule<PlacesSourcesAndLayers, PlaceModuleConfig> {
+export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
     private static lastInstanceIndex = -1;
     private layerSpecs!: [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource];
     private sourceID!: string;
@@ -35,23 +35,23 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesSourcesAndLayers, Pla
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: PlaceModuleConfig): Promise<GeoJSONPlaces> {
+    static async init(tomtomMap: TomTomMap, config?: PlacesModuleConfig): Promise<PlacesModule> {
         await waitUntilMapIsReady(tomtomMap);
-        return new GeoJSONPlaces(tomtomMap, config);
+        return new PlacesModule(tomtomMap, config);
     }
 
-    protected _initSourcesWithLayers(config?: PlaceModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
+    protected _initSourcesWithLayers(config?: PlacesModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
         if (!restore) {
-            GeoJSONPlaces.lastInstanceIndex++;
-            this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${GeoJSONPlaces.lastInstanceIndex}`;
-            this.layerIDPrefix = `placesSymbols-${GeoJSONPlaces.lastInstanceIndex}`;
+            PlacesModule.lastInstanceIndex++;
+            this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${PlacesModule.lastInstanceIndex}`;
+            this.layerIDPrefix = `placesSymbols-${PlacesModule.lastInstanceIndex}`;
         }
         const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
         this.layerSpecs = layerSpecs;
         return { places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, layerSpecs) };
     }
 
-    protected _applyConfig(config: PlaceModuleConfig | undefined) {
+    protected _applyConfig(config: PlacesModuleConfig | undefined) {
         if (config?.iconConfig || config?.textConfig) {
             this.updateLayersAndData(config);
         } else if (config?.extraFeatureProps) {
@@ -90,7 +90,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesSourcesAndLayers, Pla
         this.config = config;
     }
 
-    private updateLayersAndData(config: PlaceModuleConfig): void {
+    private updateLayersAndData(config: PlacesModuleConfig): void {
         const newLayerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
         changeLayersProps(newLayerSpecs, this.layerSpecs, this.mapLibreMap);
         this.layerSpecs = newLayerSpecs;
@@ -106,7 +106,7 @@ export class GeoJSONPlaces extends AbstractMapModule<PlacesSourcesAndLayers, Pla
         this.config = config;
     }
 
-    private updateData(config: PlaceModuleConfig): void {
+    private updateData(config: PlacesModuleConfig): void {
         this.sourcesWithLayers.places.source.runtimeSource?.setData(
             preparePlacesForDisplay(this.sourcesWithLayers.places.shownFeatures, this.mapLibreMap, config)
         );

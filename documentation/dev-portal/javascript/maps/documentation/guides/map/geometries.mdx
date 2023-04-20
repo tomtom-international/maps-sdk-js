@@ -16,7 +16,7 @@ The Geometry Module allows you to draw various geometries on the map.
 
 # Polygons
 
-The Map Display module supports drawing polygons on the map through the [`GeometryModule`](/javascript/maps/documentation/api-reference/classes/map_geometry.GeometryModule) class.
+The Map Display module supports drawing polygons on the map through the [`GeometriesModule`](/javascript/maps/documentation/api-reference/classes/map_geometry.GeometriesModule) class.
 This module takes a [`GeometryDataResponse`](/javascript/maps/documentation/api-reference/modules/core#GeometryDataResponse) object and draws the geometry on the map.
 
 > A [`GeometryDataResponse`](/javascript/maps/documentation/api-reference/modules/core#GeometryDataResponse) is returned by the Geometry Data service.
@@ -26,12 +26,12 @@ Read more about this service [here](/javascript/maps/documentation/guides/search
 Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map-display/quickstart) guide.
 
 ```javascript
-import { GeometryModule } from "@anw/maps-sdk-js/map";
+import { GeometriesModule } from "@anw/maps-sdk-js/map";
 import { geocode, geometryData } from "@anw/maps-sdk-js/services";
 
 const areaToSearch = await geocode({ query: "paris", limit: 1 });
 const areaGeometry = await geometryData({ geometries: areaToSearch });
-const geometryModule = await GeometryModule.init(map);
+const geometryModule = await GeometriesModule.init(map);
 geometryModule.show(areaGeometry);
 ```
 

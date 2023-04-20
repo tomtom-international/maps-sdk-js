@@ -1,6 +1,6 @@
 import { Place, Places } from "@anw/maps-sdk-js/core";
 import { GeoJSONSource, Map } from "maplibre-gl";
-import { GeoJSONPlaces } from "../GeoJSONPlaces";
+import { PlacesModule } from "../PlacesModule";
 import { TomTomMap } from "../../TomTomMap";
 import { EventsModule, PLACES_SOURCE_PREFIX_ID } from "../../shared";
 
@@ -33,7 +33,7 @@ describe("GeoJSON Places module tests", () => {
             type: "FeatureCollection",
             features: [{ properties: { address: { freeformAddress: "TEST_ADDRESS" } } }]
         } as Places;
-        const places = await GeoJSONPlaces.init(tomtomMapMock, {
+        const places = await PlacesModule.init(tomtomMapMock, {
             iconConfig: {
                 iconStyle: "circle"
             },

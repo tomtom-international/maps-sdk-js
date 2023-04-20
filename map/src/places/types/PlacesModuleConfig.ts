@@ -45,7 +45,7 @@ export type PlaceTextConfig = {
 /**
  * Places layer configuration
  */
-export type PlaceModuleConfig = {
+export type PlacesModuleConfig = {
     iconConfig?: PlaceIconConfig;
     textConfig?: PlaceTextConfig;
     extraFeatureProps?: { [key: string]: ((place: Place) => any) | any };

@@ -46,6 +46,7 @@ describe("Calculate route integration tests", () => {
                     [7.74328, 46.403849],
                     [1.32248, 51.111645]
                 ],
+                costModel: { considerTraffic: false },
                 sectionTypes: testInputSectionTypes,
                 vehicle: {
                     dimensions: { weightKG: 1500 },

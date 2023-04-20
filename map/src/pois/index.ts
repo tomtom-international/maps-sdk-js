@@ -3,6 +3,6 @@
  * @category Map
  */
 
-export * from "./types/VectorTilePOIsConfig";
-export * from "./VectorTilePOIs";
+export * from "./types/POIsModuleConfig";
+export * from "./POIsModule";
 export * from "./poiClassificationGroups";

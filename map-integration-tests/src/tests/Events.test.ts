@@ -4,7 +4,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import placesJSON from "./Events.test.data.json";
-import amsterdamGeometryData from "./GeometryModule.test.data.json";
+import amsterdamGeometryData from "./GeometriesModule.test.data.json";
 import {
     getPlacesSourceAndLayerIDs,
     initGeometry,

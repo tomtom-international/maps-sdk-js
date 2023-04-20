@@ -9,7 +9,7 @@ import {
     geometryFillSpec,
     geometryOutlineSpec
 } from "./layers/GeometryLayers";
-import { GeometryModuleConfig } from "./types/GeometryModuleConfig";
+import { GeometriesModuleConfig } from "./types/GeometriesModuleConfig";
 import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/GeometryDisplayProps";
 import { SymbolLayerSpecWithoutSource } from "../shared";
 
@@ -19,7 +19,7 @@ import { SymbolLayerSpecWithoutSource } from "../shared";
  * @returns
  */
 export const buildGeometryLayerSpec = (
-    config?: GeometryModuleConfig
+    config?: GeometriesModuleConfig
 ): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
     const colorConfig = config?.colorConfig;
     const lineConfig = config?.lineConfig;
@@ -56,7 +56,7 @@ export const buildGeometryLayerSpec = (
  */
 const buildTitle = (
     feature: Feature<Polygon | MultiPolygon, DisplayGeometryProps | GeoJsonProperties>,
-    config: GeometryModuleConfig
+    config: GeometriesModuleConfig
 ): DataDrivenPropertyValueSpecification<string> | string | undefined => {
     if (config.textConfig?.textField) {
         return config.textConfig.textField;
@@ -66,14 +66,12 @@ const buildTitle = (
 };
 
 /**
- * Build geometry color. The type can be a string or a Maplibre expression.
- * @param textField - Name of the field used to get the title
+ * Builds a geometry color string or MapLibre expression.
  * @param config - Geometry module configuration
  * @param index - Number to use as index to pick color from palette option
- * @returns
  */
 const buildColor = (
-    config: GeometryModuleConfig,
+    config: GeometriesModuleConfig,
     index: number
 ): DataDrivenPropertyValueSpecification<string> | string | undefined => {
     const color = config?.colorConfig?.fillColor;
@@ -94,7 +92,7 @@ const buildColor = (
  */
 export const buildGeometryTitleLayerSpec = (
     layerID: string,
-    config?: GeometryModuleConfig
+    config?: GeometriesModuleConfig
 ): Omit<SymbolLayerSpecification, "source"> => {
     const textConfig = config?.textConfig;
 
@@ -127,7 +125,7 @@ export const buildGeometryTitleLayerSpec = (
  */
 export const prepareGeometryForDisplay = (
     geometry: Geometries<GeoJsonProperties | DisplayGeometryProps>,
-    config: GeometryModuleConfig = {}
+    config: GeometriesModuleConfig = {}
 ): Geometries<ExtraGeometryDisplayProps> => ({
     ...geometry,
     features: geometry.features.map((feature, index) => {

@@ -35,11 +35,11 @@ The places from each module will be layered on top of places from the module add
 * Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance.
 * Import the Places module class:
 ```javascript
-import { GeoJSONPlaces } from "@anw/maps-sdk-js/map";
+import { PlacesModule } from "@anw/maps-sdk-js/map";
 ```
 * Initialize a Places module (default config):
 ```javascript
-const placesModule = await GeoJSONPlaces.init(map);
+const placesModule = await PlacesModule.init(map);
 ```
 * Optionally, [configure your module](#configuring-a-places-module) in the step above
 
@@ -53,10 +53,10 @@ which are returned from the services of the Services module.
 For example, showing places from a Search result:
 
 ```javascript
-import { GeoJSONPlaces } from "@anw/maps-sdk-js/map";
+import { PlacesModule } from "@anw/maps-sdk-js/map";
 import { search } from "@anw/maps-sdk-js/services";
 
-const placesModule = await GeoJSONPlaces.init(map);
+const placesModule = await PlacesModule.init(map);
 
 const places = await search({
     query: "pharmacy",
@@ -83,8 +83,8 @@ placesModule.show(places);
 
 ## Customizing icons
 
-You can customize the Places marker icons in the `GeoJSONPlaces` module
-using the [`applyIconConfig()`](/javascript/maps/documentation/api-reference/classes/map_places.GeoJSONPlaces#applyConfig) method.
+You can customize the Places marker icons in the `PlacesModule` module
+using the [`applyIconConfig()`](/javascript/maps/documentation/api-reference/classes/map_places.PlacesModule#applyConfig) method.
 See the [Map Places Customize](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize) example.
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}

@@ -10,8 +10,8 @@ import {
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
-import amsterdamGeometryData from "./GeometryModule.test.data.json";
-import netherlandsGeometryData from "./GeometryModule-Netherlands.test.data.json";
+import amsterdamGeometryData from "./GeometriesModule.test.data.json";
+import netherlandsGeometryData from "./GeometriesModule-Netherlands.test.data.json";
 import { GeoJsonProperties, Position } from "geojson";
 import {
     getNumVisibleLayersBySource,
@@ -110,9 +110,7 @@ describe("Geometry integration tests", () => {
         const features = await queryRenderedFeatures(["geometry_Title"]);
         expect(features).toHaveLength(12);
         features.forEach((feature) => {
-            expect(feature).toMatchObject({
-                properties: { title: "CustomText", color: "#00ccbb" }
-            });
+            expect(feature).toMatchObject({ properties: { title: "CustomText", color: "#00ccbb" } });
         });
 
         const geometryLayer = await getSymbolLayersByID("geometry_Fill");

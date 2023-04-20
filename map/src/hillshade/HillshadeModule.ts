@@ -1,5 +1,5 @@
 import isNil from "lodash/isNil";
-import { VectorTilesHillshadeConfig } from ".";
+import { HillshadeModuleConfig } from ".";
 import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
 import { notInTheStyle } from "../shared/ErrorMessages";
 import { TomTomMap } from "../TomTomMap";
@@ -16,27 +16,27 @@ type HillshadeSourcesWithLayers = {
  * Vector tiles hillshade module.
  * * Hillshade refers to the semi-transparent terrain layer.
  */
-export class VectorTilesHillshade extends AbstractMapModule<HillshadeSourcesWithLayers, VectorTilesHillshadeConfig> {
+export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayers, HillshadeModuleConfig> {
     /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * Gets the Hillshade Module for the given TomTomMap and configuration once the map is ready.
      * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: VectorTilesHillshadeConfig): Promise<VectorTilesHillshade> {
+    static async get(tomtomMap: TomTomMap, config?: HillshadeModuleConfig): Promise<HillshadeModule> {
         await waitUntilMapIsReady(tomtomMap);
-        return new VectorTilesHillshade(tomtomMap, config);
+        return new HillshadeModule(tomtomMap, config);
     }
 
     protected _initSourcesWithLayers() {
         const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
         if (!hillshadeSource) {
-            throw notInTheStyle(`init ${VectorTilesHillshade.name} with source ID ${HILLSHADE_SOURCE_ID}`);
+            throw notInTheStyle(`init ${HillshadeModule.name} with source ID ${HILLSHADE_SOURCE_ID}`);
         }
         return { hillshade: new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource) };
     }
 
-    _applyConfig(config: VectorTilesHillshadeConfig | undefined) {
+    _applyConfig(config: HillshadeModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {

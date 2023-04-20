@@ -37,7 +37,7 @@ export type GeometryBeforeLayerConfig = "top" | MapStyleLayerID;
 /**
  * Geometry layer configuration
  */
-export type GeometryModuleConfig = {
+export type GeometriesModuleConfig = {
     colorConfig?: GeometryColorConfig;
     textConfig?: GeometryTextConfig;
     lineConfig?: GeometryLineConfig;

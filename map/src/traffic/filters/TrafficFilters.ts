@@ -9,7 +9,7 @@ import {
     TrafficFlowFilters,
     TrafficIncidentsFilter,
     TrafficIncidentsFilters
-} from "../types/VectorTilesTrafficConfig";
+} from "../types/TrafficModuleConfig";
 import { MultiSyntaxFilter, ValuesFilter } from "../../shared";
 import { buildValuesFilter, getMergedAnyFilter } from "../../shared/MapLibreFilterUtils";
 

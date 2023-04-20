@@ -1,5 +1,5 @@
 /**
- * Base type for all GO SDK vector tile map modules.
+ * Base type for all Maps SDK vector tile (style based) map modules.
  */
 export type VectorTileMapModuleConfig = {
     /**

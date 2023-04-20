@@ -11,7 +11,7 @@ import {
     SymbolLayerSpecWithoutSource,
     ToBeAddedLayerSpec
 } from "../shared";
-import { GeometryBeforeLayerConfig, GeometryModuleConfig, GeometryTextConfig } from "./types/GeometryModuleConfig";
+import { GeometryBeforeLayerConfig, GeometriesModuleConfig, GeometryTextConfig } from "./types/GeometriesModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { changeLayerProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
@@ -33,7 +33,7 @@ type GeometrySourcesWithLayers = {
 /**
  * Geometry data module.
  */
-export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometryModuleConfig> {
+export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometriesModuleConfig> {
     private titleLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryFillLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryOutlineLayerSpecs!: SymbolLayerSpecWithoutSource;
@@ -44,12 +44,12 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: GeometryModuleConfig): Promise<GeometryModule> {
+    static async init(tomtomMap: TomTomMap, config?: GeometriesModuleConfig): Promise<GeometriesModule> {
         await waitUntilMapIsReady(tomtomMap);
-        return new GeometryModule(tomtomMap, config);
+        return new GeometriesModule(tomtomMap, config);
     }
 
-    protected _initSourcesWithLayers(config?: GeometryModuleConfig): GeometrySourcesWithLayers {
+    protected _initSourcesWithLayers(config?: GeometriesModuleConfig): GeometrySourcesWithLayers {
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
         this.titleLayerSpecs = titleLayerSpec;
@@ -67,7 +67,7 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         };
     }
 
-    protected _applyConfig(config: GeometryModuleConfig | undefined) {
+    protected _applyConfig(config: GeometriesModuleConfig | undefined) {
         if (config?.textConfig || config?.colorConfig || config?.lineConfig) {
             this.updateLayerAndData(config);
         }
@@ -101,7 +101,7 @@ export class GeometryModule extends AbstractMapModule<GeometrySourcesWithLayers,
         this.config = config;
     }
 
-    private updateLayerAndData(config: GeometryModuleConfig) {
+    private updateLayerAndData(config: GeometriesModuleConfig) {
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         const newTitleLayerSpecs = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
 

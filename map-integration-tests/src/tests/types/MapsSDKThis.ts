@@ -1,13 +1,13 @@
 import { LngLatLike, Map, MapGeoJSONFeature } from "maplibre-gl";
 import {
-    GeoJSONPlaces,
-    GeometryModule,
+    PlacesModule,
+    GeometriesModule,
     TomTomMap,
     RoutingModule,
     SourceWithLayers,
-    VectorTilePOIs,
-    VectorTilesHillshade,
-    VectorTilesTraffic
+    POIsModule,
+    HillshadeModule,
+    TrafficModule
 } from "map";
 
 export type MapsSDKThis = typeof globalThis & {
@@ -17,11 +17,11 @@ export type MapsSDKThis = typeof globalThis & {
     MapsSDKCore: typeof globalThis.MapsSDKCore;
     tomtomMap: TomTomMap;
     mapLibreMap: Map;
-    traffic?: VectorTilesTraffic;
-    pois?: VectorTilePOIs;
-    hillshade?: VectorTilesHillshade;
-    places?: GeoJSONPlaces;
-    geometry?: GeometryModule;
+    traffic?: TrafficModule;
+    pois?: POIsModule;
+    hillshade?: HillshadeModule;
+    places?: PlacesModule;
+    geometry?: GeometriesModule;
     routing?: RoutingModule;
     // These properties are used for testing events in a map
     // It's initialized by 0 and you can assert the count of:

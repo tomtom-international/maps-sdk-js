@@ -7,7 +7,7 @@ import {
 import { LayerSpecTemplate, SymbolLayerSpecWithoutSource } from "../../shared";
 import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from "../../shared/layers/CommonLayerProps";
 import { ICON_ID, TITLE } from "../types/PlaceDisplayProps";
-import { PlaceModuleConfig } from "../types/PlaceModuleConfig";
+import { PlacesModuleConfig } from "../types/PlacesModuleConfig";
 
 /**
  * @ignore
@@ -89,7 +89,7 @@ export const clickedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> 
 
 const withConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
-    config: PlaceModuleConfig | undefined,
+    config: PlacesModuleConfig | undefined,
     id: string
 ): SymbolLayerSpecWithoutSource => {
     const textConfig = config?.textConfig;
@@ -144,7 +144,7 @@ const buildPOILikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecifica
  * @ignore
  */
 export const buildPlacesLayerSpecs = (
-    config: PlaceModuleConfig | undefined,
+    config: PlacesModuleConfig | undefined,
     idPrefix: string,
     map: Map
 ): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {

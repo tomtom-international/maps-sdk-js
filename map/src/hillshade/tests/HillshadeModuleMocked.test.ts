@@ -1,7 +1,7 @@
 import { Map } from "maplibre-gl";
 import { HILLSHADE_SOURCE_ID } from "../../shared";
 import { TomTomMap } from "../../TomTomMap";
-import { VectorTilesHillshade } from "../VectorTilesHillshade";
+import { HillshadeModule } from "../HillshadeModule";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -22,7 +22,7 @@ describe("Vector tiles Hillshade module tests", () => {
             _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
-        const hillshade = await VectorTilesHillshade.init(tomtomMapMock, {
+        const hillshade = await HillshadeModule.get(tomtomMapMock, {
             visible: false
         });
         expect(hillshade).toBeDefined();
@@ -50,7 +50,7 @@ describe("Vector tiles Hillshade module tests", () => {
             _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
-        const hillshade = await VectorTilesHillshade.init(tomtomMapMock);
+        const hillshade = await HillshadeModule.get(tomtomMapMock);
         expect(hillshade).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();

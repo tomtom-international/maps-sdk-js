@@ -7,7 +7,7 @@ import {
     RoadCategory,
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID,
-    VectorTilesTrafficConfig
+    TrafficModuleConfig
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
@@ -48,19 +48,19 @@ const getByIncidentCategories = (
 const getByRoadCategories = (renderedItems: MapGeoJSONFeature[], roadCategories: RoadCategory[]): MapGeoJSONFeature[] =>
     renderedItems.filter((incident) => roadCategories.includes(incident.properties["road_category"]));
 
-const initTraffic = async (config?: VectorTilesTrafficConfig) =>
+const initTraffic = async (config?: TrafficModuleConfig) =>
     page.evaluate(async (inputConfig?) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.traffic = await mapsSDKThis.MapsSDK.VectorTilesTraffic.init(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as VectorTilesTrafficConfig);
+        mapsSDKThis.traffic = await mapsSDKThis.MapsSDK.TrafficModule.get(mapsSDKThis.tomtomMap, inputConfig);
+    }, config as TrafficModuleConfig);
 
-const getConfig = async (): Promise<VectorTilesTrafficConfig | undefined> =>
+const getConfig = async (): Promise<TrafficModuleConfig | undefined> =>
     page.evaluate(async () => (globalThis as MapsSDKThis).traffic?.getConfig());
 
-const applyConfig = async (config: VectorTilesTrafficConfig | undefined) =>
+const applyConfig = async (config: TrafficModuleConfig | undefined) =>
     page.evaluate(
         (inputConfig) => (globalThis as MapsSDKThis).traffic?.applyConfig(inputConfig),
-        config as VectorTilesTrafficConfig
+        config as TrafficModuleConfig
     );
 
 const resetConfig = async () => page.evaluate(() => (globalThis as MapsSDKThis).traffic?.resetConfig());
@@ -205,7 +205,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(defaultIncidents.length).toBeGreaterThan(4);
         expect(getByIncidentCategories(defaultIncidents, ["road_closed"]).length).toBeGreaterThan(0);
 
-        let config: VectorTilesTrafficConfig = {
+        let config: TrafficModuleConfig = {
             incidents: {
                 filters: { any: [{ incidentCategories: { show: "only", values: ["road_closed"] } }] }
             }
@@ -275,7 +275,7 @@ describe("Map vector tile traffic module tests", () => {
             { style: { type: "published", exclude: ["traffic_incidents", "hillshade", "poi"] } }
         );
 
-        const config: VectorTilesTrafficConfig = {
+        const config: TrafficModuleConfig = {
             flow: {
                 filters: {
                     any: [{ roadCategories: { show: "only", values: ["motorway"] }, showRoadClosures: "all_except" }]
@@ -317,7 +317,7 @@ describe("Map vector tile traffic module tests", () => {
             { style: { type: "published", exclude: ["hillshade"] } }
         );
 
-        const config: VectorTilesTrafficConfig = {
+        const config: TrafficModuleConfig = {
             incidents: {
                 filters: {
                     any: [
@@ -464,7 +464,7 @@ describe("Map vector tile traffic module tests", () => {
             flow: { filters: flowFilters }
         });
 
-        await page.evaluate(async () => (globalThis as MapsSDKThis).traffic?.filterFlow(undefined));
+        await page.evaluate(async () => (globalThis as MapsSDKThis).traffic?.filterFlow());
         expect(await getConfig()).toEqual({
             visible: false,
             incidents: { filters: incidentFilters, icons: { filters: incidentFilters } },

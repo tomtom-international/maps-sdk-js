@@ -2,9 +2,9 @@ import { GeoJsonProperties, Position } from "geojson";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
 import { Geometries, GlobalConfig, Language, Places } from "@anw/maps-sdk-js/core";
 import {
-    GeometryModuleConfig,
+    GeometriesModuleConfig,
     LayerSpecWithSource,
-    PlaceModuleConfig,
+    PlacesModuleConfig,
     StyleInput,
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID
@@ -164,10 +164,10 @@ export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; 
         };
     });
 
-export const initPlaces = async (config?: PlaceModuleConfig) =>
+export const initPlaces = async (config?: PlacesModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places = await mapsSDKThis.MapsSDK.GeoJSONPlaces.init(mapsSDKThis.tomtomMap, inputConfig);
+        mapsSDKThis.places = await mapsSDKThis.MapsSDK.PlacesModule.init(mapsSDKThis.tomtomMap, inputConfig);
     }, config as never);
 
 export const showPlaces = async (places: Places) =>
@@ -176,11 +176,11 @@ export const showPlaces = async (places: Places) =>
         // @ts-ignore
     }, places);
 
-export const initGeometry = async (config?: GeometryModuleConfig) =>
+export const initGeometry = async (config?: GeometriesModuleConfig) =>
     page.evaluate(
-        async (inputConfig: GeometryModuleConfig) => {
+        async (inputConfig: GeometriesModuleConfig) => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.geometry = await mapsSDKThis.MapsSDK.GeometryModule.init(mapsSDKThis.tomtomMap, inputConfig);
+            mapsSDKThis.geometry = await mapsSDKThis.MapsSDK.GeometriesModule.init(mapsSDKThis.tomtomMap, inputConfig);
         },
         // @ts-ignore
         config
