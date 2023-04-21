@@ -72,7 +72,7 @@ export const injectCustomHeaders =
 export const areBothDefinedAndEqual = (
     featureA: MapGeoJSONFeature | undefined,
     featureB: MapGeoJSONFeature | undefined
-): boolean => !!featureA && !!featureB && featureA.id == featureB.id;
+): boolean => !!featureA && !!featureB && featureA.id === featureB.id;
 
 type LayerProps = {
     id: string;

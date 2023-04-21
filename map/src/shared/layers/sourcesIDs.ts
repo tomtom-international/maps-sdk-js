@@ -30,6 +30,11 @@ export const PLACES_SOURCE_PREFIX_ID = "places";
 export const PLACES_SYMBOL_LAYER_PREFIX_ID = "placesSymbols";
 
 /**
+ * Vector tiles source id
+ */
+export const VECTOR_TILES_SOURCE_ID = "vectorTiles";
+
+/**
  * Traffic incidents source id
  */
 export const VECTOR_TILES_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";

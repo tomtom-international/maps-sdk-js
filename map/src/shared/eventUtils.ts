@@ -138,7 +138,10 @@ export const detectHoverState = (
             return {};
         } else if (!prevHoveredFeature) {
             return { hoverChanged: true };
-        } else if (hoveringFeature.id !== prevHoveredFeature.id) {
+        } else if (
+            hoveringFeature.id !== prevHoveredFeature.id ||
+            hoveringFeature.source !== prevHoveredFeature.source
+        ) {
             // hovering from one feature to another one (from the same or different layer/source):
             return { hoverChanged: true };
         } else {

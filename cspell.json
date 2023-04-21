@@ -46,7 +46,8 @@
     "Marechal",
     "POIAPI",
     "typeahead",
-    "includepaths"
+    "includepaths",
+    "sourcedata"
   ],
   "ignorePaths": [
     "**/dist/**",

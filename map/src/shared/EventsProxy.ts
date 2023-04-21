@@ -2,7 +2,7 @@ import { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } fro
 import { AbstractEventProxy, toHandlerGroupID } from "./AbstractEventProxy";
 import { ClickEventType, SourceWithLayers } from "./types";
 import { MapEventsConfig } from "../init";
-import { areBothDefinedAndEqual, deserializeFeatures } from "./mapUtils";
+import { deserializeFeatures } from "./mapUtils";
 import { detectHoverState, updateEventState } from "./eventUtils";
 
 // Default values for events
@@ -114,28 +114,26 @@ export class EventsProxy extends AbstractEventProxy {
 
     private handleLongHoverTimeout() {
         // We avoid firing long hovers when the feature is in clicked state:
-        if (!areBothDefinedAndEqual(this.hoveringFeature, this.lastClickedFeature)) {
-            this.firstDelayedHoverSinceMapMove = false;
+        this.firstDelayedHoverSinceMapMove = false;
 
-            if (this.hoveringSourceWithLayers) {
-                const eventState = updateEventState(
-                    "long-hover",
-                    this.hoveringFeature,
-                    undefined,
-                    this.hoveringSourceWithLayers,
-                    undefined
-                );
+        if (this.hoveringSourceWithLayers) {
+            const eventState = updateEventState(
+                "long-hover",
+                this.hoveringFeature,
+                undefined,
+                this.hoveringSourceWithLayers,
+                undefined
+            );
 
-                const longHoverHandlers = this.handlers[this.hoveringSourceWithLayers.source.id + "_long-hover"];
-                longHoverHandlers?.forEach((handler) =>
-                    handler(
-                        eventState?.feature,
-                        this.hoveringLngLat as LngLat,
-                        this.hoveringFeatures as MapGeoJSONFeature[],
-                        this.hoveringSourceWithLayers as SourceWithLayers
-                    )
-                );
-            }
+            const longHoverHandlers = this.handlers[this.hoveringSourceWithLayers?.source.id + "_long-hover"];
+            longHoverHandlers?.forEach((handler) =>
+                handler(
+                    eventState?.feature,
+                    this.hoveringLngLat as LngLat,
+                    this.hoveringFeatures as MapGeoJSONFeature[],
+                    this.hoveringSourceWithLayers as SourceWithLayers
+                )
+            );
         }
     }
 
@@ -242,19 +240,17 @@ export class EventsProxy extends AbstractEventProxy {
         this.lastClickedSourceWithLayers = this.interactiveSourcesAndLayers[this.lastClickedFeature?.source];
         const clickHandlers = this.handlers[toHandlerGroupID(this.lastClickedFeature?.source, clickType)];
 
-        if (clickHandlers || !this.lastClickedFeature) {
-            const eventState = updateEventState(
-                clickType,
-                this.lastClickedFeature,
-                prevClickedFeature,
-                this.lastClickedSourceWithLayers,
-                prevClickedSourceWithLayers
-            );
+        const eventState = updateEventState(
+            clickType,
+            this.lastClickedFeature,
+            prevClickedFeature,
+            this.lastClickedSourceWithLayers,
+            prevClickedSourceWithLayers
+        );
 
-            if (clickHandlers && eventState) {
-                for (const handler of clickHandlers) {
-                    handler(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
-                }
+        if (clickHandlers && eventState) {
+            for (const handler of clickHandlers) {
+                handler(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
             }
         }
     }

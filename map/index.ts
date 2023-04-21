@@ -4,6 +4,7 @@
  */
 export * from "./src/shared";
 export * from "./src/init";
+export * from "./src/base";
 export * from "./src/hillshade";
 export * from "./src/pois";
 export * from "./src/traffic";
