@@ -7,7 +7,8 @@ import {
     SourceWithLayers,
     POIsModule,
     HillshadeModule,
-    TrafficModule
+    TrafficModule,
+    BaseMapModule
 } from "map";
 
 export type MapsSDKThis = typeof globalThis & {
@@ -17,6 +18,7 @@ export type MapsSDKThis = typeof globalThis & {
     MapsSDKCore: typeof globalThis.MapsSDKCore;
     tomtomMap: TomTomMap;
     mapLibreMap: Map;
+    basemap: BaseMapModule;
     traffic?: TrafficModule;
     pois?: POIsModule;
     hillshade?: HillshadeModule;

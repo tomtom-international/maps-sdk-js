@@ -1,7 +1,7 @@
 import { Map } from "maplibre-gl";
 import { VECTOR_TILES_SOURCE_ID } from "../../shared";
 import { TomTomMap } from "../../TomTomMap";
-import { BaseMap } from "../BaseMap";
+import { BaseMapModule } from "../BaseMap";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -28,7 +28,7 @@ describe("BaseMap module tests", () => {
     });
 
     test("Initializing module with config", async () => {
-        const basemap = await BaseMap.init(tomtomMapMock, {
+        const basemap = await BaseMapModule.init(tomtomMapMock, {
             visible: false
         });
         const spySetVisible = jest.spyOn(basemap, "setVisible");
@@ -45,7 +45,7 @@ describe("BaseMap module tests", () => {
     });
 
     test("Initializing module with no config", async () => {
-        const basemap = await BaseMap.init(tomtomMapMock);
+        const basemap = await BaseMapModule.init(tomtomMapMock);
         expect(basemap).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
@@ -55,6 +55,6 @@ describe("BaseMap module tests", () => {
     test("Throw if source runtime is not found", async () => {
         tomtomMapMock.mapLibreMap.getSource = jest.fn().mockReturnValueOnce(undefined);
 
-        await expect(async () => await BaseMap.init(tomtomMapMock)).rejects.toThrow();
+        await expect(async () => await BaseMapModule.init(tomtomMapMock)).rejects.toThrow();
     });
 });

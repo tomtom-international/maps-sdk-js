@@ -17,7 +17,7 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
-import { EventType } from "map";
+import { EventType, VECTOR_TILES_SOURCE_ID, VectorTileMapModuleConfig } from "map";
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
@@ -72,6 +72,24 @@ const getNumHoversAndLongHovers = async (): Promise<[number, number]> =>
     page.evaluate(() => {
         const sdkThis = globalThis as MapsSDKThis;
         return [sdkThis._numOfHovers, sdkThis._numOfLongHovers] as [number, number];
+    });
+
+const initBasemap = async (config?: VectorTileMapModuleConfig) =>
+    page.evaluate(async (inputConfig) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.init(mapsSDKThis.tomtomMap, inputConfig);
+    }, config as never);
+
+const setupBasemapClickHandlers = async () =>
+    page.evaluate(async () => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.basemap?.events.on("click", (topFeature, lnglat, features, sourceWithLayers) => {
+            mapsSDKThis._numOfClicks++;
+            mapsSDKThis._clickedTopFeature = topFeature;
+            mapsSDKThis._clickedLngLat = lnglat;
+            mapsSDKThis._clickedFeatures = features;
+            mapsSDKThis._clickedSourceWithLayers = sourceWithLayers;
+        });
     });
 
 describe("Tests with user events", () => {
@@ -217,6 +235,22 @@ describe("Tests with user events", () => {
 
         // we register a hover handler for geometries
         await setupGeometryHoverHandlers();
+    });
+
+    test("Events combining BaseMap module", async () => {
+        await initBasemap();
+        await initPlaces();
+
+        await setupBasemapClickHandlers();
+
+        // Click on a POI and gets the under layer from basemap as we don't have a event register por Places.
+        const placePosition = await getPixelCoords(firstPlacePosition);
+        await page.mouse.click(placePosition.x, placePosition.y);
+        const topFeature = (await page.evaluate(
+            () => (globalThis as MapsSDKThis)._clickedTopFeature
+        )) as MapGeoJSONFeature;
+
+        expect(topFeature?.source).toBe(VECTOR_TILES_SOURCE_ID);
     });
 });
 

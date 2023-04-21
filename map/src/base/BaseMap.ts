@@ -14,7 +14,7 @@ type BaseSourceAndLayers = {
     vectorTiles: StyleSourceWithLayers;
 };
 
-export class BaseMap extends AbstractMapModule<BaseSourceAndLayers, VectorTileMapModuleConfig> {
+export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, VectorTileMapModuleConfig> {
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
      * @param tomtomMap The TomTomMap instance.
@@ -25,13 +25,13 @@ export class BaseMap extends AbstractMapModule<BaseSourceAndLayers, VectorTileMa
         waitUntilMapIsReady(tomtomMap);
         // We make sure that all data source is loaded before create a new instance of BaseMap module
         await tomtomMap.mapLibreMap.once("sourcedata");
-        return new BaseMap(tomtomMap, config);
+        return new BaseMapModule(tomtomMap, config);
     }
 
     protected _initSourcesWithLayers() {
         const vectorTitleRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_SOURCE_ID);
         if (!vectorTitleRuntimeSource) {
-            throw notInTheStyle(`init ${BaseMap.name} with source ID ${VECTOR_TILES_SOURCE_ID}`);
+            throw notInTheStyle(`init ${BaseMapModule.name} with source ID ${VECTOR_TILES_SOURCE_ID}`);
         }
         const vectorTiles = new StyleSourceWithLayers(this.mapLibreMap, vectorTitleRuntimeSource);
         return { vectorTiles };
