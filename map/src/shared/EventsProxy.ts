@@ -1,5 +1,5 @@
 import { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } from "maplibre-gl";
-import { AbstractEventProxy } from "./AbstractEventProxy";
+import { AbstractEventProxy, toHandlerGroupID } from "./AbstractEventProxy";
 import { ClickEventType, SourceWithLayers } from "./types";
 import { MapEventsConfig } from "../init";
 import { areBothDefinedAndEqual, deserializeFeatures } from "./mapUtils";
@@ -42,7 +42,6 @@ export class EventsProxy extends AbstractEventProxy {
     private lastCursorStyle: string;
     // Configuration
     private readonly config: Required<MapEventsConfig>;
-    private paddingBoxOnZoom: number | null = null;
     private readonly defaultZoomLevel: number;
 
     constructor(map: Map, config: MapEventsConfig = {}) {
@@ -76,12 +75,12 @@ export class EventsProxy extends AbstractEventProxy {
     }
 
     private toPaddedBounds(point: Point2D): [[number, number], [number, number]] {
-        const paddingBox = this.paddingBoxOnZoom || this.config.paddingBox;
+        const padding = this.config.paddingBox;
         return [
             // sw:
-            [point.x - paddingBox, point.y + paddingBox],
+            [point.x - padding, point.y + padding],
             // ne:
-            [point.x + paddingBox, point.y - paddingBox]
+            [point.x + padding, point.y - padding]
         ];
     }
 
@@ -91,10 +90,12 @@ export class EventsProxy extends AbstractEventProxy {
 
     private getRenderedFeatures(point: Point2D): MapGeoJSONFeature[] {
         const options = { layers: this.interactiveLayerIDs };
+        // first attempt right in the given coordinates:
         const renderedFeatures = this.map.queryRenderedFeatures(point as PointLike, options);
         return renderedFeatures.length
             ? renderedFeatures
-            : this.map.queryRenderedFeatures(this.toPaddedBounds(point), options);
+            : // second attempt using padded bounds (trying to hit something slightly further from the pointer location)
+              this.map.queryRenderedFeatures(this.toPaddedBounds(point), options);
     }
 
     private clearLongHoverTimeout() {
@@ -203,7 +204,7 @@ export class EventsProxy extends AbstractEventProxy {
                     prevHoveredSourceWithLayers
                 );
 
-                const hoverHandlers = this.handlers[hoveredTopFeature && hoveredTopFeature.source + `_hover`];
+                const hoverHandlers = this.handlers[toHandlerGroupID(hoveredTopFeature?.source, "hover")];
                 if (hoverHandlers && eventState) {
                     for (const handler of hoverHandlers) {
                         handler(eventState.feature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
@@ -239,7 +240,7 @@ export class EventsProxy extends AbstractEventProxy {
         this.lastClickedFeature = clickedFeatures[0];
         const prevClickedSourceWithLayers = this.lastClickedSourceWithLayers;
         this.lastClickedSourceWithLayers = this.interactiveSourcesAndLayers[this.lastClickedFeature?.source];
-        const clickHandlers = this.handlers[this.lastClickedFeature?.source + `_${clickType}`];
+        const clickHandlers = this.handlers[toHandlerGroupID(this.lastClickedFeature?.source, clickType)];
 
         if (clickHandlers || !this.lastClickedFeature) {
             const eventState = updateEventState(

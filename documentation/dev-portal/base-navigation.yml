@@ -18,6 +18,8 @@ menu:
         items:
           - fileId: guides/map/quickstart
             title: Quickstart
+          - fileId: guides/map/about-maplibre
+            title: About MapLibre
           - fileId: guides/map/map-styles
             title: Map styles
           - fileId: guides/map/traffic
@@ -30,8 +32,6 @@ menu:
             title: Routes
           - fileId: guides/map/user-events
             title: User Events
-          - fileId: guides/map/about-maplibre
-            title: About MapLibre
       - title: Services
         items:
           - fileId: guides/services/quickstart

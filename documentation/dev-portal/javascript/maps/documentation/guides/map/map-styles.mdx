@@ -29,7 +29,7 @@ The TomTom Map can load multiple pre-defined styles, but it also supports loadin
 
 # Pre-defined styles
 
-The Map Display module provides pre-defined styles that can be used in the application.
+The Map bundle provides pre-defined styles that can be used in the application.
 They are provided in the [`StyleInput`](/javascript/maps/documentation/api-reference/modules/map_init#StyleInput) as [`PublishedStyle`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle).
 A [`PublishedStyle`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle) represents a style which is officially hosted by TomTom and easily accessible by its name.
 
@@ -90,7 +90,7 @@ as a [`CustomStyle`](/javascript/maps/documentation/api-reference/modules/map_in
 # Excluding modules from a style
 
 When setting the map style, you can exclude modules from the loaded map style with the `exclude` property in [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
-For example, excluding [hill shading](/javascript/maps/documentation/guides/map-display/map-styles#_adding_hill_shading) and [traffic flow](/javascript/maps/documentation/guides/map-display/traffic) from the map style:
+For example, excluding [hill shading](/javascript/maps/documentation/guides/map/map-styles#_adding_hill_shading) and [traffic flow](/javascript/maps/documentation/guides/map/traffic) from the map style:
 
 ```javascript
 import { TomTomMap } from "@anw/maps-sdk-js/map";
@@ -116,7 +116,7 @@ const map = new TomTomMap(
 
 # Adding and filtering Points of Interest
 
-The styles from the Map Display module contain a Points of Interest (POIs) layer. This layer is enabled by default, but can be excluded from the
+The styles from the Map bundle contain a Points of Interest (POIs) layer. This layer is enabled by default, but can be excluded from the
 map style with the `exclude` property of the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
 
 <img src="images/ss_poi_layer.png" alt="Map with POI layer enabled" />
@@ -139,7 +139,7 @@ See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map
 
 # Adding hill shading
 
-The Map Display module allows you to add style layers such as hill shading to the map style.
+The Map bundle allows you to add style layers such as hill shading to the map style.
 
 <img src="images/ss_hillshade.png" alt="Map with hill shading" />
 

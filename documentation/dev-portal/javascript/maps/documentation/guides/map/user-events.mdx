@@ -10,52 +10,117 @@ titleTags:
   color: "grey5"
 ---
 
-The Map Display module allows events to be detected on the TomTom map layers. By default, these layers support the following events:
+TomTom's Maps SDK JS offers to proxy some of MapLibre's user events and adds out-of-the-box convenience to save you time.
 
--   `"click"` - a [click](https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event) event
--   `"contextmenu"` - a [contextmenu](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event) event
--   `"hover"` - a hover event gets fired when the user's pointer is moving over a layer
--   `"long-hover"` - a long-hover event gets fired when the user's pointer is hovering over a layer for a longer period of time
+# MapLibre user events
 
-These events can be customized through the [`MapEventsConfig`](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
-when initializing a [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
+MapLibre GL JS supports many kinds of [events](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-events).
+Some of those events are so-called user events, which are triggered by direct user actions (mouse/keyboard/touch inputs).
 
-> If, instead of events on the TomTom map layers, you're interested in defining events directly on the MapLibre [`Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/)
-contained by the [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap), take a look at [MapLibre Events](https://maplibre.org/maplibre-gl-js-docs/api/events/).
+While using the TomTom Maps SDK JS, you have full access to MapLibre GL JS, which in turn means you can fully access its events,
+both for TomTom data and your own.
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_listening_for_events"></a>}
+However:
+* **Hover events aren't trivial to implement**, particularly with refined delays in them.
+* When multiple sources are interactive, handling their events **requires boilerplate to prevent conflicts**.
+* You need to usually **transform from the raw event objects to the core ones in your application state**.
+* Allowing for some **padding around the pointing device while still being accurate** isn't trivial to implement.
 
-# Listening for events
+To help with the above, the TomTom SDK provides out of the box support for key user events
+in relation to the TomTom Map and rendered items via SDK modules.
+<br/>
 
-Event handlers can be registered per individual module in the Map Display module. For example, a hover event handler
-on traffic incidents ([`TrafficModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule) module)
-can be registered with:
+# TomTom Maps SDK JS: user event types
+This section explains the different [user event types](/javascript/maps/documentation/api-reference/modules/map_shared#EventType) supported by the TomTom SDK (on top of all the ones already supported by MapLibre).
 
-> Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map-display/quickstart) guide.
+## `"hover"`
+Hover is a new synthetic event type which does not exist in MapLibre as such.
+A hover event gets fired when the user's pointer **enters** a registered layer.
+
+You can configure the hovering cursor when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap)
+via its [events configuration object](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
+(see `cursorOnHover`).
+
+Hover events are very useful to provide quick visual feedback. However, taking too much action on hover can feel like the map overreacts.
+
+This is why the SDK also supports long-hover events.
+
+## `"long-hover"`
+Long Hover is a new synthetic event type which does not exist in MapLibre as such.
+A long hover event gets fired when a pointer device **keeps hovering** a registered layer feature long enough without moving.
+
+Long hover events are very useful to ensure the hovering intention of a user and perform further action than an immediate hover.
+For instance, while a hover might just highlight a pin, a long hover might show a popup on it.
+
+The SDK also applies a longer delay for a long hover right after you have moved the map.
+This helps mitigate unwanted hover effects when the user is moving the map around.
+Once the first long hover has happened, subsequent ones will be triggered with a slightly lower delay, until the map is moved again.
+
+You can configure the length of long hover delays
+when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap)
+via its [events configuration object](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
+(see `longHoverDelayAfterMapMoveMS` and `longHoverDelayOnStillMapMS`).
+
+## `"click"`
+Click events are based on MapLibre [click](https://maplibre.org/maplibre-gl-js-docs/api/map/#map.event:click).
+
+They are fired when a pointing device (usually a mouse) is **pressed and released** at the same point on the map.
+
+## `"contextmenu"`
+Contextmenu events are based on MapLibre [contextmenu](https://maplibre.org/maplibre-gl-js-docs/api/map/#map.event:contextmenu).
+
+They are fired when the **right button** of the mouse is clicked or the **context menu key** is pressed within the map.
+<br/>
+
+# Registering and de-registering
+
+You can register your user event handlers for each event type in each map module.
+The guide for each [map module](/javascript/maps/documentation/guides/map/quickstart#map-modules) has a user events section.
+
+Each map module has an `events` object which returns an [`EventsModule`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule) instance
+typed for the map module in particular. For instance, if you access the `events` object of a Places module, the events will already be typed for Places.
+
+Via `events` you can then register and de-register your handlers using the
+[`on`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule#on)
+and [`off`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule#off) methods.
+
+The user events handler is a function of type [`UserEventHandler`](/javascript/maps/documentation/api-reference/modules/map_shared#UserEventHandler).
+
+For example, a hover event handler on traffic incidents ([`TrafficModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule))
+can be registered like this:
 
 ```javascript
+// ensure "map" is initialized as your TomtomMap (see map quickstart guide)
 const traffic = await TrafficModule.get(map);
-traffic.events.incidents.on("hover", eventHandler);
+traffic.events.incidents.on("hover", (incident) => console.log(JSON.stringify(incident)));
 ```
 
-where `eventHandler` is a function of type [`HoverClickHandler`](/javascript/maps/documentation/api-reference/modules/map_shared#HoverClickHandler).
-
-Remove existing listeners by calling the `off` method on the corresponding [`EventsModule`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule).
+You can de-register all your handlers from a module for an event type by calling the
+[`off`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule#off) method
+on the corresponding [`EventsModule`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule).
 
 ```javascript
 traffic.events.incidents.off("hover");
 ```
+<br/>
 
-The `interactive` flag in the `config` for map modules can also be used to disable all interaction with a map layer,
-effectively disabling all event handlers on that map layer.
+# Default SDK handling: *eventState*
+When you register to events in some SDK module, the SDK will automatically start setting eventState property in the features impacted by the registered events.
+This will give you in some modules hover and click effects out of the box, but also the ability to customize how they look without having to set the props yourself.
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
+* If you register for any event types in a map module, then hover and long-hover states will be automatically set, even if you had no handlers for them. *E.g. if you listen to click events for Places, in addition to click effects you also get hover effects for free.*
+* If you register only for hover effects in a map module, you won't get click event states set, since hover events have lower priority. *E.g. if you only listen to hover events for Places, when clicking them nothing will happen.*
+<br/>
 
-# Next steps
+# Pointer accuracy and padding
+Very often end users enjoy some slack in the accuracy needed to hit a visual feature with their pointing device.
+This is why the SDK tries first to find features right under the pointed coordinates, but if that doesn't work, it defaults to **padded bounds**.
+Padded bounds are a small box (10px across by default) around the pointing device which increases its target range.
 
-Since you have learned how to interact with the map, here are recommendations for the next steps:
+You can configure the size of the padding box when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap)
+via its [events configuration object](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig).
+<br/>
 
--   [Example: Map events](https://hosted-examples.maps-sdk-js.tomtom.com/main/map-events)
--   [Manipulate the camera position](/javascript/maps/documentation/guides/map-display/camera-and-animations)
--   [Draw shapes on the map](/javascript/maps/documentation/guides/map-display/overlays)
+# Customizing user events
+These events can be customized through the [`MapEventsConfig`](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
+when initializing a [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).

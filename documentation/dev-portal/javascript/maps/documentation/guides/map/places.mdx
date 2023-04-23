@@ -16,14 +16,11 @@ However, you still can configure how to display the places, and also display the
 
 # When all you need is a map with one or few pins
 
-Very often all you need to do is to show a map with a single pin, or perhaps a handful of icons which won't change often. For that you might directly try to add [Markers](https://maplibre.org/maplibre-gl-js-docs/api/markers/) via MapLibre.
+Very often all you need to do is to show a map with a single pin without a label, or perhaps a handful of icons which won't change often. For that you might directly try to add [Markers](https://maplibre.org/maplibre-gl-js-docs/api/markers/) via MapLibre.
 See [default marker example](https://maplibre.org/maplibre-gl-js-docs/example/add-a-marker/) and
 [add popup to marker instance example](https://maplibre.org/maplibre-gl-js-docs/example/set-popup/)
 
 However, if you want to easily show TomTom places, or show your own places with richer display information and solid user events which also work well with other map parts, keep reading.
-
-
-
 
 # Initializing a Places module
 
@@ -43,27 +40,18 @@ const placesModule = await PlacesModule.init(map);
 ```
 * Optionally, [configure your module](#configuring-a-places-module) in the step above
 
-
-
-
 # Showing Places on the map
 
 The Places Module is used to show [`Places`](/javascript/maps/documentation/api-reference/modules/core#Places) on the map,
 which are returned from the services of the Services module.
-For example, showing places from a Search result:
+For example, showing places from a search result:
 
 ```javascript
-import { PlacesModule } from "@anw/maps-sdk-js/map";
 import { search } from "@anw/maps-sdk-js/services";
-
+import { PlacesModule } from "@anw/maps-sdk-js/map";
+// ensure "map" is initialized as your TomtomMap (see map quickstart guide)
+const places = await search({ query: "pharmacy", limit: 35, boundingBox: map.getBounds()});
 const placesModule = await PlacesModule.init(map);
-
-const places = await search({
-    query: "pharmacy",
-    limit: 35,
-    boundingBox: map.getBounds()
-});
-
 placesModule.show(places);
 ```
 
@@ -71,29 +59,62 @@ placesModule.show(places);
 
 <br/>
 
+# Interacting with Places on the map
 
+With the SDK you can easily listen to key user events for Places without worrying if the events overlap with other SDK layers.
 
+To understand how the SDK deals with user events, read the [user events guide](/javascript/maps/documentation/guides/map/user-events) first.
+
+The first parameter of event callbacks will be the top Place that got the event.
+<br/>
+
+Registering to user events:
+```javascript
+import { Place } from "@anw/maps-sdk-js/core";
+import { PlacesModule } from "@anw/maps-sdk-js/map";
+// ensure "map" is initialized as your TomtomMap (see map quickstart guide)
+const placesModule = await PlacesModule.init(map);
+placesModule.events.on("hover", (place: Place) => console.log(`hover: ${JSON.stringify(place)}`));
+placesModule.events.on("long-hover", (place: Place) => console.log(`long-hover: ${JSON.stringify(place)}`));
+placesModule.events.on("click", (place: Place) => console.log(`click: ${JSON.stringify(place)}`));
+placesModule.events.on("contextmenu", (place: Place) => console.log(`contextmenu: ${JSON.stringify(place)}`));
+```
+
+When you listen to Places events, the SDK will automatically apply [`eventState`](/javascript/maps/documentation/api-reference/modules/map_shared#SupportsEvents)
+with the occurred event to the Place feature properties on the map.
+
+The SDK applies then default styling based on such properties.
+<div style={{display: "flex"}}>
+	<div style={{marginRight: 36}}>
+		<img src="images/default-pin.png" alt="Default pin" style={{width: 128}} />
+		*Default pin*
+	</div>
+	<div style={{marginRight: 36}}>
+		<img src="images/hovered-pin.png" alt="Hovered pin" style={{width: 128}} />
+		*Hovered pin*
+	</div>
+	<div>
+		<img src="images/clicked-pin.png" alt="Clicked pin" style={{width: 128}} />
+		*Clicked pin*
+	</div>
+</div>
+You can change such default styling if you want.
+<br/>
 
 # Configuring a Places module
 
-<Blockquote>
-	Coming soon
-</Blockquote>
+You can customize how you want to display places in different ways.
 
+>Coming soon
+<br/>
 
 ## Customizing icons
 
-You can customize the Places marker icons in the `PlacesModule` module
-using the [`applyIconConfig()`](/javascript/maps/documentation/api-reference/classes/map_places.PlacesModule#applyConfig) method.
-See the [Map Places Customize](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize) example.
-
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
-
+You can customize the Places icons in the `PlacesModule` module
+using the [`applyIconConfig`](/javascript/maps/documentation/api-reference/classes/map_places.PlacesModule#applyConfig) method.
+See the [Places Customization](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize) example.
+<br/>
 
 ## Customizing text
 
-<Blockquote>
-	Coming soon
-</Blockquote>
-
-
+>Coming soon

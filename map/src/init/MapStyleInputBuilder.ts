@@ -60,10 +60,10 @@ const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
         `&${HILLSHADE}=2-test/hillshade_rgb-mono-light`,
     monoDark:
         URL_PREFIX +
-        "&map=2-test/basic_mono-dark" +
+        "&map=2/basic_mono-dark" +
         `&${TRAFFIC_FLOW}=2/flow_relative-dark` +
         `&${TRAFFIC_INCIDENTS}=2/incidents_dark` +
-        `&${POI}=2-test/poi_dynamic-mono-dark` +
+        `&${POI}=2/poi_dynamic-mono-dark` +
         `&${HILLSHADE}=2-test/hillshade_rgb-mono-dark`,
     satellite:
         URL_PREFIX +

@@ -29,6 +29,6 @@ describe("EventsModule tests", () => {
 
         event.off("click");
 
-        expect(MockEventProxy.remove).toHaveBeenCalledWith("click", mockedMapModule);
+        expect(MockEventProxy.remove).toHaveBeenCalledWith(mockedMapModule, "click");
     });
 });

@@ -9,6 +9,17 @@ type EventHandlers = Record<string, UserEventHandler<any>[]>;
 /**
  * @ignore
  */
+export const toHandlerGroupID = (sourceID: string, type: EventType): string => `${sourceID}_${type}`;
+
+/**
+ * @ignore
+ */
+const _toHandlerGroupID = (sourceWithLayers: SourceWithLayers, type: EventType): string =>
+    toHandlerGroupID(sourceWithLayers.source.id, type);
+
+/**
+ * @ignore
+ */
 export abstract class AbstractEventProxy {
     // This is the list of all sources/layers we listen to:
     protected interactiveSourcesAndLayers: SourceWithLayersMap = {};
@@ -42,12 +53,12 @@ export abstract class AbstractEventProxy {
     ) {
         this.ensureAdded(sourceWithLayers);
 
-        const handlerId = `${sourceWithLayers.source.id}_${type}`;
-        const handlerExists = this.handlers[handlerId] && this.handlers[handlerId].indexOf(handler) !== -1;
+        const handlerGroupId = _toHandlerGroupID(sourceWithLayers, type);
+        const handlerExists = this.handlers[handlerGroupId] && this.handlers[handlerGroupId].includes(handler);
 
         if (!handlerExists) {
-            this.handlers[handlerId] = this.handlers[handlerId] || [];
-            this.handlers[handlerId].push(handler);
+            this.handlers[handlerGroupId] = this.handlers[handlerGroupId] || [];
+            this.handlers[handlerGroupId].push(handler);
         }
     }
 
@@ -56,8 +67,8 @@ export abstract class AbstractEventProxy {
      * @param type The event type to be removed.
      * @param sourceWithLayers The sources and layers to remove, matched by source and layer IDs.
      */
-    remove(type: EventType, sourceWithLayers: SourceWithLayers) {
-        delete this.handlers[`${sourceWithLayers.source.id}_${type}`];
+    remove(sourceWithLayers: SourceWithLayers, type: EventType) {
+        delete this.handlers[_toHandlerGroupID(sourceWithLayers, type)];
         delete this.interactiveSourcesAndLayers[sourceWithLayers.source.id];
         sourceWithLayers._layerSpecs.forEach((layer) => {
             remove(this.interactiveLayerIDs, (item) => layer.id.includes(item));

@@ -19,6 +19,6 @@ export class EventsModule<T = MapGeoJSONFeature> {
      * @param type
      */
     off(type: EventType) {
-        this.eventProxy.remove(type, this.sourceWithLayers);
+        this.eventProxy.remove(this.sourceWithLayers, type);
     }
 }

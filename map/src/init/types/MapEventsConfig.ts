@@ -1,6 +1,6 @@
 export type MapEventsConfig = {
     /**
-     * Optional padding box to be inserted on the click area
+     * Optional padding box to be inserted on the click area, in pixels.
      *  @default 5
      */
     paddingBox?: number;

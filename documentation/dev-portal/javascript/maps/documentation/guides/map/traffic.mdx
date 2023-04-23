@@ -10,10 +10,9 @@ titleTags:
   color: "grey5"
 ---
 
-The TomTom Map Display module provides real-time traffic updates. You can show this on the map by adding a layer with
+The TomTom Map bundle provides real-time traffic updates. You can show this on the map by adding a layer with
 traffic flow and a layer with traffic incidents.
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_traffic_flow_and_incidents"></a>}
 
 # Traffic flow and incidents
 
@@ -21,7 +20,7 @@ The traffic flow layer shows congestion on the main route network and the traffi
 These traffic layers are visible by default in the standard map styles and can be controlled at runtime by the [`TrafficModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule)
 module.
 
-> If these layers are unnecessary in your application, they can be completely excluded from the map style through the [`exclude`](/javascript/maps/documentation/guides/map-display/map-styles#_excluding_modules_from_a_style) property of a `PublishedStyle`.
+> If these layers are unnecessary in your application, they can be completely excluded from the map style through the [`exclude`](/javascript/maps/documentation/guides/map/map-styles#_excluding_modules_from_a_style) property of a `PublishedStyle`.
 
 <img src="images/ss_traffic_layer.png" alt="Map with traffic layer enabled" />
 
@@ -30,7 +29,7 @@ module.
 The [`TrafficModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule) module can be initialized with:
 
 > Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map-display/quickstart) guide.
+Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map/quickstart) guide.
 
 ```javascript
 import { TrafficModule } from "@anw/maps-sdk-js/map";

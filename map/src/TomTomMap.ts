@@ -25,6 +25,9 @@ export class TomTomMap {
      * * Use it whenever you want to leverage MapLibre's power directly.
      */
     readonly mapLibreMap: Map;
+    /**
+     * @ignore
+     */
     _eventsProxy: EventsProxy;
     private params: TomTomMapParams;
     private styleChangeHandlers: (() => void)[] = [];
@@ -113,6 +116,9 @@ export class TomTomMap {
         }
     }
 
+    /**
+     * @ignore
+     */
     _addStyleChangeHandler(handler: () => void): void {
         this.styleChangeHandlers.push(handler);
     }

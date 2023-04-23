@@ -7,11 +7,29 @@ import { SourcesWithLayers, SourceWithLayerIDs } from "./types";
  * Base class for all Maps SDK map modules.
  */
 export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithLayers, CFG = undefined> {
+    /**
+     * @ignore
+     */
     protected readonly tomtomMap: TomTomMap;
+    /**
+     * @ignore
+     */
     protected readonly eventsProxy: EventsProxy;
+    /**
+     * @ignore
+     */
     protected readonly mapLibreMap: Map;
+    /**
+     * @ignore
+     */
     protected sourcesWithLayers!: SOURCES_WITH_LAYERS;
+    /**
+     * @ignore
+     */
     protected _sourceAndLayerIDs!: Record<keyof SOURCES_WITH_LAYERS, SourceWithLayerIDs>;
+    /**
+     * @ignore
+     */
     protected config?: CFG;
 
     /**
@@ -31,6 +49,13 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         }
     }
 
+    /**
+     * Initializes the sources with layers of this module.
+     * @param config The optional configuration for the module.
+     * @param restore Whether we are restoring an existing module after the map style got reloaded.
+     * @protected
+     * @ignore
+     */
     protected initSourcesWithLayers(config?: CFG, restore?: boolean): void {
         this.sourcesWithLayers = this._initSourcesWithLayers(config, restore);
         this._sourceAndLayerIDs = Object.fromEntries(
@@ -47,6 +72,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
     /**
      * Initializes the sources with layers for the specific module.
      * @protected
+     * @ignore
      */
     protected abstract _initSourcesWithLayers(config?: CFG, restore?: boolean): SOURCES_WITH_LAYERS;
 
@@ -63,6 +89,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * @param config The config to apply. this.config contains the previous configuration (if any).
      * Once the method returns config, it will be assigned to this.config.
      * @protected
+     * @ignore
      */
     protected abstract _applyConfig(config: CFG | undefined): CFG | undefined;
 
@@ -78,6 +105,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * implementation needed to restore the module state (data and config applied to the module).
      * to be used to restore module state after map style change
      * @protected
+     * @ignore
      */
     protected restoreDataAndConfig(): void {
         this.initSourcesWithLayers(this.config, true);

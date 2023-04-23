@@ -10,13 +10,11 @@ titleTags:
   color: "grey5"
 ---
 
-The Map bundle is a [MapLibre GL JS library](/javascript/maps/documentation/guides/map/about-maplibre) and allows you to:
+The Map bundle is a [MapLibre GL JS - based library](/javascript/maps/documentation/guides/map/about-maplibre) and allows you to:
 * visualize and configure a TomTom map in your web application
 * easily display the results coming from TomTom services on the map (places, routes, geometries)
 * easily interact with the key elements on the map
 * display and interact with your own data
-
-
 
 # Set up
 
@@ -56,12 +54,10 @@ Minimal initialization (assuming the ID of your map HTML element is "map"):
 const map = new TomTomMap( { container: "map" } );
 ```
 
-
 The TomTomMap is initialized via its constructor with:
 * [MapLibreOptions](#MapLibreOptions) - a required parameter based on a subset of the [options](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters) for a MapLibre Map.
 * [TomTomMapParams](#TomTomMapParams) - optional TomTom-specific parameters.
-
-
+<br/>
 
 ## MapLibreOptions
 
@@ -87,8 +83,7 @@ const map = new TomTomMap( { container: "map", bounds: [-0.12621, 51.50394, -0.1
 The MapLibre *style* parameter is *ignored*. Refer to the TomTomMapParams [style](#map-style) parameter instead.
 
 For more maplibre parameters, refer to its [documentation](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters)
-
-
+<br/>
 
 ## TomTomMapParams
 
@@ -96,7 +91,6 @@ The TomTom Map parameters extend the global configuration and are focused on con
 
 Whereas the MapLibre parameters are more generic, these parameters are focused on the TomTom side of things,
 saving you some time and plumbing compared to using MapLibre directly.
-
 
 ### Map style
 
@@ -114,15 +108,23 @@ const map = new TomTomMap({ container: "map" }, { style: { id: "monoLight", excl
 ```
 
 To learn more about map styles, refer to the [Map Styles Guide](/javascript/maps/documentation/guides/map/map-styles)
-
+<br/>
 
 
 # Map modules
 
 In addition to the map itself, the Map bundle contains several individual modules that allow you to control and interact with key map parts:
+
+**Map style - based modules:**
+
+*These are modules that control part of the sources and layers coming with the loaded map style.*
 * [Traffic Module](/javascript/maps/documentation/guides/map/traffic) - controls live traffic on the map.
 * [POIs Module](/javascript/maps/documentation/guides/map/pois) - controls POIs on the map.
 * [Hillshade Module](/javascript/maps/documentation/guides/map/hillshade) - controls hillshading on the map.
+
+**Added data modules:**
+
+*These are modules controlling data coming from services or custom sources.*
 * [Places Module](/javascript/maps/documentation/guides/map/places) - controls added places on the map.
 * [Geometry Module](/javascript/maps/documentation/guides/map/geometries) - controls added geometries on the map.
 * [Routing Module](/javascript/maps/documentation/guides/map/routing) - controls added routes on the map.

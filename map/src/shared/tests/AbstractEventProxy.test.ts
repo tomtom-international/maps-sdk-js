@@ -53,7 +53,7 @@ describe("AbstractEventProxy tests", () => {
 
     test("Remove event handler", () => {
         eventsProxy.addEventHandler(sourceWithLayersMock.places, () => "test", "click");
-        eventsProxy.remove("click", sourceWithLayersMock.places);
+        eventsProxy.remove(sourceWithLayersMock.places, "click");
         expect(eventsProxy.has(sourceWithLayersMock.places)).toStrictEqual(false);
     });
 
