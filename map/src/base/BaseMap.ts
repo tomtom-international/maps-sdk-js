@@ -1,4 +1,4 @@
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { TomTomMap } from "../init";
 import {
     AbstractMapModule,
@@ -54,10 +54,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, Vector
 
     setVisible(visible: boolean): void {
         this.sourcesWithLayers.vectorTiles.setAllLayersVisible(visible);
-        this.config = {
-            ...this.config,
-            visible
-        };
+        this.config = { ...this.config, visible };
     }
 
     /**

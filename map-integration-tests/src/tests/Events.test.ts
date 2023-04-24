@@ -7,6 +7,7 @@ import placesJSON from "./Events.test.data.json";
 import amsterdamGeometryData from "./GeometriesModule.test.data.json";
 import {
     getPlacesSourceAndLayerIDs,
+    initBasemap,
     initGeometry,
     initPlaces,
     queryRenderedFeatures,
@@ -17,7 +18,7 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
-import { EventType, VECTOR_TILES_SOURCE_ID, VectorTileMapModuleConfig } from "map";
+import { EventType, VECTOR_TILES_SOURCE_ID } from "map";
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
@@ -73,12 +74,6 @@ const getNumHoversAndLongHovers = async (): Promise<[number, number]> =>
         const sdkThis = globalThis as MapsSDKThis;
         return [sdkThis._numOfHovers, sdkThis._numOfLongHovers] as [number, number];
     });
-
-const initBasemap = async (config?: VectorTileMapModuleConfig) =>
-    page.evaluate(async (inputConfig) => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.init(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as never);
 
 const setupBasemapClickHandlers = async () =>
     page.evaluate(async () => {
@@ -249,7 +244,6 @@ describe("Tests with user events", () => {
         const topFeature = (await page.evaluate(
             () => (globalThis as MapsSDKThis)._clickedTopFeature
         )) as MapGeoJSONFeature;
-
         expect(topFeature?.source).toBe(VECTOR_TILES_SOURCE_ID);
     });
 });
