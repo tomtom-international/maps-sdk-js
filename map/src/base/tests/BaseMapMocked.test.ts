@@ -55,6 +55,6 @@ describe("BaseMap module tests", () => {
     test("Throw if source runtime is not found", async () => {
         tomtomMapMock.mapLibreMap.getSource = jest.fn().mockReturnValueOnce(undefined);
 
-        await expect(async () => await BaseMapModule.init(tomtomMapMock)).rejects.toThrow();
+        await expect(() => BaseMapModule.init(tomtomMapMock)).rejects.toThrow();
     });
 });
