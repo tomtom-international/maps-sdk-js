@@ -1,13 +1,7 @@
-import { VECTOR_TILES_SOURCE_ID, VectorTileMapModuleConfig } from "map/src/shared";
+import { VECTOR_TILES_SOURCE_ID } from "map/src/shared";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { getNumVisibleLayersBySource } from "./util/TestUtils";
-
-const initBasemap = async (config?: VectorTileMapModuleConfig) =>
-    page.evaluate(async (inputConfig) => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.init(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as never);
+import { getNumVisibleLayersBySource, initBasemap } from "./util/TestUtils";
 
 describe("BaseMap module tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
