@@ -26,21 +26,21 @@ describe("Map Init tests", () => {
         async (_name: string, mapLibreOptions: MapLibreOptions, tomtomMapParams: TomTomMapParams) => {
             await mapEnv.loadMap(mapLibreOptions, tomtomMapParams);
             await waitForMapReady();
-            expect(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
-            expect(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toBeGreaterThan(0);
-            expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
-            expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+            expect(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).toEqual(0);
+            expect(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toEqual(0);
+            expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toEqual(0);
+            expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toEqual(0);
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
 
-    test("Excluding all traffic from the style", async () => {
+    test("Including poi and hillshade into the style", async () => {
         await mapEnv.loadMap(
             {
                 center: [-0.12621, 51.50394]
             },
             {
-                style: { type: "published", exclude: ["traffic_flow", "traffic_incidents"] }
+                style: { type: "published", include: ["poi", "hillshade"] }
             }
         );
 
@@ -53,13 +53,13 @@ describe("Map Init tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Excluding traffic flow from the style", async () => {
+    test("Including traffic incidents poi and hillshade into the style", async () => {
         await mapEnv.loadMap(
             {
                 center: [-0.12621, 51.50394]
             },
             {
-                style: { type: "published", exclude: ["traffic_flow"] }
+                style: { type: "published", include: ["traffic_incidents", "poi", "hillshade"] }
             }
         );
 
@@ -72,14 +72,14 @@ describe("Map Init tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Excluding POIs and hillshade from the style", async () => {
+    test("Including traffic into the style", async () => {
         await mapEnv.loadMap(
             {
                 center: [-0.12621, 51.50394],
                 zoom: 15
             },
             {
-                style: { type: "published", exclude: ["poi", "hillshade"] }
+                style: { type: "published", include: ["traffic_incidents", "traffic_flow"] }
             }
         );
 

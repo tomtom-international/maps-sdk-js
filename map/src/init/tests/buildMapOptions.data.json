@@ -10,7 +10,7 @@
     },
     {
       "container": "<div id='map'></div>",
-      "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light&poi=2/poi_dynamic-light&hillshade=2-test/hillshade_rgb-light",
+      "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light",
       "attributionControl": false
     }
   ],
@@ -44,7 +44,7 @@
     }
   ],
   [
-    "Map init hiding traffic flow & traffic incidents using hide options",
+    "Map init showing traffic flow & traffic incidents using include options",
     {
       "container": "<div id='map'></div>"
     },
@@ -53,31 +53,31 @@
       "apiKey": "TEST_API_KEY",
       "style": {
         "type": "published",
-        "exclude": ["traffic_flow", "traffic_incidents"]
+        "include": ["traffic_flow", "traffic_incidents"]
+      }
+    },
+    {
+      "container": "<div id='map'></div>",
+      "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light",
+      "attributionControl": false
+    }
+  ],
+  [
+    "Map init showing poi and hillshade using include options",
+    {
+      "container": "<div id='map'></div>"
+    },
+    {
+      "commonBaseURL": "https://api-test.tomtom.com",
+      "apiKey": "TEST_API_KEY",
+      "style": {
+        "type": "published",
+        "include": ["poi", "hillshade"]
       }
     },
     {
       "container": "<div id='map'></div>",
       "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light&poi=2/poi_dynamic-light&hillshade=2-test/hillshade_rgb-light",
-      "attributionControl": false
-    }
-  ],
-  [
-    "Map init hiding traffic flow, traffic incidents, poi and hillshade using hide options",
-    {
-      "container": "<div id='map'></div>"
-    },
-    {
-      "commonBaseURL": "https://api-test.tomtom.com",
-      "apiKey": "TEST_API_KEY",
-      "style": {
-        "type": "published",
-        "exclude": ["traffic_flow", "traffic_incidents", "poi", "hillshade"]
-      }
-    },
-    {
-      "container": "<div id='map'></div>",
-      "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light",
       "attributionControl": false
     }
   ]

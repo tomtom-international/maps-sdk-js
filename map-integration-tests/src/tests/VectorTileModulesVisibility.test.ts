@@ -15,10 +15,15 @@ describe("Vector tile modules combined visibility tests, to ensure one module do
         assertNumber(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID), hillshadeVisible);
 
     test("Vector tiles traffic/pois/hillshade visibility", async () => {
-        await mapEnv.loadMap({
-            zoom: 14,
-            center: [-0.12621, 51.50394]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 14,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] }
+            }
+        );
         await page.evaluate(async () => {
             const sdkThis = globalThis as MapsSDKThis;
             sdkThis.traffic = await sdkThis.MapsSDK.TrafficModule.get(sdkThis.tomtomMap, { visible: false });

@@ -32,7 +32,7 @@ describe("Map vector tile POI filtering tests", () => {
                 zoom: 15
             },
             {
-                style: { type: "published", exclude: ["poi"] }
+                style: { type: "published" }
             }
         );
 
@@ -45,10 +45,15 @@ describe("Map vector tile POI filtering tests", () => {
     });
 
     test("Vector tiles pois visibility changes in different ways", async () => {
-        await mapEnv.loadMap({
-            zoom: 14,
-            center: [-0.12621, 51.50394]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 14,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: { type: "published", include: ["poi"] }
+            }
+        );
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
@@ -90,10 +95,15 @@ describe("Map vector tile POI filtering tests", () => {
     });
 
     test("Vector tiles pois filter starting with no config", async () => {
-        await mapEnv.loadMap({
-            zoom: 14,
-            center: [-0.12621, 51.50394]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 14,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: { type: "published", include: ["poi"] }
+            }
+        );
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
             mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
@@ -138,10 +148,15 @@ describe("Map vector tile POI filtering tests", () => {
     });
 
     test("Vector tiles pois filter while initializing with config", async () => {
-        await mapEnv.loadMap({
-            zoom: 14,
-            center: [-0.12621, 51.50394]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 14,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: { type: "published", include: ["poi"] }
+            }
+        );
         // config poi layer to only include TRANSPORTATION_GROUP categories and expect all features to be from TRANSPORTATION_GROUP
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
@@ -207,10 +222,15 @@ describe("Map vector tile POI filtering tests", () => {
             // RAILROAD_STATION
             ["==", ["get", "icon"], 147]
         ];
-        await mapEnv.loadMap({
-            zoom: 14,
-            center: [-0.12621, 51.50394]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 14,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: { type: "published", include: ["poi"] }
+            }
+        );
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
             mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
@@ -252,10 +272,15 @@ describe("Map vector tile POI feature tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("Ensure required feature properties are defined", async () => {
-        await mapEnv.loadMap({
-            zoom: 14,
-            center: [-0.12621, 51.50394]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 14,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: { type: "published", include: ["poi"] }
+            }
+        );
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;

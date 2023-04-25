@@ -67,7 +67,10 @@ describe("GeoJSON Places tests", () => {
         // @ts-ignore
         async (_name: string, testPlaces: Places, expectedDisplayProps: PlaceDisplayProps[]) => {
             const bounds = await getBBox(testPlaces);
-            await mapEnv.loadMap({ bounds });
+            await mapEnv.loadMap(
+                { bounds },
+                { style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] } }
+            );
             await initPlaces();
             const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs();
             expect(await getNumVisibleLayers(sourceID)).toStrictEqual(0);
@@ -91,7 +94,10 @@ describe("GeoJSON Places tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
 
             // once more, reloading the map and this time showing places before waiting for it to load:
-            await mapEnv.loadMap({ bounds });
+            await mapEnv.loadMap(
+                { bounds },
+                { style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] } }
+            );
             await initPlaces();
             const { layerIDs: nextLayerIDs } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
@@ -99,7 +105,11 @@ describe("GeoJSON Places tests", () => {
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
 
             // finally, changing the map style: verifying the places are still shown (state restoration):
-            await setStyle("standardDark");
+            await setStyle({
+                type: "published",
+                id: "standardDark",
+                include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+            });
             await waitForMapIdle();
             renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
@@ -124,7 +134,10 @@ describe("GeoJSON Places with init config tests", () => {
             expectedDisplayCustomProps: LocationDisplayProps[]
         ) => {
             const bounds = await getBBox(testPlaces);
-            await mapEnv.loadMap({ bounds });
+            await mapEnv.loadMap(
+                { bounds },
+                { style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] } }
+            );
             await initPlaces({ iconConfig: { iconStyle: "circle" } });
             const { layerIDs } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
@@ -151,7 +164,10 @@ describe("GeoJSON Places apply icon config tests", () => {
             expectedDisplayCustomProps: LocationDisplayProps[]
         ) => {
             const bounds = await getBBox(testPlaces);
-            await mapEnv.loadMap({ bounds });
+            await mapEnv.loadMap(
+                { bounds },
+                { style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] } }
+            );
             await initPlaces();
             const { layerIDs } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);

@@ -15,7 +15,7 @@ describe("Map vector tiles hillshade module tests", () => {
                 zoom: 15
             },
             {
-                style: { type: "published", exclude: ["hillshade"] }
+                style: { type: "published" }
             }
         );
 
@@ -28,10 +28,15 @@ describe("Map vector tiles hillshade module tests", () => {
     });
 
     test("Vector tiles hillshade visibility changes in different ways", async () => {
-        await mapEnv.loadMap({
-            zoom: 14,
-            center: [-0.12621, 51.50394]
-        });
+        await mapEnv.loadMap(
+            {
+                zoom: 14,
+                center: [-0.12621, 51.50394]
+            },
+            {
+                style: { type: "published", include: ["hillshade"] }
+            }
+        );
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;

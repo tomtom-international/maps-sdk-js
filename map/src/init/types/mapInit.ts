@@ -26,9 +26,9 @@ export type PublishedStyle = {
      */
     id?: PublishedStyleID;
     /**
-     * Exclude traffic incidents, traffic flow, poi and hillshade modules when loading styles.
+     * Include traffic incidents, traffic flow, poi and hillshade modules when loading styles.
      */
-    exclude?: StyleModules[];
+    include?: StyleModules[];
     /**
      * An optional version for the map style to load.
      * @default latest SDK-supported version.

@@ -101,9 +101,9 @@ Minimal style input:
 const map = new TomTomMap({ container: "map" }, { style: "monoLight" });
 ```
 
-Style input with exclusions:
+Style input with inclusion:
 ```javascript
-const map = new TomTomMap({ container: "map" }, { style: { id: "monoLight", exclude: ["traffic_flow"]}});
+const map = new TomTomMap({ container: "map" }, { style: { id: "monoLight", include: ["traffic_flow"]}});
 ```
 
 To learn more about map styles, refer to the [Map Styles Guide](/javascript/maps/documentation/guides/map/map-styles)

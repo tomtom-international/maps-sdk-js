@@ -71,16 +71,16 @@ describe("Map vector tile traffic module tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("Failing to initialize if fully excluded from the style", async () => {
-        await mapEnv.loadMap(
-            { center: [-0.12621, 51.50394], zoom: 15 },
-            { style: { type: "published", exclude: ["traffic_incidents", "traffic_flow"] } }
-        );
+        await mapEnv.loadMap({ center: [-0.12621, 51.50394], zoom: 15 });
 
         await expect(initTraffic()).rejects.toBeDefined();
     });
 
     test("Vector tiles traffic visibility changes in different ways", async () => {
-        await mapEnv.loadMap({ zoom: 14, center: [-0.12621, 51.50394] });
+        await mapEnv.loadMap(
+            { zoom: 14, center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["traffic_incidents", "traffic_flow"] } }
+        );
         expect(await getConfig()).toBeUndefined();
 
         await initTraffic({ visible: false });
@@ -169,7 +169,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual({ flow: { visible: false } });
 
         // changing the map style: verifying the places are still shown (state restoration):
-        await setStyle("standardDark");
+        await setStyle({ type: "published", id: "standardDark", include: ["traffic_incidents", "traffic_flow"] });
         await waitForMapIdle();
         await waitForTimeout(3000);
         await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: false });
@@ -194,7 +194,7 @@ describe("Map vector tile traffic module tests", () => {
                 center: [-0.12621, 51.50394]
             },
             {
-                style: { type: "published", exclude: ["traffic_flow", "hillshade", "poi"] }
+                style: { type: "published", include: ["traffic_incidents"] }
             }
         );
         await initTraffic();
@@ -216,7 +216,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual(config);
 
         // changing the map style: verifying the config is still the same (state restoration):
-        await setStyle("standardDark");
+        await setStyle({ type: "published", id: "standardDark", include: ["traffic_incidents"] });
         await waitForMapIdle();
         await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
@@ -247,7 +247,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toEqual(config);
 
         // changing the map style: verifying the config is still the same (state restoration):
-        await setStyle("monoLight");
+        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents"] });
         await waitForMapIdle();
         await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
@@ -272,7 +272,7 @@ describe("Map vector tile traffic module tests", () => {
     test("Traffic flow filtering with initial config", async () => {
         await mapEnv.loadMap(
             { zoom: 12, center: [2.37327, 48.85903] },
-            { style: { type: "published", exclude: ["traffic_incidents", "hillshade", "poi"] } }
+            { style: { type: "published", include: ["traffic_flow"] } }
         );
 
         const config: TrafficModuleConfig = {
@@ -314,7 +314,7 @@ describe("Map vector tile traffic module tests", () => {
     test("Traffic incidents and flow filtering with complex initial config", async () => {
         await mapEnv.loadMap(
             { zoom: 13, center: [-0.12621, 51.50394] },
-            { style: { type: "published", exclude: ["hillshade"] } }
+            { style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi"] } }
         );
 
         const config: TrafficModuleConfig = {
@@ -376,7 +376,11 @@ describe("Map vector tile traffic module tests", () => {
         expect(getByRoadCategories(renderedFlowSegments, ["secondary", "tertiary", "street"])).toHaveLength(0);
 
         // CHANGING THE MAP STYLE: verifying the config is still the same (state restoration):
-        await setStyle("standardDark");
+        await setStyle({
+            type: "published",
+            id: "standardDark",
+            include: ["traffic_incidents", "traffic_flow", "poi"]
+        });
         await waitForMapIdle();
         await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
@@ -403,7 +407,7 @@ describe("Map vector tile traffic module tests", () => {
         await mapEnv.loadMap(
             // London:
             { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: "published", exclude: ["hillshade", "poi"] } }
+            { style: { type: "published", include: ["traffic_incidents", "traffic_flow"] } }
         );
 
         await initTraffic();

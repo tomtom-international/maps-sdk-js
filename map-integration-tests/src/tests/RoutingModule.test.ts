@@ -83,7 +83,12 @@ describe("Routing tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("Show and clear flows", async () => {
-        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox });
+        await mapEnv.loadMap(
+            { fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox },
+            {
+                style: { type: "published", include: ["traffic_incidents", "traffic_flow"] }
+            }
+        );
         await initRouting();
 
         await showWaypoints([
@@ -110,7 +115,7 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle("standardDark");
+        await setStyle({ type: "published", id: "standardDark", include: ["traffic_incidents", "traffic_flow"] });
         await waitForMapIdle();
         await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
@@ -127,7 +132,7 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 2, 2000);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle("monoLight");
+        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents", "traffic_flow"] });
         await waitForMapIdle();
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
@@ -147,7 +152,7 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle("drivingDark");
+        await setStyle({ type: "published", id: "drivingDark", include: ["traffic_incidents", "traffic_flow"] });
         await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
@@ -157,7 +162,7 @@ describe("Routing tests", () => {
         await waitForRenderedWaypoints(1);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle("standardLight");
+        await setStyle({ type: "published", id: "standardLight", include: ["traffic_incidents", "traffic_flow"] });
         await waitForMapIdle();
         await waitForRenderedWaypoints(1);
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -194,7 +199,7 @@ describe("Routing tests", () => {
 
         await mapEnv.loadMap(
             { fitBoundsOptions: { padding: 100 }, center: [4.8806, 52.40316], zoom: 12 },
-            { style: { type: "published", exclude: ["traffic_flow"] } }
+            { style: { type: "published", include: ["traffic_incidents"] } }
         );
         await initRouting();
 
@@ -233,7 +238,10 @@ describe("Routing tests", () => {
     });
 
     test("Updating configuration", async () => {
-        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox });
+        await mapEnv.loadMap(
+            { fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox },
+            { style: { type: "published", include: ["traffic_incidents", "traffic_flow"] } }
+        );
         await initRouting();
 
         await showWaypoints([
@@ -269,7 +277,7 @@ describe("Routing tests", () => {
         expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
 
         // Changing the style, asserting that the config stays the same:
-        await setStyle("monoLight");
+        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents", "traffic_flow"] });
         await waitForMapIdle();
         await waitForTimeout(2000);
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);

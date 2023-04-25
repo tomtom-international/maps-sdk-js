@@ -116,7 +116,7 @@ export class TomTomMap {
         this.params.language && this._setLanguage(this.params.language);
         // This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style:
         const style = this.params?.style;
-        if (typeof style === "object" && style.type == "published" && style.exclude?.includes("poi")) {
+        if (typeof style === "object" && style.type == "published" && !style.include?.includes("poi")) {
             this.mapLibreMap.setLayoutProperty("POI", "visibility", "none", { validate: false });
         }
     }
