@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.0...v0.2.1) (2023-04-25)
+
+
+### Features
+
+* **baseMap:** Add BaseMap module ([9e09390](https://github.com/tomtom-international/maps-sdk-js/commit/9e093907abf7d3f4029485c42ae6f17a88355f06))
+* **basemap:** Update click logic and add test(failing) ([772693c](https://github.com/tomtom-international/maps-sdk-js/commit/772693c720772ead377b7233e0060ae5e545e18f))
+* **docs:** updating guides, focusing on user events and places ([f1d7a03](https://github.com/tomtom-international/maps-sdk-js/commit/f1d7a03aeba03bda5b9f4aa37f58423ace01754b))
+* **map:** ensuring map module constructors are private ([d419522](https://github.com/tomtom-international/maps-sdk-js/commit/d41952241a44717b6d69b0a330e43a7e346d58d9))
+* **map:** making base map constructor private ([defbec4](https://github.com/tomtom-international/maps-sdk-js/commit/defbec4f1dd3c19792ffe176ad577827f3c281cc))
+* **map:** simplifying/fixing base map init ([c670933](https://github.com/tomtom-international/maps-sdk-js/commit/c67093349578a8cdb63c86647d978ab283918bc0))
+
+
+### Bug Fixes
+
+* **basemap:** Move initBasemap to TestUtils, fix merging issue. ([c837f09](https://github.com/tomtom-international/maps-sdk-js/commit/c837f098d8b5735d30717f0499bc9f9f1120bc15))
+
 ## [0.2.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.1.112...v0.2.0) (2023-04-20)
 
 
