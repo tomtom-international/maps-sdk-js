@@ -31,12 +31,11 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, Vector
     }
 
     protected _initSourcesWithLayers() {
-        const vectorTitleRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_SOURCE_ID);
-        if (!vectorTitleRuntimeSource) {
+        const source = this.mapLibreMap.getSource(VECTOR_TILES_SOURCE_ID);
+        if (!source) {
             throw notInTheStyle(`init ${BaseMapModule.name} with source ID ${VECTOR_TILES_SOURCE_ID}`);
         }
-        const vectorTiles = new StyleSourceWithLayers(this.mapLibreMap, vectorTitleRuntimeSource);
-        return { vectorTiles };
+        return { vectorTiles: new StyleSourceWithLayers(this.mapLibreMap, source) };
     }
 
     protected _applyConfig(config: VectorTileMapModuleConfig | undefined) {
