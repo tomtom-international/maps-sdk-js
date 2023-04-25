@@ -22,9 +22,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, Vector
      * @returns {Promise} Returns a promise with a new instance of this module
      */
     static async init(tomtomMap: TomTomMap, config?: VectorTileMapModuleConfig) {
-        waitUntilMapIsReady(tomtomMap);
-        // We make sure that all data source is loaded before create a new instance of BaseMap module
-        await tomtomMap.mapLibreMap.once("sourcedata");
+        await waitUntilMapIsReady(tomtomMap);
         return new BaseMapModule(tomtomMap, config);
     }
 
