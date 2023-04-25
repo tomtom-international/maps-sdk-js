@@ -1,5 +1,5 @@
 import { GeoJsonProperties, Position } from "geojson";
-import { Geometries, Places } from "@anw/maps-sdk-js/core";
+import { Geometries, Place, Places } from "@anw/maps-sdk-js/core";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
@@ -51,7 +51,6 @@ const setupPlacesClickHandlers = async () =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.places?.events.on("click", (topFeature, lnglat, features, sourceWithLayers) => {
-            console.log(topFeature);
             mapsSDKThis._numOfClicks++;
             mapsSDKThis._clickedTopFeature = topFeature;
             mapsSDKThis._clickedLngLat = lnglat;
@@ -98,6 +97,9 @@ describe("Tests with user events", () => {
     beforeEach(async () => {
         await page.evaluate(() => {
             const mapSDKThis = globalThis as MapsSDKThis;
+            mapSDKThis._clickedTopFeature = undefined;
+            mapSDKThis._clickedSourceWithLayers = undefined;
+            mapSDKThis._clickedFeatures = undefined;
             mapSDKThis._numOfClicks = 0;
             mapSDKThis._numOfContextmenuClicks = 0;
             mapSDKThis._numOfHovers = 0;
@@ -231,33 +233,39 @@ describe("Tests with user events", () => {
 
         // we register a hover handler for geometries
         await setupGeometryHoverHandlers();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test("Events combining BaseMap module", async () => {
         await initBasemap();
         await initPlaces();
-
+        await showPlaces(places);
+        await waitForMapIdle();
         await setupBasemapClickHandlers();
 
         // Click on a POI and gets the under layer from basemap as we don't have a event register por Places.
         const placePosition = await getPixelCoords(firstPlacePosition);
         await page.mouse.click(placePosition.x, placePosition.y);
-        let topFeature = (await page.evaluate(
+        const topBaseMapFeature = (await page.evaluate(
             () => (globalThis as MapsSDKThis)._clickedTopFeature
         )) as MapGeoJSONFeature;
-        expect(topFeature?.source).toBe(VECTOR_TILES_SOURCE_ID);
+        expect(topBaseMapFeature?.source).toBe(VECTOR_TILES_SOURCE_ID);
 
         await setupPlacesClickHandlers();
-        await page.evaluate(() => {
-            const mapSDKThis = globalThis as MapsSDKThis;
-            mapSDKThis.places?.events.on("click", (topFeature) => {
-                mapSDKThis._clickedTopFeature = topFeature;
-            });
-        });
 
         await page.mouse.click(placePosition.x, placePosition.y);
-        topFeature = (await page.evaluate(() => (globalThis as MapsSDKThis)._clickedTopFeature)) as MapGeoJSONFeature;
-        expect(topFeature).toEqual(places.features[0]);
+        const topPlaceFeature = (await page.evaluate(() => (globalThis as MapsSDKThis)._clickedTopFeature)) as Place;
+        expect(topPlaceFeature).toEqual({
+            ...places.features[0],
+            properties: {
+                ...places.features[0].properties,
+                eventState: "click",
+                iconID: "159_pin",
+                title: "H32 Sportfondsenbad Amsterdam-Oost",
+                id: expect.anything()
+            }
+        });
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });
 
@@ -303,5 +311,6 @@ describe("Events custom configuration", () => {
         expect(await getCursor()).toBe("help");
 
         await setupPlacesHoverHandlers();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });
