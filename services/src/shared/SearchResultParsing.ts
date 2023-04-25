@@ -11,7 +11,7 @@ import { SearchSummary } from "./types/SearchSummary";
  */
 export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<SearchPlaceProps> => {
     const { position, entryPoints, poi, id, dist, boundingBox, chargingPark, ...rest } = result;
-    const connectors = chargingPark?.connectors.map((connector) => ({
+    const connectors = chargingPark?.connectors?.map((connector) => ({
         ...omit(connector, "connectorType"),
         type: connector.connectorType
     }));
