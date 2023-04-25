@@ -26,6 +26,10 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, Vector
         return new BaseMapModule(tomtomMap, config);
     }
 
+    private constructor(map: TomTomMap, config?: VectorTileMapModuleConfig) {
+        super(map, config);
+    }
+
     protected _initSourcesWithLayers() {
         const vectorTitleRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_SOURCE_ID);
         if (!vectorTitleRuntimeSource) {
