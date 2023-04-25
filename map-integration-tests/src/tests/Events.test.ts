@@ -60,6 +60,9 @@ const setupPlacesClickHandlers = async () =>
         mapsSDKThis.places?.events.on("contextmenu", () => mapsSDKThis._numOfContextmenuClicks++);
     });
 
+const deRegisterPlacesClickHandlers = async () =>
+    page.evaluate(() => (globalThis as MapsSDKThis).places?.events.off("click"));
+
 const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeatures(["geometry_Fill"], numFeatures, 3000, position);
 
@@ -138,11 +141,15 @@ describe("Tests with user events", () => {
         );
 
     test("Click and contextmenu events for places", async () => {
-        await setupPlacesClickHandlers();
-
         const placePixelCoords = await getPixelCoords(firstPlacePosition);
         await waitForEventState(undefined);
 
+        // (we haven't registered click events yet)
+        await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
+        await waitForEventState(undefined);
+        expect(await getNumLeftAndRightClicks()).toEqual([0, 0]);
+
+        await setupPlacesClickHandlers();
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         await waitForEventState("click");
         expect(await getNumLeftAndRightClicks()).toEqual([1, 0]);
@@ -151,7 +158,14 @@ describe("Tests with user events", () => {
         await waitForEventState("contextmenu");
         expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
 
+        // clicking away:
         await page.mouse.click(placePixelCoords.x - 100, placePixelCoords.y - 100);
+        await waitForEventState(undefined);
+        expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
+
+        // de-registering handlers, clicking again and asserting nothing happens:
+        await deRegisterPlacesClickHandlers();
+        await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         await waitForEventState(undefined);
         expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
 
