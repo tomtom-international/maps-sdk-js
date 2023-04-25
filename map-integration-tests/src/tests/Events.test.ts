@@ -228,12 +228,8 @@ describe("Tests with user events", () => {
 
     test("Events combining different map modules", async () => {
         await initGeometry();
-        await initPlaces();
-        const placesSourceAndLayerIDs = await getPlacesSourceAndLayerIDs();
         await showGeometry(geometryData);
-        await showPlaces(places);
         await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
-        await waitUntilRenderedFeatures(placesSourceAndLayerIDs.layerIDs, placesJSON.features.length, 10000);
 
         // Setting up handlers for places:
         await setupPlacesClickHandlers();
@@ -243,7 +239,7 @@ describe("Tests with user events", () => {
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         const features = await page.evaluate(() => (globalThis as MapsSDKThis)._clickedFeatures);
         expect(features).toHaveLength(1);
-        expect(features?.[0].layer.id).toEqual(placesSourceAndLayerIDs.layerIDs[0]);
+        expect(features?.[0].layer.id).toEqual(placesLayerIDs[0]);
 
         // we register a hover handler for geometries
         await setupGeometryHoverHandlers();
@@ -252,8 +248,6 @@ describe("Tests with user events", () => {
 
     test("Events combining BaseMap module", async () => {
         await initBasemap();
-        await initPlaces();
-        await showPlaces(places);
         await waitForMapIdle();
         await setupBasemapClickHandlers();
 
