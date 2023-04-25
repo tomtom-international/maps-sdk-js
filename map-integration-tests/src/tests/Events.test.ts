@@ -51,6 +51,7 @@ const setupPlacesClickHandlers = async () =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.places?.events.on("click", (topFeature, lnglat, features, sourceWithLayers) => {
+            console.log(topFeature);
             mapsSDKThis._numOfClicks++;
             mapsSDKThis._clickedTopFeature = topFeature;
             mapsSDKThis._clickedLngLat = lnglat;
@@ -241,10 +242,22 @@ describe("Tests with user events", () => {
         // Click on a POI and gets the under layer from basemap as we don't have a event register por Places.
         const placePosition = await getPixelCoords(firstPlacePosition);
         await page.mouse.click(placePosition.x, placePosition.y);
-        const topFeature = (await page.evaluate(
+        let topFeature = (await page.evaluate(
             () => (globalThis as MapsSDKThis)._clickedTopFeature
         )) as MapGeoJSONFeature;
         expect(topFeature?.source).toBe(VECTOR_TILES_SOURCE_ID);
+
+        await setupPlacesClickHandlers();
+        await page.evaluate(() => {
+            const mapSDKThis = globalThis as MapsSDKThis;
+            mapSDKThis.places?.events.on("click", (topFeature) => {
+                mapSDKThis._clickedTopFeature = topFeature;
+            });
+        });
+
+        await page.mouse.click(placePosition.x, placePosition.y);
+        topFeature = (await page.evaluate(() => (globalThis as MapsSDKThis)._clickedTopFeature)) as MapGeoJSONFeature;
+        expect(topFeature).toEqual(places.features[0]);
     });
 });
 

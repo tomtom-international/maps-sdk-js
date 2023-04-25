@@ -248,7 +248,7 @@ export class EventsProxy extends AbstractEventProxy {
             prevClickedSourceWithLayers
         );
 
-        if (clickHandlers && eventState) {
+        if (eventState && clickHandlers) {
             for (const handler of clickHandlers) {
                 handler(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
             }
