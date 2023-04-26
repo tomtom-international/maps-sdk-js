@@ -24,7 +24,9 @@
                 "id": 7309
               }
             ],
-            "categories": ["electric vehicle station"],
+            "categories": [
+              "electric vehicle station"
+            ],
             "classifications": [
               {
                 "code": "ELECTRIC_VEHICLE_STATION",
@@ -115,7 +117,10 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [2.32707, 48.83353]
+            "coordinates": [
+              2.32707,
+              48.83353
+            ]
           },
           "id": "250009044730934",
           "properties": {
@@ -185,12 +190,17 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [2.32755, 48.83308]
+                "position": [
+                  2.32755,
+                  48.83308
+                ]
               }
             ],
             "poi": {
               "name": "Saemes 14ème Arrondissement Rue Saillard",
-              "categories": ["electric vehicle station"],
+              "categories": [
+                "electric vehicle station"
+              ],
               "classifications": [
                 {
                   "code": "ELECTRIC_VEHICLE_STATION",
@@ -203,7 +213,9 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [7309]
+              "categoryIds": [
+                7309
+              ]
             }
           }
         }
@@ -237,7 +249,10 @@
               }
             ],
             "url": "guymartinitalia.com",
-            "categories": ["italian", "restaurant"],
+            "categories": [
+              "italian",
+              "restaurant"
+            ],
             "classifications": [
               {
                 "code": "RESTAURANT",
@@ -340,7 +355,10 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [2.33007, 48.84287]
+            "coordinates": [
+              2.33007,
+              48.84287
+            ]
           },
           "id": "250007000178386",
           "properties": {
@@ -394,14 +412,20 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [2.32994, 48.84291]
+                "position": [
+                  2.32994,
+                  48.84291
+                ]
               }
             ],
             "poi": {
               "name": "Guy Martin Italia",
               "phone": "+33 1 43 27 08 80",
               "url": "guymartinitalia.com",
-              "categories": ["italian", "restaurant"],
+              "categories": [
+                "italian",
+                "restaurant"
+              ],
               "classifications": [
                 {
                   "code": "RESTAURANT",
@@ -418,7 +442,9 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [7315025]
+              "categoryIds": [
+                7315025
+              ]
             }
           }
         }
@@ -496,14 +522,27 @@
         "queryType": "NON_NEAR",
         "totalResults": 16
       },
-      "bbox": [-0.35137, 51.38474, 0.14471, 51.67235],
+      "bbox": [
+        -0.35137,
+        51.38474,
+        0.14471,
+        51.67235
+      ],
       "features": [
         {
           "type": "Feature",
-          "bbox": [-0.35137, 51.38474, 0.14471, 51.67235],
+          "bbox": [
+            -0.35137,
+            51.38474,
+            0.14471,
+            51.67235
+          ],
           "geometry": {
             "type": "Point",
-            "coordinates": [-0.12624, 51.50015]
+            "coordinates": [
+              -0.12624,
+              51.50015
+            ]
           },
           "id": "GB/GEO/p0/37894",
           "properties": {
@@ -560,7 +599,9 @@
                 "id": 7309
               }
             ],
-            "categories": ["electric vehicle station"],
+            "categories": [
+              "electric vehicle station"
+            ],
             "classifications": [
               {
                 "code": "ELECTRIC_VEHICLE_STATION",
@@ -640,7 +681,10 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [7.80076, 46.28515]
+            "coordinates": [
+              7.80076,
+              46.28515
+            ]
           },
           "id": "756009003511328",
           "properties": {
@@ -688,13 +732,18 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [7.80065, 46.28554]
+                "position": [
+                  7.80065,
+                  46.28554
+                ]
               }
             ],
             "poi": {
               "name": "Energiedienst Unterbäch Wiispilweg",
               "phone": "+41 27 945 75 00",
-              "categories": ["electric vehicle station"],
+              "categories": [
+                "electric vehicle station"
+              ],
               "classifications": [
                 {
                   "code": "ELECTRIC_VEHICLE_STATION",
@@ -707,7 +756,9 @@
                 }
               ],
               "brands": [],
-              "categoryIds": [7309]
+              "categoryIds": [
+                7309
+              ]
             }
           }
         }
@@ -744,7 +795,9 @@
                 "id": 7311
               }
             ],
-            "categories": ["petrol station"],
+            "categories": [
+              "petrol station"
+            ],
             "classifications": [
               {
                 "code": "PETROL_STATION",
@@ -811,7 +864,9 @@
                 "id": 7311
               }
             ],
-            "categories": ["petrol station"],
+            "categories": [
+              "petrol station"
+            ],
             "classifications": [
               {
                 "code": "PETROL_STATION",
@@ -855,13 +910,21 @@
         "queryType": "NON_NEAR",
         "totalResults": 94
       },
-      "bbox": [-6.88878, 53.73118, -5.12343, 54.73118],
+      "bbox": [
+        -6.88878,
+        53.73118,
+        -5.12343,
+        54.73118
+      ],
       "features": [
         {
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [-6.88878, 53.73118]
+            "coordinates": [
+              -6.88878,
+              53.73118
+            ]
           },
           "id": "372008000031461",
           "properties": {
@@ -884,13 +947,20 @@
             "entryPoints": [
               {
                 "type": "main",
-                "position": [-6.88953, 53.73119]
+                "position": [
+                  -6.88953,
+                  53.73119
+                ]
               }
             ],
             "poi": {
               "name": "Circle K Fuel Station",
-              "brands": ["Circle K"],
-              "categories": ["petrol station"],
+              "brands": [
+                "Circle K"
+              ],
+              "categories": [
+                "petrol station"
+              ],
               "classifications": [
                 {
                   "code": "PETROL_STATION",
@@ -902,7 +972,9 @@
                   ]
                 }
               ],
-              "categoryIds": [7311]
+              "categoryIds": [
+                7311
+              ]
             }
           }
         },
@@ -910,7 +982,10 @@
           "type": "Feature",
           "geometry": {
             "type": "Point",
-            "coordinates": [-5.12343, 54.73118]
+            "coordinates": [
+              -5.12343,
+              54.73118
+            ]
           },
           "id": "372008000031461",
           "properties": {
@@ -932,8 +1007,12 @@
             },
             "poi": {
               "name": "Circle K Fuel Station",
-              "brands": ["Circle K"],
-              "categories": ["petrol station"],
+              "brands": [
+                "Circle K"
+              ],
+              "categories": [
+                "petrol station"
+              ],
               "classifications": [
                 {
                   "code": "PETROL_STATION",
@@ -945,7 +1024,9 @@
                   ]
                 }
               ],
-              "categoryIds": [7311]
+              "categoryIds": [
+                7311
+              ]
             }
           }
         }
@@ -978,6 +1059,160 @@
         "totalResults": 0
       },
       "features": []
+    }
+  ],
+  [
+    "Geometry search with empty connectors",
+    {
+      "summary": {
+        "query": "electric charging station",
+        "queryType": "NON_NEAR",
+        "queryTime": 48,
+        "numResults": 1,
+        "offset": 0,
+        "totalResults": 420,
+        "fuzzyLevel": 1
+      },
+      "results": [
+        {
+          "type": "POI",
+          "id": "250009044730934",
+          "score": 6.8659100533,
+          "info": "search:ev:250009044730934",
+          "poi": {
+            "name": "Saemes 14ème Arrondissement Rue Saillard",
+            "categorySet": [
+              {
+                "id": 7309
+              }
+            ],
+            "categories": [
+              "electric vehicle station"
+            ],
+            "classifications": [
+              {
+                "code": "ELECTRIC_VEHICLE_STATION",
+                "names": [
+                  {
+                    "nameLocale": "en-US",
+                    "name": "electric vehicle station"
+                  }
+                ]
+              }
+            ]
+          },
+          "address": {
+            "streetName": "Rue Saillard",
+            "municipalitySubdivision": "Mouton-Duvernet",
+            "municipality": "Paris",
+            "countrySecondarySubdivision": "Paris",
+            "countrySubdivision": "Île-de-France",
+            "postalCode": "75014",
+            "countryCode": "FR",
+            "country": "France",
+            "countryCodeISO3": "FRA",
+            "freeformAddress": "Rue Saillard, 75014 14ème Arrondissement",
+            "localName": "14ème Arrondissement"
+          },
+          "position": {
+            "lat": 48.83353,
+            "lon": 2.32707
+          },
+          "viewport": {
+            "topLeftPoint": {
+              "lat": 48.83443,
+              "lon": 2.3257
+            },
+            "btmRightPoint": {
+              "lat": 48.83263,
+              "lon": 2.32844
+            }
+          },
+          "entryPoints": [
+            {
+              "type": "main",
+              "position": {
+                "lat": 48.83308,
+                "lon": 2.32755
+              }
+            }
+          ],
+          "chargingPark": {}
+        }
+      ]
+    },
+    {
+      "type": "FeatureCollection",
+      "properties": {
+        "query": "electric charging station",
+        "queryType": "NON_NEAR",
+        "queryTime": 48,
+        "numResults": 1,
+        "offset": 0,
+        "totalResults": 420,
+        "fuzzyLevel": 1
+      },
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              2.32707,
+              48.83353
+            ]
+          },
+          "properties": {
+            "type": "POI",
+            "score": 6.8659100533,
+            "info": "search:ev:250009044730934",
+            "address": {
+              "streetName": "Rue Saillard",
+              "municipalitySubdivision": "Mouton-Duvernet",
+              "municipality": "Paris",
+              "countrySecondarySubdivision": "Paris",
+              "countrySubdivision": "Île-de-France",
+              "postalCode": "75014",
+              "countryCode": "FR",
+              "country": "France",
+              "countryCodeISO3": "FRA",
+              "freeformAddress": "Rue Saillard, 75014 14ème Arrondissement",
+              "localName": "14ème Arrondissement"
+            },
+            "entryPoints": [
+              {
+                "type": "main",
+                "position": [
+                  2.32755,
+                  48.83308
+                ]
+              }
+            ],
+            "poi": {
+              "name": "Saemes 14ème Arrondissement Rue Saillard",
+              "categories": [
+                "electric vehicle station"
+              ],
+              "classifications": [
+                {
+                  "code": "ELECTRIC_VEHICLE_STATION",
+                  "names": [
+                    {
+                      "nameLocale": "en-US",
+                      "name": "electric vehicle station"
+                    }
+                  ]
+                }
+              ],
+              "brands": [],
+              "categoryIds": [
+                7309
+              ]
+            }
+          },
+          "id": "250009044730934"
+        }
+      ]
     }
   ]
 ]
