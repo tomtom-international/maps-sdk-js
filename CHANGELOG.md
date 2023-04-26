@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.2...v0.2.3) (2023-04-26)
+
+
+### Features
+
+* **map:** when custom style urls come with an api key, we use it, regardless of the configured one via sdk ([1c7fde5](https://github.com/tomtom-international/maps-sdk-js/commit/1c7fde5a4af058d8e08c1f8c9e55efc092a360dc))
+
 ### [0.2.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.1...v0.2.2) (2023-04-26)
 
 
