@@ -101,15 +101,15 @@
     "https://api-test.tomtom.com/randomurl/bla/bla?key=TEST_API_KEY"
   ],
   [
-    "Given style URL without base URL",
+    "Given style URL with its own API key",
     {
       "apiKey": "TEST_API_KEY",
       "style": {
         "type": "custom",
-        "url": "https://api-test.tomtom.com/randomurl/bla/bla"
+        "url": "https://api-test.tomtom.com/randomurl/bla/bla?key=CUSTOM_API_KEY"
       }
     },
-    "https://api-test.tomtom.com/randomurl/bla/bla?key=TEST_API_KEY"
+    "https://api-test.tomtom.com/randomurl/bla/bla?key=CUSTOM_API_KEY"
   ],
   [
     "Given style JSON",

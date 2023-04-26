@@ -82,7 +82,14 @@ const buildPublishedStyleURL = (publishedStyle: PublishedStyle, baseURL: string,
 
 const withAPIKey = (givenURL: string, apiKey: string): string => {
     const url = new URL(givenURL);
-    url.searchParams.set("key", apiKey);
+    if (!url.searchParams.has("key")) {
+        url.searchParams.set("key", apiKey);
+    } else {
+        console.warn(
+            "The style URL is coming with an API key parameter which takes priority. " +
+                "If you want to use the SDK configured API key, remove the key param from the style URL"
+        );
+    }
     return url.toString();
 };
 
