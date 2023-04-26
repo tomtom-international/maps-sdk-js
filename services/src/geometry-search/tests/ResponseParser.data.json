@@ -1000,11 +1000,7 @@
           "info": "search:ev:250009044730934",
           "poi": {
             "name": "Saemes 14ème Arrondissement Rue Saillard",
-            "categorySet": [
-              {
-                "id": 7309
-              }
-            ],
+            "categorySet": [ { "id": 7309 } ],
             "categories": ["electric vehicle station"],
             "classifications": [
               {
@@ -1031,27 +1027,15 @@
             "freeformAddress": "Rue Saillard, 75014 14ème Arrondissement",
             "localName": "14ème Arrondissement"
           },
-          "position": {
-            "lat": 48.83353,
-            "lon": 2.32707
-          },
+          "position": { "lat": 48.83353, "lon": 2.32707 },
           "viewport": {
-            "topLeftPoint": {
-              "lat": 48.83443,
-              "lon": 2.3257
-            },
-            "btmRightPoint": {
-              "lat": 48.83263,
-              "lon": 2.32844
-            }
+            "topLeftPoint": { "lat": 48.83443, "lon": 2.3257 },
+            "btmRightPoint": { "lat": 48.83263, "lon": 2.32844 }
           },
           "entryPoints": [
             {
               "type": "main",
-              "position": {
-                "lat": 48.83308,
-                "lon": 2.32755
-              }
+              "position": { "lat": 48.83308, "lon": 2.32755 }
             }
           ],
           "chargingPark": {}
