@@ -1,7 +1,7 @@
 import reverseGeocode from "../ReverseGeocoding";
-import { parseRevGeoResponse } from "../ResponseParser";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
-import { SDKServiceError } from "../../shared/Errors";
+import { SDKServiceError } from "../../shared";
+import { customizeService } from "../../../index";
 
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {
@@ -137,7 +137,7 @@ describe("Reverse Geocoding integration tests", () => {
             { position: [-0.12681, 51.50054] },
             {
                 parseResponse: (params, response) => ({
-                    ...parseRevGeoResponse(params, response),
+                    ...customizeService.reverseGeocode.parseRevGeoResponse(params, response),
                     newField: "test"
                 })
             }

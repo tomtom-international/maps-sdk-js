@@ -12,12 +12,87 @@ titleTags:
 
 # Request validation
 
-<Blockquote>
-    Coming soon
-</Blockquote>
+Each service request is validated by the SDK by default before being sent to its corresponding API.
+The SDK verifies that each request object adheres to the expected JSON input structure, including contextual relationships between some inputs.
 
-# Service implementation templates
+This helps with
+* getting contextual errors relevant to the SDK types (easier to read and debug).
+* preventing faulty API calls (less cost involved for all parties).
 
-<Blockquote>
-	Coming soon
-</Blockquote>
+However, if you are confident about your inputs and want to save some CPU,
+you can disable SDK-side request validation from some or all your service calls
+with the [`validateRequest`](/javascript/maps/documentation/api-reference/modules/services_shared#CommonServiceParams) services parameter.
+Such parameter is common to all service call parameter types, but each service receives its own values, so you can control which services have SDK input validation.
+
+```javascript
+	await search({ query: "Eiffel Tower", validateRequest: false });
+```
+
+We recommend keeping validation enabled as default until you have tested your application enough so you are confident about a lack of malformed inputs.
+
+Regardless, if SDK validation is disabled and yet some inputs are malformed, what can happen is:
+* The application will get API validation errors instead. Those will often be relatable but not exactly matching with the SDK models.
+* The application will get SDK unhandled errors. Those should be less common, but likely not be easy to understand.
+If the above occurs, we recommend to turn validation again and do some troubleshooting.
+<br/>
+
+# Service templates
+
+Each SDK service is an implementation of the same [template](/javascript/maps/documentation/api-reference/modules/services_shared#ServiceTemplate),
+consisting of a set of basic steps:
+
+1. **Validate request:** validates the request before being sent. Described in [Request validation](#request-validation)
+2. **Build API request:** transforms the SDK request into one ready to be sent to the API (URL with parameters)
+3. **Send API request:** sends the request via GET/POST with right payload and headers
+4. **Parse response:** parses the API response (either success or error) into the SDK supported type
+
+## customTemplate
+
+The SDK enables you to tap into any of the service implementation parts and partially or completely change or enhance it.
+
+Each SDK service call has two main arguments:
+* `params`: the call parameters, describing the API call input
+* `customTemplate`: an optional custom template (parts) implementation, which determines the behaviour of the service itself for that call.
+
+In each service call the SDK will take the default service implementation and will append whatever you added in `customTemplate`.
+This allows developers to override a part or the whole service implementation at any time.
+
+The SDK also exposes the default implementation parts for each service so it's easy for developers to only override certain parts.
+All the existing service implementation parts are discoverable via the [`customizeService`](/javascript/maps/documentation/api-reference/modules/services_customization#customizeService) object.
+
+A practical use case for service template customizations are **enhancements** where you add extra functionality to TomTom services.
+
+However, if you start changing the core behaviours of services, you need to ensure it all still works for your application,
+since you can end up with inconsistent or map-incompatible models.
+<br/>
+
+**Enhanced response parsing for reverse geocoding call:**
+```javascript
+	import { customizeService, reverseGeocode } from "@anw/maps-sdk-js/services";
+	const result = await reverseGeocode(
+            { position: [-0.12681, 51.50054] },
+            {
+                parseResponse: (params, response) => ({
+                    // default:
+                    ...customizeService.reverseGeocode.parseRevGeoResponse(params, response),
+                    // enhancement:
+                    apiPosition: response.addresses[0].position
+                })
+            }
+        );
+```
+
+**Custom response parsing for geocoding call:**
+```javascript
+	const result = await geocode(
+            { query: "teakhout" },
+            {
+                // custom response parsing forwarding the first raw API result:
+                parseResponse: (response: GeocodingResponseAPI) =>
+                    ({
+                        result: response.results[0],
+                        summary: response.summary
+                    })
+            }
+        );
+```

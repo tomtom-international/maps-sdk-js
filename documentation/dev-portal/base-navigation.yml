@@ -118,6 +118,8 @@ menu:
                 title: Search
               - fileId: /api-reference/modules/services_shared
                 title: Shared
+              - fileId: /api-reference/modules/services_customization
+                title: Customization
       - title: Extra pages
         isHidden: true
         items:

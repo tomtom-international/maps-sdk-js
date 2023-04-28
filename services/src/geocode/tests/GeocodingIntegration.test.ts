@@ -2,7 +2,7 @@ import { Polygon } from "geojson";
 import geocode from "../Geocoding";
 import { GeocodingResponseAPI } from "../types/APITypes";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/IntegrationTestUtils";
-import { SDKServiceError } from "../../shared/Errors";
+import { SDKServiceError } from "../../shared";
 
 describe("Geocoding errors", () => {
     test("Geocoding test without API key", async () => {

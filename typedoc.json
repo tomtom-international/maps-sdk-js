@@ -20,7 +20,8 @@
     "./services/src/routing",
     "./services/src/search",
     "./services/src/shared",
-    "./services/src/autocomplete-search"
+    "./services/src/autocomplete-search",
+    "./services/src/customize"
   ],
   "entryPointStrategy": "resolve",
   "entryDocument": "home.mdx",

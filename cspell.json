@@ -47,7 +47,8 @@
     "POIAPI",
     "typeahead",
     "includepaths",
-    "sourcedata"
+    "sourcedata",
+    "revgeo"
   ],
   "ignorePaths": [
     "**/dist/**",
