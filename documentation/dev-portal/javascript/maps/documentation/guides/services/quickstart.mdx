@@ -10,6 +10,67 @@ titleTags:
   color: "grey5"
 ---
 
-<Blockquote>
-    Coming soon
-</Blockquote>
+The Services bundle consists of a set of [GeoJSON](#why-geojson) services for TomTom location APIs and can be used from any JS-based application.
+
+Each service is exposed via typically a stateless function which accepts some parameters.
+You call the function with some parameters and get the GeoJSON response back without further side effects.
+
+The SDK services are designed to share as many types between them as possible, both for inputs and outputs.
+<br/>
+
+## Why GeoJSON?
+
+* [GeoJSON](https://geojson.org/) is a widely used standard to encode geographic data structures.
+* Having GeoJSON compatibility helps you seamlessly integrate with a large ecosystem of geospatial tools and services.
+* Easily readable by both humans and machines.
+* Extends JSON, which makes it a perfect choice for JS-based applications.
+<br/>
+
+# Where can I use the Services bundle?
+
+**web**
+* Search for places, plan routes, fetch geometries and EV charging stations availability.
+* Then use the Map bundle to show them on a map and interact with them.
+
+**nodejs**
+* Ideal for tooling and back-end processing.
+* Geocode address inputs to resolve their full address and position before saving or further processing.
+* Reverse geocode coordinates to enrich locations before saving them.
+
+**React Native**
+* Access our GeoJSON location services from a single codebase without extra plumbing.
+<br/>
+
+# Set up
+
+1. Configure the project as described in [Project setup guide](/javascript/maps/documentation/overview/project-set-up).
+2. Make sure that after following the guide above you have both the SDK and [Axios](#why-axios) installed as dependencies.
+3. Discover which [services you want to use](#available-services) and use them.
+<br/>
+
+## Why Axios
+
+The Services bundle uses [axios](https://www.npmjs.com/package/axios) as a peer dependency, sharing it with your project.
+
+We use Axios instead of [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) for now to maximize compatibility for both web and nodejs.
+
+`Fetch` support is only available in NodeJS from version [17.5](https://blog.logrocket.com/fetch-api-node-js/) and as of this writing it is still labelled as experimental.
+Once `fetch` support becomes more stable, the TomTom SDK might switch to it for all platforms.
+<br/>
+
+# Available services
+
+Explore the different services available in the TomTom SDK:
+
+[**Places:**](/javascript/maps/documentation/guides/services/places/quickstart)
+
+*These are services that enable applications to search for places and their details.*
+* [Search](/javascript/maps/documentation/guides/services/places/search) - search for places, brands or categories.
+* [Geocoding](/javascript/maps/documentation/guides/services/places/geocoding) - resolve places quickly based on address/location inputs.
+* [Reverse geocoding](/javascript/maps/documentation/guides/services/places/reverse-geocoding) - find the nearest address for given coordinates.
+
+[**Routing:**](/javascript/maps/documentation/guides/services/routing/quickstart)
+
+*These are services that enable applications to plan routes.*
+* [Routing](/javascript/maps/documentation/guides/services/routing/planning-route) - controls added places on the map.
+* [Long distance EV routing](/javascript/maps/documentation/guides/services/routing/long-distance-ev-routing) - controls added geometries on the map.

@@ -14,7 +14,7 @@ titleTags:
 
 To use **Maps SDK JS** in your application you need to obtain a TomTom API key by following [these instructions](https://developer.tomtom.com/how-to-get-tomtom-api-key).
 **Remember to keep your API key secure.**
-
+<br/>
 
 # Installing dependencies with NPM
 
@@ -36,7 +36,7 @@ npm i maplibre-gl
 ```shell
 npm i axios
 ```
-
+<br/>
 
 # TomTomConfig: the SDK global configuration
 
@@ -47,7 +47,7 @@ Importing the global config:
 ```javascript
 import { TomTomConfig } from "@anw/maps-sdk-js/core";
 ```
-
+<br/>
 
 # Setting your API key in the SDK
 
@@ -55,7 +55,7 @@ Once you have obtained your API key, you can set it once in your global config v
 ```javascript
 TomTomConfig.instance.put({ apiKey: YOUR_KEY });
 ```
-
+<br/>
 
 # Using multiple API keys
 
@@ -64,8 +64,7 @@ particularly if they have different settings.
 
 In that case, your global configuration ```apiKey``` can be optional or used as a default parameter,
 while you can pass a custom ```apiKey``` when creating the map or calling each service.
-
-
+<br/>
 
 # Setting a language in the SDK
 
@@ -78,7 +77,7 @@ If you don't use any language, the SDK will resolve the languages depending on w
 ```javascript
 TomTomConfig.instance.put({ apiKey: YOUR_KEY, language: "en-US" });
 ```
-
+<br/>
 
 # Next steps
 

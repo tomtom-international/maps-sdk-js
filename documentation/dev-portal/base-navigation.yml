@@ -58,8 +58,12 @@ menu:
                 title: Planning a route
               - fileId: guides/services/routing/waypoints-and-custom-routes
                 title: Waypoints and custom routes
+              - fileId: guides/services/routing/planning-criteria
+                title: Planning criteria
               - fileId: guides/services/routing/route-sections
                 title: Route sections
+              - fileId: guides/services/routing/long-distance-ev-routing
+                title: Long Distance EV Routing
           - fileId: guides/services/customizing-services
             title: Customizing services
       - title: Core
