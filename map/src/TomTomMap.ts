@@ -72,6 +72,12 @@ export class TomTomMap {
         this.mapLibreMap.setStyle(buildMapStyleInput(this.params));
     };
 
+    /**
+     * Returns the current style of the map.
+     */
+    getStyle = (): StyleInput | undefined => {
+        return this.params.style;
+    };
     private _setLanguage(language: Language) {
         this.params = { ...this.params, language };
         this.mapLibreMap.getStyle().layers.forEach((layer) => {

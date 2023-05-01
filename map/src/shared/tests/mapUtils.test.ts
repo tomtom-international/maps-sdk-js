@@ -5,13 +5,18 @@ import {
     changeLayerProps,
     deserializeFeatures,
     injectCustomHeaders,
+    checkForSourceAndTryToAddIfMissing,
     updateLayersAndSource,
+    updateStyleWithModule,
     waitUntilMapIsReady
 } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
 import poiLayerSpec from "../../places/tests/poiLayerSpec.data.json";
 import { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from "../SourceWithLayers";
 import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "../types";
+import updateStyleData from "./mapUtils.test.data.json";
+import { StyleInput, StyleModules } from "../../init";
+import { HILLSHADE_SOURCE_ID } from "../layers/sourcesIDs";
 
 const getTomTomMapMock = async (flag: boolean) =>
     ({
@@ -264,5 +269,61 @@ describe("Map utils - addLayersInCorrectOrder", () => {
         const layer1 = { id: id1, beforeID: id2 } as ToBeAddedLayerSpec;
         const layer2 = { id: id2, beforeID: id1 } as ToBeAddedLayerSpec;
         expect(() => addLayersInCorrectOrder([layer1, layer2], mapMock)).toThrow();
+    });
+});
+
+describe("Map utils - updateStyleWithStyleModule", () => {
+    test("error case", () => {
+        expect(() => updateStyleWithModule({ type: "custom" }, "poi")).toThrow();
+    });
+
+    test.each(updateStyleData)(
+        `'%s`,
+        // @ts-ignore
+        (_name: string, styleInput: StyleInput, styleModule: StyleModules, styleOutput: StyleInput) => {
+            expect(updateStyleWithModule(styleInput ? styleInput : undefined, styleModule)).toEqual(styleOutput);
+        }
+    );
+});
+
+describe("Map utils - tryToAddSourceToMapIfMissing", () => {
+    test("Initializing module with source", async () => {
+        const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
+        const tomtomMapMock = {
+            mapLibreMap: {
+                getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn(),
+                ensureAdded: jest.fn()
+            },
+            _addStyleChangeHandler: jest.fn()
+        } as unknown as TomTomMap;
+
+        await checkForSourceAndTryToAddIfMissing(tomtomMapMock, HILLSHADE_SOURCE_ID, "hillshade");
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+    });
+    test("Initializing module with no source", async () => {
+        const tomtomMapMock = {
+            mapLibreMap: {
+                getSource: jest.fn().mockReturnValueOnce(undefined),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn(),
+                ensureAdded: jest.fn()
+            },
+            _addStyleChangeHandler: jest.fn(),
+            getStyle: jest.fn(),
+            setStyle: jest.fn()
+        } as unknown as TomTomMap;
+
+        await checkForSourceAndTryToAddIfMissing(tomtomMapMock, HILLSHADE_SOURCE_ID, "hillshade");
+        expect(tomtomMapMock.getStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.setStyle).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(2);
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
     });
 });

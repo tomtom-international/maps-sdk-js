@@ -1,0 +1,29 @@
+[
+  ["undefined style", null, "poi", { "type": "published", "include": ["poi"] }],
+  [
+    "Just string for published style",
+    "monoLight",
+    "poi",
+    { "type": "published", "id": "monoLight", "include": ["poi"] }
+  ],
+  [
+    "Style without includes already in it",
+    { "type": "published", "id": "standardLight" },
+    "traffic_incidents",
+    {
+      "type": "published",
+      "id": "standardLight",
+      "include": ["traffic_incidents"]
+    }
+  ],
+  [
+    "Style with some includes already in it",
+    { "type": "published", "id": "standardLight", "include": ["poi"] },
+    "traffic_incidents",
+    {
+      "type": "published",
+      "id": "standardLight",
+      "include": ["poi", "traffic_incidents"]
+    }
+  ]
+]

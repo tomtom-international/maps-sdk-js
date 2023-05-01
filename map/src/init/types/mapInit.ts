@@ -52,7 +52,7 @@ export type CustomStyle = {
 };
 
 /**
- * Optional parameter to exclude modules when loading styles.
+ * Optional parameter to include modules when loading styles.
  * * trafficIncidents: Exclude traffic incidents
  * * trafficFlow: Exclude traffic flow
  * * pois: Exclude POIs (Points of Interest)

@@ -11,7 +11,7 @@ describe("Vector tiles Hillshade module tests", () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
+                getSource: jest.fn().mockReturnValue(hillshadeSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map,
@@ -39,7 +39,7 @@ describe("Vector tiles Hillshade module tests", () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
+                getSource: jest.fn().mockReturnValue(hillshadeSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map,

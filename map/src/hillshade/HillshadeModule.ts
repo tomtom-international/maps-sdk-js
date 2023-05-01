@@ -3,7 +3,7 @@ import { HillshadeModuleConfig } from ".";
 import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
 import { notInTheStyle } from "../shared/errorMessages";
 import { TomTomMap } from "../TomTomMap";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
+import { checkForSourceAndTryToAddIfMissing } from "../shared/mapUtils";
 
 /**
  * IDs of sources and layers for hillshade module.
@@ -24,7 +24,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * @returns {Promise} Returns a promise with a new instance of this module
      */
     static async get(tomtomMap: TomTomMap, config?: HillshadeModuleConfig): Promise<HillshadeModule> {
-        await waitUntilMapIsReady(tomtomMap);
+        await checkForSourceAndTryToAddIfMissing(tomtomMap, HILLSHADE_SOURCE_ID, "hillshade");
         return new HillshadeModule(tomtomMap, config);
     }
 
