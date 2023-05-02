@@ -23,16 +23,17 @@ export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<boolean
     });
 
 /**
- * Wait until the style is ready
+ * Wait until the source is ready.
  * @param tomtomMap The TomTomMap instance.
+ * @param sourceId we want to check for.
  * @returns {Promise<boolean>} Returns a Promise<boolean>
  */
-export const waitUntilStyleIsReady = async (tomtomMap: TomTomMap): Promise<boolean> =>
+export const waitUntilSourceIsLoadedOrMapIsIdle = async (tomtomMap: TomTomMap, sourceId: string): Promise<boolean> =>
     new Promise((resolve) => {
-        if (tomtomMap.mapLibreMap.isStyleLoaded()) {
+        if (tomtomMap.mapLibreMap.getSource(sourceId) && tomtomMap.mapLibreMap.isSourceLoaded(sourceId)) {
             resolve(true);
         } else {
-            tomtomMap.mapLibreMap.once("styledata", () => {
+            tomtomMap.mapLibreMap.once("idle", () => {
                 resolve(true);
             });
         }
@@ -309,11 +310,8 @@ export const checkForSourceAndTryToAddIfMissing = async (
 ): Promise<void> => {
     await waitUntilMapIsReady(tomtomMap);
     const source = tomtomMap.mapLibreMap.getSource(sourceId);
-    console.log(`source is: ${source}`);
     if (!source) {
         tomtomMap.setStyle(updateStyleWithModule(tomtomMap.getStyle(), styleModule));
-        // TODO this wait doesn't work correctly
-        await waitUntilStyleIsReady(tomtomMap);
-        console.log(`after style update source is ${tomtomMap.mapLibreMap.getSource(sourceId)}`);
+        await waitUntilSourceIsLoadedOrMapIsIdle(tomtomMap, sourceId);
     }
 };

@@ -1,6 +1,6 @@
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { getNumVisibleLayersBySource } from "./util/TestUtils";
+import { getNumVisibleLayersBySource, waitForTimeout } from "./util/TestUtils";
 import { HILLSHADE_SOURCE_ID } from "map";
 
 describe("Map vector tiles hillshade module tests", () => {
@@ -8,7 +8,7 @@ describe("Map vector tiles hillshade module tests", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
-    test("Failing to initialize if excluded from the style", async () => {
+    test("Success to initialize if excluded from the style, using auto add of style", async () => {
         await mapEnv.loadMap(
             {
                 center: [-0.12621, 51.50394],
@@ -19,12 +19,14 @@ describe("Map vector tiles hillshade module tests", () => {
             }
         );
 
-        await expect(
-            page.evaluate(async () => {
-                const mapsSDKThis = globalThis as MapsSDKThis;
-                await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap);
-            })
-        ).rejects.toBeDefined();
+        // await expect(
+        await page.evaluate(async () => {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap);
+        });
+        // this is now working
+        // ).rejects.toBeDefined();
+        // await waitForTimeout(1000 * 60 * 10);
     });
 
     test("Vector tiles hillshade visibility changes in different ways", async () => {
