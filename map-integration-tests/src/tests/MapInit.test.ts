@@ -36,12 +36,8 @@ describe("Map Init tests", () => {
 
     test("Including poi and hillshade into the style", async () => {
         await mapEnv.loadMap(
-            {
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["poi", "hillshade"] }
-            }
+            { center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["poi", "hillshade"] } }
         );
 
         await waitForMapReady();
@@ -55,12 +51,8 @@ describe("Map Init tests", () => {
 
     test("Including traffic incidents poi and hillshade into the style", async () => {
         await mapEnv.loadMap(
-            {
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["traffic_incidents", "poi", "hillshade"] }
-            }
+            { center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["traffic_incidents", "poi", "hillshade"] } }
         );
 
         await waitForMapReady();
@@ -74,13 +66,8 @@ describe("Map Init tests", () => {
 
     test("Including traffic into the style", async () => {
         await mapEnv.loadMap(
-            {
-                center: [-0.12621, 51.50394],
-                zoom: 15
-            },
-            {
-                style: { type: "published", include: ["traffic_incidents", "traffic_flow"] }
-            }
+            { center: [-0.12621, 51.50394], zoom: 15 },
+            { style: { type: "published", include: ["traffic_incidents", "traffic_flow"] } }
         );
 
         await waitForMapReady();
