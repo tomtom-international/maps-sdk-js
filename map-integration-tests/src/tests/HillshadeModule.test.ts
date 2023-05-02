@@ -1,6 +1,6 @@
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { getNumVisibleLayersBySource, waitForTimeout } from "./util/TestUtils";
+import { getNumVisibleLayersBySource } from "./util/TestUtils";
 import { HILLSHADE_SOURCE_ID } from "map";
 
 describe("Map vector tiles hillshade module tests", () => {
@@ -19,14 +19,11 @@ describe("Map vector tiles hillshade module tests", () => {
             }
         );
 
-        // await expect(
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap);
+            mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap);
         });
-        // this is now working
-        // ).rejects.toBeDefined();
-        // await waitForTimeout(1000 * 60 * 10);
+        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
     });
 
     test("Vector tiles hillshade visibility changes in different ways", async () => {

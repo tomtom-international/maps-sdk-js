@@ -1,6 +1,6 @@
 module.exports = {
     launch: {
-        headless: false,
+        headless: true,
         args: ["--ignore-certificate-errors", "--window-size=800,600"],
         product: "chrome"
     },
