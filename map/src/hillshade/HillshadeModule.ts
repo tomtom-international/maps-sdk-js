@@ -32,6 +32,9 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
         super(map, config);
     }
 
+    /**
+     * @ignore
+     */
     protected _initSourcesWithLayers() {
         const hillshadeSource = this.mapLibreMap.getSource(HILLSHADE_SOURCE_ID);
         if (!hillshadeSource) {
@@ -40,7 +43,10 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
         return { hillshade: new StyleSourceWithLayers(this.mapLibreMap, hillshadeSource) };
     }
 
-    _applyConfig(config: HillshadeModuleConfig | undefined) {
+    /**
+     * @ignore
+     */
+    protected _applyConfig(config: HillshadeModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {

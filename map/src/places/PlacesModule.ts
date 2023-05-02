@@ -44,6 +44,9 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         super(map, config);
     }
 
+    /**
+     * @ignore
+     */
     protected _initSourcesWithLayers(config?: PlacesModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
         if (!restore) {
             PlacesModule.lastInstanceIndex++;
@@ -55,6 +58,9 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         return { places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, layerSpecs) };
     }
 
+    /**
+     * @ignore
+     */
     protected _applyConfig(config: PlacesModuleConfig | undefined) {
         if (config?.iconConfig || config?.textConfig) {
             this.updateLayersAndData(config);
@@ -64,6 +70,9 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         return config;
     }
 
+    /**
+     * @ignore
+     */
     protected restoreDataAndConfig() {
         const previousShownFeatures = this.sourcesWithLayers.places.shownFeatures;
         this.initSourcesWithLayers(this.config, true);

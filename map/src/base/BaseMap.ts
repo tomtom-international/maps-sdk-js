@@ -30,6 +30,9 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, Vector
         super(map, config);
     }
 
+    /**
+     * @ignore
+     */
     protected _initSourcesWithLayers() {
         const source = this.mapLibreMap.getSource(VECTOR_TILES_SOURCE_ID);
         if (!source) {
@@ -38,6 +41,9 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, Vector
         return { vectorTiles: new StyleSourceWithLayers(this.mapLibreMap, source) };
     }
 
+    /**
+     * @ignore
+     */
     protected _applyConfig(config: VectorTileMapModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);

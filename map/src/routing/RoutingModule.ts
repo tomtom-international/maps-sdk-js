@@ -93,6 +93,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         };
     }
 
+    /**
+     * @ignore
+     */
     protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
         // loading of extra assets not present in the map style:
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
@@ -109,6 +112,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         return routingSourcesWithLayers;
     }
 
+    /**
+     * @ignore
+     */
     protected _applyConfig(config?: RoutingModuleConfig) {
         const mergedConfig = mergeConfig(config);
 
@@ -139,6 +145,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         return mergedConfig;
     }
 
+    /**
+     * @ignore
+     */
     protected restoreDataAndConfig() {
         const previouslyShown = {
             waypoints: this.sourcesWithLayers.waypoints.shownFeatures,

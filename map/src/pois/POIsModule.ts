@@ -12,6 +12,7 @@ import { buildMappedValuesFilter, getMergedAllFilter } from "../shared/MapLibreF
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.
  * @param categories list of filtered categories.
+ * @ignore
  */
 export const getCategoryIcons = (categories: FilterablePOICategory[]): number[] => {
     const categoryIds: number[] = [];
@@ -58,6 +59,9 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
         super(tomtomMap, config);
     }
 
+    /**
+     * @ignore
+     */
     protected _initSourcesWithLayers() {
         const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (!poiRuntimeSource) {
@@ -68,6 +72,9 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
         return { poi };
     }
 
+    /**
+     * @ignore
+     */
     protected _applyConfig(config: POIsModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);

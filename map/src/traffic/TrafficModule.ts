@@ -50,6 +50,9 @@ export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, Tr
         super(map, config);
     }
 
+    /**
+     * @ignore
+     */
     protected _initSourcesWithLayers(): TrafficSourcesAndLayers {
         const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
         let incidents: StyleSourceWithLayers | undefined;
@@ -80,6 +83,9 @@ export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, Tr
         return { ...(incidents && { incidents }), ...(flow && { flow }) };
     }
 
+    /**
+     * @ignore
+     */
     protected _applyConfig(config: TrafficModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this._setVisible(config.visible, { updateConfig: false });

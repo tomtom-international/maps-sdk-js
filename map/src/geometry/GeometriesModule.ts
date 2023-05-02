@@ -53,6 +53,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         super(map, config);
     }
 
+    /**
+     * @ignore
+     */
     protected _initSourcesWithLayers(config?: GeometriesModuleConfig): GeometrySourcesWithLayers {
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
         const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
@@ -71,6 +74,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         };
     }
 
+    /**
+     * @ignore
+     */
     protected _applyConfig(config: GeometriesModuleConfig | undefined) {
         if (config?.textConfig || config?.colorConfig || config?.lineConfig) {
             this.updateLayerAndData(config);
@@ -118,6 +124,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         this.titleLayerSpecs = newTitleLayerSpecs;
     }
 
+    /**
+     * @ignore
+     */
     protected restoreDataAndConfig() {
         const previousShownFeatures = this.sourcesWithLayers.geometry.shownFeatures;
         this.initSourcesWithLayers();
