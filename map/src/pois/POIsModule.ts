@@ -46,17 +46,17 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
 
     /**
      * Gets the POIs Module for the given TomTomMap and configuration once the map is ready.
-     * @param tomtomMap The TomTomMap instance.
+     * @param map The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async get(tomtomMap: TomTomMap, config?: POIsModuleConfig): Promise<POIsModule> {
-        await waitUntilMapIsReady(tomtomMap);
-        return new POIsModule(tomtomMap, config);
+    static async get(map: TomTomMap, config?: StyleModuleInitConfig & POIsModuleConfig): Promise<POIsModule> {
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, POI_SOURCE_ID, "poi");
+        return new POIsModule(map, config);
     }
 
-    private constructor(tomtomMap: TomTomMap, config?: POIsModuleConfig) {
-        super(tomtomMap, config);
+    private constructor(map: TomTomMap, config?: POIsModuleConfig) {
+        super(map, config);
     }
 
     /**

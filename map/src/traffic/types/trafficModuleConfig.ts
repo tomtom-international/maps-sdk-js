@@ -1,5 +1,5 @@
 import { DelayMagnitude } from "@anw/maps-sdk-js/core";
-import { FilterShowMode, ValuesFilter, VectorTileMapModuleConfig } from "../../shared";
+import { FilterShowMode, ValuesFilter, StyleModuleConfig } from "../../shared";
 
 /**
  * Available incident categories.
@@ -170,7 +170,7 @@ export type FlowConfig = {
 /**
  * Configuration for vector tiles traffic incidents and flow layers.
  */
-export type TrafficModuleConfig = VectorTileMapModuleConfig & {
+export type TrafficModuleConfig = StyleModuleConfig & {
     /**
      * Optional configuration for incidents.
      */

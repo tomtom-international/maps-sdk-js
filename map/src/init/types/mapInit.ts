@@ -28,7 +28,7 @@ export type PublishedStyle = {
     /**
      * Include traffic incidents, traffic flow, poi and hillshade modules when loading styles.
      */
-    include?: StyleModules[];
+    include?: StyleModule[];
     /**
      * An optional version for the map style to load.
      * @default latest SDK-supported version.
@@ -58,7 +58,7 @@ export type CustomStyle = {
  * * pois: Exclude POIs (Points of Interest)
  * * hillshade: Exclude hillshade
  */
-export type StyleModules = "traffic_incidents" | "traffic_flow" | "poi" | "hillshade";
+export type StyleModule = "traffic_incidents" | "traffic_flow" | "poi" | "hillshade";
 
 /**
  * Style to load on the map.

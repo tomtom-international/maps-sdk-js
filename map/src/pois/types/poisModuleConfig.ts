@@ -1,4 +1,4 @@
-import { ValuesFilter, VectorTileMapModuleConfig } from "../../shared";
+import { ValuesFilter, StyleModuleConfig } from "../../shared";
 import { MapStylePOIClassification } from "../../places";
 import { POIClassificationGroup } from "../poiClassificationGroups";
 import { MapGeoJSONFeature } from "maplibre-gl";
@@ -9,7 +9,7 @@ import { Language } from "@anw/maps-sdk-js/core";
  */
 export type FilterablePOICategory = MapStylePOIClassification | POIClassificationGroup;
 
-export type POIsModuleConfig = VectorTileMapModuleConfig & {
+export type POIsModuleConfig = StyleModuleConfig & {
     filters?: {
         /**
          * By default, all categories are included in the map.

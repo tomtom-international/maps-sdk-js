@@ -1,9 +1,22 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { FilterablePOICategory, getCategoryIcons, POI_SOURCE_ID, POIsModuleFeature } from "map";
+import {
+    FilterablePOICategory,
+    getCategoryIcons,
+    HILLSHADE_SOURCE_ID,
+    POI_SOURCE_ID,
+    POIsModuleFeature,
+    VECTOR_TILES_FLOW_SOURCE_ID,
+    VECTOR_TILES_INCIDENTS_SOURCE_ID
+} from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { Point } from "geojson";
-import { getNumVisibleLayersBySource, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
+import {
+    getNumVisibleLayersBySource,
+    waitForMapIdle,
+    waitForMapReady,
+    waitUntilRenderedFeaturesChange
+} from "./util/TestUtils";
 
 const waitForRenderedPOIsChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(["POI"], previousFeaturesCount, 10000);
@@ -26,16 +39,7 @@ describe("Map vector tile POI filtering tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("Failing to initialize if excluded from the style", async () => {
-        await mapEnv.loadMap(
-            {
-                center: [-0.12621, 51.50394],
-                zoom: 15
-            },
-            {
-                style: { type: "published" }
-            }
-        );
-
+        await mapEnv.loadMap({});
         await expect(
             page.evaluate(async () => {
                 const mapsSDKThis = globalThis as MapsSDKThis;
@@ -44,22 +48,50 @@ describe("Map vector tile POI filtering tests", () => {
         ).rejects.toBeDefined();
     });
 
-    test("Vector tiles pois visibility changes in different ways", async () => {
-        await mapEnv.loadMap(
-            {
-                zoom: 14,
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["poi"] }
-            }
-        );
+    test("Success to initialize if not included in the style, but auto adding it", async () => {
+        await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
+
+        await page.evaluate(async () => {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
+        });
+
+        await waitForMapReady();
+        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).toBe(0);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Success to initialize if not included in the style, but auto adding it, invisible upfront", async () => {
+        await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
 
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
             mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, {
+                ensureAddedToStyle: true,
                 visible: false
             });
+        });
+
+        await waitForMapReady();
+        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
+
+        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(true));
+        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Vector tiles pois visibility changes in different ways", async () => {
+        await mapEnv.loadMap(
+            { zoom: 14, center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["poi"] } }
+        );
+
+        await page.evaluate(async () => {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { visible: false });
         });
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
 
@@ -96,13 +128,8 @@ describe("Map vector tile POI filtering tests", () => {
 
     test("Vector tiles pois filter starting with no config", async () => {
         await mapEnv.loadMap(
-            {
-                zoom: 14,
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["poi"] }
-            }
+            { zoom: 14, center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["poi"] } }
         );
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
@@ -223,17 +250,14 @@ describe("Map vector tile POI filtering tests", () => {
             ["==", ["get", "icon"], 147]
         ];
         await mapEnv.loadMap(
-            {
-                zoom: 14,
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["poi"] }
-            }
+            { zoom: 14, center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["poi"] } }
         );
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
+            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, {
+                ensureAddedToStyle: true
+            });
         });
 
         // manually override existing POI layer filter to be able to verify it's combined with categories filter

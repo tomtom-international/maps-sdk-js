@@ -5,7 +5,7 @@ import {
     EventsModule,
     StyleSourceWithLayers,
     VECTOR_TILES_SOURCE_ID,
-    VectorTileMapModuleConfig
+    StyleModuleConfig
 } from "../shared";
 import { notInTheStyle } from "../shared/errorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
@@ -14,19 +14,19 @@ type BaseSourceAndLayers = {
     vectorTiles: StyleSourceWithLayers;
 };
 
-export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, VectorTileMapModuleConfig> {
+export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, StyleModuleConfig> {
     /**
      * Gets the BaseMap Module for the given TomTomMap and configuration once the map is ready.
      * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async get(tomtomMap: TomTomMap, config?: VectorTileMapModuleConfig) {
+    static async get(tomtomMap: TomTomMap, config?: StyleModuleConfig) {
         await waitUntilMapIsReady(tomtomMap);
         return new BaseMapModule(tomtomMap, config);
     }
 
-    private constructor(map: TomTomMap, config?: VectorTileMapModuleConfig) {
+    private constructor(map: TomTomMap, config?: StyleModuleConfig) {
         super(map, config);
     }
 
@@ -44,7 +44,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, Vector
     /**
      * @ignore
      */
-    protected _applyConfig(config: VectorTileMapModuleConfig | undefined) {
+    protected _applyConfig(config: StyleModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this.isVisible()) {

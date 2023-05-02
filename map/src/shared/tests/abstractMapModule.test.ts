@@ -1,17 +1,17 @@
 import { Map } from "maplibre-gl";
 import { AbstractMapModule } from "../AbstractMapModule";
-import { VectorTileMapModuleConfig } from "../types";
+import { StyleModuleConfig } from "../types";
 import { TomTomMap } from "../../TomTomMap";
 import { waitUntilMapIsReady } from "../mapUtils";
 import Mock = jest.Mock;
 
 describe("AbstractMapModule tests", () => {
-    class TestModule extends AbstractMapModule<Record<string, never>, VectorTileMapModuleConfig> {
+    class TestModule extends AbstractMapModule<Record<string, never>, StyleModuleConfig> {
         initCalled?: boolean;
-        configApplied?: VectorTileMapModuleConfig | null;
+        configApplied?: StyleModuleConfig | null;
         restored?: boolean;
 
-        static async init(tomtomMap: TomTomMap, config?: VectorTileMapModuleConfig): Promise<TestModule> {
+        static async init(tomtomMap: TomTomMap, config?: StyleModuleConfig): Promise<TestModule> {
             await waitUntilMapIsReady(tomtomMap);
             return new TestModule(tomtomMap, config);
         }
@@ -21,7 +21,7 @@ describe("AbstractMapModule tests", () => {
             return {};
         }
 
-        protected _applyConfig(config: VectorTileMapModuleConfig | undefined) {
+        protected _applyConfig(config: StyleModuleConfig | undefined) {
             this.configApplied = config;
             return config;
         }

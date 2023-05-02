@@ -3,7 +3,7 @@ import { generateTomTomCustomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core
 import { TomTomMap } from "../TomTomMap";
 import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
 import { AbstractSourceWithLayers } from "./SourceWithLayers";
-import { StyleInput, StyleModules } from "../init";
+import { StyleInput, StyleModule } from "../init";
 import { cannotAddStyleModuleToCustomStyle } from "./ErrorMessages";
 
 /**
@@ -16,9 +16,7 @@ export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<boolean
         if (tomtomMap.mapReady || tomtomMap.mapLibreMap.isStyleLoaded()) {
             resolve(true);
         } else {
-            tomtomMap.mapLibreMap.once("styledata", () => {
-                resolve(true);
-            });
+            tomtomMap.mapLibreMap.once("styledata", () => resolve(true));
         }
     });
 
@@ -28,14 +26,12 @@ export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<boolean
  * @param sourceId we want to check for.
  * @returns {Promise<boolean>} Returns a Promise<boolean>
  */
-export const waitUntilSourceIsLoadedOrMapIsIdle = async (tomtomMap: TomTomMap, sourceId: string): Promise<boolean> =>
+export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: string): Promise<boolean> =>
     new Promise((resolve) => {
         if (tomtomMap.mapLibreMap.getSource(sourceId) && tomtomMap.mapLibreMap.isSourceLoaded(sourceId)) {
             resolve(true);
         } else {
-            tomtomMap.mapLibreMap.once("idle", () => {
-                resolve(true);
-            });
+            tomtomMap.mapLibreMap.once("idle", () => resolve(true));
         }
     });
 
@@ -273,11 +269,11 @@ export const addLayersInCorrectOrder = (layersToAdd: ToBeAddedLayerSpec[], map: 
 
 /**
  * Adding style module to the style, if possible.
- * @ignore
  * @param style which we want to update.
  * @param styleModule module we want to add.
+ * @ignore
  */
-export const updateStyleWithModule = (style: StyleInput | undefined, styleModule: StyleModules): StyleInput => {
+export const updateStyleWithModule = (style: StyleInput | undefined, styleModule: StyleModule): StyleInput => {
     switch (typeof style) {
         case "undefined":
             return { type: "published", include: [styleModule] };
@@ -300,18 +296,25 @@ export const updateStyleWithModule = (style: StyleInput | undefined, styleModule
 /**
  * Check if the source is missing and try to add it to the map.
  * @param tomtomMap map to add source to.
+ * @param ensureAddedToStyle
  * @param sourceId id of the source.
  * @param styleModule style module of the source.
+ * @ignore
  */
-export const checkForSourceAndTryToAddIfMissing = async (
+export const prepareForModuleInit = async (
     tomtomMap: TomTomMap,
+    ensureAddedToStyle: boolean | undefined,
     sourceId: string,
-    styleModule: StyleModules
+    styleModule: StyleModule
 ): Promise<void> => {
     await waitUntilMapIsReady(tomtomMap);
-    const source = tomtomMap.mapLibreMap.getSource(sourceId);
-    if (!source) {
-        tomtomMap.setStyle(updateStyleWithModule(tomtomMap.getStyle(), styleModule));
-        await waitUntilSourceIsLoadedOrMapIsIdle(tomtomMap, sourceId);
+    if (ensureAddedToStyle) {
+        const source = tomtomMap.mapLibreMap.getSource(sourceId);
+        if (!source) {
+            // we let the map settle a bit more before changing its style again:
+            await tomtomMap.mapLibreMap.once("idle");
+            tomtomMap.setStyle(updateStyleWithModule(tomtomMap.getStyle(), styleModule));
+            await waitUntilSourceIsLoaded(tomtomMap, sourceId);
+        }
     }
 };

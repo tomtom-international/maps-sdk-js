@@ -1,66 +1,123 @@
 [
   ["All defaults", {}, {}],
   [
-    "Dark map",
+    "Defaults with style object input, yet no added parts",
+    {},
+    { "style": { "type": "published" } }
+  ],
+  [
+    "Defaults with few included parts",
+    {},
     {
-      "zoom": 6,
-      "center": [-0.12621, 51.50394]
-    },
-    {
-      "style": "standardDark"
+      "style": {
+        "type": "published",
+        "include": ["traffic_incidents", "poi"]
+      }
     }
   ],
   [
-    "Mono light map",
+    "Defaults with more included parts",
+    {},
     {
-      "zoom": 14,
-      "minZoom": 2,
-      "center": [-0.12621, 51.50394]
-    },
+      "style": {
+        "type": "published",
+        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+      }
+    }
+  ],
+  ["Dark map, basic", { "zoom": 6 }, { "style": "standardDark" }],
+  [
+    "Dark map, with included parts",
+    { "zoom": 6, "center": [-0.12621, 51.50394] },
     {
-      "style": "monoLight"
+      "style": {
+        "type": "published",
+        "id": "standardDark",
+        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+      }
     }
   ],
   [
-    "Mono dark map",
+    "Mono light map, basic",
+    { "zoom": 14, "minZoom": 2 },
+    { "style": "monoLight" }
+  ],
+  [
+    "Mono light map, with included parts",
+    { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
-      "zoom": 14,
-      "minZoom": 2,
-      "center": [-0.12621, 51.50394]
-    },
-    {
-      "style": "monoDark"
+      "style": {
+        "type": "published",
+        "id": "monoLight",
+        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+      }
     }
   ],
   [
-    "Driving light map",
+    "Mono dark map, basic",
+    { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
+    { "style": "monoDark" }
+  ],
+  [
+    "Mono dark map, with included parts",
+    { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
-      "zoom": 8,
-      "center": [-0.12621, 51.50394]
-    },
+      "style": {
+        "type": "published",
+        "id": "monoDark",
+        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+      }
+    }
+  ],
+  ["Driving light map, basic", {}, { "style": "drivingLight" }],
+  [
+    "Driving light map, with included parts",
+    {},
     {
-      "style": "drivingLight"
+      "style": {
+        "type": "published",
+        "id": "drivingLight",
+        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+      }
+    }
+  ],
+  ["Driving dark map, basic", {}, { "style": "drivingDark" }],
+  [
+    "Driving dark map, with included parts",
+    {},
+    {
+      "style": {
+        "type": "published",
+        "id": "drivingDark",
+        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+      }
     }
   ],
   [
-    "Driving dark map",
+    "Satellite map, basic",
+    { "zoom": 12, "minZoom": 2, "center": [-0.12621, 51.50394] },
+    { "style": "satellite" }
+  ],
+  [
+    "Satellite map, with few included parts",
+    { "zoom": 10, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
-      "zoom": 8,
-      "center": [-0.12621, 51.50394]
-    },
-    {
-      "style": "drivingDark"
+      "style": {
+        "type": "published",
+        "id": "satellite",
+        "include": ["poi", "hillshade"]
+      }
     }
   ],
   [
-    "Satellite map",
+    "Satellite map, with more included parts",
+    { "zoom": 12, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
-      "zoom": 12,
-      "minZoom": 2,
-      "center": [-0.12621, 51.50394]
-    },
-    {
-      "style": "satellite"
+      "style": {
+        "type": "published",
+        "id": "satellite",
+        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+      }
     }
   ]
 ]

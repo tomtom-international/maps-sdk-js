@@ -3,7 +3,7 @@ import { HillshadeModuleConfig } from ".";
 import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
 import { notInTheStyle } from "../shared/errorMessages";
 import { TomTomMap } from "../TomTomMap";
-import { checkForSourceAndTryToAddIfMissing } from "../shared/mapUtils";
+import { prepareForModuleInit } from "../shared/mapUtils";
 
 /**
  * IDs of sources and layers for hillshade module.
@@ -19,13 +19,13 @@ type HillshadeSourcesWithLayers = {
 export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayers, HillshadeModuleConfig> {
     /**
      * Gets the Hillshade Module for the given TomTomMap and configuration once the map is ready.
-     * @param tomtomMap The TomTomMap instance.
+     * @param map The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async get(tomtomMap: TomTomMap, config?: HillshadeModuleConfig): Promise<HillshadeModule> {
-        await checkForSourceAndTryToAddIfMissing(tomtomMap, HILLSHADE_SOURCE_ID, "hillshade");
-        return new HillshadeModule(tomtomMap, config);
+    static async get(map: TomTomMap, config?: StyleModuleInitConfig & HillshadeModuleConfig): Promise<HillshadeModule> {
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, HILLSHADE_SOURCE_ID, "hillshade");
+        return new HillshadeModule(map, config);
     }
 
     private constructor(map: TomTomMap, config?: HillshadeModuleConfig) {

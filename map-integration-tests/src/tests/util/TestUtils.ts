@@ -8,7 +8,7 @@ import {
     StyleInput,
     VECTOR_TILES_FLOW_SOURCE_ID,
     VECTOR_TILES_INCIDENTS_SOURCE_ID,
-    VectorTileMapModuleConfig
+    StyleModuleConfig
 } from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
 
@@ -194,7 +194,7 @@ export const showGeometry = async (geometry: Geometries<GeoJsonProperties>) =>
         geometry
     );
 
-export const initBasemap = async (config?: VectorTileMapModuleConfig) =>
+export const initBasemap = async (config?: StyleModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);

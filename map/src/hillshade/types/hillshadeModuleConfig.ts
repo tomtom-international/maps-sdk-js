@@ -1,3 +1,3 @@
-import { VectorTileMapModuleConfig } from "../../shared";
+import { StyleModuleConfig } from "../../shared";
 
-export type HillshadeModuleConfig = VectorTileMapModuleConfig;
+export type HillshadeModuleConfig = StyleModuleConfig;

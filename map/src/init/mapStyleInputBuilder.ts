@@ -1,11 +1,11 @@
 import isEmpty from "lodash/isEmpty";
 import { StyleSpecification } from "maplibre-gl";
-import { PublishedStyle, PublishedStyleID, StyleModules, TomTomMapParams } from "./types/mapInit";
+import { PublishedStyle, PublishedStyleID, StyleModule, TomTomMapParams } from "./types/MapInit";
 
 const DEFAULT_PUBLISHED_STYLE = "standardLight";
 const URL_PREFIX = "${baseURL}/style/1/style/${version}/?key=${apiKey}";
 
-const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModules, string>> = {
+const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, string>> = {
     standardLight: {
         traffic_incidents: "2/incidents_light",
         traffic_flow: "2/flow_relative-light",

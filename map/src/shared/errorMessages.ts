@@ -1,4 +1,4 @@
-import { StyleModules } from "../init";
+import { StyleModule } from "../init";
 
 /**
  * @ignore
@@ -9,5 +9,5 @@ export const notInTheStyle = (actionText: string): Error =>
 /**
  * @ignore
  */
-export const cannotAddStyleModuleToCustomStyle = (styleModule: StyleModules): Error =>
+export const cannotAddStyleModuleToCustomStyle = (styleModule: StyleModule): Error =>
     new Error(`Trying to add style module ${styleModule} to the custom style!`);

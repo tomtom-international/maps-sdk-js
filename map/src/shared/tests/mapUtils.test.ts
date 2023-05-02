@@ -5,7 +5,7 @@ import {
     changeLayerProps,
     deserializeFeatures,
     injectCustomHeaders,
-    checkForSourceAndTryToAddIfMissing,
+    prepareForModuleInit,
     updateLayersAndSource,
     updateStyleWithModule,
     waitUntilMapIsReady
@@ -15,7 +15,7 @@ import poiLayerSpec from "../../places/tests/poiLayerSpec.data.json";
 import { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from "../SourceWithLayers";
 import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "../types";
 import updateStyleData from "./mapUtils.test.data.json";
-import { StyleInput, StyleModules } from "../../init";
+import { StyleInput, StyleModule } from "../../init";
 import { HILLSHADE_SOURCE_ID } from "../layers/sourcesIDs";
 
 const getTomTomMapMock = async (flag: boolean) =>
@@ -280,7 +280,7 @@ describe("Map utils - updateStyleWithStyleModule", () => {
     test.each(updateStyleData)(
         `'%s`,
         // @ts-ignore
-        (_name: string, styleInput: StyleInput, styleModule: StyleModules, styleOutput: StyleInput) => {
+        (_name: string, styleInput: StyleInput, styleModule: StyleModule, styleOutput: StyleInput) => {
             expect(updateStyleWithModule(styleInput ? styleInput : undefined, styleModule)).toEqual(styleOutput);
         }
     );
@@ -289,7 +289,7 @@ describe("Map utils - updateStyleWithStyleModule", () => {
 describe("Map utils - tryToAddSourceToMapIfMissing", () => {
     test("Initializing module with source", async () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
-        const tomtomMapMock = {
+        const mapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
                 isStyleLoaded: jest.fn().mockReturnValue(true)
@@ -301,10 +301,11 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
             _addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
-        await checkForSourceAndTryToAddIfMissing(tomtomMapMock, HILLSHADE_SOURCE_ID, "hillshade");
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
-        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        await prepareForModuleInit(mapMock, true, HILLSHADE_SOURCE_ID, "hillshade");
+        expect(mapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(mapMock.mapLibreMap.getSource).toHaveBeenCalled();
     });
+
     test("Initializing module with no source", async () => {
         const tomtomMapMock = {
             mapLibreMap: {
@@ -320,7 +321,7 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
             setStyle: jest.fn()
         } as unknown as TomTomMap;
 
-        await checkForSourceAndTryToAddIfMissing(tomtomMapMock, HILLSHADE_SOURCE_ID, "hillshade");
+        await prepareForModuleInit(tomtomMapMock, true, HILLSHADE_SOURCE_ID, "hillshade");
         expect(tomtomMapMock.getStyle).toHaveBeenCalled();
         expect(tomtomMapMock.setStyle).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(2);

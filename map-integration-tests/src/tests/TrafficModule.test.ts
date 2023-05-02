@@ -71,8 +71,7 @@ describe("Map vector tile traffic module tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("Failing to initialize if fully excluded from the style", async () => {
-        await mapEnv.loadMap({ center: [-0.12621, 51.50394], zoom: 15 });
-
+        await mapEnv.loadMap({});
         await expect(initTraffic()).rejects.toBeDefined();
     });
 
