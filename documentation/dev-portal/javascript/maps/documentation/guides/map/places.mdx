@@ -50,7 +50,7 @@ For example, showing places from a search result:
 import { search } from "@anw/maps-sdk-js/services";
 import { PlacesModule } from "@anw/maps-sdk-js/map";
 // ensure "map" is initialized as your TomtomMap (see map quickstart guide)
-const places = await search({ query: "pharmacy", limit: 35, boundingBox: map.getBounds()});
+const places = await search({ query: "pharmacy", limit: 35, boundingBox: map.getBBox()});
 const placesModule = await PlacesModule.init(map);
 placesModule.show(places);
 ```

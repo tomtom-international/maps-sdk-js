@@ -99,7 +99,12 @@ export class TomTomMap {
         }
     }
 
-    getBounds(): BBox {
+    /**
+     * Get the current bounding box in a BBox type
+     * * This method returns a GeoJSON format bounding box coordinates.
+     * @returns BBox
+     */
+    getBBox(): BBox {
         return this.mapLibreMap.getBounds().toArray().flat() as BBox;
     }
 
