@@ -1,0 +1,179 @@
+import {
+    AbstractMapModule,
+    EventsModule,
+    filterLayersBySources,
+    LayerSpecWithSource,
+    StyleModuleInitConfig,
+    StyleSourceWithLayers,
+    TRAFFIC_INCIDENTS_SOURCE_ID
+} from "../shared";
+import { IncidentsConfig, TrafficIncidentsFilters } from "./types/TrafficModuleConfig";
+import { TomTomMap } from "../TomTomMap";
+import { prepareForModuleInit } from "../shared/mapUtils";
+import { notInTheStyle } from "../shared/ErrorMessages";
+import isNil from "lodash/isNil";
+import { FilterSpecification } from "maplibre-gl";
+import { applyFilter, buildMapLibreIncidentFilters } from "./filters/TrafficFilters";
+import omitBy from "lodash/omitBy";
+
+/**
+ * IDs of sources and layers for traffic incidents module.
+ */
+type TrafficIncidentsSourcesWithLayers = {
+    trafficIncidents: StyleSourceWithLayers;
+};
+
+/**
+ * Vector tiles traffic incidents module.
+ * * Traffic incidents refers to the vector traffic incidents layers.
+ */
+export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSourcesWithLayers, IncidentsConfig> {
+    private originalFilters!: Record<string, FilterSpecification | undefined>;
+
+    /**
+     * Gets the Traffic incidents Module for the given TomTomMap and configuration once the map is ready.
+     * @param map The TomTomMap instance.
+     * @param config  The module optional configuration
+     * @returns {Promise} Returns a promise with a new instance of this module
+     */
+    static async get(
+        map: TomTomMap,
+        config?: StyleModuleInitConfig & IncidentsConfig
+    ): Promise<TrafficIncidentsModule> {
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_INCIDENTS_SOURCE_ID, "traffic_incidents");
+        return new TrafficIncidentsModule(map, config);
+    }
+
+    private constructor(map: TomTomMap, config?: IncidentsConfig) {
+        super(map, config);
+    }
+
+    /**
+     * @ignore
+     */
+    protected _initSourcesWithLayers() {
+        const incidentsSource = this.mapLibreMap.getSource(TRAFFIC_INCIDENTS_SOURCE_ID);
+        if (!incidentsSource) {
+            throw notInTheStyle(`init ${TrafficIncidentsModule.name} with source ID ${TRAFFIC_INCIDENTS_SOURCE_ID}`);
+        }
+        this.originalFilters = {};
+        for (const layer of this.getLayers()) {
+            this.originalFilters[layer.id] = layer.filter;
+        }
+        return { trafficIncidents: new StyleSourceWithLayers(this.mapLibreMap, incidentsSource) };
+    }
+
+    /**
+     * @ignore
+     */
+    protected _applyConfig(config: IncidentsConfig | undefined) {
+        if (config && !isNil(config.visible)) {
+            this.setVisible(config.visible);
+        } else if (!this.isVisible()) {
+            // applying default:
+            this.setVisible(true);
+        }
+        if (config?.icons && !isNil(config.icons.visible)) {
+            this.setIconsVisible(config.icons.visible);
+        }
+        this._filter(config?.filters, config?.icons?.filters);
+        return config;
+    }
+
+    /**
+     * Applies the given filters to traffic incidents.
+     * * Any other configurations remain untouched.
+     * @param incidentFilters The incident filters to apply. If undefined, defaults will be ensured.
+     * @param iconFilters The icon filters to apply. If undefined, defaults will be ensured.
+     */
+    filter(incidentFilters?: TrafficIncidentsFilters, iconFilters?: TrafficIncidentsFilters) {
+        this._filter(incidentFilters, iconFilters);
+    }
+
+    private _filter(
+        incidentFilters: TrafficIncidentsFilters | undefined,
+        iconFilters: TrafficIncidentsFilters | undefined
+    ) {
+        if (incidentFilters?.any?.length) {
+            const incidentFilterExpression = buildMapLibreIncidentFilters(incidentFilters);
+            if (incidentFilterExpression) {
+                const layers = iconFilters ? this.getNonSymbolLayers() : this.getLayers();
+                applyFilter(incidentFilterExpression, layers, this.mapLibreMap, this.originalFilters);
+            }
+        } else if (this.config?.filters?.any?.length) {
+            applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
+        }
+        if (iconFilters?.any?.length) {
+            const iconFilterExpression = buildMapLibreIncidentFilters(iconFilters);
+            if (iconFilterExpression) {
+                applyFilter(iconFilterExpression, this.getSymbolLayers(), this.mapLibreMap, this.originalFilters);
+            }
+        }
+        // else: default incidents visibility has been set already if necessary
+
+        this.config = omitBy(
+            {
+                ...this.config,
+                filters: incidentFilters,
+                icons: { ...this.config?.icons, filters: iconFilters }
+            },
+            isNil
+        );
+    }
+
+    private getLayers(): LayerSpecWithSource[] {
+        return filterLayersBySources(this.tomtomMap.mapLibreMap, [TRAFFIC_INCIDENTS_SOURCE_ID]);
+    }
+
+    private getSymbolLayers(): LayerSpecWithSource[] {
+        return this.getLayers().filter((layer) => layer.type == "symbol");
+    }
+
+    private getNonSymbolLayers(): LayerSpecWithSource[] {
+        return this.getLayers().filter((layer) => layer.type != "symbol");
+    }
+
+    /**
+     * Sets the icon visibility for incidents.
+     * @param visible
+     */
+    setIconsVisible(visible: boolean): void {
+        if (this.sourcesWithLayers.trafficIncidents) {
+            this.sourcesWithLayers.trafficIncidents.setAllLayersVisible(
+                visible,
+                (layerSpec) => layerSpec.type === "symbol"
+            );
+            // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
+            this.config = {
+                ...this.config,
+                icons: { ...this.config?.icons, visible }
+            };
+        }
+    }
+    /**
+     * Sets visibility for traffic incidents layers.
+     * @param visible
+     */
+    setVisible(visible: boolean): void {
+        this.sourcesWithLayers.trafficIncidents.setAllLayersVisible(visible);
+        this.config = {
+            ...this.config,
+            visible
+        };
+    }
+
+    /**
+     * Returns if any layer for traffic incidents is visible or not.
+     */
+    isVisible(): boolean {
+        return this.sourcesWithLayers.trafficIncidents.isAnyLayerVisible();
+    }
+
+    /**
+     * Create the events on/off for this module
+     * @returns An instance of EventsModule
+     */
+    get events() {
+        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.trafficIncidents);
+    }
+}

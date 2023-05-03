@@ -54,7 +54,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
             throw notInTheStyle(`init ${TrafficFlowModule.name} with source ID ${TRAFFIC_FLOW_SOURCE_ID}`);
         }
         this.originalFilters = {};
-        for (const layer of filterLayersBySources(this.tomtomMap.mapLibreMap, [TRAFFIC_FLOW_SOURCE_ID])) {
+        for (const layer of this.getLayers()) {
             this.originalFilters[layer.id] = layer.filter;
         }
         return { trafficFlow: new StyleSourceWithLayers(this.mapLibreMap, flowSource) };
@@ -89,9 +89,9 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
 
     private _filter(filters: TrafficFlowFilters | undefined) {
         if (filters?.any?.length) {
-            const flowFilterExpression = buildMapLibreFlowFilters(filters);
-            if (flowFilterExpression) {
-                applyFilter(flowFilterExpression, this.getLayers(), this.mapLibreMap, this.originalFilters);
+            const filterExpression = buildMapLibreFlowFilters(filters);
+            if (filterExpression) {
+                applyFilter(filterExpression, this.getLayers(), this.mapLibreMap, this.originalFilters);
             }
         } else if (this.config?.filters?.any?.length) {
             applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
@@ -106,6 +106,10 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         );
     }
 
+    /**
+     * Sets visibility for traffic flow layers.
+     * @param visible
+     */
     setVisible(visible: boolean): void {
         this.sourcesWithLayers.trafficFlow.setAllLayersVisible(visible);
         this.config = {
@@ -114,6 +118,9 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         };
     }
 
+    /**
+     * Returns if any layer for traffic flow is visible or not.
+     */
     isVisible(): boolean {
         return this.sourcesWithLayers.trafficFlow.isAnyLayerVisible();
     }
