@@ -60,8 +60,8 @@ describe("Routing - error response parsing tests", () => {
     );
 });
 
-describe("Routing - invalid response", () => {
-    test("Not throw when route has no section", async () => {
+describe("Routing - no section from api response", () => {
+    test("Route with undefined api sections", async () => {
         const apiRoute = apiAndParsedResponses[0][1] as unknown as CalculateRouteResponseAPI;
 
         for (const route of apiRoute.routes) {
