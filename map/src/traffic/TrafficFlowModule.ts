@@ -70,37 +70,37 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
             // applying default:
             this.setVisible(true);
         }
-        this._filterFlow(config?.filters);
+        this._filter(config?.filters);
         return config;
     }
 
-    private getFlowLayers(): LayerSpecWithSource[] {
+    private getLayers(): LayerSpecWithSource[] {
         return filterLayersBySources(this.tomtomMap.mapLibreMap, [VECTOR_TILES_FLOW_SOURCE_ID]);
     }
 
     /**
      * Applies the given filters to traffic flow.
      * * Any other configurations remain untouched.
-     * @param flowFilters The filters to apply. If undefined, defaults will be ensured.
+     * @param filters The filters to apply. If undefined, defaults will be ensured.
      */
-    filterFlow(flowFilters?: TrafficFlowFilters) {
-        this._filterFlow(flowFilters);
+    filter(filters?: TrafficFlowFilters) {
+        this._filter(filters);
     }
 
-    private _filterFlow(flowFilters: TrafficFlowFilters | undefined) {
-        if (flowFilters?.any?.length) {
-            const flowFilterExpression = buildMapLibreFlowFilters(flowFilters);
+    private _filter(filters: TrafficFlowFilters | undefined) {
+        if (filters?.any?.length) {
+            const flowFilterExpression = buildMapLibreFlowFilters(filters);
             if (flowFilterExpression) {
-                applyFilter(flowFilterExpression, this.getFlowLayers(), this.mapLibreMap, this.originalFilters);
+                applyFilter(flowFilterExpression, this.getLayers(), this.mapLibreMap, this.originalFilters);
             }
         } else if (this.config?.filters?.any?.length) {
-            applyFilter(undefined, this.getFlowLayers(), this.mapLibreMap, this.originalFilters);
+            applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
         }
 
         this.config = omitBy(
             {
                 ...this.config,
-                filters: flowFilters
+                filters: filters
             },
             isNil
         );
