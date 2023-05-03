@@ -1,5 +1,11 @@
+import { Map } from "maplibre-gl";
 import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
-import { ExpressionFilterSpecification, LegacyFilterSpecification } from "maplibre-gl";
+import {
+    ExpressionFilterSpecification,
+    FilterSpecification,
+    LayerSpecification,
+    LegacyFilterSpecification
+} from "maplibre-gl";
 import isNil from "lodash/isNil";
 import {
     DelayFilter,
@@ -155,5 +161,26 @@ export const buildMapLibreFlowFilters = (flowFilters: TrafficFlowFilters): Multi
             .map(buildMapLibreFlowFilter)
             .filter((mapLibreFilter) => !isNil(mapLibreFilter)) as MultiSyntaxFilter[];
         return getMergedAnyFilter(mapLibreFilters);
+    }
+};
+
+/**
+ * @ignore
+ * @param filter
+ * @param layers
+ * @param mapLibreMap
+ * @param originalFilters
+ */
+export const applyFilter = (
+    filter: MultiSyntaxFilter | undefined,
+    layers: LayerSpecification[],
+    mapLibreMap: Map,
+    originalFilters: Record<string, FilterSpecification | undefined>
+) => {
+    for (const layer of layers) {
+        mapLibreMap.setFilter(
+            layer.id,
+            filter ? getMergedAllFilter(filter, originalFilters[layer.id]) : originalFilters[layer.id]
+        );
     }
 };
