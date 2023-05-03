@@ -175,6 +175,10 @@ const getSectionMapping = (
 };
 
 const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: SectionsProps): void => {
+    if (!Array.isArray(apiSections)) {
+        return;
+    }
+
     for (const apiSection of apiSections) {
         const sectionMapping = getSectionMapping(apiSection);
         const mappedSection = sectionMapping.mappingFunction(apiSection);
