@@ -28,7 +28,7 @@ describe("BaseMap module tests", () => {
     });
 
     test("Initializing module with config", async () => {
-        const basemap = await BaseMapModule.init(tomtomMapMock, {
+        const basemap = await BaseMapModule.get(tomtomMapMock, {
             visible: false
         });
         const spySetVisible = jest.spyOn(basemap, "setVisible");
@@ -45,7 +45,7 @@ describe("BaseMap module tests", () => {
     });
 
     test("Initializing module with no config", async () => {
-        const basemap = await BaseMapModule.init(tomtomMapMock);
+        const basemap = await BaseMapModule.get(tomtomMapMock);
         expect(basemap).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
@@ -55,6 +55,6 @@ describe("BaseMap module tests", () => {
     test("Throw if source runtime is not found", async () => {
         tomtomMapMock.mapLibreMap.getSource = jest.fn().mockReturnValueOnce(undefined);
 
-        await expect(() => BaseMapModule.init(tomtomMapMock)).rejects.toThrow();
+        await expect(() => BaseMapModule.get(tomtomMapMock)).rejects.toThrow();
     });
 });

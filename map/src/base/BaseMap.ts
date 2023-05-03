@@ -16,12 +16,12 @@ type BaseSourceAndLayers = {
 
 export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, VectorTileMapModuleConfig> {
     /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * Gets the BaseMap Module for the given TomTomMap and configuration once the map is ready.
      * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: VectorTileMapModuleConfig) {
+    static async get(tomtomMap: TomTomMap, config?: VectorTileMapModuleConfig) {
         await waitUntilMapIsReady(tomtomMap);
         return new BaseMapModule(tomtomMap, config);
     }

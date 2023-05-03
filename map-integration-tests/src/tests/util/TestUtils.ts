@@ -197,7 +197,7 @@ export const showGeometry = async (geometry: Geometries<GeoJsonProperties>) =>
 export const initBasemap = async (config?: VectorTileMapModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.init(mapsSDKThis.tomtomMap, inputConfig);
+        mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config as never);
 
 export const setStyle = async (style: StyleInput) =>
