@@ -9,8 +9,8 @@ import {
     LayerSpecWithSource,
     MultiSyntaxFilter,
     StyleSourceWithLayers,
-    VECTOR_TILES_FLOW_SOURCE_ID,
-    VECTOR_TILES_INCIDENTS_SOURCE_ID
+    TRAFFIC_FLOW_SOURCE_ID,
+    TRAFFIC_INCIDENTS_SOURCE_ID
 } from "../shared";
 import { TrafficFlowFilters, TrafficIncidentsFilters, TrafficModuleConfig } from ".";
 import { notInTheStyle } from "../shared/errorMessages";
@@ -54,14 +54,14 @@ export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, Tr
      * @ignore
      */
     protected _initSourcesWithLayers(): TrafficSourcesAndLayers {
-        const incidentsRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
+        const incidentsRuntimeSource = this.mapLibreMap.getSource(TRAFFIC_INCIDENTS_SOURCE_ID);
         let incidents: StyleSourceWithLayers | undefined;
         if (incidentsRuntimeSource) {
             incidents = new StyleSourceWithLayers(this.mapLibreMap, incidentsRuntimeSource);
         }
 
         let flow: StyleSourceWithLayers | undefined;
-        const flowRuntimeSource = this.mapLibreMap.getSource(VECTOR_TILES_FLOW_SOURCE_ID);
+        const flowRuntimeSource = this.mapLibreMap.getSource(TRAFFIC_FLOW_SOURCE_ID);
         if (flowRuntimeSource) {
             flow = new StyleSourceWithLayers(this.mapLibreMap, flowRuntimeSource);
         }
@@ -69,14 +69,14 @@ export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, Tr
         if (!incidentsRuntimeSource && !flowRuntimeSource) {
             throw notInTheStyle(
                 `init ${TrafficModule.name} with at least one of these source IDs: 
-                ${VECTOR_TILES_INCIDENTS_SOURCE_ID} ${VECTOR_TILES_FLOW_SOURCE_ID}`
+                ${TRAFFIC_INCIDENTS_SOURCE_ID} ${TRAFFIC_FLOW_SOURCE_ID}`
             );
         }
         // else
         this.originalFilters = {};
         for (const layer of filterLayersBySources(this.tomtomMap.mapLibreMap, [
-            VECTOR_TILES_INCIDENTS_SOURCE_ID,
-            VECTOR_TILES_FLOW_SOURCE_ID
+            TRAFFIC_INCIDENTS_SOURCE_ID,
+            TRAFFIC_FLOW_SOURCE_ID
         ])) {
             this.originalFilters[layer.id] = layer.filter;
         }
@@ -214,7 +214,7 @@ export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, Tr
     }
 
     private getIncidentLayers(): LayerSpecWithSource[] {
-        return filterLayersBySources(this.tomtomMap.mapLibreMap, [VECTOR_TILES_INCIDENTS_SOURCE_ID]);
+        return filterLayersBySources(this.tomtomMap.mapLibreMap, [TRAFFIC_INCIDENTS_SOURCE_ID]);
     }
 
     private getIncidentSymbolLayers(): LayerSpecWithSource[] {
@@ -226,7 +226,7 @@ export class TrafficModule extends AbstractMapModule<TrafficSourcesAndLayers, Tr
     }
 
     private getFlowLayers(): LayerSpecWithSource[] {
-        return filterLayersBySources(this.tomtomMap.mapLibreMap, [VECTOR_TILES_FLOW_SOURCE_ID]);
+        return filterLayersBySources(this.tomtomMap.mapLibreMap, [TRAFFIC_FLOW_SOURCE_ID]);
     }
 
     private applyFilter(filter: MultiSyntaxFilter, layers: LayerSpecification[]) {

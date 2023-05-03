@@ -18,7 +18,7 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
-import { EventType, VECTOR_TILES_SOURCE_ID } from "map";
+import { EventType, BASE_MAP_SOURCE_ID } from "map";
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
@@ -257,7 +257,7 @@ describe("Tests with user events", () => {
         const topBaseMapFeature = (await page.evaluate(
             () => (globalThis as MapsSDKThis)._clickedTopFeature
         )) as MapGeoJSONFeature;
-        expect(topBaseMapFeature?.source).toBe(VECTOR_TILES_SOURCE_ID);
+        expect(topBaseMapFeature?.source).toBe(BASE_MAP_SOURCE_ID);
 
         await setupPlacesClickHandlers();
 

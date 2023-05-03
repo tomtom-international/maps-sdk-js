@@ -4,7 +4,7 @@ import {
     AbstractMapModule,
     EventsModule,
     StyleSourceWithLayers,
-    VECTOR_TILES_SOURCE_ID,
+    BASE_MAP_SOURCE_ID,
     StyleModuleConfig
 } from "../shared";
 import { notInTheStyle } from "../shared/errorMessages";
@@ -34,9 +34,9 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, StyleM
      * @ignore
      */
     protected _initSourcesWithLayers() {
-        const source = this.mapLibreMap.getSource(VECTOR_TILES_SOURCE_ID);
+        const source = this.mapLibreMap.getSource(BASE_MAP_SOURCE_ID);
         if (!source) {
-            throw notInTheStyle(`init ${BaseMapModule.name} with source ID ${VECTOR_TILES_SOURCE_ID}`);
+            throw notInTheStyle(`init ${BaseMapModule.name} with source ID ${BASE_MAP_SOURCE_ID}`);
         }
         return { vectorTiles: new StyleSourceWithLayers(this.mapLibreMap, source) };
     }

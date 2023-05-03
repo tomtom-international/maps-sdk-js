@@ -6,8 +6,8 @@ import {
     LayerSpecWithSource,
     PlacesModuleConfig,
     StyleInput,
-    VECTOR_TILES_FLOW_SOURCE_ID,
-    VECTOR_TILES_INCIDENTS_SOURCE_ID,
+    TRAFFIC_FLOW_SOURCE_ID,
+    TRAFFIC_INCIDENTS_SOURCE_ID,
     StyleModuleConfig
 } from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
@@ -86,8 +86,8 @@ export const assertTrafficVisibility = async (visibility: {
     }
 
     // we double-check against maplibre directly as well:
-    assertNumber(await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID), visibility.incidents);
-    assertNumber(await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID), visibility.flow);
+    assertNumber(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID), visibility.incidents);
+    assertNumber(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID), visibility.flow);
 };
 
 export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Position): Promise<MapGeoJSONFeature[]> =>

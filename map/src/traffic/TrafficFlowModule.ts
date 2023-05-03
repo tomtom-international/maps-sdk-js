@@ -5,7 +5,7 @@ import {
     LayerSpecWithSource,
     StyleModuleInitConfig,
     StyleSourceWithLayers,
-    VECTOR_TILES_FLOW_SOURCE_ID
+    TRAFFIC_FLOW_SOURCE_ID
 } from "../shared";
 import { FlowConfig, TrafficFlowFilters } from "./types/TrafficModuleConfig";
 import { TomTomMap } from "../TomTomMap";
@@ -37,7 +37,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @returns {Promise} Returns a promise with a new instance of this module
      */
     static async get(map: TomTomMap, config?: StyleModuleInitConfig & FlowConfig): Promise<TrafficFlowModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, VECTOR_TILES_FLOW_SOURCE_ID, "traffic_flow");
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_FLOW_SOURCE_ID, "traffic_flow");
         return new TrafficFlowModule(map, config);
     }
 
@@ -49,12 +49,12 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @ignore
      */
     protected _initSourcesWithLayers() {
-        const flowSource = this.mapLibreMap.getSource(VECTOR_TILES_FLOW_SOURCE_ID);
+        const flowSource = this.mapLibreMap.getSource(TRAFFIC_FLOW_SOURCE_ID);
         if (!flowSource) {
-            throw notInTheStyle(`init ${TrafficFlowModule.name} with source ID ${VECTOR_TILES_FLOW_SOURCE_ID}`);
+            throw notInTheStyle(`init ${TrafficFlowModule.name} with source ID ${TRAFFIC_FLOW_SOURCE_ID}`);
         }
         this.originalFilters = {};
-        for (const layer of filterLayersBySources(this.tomtomMap.mapLibreMap, [VECTOR_TILES_FLOW_SOURCE_ID])) {
+        for (const layer of filterLayersBySources(this.tomtomMap.mapLibreMap, [TRAFFIC_FLOW_SOURCE_ID])) {
             this.originalFilters[layer.id] = layer.filter;
         }
         return { trafficFlow: new StyleSourceWithLayers(this.mapLibreMap, flowSource) };
@@ -75,7 +75,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     }
 
     private getLayers(): LayerSpecWithSource[] {
-        return filterLayersBySources(this.tomtomMap.mapLibreMap, [VECTOR_TILES_FLOW_SOURCE_ID]);
+        return filterLayersBySources(this.tomtomMap.mapLibreMap, [TRAFFIC_FLOW_SOURCE_ID]);
     }
 
     /**

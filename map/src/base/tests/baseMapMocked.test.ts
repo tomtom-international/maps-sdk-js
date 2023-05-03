@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { VECTOR_TILES_SOURCE_ID } from "../../shared";
+import { BASE_MAP_SOURCE_ID } from "../../shared";
 import { TomTomMap } from "../../TomTomMap";
 import { BaseMapModule } from "../BaseMap";
 
@@ -12,7 +12,7 @@ describe("BaseMap module tests", () => {
     beforeEach(() => {
         tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce({ id: VECTOR_TILES_SOURCE_ID }),
+                getSource: jest.fn().mockReturnValueOnce({ id: BASE_MAP_SOURCE_ID }),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn(),

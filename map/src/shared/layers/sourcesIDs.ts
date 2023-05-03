@@ -32,16 +32,16 @@ export const PLACES_SYMBOL_LAYER_PREFIX_ID = "placesSymbols";
 /**
  * Vector tiles source id
  */
-export const VECTOR_TILES_SOURCE_ID = "vectorTiles";
+export const BASE_MAP_SOURCE_ID = "vectorTiles";
 
 /**
  * Traffic incidents source id
  */
-export const VECTOR_TILES_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
+export const TRAFFIC_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
 /**
  * Traffic flow source id
  */
-export const VECTOR_TILES_FLOW_SOURCE_ID = "vectorTilesFlow";
+export const TRAFFIC_FLOW_SOURCE_ID = "vectorTilesFlow";
 
 /* Start of Routing Source ids */
 /**

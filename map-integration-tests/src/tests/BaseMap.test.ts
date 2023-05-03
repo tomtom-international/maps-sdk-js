@@ -1,4 +1,4 @@
-import { VECTOR_TILES_SOURCE_ID } from "map/src/shared";
+import { BASE_MAP_SOURCE_ID } from "map/src/shared";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { getNumVisibleLayersBySource, initBasemap } from "./util/TestUtils";
@@ -22,11 +22,11 @@ describe("BaseMap module tests", () => {
     });
 
     test("BaseMap visibility changes", async () => {
-        expect(await getNumVisibleLayersBySource(VECTOR_TILES_SOURCE_ID)).toBeGreaterThanOrEqual(87);
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThanOrEqual(87);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).basemap?.setVisible(false));
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).basemap?.isVisible())).toBe(false);
-        expect(await getNumVisibleLayersBySource(VECTOR_TILES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBe(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

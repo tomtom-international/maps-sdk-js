@@ -5,8 +5,8 @@ import {
     incidentCategoriesMapping,
     IncidentCategory,
     RoadCategory,
-    VECTOR_TILES_FLOW_SOURCE_ID,
-    VECTOR_TILES_INCIDENTS_SOURCE_ID,
+    TRAFFIC_FLOW_SOURCE_ID,
+    TRAFFIC_INCIDENTS_SOURCE_ID,
     TrafficModuleConfig
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
@@ -22,14 +22,14 @@ import {
 
 const waitForRenderedFlowChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(
-        (await getVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID)).map((layer) => layer.id),
+        (await getVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).map((layer) => layer.id),
         previousFeaturesCount,
         10000
     );
 
 const waitForRenderedIncidentsChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(
-        (await getVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID)).map((layer) => layer.id),
+        (await getVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).map((layer) => layer.id),
         previousFeaturesCount,
         20000
     );

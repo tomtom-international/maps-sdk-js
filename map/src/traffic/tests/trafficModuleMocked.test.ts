@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { VECTOR_TILES_FLOW_SOURCE_ID, VECTOR_TILES_INCIDENTS_SOURCE_ID } from "../../shared";
+import { TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from "../../shared";
 import { TomTomMap } from "../../TomTomMap";
 import { TrafficModule } from "../TrafficModule";
 
@@ -8,8 +8,8 @@ import { TrafficModule } from "../TrafficModule";
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles traffic module tests", () => {
     test("Initializing module with config", async () => {
-        const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
-        const flowSource = { id: VECTOR_TILES_FLOW_SOURCE_ID };
+        const incidentsSource = { id: TRAFFIC_INCIDENTS_SOURCE_ID };
+        const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(flowSource),
@@ -72,7 +72,7 @@ describe("Vector tiles traffic module tests", () => {
     });
 
     test("Initializing module with no config and no flow in style", async () => {
-        const incidentsSource = { id: VECTOR_TILES_INCIDENTS_SOURCE_ID };
+        const incidentsSource = { id: TRAFFIC_INCIDENTS_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(undefined),

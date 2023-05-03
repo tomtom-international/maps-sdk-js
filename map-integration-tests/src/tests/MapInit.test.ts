@@ -6,12 +6,13 @@ import {
     StyleInput,
     StyleModule,
     TomTomMapParams,
-    VECTOR_TILES_FLOW_SOURCE_ID,
-    VECTOR_TILES_INCIDENTS_SOURCE_ID
+    TRAFFIC_FLOW_SOURCE_ID,
+    TRAFFIC_INCIDENTS_SOURCE_ID
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
-import { getNumVisibleLayersBySource, isLayerVisible, waitForMapReady } from "./util/TestUtils";
+import { getNumVisibleLayersBySource, isLayerVisible, waitForMapReady, waitForTimeout } from "./util/TestUtils";
+import { MapsSDKThis } from "./types/MapsSDKThis";
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
     !!(style as PublishedStyle)?.include?.includes(module);
@@ -29,10 +30,10 @@ describe("Map Init tests", () => {
             await waitForMapReady();
 
             const style = tomtomMapParams.style;
-            const incidentLayers = await getNumVisibleLayersBySource(VECTOR_TILES_INCIDENTS_SOURCE_ID);
+            const incidentLayers = await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID);
             expect(includes(style, "traffic_incidents") ? incidentLayers > 0 : incidentLayers == 0).toBe(true);
 
-            const flowLayers = await getNumVisibleLayersBySource(VECTOR_TILES_FLOW_SOURCE_ID);
+            const flowLayers = await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID);
             expect(includes(style, "traffic_flow") ? flowLayers > 0 : flowLayers == 0).toBe(true);
 
             const poiLayersBySource = await getNumVisibleLayersBySource(POI_SOURCE_ID);
@@ -46,4 +47,19 @@ describe("Map Init tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
+
+    test("Multiple modules auto-added to the style right after map init", async () => {
+        await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 10 });
+        await page.evaluate(async () => {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
+            await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
+            await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
+        });
+        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 });

@@ -8,7 +8,8 @@ import {
     POIsModule,
     HillshadeModule,
     TrafficModule,
-    BaseMapModule
+    BaseMapModule,
+    TrafficFlowModule
 } from "map";
 
 export type MapsSDKThis = typeof globalThis & {
@@ -20,6 +21,7 @@ export type MapsSDKThis = typeof globalThis & {
     mapLibreMap: Map;
     basemap: BaseMapModule;
     traffic?: TrafficModule;
+    trafficFlow?: TrafficFlowModule;
     pois?: POIsModule;
     hillshade?: HillshadeModule;
     places?: PlacesModule;

@@ -31,7 +31,7 @@ export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: st
         if (tomtomMap.mapLibreMap.getSource(sourceId) && tomtomMap.mapLibreMap.isSourceLoaded(sourceId)) {
             resolve(true);
         } else {
-            tomtomMap.mapLibreMap.once("idle", () => resolve(true));
+            tomtomMap.mapLibreMap.once("sourcedata", () => resolve(true));
         }
     });
 
@@ -295,26 +295,28 @@ export const updateStyleWithModule = (style: StyleInput | undefined, styleModule
 
 /**
  * Check if the source is missing and try to add it to the map.
- * @param tomtomMap map to add source to.
+ * @param map map to add source to.
  * @param ensureAddedToStyle
  * @param sourceId id of the source.
  * @param styleModule style module of the source.
  * @ignore
  */
 export const prepareForModuleInit = async (
-    tomtomMap: TomTomMap,
+    map: TomTomMap,
     ensureAddedToStyle: boolean | undefined,
     sourceId: string,
     styleModule: StyleModule
 ): Promise<void> => {
-    await waitUntilMapIsReady(tomtomMap);
+    await waitUntilMapIsReady(map);
     if (ensureAddedToStyle) {
-        const source = tomtomMap.mapLibreMap.getSource(sourceId);
+        const source = map.mapLibreMap.getSource(sourceId);
         if (!source) {
-            // we let the map settle a bit more before changing its style again:
-            await tomtomMap.mapLibreMap.once("idle");
-            tomtomMap.setStyle(updateStyleWithModule(tomtomMap.getStyle(), styleModule));
-            await waitUntilSourceIsLoaded(tomtomMap, sourceId);
+            if (!map.mapLibreMap.isStyleLoaded()) {
+                // we let the map settle before changing its style again, so the previous style/data load goes smoother:
+                await map.mapLibreMap.once("idle");
+            }
+            map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
+            await waitUntilSourceIsLoaded(map, sourceId);
         }
     }
 };
