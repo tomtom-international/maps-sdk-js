@@ -309,8 +309,9 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
     test("Initializing module with no source", async () => {
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(undefined),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                getSource: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(jest.fn()),
+                isStyleLoaded: jest.fn().mockReturnValue(true),
+                isSourceLoaded: jest.fn().mockReturnValue(true)
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
