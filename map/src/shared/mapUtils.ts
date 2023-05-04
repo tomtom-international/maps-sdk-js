@@ -280,7 +280,7 @@ export const updateStyleWithModule = (style: StyleInput | undefined, styleModule
         case "string":
             // this is a published style
             return { type: "published", id: style, include: [styleModule] };
-        case "object":
+        default:
             if (style.type === "published") {
                 if (style.include) {
                     return { ...style, include: [...style.include, styleModule] };
@@ -308,15 +308,12 @@ export const prepareForModuleInit = async (
     styleModule: StyleModule
 ): Promise<void> => {
     await waitUntilMapIsReady(map);
-    if (ensureAddedToStyle) {
-        const source = map.mapLibreMap.getSource(sourceId);
-        if (!source) {
-            if (!map.mapLibreMap.isStyleLoaded()) {
-                // we let the map settle before changing its style again, so the previous style/data load goes smoother:
-                await map.mapLibreMap.once("idle");
-            }
-            map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
-            await waitUntilSourceIsLoaded(map, sourceId);
+    if (ensureAddedToStyle && !map.mapLibreMap.getSource(sourceId)) {
+        if (!map.mapLibreMap.isStyleLoaded()) {
+            // we let the map settle before changing its style again, so the previous style/data load goes smoother:
+            await map.mapLibreMap.once("idle");
         }
+        map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
+        await waitUntilSourceIsLoaded(map, sourceId);
     }
 };

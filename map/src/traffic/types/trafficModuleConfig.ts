@@ -154,16 +154,14 @@ export type IncidentsConfig = IncidentsCommonConfig & {
 /**
  * Common properties for traffic incident lines and icons.
  */
-export type IncidentsCommonConfig = {
-    visible?: boolean;
+export type IncidentsCommonConfig = StyleModuleConfig & {
     filters?: TrafficIncidentsFilters;
 };
 
 /**
  * Traffic flow configuration.
  */
-export type FlowConfig = {
-    visible?: boolean;
+export type FlowConfig = StyleModuleConfig & {
     filters?: TrafficFlowFilters;
 };
 
