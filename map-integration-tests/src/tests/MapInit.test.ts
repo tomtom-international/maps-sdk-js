@@ -11,7 +11,7 @@ import {
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
-import { getNumVisibleLayersBySource, isLayerVisible, waitForMapReady, waitForTimeout } from "./util/TestUtils";
+import { getNumVisibleLayersBySource, isLayerVisible, waitForMapReady } from "./util/TestUtils";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
@@ -52,12 +52,14 @@ describe("Map Init tests", () => {
         await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 10 });
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
             await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
+            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
+            await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
             await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
         });
-        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
