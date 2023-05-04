@@ -1,0 +1,71 @@
+import { Map } from "maplibre-gl";
+import { TRAFFIC_FLOW_SOURCE_ID } from "../../shared";
+import { TomTomMap } from "../../TomTomMap";
+import { TrafficFlowModule } from "../TrafficFlowModule";
+
+// NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
+// For real testing of such modules, refer to map-integration-tests.
+// Any forced coverage from tests here must be truly covered in map integration tests.
+describe("Vector tiles traffic flow module tests", () => {
+    test("Initializing module with config", async () => {
+        const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
+        const tomtomMapMock = {
+            mapLibreMap: {
+                getSource: jest.fn().mockReturnValueOnce(flowSource),
+                getStyle: jest
+                    .fn()
+                    .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn(),
+                ensureAdded: jest.fn()
+            },
+            _addStyleChangeHandler: jest.fn()
+        } as unknown as TomTomMap;
+
+        const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock, {
+            visible: true,
+            filters: { any: [{ roadCategories: { show: "only", values: ["motorway", "trunk"] } }] }
+        });
+        expect(trafficFlowModule).toBeDefined();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+
+        // (see note on top of test file)
+        trafficFlowModule.setVisible(false);
+        trafficFlowModule.setVisible(true);
+        trafficFlowModule.filter();
+        trafficFlowModule.filter({ any: [{ roadCategories: { show: "only", values: ["primary"] } }] });
+
+        // (see note on top of test file)
+        trafficFlowModule.applyConfig(undefined);
+        trafficFlowModule.applyConfig({});
+        trafficFlowModule.applyConfig({ visible: false });
+    });
+
+    test("Initializing module with no config and no flow in style", async () => {
+        const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
+        const tomtomMapMock = {
+            mapLibreMap: {
+                getSource: jest.fn().mockReturnValueOnce(flowSource),
+                getStyle: jest
+                    .fn()
+                    .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
+                isStyleLoaded: jest.fn().mockReturnValue(true)
+            } as unknown as Map,
+            _eventsProxy: {
+                add: jest.fn(),
+                ensureAdded: jest.fn()
+            },
+            _addStyleChangeHandler: jest.fn()
+        } as unknown as TomTomMap;
+
+        const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock);
+        expect(trafficFlowModule).toBeDefined();
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+    });
+});
