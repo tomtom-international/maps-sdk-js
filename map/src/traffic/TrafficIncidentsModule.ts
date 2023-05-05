@@ -15,6 +15,7 @@ import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
 import { applyFilter, buildMapLibreIncidentFilters } from "./filters/TrafficFilters";
 import omitBy from "lodash/omitBy";
+import isEmpty from "lodash/isEmpty";
 
 /**
  * IDs of sources and layers for traffic incidents module.
@@ -76,7 +77,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
         if (config?.icons && !isNil(config.icons.visible)) {
             this.setIconsVisible(config.icons.visible);
         }
-        this._filter(config?.filters, config?.icons?.filters);
+        this._filter(config?.filters, config?.icons?.filters, false);
         return config;
     }
 
@@ -92,7 +93,8 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
 
     private _filter(
         incidentFilters: TrafficIncidentsFilters | undefined,
-        iconFilters: TrafficIncidentsFilters | undefined
+        iconFilters: TrafficIncidentsFilters | undefined,
+        updateConfig = true
     ) {
         if (incidentFilters?.any?.length) {
             const incidentFilterExpression = buildMapLibreIncidentFilters(incidentFilters);
@@ -110,15 +112,16 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
             }
         }
         // else: default incidents visibility has been set already if necessary
-
-        this.config = omitBy(
-            {
-                ...this.config,
-                filters: incidentFilters,
-                icons: { ...this.config?.icons, filters: iconFilters }
-            },
-            isNil
-        );
+        if (updateConfig) {
+            this.config = omitBy(
+                {
+                    ...this.config,
+                    filters: incidentFilters,
+                    icons: { ...this.config?.icons, filters: iconFilters }
+                },
+                isNil
+            );
+        }
     }
 
     private getLayers(): LayerSpecWithSource[] {
@@ -156,10 +159,8 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      */
     setVisible(visible: boolean): void {
         this.sourcesWithLayers.trafficIncidents.setAllLayersVisible(visible);
-        this.config = {
-            ...this.config,
-            visible
-        };
+        delete this.config?.icons?.visible;
+        this.config = { ...omitBy({ ...this.config }, isEmpty), visible };
     }
 
     /**
@@ -167,6 +168,13 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      */
     isVisible(): boolean {
         return this.sourcesWithLayers.trafficIncidents.isAnyLayerVisible();
+    }
+
+    /**
+     * Returns whether any traffic incident symbol layers are visible.
+     */
+    anyIconLayersVisible(): boolean {
+        return !!this.sourcesWithLayers.trafficIncidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === "symbol");
     }
 
     /**

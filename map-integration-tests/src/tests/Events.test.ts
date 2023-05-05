@@ -11,6 +11,7 @@ import {
     initGeometry,
     initPlaces,
     queryRenderedFeatures,
+    setStyle,
     showGeometry,
     showPlaces,
     tryBeforeTimeout,
@@ -248,6 +249,7 @@ describe("Tests with user events", () => {
 
     test("Events combining BaseMap module", async () => {
         await initBasemap();
+        await setStyle({ type: "published", include: ["poi"] });
         await waitForMapIdle();
         await setupBasemapClickHandlers();
 

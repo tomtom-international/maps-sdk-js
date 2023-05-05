@@ -1,5 +1,5 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { RoadCategory, TRAFFIC_FLOW_SOURCE_ID, FlowConfig } from "map";
+import { RoadCategory, TRAFFIC_FLOW_SOURCE_ID, FlowConfig, StyleModuleInitConfig } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import {
@@ -20,7 +20,7 @@ const waitForRenderedFlowChange = async (previousFeaturesCount: number): Promise
 const getByRoadCategories = (renderedItems: MapGeoJSONFeature[], roadCategories: RoadCategory[]): MapGeoJSONFeature[] =>
     renderedItems.filter((incident) => roadCategories.includes(incident.properties["road_category"]));
 
-const initTrafficFlow = async (config?: FlowConfig) =>
+const initTrafficFlow = async (config?: StyleModuleInitConfig & FlowConfig) =>
     page.evaluate(async (inputConfig?) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.trafficFlow = await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, inputConfig);
@@ -45,6 +45,12 @@ describe("Map vector tile traffic module tests", () => {
     test("Failing to initialize if fully excluded from the style", async () => {
         await mapEnv.loadMap({});
         await expect(initTrafficFlow()).rejects.toBeDefined();
+    });
+
+    test("Auto initialize if fully excluded from the style", async () => {
+        await mapEnv.loadMap({});
+        await initTrafficFlow({ ensureAddedToStyle: true });
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow)).not.toBeNull();
     });
 
     test("Vector tiles traffic visibility changes in different ways", async () => {

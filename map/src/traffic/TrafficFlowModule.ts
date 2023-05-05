@@ -70,7 +70,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
             // applying default:
             this.setVisible(true);
         }
-        this._filter(config?.filters);
+        this._filter(config?.filters, false);
         return config;
     }
 
@@ -87,7 +87,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         this._filter(filters);
     }
 
-    private _filter(filters: TrafficFlowFilters | undefined) {
+    private _filter(filters: TrafficFlowFilters | undefined, updateConfig = true) {
         if (filters?.any?.length) {
             const filterExpression = buildMapLibreFlowFilters(filters);
             if (filterExpression) {
@@ -96,14 +96,15 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         } else if (this.config?.filters?.any?.length) {
             applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
         }
-
-        this.config = omitBy(
-            {
-                ...this.config,
-                filters: filters
-            },
-            isNil
-        );
+        if (updateConfig) {
+            this.config = omitBy(
+                {
+                    ...this.config,
+                    filters: filters
+                },
+                isNil
+            );
+        }
     }
 
     /**
