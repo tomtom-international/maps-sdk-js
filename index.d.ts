@@ -1,3 +1,3 @@
-export * from "./core";
-export * from "./map";
-export * from "./services";
+import "./core";
+import "./map";
+import "./services";
