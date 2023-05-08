@@ -1,4 +1,4 @@
-import { asSoftWaypoint, getGeoInputType } from "../GeoInputs";
+import { asSoftWaypoint, getGeoInputType } from "../geoInputs";
 import { Route } from "../../types";
 
 describe("GeoInputs utility tests", () => {

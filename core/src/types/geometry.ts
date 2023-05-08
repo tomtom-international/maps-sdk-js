@@ -1,5 +1,5 @@
 import { BBox, Feature, FeatureCollection, GeoJsonObject, MultiPolygon, Point, Polygon, Position } from "geojson";
-import { Anything } from "./Generic";
+import { Anything } from "./generic";
 
 /**
  * An GeoJSON input type that consists of, or has, a [lng, lat] Position.

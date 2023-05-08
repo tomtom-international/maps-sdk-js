@@ -1,7 +1,7 @@
 import { Feature, FeatureCollection, Point, Position } from "geojson";
-import { Anything } from "../Generic";
-import { HasLngLat } from "../Geometry";
-import { Route } from "./Route";
+import { Anything } from "../generic";
+import { HasLngLat } from "../geometry";
+import { Route } from "./route";
 
 /**
  * GeoInputs-specific properties.

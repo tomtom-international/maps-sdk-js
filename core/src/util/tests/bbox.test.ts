@@ -19,9 +19,9 @@ import {
     bboxFromGeoJSON,
     bboxOnlyIfWithArea,
     isBBoxWithArea
-} from "../BBox";
+} from "../bbox";
 
-import { bestExecutionTimeMS } from "./PerformanceTestUtils";
+import { bestExecutionTimeMS } from "./performanceTestUtils";
 
 describe("Bounding Box expansion functions", () => {
     test("Expand bounding box with position", () => {

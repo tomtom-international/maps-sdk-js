@@ -1,4 +1,4 @@
-import { formatDuration, formatDistance } from "../UnitFormatters";
+import { formatDuration, formatDistance } from "../unitFormatters";
 
 describe("Unit formatters tests", () => {
     test("format duration", () => {

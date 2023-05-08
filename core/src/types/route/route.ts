@@ -1,8 +1,8 @@
 import { Feature, LineString } from "geojson";
-import { Guidance } from "./Guidance";
-import { SectionsProps } from "./Sections";
-import { RouteSummary } from "./Summary";
-import { FeatureCollectionWithProperties } from "../ExtendedGeoJSON";
+import { Guidance } from "./guidance";
+import { SectionsProps } from "./sections";
+import { RouteSummary } from "./summary";
+import { FeatureCollectionWithProperties } from "../extendedGeoJSON";
 
 /**
  * Specifies something that the route calculation should try to avoid when determining the route.

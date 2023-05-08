@@ -1,6 +1,6 @@
-import { OpeningHours } from "./OpeningHours";
-import { Classification } from "./Classification";
-import { TimeZone } from "../../TimeZone";
+import { OpeningHours } from "./openingHours";
+import { Classification } from "./classification";
+import { TimeZone } from "../../timezone";
 
 /**
  * Place of interest information.

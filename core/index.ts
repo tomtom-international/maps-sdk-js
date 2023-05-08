@@ -4,5 +4,5 @@
  * @category Core
  */
 export * from "./src/types";
-export * from "./src/config/GlobalConfig";
+export * from "./src/config/globalConfig";
 export * from "./src/util";

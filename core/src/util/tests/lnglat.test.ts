@@ -1,4 +1,4 @@
-import { getLngLatArray, toPointFeature } from "../LngLat";
+import { getLngLatArray, toPointFeature } from "../lnglat";
 
 describe("toPointFeature tests", () => {
     test("passing LngLat to toPointFeature", () => {

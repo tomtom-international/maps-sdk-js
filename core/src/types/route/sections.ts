@@ -1,4 +1,4 @@
-import { LegSummary } from "./Summary";
+import { LegSummary } from "./summary";
 
 /**
  * Base type for all route section properties.

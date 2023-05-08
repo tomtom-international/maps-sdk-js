@@ -1,4 +1,4 @@
-import { generateTomTomCustomHeaders, TOMTOM_USER_AGENT_SDK_NAME } from "../CustomHeaders";
+import { generateTomTomCustomHeaders, TOMTOM_USER_AGENT_SDK_NAME } from "../customHeaders";
 
 describe("CustomHeaders", () => {
     test("Generate custom Tracking-ID", () => {

@@ -1,10 +1,10 @@
 import { Feature, Point, Position } from "geojson";
-import { PlaceDataSources } from "./PlaceDataSources";
-import { HasLngLat } from "../Geometry";
-import { POI, RelatedPOI } from "./poi/POI";
-import { Connector } from "./poi/Connector";
-import { FeatureCollectionWithProperties } from "../ExtendedGeoJSON";
-import { ConnectorAvailability } from "./ev/EVChargingStationsAvailability";
+import { PlaceDataSources } from "./placeDataSources";
+import { HasLngLat } from "../geometry";
+import { POI, RelatedPOI } from "./poi/poi";
+import { Connector } from "./poi/connector";
+import { FeatureCollectionWithProperties } from "../extendedGeoJSON";
+import { ConnectorAvailability } from "./ev/evChargingStationsAvailability";
 
 /**
  * @group Place

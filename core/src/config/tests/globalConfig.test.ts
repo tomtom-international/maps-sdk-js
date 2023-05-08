@@ -1,4 +1,4 @@
-import { GlobalConfig, TomTomConfig, mergeFromGlobal } from "../GlobalConfig";
+import { GlobalConfig, TomTomConfig, mergeFromGlobal } from "../globalConfig";
 
 describe("GlobalConfig", () => {
     afterEach(() => {

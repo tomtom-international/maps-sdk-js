@@ -1,6 +1,6 @@
 import { Feature, GeoJsonObject, Point } from "geojson";
 import { GeoInput, GeoInputType, HasLngLat, Waypoint } from "../types";
-import { getLngLatArray, toPointFeature } from "./LngLat";
+import { getLngLatArray, toPointFeature } from "./lnglat";
 
 /**
  * Builds a soft waypoint object with the given location coordinates and radius.
