@@ -7,7 +7,6 @@ import {
     SourceWithLayers,
     POIsModule,
     HillshadeModule,
-    TrafficModule,
     BaseMapModule,
     TrafficIncidentsModule,
     TrafficFlowModule
@@ -21,7 +20,6 @@ export type MapsSDKThis = typeof globalThis & {
     tomtomMap: TomTomMap;
     mapLibreMap: Map;
     basemap: BaseMapModule;
-    traffic?: TrafficModule;
     trafficIncidents?: TrafficIncidentsModule;
     trafficFlow?: TrafficFlowModule;
     pois?: POIsModule;

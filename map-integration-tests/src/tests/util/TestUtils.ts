@@ -1,15 +1,7 @@
 import { GeoJsonProperties, Position } from "geojson";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
 import { Geometries, GlobalConfig, Language, Places } from "@anw/maps-sdk-js/core";
-import {
-    GeometriesModuleConfig,
-    LayerSpecWithSource,
-    PlacesModuleConfig,
-    StyleInput,
-    TRAFFIC_FLOW_SOURCE_ID,
-    TRAFFIC_INCIDENTS_SOURCE_ID,
-    StyleModuleConfig
-} from "map";
+import { GeometriesModuleConfig, LayerSpecWithSource, PlacesModuleConfig, StyleInput, StyleModuleConfig } from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
@@ -63,31 +55,6 @@ export const assertNumber = (value: number, positiveVsZero: boolean) => {
     } else {
         expect(value).toBe(0);
     }
-};
-
-export const assertTrafficVisibility = async (visibility: {
-    incidents: boolean;
-    incidentIcons: boolean;
-    flow: boolean;
-}) => {
-    expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyIncidentLayersVisible())).toBe(
-        visibility.incidents
-    );
-    expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyIncidentIconLayersVisible())).toBe(
-        visibility.incidentIcons
-    );
-    expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyFlowLayersVisible())).toBe(
-        visibility.flow
-    );
-    if (visibility.incidents && visibility.flow) {
-        expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyLayersVisible())).toBe(true);
-    } else if (!visibility.incidents && !visibility.flow) {
-        expect(await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.anyLayersVisible())).toBe(false);
-    }
-
-    // we double-check against maplibre directly as well:
-    assertNumber(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID), visibility.incidents);
-    assertNumber(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID), visibility.flow);
 };
 
 export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Position): Promise<MapGeoJSONFeature[]> =>

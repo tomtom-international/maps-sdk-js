@@ -1,7 +1,7 @@
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { HILLSHADE_SOURCE_ID, POI_SOURCE_ID } from "map";
-import { assertNumber, assertTrafficVisibility, getNumVisibleLayersBySource } from "./util/TestUtils";
+import { assertNumber, getNumVisibleLayersBySource } from "./util/TestUtils";
 
 describe("Vector tile modules combined visibility tests, to ensure one module doesn't step on another", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -26,45 +26,64 @@ describe("Vector tile modules combined visibility tests, to ensure one module do
         );
         await page.evaluate(async () => {
             const sdkThis = globalThis as MapsSDKThis;
-            sdkThis.traffic = await sdkThis.MapsSDK.TrafficModule.get(sdkThis.tomtomMap, { visible: false });
+            sdkThis.trafficIncidents = await sdkThis.MapsSDK.TrafficIncidentsModule.get(sdkThis.tomtomMap, {
+                visible: false
+            });
+            sdkThis.trafficFlow = await sdkThis.MapsSDK.TrafficFlowModule.get(sdkThis.tomtomMap, { visible: false });
             sdkThis.pois = await sdkThis.MapsSDK.POIsModule.get(sdkThis.tomtomMap, { visible: false });
             sdkThis.hillshade = await sdkThis.MapsSDK.HillshadeModule.get(sdkThis.tomtomMap, { visible: false });
         });
 
-        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeFalsy();
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeFalsy();
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
 
-        await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.setVisible(true));
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.setVisible(true));
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(true));
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(true));
-        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeTruthy();
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeTruthy();
         await assertPOIsVisibility(true);
         await assertHillshadeVisibility(true);
 
-        await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.setVisible(false));
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(false));
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.setVisible(false));
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(false));
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(false));
-        await assertTrafficVisibility({ incidents: false, incidentIcons: false, flow: false });
+
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeFalsy();
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeFalsy();
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
 
-        await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.setVisible(true));
-        await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.setIncidentIconsVisible(false));
-        await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: true });
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.setVisible(true));
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setIconsVisible(false));
+
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeTruthy();
+        expect(
+            await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())
+        ).toBeFalsy();
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeTruthy();
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
 
-        await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.setFlowVisible(false));
-        await assertTrafficVisibility({ incidents: true, incidentIcons: false, flow: false });
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.setVisible(false));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeFalsy();
         await assertPOIsVisibility(false);
         await assertHillshadeVisibility(false);
 
         // re-setting configs (thus expecting default to be re-applied)
-        await page.evaluate(() => (globalThis as MapsSDKThis).traffic?.resetConfig());
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.resetConfig());
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.resetConfig());
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
-        await assertTrafficVisibility({ incidents: true, incidentIcons: true, flow: true });
+
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeTruthy();
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeTruthy();
         await assertPOIsVisibility(true);
         await assertHillshadeVisibility(true);
 
