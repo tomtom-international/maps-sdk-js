@@ -18,7 +18,7 @@ The Map bundle is a [MapLibre GL JS - based library](/javascript/maps/documentat
 
 # Set up
 
-1. Configure the project as described in [Project setup guide](/javascript/maps/documentation/overview/project-set-up).
+1. Configure the project as described in [Project setup guide](/javascript/maps/documentation/overview/project-setup).
 2. Make sure that after following the guide above you have both the SDK and MapLibre installed as dependencies.
 3. Create an HTML page with a container element for the map (with an id):
  ```html
@@ -39,7 +39,7 @@ The Map bundle is a [MapLibre GL JS - based library](/javascript/maps/documentat
 
 # Initializing a TomTom map
 
-The [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) object is the main entry point to add a *TomTom* map to your application.
+The [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap) object is the main entry point to add a *TomTom* map to your application.
 
 Its main purpose is to initialize a TomTom map using MapLibre and serve as the base for further map modules to operate.
 
@@ -54,8 +54,8 @@ const map = new TomTomMap( { container: "map" } );
 ```
 
 The TomTomMap is initialized via its constructor with:
-* [MapLibreOptions](#MapLibreOptions) - a required parameter based on a subset of the [options](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters) for a MapLibre Map.
-* [TomTomMapParams](#TomTomMapParams) - optional TomTom-specific parameters.
+* [MapLibreOptions](#maplibreoptions) - a required parameter based on a subset of the [options](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters) for a MapLibre Map.
+* [TomTomMapParams](#tomtommapparams) - optional TomTom-specific parameters.
 <br/>
 
 ## MapLibreOptions

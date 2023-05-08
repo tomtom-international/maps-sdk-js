@@ -10,37 +10,37 @@ titleTags:
   color: "grey5"
 ---
 
-Route sections are parts of the planned [`Route`](/javascript/maps/documentation/api-reference/modules/core/#route) that have specific characteristics, such as ones on a ferry or motorway, or sections with traffic incidents in them. Using sections, you can show users where these things lie on a planned route. The list of supported section types can be found further in this guide.
+Route sections are parts of the planned [`Route`](/javascript/maps/documentation/api-reference/core/#route) that have specific characteristics, such as ones on a ferry or motorway, or sections with traffic incidents in them. Using sections, you can show users where these things lie on a planned route. The list of supported section types can be found further in this guide.
 
 Each section in the response has two basic properties:
 
-- [`startPointIndex`](/javascript/maps/documentation/api-reference/modules/core/#section) - the route path point index where this section starts.
-- [`endPointIndex`](/javascript/maps/documentation/api-reference/modules/core/#section) - the route path point index where this section ends.
+- [`startPointIndex`](/javascript/maps/documentation/api-reference/core/#section) - the route path point index where this section starts.
+- [`endPointIndex`](/javascript/maps/documentation/api-reference/core/#section) - the route path point index where this section ends.
 
 However, some specific section types return additional information about the section.
 
-The [`Sections`](/javascript/maps/documentation/api-reference/modules/core/#sections) type contains a list of supported sections. The possible section types are:
+The [`Sections`](/javascript/maps/documentation/api-reference/core/#sections) type contains a list of supported sections. The possible section types are:
 
--   [`leg`](/javascript/maps/documentation/api-reference/modules/core/#legsection) - Represents a route leg, which is the portion between two regular (non-circle) waypoints.
-    - It provides a [`Summary`](/javascript/maps/documentation/api-reference/modules/core/#summary) of the route leg.
--   [`traffic`](/javascript/maps/documentation/api-reference/modules/core/#trafficsection) - Represents a route section with traffic information. It also provides:
+-   [`leg`](/javascript/maps/documentation/api-reference/core/#legsection) - Represents a route leg, which is the portion between two regular (non-circle) waypoints.
+    - It provides a [`Summary`](/javascript/maps/documentation/api-reference/core/#summary) of the route leg.
+-   [`traffic`](/javascript/maps/documentation/api-reference/core/#trafficsection) - Represents a route section with traffic information. It also provides:
     - The category of the incident. There will never be more than one incident in any section.
     - The delay caused by the incident (in seconds).
     - The magnitude of the delay caused by the incident.
     - Detailed information about the incident (TPEG2-TEC standard).
     - The average effective speed in that section (in km/h).
--   [`travelMode`](/javascript/maps/documentation/api-reference/modules/core/#travelmodesection) - Represents a route section with travel mode. This section type is related to the [`TravelMode`](/javascript/maps/documentation/api-reference/modules/core/#travelmode) request parameter.
-    - Provides the [`TravelMode`](/javascript/maps/documentation/api-reference/modules/core/#travelmode) in this section.
--   [`tollRoad`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section that requires a toll payment.
--   [`ferry`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section that is a ferry.
--   [`motorway`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section that is a motorway.
--   [`carTrain`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section that has a car train.
--   [`tunnel`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section with a tunnel.
--   [`pedestrian`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section with pedestrian area.
--   [`tollVignette`](/javascript/maps/documentation/api-reference/modules/core/#countrysection) - Represents a route section that requires a toll vignette.
+-   [`travelMode`](/javascript/maps/documentation/api-reference/core/#travelmodesection) - Represents a route section with travel mode. This section type is related to the [`TravelMode`](/javascript/maps/documentation/api-reference/core/#travelmode) request parameter.
+    - Provides the [`TravelMode`](/javascript/maps/documentation/api-reference/core/#travelmode) in this section.
+-   [`tollRoad`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section that requires a toll payment.
+-   [`ferry`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section that is a ferry.
+-   [`motorway`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section that is a motorway.
+-   [`carTrain`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section that has a car train.
+-   [`tunnel`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section with a tunnel.
+-   [`pedestrian`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section with pedestrian area.
+-   [`tollVignette`](/javascript/maps/documentation/api-reference/core/#countrysection) - Represents a route section that requires a toll vignette.
     - It provides the 3-character ISO 3166-1 alpha-3 country code in which the section is located.
--   [`country`](/javascript/maps/documentation/api-reference/modules/core/#countrysection) - Represents a route section that is passing through a specific country.
+-   [`country`](/javascript/maps/documentation/api-reference/core/#countrysection) - Represents a route section that is passing through a specific country.
     - It provides the 3-character ISO 3166-1 alpha-3 country code in which the section is located.
--   [`urban`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section that is location within urban areas.
--   [`carpool`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section that requires use of carpool (HOV/High Occupancy Vehicle) lanes.
--   [`unpaved`](/javascript/maps/documentation/api-reference/modules/core/#sections) - Represents a route section with an unpaved road.
+-   [`urban`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section that is location within urban areas.
+-   [`carpool`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section that requires use of carpool (HOV/High Occupancy Vehicle) lanes.
+-   [`unpaved`](/javascript/maps/documentation/api-reference/core/#sections) - Represents a route section with an unpaved road.

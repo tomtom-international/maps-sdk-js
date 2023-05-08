@@ -31,14 +31,14 @@ in relation to the TomTom Map and rendered items via SDK modules.
 <br/>
 
 # TomTom Maps SDK JS: user event types
-This section explains the different [user event types](/javascript/maps/documentation/api-reference/modules/map_shared#EventType) supported by the TomTom SDK (on top of all the ones already supported by MapLibre).
+This section explains the different [user event types](/javascript/maps/documentation/api-reference/map-shared#EventType) supported by the TomTom SDK (on top of all the ones already supported by MapLibre).
 
 ## `"hover"`
 Hover is a new synthetic event type which does not exist in MapLibre as such.
 A hover event gets fired when the user's pointer **enters** a registered layer.
 
-You can configure the hovering cursor when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap)
-via its [events configuration object](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
+You can configure the hovering cursor when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap)
+via its [events configuration object](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig)
 (see `cursorOnHover`).
 
 Hover events are very useful to provide quick visual feedback. However, taking too much action on hover can feel like the map overreacts.
@@ -57,8 +57,8 @@ This helps mitigate unwanted hover effects when the user is moving the map aroun
 Once the first long hover has happened, subsequent ones will be triggered with a slightly lower delay, until the map is moved again.
 
 You can configure the length of long hover delays
-when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap)
-via its [events configuration object](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
+when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap)
+via its [events configuration object](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig)
 (see `longHoverDelayAfterMapMoveMS` and `longHoverDelayOnStillMapMS`).
 
 ## `"click"`
@@ -77,16 +77,16 @@ They are fired when the **right button** of the mouse is clicked or the **contex
 You can register your user event handlers for each event type in each map module.
 The guide for each [map module](/javascript/maps/documentation/guides/map/quickstart#map-modules) has a user events section.
 
-Each map module has an `events` object which returns an [`EventsModule`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule) instance
+Each map module has an `events` object which returns an [`EventsModule`](/javascript/maps/documentation/api-reference/map-shared.EventsModule) instance
 typed for the map module in particular. For instance, if you access the `events` object of a Places module, the events will already be typed for Places.
 
 Via `events` you can then register and de-register your handlers using the
-[`on`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule#on)
-and [`off`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule#off) methods.
+[`on`](/javascript/maps/documentation/api-reference/map-shared.EventsModule#on)
+and [`off`](/javascript/maps/documentation/api-reference/map-shared.EventsModule#off) methods.
 
-The user events handler is a function of type [`UserEventHandler`](/javascript/maps/documentation/api-reference/modules/map_shared#UserEventHandler).
+The user events handler is a function of type [`UserEventHandler`](/javascript/maps/documentation/api-reference/map-shared#UserEventHandler).
 
-For example, a hover event handler on traffic incidents ([`TrafficModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule))
+For example, a hover event handler on traffic incidents ([`TrafficModule`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule))
 can be registered like this:
 
 ```javascript
@@ -96,8 +96,8 @@ traffic.events.incidents.on("hover", (incident) => console.log(JSON.stringify(in
 ```
 
 You can de-register all your handlers from a module for an event type by calling the
-[`off`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule#off) method
-on the corresponding [`EventsModule`](/javascript/maps/documentation/api-reference/classes/map_shared.EventsModule).
+[`off`](/javascript/maps/documentation/api-reference/map-shared.EventsModule#off) method
+on the corresponding [`EventsModule`](/javascript/maps/documentation/api-reference/map-shared.EventsModule).
 
 ```javascript
 traffic.events.incidents.off("hover");
@@ -117,10 +117,10 @@ Very often end users enjoy some slack in the accuracy needed to hit a visual fea
 This is why the SDK tries first to find features right under the pointed coordinates, but if that doesn't work, it defaults to **padded bounds**.
 Padded bounds are a small box (10px across by default) around the pointing device which increases its target range.
 
-You can configure the size of the padding box when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap)
-via its [events configuration object](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig).
+You can configure the size of the padding box when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap)
+via its [events configuration object](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig).
 <br/>
 
 # Customizing user events
-These events can be customized through the [`MapEventsConfig`](/javascript/maps/documentation/api-reference/modules/map_init#MapEventsConfig)
-when initializing a [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
+These events can be customized through the [`MapEventsConfig`](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig)
+when initializing a [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap).

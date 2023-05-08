@@ -29,7 +29,7 @@ You can add one or multiple Places modules to your map, each with its own config
 The places from each module will be layered on top of places from the module added before.
 
 * First Set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart)
-* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance.
+* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
 * Import the Places module class:
 ```javascript
 import { PlacesModule } from "@anw/maps-sdk-js/map";
@@ -42,7 +42,7 @@ const placesModule = await PlacesModule.init(map);
 
 # Showing Places on the map
 
-The Places Module is used to show [`Places`](/javascript/maps/documentation/api-reference/modules/core#Places) on the map,
+The Places Module is used to show [`Places`](/javascript/maps/documentation/api-reference/core#Places) on the map,
 which are returned from the services of the Services module.
 For example, showing places from a search result:
 
@@ -80,7 +80,7 @@ placesModule.events.on("click", (place: Place) => console.log(`click: ${JSON.str
 placesModule.events.on("contextmenu", (place: Place) => console.log(`contextmenu: ${JSON.stringify(place)}`));
 ```
 
-When you listen to Places events, the SDK will automatically apply [`eventState`](/javascript/maps/documentation/api-reference/modules/map_shared#SupportsEvents)
+When you listen to Places events, the SDK will automatically apply [`eventState`](/javascript/maps/documentation/api-reference/map-shared#SupportsEvents)
 with the occurred event to the Place feature properties on the map.
 
 The SDK applies then default styling based on such properties.
@@ -111,7 +111,7 @@ You can customize how you want to display places in different ways.
 ## Customizing icons
 
 You can customize the Places icons in the `PlacesModule` module
-using the [`applyIconConfig`](/javascript/maps/documentation/api-reference/classes/map_places.PlacesModule#applyConfig) method.
+using the [`applyIconConfig`](/javascript/maps/documentation/api-reference/map-places.PlacesModule#applyConfig) method.
 See the [Places Customization](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize) example.
 <br/>
 

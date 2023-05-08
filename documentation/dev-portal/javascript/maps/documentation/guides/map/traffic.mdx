@@ -40,19 +40,19 @@ To further learn about traffic **along a route**, refer to the [routing](/javasc
 <br/>
 
 # The Traffic module
-The [`TrafficModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule) is a [map-style based module](/javascript/maps/documentation/guides/map/quickstart#map-style---based-modules)
+The [`TrafficModule`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule) is a [map-style based module](/javascript/maps/documentation/guides/map/quickstart#map-style---based-modules)
 and controls the display and interactivity of live traffic on the map.
 <img src="images/ss_traffic_layer.png" alt="Map with traffic incidents and flow" style={{width: 500}} />
 <br/><br/>
 
 # Initializing a Traffic module
 * First Set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart)
-* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance.
+* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
 * Import the Traffic module class:
 ```javascript
 import { TrafficModule } from "@anw/maps-sdk-js/map";
 ```
-* [Initialize a Traffic module](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#get) for your running map (default config):
+* [Initialize a Traffic module](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get) for your running map (default config):
 ```javascript
 const traffic = await TrafficModule.get(map);
 ```
@@ -65,7 +65,7 @@ You can set traffic configuration on startup or at any time during runtime. Any 
 ## Ways to configure traffic
 
 ### Configuring on init
-With the `config` parameter you can set all the configuration you want right when the module is [initialized](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#get).
+With the `config` parameter you can set all the configuration you want right when the module is [initialized](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get).
 
 Any configuration parameters you don't set will resolve to their default values.
 
@@ -78,7 +78,7 @@ const traffic = await TrafficModule.get(map, config);
 <br/>
 
 ### Configuring with applyConfig
-With the `config` parameter in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#applyConfig)
+With the `config` parameter in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig)
 you can set all the configuration you want right on the spot while the module is already initialized.
 
 Any configuration parameters you don't set won't have any effect, so the existing values will remain.
@@ -90,7 +90,7 @@ traffic.applyConfig({ incidents: { icons: { visible: false} }, flow: { visible: 
 <br/>
 
 ### Configuring with dedicated methods
-You can change key configuration parts with dedicated methods which act the same as [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#applyConfig) just for the part they change.
+You can change key configuration parts with dedicated methods which act the same as [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig) just for the part they change.
 ```javascript
 const traffic = await TrafficModule.get(map);
 traffic.setFlowVisible(false);
@@ -99,7 +99,7 @@ traffic.filterIncidents({ any: [{ roadCategories: { show: "only", values: ["prim
 <br/>
 
 ### Reset traffic configuration:
-All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/classes/map_shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
+All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/map-shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
 
 For traffic, resetting configuration means that visibilities will go back to defaults (visible), and any added filters will be removed.
 ```javascript
@@ -116,10 +116,10 @@ It can be practical in your application to let users toggle traffic visibility, 
 
 ### Incidents visibility
 You can control incidents visibility via:
-* `visible` properties inside `incidents` in the config object upon module [init](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#get)
-* `visible` properties inside `incidents` in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#applyConfig).
-* [`setIncidentsVisible`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#setIncidentsVisible)
-* incident icons visibility via [`setIncidentIconsVisible`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#setIncidentIconsVisible)
+* `visible` properties inside `incidents` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
+* `visible` properties inside `incidents` in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig).
+* [`setIncidentsVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#setIncidentsVisible)
+* incident icons visibility via [`setIncidentIconsVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#setIncidentIconsVisible)
 
 *Tip: if sometimes you want a more minimalistic traffic display, showing only incidents without icons is a good choice.*
 ```javascript
@@ -134,9 +134,9 @@ traffic.setIncidentIconsVisible(true);
 
 ### Flow visibility
 You can control overall flow visibility via:
-* [`setFlowVisibility`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#setFlowVisible)
-* `visible` property inside `flow` in the config object upon module [init](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#get)
-* `visible` property inside `flow` in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#applyConfig).
+* [`setFlowVisibility`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#setFlowVisible)
+* `visible` property inside `flow` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
+* `visible` property inside `flow` in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig).
 
 ```javascript
 // applying flow visibility on init:
@@ -155,17 +155,17 @@ With traffic filtering you can, at any time, change what types of traffic you di
 
 ### Filtering incidents
 You can filter traffic incidents via:
-* the `filters` properties inside `incidents` in the config object upon module [init](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#get)
-* the `filters` properties inside `incidents` in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#applyConfig)
-* [`filterIncidents`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#filterIncidents)
+* the `filters` properties inside `incidents` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
+* the `filters` properties inside `incidents` in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig)
+* [`filterIncidents`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#filterIncidents)
 
 >Coming soon...
 <br/>
 
 ### Filtering flow
 You can filter traffic flow via:
-* the `filters` properties inside `flow` in the config object upon module [init](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#get)
-* the `filters` properties inside `flow` in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#applyConfig)
-* [`filterFlow`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficModule#filterFlow)
+* the `filters` properties inside `flow` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
+* the `filters` properties inside `flow` in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig)
+* [`filterFlow`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#filterFlow)
 
 >Coming soon...

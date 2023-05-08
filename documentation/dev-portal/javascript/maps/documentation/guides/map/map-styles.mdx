@@ -30,10 +30,10 @@ The TomTom Map can load multiple pre-defined styles, but it also supports loadin
 # Pre-defined styles
 
 The Map bundle provides pre-defined styles that can be used in the application.
-They are provided in the [`StyleInput`](/javascript/maps/documentation/api-reference/modules/map_init#StyleInput) as [`PublishedStyle`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle).
-A [`PublishedStyle`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle) represents a style which is officially hosted by TomTom and easily accessible by its name.
+They are provided in the [`StyleInput`](/javascript/maps/documentation/api-reference/map-init#StyleInput) as [`PublishedStyle`](/javascript/maps/documentation/api-reference/map-init#PublishedStyle).
+A [`PublishedStyle`](/javascript/maps/documentation/api-reference/map-init#PublishedStyle) represents a style which is officially hosted by TomTom and easily accessible by its name.
 
-The available [`PublishedStyle`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle) are:
+The available [`PublishedStyle`](/javascript/maps/documentation/api-reference/map-init#PublishedStyle) are:
 
 -   `standardLight` and `standardDark` - Styles made for browsing the map in light and dark mode respectively. The `standardLight` style is the default style.
 -   `drivingLight` and `drivingDark` - Styles to use during navigation in light and dark mode respectively. These styles render routes in gray and show traffic flow and road shields.
@@ -48,8 +48,8 @@ These styles are showcased in the [Map Config Playground](https://hosted-example
 # Loading a style
 
 The style can be loaded when the map is initialized by specifying the `style` property of
-the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams) when initializing
-an instance of [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
+the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams) when initializing
+an instance of [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap).
 
 
 
@@ -62,7 +62,7 @@ const map = new TomTomMap(
 );
 ```
 
-Additionally, you can change the style of the map at runtime using the [`setStyle`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap#setStyle) method on the TomTomMap class.
+Additionally, you can change the style of the map at runtime using the [`setStyle`](/javascript/maps/documentation/api-reference/map-init.TomTomMap#setStyle) method on the TomTomMap class.
 
 ```javascript
 map.setStyle("drivingDark");
@@ -81,15 +81,15 @@ You can also create your own style to suit your application.
     The easiest way to do this is to use the [Map Styler](https://developer.tomtom.com/maps-api/map-styler). It provides a user interface with real-time previews so you can see the effects of your changes.
 </Blockquote>
 
-Custom styles can be provided to the application in the [`StyleInput`](/javascript/maps/documentation/api-reference/modules/map_init#StyleInput)
-as a [`CustomStyle`](/javascript/maps/documentation/api-reference/modules/map_init#CustomStyle).
+Custom styles can be provided to the application in the [`StyleInput`](/javascript/maps/documentation/api-reference/map-init#StyleInput)
+as a [`CustomStyle`](/javascript/maps/documentation/api-reference/map-init#CustomStyle).
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_excluding_modules_from_a_style"></a>}
 
 
 # Excluding modules from a style
 
-When setting the map style, you can exclude modules from the loaded map style with the `exclude` property in [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
+When setting the map style, you can exclude modules from the loaded map style with the `exclude` property in [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams).
 For example, excluding [hill shading](/javascript/maps/documentation/guides/map/map-styles#_adding_hill_shading) and [traffic flow](/javascript/maps/documentation/guides/map/traffic) from the map style:
 
 ```javascript
@@ -117,13 +117,13 @@ const map = new TomTomMap(
 # Adding and filtering Points of Interest
 
 The styles from the Map bundle contain a Points of Interest (POIs) layer. This layer is enabled by default, but can be excluded from the
-map style with the `exclude` property of the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
+map style with the `exclude` property of the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams).
 
 <img src="images/ss_poi_layer.png" alt="Map with POI layer enabled" />
 
 <br/>
 
-The POI layer visibility can be controlled during runtime with the [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule) module.
+The POI layer visibility can be controlled during runtime with the [`POIsModule`](/javascript/maps/documentation/api-reference/map-POIs.POIsModule) module.
 
 ```javascript
 import { POIsModule } from "@anw/maps-sdk-js/map";
@@ -132,7 +132,7 @@ const pois = await POIsModule.init(map);
 pois.setVisible(false);
 ```
 
-It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule).
+It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`POIsModule`](/javascript/maps/documentation/api-reference/map-POIs.POIsModule).
 See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-poi-filters) example for this functionality.
 
 {<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_hill_shading"></a>}
@@ -145,9 +145,9 @@ The Map bundle allows you to add style layers such as hill shading to the map st
 
 <br/>
 
-Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
+Hill shading is enabled by default. It can be excluded from the map style with the `exclude` property of the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams).
 
-To show or hide hill shading on runtime, use the [`HillshadeModule`](/javascript/maps/documentation/api-reference/classes/map_hillshade.HillshadeModule) class:
+To show or hide hill shading on runtime, use the [`HillshadeModule`](/javascript/maps/documentation/api-reference/map-hillshade.HillshadeModule) class:
 
 ``` javascript
 const hillshade = await HillshadeModule.init(map);

@@ -10,9 +10,9 @@ titleTags:
   color: "grey5"
 ---
 
-Planning a route may involve locations beyond the origin and destination, where the origin and destination are the first and last waypoints of the [`locations`](/javascript/maps/documentation/api-reference/modules/services/#routemandatoryparams) parameter respectively.
+Planning a route may involve locations beyond the origin and destination, where the origin and destination are the first and last waypoints of the [`locations`](/javascript/maps/documentation/api-reference/services/#routemandatoryparams) parameter respectively.
 
-In a more advanced navigation experience, the user may want to provide more waypoints through which the route should be calculated. These can be stops along the way, or places that the user wants to pass by during the journey. These additional waypoints can be added to the [`locations`](/javascript/maps/documentation/api-reference/modules/services/#routemandatoryparams) array and are included in the route in the order they are specified.
+In a more advanced navigation experience, the user may want to provide more waypoints through which the route should be calculated. These can be stops along the way, or places that the user wants to pass by during the journey. These additional waypoints can be added to the [`locations`](/javascript/maps/documentation/api-reference/services/#routemandatoryparams) array and are included in the route in the order they are specified.
 
 <Blockquote type="announcement" hasIcon>
 
@@ -20,7 +20,7 @@ The maximum allowed number of additional waypoints is 150.
 
 </Blockquote>
 
-A [`WaypointLike`](/javascript/maps/documentation/api-reference/modules/core/#waypointlike) is either a complex [`GeoInputs`](/javascript/maps/documentation/api-reference/modules/core/#waypoint) object or anything with coordinates.
+A [`WaypointLike`](/javascript/maps/documentation/api-reference/core/#waypointlike) is either a complex [`GeoInputs`](/javascript/maps/documentation/api-reference/core/#waypoint) object or anything with coordinates.
 
 There are two different types of waypoints:
 - Single point waypoints - considered as a single point and seen as stops along the route.
@@ -29,7 +29,7 @@ The origin and destination must be single point waypoints.
 
 In [route planning](/javascript/maps/documentation/guides/routing/planning-a-route), each single point waypoint results in an extra [leg section](/javascript/maps/documentation/guides/routing/route-sections) in the response. A circle (soft) waypoint will not generate any extra leg section or specific guidance.
 
-By default, a [`GeoInputs`](/javascript/maps/documentation/api-reference/modules/core/#waypoint) is considered a single point, unless a [`radius`](/javascript/maps/documentation/api-reference/modules/core/#waypoint) is specified, which then transforms the waypoint into a circle (soft) waypoint.
+By default, a [`GeoInputs`](/javascript/maps/documentation/api-reference/core/#waypoint) is considered a single point, unless a [`radius`](/javascript/maps/documentation/api-reference/core/#waypoint) is specified, which then transforms the waypoint into a circle (soft) waypoint.
 
 ```javascript
 import { asSoftWaypoint, GeoInputs } from "@anw/maps-sdk-js/core";

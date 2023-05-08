@@ -18,7 +18,9 @@ const OUTPUT_NAV_FILE_NAME = "navigation.yml";
 const getAllApiReferenceFileNames = () => readdirSync(API_REFERENCE_DIR_PATH).map((x) => x.replace(/\.[^/.]+$/, ""));
 
 const createNavFileEntries = (extraFilesArray: string[]) =>
-    extraFilesArray.map((fileId) => `          - fileId: ${fileId}\n          - isHidden: true`).join("\n");
+    extraFilesArray
+        .map((fileId) => `          - fileId: /api-reference/${fileId}\n          - isHidden: true`)
+        .join("\n");
 
 // Take content from base nav file, append extra file entries to it and output to output navigation.yml file
 const writeToOutputNavFile = (extraFileNavEntries: string) => {
