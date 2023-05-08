@@ -1,6 +1,6 @@
 import { ProjectReflection, UrlMapping } from "typedoc";
 import { MarkdownTheme, MarkdownThemeRenderContext } from "typedoc-plugin-markdown";
-import { customPartials } from "./resources/resources";
+import { customPartials } from "./resources";
 import { MarkdownThemeConverterContext } from "typedoc-plugin-markdown/dist/theme-converter-context";
 
 export class MapsSDKThemeConverterContext extends MarkdownThemeConverterContext {
@@ -13,7 +13,6 @@ export class MapsSDKThemeConverterContext extends MarkdownThemeConverterContext 
 
 export class MapsSDKThemeRenderContext extends MarkdownThemeRenderContext {
     relativeURL = (url: string | undefined): string | null => super.getRelativeUrl(url)?.replace(/\.mdx?/, "") ?? null;
-
     partials = customPartials(this);
 }
 
