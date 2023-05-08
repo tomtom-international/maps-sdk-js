@@ -80,14 +80,14 @@ menu:
             title: Core
           - title: Map
             items:
+              - fileId: /api-reference/module.map-init
+                title: TomTomMap
               - fileId: /api-reference/module.map-geometry
                 title: Geometry
               - fileId: /api-reference/module.map-hillshade
                 title: Hill shading
               - fileId: /api-reference/module.map-places
                 title: Places
-              - fileId: /api-reference/module.map-init
-                title: Init
               - fileId: /api-reference/module.map-POIs
                 title: Points of Interest
               - fileId: /api-reference/module.map-routes

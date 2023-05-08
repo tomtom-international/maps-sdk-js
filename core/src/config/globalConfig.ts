@@ -54,10 +54,10 @@ export const defaultConfig: GlobalConfig = {
     apiKey: ""
 };
 
+//TODO: add back `@group Configuration` when md plugin >=4.0.0-next.11
 /**
  * TomTom Maps SDK Global configuration singleton class.
  * It initializes to a default basic configuration.
- * @group Configuration
  * @category Classes
  */
 export class TomTomConfig {

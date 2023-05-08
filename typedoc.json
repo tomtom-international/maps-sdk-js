@@ -9,6 +9,7 @@
     "./map/src/routing",
     "./map/src/shared",
     "./map/src/traffic",
+    "./map/src/base",
 
     "./services/src/fuzzy-search",
     "./services/src/ev-charging-stations-availability",
@@ -44,11 +45,12 @@
   },
   "excludePrivate": true,
   "githubPages": false,
-  "kindsWithOwnFile": "none",
+  "kindsWithOwnFile": ["class"],
   "enableFrontmatter": true,
   "hidePageTitle": true,
   "hideBreadcrumbs": true,
   "indexPageTitle": "Maps SDK for JavaScript - API Reference",
   "preserveAnchorCasing": true,
-  "anchorFormat": "none"
+  "anchorFormat": "none",
+  "flattenOutputFiles": true
 }
