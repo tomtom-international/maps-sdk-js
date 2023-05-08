@@ -13,11 +13,11 @@ import {
     VECTOR_TILES_INCIDENTS_SOURCE_ID
 } from "../shared";
 import { TrafficFlowFilters, TrafficIncidentsFilters, TrafficModuleConfig } from ".";
-import { notInTheStyle } from "../shared/ErrorMessages";
+import { notInTheStyle } from "../shared/errorMessages";
 import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
-import { buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from "./filters/TrafficFilters";
-import { getMergedAllFilter } from "../shared/MapLibreFilterUtils";
+import { buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from "./filters/trafficFilters";
+import { getMergedAllFilter } from "../shared/mapLibreFilterUtils";
 
 type ChangeOptions = {
     updateConfig: boolean;

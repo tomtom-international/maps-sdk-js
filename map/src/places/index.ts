@@ -3,8 +3,8 @@
  * @category Map
  */
 
-export * from "./types/PlaceDisplayProps";
-export * from "./types/PlacesModuleConfig";
+export * from "./types/placeDisplayProps";
+export * from "./types/placesModuleConfig";
 export * from "./preparePlacesForDisplay";
 export * from "./PlacesModule";
 export * from "./poiIconIDMapping";

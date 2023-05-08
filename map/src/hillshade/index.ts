@@ -3,5 +3,5 @@
  * @category Map
  */
 
-export * from "./types/HillshadeModuleConfig";
+export * from "./types/hillshadeModuleConfig";
 export * from "./HillshadeModule";

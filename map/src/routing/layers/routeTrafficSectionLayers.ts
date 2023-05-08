@@ -1,5 +1,5 @@
 import { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { MAP_BOLD_FONT } from "../../shared/layers/CommonLayerProps";
+import { MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
 import { LayerSpecTemplate } from "../../shared";
 import { SELECTED_ROUTE_FILTER } from "./shared";
 

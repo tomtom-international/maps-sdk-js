@@ -15,7 +15,7 @@ import {
     ToBeAddedLayerSpecWithoutSource
 } from "./types";
 import { FeatureCollection } from "geojson";
-import { asDefined } from "./AssertionUtils";
+import { asDefined } from "./assertionUtils";
 
 /**
  * Contains a source and the layers to render its data.

@@ -1,6 +1,6 @@
-import { buildGeocodingRequest } from "./RequestBuilder";
-import { parseGeocodingResponse } from "./ResponseParser";
-import { geocodingTemplate } from "./GeocodingTemplate";
+import { buildGeocodingRequest } from "./requestBuilder";
+import { parseGeocodingResponse } from "./responseParser";
+import { geocodingTemplate } from "./geocodingTemplate";
 
 const customize = {
     buildGeocodingRequest,

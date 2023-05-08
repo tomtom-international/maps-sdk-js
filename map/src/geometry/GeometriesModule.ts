@@ -11,7 +11,7 @@ import {
     SymbolLayerSpecWithoutSource,
     ToBeAddedLayerSpec
 } from "../shared";
-import { GeometryBeforeLayerConfig, GeometriesModuleConfig, GeometryTextConfig } from "./types/GeometriesModuleConfig";
+import { GeometryBeforeLayerConfig, GeometriesModuleConfig, GeometryTextConfig } from "./types/geometriesModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { changeLayerProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
@@ -20,7 +20,7 @@ import {
     prepareGeometryForDisplay,
     prepareTitleForDisplay
 } from "./prepareGeometryForDisplay";
-import { GEOMETRY_TITLE_LAYER_ID } from "./layers/GeometryLayers";
+import { GEOMETRY_TITLE_LAYER_ID } from "./layers/geometryLayers";
 
 /**
  * IDs of sources and layers for geometry module.

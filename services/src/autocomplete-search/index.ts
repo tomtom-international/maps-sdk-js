@@ -4,4 +4,4 @@
  */
 
 export * from "./types";
-export * from "./AutocompleteSearch";
+export * from "./autocompleteSearch";

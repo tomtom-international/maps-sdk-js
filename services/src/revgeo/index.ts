@@ -3,5 +3,5 @@
  * @category Service
  */
 
-export * from "./types/ReverseGeocodingParams";
-export * from "./ReverseGeocoding";
+export * from "./types/reverseGeocodingParams";
+export * from "./reverseGeocoding";

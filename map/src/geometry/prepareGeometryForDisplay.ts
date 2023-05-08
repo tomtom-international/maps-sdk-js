@@ -8,9 +8,9 @@ import {
     colorPalettes,
     geometryFillSpec,
     geometryOutlineSpec
-} from "./layers/GeometryLayers";
-import { GeometriesModuleConfig } from "./types/GeometriesModuleConfig";
-import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/GeometryDisplayProps";
+} from "./layers/geometryLayers";
+import { GeometriesModuleConfig } from "./types/geometriesModuleConfig";
+import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/geometryDisplayProps";
 import { SymbolLayerSpecWithoutSource } from "../shared";
 
 /**

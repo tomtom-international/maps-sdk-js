@@ -3,6 +3,6 @@
  * @category Map
  */
 
-export * from "./types/GeometriesModuleConfig";
-export * from "./types/GeometryDisplayProps";
+export * from "./types/geometriesModuleConfig";
+export * from "./types/geometryDisplayProps";
 export * from "./GeometriesModule";

@@ -3,11 +3,11 @@
  * @category Service
  */
 
-export * from "./types/APIPlacesResponseTypes";
-export * from "./types/ServicesTypes";
-export * from "./types/CommonPlacesParams";
-export * from "./types/CommonSearchParams";
-export * from "./types/CommonGeocodeAndFuzzySearchParams";
-export * from "./types/SearchSummary";
-export * from "./ServiceTypes";
-export * from "./Errors";
+export * from "./types/apiPlacesResponseTypes";
+export * from "./types/servicesTypes";
+export * from "./types/commonPlacesParams";
+export * from "./types/commonSearchParams";
+export * from "./types/commonGeocodeAndFuzzySearchParams";
+export * from "./types/searchSummary";
+export * from "./serviceTypes";
+export * from "./errors";

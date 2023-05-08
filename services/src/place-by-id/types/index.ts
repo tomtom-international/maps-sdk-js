@@ -1,3 +1,3 @@
-export * from "./PlaceByIdResponse";
-export * from "./PlaceByIdParams";
-export * from "./PlaceByIdResponseAPI";
+export * from "./placeByIdResponse";
+export * from "./placeByIdParams";
+export * from "./placeByIdResponseAPI";

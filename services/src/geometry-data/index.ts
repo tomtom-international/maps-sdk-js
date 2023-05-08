@@ -2,6 +2,6 @@
  * @module geometry-data
  * @category Service
  */
-export * from "./GeometryData";
-export * from "./types/GeometryDataParams";
-export * from "./types/APITypes";
+export * from "./geometryData";
+export * from "./types/geometryDataParams";
+export * from "./types/apiTypes";

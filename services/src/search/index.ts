@@ -3,7 +3,7 @@
  * @category Service
  */
 
-export * from "./Search";
-export * from "../shared/types/CommonPlacesParams";
-export * from "../shared/types/CommonSearchParams";
-export * from "../shared/types/CommonGeocodeAndFuzzySearchParams";
+export * from "./search";
+export * from "../shared/types/commonPlacesParams";
+export * from "../shared/types/commonSearchParams";
+export * from "../shared/types/commonGeocodeAndFuzzySearchParams";

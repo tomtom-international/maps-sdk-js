@@ -1,0 +1,62 @@
+import { z } from "zod";
+import { getGeoInputType, inputSectionTypes, SectionType } from "@anw/maps-sdk-js/core";
+import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from "../shared/geometriesSchema";
+import { CalculateRouteParams, instructionsTypes } from "./types/calculateRouteParams";
+import { vehicleParametersSchema } from "./vehicleSchema";
+import { SchemaRefinement } from "../shared/types/validation";
+
+const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);
+const pathLikeSchema = z.union([lineStringCoordsSchema, featureSchema]);
+
+const calculateRouteRequestSchemaMandatory = z.object({
+    geoInputs: z.array(z.union([waypointLikeSchema, pathLikeSchema])).min(1)
+});
+
+/**
+ * @ignore
+ */
+export const calculateRouteRequestSchema = calculateRouteRequestSchemaMandatory.merge(
+    z
+        .object({
+            costModel: z.object({
+                avoid: z.string().array().optional(),
+                considerTraffic: z.boolean().optional(),
+                routeType: z.string().optional(),
+                thrillingParams: z
+                    .object({
+                        hilliness: z.enum(["low", "normal", "high"]).optional(),
+                        windingness: z.enum(["low", "normal", "high"]).optional()
+                    })
+                    .optional()
+            }),
+            computeAdditionalTravelTimeFor: z.enum(["none", "all"]),
+            currentHeading: z.number().min(0).max(359.5),
+            instructionsType: z.enum(instructionsTypes),
+            maxAlternatives: z.number().min(1).max(5),
+            routeRepresentation: z.enum(["polyline", "summaryOnly"]),
+            sectionTypes: z.array(z.enum(inputSectionTypes as [SectionType, ...SectionType[]])),
+            travelMode: z.string(),
+            vehicle: vehicleParametersSchema,
+            when: z.object({
+                option: z.enum(["departAt", "arriveBy"]),
+                date: z.date()
+            })
+        })
+        .partial()
+);
+
+/**
+ * @ignore
+ */
+export const calculateRouteGeoInputsRefinement: SchemaRefinement<CalculateRouteParams> = {
+    check: (data: CalculateRouteParams): boolean => {
+        const geoInputTypes = data.geoInputs.map(getGeoInputType);
+        if (!geoInputTypes.includes("path")) {
+            return data.geoInputs.length >= 2;
+        }
+        return true;
+    },
+    message:
+        "When passing waypoints only: at least 2 must be defined. " +
+        "If passing also paths, at least one path must be defined"
+};

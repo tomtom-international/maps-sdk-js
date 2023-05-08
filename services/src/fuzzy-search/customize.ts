@@ -1,7 +1,7 @@
-import { fuzzySearch } from "./FuzzySearch";
-import { buildFuzzySearchRequest } from "./RequestBuilder";
-import { parseFuzzySearchResponse } from "./ResponseParser";
-import { fuzzySearchTemplate } from "./FuzzySearchTemplate";
+import { fuzzySearch } from "./fuzzySearch";
+import { buildFuzzySearchRequest } from "./requestBuilder";
+import { parseFuzzySearchResponse } from "./responseParser";
+import { fuzzySearchTemplate } from "./fuzzySearchTemplate";
 
 const customize = {
     fuzzySearch,

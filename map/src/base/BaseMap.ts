@@ -7,7 +7,7 @@ import {
     VECTOR_TILES_SOURCE_ID,
     VectorTileMapModuleConfig
 } from "../shared";
-import { notInTheStyle } from "../shared/ErrorMessages";
+import { notInTheStyle } from "../shared/errorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 
 type BaseSourceAndLayers = {

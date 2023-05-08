@@ -1,12 +1,12 @@
 import { FeatureCollection, MultiPolygon, Polygon } from "geojson";
-import { ColorPaletteOptions, colorPalettes } from "../layers/GeometryLayers";
+import { ColorPaletteOptions, colorPalettes } from "../layers/geometryLayers";
 import {
     buildGeometryLayerSpec,
     buildGeometryTitleLayerSpec,
     prepareGeometryForDisplay,
     prepareTitleForDisplay
 } from "../prepareGeometryForDisplay";
-import { GeometriesModuleConfig } from "../types/GeometriesModuleConfig";
+import { GeometriesModuleConfig } from "../types/geometriesModuleConfig";
 
 describe("prepareGeometryForDisplay", () => {
     test("Build geometry spec layer", () => {

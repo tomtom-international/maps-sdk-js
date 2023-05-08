@@ -1,7 +1,7 @@
-import { autocompleteSearch } from "./AutocompleteSearch";
-import { buildAutocompleteSearchRequest } from "./RequestBuilder";
-import { parseAutocompleteSearchResponse } from "./ResponseParser";
-import { autocompleteSearchTemplate } from "./AutocompleteSearchTemplate";
+import { autocompleteSearch } from "./autocompleteSearch";
+import { buildAutocompleteSearchRequest } from "./requestBuilder";
+import { parseAutocompleteSearchResponse } from "./responseParser";
+import { autocompleteSearchTemplate } from "./autocompleteSearchTemplate";
 
 const customize = {
     autocompleteSearch,

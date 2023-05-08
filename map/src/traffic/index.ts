@@ -3,5 +3,5 @@
  * @category Map
  */
 
-export * from "./types/TrafficModuleConfig";
+export * from "./types/trafficModuleConfig";
 export * from "./TrafficModule";

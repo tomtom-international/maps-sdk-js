@@ -1,7 +1,7 @@
 import { Map } from "maplibre-gl";
 import { Place, Places } from "@anw/maps-sdk-js/core";
-import { DisplayPlaceProps } from "./types/PlaceDisplayProps";
-import { CustomIcon, PlacesModuleConfig } from "./types/PlacesModuleConfig";
+import { DisplayPlaceProps } from "./types/placeDisplayProps";
+import { CustomIcon, PlacesModuleConfig } from "./types/placesModuleConfig";
 import {
     MapStylePOIClassification,
     placeToPOILayerClassificationMapping,

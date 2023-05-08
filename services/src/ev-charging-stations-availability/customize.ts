@@ -1,6 +1,6 @@
-import { buildEVChargingStationsAvailabilityRequest } from "./RequestBuilder";
-import { parseEVChargingStationsAvailabilityResponse } from "./ResponseParser";
-import { evChargingStationsAvailabilityTemplate } from "./EVChargingStationsAvailabilityTemplate";
+import { buildEVChargingStationsAvailabilityRequest } from "./requestBuilder";
+import { parseEVChargingStationsAvailabilityResponse } from "./responseParser";
+import { evChargingStationsAvailabilityTemplate } from "./evChargingStationsAvailabilityTemplate";
 
 const customize = {
     buildEVChargingStationsAvailabilityRequest,

@@ -6,12 +6,12 @@ import {
     PLACES_SOURCE_PREFIX_ID,
     SymbolLayerSpecWithoutSource
 } from "../shared";
-import { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from "./types/PlacesModuleConfig";
+import { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from "./types/placesModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { changeLayersProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import { preparePlacesForDisplay } from "./preparePlacesForDisplay";
-import { buildPlacesLayerSpecs } from "./layers/PlacesLayers";
-import { DisplayPlaceProps } from "./types/PlaceDisplayProps";
+import { buildPlacesLayerSpecs } from "./layers/placesLayers";
+import { DisplayPlaceProps } from "./types/placeDisplayProps";
 
 /**
  * IDs of sources and layers for places module.

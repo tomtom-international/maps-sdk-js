@@ -2,8 +2,8 @@ import mapLibreExported, { Map } from "maplibre-gl";
 import { BBox } from "geojson";
 import { Language, mergeFromGlobal } from "@anw/maps-sdk-js/core";
 import { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
-import { buildMapOptions } from "./init/BuildMapOptions";
-import { buildMapStyleInput } from "./init/MapStyleInputBuilder";
+import { buildMapOptions } from "./init/buildMapOptions";
+import { buildMapStyleInput } from "./init/mapStyleInputBuilder";
 import { EventsProxy } from "./shared";
 import { isLayerLocalizable } from "./shared/localization";
 

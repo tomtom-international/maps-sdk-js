@@ -1,0 +1,22 @@
+import { MapOptions } from "maplibre-gl";
+import sdkAndRendererInitParams from "./buildMapOptions.data.json";
+import { MapLibreOptions, TomTomMapParams } from "../types/mapInit";
+import { buildMapOptions } from "../buildMapOptions";
+
+describe("Renderer init params tests", () => {
+    test.each(sdkAndRendererInitParams)(
+        `'%s`,
+        // @ts-ignore
+        (
+            _name: string,
+            mapLibreOptions: MapLibreOptions,
+            tomtomMapParams: TomTomMapParams,
+            rendererOptions: MapOptions
+        ) => {
+            expect(buildMapOptions(mapLibreOptions, tomtomMapParams)).toStrictEqual({
+                ...rendererOptions,
+                transformRequest: expect.any(Function)
+            });
+        }
+    );
+});

@@ -1,6 +1,6 @@
-import { buildPlaceByIdRequest } from "./RequestBuilder";
-import { parsePlaceByIdResponse } from "./ResponseParser";
-import { placeByIdTemplate } from "./PlaceByIdTemplate";
+import { buildPlaceByIdRequest } from "./requestBuilder";
+import { parsePlaceByIdResponse } from "./responseParser";
+import { placeByIdTemplate } from "./placeByIdTemplate";
 
 const customize = {
     buildPlaceByIdRequest,

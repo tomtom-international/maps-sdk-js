@@ -1,7 +1,7 @@
 import isNil from "lodash/isNil";
 import { HillshadeModuleConfig } from ".";
 import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
-import { notInTheStyle } from "../shared/ErrorMessages";
+import { notInTheStyle } from "../shared/errorMessages";
 import { TomTomMap } from "../TomTomMap";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 

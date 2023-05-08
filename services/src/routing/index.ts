@@ -3,6 +3,6 @@
  * @category Service
  */
 
-export * from "./types/CalculateRouteParams";
-export * from "./types/VehicleParams";
-export * from "./CalculateRoute";
+export * from "./types/calculateRouteParams";
+export * from "./types/vehicleParams";
+export * from "./calculateRoute";

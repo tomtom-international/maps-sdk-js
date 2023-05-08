@@ -18,15 +18,15 @@ import {
     WAYPOINT_START_IMAGE_ID,
     WAYPOINT_STOP_IMAGE_ID
 } from "./layers/waypointLayers";
-import { toDisplayWaypoints } from "./util/WaypointUtils";
-import { PlanningWaypoint } from "./types/PlanningWaypoint";
-import { DEFAULT_ROUTE_LAYERS_CONFIGURATION, RoutingModuleConfig } from "./types/RouteModuleConfig";
-import { buildDisplayRouteSections, showSectionsWithRouteSelection } from "./util/RouteSections";
-import { toDisplayTrafficSectionProps } from "./util/DisplayTrafficSectionProps";
-import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/RouteSections";
-import { buildDisplayRoutes, createLayersSpecs, mergeConfig, RoutingLayersSpecs } from "./util/Routes";
-import { DisplayRouteProps } from "./types/DisplayRoutes";
-import { ShowRoutesOptions } from "./types/ShowRoutesOptions";
+import { toDisplayWaypoints } from "./util/waypointUtils";
+import { PlanningWaypoint } from "./types/planningWaypoint";
+import { DEFAULT_ROUTE_LAYERS_CONFIGURATION, RoutingModuleConfig } from "./types/routeModuleConfig";
+import { buildDisplayRouteSections, showSectionsWithRouteSelection } from "./util/routeSections";
+import { toDisplayTrafficSectionProps } from "./util/displayTrafficSectionProps";
+import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/routeSections";
+import { buildDisplayRoutes, createLayersSpecs, mergeConfig, RoutingLayersSpecs } from "./util/routes";
+import { DisplayRouteProps } from "./types/displayRoutes";
+import { ShowRoutesOptions } from "./types/showRoutesOptions";
 import { addLayersInCorrectOrder, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 
