@@ -178,16 +178,13 @@ describe("Tests with user events", () => {
 
     test("Hover and long hover states for a place", async () => {
         await setupPlacesHoverHandlers();
-
         const placePosition = await getPixelCoords(firstPlacePosition);
         await page.mouse.move(placePosition.x, placePosition.y);
         await waitForEventState("hover");
-
         // Moving cursor away from the place
         await page.mouse.move(placePosition.x - 100, placePosition.y - 100);
         await waitForEventState(undefined);
         expect(await getNumHoversAndLongHovers()).toEqual([1, 0]);
-        await waitForMapIdle();
 
         // Moving cursor back to the place
         await page.mouse.move(placePosition.x, placePosition.y);
@@ -196,7 +193,6 @@ describe("Tests with user events", () => {
         await waitForTimeout(1000);
         await waitForEventState("long-hover");
         expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
-
         // Moving away again:
         await page.mouse.move(placePosition.x - 100, placePosition.y - 100);
         await waitForEventState(undefined);

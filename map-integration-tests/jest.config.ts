@@ -7,13 +7,9 @@ const config: Config = {
     testTimeout: 100000,
     preset: "jest-puppeteer",
     extensionsToTreatAsEsm: [".ts"],
-    transform: {
-        "^.+\\.ts?$": "ts-jest"
-    },
+    transform: { "^.+\\.ts?$": "ts-jest" },
     testPathIgnorePatterns: ["<rootDir>/node_modules/"],
-    moduleNameMapper: {
-        "@anw/maps-sdk-js/core": "<rootDir>/../core/dist/core.cjs.min.js"
-    }
+    moduleNameMapper: { "@anw/maps-sdk-js/core": "<rootDir>/../core/dist/core.cjs.min.js" }
 };
 
 export default config;
