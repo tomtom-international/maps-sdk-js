@@ -1,8 +1,9 @@
 import { MarkdownThemeRenderContext, partials } from "typedoc-plugin-markdown";
-import { ContainerReflection, DeclarationReflection } from "typedoc";
+import { ContainerReflection, DeclarationReflection, PageEvent, ProjectReflection } from "typedoc";
 import { member } from "typedoc-plugin-markdown/dist/partials/member";
 import { members } from "typedoc-plugin-markdown/dist/partials/members";
 import { getReflectionTitle } from "typedoc-plugin-markdown/dist/support/helpers";
+import { stringify } from "yaml";
 
 // Wrap all members in devportal Accordion components. Also adds an invisible anchor tag above each Accordion, which
 // allows linking to the Accordion. Invisible anchor tag is needed until devportal supports linking to Accordions.
@@ -21,10 +22,26 @@ const customMember = (context: MarkdownThemeRenderContext, reflection: Declarati
 const customMembers = (context: MarkdownThemeRenderContext, container: ContainerReflection) =>
     members(context, container).replace(/\n\n---/g, "");
 
+// Using our own custom implementation with proper yaml formatting.
+// The next release of plugin (>= 4.0.0-next-11) will fix this.
+const yamlFrontmatter = (
+    context: MarkdownThemeRenderContext,
+    page: PageEvent<ProjectReflection | DeclarationReflection>
+) => {
+    const globalOption = context.getOption("frontmatterGlobals");
+    const globalFrontmatter = typeof globalOption === "string" ? JSON.parse(globalOption) : globalOption;
+    const frontmatter = {
+        title: page.model.name,
+        ...globalFrontmatter
+    };
+    return `---\n${stringify(frontmatter)}---\n\n`;
+};
+
 export const customPartials = (context: MarkdownThemeRenderContext) => {
     return {
         ...partials(context),
         member: (ref: DeclarationReflection) => customMember(context, ref),
-        members: (container: ContainerReflection) => customMembers(context, container)
+        members: (container: ContainerReflection) => customMembers(context, container),
+        frontmatter: (page: PageEvent<ProjectReflection | DeclarationReflection>) => yamlFrontmatter(context, page)
     };
 };

@@ -10,9 +10,9 @@
 import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
-const DOCUMENTATION_DIR_PATH = resolve(__dirname, "../documentation/dev-portal/javascript/maps/documentation/");
+const DOCUMENTATION_DIR_PATH = resolve(__dirname, "../../documentation/dev-portal/javascript/maps/documentation/");
 const API_REFERENCE_DIR_PATH = resolve(DOCUMENTATION_DIR_PATH, "api-reference");
-const BASE_NAV_FILE_PATH = resolve(__dirname, "../documentation/dev-portal/base-navigation.yml");
+const BASE_NAV_FILE_PATH = resolve(DOCUMENTATION_DIR_PATH, "../../../base-navigation.yml");
 const OUTPUT_NAV_FILE_NAME = "navigation.yml";
 
 const getAllApiReferenceFileNames = () => readdirSync(API_REFERENCE_DIR_PATH).map((x) => x.replace(/\.[^/.]+$/, ""));

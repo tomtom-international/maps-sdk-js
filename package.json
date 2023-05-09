@@ -6,14 +6,13 @@
     "clean": "npm run clean:dist -ws && npm run clean:cache -ws",
     "release:dry": "npx standard-version --dry-run",
     "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi",
-    "documentation": "npm run build-theme && typedoc && npx ts-node scripts/generate-docs-nav-file.ts",
+    "documentation": "./scripts/documentation/generate-api-reference.sh",
     "build:full": "npm run build:full -ws",
     "build": "npm run build -ws",
     "type-check": "npm run type-check -ws",
     "lint": "npm run lint -ws",
     "format": "npm run format -ws",
     "test": "npm run test -ws",
-    "build-theme": "rimraf ./documentation/maps-sdk-theme/dist && tsc -p ./documentation/maps-sdk-theme",
     "prepare": "node scripts/prepare.js",
     "pre-commit": "lint-staged"
   },
@@ -86,7 +85,8 @@
     "size-limit": "^8.2.4",
     "typedoc": "^0.24.6",
     "typedoc-plugin-markdown": "^4.0.0-next.10",
-    "typedoc-plugin-missing-exports": "^2.0.0"
+    "typedoc-plugin-missing-exports": "^2.0.0",
+    "yaml": "^2.2.2"
   },
   "size-limit": [
     {
