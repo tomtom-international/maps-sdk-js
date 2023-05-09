@@ -22,8 +22,8 @@ const customMember = (context: MarkdownThemeRenderContext, reflection: Declarati
 const customMembers = (context: MarkdownThemeRenderContext, container: ContainerReflection) =>
     members(context, container).replace(/\n\n---/g, "");
 
-// Using our own custom implementation with proper yaml formatting.
-// The next release of plugin (>= 4.0.0-next-11) will fix this.
+// Using our own custom implementation of frontmatter rendering with proper yaml formatting.
+// The next release of plugin (>= 4.0.0-next-11) will fix this and make this function + yaml-package unnecessary.
 const yamlFrontmatter = (
     context: MarkdownThemeRenderContext,
     page: PageEvent<ProjectReflection | DeclarationReflection>

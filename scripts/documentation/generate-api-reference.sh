@@ -2,9 +2,6 @@
 
 set -e
 
-# Write global frontmatter to typedoc configuration file
-npx ts-node ./scripts/documentation/write-global-frontmatter-to-typedoc.ts
-
 # Build our custom typedoc plugin
 rimraf ./documentation/maps-sdk-theme/dist && tsc -p ./documentation/maps-sdk-theme
 
