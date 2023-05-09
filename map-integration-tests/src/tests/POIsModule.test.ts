@@ -13,6 +13,7 @@ import { MapsSDKThis } from "./types/MapsSDKThis";
 import { Point } from "geojson";
 import {
     getNumVisibleLayersBySource,
+    initPOIs,
     waitForMapIdle,
     waitForMapReady,
     waitUntilRenderedFeaturesChange
@@ -40,22 +41,12 @@ describe("Map vector tile POI filtering tests", () => {
 
     test("Failing to initialize if excluded from the style", async () => {
         await mapEnv.loadMap({});
-        await expect(
-            page.evaluate(async () => {
-                const mapsSDKThis = globalThis as MapsSDKThis;
-                await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
-            })
-        ).rejects.toBeDefined();
+        await expect(initPOIs()).rejects.toBeDefined();
     });
 
     test("Success to initialize if not included in the style, but auto adding it", async () => {
         await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
-
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
-        });
-
+        await initPOIs({ ensureAddedToStyle: true });
         await waitForMapReady();
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
@@ -66,15 +57,7 @@ describe("Map vector tile POI filtering tests", () => {
 
     test("Success to initialize if not included in the style, but auto adding it, invisible upfront", async () => {
         await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
-
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, {
-                ensureAddedToStyle: true,
-                visible: false
-            });
-        });
-
+        await initPOIs({ ensureAddedToStyle: true, visible: false });
         await waitForMapReady();
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
 
@@ -89,10 +72,7 @@ describe("Map vector tile POI filtering tests", () => {
             { style: { type: "published", include: ["poi"] } }
         );
 
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { visible: false });
-        });
+        await initPOIs({ visible: false });
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBe(0);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(true));
@@ -131,10 +111,7 @@ describe("Map vector tile POI filtering tests", () => {
             { zoom: 14, center: [-0.12621, 51.50394] },
             { style: { type: "published", include: ["poi"] } }
         );
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
-        });
+        await initPOIs();
         await waitForMapIdle();
         let renderedPOIs = await waitForRenderedPOIsChange(0);
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
@@ -176,26 +153,11 @@ describe("Map vector tile POI filtering tests", () => {
 
     test("Vector tiles pois filter while initializing with config", async () => {
         await mapEnv.loadMap(
-            {
-                zoom: 14,
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["poi"] }
-            }
+            { zoom: 14, center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["poi"] } }
         );
         // config poi layer to only include TRANSPORTATION_GROUP categories and expect all features to be from TRANSPORTATION_GROUP
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, {
-                filters: {
-                    categories: {
-                        show: "only",
-                        values: ["TRANSPORTATION_GROUP"]
-                    }
-                }
-            });
-        });
+        await initPOIs({ filters: { categories: { show: "only", values: ["TRANSPORTATION_GROUP"] } } });
         await waitForMapIdle();
 
         let renderedPOIs = await waitForRenderedPOIsChange(0);
@@ -253,12 +215,7 @@ describe("Map vector tile POI filtering tests", () => {
             { zoom: 14, center: [-0.12621, 51.50394] },
             { style: { type: "published", include: ["poi"] } }
         );
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, {
-                ensureAddedToStyle: true
-            });
-        });
+        await initPOIs({ ensureAddedToStyle: true });
 
         // manually override existing POI layer filter to be able to verify it's combined with categories filter
         await page.evaluate(
@@ -297,19 +254,11 @@ describe("Map vector tile POI feature tests", () => {
 
     test("Ensure required feature properties are defined", async () => {
         await mapEnv.loadMap(
-            {
-                zoom: 14,
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["poi"] }
-            }
+            { zoom: 14, center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["poi"] } }
         );
 
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap);
-        });
+        await initPOIs();
         await waitForMapIdle();
 
         const poiCoordinates = await page.evaluate(async () => {

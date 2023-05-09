@@ -9,6 +9,7 @@ import {
     getNumVisibleLayersBySource,
     getPlacesSourceAndLayerIDs,
     initPlaces,
+    initTrafficIncidents,
     queryRenderedFeatures,
     setStyle,
     showPlaces,
@@ -57,7 +58,7 @@ const compareToExpectedPOILikeDisplayProps = (
     }
 };
 
-describe("GeoJSON Places tests", () => {
+describe("PlacesModule tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
@@ -67,10 +68,7 @@ describe("GeoJSON Places tests", () => {
         // @ts-ignore
         async (_name: string, testPlaces: Places, expectedDisplayProps: PlaceDisplayProps[]) => {
             const bounds = await getBBox(testPlaces);
-            await mapEnv.loadMap(
-                { bounds },
-                { style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] } }
-            );
+            await mapEnv.loadMap({ bounds }, { style: { type: "published", include: ["poi"] } });
             await initPlaces();
             const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs();
             expect(await getNumVisibleLayers(sourceID)).toStrictEqual(0);
@@ -94,24 +92,23 @@ describe("GeoJSON Places tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
 
             // once more, reloading the map and this time showing places before waiting for it to load:
-            await mapEnv.loadMap(
-                { bounds },
-                { style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] } }
-            );
+            await mapEnv.loadMap({ bounds }, { style: { type: "published", include: ["poi"] } });
             await initPlaces();
             const { layerIDs: nextLayerIDs } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
             renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
 
-            // finally, changing the map style: verifying the places are still shown (state restoration):
-            await setStyle({
-                type: "published",
-                id: "standardDark",
-                include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
-            });
+            // adding traffic incidents to the style: verifying the places are still shown (state restoration):
+            await initTrafficIncidents({ ensureAddedToStyle: true });
             await waitForMapIdle();
-            renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 10000);
+            renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 5000);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+
+            // changing the map style: verifying the places are still shown (state restoration):
+            await setStyle({ type: "published", id: "standardDark", include: ["poi", "traffic_incidents"] });
+            await waitForMapIdle();
+            renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 5000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
 
             expect(mapEnv.consoleErrors).toHaveLength(0);

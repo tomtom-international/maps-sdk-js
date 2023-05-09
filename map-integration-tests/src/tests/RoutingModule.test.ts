@@ -22,6 +22,7 @@ import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
 import {
     getLayerById,
     getNumVisibleLayersBySource,
+    initHillshade,
     setStyle,
     waitForMapIdle,
     waitForMapReady,
@@ -85,9 +86,7 @@ describe("Routing tests", () => {
     test("Show and clear flows", async () => {
         await mapEnv.loadMap(
             { fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox },
-            {
-                style: { type: "published", include: ["traffic_incidents", "traffic_flow"] }
-            }
+            { style: { type: "published", include: ["traffic_incidents", "traffic_flow"] } }
         );
         await initRouting();
 
@@ -124,6 +123,12 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
+        // Adding hillshade to style, asserting that the route stays the same:
+        await initHillshade({ ensureAddedToStyle: true });
+        await waitForMapIdle();
+        await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+
         await selectRoute(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
@@ -132,7 +137,11 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 2, 2000);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents", "traffic_flow"] });
+        await setStyle({
+            type: "published",
+            id: "monoLight",
+            include: ["traffic_incidents", "traffic_flow", "hillshade"]
+        });
         await waitForMapIdle();
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
@@ -152,7 +161,11 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle({ type: "published", id: "drivingDark", include: ["traffic_incidents", "traffic_flow"] });
+        await setStyle({
+            type: "published",
+            id: "drivingDark",
+            include: ["traffic_incidents", "traffic_flow", "hillshade"]
+        });
         await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
@@ -162,7 +175,11 @@ describe("Routing tests", () => {
         await waitForRenderedWaypoints(1);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle({ type: "published", id: "standardLight", include: ["traffic_incidents", "traffic_flow"] });
+        await setStyle({
+            type: "published",
+            id: "standardLight",
+            include: ["traffic_incidents", "traffic_flow", "hillshade"]
+        });
         await waitForMapIdle();
         await waitForRenderedWaypoints(1);
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -173,26 +190,17 @@ describe("Routing tests", () => {
             [4.8606, 52.39316],
             {
                 type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: [4.8706, 52.40316]
-                },
+                geometry: { type: "Point", coordinates: [4.8706, 52.40316] },
                 properties: { address: { freeformAddress: "This is a test address, 9999 Some Country" } }
             },
             {
                 type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: [4.8806, 52.41316]
-                },
+                geometry: { type: "Point", coordinates: [4.8806, 52.41316] },
                 properties: { radiusMeters: 30 }
             },
             {
                 type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: [4.8906, 52.42316]
-                },
+                geometry: { type: "Point", coordinates: [4.8906, 52.42316] },
                 properties: { poi: { name: "This is a test POI." } }
             }
         ];
@@ -264,20 +272,14 @@ describe("Routing tests", () => {
             return { id, beforeID, layerSpec };
         });
 
-        const newConfig = {
-            routeLayers: {
-                mainLine: {
-                    layers: updatedLayers
-                }
-            }
-        } as RoutingModuleConfig;
+        const newConfig = { routeLayers: { mainLine: { layers: updatedLayers } } } as RoutingModuleConfig;
         await applyConfig(newConfig);
         await waitForMapIdle();
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
         expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
 
-        // Changing the style, asserting that the config stays the same:
-        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents", "traffic_flow"] });
+        // Changing the style with extra poi included style part, asserting that the config stays the same:
+        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents", "traffic_flow", "poi"] });
         await waitForMapIdle();
         await waitForTimeout(2000);
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);

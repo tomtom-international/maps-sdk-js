@@ -1,6 +1,6 @@
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { getNumVisibleLayersBySource, isLayerVisible, waitForMapReady } from "./util/TestUtils";
+import { getNumVisibleLayersBySource, initHillshade, isLayerVisible, waitForMapReady } from "./util/TestUtils";
 import { HILLSHADE_SOURCE_ID, POI_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from "map";
 
 describe("Map vector tiles hillshade module tests", () => {
@@ -10,22 +10,12 @@ describe("Map vector tiles hillshade module tests", () => {
 
     test("Failing to initialize if excluded from the style", async () => {
         await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
-        await expect(
-            page.evaluate(async () => {
-                const mapsSDKThis = globalThis as MapsSDKThis;
-                await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap);
-            })
-        ).rejects.toBeDefined();
+        await expect(initHillshade()).rejects.toBeDefined();
     });
 
     test("Success to initialize if not included in the style, but auto adding it", async () => {
         await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
-
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
-        });
-
+        await initHillshade({ ensureAddedToStyle: true });
         await waitForMapReady();
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -36,13 +26,9 @@ describe("Map vector tiles hillshade module tests", () => {
             { center: [7.12621, 48.50394], zoom: 8 },
             { style: { type: "published", include: ["hillshade"] } }
         );
-
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
-        });
-
+        await initHillshade({ ensureAddedToStyle: true });
         await waitForMapReady();
+
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
         expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toEqual(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toEqual(0);
@@ -58,12 +44,7 @@ describe("Map vector tiles hillshade module tests", () => {
             { style: { type: "published", include: ["hillshade"] } }
         );
 
-        await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, {
-                visible: false
-            });
-        });
+        await initHillshade({ visible: false });
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(true));

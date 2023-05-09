@@ -1,7 +1,17 @@
 import { GeoJsonProperties, Position } from "geojson";
 import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
 import { Geometries, GlobalConfig, Language, Places } from "@anw/maps-sdk-js/core";
-import { GeometriesModuleConfig, LayerSpecWithSource, PlacesModuleConfig, StyleInput, StyleModuleConfig } from "map";
+import {
+    GeometriesModuleConfig,
+    HillshadeModuleConfig,
+    IncidentsConfig,
+    LayerSpecWithSource,
+    PlacesModuleConfig,
+    POIsModuleConfig,
+    StyleInput,
+    StyleModuleConfig,
+    StyleModuleInitConfig
+} from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
@@ -165,7 +175,28 @@ export const initBasemap = async (config?: StyleModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as never);
+    }, config as StyleModuleConfig);
+
+export const initTrafficIncidents = async (config?: StyleModuleInitConfig & IncidentsConfig) =>
+    page.evaluate(async (inputConfig?) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.trafficIncidents = await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(
+            mapsSDKThis.tomtomMap,
+            inputConfig
+        );
+    }, config as IncidentsConfig);
+
+export const initPOIs = async (config?: StyleModuleInitConfig & POIsModuleConfig) =>
+    await page.evaluate(async (inputConfig) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, inputConfig);
+    }, config as StyleModuleInitConfig & POIsModuleConfig);
+
+export const initHillshade = async (config?: StyleModuleInitConfig & HillshadeModuleConfig) =>
+    page.evaluate(async (inputConfig) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, inputConfig);
+    }, config as StyleModuleInitConfig & HillshadeModuleConfig);
 
 export const setStyle = async (style: StyleInput) =>
     page.evaluate((pageStyleInput) => {

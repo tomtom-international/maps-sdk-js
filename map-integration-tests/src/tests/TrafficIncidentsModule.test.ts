@@ -13,6 +13,7 @@ import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import {
     getVisibleLayersBySource,
+    initTrafficIncidents,
     setStyle,
     waitForMapIdle,
     waitForTimeout,
@@ -40,15 +41,6 @@ const getByIncidentCategories = (
 const getByRoadCategories = (renderedItems: MapGeoJSONFeature[], roadCategories: RoadCategory[]): MapGeoJSONFeature[] =>
     renderedItems.filter((incident) => roadCategories.includes(incident.properties["road_category"]));
 
-const initIncidentsTraffic = async (config?: StyleModuleInitConfig & IncidentsConfig) =>
-    page.evaluate(async (inputConfig?) => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.trafficIncidents = await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(
-            mapsSDKThis.tomtomMap,
-            inputConfig
-        );
-    }, config as IncidentsConfig);
-
 const getConfig = async (): Promise<IncidentsConfig | undefined> =>
     page.evaluate(async () => (globalThis as MapsSDKThis).trafficIncidents?.getConfig());
 
@@ -67,12 +59,12 @@ describe("Map vector tile traffic incidents module tests", () => {
 
     test("Failing to initialize if fully excluded from the style", async () => {
         await mapEnv.loadMap({});
-        await expect(initIncidentsTraffic()).rejects.toBeDefined();
+        await expect(initTrafficIncidents()).rejects.toBeDefined();
     });
 
     test("Auto initialize if fully excluded from the style", async () => {
         await mapEnv.loadMap({});
-        await initIncidentsTraffic({ ensureAddedToStyle: true });
+        await initTrafficIncidents({ ensureAddedToStyle: true });
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents)).not.toBeNull();
     });
 
@@ -83,7 +75,7 @@ describe("Map vector tile traffic incidents module tests", () => {
         );
         expect(await getConfig()).toBeUndefined();
 
-        await initIncidentsTraffic({ visible: false });
+        await initTrafficIncidents({ visible: false });
         expect(await getConfig()).toEqual({ visible: false });
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeFalsy();
 
@@ -171,7 +163,7 @@ describe("Map vector tile traffic incidents module tests", () => {
                 style: { type: "published", include: ["traffic_incidents"] }
             }
         );
-        await initIncidentsTraffic();
+        await initTrafficIncidents();
         expect(await getConfig()).toBeUndefined();
         await waitForMapIdle();
 
@@ -257,7 +249,7 @@ describe("Map vector tile traffic incidents module tests", () => {
             }
         };
 
-        await initIncidentsTraffic(config);
+        await initTrafficIncidents(config);
         expect(await getConfig()).toEqual(config);
         await waitForMapIdle();
 
@@ -310,7 +302,7 @@ describe("Map vector tile traffic incidents module tests", () => {
             { style: { type: "published", include: ["traffic_incidents"] } }
         );
 
-        await initIncidentsTraffic();
+        await initTrafficIncidents();
 
         const incidentFilters = { any: [{ incidentCategories: { show: "only", values: ["road_closed"] } }] };
         // Showing road closures only:
