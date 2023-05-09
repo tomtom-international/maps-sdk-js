@@ -1,8 +1,8 @@
-import { Map } from "maplibre-gl";
 import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
 import {
     ExpressionFilterSpecification,
     FilterSpecification,
+    Map,
     LayerSpecification,
     LegacyFilterSpecification
 } from "maplibre-gl";
