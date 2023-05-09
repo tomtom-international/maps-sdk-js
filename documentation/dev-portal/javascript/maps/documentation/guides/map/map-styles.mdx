@@ -11,6 +11,7 @@ titleTags:
 ---
 
 # About TomTom map styles
+This section explains what map styles are and which are the main TomTom styles and parts.
 
 ## What is a map style
 A map style is used to define the look and feel of a map. It’s written in JSON format and specifies how to:
@@ -75,14 +76,14 @@ Traffic Incidents can be optionally included when loading the style and can be f
 
 ## Pre-defined styles and variants
 The Map bundle provides access to TomTom pre-defined styles that can be used in your application.
-They are provided in the [`StyleInput`](/javascript/maps/documentation/api-reference/modules/map_init#StyleInput) as [`PublishedStyle`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle).
-A [`PublishedStyle`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle) represents a style which is officially hosted by TomTom and easily accessible by its name.
+They are provided in the [`StyleInput`](/javascript/maps/documentation/api-reference/map-init#StyleInput) as [`PublishedStyle`](/javascript/maps/documentation/api-reference/map-init#PublishedStyle).
+A [`PublishedStyle`](/javascript/maps/documentation/api-reference/map-init#PublishedStyle) represents a style which is officially hosted by TomTom and easily accessible by its name.
 
 Each pre-defined style may also have `variants` which are different versions of the look and feel for different contexts, such as day and night.
 
-The available [`published styles`](/javascript/maps/documentation/api-reference/modules/map_init#PublishedStyle) and variants are:
+The available [`published styles`](/javascript/maps/documentation/api-reference/map-init#PublishedStyle) and variants are:
 * `standardLight` and `standardDark` - Styles made for browsing the map in light and dark mode respectively. `standardLight` is the default style.
-* `monoLight` and `monoDark` - Styles made for browsing the map in black and white, emphasizing color contend added on tip.
+* `monoLight` and `monoDark` - Styles made for browsing the map in black and white, emphasizing color content added on top.
 * `drivingLight` and `drivingDark` - Styles to use during navigation in light and dark mode respectively.
 * `satellite` - This style uses satellite imagery to draw the map.
 
@@ -96,8 +97,8 @@ When you initialize a TomTomMap, it will use the `standardLight` style by defaul
 However, you can specify a different style if you want.
 
 A map style can be loaded when the map is initialized by specifying the `style` property of
-the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams) when initializing
-an instance of [`TomTomMap`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap).
+the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams) when initializing
+an instance of [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap).
 ```javascript
 import { TomTomMap } from "@anw/maps-sdk-js/map";
 const map = new TomTomMap(
@@ -110,7 +111,7 @@ This is useful when you want to change the style at runtime. MapLibre will help 
 <br/>
 
 ## Including parts in a style
-When setting the map style, you can include parts into it with the `include` property in [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams).
+When setting the map style, you can include parts into it with the `include` property in [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams).
 For example, including [pois](/javascript/maps/documentation/guides/map/pois) and [traffic incidents](/javascript/maps/documentation/guides/map/traffic_incidents):
 
 ```javascript
@@ -147,7 +148,7 @@ You can learn more about that [here](#preserving-state-after-changing-the-style)
 <br/>
 
 ## Changing a map style at runtime
-You can change the style of the map at runtime using the [`setStyle`](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap#setStyle) method on the TomTomMap class.
+You can change the style of the map at runtime using the [`setStyle`](/javascript/maps/documentation/api-reference/map-init.TomTomMap#setStyle) method on the TomTomMap class.
 ```javascript
 map.setStyle("monoLight");
 ```
@@ -183,6 +184,6 @@ You can also create your own style to suit your application.
     The easiest way to do this is to use [Map Styler](https://developer.tomtom.com/maps-api/map-styler). It provides a user interface with real-time previews so you can see the effects of your changes.
 </Blockquote>
 
-Custom styles can be provided to the application in the [`StyleInput`](/javascript/maps/documentation/api-reference/modules/map_init#StyleInput)
-as a [`CustomStyle`](/javascript/maps/documentation/api-reference/modules/map_init#CustomStyle).
+Custom styles can be provided to the application in the [`StyleInput`](/javascript/maps/documentation/api-reference/map-init#StyleInput)
+as a [`CustomStyle`](/javascript/maps/documentation/api-reference/map-init#CustomStyle).
 <br/>

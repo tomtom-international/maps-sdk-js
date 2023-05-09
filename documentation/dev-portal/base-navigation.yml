@@ -26,8 +26,14 @@ menu:
             title: Base Map
           - fileId: guides/map/traffic
             title: Traffic
+          - fileId: guides/map/traffic-incidents
+            title: Traffic Incidents
+          - fileId: guides/map/traffic-flow
+            title: Traffic Flow
           - fileId: guides/map/pois
             title: POIs
+          - fileId: guides/map/hillshade
+            title: Hillshade
           - fileId: guides/map/places
             title: Places
           - fileId: guides/map/routes

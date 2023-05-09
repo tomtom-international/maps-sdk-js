@@ -16,7 +16,7 @@ Traffic flow provides real time observed speeds and travel times for all key roa
 
 # Initializing the Traffic Flow module
 * First Set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart)
-* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/classes/map_init.TomTomMap) instance.
+* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
 * If you want traffic flow straight away, include `"traffic_flow"` in your style:
 ```javascript
 	const map = new TomTomMap({ container: "map" }, { style: { type: "published", include: ["traffic_flow"]}});
@@ -25,7 +25,7 @@ Traffic flow provides real time observed speeds and travel times for all key roa
 ```javascript
 import { TrafficFlowModule } from "@anw/maps-sdk-js/map";
 ```
-* [Initialize a Traffic module](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#get) for your running map (default config):
+* [Initialize a Traffic module](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#get) for your running map (default config):
 ```javascript
 const traffic = await TrafficFlowModule.get(map);
 ```
@@ -38,7 +38,7 @@ You can set traffic configuration on startup or at any time during runtime. Any 
 ## Ways to configure traffic
 
 ### Configuring on init
-With the `config` parameter you can set all the configuration you want right when the module is [initialized](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#get).
+With the `config` parameter you can set all the configuration you want right when the module is [initialized](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#get).
 
 Any configuration parameters you don't set will resolve to their default values.
 
@@ -50,7 +50,7 @@ const flow = await TrafficFlowModule.get(map, { visible: false });
 <br/>
 
 ### Configuring with applyConfig
-With the `config` parameter in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#applyConfig)
+With the `config` parameter in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#applyConfig)
 you can set all the configuration you want right on the spot while the module is already initialized.
 
 Any configuration parameters you don't set won't have any effect, so the existing values will remain.
@@ -71,7 +71,7 @@ flow.filter({ any: [{ roadCategories: { show: "only", values: ["primary"] } }] }
 <br/>
 
 ### Reset traffic configuration:
-All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/classes/map_shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
+All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/map_shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
 
 For traffic flow, resetting configuration means that visibilities will go back to defaults (visible), and any added filters will be removed.
 ```javascript
@@ -87,9 +87,9 @@ You can change traffic flow visibility via configuration or direct methods at an
 It can be practical in your application to let users toggle traffic visibility, or to programmatically adjust it when showing other content on the map.
 
 You can control overall flow visibility via:
-* [`setVisible`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#setVisible)
-* `visible` property in the config object upon module [init](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#get)
-* `visible` property in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#applyConfig).
+* [`setVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#setVisible)
+* `visible` property in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#get)
+* `visible` property in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#applyConfig).
 
 ```javascript
 // applying flow visibility on init:
@@ -107,8 +107,8 @@ If you want more advanced control on what traffic flow to display, you can use f
 With traffic filtering you can, at any time, change what types of traffic flow ou display in more detail.
 
 You can filter traffic flow via:
-* the `filters` properties in the config object upon module [init](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#get)
-* the `filters` properties in [`applyConfig`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#applyConfig)
-* [`filter`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule#filterFlow) method
+* the `filters` properties in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#get)
+* the `filters` properties in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#applyConfig)
+* [`filter`](/javascript/maps/documentation/api-reference/map-traffic.TrafficFlowModule#filterFlow) method
 
 >Coming soon...

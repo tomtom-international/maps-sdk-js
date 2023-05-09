@@ -18,7 +18,7 @@ titleTags:
 
 # Including POIs on map init
 When initializing a map, POIs can be included into its style by adding `"poi"` in the `include` property
-from [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams)
+from [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams)
 ```javascript
 import { TomTomMap } from "@anw/maps-sdk-js/map";
 const map = new TomTomMap(
@@ -34,7 +34,7 @@ const map = new TomTomMap(
 # Configuring POIs
 
 ## Changing POIs visibility
-The POI layer visibility can be controlled during runtime with the [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule) module.
+The POI layer visibility can be controlled during runtime with the [`POIsModule`](/javascript/maps/documentation/api-reference/map_POIs.POIsModule) module.
 
 ```javascript
 import { POIsModule } from "@anw/maps-sdk-js/map";
@@ -43,7 +43,7 @@ pois.setVisible(false);
 ```
 
 ## Filtering POI categories
-It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule).
+It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`POIsModule`](/javascript/maps/documentation/api-reference/map_POIs.POIsModule).
 See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-poi-filters) example for this functionality.
 
 >Coming soon...

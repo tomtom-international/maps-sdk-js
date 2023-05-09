@@ -17,7 +17,7 @@ The SDK Map bundle allows you to include hill shading in the map style.
 
 # Including hillshade on map init
 When initializing a map, hillshading can be included into its style by adding `"hillshade"` in the `include` property
-from [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams)
+from [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams)
 ```javascript
 import { TomTomMap } from "@anw/maps-sdk-js/map";
 const map = new TomTomMap(
@@ -29,11 +29,10 @@ const map = new TomTomMap(
 
 # Adding hillshade later on
 You can also initialize a map without hillshade in its style, and add hillshade later on
-by initializing the [`HillshadeModule`](/javascript/maps/documentation/api-reference/classes/map_hillshade.HillshadeModule)
+by initializing the [`HillshadeModule`](/javascript/maps/documentation/api-reference/map-hillshade.HillshadeModule)
 with `ensureAddedToStyle` as true.
 ```javascript
-	import { TomTomMap } from "@anw/maps-sdk-js/map";
-	import { HillshadeModule } from "@anw/maps-sdk-js/map";
+	import { HillshadeModule, TomTomMap } from "@anw/maps-sdk-js/map";
 	const map = new TomTomMap({ container: "map" });	// map without hillshade
 	// ...
 	const hillshade = await HillshadeModule.get(map, { ensureAddedToStyle: true });
@@ -45,7 +44,7 @@ with `ensureAddedToStyle` as true.
 ## Changing visibility
 You can initialize hillshade with enabled or disabled visibility upfront. By default, it will initialize as visible.
 
-To show or hide hill shading anytime, use [`HillshadeModule`](/javascript/maps/documentation/api-reference/classes/map_hillshade.HillshadeModule) `setVisible`.
+To show or hide hill shading anytime, use [`HillshadeModule`](/javascript/maps/documentation/api-reference/map-hillshade.HillshadeModule) `setVisible`.
 ```javascript
 import { HillshadeModule } from "@anw/maps-sdk-js/map";
 // Initialized as invisible:
