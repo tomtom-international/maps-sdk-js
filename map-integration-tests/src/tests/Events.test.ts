@@ -117,7 +117,10 @@ describe("Tests with user events", () => {
                 center: [4.89067, 52.37313]
             },
             // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-            { events: { longHoverDelayAfterMapMoveMS: 2500, longHoverDelayOnStillMapMS: 2000 } }
+            {
+                style: { type: "published", include: ["poi"] },
+                events: { longHoverDelayAfterMapMoveMS: 2500, longHoverDelayOnStillMapMS: 2000 }
+            }
         );
 
         await initPlaces();
@@ -249,7 +252,8 @@ describe("Tests with user events", () => {
 
     test("Events combining BaseMap module", async () => {
         await initBasemap();
-        await setStyle({ type: "published", include: ["poi"] });
+        // changing the style in between, to double-check we can still register to events in base map after:
+        await setStyle({ type: "published", id: "monoLight", include: ["poi"] });
         await waitForMapIdle();
         await setupBasemapClickHandlers();
 
@@ -292,6 +296,7 @@ describe("Events custom configuration", () => {
                 center: [4.89067, 52.37313]
             },
             {
+                style: { type: "published", include: ["poi"] },
                 events: {
                     paddingBox: 20,
                     cursorOnMap: "help",
