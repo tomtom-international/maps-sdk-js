@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.3...v0.2.6) (2023-05-09)
+
+
+### Features
+
+* **docs:** upgrading guides, focusing on service customization ([77e6148](https://github.com/tomtom-international/maps-sdk-js/commit/77e61485de4fd063761c60ab2b32ddcbf2719757))
+* **docs:** upgrading guides, focusing on services ([ec52e51](https://github.com/tomtom-international/maps-sdk-js/commit/ec52e51ad26d7d9cfab03781d165ee44c03b9a5c))
+* **docs:** upgrading guides, focusing on traffic module ([c7be10f](https://github.com/tomtom-international/maps-sdk-js/commit/c7be10f70bf565885ca7790dae11fc8f2466c42f))
+
 ### [0.2.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.3...v0.2.5) (2023-05-08)
 
 
