@@ -26,6 +26,8 @@ const initTrafficFlow = async (config?: StyleModuleInitConfig & FlowConfig) =>
         mapsSDKThis.trafficFlow = await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config as FlowConfig);
 
+const unsetTrafficFlow = async () => page.evaluate(async () => ((globalThis as MapsSDKThis).trafficFlow = undefined));
+
 const getConfig = async (): Promise<FlowConfig | undefined> =>
     page.evaluate(async () => (globalThis as MapsSDKThis).trafficFlow?.getConfig());
 
@@ -41,6 +43,7 @@ describe("Map vector tile traffic module tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
+    afterEach(async () => unsetTrafficFlow());
 
     test("Failing to initialize if fully excluded from the style", async () => {
         await mapEnv.loadMap({});

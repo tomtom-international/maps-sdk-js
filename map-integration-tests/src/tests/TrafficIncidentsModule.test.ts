@@ -49,12 +49,16 @@ const applyConfig = async (config: IncidentsConfig | undefined) =>
         config as IncidentsConfig
     );
 
+const unsetIncidents = async () =>
+    page.evaluate(async () => ((globalThis as MapsSDKThis).trafficIncidents = undefined));
+
 const resetConfig = async () => page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.resetConfig());
 
 describe("Map vector tile traffic incidents module tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
+    afterEach(async () => unsetIncidents());
 
     test("Failing to initialize if fully excluded from the style", async () => {
         await mapEnv.loadMap({});
