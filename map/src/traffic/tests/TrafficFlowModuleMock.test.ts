@@ -7,9 +7,8 @@ import { TrafficFlowModule } from "../TrafficFlowModule";
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe("Vector tiles traffic flow module tests", () => {
-    test("Initializing module with config", async () => {
-        const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
-        const tomtomMapMock = {
+    function createMockMap(flowSource: { id: string }): TomTomMap {
+        return {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(flowSource),
                 getStyle: jest
@@ -23,6 +22,10 @@ describe("Vector tiles traffic flow module tests", () => {
             },
             addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
+    }
+    test("Initializing module with config", async () => {
+        const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
+        const tomtomMapMock = createMockMap(flowSource);
 
         const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock, {
             visible: true,
@@ -47,20 +50,7 @@ describe("Vector tiles traffic flow module tests", () => {
 
     test("Initializing module with no config and no flow in style", async () => {
         const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
-        const tomtomMapMock = {
-            mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(flowSource),
-                getStyle: jest
-                    .fn()
-                    .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
-            } as unknown as Map,
-            _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn()
-            },
-            addStyleChangeHandler: jest.fn()
-        } as unknown as TomTomMap;
+        const tomtomMapMock = createMockMap(flowSource);
 
         const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock);
         expect(trafficFlowModule).toBeDefined();
