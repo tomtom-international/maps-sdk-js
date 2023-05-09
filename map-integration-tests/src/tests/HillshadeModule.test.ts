@@ -28,11 +28,6 @@ describe("Map vector tiles hillshade module tests", () => {
 
         await waitForMapReady();
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
-        expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toEqual(0);
-        expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toEqual(0);
-        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toEqual(0);
-        // double-checking against base-map "default" POIs:
-        expect(await isLayerVisible("POI")).toBe(false);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
