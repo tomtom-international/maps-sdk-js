@@ -187,7 +187,7 @@ export const initTrafficIncidents = async (config?: StyleModuleInitConfig & Inci
     }, config as IncidentsConfig);
 
 export const initPOIs = async (config?: StyleModuleInitConfig & POIsModuleConfig) =>
-    await page.evaluate(async (inputConfig) => {
+    page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config as StyleModuleInitConfig & POIsModuleConfig);

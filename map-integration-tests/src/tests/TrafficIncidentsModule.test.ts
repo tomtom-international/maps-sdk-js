@@ -6,8 +6,7 @@ import {
     IncidentCategory,
     RoadCategory,
     TRAFFIC_INCIDENTS_SOURCE_ID,
-    IncidentsConfig,
-    StyleModuleInitConfig
+    IncidentsConfig
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
