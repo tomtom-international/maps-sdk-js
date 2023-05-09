@@ -11,13 +11,11 @@ titleTags:
 ---
 
 # Requesting your API key
-
 To use **Maps SDK JS** in your application you need to obtain a TomTom API key by following [these instructions](https://developer.tomtom.com/how-to-get-tomtom-api-key).
 **Remember to keep your API key secure.**
 <br/>
 
 # Installing dependencies with NPM
-
 We recommend using [NPM](https://www.npmjs.com/) to manage your project dependencies.
 
 Before you start: [install npm 9+](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
@@ -28,18 +26,17 @@ npm i @anw/maps-sdk-js
 ```
 
 Additionally:
-* If you use the *map*, ensure to have [maplibre-gl](https://www.npmjs.com/package/maplibre-gl) installed:
+* If you use the [*map*](/javascript/maps/documentation/guides/map/quickstart), ensure to have [maplibre-gl](https://www.npmjs.com/package/maplibre-gl) installed:
 ```shell
 npm i maplibre-gl
 ```
-* If you use *services*, ensure to have [axios](https://www.npmjs.com/package/axios) installed::
+* If you use [*services*](/javascript/maps/documentation/guides/services/quickstart), ensure to have [axios](https://www.npmjs.com/package/axios) installed::
 ```shell
 npm i axios
 ```
 <br/>
 
 # TomTomConfig: the SDK global configuration
-
 The TomTom SDK comes with a global configuration singleton object where you can set common parameters to both maps and services.
 You only need to set the global parameters once in your code, and the SDK will then inject them into any map and services you use.
 
@@ -50,24 +47,13 @@ import { TomTomConfig } from "@anw/maps-sdk-js/core";
 <br/>
 
 # Setting your API key in the SDK
-
 Once you have obtained your API key, you can set it once in your global config via the ```apiKey``` property:
 ```javascript
 TomTomConfig.instance.put({ apiKey: YOUR_KEY });
 ```
 <br/>
 
-# Using multiple API keys
-
-We recommend to use a single API key in your application, but in some cases you might want to have multiple,
-particularly if they have different settings.
-
-In that case, your global configuration ```apiKey``` can be optional or used as a default parameter,
-while you can pass a custom ```apiKey``` when creating the map or calling each service.
-<br/>
-
 # Setting a language in the SDK
-
 The map and services in TomTom support multiple languages.
 
 If you don't use any language, the SDK will resolve the languages depending on what you use:
@@ -75,12 +61,21 @@ If you don't use any language, the SDK will resolve the languages depending on w
 * The services will attempt to match the language to your query, or default to English.
 
 ```javascript
-TomTomConfig.instance.put({ apiKey: YOUR_KEY, language: "en-US" });
+TomTomConfig.instance.put({ language: "en-US", apiKey: YOUR_KEY });
 ```
 <br/>
 
 # Next steps
-
 * [Getting started with the map](/javascript/maps/documentation/guides/map/quickstart)
-
 * [Getting started with services](/javascript/maps/documentation/guides/services/quickstart)
+<br/>
+<br/>
+
+### (Using multiple API keys)
+We recommend using a single API key in your application, but in some cases you might want to have multiple,
+particularly if they have different settings.
+
+In that case, your global configuration ```apiKey``` can be optional or used as a default parameter,
+while you can pass a custom ```apiKey``` when creating the map or calling each service.
+
+Check the [map](/javascript/maps/documentation/guides/map/quickstart) and [services](/javascript/maps/documentation/guides/services/quickstart) guides for more details.
