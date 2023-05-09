@@ -1,9 +1,16 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
+import {
+    AbstractMapModule,
+    EventsModule,
+    POI_SOURCE_ID,
+    StyleModuleInitConfig,
+    StyleSourceWithLayers,
+    ValuesFilter
+} from "../shared";
 import { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from "./types/poisModuleConfig";
 import { notInTheStyle } from "../shared/errorMessages";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
+import { prepareForModuleInit } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 import { MapStylePOIClassification, poiClassificationToIconID } from "../places";
 import { POIClassificationGroup, poiClassificationGroups } from "./poiClassificationGroups";

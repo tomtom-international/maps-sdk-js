@@ -298,7 +298,7 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         await prepareForModuleInit(mapMock, true, HILLSHADE_SOURCE_ID, "hillshade");
@@ -317,7 +317,7 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn(),
+            addStyleChangeHandler: jest.fn(),
             getStyle: jest.fn(),
             setStyle: jest.fn()
         } as unknown as TomTomMap;

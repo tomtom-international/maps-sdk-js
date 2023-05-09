@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import { StyleSpecification } from "maplibre-gl";
-import { PublishedStyle, PublishedStyleID, StyleModule, TomTomMapParams } from "./types/MapInit";
+import { PublishedStyle, PublishedStyleID, StyleModule, TomTomMapParams } from "./types/mapInit";
 
 const DEFAULT_PUBLISHED_STYLE = "standardLight";
 const URL_PREFIX = "${baseURL}/style/1/style/${version}/?key=${apiKey}";

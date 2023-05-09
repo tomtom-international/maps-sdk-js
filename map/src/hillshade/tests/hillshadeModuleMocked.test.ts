@@ -19,7 +19,7 @@ describe("Vector tiles Hillshade module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock, {
@@ -47,7 +47,7 @@ describe("Vector tiles Hillshade module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock);

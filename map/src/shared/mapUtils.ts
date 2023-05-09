@@ -4,7 +4,7 @@ import { TomTomMap } from "../TomTomMap";
 import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
 import { AbstractSourceWithLayers } from "./SourceWithLayers";
 import { StyleInput, StyleModule } from "../init";
-import { cannotAddStyleModuleToCustomStyle } from "./ErrorMessages";
+import { cannotAddStyleModuleToCustomStyle } from "./errorMessages";
 
 /**
  * Wait until the map is ready
@@ -294,8 +294,8 @@ export const updateStyleWithModule = (style: StyleInput | undefined, styleModule
 };
 
 /**
- * Check if the source is missing and try to add it to the map.
- * @param map map to add source to.
+ * Check if the source is missing and try to add it to the map by reloading its style.
+ * @param map the TomTom map instance.
  * @param ensureAddedToStyle
  * @param sourceId id of the source.
  * @param styleModule style module of the source.

@@ -7,13 +7,13 @@ import {
     StyleSourceWithLayers,
     TRAFFIC_INCIDENTS_SOURCE_ID
 } from "../shared";
-import { IncidentsConfig, TrafficIncidentsFilters } from "./types/TrafficModuleConfig";
+import { IncidentsConfig, TrafficIncidentsFilters } from "./types/trafficModuleConfig";
 import { TomTomMap } from "../TomTomMap";
 import { prepareForModuleInit } from "../shared/mapUtils";
-import { notInTheStyle } from "../shared/ErrorMessages";
+import { notInTheStyle } from "../shared/errorMessages";
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
-import { applyFilter, buildMapLibreIncidentFilters } from "./filters/TrafficFilters";
+import { applyFilter, buildMapLibreIncidentFilters } from "./filters/trafficFilters";
 import omitBy from "lodash/omitBy";
 import isEmpty from "lodash/isEmpty";
 

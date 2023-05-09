@@ -23,7 +23,7 @@ describe("Vector tiles POI module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
     });
 

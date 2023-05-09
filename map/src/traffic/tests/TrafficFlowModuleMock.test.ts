@@ -21,7 +21,7 @@ describe("Vector tiles traffic flow module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock, {
@@ -59,7 +59,7 @@ describe("Vector tiles traffic flow module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock);

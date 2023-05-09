@@ -10,4 +10,40 @@ titleTags:
   color: "grey5"
 ---
 
->Coming soon
+# About Points of Interest on the map
+<img src="images/ss_poi_layer.png" alt="Map with POI layer enabled" />
+<br/>
+
+>Coming soon...
+
+# Including POIs on map init
+When initializing a map, POIs can be included into its style by adding `"poi"` in the `include` property
+from [`TomTomMapParams`](/javascript/maps/documentation/api-reference/modules/map_init#TomTomMapParams)
+```javascript
+import { TomTomMap } from "@anw/maps-sdk-js/map";
+const map = new TomTomMap(
+    { container: "map" },
+    { style: { type: "published", include: ["poi"] }}
+);
+```
+<br/>
+
+# Including POIs on map init
+>Coming soon...
+
+# Configuring POIs
+
+## Changing POIs visibility
+The POI layer visibility can be controlled during runtime with the [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule) module.
+
+```javascript
+import { POIsModule } from "@anw/maps-sdk-js/map";
+const pois = await POIsModule.get(map);
+pois.setVisible(false);
+```
+
+## Filtering POI categories
+It's also possible to filter shown POIs by category or classification group using the `filterCategories()` method on [`POIsModule`](/javascript/maps/documentation/api-reference/classes/map_POIs.POIsModule).
+See the [Map POI filters](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-poi-filters) example for this functionality.
+
+>Coming soon...

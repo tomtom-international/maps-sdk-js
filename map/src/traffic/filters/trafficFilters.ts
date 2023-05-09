@@ -17,7 +17,7 @@ import {
     TrafficIncidentsFilters
 } from "../types/trafficModuleConfig";
 import { MultiSyntaxFilter, ValuesFilter } from "../../shared";
-import { buildValuesFilter, getMergedAnyFilter } from "../../shared/mapLibreFilterUtils";
+import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter } from "../../shared/mapLibreFilterUtils";
 
 const toMultiSyntaxAllFilter = (
     newSyntaxExpressions: unknown[],

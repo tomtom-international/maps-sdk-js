@@ -78,6 +78,7 @@ export class TomTomMap {
     getStyle = (): StyleInput | undefined => {
         return this.params.style;
     };
+
     private _setLanguage(language: Language) {
         this.params = { ...this.params, language };
         this.mapLibreMap.getStyle().layers.forEach((layer) => {
@@ -128,9 +129,10 @@ export class TomTomMap {
     }
 
     /**
-     * @ignore
+     * Adds a handler function to style changes done to this map via the "setStyle" method.
+     * @param handler The handler function, which will be called when "setStyle" was called.
      */
-    _addStyleChangeHandler(handler: () => void): void {
+    addStyleChangeHandler(handler: () => void): void {
         this.styleChangeHandlers.push(handler);
     }
 }

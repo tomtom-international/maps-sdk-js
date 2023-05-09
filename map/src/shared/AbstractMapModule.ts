@@ -41,7 +41,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
     protected constructor(tomtomMap: TomTomMap, config?: CFG) {
         this.tomtomMap = tomtomMap;
         this.eventsProxy = tomtomMap._eventsProxy;
-        this.tomtomMap._addStyleChangeHandler(() => this.restoreDataAndConfig());
+        this.tomtomMap.addStyleChangeHandler(() => this.restoreDataAndConfig());
         this.mapLibreMap = tomtomMap.mapLibreMap;
         this.initSourcesWithLayers(config);
         if (config) {

@@ -15,7 +15,7 @@ The TomTom Map bundle provides real-time traffic updates. They can be displayed 
 
 There are two types of traffic:
 
-**Traffic incidents**: Provides an accurate view about traffic jams and incidents around the road network.
+**Traffic incidents**: Provides an accurate view about traffic jams and incidents on the road network.
 <img src="images/incidents.png" alt="Traffic incidents" style={{width: 500}} />
 <br/>
 
@@ -34,138 +34,19 @@ With the TomTom SDK you can:
 >Coming soon...
 
 # Traffic along routes
+
 The SDK can show traffic incidents along routes. To do so, you must have initialized the map with **incidents** in the style.
 
 To further learn about traffic **along a route**, refer to the [routing](/javascript/maps/documentation/guides/routes) guide.
 <br/>
 
-# The Traffic module
-The [`TrafficModule`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule) is a [map-style based module](/javascript/maps/documentation/guides/map/quickstart#map-style---based-modules)
-and controls the display and interactivity of live traffic on the map.
+# The Traffic Incidents and Flow modules
+
+The [`TrafficIncidentsModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficIncidentsModule)
+and [`TrafficFlowModule`](/javascript/maps/documentation/api-reference/classes/map_traffic.TrafficFlowModule)
+are [map-style based modules](/javascript/maps/documentation/guides/map/quickstart#map-style---based-modules)
+and control the display and interactivity of live traffic on the map.
+
 <img src="images/ss_traffic_layer.png" alt="Map with traffic incidents and flow" style={{width: 500}} />
 <br/><br/>
 
-# Initializing a Traffic module
-* First Set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart)
-* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
-* Import the Traffic module class:
-```javascript
-import { TrafficModule } from "@anw/maps-sdk-js/map";
-```
-* [Initialize a Traffic module](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get) for your running map (default config):
-```javascript
-const traffic = await TrafficModule.get(map);
-```
-* Optionally, [configure your module](#configuring-a-traffic-module) in the step above
-<br/>
-
-# Configuring a Traffic module
-You can set traffic configuration on startup or at any time during runtime. Any configuration changes will be seamlessly applied without reloading the map.
-
-## Ways to configure traffic
-
-### Configuring on init
-With the `config` parameter you can set all the configuration you want right when the module is [initialized](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get).
-
-Any configuration parameters you don't set will resolve to their default values.
-
-If you initialize the module right after the map itself, then the config takes effect right when traffic appears for the first time.
-
-```javascript
-const config = { incidents: { icons: { visible: false} }};
-const traffic = await TrafficModule.get(map, config);
-```
-<br/>
-
-### Configuring with applyConfig
-With the `config` parameter in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig)
-you can set all the configuration you want right on the spot while the module is already initialized.
-
-Any configuration parameters you don't set won't have any effect, so the existing values will remain.
-```javascript
-const traffic = await TrafficModule.get(map);
-// ...
-traffic.applyConfig({ incidents: { icons: { visible: false} }, flow: { visible: false }});
-```
-<br/>
-
-### Configuring with dedicated methods
-You can change key configuration parts with dedicated methods which act the same as [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig) just for the part they change.
-```javascript
-const traffic = await TrafficModule.get(map);
-traffic.setFlowVisible(false);
-traffic.filterIncidents({ any: [{ roadCategories: { show: "only", values: ["primary"] } }] });
-```
-<br/>
-
-### Reset traffic configuration:
-All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/map-shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
-
-For traffic, resetting configuration means that visibilities will go back to defaults (visible), and any added filters will be removed.
-```javascript
-const traffic = await TrafficModule.get(map, { visible: false });
-// ...
-traffic.resetConfig();
-```
-<br/>
-
-## Traffic visibility
-You can change incidents and flow visibility via configuration or direct methods at any time.
-
-It can be practical in your application to let users toggle traffic visibility, or to programmatically adjust it when showing other content on the map.
-
-### Incidents visibility
-You can control incidents visibility via:
-* `visible` properties inside `incidents` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
-* `visible` properties inside `incidents` in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig).
-* [`setIncidentsVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#setIncidentsVisible)
-* incident icons visibility via [`setIncidentIconsVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#setIncidentIconsVisible)
-
-*Tip: if sometimes you want a more minimalistic traffic display, showing only incidents without icons is a good choice.*
-```javascript
-// applying incidents visibility on init:
-const traffic = await TrafficModule.get(map, { incidents: { visible: false }});
-// then changing it via applyConfig:
-traffic.applyConfig({ incidents: { visible: true, icons: { visible: false }}});
-// then changing it via dedicated method:
-traffic.setIncidentIconsVisible(true);
-```
-<br/>
-
-### Flow visibility
-You can control overall flow visibility via:
-* [`setFlowVisibility`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#setFlowVisible)
-* `visible` property inside `flow` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
-* `visible` property inside `flow` in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig).
-
-```javascript
-// applying flow visibility on init:
-const traffic = await TrafficModule.get(map, { flow: { visible: false }});
-// then changing it via applyConfig:
-traffic.applyConfig({ flow: { visible: true }});
-// then changing it via dedicated method:
-traffic.setFlowVisible(true);
-```
-<br/>
-
-## Filtering traffic
-If you want more advanced control on what traffic to display, you can use traffic filtering.
-
-With traffic filtering you can, at any time, change what types of traffic you display in more detail.
-
-### Filtering incidents
-You can filter traffic incidents via:
-* the `filters` properties inside `incidents` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
-* the `filters` properties inside `incidents` in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig)
-* [`filterIncidents`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#filterIncidents)
-
->Coming soon...
-<br/>
-
-### Filtering flow
-You can filter traffic flow via:
-* the `filters` properties inside `flow` in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#get)
-* the `filters` properties inside `flow` in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#applyConfig)
-* [`filterFlow`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#filterFlow)
-
->Coming soon...

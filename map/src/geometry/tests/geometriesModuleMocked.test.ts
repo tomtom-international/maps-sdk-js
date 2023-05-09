@@ -30,7 +30,7 @@ describe("Geometry module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const geometryConfig = { colorConfig: { fillColor: "warm" }, textConfig: { textField: "title" } };

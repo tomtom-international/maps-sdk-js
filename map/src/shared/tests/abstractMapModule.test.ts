@@ -43,7 +43,7 @@ describe("AbstractMapModule tests", () => {
                 isStyleLoaded: jest.fn().mockReturnValue(true),
                 once: jest.fn((_, callback) => callback())
             } as unknown as Map,
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         let testModule = await TestModule.init(tomtomMapMock);
@@ -69,7 +69,7 @@ describe("AbstractMapModule tests", () => {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
                 once: jest.fn((_, callback) => callback())
             } as unknown as Map,
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         let testModule = await TestModule.init(tomtomMapMock);
@@ -106,7 +106,7 @@ describe("AbstractMapModule tests", () => {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
                 once: jest.fn((_, callback) => callback())
             } as unknown as Map,
-            _addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn()
         } as unknown as TomTomMap;
 
         const testModule = await TestModule.init(tomtomMapMock);
