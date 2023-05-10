@@ -3,7 +3,7 @@ import { BBox } from "geojson";
 import { Language, mergeFromGlobal } from "@anw/maps-sdk-js/core";
 import { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
 import { buildMapOptions } from "./init/buildMapOptions";
-import { buildMapStyleInput } from "./init/mapStyleInputBuilder";
+import { buildStyleInput, withPreviousStyleParts } from "./init/styleInputBuilder";
 import { EventsProxy } from "./shared";
 import { isLayerLocalizable } from "./shared/localization";
 
@@ -66,10 +66,10 @@ export class TomTomMap {
      * @param keepState Whether to restore previous SDK rendered items and configurations. Defaults to true.
      */
     setStyle = (style: StyleInput, keepState = true): void => {
-        this.params = { ...this.params, style };
+        this.params = { ...this.params, style: keepState ? withPreviousStyleParts(style, this.params.style) : style };
         this.mapReady = false;
         this.mapLibreMap.once("styledata", () => this.handleStyleData(keepState));
-        this.mapLibreMap.setStyle(buildMapStyleInput(this.params));
+        this.mapLibreMap.setStyle(buildStyleInput(this.params));
     };
 
     /**

@@ -114,7 +114,7 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle({ type: "published", id: "standardDark", include: ["traffic_incidents", "traffic_flow"] });
+        await setStyle("standardDark");
         await waitForMapIdle();
         await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
@@ -136,7 +136,7 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 0, 2000);
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 2, 2000);
 
-        // Changing the style, asserting that the route stays the same:
+        // Changing the style (this time passing manually the parts again), asserting that the route stays the same:
         await setStyle({
             type: "published",
             id: "monoLight",
@@ -161,11 +161,7 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle({
-            type: "published",
-            id: "drivingDark",
-            include: ["traffic_incidents", "traffic_flow", "hillshade"]
-        });
+        await setStyle("drivingDark");
         await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
@@ -175,11 +171,7 @@ describe("Routing tests", () => {
         await waitForRenderedWaypoints(1);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle({
-            type: "published",
-            id: "standardLight",
-            include: ["traffic_incidents", "traffic_flow", "hillshade"]
-        });
+        await setStyle("standardLight");
         await waitForMapIdle();
         await waitForRenderedWaypoints(1);
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -279,7 +271,7 @@ describe("Routing tests", () => {
         expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
 
         // Changing the style with extra poi included style part, asserting that the config stays the same:
-        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents", "traffic_flow", "poi"] });
+        await setStyle("monoLight");
         await waitForMapIdle();
         await waitForTimeout(2000);
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);

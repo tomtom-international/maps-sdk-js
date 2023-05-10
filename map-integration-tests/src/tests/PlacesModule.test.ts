@@ -106,7 +106,7 @@ describe("PlacesModule tests", () => {
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
 
             // changing the map style: verifying the places are still shown (state restoration):
-            await setStyle({ type: "published", id: "standardDark", include: ["poi", "traffic_incidents"] });
+            await setStyle("standardDark");
             await waitForMapIdle();
             renderedPlaces = await waitUntilRenderedFeatures(nextLayerIDs, numTestPlaces, 5000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);

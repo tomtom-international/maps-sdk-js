@@ -93,7 +93,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(await getConfig()).toBeUndefined();
 
         // changing the map style: verifying the places are still shown (state restoration):
-        await setStyle({ type: "published", id: "standardDark", include: ["traffic_flow"] });
+        await setStyle("standardDark");
         await waitForMapIdle();
         await waitForTimeout(3000);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeTruthy();
@@ -176,11 +176,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(getByRoadCategories(renderedFlowSegments, ["secondary", "tertiary", "street"])).toHaveLength(0);
 
         // CHANGING THE MAP STYLE: verifying the config is still the same (state restoration):
-        await setStyle({
-            type: "published",
-            id: "standardDark",
-            include: ["traffic_flow", "poi"]
-        });
+        await setStyle("standardDark");
         await waitForMapIdle();
         await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);

@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import { StyleSpecification } from "maplibre-gl";
-import { PublishedStyle, PublishedStyleID, StyleModule, TomTomMapParams } from "./types/mapInit";
+import { PublishedStyle, PublishedStyleID, StyleInput, StyleModule, TomTomMapParams } from "./types/mapInit";
 
 const DEFAULT_PUBLISHED_STYLE = "standardLight";
 const URL_PREFIX = "${baseURL}/style/1/style/${version}/?key=${apiKey}";
@@ -104,12 +104,12 @@ const includeModulesOptions = (url: string, publishedStyle: PublishedStyle): str
  * @param mapParams The SDK parameters to convert to input renderer style.
  * @return The map style to load into the renderer.
  */
-export const buildMapStyleInput = (mapParams: TomTomMapParams): StyleSpecification | string => {
+export const buildStyleInput = (mapParams: TomTomMapParams): StyleSpecification | string => {
     let mapStyleUrl: StyleSpecification | string;
     let isIncludeEmpty = true;
     const style = mapParams.style;
-    const baseURL = mapParams.commonBaseURL as string;
-    const apiKey = mapParams.apiKey as string;
+    const baseURL = mapParams.commonBaseURL;
+    const apiKey = mapParams.apiKey;
 
     if (typeof style === "string") {
         mapStyleUrl = buildPublishedStyleURL({ id: style }, baseURL, apiKey);
@@ -125,4 +125,27 @@ export const buildMapStyleInput = (mapParams: TomTomMapParams): StyleSpecificati
     }
 
     return isIncludeEmpty ? mapStyleUrl : includeModulesOptions(mapStyleUrl as string, style as PublishedStyle);
+};
+
+/**
+ * Includes the previous published style parts into the given published style if the new one didn't define any.
+ * * Both new and previous styles must be of "published" type.
+ * @ignore
+ */
+export const withPreviousStyleParts = (style: StyleInput, previousStyle?: StyleInput): StyleInput => {
+    if (
+        previousStyle &&
+        typeof previousStyle == "object" &&
+        previousStyle.type == "published" &&
+        previousStyle.include
+    ) {
+        if (typeof style == "string" || (style.type == "published" && !style.include)) {
+            return {
+                type: "published",
+                id: typeof style == "string" ? style : style.id,
+                include: previousStyle.include
+            };
+        }
+    }
+    return style;
 };

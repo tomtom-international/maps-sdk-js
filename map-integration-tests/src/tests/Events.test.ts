@@ -249,7 +249,7 @@ describe("Tests with user events", () => {
     test("Events combining BaseMap module", async () => {
         await initBasemap();
         // changing the style in between, to double-check we can still register to events in base map after:
-        await setStyle({ type: "published", id: "monoLight", include: ["poi"] });
+        await setStyle("monoLight");
         await waitForMapIdle();
         await setupBasemapClickHandlers();
 

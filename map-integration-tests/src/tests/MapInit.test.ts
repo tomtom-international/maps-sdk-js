@@ -11,7 +11,13 @@ import {
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
-import { getNumVisibleLayersBySource, isLayerVisible, waitForMapReady } from "./util/TestUtils";
+import {
+    getNumVisibleLayersBySource,
+    isLayerVisible,
+    setStyle,
+    waitForMapIdle,
+    waitForMapReady
+} from "./util/TestUtils";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
@@ -57,6 +63,14 @@ describe("Map Init tests", () => {
             await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
             await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
         });
+        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
+
+        // changing style, verifying all parts are still there:
+        await setStyle("monoLight");
+        await waitForMapReady();
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
