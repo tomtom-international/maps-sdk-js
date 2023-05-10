@@ -10,7 +10,7 @@ titleTags:
   color: "grey5"
 ---
 
-Traffic incidents provides real time observed speeds and travel times for all key roads in a network.
+Traffic incidents provide real time observed speeds and travel times for all key roads in a network.
 <img src="images/incidents.png" alt="Traffic incidents" style={{width: 500}} />
 <br/>
 
@@ -20,11 +20,14 @@ Traffic incidents provides real time observed speeds and travel times for all ke
 <br/>
 
 # Initializing the Traffic Incidents module
-* First Set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart)
+* First set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart).
 * Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
 * If you want traffic incidents straight away, include `"traffic_incidents"` in your style:
 ```javascript
-	const map = new TomTomMap({ container: "map" }, { style: { type: "published", include: ["traffic_incidents"]}});
+const map = new TomTomMap(
+  { container: "map" },
+  { style: { type: "published", include: ["traffic_incidents"]}}
+);
 ```
 * If you want to further control traffic incidents: import the `TrafficIncidentsModule` class:
 ```javascript
@@ -34,19 +37,18 @@ import { TrafficIncidentsModule } from "@anw/maps-sdk-js/map";
 ```javascript
 const traffic = await TrafficIncidentsModule.get(map);
 ```
-* Optionally, [configure your module](#configuring-a-traffic-module) in the step above
+* Optionally, [configure your module](#configuring-the-traffic-incidents-module) in the step below
 <br/>
 
 # Configuring the Traffic Incidents Module
-You can set traffic configuration on startup or at any time during runtime. Any configuration changes will be seamlessly applied without reloading the map.
+You can set traffic incidents configuration on startup or at any time during runtime.
+Any configuration changes will be seamlessly applied without reloading the map.
 
 ## Ways to configure traffic
 
 ### Configuring on init
 With the `config` parameter you can set all the configuration you want right when the module is [initialized](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#get).
-
 Any configuration parameters you don't set will resolve to their default values.
-
 If you initialize the module right after the map itself, then the config takes effect right when traffic appears for the first time.
 
 ```javascript
@@ -76,7 +78,7 @@ incidents.filter({ any: [{ roadCategories: { show: "only", values: ["primary"] }
 <br/>
 
 ### Reset traffic configuration:
-All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/map_shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
+All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/map-shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
 
 For traffic incidents, resetting configuration means that visibilities will go back to defaults (visible), and any added filters will be removed.
 ```javascript
@@ -86,16 +88,16 @@ incidents.resetConfig();
 ```
 <br/>
 
-## Traffic visibility
+## Traffic incidents visibility
 You can change traffic incidents visibility via configuration or direct methods at any time.
-
-It can be practical in your application to let users toggle traffic visibility, or to programmatically adjust it when showing other content on the map.
+It can be practical in your application to let users toggle traffic visibility, or to programmatically adjust it when
+showing other content on the map.
 
 You can control overall incidents visibility via:
-* [`setVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#setVisible)
+* [`setVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#setVisible) method on the `TrafficIncidentsModule` class.
 * `visible` property in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#get)
-* `visible` property in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#applyConfig).
-* incident icons visibility via [`setIconsVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule#setIconsVisible)
+* `visible` property in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#applyConfig)
+* incident icons visibility via [`setIconsVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#setIconsVisible)
 
 ```javascript
 // applying incidents visibility on init:
@@ -103,14 +105,13 @@ const incidents = await TrafficIncidentsModule.get(map, { visible: false });
 // then changing it via applyConfig:
 incidents.applyConfig({ incidents: { visible: true }});
 // then changing it via dedicated method:
-incidents.setFlowVisible(true);
+incidents.setIconsVisible(true);
 ```
 <br/>
 
 ## Filtering traffic incidents
-If you want more advanced control on what traffic incidents to display, you can use filtering.
-
-With traffic filtering you can, at any time, change what types of traffic incidents ou display in more detail.
+If you want more advanced control of what traffic incidents to display, you can use filtering.
+With traffic filtering you can, at any time, change what types of traffic incidents you display in more detail.
 
 You can filter traffic incidents via:
 * the `filters` properties in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#get)
