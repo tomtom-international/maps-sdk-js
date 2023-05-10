@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.3...v0.2.7) (2023-05-10)
+
+
+### Features
+
+* **855:** moving from excluding to including modules ([01a0b5c](https://github.com/tomtom-international/maps-sdk-js/commit/01a0b5c60a2ce69ce747b2c3e988b4515721ef7e))
+* **855:** splitting traffic flow into its own module ([935eca0](https://github.com/tomtom-international/maps-sdk-js/commit/935eca02462f3b62577dddfd3c4e8cb2cce0d77c))
+* **855:** splitting traffic flow into its own module ([5531dd5](https://github.com/tomtom-international/maps-sdk-js/commit/5531dd51ae15e8aa4cf93999d9ba3562fa8f8bf5))
+* **855:** splitting traffic incidents into its own module ([07f0374](https://github.com/tomtom-international/maps-sdk-js/commit/07f0374c59b50db3f773f1d0e87733bf4c7e3a16))
+* **855:** trying to auto update the modules if initiated ([fb128d5](https://github.com/tomtom-international/maps-sdk-js/commit/fb128d51d9325474f3538d22f458be27be9f7bd8))
+* **855:** trying to auto update the modules if initiated ([404498b](https://github.com/tomtom-international/maps-sdk-js/commit/404498beaa87a6409c04cbc5b331035945b4d963))
+* **855:** trying to auto update the modules if initiated ([a13bc7c](https://github.com/tomtom-international/maps-sdk-js/commit/a13bc7ce28eac3dae3ba08eab0eac6b61d7f592d))
+* **api reference:** update to next version of typedoc and typedoc-plugin-markdown ([b9a889c](https://github.com/tomtom-international/maps-sdk-js/commit/b9a889cb04b9ab18d16fa375a48f94f96067ab8c))
+* **api ref:** render classes to their own file with updated file output structure ([488ea5b](https://github.com/tomtom-international/maps-sdk-js/commit/488ea5b06a31fa5214d046bc42711e1ab1bfc083))
+* **docs:** updates in project setup guide based on feedback ([d863053](https://github.com/tomtom-international/maps-sdk-js/commit/d86305340f3bcbe5a791c1accf47d98a69210623))
+* **docs:** upgrading guides, focusing on service customization ([77e6148](https://github.com/tomtom-international/maps-sdk-js/commit/77e61485de4fd063761c60ab2b32ddcbf2719757))
+* **docs:** upgrading guides, focusing on services ([ec52e51](https://github.com/tomtom-international/maps-sdk-js/commit/ec52e51ad26d7d9cfab03781d165ee44c03b9a5c))
+* **docs:** upgrading guides, focusing on traffic module ([c7be10f](https://github.com/tomtom-international/maps-sdk-js/commit/c7be10f70bf565885ca7790dae11fc8f2466c42f))
+* **map:** fixing ability to auto-add multiple style modules close together, including new traffic flow module in tests, and some renamings ([1610beb](https://github.com/tomtom-international/maps-sdk-js/commit/1610beb995260c119a875d9f44466f9df5d8645e))
+* **map:** making the ability to auto reload style on module init optional, false by default, adding tests, adding support for pois module auto-addition to style, refactorings ([3cd7b9b](https://github.com/tomtom-international/maps-sdk-js/commit/3cd7b9b80f05ab7c9fdcb0f1c2165911650eec1b))
+
 ### [0.2.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.3...v0.2.6) (2023-05-09)
 
 
