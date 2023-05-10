@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.7...v0.2.8) (2023-05-10)
+
+
+### Features
+
+* **map:** allowing to change the style while keeping the previous style parts auto-adjusted to the new style variant ([fb721b0](https://github.com/tomtom-international/maps-sdk-js/commit/fb721b062957ce85dedb70bea86aed9e057664f7))
+
 ### [0.2.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.3...v0.2.7) (2023-05-10)
 
 
