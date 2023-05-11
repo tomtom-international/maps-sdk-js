@@ -105,7 +105,7 @@
   },
   "standard-version": {
     "scripts": {
-      "postbump": "./scripts/documentation/update-sdk-version-in-docs.sh && git add typedoc.json documentation/devportal/"
+      "postbump": "./scripts/documentation/update-sdk-version-in-docs.sh && git add typedoc.json documentation/dev-portal/"
     }
   }
 }
