@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.10](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.8...v0.2.10) (2023-05-11)
+
+
+### Features
+
+* **api reference:** add version labels to generated API reference ([c25fe0a](https://github.com/tomtom-international/maps-sdk-js/commit/c25fe0a37b58f0a3339a0076825d08d6662477f0))
+* **guides:** update guide versions on release ([6eede6d](https://github.com/tomtom-international/maps-sdk-js/commit/6eede6dc911ebdf6ee0cf21ef52ff9b846ec034b))
+* **map:** allowing to have multiple geometries modules for a map ([838c791](https://github.com/tomtom-international/maps-sdk-js/commit/838c79108c30590c65fb0e95719209ac54cc59f3))
+
 ### [0.2.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.7...v0.2.8) (2023-05-10)
 
 
