@@ -1,15 +1,3 @@
-// Export all sources Ids for Map
-
-/**
- * Geometry source id
- */
-export const GEOMETRY_SOURCE_ID = "geometry";
-
-/**
- * Geometry title source id
- */
-export const GEOMETRY_TITLE_SOURCE_ID = "geometryTitle";
-
 /**
  * POI source id
  */

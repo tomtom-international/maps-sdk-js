@@ -1,5 +1,5 @@
 import { GeoJsonProperties, Position } from "geojson";
-import { MapGeoJSONFeature, SymbolLayerSpecification } from "maplibre-gl";
+import { MapGeoJSONFeature, LayerSpecification } from "maplibre-gl";
 import { Geometries, GlobalConfig, Language, Places } from "@anw/maps-sdk-js/core";
 import {
     GeometriesModuleConfig,
@@ -121,11 +121,11 @@ export const waitUntilRenderedFeaturesChange = async (
         timeoutMS
     );
 
-export const getSymbolLayersByID = async (layerID: string): Promise<SymbolLayerSpecification> =>
+export const getLayerByID = async (layerID: string): Promise<LayerSpecification> =>
     page.evaluate((symbolLayerID) => {
         return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
-            .layers.filter((layer) => layer.id === symbolLayerID)[0] as SymbolLayerSpecification;
+            .layers.filter((layer) => layer.id === symbolLayerID)[0];
     }, layerID);
 
 export const isLayerVisible = async (layerID: string): Promise<boolean> =>
@@ -141,6 +141,9 @@ export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; 
             layerIDs: places?.sourceAndLayerIDs.places.layerIDs as string[]
         };
     });
+
+export const getGeometriesSourceAndLayerIDs = async () =>
+    page.evaluate(() => (globalThis as MapsSDKThis).geometries?.sourceAndLayerIDs);
 
 export const initPlaces = async (config?: PlacesModuleConfig) =>
     page.evaluate(async (inputConfig) => {
@@ -158,7 +161,10 @@ export const initGeometry = async (config?: GeometriesModuleConfig) =>
     page.evaluate(
         async (inputConfig: GeometriesModuleConfig) => {
             const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.geometry = await mapsSDKThis.MapsSDK.GeometriesModule.init(mapsSDKThis.tomtomMap, inputConfig);
+            mapsSDKThis.geometries = await mapsSDKThis.MapsSDK.GeometriesModule.init(
+                mapsSDKThis.tomtomMap,
+                inputConfig
+            );
         },
         // @ts-ignore
         config
@@ -166,7 +172,7 @@ export const initGeometry = async (config?: GeometriesModuleConfig) =>
 
 export const showGeometry = async (geometry: Geometries<GeoJsonProperties>) =>
     page.evaluate(
-        (inputGeometry: Geometries<GeoJsonProperties>) => (globalThis as MapsSDKThis).geometry?.show(inputGeometry),
+        (inputGeometry: Geometries<GeoJsonProperties>) => (globalThis as MapsSDKThis).geometries?.show(inputGeometry),
         // @ts-ignore
         geometry
     );

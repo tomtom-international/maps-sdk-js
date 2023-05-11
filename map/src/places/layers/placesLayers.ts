@@ -152,6 +152,7 @@ export const buildPlacesLayerSpecs = (
         config?.iconConfig?.iconStyle == "poi-like"
             ? [buildPOILikeLayerSpec(map), clickedPlaceLayerSpec]
             : [placesLayerSpec, selectedPlaceLayerSpec];
+    // (The first layer is the main one, the next one, on top, is used for the "selected" place)
     return layerSpecs.map((spec, index) =>
         withConfig(spec, config, `${idPrefix}-${index == 0 ? "main" : "selected"}`)
     ) as [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource];

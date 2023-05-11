@@ -1,24 +1,18 @@
 import { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
-import {
-    ColorPaletteOptions,
-    GEOMETRY_FILL_LAYER_ID,
-    GEOMETRY_OUTLINE_LAYER_ID,
-    colorPalettes,
-    geometryFillSpec,
-    geometryOutlineSpec
-} from "./layers/geometryLayers";
+import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/geometryLayers";
 import { GeometriesModuleConfig } from "./types/geometriesModuleConfig";
 import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/geometryDisplayProps";
 import { SymbolLayerSpecWithoutSource } from "../shared";
 
 /**
- * Build Geometry layer specification
- * @param config
- * @returns
+ * Builds Geometry layer specifications for fill and outline layers.
+ * @ignore
  */
-export const buildGeometryLayerSpec = (
+export const buildGeometryLayerSpecs = (
+    fillLayerID: string,
+    outlineLayerID: string,
     config?: GeometriesModuleConfig
 ): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
     const colorConfig = config?.colorConfig;
@@ -26,7 +20,7 @@ export const buildGeometryLayerSpec = (
 
     const fillLayerSpec = {
         ...geometryFillSpec,
-        id: GEOMETRY_FILL_LAYER_ID,
+        id: fillLayerID,
         paint: {
             ...geometryFillSpec.paint,
             ...(colorConfig?.fillOpacity && { "fill-opacity": colorConfig.fillOpacity }),
@@ -36,7 +30,7 @@ export const buildGeometryLayerSpec = (
 
     const outlineLayerSpec = {
         ...geometryOutlineSpec,
-        id: GEOMETRY_OUTLINE_LAYER_ID,
+        id: outlineLayerID,
         paint: {
             ...geometryOutlineSpec.paint,
             ...(lineConfig?.lineColor && { "line-color": lineConfig.lineColor }),
@@ -89,6 +83,7 @@ const buildColor = (
  * @param layerID
  * @param config
  * @returns
+ * @ignore
  */
 export const buildGeometryTitleLayerSpec = (
     layerID: string,
@@ -122,6 +117,7 @@ export const buildGeometryTitleLayerSpec = (
  * @param geometry
  * @param config
  * @returns
+ * @ignore
  */
 export const prepareGeometryForDisplay = (
     geometry: Geometries<GeoJsonProperties | DisplayGeometryProps>,
@@ -159,6 +155,7 @@ const getLongestArray = (coordinates: Position[][][]) =>
  * the bounding box for those coordinates and finally calculate the bounding box center to place the title.
  * @param geometries
  * @returns
+ * @ignore
  */
 export const prepareTitleForDisplay = (geometries: Geometries<GeoJsonProperties>): FeatureCollection<Point> => {
     const features = geometries.features.map((feature) => {

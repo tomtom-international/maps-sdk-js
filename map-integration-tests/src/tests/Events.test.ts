@@ -6,6 +6,7 @@ import { MapsSDKThis } from "./types/MapsSDKThis";
 import placesJSON from "./Events.test.data.json";
 import amsterdamGeometryData from "./GeometriesModule.test.data.json";
 import {
+    getGeometriesSourceAndLayerIDs,
     getPlacesSourceAndLayerIDs,
     initBasemap,
     initGeometry,
@@ -44,8 +45,8 @@ const setupPlacesHoverHandlers = async () =>
 const setupGeometryHoverHandlers = async () =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.geometry?.events.on("hover", () => mapsSDKThis._numOfHovers++);
-        mapsSDKThis.geometry?.events.on("long-hover", () => mapsSDKThis._numOfLongHovers++);
+        mapsSDKThis.geometries?.events.on("hover", () => mapsSDKThis._numOfHovers++);
+        mapsSDKThis.geometries?.events.on("long-hover", () => mapsSDKThis._numOfLongHovers++);
     });
 
 const setupPlacesClickHandlers = async () =>
@@ -64,8 +65,11 @@ const setupPlacesClickHandlers = async () =>
 const deRegisterPlacesClickHandlers = async () =>
     page.evaluate(() => (globalThis as MapsSDKThis).places?.events.off("click"));
 
-const waitUntilRenderedGeometry = async (numFeatures: number, position: Position): Promise<MapGeoJSONFeature[]> =>
-    waitUntilRenderedFeatures(["geometry_Fill"], numFeatures, 3000, position);
+const waitUntilRenderedGeometry = async (
+    numFeatures: number,
+    position: Position,
+    layerIDs: string[]
+): Promise<MapGeoJSONFeature[]> => waitUntilRenderedFeatures(layerIDs, numFeatures, 3000, position);
 
 const getNumLeftAndRightClicks = async (): Promise<[number, number]> =>
     page.evaluate(() => {
@@ -229,7 +233,12 @@ describe("Tests with user events", () => {
     test("Events combining different map modules", async () => {
         await initGeometry();
         await showGeometry(geometryData);
-        await waitUntilRenderedGeometry(1, [4.89067, 52.37313]);
+        const geometrySourcesAndLayerIDs = await getGeometriesSourceAndLayerIDs();
+        await waitUntilRenderedGeometry(
+            1,
+            [4.89067, 52.37313],
+            geometrySourcesAndLayerIDs?.geometry.layerIDs as string[]
+        );
 
         // Setting up handlers for places:
         await setupPlacesClickHandlers();

@@ -1,7 +1,7 @@
 import { FeatureCollection, MultiPolygon, Polygon } from "geojson";
 import { ColorPaletteOptions, colorPalettes } from "../layers/geometryLayers";
 import {
-    buildGeometryLayerSpec,
+    buildGeometryLayerSpecs,
     buildGeometryTitleLayerSpec,
     prepareGeometryForDisplay,
     prepareTitleForDisplay
@@ -22,10 +22,11 @@ describe("prepareGeometryForDisplay", () => {
             }
         };
 
-        const [fillLayerSpec, outLineLayerSpec] = buildGeometryLayerSpec(config);
+        const [fillLayerSpec, outLineLayerSpec] = buildGeometryLayerSpecs("fillID", "outlineID", config);
 
         expect(fillLayerSpec).toMatchObject({
             type: "fill",
+            id: "fillID",
             paint: {
                 "fill-color": ["get", "color"],
                 "fill-opacity": config.colorConfig?.fillOpacity,
@@ -35,6 +36,7 @@ describe("prepareGeometryForDisplay", () => {
 
         expect(outLineLayerSpec).toMatchObject({
             type: "line",
+            id: "outlineID",
             paint: {
                 "line-color": config.lineConfig?.lineColor,
                 "line-opacity": config.lineConfig?.lineOpacity,
@@ -44,26 +46,21 @@ describe("prepareGeometryForDisplay", () => {
     });
 
     test("Build geometry title spec layer", () => {
-        const GEOMETRY_TITLE_SOURCE_ID = "GEOMETRY_TITLE_SOURCE";
         let config: GeometriesModuleConfig = {
             textConfig: {
                 textField: "title"
             }
         };
 
-        let geometryTitleSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_SOURCE_ID, config);
+        let geometryTitleSpec = buildGeometryTitleLayerSpec("titleLayerID", config);
 
-        expect(geometryTitleSpec).toHaveProperty("id", GEOMETRY_TITLE_SOURCE_ID);
+        expect(geometryTitleSpec).toHaveProperty("id", "titleLayerID");
         expect(geometryTitleSpec.layout).toHaveProperty("text-field", "title");
 
         // Using Maplibre expressions
-        config = {
-            textConfig: {
-                textField: ["get", "name"]
-            }
-        };
-
-        geometryTitleSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_SOURCE_ID, config);
+        config = { textConfig: { textField: ["get", "name"] } };
+        geometryTitleSpec = buildGeometryTitleLayerSpec("anotherTitleLayerID", config);
+        expect(geometryTitleSpec).toHaveProperty("id", "anotherTitleLayerID");
         expect(geometryTitleSpec.layout).toHaveProperty("text-field", config.textConfig?.textField);
     });
 

@@ -5,8 +5,6 @@ import {
     AbstractMapModule,
     EventsModule,
     GeoJSONSourceWithLayers,
-    GEOMETRY_SOURCE_ID,
-    GEOMETRY_TITLE_SOURCE_ID,
     mapStyleLayerIDs,
     SymbolLayerSpecWithoutSource,
     ToBeAddedLayerSpec
@@ -15,15 +13,14 @@ import { GeometryBeforeLayerConfig, GeometriesModuleConfig, GeometryTextConfig }
 import { TomTomMap } from "../TomTomMap";
 import { changeLayerProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import {
-    buildGeometryLayerSpec,
+    buildGeometryLayerSpecs,
     buildGeometryTitleLayerSpec,
     prepareGeometryForDisplay,
     prepareTitleForDisplay
 } from "./prepareGeometryForDisplay";
-import { GEOMETRY_TITLE_LAYER_ID } from "./layers/geometryLayers";
 
 /**
- * IDs of sources and layers for geometry module.
+ * IDs of sources and layers from a geometry module.
  */
 type GeometrySourcesWithLayers = {
     geometry: GeoJSONSourceWithLayers<Geometries<GeoJsonProperties>>;
@@ -34,9 +31,18 @@ type GeometrySourcesWithLayers = {
  * Geometry data module.
  */
 export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometriesModuleConfig> {
+    private static lastInstanceIndex = -1;
+
     private titleLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryFillLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryOutlineLayerSpecs!: SymbolLayerSpecWithoutSource;
+
+    private sourceID!: string;
+    private fillLayerID!: string;
+    private outlineLayerID!: string;
+
+    private titleSourceID!: string;
+    private titleLayerID!: string;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -56,19 +62,33 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     /**
      * @ignore
      */
-    protected _initSourcesWithLayers(config?: GeometriesModuleConfig): GeometrySourcesWithLayers {
-        const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
-        const titleLayerSpec = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
+    protected _initSourcesWithLayers(config?: GeometriesModuleConfig, restore?: boolean): GeometrySourcesWithLayers {
+        if (!restore) {
+            GeometriesModule.lastInstanceIndex++;
+            this.sourceID = `geometry-${GeometriesModule.lastInstanceIndex}`;
+            this.titleSourceID = `geometryTitle-${GeometriesModule.lastInstanceIndex}`;
+            const layerIDPrefix = `geometry-${GeometriesModule.lastInstanceIndex}`;
+            this.fillLayerID = `${layerIDPrefix}_Fill`;
+            this.outlineLayerID = `${layerIDPrefix}_Outline`;
+            this.titleLayerID = `${layerIDPrefix}_Title`;
+        }
+
+        const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpecs(
+            this.fillLayerID,
+            this.outlineLayerID,
+            config
+        );
+        const titleLayerSpec = buildGeometryTitleLayerSpec(this.titleLayerID, config);
         this.titleLayerSpecs = titleLayerSpec;
         this.geometryFillLayerSpecs = geometryFillSpec;
         this.geometryOutlineLayerSpecs = geometryOutlineSpec;
 
         return {
-            geometry: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_SOURCE_ID, [
+            geometry: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, [
                 { ...geometryFillSpec },
                 { ...geometryOutlineSpec }
             ]),
-            geometryLabel: new GeoJSONSourceWithLayers(this.mapLibreMap, GEOMETRY_TITLE_SOURCE_ID, [
+            geometryLabel: new GeoJSONSourceWithLayers(this.mapLibreMap, this.titleSourceID, [
                 titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
             ])
         };
@@ -95,7 +115,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
 
     moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig) {
         this.config = { ...this.config, beforeLayerConfig: layerConfig };
-        this.moveBeforeLayerID(layerConfig == "top" ? GEOMETRY_TITLE_LAYER_ID : mapStyleLayerIDs[layerConfig]);
+        this.moveBeforeLayerID(layerConfig == "top" ? this.titleLayerID : mapStyleLayerIDs[layerConfig]);
     }
 
     /**
@@ -112,8 +132,12 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     }
 
     private updateLayerAndData(config: GeometriesModuleConfig) {
-        const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpec(config);
-        const newTitleLayerSpecs = buildGeometryTitleLayerSpec(GEOMETRY_TITLE_LAYER_ID, config);
+        const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpecs(
+            this.fillLayerID,
+            this.outlineLayerID,
+            config
+        );
+        const newTitleLayerSpecs = buildGeometryTitleLayerSpec(this.titleLayerID, config);
 
         changeLayerProps(geometryFillSpec, this.geometryFillLayerSpecs, this.mapLibreMap);
         changeLayerProps(geometryOutlineSpec, this.geometryOutlineLayerSpecs, this.mapLibreMap);

@@ -3,9 +3,8 @@ import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import { GeometriesModule } from "../GeometriesModule";
 import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./geometriesModuleMocked.test.data.json";
-import { GEOMETRY_SOURCE_ID, mapStyleLayerIDs } from "../../shared";
+import { mapStyleLayerIDs } from "../../shared";
 import { GeoJsonProperties } from "geojson";
-import { GEOMETRY_TITLE_LAYER_ID } from "../layers/geometryLayers";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -13,7 +12,7 @@ import { GEOMETRY_TITLE_LAYER_ID } from "../layers/geometryLayers";
 describe("Geometry module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", async () => {
-        const geometrySource = { id: GEOMETRY_SOURCE_ID, setData: jest.fn() };
+        const geometrySource = { id: "sourceID", setData: jest.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValue(geometrySource),
@@ -52,7 +51,7 @@ describe("Geometry module tests", () => {
         expect(geometry.getConfig()).toEqual({ ...geometryConfig, textConfig: { textField } });
 
         geometry.moveBeforeLayer("top");
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(GEOMETRY_TITLE_LAYER_ID);
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith("geometry-0_Title");
         geometry.moveBeforeLayer("country");
         expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.country);
         geometry.moveBeforeLayer("lowestPlaceLabel");

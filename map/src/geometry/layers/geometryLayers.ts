@@ -155,7 +155,3 @@ export const geometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
         "line-width": 2
     }
 };
-
-export const GEOMETRY_FILL_LAYER_ID = "geometry_Fill";
-export const GEOMETRY_OUTLINE_LAYER_ID = "geometry_Outline";
-export const GEOMETRY_TITLE_LAYER_ID = "geometry_Title";
