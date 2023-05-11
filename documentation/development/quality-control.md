@@ -22,6 +22,6 @@ npm run -ws lint:fix
 ## SonarQube
 
 SonarQube scan workflow executes the static quality control analysis and publishes results to the SonarCube service of
-TomTom. See [this SonarQube project](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_go-sdk-js_AYHTCTXCqdbqIGrKswTc).
+TomTom. See [this SonarQube project](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc).
 
 SonarQube integration supports PR comments, so when the SonarQube workflow executes it notifies about the new issues immediately.

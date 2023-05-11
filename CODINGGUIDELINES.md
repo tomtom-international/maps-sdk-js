@@ -1,4 +1,4 @@
-# Coding Guidelines GO-SDK for Web
+# Coding Guidelines Maps SDK JS
 
 ## General coding guidelines
 
