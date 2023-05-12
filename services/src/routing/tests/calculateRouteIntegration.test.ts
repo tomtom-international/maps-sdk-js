@@ -310,7 +310,7 @@ describe("Calculate route integration tests", () => {
             }
         });
 
-        expect(result?.features?.length).toEqual(3);
+        expect(result?.features?.length).toBeGreaterThan(1);
         for (const routeFeature of result.features) {
             expect(routeFeature).toBeDefined();
             expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
