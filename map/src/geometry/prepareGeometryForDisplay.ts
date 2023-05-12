@@ -1,3 +1,4 @@
+import isNil from "lodash/isNil";
 import { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
@@ -23,7 +24,7 @@ export const buildGeometryLayerSpecs = (
         id: fillLayerID,
         paint: {
             ...geometryFillSpec.paint,
-            ...(colorConfig?.fillOpacity && { "fill-opacity": colorConfig.fillOpacity }),
+            ...(!isNil(colorConfig?.fillOpacity) && { "fill-opacity": colorConfig?.fillOpacity }),
             ...(colorConfig?.fillColor && { "fill-color": ["get", "color"] })
         }
     } as unknown as SymbolLayerSpecWithoutSource;
@@ -33,9 +34,9 @@ export const buildGeometryLayerSpecs = (
         id: outlineLayerID,
         paint: {
             ...geometryOutlineSpec.paint,
-            ...(lineConfig?.lineColor && { "line-color": lineConfig.lineColor }),
-            ...(lineConfig?.lineWidth && { "line-width": lineConfig.lineWidth }),
-            ...(lineConfig?.lineOpacity && { "line-opacity": lineConfig.lineOpacity })
+            ...(!isNil(lineConfig?.lineColor) && { "line-color": lineConfig?.lineColor }),
+            ...(!isNil(lineConfig?.lineWidth) && { "line-width": lineConfig?.lineWidth }),
+            ...(!isNil(lineConfig?.lineOpacity) && { "line-opacity": lineConfig?.lineOpacity })
         }
     } as unknown as SymbolLayerSpecWithoutSource;
 

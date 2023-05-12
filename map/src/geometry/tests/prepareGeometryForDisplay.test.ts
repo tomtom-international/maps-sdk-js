@@ -46,12 +46,7 @@ describe("prepareGeometryForDisplay", () => {
     });
 
     test("Build geometry title spec layer", () => {
-        let config: GeometriesModuleConfig = {
-            textConfig: {
-                textField: "title"
-            }
-        };
-
+        let config: GeometriesModuleConfig = { textConfig: { textField: "title" } };
         let geometryTitleSpec = buildGeometryTitleLayerSpec("titleLayerID", config);
 
         expect(geometryTitleSpec).toHaveProperty("id", "titleLayerID");
@@ -70,35 +65,18 @@ describe("prepareGeometryForDisplay", () => {
             features: [
                 {
                     type: "Feature",
-                    properties: {
-                        title: "TomTom"
-                    },
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: []
-                    }
+                    properties: { title: "TomTom" },
+                    geometry: { type: "Polygon", coordinates: [] }
                 },
                 {
                     type: "Feature",
-                    properties: {
-                        address: {
-                            freeformAddress: "TomTom"
-                        },
-                        color: "#00aabb"
-                    },
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: []
-                    }
+                    properties: { address: { freeformAddress: "TomTom" }, color: "#00aabb" },
+                    geometry: { type: "Polygon", coordinates: [] }
                 }
             ]
         };
 
-        const config: GeometriesModuleConfig = {
-            colorConfig: {
-                fillColor: "warm"
-            }
-        };
+        const config: GeometriesModuleConfig = { colorConfig: { fillColor: "warm" } };
 
         const results = prepareGeometryForDisplay(geometry, config);
 
