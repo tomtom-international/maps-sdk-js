@@ -39,6 +39,8 @@ Basically, all you need to do is just pushing your code to branches. Everything 
 maps-sdk-js uses the "standard-version" tool for calculation of version increment. Calculation happens according to the "conventional commits". See [conventionalcommits.org](https://www.conventionalcommits.org) website for explanation.
 
 CHANGELOG.md file is generated and updated by the standard-version tool automatically.
+We also have a post-bump script defined in `package.json` that updates the SDK version tags in our documentation, 
+see the [docs](./docs.md) for more information about our documentation.
 
 ```shell
 # dry run mode to check the version number and release notes
@@ -54,6 +56,11 @@ Version numbers for the "latest" npm tag look like this - 1.2.3, 2.3.0 etc. Corr
 ## Extra features
 
 Along with the main purpose the CI/CD does code quality checks, commit checks and Slack notifications.
+
+### Cross-repo workflow for examples
+We have an additional CI/CD step that triggers a build of the SDK examples, given an SDK version. This is useful to
+catch breaking changes in the SDK before they reach the main branch. A push to a development branch will trigger this 
+step. It triggers a build of the SDK examples with the changes in your development branch, giving you extra guarantees about your changes.
 
 ## GitHub Actions
 
