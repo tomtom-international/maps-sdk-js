@@ -1,7 +1,7 @@
 /**
  * Key layer IDs from the vector map style.
  */
-export const mapStyleLayerIDs: Record<string, string> = {
+export const mapStyleLayerIDs = {
     /**
      * The country name layer.
      */
