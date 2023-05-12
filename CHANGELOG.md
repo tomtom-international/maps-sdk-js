@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.11](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.10...v0.2.11) (2023-05-12)
+
+
+### Bug Fixes
+
+* **geometries:** small typing simplification / fix ([cd03a8a](https://github.com/tomtom-international/maps-sdk-js/commit/cd03a8a8c9f5f445079ed9b21c73df00016fc9ea))
+* **map:** hotfix to allow supplying valid 0s as inputs ([d4b0a24](https://github.com/tomtom-international/maps-sdk-js/commit/d4b0a24583147f79096fc48c8f6b11e49d29e6d3))
+* **services:** hot fixing unstable routing integration test ([0456f4f](https://github.com/tomtom-international/maps-sdk-js/commit/0456f4f19a3adfe15a38baf8a38ff94b36005cc6))
+
 ### [0.2.10](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.8...v0.2.10) (2023-05-11)
 
 
