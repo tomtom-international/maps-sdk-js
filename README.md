@@ -48,7 +48,7 @@ Additionally:
   <br/><br/>
 
 ## Map
-The SDK [Map bundle](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/home#map-modules) is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/), and shares it as a dependency with your app.\
+The SDK [Map bundle](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/home#map-modules) is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/), and shares it as a dependency with your app.\
 You can both use the TomTom and MapLibre SDKs together at any time.
 
 ### Feature highlights
@@ -62,7 +62,7 @@ Readily available, yet highly customizable interactive TomTom Maps:
 #### Using npm
 The SDK Map uses [MapLibre GL JS](https://www.npmjs.com/package/maplibre-gl) as peer dependency.
 Therefore, you need to also have it installed in your project.\
-The TomTom SDK is tested against the latest stable [release  of MapLibre GL](https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md).
+The TomTom SDK is tested against the latest stable [release of MapLibre GL](https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md).
 ```
 npm i @anw/maps-sdk-js maplibre-gl
 ```
@@ -70,15 +70,15 @@ Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/map```
 <br/><br/>
 
 ## Services
-The SDK [Services bundle](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/home#service-modules) integrates the TomTom location APIs into comprehensive [GeoJSON](https://geojson.org/) services.\
+The SDK [Services bundle](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/home#service-modules) integrates the TomTom location APIs into comprehensive [GeoJSON](https://geojson.org/) services.\
 The services can be integrated in **web**, [nodejs](https://nodejs.org/) and [React Native](https://reactnative.dev/) apps.\
 The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/) helps with further integration with geospatial tools.
 
 ### Feature highlights
-* [Search](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/search) (fuzzy search, geometry search)
-* [Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/geocoding) and [Reverse Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/reverse_geocoding)
-* [Geometry Data](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/geometry_data)
-* [Routing](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/calculate_route) with EV support
+* [Search](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/search) (fuzzy search, geometry search)
+* [Geocoding](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/geocoding) and [Reverse Geocoding](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/reverse-geocoding)
+* [Geometry Data](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/geometry-data)
+* [Routing](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/calculate-route) with EV support
 * EV Charging Stations Availability
 
 ### Getting Started with Services
@@ -93,11 +93,11 @@ Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/services
 <br/><br/>
 
 ## Core
-The SDK [Core](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/modules/core)
+The SDK [Core](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/core)
 is a set of utilities and TypeScript types which are common to both [Map](#map) and [Services](#services).`
 
 ### Feature highlights
-* [Common configuration](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/api-reference/classes/core.TomTomConfig)
+* [Common configuration](https://developer-staging.tomtom.com/javascript/maps/documentation/api-reference/core.TomTomConfig)
 * Common types (such as outputs from Services which can be used as inputs to the Map)
 * Utilities (such as distance/duration formatting and bounding box calculations)
 
