@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "npm run clean:dist -ws && npm run clean:cache -ws",
     "release:dry": "npx standard-version --dry-run",
-    "release": "if [ \"$(git rev-parse --abbrev-ref HEAD)\" == \"main\" ]; then npx standard-version --commit-all && git push --follow-tags origin main; else echo \"RELEASE IS ONLY PERMITTED FROM MAIN BRANCH\"; fi",
+    "release": "./scripts/release.sh && git push --follow-tags origin main",
     "documentation": "./scripts/documentation/generate-api-reference.sh",
     "build:full": "npm run build:full -ws",
     "build": "npm run build -ws",
