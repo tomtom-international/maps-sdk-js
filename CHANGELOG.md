@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.12](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.11...v0.2.12) (2023-05-15)
+
+
+### Features
+
+* **places:** ability to conveniently show a single place or an array of them in addition to a feature collection ([956c27b](https://github.com/tomtom-international/maps-sdk-js/commit/956c27b1b4c5aa3abe47234791dc0feb3ab9c515))
+
 ### [0.2.11](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.10...v0.2.11) (2023-05-12)
 
 
