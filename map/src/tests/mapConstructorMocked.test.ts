@@ -30,7 +30,7 @@ describe("Map initialization mocked tests", () => {
         expect(tomtomMap).toBeDefined();
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
-            style: "https://api.tomtom.com/style/1/style/24.1.*/?key=TEST_KEY&map=2/basic_street-light",
+            style: "https://api.tomtom.com/style/1/style/24.2.*/?key=TEST_KEY&map=2/basic_street-light",
             attributionControl: false,
             transformRequest: expect.any(Function)
         });

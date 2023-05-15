@@ -10,7 +10,7 @@
     },
     {
       "container": "<div id='map'></div>",
-      "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light",
+      "style": "https://api-test.tomtom.com/style/1/style/24.2.*/?key=TEST_API_KEY&map=2/basic_street-light",
       "attributionControl": false
     }
   ],
@@ -58,7 +58,7 @@
     },
     {
       "container": "<div id='map'></div>",
-      "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light",
+      "style": "https://api-test.tomtom.com/style/1/style/24.2.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_flow=2/flow_relative-light&traffic_incidents=2/incidents_light",
       "attributionControl": false
     }
   ],
@@ -77,7 +77,7 @@
     },
     {
       "container": "<div id='map'></div>",
-      "style": "https://api-test.tomtom.com/style/1/style/24.1.*/?key=TEST_API_KEY&map=2/basic_street-light&poi=2/poi_dynamic-light&hillshade=2-test/hillshade_rgb-light",
+      "style": "https://api-test.tomtom.com/style/1/style/24.2.*/?key=TEST_API_KEY&map=2/basic_street-light&poi=2/poi_dynamic-light&hillshade=2-test/hillshade_rgb-light",
       "attributionControl": false
     }
   ]

@@ -13,7 +13,6 @@ export type CommonGeocodeAndFuzzySearchParams = {
     /**
      * Starting offset of the returned results within the full result set.
      * @default 0
-     * Maximum value: 1900
      */
     offset?: number;
 
