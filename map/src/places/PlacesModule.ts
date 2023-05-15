@@ -129,7 +129,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * Shows the given places on the map.
      * @param places
      */
-    show(places: Places): void {
+    show(places: Place | Place[] | Places): void {
         this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.mapLibreMap, this.config));
     }
 

@@ -74,50 +74,63 @@ export const getPOILayerCategoryForPlace = (place: Place): string | undefined =>
 };
 
 /**
+ * Transforms the input of a "show" call to FeatureCollection "Places".
+ * @ignore
+ */
+export const toPlaces = (places: Place | Place[] | Places): Places => {
+    if (Array.isArray(places)) {
+        return { type: "FeatureCollection", features: places };
+    }
+    return places.type == "Feature" ? { type: "FeatureCollection", features: [places] } : places;
+};
+
+/**
  * prepare places features to be displayed on map by adding needed  properties for title, icon and style
  * @ignore
- * @param places
- * @param map
- * @param config
  */
 export const preparePlacesForDisplay = (
-    places: Places,
+    placesInput: Place | Place[] | Places,
     map: Map,
     config: PlacesModuleConfig = {}
-): Places<DisplayPlaceProps> => ({
-    ...places,
-    features: places.features.map((place) => {
-        const title =
-            typeof config?.textConfig?.textField === "function"
-                ? config?.textConfig?.textField(place)
-                : buildPlaceTitle(place);
+): Places<DisplayPlaceProps> => {
+    const places = toPlaces(placesInput);
+    return {
+        ...places,
+        features: places.features.map((place) => {
+            const title =
+                typeof config?.textConfig?.textField === "function"
+                    ? config?.textConfig?.textField(place)
+                    : buildPlaceTitle(place);
 
-        const extraFeatureProps = config.extraFeatureProps
-            ? Object.keys(config.extraFeatureProps).reduce(
-                  (acc, prop) => ({
-                      ...acc,
-                      [prop]:
-                          typeof config.extraFeatureProps?.[prop] === "function"
-                              ? config.extraFeatureProps?.[prop](place)
-                              : config.extraFeatureProps?.[prop]
-                  }),
-                  {}
-              )
-            : {};
-        return {
-            ...place,
-            geometry: {
-                ...place.geometry,
-                bbox: place.bbox
-            },
-            properties: {
-                ...place.properties,
-                id: place.id,
-                title,
-                iconID: getIconIDForPlace(place, config, map),
-                ...(config?.iconConfig?.iconStyle == "poi-like" && { category: getPOILayerCategoryForPlace(place) }),
-                ...extraFeatureProps
-            }
-        };
-    })
-});
+            const extraFeatureProps = config.extraFeatureProps
+                ? Object.keys(config.extraFeatureProps).reduce(
+                      (acc, prop) => ({
+                          ...acc,
+                          [prop]:
+                              typeof config.extraFeatureProps?.[prop] === "function"
+                                  ? config.extraFeatureProps?.[prop](place)
+                                  : config.extraFeatureProps?.[prop]
+                      }),
+                      {}
+                  )
+                : {};
+            return {
+                ...place,
+                geometry: {
+                    ...place.geometry,
+                    bbox: place.bbox
+                },
+                properties: {
+                    ...place.properties,
+                    id: place.id,
+                    title,
+                    iconID: getIconIDForPlace(place, config, map),
+                    ...(config?.iconConfig?.iconStyle == "poi-like" && {
+                        category: getPOILayerCategoryForPlace(place)
+                    }),
+                    ...extraFeatureProps
+                }
+            };
+        })
+    };
+};

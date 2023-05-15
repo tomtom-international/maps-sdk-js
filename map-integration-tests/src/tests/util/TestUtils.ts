@@ -1,6 +1,6 @@
 import { GeoJsonProperties, Position } from "geojson";
 import { MapGeoJSONFeature, LayerSpecification } from "maplibre-gl";
-import { Geometries, GlobalConfig, Language, Places } from "@anw/maps-sdk-js/core";
+import { Geometries, GlobalConfig, Language, Place, Places } from "@anw/maps-sdk-js/core";
 import {
     GeometriesModuleConfig,
     HillshadeModuleConfig,
@@ -151,7 +151,7 @@ export const initPlaces = async (config?: PlacesModuleConfig) =>
         mapsSDKThis.places = await mapsSDKThis.MapsSDK.PlacesModule.init(mapsSDKThis.tomtomMap, inputConfig);
     }, config as never);
 
-export const showPlaces = async (places: Places) =>
+export const showPlaces = async (places: Place | Place[] | Places) =>
     page.evaluate((inputPlaces: Places) => {
         (globalThis as MapsSDKThis).places?.show(inputPlaces);
         // @ts-ignore

@@ -1,11 +1,48 @@
-import { Place, Places } from "@anw/maps-sdk-js/core";
+import { CommonPlaceProps, Place, Places } from "@anw/maps-sdk-js/core";
 import { Map } from "maplibre-gl";
 import {
     addMapIcon,
     getIconIDForPlace,
     getPOILayerCategoryForPlace,
-    preparePlacesForDisplay
+    preparePlacesForDisplay,
+    toPlaces
 } from "../preparePlacesForDisplay";
+
+describe("toPlaces tests", () => {
+    const testPlace0: Place = {
+        id: "something0",
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [0, 10] },
+        properties: {} as CommonPlaceProps
+    };
+
+    const testPlace1: Place = {
+        id: "something1",
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [1, 11] },
+        properties: {} as CommonPlaceProps
+    };
+
+    test("toPlaces with array", () => {
+        expect(toPlaces([])).toEqual({ type: "FeatureCollection", features: [] });
+        expect(toPlaces([testPlace0])).toEqual({ type: "FeatureCollection", features: [testPlace0] });
+        expect(toPlaces([testPlace0, testPlace1])).toEqual({
+            type: "FeatureCollection",
+            features: [testPlace0, testPlace1]
+        });
+    });
+
+    test("toPlaces with single feature", () => {
+        expect(toPlaces(testPlace0)).toEqual({ type: "FeatureCollection", features: [testPlace0] });
+    });
+
+    test("toPlaces with FeatureCollection", () => {
+        const testFeatureCollection0: Places = { type: "FeatureCollection", features: [] };
+        expect(toPlaces(testFeatureCollection0)).toBe(testFeatureCollection0);
+        const testFeatureCollection1: Places = { type: "FeatureCollection", features: [testPlace0, testPlace1] };
+        expect(toPlaces(testFeatureCollection1)).toBe(testFeatureCollection1);
+    });
+});
 
 describe("Get Icon ID for a given Place tests", () => {
     test("Get Icon ID for a given Place", () => {
@@ -163,6 +200,28 @@ describe("test prepare places for display", () => {
             }
         ]
     };
+
+    test("prepare places for display for single place", () => {
+        expect(preparePlacesForDisplay(places.features[0], mapLibreMock)).toEqual({
+            type: "FeatureCollection",
+            features: [
+                {
+                    id: "123",
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: [0, 0], bbox: undefined },
+                    properties: {
+                        id: "123",
+                        iconID: "default_pin",
+                        title: "test",
+                        type: "POI",
+                        poi: { name: "test", phone: "+31000099999" },
+                        address: { freeformAddress: "address test" }
+                    }
+                }
+            ]
+        });
+    });
+
     const getPhoneFun = (place: Place) => place.properties.poi?.phone;
 
     test("prepare places for display with config", () => {
@@ -185,11 +244,7 @@ describe("test prepare places for display", () => {
                 {
                     id: "123",
                     type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [0, 0],
-                        bbox: undefined
-                    },
+                    geometry: { type: "Point", coordinates: [0, 0], bbox: undefined },
                     properties: {
                         id: "123",
                         iconID: "default_pin",
@@ -197,13 +252,8 @@ describe("test prepare places for display", () => {
                         phone: "+31000099999",
                         staticProp: "Static text",
                         type: "POI",
-                        poi: {
-                            name: "test",
-                            phone: "+31000099999"
-                        },
-                        address: {
-                            freeformAddress: "address test"
-                        }
+                        poi: { name: "test", phone: "+31000099999" },
+                        address: { freeformAddress: "address test" }
                     }
                 }
             ]

@@ -1,4 +1,4 @@
-import { HasBBox, Places } from "@anw/maps-sdk-js/core";
+import { HasBBox, Place, Places } from "@anw/maps-sdk-js/core";
 import { LocationDisplayProps, PlaceIconConfig } from "map";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
@@ -63,6 +63,27 @@ describe("PlacesModule tests", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
+    test("Rendering single place", async () => {
+        await mapEnv.loadMap(
+            { center: [-75.43974, 39.82295], zoom: 10 },
+            { style: { type: "published", include: ["poi"] } }
+        );
+        await initPlaces();
+        await showPlaces({
+            type: "Feature",
+            geometry: { type: "Point", coordinates: [-75.43974, 39.82295] },
+            properties: { address: { freeformAddress: "Test Address" } }
+        } as Place);
+
+        const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs();
+        expect(await getNumVisibleLayers(sourceID)).toStrictEqual(2);
+
+        const renderedPlaces = await waitUntilRenderedFeatures(layerIDs, 1, 10000);
+        compareToExpectedDisplayProps(renderedPlaces, [{ iconID: "default_pin", title: "Test Address" }]);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
     test.each(placesTestData)(
         `'%s`,
         // @ts-ignore
@@ -71,27 +92,29 @@ describe("PlacesModule tests", () => {
             await mapEnv.loadMap({ bounds }, { style: { type: "published", include: ["poi"] } });
             await initPlaces();
             const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs();
-            expect(await getNumVisibleLayers(sourceID)).toStrictEqual(0);
+            expect(await getNumVisibleLayers(sourceID)).toBe(0);
 
             await showPlaces(testPlaces);
             const numTestPlaces = testPlaces.features.length;
             let renderedPlaces = await waitUntilRenderedFeatures(layerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
-            expect(await getNumVisibleLayers(sourceID)).toStrictEqual(2);
-            // once more:
-            await showPlaces(testPlaces);
-            renderedPlaces = await waitUntilRenderedFeatures(layerIDs, numTestPlaces, 10000);
+            expect(await getNumVisibleLayers(sourceID)).toBe(2);
+
+            // once more, this time inputting the array of features, should yield same results:
+            await showPlaces(testPlaces.features);
+            await waitForMapIdle();
+            renderedPlaces = await waitUntilRenderedFeatures(layerIDs, numTestPlaces, 5000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
-            expect(await getNumVisibleLayers(sourceID)).toStrictEqual(2);
+            expect(await getNumVisibleLayers(sourceID)).toBe(2);
 
             await clearPlaces();
-            renderedPlaces = await waitUntilRenderedFeatures(layerIDs, 0, 10000);
+            renderedPlaces = await waitUntilRenderedFeatures(layerIDs, 0, 5000);
             expect(renderedPlaces).toHaveLength(0);
-            expect(await getNumVisibleLayers(sourceID)).toStrictEqual(0);
+            expect(await getNumVisibleLayers(sourceID)).toBe(0);
 
             expect(mapEnv.consoleErrors).toHaveLength(0);
 
-            // once more, reloading the map and this time showing places before waiting for it to load:
+            // once more, reloading the map, showing the same again:
             await mapEnv.loadMap({ bounds }, { style: { type: "published", include: ["poi"] } });
             await initPlaces();
             const { layerIDs: nextLayerIDs } = await getPlacesSourceAndLayerIDs();
@@ -141,6 +164,7 @@ describe("GeoJSON Places with init config tests", () => {
             const numTestPlaces = testPlaces.features.length;
             const renderedPlaces = await waitUntilRenderedFeatures(layerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCustomProps);
+
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );

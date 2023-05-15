@@ -128,15 +128,7 @@ export const prepareGeometryForDisplay = (
     features: geometry.features.map((feature, index) => {
         const title = feature.properties?.title ? feature.properties.title : buildTitle(feature, config);
         const color = feature.properties?.color ? feature.properties.color : buildColor(config, index);
-
-        return {
-            ...feature,
-            properties: {
-                ...feature.properties,
-                title,
-                color
-            }
-        };
+        return { ...feature, properties: { ...feature.properties, title, color } };
     })
 });
 
@@ -174,17 +166,10 @@ export const prepareTitleForDisplay = (geometries: Geometries<GeoJsonProperties>
 
         return {
             type: "Feature",
-            geometry: {
-                type: "Point",
-                coordinates
-            },
+            geometry: { type: "Point", coordinates },
             properties: feature.properties
         } as Feature<Point>;
     });
 
-    return {
-        type: "FeatureCollection",
-        bbox: geometries.bbox,
-        features
-    };
+    return { type: "FeatureCollection", bbox: geometries.bbox, features };
 };
