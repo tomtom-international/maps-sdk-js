@@ -21,7 +21,6 @@ export class MapIntegrationTestEnv {
                 );
                 mapsSDKThis.mapLibreMap = mapsSDKThis.tomtomMap.mapLibreMap;
             },
-            // @ts-ignore
             mapLibreOptions,
             tomtomMapParams,
             process.env.API_KEY

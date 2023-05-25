@@ -66,27 +66,27 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@types/geojson": "^7946.0.10",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "^4.14.194",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@size-limit/file": "^8.2.4",
     "@size-limit/preset-app": "^8.2.4",
-    "cspell": "^6.28.0",
+    "cspell": "^6.31.1",
     "@types/uuid": "^9.0.1",
-    "eslint-config-prettier": "^8.7.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-jest": "^27.2.1",
     "eslint-plugin-prettier": "^4.2.1",
     "handlebars": "^4.7.7",
     "husky": "^8.0.3",
-    "lint-staged": "^13.1.2",
+    "lint-staged": "^13.2.2",
     "map": "file:map",
     "services": "file:services",
     "size-limit": "^8.2.4",
-    "typedoc": "^0.24.6",
-    "typedoc-plugin-markdown": "^4.0.0-next.10",
+    "typedoc": "^0.24.7",
+    "typedoc-plugin-markdown": "4.0.0-next.10",
     "typedoc-plugin-missing-exports": "^2.0.0",
-    "yaml": "^2.2.2"
+    "yaml": "^2.3.0"
   },
   "size-limit": [
     {

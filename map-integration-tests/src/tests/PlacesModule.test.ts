@@ -22,15 +22,11 @@ import expectedPOILikeFeatureProps from "./PlacesModulePOILikeProps.test.data.js
 const applyIconConfig = async (iconConfig?: PlaceIconConfig) =>
     page.evaluate(
         async (inputConfig) => (globalThis as MapsSDKThis).places?.applyIconConfig(inputConfig),
-        iconConfig as never
+        iconConfig as PlaceIconConfig
     );
 
 const getBBox = async (places: HasBBox) =>
-    page.evaluate(
-        (inputPlaces) => (globalThis as MapsSDKThis).MapsSDKCore.bboxFromGeoJSON(inputPlaces),
-        // @ts-ignore
-        places
-    );
+    page.evaluate((inputPlaces) => (globalThis as MapsSDKThis).MapsSDKCore.bboxFromGeoJSON(inputPlaces), places);
 
 const clearPlaces = async () => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
 

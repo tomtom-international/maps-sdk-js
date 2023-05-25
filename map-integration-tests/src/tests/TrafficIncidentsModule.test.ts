@@ -6,7 +6,8 @@ import {
     IncidentCategory,
     RoadCategory,
     TRAFFIC_INCIDENTS_SOURCE_ID,
-    IncidentsConfig
+    IncidentsConfig,
+    TrafficIncidentsFilters
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
@@ -44,10 +45,7 @@ const getConfig = async (): Promise<IncidentsConfig | undefined> =>
     page.evaluate(async () => (globalThis as MapsSDKThis).trafficIncidents?.getConfig());
 
 const applyConfig = async (config: IncidentsConfig | undefined) =>
-    page.evaluate(
-        (inputConfig) => (globalThis as MapsSDKThis).trafficIncidents?.applyConfig(inputConfig),
-        config as IncidentsConfig
-    );
+    page.evaluate((inputConfig) => (globalThis as MapsSDKThis).trafficIncidents?.applyConfig(inputConfig), config);
 
 const unsetIncidents = async () =>
     page.evaluate(async () => ((globalThis as MapsSDKThis).trafficIncidents = undefined));
@@ -308,7 +306,9 @@ describe("Map vector tile traffic incidents module tests", () => {
 
         await initTrafficIncidents();
 
-        const incidentFilters = { any: [{ incidentCategories: { show: "only", values: ["road_closed"] } }] };
+        const incidentFilters: TrafficIncidentsFilters = {
+            any: [{ incidentCategories: { show: "only", values: ["road_closed"] } }]
+        };
         // Showing road closures only:
         await page.evaluate(
             async (inputIncidentFilters) => (globalThis as MapsSDKThis).trafficIncidents?.filter(inputIncidentFilters),

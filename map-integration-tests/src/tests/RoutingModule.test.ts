@@ -39,19 +39,16 @@ const initRouting = async () =>
 const applyConfig = async (config: RoutingModuleConfig) =>
     page.evaluate((inputConfig: RoutingModuleConfig) => {
         (globalThis as MapsSDKThis).routing?.applyConfig(inputConfig);
-        // @ts-ignore
     }, config);
 
 const showRoutes = async (routes: Routes) =>
     page.evaluate((inputRoutes: Routes) => {
         (globalThis as MapsSDKThis).routing?.showRoutes(inputRoutes);
-        // @ts-ignore
     }, routes);
 
 const selectRoute = async (index: number) =>
     page.evaluate((inputIndex: number) => {
         (globalThis as MapsSDKThis).routing?.selectRoute(inputIndex);
-        // @ts-ignore
     }, index);
 
 const clearRoutes = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearRoutes());
@@ -59,7 +56,6 @@ const clearRoutes = async () => page.evaluate(() => (globalThis as MapsSDKThis).
 const showWaypoints = async (waypoints: WaypointLike[]) =>
     page.evaluate((inputWaypoints) => {
         (globalThis as MapsSDKThis).routing?.showWaypoints(inputWaypoints);
-        // @ts-ignore
     }, waypoints);
 
 const clearWaypoints = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());

@@ -1,5 +1,5 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { RoadCategory, TRAFFIC_FLOW_SOURCE_ID, FlowConfig, StyleModuleInitConfig } from "map";
+import { RoadCategory, TRAFFIC_FLOW_SOURCE_ID, FlowConfig, StyleModuleInitConfig, TrafficFlowFilters } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import {
@@ -24,7 +24,7 @@ const initTrafficFlow = async (config?: StyleModuleInitConfig & FlowConfig) =>
     page.evaluate(async (inputConfig?) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.trafficFlow = await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as FlowConfig);
+    }, config);
 
 const unsetTrafficFlow = async () => page.evaluate(async () => ((globalThis as MapsSDKThis).trafficFlow = undefined));
 
@@ -32,10 +32,7 @@ const getConfig = async (): Promise<FlowConfig | undefined> =>
     page.evaluate(async () => (globalThis as MapsSDKThis).trafficFlow?.getConfig());
 
 const applyConfig = async (config: FlowConfig | undefined) =>
-    page.evaluate(
-        (inputConfig) => (globalThis as MapsSDKThis).trafficFlow?.applyConfig(inputConfig),
-        config as FlowConfig
-    );
+    page.evaluate((inputConfig) => (globalThis as MapsSDKThis).trafficFlow?.applyConfig(inputConfig), config);
 
 const resetConfig = async () => page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.resetConfig());
 
@@ -128,7 +125,7 @@ describe("Map vector tile traffic module tests", () => {
         expect(renderedFlowSegments.filter((segment) => segment.properties["road_closure"] === true)).toHaveLength(0);
 
         // Showing flow in road closures only:
-        const flowFilters = { any: [{ showRoadClosures: "only" }] };
+        const flowFilters: TrafficFlowFilters = { any: [{ showRoadClosures: "only" }] };
         await page.evaluate(
             async (inputFlowFilters) => (globalThis as MapsSDKThis).trafficFlow?.filter(inputFlowFilters),
             flowFilters
@@ -202,7 +199,7 @@ describe("Map vector tile traffic module tests", () => {
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.setVisible(false));
 
-        const flowFilters = { any: [{ roadCategories: { show: "only", values: ["primary"] } }] };
+        const flowFilters: TrafficFlowFilters = { any: [{ roadCategories: { show: "only", values: ["primary"] } }] };
         // Showing flow in primary roads only:
         await page.evaluate(
             async (inputFlowFilters) => (globalThis as MapsSDKThis).trafficFlow?.filter(inputFlowFilters),

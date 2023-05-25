@@ -79,7 +79,6 @@ export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Positio
             );
         },
         layerIDs,
-        // @ts-ignore
         lngLat
     );
 
@@ -149,31 +148,22 @@ export const initPlaces = async (config?: PlacesModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.places = await mapsSDKThis.MapsSDK.PlacesModule.init(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as never);
+    }, config);
 
 export const showPlaces = async (places: Place | Place[] | Places) =>
-    page.evaluate((inputPlaces: Places) => {
+    page.evaluate((inputPlaces) => {
         (globalThis as MapsSDKThis).places?.show(inputPlaces);
-        // @ts-ignore
     }, places);
 
 export const initGeometry = async (config?: GeometriesModuleConfig) =>
-    page.evaluate(
-        async (inputConfig: GeometriesModuleConfig) => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.geometries = await mapsSDKThis.MapsSDK.GeometriesModule.init(
-                mapsSDKThis.tomtomMap,
-                inputConfig
-            );
-        },
-        // @ts-ignore
-        config
-    );
+    page.evaluate(async (inputConfig) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.geometries = await mapsSDKThis.MapsSDK.GeometriesModule.init(mapsSDKThis.tomtomMap, inputConfig);
+    }, config);
 
 export const showGeometry = async (geometry: Geometries<GeoJsonProperties>) =>
     page.evaluate(
         (inputGeometry: Geometries<GeoJsonProperties>) => (globalThis as MapsSDKThis).geometries?.show(inputGeometry),
-        // @ts-ignore
         geometry
     );
 
@@ -181,7 +171,7 @@ export const initBasemap = async (config?: StyleModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as StyleModuleConfig);
+    }, config);
 
 export const initTrafficIncidents = async (config?: StyleModuleInitConfig & IncidentsConfig) =>
     page.evaluate(async (inputConfig?) => {
@@ -190,24 +180,24 @@ export const initTrafficIncidents = async (config?: StyleModuleInitConfig & Inci
             mapsSDKThis.tomtomMap,
             inputConfig
         );
-    }, config as IncidentsConfig);
+    }, config);
 
 export const initPOIs = async (config?: StyleModuleInitConfig & POIsModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as StyleModuleInitConfig & POIsModuleConfig);
+    }, config);
 
 export const initHillshade = async (config?: StyleModuleInitConfig & HillshadeModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, inputConfig);
-    }, config as StyleModuleInitConfig & HillshadeModuleConfig);
+    }, config);
 
 export const setStyle = async (style: StyleInput) =>
     page.evaluate((pageStyleInput) => {
         (globalThis as MapsSDKThis).tomtomMap.setStyle(pageStyleInput);
-    }, style as any);
+    }, style);
 
 export const setLanguage = async (language: Language) =>
     page.evaluate((inputLanguage) => {

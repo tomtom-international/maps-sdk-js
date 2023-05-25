@@ -10,6 +10,7 @@
     "sourceMap": true,
     "strict": true,
     "outDir": "./dist",
+    "rootDir": ".",
     "target": "ES6",
     "paths": {
       "@anw/maps-sdk-js/core": ["./core"]

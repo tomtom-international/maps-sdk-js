@@ -1,4 +1,4 @@
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { FilterSpecification, LngLatLike, MapGeoJSONFeature } from "maplibre-gl";
 import {
     FilterablePOICategory,
     getCategoryIcons,
@@ -204,7 +204,7 @@ describe("Map vector tile POI filtering tests", () => {
     });
 
     test("Vector tiles pois filter with manual set filter before category filter", async () => {
-        const existingFilter = [
+        const existingFilter: FilterSpecification = [
             "any",
             // IMPORTANT_TOURIST_ATTRACTION
             ["==", ["get", "icon"], 154],
@@ -261,10 +261,10 @@ describe("Map vector tile POI feature tests", () => {
         await initPOIs();
         await waitForMapIdle();
 
-        const poiCoordinates = await page.evaluate(async () => {
+        const poiCoordinates: LngLatLike = await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
             const geometry = mapsSDKThis.mapLibreMap.queryRenderedFeatures({ layers: ["POI"] })[0].geometry as Point;
-            return geometry.coordinates;
+            return geometry.coordinates as LngLatLike;
         });
 
         await page.evaluate(async () => {

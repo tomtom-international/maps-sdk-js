@@ -11,13 +11,7 @@ import {
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
-import {
-    getNumVisibleLayersBySource,
-    isLayerVisible,
-    setStyle,
-    waitForMapIdle,
-    waitForMapReady
-} from "./util/TestUtils";
+import { getNumVisibleLayersBySource, isLayerVisible, setStyle, waitForMapReady } from "./util/TestUtils";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
