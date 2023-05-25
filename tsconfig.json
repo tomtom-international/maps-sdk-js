@@ -9,8 +9,7 @@
     "moduleResolution": "Node",
     "sourceMap": true,
     "strict": true,
-    "outDir": "./dist",
-    "rootDir": ".",
+    "outDir": ".",
     "target": "ES6",
     "paths": {
       "@anw/maps-sdk-js/core": ["./core"]
