@@ -3,7 +3,7 @@ import { shortRouteRequestParams } from "./requestBuilderPerf.data";
 import { CalculateRouteParams } from "../types/calculateRouteParams";
 import { buildCalculateRouteRequest } from "../requestBuilder";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 import { FetchInput } from "../../shared/types/fetch";
 import { CalculateRoutePOSTDataAPI } from "../types/apiPostRequestTypes";
 

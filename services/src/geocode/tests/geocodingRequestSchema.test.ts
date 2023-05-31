@@ -4,7 +4,7 @@ import geoCodingReqObjects from "../../geocode/tests/requestBuilderPerf.data.jso
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";
 import { geocodingRequestSchema } from "../geocodingRequestSchema";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Geocoding schema validation", () => {
     const apiKey = "APIKEY";

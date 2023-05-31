@@ -3,7 +3,7 @@ import apiAndParsedResponses from "./responseParser.data.json";
 import { parseAutocompleteSearchResponse } from "../responseParser";
 import apiResponses from "./responseParserPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Autocomplete response parser tests", () => {
     test.each(apiAndParsedResponses)(

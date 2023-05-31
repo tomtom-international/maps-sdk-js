@@ -3,7 +3,7 @@ import { GeocodingParams } from "../types/geocodingParams";
 import geocodingReqObjectsAndURLs from "./requestBuilder.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import geocodingReqObjects from "./requestBuilderPerf.data.json";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Geocoding service URL building functional tests", () => {
     test.each(geocodingReqObjectsAndURLs)(

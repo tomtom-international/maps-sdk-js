@@ -1,7 +1,7 @@
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";
 import { routeRequestParams } from "./requestBuilderPerf.data";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 import { routeRequestValidationConfig } from "../calculateRouteTemplate";
 
 describe("Calculate route request schema validation", () => {

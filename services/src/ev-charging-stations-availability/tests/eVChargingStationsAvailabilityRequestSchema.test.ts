@@ -4,7 +4,7 @@ import requestObjects from "./requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { evChargingStationsAvailabilityRequestSchema } from "../evChargingStationsAvailabilityRequestSchema";
 import { validateRequestSchema } from "../../shared/validation";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("EV Charging Stations availability schema validation", () => {
     const apiKey = "APIKEY";

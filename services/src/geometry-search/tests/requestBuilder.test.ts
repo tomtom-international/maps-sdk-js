@@ -3,7 +3,7 @@ import geometrySearchReqObjectsAndURLs from "./requestBuilder.data.json";
 import geometrySearchReqObjects from "./requestBuilderPerf.data.json";
 import { GeometrySearchParams, SearchByGeometryPayloadAPI } from "../types";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Calculate Geometry Search request URL building tests", () => {
     test.each(geometrySearchReqObjectsAndURLs)(

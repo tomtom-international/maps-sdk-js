@@ -6,7 +6,7 @@ import { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
 import { ReverseGeocodingResponse } from "../reverseGeocoding";
 import { ReverseGeocodingResponseAPI } from "../types/apiTypes";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("ReverseGeocode response parsing tests", () => {
     test.each(apiAndParsedResponses)(

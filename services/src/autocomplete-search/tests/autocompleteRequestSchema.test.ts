@@ -4,7 +4,7 @@ import { autocompleteSearchRequestSchema } from "../autocompleteSearchRequestSch
 import { AutocompleteSearchParams } from "../types";
 import autocompleteSearchReqObjects from "./requestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/validation";
-import { MAX_EXEC_TIMES_MS } from "../../../perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Autocomplete Schema Validation", () => {
     beforeAll(() => {

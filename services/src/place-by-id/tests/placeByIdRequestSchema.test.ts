@@ -4,7 +4,7 @@ import placeByIdReqObjects from "../../place-by-id/tests/requestBuilderPerf.data
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";
 import { placeByIdRequestSchema } from "../placeByIdSchema";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Place By Id API", () => {
     const apiKey = "APIKEY";

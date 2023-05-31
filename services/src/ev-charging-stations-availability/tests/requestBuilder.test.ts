@@ -3,7 +3,7 @@ import requestObjectsAndURLs from "./requestBuilder.data.json";
 import requestObjects from "./requestBuilderPerf.data.json";
 import { EVChargingStationsAvailabilityParams } from "../types/evChargingStationsAvailabilityParams";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("EV charging stations availability URL building functional tests", () => {
     test.each(requestObjectsAndURLs)(

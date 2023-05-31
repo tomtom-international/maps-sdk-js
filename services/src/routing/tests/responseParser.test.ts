@@ -9,7 +9,7 @@ import { parseRoutingResponseError } from "../routingResponseErrorParser";
 import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/apiResponseErrorTypes";
 import { SDKServiceError } from "../../shared";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Calculate Route response parsing functional tests", () => {
     // Functional tests:

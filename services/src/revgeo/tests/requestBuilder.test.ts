@@ -3,7 +3,7 @@ import reverseGeocodeReqObjects from "./requestBuilderPerf.data.json";
 import { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
 import { buildRevGeoRequest } from "../requestBuilder";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Reverse Geocoding request URL building functional tests", () => {
     test.each(reverseGeocodeReqObjectsAndURLS)(

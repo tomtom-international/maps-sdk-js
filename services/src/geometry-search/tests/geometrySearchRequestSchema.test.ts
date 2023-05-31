@@ -3,7 +3,7 @@ import { geometrySearchRequestSchema } from "../geometrySearchRequestSchema";
 import geometrySearchReqObjects from "../../geometry-search/tests/requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("GeometrySearch Schema Validation", () => {
     const apiKey = "APIKEY";

@@ -3,7 +3,7 @@ import { fuzzySearchRequestSchema } from "../fuzzySearchRequestSchema";
 import { FuzzySearchParams } from "../types";
 import fuzzySearchReqObjects from "./requestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/validation";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("FuzzySearch Schema Validation", () => {
     const apiKey = "API_KEY";

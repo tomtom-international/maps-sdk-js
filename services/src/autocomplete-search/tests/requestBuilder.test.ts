@@ -3,7 +3,7 @@ import autocompleteSearchReqObjectsAndURLs from "./requestBuilder.data.json";
 import { AutocompleteSearchParams } from "../types";
 import autocompleteSearchReqObjects from "./requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "services/perfConfig";
+import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 
 describe("Autocomplete Search request URL building tests", () => {
     test.each(autocompleteSearchReqObjectsAndURLs)(
