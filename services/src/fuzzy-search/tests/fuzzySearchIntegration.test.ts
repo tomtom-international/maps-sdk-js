@@ -102,7 +102,7 @@ describe("Fuzzy Search service", () => {
 
     test("fuzzy search buildRequest hook modifies url", async () => {
         const query = "cafe";
-        const newQuery = "petrol";
+        const newQuery = "parking";
         const res = await search(
             { query },
             {
