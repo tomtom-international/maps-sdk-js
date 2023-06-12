@@ -3,7 +3,7 @@
 set -e
 
 # Build our custom typedoc plugin
-rimraf ./documentation/maps-sdk-theme/dist && tsc -p ./documentation/maps-sdk-theme
+rimraf ./documentation/maps-sdk-theme/dist && tsc --strict -p ./documentation/maps-sdk-theme
 
 # Generate API reference
 typedoc
