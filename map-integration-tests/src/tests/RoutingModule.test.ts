@@ -25,7 +25,6 @@ import {
     initHillshade,
     setStyle,
     waitForMapIdle,
-    waitForMapReady,
     waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
@@ -201,7 +200,7 @@ describe("Routing tests", () => {
         await initRouting();
 
         await showWaypoints(waypoints);
-        await waitForMapReady();
+        await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         const renderedWaypoints = await waitForRenderedWaypoints(4);
 
