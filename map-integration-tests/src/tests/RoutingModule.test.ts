@@ -163,6 +163,7 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
 
         await showWaypoints([[4.53074, 51.95102]]);
+        await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         await waitForRenderedWaypoints(1);
 
