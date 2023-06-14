@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.20](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.19...v0.2.20) (2023-06-14)
+
+
+### Features
+
+* **routing:** adding avoid options and sections ([73130e8](https://github.com/tomtom-international/maps-sdk-js/commit/73130e811e557ed7e5b7b4d97aeebac9a658a4c5))
+
 ### [0.2.19](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.18...v0.2.19) (2023-06-12)
 
 
