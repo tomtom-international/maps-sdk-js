@@ -18,7 +18,7 @@ describe("Using customize obj", () => {
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
                     "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
                     "&sectionType=travelMode&sectionType=traffic&sectionType=urban" +
-                    "&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=unpaved&sectionType=carpool&sectionType=lowEmissionZone"
             )
         });
     });

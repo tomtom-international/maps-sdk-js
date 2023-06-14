@@ -13,10 +13,24 @@ import { FeatureCollectionWithProperties } from "../extendedGeoJSON";
  * * unpavedRoads: avoids unpaved roads.
  * * carpools: avoids routes that require use of a carpool (HOV/ High Occupancy Vehicle) lanes.
  * * alreadyUsedRoads: avoids using the same road multiple times.
+ * * borderCrossings: avoids crossing country borders.
+ * * tunnels: avoids tunnels.
+ * * carTrains: avoids car trains.
+ * * lowEmissionZones: avoids low-emission zones.
  * @group Route
  * @category Types
  */
-export type Avoidable = "tollRoads" | "motorways" | "ferries" | "unpavedRoads" | "carpools" | "alreadyUsedRoads";
+export type Avoidable =
+    | "tollRoads"
+    | "motorways"
+    | "ferries"
+    | "unpavedRoads"
+    | "carpools"
+    | "alreadyUsedRoads"
+    | "borderCrossings"
+    | "tunnels"
+    | "carTrains"
+    | "lowEmissionZones";
 
 /**
  * Primary means of transportation to be used in a route.

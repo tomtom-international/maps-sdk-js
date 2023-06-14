@@ -21,7 +21,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             )
         }
     ],
@@ -87,7 +88,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             )
         }
     ],
@@ -116,7 +118,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             )
         }
     ],
@@ -131,7 +134,18 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [2.48819, 42.18211]
             ],
             costModel: {
-                avoid: ["carpools", "ferries", "motorways", "alreadyUsedRoads", "tollRoads", "unpavedRoads"],
+                avoid: [
+                    "carpools",
+                    "ferries",
+                    "motorways",
+                    "alreadyUsedRoads",
+                    "tollRoads",
+                    "unpavedRoads",
+                    "borderCrossings",
+                    "tunnels",
+                    "carTrains",
+                    "lowEmissionZones"
+                ],
                 considerTraffic: false,
                 routeType: "thrilling",
                 thrillingParams: {
@@ -185,6 +199,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&language=es-ES" +
                     "&avoid=carpools&avoid=ferries&avoid=motorways" +
                     "&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads" +
+                    "&avoid=borderCrossings&avoid=tunnels&avoid=carTrains&avoid=lowEmissionZones" +
                     "&computeTravelTimeFor=all" +
                     "&traffic=false" +
                     "&vehicleHeading=45" +
@@ -196,7 +211,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
                     "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
                     "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved" +
-                    "&sectionType=carpool&hilliness=low&windingness=high" +
+                    "&sectionType=carpool&sectionType=lowEmissionZone&hilliness=low&windingness=high" +
                     "&vehicleEngineType=electric" +
                     "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
                     "&auxiliaryPowerInkW=1.7" +
@@ -254,6 +269,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
                     "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone" +
                     "&accelerationEfficiency=0.33&decelerationEfficiency=0.83" +
                     "&uphillEfficiency=0.27&downhillEfficiency=0.51" +
                     "&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5" +
@@ -310,6 +326,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
                     "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone" +
                     "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
                     "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
                     "&vehicleEngineType=electric" +
@@ -423,6 +440,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
                     "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone" +
                     "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
                     "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
                     "&vehicleEngineType=electric" +
@@ -515,7 +533,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             ),
             data: {
                 supportingPoints: [
@@ -592,7 +611,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             ),
             data: {
                 supportingPoints: [
@@ -702,7 +722,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             ),
             data: {
                 supportingPoints: [
@@ -809,7 +830,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
                     "&sectionType=motorway&sectionType=pedestrian" +
                     "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool"
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             ),
             data: {
                 supportingPoints: [

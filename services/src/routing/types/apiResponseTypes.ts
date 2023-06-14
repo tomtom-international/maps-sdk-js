@@ -32,7 +32,8 @@ export type SectionTypeAPI =
     | "TUNNEL"
     | "UNPAVED"
     | "URBAN"
-    | "CARPOOL";
+    | "CARPOOL"
+    | "LOW_EMISSION_ZONE";
 
 /**
  * @ignore

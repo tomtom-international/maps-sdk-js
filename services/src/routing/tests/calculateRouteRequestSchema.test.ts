@@ -236,14 +236,15 @@ describe("Calculate route request schema validation", () => {
                             "traffic",
                             "urban",
                             "unpaved",
-                            "carpool"
+                            "carpool",
+                            "lowEmissionZone"
                         ],
                         path: ["sectionTypes", 1],
                         message:
                             "Invalid enum value. Expected 'carTrain' | 'ferry' | " +
                             "'tunnel' | 'motorway' | 'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | " +
                             "'vehicleRestricted' | 'traffic' | 'urban' | " +
-                            "'unpaved' | 'carpool', received 'motorways'"
+                            "'unpaved' | 'carpool' | 'lowEmissionZone', received 'motorways'"
                     },
                     {
                         code: "invalid_type",

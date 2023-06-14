@@ -171,6 +171,8 @@ const getSectionMapping = (
             return { sectionType: "urban", mappingFunction: toSectionProps };
         case "CARPOOL":
             return { sectionType: "carpool", mappingFunction: toSectionProps };
+        case "LOW_EMISSION_ZONE":
+            return { sectionType: "lowEmissionZone", mappingFunction: toSectionProps };
     }
 };
 

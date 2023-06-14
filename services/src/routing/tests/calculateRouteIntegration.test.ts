@@ -46,7 +46,7 @@ describe("Calculate route integration tests", () => {
                     [7.74328, 46.403849],
                     [1.32248, 51.111645]
                 ],
-                costModel: { considerTraffic: false },
+                costModel: { considerTraffic: false, avoid: ["tunnels", "lowEmissionZones"] },
                 sectionTypes: testInputSectionTypes,
                 vehicle: {
                     dimensions: { weightKG: 1500 },
@@ -291,7 +291,7 @@ describe("Calculate route integration tests", () => {
                 [2.48819, 42.18211]
             ],
             costModel: {
-                avoid: ["carpools", "ferries"],
+                avoid: ["carpools", "ferries", "carTrains"],
                 considerTraffic: false,
                 routeType: "thrilling",
                 thrillingParams: {

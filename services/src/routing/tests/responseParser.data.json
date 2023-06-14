@@ -559,6 +559,16 @@
               "startPointIndex": 0,
               "endPointIndex": 125,
               "sectionType": "URBAN"
+            },
+            {
+              "startPointIndex": 45,
+              "endPointIndex": 95,
+              "sectionType": "LOW_EMISSION_ZONE"
+            },
+            {
+              "startPointIndex": 105,
+              "endPointIndex": 110,
+              "sectionType": "LOW_EMISSION_ZONE"
             }
           ],
           "guidance": {
@@ -2741,6 +2751,16 @@
                 {
                   "startPointIndex": 0,
                   "endPointIndex": 125
+                }
+              ],
+              "lowEmissionZone": [
+                {
+                  "startPointIndex": 45,
+                  "endPointIndex": 95
+                },
+                {
+                  "startPointIndex": 105,
+                  "endPointIndex": 110
                 }
               ]
             },

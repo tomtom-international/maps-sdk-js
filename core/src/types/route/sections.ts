@@ -151,6 +151,7 @@ export type SectionsProps = {
     unpaved?: SectionProps[];
     urban?: SectionProps[];
     carpool?: SectionProps[];
+    lowEmissionZone?: SectionProps[];
 };
 
 /**
@@ -176,7 +177,8 @@ export const inputSectionTypes: SectionType[] = [
     "traffic",
     "urban",
     "unpaved",
-    "carpool"
+    "carpool",
+    "lowEmissionZone"
 ];
 
 /**
