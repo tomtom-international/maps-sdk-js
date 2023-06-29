@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.21](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.20...v0.2.21) (2023-06-29)
+
+
+### Features
+
+* **hillshade:** applying final hillshade styles ([14f176f](https://github.com/tomtom-international/maps-sdk-js/commit/14f176f66b56c2789dcb0659fbab1616c860e240))
+
 ### [0.2.20](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.19...v0.2.20) (2023-06-14)
 
 
