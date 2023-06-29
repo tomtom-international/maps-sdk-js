@@ -10,43 +10,43 @@ const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, 
         traffic_incidents: "2/incidents_light",
         traffic_flow: "2/flow_relative-light",
         poi: "2/poi_dynamic-light",
-        hillshade: "2-test/hillshade_rgb-light"
+        hillshade: "2/hillshade_light"
     },
     standardDark: {
         traffic_incidents: "2/incidents_dark",
         traffic_flow: "2/flow_relative-dark",
         poi: "2/poi_dynamic-dark",
-        hillshade: "2-test/hillshade_rgb-dark"
+        hillshade: "2/hillshade_dark"
     },
     drivingLight: {
         traffic_incidents: "2/incidents_light",
         traffic_flow: "2/flow_relative-light",
         poi: "2/poi_dynamic-light",
-        hillshade: "2-test/hillshade_rgb-light"
+        hillshade: "2/hillshade_light"
     },
     drivingDark: {
         traffic_incidents: "2/incidents_dark",
         traffic_flow: "2/flow_relative-dark",
         poi: "2/poi_dynamic-dark",
-        hillshade: "2-test/hillshade_rgb-dark"
+        hillshade: "2/hillshade_dark"
     },
     monoLight: {
         traffic_incidents: "2/incidents_light",
         traffic_flow: "2/flow_relative-light",
         poi: "2/poi_dynamic-mono-light",
-        hillshade: "2-test/hillshade_rgb-mono-light"
+        hillshade: "2/hillshade_mono-light"
     },
     monoDark: {
         traffic_incidents: "2/incidents_dark",
         traffic_flow: "2/flow_relative-dark",
         poi: "2/poi_dynamic-mono-dark",
-        hillshade: "2-test/hillshade_rgb-mono-dark"
+        hillshade: "2/hillshade_mono-dark"
     },
     satellite: {
         traffic_incidents: "2/incidents_light",
         traffic_flow: "2/flow_relative-light",
         poi: "2/poi_dynamic-satellite",
-        hillshade: "2-test/hillshade_rgb-satellite"
+        hillshade: "2/hillshade_satellite"
     }
 };
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {

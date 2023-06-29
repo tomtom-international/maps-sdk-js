@@ -139,7 +139,7 @@
         "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
       }
     },
-    "https://api.tomtom.com/style/1/style/24.2.*/?key=TEST_API_KEY&map=2/basic_street-dark&traffic_incidents=2/incidents_dark&traffic_flow=2/flow_relative-dark&poi=2/poi_dynamic-dark&hillshade=2-test/hillshade_rgb-dark"
+    "https://api.tomtom.com/style/1/style/24.2.*/?key=TEST_API_KEY&map=2/basic_street-dark&traffic_incidents=2/incidents_dark&traffic_flow=2/flow_relative-dark&poi=2/poi_dynamic-dark&hillshade=2/hillshade_dark"
   ],
   [
     "Published style with module inclusion light",
@@ -152,6 +152,6 @@
         "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
       }
     },
-    "https://api.tomtom.com/style/1/style/24.2.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light&poi=2/poi_dynamic-light&hillshade=2-test/hillshade_rgb-light"
+    "https://api.tomtom.com/style/1/style/24.2.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light&poi=2/poi_dynamic-light&hillshade=2/hillshade_light"
   ]
 ]

@@ -1,6 +1,13 @@
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { getNumVisibleLayersBySource, initHillshade, isLayerVisible, waitForMapReady } from "./util/TestUtils";
+import {
+    getNumVisibleLayersBySource,
+    initHillshade,
+    isLayerVisible,
+    setStyle,
+    waitForMapIdle,
+    waitForMapReady
+} from "./util/TestUtils";
 import { HILLSHADE_SOURCE_ID, POI_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from "map";
 
 describe("Map vector tiles hillshade module tests", () => {
@@ -73,6 +80,11 @@ describe("Map vector tiles hillshade module tests", () => {
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
+        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
+
+        // changing style at runtime, verifying hillshade is still there:
+        await setStyle("monoLight");
+        await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
