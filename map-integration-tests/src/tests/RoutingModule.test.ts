@@ -28,6 +28,7 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
+import { LineLayerSpecification } from "maplibre-gl";
 
 const initRouting = async () =>
     page.evaluate(async () => {
@@ -246,8 +247,8 @@ describe("Routing tests", () => {
         ]);
         await showRoutes(parsedTestRoutes);
         await waitForMapIdle();
-        let mainLineLayer: any | undefined = await getLayerById(ROUTE_LINE_LAYER_ID);
-        expect(mainLineLayer?.paint["line-color"]).toStrictEqual("#3f9cd9");
+        let mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
+        expect((mainLineLayer as LineLayerSpecification)?.paint?.["line-color"]).toStrictEqual("#3f9cd9");
 
         const updatedLayers = DEFAULT_ROUTE_LAYERS_CONFIGURATION.mainLine?.layers.map(({ id, layerSpec, beforeID }) => {
             if (id === ROUTE_LINE_LAYER_ID) {
@@ -264,14 +265,14 @@ describe("Routing tests", () => {
         await applyConfig(newConfig);
         await waitForMapIdle();
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
-        expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
+        expect((mainLineLayer as LineLayerSpecification)?.paint?.["line-color"]).toBe("#ff0000");
 
         // Changing the style with extra poi included style part, asserting that the config stays the same:
         await setStyle("monoLight");
         await waitForMapIdle();
         await waitForTimeout(2000);
         mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
-        expect(mainLineLayer?.paint["line-color"]).toBe("#ff0000");
+        expect((mainLineLayer as LineLayerSpecification)?.paint?.["line-color"]).toBe("#ff0000");
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
