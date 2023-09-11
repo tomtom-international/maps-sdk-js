@@ -162,7 +162,7 @@ describe("Geocoding integration tests", () => {
                     ({
                         result: response.results[0],
                         summary: response.summary
-                    } as never)
+                    }) as never
             }
         );
         expect(result).toMatchObject(customParserExample);

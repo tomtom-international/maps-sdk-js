@@ -117,11 +117,12 @@ describe("Map vector tile POI filtering tests", () => {
         expect(areSomeIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
         // exclude TRANSPORTATION_GROUP, IMPORTANT_TOURIST_ATTRACTION, expect to not find them in rendered features
-        await page.evaluate(() =>
-            (globalThis as MapsSDKThis).pois?.filterCategories({
-                show: "all_except",
-                values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
-            })
+        await page.evaluate(
+            () =>
+                (globalThis as MapsSDKThis).pois?.filterCategories({
+                    show: "all_except",
+                    values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
+                })
         );
         await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
@@ -130,11 +131,12 @@ describe("Map vector tile POI filtering tests", () => {
         );
 
         // change filter config to show "only" TRANSPORTATION_GROUP and expect all features to be from TRANSPORTATION_GROUP
-        await page.evaluate(() =>
-            (globalThis as MapsSDKThis).pois?.filterCategories({
-                show: "only",
-                values: ["TRANSPORTATION_GROUP"]
-            })
+        await page.evaluate(
+            () =>
+                (globalThis as MapsSDKThis).pois?.filterCategories({
+                    show: "only",
+                    values: ["TRANSPORTATION_GROUP"]
+                })
         );
         await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
@@ -164,22 +166,24 @@ describe("Map vector tile POI filtering tests", () => {
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
         // set filter to include only and expect all features to be from the included category values
-        await page.evaluate(() =>
-            (globalThis as MapsSDKThis).pois?.filterCategories({
-                show: "only",
-                values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
-            })
+        await page.evaluate(
+            () =>
+                (globalThis as MapsSDKThis).pois?.filterCategories({
+                    show: "only",
+                    values: ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"]
+                })
         );
         await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
         expect(areAllIconsIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(true);
 
         // change filter settings to exclude TRANSPORTATION_GROUP and expect to not find any features from TRANSPORTATION_GROUP
-        await page.evaluate(() =>
-            (globalThis as MapsSDKThis).pois?.filterCategories({
-                show: "all_except",
-                values: ["TRANSPORTATION_GROUP"]
-            })
+        await page.evaluate(
+            () =>
+                (globalThis as MapsSDKThis).pois?.filterCategories({
+                    show: "all_except",
+                    values: ["TRANSPORTATION_GROUP"]
+                })
         );
         await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
@@ -233,11 +237,12 @@ describe("Map vector tile POI filtering tests", () => {
         let renderedPOIs = await waitForRenderedPOIsChange(0);
         expect(areAllIconsIncluded(renderedPOIs, ["IMPORTANT_TOURIST_ATTRACTION", "RAILROAD_STATION"])).toBe(true);
 
-        await page.evaluate(() =>
-            (globalThis as MapsSDKThis).pois?.filterCategories({
-                show: "all_except",
-                values: ["IMPORTANT_TOURIST_ATTRACTION"]
-            })
+        await page.evaluate(
+            () =>
+                (globalThis as MapsSDKThis).pois?.filterCategories({
+                    show: "all_except",
+                    values: ["IMPORTANT_TOURIST_ATTRACTION"]
+                })
         );
         await waitForMapIdle();
         renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);

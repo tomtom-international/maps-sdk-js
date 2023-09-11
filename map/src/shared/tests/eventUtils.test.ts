@@ -13,7 +13,7 @@ describe("updateEventState related tests", () => {
                     eventState
                 }
             })
-        } as unknown as Feature);
+        }) as unknown as Feature;
 
     test("putEventState", () => {
         expect(putEventState("hover", "2", [])).toBeUndefined();

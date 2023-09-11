@@ -317,9 +317,7 @@ describe("Events custom configuration", () => {
         await showPlaces(places);
         await waitForMapIdle();
         await waitUntilRenderedFeatures(
-            (
-                await getPlacesSourceAndLayerIDs()
-            ).layerIDs,
+            (await getPlacesSourceAndLayerIDs()).layerIDs,
             placesJSON.features.length,
             10000
         );

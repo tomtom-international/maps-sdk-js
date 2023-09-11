@@ -28,7 +28,7 @@ const getTomTomMapMock = async (flag: boolean) =>
         _eventsProxy: {
             add: jest.fn()
         }
-    } as unknown as TomTomMap);
+    }) as unknown as TomTomMap;
 
 describe("Map utils - waitUntilMapIsReady", () => {
     test("waitUntilMapIsReady resolve promise when mapReady or maplibre.isStyleLoaded are true", async () => {
@@ -90,7 +90,7 @@ describe("Map utils - changeLayerProps", () => {
                 setLayerZoomRange: jest.fn(),
                 getMaxZoom: jest.fn().mockReturnValueOnce(20),
                 getMinZoom: jest.fn().mockReturnValueOnce(3)
-            } as unknown as Map);
+            }) as unknown as Map;
 
         let mapLibreMock = newMapMock();
         changeLayerProps({ id: "layerX", layout: { prop0: "value0" } }, { id: "layerX" }, mapLibreMock);
@@ -173,7 +173,7 @@ describe("Map utils - updateLayersAndSource", () => {
                 setLayoutProperty: jest.fn(),
                 setPaintProperty: jest.fn(),
                 setFilter: jest.fn()
-            } as unknown as Map);
+            }) as unknown as Map;
 
         // empty arrays
         updateLayersAndSource([], [], {} as AbstractSourceWithLayers, newMapMock());

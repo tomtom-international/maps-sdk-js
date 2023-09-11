@@ -10,11 +10,12 @@ import { GeometryDataResponseAPI } from "./types/apiTypes";
  */
 export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI): Geometries => {
     const features = apiResponse.additionalData
-        .flatMap((data) =>
-            (data.geometryData as Geometries)?.features.map((feature) => ({
-                ...feature,
-                bbox: bboxFromGeoJSON(feature.geometry)
-            }))
+        .flatMap(
+            (data) =>
+                (data.geometryData as Geometries)?.features.map((feature) => ({
+                    ...feature,
+                    bbox: bboxFromGeoJSON(feature.geometry)
+                }))
         )
         .filter((feature) => feature);
     return {

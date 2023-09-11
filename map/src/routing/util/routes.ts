@@ -23,7 +23,7 @@ export const buildDisplayRoutes = (routes: Routes, selectedIndex = 0): Routes<Di
  */
 const mapLayerSpecs = (layerSpecs: LayersSpecWithOrder = { layers: [] }): ToBeAddedLayerSpecWithoutSource[] =>
     layerSpecs.layers.map(
-        ({ layerSpec, id, beforeID }) => ({ ...layerSpec, id, beforeID } as ToBeAddedLayerSpecWithoutSource)
+        ({ layerSpec, id, beforeID }) => ({ ...layerSpec, id, beforeID }) as ToBeAddedLayerSpecWithoutSource
     );
 
 /**
