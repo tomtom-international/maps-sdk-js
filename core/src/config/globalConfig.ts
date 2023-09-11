@@ -1,4 +1,4 @@
-import { Language } from "../types/mapLanguageConfig";
+import { Language } from "../types";
 
 /**
  * Global configuration containing basic parameters.
