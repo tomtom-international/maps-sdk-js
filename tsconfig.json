@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "incremental": true,
     "declaration": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
