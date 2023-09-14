@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.22](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.21...v0.2.22) (2023-09-14)
+
+
+### Bug Fixes
+
+* **misc:** fixing tests and adding EV accessibility enum ([bd30175](https://github.com/tomtom-international/maps-sdk-js/commit/bd301755dfdbf9c469e0ac1a062fb3905b3de7e7))
+* **misc:** removing incremental tsconfig setting to try to fix rollup bundling ([123dcba](https://github.com/tomtom-international/maps-sdk-js/commit/123dcbaa369caebb5b4cfb0718c37885a8642350))
+
 ### [0.2.21](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.20...v0.2.21) (2023-06-29)
 
 
