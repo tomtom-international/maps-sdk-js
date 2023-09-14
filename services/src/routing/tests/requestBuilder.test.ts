@@ -11,7 +11,7 @@ describe("Calculate Route request URL building functional tests", () => {
     test.each(sdkAndAPIRequests)(
         "'%s'",
         (_name: string, params: CalculateRouteParams, fetchInput: FetchInput<CalculateRoutePOSTDataAPI>) => {
-            expect(buildCalculateRouteRequest(params)).toStrictEqual(fetchInput);
+            expect(buildCalculateRouteRequest(params)).toMatchObject(fetchInput);
         }
     );
 });

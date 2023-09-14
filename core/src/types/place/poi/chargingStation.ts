@@ -11,7 +11,8 @@ export const accessibility = [
     "ResidentsOnly",
     "EmployeesOnly",
     "AuthorizedPersonnelOnly",
-    "MembersOnly"
+    "MembersOnly",
+    "Public"
 ] as const;
 
 /**

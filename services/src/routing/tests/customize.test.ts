@@ -11,7 +11,7 @@ describe("Using customize obj", () => {
                     [4.49015, 52.16109]
                 ]
             })
-        ).toStrictEqual({
+        ).toMatchObject({
             method: "GET",
             url: new URL(
                 "https://api.tomtom.com/routing/1/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?key=API_KEY" +

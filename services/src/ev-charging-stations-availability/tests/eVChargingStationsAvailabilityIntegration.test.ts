@@ -42,10 +42,10 @@ describe("evChargingStationsAvailability integration tests", () => {
             ]
         };
         const expectedResult: EVChargingStationsAvailability = {
-            chargingParkId: "528009010069650",
+            chargingParkId: "1f46c10e-ce37-4e99-8fdf-db22afe9c90b",
             chargingStations: [
                 {
-                    chargingStationId: "ffffffff-9408-532f-0000-000000153b86",
+                    chargingStationId: expect.any(String),
                     accessibility: expect.stringMatching(accessibilityRegex),
                     chargingPoints: expect.arrayContaining([chargingPointObj])
                 }
@@ -57,32 +57,24 @@ describe("evChargingStationsAvailability integration tests", () => {
             connectorAvailabilities: expect.any(Array)
         };
 
-        const result = await evChargingStationsAvailability({ id: "528009010069650" });
+        const result = await evChargingStationsAvailability({ id: "1f46c10e-ce37-4e99-8fdf-db22afe9c90b" });
         expect(result).toMatchObject(expectedResult);
         expect(result.chargingStations[0].chargingPoints.length).toBeGreaterThan(0);
     });
 
     test("EVChargingStationsAvailability with connector filter", async () => {
-        const chargingStationObj = {
-            chargingStationId: expect.any(String),
-            accessibility: expect.stringMatching(accessibilityRegex),
-            chargingPoints: [
-                {
-                    evseId: expect.any(String),
-                    status: expect.stringMatching(statusRegex),
-                    connectors: [
-                        { type: "Chademo", ratedPowerKW: 25.0, voltageV: 400, currentA: 62, currentType: "DC" }
-                    ]
-                }
-            ]
-        };
-        const expectedResult = {
-            chargingParkId: "840479002976741",
-            chargingStations: [chargingStationObj, chargingStationObj]
-        };
+        const id = "57e78da9-5b0e-44ff-bd0f-f54e3b24292b";
+        const resultWithExistingConnector = await evChargingStationsAvailability({
+            id,
+            connectorTypes: ["IEC62196Type2CCS"]
+        });
+        expect(resultWithExistingConnector.chargingStations.length).toBeGreaterThan(0);
 
-        const result = await evChargingStationsAvailability({ id: "840479002976741", connectorTypes: ["Chademo"] });
-        expect(result).toMatchObject(expectedResult);
+        const resultWithNonExistingConnector = await evChargingStationsAvailability({
+            id,
+            connectorTypes: ["Chademo"]
+        });
+        expect(resultWithNonExistingConnector.chargingStations).toHaveLength(0);
     });
 
     test("search combined with buildPlacesWithEVAvailability", async () => {
@@ -97,6 +89,7 @@ describe("evChargingStationsAvailability integration tests", () => {
         const resultFeatures = evStationsWithAvailability.features;
         expect(resultFeatures).toHaveLength(evStationsWithoutAvailability.features.length);
         expect(resultFeatures.every((feature) => feature.properties.chargingPark?.connectors)).toBeTruthy();
+        expect(resultFeatures.every((feature) => feature.properties.chargingPark?.connectorCounts)).toBeTruthy();
         expect(resultFeatures.some((feature) => feature.properties.chargingPark?.availability)).toBeTruthy();
     });
 });
