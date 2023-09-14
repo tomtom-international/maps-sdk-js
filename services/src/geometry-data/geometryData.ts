@@ -10,20 +10,17 @@ import { callService } from "../shared/serviceTemplate";
  * @returns FeatureCollection<Polygon | MultiPolygon>,
  */
 const mergePlacesWithGeometries = (places: Places, geometries: Geometries): Geometries<CommonPlaceProps> => {
-    const placesIdMap = places.features.reduce(
-        (acc, place) => {
-            const geometryId = place.properties.dataSources?.geometry?.id;
+    const placesIdMap = places.features.reduce((acc, place) => {
+        const geometryId = place.properties.dataSources?.geometry?.id;
 
-            if (geometryId) {
-                acc[geometryId] = {
-                    ...place.properties,
-                    placeCoordinates: place.geometry.coordinates
-                };
-            }
-            return acc;
-        },
-        {} as Record<string, unknown>
-    );
+        if (geometryId) {
+            acc[geometryId] = {
+                ...place.properties,
+                placeCoordinates: place.geometry.coordinates
+            };
+        }
+        return acc;
+    }, {} as Record<string, unknown>);
 
     const features = geometries.features.map((feature) => {
         if (feature.id && placesIdMap[feature.id]) {

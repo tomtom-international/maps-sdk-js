@@ -3,10 +3,7 @@ import { EventsProxy } from "./EventsProxy";
 import { EventType, SourceWithLayers, UserEventHandler } from "./types";
 
 export class EventsModule<T = MapGeoJSONFeature> {
-    constructor(
-        private readonly eventProxy: EventsProxy,
-        private readonly sourceWithLayers: SourceWithLayers
-    ) {}
+    constructor(private readonly eventProxy: EventsProxy, private readonly sourceWithLayers: SourceWithLayers) {}
 
     /**
      * Add event handler of an event type

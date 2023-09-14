@@ -83,8 +83,8 @@ const parseSummary = (apiSummary: SummaryAPI, params: CalculateRouteParams): Rou
 
 const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
     type: "LineString",
-    coordinates: apiRouteLegs.flatMap(
-        (apiLeg) => apiLeg.points?.map((apiPoint) => [apiPoint.longitude, apiPoint.latitude])
+    coordinates: apiRouteLegs.flatMap((apiLeg) =>
+        apiLeg.points?.map((apiPoint) => [apiPoint.longitude, apiPoint.latitude])
     )
 });
 

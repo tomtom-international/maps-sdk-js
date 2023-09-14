@@ -13,11 +13,7 @@ import { ZodIssue } from "zod";
  *
  */
 export class SDKError extends Error {
-    constructor(
-        message: string,
-        private service: string,
-        private errors?: ZodIssue[]
-    ) {
+    constructor(message: string, private service: string, private errors?: ZodIssue[]) {
         super(message);
 
         if (Error.captureStackTrace) {

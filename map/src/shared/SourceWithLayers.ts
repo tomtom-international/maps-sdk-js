@@ -106,7 +106,7 @@ export class AddedSourceWithLayers<
             map,
             new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceID, sourceSpec),
             // We ensure the source ID is assigned to the layers:
-            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID }) as ToBeAddedLayerSpec)
+            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID } as ToBeAddedLayerSpec))
         );
     }
 
