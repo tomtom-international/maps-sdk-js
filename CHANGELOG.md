@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.23](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.22...v0.2.23) (2023-10-05)
+
+
+### Features
+
+* **services:** adding optional callbacks for api requests and responses within each service ([8828c30](https://github.com/tomtom-international/maps-sdk-js/commit/8828c307a4b64cb855f984da6c86e8c15620a3b9))
+
 ### [0.2.22](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.21...v0.2.22) (2023-09-14)
 
 
