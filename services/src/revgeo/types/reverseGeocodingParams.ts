@@ -1,6 +1,7 @@
 import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
 
 import { CommonServiceParams } from "../../shared";
+import { ReverseGeocodingResponseAPI } from "./apiTypes";
 
 /**
  * @enum
@@ -138,6 +139,6 @@ export type ReverseGeocodingOptionalParams = {
     view?: View;
 };
 
-export type ReverseGeocodingParams = CommonServiceParams &
+export type ReverseGeocodingParams = CommonServiceParams<URL, ReverseGeocodingResponseAPI> &
     ReverseGeocodingMandatoryParams &
     ReverseGeocodingOptionalParams;

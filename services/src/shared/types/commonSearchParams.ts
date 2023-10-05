@@ -8,7 +8,7 @@ import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "./serv
  * Common parameters related to search services.
  * @see https://developer.tomtom.com/search-api/documentation/search-service/search-service
  */
-export type CommonSearchParams = CommonPlacesParams & {
+export type CommonSearchParams<API_REQUEST, API_RESPONSE> = CommonPlacesParams<API_REQUEST, API_RESPONSE> & {
     /**
      * Parameter allows for fine-tuning Search by specifying which indexes to utilize for the search
      */

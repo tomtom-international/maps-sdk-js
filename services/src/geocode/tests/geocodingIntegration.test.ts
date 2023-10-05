@@ -167,4 +167,13 @@ describe("Geocoding integration tests", () => {
         );
         expect(result).toMatchObject(customParserExample);
     });
+
+    test("Geocoding with API response callback", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        const result = await geocode({ query: "Amsterdam", onAPIRequest, onAPIResponse });
+        expect(result).toBeDefined();
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+    });
 });

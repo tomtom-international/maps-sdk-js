@@ -1,8 +1,9 @@
 import { HasLngLat } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
+import { AutocompleteSearchResponseAPI } from "./autocompleteSearchResponseAPI";
 export type AutocompleteSearchSegmentType = "brand" | "category" | "plaintext";
 
-export type AutocompleteSearchParams = CommonServiceParams & {
+export type AutocompleteSearchParams = CommonServiceParams<URL, AutocompleteSearchResponseAPI> & {
     /**
      * Query string. Must be properly URL encoded (Mandatory).
      */

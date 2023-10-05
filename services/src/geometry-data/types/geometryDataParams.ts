@@ -1,5 +1,6 @@
 import { Place, Places } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
+import { GeometryDataResponseAPI } from "./apiTypes";
 
 /**
  * Geometry IDs or places containing them.
@@ -10,7 +11,7 @@ export type GeometriesInput = string[];
  * Common services params with zoom configuration
  * This configuration is extended by GeometryDataParams and GeometryPlaceParams
  */
-export type CommonServiceParamsWithZoom = CommonServiceParams & {
+export type CommonServiceParamsWithZoom = CommonServiceParams<URL, GeometryDataResponseAPI> & {
     /**
      * Optional zoom parameter.
      * * It can be an integer from 0 until 22.

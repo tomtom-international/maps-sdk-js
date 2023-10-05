@@ -1,5 +1,5 @@
 import { TomTomConfig, Language } from "@anw/maps-sdk-js/core";
-import { AutocompleteSearchResponse, AutocompleteSearchSegmentType } from "../types";
+import { AutocompleteSearchResponse, AutocompleteSearchResponseAPI, AutocompleteSearchSegmentType } from "../types";
 import autocompleteSearch from "../autocompleteSearch";
 
 const expectedResults = expect.arrayContaining([
@@ -88,5 +88,16 @@ describe("Autocomplete service", () => {
         });
 
         expect(response).toEqual(responseWithStrictBrandType);
+    });
+
+    test("Autocomplete with API request and response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const query = "cafe";
+        const language = "en-GB";
+        const result = await autocompleteSearch({ query, language, onAPIRequest, onAPIResponse });
+        expect(result).toEqual(basicResponse);
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 });

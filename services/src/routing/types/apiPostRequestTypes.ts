@@ -1,5 +1,6 @@
 import { LatLngPointAPI } from "./apiResponseTypes";
 import { ChargingModel } from "./vehicleEngineParams";
+import { FetchInput } from "../../shared/types/fetch";
 
 /**
  * @ignore
@@ -20,3 +21,8 @@ export type CalculateRoutePOSTDataAPI = {
     // only used for LDEVR:
     chargingParameters?: ChargingParametersAPI;
 };
+
+/**
+ * @ignore
+ */
+export type CalculateRouteRequestAPI = FetchInput<CalculateRoutePOSTDataAPI>;

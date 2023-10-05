@@ -5,7 +5,7 @@ import { IndexTypesAbbreviation } from "./apiPlacesResponseTypes";
 /**
  * Common parameters to services related to places services (search, geocoding, reverse geocoding).
  */
-export type CommonPlacesParams = CommonServiceParams & {
+export type CommonPlacesParams<API_REQUEST, API_RESPONSE> = CommonServiceParams<API_REQUEST, API_RESPONSE> & {
     /**
      * Query string. Must be properly URL encoded (mandatory).
      */

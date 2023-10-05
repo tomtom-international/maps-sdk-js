@@ -92,4 +92,17 @@ describe("evChargingStationsAvailability integration tests", () => {
         expect(resultFeatures.every((feature) => feature.properties.chargingPark?.connectorCounts)).toBeTruthy();
         expect(resultFeatures.some((feature) => feature.properties.chargingPark?.availability)).toBeTruthy();
     });
+
+    test("EVChargingStationsAvailability with API request and response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: EVChargingStationsAvailability) => void;
+        const result = await evChargingStationsAvailability({
+            id: "57e78da9-5b0e-44ff-bd0f-f54e3b24292b",
+            onAPIRequest,
+            onAPIResponse
+        });
+        expect(result.chargingStations.length).toBeGreaterThan(0);
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+    });
 });

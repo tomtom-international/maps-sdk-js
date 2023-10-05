@@ -1,5 +1,5 @@
 import { PostObject } from "../shared/fetch";
-import { GeometryAPI, GeometrySearchParams, SearchByGeometryPayloadAPI, SearchGeometryInput } from "./types";
+import { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from "./types";
 import { positionToCSVLatLon } from "../shared/geometry";
 import { sampleWithinMaxLength } from "../shared/arrays";
 import { appendCommonSearchParams } from "../shared/commonSearchRequestBuilder";
@@ -69,7 +69,7 @@ const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
  * Default function for building a geometry search request from {@link GeometrySearchParams}
  * @param params The geometry search parameters, with global configuration already merged into them.
  */
-export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostObject<SearchByGeometryPayloadAPI> => {
+export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostObject<GeometrySearchPayloadAPI> => {
     const url = new URL(`${buildURLBasePath(params)}`);
     appendCommonSearchParams(url, params);
 

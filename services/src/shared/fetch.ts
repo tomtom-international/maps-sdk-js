@@ -7,10 +7,7 @@ import { FetchInput } from "./types/fetch";
  * @ignore
  * @param url The URL to fetch.
  */
-export const get = async <T>(url: URL): Promise<T> => {
-    const response = await axios.get(url.toString());
-    return response.data;
-};
+export const get = async <T>(url: URL): Promise<T> => (await axios.get(url.toString())).data;
 
 /**
  * POST object with URL and optional payload.
@@ -24,10 +21,8 @@ export type PostObject<D> = { url: URL; data?: D };
  * @ignore
  * @param input The POST object with URL and optional payload.
  */
-export const post = async <T, D>(input: PostObject<D>): Promise<T> => {
-    const response = await axios.post(input.url.toString(), input.data);
-    return response.data;
-};
+export const post = async <T, D>(input: PostObject<D>): Promise<T> =>
+    (await axios.post(input.url.toString(), input.data)).data;
 
 /**
  * Fetches the given HTTP JSON resource with the given HTTP operation and URL/Payload as applicable.

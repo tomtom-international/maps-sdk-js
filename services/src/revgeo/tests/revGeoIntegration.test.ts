@@ -2,6 +2,7 @@ import reverseGeocode from "../reverseGeocoding";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { SDKServiceError } from "../../shared";
 import { customizeService } from "../../../index";
+import { ReverseGeocodingResponseAPI } from "../types/apiTypes";
 
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {
@@ -143,5 +144,14 @@ describe("Reverse Geocoding integration tests", () => {
             }
         );
         expect(result).toStrictEqual({ ...result, newField: "test" });
+    });
+
+    test("Reverse geocoding with API request and response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
+        const result = await reverseGeocode({ position: [5.72884, 52.33499], onAPIRequest, onAPIResponse });
+        expect(result).toBeDefined();
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 });

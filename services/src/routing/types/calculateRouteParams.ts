@@ -1,6 +1,8 @@
 import { Avoidable, GeoInput, inputSectionTypes, TravelMode } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 import { VehicleParameters } from "./vehicleParams";
+import { CalculateRouteRequestAPI } from "./apiPostRequestTypes";
+import { CalculateRouteResponseAPI } from "./apiResponseTypes";
 
 /**
  * Criteria that specifies what paths to prefer during routing.
@@ -111,7 +113,7 @@ export const instructionsTypes = ["coded", "text", "tagged"] as const;
  */
 export type InstructionsTypes = (typeof instructionsTypes)[number];
 
-export type CalculateRouteParams = CommonServiceParams & {
+export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> & {
     /**
      * These are the specified locations (waypoints) and/or path points (supporting points) for route calculation.
      * They are to be supplied in the order the route should go through.

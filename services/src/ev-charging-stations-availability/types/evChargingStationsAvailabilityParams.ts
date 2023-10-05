@@ -1,7 +1,7 @@
-import { ConnectorType } from "@anw/maps-sdk-js/core";
+import { ConnectorType, EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../../shared";
 
-export type EVChargingStationsAvailabilityParams = CommonServiceParams & {
+export type EVChargingStationsAvailabilityParams = CommonServiceParams<URL, EVChargingStationsAvailability> & {
     /**
      * The chargingAvailability ID, previously retrieved from a Search request.
      */
@@ -9,7 +9,7 @@ export type EVChargingStationsAvailabilityParams = CommonServiceParams & {
 
     /**
      * The list of connector types which could be used to restrict the result to the availability for the specific connector types. (the same as in search request)
-     * When multiple connector types are provided, only connectors that support (at least) one of the connector types from the provided list will be returned.
+     * * When multiple connector types are provided, only connectors that support (at least) one of the connector types from the provided list will be returned.
      */
     connectorTypes?: ConnectorType[];
 

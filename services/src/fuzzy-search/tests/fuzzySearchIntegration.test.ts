@@ -1,4 +1,4 @@
-import { Fuel, TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { Fuel, Place, SearchPlaceProps, TomTomConfig } from "@anw/maps-sdk-js/core";
 
 import { search } from "../../search";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
@@ -152,5 +152,14 @@ describe("Fuzzy Search service", () => {
                 bbox: [0, 0, 0, 0]
             })
         );
+    });
+
+    test("Fuzzy search with API request and response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
+        const result = await search({ query: "restaurant", onAPIRequest, onAPIResponse });
+        expect(result).toBeDefined();
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 });

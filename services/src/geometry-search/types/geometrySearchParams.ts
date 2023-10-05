@@ -1,8 +1,10 @@
 import { Geometries } from "@anw/maps-sdk-js/core";
 import { MultiPolygon, Polygon, Position } from "geojson";
 import { CommonSearchParams } from "../../shared";
+import { GeometrySearchResponseAPI } from "./geometrySearchResponseAPI";
+import { GeometrySearchRequestAPI } from "./geometrySearchRequestAPI";
 
-export type GeometrySearchParams = CommonSearchParams & {
+export type GeometrySearchParams = CommonSearchParams<GeometrySearchRequestAPI, GeometrySearchResponseAPI> & {
     /**
      * List of geometries to search.
      * * (Also referred to as "geometryList")

@@ -1,6 +1,6 @@
 import { CommonPlaceProps, Geometries, Places } from "@anw/maps-sdk-js/core";
 import { GeometryDataParams, GeometryParams, GeometryPlaceParams } from "./types/geometryDataParams";
-import { geometryDataTemplate } from "./geometryDataTemplate";
+import { GeometryDataTemplate, geometryDataTemplate } from "./geometryDataTemplate";
 import { callService } from "../shared/serviceTemplate";
 
 /**
@@ -46,13 +46,13 @@ const mergePlacesWithGeometries = (places: Places, geometries: Geometries): Geom
  */
 export async function geometryData(
     params: GeometryDataParams,
-    customTemplate?: Partial<GeometryDataParams>
+    customTemplate?: Partial<GeometryDataTemplate>
 ): Promise<Geometries>;
 export async function geometryData(
     params: GeometryPlaceParams,
-    customTemplate?: Partial<GeometryDataParams>
+    customTemplate?: Partial<GeometryDataTemplate>
 ): Promise<Geometries<CommonPlaceProps>>;
-export async function geometryData(params: GeometryParams, customTemplate?: Partial<GeometryDataParams>) {
+export async function geometryData(params: GeometryParams, customTemplate?: Partial<GeometryDataTemplate>) {
     const geometryResult = await callService(params, { ...geometryDataTemplate, ...customTemplate }, "GeometryData");
 
     // If params.geometries is a FeatureCollection(Place), the properties will be merge with geometry results.

@@ -1,12 +1,12 @@
 import { parseGeometrySearchResponse } from "./responseParser";
 import { buildGeometrySearchRequest } from "./requestBuilder";
-import { post, PostObject } from "../shared/fetch";
+import { post } from "../shared/fetch";
 import { ServiceTemplate } from "../shared";
 import {
     GeometrySearchParams,
     GeometrySearchResponse,
     GeometrySearchResponseAPI,
-    SearchByGeometryPayloadAPI
+    GeometrySearchRequestAPI
 } from "./types";
 import { geometrySearchRequestSchema } from "./geometrySearchRequestSchema";
 
@@ -15,7 +15,7 @@ import { geometrySearchRequestSchema } from "./geometrySearchRequestSchema";
  */
 export type GeometrySearchTemplate = ServiceTemplate<
     GeometrySearchParams,
-    PostObject<SearchByGeometryPayloadAPI>,
+    GeometrySearchRequestAPI,
     GeometrySearchResponseAPI,
     GeometrySearchResponse
 >;

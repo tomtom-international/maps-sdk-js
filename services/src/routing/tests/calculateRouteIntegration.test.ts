@@ -9,6 +9,8 @@ import {
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { calculateRoute } from "../calculateRoute";
 import { CalculateRouteParams } from "../types/calculateRouteParams";
+import { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
+import { CalculateRouteRequestAPI } from "../types/apiPostRequestTypes";
 
 const assertSummaryBasics = (summary: SummaryBase): void => {
     expect(summary).toBeDefined();
@@ -385,5 +387,22 @@ describe("Calculate route integration tests", () => {
         expect(routeWithEmbeddedRouteSections.urban?.length).toBeGreaterThan(
             reconstructedRouteSections.urban?.length || 0
         );
+    });
+
+    test("Calculate route with API request and response callbacks", async () => {
+        const geoInputs = [
+            [7.675106, 46.490793],
+            [7.74328, 46.403849]
+        ];
+        const onAPIRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
+        const onAPIResponse = jest.fn() as (
+            request: CalculateRouteRequestAPI,
+            response: CalculateRouteResponseAPI
+        ) => void;
+        const result = await calculateRoute({ geoInputs, onAPIRequest, onAPIResponse });
+        expect(result).toBeDefined();
+        const expectedAPIRequest = { method: "GET", url: expect.any(URL) };
+        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
+        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.anything());
     });
 });

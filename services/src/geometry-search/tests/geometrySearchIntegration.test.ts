@@ -2,7 +2,13 @@ import { Fuel, Geometries, TomTomConfig, Place, SearchPlaceProps } from "@anw/ma
 import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../responseParser";
 import { buildGeometrySearchRequest } from "../requestBuilder";
-import { GeometrySearchParams, GeometrySearchResponse, GeometrySearchResponseAPI, SearchGeometryInput } from "../types";
+import {
+    GeometrySearchParams,
+    GeometrySearchRequestAPI,
+    GeometrySearchResponse,
+    GeometrySearchResponseAPI,
+    SearchGeometryInput
+} from "../types";
 import { IndexTypesAbbreviation } from "../../shared";
 import { baseSearchPOITestProps } from "../../shared/tests/integrationTestUtils";
 import realGeometryDataInput from "./realGeometryDataInput.json";
@@ -185,5 +191,18 @@ describe("Geometry Search service", () => {
         const query = "university";
         const res = await search({ query, geometries: [hugeMultiPolygonDataInput as unknown as Geometries] });
         expect(res).toEqual(expectWorkingResult());
+    });
+
+    test("geometrySearch with API request and response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
+        const onAPIResponse = jest.fn() as (
+            request: GeometrySearchRequestAPI,
+            response: GeometrySearchResponseAPI
+        ) => void;
+        const result = await search({ query: "cafe", geometries, onAPIRequest, onAPIResponse });
+        expect(result).toBeDefined();
+        const expectedAPIRequest = { url: expect.any(URL), data: expect.anything() };
+        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
+        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.anything());
     });
 });

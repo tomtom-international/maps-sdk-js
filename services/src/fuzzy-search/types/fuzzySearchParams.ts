@@ -1,6 +1,7 @@
 import { CommonSearchParams, CommonGeocodeAndFuzzySearchParams } from "../../shared";
+import { FuzzySearchResponseAPI } from "./fuzzySearchResponseAPI";
 
-export type FuzzySearchParams = CommonSearchParams &
+export type FuzzySearchParams = CommonSearchParams<URL, FuzzySearchResponseAPI> &
     CommonGeocodeAndFuzzySearchParams & {
         /**
          * Minimum fuzziness level to be used.

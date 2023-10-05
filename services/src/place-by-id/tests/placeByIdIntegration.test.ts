@@ -1,6 +1,6 @@
 import { TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 
-import { placeById, PlaceByIdResponse } from "..";
+import { placeById, PlaceByIdResponse, PlaceByIdResponseAPI } from "..";
 import { baseSearchPOITestProps } from "../../shared/tests/integrationTestUtils";
 
 describe("Place By Id API", () => {
@@ -40,5 +40,14 @@ describe("Place By Id API", () => {
                 ])
             })
         );
+    });
+
+    test("PlaceById with API request and response callbacks", async () => {
+        const entityId = "528009004250472";
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
+        const result = await placeById({ entityId, onAPIRequest, onAPIResponse });
+        expect(result).toBeDefined();
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.anything(), expect.anything());
     });
 });

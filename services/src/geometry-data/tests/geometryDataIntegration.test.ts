@@ -1,6 +1,7 @@
 import { Places, TomTomConfig } from "@anw/maps-sdk-js/core";
 import { geometryData } from "../geometryData";
 import places from "./geometryDataIntegration.data.json";
+import { GeometryDataResponseAPI } from "../types/apiTypes";
 
 describe("Geometry data errors", () => {
     test("Geometry data test without API key", async () => {
@@ -159,6 +160,16 @@ describe("Geometry data integration tests", () => {
             });
         }
     );
+
+    test("Geometry Data with API response callback", async () => {
+        const geometries = ["00004e4c-3100-3c00-0000-000059685013"];
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        const result = await geometryData({ geometries, zoom: 10, onAPIRequest, onAPIResponse });
+        expect(result).toBeDefined();
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+    });
 });
 
 describe("Geometry with Places", () => {
