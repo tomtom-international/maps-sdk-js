@@ -1,7 +1,7 @@
 import { ZodError } from "zod";
 import { hasLngLatSchema } from "../geometriesSchema";
 
-describe("Geometries schema validation", () => {
+describe("PolygonFeatures schema validation", () => {
     test("Verify if lng, lat coordinates are resolved correctly", () => {
         expect(hasLngLatSchema.parse([180, 90])).toStrictEqual([180, 90]);
         expect(hasLngLatSchema.parse([180, -90])).toStrictEqual([180, -90]);

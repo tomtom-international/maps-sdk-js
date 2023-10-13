@@ -1,5 +1,5 @@
 export * from "./extendedGeoJSON";
-export * from "./geometry";
+export * from "./polygonFeature";
 export * from "./place/place";
 export * from "./place/placeDataSources";
 export * from "./place/poi/chargingStation";

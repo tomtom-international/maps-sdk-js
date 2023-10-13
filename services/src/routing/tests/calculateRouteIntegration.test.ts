@@ -10,7 +10,7 @@ import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUti
 import { calculateRoute } from "../calculateRoute";
 import { CalculateRouteParams } from "../types/calculateRouteParams";
 import { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
-import { CalculateRouteRequestAPI } from "../types/apiPostRequestTypes";
+import { CalculateRouteRequestAPI } from "../types/apiRequestTypes";
 
 const assertSummaryBasics = (summary: SummaryBase): void => {
     expect(summary).toBeDefined();
@@ -139,9 +139,7 @@ describe("Calculate route integration tests", () => {
                                 downhill: 0.73
                             }
                         },
-                        charging: {
-                            maxChargeKWH: 85
-                        }
+                        charging: { maxChargeKWH: 85 }
                     },
                     currentChargePCT: 50
                 }

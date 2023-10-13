@@ -2,7 +2,8 @@ import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";
 import { routeRequestParams } from "./requestBuilderPerf.data";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
-import { routeRequestValidationConfig } from "../calculateRouteTemplate";
+import { routeRequestValidationConfig } from "../calculateRouteRequestSchema";
+import { CalculateRouteParams } from "../types/calculateRouteParams";
 
 describe("Calculate route request schema validation", () => {
     const apiKey = "APIKEY";
@@ -10,7 +11,7 @@ describe("Calculate route request schema validation", () => {
 
     test("it should fail when latitude & longitude are out of range", () => {
         const validationCall = () =>
-            validateRequestSchema(
+            validateRequestSchema<CalculateRouteParams>(
                 {
                     geoInputs: [
                         [200, 180],
@@ -67,12 +68,8 @@ describe("Calculate route request schema validation", () => {
 
     test("it should fail when format of location is incorrect - example 1", () => {
         const validationCall = () =>
-            validateRequestSchema(
-                {
-                    geoInputs: "4.89066,52.37317:4.49015,52.16109",
-                    apiKey,
-                    commonBaseURL
-                },
+            validateRequestSchema<CalculateRouteParams>(
+                { geoInputs: "4.89066,52.37317:4.49015,52.16109" as never, apiKey, commonBaseURL },
                 routeRequestValidationConfig
             );
         expect(validationCall).toThrow(
@@ -109,7 +106,12 @@ describe("Calculate route request schema validation", () => {
     });
 
     test("it should fail when geoInputs param is missing", () => {
-        expect(() => validateRequestSchema({ apiKey, commonBaseURL }, routeRequestValidationConfig)).toThrow(
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                { apiKey, commonBaseURL } as never,
+                routeRequestValidationConfig
+            )
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -126,31 +128,31 @@ describe("Calculate route request schema validation", () => {
 
     test("it should fail when format of optional params are incorrect", () => {
         const validationCall = () =>
-            validateRequestSchema(
+            validateRequestSchema<CalculateRouteParams>(
                 {
                     geoInputs: [
                         [4.89066, 52.37317],
                         [4.4906, 51.37317]
                     ],
                     costModel: {
-                        avoid: "tollRoads",
-                        considerTraffic: "true",
+                        avoid: "tollRoads" as never,
+                        considerTraffic: "true" as never,
                         thrillingParams: {
                             hilliness: "low",
-                            windingness: "medium"
+                            windingness: "medium" as never
                         }
                     },
-                    computeAdditionalTravelTimeFor: "first",
+                    computeAdditionalTravelTimeFor: "first" as never,
                     currentHeading: 360,
-                    instructionsType: "Coded",
-                    maxAlternatives: 6,
-                    routeRepresentation: "summary",
-                    travelMode: 2,
+                    instructionsType: "Coded" as never,
+                    maxAlternatives: 6 as never,
+                    routeRepresentation: "summary" as never,
+                    travelMode: 2 as never,
                     when: {
-                        option: "arriveAt",
+                        option: "arriveAt" as never,
                         date: new Date()
                     },
-                    sectionTypes: ["tunnel", "motorways"],
+                    sectionTypes: ["tunnel", "motorways"] as never,
                     apiKey,
                     commonBaseURL
                 },
@@ -159,7 +161,7 @@ describe("Calculate route request schema validation", () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                errors: [
+                errors: expect.arrayContaining([
                     {
                         code: "invalid_type",
                         expected: "array",
@@ -260,7 +262,7 @@ describe("Calculate route request schema validation", () => {
                         path: ["when", "option"],
                         message: "Invalid enum value. Expected 'departAt' | 'arriveBy', received 'arriveAt'"
                     }
-                ]
+                ])
             })
         );
     });
@@ -269,7 +271,10 @@ describe("Calculate route request schema validation", () => {
 describe("Calculate route request schema performance tests", () => {
     test("Calculate route request with many waypoints, mandatory & optional params", () => {
         expect(
-            bestExecutionTimeMS(() => validateRequestSchema(routeRequestParams, routeRequestValidationConfig), 10)
+            bestExecutionTimeMS(
+                () => validateRequestSchema<CalculateRouteParams>(routeRequestParams, routeRequestValidationConfig),
+                10
+            )
         ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.schemaValidation);
     });
 });

@@ -1,6 +1,6 @@
 import { Feature, FeatureCollection, Point, Position } from "geojson";
 import { Anything } from "../generic";
-import { HasLngLat } from "../geometry";
+import { HasLngLat } from "../polygonFeature";
 import { Route } from "./route";
 
 /**

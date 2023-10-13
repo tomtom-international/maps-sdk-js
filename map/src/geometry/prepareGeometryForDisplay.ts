@@ -1,7 +1,7 @@
 import isNil from "lodash/isNil";
 import { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
 import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { bboxCenter, bboxFromCoordsArray, Geometries } from "@anw/maps-sdk-js/core";
+import { bboxCenter, bboxFromCoordsArray, PolygonFeatures } from "@anw/maps-sdk-js/core";
 import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/geometryLayers";
 import { GeometriesModuleConfig } from "./types/geometriesModuleConfig";
 import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/geometryDisplayProps";
@@ -121,9 +121,9 @@ export const buildGeometryTitleLayerSpec = (
  * @ignore
  */
 export const prepareGeometryForDisplay = (
-    geometry: Geometries<GeoJsonProperties | DisplayGeometryProps>,
+    geometry: PolygonFeatures<GeoJsonProperties | DisplayGeometryProps>,
     config: GeometriesModuleConfig = {}
-): Geometries<ExtraGeometryDisplayProps> => ({
+): PolygonFeatures<ExtraGeometryDisplayProps> => ({
     ...geometry,
     features: geometry.features.map((feature, index) => {
         const title = feature.properties?.title ? feature.properties.title : buildTitle(feature, config);
@@ -150,7 +150,7 @@ const getLongestArray = (coordinates: Position[][][]) =>
  * @returns
  * @ignore
  */
-export const prepareTitleForDisplay = (geometries: Geometries<GeoJsonProperties>): FeatureCollection<Point> => {
+export const prepareTitleForDisplay = (geometries: PolygonFeatures<GeoJsonProperties>): FeatureCollection<Point> => {
     const features = geometries.features.map((feature) => {
         let coordinates: Position[] | Position | null;
 

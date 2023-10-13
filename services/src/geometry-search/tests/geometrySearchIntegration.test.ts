@@ -1,4 +1,4 @@
-import { Fuel, Geometries, TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { Fuel, PolygonFeatures, TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../responseParser";
 import { buildGeometrySearchRequest } from "../requestBuilder";
@@ -183,13 +183,13 @@ describe("Geometry Search service", () => {
 
     test("geometrySearch with real geometry data input from a geometry data call", async () => {
         const query = "university";
-        const res = await search({ query, geometries: [realGeometryDataInput as unknown as Geometries] });
+        const res = await search({ query, geometries: [realGeometryDataInput as unknown as PolygonFeatures] });
         expect(res).toEqual(expectWorkingResult());
     });
 
     test("geometrySearch with huge multipolygon geometry data input from a geometry data call", async () => {
         const query = "university";
-        const res = await search({ query, geometries: [hugeMultiPolygonDataInput as unknown as Geometries] });
+        const res = await search({ query, geometries: [hugeMultiPolygonDataInput as unknown as PolygonFeatures] });
         expect(res).toEqual(expectWorkingResult());
     });
 

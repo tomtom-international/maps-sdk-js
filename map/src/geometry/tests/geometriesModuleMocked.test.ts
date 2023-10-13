@@ -1,10 +1,9 @@
-import { Geometries } from "@anw/maps-sdk-js/core";
+import { PolygonFeatures } from "@anw/maps-sdk-js/core";
 import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import { GeometriesModule } from "../GeometriesModule";
 import { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./geometriesModuleMocked.test.data.json";
 import { mapStyleLayerIDs } from "../../shared";
-import { GeoJsonProperties } from "geojson";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -36,7 +35,7 @@ describe("Geometry module tests", () => {
 
         const textField: DataDrivenPropertyValueSpecification<string> = ["get", "country"];
 
-        const testGeometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
+        const testGeometryData = amsterdamGeometryData as PolygonFeatures;
         let geometry = await GeometriesModule.init(tomtomMapMock, geometryConfig);
         // to be able to spy on private methods
         const geometryAny: any = geometry;
@@ -62,6 +61,8 @@ describe("Geometry module tests", () => {
         expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestLabel);
         geometry.moveBeforeLayer("lowestRoadLine");
         expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestRoadLine);
+        geometry.moveBeforeLayer("lowestBuilding");
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestBuilding);
 
         geometry.show(testGeometryData);
         geometry.clear();

@@ -1,6 +1,6 @@
-import { FeatureCollection, GeoJsonProperties, Point } from "geojson";
+import { FeatureCollection, Point } from "geojson";
 import { SymbolLayerSpecification } from "maplibre-gl";
-import { Geometries } from "@anw/maps-sdk-js/core";
+import { PolygonFeatures } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
@@ -23,7 +23,7 @@ import {
  * IDs of sources and layers from a geometry module.
  */
 type GeometrySourcesWithLayers = {
-    geometry: GeoJSONSourceWithLayers<Geometries<GeoJsonProperties>>;
+    geometry: GeoJSONSourceWithLayers<PolygonFeatures>;
     geometryLabel: GeoJSONSourceWithLayers<FeatureCollection<Point>>;
 };
 
@@ -162,7 +162,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * Shows the given geometries on the map.
      * @param geometries The geometries to display.
      */
-    show(geometries: Geometries<GeoJsonProperties>): void {
+    show(geometries: PolygonFeatures): void {
         const geometry = this.sourcesWithLayers.geometry;
         geometry.show(prepareGeometryForDisplay(geometries, this.config));
         this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(geometry.shownFeatures));

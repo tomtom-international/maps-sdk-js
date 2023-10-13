@@ -1,6 +1,6 @@
 import { Feature, Point, Position } from "geojson";
 import { PlaceDataSources } from "./placeDataSources";
-import { HasLngLat } from "../geometry";
+import { HasLngLat } from "../polygonFeature";
 import { POI, RelatedPOI } from "./poi/poi";
 import { Connector } from "./poi/connector";
 import { FeatureCollectionWithProperties } from "../extendedGeoJSON";

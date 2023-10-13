@@ -79,7 +79,7 @@ const electricEngineModelSchema = z.object({
 
 const combustionEngineSchema = z.object({
     type: z.literal("combustion"),
-    currentFuelInLiters: z.number().optional(),
+    currentFuelInLiters: z.number(),
     model: combustionModelSchema
 });
 
@@ -87,7 +87,7 @@ const pct = z.number().min(0).max(100);
 
 const electricEngineSchema = z.object({
     type: z.literal("electric"),
-    currentChargePCT: pct.optional(),
+    currentChargePCT: pct,
     model: electricEngineModelSchema,
     chargingPreferences: z
         .object({

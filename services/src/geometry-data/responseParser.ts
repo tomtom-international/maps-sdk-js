@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, Geometries } from "@anw/maps-sdk-js/core";
+import { bboxFromGeoJSON, PolygonFeatures } from "@anw/maps-sdk-js/core";
 import { GeometryDataResponseAPI } from "./types/apiTypes";
 
 /**
@@ -8,10 +8,10 @@ import { GeometryDataResponseAPI } from "./types/apiTypes";
  * * Each geometry ID is included in each GeoJSON feature "id" field.
  * @param apiResponse
  */
-export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI): Geometries => {
+export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI): PolygonFeatures => {
     const features = apiResponse.additionalData
         .flatMap((data) =>
-            (data.geometryData as Geometries)?.features.map((feature) => ({
+            (data.geometryData as PolygonFeatures)?.features.map((feature) => ({
                 ...feature,
                 bbox: bboxFromGeoJSON(feature.geometry)
             }))

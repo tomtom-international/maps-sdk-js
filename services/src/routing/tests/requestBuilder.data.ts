@@ -1,7 +1,7 @@
 import { Route } from "@anw/maps-sdk-js/core";
 import { CalculateRouteParams } from "../types/calculateRouteParams";
 import { FetchInput } from "../../shared/types/fetch";
-import { CalculateRoutePOSTDataAPI } from "../types/apiPostRequestTypes";
+import { CalculateRoutePOSTDataAPI } from "../types/apiRequestTypes";
 
 export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<CalculateRoutePOSTDataAPI>][] = [
     [
@@ -72,10 +72,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 {
                     type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [4.49015, 52.16109]
-                    },
+                    geometry: { type: "Point", coordinates: [4.49015, 52.16109] },
                     properties: {}
                 },
                 [4.47059, 51.92291]
@@ -102,10 +99,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 {
                     type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [4.49015, 52.16109]
-                    },
+                    geometry: { type: "Point", coordinates: [4.49015, 52.16109] },
                     properties: { radiusMeters: 20 }
                 },
                 [4.47059, 51.92291]
@@ -200,18 +194,10 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&avoid=carpools&avoid=ferries&avoid=motorways" +
                     "&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads" +
                     "&avoid=borderCrossings&avoid=tunnels&avoid=carTrains&avoid=lowEmissionZones" +
-                    "&computeTravelTimeFor=all" +
                     "&traffic=false" +
-                    "&vehicleHeading=45" +
                     "&arriveAt=2022-09-16T15%3A48%3A15.400Z" +
-                    "&instructionsType=tagged" +
-                    "&maxAlternatives=2" +
-                    "&routeRepresentation=summaryOnly" +
                     "&routeType=thrilling" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
-                    "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
-                    "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved" +
-                    "&sectionType=carpool&sectionType=lowEmissionZone&hilliness=low&windingness=high" +
+                    "&hilliness=low&windingness=high" +
                     "&vehicleEngineType=electric" +
                     "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
                     "&auxiliaryPowerInkW=1.7" +
@@ -219,7 +205,16 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&maxChargeInkWh=85&currentChargeInkWh=42.5" +
                     "&vehicleLength=20&vehicleHeight=4&vehicleWidth=5&vehicleWeight=3500&vehicleAxleWeight=500" +
                     "&vehicleLoadType=otherHazmatExplosive&vehicleLoadType=otherHazmatHarmfulToWater" +
-                    "&vehicleAdrTunnelRestrictionCode=B&vehicleCommercial=true&vehicleMaxSpeed=60"
+                    "&vehicleAdrTunnelRestrictionCode=B&vehicleCommercial=true&vehicleMaxSpeed=60" +
+                    "&computeTravelTimeFor=all" +
+                    "&vehicleHeading=45" +
+                    "&instructionsType=tagged" +
+                    "&maxAlternatives=2" +
+                    "&routeRepresentation=summaryOnly" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
+                    "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved" +
+                    "&sectionType=carpool&sectionType=lowEmissionZone"
             )
         }
     ],
@@ -265,18 +260,18 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
                     "&departAt=2022-09-16T15%3A48%3A15.400Z" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone" +
                     "&accelerationEfficiency=0.33&decelerationEfficiency=0.83" +
                     "&uphillEfficiency=0.27&downhillEfficiency=0.51" +
                     "&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5" +
                     "&auxiliaryPowerInLitersPerHour=0.2" +
                     "&fuelEnergyDensityInMJoulesPerLiter=34.2" +
                     "&currentFuelInLiters=55" +
-                    "&vehicleWeight=1500"
+                    "&vehicleWeight=1500" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             )
         }
     ],
@@ -322,17 +317,17 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.27317,4.90066:52.16109,4.49015/" +
                     "json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone" +
                     "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
                     "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
                     "&vehicleEngineType=electric" +
                     "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
                     "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68" +
-                    "&vehicleWeight=3500&vehicleMaxSpeed=60"
+                    "&vehicleWeight=3500&vehicleMaxSpeed=60" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             )
         }
     ],
@@ -370,18 +365,9 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                         charging: {
                             maxChargeKWH: 85,
                             batteryCurve: [
-                                {
-                                    stateOfChargeInkWh: 50,
-                                    maxPowerInkW: 200
-                                },
-                                {
-                                    stateOfChargeInkWh: 70,
-                                    maxPowerInkW: 100
-                                },
-                                {
-                                    stateOfChargeInkWh: 80.0,
-                                    maxPowerInkW: 40
-                                }
+                                { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+                                { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+                                { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
                             ],
                             chargingConnectors: [
                                 {
@@ -402,10 +388,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                                         "IEC_62196_Type_2_Connector_Cable_Attached",
                                         "Combo_to_IEC_62196_Type_2_Base"
                                     ],
-                                    voltageRange: {
-                                        minVoltageInV: 0,
-                                        maxVoltageInV: 500
-                                    },
+                                    voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
                                     efficiency: 0.9,
                                     baseLoadInkW: 0.2,
                                     maxPowerInkW: 150
@@ -417,10 +400,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                                         "IEC_62196_Type_2_Connector_Cable_Attached",
                                         "Combo_to_IEC_62196_Type_2_Base"
                                     ],
-                                    voltageRange: {
-                                        minVoltageInV: 500,
-                                        maxVoltageInV: 2000
-                                    },
+                                    voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
                                     efficiency: 0.9,
                                     baseLoadInkW: 0.2
                                 }
@@ -436,33 +416,24 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 "https://api.tomtom.com/routing/1/calculateLongDistanceEVRoute/52.37317,4.89066:52.16109,4.49015/" +
                     "json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone" +
                     "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
                     "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
                     "&vehicleEngineType=electric" +
                     "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
                     "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68" +
-                    "&minChargeAtDestinationInkWh=42.5&minChargeAtChargingStopsInkWh=8.5"
+                    "&minChargeAtDestinationInkWh=42.5&minChargeAtChargingStopsInkWh=8.5" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+                    "&sectionType=lowEmissionZone"
             ),
             data: {
                 chargingParameters: {
                     batteryCurve: [
-                        {
-                            stateOfChargeInkWh: 50,
-                            maxPowerInkW: 200
-                        },
-                        {
-                            stateOfChargeInkWh: 70,
-                            maxPowerInkW: 100
-                        },
-                        {
-                            stateOfChargeInkWh: 80.0,
-                            maxPowerInkW: 40
-                        }
+                        { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+                        { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+                        { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
                     ],
                     chargingConnectors: [
                         {
@@ -483,10 +454,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                                 "IEC_62196_Type_2_Connector_Cable_Attached",
                                 "Combo_to_IEC_62196_Type_2_Base"
                             ],
-                            voltageRange: {
-                                minVoltageInV: 0,
-                                maxVoltageInV: 500
-                            },
+                            voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
                             efficiency: 0.9,
                             baseLoadInkW: 0.2,
                             maxPowerInkW: 150
@@ -498,10 +466,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                                 "IEC_62196_Type_2_Connector_Cable_Attached",
                                 "Combo_to_IEC_62196_Type_2_Base"
                             ],
-                            voltageRange: {
-                                minVoltageInV: 500,
-                                maxVoltageInV: 2000
-                            },
+                            voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
                             efficiency: 0.9,
                             baseLoadInkW: 0.2
                         }
@@ -538,26 +503,11 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             ),
             data: {
                 supportingPoints: [
-                    {
-                        latitude: 52.37317,
-                        longitude: 4.89066
-                    },
-                    {
-                        latitude: 52.27317,
-                        longitude: 4.88
-                    },
-                    {
-                        latitude: 52.20317,
-                        longitude: 4.87
-                    },
-                    {
-                        latitude: 52.17317,
-                        longitude: 4.86
-                    },
-                    {
-                        latitude: 52.16109,
-                        longitude: 4.49015
-                    }
+                    { latitude: 52.37317, longitude: 4.89066 },
+                    { latitude: 52.27317, longitude: 4.88 },
+                    { latitude: 52.20317, longitude: 4.87 },
+                    { latitude: 52.17317, longitude: 4.86 },
+                    { latitude: 52.16109, longitude: 4.49015 }
                 ]
             }
         }
@@ -585,18 +535,9 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     properties: {
                         sections: {
                             leg: [
-                                {
-                                    startPointIndex: 0,
-                                    endPointIndex: 2
-                                },
-                                {
-                                    startPointIndex: 2,
-                                    endPointIndex: 4
-                                },
-                                {
-                                    startPointIndex: 4,
-                                    endPointIndex: 5
-                                }
+                                { startPointIndex: 0, endPointIndex: 2 },
+                                { startPointIndex: 2, endPointIndex: 4 },
+                                { startPointIndex: 4, endPointIndex: 5 }
                             ]
                         }
                     }
@@ -616,56 +557,20 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             ),
             data: {
                 supportingPoints: [
-                    {
-                        latitude: 0,
-                        longitude: 0
-                    },
-                    {
-                        latitude: 0,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 1,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 2,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 3,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 4,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 5,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 0,
-                        longitude: 2
-                    }
+                    { latitude: 0, longitude: 0 },
+                    { latitude: 0, longitude: 1 },
+                    { latitude: 1, longitude: 1 },
+                    { latitude: 2, longitude: 1 },
+                    { latitude: 3, longitude: 1 },
+                    { latitude: 4, longitude: 1 },
+                    { latitude: 5, longitude: 1 },
+                    { latitude: 0, longitude: 2 }
                 ],
                 pointWaypoints: [
-                    {
-                        supportingPointIndex: 1,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 3,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 5,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 6,
-                        waypointSourceType: "USER_DEFINED"
-                    }
+                    { supportingPointIndex: 1, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 3, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 5, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 6, waypointSourceType: "USER_DEFINED" }
                 ]
             }
         }
@@ -697,18 +602,9 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     properties: {
                         sections: {
                             leg: [
-                                {
-                                    startPointIndex: 0,
-                                    endPointIndex: 2
-                                },
-                                {
-                                    startPointIndex: 2,
-                                    endPointIndex: 4
-                                },
-                                {
-                                    startPointIndex: 4,
-                                    endPointIndex: 5
-                                }
+                                { startPointIndex: 0, endPointIndex: 2 },
+                                { startPointIndex: 2, endPointIndex: 4 },
+                                { startPointIndex: 4, endPointIndex: 5 }
                             ]
                         }
                     }
@@ -727,56 +623,20 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             ),
             data: {
                 supportingPoints: [
-                    {
-                        latitude: 0,
-                        longitude: 0
-                    },
-                    {
-                        latitude: 1,
-                        longitude: 0
-                    },
-                    {
-                        latitude: 2,
-                        longitude: 0
-                    },
-                    {
-                        latitude: 0,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 1,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 2,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 3,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 4,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 5,
-                        longitude: 1
-                    }
+                    { latitude: 0, longitude: 0 },
+                    { latitude: 1, longitude: 0 },
+                    { latitude: 2, longitude: 0 },
+                    { latitude: 0, longitude: 1 },
+                    { latitude: 1, longitude: 1 },
+                    { latitude: 2, longitude: 1 },
+                    { latitude: 3, longitude: 1 },
+                    { latitude: 4, longitude: 1 },
+                    { latitude: 5, longitude: 1 }
                 ],
                 pointWaypoints: [
-                    {
-                        supportingPointIndex: 3,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 5,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 7,
-                        waypointSourceType: "USER_DEFINED"
-                    }
+                    { supportingPointIndex: 3, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 5, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 7, waypointSourceType: "USER_DEFINED" }
                 ]
             }
         }
@@ -803,18 +663,9 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     properties: {
                         sections: {
                             leg: [
-                                {
-                                    startPointIndex: 0,
-                                    endPointIndex: 2
-                                },
-                                {
-                                    startPointIndex: 2,
-                                    endPointIndex: 4
-                                },
-                                {
-                                    startPointIndex: 4,
-                                    endPointIndex: 5
-                                }
+                                { startPointIndex: 0, endPointIndex: 2 },
+                                { startPointIndex: 2, endPointIndex: 4 },
+                                { startPointIndex: 4, endPointIndex: 5 }
                             ]
                         }
                     }
@@ -835,56 +686,20 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             ),
             data: {
                 supportingPoints: [
-                    {
-                        latitude: 0,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 1,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 2,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 3,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 4,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 5,
-                        longitude: 1
-                    },
-                    {
-                        latitude: 0,
-                        longitude: 2
-                    },
-                    {
-                        latitude: 0,
-                        longitude: 3
-                    }
+                    { latitude: 0, longitude: 1 },
+                    { latitude: 1, longitude: 1 },
+                    { latitude: 2, longitude: 1 },
+                    { latitude: 3, longitude: 1 },
+                    { latitude: 4, longitude: 1 },
+                    { latitude: 5, longitude: 1 },
+                    { latitude: 0, longitude: 2 },
+                    { latitude: 0, longitude: 3 }
                 ],
                 pointWaypoints: [
-                    {
-                        supportingPointIndex: 2,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 4,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 5,
-                        waypointSourceType: "USER_DEFINED"
-                    },
-                    {
-                        supportingPointIndex: 6,
-                        waypointSourceType: "USER_DEFINED"
-                    }
+                    { supportingPointIndex: 2, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 4, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 5, waypointSourceType: "USER_DEFINED" },
+                    { supportingPointIndex: 6, waypointSourceType: "USER_DEFINED" }
                 ]
             }
         }

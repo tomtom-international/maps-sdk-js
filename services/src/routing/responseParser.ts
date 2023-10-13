@@ -31,7 +31,7 @@ import {
 } from "./types/apiResponseTypes";
 import { generateId } from "../shared/generateId";
 import { CalculateRouteParams } from "./types/calculateRouteParams";
-import { ElectricVehicleEngine } from "./types/vehicleEngineParams";
+import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 
 const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined => {
     switch (apiCurrentType) {
@@ -239,9 +239,5 @@ export const parseCalculateRouteResponse = (
         parseRoute(apiRoute, index, apiRoutes, params)
     );
     const bbox = bboxFromGeoJSON(features);
-    return {
-        type: "FeatureCollection",
-        ...(bbox && { bbox }),
-        features
-    };
+    return { type: "FeatureCollection", ...(bbox && { bbox }), features };
 };

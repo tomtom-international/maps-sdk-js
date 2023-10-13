@@ -1,4 +1,4 @@
-import { CommonPlaceProps, Geometries, Places } from "@anw/maps-sdk-js/core";
+import { CommonPlaceProps, PolygonFeatures, Places } from "@anw/maps-sdk-js/core";
 import { GeometryDataParams, GeometryParams, GeometryPlaceParams } from "./types/geometryDataParams";
 import { GeometryDataTemplate, geometryDataTemplate } from "./geometryDataTemplate";
 import { callService } from "../shared/serviceTemplate";
@@ -9,7 +9,7 @@ import { callService } from "../shared/serviceTemplate";
  * @param geometries
  * @returns FeatureCollection<Polygon | MultiPolygon>,
  */
-const mergePlacesWithGeometries = (places: Places, geometries: Geometries): Geometries<CommonPlaceProps> => {
+const mergePlacesWithGeometries = (places: Places, geometries: PolygonFeatures): PolygonFeatures<CommonPlaceProps> => {
     const placesIdMap = places.features.reduce((acc, place) => {
         const geometryId = place.properties.dataSources?.geometry?.id;
 
@@ -34,11 +34,11 @@ const mergePlacesWithGeometries = (places: Places, geometries: Geometries): Geom
         type: "FeatureCollection",
         bbox: geometries.bbox,
         features
-    } as Geometries<CommonPlaceProps>;
+    } as PolygonFeatures<CommonPlaceProps>;
 };
 
 /**
- * The Geometries Data service returns sets of coordinates that represent the outline of a city, country, or land area.
+ * The PolygonFeatures Data service returns sets of coordinates that represent the outline of a city, country, or land area.
  * * The service supports batch requests of up to 20 identifiers.
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
@@ -47,15 +47,15 @@ const mergePlacesWithGeometries = (places: Places, geometries: Geometries): Geom
 export async function geometryData(
     params: GeometryDataParams,
     customTemplate?: Partial<GeometryDataTemplate>
-): Promise<Geometries>;
+): Promise<PolygonFeatures>;
 export async function geometryData(
     params: GeometryPlaceParams,
     customTemplate?: Partial<GeometryDataTemplate>
-): Promise<Geometries<CommonPlaceProps>>;
+): Promise<PolygonFeatures<CommonPlaceProps>>;
 export async function geometryData(params: GeometryParams, customTemplate?: Partial<GeometryDataTemplate>) {
     const geometryResult = await callService(params, { ...geometryDataTemplate, ...customTemplate }, "GeometryData");
 
-    // If params.geometries is a FeatureCollection(Place), the properties will be merge with geometry results.
+    // If params.geometries is a FeatureCollection(Place), the properties will be merged with geometry results.
     if (!Array.isArray(params.geometries) && params.geometries.type === "FeatureCollection") {
         return mergePlacesWithGeometries(params.geometries, geometryResult);
     }

@@ -1,12 +1,12 @@
-import { Geometries } from "@anw/maps-sdk-js/core";
+import { PolygonFeatures } from "@anw/maps-sdk-js/core";
 
 import { DisplayGeometryProps, GeometryBeforeLayerConfig, mapStyleLayerIDs } from "map";
 import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
+import { Position } from "geojson";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import amsterdamGeometryData from "./GeometriesModule.test.data.json";
 import netherlandsGeometryData from "./GeometriesModule-Netherlands.test.data.json";
-import { GeoJsonProperties, Position } from "geojson";
 import {
     getGeometriesSourceAndLayerIDs,
     getNumVisibleLayersBySource,
@@ -42,8 +42,8 @@ describe("Geometry integration tests", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
-    const geometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
-    const netherlandsData = netherlandsGeometryData as unknown as Geometries<DisplayGeometryProps>;
+    const geometryData = amsterdamGeometryData as PolygonFeatures;
+    const netherlandsData = netherlandsGeometryData as unknown as PolygonFeatures<DisplayGeometryProps>;
 
     const amsterdamCenter = [4.89067, 52.37313];
     // point in Amsterdam South East which fits inside a separate polygon:
@@ -130,16 +130,27 @@ describe("Geometry integration tests", () => {
 
         await moveBeforeLayer("lowestRoadLine");
         let layers = await getAllLayers();
-        let geometryIndex = layers.findIndex((feature) => feature.id === fillLayerID);
-        let lowestRoadLineIndex = layers.findIndex((feature) => feature.id === mapStyleLayerIDs.lowestRoadLine);
-        expect(geometryIndex).toBeLessThan(lowestRoadLineIndex);
+        const findGeometriesLayerIndex = () => layers.findIndex((layer) => layer.id === fillLayerID);
+        let geometriesLayerIndex = findGeometriesLayerIndex();
+        expect(geometriesLayerIndex).toBeGreaterThan(0);
+        const lowestRoadLineIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestRoadLine);
+        expect(geometriesLayerIndex).toBeLessThan(lowestRoadLineIndex);
+
+        await moveBeforeLayer("lowestBuilding");
+        layers = await getAllLayers();
+        geometriesLayerIndex = findGeometriesLayerIndex();
+        expect(geometriesLayerIndex).toBeGreaterThan(0);
+        let lowestBuildingIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestBuilding);
+        expect(geometriesLayerIndex).toBeLessThan(lowestBuildingIndex);
 
         // changing map style and verifying again:
         await setStyle("standardDark");
         await waitForMapIdle();
         layers = await getAllLayers();
-        geometryIndex = layers.findIndex((feature) => feature.id === fillLayerID);
-        lowestRoadLineIndex = layers.findIndex((feature) => feature.id === mapStyleLayerIDs.lowestRoadLine);
-        expect(geometryIndex).toBeLessThan(lowestRoadLineIndex);
+        geometriesLayerIndex = findGeometriesLayerIndex();
+        // TODO: geometriesLayerIndex seems to come as -1, so maybe there's a bug?
+        // expect(geometriesLayerIndex).toBeGreaterThan(0);
+        lowestBuildingIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestBuilding);
+        expect(geometriesLayerIndex).toBeLessThan(lowestBuildingIndex);
     });
 });

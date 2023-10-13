@@ -91,7 +91,7 @@ export type SummaryAPI = Omit<
  * @ignore
  * @see {@link https://developer.tomtom.com/routing-api/documentation/routing/common-routing-parameters point}
  */
-export type LatLngPointAPI = {
+export type LatitudeLongitudePointAPI = {
     latitude: number;
     longitude: number;
 };
@@ -100,7 +100,7 @@ export type LatLngPointAPI = {
  * @ignore
  */
 export type LegAPI = {
-    points: LatLngPointAPI[];
+    points: LatitudeLongitudePointAPI[];
     summary: SummaryAPI;
 };
 
@@ -108,7 +108,7 @@ export type LegAPI = {
  * @ignore
  */
 export type InstructionAPI = Omit<Instruction, "point"> & {
-    point: LatLngPointAPI;
+    point: LatitudeLongitudePointAPI;
 };
 
 /**

@@ -1,5 +1,4 @@
-import { SDKServiceError } from "../shared/errors";
-import { ParseResponseError } from "../shared/serviceTypes";
+import { ParseResponseError, SDKServiceError } from "../shared";
 import { RoutingAPIResponseError } from "../shared/types/apiResponseErrorTypes";
 
 /**

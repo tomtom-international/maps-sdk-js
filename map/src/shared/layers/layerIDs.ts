@@ -21,5 +21,10 @@ export const mapStyleLayerIDs = {
     /**
      * The lowest lines layer.
      */
-    lowestRoadLine: "Tunnel - Railway outline"
+    lowestRoadLine: "Tunnel - Railway outline",
+    /**
+     * Buildings lowest layer.
+     * * Not applicable to the Satellite style.
+     */
+    lowestBuilding: "Buildings - Underground"
 } as const;

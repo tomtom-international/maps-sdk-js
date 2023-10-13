@@ -1,5 +1,5 @@
-import { GeoJsonProperties, Position } from "geojson";
-import { Geometries, Place, Places } from "@anw/maps-sdk-js/core";
+import { Position } from "geojson";
+import { PolygonFeatures, Place, Places } from "@anw/maps-sdk-js/core";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
@@ -24,7 +24,7 @@ import { EventType, BASE_MAP_SOURCE_ID } from "map";
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
-const geometryData = amsterdamGeometryData as Geometries<GeoJsonProperties>;
+const geometryData = amsterdamGeometryData as PolygonFeatures;
 
 const getPixelCoords = async (inputCoordinates: [number, number]) =>
     page.evaluate((coordinates) => (globalThis as MapsSDKThis).mapLibreMap.project(coordinates), inputCoordinates);

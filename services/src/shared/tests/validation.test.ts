@@ -9,9 +9,7 @@ describe("Validation", () => {
             position: z.number()
         });
 
-        const params = {
-            position: "string"
-        };
+        const params = { position: "string" };
 
         expect(() => validateRequestSchema(params as never, { schema })).toThrow(
             expect.objectContaining({
@@ -34,6 +32,26 @@ describe("Validation", () => {
             })
         );
     });
+
+    test(
+        "it should fail when commonBaseURL or customServiceBaseURL is not passed " +
+            "even without given service-specific schema",
+        () => {
+            const params = { apiKey: "", position: [123, 321] };
+
+            expect(() => validateRequestSchema(params)).toThrow(
+                expect.objectContaining({
+                    errors: [
+                        {
+                            code: "custom",
+                            message: "commonBaseURL or customServiceBaseURL is required",
+                            path: []
+                        }
+                    ]
+                })
+            );
+        }
+    );
 
     test("it should fail when commonBaseURL or customServiceBaseURL is not passed", () => {
         const schema = z.object({
@@ -66,12 +84,7 @@ describe("Validation", () => {
         });
 
         const optionalAParamRefinement: SchemaRefinement = {
-            check: (data) => {
-                if ("optionalA2" in data) {
-                    return "optionalA" in data;
-                }
-                return true;
-            },
+            check: (data) => ("optionalA2" in data ? "optionalA" in data : true),
             message: "If optionalA2 is present, then optionalA must be present as well."
         };
 

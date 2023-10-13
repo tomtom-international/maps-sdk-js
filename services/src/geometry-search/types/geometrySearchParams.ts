@@ -1,4 +1,4 @@
-import { Geometries } from "@anw/maps-sdk-js/core";
+import { PolygonFeatures } from "@anw/maps-sdk-js/core";
 import { MultiPolygon, Polygon, Position } from "geojson";
 import { CommonSearchParams } from "../../shared";
 import { GeometrySearchResponseAPI } from "./geometrySearchResponseAPI";
@@ -19,4 +19,4 @@ export interface Circle {
     radius: number;
 }
 
-export type SearchGeometryInput = Polygon | MultiPolygon | Circle | Geometries;
+export type SearchGeometryInput = Polygon | MultiPolygon | Circle | PolygonFeatures;

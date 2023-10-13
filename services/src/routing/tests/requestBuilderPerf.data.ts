@@ -1,6 +1,6 @@
 import { CalculateRouteParams } from "../types/calculateRouteParams";
 
-export const routeRequestParams = {
+export const routeRequestParams: CalculateRouteParams = {
     apiKey: "APIKEY",
     commonBaseURL: "https://api.tomtom.com",
     geoInputs: [
@@ -28,13 +28,16 @@ export const routeRequestParams = {
         [12.202271279614138, 51.997746920777786],
         [13.41144, 52.52343]
     ],
-    avoid: ["carpools", "ferries", "unpavedRoads", "tollRoads"],
-    considerTraffic: true,
+    costModel: {
+        avoid: ["carpools", "ferries", "unpavedRoads", "tollRoads"],
+        considerTraffic: true,
+        routeType: "fastest"
+    },
     currentHeading: 180,
     instructionsType: "text",
     maxAlternatives: 3,
     routeRepresentation: "summaryOnly",
-    routeType: "fastest",
+
     sectionTypes: [
         "carTrain",
         "ferry",
@@ -55,26 +58,26 @@ export const routeRequestParams = {
         dimensions: {
             weightKG: 3500
         },
-        consumption: {
-            engineType: "electric",
-            speedsToConsumptionsKWH: [
-                {
-                    speedKMH: 50,
-                    consumptionUnitsPer100KM: 8.2
+        engine: {
+            type: "electric",
+            currentChargePCT: 80,
+            model: {
+                charging: {
+                    maxChargeKWH: 85
                 },
-                {
-                    speedKMH: 130,
-                    consumptionUnitsPer100KM: 21.3
+                consumption: {
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+                        { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+                    ],
+                    auxiliaryPowerInkW: 1.7,
+                    efficiency: {
+                        acceleration: 0.66,
+                        deceleration: 0.91,
+                        uphill: 0.74,
+                        downhill: 0.73
+                    }
                 }
-            ],
-            auxiliaryPowerInkW: 1.7,
-            currentChargeKWH: 43,
-            maxChargeKWH: 85,
-            efficiency: {
-                acceleration: 0.66,
-                deceleration: 0.91,
-                uphill: 0.74,
-                downhill: 0.73
             }
         }
     },

@@ -186,7 +186,7 @@ export type ChargingConnector = {
 
 /**
  * The charging model describes how a car's battery performs,
- * and it's used mostly for Long Distance EV Routing calculations.
+ * and it's used mostly for Long Distance EV Routing and EV Reachable Range calculations.
  */
 export type ChargingModel = {
     /**

@@ -27,8 +27,15 @@ export type HasBBox = BBox | GeoJsonObject | GeoJsonObject[];
 export type OptionalBBox = BBox | undefined;
 
 /**
- * Polygon geometry data (from geometry data service).
+ * Polygon geometry data.
  * @group Shared
  * @category Types
  */
-export type Geometries<P = Anything> = FeatureCollection<Polygon | MultiPolygon, P>;
+export type PolygonFeature<P = Anything> = Feature<Polygon | MultiPolygon, P>;
+
+/**
+ * Polygon geometry data collection.
+ * @group Shared
+ * @category Types
+ */
+export type PolygonFeatures<P = Anything> = FeatureCollection<Polygon | MultiPolygon, P>;
