@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.24](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.23...v0.2.24) (2023-10-27)
+
+
+### Features
+
+* **services:** reachable range service ([0a8e7b0](https://github.com/tomtom-international/maps-sdk-js/commit/0a8e7b0fb955b634803e3b4a4ea1d21315b3b89c))
+
+
+### Bug Fixes
+
+* change fail on severity to be only for the very high errors ([0bec42d](https://github.com/tomtom-international/maps-sdk-js/commit/0bec42da55e55d8482fbb300a3dce38e64a21fb1))
+
 ### [0.2.23](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.22...v0.2.23) (2023-10-05)
 
 
