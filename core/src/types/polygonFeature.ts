@@ -1,5 +1,14 @@
-import { BBox, Feature, FeatureCollection, GeoJsonObject, MultiPolygon, Point, Polygon, Position } from "geojson";
-import { Anything } from "./generic";
+import {
+    BBox,
+    Feature,
+    FeatureCollection,
+    GeoJsonObject,
+    GeoJsonProperties,
+    MultiPolygon,
+    Point,
+    Polygon,
+    Position
+} from "geojson";
 
 /**
  * An GeoJSON input type that consists of, or has, a [lng, lat] Position.
@@ -31,11 +40,11 @@ export type OptionalBBox = BBox | undefined;
  * @group Shared
  * @category Types
  */
-export type PolygonFeature<P = Anything> = Feature<Polygon | MultiPolygon, P>;
+export type PolygonFeature<P = GeoJsonProperties> = Feature<Polygon | MultiPolygon, P>;
 
 /**
  * Polygon geometry data collection.
  * @group Shared
  * @category Types
  */
-export type PolygonFeatures<P = Anything> = FeatureCollection<Polygon | MultiPolygon, P>;
+export type PolygonFeatures<P = GeoJsonProperties> = FeatureCollection<Polygon | MultiPolygon, P>;
