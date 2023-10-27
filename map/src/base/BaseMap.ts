@@ -21,7 +21,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, StyleM
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async get(tomtomMap: TomTomMap, config?: StyleModuleConfig) {
+    static async get(tomtomMap: TomTomMap, config?: StyleModuleConfig): Promise<BaseMapModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new BaseMapModule(tomtomMap, config);
     }
