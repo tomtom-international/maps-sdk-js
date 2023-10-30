@@ -37,7 +37,7 @@ describe("BaseMap module tests", () => {
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
-        basemap.applyConfig({ visible: true });
+        basemap.applyConfig({ visible: true, layerGroups: ["borders", "water", "land"] });
         expect(spySetVisible).toHaveBeenCalledWith(true);
 
         basemap.setVisible(false);

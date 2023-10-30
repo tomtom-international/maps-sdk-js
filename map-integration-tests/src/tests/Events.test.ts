@@ -86,7 +86,7 @@ const getNumHoversAndLongHovers = async (): Promise<[number, number]> =>
 const setupBasemapClickHandlers = async () =>
     page.evaluate(async () => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.basemap?.events.on("click", (topFeature, lnglat, features, sourceWithLayers) => {
+        mapsSDKThis.baseMap?.events.on("click", (topFeature, lnglat, features, sourceWithLayers) => {
             mapsSDKThis._numOfClicks++;
             mapsSDKThis._clickedTopFeature = topFeature;
             mapsSDKThis._clickedLngLat = lnglat;

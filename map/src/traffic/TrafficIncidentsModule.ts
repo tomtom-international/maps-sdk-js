@@ -70,7 +70,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     protected _applyConfig(config: IncidentsConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
-        } else if (!this.isVisible()) {
+        } else if (!this._initializing && !this.isVisible()) {
             // applying default:
             this.setVisible(true);
         }

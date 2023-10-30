@@ -19,7 +19,9 @@ export type MapsSDKThis = typeof globalThis & {
     MapsSDKCore: typeof globalThis.MapsSDKCore;
     tomtomMap: TomTomMap;
     mapLibreMap: Map;
-    basemap: BaseMapModule;
+    baseMap?: BaseMapModule;
+    // extra base map instance that can coexist with the main one:
+    baseMap2?: BaseMapModule;
     trafficIncidents?: TrafficIncidentsModule;
     trafficFlow?: TrafficFlowModule;
     pois?: POIsModule;

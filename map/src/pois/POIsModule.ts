@@ -85,7 +85,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
     protected _applyConfig(config: POIsModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
-        } else if (!this.isVisible()) {
+        } else if (!this._initializing && !this.isVisible()) {
             // applying default:
             this.setVisible(true);
         }

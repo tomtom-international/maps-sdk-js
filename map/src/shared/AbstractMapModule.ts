@@ -31,6 +31,10 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * @ignore
      */
     protected config?: CFG;
+    /**
+     * @ignore
+     */
+    protected _initializing: boolean = true;
 
     /**
      * Builds this module based on a given Maps SDK map.
@@ -47,6 +51,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         if (config) {
             this.applyConfig(config);
         }
+        this._initializing = false;
     }
 
     /**

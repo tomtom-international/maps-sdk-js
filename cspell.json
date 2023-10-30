@@ -52,7 +52,9 @@
     "revgeo",
     "UTURN",
     "travelled",
-    "devportal"
+    "devportal",
+    "landuse",
+    "landcover"
   ],
   "ignorePaths": [
     "**/dist/**",

@@ -66,7 +66,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     protected _applyConfig(config: FlowConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
-        } else if (!this.isVisible()) {
+        } else if (!this._initializing && !this.isVisible()) {
             // applying default:
             this.setVisible(true);
         }

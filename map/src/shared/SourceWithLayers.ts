@@ -36,11 +36,11 @@ export abstract class AbstractSourceWithLayers<
         this._layerSpecs = layerSpecs;
     }
 
-    isAnyLayerVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
+    isAnyLayerVisible(filter?: LayerSpecFilter): boolean {
         return this.getLayerSpecs(filter).some((layer) => this.isLayerVisible(layer));
     }
 
-    areAllLayersVisible(filter?: (layerSpec: LayerSpecification) => boolean): boolean {
+    areAllLayersVisible(filter?: LayerSpecFilter): boolean {
         return this.getLayerSpecs(filter).every((layer) => this.isLayerVisible(layer));
     }
 
@@ -81,7 +81,11 @@ export class StyleSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
     RUNTIME_SOURCE extends Source = Source
 > extends AbstractSourceWithLayers<SourceSpecification, RUNTIME_SOURCE> {
-    constructor(map: Map, runtimeSource: RUNTIME_SOURCE) {
+    constructor(map: Map, runtimeSource: RUNTIME_SOURCE, filter?: LayerSpecFilter) {
+        let layers = filterLayersBySources(map, [runtimeSource.id]);
+        if (filter) {
+            layers = layers.filter(filter);
+        }
         super(
             map,
             new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(
@@ -89,7 +93,7 @@ export class StyleSourceWithLayers<
                 map.getStyle().sources[runtimeSource.id] as SOURCE_SPEC,
                 runtimeSource
             ),
-            filterLayersBySources(map, [runtimeSource.id])
+            layers
         );
     }
 }

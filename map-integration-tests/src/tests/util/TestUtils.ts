@@ -2,6 +2,7 @@ import { Position } from "geojson";
 import { MapGeoJSONFeature, LayerSpecification } from "maplibre-gl";
 import { PolygonFeatures, GlobalConfig, Language, Place, Places } from "@anw/maps-sdk-js/core";
 import {
+    BaseMapModuleConfig,
     GeometriesModuleConfig,
     HillshadeModuleConfig,
     IncidentsConfig,
@@ -9,7 +10,6 @@ import {
     PlacesModuleConfig,
     POIsModuleConfig,
     StyleInput,
-    StyleModuleConfig,
     StyleModuleInitConfig
 } from "map";
 import { MapsSDKThis } from "../types/MapsSDKThis";
@@ -38,6 +38,16 @@ export const waitForMapReady = async () =>
 
 export const waitForMapIdle = async () =>
     page.evaluate(async () => (globalThis as MapsSDKThis).mapLibreMap.once("idle"));
+
+export const getLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>
+    page.evaluate((pageSourceID) => {
+        return (globalThis as MapsSDKThis).mapLibreMap
+            .getStyle()
+            .layers.filter((layer) => (layer as LayerSpecWithSource).source === pageSourceID) as LayerSpecWithSource[];
+    }, sourceID);
+
+export const getNumLayersBySource = async (sourceID: string): Promise<number> =>
+    (await getLayersBySource(sourceID))?.length;
 
 export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceID) => {
@@ -167,10 +177,10 @@ export const showGeometry = async (geometry: PolygonFeatures) =>
         geometry
     );
 
-export const initBasemap = async (config?: StyleModuleConfig) =>
+export const initBasemap = async (config?: BaseMapModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.basemap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
+        mapsSDKThis.baseMap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
 export const initTrafficIncidents = async (config?: StyleModuleInitConfig & IncidentsConfig) =>

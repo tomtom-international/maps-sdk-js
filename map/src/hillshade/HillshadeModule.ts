@@ -55,7 +55,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
     protected _applyConfig(config: HillshadeModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
-        } else if (!this.isVisible()) {
+        } else if (!this._initializing && !this.isVisible()) {
             // applying default:
             this.setVisible(true);
         }
