@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.26](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.25...v0.2.26) (2023-11-01)
+
+
+### Features
+
+* **map:** allowing multiple base map modules with different layer groups ([dfb260d](https://github.com/tomtom-international/maps-sdk-js/commit/dfb260da1fdd9c9f9f3010a26e730a838766b7a5))
+
 ### [0.2.25](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.24...v0.2.25) (2023-10-27)
 
 
