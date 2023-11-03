@@ -1,11 +1,8 @@
 import { LayerSpecification } from "maplibre-gl";
-import { getLayerGroupFilter } from "../layerGroups";
+import { buildLayerGroupFilter } from "../layerGroups";
 
 describe("Tests for logic related to layer group filtering", () => {
-    test("get layer group filters with no inputs", () => {
-        expect(getLayerGroupFilter()).toBeUndefined();
-        expect(getLayerGroupFilter([])).toBeUndefined();
-    });
+    test("build layer group filters with no inputs", () => expect(buildLayerGroupFilter()).toBeUndefined());
 
     const testLayers = [
         { id: "Buildings - Outline", type: "line" },
@@ -22,23 +19,29 @@ describe("Tests for logic related to layer group filtering", () => {
         { id: "TransitLabels - Road Shield 3", type: "symbol" }
     ] as LayerSpecification[];
 
-    test("get layer group filters", () => {
-        expect(testLayers.filter(getLayerGroupFilter(["land"])!)).toEqual([
+    test("build layer group filter in include mode", () => {
+        expect(buildLayerGroupFilter({ mode: "include", names: [] })).toBeUndefined();
+
+        expect(testLayers.filter(buildLayerGroupFilter({ mode: "include", names: ["land"] })!)).toEqual([
             { id: "Landuse - Sport", type: "fill" },
             { id: "Landcover - Global", type: "fill" }
         ]);
 
-        expect(testLayers.filter(getLayerGroupFilter(["buildings2D"])!)).toEqual([
+        expect(testLayers.filter(buildLayerGroupFilter({ mode: "include", names: ["buildings2D"] })!)).toEqual([
             { id: "Buildings - Outline", type: "line" }
         ]);
 
-        expect(testLayers.filter(getLayerGroupFilter(["houseNumbers", "buildings2D", "buildings3D"])!)).toEqual([
+        expect(
+            testLayers.filter(
+                buildLayerGroupFilter({ mode: "include", names: ["houseNumbers", "buildings2D", "buildings3D"] })!
+            )
+        ).toEqual([
             { id: "Buildings - Outline", type: "line" },
             { id: "3D - Building", type: "fill-extrusion" },
             { id: "House Number", type: "symbol" }
         ]);
 
-        expect(testLayers.filter(getLayerGroupFilter(["placeLabels"])!)).toEqual([
+        expect(testLayers.filter(buildLayerGroupFilter({ mode: "include", names: ["placeLabels"] })!)).toEqual([
             { id: "Places - Medium city", type: "symbol" },
             { id: "Places - Large city", type: "symbol" },
             { id: "Places - Capital", type: "symbol" },
@@ -46,14 +49,62 @@ describe("Tests for logic related to layer group filtering", () => {
             { id: "Places - Country name", type: "symbol" }
         ]);
 
-        expect(testLayers.filter(getLayerGroupFilter(["cityLabels", "capitalLabels"])!)).toEqual([
+        expect(
+            testLayers.filter(buildLayerGroupFilter({ mode: "include", names: ["cityLabels", "capitalLabels"] })!)
+        ).toEqual([
             { id: "Places - Medium city", type: "symbol" },
             { id: "Places - Large city", type: "symbol" },
             { id: "Places - Capital", type: "symbol" }
         ]);
 
-        expect(testLayers.filter(getLayerGroupFilter(["countryLabels"])!)).toEqual([
+        expect(testLayers.filter(buildLayerGroupFilter({ mode: "include", names: ["countryLabels"] })!)).toEqual([
             { id: "Places - Country name", type: "symbol" }
+        ]);
+    });
+
+    test("build layer group filter in exclude mode", () => {
+        expect(buildLayerGroupFilter({ mode: "exclude", names: [] })).toBeUndefined();
+
+        expect(testLayers.filter(buildLayerGroupFilter({ mode: "exclude", names: ["buildings3D"] })!)).toEqual([
+            { id: "Buildings - Outline", type: "line" },
+            { id: "Landuse - Sport", type: "fill" },
+            { id: "Landcover - Global", type: "fill" },
+            { id: "House Number", type: "symbol" },
+            { id: "Places - Medium city", type: "symbol" },
+            { id: "Places - Large city", type: "symbol" },
+            { id: "Places - Capital", type: "symbol" },
+            { id: "Places - State name", type: "symbol" },
+            { id: "Places - Country name", type: "symbol" },
+            { id: "Tunnel - Railway outline", type: "line" },
+            { id: "TransitLabels - Road Shield 3", type: "symbol" }
+        ]);
+
+        expect(
+            testLayers.filter(
+                buildLayerGroupFilter({ mode: "exclude", names: ["buildings2D", "buildings3D", "land"] })!
+            )
+        ).toEqual([
+            { id: "House Number", type: "symbol" },
+            { id: "Places - Medium city", type: "symbol" },
+            { id: "Places - Large city", type: "symbol" },
+            { id: "Places - Capital", type: "symbol" },
+            { id: "Places - State name", type: "symbol" },
+            { id: "Places - Country name", type: "symbol" },
+            { id: "Tunnel - Railway outline", type: "line" },
+            { id: "TransitLabels - Road Shield 3", type: "symbol" }
+        ]);
+
+        expect(
+            testLayers.filter(
+                buildLayerGroupFilter({
+                    mode: "exclude",
+                    names: ["buildings2D", "buildings3D", "land", "placeLabels"]
+                })!
+            )
+        ).toEqual([
+            { id: "House Number", type: "symbol" },
+            { id: "Tunnel - Railway outline", type: "line" },
+            { id: "TransitLabels - Road Shield 3", type: "symbol" }
         ]);
     });
 });

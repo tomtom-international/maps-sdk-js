@@ -2,7 +2,7 @@ import { EventType } from "../types";
 import { Feature } from "geojson";
 import { detectHoverState, putEventState } from "../eventUtils";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { POI_SOURCE_ID } from "../layers/sourcesIDs";
+import { BASE_MAP_SOURCE_ID, POI_SOURCE_ID } from "../layers/sourcesIDs";
 
 describe("updateEventState related tests", () => {
     const testFeature = (id: string | number | undefined, eventState?: EventType): Feature =>
@@ -94,14 +94,17 @@ describe("updateEventState related tests", () => {
 
 describe("detectHoverState related tests", () => {
     test("detectHoverState", () => {
-        const featureA = { id: "A" } as MapGeoJSONFeature;
-        const featureB = { id: "B" } as MapGeoJSONFeature;
+        const featureA = { id: "A", layer: { id: "layer1" } } as MapGeoJSONFeature;
+        const featureB = { id: "B", layer: { id: "layer1" } } as MapGeoJSONFeature;
         const featureAWithGoodPOIData = {
             ...featureA,
             source: POI_SOURCE_ID,
+            layer: { id: "layer2" },
             properties: { id: "A" } as unknown
         } as MapGeoJSONFeature;
         const featureAWithBadPOIData = { ...featureA, source: POI_SOURCE_ID } as MapGeoJSONFeature;
+        const baseMapFeature1 = { source: BASE_MAP_SOURCE_ID, layer: { id: "layer1" } } as MapGeoJSONFeature;
+        const baseMapFeature2 = { source: BASE_MAP_SOURCE_ID, layer: { id: "layer2" } } as MapGeoJSONFeature;
 
         const someCoords = { x: 10, y: 20 };
         const otherCoords = { x: 12, y: 23 };
@@ -136,6 +139,9 @@ describe("detectHoverState related tests", () => {
         });
         expect(detectHoverState(someCoords, featureA, { ...someCoords, x: -10 }, featureA)).toEqual({
             mouseInMotionOverHoveredFeature: true
+        });
+        expect(detectHoverState(someCoords, baseMapFeature1, otherCoords, baseMapFeature2)).toEqual({
+            hoverChanged: true
         });
     });
 });

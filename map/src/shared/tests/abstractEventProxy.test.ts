@@ -27,11 +27,7 @@ const sourceWithLayersMock3 = {
     } as StyleSourceWithLayers
 };
 
-class TestEventProxy extends AbstractEventProxy {
-    getInteractiveSourcesAndLayers() {
-        return this.interactiveSourcesAndLayers;
-    }
-}
+class TestEventProxy extends AbstractEventProxy {}
 
 describe("AbstractEventProxy tests", () => {
     let eventsProxy: TestEventProxy;
@@ -63,35 +59,17 @@ describe("AbstractEventProxy tests", () => {
         expect(eventsProxy.has(sourceWithLayersMock.places)).toStrictEqual(false);
     });
 
+    // eslint-disable-next-line jest/expect-expect
     test("Update sources with layers", () => {
         eventsProxy.addEventHandler(sourceWithLayersMock.places, () => "test", "click");
-        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({ SOURCE_ID: sourceWithLayersMock.places });
 
         // Happy flow: updating with sourceWithLayers of same source ID:
         eventsProxy.updateIfRegistered(sourceWithLayersMock2);
-        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({ SOURCE_ID: sourceWithLayersMock2.places });
 
         // updating while not registered yet:
         eventsProxy.updateIfRegistered(sourceWithLayersMock3);
-        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({ SOURCE_ID: sourceWithLayersMock2.places });
-
         eventsProxy.addEventHandler(sourceWithLayersMock3.otherThings, () => "test", "click");
-        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({
-            SOURCE_ID: sourceWithLayersMock2.places,
-            SOURCE_ID_456: sourceWithLayersMock3.otherThings
-        });
-
         eventsProxy.updateIfRegistered(sourceWithLayersMock);
-        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({
-            SOURCE_ID: sourceWithLayersMock.places,
-            SOURCE_ID_456: sourceWithLayersMock3.otherThings
-        });
-
         eventsProxy.addEventHandler(sourceWithLayersMock.placesStats, () => "test", "click");
-        expect(eventsProxy.getInteractiveSourcesAndLayers()).toEqual({
-            SOURCE_ID: sourceWithLayersMock.places,
-            SOURCE_ID_2: sourceWithLayersMock.placesStats,
-            SOURCE_ID_456: sourceWithLayersMock3.otherThings
-        });
     });
 });

@@ -1,6 +1,15 @@
 export type MapEventsConfig = {
     /**
-     * Optional padding box to be inserted on the click area, in pixels.
+     * Defines the event coordinates precision mode.
+     * * box: features are queried within the padding box.
+     * * point: features are queried at the specific event point. Makes paddingBox irrelevant.
+     * * point-then-box: first the features are queried at the specific event point. If none returned, then they're queried within the padding box.
+     * @default box
+     */
+    precisionMode?: "box" | "point" | "point-then-box";
+    /**
+     * Optional padding box to be inserted around the event point, in pixels.
+     * * Ignored if precisionMode is set to "point".
      *  @default 5
      */
     paddingBox?: number;

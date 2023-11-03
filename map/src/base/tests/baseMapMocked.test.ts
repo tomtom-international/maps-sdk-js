@@ -28,8 +28,9 @@ describe("BaseMap module tests", () => {
     });
 
     test("Initializing module with config", async () => {
-        const basemap = await BaseMapModule.get(tomtomMapMock, {
-            visible: false
+        const basemap: BaseMapModule = await BaseMapModule.get(tomtomMapMock, {
+            visible: false,
+            layerGroups: { mode: "include", names: ["borders", "water", "land"] }
         });
         const spySetVisible = jest.spyOn(basemap, "setVisible");
         expect(basemap).toBeDefined();
@@ -37,7 +38,7 @@ describe("BaseMap module tests", () => {
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
-        basemap.applyConfig({ visible: true, layerGroups: ["borders", "water", "land"] });
+        basemap.applyConfig({ visible: true });
         expect(spySetVisible).toHaveBeenCalledWith(true);
 
         basemap.setVisible(false);

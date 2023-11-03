@@ -1,5 +1,5 @@
 import { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } from "maplibre-gl";
-import { AbstractEventProxy, toHandlerGroupID } from "./AbstractEventProxy";
+import { AbstractEventProxy } from "./AbstractEventProxy";
 import { ClickEventType, SourceWithLayers } from "./types";
 import { MapEventsConfig } from "../init";
 import { deserializeFeatures } from "./mapUtils";
@@ -7,6 +7,7 @@ import { detectHoverState, updateEventState } from "./eventUtils";
 
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
+    precisionMode: "box",
     paddingBox: 5,
     cursorOnHover: "pointer",
     cursorOnMouseDown: "grabbing",
@@ -90,9 +91,13 @@ export class EventsProxy extends AbstractEventProxy {
 
     private getRenderedFeatures(point: Point2D): MapGeoJSONFeature[] {
         const options = { layers: this.interactiveLayerIDs };
+        const precision = this.config.precisionMode;
         // first attempt right in the given coordinates:
-        const renderedFeatures = this.map.queryRenderedFeatures(point as PointLike, options);
-        return renderedFeatures.length
+        const renderedFeatures =
+            precision == "point-then-box" || precision == "point"
+                ? this.map.queryRenderedFeatures(point as PointLike, options)
+                : [];
+        return renderedFeatures.length || precision == "point"
             ? renderedFeatures
             : // second attempt using padded bounds (trying to hit something slightly further from the pointer location)
               this.map.queryRenderedFeatures(this.toPaddedBounds(point), options);
@@ -125,14 +130,14 @@ export class EventsProxy extends AbstractEventProxy {
                 undefined
             );
 
-            const longHoverHandlers = this.handlers[this.hoveringSourceWithLayers?.source.id + "_long-hover"];
-            longHoverHandlers?.forEach((handler) =>
-                handler(
-                    eventState?.feature,
-                    this.hoveringLngLat as LngLat,
-                    this.hoveringFeatures as MapGeoJSONFeature[],
-                    this.hoveringSourceWithLayers as SourceWithLayers
-                )
+            this.findHandlers(["long-hover"], this.hoveringFeature?.source, this.hoveringFeature?.layer.id).forEach(
+                (handler) =>
+                    handler.fn(
+                        eventState.feature,
+                        this.hoveringLngLat as LngLat,
+                        this.hoveringFeatures as MapGeoJSONFeature[],
+                        this.hoveringSourceWithLayers as SourceWithLayers
+                    )
             );
         }
     }
@@ -189,7 +194,18 @@ export class EventsProxy extends AbstractEventProxy {
             const prevHoveredFeature = this.hoveringFeature;
             this.hoveringFeature = hoveredTopFeature;
             const prevHoveredSourceWithLayers = this.hoveringSourceWithLayers;
-            this.hoveringSourceWithLayers = this.interactiveSourcesAndLayers[hoveredTopFeature?.source];
+
+            // Hovering basic event states are still processed if any other handlers are registered for that source/layers.
+            // We do so because basic hovering states indicate a feature is interactive.
+            // (e.g. if there's a click handler, we'll still apply basic hover states, even if we don't fire hover events)
+            const allHandlers = this.findHandlers(
+                ["hover", "long-hover", "click", "contextmenu"],
+                hoveredTopFeature?.source,
+                hoveredTopFeature?.layer.id
+            );
+
+            // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
+            this.hoveringSourceWithLayers = allHandlers?.[0]?.sourceWithLayers;
 
             if (hoverChanged) {
                 this.updateCursor(prevHoveredFeature);
@@ -202,11 +218,14 @@ export class EventsProxy extends AbstractEventProxy {
                     prevHoveredSourceWithLayers
                 );
 
-                const hoverHandlers = this.handlers[toHandlerGroupID(hoveredTopFeature?.source, "hover")];
-                if (hoverHandlers && eventState) {
-                    for (const handler of hoverHandlers) {
-                        handler(eventState.feature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
-                    }
+                const hoverHandlers = this.findHandlers(
+                    ["hover"],
+                    hoveredTopFeature?.source,
+                    hoveredTopFeature?.layer.id
+                );
+
+                for (const handler of hoverHandlers) {
+                    handler.fn(eventState.feature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
                 }
             }
 
@@ -237,8 +256,14 @@ export class EventsProxy extends AbstractEventProxy {
         const prevClickedFeature = this.lastClickedFeature;
         this.lastClickedFeature = clickedFeatures[0];
         const prevClickedSourceWithLayers = this.lastClickedSourceWithLayers;
-        this.lastClickedSourceWithLayers = this.interactiveSourcesAndLayers[this.lastClickedFeature?.source];
-        const clickHandlers = this.handlers[toHandlerGroupID(this.lastClickedFeature?.source, clickType)];
+        const clickHandlers = this.findHandlers(
+            [clickType],
+            this.lastClickedFeature?.source,
+            this.lastClickedFeature?.layer.id
+        );
+
+        // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
+        this.lastClickedSourceWithLayers = clickHandlers?.[0]?.sourceWithLayers;
 
         const eventState = updateEventState(
             clickType,
@@ -248,10 +273,8 @@ export class EventsProxy extends AbstractEventProxy {
             prevClickedSourceWithLayers
         );
 
-        if (eventState && clickHandlers) {
-            for (const handler of clickHandlers) {
-                handler(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
-            }
+        for (const handler of clickHandlers) {
+            handler.fn(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
         }
     }
 }

@@ -79,7 +79,7 @@ export const updateEventState = (
     prevEventFeature: MapGeoJSONFeature | undefined,
     sourceWithLayers: SourceWithLayers | undefined,
     prevSourceWithLayers: SourceWithLayers | undefined
-): Partial<IndexedFeature> | undefined => {
+): Partial<IndexedFeature> => {
     if (eventFeature && sourceWithLayers instanceof GeoJSONSourceWithLayers) {
         const featuresToUpdate = [...sourceWithLayers.shownFeatures.features];
         const updatedIndex = putEventState(eventState, eventFeature.id, featuresToUpdate) as number;
@@ -140,7 +140,10 @@ export const detectHoverState = (
             return { hoverChanged: true };
         } else if (
             hoveringFeature.id !== prevHoveredFeature.id ||
-            hoveringFeature.source !== prevHoveredFeature.source
+            hoveringFeature.source !== prevHoveredFeature.source ||
+            // comparing by layer ID is needed when two id-less features from the same source but different layers are compared
+            // this can happen when e.g. hovering over different layer groups for the base map
+            hoveringFeature.layer.id !== prevHoveredFeature.layer.id
         ) {
             // hovering from one feature to another one (from the same or different layer/source):
             return { hoverChanged: true };

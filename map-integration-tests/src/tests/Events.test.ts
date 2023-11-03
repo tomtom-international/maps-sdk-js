@@ -1,4 +1,4 @@
-import { Position } from "geojson";
+import { Point, Position } from "geojson";
 import { PolygonFeatures, Place, Places } from "@anw/maps-sdk-js/core";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
@@ -9,6 +9,7 @@ import {
     getGeometriesSourceAndLayerIDs,
     getPlacesSourceAndLayerIDs,
     initBasemap,
+    initBasemap2,
     initGeometry,
     initPlaces,
     queryRenderedFeatures,
@@ -26,8 +27,11 @@ const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
 const geometryData = amsterdamGeometryData as PolygonFeatures;
 
-const getPixelCoords = async (inputCoordinates: [number, number]) =>
-    page.evaluate((coordinates) => (globalThis as MapsSDKThis).mapLibreMap.project(coordinates), inputCoordinates);
+const getPixelCoords = async (inputCoordinates: [number, number] | Position) =>
+    page.evaluate(
+        (coordinates) => (globalThis as MapsSDKThis).mapLibreMap.project(coordinates as [number, number]),
+        inputCoordinates
+    );
 
 const getCursor = async () =>
     page.evaluate(() => {
@@ -255,7 +259,7 @@ describe("Tests with user events", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Events combining BaseMap module", async () => {
+    test("Events in BaseMap module", async () => {
         await initBasemap();
         // changing the style in between, to double-check we can still register to events in base map after:
         await setStyle("monoLight");
@@ -286,6 +290,70 @@ describe("Tests with user events", () => {
         });
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
+
+    test("Events from two Base Map modules with mutually exclusive layer groups", async () => {
+        await initBasemap({ layerGroups: { mode: "include", names: ["cityLabels"] } });
+        await initBasemap2({ layerGroups: { mode: "exclude", names: ["cityLabels"] } });
+
+        const baseMapCityFeature = await getPixelCoords(
+            await page.evaluate(
+                () =>
+                    (
+                        (globalThis as MapsSDKThis).mapLibreMap.queryRenderedFeatures(undefined, {
+                            layers: ["Places - Large city"]
+                        })?.[0].geometry as Point
+                    ).coordinates
+            )
+        );
+
+        // only first base map listens to click events for now:
+        await page.evaluate(async () => {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.baseMap?.events.on("click", (topFeature) => {
+                mapsSDKThis._numOfClicks++;
+                mapsSDKThis._clickedTopFeature = topFeature;
+            });
+        });
+
+        // we click on the base map place (city label) and verify that the callback is called correctly:
+        await page.mouse.click(baseMapCityFeature.x, baseMapCityFeature.y);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks)).toBe(1);
+        expect(
+            await page.evaluate(() => ((globalThis as MapsSDKThis)._clickedTopFeature as MapGeoJSONFeature)?.layer.id)
+        ).toBe("Places - Large city");
+
+        // now we register a click handler for the second base map:
+        await page.evaluate(async () => {
+            const mapsSDKThis = globalThis as MapsSDKThis;
+            mapsSDKThis.baseMap2?.events.on("click", (topFeature) => {
+                (mapsSDKThis as any)._numOfClicks2++;
+                (mapsSDKThis as any)._clickedTopFeature2 = topFeature;
+            });
+        });
+        await page.evaluate(() => ((globalThis as any)._numOfClicks2 = 0));
+
+        // we click on the city label again. Even if the other base map module also listens to clicks, its layers are below
+        // so the first base map is the only one to fire the event:
+        await page.mouse.click(baseMapCityFeature.x, baseMapCityFeature.y);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks)).toBe(2);
+        expect(await page.evaluate(() => (globalThis as any)._numOfClicks2)).toBe(0);
+        expect(
+            await page.evaluate(() => ((globalThis as MapsSDKThis)._clickedTopFeature as MapGeoJSONFeature)?.layer.id)
+        ).toBe("Places - Large city");
+        expect(await page.evaluate(() => (globalThis as any)._clickedTopFeature2)).toBeUndefined();
+
+        // now we click on an "empty" (non-city) area of the map, and verify that this time the second base map module fires the event:
+        await page.mouse.click(baseMapCityFeature.x + 50, baseMapCityFeature.y + 50);
+        // no changes in first base map:
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks)).toBe(2);
+        // base map 2 fired the event:
+        expect(await page.evaluate(() => (globalThis as any)._numOfClicks2)).toBe(1);
+        expect(
+            await page.evaluate(() => ((globalThis as any)._clickedTopFeature2 as MapGeoJSONFeature)?.layer.id)
+        ).not.toContain("Places");
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 });
 
 describe("Events custom configuration", () => {
@@ -293,13 +361,10 @@ describe("Events custom configuration", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
-    beforeEach(async () => {
+    test("Custom cursor", async () => {
+        // Amsterdam center
         await mapEnv.loadMap(
-            {
-                zoom: 10,
-                // Amsterdam center
-                center: [4.89067, 52.37313]
-            },
+            { zoom: 10, center: [4.89067, 52.37313] },
             {
                 style: { type: "published", include: ["poi"] },
                 events: {
@@ -310,19 +375,10 @@ describe("Events custom configuration", () => {
                 }
             }
         );
-    });
 
-    test("Custom cursor", async () => {
         await initPlaces();
         await showPlaces(places);
         await waitForMapIdle();
-        await waitUntilRenderedFeatures(
-            (
-                await getPlacesSourceAndLayerIDs()
-            ).layerIDs,
-            placesJSON.features.length,
-            10000
-        );
 
         expect(await getCursor()).toBe("help");
         await page.mouse.down();
@@ -331,6 +387,60 @@ describe("Events custom configuration", () => {
         expect(await getCursor()).toBe("help");
 
         await setupPlacesHoverHandlers();
+        const placePixelCoords = await getPixelCoords(firstPlacePosition);
+        page.mouse.move(placePixelCoords.x, placePixelCoords.y);
+
+        await waitForTimeout(500);
+        expect(await getCursor()).toBe("wait");
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Point precision mode", async () => {
+        // Amsterdam center
+        await mapEnv.loadMap(
+            { zoom: 10, center: [4.89067, 52.37313] },
+            {
+                style: { type: "published", include: ["poi"] },
+                events: { precisionMode: "point" }
+            }
+        );
+
+        await initPlaces();
+        await setupPlacesHoverHandlers();
+        await showPlaces(places);
+        await waitForMapIdle();
+
+        const placePixelCoords = await getPixelCoords(firstPlacePosition);
+        page.mouse.move(placePixelCoords.x, placePixelCoords.y);
+
+        await waitForTimeout(500);
+        expect(await getCursor()).toBe("pointer");
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Point-then-box precision mode", async () => {
+        // Amsterdam center
+        await mapEnv.loadMap(
+            { zoom: 10, center: [4.89067, 52.37313] },
+            {
+                style: { type: "published", include: ["poi"] },
+                events: { precisionMode: "point-then-box" }
+            }
+        );
+
+        await initPlaces();
+        await setupPlacesHoverHandlers();
+        await showPlaces(places);
+        await waitForMapIdle();
+
+        const placePixelCoords = await getPixelCoords(firstPlacePosition);
+        page.mouse.move(placePixelCoords.x, placePixelCoords.y);
+
+        await waitForTimeout(500);
+        expect(await getCursor()).toBe("pointer");
+
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

@@ -183,6 +183,12 @@ export const initBasemap = async (config?: BaseMapModuleConfig) =>
         mapsSDKThis.baseMap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
+export const initBasemap2 = async (config?: BaseMapModuleConfig) =>
+    page.evaluate(async (inputConfig) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.baseMap2 = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
+    }, config);
+
 export const initTrafficIncidents = async (config?: StyleModuleInitConfig & IncidentsConfig) =>
     page.evaluate(async (inputConfig?) => {
         const mapsSDKThis = globalThis as MapsSDKThis;

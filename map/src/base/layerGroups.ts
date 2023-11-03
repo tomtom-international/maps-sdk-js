@@ -1,4 +1,4 @@
-import { BaseMapLayerGroupName } from "./types/baseMapModuleConfig";
+import { BaseMapLayerGroupName, BaseMapLayerGroups } from "./types/baseMapModuleConfig";
 import { LayerSpecification } from "maplibre-gl";
 import { LayerSpecFilter } from "../shared";
 
@@ -80,19 +80,26 @@ const layerGroupMappings: Record<BaseMapLayerGroupName, LayerGroupMapping> = {
     }
 };
 
+const isMatching = (group: BaseMapLayerGroupName, layer: LayerSpecification) => {
+    const mapping = layerGroupMappings[group];
+    return (
+        mapping.layerIDMatches.some((part) => layer.id.toLowerCase().includes(part)) &&
+        mapping.layerTypes.includes(layer.type)
+    );
+};
+
 /**
  * @ignore
  */
-export const getLayerGroupFilter = (names?: BaseMapLayerGroupName[]): LayerSpecFilter | undefined =>
-    names?.length
-        ? (layer: LayerSpecification) => {
-              const id = layer.id.toLowerCase();
-              return names.some((name) => {
-                  const mapping = layerGroupMappings[name];
-                  return (
-                      mapping.layerIDMatches.some((part) => id.includes(part)) &&
-                      mapping.layerTypes.includes(layer.type)
-                  );
-              });
-          }
-        : undefined;
+export const buildLayerGroupFilter = (layerGroups?: BaseMapLayerGroups): LayerSpecFilter | undefined => {
+    const mode = layerGroups?.mode;
+    const groups = layerGroups?.names;
+    if (mode && groups?.length) {
+        if (mode == "include") {
+            return (layer) => groups.some((group) => isMatching(group, layer));
+        } else if (mode == "exclude") {
+            return (layer) => !groups.some((group) => isMatching(group, layer));
+        }
+    }
+    return undefined;
+};

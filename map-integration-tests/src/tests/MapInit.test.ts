@@ -1,6 +1,7 @@
 import {
     HILLSHADE_SOURCE_ID,
     MapLibreOptions,
+    mapStyleLayerIDs,
     POI_SOURCE_ID,
     PublishedStyle,
     StyleInput,
@@ -11,7 +12,7 @@ import {
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
-import { getNumVisibleLayersBySource, isLayerVisible, setStyle, waitForMapReady } from "./util/TestUtils";
+import { getLayerById, getNumVisibleLayersBySource, isLayerVisible, setStyle, waitForMapReady } from "./util/TestUtils";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
@@ -44,12 +45,20 @@ describe("Map Init tests", () => {
 
             const hillshadeLayers = await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID);
             expect(includes(style, "hillshade") ? hillshadeLayers > 0 : hillshadeLayers == 0).toBe(true);
+
+            // we verify that common base map key layers are present in all styles:
+            expect(await getLayerById(mapStyleLayerIDs.lowestLabel)).toBeDefined();
+            expect(await getLayerById(mapStyleLayerIDs.lowestRoadLine)).toBeDefined();
+            expect(await getLayerById(mapStyleLayerIDs.lowestPlaceLabel)).toBeDefined();
+            expect(await getLayerById(mapStyleLayerIDs.country)).toBeDefined();
+
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
 
     test("Multiple modules auto-added to the style right after map init", async () => {
         await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 10 });
+
         await page.evaluate(async () => {
             const mapsSDKThis = globalThis as MapsSDKThis;
             await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
@@ -57,6 +66,7 @@ describe("Map Init tests", () => {
             await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
             await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
         });
+
         expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
@@ -69,6 +79,13 @@ describe("Map Init tests", () => {
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
+
+        // we verify that all the base map key layers are present:
+        expect(await getLayerById(mapStyleLayerIDs.lowestBuilding)).toBeDefined();
+        expect(await getLayerById(mapStyleLayerIDs.lowestLabel)).toBeDefined();
+        expect(await getLayerById(mapStyleLayerIDs.lowestRoadLine)).toBeDefined();
+        expect(await getLayerById(mapStyleLayerIDs.lowestPlaceLabel)).toBeDefined();
+        expect(await getLayerById(mapStyleLayerIDs.country)).toBeDefined();
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

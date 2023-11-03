@@ -1,28 +1,50 @@
 import remove from "lodash/remove";
-import { MapGeoJSONFeature } from "maplibre-gl";
+import { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
 import { EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from "./types";
+import isEmpty from "lodash/isEmpty";
 
-type SourceWithLayersMap = { [sourceID: string]: SourceWithLayers };
+// TODO: add support for multiple handlers per source, layers, and event type?
+//  ... (this means multiple handlers for the same module, or repeated "on" calls for the same module)
+type SourceEventTypeHandler = { sourceWithLayers: SourceWithLayers; layerIDs: string[]; fn: UserEventHandler<any> };
 
-type EventHandlers = Record<string, UserEventHandler<any>[]>;
+type SourceEventHandlers = Partial<Record<EventType, SourceEventTypeHandler[]>>;
 
-/**
- * @ignore
- */
-export const toHandlerGroupID = (sourceID: string, type: EventType): string => `${sourceID}_${type}`;
+// Source ID to event handlers for that source:
+// Example:
+// const handlers = {
+//     vectorTiles: {
+//         click: [
+//             {
+//                 layerIDs: ["Buildings", "Roads - Major"],
+//                 handler: UserEventsHandler...
+//             },
+//             {
+//                 layerIDs: ["Water", "Landuse - Parks],
+//                 handler: UserEventsHandler...
+//             }
+//         ],
+//         hover: [
+//             {
+//                 layerIDs: [...],
+//                 handler: UserEventsHandler...
+//              }
+//         ]
+//     },
+type EventHandlers = Record<string, SourceEventHandlers>;
 
-/**
- * @ignore
- */
-const _toHandlerGroupID = (sourceWithLayers: SourceWithLayers, type: EventType): string =>
-    toHandlerGroupID(sourceWithLayers.source.id, type);
+const matchesLayers = (layers: LayerSpecification[], layerIDs: string[]): boolean => {
+    layerIDs.forEach((layerID, index) => {
+        if (layerID != layers[index].id) {
+            return false;
+        }
+    });
+    return true;
+};
 
 /**
  * @ignore
  */
 export abstract class AbstractEventProxy {
-    // This is the list of all sources/layers we listen to:
-    protected interactiveSourcesAndLayers: SourceWithLayersMap = {};
     protected interactiveLayerIDs: string[] = [];
     protected handlers: EventHandlers = {};
 
@@ -31,8 +53,6 @@ export abstract class AbstractEventProxy {
      * @param sourceWithLayers The sources and layers to listen to.
      */
     ensureAdded(sourceWithLayers: SourceWithLayers) {
-        this.interactiveSourcesAndLayers[sourceWithLayers.source.id] = sourceWithLayers;
-
         sourceWithLayers._layerSpecs.forEach((layerSpec) => {
             if (!this.interactiveLayerIDs.includes(layerSpec.id)) {
                 this.interactiveLayerIDs.push(layerSpec.id);
@@ -43,23 +63,29 @@ export abstract class AbstractEventProxy {
     /**
      * Register an event listener to the list.
      * @param sourceWithLayers The sources and layers to added.
-     * @param handler Function that will handle the event.
+     * @param handlerFn Function that will handle the event.
      * @param type Type of event to listen to.
      */
     addEventHandler<T = MapGeoJSONFeature>(
         sourceWithLayers: SourceWithLayers,
-        handler: UserEventHandler<T>,
+        handlerFn: UserEventHandler<T>,
         type: EventType
     ) {
         this.ensureAdded(sourceWithLayers);
+        const sourceID = sourceWithLayers.source.id;
 
-        const handlerGroupId = _toHandlerGroupID(sourceWithLayers, type);
-        const handlerExists = this.handlers[handlerGroupId] && this.handlers[handlerGroupId].includes(handler);
-
-        if (!handlerExists) {
-            this.handlers[handlerGroupId] = this.handlers[handlerGroupId] || [];
-            this.handlers[handlerGroupId].push(handler);
+        if (!this.handlers[sourceID]) {
+            this.handlers[sourceID] = { [type]: [] };
         }
+        if (!this.handlers[sourceID][type]) {
+            this.handlers[sourceID][type] = [];
+        }
+
+        this.handlers[sourceID][type]?.push({
+            sourceWithLayers,
+            layerIDs: sourceWithLayers._layerSpecs.map((layer) => layer.id),
+            fn: handlerFn
+        });
     }
 
     /**
@@ -68,18 +94,24 @@ export abstract class AbstractEventProxy {
      * @param sourceWithLayers The sources and layers to remove, matched by source and layer IDs.
      */
     remove(sourceWithLayers: SourceWithLayers, type: EventType) {
-        delete this.handlers[_toHandlerGroupID(sourceWithLayers, type)];
-        delete this.interactiveSourcesAndLayers[sourceWithLayers.source.id];
-        sourceWithLayers._layerSpecs.forEach((layer) => {
-            remove(this.interactiveLayerIDs, (item) => layer.id.includes(item));
-        });
+        const sourceEventTypeHandlers = this.handlers[sourceWithLayers.source.id]?.[type];
+        if (sourceEventTypeHandlers) {
+            remove(sourceEventTypeHandlers, (handler) => matchesLayers(sourceWithLayers._layerSpecs, handler.layerIDs));
+            // cleaning up empty arrays and objects if necessary:
+            if (!sourceEventTypeHandlers.length) {
+                delete this.handlers[sourceWithLayers.source.id]?.[type];
+                if (isEmpty(this.handlers[sourceWithLayers.source.id])) {
+                    delete this.handlers[sourceWithLayers.source.id];
+                }
+            }
+        }
+        sourceWithLayers._layerSpecs.forEach((layer) => remove(this.interactiveLayerIDs, (id) => layer.id == id));
     }
 
     /**
      * Removes all interactive sources and layers.
      */
     removeAll() {
-        this.interactiveSourcesAndLayers = {};
         this.interactiveLayerIDs = [];
         this.handlers = {};
     }
@@ -97,7 +129,7 @@ export abstract class AbstractEventProxy {
      * @param sourceId The source id (should be linked to a SourceWithLayers instance).
      */
     hasSourceID(sourceId: string): boolean {
-        return !!this.interactiveSourcesAndLayers[sourceId];
+        return !!this.handlers[sourceId];
     }
 
     /**
@@ -112,4 +144,20 @@ export abstract class AbstractEventProxy {
             }
         }
     }
+
+    protected findHandlers = (
+        types: EventType[],
+        sourceID: string | undefined,
+        layerID: string | undefined
+    ): SourceEventTypeHandler[] =>
+        (sourceID &&
+            layerID &&
+            types.flatMap((type) => {
+                const sourceEventTypeHandlers = this.handlers[sourceID]?.[type];
+                return sourceEventTypeHandlers?.length == 1
+                    ? // if there's only handler for that source and type, we just return it, no need to match layers:
+                      sourceEventTypeHandlers
+                    : this.handlers[sourceID]?.[type]?.filter((handler) => handler.layerIDs.includes(layerID)) || [];
+            })) ||
+        [];
 }
