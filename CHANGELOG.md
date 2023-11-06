@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.27](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.26...v0.2.27) (2023-11-06)
+
+
+### Features
+
+* **map:** enhancing events to allow different handlers for the same source but different layers ([1b9b0c1](https://github.com/tomtom-international/maps-sdk-js/commit/1b9b0c100cf9e828383572ac60235ef868242d3d))
+
 ### [0.2.26](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.25...v0.2.26) (2023-11-01)
 
 
