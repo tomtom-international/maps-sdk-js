@@ -124,10 +124,10 @@ describe("Tests with user events", () => {
                 // Amsterdam center
                 center: [4.89067, 52.37313]
             },
-            // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
             {
                 style: { type: "published", include: ["poi"] },
-                events: { longHoverDelayAfterMapMoveMS: 2500, longHoverDelayOnStillMapMS: 2000 }
+                // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
+                events: { longHoverDelayAfterMapMoveMS: 3000, longHoverDelayOnStillMapMS: 2500 }
             }
         );
 
