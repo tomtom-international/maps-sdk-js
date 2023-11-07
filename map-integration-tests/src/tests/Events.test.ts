@@ -171,7 +171,7 @@ describe("Tests with user events", () => {
         expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
 
         // clicking away:
-        await page.mouse.click(placePixelCoords.x - 100, placePixelCoords.y - 100);
+        await page.mouse.click(placePixelCoords.x - 120, placePixelCoords.y - 120);
         await waitForEventState(undefined);
         expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
 
@@ -190,7 +190,7 @@ describe("Tests with user events", () => {
         await page.mouse.move(placePosition.x, placePosition.y);
         await waitForEventState("hover");
         // Moving cursor away from the place
-        await page.mouse.move(placePosition.x - 100, placePosition.y - 100);
+        await page.mouse.move(placePosition.x - 120, placePosition.y - 120);
         await waitForEventState(undefined);
         expect(await getNumHoversAndLongHovers()).toEqual([1, 0]);
 
@@ -202,7 +202,7 @@ describe("Tests with user events", () => {
         await waitForEventState("long-hover");
         expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
         // Moving away again:
-        await page.mouse.move(placePosition.x - 100, placePosition.y - 100);
+        await page.mouse.move(placePosition.x - 120, placePosition.y - 120);
         await waitForEventState(undefined);
         expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
 
