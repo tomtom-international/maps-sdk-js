@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.28](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.27...v0.2.28) (2023-11-07)
+
+
+### Features
+
+* **map:** increasing event delays trying to make tests pass with default ci/cd capacity ([03ba1ba](https://github.com/tomtom-international/maps-sdk-js/commit/03ba1baddc4a296c96c8fdf821b908b3f6d526e1))
+
 ### [0.2.27](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.26...v0.2.27) (2023-11-06)
 
 
