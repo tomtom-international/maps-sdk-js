@@ -72,7 +72,7 @@ describe("Map vector tile traffic incidents module tests", () => {
     test("Vector tiles traffic incidents visibility changes in different ways", async () => {
         await mapEnv.loadMap(
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["traffic_incidents"] } }
+            { style: { type: "published", include: ["trafficIncidents"] } }
         );
         expect(await getConfig()).toBeUndefined();
 
@@ -155,14 +155,8 @@ describe("Map vector tile traffic incidents module tests", () => {
 
     test("Traffic incidents filtering with config changes", async () => {
         await mapEnv.loadMap(
-            {
-                // London:
-                zoom: 12,
-                center: [-0.12621, 51.50394]
-            },
-            {
-                style: { type: "published", include: ["traffic_incidents"] }
-            }
+            { zoom: 13, center: [-0.12621, 51.50394] }, // London
+            { style: { type: "published", include: ["trafficIncidents"] } }
         );
         await initTrafficIncidents();
         expect(await getConfig()).toBeUndefined();
@@ -182,9 +176,8 @@ describe("Map vector tile traffic incidents module tests", () => {
 
         // changing the map style (and manually adding also poi part):
         // verifying the config is still the same (state restoration):
-        await setStyle({ type: "published", id: "standardDark", include: ["traffic_incidents", "poi"] });
+        await setStyle({ type: "published", id: "standardDark", include: ["trafficIncidents", "poi"] });
         await waitForMapIdle();
-        await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
 
         const roadClosedIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
@@ -211,9 +204,8 @@ describe("Map vector tile traffic incidents module tests", () => {
         expect(await getConfig()).toEqual(config);
 
         // changing the map style: verifying the config is still the same (state restoration):
-        await setStyle({ type: "published", id: "monoLight", include: ["traffic_incidents"] });
+        await setStyle("monoLight");
         await waitForMapIdle();
-        await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
 
         const roadClosedAndMajorRoadIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
@@ -236,7 +228,7 @@ describe("Map vector tile traffic incidents module tests", () => {
     test("Traffic incidents filtering with complex initial config", async () => {
         await mapEnv.loadMap(
             { zoom: 13, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["traffic_incidents", "poi"] } }
+            { style: { type: "published", include: ["trafficIncidents", "poi"] } }
         );
 
         const config: IncidentsConfig = {
@@ -279,7 +271,7 @@ describe("Map vector tile traffic incidents module tests", () => {
         await setStyle({
             type: "published",
             id: "standardDark",
-            include: ["traffic_incidents", "poi"]
+            include: ["trafficIncidents", "poi"]
         });
         await waitForMapIdle();
         await waitForTimeout(3000);
@@ -301,7 +293,7 @@ describe("Map vector tile traffic incidents module tests", () => {
         await mapEnv.loadMap(
             // London:
             { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["traffic_incidents"] } }
+            { style: { type: "published", include: ["trafficIncidents"] } }
         );
 
         await initTrafficIncidents();

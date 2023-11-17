@@ -1,4 +1,4 @@
-import { BaseMapLayerGroupName, baseMapLayerGroupNames } from "map";
+import { BaseMapLayerGroupName, baseMapLayerGroupNames, poiLayerIDs } from "map";
 import { BASE_MAP_SOURCE_ID } from "map/src/shared";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
@@ -10,11 +10,11 @@ import {
     waitForMapReady
 } from "./util/TestUtils";
 
-const getBaseMapLayerCount = async () =>
-    page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.sourceAndLayerIDs.vectorTiles.layerIDs.length);
+const getBaseMapLayerCount = async (): Promise<number> =>
+    page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.sourceAndLayerIDs.vectorTiles.layerIDs.length as number);
 
-const getBaseMap2LayerCount = async () =>
-    page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.sourceAndLayerIDs.vectorTiles.layerIDs.length);
+const getBaseMap2LayerCount = async (): Promise<number> =>
+    page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.sourceAndLayerIDs.vectorTiles.layerIDs.length as number);
 
 const setBaseMapVisible = async (visible: boolean) =>
     page.evaluate((visibleInput) => (globalThis as MapsSDKThis).baseMap?.setVisible(visibleInput), visible);
@@ -41,13 +41,14 @@ describe("BaseMap module tests", () => {
         expect(vectorTilesLayersCount).toBeGreaterThanOrEqual(87);
         // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
         expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(vectorTilesLayersCount - 5);
-        // This base map contains all the vector tile layers:
+        // This base map contains all the vector tile layers minus the POIs:
         const originalBaseMapLayerCount = await getBaseMapLayerCount();
-        expect(originalBaseMapLayerCount).toBe(vectorTilesLayersCount);
+        expect(originalBaseMapLayerCount).toBe(vectorTilesLayersCount - poiLayerIDs.length);
 
         await setBaseMapVisible(false);
         expect(await isBaseMapVisible()).toBe(false);
-        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBe(0);
+        // we hid the base map (but the POI layers remain):
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBe(poiLayerIDs.length);
 
         // (making the base map visible again)
         await setBaseMapVisible(true);
@@ -57,7 +58,7 @@ describe("BaseMap module tests", () => {
         await initBasemap2({ layerGroups: { mode: "include", names: ["land", "water"] } });
         // double-checking we haven't altered the overall visible base map layers:
         vectorTilesLayersCount = await getNumLayersBySource(BASE_MAP_SOURCE_ID);
-        expect(vectorTilesLayersCount).toBe(originalBaseMapLayerCount);
+        expect(vectorTilesLayersCount).toBe(originalBaseMapLayerCount + poiLayerIDs.length);
         expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(vectorTilesLayersCount - 5);
         expect(await getBaseMapLayerCount()).toBe(originalBaseMapLayerCount);
         // the second base map module should have just a subset of the overall layers:

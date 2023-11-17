@@ -42,7 +42,7 @@ import { waypointLabels, waypointSymbols } from "../layers/waypointLayers";
 
 /**
  * Configuration for the route layers. Allows full control for all the route layers.
- * All the fields are optional, if you don't supply configuration default one will be used.
+ * * All the fields are optional: if you don't supply one, then its default will be used.
  */
 export type RouteLayersConfig = {
     /**

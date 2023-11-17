@@ -5,4 +5,4 @@
 
 export * from "./types/poisModuleConfig";
 export * from "./POIsModule";
-export * from "./poiClassificationGroups";
+export * from "./poiCategoryGroups";

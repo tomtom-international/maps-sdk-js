@@ -27,7 +27,7 @@ import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types
 import { buildDisplayRoutes, createLayersSpecs, mergeConfig, RoutingLayersSpecs } from "./util/routes";
 import { DisplayRouteProps } from "./types/displayRoutes";
 import { ShowRoutesOptions } from "./types/showRoutesOptions";
-import { addLayersInCorrectOrder, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
+import { addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
@@ -105,7 +105,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
 
         this.layersSpecs = createLayersSpecs(mergeConfig(config).routeLayers);
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
-        addLayersInCorrectOrder(
+        addLayers(
             Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
             this.mapLibreMap
         );
@@ -134,7 +134,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             });
             // we need to add layers correctly
             const listOfSources = Object.values(this.sourcesWithLayers) as GeoJSONSourceWithLayers[];
-            addLayersInCorrectOrder(
+            addLayers(
                 listOfSources.flatMap((source) => source._layerSpecs),
                 this.mapLibreMap
             );
@@ -148,7 +148,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     /**
      * @ignore
      */
-    protected restoreDataAndConfig() {
+    protected async restoreDataAndConfig() {
         const previouslyShown = {
             waypoints: this.sourcesWithLayers.waypoints.shownFeatures,
             routeLines: this.sourcesWithLayers.routeLines.shownFeatures,

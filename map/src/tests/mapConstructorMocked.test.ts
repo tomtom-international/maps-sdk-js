@@ -30,8 +30,10 @@ describe("Map initialization mocked tests", () => {
         expect(tomtomMap).toBeDefined();
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
-            style: "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_KEY&map=2/basic_street-light",
+            style: "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_KEY&map=basic_street-light",
             attributionControl: false,
+            validateStyle: false,
+            maxTileCacheZoomLevels: 22,
             transformRequest: expect.any(Function)
         });
     });
@@ -56,6 +58,8 @@ describe("Map initialization mocked tests", () => {
             zoom: 3,
             center: [10, 20],
             attributionControl: false,
+            validateStyle: false,
+            maxTileCacheZoomLevels: 22,
             transformRequest: expect.any(Function)
         });
     });

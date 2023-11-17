@@ -47,12 +47,12 @@ describe("toPlaces tests", () => {
 describe("Get Icon ID for a given Place tests", () => {
     test("Get Icon ID for a given Place", () => {
         expect(getIconIDForPlace({ properties: {} } as Place)).toStrictEqual("default_pin");
-        expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: "HOSPITAL" }] } } } as Place)
-        ).toStrictEqual("157_pin");
-        expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: "UNSUPPORTED" }] } } } as Place)
-        ).toStrictEqual("default_pin");
+        expect(getIconIDForPlace({ properties: { poi: { classifications: [{ code: "HOSPITAL" }] } } } as Place)).toBe(
+            "poi-hospital"
+        );
+        expect(getIconIDForPlace({ properties: { poi: { classifications: [{ code: "UNKNOWN" }] } } } as Place)).toBe(
+            "poi-unknown"
+        );
     });
 
     test("Get Icon ID for a given Place with custom config", () => {
@@ -66,13 +66,13 @@ describe("Get Icon ID for a given Place tests", () => {
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: "RESTAURANT" }] } } } as Place, {
                 iconConfig: { iconStyle: "circle" }
             })
-        ).toStrictEqual("231");
+        ).toBe("poi-restaurant");
 
         expect(
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: "BEACH" }] } } } as Place, {
                 iconConfig: { iconStyle: "poi-like" }
             })
-        ).toStrictEqual("243");
+        ).toBe("poi-beach");
 
         expect(
             getIconIDForPlace(
@@ -82,19 +82,19 @@ describe("Get Icon ID for a given Place tests", () => {
                 },
                 mapLibreMock
             )
-        ).toStrictEqual("restaurant");
+        ).toBe("restaurant");
 
         expect(
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: "RESTAURANT" }] } } } as Place, {
                 iconConfig: { customIcons: [{ iconUrl: "https://test.com", category: "RESTAURANT" }] }
             })
-        ).toStrictEqual("231_pin");
+        ).toBe("poi-restaurant");
 
         expect(
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: "CAFE_PUB" }] } } } as Place, {
                 iconConfig: { customIcons: [{ iconUrl: "https://test.com", category: "RESTAURANT" }] }
             })
-        ).toStrictEqual("320_pin");
+        ).toBe("poi-cafe");
     });
 
     test("Add custom category icon while map load image has an error", () => {
@@ -160,7 +160,7 @@ describe("Get mapped poi layer category for a place", () => {
             getPOILayerCategoryForPlace({
                 properties: { poi: { classifications: [{ code: "CAFE_PUB" }] } }
             } as Place)
-        ).toBe("cafe_or_pub");
+        ).toBe("cafe");
         expect(
             getPOILayerCategoryForPlace({
                 properties: { poi: { classifications: [{ code: "PHARMACY" }] } }
@@ -238,7 +238,7 @@ describe("test prepare places for display", () => {
                     staticProp: "Static text"
                 }
             })
-        ).toStrictEqual({
+        ).toEqual({
             type: "FeatureCollection",
             features: [
                 {
@@ -270,7 +270,7 @@ describe("test prepare places for display", () => {
                     textFont: ["Noto-Medium"]
                 }
             })
-        ).toStrictEqual({
+        ).toEqual({
             type: "FeatureCollection",
             features: [
                 {
@@ -283,7 +283,7 @@ describe("test prepare places for display", () => {
                     },
                     properties: {
                         id: "123",
-                        iconID: "default",
+                        iconID: "default_pin",
                         title: "No url found",
                         category: undefined,
                         type: "POI",

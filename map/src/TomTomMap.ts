@@ -81,10 +81,11 @@ export class TomTomMap {
 
     private _setLanguage(language: Language) {
         this.params = { ...this.params, language };
+        const mapLanguage = language?.includes("-") ? language.split("-")[0] : language;
         this.mapLibreMap.getStyle().layers.forEach((layer) => {
             if (layer.type == "symbol" && isLayerLocalizable(layer)) {
-                const textFieldValue = language
-                    ? ["coalesce", ["get", `name_${language}`], ["get", "name"]]
+                const textFieldValue = mapLanguage
+                    ? ["coalesce", ["get", `name_${mapLanguage}`], ["get", "name"]]
                     : ["get", "name"];
                 this.mapLibreMap.setLayoutProperty(layer.id, "text-field", textFieldValue, { validate: false });
             }
@@ -121,11 +122,6 @@ export class TomTomMap {
         // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
         keepState && setTimeout(() => this.styleChangeHandlers.forEach((handler) => handler()));
         this.params.language && this._setLanguage(this.params.language);
-        // This solution is a workaround since the base map style still comes with some POIs when excluded as part of map style:
-        const style = this.params?.style;
-        if (!(typeof style === "object" && style.type == "published" && style.include?.includes("poi"))) {
-            this.mapLibreMap.setLayoutProperty("POI", "visibility", "none", { validate: false });
-        }
     }
 
     /**

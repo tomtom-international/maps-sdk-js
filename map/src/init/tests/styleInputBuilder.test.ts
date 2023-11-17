@@ -27,9 +27,9 @@ describe("Map style input builder tests", () => {
         ).toEqual({ type: "published", id: "standardDark", include: ["poi"] });
         expect(
             withPreviousStyleParts(
-                { type: "published", id: "standardDark", include: ["traffic_incidents"] },
+                { type: "published", id: "standardDark", include: ["trafficIncidents"] },
                 { type: "published", id: "monoLight", include: ["poi"] }
             )
-        ).toEqual({ type: "published", id: "standardDark", include: ["traffic_incidents"] });
+        ).toEqual({ type: "published", id: "standardDark", include: ["trafficIncidents"] });
     });
 });

@@ -36,10 +36,10 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/geojson": "^7946.0.13",
-    "@types/jest": "^29.5.7",
-    "@types/lodash": "^4.14.200",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@types/jest": "^29.5.8",
+    "@types/lodash": "^4.14.201",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-jest": "^27.6.0",
@@ -58,7 +58,7 @@
     "entryPoint": "./index.ts"
   },
   "peerDependencies": {
-    "maplibre-gl": "3.0.0-pre.4"
+    "maplibre-gl": "^3.6.1"
   },
   "dependencies": {
     "lodash": "^4.17.21"

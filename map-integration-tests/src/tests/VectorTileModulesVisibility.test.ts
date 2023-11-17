@@ -1,7 +1,7 @@
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
-import { HILLSHADE_SOURCE_ID, POI_SOURCE_ID } from "map";
-import { assertNumber, getNumVisibleLayersBySource } from "./util/TestUtils";
+import { HILLSHADE_SOURCE_ID } from "map";
+import { assertNumber, getNumVisibleLayersBySource, getNumVisiblePOILayers } from "./util/TestUtils";
 
 describe("Vector tile modules combined visibility tests, to ensure one module doesn't step on another", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -9,7 +9,7 @@ describe("Vector tile modules combined visibility tests, to ensure one module do
     beforeAll(async () => mapEnv.loadPage());
 
     const assertPOIsVisibility = async (poisVisible: boolean) =>
-        assertNumber(await getNumVisibleLayersBySource(POI_SOURCE_ID), poisVisible);
+        assertNumber(await getNumVisiblePOILayers(), poisVisible);
 
     const assertHillshadeVisibility = async (hillshadeVisible: boolean) =>
         assertNumber(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID), hillshadeVisible);
@@ -21,7 +21,7 @@ describe("Vector tile modules combined visibility tests, to ensure one module do
                 center: [-0.12621, 51.50394]
             },
             {
-                style: { type: "published", include: ["traffic_incidents", "traffic_flow", "poi", "hillshade"] }
+                style: { type: "published", include: ["trafficIncidents", "trafficFlow", "poi", "hillshade"] }
             }
         );
         await page.evaluate(async () => {

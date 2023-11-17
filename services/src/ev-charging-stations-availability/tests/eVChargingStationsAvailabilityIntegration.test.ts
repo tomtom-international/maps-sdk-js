@@ -80,7 +80,7 @@ describe("evChargingStationsAvailability integration tests", () => {
     test("search combined with buildPlacesWithEVAvailability", async () => {
         const evStationsWithoutAvailability = await search({
             query: "",
-            poiCategories: ["ELECTRIC_VEHICLE_CHARGING_STATION"],
+            poiCategories: ["ELECTRIC_VEHICLE_STATION"],
             position: [13.41273, 52.52308], // Berlin
             limit: 3
         });

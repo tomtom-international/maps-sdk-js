@@ -1,10 +1,9 @@
-import { Fuel, Place, SearchPlaceProps, TomTomConfig } from "@anw/maps-sdk-js/core";
-
+import { Fuel, Place, POICategory, SearchPlaceProps, TomTomConfig } from "@anw/maps-sdk-js/core";
 import { search } from "../../search";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
 import { IndexTypesAbbreviation } from "../../shared";
 import { baseSearchPlaceMandatoryProps } from "../../shared/tests/integrationTestUtils";
-import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
+import { poiCategoriesToID } from "../../poi-categories/poiCategoriesToID";
 import { buildFuzzySearchRequest } from "../requestBuilder";
 import { parseFuzzySearchResponse } from "../responseParser";
 

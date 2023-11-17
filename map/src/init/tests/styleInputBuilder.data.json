@@ -6,7 +6,7 @@
       "apiKey": "TEST_API_KEY",
       "style": "standardLight"
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_street-light"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-light"
   ],
   [
     "Standard dark published style ID",
@@ -15,7 +15,7 @@
       "apiKey": "TEST_API_KEY",
       "style": "standardDark"
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_street-dark"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-dark"
   ],
   [
     "Driving light published style ID",
@@ -24,7 +24,7 @@
       "apiKey": "TEST_API_KEY",
       "style": "drivingLight"
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_street-light-driving"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-light-driving"
   ],
   [
     "Driving dark published style ID",
@@ -33,7 +33,7 @@
       "apiKey": "TEST_API_KEY",
       "style": "drivingDark"
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_street-dark-driving"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-dark-driving"
   ],
   [
     "Mono light published style ID",
@@ -42,7 +42,7 @@
       "apiKey": "TEST_API_KEY",
       "style": "monoLight"
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_mono-light"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_mono-light"
   ],
   [
     "Mono dark published style ID",
@@ -51,7 +51,7 @@
       "apiKey": "TEST_API_KEY",
       "style": "monoDark"
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_mono-dark"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_mono-dark"
   ],
   [
     "Satellite published style ID",
@@ -60,7 +60,7 @@
       "apiKey": "TEST_API_KEY",
       "style": "satellite"
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_street-satellite"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-satellite"
   ],
   [
     "Standard light published style ID with version",
@@ -73,7 +73,7 @@
         "version": "TEST_VERSION"
       }
     },
-    "https://api.tomtom.com/style/1/style/TEST_VERSION/?key=TEST_API_KEY&map=2/basic_street-light"
+    "https://api.tomtom.com/maps/orbis/assets/styles/TEST_VERSION/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-light"
   ],
   [
     "Mono light published style ID with version",
@@ -86,7 +86,7 @@
         "version": "TEST_VERSION"
       }
     },
-    "https://api.tomtom.com/style/1/style/TEST_VERSION/?key=TEST_API_KEY&map=2/basic_mono-light"
+    "https://api.tomtom.com/maps/orbis/assets/styles/TEST_VERSION/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_mono-light"
   ],
   [
     "Given style URL",
@@ -136,10 +136,10 @@
       "style": {
         "type": "published",
         "id": "standardDark",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
       }
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_street-dark&traffic_incidents=2/incidents_dark&traffic_flow=2/flow_relative-dark&poi=2/poi_dynamic-dark&hillshade=2/hillshade_dark"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-dark&trafficIncidents=incidents_dark&trafficFlow=flow_relative-dark&poi=poi_dynamic-dark&hillshade=hillshade_dark"
   ],
   [
     "Published style with module inclusion light",
@@ -149,9 +149,9 @@
       "style": {
         "type": "published",
         "id": "standardLight",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
       }
     },
-    "https://api.tomtom.com/style/1/style/24.4.*/?key=TEST_API_KEY&map=2/basic_street-light&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light&poi=2/poi_dynamic-light&hillshade=2/hillshade_light"
+    "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?sourcesVersion=1&apiVersion=1&key=TEST_API_KEY&map=basic_street-light&trafficIncidents=incidents_light&trafficFlow=flow_relative-light&poi=poi_dynamic-light&hillshade=hillshade_light"
   ]
 ]

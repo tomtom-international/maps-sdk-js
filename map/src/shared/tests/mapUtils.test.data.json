@@ -9,21 +9,21 @@
   [
     "Style without includes already in it",
     { "type": "published", "id": "standardLight" },
-    "traffic_incidents",
+    "trafficIncidents",
     {
       "type": "published",
       "id": "standardLight",
-      "include": ["traffic_incidents"]
+      "include": ["trafficIncidents"]
     }
   ],
   [
     "Style with some includes already in it",
     { "type": "published", "id": "standardLight", "include": ["poi"] },
-    "traffic_incidents",
+    "trafficIncidents",
     {
       "type": "published",
       "id": "standardLight",
-      "include": ["poi", "traffic_incidents"]
+      "include": ["poi", "trafficIncidents"]
     }
   ]
 ]

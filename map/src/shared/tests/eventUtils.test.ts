@@ -94,17 +94,24 @@ describe("updateEventState related tests", () => {
 
 describe("detectHoverState related tests", () => {
     test("detectHoverState", () => {
-        const featureA = { id: "A", layer: { id: "layer1" } } as MapGeoJSONFeature;
-        const featureB = { id: "B", layer: { id: "layer1" } } as MapGeoJSONFeature;
-        const featureAWithGoodPOIData = {
+        const featureA = { id: "A", layer: { id: "layer1" }, properties: {} } as MapGeoJSONFeature;
+        const featureB = { id: "B", layer: { id: "layer1" }, properties: {} } as MapGeoJSONFeature;
+        const poiFeature = {
             ...featureA,
             source: POI_SOURCE_ID,
             layer: { id: "layer2" },
             properties: { id: "A" } as unknown
         } as MapGeoJSONFeature;
-        const featureAWithBadPOIData = { ...featureA, source: POI_SOURCE_ID } as MapGeoJSONFeature;
-        const baseMapFeature1 = { source: BASE_MAP_SOURCE_ID, layer: { id: "layer1" } } as MapGeoJSONFeature;
-        const baseMapFeature2 = { source: BASE_MAP_SOURCE_ID, layer: { id: "layer2" } } as MapGeoJSONFeature;
+        const baseMapFeature1 = {
+            source: BASE_MAP_SOURCE_ID,
+            layer: { id: "layer1" },
+            properties: {}
+        } as MapGeoJSONFeature;
+        const baseMapFeature2 = {
+            source: BASE_MAP_SOURCE_ID,
+            layer: { id: "layer2" },
+            properties: {}
+        } as MapGeoJSONFeature;
 
         const someCoords = { x: 10, y: 20 };
         const otherCoords = { x: 12, y: 23 };
@@ -117,10 +124,9 @@ describe("detectHoverState related tests", () => {
         expect(detectHoverState(someCoords, featureA, otherCoords, undefined)).toEqual({
             hoverChanged: true
         });
-        expect(detectHoverState(someCoords, featureAWithGoodPOIData, otherCoords, undefined)).toEqual({
+        expect(detectHoverState(someCoords, poiFeature, otherCoords, undefined)).toEqual({
             hoverChanged: true
         });
-        expect(detectHoverState(someCoords, featureAWithBadPOIData, otherCoords, undefined)).toEqual({});
         expect(detectHoverState(someCoords, featureA, someCoords, featureB)).toEqual({
             hoverChanged: true
         });

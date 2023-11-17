@@ -3,66 +3,67 @@ import { StyleSpecification } from "maplibre-gl";
 import { PublishedStyle, PublishedStyleID, StyleInput, StyleModule, TomTomMapParams } from "./types/mapInit";
 
 const DEFAULT_PUBLISHED_STYLE = "standardLight";
-const URL_PREFIX = "${baseURL}/style/1/style/${version}/?key=${apiKey}";
+const URL_PREFIX =
+    "${baseURL}/maps/orbis/assets/styles/${version}/style.json?sourcesVersion=1&apiVersion=1&key=${apiKey}";
 
 const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, string>> = {
     standardLight: {
-        traffic_incidents: "2/incidents_light",
-        traffic_flow: "2/flow_relative-light",
-        poi: "2/poi_dynamic-light",
-        hillshade: "2/hillshade_light"
+        trafficIncidents: "incidents_light",
+        trafficFlow: "flow_relative-light",
+        poi: "poi_dynamic-light",
+        hillshade: "hillshade_light"
     },
     standardDark: {
-        traffic_incidents: "2/incidents_dark",
-        traffic_flow: "2/flow_relative-dark",
-        poi: "2/poi_dynamic-dark",
-        hillshade: "2/hillshade_dark"
+        trafficIncidents: "incidents_dark",
+        trafficFlow: "flow_relative-dark",
+        poi: "poi_dynamic-dark",
+        hillshade: "hillshade_dark"
     },
     drivingLight: {
-        traffic_incidents: "2/incidents_light",
-        traffic_flow: "2/flow_relative-light",
-        poi: "2/poi_dynamic-light",
-        hillshade: "2/hillshade_light"
+        trafficIncidents: "incidents_light",
+        trafficFlow: "flow_relative-light",
+        poi: "poi_dynamic-light",
+        hillshade: "hillshade_light"
     },
     drivingDark: {
-        traffic_incidents: "2/incidents_dark",
-        traffic_flow: "2/flow_relative-dark",
-        poi: "2/poi_dynamic-dark",
-        hillshade: "2/hillshade_dark"
+        trafficIncidents: "incidents_dark",
+        trafficFlow: "flow_relative-dark",
+        poi: "poi_dynamic-dark",
+        hillshade: "hillshade_dark"
     },
     monoLight: {
-        traffic_incidents: "2/incidents_light",
-        traffic_flow: "2/flow_relative-light",
-        poi: "2/poi_dynamic-mono-light",
-        hillshade: "2/hillshade_mono-light"
+        trafficIncidents: "incidents_light",
+        trafficFlow: "flow_relative-light",
+        poi: "poi_dynamic-mono-light",
+        hillshade: "hillshade_mono-light"
     },
     monoDark: {
-        traffic_incidents: "2/incidents_dark",
-        traffic_flow: "2/flow_relative-dark",
-        poi: "2/poi_dynamic-mono-dark",
-        hillshade: "2/hillshade_mono-dark"
+        trafficIncidents: "incidents_dark",
+        trafficFlow: "flow_relative-dark",
+        poi: "poi_dynamic-mono-dark",
+        hillshade: "hillshade_mono-dark"
     },
     satellite: {
-        traffic_incidents: "2/incidents_light",
-        traffic_flow: "2/flow_relative-light",
-        poi: "2/poi_dynamic-satellite",
-        hillshade: "2/hillshade_satellite"
+        trafficIncidents: "incidents_light",
+        trafficFlow: "flow_relative-light",
+        poi: "poi_dynamic-satellite",
+        hillshade: "hillshade_satellite"
     }
 };
 const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
-    standardLight: URL_PREFIX + "&map=2/basic_street-light",
-    standardDark: URL_PREFIX + "&map=2/basic_street-dark",
-    drivingLight: URL_PREFIX + "&map=2/basic_street-light-driving",
-    drivingDark: URL_PREFIX + "&map=2/basic_street-dark-driving",
-    monoLight: URL_PREFIX + "&map=2/basic_mono-light",
-    monoDark: URL_PREFIX + "&map=2/basic_mono-dark",
-    satellite: URL_PREFIX + "&map=2/basic_street-satellite"
+    standardLight: URL_PREFIX + "&map=basic_street-light",
+    standardDark: URL_PREFIX + "&map=basic_street-dark",
+    drivingLight: URL_PREFIX + "&map=basic_street-light-driving",
+    drivingDark: URL_PREFIX + "&map=basic_street-dark-driving",
+    monoLight: URL_PREFIX + "&map=basic_mono-light",
+    monoDark: URL_PREFIX + "&map=basic_mono-dark",
+    satellite: URL_PREFIX + "&map=basic_street-satellite"
 };
 
 const buildPublishedStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
     publishedStyleURLTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
         .replace("${baseURL}", baseURL)
-        .replace("${version}", publishedStyle.version || "24.4.*")
+        .replace("${version}", publishedStyle.version || "0.*")
         .replace("${apiKey}", apiKey);
 
 const withAPIKey = (givenURL: string, apiKey: string): string => {

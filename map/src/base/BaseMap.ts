@@ -10,7 +10,9 @@ import {
 import { notInTheStyle } from "../shared/errorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { BaseMapModuleConfig } from "./types/baseMapModuleConfig";
-import { buildLayerGroupFilter } from "./layerGroups";
+import { filterLayerByGroups } from "./layerGroups";
+import { LayerSpecification } from "maplibre-gl";
+import { poiLayerIDs } from "../pois";
 
 type BaseSourceAndLayers = {
     vectorTiles: StyleSourceWithLayers;
@@ -46,8 +48,11 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
         if (!source) {
             throw notInTheStyle(`init ${BaseMapModule.name} with source ID ${BASE_MAP_SOURCE_ID}`);
         }
+        const layersFilter = (layer: LayerSpecification): boolean =>
+            (!config?.layerGroups || filterLayerByGroups(layer, config?.layerGroups)) &&
+            !poiLayerIDs.includes(layer.id);
         return {
-            vectorTiles: new StyleSourceWithLayers(this.mapLibreMap, source, buildLayerGroupFilter(config?.layerGroups))
+            vectorTiles: new StyleSourceWithLayers(this.mapLibreMap, source, layersFilter)
         };
     }
 

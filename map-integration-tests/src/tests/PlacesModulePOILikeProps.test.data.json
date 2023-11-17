@@ -2,79 +2,79 @@
   "Amsterdam parkings": [
     {
       "title": "Q-Park Amsterdam Nieuwendijk",
-      "iconID": "203",
-      "category": "parking_garage"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "Parkeergarage Ijdock",
-      "iconID": "203",
-      "category": "parking_garage"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "Parkeerplaats",
-      "iconID": "159",
-      "category": "open_parking_area"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "De Boelenlaan",
-      "iconID": "159",
-      "category": "open_parking_area"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "Parkeergarage Ah Stadionplein",
-      "iconID": "203",
-      "category": "parking_garage"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "Stadhouderskade",
-      "iconID": "159",
-      "category": "open_parking_area"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "Stalling Amsterdam",
-      "iconID": "203",
-      "category": "parking_garage"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "H10 Joods Historisch Museum",
-      "iconID": "159",
-      "category": "open_parking_area"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "Parkeergarage Stadhuis-Muziektheater",
-      "iconID": "203",
-      "category": "parking_garage"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     },
     {
       "title": "H32 Sportfondsenbad Amsterdam-Oost",
-      "iconID": "159",
-      "category": "open_parking_area"
+      "iconID": "poi-parking_facility",
+      "category": "parking_facility"
     }
   ],
   "Amsterdam dentists": [
     {
       "title": "Tandarts Buisman",
-      "iconID": "248",
+      "iconID": "poi-dentist",
       "category": "dentist"
     },
     {
       "title": "JorDent",
-      "iconID": "248",
+      "iconID": "poi-dentist",
       "category": "dentist"
     },
     {
       "title": "Tandarts Tideman",
-      "iconID": "248",
+      "iconID": "poi-dentist",
       "category": "dentist"
     },
     {
       "title": "Identified",
-      "iconID": "248",
+      "iconID": "poi-dentist",
       "category": "dentist"
     },
     {
       "title": "TC De With En QJMC Jessen",
-      "iconID": "248",
+      "iconID": "poi-dentist",
       "category": "dentist"
     }
   ]

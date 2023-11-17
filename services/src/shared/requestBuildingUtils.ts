@@ -1,7 +1,7 @@
-import { getLngLatArray, HasLngLat } from "@anw/maps-sdk-js/core";
+import { getLngLatArray, HasLngLat, POICategory } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "./serviceTypes";
 import isNil from "lodash/isNil";
-import { poiCategoriesToID, POICategory } from "../poi-categories/poiCategoriesToID";
+import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
 
 /**
  * @ignore

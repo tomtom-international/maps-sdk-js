@@ -56,7 +56,7 @@ describe("Map vector tile traffic module tests", () => {
     test("Vector tiles traffic visibility changes in different ways", async () => {
         await mapEnv.loadMap(
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["traffic_flow"] } }
+            { style: { type: "published", include: ["trafficFlow"] } }
         );
         expect(await getConfig()).toBeUndefined();
 
@@ -105,7 +105,7 @@ describe("Map vector tile traffic module tests", () => {
     test("Traffic flow filtering with initial config", async () => {
         await mapEnv.loadMap(
             { zoom: 12, center: [2.37327, 48.85903] },
-            { style: { type: "published", include: ["traffic_flow"] } }
+            { style: { type: "published", include: ["trafficFlow"] } }
         );
 
         const config: FlowConfig = {
@@ -143,8 +143,8 @@ describe("Map vector tile traffic module tests", () => {
 
     test("Traffic flow filtering with complex initial config", async () => {
         await mapEnv.loadMap(
-            { zoom: 13, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["traffic_flow", "poi"] } }
+            { zoom: 14, center: [-0.12621, 51.50394] },
+            { style: { type: "published", include: ["trafficFlow", "poi"] } }
         );
 
         const config: FlowConfig = {
@@ -192,7 +192,7 @@ describe("Map vector tile traffic module tests", () => {
         await mapEnv.loadMap(
             // London:
             { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["traffic_flow"] } }
+            { style: { type: "published", include: ["trafficFlow"] } }
         );
 
         await initTrafficFlow();

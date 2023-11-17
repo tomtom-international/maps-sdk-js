@@ -1,4 +1,4 @@
-import { Fuel, PolygonFeatures, TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { Fuel, PolygonFeatures, TomTomConfig, Place, POICategory, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../responseParser";
 import { buildGeometrySearchRequest } from "../requestBuilder";
@@ -13,7 +13,7 @@ import { IndexTypesAbbreviation } from "../../shared";
 import { baseSearchPOITestProps } from "../../shared/tests/integrationTestUtils";
 import realGeometryDataInput from "./realGeometryDataInput.json";
 import hugeMultiPolygonDataInput from "./hugeMultiPolygonDataInput.json";
-import { poiCategoriesToID, POICategory } from "../../poi-categories/poiCategoriesToID";
+import { poiCategoriesToID } from "../../poi-categories/poiCategoriesToID";
 
 describe("Geometry Search service", () => {
     const geometries: SearchGeometryInput[] = [

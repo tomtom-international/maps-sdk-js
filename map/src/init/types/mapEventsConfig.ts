@@ -12,7 +12,7 @@ export type MapEventsConfig = {
      * * Ignored if precisionMode is set to "point".
      *  @default 5
      */
-    paddingBox?: number;
+    paddingBoxPx?: number;
     /**
      * Optional configuration to show custom cursor when hovering
      * * Check out {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor}

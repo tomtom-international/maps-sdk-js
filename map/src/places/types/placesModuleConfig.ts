@@ -1,6 +1,6 @@
 import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
 import { Place } from "@anw/maps-sdk-js/core";
-import { MapStylePOIClassification } from "../poiIconIDMapping";
+import { MapStylePOICategory } from "../../pois/poiCategoryMapping";
 import { MapFont } from "../../shared";
 
 /**
@@ -13,7 +13,7 @@ export type IconStyle = "pin" | "circle" | "poi-like";
  * Custom Icon configuration for places
  */
 export type CustomIcon = {
-    category: MapStylePOIClassification;
+    category: MapStylePOICategory;
     iconUrl: string;
 };
 

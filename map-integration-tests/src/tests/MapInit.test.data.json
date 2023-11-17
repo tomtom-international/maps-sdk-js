@@ -6,12 +6,42 @@
     { "style": { "type": "published" } }
   ],
   [
+    "Defaults with traffic incidents",
+    {},
+    {
+      "style": {
+        "type": "published",
+        "include": ["trafficIncidents"]
+      }
+    }
+  ],
+  [
+    "Defaults with traffic flow",
+    {},
+    {
+      "style": {
+        "type": "published",
+        "include": ["trafficFlow"]
+      }
+    }
+  ],
+  [
+    "Defaults with hillshade",
+    {},
+    {
+      "style": {
+        "type": "published",
+        "include": ["trafficFlow"]
+      }
+    }
+  ],
+  [
     "Defaults with few included parts",
     {},
     {
       "style": {
         "type": "published",
-        "include": ["traffic_incidents", "poi"]
+        "include": ["trafficIncidents", "poi"]
       }
     }
   ],
@@ -21,7 +51,7 @@
     {
       "style": {
         "type": "published",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
       }
     }
   ],
@@ -33,7 +63,7 @@
       "style": {
         "type": "published",
         "id": "standardDark",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
       }
     }
   ],
@@ -49,7 +79,7 @@
       "style": {
         "type": "published",
         "id": "monoLight",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
       }
     }
   ],
@@ -65,31 +95,7 @@
       "style": {
         "type": "published",
         "id": "monoDark",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
-      }
-    }
-  ],
-  ["Driving light map, basic", {}, { "style": "drivingLight" }],
-  [
-    "Driving light map, with included parts",
-    {},
-    {
-      "style": {
-        "type": "published",
-        "id": "drivingLight",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
-      }
-    }
-  ],
-  ["Driving dark map, basic", {}, { "style": "drivingDark" }],
-  [
-    "Driving dark map, with included parts",
-    {},
-    {
-      "style": {
-        "type": "published",
-        "id": "drivingDark",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
       }
     }
   ],
@@ -99,7 +105,7 @@
     { "style": "satellite" }
   ],
   [
-    "Satellite map, with few included parts",
+    "Satellite map, with hillshade",
     { "zoom": 10, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
       "style": {
@@ -116,7 +122,7 @@
       "style": {
         "type": "published",
         "id": "satellite",
-        "include": ["traffic_incidents", "traffic_flow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
       }
     }
   ]

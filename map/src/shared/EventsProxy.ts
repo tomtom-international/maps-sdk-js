@@ -8,7 +8,7 @@ import { detectHoverState, updateEventState } from "./eventUtils";
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
     precisionMode: "box",
-    paddingBox: 5,
+    paddingBoxPx: 5,
     cursorOnHover: "pointer",
     cursorOnMouseDown: "grabbing",
     cursorOnMap: "default",
@@ -76,7 +76,7 @@ export class EventsProxy extends AbstractEventProxy {
     }
 
     private toPaddedBounds(point: Point2D): [[number, number], [number, number]] {
-        const padding = this.config.paddingBox;
+        const padding = this.config.paddingBoxPx;
         return [
             // sw:
             [point.x - padding, point.y + padding],

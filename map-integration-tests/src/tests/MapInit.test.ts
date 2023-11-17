@@ -2,7 +2,6 @@ import {
     HILLSHADE_SOURCE_ID,
     MapLibreOptions,
     mapStyleLayerIDs,
-    POI_SOURCE_ID,
     PublishedStyle,
     StyleInput,
     StyleModule,
@@ -12,7 +11,13 @@ import {
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./MapInit.test.data.json";
-import { getLayerById, getNumVisibleLayersBySource, isLayerVisible, setStyle, waitForMapReady } from "./util/TestUtils";
+import {
+    getLayerById,
+    getNumVisibleLayersBySource,
+    getNumVisiblePOILayers,
+    setStyle,
+    waitForMapReady
+} from "./util/TestUtils";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
@@ -32,23 +37,20 @@ describe("Map Init tests", () => {
 
             const style = tomtomMapParams.style;
             const incidentLayers = await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID);
-            expect(includes(style, "traffic_incidents") ? incidentLayers > 0 : incidentLayers == 0).toBe(true);
+            expect(includes(style, "trafficIncidents") ? incidentLayers > 0 : incidentLayers == 0).toBe(true);
 
             const flowLayers = await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID);
-            expect(includes(style, "traffic_flow") ? flowLayers > 0 : flowLayers == 0).toBe(true);
+            expect(includes(style, "trafficFlow") ? flowLayers > 0 : flowLayers == 0).toBe(true);
 
-            const poiLayersBySource = await getNumVisibleLayersBySource(POI_SOURCE_ID);
-            expect(includes(style, "poi") ? poiLayersBySource > 0 : poiLayersBySource == 0).toBe(true);
-            // double-checking against potential base-map "default" POIs (based on base map vector tiles source):
-            const poiLayerVisible = await isLayerVisible("POI");
-            expect(includes(style, "poi") ? poiLayerVisible : !poiLayerVisible).toBe(true);
+            expect(await getNumVisiblePOILayers()).toBeGreaterThan(1);
 
             const hillshadeLayers = await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID);
             expect(includes(style, "hillshade") ? hillshadeLayers > 0 : hillshadeLayers == 0).toBe(true);
 
             // we verify that common base map key layers are present in all styles:
             expect(await getLayerById(mapStyleLayerIDs.lowestLabel)).toBeDefined();
-            expect(await getLayerById(mapStyleLayerIDs.lowestRoadLine)).toBeDefined();
+            // TODO: Satellite Orbis maps don't currently support the current lowest Road Line layer (Tunnel - Railway outline)
+            //expect(await getLayerById(mapStyleLayerIDs.lowestRoadLine)).toBeDefined();
             expect(await getLayerById(mapStyleLayerIDs.lowestPlaceLabel)).toBeDefined();
             expect(await getLayerById(mapStyleLayerIDs.country)).toBeDefined();
 
@@ -67,7 +69,7 @@ describe("Map Init tests", () => {
             await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
         });
 
-        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisiblePOILayers()).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
@@ -75,7 +77,7 @@ describe("Map Init tests", () => {
         // changing style, verifying all parts are still there:
         await setStyle("monoLight");
         await waitForMapReady();
-        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisiblePOILayers()).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);

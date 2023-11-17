@@ -3,12 +3,11 @@ import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import {
     getNumVisibleLayersBySource,
     initHillshade,
-    isLayerVisible,
     setStyle,
     waitForMapIdle,
     waitForMapReady
 } from "./util/TestUtils";
-import { HILLSHADE_SOURCE_ID, POI_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from "map";
+import { HILLSHADE_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from "map";
 
 describe("Map vector tiles hillshade module tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -39,9 +38,9 @@ describe("Map vector tiles hillshade module tests", () => {
         expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(1);
         expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toEqual(0);
         expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toEqual(0);
-        expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toEqual(0);
-        // double-checking against base-map "default" POIs:
-        expect(await isLayerVisible("POI")).toBe(false);
+        // TODO: POIs are included in the base map for now
+        // expect(await getNumVisibleLayersBySource(POI_SOURCE_ID)).toEqual(0);
+
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 

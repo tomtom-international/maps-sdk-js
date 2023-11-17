@@ -20,15 +20,13 @@ import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
 import {
-    getLayerById,
     getNumVisibleLayersBySource,
+    getPaintProperty,
     initHillshade,
     setStyle,
     waitForMapIdle,
-    waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
-import { LineLayerSpecification } from "maplibre-gl";
 
 const initRouting = async () =>
     page.evaluate(async () => {
@@ -61,7 +59,7 @@ const showWaypoints = async (waypoints: WaypointLike[]) =>
 const clearWaypoints = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
 
 const waitForRenderedWaypoints = async (numWaypoint: number) =>
-    waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 10000);
+    waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
 
 // (We reparse the route because it contains Date objects):
 const parsedTestRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutes));
@@ -81,8 +79,8 @@ describe("Routing tests", () => {
 
     test("Show and clear flows", async () => {
         await mapEnv.loadMap(
-            { fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox },
-            { style: { type: "published", include: ["traffic_incidents", "traffic_flow"] } }
+            { bounds: parsedTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },
+            { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
         await initRouting();
 
@@ -102,7 +100,7 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(NUM_FERRY_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(NUM_TOLL_ROAD_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
-        await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 10000);
+        await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
@@ -112,7 +110,7 @@ describe("Routing tests", () => {
         // Changing the style, asserting that the route stays the same:
         await setStyle("standardDark");
         await waitForMapIdle();
-        await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 2000);
+        await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
@@ -122,10 +120,11 @@ describe("Routing tests", () => {
         // Adding hillshade to style, asserting that the route stays the same:
         await initHillshade({ ensureAddedToStyle: true });
         await waitForMapIdle();
-        await waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], 2, 2000);
+        await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
 
         await selectRoute(2);
+        await waitForMapIdle();
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 0, 2000);
@@ -136,13 +135,14 @@ describe("Routing tests", () => {
         await setStyle({
             type: "published",
             id: "monoLight",
-            include: ["traffic_incidents", "traffic_flow", "hillshade"]
+            include: ["trafficIncidents", "trafficFlow", "hillshade"]
         });
         await waitForMapIdle();
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
         await clearRoutes();
+        await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
@@ -152,12 +152,13 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(0);
 
         await clearWaypoints();
+        await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle("drivingDark");
+        await setStyle("monoDark");
         await waitForMapIdle();
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
@@ -195,8 +196,8 @@ describe("Routing tests", () => {
         ];
 
         await mapEnv.loadMap(
-            { fitBoundsOptions: { padding: 100 }, center: [4.8806, 52.40316], zoom: 12 },
-            { style: { type: "published", include: ["traffic_incidents"] } }
+            { fitBoundsOptions: { padding: 150 }, center: [4.8806, 52.40316], zoom: 12 },
+            { style: { type: "published", include: ["trafficIncidents"] } }
         );
         await initRouting();
 
@@ -237,7 +238,7 @@ describe("Routing tests", () => {
     test("Updating configuration", async () => {
         await mapEnv.loadMap(
             { fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox },
-            { style: { type: "published", include: ["traffic_incidents", "traffic_flow"] } }
+            { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
         await initRouting();
 
@@ -247,32 +248,28 @@ describe("Routing tests", () => {
         ]);
         await showRoutes(parsedTestRoutes);
         await waitForMapIdle();
-        let mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
-        expect((mainLineLayer as LineLayerSpecification)?.paint?.["line-color"]).toStrictEqual("#3f9cd9");
+        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#3f9cd9");
 
-        const updatedLayers = DEFAULT_ROUTE_LAYERS_CONFIGURATION.mainLine?.layers.map(({ id, layerSpec, beforeID }) => {
+        const updatedLayers = DEFAULT_ROUTE_LAYERS_CONFIGURATION.mainLine?.layers.map(({ id, layerSpec, ...rest }) => {
             if (id === ROUTE_LINE_LAYER_ID) {
                 return {
                     id,
-                    beforeID,
-                    layerSpec: { ...layerSpec, paint: { ...layerSpec.paint, "line-color": "#ff0000" } }
+                    layerSpec: { ...layerSpec, paint: { ...layerSpec.paint, "line-color": "#ff0000" } },
+                    ...rest
                 };
             }
-            return { id, beforeID, layerSpec };
+            return { id, layerSpec, ...rest };
         });
 
         const newConfig = { routeLayers: { mainLine: { layers: updatedLayers } } } as RoutingModuleConfig;
         await applyConfig(newConfig);
         await waitForMapIdle();
-        mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
-        expect((mainLineLayer as LineLayerSpecification)?.paint?.["line-color"]).toBe("#ff0000");
+        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
 
         // Changing the style with extra poi included style part, asserting that the config stays the same:
         await setStyle("monoLight");
         await waitForMapIdle();
-        await waitForTimeout(2000);
-        mainLineLayer = await getLayerById(ROUTE_LINE_LAYER_ID);
-        expect((mainLineLayer as LineLayerSpecification)?.paint?.["line-color"]).toBe("#ff0000");
+        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

@@ -10,11 +10,11 @@
     },
     {
       "title": "Parkeerplaats",
-      "iconID": "159_pin"
+      "iconID": "poi-parking_facility"
     },
     {
       "title": "De Boelenlaan",
-      "iconID": "159_pin"
+      "iconID": "poi-parking_facility"
     },
     {
       "title": "Parkeergarage Ah Stadionplein",
@@ -22,7 +22,7 @@
     },
     {
       "title": "Stadhouderskade",
-      "iconID": "159_pin"
+      "iconID": "poi-parking_facility"
     },
     {
       "title": "Stalling Amsterdam",
@@ -30,7 +30,7 @@
     },
     {
       "title": "H10 Joods Historisch Museum",
-      "iconID": "159_pin"
+      "iconID": "poi-parking_facility"
     },
     {
       "title": "Parkeergarage Stadhuis-Muziektheater",
@@ -38,29 +38,29 @@
     },
     {
       "title": "H32 Sportfondsenbad Amsterdam-Oost",
-      "iconID": "159_pin"
+      "iconID": "poi-parking_facility"
     }
   ],
   "Amsterdam dentists": [
     {
       "title": "Tandarts Buisman",
-      "iconID": "248_pin"
+      "iconID": "poi-dentist"
     },
     {
       "title": "JorDent",
-      "iconID": "248_pin"
+      "iconID": "poi-dentist"
     },
     {
       "title": "Tandarts Tideman",
-      "iconID": "248_pin"
+      "iconID": "poi-dentist"
     },
     {
       "title": "Identified",
-      "iconID": "248_pin"
+      "iconID": "poi-dentist"
     },
     {
       "title": "TC De With En QJMC Jessen",
-      "iconID": "248_pin"
+      "iconID": "poi-dentist"
     }
   ]
 }

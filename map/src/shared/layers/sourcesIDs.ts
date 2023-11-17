@@ -1,7 +1,7 @@
 /**
  * POI source id
  */
-export const POI_SOURCE_ID = "poiTiles";
+export const POI_SOURCE_ID = "vectorTiles";
 
 /**
  * Hillshade source id

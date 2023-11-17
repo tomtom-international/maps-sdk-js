@@ -41,7 +41,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
         map: TomTomMap,
         config?: StyleModuleInitConfig & IncidentsConfig
     ): Promise<TrafficIncidentsModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_INCIDENTS_SOURCE_ID, "traffic_incidents");
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_INCIDENTS_SOURCE_ID, "trafficIncidents");
         return new TrafficIncidentsModule(map, config);
     }
 

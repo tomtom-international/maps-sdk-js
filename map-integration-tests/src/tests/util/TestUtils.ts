@@ -8,6 +8,7 @@ import {
     IncidentsConfig,
     LayerSpecWithSource,
     PlacesModuleConfig,
+    poiLayerIDs,
     POIsModuleConfig,
     StyleInput,
     StyleModuleInitConfig
@@ -59,12 +60,31 @@ export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerS
     }, sourceID);
 
 export const getLayerById = async (layerId: string): Promise<LayerSpecWithSource> =>
-    page.evaluate((pageLayerID) => {
-        return (globalThis as MapsSDKThis).mapLibreMap
-            .getStyle()
-            .layers.filter((layer) => layer.id === pageLayerID)
-            .shift() as LayerSpecWithSource;
-    }, layerId);
+    page.evaluate(
+        (pageLayerID) =>
+            (globalThis as MapsSDKThis).mapLibreMap
+                .getStyle()
+                .layers.filter((layer) => layer.id === pageLayerID)
+                .shift() as LayerSpecWithSource,
+        layerId
+    );
+
+export const getLayersByIds = async (layerIds: string[]): Promise<LayerSpecWithSource[]> =>
+    page.evaluate(
+        (pageLayerIDs) =>
+            (globalThis as MapsSDKThis).mapLibreMap
+                .getStyle()
+                .layers.filter((layer) => pageLayerIDs.includes(layer.id)) as LayerSpecWithSource[],
+        layerIds
+    );
+
+export const getPaintProperty = async (layerID: string, propertyName: string) =>
+    page.evaluate(
+        (inputLayerID, inputPropertyName) =>
+            (globalThis as MapsSDKThis).mapLibreMap.getPaintProperty(inputLayerID, inputPropertyName),
+        layerID,
+        propertyName
+    );
 
 export const getNumVisibleLayersBySource = async (sourceID: string): Promise<number> =>
     (await getVisibleLayersBySource(sourceID))?.length;
@@ -142,6 +162,13 @@ export const isLayerVisible = async (layerID: string): Promise<boolean> =>
         return (globalThis as MapsSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, "visibility") !== "none";
     }, layerID);
 
+export const getPOILayers = async () => getLayersByIds(poiLayerIDs);
+
+export const getVisiblePOILayers = async () =>
+    (await getPOILayers()).filter((layer) => layer.layout?.visibility !== "none");
+
+export const getNumVisiblePOILayers = async () => (await getVisiblePOILayers()).length;
+
 export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; layerIDs: string[] }> =>
     page.evaluate(() => {
         const places = (globalThis as MapsSDKThis).places;
@@ -165,7 +192,7 @@ export const showPlaces = async (places: Place | Place[] | Places) =>
         (globalThis as MapsSDKThis).places?.show(inputPlaces);
     }, places);
 
-export const initGeometry = async (config?: GeometriesModuleConfig) =>
+export const initGeometries = async (config?: GeometriesModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.geometries = await mapsSDKThis.MapsSDK.GeometriesModule.init(mapsSDKThis.tomtomMap, inputConfig);

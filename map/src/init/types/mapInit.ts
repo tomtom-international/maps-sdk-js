@@ -5,6 +5,7 @@ import { MapEventsConfig } from "./mapEventsConfig";
 export const publishedStyleIDs = [
     "standardLight",
     "standardDark",
+    // TODO: driving styles not supported in Orbis for now
     "drivingLight",
     "drivingDark",
     "monoLight",
@@ -53,12 +54,13 @@ export type CustomStyle = {
 
 /**
  * Optional parameter to include modules when loading styles.
- * * trafficIncidents: Exclude traffic incidents
- * * trafficFlow: Exclude traffic flow
- * * pois: Exclude POIs (Points of Interest)
- * * hillshade: Exclude hillshade
+ * * trafficIncidents: Include traffic incidents
+ * * trafficFlow: Include traffic flow
+ * TODO: poi style part is redundant currently because POI layers and assets are already included
+ * * pois: Include POIs (Points of Interest)
+ * * hillshade: Include hillshade
  */
-export type StyleModule = "traffic_incidents" | "traffic_flow" | "poi" | "hillshade";
+export type StyleModule = "trafficIncidents" | "trafficFlow" | "poi" | "hillshade";
 
 /**
  * Style to load on the map.

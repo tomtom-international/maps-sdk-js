@@ -54,7 +54,21 @@
     "travelled",
     "devportal",
     "landuse",
-    "landcover"
+    "landcover",
+    "LEATHERWEAR",
+    "BODYSHOP",
+    "CHILDRENS",
+    "CREPERIE",
+    "FINANCIALS",
+    "DONGBEI",
+    "LAKESHORE",
+    "SPECIALITIES",
+    "MAGHRIB",
+    "TEPPANYAKI",
+    "WOMENS",
+    "lulc",
+    "orbis",
+    "Orbis"
   ],
   "ignorePaths": [
     "**/dist/**",

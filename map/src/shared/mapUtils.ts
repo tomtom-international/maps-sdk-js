@@ -214,27 +214,28 @@ export const updateLayersAndSource = (
         } as ToBeAddedLayerSpec;
         layerSpecs.push(toBeAddedLayerSpec);
     });
-    //update existing layers
+    // update existing layers
     changeLayersProps(newLayersToUpdate, oldLayersToUpdate, map);
 };
 
 /**
- * We need to make sure that layers are added in correct order because layer may depend on another layer.
+ * Adds the given layers to the map ensuring they respect their "beforeID" properties.
+ * * We need to make sure that layers are added in the correct Z order because one layer may depend on another layer.
  * @param layersToAdd
  * @param map MapLibre map
  * @ignore
  */
-export const addLayersInCorrectOrder = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => {
+export const addLayers = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => {
     const layerIdsAlreadyOnMap = new Set<string>();
-    const mapIdDependency: Record<string, ToBeAddedLayerSpec[]> = {};
     const addLayer = (layer: ToBeAddedLayerSpec): void => {
         // we can safely add this layer
         if (!map.getLayer(layer.id)) {
-            map.addLayer(layer, layer.beforeID);
-            map.setLayoutProperty(layer.id, "visibility", "none", { validate: false });
+            map.addLayer({ ...layer, layout: { ...layer.layout, visibility: "none" } }, layer.beforeID);
         }
         layerIdsAlreadyOnMap.add(layer.id);
     };
+
+    const mapIdDependency: Record<string, ToBeAddedLayerSpec[]> = {};
 
     layersToAdd.forEach((layer) => {
         if (layer.beforeID) {

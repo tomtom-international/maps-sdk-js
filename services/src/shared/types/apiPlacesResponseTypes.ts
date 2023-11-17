@@ -1,7 +1,6 @@
 import {
     AddressProperties,
     Brand,
-    Category,
     ChargingPark,
     Classification,
     Connector,
@@ -102,6 +101,11 @@ export type SummaryAPI = Omit<SearchSummary, "geoBias"> & {
 
 /**
  * @ignore
+ */
+export type CategoryAPI = { id: number };
+
+/**
+ * @ignore
  * place of interest api type.
  */
 export type POIAPI = {
@@ -110,7 +114,7 @@ export type POIAPI = {
     brands?: Brand[];
     url?: string;
     // category ids
-    categorySet?: Category[];
+    categorySet?: CategoryAPI[];
     // Example: Array(2) [café/pub, internet café]
     categories?: string[];
     openingHours?: OpeningHours;

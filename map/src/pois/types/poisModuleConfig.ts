@@ -1,13 +1,12 @@
 import { ValuesFilter, StyleModuleConfig } from "../../shared";
-import { MapStylePOIClassification } from "../../places";
-import { POIClassificationGroup } from "../poiClassificationGroups";
+import { MapStylePOICategory } from "../../places";
+import { POICategoryGroup } from "../poiCategoryGroups";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import { Language } from "@anw/maps-sdk-js/core";
 
 /**
  * A POI classification or group which can be filtered.
  */
-export type FilterablePOICategory = MapStylePOIClassification | POIClassificationGroup;
+export type FilterablePOICategory = MapStylePOICategory | POICategoryGroup;
 
 export type POIsModuleConfig = StyleModuleConfig & {
     filters?: {
@@ -20,44 +19,31 @@ export type POIsModuleConfig = StyleModuleConfig & {
     };
 };
 
-type PrependName<U> = U extends string ? `name_${U}` : never;
-
-/**
- * Feature names in a language specified in the format "name_\[language\]", where language is one of the supported languages.
- */
-type FeatureNamesByLanguage = Partial<Record<PrependName<Language>, string>>;
-
 /**
  * A GeoJSON feature describing a POI vector tile on the map.
  */
 export type POIsModuleFeature = Omit<MapGeoJSONFeature, "properties"> & {
-    properties: FeatureNamesByLanguage & {
+    properties: {
         /**
          * A unique Point of Interest identifier that can be used across other TomTom services.
          */
-        id?: string;
+        id: string;
         /**
          * A feature name in an NGT (Neutral Ground Truth) language; the native language of each country, respectively.
          */
         name: string;
         /**
-         * This property groups Points of Interest into broad categories that can be used for styling purposes.
+         * This property groups Points of Interest into categories that can be used for styling purposes.
          */
         category: string;
         /**
-         * This property narrows down the category values allowing fine-grained styling and provides a distinction between places in the same category.
+         * ID of the image for this POI within the map style's sprite.
          */
-        subcategory?: string;
+        iconID: string;
         /**
-         * An identifier representing category. Either 4 digits integer for Points of Interest without subcategory or 7
-         * digits integer for Points of Interest with subcategory (where the first 4 digits identify a category).
-         * It can be used across other TomTom services.
+         * This property represents the broad group to which this category and other similar ones belong.
          */
-        category_id: number;
-        /**
-         * The identifier of the icon asset in the TomTom styles that should be used for the visualization purpose of the Point of Interest.
-         */
-        icon: number;
+        group: string;
         /**
          * This property represents a priority of the Point of Interest. The lower the value
          * of this property the more important the Point of Interest is.

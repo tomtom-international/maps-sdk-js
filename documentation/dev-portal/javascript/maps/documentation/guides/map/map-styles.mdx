@@ -112,13 +112,13 @@ This is useful when you want to change the style at runtime. MapLibre will help 
 
 ## Including parts in a style
 When setting the map style, you can include parts into it with the `include` property in [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams).
-For example, including [pois](/javascript/maps/documentation/guides/map/pois) and [traffic incidents](/javascript/maps/documentation/guides/map/traffic_incidents):
+For example, including [pois](/javascript/maps/documentation/guides/map/pois) and [traffic incidents](/javascript/maps/documentation/guides/map/trafficIncidents):
 
 ```javascript
 import { TomTomMap } from "@anw/maps-sdk-js/map";
 const map = new TomTomMap(
     { container: "map" },
-    { style: { type: "published", include: ["poi", "traffic_incidents"] }}
+    { style: { type: "published", include: ["poi", "trafficIncidents"] }}
 );
 ```
 <br/>

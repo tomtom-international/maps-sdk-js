@@ -11,12 +11,11 @@ import {
     getGeometriesSourceAndLayerIDs,
     getNumVisibleLayersBySource,
     getLayerByID,
-    initGeometry,
+    initGeometries,
     queryRenderedFeatures,
     setStyle,
     showGeometry,
     waitForMapIdle,
-    waitForMapReady,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
 
@@ -53,10 +52,10 @@ describe("Geometry integration tests", () => {
 
     test("Show geometry in the map, default module config", async () => {
         await mapEnv.loadMap({ bounds: geometryData.bbox as LngLatBoundsLike });
-        await initGeometry();
+        await initGeometries();
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs();
         const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
-        await waitForMapReady();
+        await waitForMapIdle();
         expect(await getNumVisibleLayers(sourceID)).toBe(0);
 
         await showGeometry(geometryData);
@@ -76,7 +75,7 @@ describe("Geometry integration tests", () => {
 
     test("Show multiple geometries in the map with title, default config", async () => {
         await mapEnv.loadMap({ bounds: netherlandsData.bbox as LngLatBoundsLike });
-        await initGeometry();
+        await initGeometries();
 
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs();
         const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
@@ -100,7 +99,7 @@ describe("Geometry integration tests", () => {
 
     test("Show multiple geometries in the map with title, custom config", async () => {
         await mapEnv.loadMap({ bounds: netherlandsData.bbox as LngLatBoundsLike });
-        await initGeometry({
+        await initGeometries({
             colorConfig: { fillColor: "#00ccbb", fillOpacity: 0.6 },
             textConfig: { textField: "CustomText" }
         });

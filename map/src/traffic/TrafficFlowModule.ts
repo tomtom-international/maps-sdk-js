@@ -37,7 +37,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @returns {Promise} Returns a promise with a new instance of this module
      */
     static async get(map: TomTomMap, config?: StyleModuleInitConfig & FlowConfig): Promise<TrafficFlowModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_FLOW_SOURCE_ID, "traffic_flow");
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_FLOW_SOURCE_ID, "trafficFlow");
         return new TrafficFlowModule(map, config);
     }
 

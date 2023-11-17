@@ -22,11 +22,11 @@ Traffic incidents provide real time observed speeds and travel times for all key
 # Initializing the Traffic Incidents module
 * First set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart).
 * Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
-* If you want traffic incidents straight away, include `"traffic_incidents"` in your style:
+* If you want traffic incidents straight away, include `"trafficIncidents"` in your style:
 ```javascript
 const map = new TomTomMap(
   { container: "map" },
-  { style: { type: "published", include: ["traffic_incidents"]}}
+  { style: { type: "published", include: ["trafficIncidents"]}}
 );
 ```
 * If you want to further control traffic incidents: import the `TrafficIncidentsModule` class:

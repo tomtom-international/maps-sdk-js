@@ -13,6 +13,8 @@ export const buildMapOptions = (mapLibreOptions: MapLibreOptions, tomtomMapParam
         ...mapLibreOptions,
         style: buildStyleInput(tomtomMapParams),
         attributionControl: false,
+        validateStyle: false,
+        maxTileCacheZoomLevels: 22,
         transformRequest: injectCustomHeaders(tomtomMapParams)
     };
 };

@@ -1,7 +1,7 @@
 import { Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
 import { TomTomMap } from "../../TomTomMap";
 import {
-    addLayersInCorrectOrder,
+    addLayers,
     changeLayerProps,
     deserializeFeatures,
     injectCustomHeaders,
@@ -214,7 +214,7 @@ describe("Map utils - updateLayersAndSource", () => {
 describe("Map utils - addLayersInCorrectOrder", () => {
     test("empty list case", () => {
         const mapMock = {} as unknown as Map;
-        addLayersInCorrectOrder([], mapMock);
+        addLayers([], mapMock);
     });
 
     test("complex case with ordering", () => {
@@ -245,7 +245,7 @@ describe("Map utils - addLayersInCorrectOrder", () => {
         const layer3 = { id: id3, beforeID: id4 } as ToBeAddedLayerSpec;
         const layer4 = { id: id4, beforeID: existingId } as ToBeAddedLayerSpec;
         const layer5 = { id: id5 } as ToBeAddedLayerSpec;
-        addLayersInCorrectOrder([layer1, layer2, layer3, layer4, layer5], mapMock);
+        addLayers([layer1, layer2, layer3, layer4, layer5], mapMock);
         expect(mapMock.getLayer).toHaveBeenNthCalledWith(1, id2);
         expect(mapMock.getLayer).toHaveBeenNthCalledWith(2, id4);
         expect(mapMock.getLayer).toHaveBeenNthCalledWith(3, id4);
@@ -257,7 +257,6 @@ describe("Map utils - addLayersInCorrectOrder", () => {
         expect(mapMock.getLayer).toHaveBeenNthCalledWith(9, id1);
         expect(mapMock.addLayer).toHaveBeenCalledTimes(5);
         expect(mapMock.getLayer).toHaveBeenCalledTimes(9);
-        expect(mapMock.setLayoutProperty).toHaveBeenCalledTimes(5);
     });
 
     test("error case", () => {
@@ -268,7 +267,7 @@ describe("Map utils - addLayersInCorrectOrder", () => {
         const id2 = "id2";
         const layer1 = { id: id1, beforeID: id2 } as ToBeAddedLayerSpec;
         const layer2 = { id: id2, beforeID: id1 } as ToBeAddedLayerSpec;
-        expect(() => addLayersInCorrectOrder([layer1, layer2], mapMock)).toThrow();
+        expect(() => addLayers([layer1, layer2], mapMock)).toThrow();
     });
 });
 

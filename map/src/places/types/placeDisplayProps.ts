@@ -5,8 +5,17 @@ import { SupportsEvents } from "../../shared";
  * Properties to display a place on the map.
  */
 export type LocationDisplayProps = {
+    /**
+     * Display title for the place on the map.
+     */
     title?: string;
+    /**
+     * Icon ID referencing the map style sprite.
+     */
     iconID: string;
+    /**
+     * Map-style-compatible display category, mostly applicable for poi-like places.
+     */
     category?: string;
 } & SupportsEvents &
     Anything;

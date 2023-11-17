@@ -4,7 +4,6 @@ import { EventType, SourceWithLayers } from "./types";
 import { Feature } from "geojson";
 import { MapGeoJSONFeature, Point2D } from "maplibre-gl";
 import { GeoJSONSourceWithLayers } from "./SourceWithLayers";
-import { POI_SOURCE_ID } from "./layers/sourcesIDs";
 import { areBothDefinedAndEqual } from "./mapUtils";
 
 type IndexedFeature<F extends Feature = Feature> = { feature: F; index: number };
@@ -133,13 +132,11 @@ export const detectHoverState = (
     mouseInMotionOverHoveredFeature?: boolean;
 } => {
     if (hoveringFeature) {
-        // Workaround/hack to avoid listening to map style POIs without ID (bad data):
-        if (hoveringFeature.source === POI_SOURCE_ID && !hoveringFeature.properties?.id) {
-            return {};
-        } else if (!prevHoveredFeature) {
+        if (!prevHoveredFeature) {
             return { hoverChanged: true };
         } else if (
-            hoveringFeature.id !== prevHoveredFeature.id ||
+            (hoveringFeature.id && hoveringFeature.id !== prevHoveredFeature.id) ||
+            (hoveringFeature.properties.id && hoveringFeature.properties.id !== prevHoveredFeature.properties.id) ||
             hoveringFeature.source !== prevHoveredFeature.source ||
             // comparing by layer ID is needed when two id-less features from the same source but different layers are compared
             // this can happen when e.g. hovering over different layer groups for the base map

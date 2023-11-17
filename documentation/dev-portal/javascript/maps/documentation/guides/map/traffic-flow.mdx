@@ -17,11 +17,11 @@ Traffic flow provides real time observed speeds and travel times for all key roa
 # Initializing the Traffic Flow module
 * First set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart).
 * Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
-* If you want traffic flow straight away, include `"traffic_flow"` in your style:
+* If you want traffic flow straight away, include `"trafficFlow"` in your style:
 ```javascript
 const map = new TomTomMap(
   { container: "map" },
-  { style: { type: "published", include: ["traffic_flow"]}}
+  { style: { type: "published", include: ["trafficFlow"]}}
 );
 ```
 * If you want to further control traffic flow: import the `TrafficFlowModule` class:

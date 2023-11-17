@@ -1,12 +1,8 @@
 import { Map } from "maplibre-gl";
-import { Place, Places } from "@anw/maps-sdk-js/core";
+import { Place, Places, POICategory } from "@anw/maps-sdk-js/core";
 import { DisplayPlaceProps } from "./types/placeDisplayProps";
 import { CustomIcon, PlacesModuleConfig } from "./types/placesModuleConfig";
-import {
-    MapStylePOIClassification,
-    placeToPOILayerClassificationMapping,
-    poiClassificationToIconID
-} from "./poiIconIDMapping";
+import { MapStylePOICategory, toMapDisplayPOICategory } from "../pois/poiCategoryMapping";
 
 /**
  * Builds the title of the place to display it on the map.
@@ -18,7 +14,7 @@ export const buildPlaceTitle = (place: Place): string =>
 /**
  * @ignore
  */
-export const addMapIcon = (map: Map, classificationCode: MapStylePOIClassification, customIcon: CustomIcon) => {
+export const addMapIcon = (map: Map, classificationCode: MapStylePOICategory, customIcon: CustomIcon) => {
     map.loadImage(customIcon.iconUrl, (e, image) => {
         if (e) {
             throw e;
@@ -40,12 +36,15 @@ export const addMapIcon = (map: Map, classificationCode: MapStylePOIClassificati
 export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {}, map?: Map): string => {
     const { iconConfig } = config;
     const iconStyle = iconConfig?.iconStyle || "pin";
-    const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOIClassification;
-    const iconID = (classificationCode && poiClassificationToIconID[classificationCode]?.toString()) || "default";
-    const defaultIcon = iconStyle === "pin" ? `${iconID}_pin` : iconID;
+    const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOICategory;
+
+    // TODO: wait for pin support in Orbis
+    const iconID = (classificationCode && `poi-${toMapDisplayPOICategory(classificationCode)}`) || "default_pin";
+    // const effectiveIconID = iconStyle === "pin" ? `${iconID}_pin` : iconID;
+    const effectiveIconID = iconStyle === "pin" ? iconID : iconID;
 
     if (!iconConfig?.customIcons || !map) {
-        return defaultIcon;
+        return effectiveIconID;
     }
 
     for (const customIcon of iconConfig.customIcons) {
@@ -55,7 +54,7 @@ export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {},
         }
     }
 
-    return defaultIcon;
+    return effectiveIconID;
 };
 
 /**
@@ -65,12 +64,7 @@ export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {},
 export const getPOILayerCategoryForPlace = (place: Place): string | undefined => {
     const category = place.properties.poi?.classifications?.[0]?.code;
     // if it's one of the different categories between search and poi layer, use poi layer category
-    return (
-        category &&
-        (category in placeToPOILayerClassificationMapping
-            ? placeToPOILayerClassificationMapping[category as MapStylePOIClassification]
-            : category.toLowerCase())
-    );
+    return category && toMapDisplayPOICategory(category as POICategory);
 };
 
 /**

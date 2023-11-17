@@ -1,7 +1,6 @@
-import { ConnectorType, Fuel } from "@anw/maps-sdk-js/core";
+import { ConnectorType, Fuel, POICategory } from "@anw/maps-sdk-js/core";
 import { CommonPlacesParams } from "./commonPlacesParams";
 import { IndexTypesAbbreviation } from "./apiPlacesResponseTypes";
-import { POICategory } from "../../poi-categories/poiCategoriesToID";
 import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "./servicesTypes";
 
 /**

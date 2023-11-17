@@ -66,14 +66,14 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@types/geojson": "^7946.0.13",
-    "@types/lodash": "^4.14.200",
+    "@types/lodash": "^4.14.201",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@size-limit/file": "^9.0.0",
     "@size-limit/preset-app": "^9.0.0",
-    "@types/uuid": "^9.0.6",
-    "cspell": "^7.3.8",
+    "@types/uuid": "^9.0.7",
+    "cspell": "^7.3.9",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-jest": "^27.6.0",
     "eslint-plugin-prettier": "^4.2.1",
