@@ -315,8 +315,8 @@ describe.skip("Tests with user events", () => {
     });
 
     test("Events from two Base Map modules with mutually exclusive layer groups", async () => {
-        await initBasemap({ layerGroups: { mode: "include", names: ["cityLabels"] } });
-        await initBasemap2({ layerGroups: { mode: "exclude", names: ["cityLabels"] } });
+        await initBasemap({ layerGroupsFilter: { mode: "include", names: ["cityLabels"] } });
+        await initBasemap2({ layerGroupsFilter: { mode: "exclude", names: ["cityLabels"] } });
         await waitForMapIdle();
 
         const baseMapCityFeature = await getPixelCoords(

@@ -1,4 +1,4 @@
-import { BaseMapLayerGroupName, baseMapLayerGroupNames, poiLayerIDs } from "map";
+import { BaseMapLayerGroupName, baseMapLayerGroupNames, BaseMapLayerGroups, poiLayerIDs } from "map";
 import { BASE_MAP_SOURCE_ID } from "map/src/shared";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
@@ -16,15 +16,27 @@ const getBaseMapLayerCount = async (): Promise<number> =>
 const getBaseMap2LayerCount = async (): Promise<number> =>
     page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.sourceAndLayerIDs.vectorTiles.layerIDs.length as number);
 
-const setBaseMapVisible = async (visible: boolean) =>
-    page.evaluate((visibleInput) => (globalThis as MapsSDKThis).baseMap?.setVisible(visibleInput), visible);
+const setBaseMapVisible = async (visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }) =>
+    page.evaluate(
+        (visibleInput, optionsInput) => (globalThis as MapsSDKThis).baseMap?.setVisible(visibleInput, optionsInput),
+        visible,
+        options
+    );
 
 const isBaseMapVisible = async () => page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.isVisible());
 
-const setBaseMap2Visible = async (visible: boolean) =>
-    page.evaluate((visibleInput) => (globalThis as MapsSDKThis).baseMap2?.setVisible(visibleInput), visible);
+const getBaseMapConfig = async () => page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.getConfig());
+
+const setBaseMap2Visible = async (visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }) =>
+    page.evaluate(
+        (visibleInput, optionsInput) => (globalThis as MapsSDKThis).baseMap2?.setVisible(visibleInput, optionsInput),
+        visible,
+        options
+    );
 
 const isBaseMap2Visible = async () => page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.isVisible());
+
+const getBaseMap2Config = async () => page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.getConfig());
 
 describe("BaseMap module tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
@@ -35,8 +47,9 @@ describe("BaseMap module tests", () => {
         await waitForMapReady();
     });
 
-    test("BaseMap modules and visibility changes", async () => {
+    test("BaseMap modules and multiple visibility changes", async () => {
         await initBasemap();
+        expect(await getBaseMapConfig()).toBeUndefined();
         let vectorTilesLayersCount = await getNumLayersBySource(BASE_MAP_SOURCE_ID);
         expect(vectorTilesLayersCount).toBeGreaterThanOrEqual(87);
         // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
@@ -46,16 +59,19 @@ describe("BaseMap module tests", () => {
         expect(originalBaseMapLayerCount).toBe(vectorTilesLayersCount - poiLayerIDs.length);
 
         await setBaseMapVisible(false);
+        expect(await getBaseMapConfig()).toEqual({ visible: false });
         expect(await isBaseMapVisible()).toBe(false);
         // we hid the base map (but the POI layers remain):
         expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBe(poiLayerIDs.length);
 
         // (making the base map visible again)
         await setBaseMapVisible(true);
+        expect(await getBaseMapConfig()).toEqual({ visible: true });
         expect(await getBaseMapLayerCount()).toBe(originalBaseMapLayerCount);
 
-        // ANOTHER BASE MAP MODULE INSTANCE WITH LAYER GROUPS:
-        await initBasemap2({ layerGroups: { mode: "include", names: ["land", "water"] } });
+        // ANOTHER BASE MAP MODULE INSTANCE WITH LAYER GROUPS FILTERED:
+        await initBasemap2({ layerGroupsFilter: { mode: "include", names: ["land", "water"] } });
+        expect(await getBaseMap2Config()).toEqual({ layerGroupsFilter: { mode: "include", names: ["land", "water"] } });
         // double-checking we haven't altered the overall visible base map layers:
         vectorTilesLayersCount = await getNumLayersBySource(BASE_MAP_SOURCE_ID);
         expect(vectorTilesLayersCount).toBe(originalBaseMapLayerCount + poiLayerIDs.length);
@@ -66,11 +82,59 @@ describe("BaseMap module tests", () => {
 
         // we make the second base map module instance invisible, which should hide only some layers:
         await setBaseMap2Visible(false);
+        expect(await getBaseMap2Config()).toEqual({
+            visible: false,
+            layerGroupsFilter: { mode: "include", names: ["land", "water"] }
+        });
         expect(await isBaseMap2Visible()).toBe(false);
         // (the overall base map is still visible since some layer are still visible):
         expect(await isBaseMapVisible()).toBe(true);
         expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeLessThan(vectorTilesLayersCount);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("BaseMap module and visibility changes for some layer groups", async () => {
+        // Initializing a base map with all layers:
+        await initBasemap();
+        const visibleBaseMapLayers = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
+        // Hiding road shields:
+        await setBaseMapVisible(false, { layerGroups: { mode: "include", names: ["roadShields"] } });
+
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeLessThan(visibleBaseMapLayers);
+        // we should only have a few layers less visible:
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(visibleBaseMapLayers - 5);
+        await setBaseMapVisible(true);
+        // (3D buildings usually are invisible by default, so we end up with an extra visible layer)
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBe(visibleBaseMapLayers + 1);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("BaseMap modules and visibility changes for some layer groups", async () => {
+        // Initializing a base map with all layers:
+        await initBasemap();
+        await initBasemap2({ layerGroupsFilter: { mode: "include", names: ["land"] } });
+        expect(await getBaseMap2Config()).toEqual({ layerGroupsFilter: { mode: "include", names: ["land"] } });
+
+        // Hiding land via the first generic base map module:
+        await setBaseMapVisible(false, { layerGroups: { mode: "include", names: ["land"] } });
+        // The first base map module should be visible because many layers are still visible:
+        expect(await isBaseMapVisible()).toBe(true);
+        // The second base map module, based only on land, should be now invisible:
+        expect(await isBaseMap2Visible()).toBe(false);
+        // Caveat: even if it's invisible, the config of the second base map doesn't state invisibility, since it was changed via another map module:
+        expect(await getBaseMap2Config()).toEqual({ layerGroupsFilter: { mode: "include", names: ["land"] } });
+
+        // Showing land again:
+        await setBaseMapVisible(true, { layerGroups: { mode: "include", names: ["land"] } });
+        expect(await isBaseMap2Visible()).toBe(true);
+
+        // Hiding everything but land:
+        await setBaseMapVisible(false, { layerGroups: { mode: "exclude", names: ["land"] } });
+        // Land module still visible:
+        expect(await isBaseMap2Visible()).toBe(true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -82,9 +146,9 @@ describe("BaseMap module tests", () => {
         const names: BaseMapLayerGroupName[] = ["roadLines", "roadShields", "roadLabels"];
 
         // "foundation" base map excluding roads:
-        await initBasemap({ layerGroups: { mode: "exclude", names } });
+        await initBasemap({ layerGroupsFilter: { mode: "exclude", names } });
         // second base map with roads only (should be mutually exclusive):
-        await initBasemap2({ layerGroups: { mode: "include", names } });
+        await initBasemap2({ layerGroupsFilter: { mode: "include", names } });
 
         // double-checking we haven't altered the overall base map layers:
         expect(await getNumLayersBySource(BASE_MAP_SOURCE_ID)).toBe(originalLayersCount);
@@ -114,7 +178,7 @@ describe("BaseMap module tests", () => {
     test("BaseMap modules including each layer group, including visibility changes", async () => {
         const vectorTilesLayersCount = await getNumLayersBySource(BASE_MAP_SOURCE_ID);
         for (const layerGroup of baseMapLayerGroupNames) {
-            await initBasemap({ layerGroups: { mode: "include", names: [layerGroup] } });
+            await initBasemap({ layerGroupsFilter: { mode: "include", names: [layerGroup] } });
             const visibleLayers = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
             // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
             expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 5);
@@ -145,7 +209,7 @@ describe("BaseMap module tests", () => {
     test("BaseMap modules excluding each layer group, including visibility changes", async () => {
         const vectorTilesLayersCount = await getNumLayersBySource(BASE_MAP_SOURCE_ID);
         for (const layerGroup of baseMapLayerGroupNames) {
-            await initBasemap({ layerGroups: { mode: "exclude", names: [layerGroup] } });
+            await initBasemap({ layerGroupsFilter: { mode: "exclude", names: [layerGroup] } });
             const visibleLayers = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
             // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
             expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 5);

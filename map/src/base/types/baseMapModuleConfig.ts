@@ -23,8 +23,11 @@ export const baseMapLayerGroupNames = [
  */
 export type BaseMapLayerGroupName = (typeof baseMapLayerGroupNames)[number];
 
+export type BaseMapLayerGroupsVisibility = BaseMapLayerGroups & { visible: boolean };
+
 /**
- * Layer groups for the base map.
+ * Layer groups to include for a base map configuration rule.
+ * * They can be expressed as explicit inclusions or exclusions (all layers minus the ones specified).
  */
 export type BaseMapLayerGroups = {
     /**
@@ -40,11 +43,22 @@ export type BaseMapLayerGroups = {
 };
 
 /**
- * Configuration for a Base Map module.
+ * Init or runtime configuration for a Base Map module.
  */
 export type BaseMapModuleConfig = StyleModuleConfig & {
     /**
+     * Optional visibility for layer groups for this base map module.
+     * * The layer groups expressed here should be all included in this base map module (not excluded by layerGroupsFilter).
+     */
+    layerGroupsVisibility?: BaseMapLayerGroupsVisibility;
+};
+
+/**
+ * Init configuration for a Base Map module.
+ */
+export type BaseMapModuleInitConfig = BaseMapModuleConfig & {
+    /**
      * Optional layer groups with which to initialize the base map module.
      */
-    layerGroups?: BaseMapLayerGroups;
+    layerGroupsFilter?: BaseMapLayerGroups;
 };

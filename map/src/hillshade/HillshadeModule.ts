@@ -63,7 +63,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
     }
 
     setVisible(visible: boolean): void {
-        this.sourcesWithLayers.hillshade.setAllLayersVisible(visible);
+        this.sourcesWithLayers.hillshade.setLayersVisible(visible);
         this.config = {
             ...this.config,
             visible

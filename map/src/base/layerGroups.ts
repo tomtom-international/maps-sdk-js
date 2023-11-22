@@ -1,6 +1,7 @@
 import { BaseMapLayerGroupName, BaseMapLayerGroups } from "./types/baseMapModuleConfig";
 import { LayerSpecification } from "maplibre-gl";
 import { LayerSpecFilter } from "../shared";
+import { poiLayerIDs } from "../pois";
 
 type LayerGroupMapping = {
     layerIDMatches: string[];
@@ -119,3 +120,11 @@ export const filterLayerByGroups = (layer: LayerSpecification, layerGroups?: Bas
     }
     return true;
 };
+
+/**
+ * @ignore
+ */
+export const buildBaseMapLayerGroupFilter =
+    (layerGroupsFilter?: BaseMapLayerGroups): LayerSpecFilter =>
+    (layer: LayerSpecification): boolean =>
+        (!layerGroupsFilter || filterLayerByGroups(layer, layerGroupsFilter)) && !poiLayerIDs.includes(layer.id);

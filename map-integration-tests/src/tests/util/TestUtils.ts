@@ -1,8 +1,8 @@
 import { Position } from "geojson";
-import { MapGeoJSONFeature, LayerSpecification } from "maplibre-gl";
-import { PolygonFeatures, GlobalConfig, Language, Place, Places } from "@anw/maps-sdk-js/core";
+import { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
+import { GlobalConfig, Language, Place, Places, PolygonFeatures } from "@anw/maps-sdk-js/core";
 import {
-    BaseMapModuleConfig,
+    BaseMapModuleInitConfig,
     GeometriesModuleConfig,
     HillshadeModuleConfig,
     IncidentsConfig,
@@ -204,13 +204,13 @@ export const showGeometry = async (geometry: PolygonFeatures) =>
         geometry
     );
 
-export const initBasemap = async (config?: BaseMapModuleConfig) =>
+export const initBasemap = async (config?: BaseMapModuleInitConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.baseMap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const initBasemap2 = async (config?: BaseMapModuleConfig) =>
+export const initBasemap2 = async (config?: BaseMapModuleInitConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.baseMap2 = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);

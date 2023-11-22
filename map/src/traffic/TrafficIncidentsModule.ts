@@ -142,7 +142,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      */
     setIconsVisible(visible: boolean): void {
         if (this.sourcesWithLayers.trafficIncidents) {
-            this.sourcesWithLayers.trafficIncidents.setAllLayersVisible(
+            this.sourcesWithLayers.trafficIncidents.setLayersVisible(
                 visible,
                 (layerSpec) => layerSpec.type === "symbol"
             );
@@ -158,7 +158,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * @param visible
      */
     setVisible(visible: boolean): void {
-        this.sourcesWithLayers.trafficIncidents.setAllLayersVisible(visible);
+        this.sourcesWithLayers.trafficIncidents.setLayersVisible(visible);
         delete this.config?.icons?.visible;
         this.config = { ...omitBy({ ...this.config }, isEmpty), visible };
     }

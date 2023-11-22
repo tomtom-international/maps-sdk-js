@@ -1,18 +1,10 @@
 import isNil from "lodash/isNil";
 import { TomTomMap } from "../init";
-import {
-    AbstractMapModule,
-    EventsModule,
-    StyleSourceWithLayers,
-    BASE_MAP_SOURCE_ID,
-    StyleModuleConfig
-} from "../shared";
+import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from "../shared";
 import { notInTheStyle } from "../shared/errorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
-import { BaseMapModuleConfig } from "./types/baseMapModuleConfig";
-import { filterLayerByGroups } from "./layerGroups";
-import { LayerSpecification } from "maplibre-gl";
-import { poiLayerIDs } from "../pois";
+import { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from "./types/baseMapModuleConfig";
+import { buildBaseMapLayerGroupFilter, buildLayerGroupFilter } from "./layerGroups";
 
 type BaseSourceAndLayers = {
     vectorTiles: StyleSourceWithLayers;
@@ -31,7 +23,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async get(tomtomMap: TomTomMap, config?: BaseMapModuleConfig): Promise<BaseMapModule> {
+    static async get(tomtomMap: TomTomMap, config?: BaseMapModuleInitConfig): Promise<BaseMapModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new BaseMapModule(tomtomMap, config);
     }
@@ -43,23 +35,25 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
     /**
      * @ignore
      */
-    protected _initSourcesWithLayers(config: BaseMapModuleConfig | undefined) {
+    protected _initSourcesWithLayers(config: BaseMapModuleInitConfig | undefined) {
         const source = this.mapLibreMap.getSource(BASE_MAP_SOURCE_ID);
         if (!source) {
             throw notInTheStyle(`init ${BaseMapModule.name} with source ID ${BASE_MAP_SOURCE_ID}`);
         }
-        const layersFilter = (layer: LayerSpecification): boolean =>
-            (!config?.layerGroups || filterLayerByGroups(layer, config?.layerGroups)) &&
-            !poiLayerIDs.includes(layer.id);
+
         return {
-            vectorTiles: new StyleSourceWithLayers(this.mapLibreMap, source, layersFilter)
+            vectorTiles: new StyleSourceWithLayers(
+                this.mapLibreMap,
+                source,
+                buildBaseMapLayerGroupFilter(config?.layerGroupsFilter)
+            )
         };
     }
 
     /**
      * @ignore
      */
-    protected _applyConfig(config: StyleModuleConfig | undefined) {
+    protected _applyConfig(config: BaseMapModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
             this.setVisible(config.visible);
         } else if (!this._initializing && !this.isVisible()) {
@@ -67,16 +61,32 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
             this.setVisible(true);
         }
 
-        return config;
+        if (config?.layerGroupsVisibility) {
+            this.setVisible(config.layerGroupsVisibility.visible, { layerGroups: config.layerGroupsVisibility });
+        }
+
+        // We merge the given config with the previous one to ensure init config parameters are kept:
+        // (the init config can have more parameters than the runtime one)
+        return { ...this.config, ...config };
     }
 
     isVisible(): boolean {
         return this.sourcesWithLayers.vectorTiles.isAnyLayerVisible();
     }
 
-    setVisible(visible: boolean): void {
-        this.sourcesWithLayers.vectorTiles.setAllLayersVisible(visible);
-        this.config = { ...this.config, visible };
+    setVisible(visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }): void {
+        this.sourcesWithLayers.vectorTiles.setLayersVisible(
+            visible,
+            options?.layerGroups && buildLayerGroupFilter(options?.layerGroups)
+        );
+
+        if (!options?.layerGroups) {
+            // We remove the layer groups visibility from the config if it was there:
+            delete this.config?.layerGroupsVisibility;
+            this.config = { ...this.config, visible };
+        } else {
+            this.config = { ...this.config, layerGroupsVisibility: { ...options.layerGroups, visible } };
+        }
     }
 
     /**

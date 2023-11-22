@@ -1,6 +1,5 @@
 import { Feature, Point, Position } from "geojson";
 import { PlaceDataSources } from "./placeDataSources";
-import { HasLngLat } from "../polygonFeature";
 import { POI, RelatedPOI } from "./poi/poi";
 import { Connector } from "./poi/connector";
 import { FeatureCollectionWithProperties } from "../extendedGeoJSON";
@@ -120,7 +119,7 @@ export type EntryPoint = {
     /**
      * Position of the entry point.
      */
-    position: HasLngLat;
+    position: Position;
 };
 
 /**

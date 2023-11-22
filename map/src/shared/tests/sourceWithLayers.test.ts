@@ -124,7 +124,7 @@ describe("AbstractSourceWithLayers tests", () => {
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
-        sourceWithLayers.setAllLayersVisible(true);
+        sourceWithLayers.setLayersVisible(true);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "visible", {
             validate: false
         });
@@ -139,7 +139,7 @@ describe("AbstractSourceWithLayers tests", () => {
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
-        sourceWithLayers.setAllLayersVisible(true, (layer) => layer.id === layer1.id);
+        sourceWithLayers.setLayersVisible(true, (layer) => layer.id === layer1.id);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "visible", {
             validate: false
         });
@@ -152,7 +152,7 @@ describe("AbstractSourceWithLayers tests", () => {
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
-        sourceWithLayers.setAllLayersVisible(false);
+        sourceWithLayers.setLayersVisible(false);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer0.id, "visibility", "none", {
             validate: false
         });
@@ -167,7 +167,7 @@ describe("AbstractSourceWithLayers tests", () => {
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
-        sourceWithLayers.setAllLayersVisible(false, (layer) => layer.id === layer1.id);
+        sourceWithLayers.setLayersVisible(false, (layer) => layer.id === layer1.id);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith(layer1.id, "visibility", "none", {
             validate: false
         });

@@ -110,7 +110,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
     }
 
     setVisible(visible: boolean): void {
-        this.sourcesWithLayers.poi.setAllLayersVisible(visible);
+        this.sourcesWithLayers.poi.setLayersVisible(visible);
         this.config = {
             ...this.config,
             visible

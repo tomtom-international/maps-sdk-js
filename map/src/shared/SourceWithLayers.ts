@@ -52,7 +52,7 @@ export abstract class AbstractSourceWithLayers<
         return this.map.getLayoutProperty(layer.id, "visibility") !== "none";
     }
 
-    setAllLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {
+    setLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {
         for (const layerSpec of this.getLayerSpecs(filter)) {
             this.map.setLayoutProperty(layerSpec.id, "visibility", visible ? "visible" : "none", { validate: false });
         }
@@ -126,7 +126,7 @@ export class AddedSourceWithLayers<
         this.source.ensureAddedToMap(this.map);
         if (addLayersToMap) {
             this.ensureLayersAddedToMap();
-            this.setAllLayersVisible(visible);
+            this.setLayersVisible(visible);
         }
     }
 }
@@ -154,7 +154,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
 
     show(featureCollection: T): void {
         asDefined(this.source.runtimeSource).setData(featureCollection);
-        this.setAllLayersVisible(!!featureCollection.features.length);
+        this.setLayersVisible(!!featureCollection.features.length);
         this.shownFeatures = featureCollection;
     }
 

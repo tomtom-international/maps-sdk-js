@@ -30,7 +30,7 @@ describe("BaseMap module tests", () => {
     test("Initializing module with config", async () => {
         const basemap: BaseMapModule = await BaseMapModule.get(tomtomMapMock, {
             visible: false,
-            layerGroups: { mode: "include", names: ["borders", "water", "land"] }
+            layerGroupsFilter: { mode: "include", names: ["borders", "water", "land"] }
         });
         const spySetVisible = jest.spyOn(basemap, "setVisible");
         expect(basemap).toBeDefined();

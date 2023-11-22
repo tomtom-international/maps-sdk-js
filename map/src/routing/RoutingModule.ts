@@ -139,7 +139,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 this.mapLibreMap
             );
             //set correct visibility if there are new layers
-            listOfSources.forEach((source) => source.setAllLayersVisible(!!source.shownFeatures.features.length));
+            listOfSources.forEach((source) => source.setLayersVisible(!!source.shownFeatures.features.length));
             this.layersSpecs = newLayersSpecs;
         }
         return mergedConfig;
