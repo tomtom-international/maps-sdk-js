@@ -136,22 +136,22 @@ describe("Calculate route request schema validation", () => {
                     ],
                     costModel: {
                         avoid: "tollRoads" as never,
-                        considerTraffic: "true" as never,
-                        thrillingParams: {
-                            hilliness: "low",
-                            windingness: "medium" as never
-                        }
+                        considerTraffic: "true" as never
+                        // thrillingParams: {
+                        //     hilliness: "low",
+                        //     windingness: "medium" as never
+                        // }
                     },
                     computeAdditionalTravelTimeFor: "first" as never,
                     currentHeading: 360,
-                    instructionsType: "Coded" as never,
+                    // instructionsType: "Coded" as never,
                     maxAlternatives: 6 as never,
-                    routeRepresentation: "summary" as never,
+                    // routeRepresentation: "summary" as never,
                     travelMode: 2 as never,
-                    when: {
-                        option: "arriveAt" as never,
-                        date: new Date()
-                    },
+                    // when: {
+                    //     option: "arriveAt" as never,
+                    //     date: new Date()
+                    // },
                     sectionTypes: ["tunnel", "motorways"] as never,
                     apiKey,
                     commonBaseURL
@@ -199,13 +199,13 @@ describe("Calculate route request schema validation", () => {
                         message: "Number must be less than or equal to 359.5",
                         path: ["currentHeading"]
                     },
-                    {
-                        received: "Coded",
-                        code: "invalid_enum_value",
-                        options: ["coded", "text", "tagged"],
-                        path: ["instructionsType"],
-                        message: "Invalid enum value. Expected 'coded' | 'text' | 'tagged', received 'Coded'"
-                    },
+                    // {
+                    //     received: "Coded",
+                    //     code: "invalid_enum_value",
+                    //     options: ["coded", "text", "tagged"],
+                    //     path: ["instructionsType"],
+                    //     message: "Invalid enum value. Expected 'coded' | 'text' | 'tagged', received 'Coded'"
+                    // },
                     {
                         code: "too_big",
                         maximum: 5,

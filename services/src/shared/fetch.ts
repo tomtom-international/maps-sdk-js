@@ -33,6 +33,8 @@ export const post = async <T, D>(input: PostObject<D>): Promise<T> =>
 export const fetchWith = async <T, D = void>(input: FetchInput<D>): Promise<T> => {
     const method = input.method;
     if (method === "GET") {
+        // TODO remove, temporary to help with testing
+        console.log(input.url.toString());
         return get<T>(input.url);
     } else if (method === "POST") {
         return post<T, D>(input);

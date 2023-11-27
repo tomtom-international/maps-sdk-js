@@ -45,22 +45,22 @@ describe("Reachable Range integration tests", () => {
     test("EV reachable range for remaining charge PCT", async () => {
         const params: ReachableRangeParams = {
             origin,
-            budget: { type: "remainingChargeCPT", value: 20 },
-            vehicle: {
-                engine: {
-                    type: "electric",
-                    currentChargePCT: 80,
-                    model: {
-                        charging: { maxChargeKWH: 85 },
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                            ]
-                        }
-                    }
-                }
-            }
+            budget: { type: "remainingChargeCPT", value: 20 }
+            // vehicle: {
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 80,
+            //         model: {
+            //             charging: { maxChargeKWH: 85 },
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //                 ]
+            //             }
+            //         }
+            //     }
+            // }
         };
         expectBasics(await calculateReachableRange(params), params);
     });
@@ -70,22 +70,22 @@ describe("Reachable Range integration tests", () => {
         const params: ReachableRangeParams = {
             origin,
             budget: { type: "spentChargePCT", value: 25 },
-            when: { option: "departAt", date: new Date(Date.UTC(2030, 8, 16, 15, 0)) },
-            vehicle: {
-                engine: {
-                    type: "electric",
-                    currentChargePCT: 50,
-                    model: {
-                        charging: { maxChargeKWH: 100 },
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                            ]
-                        }
-                    }
-                }
-            }
+            when: { option: "departAt", date: new Date(Date.UTC(2030, 8, 16, 15, 0)) }
+            // vehicle: {
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 50,
+            //         model: {
+            //             charging: { maxChargeKWH: 100 },
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //                 ]
+            //             }
+            //         }
+            //     }
+            // }
         };
         expectBasics(await calculateReachableRange(params), params);
     });
@@ -94,16 +94,16 @@ describe("Reachable Range integration tests", () => {
     test("Fuel-based reachable range", async () => {
         const params: ReachableRangeParams = {
             origin,
-            budget: { type: "spentFuelLiters", value: 55 },
-            vehicle: {
-                engine: {
-                    type: "combustion",
-                    currentFuelInLiters: 60,
-                    model: {
-                        consumption: { speedsToConsumptionsLiters: [{ speedKMH: 100, consumptionUnitsPer100KM: 6 }] }
-                    }
-                }
-            }
+            budget: { type: "spentFuelLiters", value: 55 }
+            // vehicle: {
+            //     engine: {
+            //         type: "combustion",
+            //         currentFuelInLiters: 60,
+            //         model: {
+            //             consumption: { speedsToConsumptionsLiters: [{ speedKMH: 100, consumptionUnitsPer100KM: 6 }] }
+            //         }
+            //     }
+            // }
         };
         expectBasics(await calculateReachableRange(params), params);
     });

@@ -30,8 +30,8 @@ import {
     TrafficCategoryAPI
 } from "./types/apiResponseTypes";
 import { generateId } from "../shared/generateId";
-import { CalculateRouteParams } from "./types/calculateRouteParams";
-import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
+// import { CalculateRouteParams } from "./types/calculateRouteParams";
+// import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 
 const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined => {
     switch (apiCurrentType) {
@@ -46,8 +46,9 @@ const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined 
     }
 };
 
-const parseSummary = (apiSummary: SummaryAPI, params: CalculateRouteParams): RouteSummary | LegSummary => {
-    const maxChargeKWH = (params.vehicle?.engine as ElectricVehicleEngine)?.model?.charging?.maxChargeKWH;
+const parseSummary = (apiSummary: SummaryAPI /*params: CalculateRouteParams*/): RouteSummary | LegSummary => {
+    // TODO return when ldEV is ready
+    const maxChargeKWH = 1; //(params.vehicle?.engine as ElectricVehicleEngine)?.model?.charging?.maxChargeKWH;
     const chargingConnectionInfo = apiSummary.chargingInformationAtEndOfLeg?.chargingConnectionInfo;
     return {
         ...apiSummary,
@@ -88,7 +89,7 @@ const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
     )
 });
 
-const parseLegSectionProps = (apiLegs: LegAPI[], params: CalculateRouteParams): LegSectionProps[] =>
+const parseLegSectionProps = (apiLegs: LegAPI[] /*, params: CalculateRouteParams*/): LegSectionProps[] =>
     apiLegs.reduce<LegSectionProps[]>((accumulatedParsedLegs, nextApiLeg, currentIndex) => {
         const lastLegEndPointIndex = currentIndex === 0 ? 0 : accumulatedParsedLegs[currentIndex - 1]?.endPointIndex;
         let endPointIndex;
@@ -104,7 +105,7 @@ const parseLegSectionProps = (apiLegs: LegAPI[], params: CalculateRouteParams): 
         accumulatedParsedLegs.push({
             ...(!isNil(lastLegEndPointIndex) && { startPointIndex: lastLegEndPointIndex }),
             ...(endPointIndex && { endPointIndex }),
-            summary: parseSummary(nextApiLeg.summary, params),
+            summary: parseSummary(nextApiLeg.summary /*, params*/),
             id: generateId()
         });
         return accumulatedParsedLegs;
@@ -161,8 +162,8 @@ const getSectionMapping = (
         case "TRAFFIC":
             return { sectionType: "traffic", mappingFunction: toTrafficSectionProps };
         case "TRAVEL_MODE":
-            // NOTE: vehicleRestricted sections come from TRAVEL_MODE "other" ones:
-            return { sectionType: "vehicleRestricted", mappingFunction: toVehicleRestrictedSectionProps };
+            // TODO, probably no longer needed, NOTE: vehicleRestricted sections come from TRAVEL_MODE "other" ones:
+            return { sectionType: "travelMode", mappingFunction: toVehicleRestrictedSectionProps };
         case "TUNNEL":
             return { sectionType: "tunnel", mappingFunction: toSectionProps };
         case "UNPAVED":
@@ -173,6 +174,13 @@ const getSectionMapping = (
             return { sectionType: "carpool", mappingFunction: toSectionProps };
         case "LOW_EMISSION_ZONE":
             return { sectionType: "lowEmissionZone", mappingFunction: toSectionProps };
+        // TODO for guidance sections
+        case "LANES":
+            return { sectionType: "lanes", mappingFunction: toSectionProps };
+        case "SPEED_LIMIT":
+            return { sectionType: "speedLimit", mappingFunction: toSectionProps };
+        case "ROAD_SHIELDS":
+            return { sectionType: "roadShields", mappingFunction: toSectionProps };
     }
 };
 
@@ -190,9 +198,9 @@ const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: Secti
     }
 };
 
-const parseSections = (apiRoute: RouteAPI, params: CalculateRouteParams): SectionsProps => {
+const parseSections = (apiRoute: RouteAPI /*, params: CalculateRouteParams*/): SectionsProps => {
     const result = {
-        leg: parseLegSectionProps(apiRoute.legs, params)
+        leg: parseLegSectionProps(apiRoute.legs /*, params*/)
         // (the rest of sections are parsed below)
     } as SectionsProps;
     parseSectionsAndAppendToResult(apiRoute.sections, result);
@@ -202,12 +210,19 @@ const parseSections = (apiRoute: RouteAPI, params: CalculateRouteParams): Sectio
 const parseGuidance = (apiGuidance: GuidanceAPI): Guidance => ({
     instructions: apiGuidance.instructions.map((apiInstruction) => ({
         ...apiInstruction,
-        point: [apiInstruction.point.longitude, apiInstruction.point.latitude]
-    })),
-    instructionGroups: apiGuidance.instructionGroups
+        maneuverPoint: [apiInstruction.maneuverPoint.longitude, apiInstruction.maneuverPoint.latitude],
+        routePath: apiInstruction.routePath.map((apiPoint) => ({
+            ...apiPoint,
+            point: [apiPoint.point.longitude, apiPoint.point.latitude]
+        }))
+    }))
 });
 
-const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[], params: CalculateRouteParams): Route => {
+const parseRoute = (
+    apiRoute: RouteAPI,
+    index: number,
+    apiRoutes: RouteAPI[] /*, params: CalculateRouteParams*/
+): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
     const bbox = bboxFromGeoJSON(geometry);
     const id = generateId();
@@ -218,8 +233,8 @@ const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[], pa
         ...(bbox && { bbox }),
         properties: {
             id,
-            summary: parseSummary(apiRoute.summary, params),
-            sections: parseSections(apiRoute, params),
+            summary: parseSummary(apiRoute.summary /*, params*/),
+            sections: parseSections(apiRoute /*, params*/),
             ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance) }),
             ...(apiRoutes.length > 1 && { index })
         }
@@ -232,11 +247,11 @@ const parseRoute = (apiRoute: RouteAPI, index: number, apiRoutes: RouteAPI[], pa
  * @param params The params used to calculate this route.
  */
 export const parseCalculateRouteResponse = (
-    apiResponse: CalculateRouteResponseAPI,
-    params: CalculateRouteParams
+    apiResponse: CalculateRouteResponseAPI
+    /*params: CalculateRouteParams*/
 ): Routes => {
     const features = apiResponse.routes.map((apiRoute, index, apiRoutes) =>
-        parseRoute(apiRoute, index, apiRoutes, params)
+        parseRoute(apiRoute, index, apiRoutes /*, params*/)
     );
     const bbox = bboxFromGeoJSON(features);
     return { type: "FeatureCollection", ...(bbox && { bbox }), features };

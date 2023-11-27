@@ -65,7 +65,8 @@ export type CombustionSummary = SummaryBase & {
      *
      * The value will be positive.
      */
-    fuelConsumptionInLiters?: number;
+    // TODO no longer supported by the API
+    // fuelConsumptionInLiters?: number;
 };
 
 /**

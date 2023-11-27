@@ -1,5 +1,5 @@
 import { Avoidable, TravelMode } from "@anw/maps-sdk-js/core";
-import { VehicleParameters } from "./vehicleParams";
+// import { VehicleParameters } from "./vehicleParams";
 
 /**
  * Basic low/normal/high option.
@@ -73,7 +73,8 @@ export type CostModel = {
     /**
      * Optional parameters if the route type is "thrilling" to indicate how curvy and hilly the route should be.
      */
-    thrillingParams?: ThrillingParams;
+    // TODO no longer supported
+    // thrillingParams?: ThrillingParams;
 };
 
 type DepartArriveOption = "departAt" | "arriveBy";
@@ -118,10 +119,17 @@ export type CommonRoutingParams = {
      * (e.g. an imminent arrival date for a long route), then it will default to departing now.
      * @default depart now
      */
-    when?: DepartArriveParams;
+    // TODO no longer supported
+    // when?: DepartArriveParams;
 
     /**
      * Parameters for the vehicle that will be used to drive the route.
      */
-    vehicle?: VehicleParameters;
+    // TODO no longer supported
+    // vehicle?: VehicleParameters;
+
+    /**
+     * The version of the API to use. It defaults to 1 if not specified.
+     */
+    apiVersion?: number;
 };

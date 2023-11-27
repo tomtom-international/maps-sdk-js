@@ -33,22 +33,22 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, URL][] = [
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
             origin: [-10.123567, -20.567],
-            budget: { type: "remainingChargeCPT", value: 20 },
-            vehicle: {
-                engine: {
-                    type: "electric",
-                    currentChargePCT: 80,
-                    model: {
-                        charging: { maxChargeKWH: 200 },
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                            ]
-                        }
-                    }
-                }
-            }
+            budget: { type: "remainingChargeCPT", value: 20 }
+            // vehicle: {
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 80,
+            //         model: {
+            //             charging: { maxChargeKWH: 200 },
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //                 ]
+            //             }
+            //         }
+            //     }
+            // }
         },
         new URL(
             "https://api.tomtom.com/routing/1/calculateReachableRange/-20.567,-10.123567/json?key=GLOBAL_API_KEY" +
@@ -62,22 +62,22 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, URL][] = [
             apiKey: "GLOBAL_API_KEY",
             commonBaseURL: "https://api.tomtom.com",
             origin: [-10.123567, -20.567],
-            budget: { type: "spentChargePCT", value: 50 },
-            vehicle: {
-                engine: {
-                    type: "electric",
-                    currentChargePCT: 80,
-                    model: {
-                        charging: { maxChargeKWH: 85 },
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                            ]
-                        }
-                    }
-                }
-            }
+            budget: { type: "spentChargePCT", value: 50 }
+            // vehicle: {
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 80,
+            //         model: {
+            //             charging: { maxChargeKWH: 85 },
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //                 ]
+            //             }
+            //         }
+            //     }
+            // }
         },
         new URL(
             "https://api.tomtom.com/routing/1/calculateReachableRange/-20.567,-10.123567/json?key=GLOBAL_API_KEY" +

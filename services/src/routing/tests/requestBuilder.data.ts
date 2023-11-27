@@ -53,7 +53,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ],
-            sectionTypes: ["vehicleRestricted", "traffic", "ferry"]
+            sectionTypes: ["travelMode", "traffic", "ferry"]
         },
         {
             method: "GET",
@@ -141,50 +141,50 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "lowEmissionZones"
                 ],
                 considerTraffic: false,
-                routeType: "thrilling",
-                thrillingParams: {
-                    hilliness: "low",
-                    windingness: "high"
-                }
+                routeType: "thrilling"
+                // thrillingParams: {
+                //     hilliness: "low",
+                //     windingness: "high"
+                // }
             },
             computeAdditionalTravelTimeFor: "all",
             currentHeading: 45,
-            instructionsType: "tagged",
-            maxAlternatives: 2,
-            routeRepresentation: "summaryOnly",
-            vehicle: {
-                commercial: true,
-                dimensions: {
-                    lengthMeters: 20,
-                    widthMeters: 5,
-                    heightMeters: 4,
-                    weightKG: 3500,
-                    axleWeightKG: 500
-                },
-                maxSpeedKMH: 60,
-                loadTypes: ["otherHazmatExplosive", "otherHazmatHarmfulToWater"],
-                adrCode: "B",
-                engine: {
-                    type: "electric",
-                    currentChargePCT: 50,
-                    model: {
-                        charging: { maxChargeKWH: 85 },
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                            ],
-                            auxiliaryPowerInkW: 1.7,
-                            consumptionInKWHPerKMAltitudeGain: 7,
-                            recuperationInKWHPerKMAltitudeLoss: 3.8
-                        }
-                    }
-                }
-            },
-            when: {
-                option: "arriveBy",
-                date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-            }
+            // instructionsType: "tagged",
+            maxAlternatives: 2
+            // routeRepresentation: "summaryOnly",
+            // vehicle: {
+            //     commercial: true,
+            //     dimensions: {
+            //         lengthMeters: 20,
+            //         widthMeters: 5,
+            //         heightMeters: 4,
+            //         weightKG: 3500,
+            //         axleWeightKG: 500
+            //     },
+            //     maxSpeedKMH: 60,
+            //     loadTypes: ["otherHazmatExplosive", "otherHazmatHarmfulToWater"],
+            //     adrCode: "B",
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 50,
+            //         model: {
+            //             charging: { maxChargeKWH: 85 },
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //                 ],
+            //                 auxiliaryPowerInkW: 1.7,
+            //                 consumptionInKWHPerKMAltitudeGain: 7,
+            //                 recuperationInKWHPerKMAltitudeLoss: 3.8
+            //             }
+            //         }
+            //     }
+            // },
+            // when: {
+            //     option: "arriveBy",
+            //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
+            // }
         },
         {
             method: "GET",
@@ -208,7 +208,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&vehicleAdrTunnelRestrictionCode=B&vehicleCommercial=true&vehicleMaxSpeed=60" +
                     "&computeTravelTimeFor=all" +
                     "&vehicleHeading=45" +
-                    "&instructionsType=tagged" +
+                    // "&instructionsType=tagged" +
                     "&maxAlternatives=2" +
                     "&routeRepresentation=summaryOnly" +
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
@@ -226,34 +226,34 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
-            ],
-            vehicle: {
-                dimensions: { weightKG: 1500 },
-                engine: {
-                    type: "combustion",
-                    currentFuelInLiters: 55,
-                    model: {
-                        consumption: {
-                            speedsToConsumptionsLiters: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 11.5 }
-                            ],
-                            auxiliaryPowerInLitersPerHour: 0.2,
-                            fuelEnergyDensityInMJoulesPerLiter: 34.2,
-                            efficiency: {
-                                acceleration: 0.33,
-                                deceleration: 0.83,
-                                uphill: 0.27,
-                                downhill: 0.51
-                            }
-                        }
-                    }
-                }
-            },
-            when: {
-                option: "departAt",
-                date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-            }
+            ]
+            // vehicle: {
+            //     dimensions: { weightKG: 1500 },
+            //     engine: {
+            //         type: "combustion",
+            //         currentFuelInLiters: 55,
+            //         model: {
+            //             consumption: {
+            //                 speedsToConsumptionsLiters: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 11.5 }
+            //                 ],
+            //                 auxiliaryPowerInLitersPerHour: 0.2,
+            //                 fuelEnergyDensityInMJoulesPerLiter: 34.2,
+            //                 efficiency: {
+            //                     acceleration: 0.33,
+            //                     deceleration: 0.83,
+            //                     uphill: 0.27,
+            //                     downhill: 0.51
+            //                 }
+            //             }
+            //         }
+            //     }
+            // },
+            // when: {
+            //     option: "departAt",
+            //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
+            // }
         },
         {
             method: "GET",
@@ -284,33 +284,33 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 [4.90066, 52.27317],
                 [4.49015, 52.16109]
-            ],
-            vehicle: {
-                dimensions: { weightKG: 3500 },
-                maxSpeedKMH: 60,
-                engine: {
-                    type: "electric",
-                    currentChargePCT: 80,
-                    model: {
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                            ],
-                            auxiliaryPowerInkW: 1.7,
-                            efficiency: {
-                                acceleration: 0.66,
-                                deceleration: 0.91,
-                                uphill: 0.74,
-                                downhill: 0.73
-                            }
-                        },
-                        charging: {
-                            maxChargeKWH: 85
-                        }
-                    }
-                }
-            }
+            ]
+            // vehicle: {
+            //     dimensions: { weightKG: 3500 },
+            //     maxSpeedKMH: 60,
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 80,
+            //         model: {
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //                 ],
+            //                 auxiliaryPowerInkW: 1.7,
+            //                 efficiency: {
+            //                     acceleration: 0.66,
+            //                     deceleration: 0.91,
+            //                     uphill: 0.74,
+            //                     downhill: 0.73
+            //                 }
+            //             },
+            //             charging: {
+            //                 maxChargeKWH: 85
+            //             }
+            //         }
+            //     }
+            // }
         },
         {
             method: "GET",
@@ -339,77 +339,77 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             geoInputs: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
-            ],
-            vehicle: {
-                engine: {
-                    type: "electric",
-                    currentChargePCT: 80,
-                    chargingPreferences: {
-                        minChargeAtChargingStopsPCT: 10,
-                        minChargeAtDestinationPCT: 50
-                    },
-                    model: {
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                            ],
-                            auxiliaryPowerInkW: 1.7,
-                            efficiency: {
-                                acceleration: 0.66,
-                                deceleration: 0.91,
-                                uphill: 0.74,
-                                downhill: 0.73
-                            }
-                        },
-                        charging: {
-                            maxChargeKWH: 85,
-                            batteryCurve: [
-                                { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
-                                { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
-                                { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
-                            ],
-                            chargingConnectors: [
-                                {
-                                    currentType: "AC3",
-                                    plugTypes: [
-                                        "IEC_62196_Type_2_Outlet",
-                                        "IEC_62196_Type_2_Connector_Cable_Attached",
-                                        "Combo_to_IEC_62196_Type_2_Base"
-                                    ],
-                                    efficiency: 0.9,
-                                    baseLoadInkW: 0.2,
-                                    maxPowerInkW: 11
-                                },
-                                {
-                                    currentType: "DC",
-                                    plugTypes: [
-                                        "IEC_62196_Type_2_Outlet",
-                                        "IEC_62196_Type_2_Connector_Cable_Attached",
-                                        "Combo_to_IEC_62196_Type_2_Base"
-                                    ],
-                                    voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
-                                    efficiency: 0.9,
-                                    baseLoadInkW: 0.2,
-                                    maxPowerInkW: 150
-                                },
-                                {
-                                    currentType: "DC",
-                                    plugTypes: [
-                                        "IEC_62196_Type_2_Outlet",
-                                        "IEC_62196_Type_2_Connector_Cable_Attached",
-                                        "Combo_to_IEC_62196_Type_2_Base"
-                                    ],
-                                    voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
-                                    efficiency: 0.9,
-                                    baseLoadInkW: 0.2
-                                }
-                            ],
-                            chargingTimeOffsetInSec: 60
-                        }
-                    }
-                }
-            }
+            ]
+            // vehicle: {
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 80,
+            //         chargingPreferences: {
+            //             minChargeAtChargingStopsPCT: 10,
+            //             minChargeAtDestinationPCT: 50
+            //         },
+            //         model: {
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+            //                 ],
+            //                 auxiliaryPowerInkW: 1.7,
+            //                 efficiency: {
+            //                     acceleration: 0.66,
+            //                     deceleration: 0.91,
+            //                     uphill: 0.74,
+            //                     downhill: 0.73
+            //                 }
+            //             },
+            //             charging: {
+            //                 maxChargeKWH: 85,
+            //                 batteryCurve: [
+            //                     { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+            //                     { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+            //                     { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
+            //                 ],
+            //                 chargingConnectors: [
+            //                     {
+            //                         currentType: "AC3",
+            //                         plugTypes: [
+            //                             "IEC_62196_Type_2_Outlet",
+            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+            //                             "Combo_to_IEC_62196_Type_2_Base"
+            //                         ],
+            //                         efficiency: 0.9,
+            //                         baseLoadInkW: 0.2,
+            //                         maxPowerInkW: 11
+            //                     },
+            //                     {
+            //                         currentType: "DC",
+            //                         plugTypes: [
+            //                             "IEC_62196_Type_2_Outlet",
+            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+            //                             "Combo_to_IEC_62196_Type_2_Base"
+            //                         ],
+            //                         voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
+            //                         efficiency: 0.9,
+            //                         baseLoadInkW: 0.2,
+            //                         maxPowerInkW: 150
+            //                     },
+            //                     {
+            //                         currentType: "DC",
+            //                         plugTypes: [
+            //                             "IEC_62196_Type_2_Outlet",
+            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+            //                             "Combo_to_IEC_62196_Type_2_Base"
+            //                         ],
+            //                         voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
+            //                         efficiency: 0.9,
+            //                         baseLoadInkW: 0.2
+            //                     }
+            //                 ],
+            //                 chargingTimeOffsetInSec: 60
+            //             }
+            //         }
+            //     }
+            // }
         },
         {
             method: "POST",

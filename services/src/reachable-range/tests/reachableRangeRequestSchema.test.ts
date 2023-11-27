@@ -121,10 +121,10 @@ describe("Reachable range request schema validation", () => {
                 {
                     origin: [10, 20],
                     budget: { type: "remainingChargeCPT", value: 50 },
-                    vehicle: {
-                        // model missing:
-                        engine: { type: "electric", currentChargePCT: 50 } as never
-                    },
+                    // vehicle: {
+                    //     // model missing:
+                    //     engine: { type: "electric", currentChargePCT: 50 } as never
+                    // },
                     apiKey,
                     commonBaseURL
                 },
@@ -143,17 +143,17 @@ describe("Reachable range request schema validation", () => {
                 {
                     origin: [10, 20],
                     budget: { type: "remainingChargeCPT", value: 50 },
-                    vehicle: {
-                        engine: {
-                            type: "combustion",
-                            currentFuelInLiters: 60,
-                            model: {
-                                consumption: {
-                                    speedsToConsumptionsLiters: [{ speedKMH: 100, consumptionUnitsPer100KM: 6 }]
-                                }
-                            }
-                        }
-                    },
+                    // vehicle: {
+                    //     engine: {
+                    //         type: "combustion",
+                    //         currentFuelInLiters: 60,
+                    //         model: {
+                    //             consumption: {
+                    //                 speedsToConsumptionsLiters: [{ speedKMH: 100, consumptionUnitsPer100KM: 6 }]
+                    //             }
+                    //         }
+                    //     }
+                    // },
                     apiKey,
                     commonBaseURL
                 },

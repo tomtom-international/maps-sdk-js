@@ -25,12 +25,31 @@ export type InputSectionType = (typeof inputSectionTypes)[number];
  */
 export type InputSectionTypes = InputSectionType[];
 
-export const instructionsTypes = ["coded", "text", "tagged"] as const;
+// TODO cleanup if we don't need this
+// export const instructionsTypes = ["coded", "text", "tagged"] as const;
 
 /**
  * Basic coded/text/tagged values.
  */
-export type InstructionsTypes = (typeof instructionsTypes)[number];
+// TODO cleanup if we don't need this
+// export type InstructionsTypes = (typeof instructionsTypes)[number];
+
+/**
+ * The information about the instructions for Orbis guidance request.
+ * For now the only two fields needed are choice of phonetics and language.
+ */
+export type InstructionsInfo = {
+    type: "coded";
+    version: 2;
+    phonetics: "LHP" | "IPA";
+    roadShieldReferences: "all";
+    language: string;
+};
+
+/**
+ * The extended representation of the set of routes provided as a response.
+ */
+export type ExtendedRouteRepresentation = "distance" | "travelTime";
 
 export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> &
     CommonRoutingParams & {
@@ -71,17 +90,18 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
         currentHeading?: number;
 
         /**
+         * Specifies the extended representation of the set of routes provided as a response. Can be specified multiple times.
+         */
+        extendedRouteRepresentations?: ExtendedRouteRepresentation[];
+
+        /**
          * If specified, guidance instructions will be returned (if available).
-         *
-         * Possible values:
-         * * coded : returns raw instruction data without human-readable messages.
-         * * text : returns raw instructions data with human-readable messages in plain text.
-         * * tagged : returns raw instruction data with tagged human-readable messages to permit formatting.
          *
          * If alternative routes are requested, instructions will be generated for each route returned.
          * @default None
          */
-        instructionsType?: InstructionsTypes;
+
+        instructionsInfo?: InstructionsInfo;
 
         /**
          * The number of desired alternative routes to be calculated.
@@ -99,12 +119,19 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * * polyline: includes routes in the response.
          * * summaryOnly: as per polyline, but excluding the points elements for the routes in the response.
          * @default polyline
+         * @deprecated
          */
-        routeRepresentation?: "polyline" | "summaryOnly";
+        // TODO now only option is polyline and default one, so remove this option
+        // routeRepresentation?: "polyline" | "summaryOnly";
 
         /**
          * Specifies which of the section types is reported in the route response.
          * @default travelMode
          */
         sectionTypes?: InputSectionTypes;
+
+        /**
+         * Specifies the precision of coordinates in the response. default: 5 decimals, full: 7 decimals.
+         */
+        coordinatePrecision?: "default" | "full";
     };

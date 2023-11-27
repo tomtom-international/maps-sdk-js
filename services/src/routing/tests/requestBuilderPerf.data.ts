@@ -34,9 +34,9 @@ export const routeRequestParams: CalculateRouteParams = {
         routeType: "fastest"
     },
     currentHeading: 180,
-    instructionsType: "text",
+    // instructionsType: "text",
     maxAlternatives: 3,
-    routeRepresentation: "summaryOnly",
+    // routeRepresentation: "summaryOnly",
 
     sectionTypes: [
         "carTrain",
@@ -47,44 +47,44 @@ export const routeRequestParams: CalculateRouteParams = {
         "tollRoad",
         "tollVignette",
         "country",
-        "vehicleRestricted",
+        // "vehicleRestricted",
         "traffic",
         "urban",
         "unpaved",
         "carpool"
     ],
-    travelMode: "car",
-    vehicle: {
-        dimensions: {
-            weightKG: 3500
-        },
-        engine: {
-            type: "electric",
-            currentChargePCT: 80,
-            model: {
-                charging: {
-                    maxChargeKWH: 85
-                },
-                consumption: {
-                    speedsToConsumptionsKWH: [
-                        { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                        { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-                    ],
-                    auxiliaryPowerInkW: 1.7,
-                    efficiency: {
-                        acceleration: 0.66,
-                        deceleration: 0.91,
-                        uphill: 0.74,
-                        downhill: 0.73
-                    }
-                }
-            }
-        }
-    },
-    when: {
-        option: "arriveBy",
-        date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-    }
+    travelMode: "car"
+    // vehicle: {
+    //     dimensions: {
+    //         weightKG: 3500
+    //     },
+    //     engine: {
+    //         type: "electric",
+    //         currentChargePCT: 80,
+    //         model: {
+    //             charging: {
+    //                 maxChargeKWH: 85
+    //             },
+    //             consumption: {
+    //                 speedsToConsumptionsKWH: [
+    //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+    //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+    //                 ],
+    //                 auxiliaryPowerInkW: 1.7,
+    //                 efficiency: {
+    //                     acceleration: 0.66,
+    //                     deceleration: 0.91,
+    //                     uphill: 0.74,
+    //                     downhill: 0.73
+    //                 }
+    //             }
+    //         }
+    //     }
+    // },
+    // when: {
+    //     option: "arriveBy",
+    //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
+    // }
 };
 
 export const shortRouteRequestParams: CalculateRouteParams = {
@@ -110,9 +110,9 @@ export const shortRouteRequestParams: CalculateRouteParams = {
         considerTraffic: true,
         routeType: "fastest"
     },
-    instructionsType: "text",
+    // instructionsType: "text",
     maxAlternatives: 3,
-    routeRepresentation: "summaryOnly",
+    // routeRepresentation: "summaryOnly",
     sectionTypes: [
         "carTrain",
         "ferry",
@@ -122,15 +122,15 @@ export const shortRouteRequestParams: CalculateRouteParams = {
         "tollRoad",
         "tollVignette",
         "country",
-        "vehicleRestricted",
+        // "vehicleRestricted",
         "traffic",
         "urban",
         "unpaved",
         "carpool"
     ],
-    travelMode: "car",
-    when: {
-        option: "arriveBy",
-        date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-    }
+    travelMode: "car"
+    // when: {
+    //     option: "arriveBy",
+    //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
+    // }
 };

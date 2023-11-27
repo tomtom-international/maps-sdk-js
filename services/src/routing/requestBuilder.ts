@@ -4,17 +4,18 @@ import {
     getGeoInputType,
     getLngLatArray,
     inputSectionTypes,
+    inputSectionTypesWithGuidance,
     PathLike,
     Waypoint,
     WaypointLike,
     WaypointProps
 } from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
-import omit from "lodash/omit";
+// import omit from "lodash/omit";
 import { Position } from "geojson";
-import { CalculateRouteParams, InputSectionTypes } from "./types/calculateRouteParams";
+import { CalculateRouteParams, InputSectionTypes, InstructionsInfo } from "./types/calculateRouteParams";
 import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
-import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
+// import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 import { FetchInput } from "../shared/types/fetch";
 import { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestTypes";
 import { LatitudeLongitudePointAPI } from "./types/apiResponseTypes";
@@ -22,12 +23,14 @@ import { positionToCSVLatLon } from "../shared/geometry";
 import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
 
 // Are these params about Long Distance EV Routing:
-const isLDEVR = (params: CalculateRouteParams): boolean =>
-    params.vehicle?.engine?.type == "electric" && !!params.vehicle.engine.chargingPreferences;
+// TODO temporary implementation, until I change EV routing to Orbis as well
+const isLDEVR = (/*params: CalculateRouteParams*/): boolean => false; // params.vehicle?.engine?.type == "electric" && !!params.vehicle.engine.chargingPreferences;
 
 const buildURLBasePath = (params: CalculateRouteParams): string =>
     params.customServiceBaseURL ||
-    `${params.commonBaseURL}/routing/1/${isLDEVR(params) ? "calculateLongDistanceEVRoute" : "calculateRoute"}`;
+    `${params.commonBaseURL}/maps/orbis/routing/${
+        isLDEVR(/*params*/) ? "calculateLongDistanceEVRoute" : "calculateRoute"
+    }`;
 
 const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
@@ -76,11 +79,30 @@ const buildLocationsString = (geoInputs: GeoInput[], geoInputTypes: GeoInputType
         geoInputTypes.includes("path") ? getFirstAndLastPoints(geoInputs, geoInputTypes) : (geoInputs as WaypointLike[])
     );
 
-const appendSectionTypes = (urlParams: URLSearchParams, sectionTypes?: InputSectionTypes): void => {
-    const effectiveSectionTypes = (sectionTypes || inputSectionTypes).map((sectionType) =>
-        sectionType === "vehicleRestricted" ? "travelMode" : sectionType
+const appendSectionTypes = (
+    urlParams: URLSearchParams,
+    sectionTypes: InputSectionTypes | undefined,
+    instructionsInclude: boolean
+): void => {
+    // TODO no longer needed I think
+    // const effectiveSectionTypes = (sectionTypes || inputSectionTypes).map((sectionType) =>
+    //     sectionType === "vehicleRestricted" ? "travelMode" : sectionType
+    // );
+    appendByRepeatingParamName(
+        urlParams,
+        "sectionType",
+        sectionTypes || (instructionsInclude ? inputSectionTypesWithGuidance : inputSectionTypes)
     );
-    appendByRepeatingParamName(urlParams, "sectionType", effectiveSectionTypes);
+};
+
+const appendInstructionsInfo = (urlParams: URLSearchParams, instructionsInfo?: InstructionsInfo): void => {
+    if (instructionsInfo) {
+        urlParams.append("instructionsType", instructionsInfo.type);
+        urlParams.append("guidanceVersion", String(instructionsInfo.version));
+        urlParams.append("instructionPhonetics", instructionsInfo.phonetics);
+        urlParams.append("instructionRoadShieldReferences", instructionsInfo.roadShieldReferences);
+        urlParams.append("language", instructionsInfo.language);
+    }
 };
 
 const toLatLngPointAPI = (position: Position): LatitudeLongitudePointAPI => ({
@@ -173,16 +195,16 @@ const buildGeoInputsPOSTData = (
 
 const buildPOSTData = (params: CalculateRouteParams, types: GeoInputType[]): CalculateRoutePOSTDataAPI | null => {
     const pathsIncluded = types.includes("path");
-    const ldevr = isLDEVR(params);
+    const ldevr = isLDEVR(/*params*/);
     if (!pathsIncluded && !ldevr) {
         // (if no paths in the given geoInputs nor LDEVR, there'll be no POST data, which will trigger a GET call)
         return null;
     }
-
-    const chargingModel = (params.vehicle?.engine as ElectricVehicleEngine)?.model.charging;
+    // TODO temporary implementation, until I change EV routing to Orbis as well
+    // const chargingModel = (params.vehicle?.engine as ElectricVehicleEngine)?.model.charging;
     return {
-        ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types)),
-        ...(ldevr && chargingModel && { chargingParameters: omit(chargingModel, "maxChargeKWH") })
+        ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types))
+        // ...(ldevr && chargingModel && { chargingParameters: omit(chargingModel, "maxChargeKWH") })
     };
 };
 
@@ -199,10 +221,15 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     appendCommonRoutingParams(urlParams, params);
     appendOptionalParam(urlParams, "computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
     params.currentHeading && urlParams.append("vehicleHeading", String(params.currentHeading));
-    params.instructionsType && urlParams.append("instructionsType", params.instructionsType);
+    appendInstructionsInfo(urlParams, params.instructionsInfo);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
-    params.routeRepresentation && urlParams.append("routeRepresentation", params.routeRepresentation);
-    appendSectionTypes(urlParams, params.sectionTypes);
+    // TODO maybe this will be added to the API in the future
+    // params.routeRepresentation && urlParams.append("routeRepresentation", params.routeRepresentation);
+    appendSectionTypes(urlParams, params.sectionTypes, !!params.instructionsInfo);
+    params.extendedRouteRepresentations?.forEach((extendedRouteRepresentation) => {
+        urlParams.append("extendedRouteRepresentation", extendedRouteRepresentation);
+    });
+    urlParams.append("apiVersion", String(params.apiVersion || 1));
 
     const postData = buildPOSTData(params, geoInputTypes);
     return postData ? { method: "POST", url, data: postData } : { method: "GET", url };

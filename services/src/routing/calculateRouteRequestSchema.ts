@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getGeoInputType, inputSectionTypes, SectionType } from "@anw/maps-sdk-js/core";
 import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from "../shared/geometriesSchema";
-import { CalculateRouteParams, instructionsTypes } from "./types/calculateRouteParams";
+import { CalculateRouteParams } from "./types/calculateRouteParams";
 import { SchemaRefinement } from "../shared/types/validation";
 import { commonRoutingRequestSchema } from "../shared/commonRoutingRequestSchema";
 
@@ -16,7 +16,8 @@ const calculateRouteRequestSchemaOptional = z
     .object({
         computeAdditionalTravelTimeFor: z.enum(["none", "all"]),
         currentHeading: z.number().min(0).max(359.5),
-        instructionsType: z.enum(instructionsTypes),
+        // TODO add proper instructionsInfo check
+        // instructionsType: z.enum(instructionsTypes),
         maxAlternatives: z.number().min(1).max(5),
         routeRepresentation: z.enum(["polyline", "summaryOnly"]),
         sectionTypes: z.array(z.enum(inputSectionTypes as [SectionType, ...SectionType[]]))

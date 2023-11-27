@@ -8,6 +8,7 @@ import {
     TrafficIncidentTEC,
     TravelMode
 } from "@anw/maps-sdk-js/core";
+import { RoutePathPoint } from "core";
 
 /**
  * @ignore
@@ -33,7 +34,11 @@ export type SectionTypeAPI =
     | "UNPAVED"
     | "URBAN"
     | "CARPOOL"
-    | "LOW_EMISSION_ZONE";
+    | "LOW_EMISSION_ZONE"
+    // FOR GUIDANCE
+    | "LANES"
+    | "SPEED_LIMIT"
+    | "ROAD_SHIELDS";
 
 /**
  * @ignore
@@ -107,8 +112,16 @@ export type LegAPI = {
 /**
  * @ignore
  */
-export type InstructionAPI = Omit<Instruction, "point"> & {
+export type RoutePathPointAPI = Omit<RoutePathPoint, "point"> & {
     point: LatitudeLongitudePointAPI;
+};
+
+/**
+ * @ignore
+ */
+export type InstructionAPI = Omit<Instruction, "maneuverPoint" | "routePath"> & {
+    maneuverPoint: LatitudeLongitudePointAPI;
+    routePath: RoutePathPointAPI[];
 };
 
 /**
@@ -136,4 +149,5 @@ export type CalculateRouteResponseAPI = {
     routes: RouteAPI[];
     optimizedWaypoints?: { providedIndex: number; optimizedIndex: number }[];
     report?: ReportAPI;
+    roadShieldAtlasReference?: string;
 };

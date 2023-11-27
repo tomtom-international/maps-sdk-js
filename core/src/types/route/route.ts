@@ -37,7 +37,7 @@ export type Avoidable =
  * @group Route
  * @category Types
  */
-export type TravelMode = "car" | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
+export type TravelMode = "car"; // TODO no longer supported | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
 
 /**
  * @group Route

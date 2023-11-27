@@ -146,12 +146,17 @@ export type SectionsProps = {
     tollRoad?: SectionProps[];
     tollVignette?: CountrySectionProps[];
     traffic?: TrafficSectionProps[];
-    vehicleRestricted?: SectionProps[];
+    travelMode?: SectionProps[];
+    // TODO no longer supported, vehicleRestricted?: SectionProps[];
     tunnel?: SectionProps[];
     unpaved?: SectionProps[];
     urban?: SectionProps[];
     carpool?: SectionProps[];
     lowEmissionZone?: SectionProps[];
+    // TODO create proper types for these
+    lanes?: SectionProps[];
+    speedLimit?: SectionProps[];
+    roadShields?: SectionProps[];
 };
 
 /**
@@ -173,16 +178,24 @@ export const inputSectionTypes: SectionType[] = [
     "tollRoad",
     "tollVignette",
     "country",
-    "vehicleRestricted",
+    "travelMode",
+    // TODO no longer supported, "vehicleRestricted",
     "traffic",
+    "carpool",
     "urban",
     "unpaved",
-    "carpool",
     "lowEmissionZone"
+];
+
+export const inputSectionTypesWithGuidance: SectionType[] = [
+    ...inputSectionTypes,
+    "lanes",
+    "speedLimit",
+    "roadShields"
 ];
 
 /**
  * @group Route
  * @category Variables
  */
-export const sectionTypes: SectionType[] = [...inputSectionTypes, "leg"];
+export const sectionTypes: SectionType[] = [...inputSectionTypesWithGuidance, "leg"];

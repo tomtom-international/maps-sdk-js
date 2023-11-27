@@ -2,6 +2,6 @@
  * @module reachable-range
  * @category Service
  */
-
-export * from "./types/reachableRangeParams";
-export * from "./calculateReachableRange";
+// TODO this service is not yet implemented in Orbis
+// export * from "./types/reachableRangeParams";
+// export * from "./calculateReachableRange";
