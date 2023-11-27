@@ -14,13 +14,14 @@ describe("Vector tiles traffic flow module tests", () => {
                 getStyle: jest
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
     }
     test("Initializing module with config", async () => {
@@ -32,7 +33,6 @@ describe("Vector tiles traffic flow module tests", () => {
             filters: { any: [{ roadCategories: { show: "only", values: ["motorway", "trunk"] } }] }
         });
         expect(trafficFlowModule).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
@@ -54,7 +54,6 @@ describe("Vector tiles traffic flow module tests", () => {
 
         const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock);
         expect(trafficFlowModule).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });

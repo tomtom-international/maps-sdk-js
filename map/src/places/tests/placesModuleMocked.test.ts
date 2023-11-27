@@ -17,16 +17,17 @@ describe("GeoJSON Places module tests", () => {
                 getLayer: jest.fn(),
                 getStyle: jest.fn().mockReturnValue({ layers: [] }),
                 addLayer: jest.fn(),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn(),
                 setPaintProperty: jest.fn(),
-                setFilter: jest.fn()
+                setFilter: jest.fn(),
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         const testPlaces = {

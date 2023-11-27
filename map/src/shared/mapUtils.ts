@@ -11,14 +11,13 @@ import { cannotAddStyleModuleToCustomStyle } from "./errorMessages";
  * @param tomtomMap The TomTomMap instance.
  * @returns {Promise<boolean>} Returns a Promise<boolean>
  */
-export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<boolean> =>
-    new Promise((resolve) => {
-        if (tomtomMap.mapReady || tomtomMap.mapLibreMap.isStyleLoaded()) {
-            resolve(true);
-        } else {
-            tomtomMap.mapLibreMap.once("styledata", () => resolve(true));
-        }
-    });
+export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<void> => {
+    if (!tomtomMap.mapReady) {
+        await tomtomMap.mapLibreMap.once("styledata");
+        // Recursively waiting for map to be ready (in case of style changes quickly in succession):
+        await waitUntilMapIsReady(tomtomMap);
+    }
+};
 
 /**
  * Wait until the source is ready.
@@ -26,14 +25,11 @@ export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<boolean
  * @param sourceId we want to check for.
  * @returns {Promise<boolean>} Returns a Promise<boolean>
  */
-export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: string): Promise<boolean> =>
-    new Promise((resolve) => {
-        if (tomtomMap.mapLibreMap.getSource(sourceId) && tomtomMap.mapLibreMap.isSourceLoaded(sourceId)) {
-            resolve(true);
-        } else {
-            tomtomMap.mapLibreMap.once("sourcedata", () => resolve(true));
-        }
-    });
+export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: string): Promise<void> => {
+    if (!tomtomMap.mapLibreMap.getSource(sourceId) || !tomtomMap.mapLibreMap.isSourceLoaded(sourceId)) {
+        await tomtomMap.mapLibreMap.once("sourcedata");
+    }
+};
 
 /**
  * Deserializes the properties from MapLibre features.

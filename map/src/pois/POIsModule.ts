@@ -110,11 +110,14 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
     }
 
     setVisible(visible: boolean): void {
-        this.sourcesWithLayers.poi.setLayersVisible(visible);
         this.config = {
             ...this.config,
             visible
         };
+
+        if (this.tomtomMap.mapReady) {
+            this.sourcesWithLayers.poi.setLayersVisible(visible);
+        }
     }
 
     /**
@@ -124,12 +127,15 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
      */
     filterCategories(categoriesFilter?: ValuesFilter<FilterablePOICategory> | undefined): void {
         if (categoriesFilter) {
-            const poiFilter = buildMappedValuesFilter(
-                "category",
-                categoriesFilter.show,
-                getStyleCategories(categoriesFilter.values)
-            );
-            this.mapLibreMap.setFilter("POI", getMergedAllFilter(poiFilter, this.originalFilter));
+            if (this.tomtomMap.mapReady) {
+                const poiFilter = buildMappedValuesFilter(
+                    "category",
+                    categoriesFilter.show,
+                    getStyleCategories(categoriesFilter.values)
+                );
+
+                this.mapLibreMap.setFilter("POI", getMergedAllFilter(poiFilter, this.originalFilter));
+            }
             this.config = {
                 ...this.config,
                 filters: {
@@ -147,8 +153,10 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
                     }
                 }
             };
-            // Applies default:
-            this.mapLibreMap.setFilter("POI", this.originalFilter);
+            if (this.tomtomMap.mapReady) {
+                // Applies default:
+                this.mapLibreMap.setFilter("POI", this.originalFilter);
+            }
         }
 
         this.categoriesFilter = categoriesFilter;

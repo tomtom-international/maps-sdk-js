@@ -96,21 +96,24 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
         iconFilters: TrafficIncidentsFilters | undefined,
         updateConfig = true
     ) {
-        if (incidentFilters?.any?.length) {
-            const incidentFilterExpression = buildMapLibreIncidentFilters(incidentFilters);
-            if (incidentFilterExpression) {
-                const layers = iconFilters ? this.getNonSymbolLayers() : this.getLayers();
-                applyFilter(incidentFilterExpression, layers, this.mapLibreMap, this.originalFilters);
+        if (this.tomtomMap.mapReady) {
+            if (incidentFilters?.any?.length) {
+                const incidentFilterExpression = buildMapLibreIncidentFilters(incidentFilters);
+                if (incidentFilterExpression) {
+                    const layers = iconFilters ? this.getNonSymbolLayers() : this.getLayers();
+                    applyFilter(incidentFilterExpression, layers, this.mapLibreMap, this.originalFilters);
+                }
+            } else if (this.config?.filters?.any?.length) {
+                applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
             }
-        } else if (this.config?.filters?.any?.length) {
-            applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
-        }
-        if (iconFilters?.any?.length) {
-            const iconFilterExpression = buildMapLibreIncidentFilters(iconFilters);
-            if (iconFilterExpression) {
-                applyFilter(iconFilterExpression, this.getSymbolLayers(), this.mapLibreMap, this.originalFilters);
+            if (iconFilters?.any?.length) {
+                const iconFilterExpression = buildMapLibreIncidentFilters(iconFilters);
+                if (iconFilterExpression) {
+                    applyFilter(iconFilterExpression, this.getSymbolLayers(), this.mapLibreMap, this.originalFilters);
+                }
             }
         }
+
         // else: default incidents visibility has been set already if necessary
         if (updateConfig) {
             this.config = omitBy(
@@ -142,25 +145,31 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      */
     setIconsVisible(visible: boolean): void {
         if (this.sourcesWithLayers.trafficIncidents) {
-            this.sourcesWithLayers.trafficIncidents.setLayersVisible(
-                visible,
-                (layerSpec) => layerSpec.type === "symbol"
-            );
             // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
             this.config = {
                 ...this.config,
                 icons: { ...this.config?.icons, visible }
             };
+
+            if (this.tomtomMap.mapReady) {
+                this.sourcesWithLayers.trafficIncidents.setLayersVisible(
+                    visible,
+                    (layerSpec) => layerSpec.type === "symbol"
+                );
+            }
         }
     }
+
     /**
      * Sets visibility for traffic incidents layers.
      * @param visible
      */
     setVisible(visible: boolean): void {
-        this.sourcesWithLayers.trafficIncidents.setLayersVisible(visible);
         delete this.config?.icons?.visible;
         this.config = { ...omitBy({ ...this.config }, isEmpty), visible };
+        if (this.tomtomMap.mapReady) {
+            this.sourcesWithLayers.trafficIncidents.setLayersVisible(visible);
+        }
     }
 
     /**

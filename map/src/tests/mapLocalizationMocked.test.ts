@@ -26,19 +26,6 @@ describe("Map localization mocked tests", () => {
         jest.clearAllMocks();
     });
 
-    test("Map init with given language in sdk config", () => {
-        jest.spyOn(TomTomMap.prototype, "setLanguage");
-        const tomtomMap = new TomTomMap(
-            { container: mockedContainer },
-            {
-                language: "en-GB"
-            }
-        );
-        expect(tomtomMap.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
-        expect(tomtomMap.setLanguage).toHaveBeenCalledTimes(1);
-        expect(tomtomMap.setLanguage).toHaveBeenCalledWith("en-GB");
-    });
-
     test("Localize map after initialization", () => {
         const tomtomMap = new TomTomMap({ container: mockedContainer });
         jest.spyOn(tomtomMap, "setLanguage");

@@ -88,14 +88,17 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     }
 
     private _filter(filters: TrafficFlowFilters | undefined, updateConfig = true) {
-        if (filters?.any?.length) {
-            const filterExpression = buildMapLibreFlowFilters(filters);
-            if (filterExpression) {
-                applyFilter(filterExpression, this.getLayers(), this.mapLibreMap, this.originalFilters);
+        if (this.tomtomMap.mapReady) {
+            if (filters?.any?.length) {
+                const filterExpression = buildMapLibreFlowFilters(filters);
+                if (filterExpression) {
+                    applyFilter(filterExpression, this.getLayers(), this.mapLibreMap, this.originalFilters);
+                }
+            } else if (this.config?.filters?.any?.length) {
+                applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
             }
-        } else if (this.config?.filters?.any?.length) {
-            applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
         }
+
         if (updateConfig) {
             this.config = omitBy(
                 {
@@ -112,8 +115,10 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @param visible
      */
     setVisible(visible: boolean): void {
-        this.sourcesWithLayers.trafficFlow.setLayersVisible(visible);
         this.config = { ...this.config, visible };
+        if (this.tomtomMap.mapReady) {
+            this.sourcesWithLayers.trafficFlow.setLayersVisible(visible);
+        }
     }
 
     /**

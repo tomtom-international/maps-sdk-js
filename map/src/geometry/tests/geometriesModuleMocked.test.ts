@@ -14,6 +14,7 @@ describe("Geometry module tests", () => {
         const geometrySource = { id: "sourceID", setData: jest.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
+                once: jest.fn().mockReturnValue(Promise.resolve()),
                 getSource: jest.fn().mockReturnValue(geometrySource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { geometrySourceID: {} } }),
                 getLayer: jest.fn(),
@@ -28,7 +29,8 @@ describe("Geometry module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         const geometryConfig = { colorConfig: { fillColor: "warm" }, textConfig: { textField: "title" } };

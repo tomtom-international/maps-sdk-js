@@ -10,7 +10,7 @@ describe("GlobalConfig", () => {
         const newInstance = new TomTomConfig();
         const staticInstance = TomTomConfig.instance;
 
-        expect(newInstance).toBe(staticInstance);
+        expect(newInstance).toEqual(staticInstance);
     });
 
     test("TomTomConfig contains default config", () => {

@@ -14,16 +14,16 @@ describe("BaseMap module tests", () => {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce({ id: BASE_MAP_SOURCE_ID }),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
                 setLayoutProperty: jest.fn(),
                 getLayoutProperty: jest.fn(),
-                once: jest.fn()
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
     });
 
@@ -34,7 +34,6 @@ describe("BaseMap module tests", () => {
         });
         const spySetVisible = jest.spyOn(basemap, "setVisible");
         expect(basemap).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
@@ -48,7 +47,6 @@ describe("BaseMap module tests", () => {
     test("Initializing module with no config", async () => {
         const basemap = await BaseMapModule.get(tomtomMapMock);
         expect(basemap).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });

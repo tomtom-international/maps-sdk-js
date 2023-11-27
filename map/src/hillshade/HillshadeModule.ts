@@ -63,11 +63,14 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
     }
 
     setVisible(visible: boolean): void {
-        this.sourcesWithLayers.hillshade.setLayersVisible(visible);
         this.config = {
             ...this.config,
             visible
         };
+
+        if (this.tomtomMap.mapReady) {
+            this.sourcesWithLayers.hillshade.setLayersVisible(visible);
+        }
     }
 
     isVisible(): boolean {

@@ -1,6 +1,7 @@
 import mapLibreExported, { Map } from "maplibre-gl";
 import { BBox } from "geojson";
 import { Language, mergeFromGlobal } from "@anw/maps-sdk-js/core";
+import isEqual from "lodash/isEqual";
 import { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
 import { buildMapOptions } from "./init/buildMapOptions";
 import { buildStyleInput, withPreviousStyleParts } from "./init/styleInputBuilder";
@@ -55,7 +56,6 @@ export class TomTomMap {
                 true
             );
         }
-        this.params?.language && this.setLanguage(this.params?.language);
     }
 
     /**
@@ -67,12 +67,17 @@ export class TomTomMap {
      * @param options.keepState Whether to restore previous SDK rendered items and configurations. Defaults to true.
      */
     setStyle = (style: StyleInput, options: { keepState?: boolean } = { keepState: true }): void => {
-        this.params = {
-            ...this.params,
-            style: options.keepState ? withPreviousStyleParts(style, this.params.style) : style
-        };
         this.mapReady = false;
-        this.mapLibreMap.once("styledata", () => this.handleStyleData(options.keepState || true));
+        const effectiveStyle = options.keepState ? withPreviousStyleParts(style, this.params.style) : style;
+        this.params = { ...this.params, style: effectiveStyle };
+        this.mapLibreMap.once("styledata", () => {
+            // We only handle the style data change if the applied style is still the same as the one we set,
+            // to prevent race conditions when handling stale styles applied quickly in succession.
+            // (If the current style parameters are different, there's likely a new style being set, which will trigger the handler soon after)
+            if (!this.mapReady && isEqual(effectiveStyle, this.params.style)) {
+                this.handleStyleData(options.keepState || true);
+            }
+        });
         this.mapLibreMap.setStyle(buildStyleInput(this.params));
     };
 
@@ -104,10 +109,10 @@ export class TomTomMap {
      * @param language The language to be used in map translations.
      */
     setLanguage(language: Language) {
-        if (this.mapReady || this.mapLibreMap.isStyleLoaded()) {
+        if (this.mapReady) {
             this._setLanguage(language);
         } else {
-            this.mapLibreMap.once("styledata", () => this._setLanguage(language));
+            this.mapLibreMap.once("styledata", () => this.setLanguage(language));
         }
     }
 

@@ -15,15 +15,16 @@ describe("Vector tiles POI module tests", () => {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(poiSource),
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
                 setFilter: jest.fn(),
-                getFilter: jest.fn()
+                getFilter: jest.fn(),
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
     });
 
@@ -32,7 +33,6 @@ describe("Vector tiles POI module tests", () => {
             visible: false
         });
         expect(pois).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
@@ -44,7 +44,6 @@ describe("Vector tiles POI module tests", () => {
     test("Initializing module with no config", async () => {
         const pois = await POIsModule.get(tomtomMapMock);
         expect(pois).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });

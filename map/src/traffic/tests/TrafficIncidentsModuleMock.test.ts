@@ -15,13 +15,15 @@ describe("Vector tiles traffic module tests", () => {
                 getStyle: jest
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                isStyleLoaded: jest.fn().mockReturnValue(true),
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         const trafficIncidentsModule = await TrafficIncidentsModule.get(tomtomMapMock, {
@@ -33,7 +35,6 @@ describe("Vector tiles traffic module tests", () => {
             }
         });
         expect(trafficIncidentsModule).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
@@ -61,18 +62,18 @@ describe("Vector tiles traffic module tests", () => {
                 getStyle: jest
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         const trafficIncidentsModule = await TrafficIncidentsModule.get(tomtomMapMock);
         expect(trafficIncidentsModule).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });

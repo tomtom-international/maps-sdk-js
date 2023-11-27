@@ -64,9 +64,7 @@ export class TomTomConfig {
     static readonly instance = new TomTomConfig();
     private config: GlobalConfig = { ...defaultConfig };
 
-    private constructor() {
-        return TomTomConfig.instance;
-    }
+    private constructor() {}
 
     /**
      * Puts the content of the given config into this one, merging the two. The given config properties have priority.

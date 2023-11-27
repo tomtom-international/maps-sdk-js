@@ -62,7 +62,6 @@ describe("Routing module tests", () => {
                 getLayer: jest.fn().mockReturnValue({}),
                 addLayer: jest.fn(),
                 removeLayer: jest.fn(),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
                 hasImage: jest.fn().mockReturnValue(false),
                 loadImage: jest.fn(),
                 setLayoutProperty: jest.fn(),
@@ -73,7 +72,9 @@ describe("Routing module tests", () => {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            once: jest.fn().mockReturnValue(Promise.resolve()),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         const routing = await RoutingModule.init(tomtomMapMock);

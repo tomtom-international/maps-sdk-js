@@ -11,22 +11,22 @@ describe("Vector tiles Hillshade module tests", () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
+                once: jest.fn().mockReturnValue(Promise.resolve()),
                 getSource: jest.fn().mockReturnValue(hillshadeSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } })
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock, {
             visible: false
         });
         expect(hillshade).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
@@ -40,19 +40,18 @@ describe("Vector tiles Hillshade module tests", () => {
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValue(hillshadeSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } })
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock);
         expect(hillshade).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });

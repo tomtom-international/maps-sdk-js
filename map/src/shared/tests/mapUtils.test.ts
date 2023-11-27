@@ -18,12 +18,11 @@ import updateStyleData from "./mapUtils.test.data.json";
 import { StyleInput, StyleModule } from "../../init";
 import { HILLSHADE_SOURCE_ID } from "../layers/sourcesIDs";
 
-const getTomTomMapMock = async (flag: boolean) =>
+const getTomTomMapMock = async (mapReady: boolean[]) =>
     ({
-        mapReady: flag,
+        mapReady: jest.fn().mockReturnValue(mapReady[0]).mockReturnValue(mapReady[1]).mockReturnValue(mapReady[2]),
         mapLibreMap: {
-            once: jest.fn((_, callback) => callback()),
-            isStyleLoaded: jest.fn().mockReturnValue(flag)
+            once: jest.fn((_, callback) => callback())
         },
         _eventsProxy: {
             add: jest.fn()
@@ -32,14 +31,23 @@ const getTomTomMapMock = async (flag: boolean) =>
 
 describe("Map utils - waitUntilMapIsReady", () => {
     test("waitUntilMapIsReady resolve promise when mapReady or maplibre.isStyleLoaded are true", async () => {
-        const tomtomMapMock = await getTomTomMapMock(true);
-        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.toBeTruthy();
+        const tomtomMapMock = await getTomTomMapMock([true]);
+        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.not.toThrow();
     });
 
     test('waitUntilMapIsReady resolve promise from mapLibre event once("styledata")', async () => {
-        const tomtomMapMock = await getTomTomMapMock(false);
-        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.toBeTruthy();
+        const tomtomMapMock = await getTomTomMapMock([false, true]);
+        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.not.toThrow();
     });
+
+    test(
+        'waitUntilMapIsReady resolve promise from mapLibre event once("styledata") ' +
+            "while map is not ready after first event, likely due to subsequent setStyle call",
+        async () => {
+            const tomtomMapMock = await getTomTomMapMock([false, false, true]);
+            await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.not.toThrow();
+        }
+    );
 });
 
 describe("Map utils - deserializeFeatures", () => {
@@ -291,17 +299,18 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
         const mapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
-                isStyleLoaded: jest.fn().mockReturnValue(true)
+                isStyleLoaded: jest.fn().mockReturnValue(true),
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
                 ensureAdded: jest.fn()
             },
-            addStyleChangeHandler: jest.fn()
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         await prepareForModuleInit(mapMock, true, HILLSHADE_SOURCE_ID, "hillshade");
-        expect(mapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalled();
         expect(mapMock.mapLibreMap.getSource).toHaveBeenCalled();
     });
 
@@ -310,7 +319,8 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(jest.fn()),
                 isStyleLoaded: jest.fn().mockReturnValue(true),
-                isSourceLoaded: jest.fn().mockReturnValue(true)
+                isSourceLoaded: jest.fn().mockReturnValue(true),
+                once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
@@ -318,13 +328,14 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
             },
             addStyleChangeHandler: jest.fn(),
             getStyle: jest.fn(),
-            setStyle: jest.fn()
+            setStyle: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
         } as unknown as TomTomMap;
 
         await prepareForModuleInit(tomtomMapMock, true, HILLSHADE_SOURCE_ID, "hillshade");
         expect(tomtomMapMock.getStyle).toHaveBeenCalled();
         expect(tomtomMapMock.setStyle).toHaveBeenCalled();
-        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(2);
+        expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
     });
 });

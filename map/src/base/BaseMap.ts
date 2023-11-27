@@ -75,17 +75,19 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
     }
 
     setVisible(visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }): void {
-        this.sourcesWithLayers.vectorTiles.setLayersVisible(
-            visible,
-            options?.layerGroups && buildLayerGroupFilter(options?.layerGroups)
-        );
-
         if (!options?.layerGroups) {
             // We remove the layer groups visibility from the config if it was there:
             delete this.config?.layerGroupsVisibility;
             this.config = { ...this.config, visible };
         } else {
             this.config = { ...this.config, layerGroupsVisibility: { ...options.layerGroups, visible } };
+        }
+
+        if (this.tomtomMap.mapReady) {
+            this.sourcesWithLayers.vectorTiles.setLayersVisible(
+                visible,
+                options?.layerGroups && buildLayerGroupFilter(options?.layerGroups)
+            );
         }
     }
 
