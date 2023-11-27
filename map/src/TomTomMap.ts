@@ -63,12 +63,16 @@ export class TomTomMap {
      * * You can use this method to change the style at runtime.
      * * To set the style upon {@link constructor initialization}, you can better do it via {@link TomTomMapParams}.
      * @param style The new style to set.
-     * @param keepState Whether to restore previous SDK rendered items and configurations. Defaults to true.
+     * @param options Additional options for behavior upon style change.
+     * @param options.keepState Whether to restore previous SDK rendered items and configurations. Defaults to true.
      */
-    setStyle = (style: StyleInput, keepState = true): void => {
-        this.params = { ...this.params, style: keepState ? withPreviousStyleParts(style, this.params.style) : style };
+    setStyle = (style: StyleInput, options: { keepState?: boolean } = { keepState: true }): void => {
+        this.params = {
+            ...this.params,
+            style: options.keepState ? withPreviousStyleParts(style, this.params.style) : style
+        };
         this.mapReady = false;
-        this.mapLibreMap.once("styledata", () => this.handleStyleData(keepState));
+        this.mapLibreMap.once("styledata", () => this.handleStyleData(options.keepState || true));
         this.mapLibreMap.setStyle(buildStyleInput(this.params));
     };
 

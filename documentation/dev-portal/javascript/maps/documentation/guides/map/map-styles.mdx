@@ -169,7 +169,7 @@ map.addStyleChangeHandler(() => console.log("TomTomMap setStyle was invoked"));
 
 You can opt out from automatically restoring state when changing style with the `keepState` parameter:
 ```javascript
-map.setStyle("monoLight", false);
+map.setStyle("monoLight", { keepState: false });
 ```
 <br/>
 

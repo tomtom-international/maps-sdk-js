@@ -113,10 +113,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      */
     setVisible(visible: boolean): void {
         this.sourcesWithLayers.trafficFlow.setLayersVisible(visible);
-        this.config = {
-            ...this.config,
-            visible
-        };
+        this.config = { ...this.config, visible };
     }
 
     /**
