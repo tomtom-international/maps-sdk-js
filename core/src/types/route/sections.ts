@@ -1,4 +1,5 @@
 import { LegSummary } from "./summary";
+import { RoadShieldReference } from "./guidance";
 
 /**
  * Base type for all route section properties.
@@ -130,6 +131,109 @@ export type LegSectionProps = Omit<SectionProps, "startPointIndex" | "endPointIn
 };
 
 /**
+ * All the possible lane directions.
+ * @group Route
+ * @category Types
+ */
+export type PossibleLaneDirection =
+    | "STRAIGHT"
+    | "SLIGHT_RIGHT"
+    | "RIGHT"
+    | "SHARP_RIGHT"
+    | "RIGHT_U_TURN"
+    | "SLIGHT_LEFT"
+    | "LEFT"
+    | "SHARP_LEFT"
+    | "LEFT_U_TURN";
+
+/**
+ * Lane direction object, containing the possible directions for a lane and the follow direction.
+ * @group Route
+ * @category Types
+ */
+export type LaneDirection = {
+    /**
+     * The possible directions for this lane.
+     */
+    directions: PossibleLaneDirection[];
+    /**
+     * The direction to follow for this lane.
+     */
+    follow?: PossibleLaneDirection;
+};
+
+/**
+ * All the possible lane separators.
+ * @group Route
+ * @category Types
+ */
+export type PossibleLaneSeparator =
+    | "UNKNOWN"
+    | "NO_MARKING"
+    | "LONG_DASHED"
+    | "DOUBLE_SOLID"
+    | "SINGLE_SOLID"
+    | "SOLID_DASHED"
+    | "DASHED_SOLID"
+    | "SHORT_DASHED"
+    | "SHADED_AREA_MARKING"
+    | "DASHED_BLOCKS"
+    | "DOUBLE_DASHED"
+    | "CROSSING_ALERT"
+    | "PHYSICAL_DIVIDER"
+    | "PHYSICAL_DIVIDER_LESS_THAN_3M"
+    | "PHYSICAL_DIVIDER_GUARDRAIL"
+    | "CURB";
+/**
+ * Section representing a lane configuration.
+ * @group Route
+ * @category Types
+ */
+export type LaneSectionProps = SectionProps & {
+    /**
+     * The lane directions for this lane section.
+     */
+    lanes: LaneDirection[];
+    /**
+     * The lane separators for this lane section.
+     */
+    laneSeparators: PossibleLaneSeparator[];
+    /**
+     * Properties of the lane section, as a possible combination of several values. This field is optional.
+     * Possible values:
+     * IS_MANEUVER: whether the lane section contains a maneuver point, that is, there exists a guidance instruction
+     * with a maneuverPoint that falls into this section. The section describes the lane configuration for that
+     * particular instruction.
+     * It is possible that more values will be added to the API in the future.
+     */
+    properties?: string[];
+};
+
+/**
+ * Section representing a speed limit.
+ * @group Route
+ * @category Types
+ */
+export type SpeedLimitSectionProps = SectionProps & {
+    /**
+     * The speed limit in km/h for this section.
+     */
+    maxSpeedLimitInKmh: number;
+};
+
+/**
+ * Section representing a road shield.
+ * @group Route
+ * @category Types
+ */
+export type RoadShieldSectionProps = SectionProps & {
+    /**
+     * The road shield code for this section.
+     */
+    roadShieldReferences: RoadShieldReference[];
+};
+
+/**
  * Route sections are parts of the planned route that have specific characteristics,
  * such as ones on a ferry or motorway, or sections with traffic incidents in them.
  * Using sections, you can show users where these things lie on a planned route.
@@ -154,9 +258,9 @@ export type SectionsProps = {
     carpool?: SectionProps[];
     lowEmissionZone?: SectionProps[];
     // TODO create proper types for these
-    lanes?: SectionProps[];
-    speedLimit?: SectionProps[];
-    roadShields?: SectionProps[];
+    lanes?: LaneSectionProps[];
+    speedLimit?: SpeedLimitSectionProps[];
+    roadShields?: RoadShieldSectionProps[];
 };
 
 /**

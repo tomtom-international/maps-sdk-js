@@ -318,7 +318,7 @@ describe("Calculate route integration tests", () => {
                 language: "es-ES"
             },
             maxAlternatives: 2,
-            sectionTypes: ["traffic", "ferry", "tollRoad"],
+            sectionTypes: ["traffic", "ferry", "tollRoad", "lanes", "speedLimit", "roadShields"],
             travelMode: "car"
             // TODO no travel mode motorcycle with Orbis, or option to se when, so I commented it out
             // travelMode: "motorcycle",

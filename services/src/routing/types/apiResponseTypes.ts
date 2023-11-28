@@ -6,9 +6,12 @@ import {
     PlugType,
     RouteSummary,
     TrafficIncidentTEC,
-    TravelMode
+    TravelMode,
+    RoutePathPoint,
+    LaneDirection,
+    PossibleLaneSeparator,
+    RoadShieldReference
 } from "@anw/maps-sdk-js/core";
-import { RoutePathPoint } from "core";
 
 /**
  * @ignore
@@ -35,7 +38,6 @@ export type SectionTypeAPI =
     | "URBAN"
     | "CARPOOL"
     | "LOW_EMISSION_ZONE"
-    // FOR GUIDANCE
     | "LANES"
     | "SPEED_LIMIT"
     | "ROAD_SHIELDS";
@@ -59,6 +61,11 @@ export type SectionAPI = {
     effectiveSpeedInKmh?: number;
     delayInSeconds?: number;
     tec?: TrafficIncidentTEC;
+    lanes?: LaneDirection[];
+    laneSeparators?: PossibleLaneSeparator[];
+    properties?: string[];
+    maxSpeedLimitInKmh?: number;
+    roadShieldReferences?: RoadShieldReference[];
 };
 
 /**

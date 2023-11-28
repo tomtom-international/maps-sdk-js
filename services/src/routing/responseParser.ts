@@ -14,7 +14,13 @@ import {
     SectionType,
     TrafficCategory,
     TrafficIncidentTEC,
-    TrafficSectionProps
+    TrafficSectionProps,
+    LaneDirection,
+    LaneSectionProps,
+    PossibleLaneSeparator,
+    RoadShieldReference,
+    RoadShieldSectionProps,
+    SpeedLimitSectionProps
 } from "@anw/maps-sdk-js/core";
 import omit from "lodash/omit";
 import isNil from "lodash/isNil";
@@ -122,7 +128,7 @@ const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => (
     countryCodeISO3: apiSection.countryCode as string
 });
 
-const toVehicleRestrictedSectionProps = (apiSection: SectionAPI): SectionProps | null =>
+const toTravelModeSectionProps = (apiSection: SectionAPI): SectionProps | null =>
     apiSection.travelMode === "other" ? toSectionProps(apiSection) : null;
 
 const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => ({
@@ -132,6 +138,23 @@ const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => (
     simpleCategory: (apiSection.simpleCategory as TrafficCategoryAPI).toLowerCase() as TrafficCategory,
     magnitudeOfDelay: indexedMagnitudes[apiSection.magnitudeOfDelay as number],
     tec: apiSection.tec as TrafficIncidentTEC
+});
+
+const toLaneSectionProps = (apiSection: SectionAPI): LaneSectionProps => ({
+    ...toSectionProps(apiSection),
+    lanes: apiSection.lanes as LaneDirection[],
+    laneSeparators: apiSection.laneSeparators as PossibleLaneSeparator[],
+    properties: apiSection.properties
+});
+
+const toSpeedLimitSectionProps = (apiSection: SectionAPI): SpeedLimitSectionProps => ({
+    ...toSectionProps(apiSection),
+    maxSpeedLimitInKmh: apiSection.maxSpeedLimitInKmh as number
+});
+
+const toRoadShieldsSectionProps = (apiSection: SectionAPI): RoadShieldSectionProps => ({
+    ...toSectionProps(apiSection),
+    roadShieldReferences: apiSection.roadShieldReferences as RoadShieldReference[]
 });
 
 const ensureInit = <S extends SectionProps>(sectionType: SectionType, result: SectionsProps): S[] => {
@@ -162,8 +185,7 @@ const getSectionMapping = (
         case "TRAFFIC":
             return { sectionType: "traffic", mappingFunction: toTrafficSectionProps };
         case "TRAVEL_MODE":
-            // TODO, probably no longer needed, NOTE: vehicleRestricted sections come from TRAVEL_MODE "other" ones:
-            return { sectionType: "travelMode", mappingFunction: toVehicleRestrictedSectionProps };
+            return { sectionType: "travelMode", mappingFunction: toTravelModeSectionProps };
         case "TUNNEL":
             return { sectionType: "tunnel", mappingFunction: toSectionProps };
         case "UNPAVED":
@@ -174,13 +196,12 @@ const getSectionMapping = (
             return { sectionType: "carpool", mappingFunction: toSectionProps };
         case "LOW_EMISSION_ZONE":
             return { sectionType: "lowEmissionZone", mappingFunction: toSectionProps };
-        // TODO for guidance sections
         case "LANES":
-            return { sectionType: "lanes", mappingFunction: toSectionProps };
+            return { sectionType: "lanes", mappingFunction: toLaneSectionProps };
         case "SPEED_LIMIT":
-            return { sectionType: "speedLimit", mappingFunction: toSectionProps };
+            return { sectionType: "speedLimit", mappingFunction: toSpeedLimitSectionProps };
         case "ROAD_SHIELDS":
-            return { sectionType: "roadShields", mappingFunction: toSectionProps };
+            return { sectionType: "roadShields", mappingFunction: toRoadShieldsSectionProps };
     }
 };
 
