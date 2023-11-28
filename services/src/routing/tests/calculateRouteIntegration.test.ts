@@ -8,7 +8,7 @@ import {
 } from "@anw/maps-sdk-js/core";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { calculateRoute } from "../calculateRoute";
-// import { CalculateRouteParams } from "../types/calculateRouteParams";
+import { CalculateRouteParams } from "../types/calculateRouteParams";
 import { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
 import { CalculateRouteRequestAPI } from "../types/apiRequestTypes";
 
@@ -169,129 +169,129 @@ describe("Calculate route integration tests", () => {
         // expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
     });
     // TODO still need to work on EV routing, so I commented out the following
-    // test("LDEVR: Cologne to Berlin", async () => {
-    //     const params: CalculateRouteParams = {
-    //         geoInputs: [
-    //             [6.90852, 50.9542],
-    //             [13.45686, 52.50825]
-    //         ]
-    //         // vehicle: {
-    //         //     engine: {
-    //         //         type: "electric",
-    //         //         currentChargePCT: 80,
-    //         //         chargingPreferences: {
-    //         //             minChargeAtDestinationPCT: 50,
-    //         //             minChargeAtChargingStopsPCT: 10
-    //         //         },
-    //         //         model: {
-    //         //             consumption: {
-    //         //                 speedsToConsumptionsKWH: [
-    //         //                     { speedKMH: 32, consumptionUnitsPer100KM: 10.87 },
-    //         //                     { speedKMH: 77, consumptionUnitsPer100KM: 18.01 }
-    //         //                 ]
-    //         //             },
-    //         //             charging: {
-    //         //                 maxChargeKWH: 40,
-    //         //                 batteryCurve: [
-    //         //                     {
-    //         //                         stateOfChargeInkWh: 50,
-    //         //                         maxPowerInkW: 200
-    //         //                     },
-    //         //                     {
-    //         //                         stateOfChargeInkWh: 70,
-    //         //                         maxPowerInkW: 100
-    //         //                     },
-    //         //                     {
-    //         //                         stateOfChargeInkWh: 80,
-    //         //                         maxPowerInkW: 40
-    //         //                     }
-    //         //                 ],
-    //         //                 chargingConnectors: [
-    //         //                     {
-    //         //                         currentType: "AC3",
-    //         //                         plugTypes: [
-    //         //                             "IEC_62196_Type_2_Outlet",
-    //         //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-    //         //                             "Combo_to_IEC_62196_Type_2_Base"
-    //         //                         ],
-    //         //                         efficiency: 0.9,
-    //         //                         baseLoadInkW: 0.2,
-    //         //                         maxPowerInkW: 11
-    //         //                     },
-    //         //                     {
-    //         //                         currentType: "DC",
-    //         //                         plugTypes: [
-    //         //                             "IEC_62196_Type_2_Outlet",
-    //         //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-    //         //                             "Combo_to_IEC_62196_Type_2_Base"
-    //         //                         ],
-    //         //                         voltageRange: {
-    //         //                             minVoltageInV: 0,
-    //         //                             maxVoltageInV: 500
-    //         //                         },
-    //         //                         efficiency: 0.9,
-    //         //                         baseLoadInkW: 0.2,
-    //         //                         maxPowerInkW: 150
-    //         //                     },
-    //         //                     {
-    //         //                         currentType: "DC",
-    //         //                         plugTypes: [
-    //         //                             "IEC_62196_Type_2_Outlet",
-    //         //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-    //         //                             "Combo_to_IEC_62196_Type_2_Base"
-    //         //                         ],
-    //         //                         voltageRange: {
-    //         //                             minVoltageInV: 500,
-    //         //                             maxVoltageInV: 2000
-    //         //                         },
-    //         //                         efficiency: 0.9,
-    //         //                         baseLoadInkW: 0.2
-    //         //                     }
-    //         //                 ],
-    //         //                 chargingTimeOffsetInSec: 60
-    //         //             }
-    //         //         }
-    //         //     }
-    //         // }
-    //     };
-    //
-    //     const result = await calculateRoute(params);
-    //     expect(result?.features?.length).toEqual(1);
-    //     const routeFeature = result.features[0];
-    //     expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
-    //     const routeProperties = routeFeature.properties;
-    //     const legs = routeProperties.sections.leg;
-    //     // with charging stops we must have more than 1 leg generated:
-    //     expect(legs.length).toBeGreaterThan(1);
-    //     const routeSummary = routeProperties.summary;
-    //     assertSummaryBasics(routeSummary);
-    //     // asserting summary properties relevant to ldevr:
-    //     expect(routeSummary.totalChargingTimeInSeconds).toBeGreaterThan(1000);
-    //     expect(routeSummary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
-    //     // param is min 50% at arrival:
-    //     expect(routeSummary.remainingChargeAtArrivalInPCT).toBeGreaterThan(40);
-    //     expect(routeSummary.remainingChargeAtArrivalInPCT).toBeLessThan(100);
-    //     expect(routeSummary.batteryConsumptionInkWh).toBeGreaterThan(100);
-    //     expect(routeSummary.batteryConsumptionInPCT).toBeGreaterThan(100);
-    //
-    //     // we assert the legs excluding the last one:
-    //     for (let i = 0; i < legs.length - 1; i++) {
-    //         const leg = legs[i];
-    //         assertSummaryBasics(leg.summary);
-    //         expect(leg.summary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
-    //         // param is min 10% at stops:
-    //         expect(leg.summary.remainingChargeAtArrivalInPCT).toBeGreaterThan(8);
-    //         expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
-    //     }
-    //
-    //     // the last leg has some particularities
-    //     const lastLeg = legs[legs.length - 1];
-    //     assertSummaryBasics(lastLeg.summary);
-    //     expect(lastLeg.summary.remainingChargeAtArrivalInkWh).toEqual(routeSummary.remainingChargeAtArrivalInkWh);
-    //     expect(lastLeg.summary.remainingChargeAtArrivalInPCT).toEqual(routeSummary.remainingChargeAtArrivalInPCT);
-    //     // arriving at destination, not a charging stop:
-    //     expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
-    // });
+    test.skip("LDEVR: Cologne to Berlin", async () => {
+        const params: CalculateRouteParams = {
+            geoInputs: [
+                [6.90852, 50.9542],
+                [13.45686, 52.50825]
+            ]
+            // vehicle: {
+            //     engine: {
+            //         type: "electric",
+            //         currentChargePCT: 80,
+            //         chargingPreferences: {
+            //             minChargeAtDestinationPCT: 50,
+            //             minChargeAtChargingStopsPCT: 10
+            //         },
+            //         model: {
+            //             consumption: {
+            //                 speedsToConsumptionsKWH: [
+            //                     { speedKMH: 32, consumptionUnitsPer100KM: 10.87 },
+            //                     { speedKMH: 77, consumptionUnitsPer100KM: 18.01 }
+            //                 ]
+            //             },
+            //             charging: {
+            //                 maxChargeKWH: 40,
+            //                 batteryCurve: [
+            //                     {
+            //                         stateOfChargeInkWh: 50,
+            //                         maxPowerInkW: 200
+            //                     },
+            //                     {
+            //                         stateOfChargeInkWh: 70,
+            //                         maxPowerInkW: 100
+            //                     },
+            //                     {
+            //                         stateOfChargeInkWh: 80,
+            //                         maxPowerInkW: 40
+            //                     }
+            //                 ],
+            //                 chargingConnectors: [
+            //                     {
+            //                         currentType: "AC3",
+            //                         plugTypes: [
+            //                             "IEC_62196_Type_2_Outlet",
+            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+            //                             "Combo_to_IEC_62196_Type_2_Base"
+            //                         ],
+            //                         efficiency: 0.9,
+            //                         baseLoadInkW: 0.2,
+            //                         maxPowerInkW: 11
+            //                     },
+            //                     {
+            //                         currentType: "DC",
+            //                         plugTypes: [
+            //                             "IEC_62196_Type_2_Outlet",
+            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+            //                             "Combo_to_IEC_62196_Type_2_Base"
+            //                         ],
+            //                         voltageRange: {
+            //                             minVoltageInV: 0,
+            //                             maxVoltageInV: 500
+            //                         },
+            //                         efficiency: 0.9,
+            //                         baseLoadInkW: 0.2,
+            //                         maxPowerInkW: 150
+            //                     },
+            //                     {
+            //                         currentType: "DC",
+            //                         plugTypes: [
+            //                             "IEC_62196_Type_2_Outlet",
+            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+            //                             "Combo_to_IEC_62196_Type_2_Base"
+            //                         ],
+            //                         voltageRange: {
+            //                             minVoltageInV: 500,
+            //                             maxVoltageInV: 2000
+            //                         },
+            //                         efficiency: 0.9,
+            //                         baseLoadInkW: 0.2
+            //                     }
+            //                 ],
+            //                 chargingTimeOffsetInSec: 60
+            //             }
+            //         }
+            //     }
+            // }
+        };
+
+        const result = await calculateRoute(params);
+        expect(result?.features?.length).toEqual(1);
+        const routeFeature = result.features[0];
+        expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
+        const routeProperties = routeFeature.properties;
+        const legs = routeProperties.sections.leg;
+        // with charging stops we must have more than 1 leg generated:
+        expect(legs.length).toBeGreaterThan(1);
+        const routeSummary = routeProperties.summary;
+        assertSummaryBasics(routeSummary);
+        // asserting summary properties relevant to ldevr:
+        expect(routeSummary.totalChargingTimeInSeconds).toBeGreaterThan(1000);
+        expect(routeSummary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
+        // param is min 50% at arrival:
+        expect(routeSummary.remainingChargeAtArrivalInPCT).toBeGreaterThan(40);
+        expect(routeSummary.remainingChargeAtArrivalInPCT).toBeLessThan(100);
+        expect(routeSummary.batteryConsumptionInkWh).toBeGreaterThan(100);
+        expect(routeSummary.batteryConsumptionInPCT).toBeGreaterThan(100);
+
+        // we assert the legs excluding the last one:
+        for (let i = 0; i < legs.length - 1; i++) {
+            const leg = legs[i];
+            assertSummaryBasics(leg.summary);
+            expect(leg.summary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
+            // param is min 10% at stops:
+            expect(leg.summary.remainingChargeAtArrivalInPCT).toBeGreaterThan(8);
+            expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
+        }
+
+        // the last leg has some particularities
+        const lastLeg = legs[legs.length - 1];
+        assertSummaryBasics(lastLeg.summary);
+        expect(lastLeg.summary.remainingChargeAtArrivalInkWh).toEqual(routeSummary.remainingChargeAtArrivalInkWh);
+        expect(lastLeg.summary.remainingChargeAtArrivalInPCT).toEqual(routeSummary.remainingChargeAtArrivalInPCT);
+        // arriving at destination, not a charging stop:
+        expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
+    });
 
     test("Roses to Olot thrilling route with alternatives", async () => {
         const result = await calculateRoute({

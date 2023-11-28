@@ -17,12 +17,11 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?" +
+                    "key=GLOBAL_API_KEY&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette" +
+                    "&sectionType=country&sectionType=travelMode&sectionType=traffic&sectionType=carpool" +
+                    "&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             )
         }
     ],
@@ -40,7 +39,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?" +
+                    "key=GLOBAL_API_KEY&apiVersion=1"
             )
         }
     ],
@@ -58,8 +58,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-                    "&sectionType=travelMode&sectionType=traffic&sectionType=ferry"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?" +
+                    "key=GLOBAL_API_KEY&sectionType=travelMode&sectionType=traffic&sectionType=ferry&apiVersion=1"
             )
         }
     ],
@@ -81,12 +81,13 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/" +
+                    "52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             )
         }
     ],
@@ -108,12 +109,13 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api-test.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:circle(52.16109,4.49015,20):51.92291,4.47059/json?key=API_KEY_X" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api-test.tomtom.com/maps/orbis/routing/calculateRoute/" +
+                    "52.37317,4.89066:circle(52.16109,4.49015,20):51.92291,4.47059/json?key=API_KEY_X" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             )
         }
     ],
@@ -189,32 +191,15 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/42.26297,3.1748:42.18211,2.48819/json?key=GLOBAL_API_KEY" +
-                    "&language=es-ES" +
-                    "&avoid=carpools&avoid=ferries&avoid=motorways" +
-                    "&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads" +
-                    "&avoid=borderCrossings&avoid=tunnels&avoid=carTrains&avoid=lowEmissionZones" +
-                    "&traffic=false" +
-                    "&arriveAt=2022-09-16T15%3A48%3A15.400Z" +
-                    "&routeType=thrilling" +
-                    "&hilliness=low&windingness=high" +
-                    "&vehicleEngineType=electric" +
-                    "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
-                    "&auxiliaryPowerInkW=1.7" +
-                    "&consumptionInkWhPerkmAltitudeGain=7&recuperationInkWhPerkmAltitudeLoss=3.8" +
-                    "&maxChargeInkWh=85&currentChargeInkWh=42.5" +
-                    "&vehicleLength=20&vehicleHeight=4&vehicleWidth=5&vehicleWeight=3500&vehicleAxleWeight=500" +
-                    "&vehicleLoadType=otherHazmatExplosive&vehicleLoadType=otherHazmatHarmfulToWater" +
-                    "&vehicleAdrTunnelRestrictionCode=B&vehicleCommercial=true&vehicleMaxSpeed=60" +
-                    "&computeTravelTimeFor=all" +
-                    "&vehicleHeading=45" +
-                    // "&instructionsType=tagged" +
-                    "&maxAlternatives=2" +
-                    "&routeRepresentation=summaryOnly" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
-                    "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
-                    "&sectionType=travelMode&sectionType=traffic&sectionType=urban&sectionType=unpaved" +
-                    "&sectionType=carpool&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/42.26297,3.1748:42.18211,2.48819/json?" +
+                    "key=GLOBAL_API_KEY&language=es-ES&avoid=carpools&avoid=ferries&avoid=motorways" +
+                    "&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads&avoid=borderCrossings" +
+                    "&avoid=tunnels&avoid=carTrains&avoid=lowEmissionZones&traffic=false&routeType=thrilling" +
+                    "&computeTravelTimeFor=all&vehicleHeading=45&maxAlternatives=2&sectionType=carTrain" +
+                    "&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian" +
+                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
+                    "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             )
         }
     ],
@@ -258,20 +243,11 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-                    "&departAt=2022-09-16T15%3A48%3A15.400Z" +
-                    "&accelerationEfficiency=0.33&decelerationEfficiency=0.83" +
-                    "&uphillEfficiency=0.27&downhillEfficiency=0.51" +
-                    "&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5" +
-                    "&auxiliaryPowerInLitersPerHour=0.2" +
-                    "&fuelEnergyDensityInMJoulesPerLiter=34.2" +
-                    "&currentFuelInLiters=55" +
-                    "&vehicleWeight=1500" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?" +
+                    "key=GLOBAL_API_KEY&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette" +
+                    "&sectionType=country&sectionType=travelMode&sectionType=traffic&sectionType=carpool" +
+                    "&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             )
         }
     ],
@@ -315,167 +291,161 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "GET",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.27317,4.90066:52.16109,4.49015/" +
-                    "json?key=GLOBAL_API_KEY" +
-                    "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
-                    "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
-                    "&vehicleEngineType=electric" +
-                    "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
-                    "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68" +
-                    "&vehicleWeight=3500&vehicleMaxSpeed=60" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/" +
+                    "52.37317,4.89066:52.27317,4.90066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             )
         }
     ],
-    [
-        "LDEV A-B Route",
-        {
-            apiKey: "GLOBAL_API_KEY",
-            commonBaseURL: "https://api.tomtom.com",
-            geoInputs: [
-                [4.89066, 52.37317],
-                [4.49015, 52.16109]
-            ]
-            // vehicle: {
-            //     engine: {
-            //         type: "electric",
-            //         currentChargePCT: 80,
-            //         chargingPreferences: {
-            //             minChargeAtChargingStopsPCT: 10,
-            //             minChargeAtDestinationPCT: 50
-            //         },
-            //         model: {
-            //             consumption: {
-            //                 speedsToConsumptionsKWH: [
-            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-            //                 ],
-            //                 auxiliaryPowerInkW: 1.7,
-            //                 efficiency: {
-            //                     acceleration: 0.66,
-            //                     deceleration: 0.91,
-            //                     uphill: 0.74,
-            //                     downhill: 0.73
-            //                 }
-            //             },
-            //             charging: {
-            //                 maxChargeKWH: 85,
-            //                 batteryCurve: [
-            //                     { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
-            //                     { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
-            //                     { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
-            //                 ],
-            //                 chargingConnectors: [
-            //                     {
-            //                         currentType: "AC3",
-            //                         plugTypes: [
-            //                             "IEC_62196_Type_2_Outlet",
-            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-            //                             "Combo_to_IEC_62196_Type_2_Base"
-            //                         ],
-            //                         efficiency: 0.9,
-            //                         baseLoadInkW: 0.2,
-            //                         maxPowerInkW: 11
-            //                     },
-            //                     {
-            //                         currentType: "DC",
-            //                         plugTypes: [
-            //                             "IEC_62196_Type_2_Outlet",
-            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-            //                             "Combo_to_IEC_62196_Type_2_Base"
-            //                         ],
-            //                         voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
-            //                         efficiency: 0.9,
-            //                         baseLoadInkW: 0.2,
-            //                         maxPowerInkW: 150
-            //                     },
-            //                     {
-            //                         currentType: "DC",
-            //                         plugTypes: [
-            //                             "IEC_62196_Type_2_Outlet",
-            //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-            //                             "Combo_to_IEC_62196_Type_2_Base"
-            //                         ],
-            //                         voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
-            //                         efficiency: 0.9,
-            //                         baseLoadInkW: 0.2
-            //                     }
-            //                 ],
-            //                 chargingTimeOffsetInSec: 60
-            //             }
-            //         }
-            //     }
-            // }
-        },
-        {
-            method: "POST",
-            url: new URL(
-                "https://api.tomtom.com/routing/1/calculateLongDistanceEVRoute/52.37317,4.89066:52.16109,4.49015/" +
-                    "json?key=GLOBAL_API_KEY" +
-                    "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
-                    "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
-                    "&vehicleEngineType=electric" +
-                    "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
-                    "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68" +
-                    "&minChargeAtDestinationInkWh=42.5&minChargeAtChargingStopsInkWh=8.5" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
-            ),
-            data: {
-                chargingParameters: {
-                    batteryCurve: [
-                        { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
-                        { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
-                        { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
-                    ],
-                    chargingConnectors: [
-                        {
-                            currentType: "AC3",
-                            plugTypes: [
-                                "IEC_62196_Type_2_Outlet",
-                                "IEC_62196_Type_2_Connector_Cable_Attached",
-                                "Combo_to_IEC_62196_Type_2_Base"
-                            ],
-                            efficiency: 0.9,
-                            baseLoadInkW: 0.2,
-                            maxPowerInkW: 11
-                        },
-                        {
-                            currentType: "DC",
-                            plugTypes: [
-                                "IEC_62196_Type_2_Outlet",
-                                "IEC_62196_Type_2_Connector_Cable_Attached",
-                                "Combo_to_IEC_62196_Type_2_Base"
-                            ],
-                            voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
-                            efficiency: 0.9,
-                            baseLoadInkW: 0.2,
-                            maxPowerInkW: 150
-                        },
-                        {
-                            currentType: "DC",
-                            plugTypes: [
-                                "IEC_62196_Type_2_Outlet",
-                                "IEC_62196_Type_2_Connector_Cable_Attached",
-                                "Combo_to_IEC_62196_Type_2_Base"
-                            ],
-                            voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
-                            efficiency: 0.9,
-                            baseLoadInkW: 0.2
-                        }
-                    ],
-                    chargingTimeOffsetInSec: 60
-                }
-            }
-        }
-    ],
+    // [
+    //     "LDEV A-B Route",
+    //     {
+    //         apiKey: "GLOBAL_API_KEY",
+    //         commonBaseURL: "https://api.tomtom.com",
+    //         geoInputs: [
+    //             [4.89066, 52.37317],
+    //             [4.49015, 52.16109]
+    //         ]
+    //         vehicle: {
+    //             engine: {
+    //                 type: "electric",
+    //                 currentChargePCT: 80,
+    //                 chargingPreferences: {
+    //                     minChargeAtChargingStopsPCT: 10,
+    //                     minChargeAtDestinationPCT: 50
+    //                 },
+    //                 model: {
+    //                     consumption: {
+    //                         speedsToConsumptionsKWH: [
+    //                             { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+    //                             { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
+    //                         ],
+    //                         auxiliaryPowerInkW: 1.7,
+    //                         efficiency: {
+    //                             acceleration: 0.66,
+    //                             deceleration: 0.91,
+    //                             uphill: 0.74,
+    //                             downhill: 0.73
+    //                         }
+    //                     },
+    //                     charging: {
+    //                         maxChargeKWH: 85,
+    //                         batteryCurve: [
+    //                             { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+    //                             { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+    //                             { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
+    //                         ],
+    //                         chargingConnectors: [
+    //                             {
+    //                                 currentType: "AC3",
+    //                                 plugTypes: [
+    //                                     "IEC_62196_Type_2_Outlet",
+    //                                     "IEC_62196_Type_2_Connector_Cable_Attached",
+    //                                     "Combo_to_IEC_62196_Type_2_Base"
+    //                                 ],
+    //                                 efficiency: 0.9,
+    //                                 baseLoadInkW: 0.2,
+    //                                 maxPowerInkW: 11
+    //                             },
+    //                             {
+    //                                 currentType: "DC",
+    //                                 plugTypes: [
+    //                                     "IEC_62196_Type_2_Outlet",
+    //                                     "IEC_62196_Type_2_Connector_Cable_Attached",
+    //                                     "Combo_to_IEC_62196_Type_2_Base"
+    //                                 ],
+    //                                 voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
+    //                                 efficiency: 0.9,
+    //                                 baseLoadInkW: 0.2,
+    //                                 maxPowerInkW: 150
+    //                             },
+    //                             {
+    //                                 currentType: "DC",
+    //                                 plugTypes: [
+    //                                     "IEC_62196_Type_2_Outlet",
+    //                                     "IEC_62196_Type_2_Connector_Cable_Attached",
+    //                                     "Combo_to_IEC_62196_Type_2_Base"
+    //                                 ],
+    //                                 voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
+    //                                 efficiency: 0.9,
+    //                                 baseLoadInkW: 0.2
+    //                             }
+    //                         ],
+    //                         chargingTimeOffsetInSec: 60
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     },
+    //     {
+    //         method: "POST",
+    //         url: new URL(
+    //             "https://api.tomtom.com/routing/1/calculateLongDistanceEVRoute/52.37317,4.89066:52.16109,4.49015/" +
+    //                 "json?key=GLOBAL_API_KEY" +
+    //                 "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
+    //                 "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
+    //                 "&vehicleEngineType=electric" +
+    //                 "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
+    //                 "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68" +
+    //                 "&minChargeAtDestinationInkWh=42.5&minChargeAtChargingStopsInkWh=8.5" +
+    //                 "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+    //                 "&sectionType=motorway&sectionType=pedestrian" +
+    //                 "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
+    //                 "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
+    //                 "&sectionType=lowEmissionZone"
+    //         ),
+    //         data: {
+    //             chargingParameters: {
+    //                 batteryCurve: [
+    //                     { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+    //                     { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+    //                     { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
+    //                 ],
+    //                 chargingConnectors: [
+    //                     {
+    //                         currentType: "AC3",
+    //                         plugTypes: [
+    //                             "IEC_62196_Type_2_Outlet",
+    //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+    //                             "Combo_to_IEC_62196_Type_2_Base"
+    //                         ],
+    //                         efficiency: 0.9,
+    //                         baseLoadInkW: 0.2,
+    //                         maxPowerInkW: 11
+    //                     },
+    //                     {
+    //                         currentType: "DC",
+    //                         plugTypes: [
+    //                             "IEC_62196_Type_2_Outlet",
+    //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+    //                             "Combo_to_IEC_62196_Type_2_Base"
+    //                         ],
+    //                         voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
+    //                         efficiency: 0.9,
+    //                         baseLoadInkW: 0.2,
+    //                         maxPowerInkW: 150
+    //                     },
+    //                     {
+    //                         currentType: "DC",
+    //                         plugTypes: [
+    //                             "IEC_62196_Type_2_Outlet",
+    //                             "IEC_62196_Type_2_Connector_Cable_Attached",
+    //                             "Combo_to_IEC_62196_Type_2_Base"
+    //                         ],
+    //                         voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
+    //                         efficiency: 0.9,
+    //                         baseLoadInkW: 0.2
+    //                     }
+    //                 ],
+    //                 chargingTimeOffsetInSec: 60
+    //             }
+    //         }
+    //     }
+    // ],
     [
         "Route based on a path to reconstruct",
         {
@@ -494,12 +464,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "POST",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?" +
+                    "key=GLOBAL_API_KEY&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
+                    "&sectionType=motorway&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             ),
             data: {
                 supportingPoints: [
@@ -548,12 +518,13 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "POST",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/0,0:0,2/json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/0,0:0,2/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry" +
+                    "&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country" +
+                    "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&apiVersion=1"
             ),
             data: {
                 supportingPoints: [
@@ -614,12 +585,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "POST",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/0,0:5,1/json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/0,0:5,1/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
             ),
             data: {
                 supportingPoints: [
@@ -677,12 +648,13 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         {
             method: "POST",
             url: new URL(
-                "https://api.tomtom.com/routing/1/calculateRoute/0,1:0,3/json?key=GLOBAL_API_KEY" +
-                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-                    "&sectionType=motorway&sectionType=pedestrian" +
-                    "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-                    "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-                    "&sectionType=lowEmissionZone"
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/0,1:0,3/json?key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry" +
+                    "&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country" +
+                    "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&apiVersion=1"
             ),
             data: {
                 supportingPoints: [

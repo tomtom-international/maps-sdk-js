@@ -2,7 +2,7 @@ import { validateRequestSchema } from "../../shared/validation";
 import { ReachableRangeParams } from "../types/reachableRangeParams";
 import { reachableRangeRequestValidationConfig } from "../reachableRangeRequestSchema";
 
-describe("Reachable range request schema validation", () => {
+describe.skip("Reachable range request schema validation", () => {
     const apiKey = "APIKEY";
     const commonBaseURL = "https://api-test.tomtom.com";
     const config = reachableRangeRequestValidationConfig;

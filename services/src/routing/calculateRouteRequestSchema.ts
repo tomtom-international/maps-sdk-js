@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getGeoInputType, inputSectionTypes, SectionType } from "@anw/maps-sdk-js/core";
+import { getGeoInputType, inputSectionTypesWithGuidance, SectionType } from "@anw/maps-sdk-js/core";
 import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from "../shared/geometriesSchema";
 import { CalculateRouteParams } from "./types/calculateRouteParams";
 import { SchemaRefinement } from "../shared/types/validation";
@@ -19,8 +19,8 @@ const calculateRouteRequestSchemaOptional = z
         // TODO add proper instructionsInfo check
         // instructionsType: z.enum(instructionsTypes),
         maxAlternatives: z.number().min(1).max(5),
-        routeRepresentation: z.enum(["polyline", "summaryOnly"]),
-        sectionTypes: z.array(z.enum(inputSectionTypes as [SectionType, ...SectionType[]]))
+        // routeRepresentation: z.enum(["polyline", "summaryOnly"]),
+        sectionTypes: z.array(z.enum(inputSectionTypesWithGuidance as [SectionType, ...SectionType[]]))
     })
     .partial();
 

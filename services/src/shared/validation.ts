@@ -45,7 +45,9 @@ export const validateRequestSchema = <T extends CommonServiceParams>(
 
     const validation = (refinedMergedSchema || mergedSchema).safeParse(params);
     if (!validation.success) {
-        throw new ValidationError(validation.error);
+        const validationError: ValidationError = new ValidationError(validation.error);
+        console.log(JSON.stringify(validationError, null, 2));
+        throw validationError;
     }
 
     return params;

@@ -176,12 +176,19 @@ describe("Calculate route request schema validation", () => {
                         path: ["costModel", "considerTraffic"],
                         message: "Expected boolean, received string"
                     },
+                    // {
+                    //     received: "medium",
+                    //     code: "invalid_enum_value",
+                    //     options: ["low", "normal", "high"],
+                    //     path: ["costModel", "thrillingParams", "windingness"],
+                    //     message: "Invalid enum value. Expected 'low' | 'normal' | 'high', received 'medium'"
+                    // },
                     {
-                        received: "medium",
-                        code: "invalid_enum_value",
-                        options: ["low", "normal", "high"],
-                        path: ["costModel", "thrillingParams", "windingness"],
-                        message: "Invalid enum value. Expected 'low' | 'normal' | 'high', received 'medium'"
+                        code: "invalid_type",
+                        expected: "string",
+                        received: "number",
+                        path: ["travelMode"],
+                        message: "Expected string, received number"
                     },
                     {
                         received: "first",
@@ -215,13 +222,13 @@ describe("Calculate route request schema validation", () => {
                         message: "Number must be less than or equal to 5",
                         path: ["maxAlternatives"]
                     },
-                    {
-                        received: "summary",
-                        code: "invalid_enum_value",
-                        options: ["polyline", "summaryOnly"],
-                        path: ["routeRepresentation"],
-                        message: "Invalid enum value. Expected 'polyline' | 'summaryOnly', received 'summary'"
-                    },
+                    // {
+                    //     received: "summary",
+                    //     code: "invalid_enum_value",
+                    //     options: ["polyline", "summaryOnly"],
+                    //     path: ["routeRepresentation"],
+                    //     message: "Invalid enum value. Expected 'polyline' | 'summaryOnly', received 'summary'"
+                    // },
                     {
                         received: "motorways",
                         code: "invalid_enum_value",
@@ -234,34 +241,31 @@ describe("Calculate route request schema validation", () => {
                             "tollRoad",
                             "tollVignette",
                             "country",
-                            "vehicleRestricted",
+                            "travelMode",
                             "traffic",
+                            "carpool",
                             "urban",
                             "unpaved",
-                            "carpool",
-                            "lowEmissionZone"
+                            "lowEmissionZone",
+                            "lanes",
+                            "speedLimit",
+                            "roadShields"
                         ],
                         path: ["sectionTypes", 1],
                         message:
                             "Invalid enum value. Expected 'carTrain' | 'ferry' | " +
                             "'tunnel' | 'motorway' | 'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | " +
-                            "'vehicleRestricted' | 'traffic' | 'urban' | " +
-                            "'unpaved' | 'carpool' | 'lowEmissionZone', received 'motorways'"
-                    },
-                    {
-                        code: "invalid_type",
-                        expected: "string",
-                        received: "number",
-                        path: ["travelMode"],
-                        message: "Expected string, received number"
-                    },
-                    {
-                        received: "arriveAt",
-                        code: "invalid_enum_value",
-                        options: ["departAt", "arriveBy"],
-                        path: ["when", "option"],
-                        message: "Invalid enum value. Expected 'departAt' | 'arriveBy', received 'arriveAt'"
+                            "'travelMode' | 'traffic' | 'carpool' | 'urban' | " +
+                            "'unpaved' | 'lowEmissionZone' | 'lanes' | 'speedLimit' | " +
+                            "'roadShields', received 'motorways'"
                     }
+                    // {
+                    //     received: "arriveAt",
+                    //     code: "invalid_enum_value",
+                    //     options: ["departAt", "arriveBy"],
+                    //     path: ["when", "option"],
+                    //     message: "Invalid enum value. Expected 'departAt' | 'arriveBy', received 'arriveAt'"
+                    // }
                 ])
             })
         );

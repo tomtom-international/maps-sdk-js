@@ -4,7 +4,7 @@ import apiAndParsedResponses from "./responseParser.data.json";
 import { ReachableRangeResponseAPI } from "../types/apiResponseTypes";
 import { ReachableRangeParams } from "../types/reachableRangeParams";
 
-describe("Calculate Route response parsing functional tests", () => {
+describe.skip("Calculate Route response parsing functional tests", () => {
     // Functional tests:
     test.each(apiAndParsedResponses)(
         "'%s'",

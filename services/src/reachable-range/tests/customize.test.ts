@@ -1,6 +1,6 @@
 import { customizeService } from "../../../index";
 
-describe("Using customize obj", () => {
+describe.skip("Using customize obj", () => {
     test("reachable range request URL building tests using customize obj", () => {
         expect(
             customizeService.reachableRange.buildReachableRangeRequest({

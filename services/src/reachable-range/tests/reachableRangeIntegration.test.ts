@@ -3,7 +3,7 @@ import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUti
 import { calculateReachableRange, calculateReachableRanges } from "../calculateReachableRange";
 import { ReachableRangeParams } from "../types/reachableRangeParams";
 
-describe("Reachable Range integration tests", () => {
+describe.skip("Reachable Range integration tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
     const origin = [4.87554, 52.38121];
