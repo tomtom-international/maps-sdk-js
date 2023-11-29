@@ -6600,7 +6600,7 @@
                   "endPointIndex": 155
                 }
               ],
-              "travelMode": [
+              "vehicleRestricted": [
                 {
                   "startPointIndex": 151,
                   "endPointIndex": 155
@@ -7584,7 +7584,7 @@
                   "endPointIndex": 165
                 }
               ],
-              "travelMode": [
+              "vehicleRestricted": [
                 {
                   "startPointIndex": 161,
                   "endPointIndex": 165
@@ -8896,7 +8896,7 @@
                   "endPointIndex": 452
                 }
               ],
-              "travelMode": [
+              "vehicleRestricted": [
                 {
                   "startPointIndex": 448,
                   "endPointIndex": 452
@@ -11112,7 +11112,7 @@
                   "endPointIndex": 69
                 }
               ],
-              "travelMode": [
+              "vehicleRestricted": [
                 {
                   "startPointIndex": 54,
                   "endPointIndex": 61

@@ -84,15 +84,10 @@ const appendSectionTypes = (
     sectionTypes: InputSectionTypes | undefined,
     instructionsInclude: boolean
 ): void => {
-    // TODO no longer needed I think
-    // const effectiveSectionTypes = (sectionTypes || inputSectionTypes).map((sectionType) =>
-    //     sectionType === "vehicleRestricted" ? "travelMode" : sectionType
-    // );
-    appendByRepeatingParamName(
-        urlParams,
-        "sectionType",
+    const effectiveSectionTypes = (
         sectionTypes || (instructionsInclude ? inputSectionTypesWithGuidance : inputSectionTypes)
-    );
+    ).map((sectionType) => (sectionType === "vehicleRestricted" ? "travelMode" : sectionType));
+    appendByRepeatingParamName(urlParams, "sectionType", effectiveSectionTypes);
 };
 
 const appendInstructionsInfo = (urlParams: URLSearchParams, instructionsInfo?: InstructionsInfo): void => {

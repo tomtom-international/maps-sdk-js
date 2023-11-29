@@ -250,14 +250,12 @@ export type SectionsProps = {
     tollRoad?: SectionProps[];
     tollVignette?: CountrySectionProps[];
     traffic?: TrafficSectionProps[];
-    travelMode?: SectionProps[];
-    // TODO no longer supported, vehicleRestricted?: SectionProps[];
+    vehicleRestricted?: SectionProps[];
     tunnel?: SectionProps[];
     unpaved?: SectionProps[];
     urban?: SectionProps[];
     carpool?: SectionProps[];
     lowEmissionZone?: SectionProps[];
-    // TODO create proper types for these
     lanes?: LaneSectionProps[];
     speedLimit?: SpeedLimitSectionProps[];
     roadShields?: RoadShieldSectionProps[];
@@ -282,8 +280,7 @@ export const inputSectionTypes: SectionType[] = [
     "tollRoad",
     "tollVignette",
     "country",
-    "travelMode",
-    // TODO no longer supported, "vehicleRestricted",
+    "vehicleRestricted",
     "traffic",
     "carpool",
     "urban",

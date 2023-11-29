@@ -25,15 +25,6 @@ export type InputSectionType = (typeof inputSectionTypes)[number];
  */
 export type InputSectionTypes = InputSectionType[];
 
-// TODO cleanup if we don't need this
-// export const instructionsTypes = ["coded", "text", "tagged"] as const;
-
-/**
- * Basic coded/text/tagged values.
- */
-// TODO cleanup if we don't need this
-// export type InstructionsTypes = (typeof instructionsTypes)[number];
-
 /**
  * The information about the instructions for Orbis guidance request.
  * For now the only two fields needed are choice of phonetics and language.
@@ -111,18 +102,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * @default 0
          */
         maxAlternatives?: 1 | 2 | 3 | 4 | 5;
-
-        /**
-         * Specifies the representation of the set of routes provided as a response.
-         *
-         * Possible values are:
-         * * polyline: includes routes in the response.
-         * * summaryOnly: as per polyline, but excluding the points elements for the routes in the response.
-         * @default polyline
-         * @deprecated
-         */
-        // TODO now only option is polyline and default one, so remove this option
-        // routeRepresentation?: "polyline" | "summaryOnly";
 
         /**
          * Specifies which of the section types is reported in the route response.

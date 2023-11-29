@@ -128,7 +128,7 @@ const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => (
     countryCodeISO3: apiSection.countryCode as string
 });
 
-const toTravelModeSectionProps = (apiSection: SectionAPI): SectionProps | null =>
+const toVehicleRestrictedSectionProps = (apiSection: SectionAPI): SectionProps | null =>
     apiSection.travelMode === "other" ? toSectionProps(apiSection) : null;
 
 const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => ({
@@ -185,7 +185,8 @@ const getSectionMapping = (
         case "TRAFFIC":
             return { sectionType: "traffic", mappingFunction: toTrafficSectionProps };
         case "TRAVEL_MODE":
-            return { sectionType: "travelMode", mappingFunction: toTravelModeSectionProps };
+            // NOTE: vehicleRestricted sections come from TRAVEL_MODE "other" ones:
+            return { sectionType: "vehicleRestricted", mappingFunction: toVehicleRestrictedSectionProps };
         case "TUNNEL":
             return { sectionType: "tunnel", mappingFunction: toSectionProps };
         case "UNPAVED":

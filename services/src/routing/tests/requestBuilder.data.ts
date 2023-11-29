@@ -53,7 +53,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ],
-            sectionTypes: ["travelMode", "traffic", "ferry"]
+            sectionTypes: ["vehicleRestricted", "traffic", "ferry"]
         },
         {
             method: "GET",
