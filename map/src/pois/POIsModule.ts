@@ -2,7 +2,6 @@ import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
 import {
     AbstractMapModule,
-    BASE_MAP_SOURCE_ID,
     EventsModule,
     POI_SOURCE_ID,
     StyleModuleInitConfig,
@@ -78,15 +77,17 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
      * @ignore
      */
     protected _initSourcesWithLayers() {
-        const poiRuntimeSource = this.mapLibreMap.getSource(BASE_MAP_SOURCE_ID);
+        const poiRuntimeSource = this.mapLibreMap.getSource(POI_SOURCE_ID);
         if (!poiRuntimeSource) {
             throw notInTheStyle(`init ${POIsModule.name} with source ID ${POI_SOURCE_ID}`);
         }
         const poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource, (layer) =>
             poiLayerIDs.includes(layer.id)
         );
-        // TODO: verify that the specific POI layers are in the style
-        this.originalFilter = this.mapLibreMap.getFilter(poi.sourceAndLayerIDs.layerIDs[0]) as FilterSpecification;
+        const mainLayer = poi.sourceAndLayerIDs.layerIDs[0];
+        if (this.mapLibreMap.getLayer(mainLayer)) {
+            this.originalFilter = this.mapLibreMap.getFilter(mainLayer) as FilterSpecification;
+        }
         return { poi };
     }
 

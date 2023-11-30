@@ -17,6 +17,7 @@ describe("Vector tiles POI module tests", () => {
                 getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
                 setFilter: jest.fn(),
                 getFilter: jest.fn(),
+                getLayer: jest.fn(),
                 once: jest.fn().mockReturnValue(Promise.resolve())
             } as unknown as Map,
             _eventsProxy: {
