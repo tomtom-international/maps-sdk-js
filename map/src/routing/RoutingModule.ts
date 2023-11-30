@@ -174,7 +174,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     private addImageIfNotExisting(imageID: string, path: string) {
         if (!this.mapLibreMap.hasImage(imageID)) {
             this.mapLibreMap.loadImage(path, (_, image) => {
-                this.mapLibreMap.addImage(imageID, image as HTMLImageElement);
+                // double-checking just in case of a race condition with overlapping init:
+                if (!this.mapLibreMap.hasImage(imageID)) {
+                    this.mapLibreMap.addImage(imageID, image as HTMLImageElement);
+                }
             });
         }
     }
