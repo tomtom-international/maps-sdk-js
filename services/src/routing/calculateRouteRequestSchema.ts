@@ -19,7 +19,6 @@ const calculateRouteRequestSchemaOptional = z
         // TODO add proper instructionsInfo check
         // instructionsType: z.enum(instructionsTypes),
         maxAlternatives: z.number().min(1).max(5),
-        // routeRepresentation: z.enum(["polyline", "summaryOnly"]),
         sectionTypes: z.array(z.enum(inputSectionTypesWithGuidance as [SectionType, ...SectionType[]]))
     })
     .partial();

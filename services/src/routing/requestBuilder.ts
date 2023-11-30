@@ -11,26 +11,22 @@ import {
     WaypointProps
 } from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
-// import omit from "lodash/omit";
 import { Position } from "geojson";
 import { CalculateRouteParams, InputSectionTypes, InstructionsInfo } from "./types/calculateRouteParams";
 import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
-// import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 import { FetchInput } from "../shared/types/fetch";
 import { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestTypes";
 import { LatitudeLongitudePointAPI } from "./types/apiResponseTypes";
 import { positionToCSVLatLon } from "../shared/geometry";
 import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
+import { CommonEVRoutingParams } from "../shared";
 
 // Are these params about Long Distance EV Routing:
-// TODO temporary implementation, until I change EV routing to Orbis as well
-const isLDEVR = (/*params: CalculateRouteParams*/): boolean => false; // params.vehicle?.engine?.type == "electric" && !!params.vehicle.engine.chargingPreferences;
+const isLDEVR = (params: CalculateRouteParams): boolean => !!params.commonEVRoutingParams;
 
 const buildURLBasePath = (params: CalculateRouteParams): string =>
     params.customServiceBaseURL ||
-    `${params.commonBaseURL}/maps/orbis/routing/${
-        isLDEVR(/*params*/) ? "calculateLongDistanceEVRoute" : "calculateRoute"
-    }`;
+    `${params.commonBaseURL}/maps/orbis/routing/${isLDEVR(params) ? "calculateLongDistanceEVRoute" : "calculateRoute"}`;
 
 const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
@@ -97,6 +93,23 @@ const appendInstructionsInfo = (urlParams: URLSearchParams, instructionsInfo?: I
         urlParams.append("instructionPhonetics", instructionsInfo.phonetics);
         urlParams.append("instructionRoadShieldReferences", instructionsInfo.roadShieldReferences);
         urlParams.append("language", instructionsInfo.language);
+    }
+};
+
+const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRoutingParams): void => {
+    if (evRoutingParams) {
+        urlParams.append("vehicleEngineType", evRoutingParams.vehicleEngineType);
+        urlParams.append("currentChargeInkWh", String(evRoutingParams.currentChargeInkWh));
+        urlParams.append("minChargeAtDestinationInkWh", String(evRoutingParams.minChargeAtDestinationInkWh));
+        urlParams.append("minChargeAtChargingStopsInkWh", String(evRoutingParams.minChargeAtChargingStopsInkWh));
+        urlParams.append("vehicleModelId", evRoutingParams.vehicleModelId);
+        evRoutingParams.minDeviationDistance &&
+            urlParams.append("minDeviationDistance", String(evRoutingParams.minDeviationDistance));
+        evRoutingParams.minDeviationTime &&
+            urlParams.append("minDeviationTime", String(evRoutingParams.minDeviationTime));
+        evRoutingParams.supportingPointIndexOfOrigin &&
+            urlParams.append("supportingPointIndexOfOrigin", String(evRoutingParams.supportingPointIndexOfOrigin));
+        evRoutingParams.alternativeType && urlParams.append("alternativeType", evRoutingParams.alternativeType);
     }
 };
 
@@ -190,17 +203,19 @@ const buildGeoInputsPOSTData = (
 
 const buildPOSTData = (params: CalculateRouteParams, types: GeoInputType[]): CalculateRoutePOSTDataAPI | null => {
     const pathsIncluded = types.includes("path");
-    const ldevr = isLDEVR(/*params*/);
+    const ldevr = isLDEVR(params);
     if (!pathsIncluded && !ldevr) {
         // (if no paths in the given geoInputs nor LDEVR, there'll be no POST data, which will trigger a GET call)
         return null;
     }
-    // TODO temporary implementation, until I change EV routing to Orbis as well
-    // const chargingModel = (params.vehicle?.engine as ElectricVehicleEngine)?.model.charging;
-    return {
-        ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types))
-        // ...(ldevr && chargingModel && { chargingParameters: omit(chargingModel, "maxChargeKWH") })
-    };
+    if (ldevr) {
+        // TODO not ideal, if we can reuse the same POST data for both LDEVR and regular routing, we should
+        return { ...params.commonEVRoutingParams?.postData };
+    } else {
+        return {
+            ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types))
+        };
+    }
 };
 
 /**
@@ -218,14 +233,14 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     params.currentHeading && urlParams.append("vehicleHeading", String(params.currentHeading));
     appendInstructionsInfo(urlParams, params.instructionsInfo);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
-    // TODO maybe this will be added to the API in the future
-    // params.routeRepresentation && urlParams.append("routeRepresentation", params.routeRepresentation);
     appendSectionTypes(urlParams, params.sectionTypes, !!params.instructionsInfo);
     params.extendedRouteRepresentations?.forEach((extendedRouteRepresentation) => {
         urlParams.append("extendedRouteRepresentation", extendedRouteRepresentation);
     });
+    appendEVParams(urlParams, params.commonEVRoutingParams);
     urlParams.append("apiVersion", String(params.apiVersion || 1));
 
+    console.log(url.toString());
     const postData = buildPOSTData(params, geoInputTypes);
     return postData ? { method: "POST", url, data: postData } : { method: "GET", url };
 };
