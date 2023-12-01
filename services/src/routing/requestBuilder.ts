@@ -19,7 +19,7 @@ import { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestT
 import { LatitudeLongitudePointAPI } from "./types/apiResponseTypes";
 import { positionToCSVLatLon } from "../shared/geometry";
 import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
-import { CommonEVRoutingParams } from "../shared";
+// import { CommonEVRoutingParams } from "../shared";
 
 // Are these params about Long Distance EV Routing:
 const isLDEVR = (params: CalculateRouteParams): boolean => !!params.commonEVRoutingParams;
@@ -93,23 +93,6 @@ const appendInstructionsInfo = (urlParams: URLSearchParams, instructionsInfo?: I
         urlParams.append("instructionPhonetics", instructionsInfo.phonetics);
         urlParams.append("instructionRoadShieldReferences", instructionsInfo.roadShieldReferences);
         urlParams.append("language", instructionsInfo.language);
-    }
-};
-
-const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRoutingParams): void => {
-    if (evRoutingParams) {
-        urlParams.append("vehicleEngineType", evRoutingParams.vehicleEngineType);
-        urlParams.append("currentChargeInkWh", String(evRoutingParams.currentChargeInkWh));
-        urlParams.append("minChargeAtDestinationInkWh", String(evRoutingParams.minChargeAtDestinationInkWh));
-        urlParams.append("minChargeAtChargingStopsInkWh", String(evRoutingParams.minChargeAtChargingStopsInkWh));
-        urlParams.append("vehicleModelId", evRoutingParams.vehicleModelId);
-        evRoutingParams.minDeviationDistance &&
-            urlParams.append("minDeviationDistance", String(evRoutingParams.minDeviationDistance));
-        evRoutingParams.minDeviationTime &&
-            urlParams.append("minDeviationTime", String(evRoutingParams.minDeviationTime));
-        evRoutingParams.supportingPointIndexOfOrigin &&
-            urlParams.append("supportingPointIndexOfOrigin", String(evRoutingParams.supportingPointIndexOfOrigin));
-        evRoutingParams.alternativeType && urlParams.append("alternativeType", evRoutingParams.alternativeType);
     }
 };
 
@@ -237,10 +220,8 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     params.extendedRouteRepresentations?.forEach((extendedRouteRepresentation) => {
         urlParams.append("extendedRouteRepresentation", extendedRouteRepresentation);
     });
-    appendEVParams(urlParams, params.commonEVRoutingParams);
     urlParams.append("apiVersion", String(params.apiVersion || 1));
 
-    console.log(url.toString());
     const postData = buildPOSTData(params, geoInputTypes);
     return postData ? { method: "POST", url, data: postData } : { method: "GET", url };
 };

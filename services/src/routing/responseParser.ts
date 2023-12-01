@@ -52,22 +52,13 @@ const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined 
     }
 };
 
-const parseSummary = (apiSummary: SummaryAPI /*params: CalculateRouteParams*/): RouteSummary | LegSummary => {
+const parseSummary = (apiSummary: SummaryAPI): RouteSummary | LegSummary => {
     // TODO return when ldEV is ready
-    const maxChargeKWH = 1; //(params.vehicle?.engine as ElectricVehicleEngine)?.model?.charging?.maxChargeKWH;
     const chargingConnectionInfo = apiSummary.chargingInformationAtEndOfLeg?.chargingConnectionInfo;
     return {
         ...apiSummary,
         departureTime: new Date(apiSummary.departureTime),
         arrivalTime: new Date(apiSummary.arrivalTime),
-        ...(maxChargeKWH &&
-            apiSummary.batteryConsumptionInkWh && {
-                batteryConsumptionInPCT: (100 * apiSummary.batteryConsumptionInkWh) / maxChargeKWH
-            }),
-        ...(maxChargeKWH &&
-            apiSummary.remainingChargeAtArrivalInkWh && {
-                remainingChargeAtArrivalInPCT: (100 * apiSummary.remainingChargeAtArrivalInkWh) / maxChargeKWH
-            }),
         ...(apiSummary.chargingInformationAtEndOfLeg && {
             chargingInformationAtEndOfLeg: {
                 ...omit(apiSummary.chargingInformationAtEndOfLeg, "chargingConnectionInfo"),
@@ -79,9 +70,6 @@ const parseSummary = (apiSummary: SummaryAPI /*params: CalculateRouteParams*/): 
                         chargingPowerInkW: chargingConnectionInfo.chargingPowerInkW,
                         currentType: toCurrentType(chargingConnectionInfo.chargingCurrentType)
                     }
-                }),
-                ...(maxChargeKWH && {
-                    targetChargePCT: (100 * apiSummary.chargingInformationAtEndOfLeg.targetChargeInkWh) / maxChargeKWH
                 })
             }
         })

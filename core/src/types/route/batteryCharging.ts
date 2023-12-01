@@ -150,11 +150,6 @@ export type BatteryCharging = {
      * * This uuid can be used to check the availability of the charging park.
      */
     chargingParkUuid: string;
-    /**
-     * The unique external identifier of this charging park.
-     * * This uuid can be used to check the availability of the charging park.
-     */
-    chargingParkExternalId: string;
 
     /**
      * Describes details of the charging connection which should be used at this charging stop.

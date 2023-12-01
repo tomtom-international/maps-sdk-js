@@ -199,11 +199,7 @@ describe("Calculate route integration tests", () => {
         expect(routeSummary.totalChargingTimeInSeconds).toBeGreaterThan(1000);
         expect(routeSummary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
         // param is min 50% at arrival:
-        expect(routeSummary.remainingChargeAtArrivalInPCT).toBeGreaterThan(40);
-        // it shows as 407, not sure why it returns like that
-        // expect(routeSummary.remainingChargeAtArrivalInPCT).toBeLessThan(100);
         expect(routeSummary.batteryConsumptionInkWh).toBeGreaterThan(100);
-        expect(routeSummary.batteryConsumptionInPCT).toBeGreaterThan(100);
 
         // we assert the legs excluding the last one:
         for (let i = 0; i < legs.length - 1; i++) {
@@ -211,7 +207,6 @@ describe("Calculate route integration tests", () => {
             assertSummaryBasics(leg.summary);
             expect(leg.summary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
             // param is min 10% at stops:
-            expect(leg.summary.remainingChargeAtArrivalInPCT).toBeGreaterThan(8);
             expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
         }
 

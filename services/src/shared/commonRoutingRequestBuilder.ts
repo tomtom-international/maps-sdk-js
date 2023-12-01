@@ -1,6 +1,11 @@
 // import isNil from "lodash/isNil";
 import { appendByRepeatingParamName, appendOptionalParam } from "./requestBuildingUtils";
-import { CommonRoutingParams /*DepartArriveParams, ThrillingParams*/ } from "./types/commonRoutingParams";
+import {
+    CommonEVRoutingParams,
+    CommonRoutingParams /*DepartArriveParams, ThrillingParams*/
+} from "./types/commonRoutingParams";
+
+// TODO lot of functionality is not supported in Orbis but it may be supported in the future
 // import {
 //     ChargingPreferences,
 //     CombustionVehicleEngine,
@@ -149,6 +154,23 @@ import { CommonRoutingParams /*DepartArriveParams, ThrillingParams*/ } from "./t
 //     }
 // };
 
+const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRoutingParams): void => {
+    if (evRoutingParams) {
+        urlParams.append("vehicleEngineType", evRoutingParams.vehicleEngineType);
+        urlParams.append("currentChargeInkWh", String(evRoutingParams.currentChargeInkWh));
+        urlParams.append("minChargeAtDestinationInkWh", String(evRoutingParams.minChargeAtDestinationInkWh));
+        urlParams.append("minChargeAtChargingStopsInkWh", String(evRoutingParams.minChargeAtChargingStopsInkWh));
+        urlParams.append("vehicleModelId", evRoutingParams.vehicleModelId);
+        evRoutingParams.minDeviationDistance &&
+            urlParams.append("minDeviationDistance", String(evRoutingParams.minDeviationDistance));
+        evRoutingParams.minDeviationTime &&
+            urlParams.append("minDeviationTime", String(evRoutingParams.minDeviationTime));
+        evRoutingParams.supportingPointIndexOfOrigin &&
+            urlParams.append("supportingPointIndexOfOrigin", String(evRoutingParams.supportingPointIndexOfOrigin));
+        evRoutingParams.alternativeType && urlParams.append("alternativeType", evRoutingParams.alternativeType);
+    }
+};
+
 /**
  * @ignore
  */
@@ -162,5 +184,5 @@ export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: Co
     if (costModel?.routeType == "thrilling") {
         // appendThrillingParams(urlParams, costModel.thrillingParams);
     }
-    // appendVehicleParams(urlParams, params.vehicle);
+    appendEVParams(urlParams, params.commonEVRoutingParams);
 };
