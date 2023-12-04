@@ -85,7 +85,7 @@ const mapDisplayPOICategoryMappings: Partial<Record<POICategory, string>> = {
     PAGODA: "religious_site",
     PARK_RECREATION_AREA: "park_and_recreation_area",
     PARKING_GARAGE: "parking_facility",
-    PETROL_STATION: "gas_station",
+    PETROL_STATION: "fuel_station",
     PHARMACY: "pharmacy",
     PLACE_OF_WORSHIP: "place_of_worship",
     POLICE_STATION: "police_station",
