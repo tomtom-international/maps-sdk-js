@@ -178,10 +178,12 @@ export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: Co
     const costModel = params.costModel;
     appendByRepeatingParamName(urlParams, "avoid", costModel?.avoid);
     appendOptionalParam(urlParams, "traffic", costModel?.considerTraffic);
+    // TODO not supported in Orbis
     // appendWhenParams(urlParams, params.when);
     appendOptionalParam(urlParams, "routeType", costModel?.routeType);
     appendOptionalParam(urlParams, "travelMode", params.travelMode);
     if (costModel?.routeType == "thrilling") {
+        // TODO not supported in Orbis
         // appendThrillingParams(urlParams, costModel.thrillingParams);
     }
     appendEVParams(urlParams, params.commonEVRoutingParams);

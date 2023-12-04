@@ -144,6 +144,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 ],
                 considerTraffic: false,
                 routeType: "thrilling"
+                // TODO not supported in Orbis
                 // thrillingParams: {
                 //     hilliness: "low",
                 //     windingness: "high"
@@ -151,8 +152,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             },
             computeAdditionalTravelTimeFor: "all",
             currentHeading: 45,
-            // instructionsType: "tagged",
             maxAlternatives: 2
+            // TODO not supported in Orbis
             // routeRepresentation: "summaryOnly",
             // vehicle: {
             //     commercial: true,
@@ -212,6 +213,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 [4.49015, 52.16109]
             ]
+            // TODO not supported in Orbis
             // vehicle: {
             //     dimensions: { weightKG: 1500 },
             //     engine: {
@@ -261,6 +263,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.90066, 52.27317],
                 [4.49015, 52.16109]
             ]
+            // TODO not supported in Orbis
             // vehicle: {
             //     dimensions: { weightKG: 3500 },
             //     maxSpeedKMH: 60,
@@ -301,151 +304,39 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             )
         }
     ],
-    // [
-    //     "LDEV A-B Route",
-    //     {
-    //         apiKey: "GLOBAL_API_KEY",
-    //         commonBaseURL: "https://api.tomtom.com",
-    //         geoInputs: [
-    //             [4.89066, 52.37317],
-    //             [4.49015, 52.16109]
-    //         ]
-    //         vehicle: {
-    //             engine: {
-    //                 type: "electric",
-    //                 currentChargePCT: 80,
-    //                 chargingPreferences: {
-    //                     minChargeAtChargingStopsPCT: 10,
-    //                     minChargeAtDestinationPCT: 50
-    //                 },
-    //                 model: {
-    //                     consumption: {
-    //                         speedsToConsumptionsKWH: [
-    //                             { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-    //                             { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-    //                         ],
-    //                         auxiliaryPowerInkW: 1.7,
-    //                         efficiency: {
-    //                             acceleration: 0.66,
-    //                             deceleration: 0.91,
-    //                             uphill: 0.74,
-    //                             downhill: 0.73
-    //                         }
-    //                     },
-    //                     charging: {
-    //                         maxChargeKWH: 85,
-    //                         batteryCurve: [
-    //                             { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
-    //                             { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
-    //                             { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
-    //                         ],
-    //                         chargingConnectors: [
-    //                             {
-    //                                 currentType: "AC3",
-    //                                 plugTypes: [
-    //                                     "IEC_62196_Type_2_Outlet",
-    //                                     "IEC_62196_Type_2_Connector_Cable_Attached",
-    //                                     "Combo_to_IEC_62196_Type_2_Base"
-    //                                 ],
-    //                                 efficiency: 0.9,
-    //                                 baseLoadInkW: 0.2,
-    //                                 maxPowerInkW: 11
-    //                             },
-    //                             {
-    //                                 currentType: "DC",
-    //                                 plugTypes: [
-    //                                     "IEC_62196_Type_2_Outlet",
-    //                                     "IEC_62196_Type_2_Connector_Cable_Attached",
-    //                                     "Combo_to_IEC_62196_Type_2_Base"
-    //                                 ],
-    //                                 voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
-    //                                 efficiency: 0.9,
-    //                                 baseLoadInkW: 0.2,
-    //                                 maxPowerInkW: 150
-    //                             },
-    //                             {
-    //                                 currentType: "DC",
-    //                                 plugTypes: [
-    //                                     "IEC_62196_Type_2_Outlet",
-    //                                     "IEC_62196_Type_2_Connector_Cable_Attached",
-    //                                     "Combo_to_IEC_62196_Type_2_Base"
-    //                                 ],
-    //                                 voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
-    //                                 efficiency: 0.9,
-    //                                 baseLoadInkW: 0.2
-    //                             }
-    //                         ],
-    //                         chargingTimeOffsetInSec: 60
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     {
-    //         method: "POST",
-    //         url: new URL(
-    //             "https://api.tomtom.com/routing/1/calculateLongDistanceEVRoute/52.37317,4.89066:52.16109,4.49015/" +
-    //                 "json?key=GLOBAL_API_KEY" +
-    //                 "&accelerationEfficiency=0.66&decelerationEfficiency=0.91" +
-    //                 "&uphillEfficiency=0.74&downhillEfficiency=0.73" +
-    //                 "&vehicleEngineType=electric" +
-    //                 "&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3" +
-    //                 "&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68" +
-    //                 "&minChargeAtDestinationInkWh=42.5&minChargeAtChargingStopsInkWh=8.5" +
-    //                 "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel" +
-    //                 "&sectionType=motorway&sectionType=pedestrian" +
-    //                 "&sectionType=tollRoad&sectionType=tollVignette&sectionType=country&sectionType=travelMode" +
-    //                 "&sectionType=traffic&sectionType=urban&sectionType=unpaved&sectionType=carpool" +
-    //                 "&sectionType=lowEmissionZone"
-    //         ),
-    //         data: {
-    //             chargingParameters: {
-    //                 batteryCurve: [
-    //                     { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
-    //                     { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
-    //                     { stateOfChargeInkWh: 80.0, maxPowerInkW: 40 }
-    //                 ],
-    //                 chargingConnectors: [
-    //                     {
-    //                         currentType: "AC3",
-    //                         plugTypes: [
-    //                             "IEC_62196_Type_2_Outlet",
-    //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-    //                             "Combo_to_IEC_62196_Type_2_Base"
-    //                         ],
-    //                         efficiency: 0.9,
-    //                         baseLoadInkW: 0.2,
-    //                         maxPowerInkW: 11
-    //                     },
-    //                     {
-    //                         currentType: "DC",
-    //                         plugTypes: [
-    //                             "IEC_62196_Type_2_Outlet",
-    //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-    //                             "Combo_to_IEC_62196_Type_2_Base"
-    //                         ],
-    //                         voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
-    //                         efficiency: 0.9,
-    //                         baseLoadInkW: 0.2,
-    //                         maxPowerInkW: 150
-    //                     },
-    //                     {
-    //                         currentType: "DC",
-    //                         plugTypes: [
-    //                             "IEC_62196_Type_2_Outlet",
-    //                             "IEC_62196_Type_2_Connector_Cable_Attached",
-    //                             "Combo_to_IEC_62196_Type_2_Base"
-    //                         ],
-    //                         voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
-    //                         efficiency: 0.9,
-    //                         baseLoadInkW: 0.2
-    //                     }
-    //                 ],
-    //                 chargingTimeOffsetInSec: 60
-    //             }
-    //         }
-    //     }
-    // ],
+    [
+        "LDEV A-B Route",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            commonBaseURL: "https://api.tomtom.com",
+            geoInputs: [
+                [13.492, 52.507],
+                [8.624, 50.104]
+            ],
+            commonEVRoutingParams: {
+                vehicleEngineType: "electric",
+                currentChargeInkWh: 20,
+                minChargeAtDestinationInkWh: 4,
+                minChargeAtChargingStopsInkWh: 4,
+                vehicleModelId: "54B969E8-E28D-11EC-8FEA-0242AC120002"
+            },
+            apiVersion: 2
+        },
+        {
+            method: "POST",
+            url: new URL(
+                "https://api.tomtom.com/maps/orbis/routing/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/" +
+                    "json?key=GLOBAL_API_KEY&vehicleEngineType=electric&currentChargeInkWh=20" +
+                    "&minChargeAtDestinationInkWh=4&minChargeAtChargingStopsInkWh=4" +
+                    "&vehicleModelId=54B969E8-E28D-11EC-8FEA-0242AC120002&sectionType=carTrain&sectionType=ferry" +
+                    "&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian&sectionType=tollRoad" +
+                    "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban&sectionType=unpaved" +
+                    "&sectionType=lowEmissionZone&apiVersion=2"
+            ),
+            data: {}
+        }
+    ],
     [
         "Route based on a path to reconstruct",
         {

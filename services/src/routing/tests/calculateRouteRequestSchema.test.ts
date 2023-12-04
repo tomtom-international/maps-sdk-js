@@ -137,6 +137,7 @@ describe("Calculate route request schema validation", () => {
                     costModel: {
                         avoid: "tollRoads" as never,
                         considerTraffic: "true" as never
+                        // TODO not supported in Orbis
                         // thrillingParams: {
                         //     hilliness: "low",
                         //     windingness: "medium" as never
@@ -144,10 +145,13 @@ describe("Calculate route request schema validation", () => {
                     },
                     computeAdditionalTravelTimeFor: "first" as never,
                     currentHeading: 360,
+                    // TODO not supported in Orbis in this way, to add check for the way Orbis does it
                     // instructionsType: "Coded" as never,
                     maxAlternatives: 6 as never,
+                    // TODO deprecated in Orbis
                     // routeRepresentation: "summary" as never,
                     travelMode: 2 as never,
+                    // TODO not supported in Orbis
                     // when: {
                     //     option: "arriveAt" as never,
                     //     date: new Date()
@@ -176,6 +180,7 @@ describe("Calculate route request schema validation", () => {
                         path: ["costModel", "considerTraffic"],
                         message: "Expected boolean, received string"
                     },
+                    // TODO not supported in Orbis
                     // {
                     //     received: "medium",
                     //     code: "invalid_enum_value",
@@ -206,6 +211,7 @@ describe("Calculate route request schema validation", () => {
                         message: "Number must be less than or equal to 359.5",
                         path: ["currentHeading"]
                     },
+                    // TODO not supported in Orbis
                     // {
                     //     received: "Coded",
                     //     code: "invalid_enum_value",
@@ -222,6 +228,7 @@ describe("Calculate route request schema validation", () => {
                         message: "Number must be less than or equal to 5",
                         path: ["maxAlternatives"]
                     },
+                    // TODO not supported in Orbis
                     // {
                     //     received: "summary",
                     //     code: "invalid_enum_value",
@@ -259,6 +266,7 @@ describe("Calculate route request schema validation", () => {
                             "'unpaved' | 'lowEmissionZone' | 'lanes' | 'speedLimit' | " +
                             "'roadShields', received 'motorways'"
                     }
+                    // TODO not supported in Orbis
                     // {
                     //     received: "arriveAt",
                     //     code: "invalid_enum_value",

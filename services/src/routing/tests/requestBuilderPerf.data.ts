@@ -34,9 +34,9 @@ export const routeRequestParams: CalculateRouteParams = {
         routeType: "fastest"
     },
     currentHeading: 180,
+    // TODO not supported in Orbis, change to correct implementation
     // instructionsType: "text",
     maxAlternatives: 3,
-    // routeRepresentation: "summaryOnly",
 
     sectionTypes: [
         "carTrain",
@@ -54,6 +54,7 @@ export const routeRequestParams: CalculateRouteParams = {
         "carpool"
     ],
     travelMode: "car"
+    // TODO not supported in Orbis
     // vehicle: {
     //     dimensions: {
     //         weightKG: 3500
@@ -110,9 +111,9 @@ export const shortRouteRequestParams: CalculateRouteParams = {
         considerTraffic: true,
         routeType: "fastest"
     },
+    // TODO not supported in Orbis, change to correct implementation
     // instructionsType: "text",
     maxAlternatives: 3,
-    // routeRepresentation: "summaryOnly",
     sectionTypes: [
         "carTrain",
         "ferry",
@@ -129,6 +130,7 @@ export const shortRouteRequestParams: CalculateRouteParams = {
         "carpool"
     ],
     travelMode: "car"
+    // TODO not supported in Orbis
     // when: {
     //     option: "arriveBy",
     //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
