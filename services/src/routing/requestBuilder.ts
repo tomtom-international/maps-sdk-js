@@ -86,8 +86,9 @@ const appendSectionTypes = (
     appendByRepeatingParamName(urlParams, "sectionType", effectiveSectionTypes);
 };
 
-const appendInstructionsInfo = (urlParams: URLSearchParams, instructionsInfo?: InstructionsInfo): void => {
-    if (instructionsInfo) {
+const appendInstructionsInfo = (urlParams: URLSearchParams, params?: CalculateRouteParams): void => {
+    if (params?.instructionsInfo) {
+        const instructionsInfo: InstructionsInfo = params.instructionsInfo;
         urlParams.append("instructionsType", instructionsInfo.type);
         urlParams.append("guidanceVersion", String(instructionsInfo.version));
         urlParams.append("instructionPhonetics", instructionsInfo.phonetics);
@@ -210,11 +211,11 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     const url = new URL(`${buildURLBasePath(params)}/${buildLocationsString(params.geoInputs, geoInputTypes)}/json`);
     const urlParams: URLSearchParams = url.searchParams;
 
-    appendCommonParams(urlParams, params);
+    appendCommonParams(urlParams, params, true);
     appendCommonRoutingParams(urlParams, params);
     appendOptionalParam(urlParams, "computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
     params.currentHeading && urlParams.append("vehicleHeading", String(params.currentHeading));
-    appendInstructionsInfo(urlParams, params.instructionsInfo);
+    appendInstructionsInfo(urlParams, params);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
     appendSectionTypes(urlParams, params.sectionTypes, !!params.instructionsInfo);
     params.extendedRouteRepresentations?.forEach((extendedRouteRepresentation) => {

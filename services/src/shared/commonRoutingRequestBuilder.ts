@@ -175,16 +175,19 @@ const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRo
  * @ignore
  */
 export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: CommonRoutingParams): void => {
-    const costModel = params.costModel;
-    appendByRepeatingParamName(urlParams, "avoid", costModel?.avoid);
-    appendOptionalParam(urlParams, "traffic", costModel?.considerTraffic);
-    // TODO not supported in Orbis
-    // appendWhenParams(urlParams, params.when);
-    appendOptionalParam(urlParams, "routeType", costModel?.routeType);
-    appendOptionalParam(urlParams, "travelMode", params.travelMode);
-    if (costModel?.routeType == "thrilling") {
+    if (!params.commonEVRoutingParams) {
+        // Orbis EV routing does not support cost model
+        const costModel = params.costModel;
+        appendByRepeatingParamName(urlParams, "avoid", costModel?.avoid);
+        appendOptionalParam(urlParams, "traffic", costModel?.considerTraffic);
         // TODO not supported in Orbis
-        // appendThrillingParams(urlParams, costModel.thrillingParams);
+        // appendWhenParams(urlParams, params.when);
+        appendOptionalParam(urlParams, "routeType", costModel?.routeType);
+        if (costModel?.routeType == "thrilling") {
+            // TODO not supported in Orbis
+            // appendThrillingParams(urlParams, costModel.thrillingParams);
+        }
     }
+    appendOptionalParam(urlParams, "travelMode", params.travelMode);
     appendEVParams(urlParams, params.commonEVRoutingParams);
 };

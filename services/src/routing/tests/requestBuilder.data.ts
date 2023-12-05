@@ -193,7 +193,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: "GET",
             url: new URL(
                 "https://api.tomtom.com/maps/orbis/routing/calculateRoute/42.26297,3.1748:42.18211,2.48819/json?" +
-                    "key=GLOBAL_API_KEY&language=es-ES&avoid=carpools&avoid=ferries&avoid=motorways" +
+                    "key=GLOBAL_API_KEY&avoid=carpools&avoid=ferries&avoid=motorways" +
                     "&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads&avoid=borderCrossings" +
                     "&avoid=tunnels&avoid=carTrains&avoid=lowEmissionZones&traffic=false&routeType=thrilling" +
                     "&computeTravelTimeFor=all&vehicleHeading=45&maxAlternatives=2&sectionType=carTrain" +

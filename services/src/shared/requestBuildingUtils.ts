@@ -8,9 +8,15 @@ import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
  * @param urlParams
  * @param params
  */
-export const appendCommonParams = (urlParams: URLSearchParams, params: CommonServiceParams): void => {
+export const appendCommonParams = (
+    urlParams: URLSearchParams,
+    params: CommonServiceParams,
+    routing?: boolean
+): void => {
     urlParams.append("key", params.apiKey as string);
-    params.language && urlParams.append("language", params.language);
+    //TODO not sure if this is the best way to handle this, but for routing, language is only supported in the URL
+    // if you request guidance instructions
+    !routing && params.language && urlParams.append("language", params.language);
 };
 
 /**
