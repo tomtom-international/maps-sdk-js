@@ -84,6 +84,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
         const poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource, (layer) =>
             poiLayerIDs.includes(layer.id)
         );
+        // TODO: check if the layers are present in the style, and if not, throw exception?
         const mainLayer = poi.sourceAndLayerIDs.layerIDs[0];
         if (this.mapLibreMap.getLayer(mainLayer)) {
             this.originalFilter = this.mapLibreMap.getFilter(mainLayer) as FilterSpecification;
