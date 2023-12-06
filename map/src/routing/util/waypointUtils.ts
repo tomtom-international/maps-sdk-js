@@ -1,4 +1,4 @@
-import { CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from "@anw/maps-sdk-js/core";
+import { ChargingParkLocation, CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from "@anw/maps-sdk-js/core";
 import { Point, Position } from "geojson";
 import {
     FINISH_INDEX,
@@ -14,6 +14,7 @@ import {
     WAYPOINT_STOP_IMAGE_ID
 } from "../layers/waypointLayers";
 import { PlanningWaypoint } from "../types/planningWaypoint";
+import { LocationDisplayProps } from "../../places";
 
 const indexTypeFor = (index: number, arrayLength: number): IndexType =>
     index === 0 ? START_INDEX : index < arrayLength - 1 ? MIDDLE_INDEX : FINISH_INDEX;
@@ -109,6 +110,33 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
                         ...(title && { title }),
                         iconID: getImageIDForWaypoint(waypoint, indexType),
                         ...(hardWaypoint && indexType === MIDDLE_INDEX && { stopDisplayIndex: hardWaypointIndex })
+                    }
+                };
+            })
+            .filter((feature) => feature)
+    };
+};
+
+/**
+ * Generates display-ready charging stations for the given planning context ones.
+ * @param chargingStations The charging stations return for ldEV.
+ */
+export const toDisplayChargingStations = (
+    chargingStations: ChargingParkLocation[]
+): Waypoints<LocationDisplayProps> => {
+    return {
+        type: "FeatureCollection",
+        features: chargingStations
+            .map((chargingStation) => {
+                if (!chargingStation) {
+                    return null as unknown as Waypoint<LocationDisplayProps>;
+                }
+                const waypoint = toWaypointFromPoint({ type: "Point", coordinates: chargingStation.coordinates });
+                return {
+                    ...waypoint,
+                    properties: {
+                        ...waypoint.properties,
+                        iconID: "poi-charging_location"
                     }
                 };
             })

@@ -36,6 +36,7 @@ export type RoutingLayersSpecs = {
     vehicleRestricted: ToBeAddedLayerSpecWithoutSource[];
     incidents: ToBeAddedLayerSpecWithoutSource[];
     ferries: ToBeAddedLayerSpecWithoutSource[];
+    ev_charging_stations: ToBeAddedLayerSpecWithoutSource[];
     tollRoads: ToBeAddedLayerSpecWithoutSource[];
     tunnels: ToBeAddedLayerSpecWithoutSource[];
 };
@@ -47,6 +48,7 @@ export const createLayersSpecs = ({ mainLine, waypoint, sections }: RouteLayersC
     routeLines: mapLayerSpecs(mainLine),
     waypoints: mapLayerSpecs(waypoint),
     ferries: mapLayerSpecs(sections?.ferry),
+    ev_charging_stations: mapLayerSpecs(sections?.ev_charging_stations),
     incidents: mapLayerSpecs(sections?.incident),
     tollRoads: mapLayerSpecs(sections?.tollRoad),
     tunnels: mapLayerSpecs(sections?.tunnel),
@@ -63,6 +65,9 @@ export const mergeConfig = (config: RoutingModuleConfig | undefined): RoutingMod
         waypoint: config?.routeLayers?.waypoint ?? DEFAULT_ROUTE_LAYERS_CONFIGURATION.waypoint,
         sections: {
             ferry: config?.routeLayers?.sections?.ferry ?? DEFAULT_ROUTE_LAYERS_CONFIGURATION.sections?.ferry,
+            ev_charging_stations:
+                config?.routeLayers?.sections?.ev_charging_stations ??
+                DEFAULT_ROUTE_LAYERS_CONFIGURATION.sections?.ev_charging_stations,
             incident: config?.routeLayers?.sections?.incident ?? DEFAULT_ROUTE_LAYERS_CONFIGURATION.sections?.incident,
             tollRoad: config?.routeLayers?.sections?.tollRoad ?? DEFAULT_ROUTE_LAYERS_CONFIGURATION.sections?.tollRoad,
             tunnel: config?.routeLayers?.sections?.tunnel ?? DEFAULT_ROUTE_LAYERS_CONFIGURATION.sections?.tunnel,

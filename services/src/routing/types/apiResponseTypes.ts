@@ -10,7 +10,8 @@ import {
     RoutePathPoint,
     LaneDirection,
     PossibleLaneSeparator,
-    RoadShieldReference
+    RoadShieldReference,
+    ChargingParkLocation
 } from "@anw/maps-sdk-js/core";
 
 /**
@@ -88,7 +89,13 @@ export type SummaryAPI = Omit<
 > & {
     arrivalTime: string;
     departureTime: string;
-    chargingInformationAtEndOfLeg?: Omit<BatteryCharging, "targetChargePCT" | "chargingConnectionInfo"> & {
+    chargingInformationAtEndOfLeg?: Omit<
+        BatteryCharging,
+        "targetChargePCT" | "chargingConnectionInfo" | "chargingParkLocation"
+    > & {
+        chargingParkLocation: Omit<ChargingParkLocation, "coordinates"> & {
+            coordinate: LatitudeLongitudePointAPI;
+        };
         chargingConnectionInfo: {
             chargingVoltageInV: number;
             chargingCurrentInA: number;

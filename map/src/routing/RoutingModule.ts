@@ -1,9 +1,10 @@
-import { Route, Routes, Waypoint, Waypoints } from "@anw/maps-sdk-js/core";
+import { ChargingParkLocation, Route, Routes, Waypoint, Waypoints } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
     GeoJSONSourceWithLayers,
     mapStyleLayerIDs,
+    ROUTE_EV_CHARGING_STATIONS_SOURCE_ID,
     ROUTE_FERRIES_SOURCE_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
@@ -18,7 +19,7 @@ import {
     WAYPOINT_START_IMAGE_ID,
     WAYPOINT_STOP_IMAGE_ID
 } from "./layers/waypointLayers";
-import { toDisplayWaypoints } from "./util/waypointUtils";
+import { toDisplayChargingStations, toDisplayWaypoints } from "./util/waypointUtils";
 import { PlanningWaypoint } from "./types/planningWaypoint";
 import { DEFAULT_ROUTE_LAYERS_CONFIGURATION, RoutingModuleConfig } from "./types/routeModuleConfig";
 import { buildDisplayRouteSections, showSectionsWithRouteSelection } from "./util/routeSections";
@@ -29,6 +30,7 @@ import { DisplayRouteProps } from "./types/displayRoutes";
 import { ShowRoutesOptions } from "./types/showRoutesOptions";
 import { addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
+import { LegSectionProps } from "core/src/types";
 
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
@@ -39,6 +41,7 @@ type RoutingSourcesWithLayers = {
     vehicleRestricted: GeoJSONSourceWithLayers<RouteSections>;
     incidents: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
     ferries: GeoJSONSourceWithLayers<RouteSections>;
+    ev_charging_stations: GeoJSONSourceWithLayers<Waypoints>;
     tollRoads: GeoJSONSourceWithLayers<RouteSections>;
     tunnels: GeoJSONSourceWithLayers<RouteSections>;
 };
@@ -78,6 +81,12 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 false
             ),
             ferries: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTE_FERRIES_SOURCE_ID, layersSpecs.ferries, false),
+            ev_charging_stations: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                ROUTE_EV_CHARGING_STATIONS_SOURCE_ID,
+                layersSpecs.ev_charging_stations,
+                false
+            ),
             tollRoads: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
                 ROUTE_TOLL_ROADS_SOURCE_ID,
@@ -155,6 +164,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             vehicleRestricted: this.sourcesWithLayers.vehicleRestricted.shownFeatures,
             incidents: this.sourcesWithLayers.incidents.shownFeatures,
             ferries: this.sourcesWithLayers.ferries.shownFeatures,
+            ev_charging_stations: this.sourcesWithLayers.ev_charging_stations.shownFeatures,
             tunnels: this.sourcesWithLayers.tunnels.shownFeatures,
             tollRoads: this.sourcesWithLayers.tollRoads.shownFeatures
         };
@@ -167,6 +177,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.vehicleRestricted.show(previouslyShown.vehicleRestricted);
         this.sourcesWithLayers.incidents.show(previouslyShown.incidents);
         this.sourcesWithLayers.ferries.show(previouslyShown.ferries);
+        this.sourcesWithLayers.ev_charging_stations.show(previouslyShown.ev_charging_stations);
         this.sourcesWithLayers.tunnels.show(previouslyShown.tunnels);
         this.sourcesWithLayers.tollRoads.show(previouslyShown.tollRoads);
     }
@@ -179,6 +190,18 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                     this.mapLibreMap.addImage(imageID, image as HTMLImageElement);
                 }
             });
+        }
+    }
+
+    private showEVChargingStations(legs: LegSectionProps[]) {
+        if (legs) {
+            const chargingStations = toDisplayChargingStations(
+                legs.map(
+                    (leg) => leg.summary.chargingInformationAtEndOfLeg?.chargingParkLocation as ChargingParkLocation
+                )
+            );
+            // TODO clean it in the future, it will have extra properties, but it's fine for now:
+            this.sourcesWithLayers.ev_charging_stations.show(chargingStations);
         }
     }
 
@@ -195,6 +218,8 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.incidents.show(
             buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
         );
+        const selectedIndex: number = options?.selectedIndex || 0;
+        this.showEVChargingStations(routes.features[selectedIndex]?.properties.sections.leg);
         this.sourcesWithLayers.ferries.show(buildDisplayRouteSections(displayRoutes, "ferry"));
         this.sourcesWithLayers.tunnels.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
         this.sourcesWithLayers.tollRoads.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
@@ -209,6 +234,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.vehicleRestricted.clear();
         this.sourcesWithLayers.incidents.clear();
         this.sourcesWithLayers.ferries.clear();
+        this.sourcesWithLayers.ev_charging_stations.clear();
         this.sourcesWithLayers.tollRoads.clear();
         this.sourcesWithLayers.tunnels.clear();
     }
@@ -222,6 +248,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.routeLines.shownFeatures, index);
 
         this.sourcesWithLayers.routeLines.show(updatedRoutes);
+        this.showEVChargingStations(updatedRoutes.features[index]?.properties.sections.leg);
         showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.vehicleRestricted);
         showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.incidents);
         showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.ferries);
@@ -269,6 +296,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 this.sourcesWithLayers.incidents
             ),
             ferries: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.ferries),
+            ev_charging_stations: new EventsModule<RouteSection>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.ev_charging_stations
+            ),
             tollRoads: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.tollRoads),
             tunnels: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.tunnels)
         };

@@ -1,4 +1,5 @@
 import { CurrentType } from "..";
+import { Position } from "geojson";
 
 /**
  * Available plug types for EV charging.
@@ -75,6 +76,11 @@ export type ChargingConnectionInfo = {
  * @category Types
  */
 export type ChargingParkLocation = {
+    /**
+     * The position of the charging park.
+     */
+    coordinates: Position;
+
     /**
      * The street name of the charging park.
      */

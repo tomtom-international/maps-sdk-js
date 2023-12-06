@@ -3,6 +3,7 @@ import {
     mapStyleLayerIDs,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_DESELECTED_OUTLINE_LAYER_ID,
+    ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID,
     ROUTE_FERRIES_LINE_LAYER_ID,
     ROUTE_FERRIES_SYMBOL_LAYER_ID,
     ROUTE_INCIDENTS_BACKGROUND_LAYER_ID,
@@ -39,6 +40,7 @@ import {
 } from "../layers/routeTrafficSectionLayers";
 import { routeTunnelsLine } from "../layers/routeTunnelSectionLayers";
 import { waypointLabels, waypointSymbols } from "../layers/waypointLayers";
+import { routeEVChargingStationSymbol } from "../layers/evChargingStationLayers";
 
 /**
  * Configuration for the route layers. Allows full control for all the route layers.
@@ -67,6 +69,10 @@ export type RouteLayersConfig = {
          * Incident section layers.
          */
         incident?: LayersSpecWithOrder;
+        /**
+         * Legs section layers, for EV routing.
+         */
+        ev_charging_stations?: LayersSpecWithOrder;
         /**
          * Toll road section layers.
          */
@@ -129,6 +135,15 @@ export const DEFAULT_ROUTE_LAYERS_CONFIGURATION: RouteLayersConfig = {
                 {
                     id: ROUTE_INCIDENTS_SYMBOL_LAYER_ID,
                     layerSpec: routeIncidentsSymbol,
+                    beforeID: WAYPOINT_SYMBOLS_LAYER_ID
+                }
+            ]
+        },
+        ev_charging_stations: {
+            layers: [
+                {
+                    id: ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID,
+                    layerSpec: routeEVChargingStationSymbol,
                     beforeID: WAYPOINT_SYMBOLS_LAYER_ID
                 }
             ]

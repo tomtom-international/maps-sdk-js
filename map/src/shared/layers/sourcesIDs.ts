@@ -134,4 +134,13 @@ export const ROUTE_TUNNELS_SOURCE_ID = "routeTunnels";
  * Route tunnels line layer id
  */
 export const ROUTE_TUNNELS_LINE_LAYER_ID = "routeTunnelsLine";
+/**
+ * Route ev charging stations source id
+ */
+export const ROUTE_EV_CHARGING_STATIONS_SOURCE_ID = "evChargingStations";
+/**
+ * Route ev charging stations symbol layer id
+ */
+export const ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID = "evChargingStationsSymbol";
+
 /* End of Routing Source ids */

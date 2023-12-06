@@ -53,15 +53,24 @@ const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined 
 };
 
 const parseSummary = (apiSummary: SummaryAPI): RouteSummary | LegSummary => {
-    // TODO return when ldEV is ready
     const chargingConnectionInfo = apiSummary.chargingInformationAtEndOfLeg?.chargingConnectionInfo;
+    const chargingParkLocation = apiSummary.chargingInformationAtEndOfLeg?.chargingParkLocation;
     return {
         ...apiSummary,
         departureTime: new Date(apiSummary.departureTime),
         arrivalTime: new Date(apiSummary.arrivalTime),
         ...(apiSummary.chargingInformationAtEndOfLeg && {
             chargingInformationAtEndOfLeg: {
-                ...omit(apiSummary.chargingInformationAtEndOfLeg, "chargingConnectionInfo"),
+                ...omit(apiSummary.chargingInformationAtEndOfLeg, ["chargingConnectionInfo", "chargingParkLocation"]),
+                ...(chargingParkLocation && {
+                    chargingParkLocation: {
+                        ...omit(chargingParkLocation, "coordinate"),
+                        coordinates: [
+                            chargingParkLocation.coordinate.longitude,
+                            chargingParkLocation.coordinate.latitude
+                        ]
+                    }
+                }),
                 ...(chargingConnectionInfo && {
                     chargingConnectionInfo: {
                         plugType: chargingConnectionInfo.chargingPlugType,
