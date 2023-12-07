@@ -1,4 +1,12 @@
-import { ChargingParkLocation, CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from "@anw/maps-sdk-js/core";
+import {
+    BatteryCharging,
+    CommonPlaceProps,
+    formatDuration,
+    Routes,
+    Waypoint,
+    WaypointLike,
+    Waypoints
+} from "@anw/maps-sdk-js/core";
 import { Point, Position } from "geojson";
 import {
     FINISH_INDEX,
@@ -15,6 +23,7 @@ import {
 } from "../layers/waypointLayers";
 import { PlanningWaypoint } from "../types/planningWaypoint";
 import { LocationDisplayProps } from "../../places";
+import { DisplayRouteProps, RouteStyleProps } from "../types/displayRoutes";
 
 const indexTypeFor = (index: number, arrayLength: number): IndexType =>
     index === 0 ? START_INDEX : index < arrayLength - 1 ? MIDDLE_INDEX : FINISH_INDEX;
@@ -117,30 +126,44 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
     };
 };
 
+const formatTitle = (chargingInformation: BatteryCharging): string | undefined => {
+    return `${chargingInformation.chargingParkName}\n${
+        chargingInformation.chargingParkOperatorName !== chargingInformation.chargingParkName
+            ? chargingInformation.chargingParkOperatorName
+            : ""
+    }(${chargingInformation.chargingParkPowerInkW}kW)\n${formatDuration(chargingInformation.chargingTimeInSeconds)}`;
+};
+
 /**
  * Generates display-ready charging stations for the given planning context ones.
- * @param chargingStations The charging stations return for ldEV.
+ * @param routes The routes return for ldEV.
  */
 export const toDisplayChargingStations = (
-    chargingStations: ChargingParkLocation[]
-): Waypoints<LocationDisplayProps> => {
+    routes: Routes<DisplayRouteProps>
+): Waypoints<LocationDisplayProps & RouteStyleProps> => {
+    const chargingStations: Waypoint<LocationDisplayProps & RouteStyleProps>[] = [];
+    routes.features.forEach((route) => {
+        route.properties.sections.leg.forEach((leg) => {
+            const chargingInformationAtEndOfLeg = leg.summary.chargingInformationAtEndOfLeg;
+            const chargingStation = chargingInformationAtEndOfLeg?.chargingParkLocation;
+            if (!chargingInformationAtEndOfLeg || !chargingStation) {
+                return null as unknown as Waypoint<LocationDisplayProps & RouteStyleProps>;
+            }
+            const waypoint = toWaypointFromPoint({ type: "Point", coordinates: chargingStation.coordinates });
+            chargingStations.push({
+                ...waypoint,
+                properties: {
+                    ...waypoint.properties,
+                    // TODO not used but needed for now
+                    iconID: "poi-charging_location",
+                    title: formatTitle(chargingInformationAtEndOfLeg),
+                    routeStyle: route.properties.routeStyle
+                }
+            });
+        });
+    });
     return {
         type: "FeatureCollection",
-        features: chargingStations
-            .map((chargingStation) => {
-                if (!chargingStation) {
-                    return null as unknown as Waypoint<LocationDisplayProps>;
-                }
-                const waypoint = toWaypointFromPoint({ type: "Point", coordinates: chargingStation.coordinates });
-                return {
-                    ...waypoint,
-                    properties: {
-                        ...waypoint.properties,
-                        iconID: "poi-charging_location",
-                        routeStyle: "selected"
-                    }
-                };
-            })
-            .filter((feature) => feature)
+        features: chargingStations.filter((feature) => feature)
     };
 };

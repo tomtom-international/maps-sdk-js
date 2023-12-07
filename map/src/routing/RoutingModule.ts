@@ -1,4 +1,4 @@
-import { ChargingParkLocation, Route, Routes, Waypoint, Waypoints } from "@anw/maps-sdk-js/core";
+import { Route, Routes, Waypoint, Waypoints } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
@@ -30,7 +30,6 @@ import { DisplayRouteProps } from "./types/displayRoutes";
 import { ShowRoutesOptions } from "./types/showRoutesOptions";
 import { addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
-import { LegSectionProps } from "core/src/types";
 
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
@@ -193,18 +192,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         }
     }
 
-    private showEVChargingStations(legs: LegSectionProps[]) {
-        if (legs) {
-            const chargingStations = toDisplayChargingStations(
-                legs.map(
-                    (leg) => leg.summary.chargingInformationAtEndOfLeg?.chargingParkLocation as ChargingParkLocation
-                )
-            );
-            // TODO this is working but far from perfect
-            this.sourcesWithLayers.ev_charging_stations.show(chargingStations);
-        }
-    }
-
     /**
      * Shows the given routes on the map.
      * @param routes The routes to show.
@@ -218,8 +205,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.incidents.show(
             buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
         );
-        const selectedIndex: number = options?.selectedIndex || 0;
-        this.showEVChargingStations(routes.features[selectedIndex]?.properties.sections.leg);
+        this.sourcesWithLayers.ev_charging_stations.show(toDisplayChargingStations(displayRoutes));
         this.sourcesWithLayers.ferries.show(buildDisplayRouteSections(displayRoutes, "ferry"));
         this.sourcesWithLayers.tunnels.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
         this.sourcesWithLayers.tollRoads.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
@@ -248,7 +234,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.routeLines.shownFeatures, index);
 
         this.sourcesWithLayers.routeLines.show(updatedRoutes);
-        this.showEVChargingStations(updatedRoutes.features[index]?.properties.sections.leg);
+        this.sourcesWithLayers.ev_charging_stations.show(toDisplayChargingStations(updatedRoutes));
         showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.vehicleRestricted);
         showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.incidents);
         showSectionsWithRouteSelection(updatedRoutes, this.sourcesWithLayers.ferries);
