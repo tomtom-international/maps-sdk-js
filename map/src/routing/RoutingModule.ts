@@ -200,7 +200,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                     (leg) => leg.summary.chargingInformationAtEndOfLeg?.chargingParkLocation as ChargingParkLocation
                 )
             );
-            // TODO clean it in the future, it will have extra properties, but it's fine for now:
+            // TODO this is working but far from perfect
             this.sourcesWithLayers.ev_charging_stations.show(chargingStations);
         }
     }

@@ -8,7 +8,7 @@ import { SELECTED_ROUTE_FILTER } from "./shared";
 export const routeEVChargingStationSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,
     type: "symbol",
-    minzoom: 6,
+    minzoom: 3,
     // zoom where the map POI naturally appears:
     maxzoom: 16.5,
     layout: {

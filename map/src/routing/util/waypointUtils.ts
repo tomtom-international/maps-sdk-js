@@ -136,7 +136,8 @@ export const toDisplayChargingStations = (
                     ...waypoint,
                     properties: {
                         ...waypoint.properties,
-                        iconID: "poi-charging_location"
+                        iconID: "poi-charging_location",
+                        routeStyle: "selected"
                     }
                 };
             })
