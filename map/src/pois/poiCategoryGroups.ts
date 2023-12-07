@@ -1,14 +1,28 @@
 import { MapStylePOICategory } from "../places";
 
 export const poiCategoryGroups: Record<string, MapStylePOICategory[]> = {
-    FOOD_DRINKS_GROUP: ["RESTAURANT", "FAST_FOOD", "CAFE_PUB", "PUB", "WINERY"],
+    FOOD_DRINKS_GROUP: [
+        "RESTAURANT",
+        "FAST_FOOD",
+        "CAFE_PUB",
+        "PUB",
+        "WINERY",
+        "PUB_FOOD",
+        "SOUL_FOOD",
+        "DELICATESSEN"
+    ],
     SHOPPING_GROUP: [
         "SHOP",
         "SHOPPING_CENTER",
+        "CLOTHING_SHOP",
         "MARKET",
+        "FOOD_MARKET",
         "SUPERMARKETS_HYPERMARKETS",
         "DEPARTMENT_STORE",
-        "CLOTHING_SHOP"
+        "CONVENIENCE_STORE",
+        "GROCERY_STORE",
+        "HARDWARE_STORE",
+        "ELECTRICAL_APPLIANCES_SHOP"
     ],
     TRANSPORTATION_GROUP: [
         "AIRPORT",
@@ -69,7 +83,7 @@ export const poiCategoryGroups: Record<string, MapStylePOICategory[]> = {
         "MOUNTAIN_PASS",
         "MOUNTAIN_PEAK"
     ],
-    EDUCATION_GROUP: ["SCHOOL", "COLLEGE_UNIVERSITY", "LIBRARY"],
+    EDUCATION_GROUP: ["SCHOOL", "COLLEGE_UNIVERSITY", "LIBRARY", "CULTURAL_CENTER"],
     GOVERNMENT_GROUP: ["GOVERNMENT_OFFICE", "COURTHOUSE", "EMBASSY", "FIRE_STATION_BRIGADE", "POLICE_STATION"]
 };
 
