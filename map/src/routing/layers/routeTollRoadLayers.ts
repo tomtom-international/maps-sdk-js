@@ -28,7 +28,7 @@ export const routeTollRoadsSymbol: LayerSpecTemplate<SymbolLayerSpecification> =
     layout: {
         "symbol-placement": "point",
         "symbol-avoid-edges": true,
-        "icon-image": "284",
+        "icon-image": "poi-toll_booth",
         "icon-size": ["interpolate", ["linear"], ["zoom"], 4, 0.8, 16.5, 1]
     }
 };

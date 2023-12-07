@@ -129,7 +129,16 @@ export class TomTomMap {
         this.mapReady = true;
         // (We use setTimeout to compensate for a MapLibre glitch where symbol layers can't get added right after
         // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
-        keepState && setTimeout(() => this.styleChangeHandlers.forEach((handler) => handler()));
+        keepState &&
+            setTimeout(() => {
+                for (const handler of this.styleChangeHandlers) {
+                    try {
+                        handler();
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            });
         this.params.language && this._setLanguage(this.params.language);
     }
 

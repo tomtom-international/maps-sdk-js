@@ -29,7 +29,7 @@ export const routeFerriesSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
     layout: {
         "symbol-placement": "point",
         "symbol-avoid-edges": true,
-        "icon-image": "145",
+        "icon-image": "poi-ferry_terminal",
         "icon-size": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 16.5, 1],
         // helps smooth the transition from along-route to map-poi, which also has a label in it:
         "icon-ignore-placement": true
