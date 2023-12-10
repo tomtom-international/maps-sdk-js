@@ -81,6 +81,7 @@ export type ChargingParkLocation = {
      */
     coordinates: Position;
 
+    // TODO: to be moved into common Place props
     /**
      * The street name of the charging park.
      */

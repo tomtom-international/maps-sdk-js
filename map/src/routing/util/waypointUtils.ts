@@ -127,11 +127,11 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
 };
 
 const formatTitle = (chargingInformation: BatteryCharging): string | undefined => {
-    return `${chargingInformation.chargingParkName}\n${
-        chargingInformation.chargingParkOperatorName !== chargingInformation.chargingParkName
-            ? chargingInformation.chargingParkOperatorName
+    return `${chargingInformation.chargingParkOperatorName} (${chargingInformation.chargingParkPowerInkW}kW)\n${
+        chargingInformation.chargingParkName !== chargingInformation.chargingParkOperatorName
+            ? chargingInformation.chargingParkName
             : ""
-    }(${chargingInformation.chargingParkPowerInkW}kW)\n${formatDuration(chargingInformation.chargingTimeInSeconds)}`;
+    }\n${formatDuration(chargingInformation.chargingTimeInSeconds)}`;
 };
 
 /**
@@ -154,7 +154,7 @@ export const toDisplayChargingStations = (
                 ...waypoint,
                 properties: {
                     ...waypoint.properties,
-                    // TODO not used but needed for now
+                    // TODO consider using pin icon when available for Orbis
                     iconID: "poi-charging_location",
                     title: formatTitle(chargingInformationAtEndOfLeg),
                     routeStyle: route.properties.routeStyle

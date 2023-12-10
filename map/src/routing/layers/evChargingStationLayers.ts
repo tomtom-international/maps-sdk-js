@@ -9,7 +9,7 @@ import { MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
 export const routeEVChargingStationSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,
     type: "symbol",
-    minzoom: 3,
+    minzoom: 6,
     paint: {
         "text-color": "black",
         "text-halo-width": 1.5,
@@ -18,14 +18,16 @@ export const routeEVChargingStationSymbol: LayerSpecTemplate<SymbolLayerSpecific
     layout: {
         "symbol-placement": "point",
         "symbol-avoid-edges": true,
-        "icon-image": "poi-charging_location", //TODO this is for Orbis
+        "icon-image": ["get", "iconID"],
         "icon-size": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 16.5, 1],
         // helps smooth the transition from along-route to map-poi, which also has a label in it:
         "icon-ignore-placement": true,
+        "icon-allow-overlap": true,
         "text-font": [MAP_BOLD_FONT],
         "text-size": 11,
         "text-anchor": "top",
         "text-offset": [0, 0.8],
-        "text-field": ["get", "title"]
+        "text-field": ["get", "title"],
+        "text-optional": true
     }
 };
