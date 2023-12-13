@@ -153,9 +153,9 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
     }
 
     show(featureCollection: T): void {
+        this.shownFeatures = featureCollection;
         asDefined(this.source.runtimeSource).setData(featureCollection);
         this.setLayersVisible(!!featureCollection.features.length);
-        this.shownFeatures = featureCollection;
     }
 
     clear(): void {
