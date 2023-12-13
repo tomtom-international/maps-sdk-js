@@ -1,5 +1,5 @@
 import { Map } from "maplibre-gl";
-import { Place, Places, POICategory } from "@anw/maps-sdk-js/core";
+import { Place, Places } from "@anw/maps-sdk-js/core";
 import { DisplayPlaceProps } from "./types/placeDisplayProps";
 import { CustomIcon, PlacesModuleConfig } from "./types/placesModuleConfig";
 import { MapStylePOICategory, toMapDisplayPOICategory } from "../pois/poiCategoryMapping";
@@ -64,7 +64,7 @@ export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {},
 export const getPOILayerCategoryForPlace = (place: Place): string | undefined => {
     const category = place.properties.poi?.classifications?.[0]?.code;
     // if it's one of the different categories between search and poi layer, use poi layer category
-    return category && toMapDisplayPOICategory(category as POICategory);
+    return category && toMapDisplayPOICategory(category);
 };
 
 /**

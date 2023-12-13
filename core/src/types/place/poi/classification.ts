@@ -1,3 +1,5 @@
+import { POICategory } from "./category";
+
 /**
  * @group Place
  * @category Types
@@ -12,6 +14,6 @@ export type LocalizedName = {
  * @category Types
  */
 export type Classification = {
-    code: string;
+    code: POICategory;
     names: LocalizedName[];
 };

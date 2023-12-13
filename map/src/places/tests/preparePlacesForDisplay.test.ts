@@ -1,4 +1,4 @@
-import { CommonPlaceProps, Place, Places } from "@anw/maps-sdk-js/core";
+import { CommonPlaceProps, Place, Places, POICategory } from "@anw/maps-sdk-js/core";
 import { Map } from "maplibre-gl";
 import {
     addMapIcon,
@@ -50,9 +50,11 @@ describe("Get Icon ID for a given Place tests", () => {
         expect(getIconIDForPlace({ properties: { poi: { classifications: [{ code: "HOSPITAL" }] } } } as Place)).toBe(
             "poi-hospital"
         );
-        expect(getIconIDForPlace({ properties: { poi: { classifications: [{ code: "UNKNOWN" }] } } } as Place)).toBe(
-            "poi-unknown"
-        );
+        expect(
+            getIconIDForPlace({
+                properties: { poi: { classifications: [{ code: "UNKNOWN" as POICategory }] } }
+            } as Place)
+        ).toBe("poi-unknown");
     });
 
     test("Get Icon ID for a given Place with custom config", () => {
