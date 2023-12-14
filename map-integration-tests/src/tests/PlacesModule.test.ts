@@ -14,6 +14,7 @@ import {
     setStyle,
     showPlaces,
     waitForMapIdle,
+    waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
 import expectedCustomIcon from "./PlacesModuleCustomIcon.test.data.json";
@@ -210,4 +211,82 @@ describe("GeoJSON Places apply icon config tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
         }
     );
+});
+
+describe("Places module programmatic event state tests", () => {
+    const mapEnv = new MapIntegrationTestEnv();
+
+    beforeAll(async () => mapEnv.loadPage());
+
+    test("putEventState and cleanEventStates", async () => {
+        await mapEnv.loadMap(
+            { center: [-75.43974, 39.82295], zoom: 10 },
+            { style: { type: "published", include: ["poi"] } }
+        );
+        await initPlaces();
+        await showPlaces([
+            {
+                type: "Feature",
+                id: "A",
+                geometry: { type: "Point", coordinates: [-75.43974, 39.82295] },
+                properties: { address: { freeformAddress: "Test Address 1" } }
+            } as Place,
+            {
+                type: "Feature",
+                id: "B",
+                geometry: { type: "Point", coordinates: [-75.44974, 39.82295] },
+                properties: { address: { freeformAddress: "Test Address 2" } }
+            } as Place
+        ]);
+
+        const { layerIDs } = await getPlacesSourceAndLayerIDs();
+
+        // we put event state on the first place:
+        await page.evaluate(() => (globalThis as MapsSDKThis).places?.putEventState({ index: 0, state: "hover" }));
+        await waitForTimeout(1000);
+        let renderedPlaces = sortBy(await waitUntilRenderedFeatures(layerIDs, 2, 10000), "id");
+        expect(renderedPlaces[0].properties.eventState).toBe("hover");
+        expect(renderedPlaces[1].properties.eventState).toBeUndefined();
+
+        // we put event state on the second place without showing yet:
+        await page.evaluate(() =>
+            (globalThis as MapsSDKThis).places?.putEventState({ index: 1, state: "hover", show: false })
+        );
+        await waitForTimeout(1000);
+        renderedPlaces = sortBy(await waitUntilRenderedFeatures(layerIDs, 2, 5000), "id");
+        expect(renderedPlaces[0].properties.eventState).toBe("hover");
+        expect(renderedPlaces[1].properties.eventState).toBeUndefined();
+
+        // we put event state on the second place:
+        await page.evaluate(() => (globalThis as MapsSDKThis).places?.putEventState({ index: 1, state: "hover" }));
+        await waitForTimeout(1000);
+        renderedPlaces = sortBy(await waitUntilRenderedFeatures(layerIDs, 2, 5000), "id");
+        expect(renderedPlaces[0].properties.eventState).toBeUndefined();
+        expect(renderedPlaces[1].properties.eventState).toBe("hover");
+
+        // we add event state on the first place:
+        await page.evaluate(() =>
+            (globalThis as MapsSDKThis).places?.putEventState({ index: 0, state: "hover", mode: "add" })
+        );
+        await waitForTimeout(1000);
+        renderedPlaces = sortBy(await waitUntilRenderedFeatures(layerIDs, 2, 5000), "id");
+        expect(renderedPlaces[0].properties.eventState).toBe("hover");
+        expect(renderedPlaces[1].properties.eventState).toBe("hover");
+
+        // we put click event state on the first place:
+        await page.evaluate(() => (globalThis as MapsSDKThis).places?.putEventState({ index: 0, state: "click" }));
+        await waitForTimeout(1000);
+        renderedPlaces = sortBy(await waitUntilRenderedFeatures(layerIDs, 2, 5000), "id");
+        expect(renderedPlaces[0].properties.eventState).toBe("click");
+        expect(renderedPlaces[1].properties.eventState).toBe("hover");
+
+        // we clean event states:
+        await page.evaluate(() => (globalThis as MapsSDKThis).places?.cleanEventStates());
+        await waitForTimeout(1000);
+        renderedPlaces = sortBy(await waitUntilRenderedFeatures(layerIDs, 2, 5000), "id");
+        expect(renderedPlaces[0].properties.eventState).toBeUndefined();
+        expect(renderedPlaces[1].properties.eventState).toBeUndefined();
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 });

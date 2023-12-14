@@ -21,6 +21,68 @@ export type HoverEventType = "hover" | "long-hover";
 export type EventType = ClickEventType | HoverEventType;
 
 /**
+ * Parameters to update the event state of a feature programmatically.
+ */
+export type PutEventStateOptions = {
+    /**
+     * The index of the feature in the feature array.
+     */
+    index: number;
+
+    /**
+     * The event state to set.
+     */
+    state: EventType;
+
+    /**
+     * Whether to:
+     * * put: set the event state in this feature and remove it from any feature having the same. Default mode.
+     * * add: set the event state in this feature regardless of what other features already have.
+     * @default put
+     */
+    mode?: "put" | "add";
+
+    /**
+     * Whether to show the feature after updating the event state.
+     * * Defaults to true. Set to false only if you want to keep manipulating the features before showing them.
+     * @default true
+     */
+    show?: boolean;
+};
+
+export type CleanEventStateOptions = {
+    /**
+     * The index of the feature in the feature array.
+     */
+    index: number;
+
+    /**
+     * Whether to show the feature after cleaning the event state.
+     * * Defaults to true. Set to false only if you want to keep manipulating the features before showing them.
+     * @default true
+     */
+    show?: boolean;
+};
+
+/**
+ * Parameters to clean event states for a collection of shown features.
+ */
+export type CleanEventStatesOptions = {
+    /**
+     * The event states to clean.
+     * * If none are supplied, then any event states will be cleaned.
+     */
+    states?: EventType[];
+
+    /**
+     * Whether to show the feature after cleaning the event state.
+     * * Defaults to true. Set to false only if you want to keep manipulating the features before showing them.
+     * @default true
+     */
+    show?: boolean;
+};
+
+/**
  * Properties part for an object that can have event state.
  */
 export type SupportsEvents = {

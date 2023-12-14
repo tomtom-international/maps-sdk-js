@@ -8,11 +8,14 @@ import {
 } from "maplibre-gl";
 import { TomTomMapSource } from "./TomTomMapSource";
 import {
+    PutEventStateOptions,
     LayerSpecFilter,
     LayerSpecWithSource,
     SourceWithLayerIDs,
     ToBeAddedLayerSpec,
-    ToBeAddedLayerSpecWithoutSource
+    ToBeAddedLayerSpecWithoutSource,
+    CleanEventStatesOptions,
+    CleanEventStateOptions
 } from "./types";
 import { FeatureCollection } from "geojson";
 import { asDefined } from "./assertionUtils";
@@ -160,5 +163,49 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
 
     clear(): void {
         this.show(emptyFeatureCollection as T);
+    }
+
+    putEventState(options: PutEventStateOptions) {
+        const mode = options.mode || "put";
+        if (mode == "put") {
+            for (const feature of this.shownFeatures.features) {
+                if (feature.properties?.eventState == options.state) {
+                    delete feature.properties.eventState;
+                }
+            }
+        }
+
+        const feature = this.shownFeatures.features[options.index];
+        if (feature) {
+            feature.properties = { ...feature.properties, eventState: options.state };
+        }
+
+        if (options.show !== false) {
+            this.show(this.shownFeatures);
+        }
+    }
+
+    cleanEventState(options: CleanEventStateOptions) {
+        const feature = this.shownFeatures.features[options.index];
+        if (feature?.properties?.eventState) {
+            delete feature?.properties?.eventState;
+            if (options?.show !== false) {
+                this.show(this.shownFeatures);
+            }
+        }
+    }
+
+    cleanEventStates(options?: CleanEventStatesOptions) {
+        let changed = false;
+        for (const feature of this.shownFeatures.features) {
+            if (!options?.states || options.states.includes(feature.properties?.eventState)) {
+                delete feature.properties?.eventState;
+                changed = true;
+            }
+        }
+
+        if (options?.show !== false && changed) {
+            this.show(this.shownFeatures);
+        }
     }
 }

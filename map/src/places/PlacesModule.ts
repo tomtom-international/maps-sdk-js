@@ -2,9 +2,12 @@ import { Place, Places } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
+    PutEventStateOptions,
     GeoJSONSourceWithLayers,
     PLACES_SOURCE_PREFIX_ID,
-    SymbolLayerSpecWithoutSource
+    SymbolLayerSpecWithoutSource,
+    CleanEventStatesOptions,
+    CleanEventStateOptions
 } from "../shared";
 import { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from "./types/placesModuleConfig";
 import { TomTomMap } from "../TomTomMap";
@@ -138,6 +141,33 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      */
     clear(): void {
         this.sourcesWithLayers.places.clear();
+    }
+
+    /**
+     * Puts the given event state to the given place.
+     * * Use this to programmatically make places appear hovered or clicked.
+     * @param options The options to put the event state.
+     */
+    putEventState(options: PutEventStateOptions) {
+        this.sourcesWithLayers.places.putEventState(options);
+    }
+
+    /**
+     * Cleans any event state from the given place.
+     * * Use this to programmatically remove a hovered or clicked appearance from a place.
+     * @param options The options to clean the event state.
+     */
+    cleanEventState(options: CleanEventStateOptions): void {
+        this.sourcesWithLayers.places.cleanEventState(options);
+    }
+
+    /**
+     * Cleans some or all the event states from these shown places.
+     * * Use this to programmatically remove hovered or clicked appearances from places.
+     * @param options The options to clean the event states.
+     */
+    cleanEventStates(options?: CleanEventStatesOptions) {
+        this.sourcesWithLayers.places.cleanEventStates(options);
     }
 
     /**

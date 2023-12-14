@@ -22,9 +22,9 @@ describe("AbstractSourceWithLayers tests", () => {
     test("Constructor", () => {
         const mapLibreMock = jest.fn() as unknown as Map;
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
-        expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
-        expect(sourceWithLayers.source).toStrictEqual(testTomTomMapSource);
-        expect(sourceWithLayers._layerSpecs).toStrictEqual(testLayerSpecs);
+        expect(sourceWithLayers.map).toEqual(mapLibreMock);
+        expect(sourceWithLayers.source).toEqual(testTomTomMapSource);
+        expect(sourceWithLayers._layerSpecs).toEqual(testLayerSpecs);
     });
 
     test("isAnyLayerVisible true", () => {
@@ -58,7 +58,7 @@ describe("AbstractSourceWithLayers tests", () => {
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
-        expect(sourceWithLayers.isAnyLayerVisible()).toStrictEqual(false);
+        expect(sourceWithLayers.isAnyLayerVisible()).toEqual(false);
     });
 
     test("isAnyLayerVisible false with filter", () => {
@@ -185,10 +185,10 @@ describe("StyleSourceWithLayers tests", () => {
         } as unknown as Map;
         const source = { id: testSourceID } as Source;
         const sourceWithLayers = new StyleSourceWithLayers(mapLibreMock, source);
-        expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
-        expect(sourceWithLayers.source.id).toStrictEqual(testSourceID);
-        expect(sourceWithLayers.source.runtimeSource).toStrictEqual(source);
-        expect(sourceWithLayers._layerSpecs).toStrictEqual(testLayerSpecs);
+        expect(sourceWithLayers.map).toEqual(mapLibreMock);
+        expect(sourceWithLayers.source.id).toEqual(testSourceID);
+        expect(sourceWithLayers.source.runtimeSource).toEqual(source);
+        expect(sourceWithLayers._layerSpecs).toEqual(testLayerSpecs);
     });
 });
 
@@ -202,10 +202,10 @@ describe("AddedSourceWithLayers tests", () => {
             sourceSpec,
             testToBeAddedLayerSpecs
         );
-        expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
-        expect(sourceWithLayers.source.id).toStrictEqual(testSourceID);
+        expect(sourceWithLayers.map).toEqual(mapLibreMock);
+        expect(sourceWithLayers.source.id).toEqual(testSourceID);
         expect(sourceWithLayers.source.runtimeSource).toBeUndefined();
-        expect(sourceWithLayers.source.spec).toStrictEqual(sourceSpec);
+        expect(sourceWithLayers.source.spec).toEqual(sourceSpec);
     });
 
     test("ensureAddedToMapWithVisibility", () => {
@@ -250,15 +250,15 @@ describe("GeoJSONSourceWithLayers", () => {
             setLayoutProperty: jest.fn()
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
-        expect(sourceWithLayers.map).toStrictEqual(mapLibreMock);
-        expect(sourceWithLayers.source.id).toStrictEqual(testSourceID);
-        expect(sourceWithLayers.source.spec).toStrictEqual({
+        expect(sourceWithLayers.map).toEqual(mapLibreMock);
+        expect(sourceWithLayers.source.id).toEqual(testSourceID);
+        expect(sourceWithLayers.source.spec).toEqual({
             type: "geojson",
             data: { type: "FeatureCollection", features: [] },
             promoteId: "id"
         });
-        expect(sourceWithLayers.source.runtimeSource).toStrictEqual({ id: testSourceID });
-        expect(sourceWithLayers._layerSpecs).toStrictEqual(testLayerSpecs);
+        expect(sourceWithLayers.source.runtimeSource).toEqual({ id: testSourceID });
+        expect(sourceWithLayers._layerSpecs).toEqual(testLayerSpecs);
     });
 
     // eslint-disable-next-line jest/expect-expect
@@ -303,5 +303,141 @@ describe("GeoJSONSourceWithLayers", () => {
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
         sourceWithLayers.clear();
+    });
+
+    test("putEventState", () => {
+        const features = {
+            features: [{ properties: {} }, { properties: { eventState: "click" } }, { properties: {} }]
+        } as FeatureCollection;
+
+        const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
+            setLayoutProperty: jest.fn()
+        } as unknown as Map;
+        const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
+        sourceWithLayers.show(features);
+        expect(sourceWithLayers.shownFeatures).toEqual(features);
+
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
+        sourceWithLayers.putEventState({ index: 0, state: "hover", mode: "add", show: false });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [
+                { properties: { eventState: "hover" } },
+                { properties: { eventState: "click" } },
+                { properties: {} }
+            ]
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
+
+        sourceWithLayers.putEventState({ index: 0, state: "click", mode: "add" });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [
+                { properties: { eventState: "click" } },
+                { properties: { eventState: "click" } },
+                { properties: {} }
+            ]
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
+
+        sourceWithLayers.putEventState({ index: 2, state: "click", mode: "put" });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [{ properties: {} }, { properties: {} }, { properties: { eventState: "click" } }]
+        });
+
+        sourceWithLayers.putEventState({ index: 0, state: "hover", mode: "put" });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [
+                { properties: { eventState: "hover" } },
+                { properties: {} },
+                { properties: { eventState: "click" } }
+            ]
+        });
+
+        // TODO: this scenario might be something to improve (should we remove the "hover" event state automatically?)
+        sourceWithLayers.putEventState({ index: 1, state: "click", mode: "put" });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [
+                { properties: { eventState: "hover" } },
+                { properties: { eventState: "click" } },
+                { properties: {} }
+            ]
+        });
+    });
+
+    test("cleanEventState", () => {
+        const features = {
+            features: [
+                { properties: {} },
+                { properties: { eventState: "hover" } },
+                { properties: { eventState: "click" } }
+            ]
+        } as FeatureCollection;
+
+        const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
+            setLayoutProperty: jest.fn()
+        } as unknown as Map;
+        const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
+        sourceWithLayers.show(features);
+        expect(sourceWithLayers.shownFeatures).toEqual(features);
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
+
+        sourceWithLayers.cleanEventState({ index: 1 });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [{ properties: {} }, { properties: {} }, { properties: { eventState: "click" } }]
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
+
+        sourceWithLayers.cleanEventState({ index: 0, show: false });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [{ properties: {} }, { properties: {} }, { properties: { eventState: "click" } }]
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
+
+        sourceWithLayers.cleanEventState({ index: 2 });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [{ properties: {} }, { properties: {} }, { properties: {} }]
+        });
+    });
+
+    test("cleanEventStates", () => {
+        const features = {
+            features: [
+                { properties: { eventState: "long-hover" } },
+                { properties: { eventState: "hover" } },
+                { properties: { eventState: "click" } }
+            ]
+        } as unknown as FeatureCollection;
+
+        const mapLibreMock = {
+            getSource: jest.fn().mockReturnValue({ id: testSourceID, setData: jest.fn() }),
+            getLayer: jest.fn(),
+            addLayer: jest.fn(),
+            setLayoutProperty: jest.fn()
+        } as unknown as Map;
+        const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
+        sourceWithLayers.show(features);
+        expect(sourceWithLayers.shownFeatures).toEqual(features);
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
+
+        sourceWithLayers.cleanEventStates({ states: ["long-hover"], show: false });
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [
+                { properties: {} },
+                { properties: { eventState: "hover" } },
+                { properties: { eventState: "click" } }
+            ]
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
+
+        sourceWithLayers.cleanEventStates();
+        expect(sourceWithLayers.shownFeatures).toEqual({
+            features: [{ properties: {} }, { properties: {} }, { properties: {} }]
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
     });
 });
