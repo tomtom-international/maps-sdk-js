@@ -11,6 +11,7 @@ export * from "./src/geometry-data";
 export * from "./src/geometry-search";
 export * from "./src/geometry-data";
 export * from "./src/routing";
+export * from "./src/matrix-routing";
 // TODO not supported yet in Orbis
 // export * from "./src/reachable-range";
 export * from "./src/ev-charging-stations-availability";
