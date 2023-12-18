@@ -1,5 +1,15 @@
 import { FetchInput } from "../../shared/types/fetch";
-import { LatitudeLongitudePointAPI, MatrixRouteAPIOptions } from "./calculateMatrixRouteParams";
+import { MatrixRouteOptions } from "./calculateMatrixRouteParams";
+
+/**
+ * @ignore
+ */
+export type LatitudeLongitudePointAPI = {
+    point: {
+        latitude: number;
+        longitude: number;
+    };
+};
 
 /**
  * @ignore
@@ -7,7 +17,7 @@ import { LatitudeLongitudePointAPI, MatrixRouteAPIOptions } from "./calculateMat
 export type CalculateMatrixRoutePOSTDataAPI = {
     origins: LatitudeLongitudePointAPI[];
     destinations: LatitudeLongitudePointAPI[];
-    options?: MatrixRouteAPIOptions;
+    options?: MatrixRouteOptions;
 };
 
 export type CalculateMatrixRouteRequestAPI = FetchInput<CalculateMatrixRoutePOSTDataAPI>;

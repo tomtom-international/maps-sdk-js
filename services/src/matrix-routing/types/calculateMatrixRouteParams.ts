@@ -3,20 +3,9 @@ import { CommonServiceParams } from "../../shared";
 import { CalculateMatrixRouteRequestAPI } from "./apiRequestTypes";
 import { CalculateMatrixRouteResponseAPI } from "./apiResponseTypes";
 
-/**
- * @ignore
- */
-export type LatitudeLongitudePointAPI = {
-    point: {
-        latitude: number;
-        longitude: number;
-    };
-};
+type MatrixRouteAvoidable = "tollRoads" | "unpavedRoads";
 
-/**
- * @ignore
- */
-export type MatrixRouteAPIOptions = {
+export type MatrixRouteOptions = {
     departAt?: Date | "any" | "now";
     arriveAt?: Date | "any";
     routeType?: "fastest";
@@ -31,7 +20,7 @@ export type MatrixRouteAPIOptions = {
     vehicleCommercial?: boolean;
     vehicleLoadType?: [string];
     vehicleAdrTunnelRestrictionCode?: string;
-    avoid?: [string];
+    avoid?: [MatrixRouteAvoidable];
 };
 
 export type CalculateMatrixRouteParams = CommonServiceParams<
@@ -54,5 +43,5 @@ export type CalculateMatrixRouteParams = CommonServiceParams<
      */
     destinations: Position[];
 
-    options?: MatrixRouteAPIOptions;
+    options?: MatrixRouteOptions;
 };

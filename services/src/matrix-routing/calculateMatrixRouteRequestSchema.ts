@@ -25,7 +25,7 @@ const calculateMatrixRouteSchemaOptional = z
             message: "Array must contain at least 1 string"
         }),
         vehicleAdrTunnelRestrictionCod: z.string(),
-        avoid: z.array(z.string()).refine((data) => data.length >= 1, {
+        avoid: z.array(z.literal("tollRoads"), z.literal("unpavedRoads")).refine((data) => data.length >= 1, {
             message: "Array must contain at least 1 string"
         })
     })

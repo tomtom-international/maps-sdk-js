@@ -1,8 +1,8 @@
 import { Position } from "geojson";
 import { appendCommonParams } from "../shared/requestBuildingUtils";
 import { FetchInput } from "../shared/types/fetch";
-import { CalculateMatrixRoutePOSTDataAPI } from "./types/apiRequestTypes";
-import { CalculateMatrixRouteParams, LatitudeLongitudePointAPI } from "./types/calculateMatrixRouteParams";
+import { CalculateMatrixRoutePOSTDataAPI, LatitudeLongitudePointAPI } from "./types/apiRequestTypes";
+import { CalculateMatrixRouteParams } from "./types/calculateMatrixRouteParams";
 
 const buildURLBasePath = (params: CalculateMatrixRouteParams): string =>
     params.customServiceBaseURL ?? `${params.commonBaseURL}/routing/matrix/2`;
@@ -28,6 +28,9 @@ const buildPOSTData = (params: CalculateMatrixRouteParams): CalculateMatrixRoute
     return basePostData;
 };
 
+/**
+ * @ignore
+ */
 export const buildCalculateMatrixRouteRequest = (
     params: CalculateMatrixRouteParams
 ): FetchInput<CalculateMatrixRoutePOSTDataAPI> => {
