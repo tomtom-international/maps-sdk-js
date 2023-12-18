@@ -4,10 +4,7 @@ import { calculateMatrixRoute } from "../calculateMatrixRoute";
 const customersList = [
     [-122.42445383121401, 37.768076271233085],
     [-122.41557035495649, 37.76851728743638],
-    [-122.42535505344227, 37.75424224518545],
-    [-122.41642866184063, 37.75559946352948],
-    [-122.40368280460183, 37.76343691239411],
-    [-122.40334333334422, 37.76343691211131]
+    [-122.42535505344227, 37.75424224518545]
 ];
 
 const sanFranciscoRestaurant = [
@@ -18,14 +15,29 @@ const sanFranciscoRestaurant = [
 describe("Matrix Routing tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
-    test.skip("Calculate Matrix route should work", async () => {
+    test("Calculate Matrix route should work", async () => {
         const response = await calculateMatrixRoute({
             origins: sanFranciscoRestaurant,
             destinations: customersList
         });
 
-        console.log(response);
+        expect(response).toHaveProperty("data");
+        expect(response).toHaveProperty("statistics");
 
-        expect(1).toBe(1);
+        expect(response.data).toHaveLength(6);
+
+        const expectedTypes = {
+            originIndex: expect.any(Number),
+            destinationIndex: expect.any(Number),
+            routeSummary: {
+                lengthInMeters: expect.any(Number),
+                travelTimeInSeconds: expect.any(Number),
+                trafficDelayInSeconds: expect.any(Number)
+            }
+        };
+
+        response.data.forEach((route) => {
+            expect(route).toMatchObject(expectedTypes);
+        });
     });
 });
