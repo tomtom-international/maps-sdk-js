@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+// TODO: Add tests for CalculateMatrixRouteRequestSchema
+
 const positionSchema = z.array(z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)]));
 
 const calculateMatrixRouteSchemaMandatory = z.object({
@@ -19,7 +21,7 @@ const calculateMatrixRouteSchemaOptional = z
         vehicleAxleWeight: z.number(),
         vehicleLength: z.number(),
         vehicleWidth: z.number(),
-        vehicleHeight: z.number(),
+        vehicleHeight: z.number(), // TODO: Reuse/Create VehicleDimensions (needs more clarification)
         vehicleCommercial: z.number(),
         vehicleLoadType: z.array(z.string()).refine((data) => data.length >= 1, {
             message: "Array must contain at least 1 string"
