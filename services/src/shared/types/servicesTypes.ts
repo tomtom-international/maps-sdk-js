@@ -5,6 +5,4 @@ export type ServiceName = string;
 
 export type RelatedPoisRequest = "child" | "parent" | "all" | "off";
 
-export type OpeningHoursRequest = "nextSevenDays";
-
 export type TimeZoneRequest = "iana";

@@ -1,5 +1,5 @@
-import { CommonServiceParams, OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "../../shared";
-import { MapcodeType, View } from "@anw/maps-sdk-js/core";
+import { CommonServiceParams, RelatedPoisRequest, TimeZoneRequest } from "../../shared";
+import { MapcodeType, OpeningHoursMode, View } from "@anw/maps-sdk-js/core";
 import { PlaceByIdResponseAPI } from "./placeByIdResponseAPI";
 
 export type PlaceByIdOptionalParams = {
@@ -37,7 +37,7 @@ export type PlaceByIdOptionalParams = {
     /**
      * List of opening hours for a POI (Points of Interest).
      */
-    openingHours?: OpeningHoursRequest;
+    openingHours?: OpeningHoursMode;
     /**
      * Used to indicate the mode in which the timeZone object should be returned.
      */

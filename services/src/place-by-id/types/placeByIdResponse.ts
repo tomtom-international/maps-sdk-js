@@ -1,3 +1,3 @@
-import { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 
-export type PlaceByIdResponse = Places<SearchPlaceProps>;
+export type PlaceByIdResponse = Place<SearchPlaceProps> | undefined;

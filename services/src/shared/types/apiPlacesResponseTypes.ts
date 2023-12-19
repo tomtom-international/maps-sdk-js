@@ -15,11 +15,6 @@ import { SearchSummary } from "./searchSummary";
 /**
  * @ignore
  */
-export type IndexTypesAbbreviation = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
-
-/**
- * @ignore
- */
 export type LatLonAPI = {
     /**
      * Latitude. min/max: -90 to +90
@@ -106,6 +101,30 @@ export type CategoryAPI = { id: number };
 
 /**
  * @ignore
+ */
+export type MomentAPI = {
+    date: string;
+    hour: number;
+    minute: number;
+};
+
+/**
+ * @ignore
+ */
+export type TimeRangeAPI = {
+    startTime: MomentAPI;
+    endTime: MomentAPI;
+};
+
+/**
+ * @ignore
+ */
+export type OpeningHoursAPI = Omit<OpeningHours, "alwaysOpenThisPeriod" | "timeRanges"> & {
+    timeRanges: TimeRangeAPI[];
+};
+
+/**
+ * @ignore
  * place of interest api type.
  */
 export type POIAPI = {
@@ -117,7 +136,7 @@ export type POIAPI = {
     categorySet?: CategoryAPI[];
     // Example: Array(2) [café/pub, internet café]
     categories?: string[];
-    openingHours?: OpeningHours;
+    openingHours?: OpeningHoursAPI;
     classifications?: Classification[];
     timeZone?: TimeZone;
 };

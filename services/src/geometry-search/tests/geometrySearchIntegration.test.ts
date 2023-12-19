@@ -1,4 +1,4 @@
-import { Fuel, PolygonFeatures, TomTomConfig, Place, POICategory, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { PolygonFeatures, TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../responseParser";
 import { buildGeometrySearchRequest } from "../requestBuilder";
@@ -9,8 +9,12 @@ import {
     GeometrySearchResponseAPI,
     SearchGeometryInput
 } from "../types";
-import { IndexTypesAbbreviation } from "../../shared";
-import { baseSearchPOITestProps } from "../../shared/tests/integrationTestUtils";
+import { SearchIndexType } from "../../shared";
+import {
+    expectPlaceTestFeature,
+    basePOITestProps,
+    evStationBaseTestProps
+} from "../../shared/tests/integrationTestUtils";
 import realGeometryDataInput from "./realGeometryDataInput.json";
 import hugeMultiPolygonDataInput from "./hugeMultiPolygonDataInput.json";
 import { poiCategoriesToID } from "../../poi-categories/poiCategoriesToID";
@@ -35,41 +39,25 @@ describe("Geometry Search service", () => {
         }
     ];
 
-    beforeAll(() => {
-        TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
-    });
+    beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));
 
     const expectWorkingResult = () =>
         expect.objectContaining<GeometrySearchResponse>({
             type: "FeatureCollection",
-            features: expect.arrayContaining<Place<SearchPlaceProps>>([
-                expect.objectContaining<Place<SearchPlaceProps>>({
-                    type: "Feature",
-                    id: expect.any(String),
-                    geometry: expect.objectContaining({
-                        coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
-                        type: expect.any(String)
-                    }),
-                    properties: expect.objectContaining<SearchPlaceProps>(baseSearchPOITestProps)
-                })
-            ])
+            features: expect.arrayContaining<Place<SearchPlaceProps>>([expectPlaceTestFeature(basePOITestProps)])
         });
 
     test("geometrySearch works", async () => {
         const query = "cafe";
-        const categories: number[] = [];
-        const fuelTypes: Fuel[] = [];
         const language = "en-GB";
         const view = "Unified";
         const timeZone = "iana";
         const openingHours = "nextSevenDays";
         const limit = 5;
-        const indexes: IndexTypesAbbreviation[] = ["POI"];
+        const indexes: SearchIndexType[] = ["POI"];
         const res = await search({
             query,
             geometries,
-            poiCategories: categories,
-            fuelTypes,
             language,
             limit,
             indexes,
@@ -82,18 +70,14 @@ describe("Geometry Search service", () => {
         expect(res).toEqual(expectWorkingResult());
     });
 
-    test("geometrySearch with human-readable poi categories", async () => {
+    test("geometrySearch with poi categories", async () => {
         const query = "restaurant";
-        const poiCategories: (number | POICategory)[] = ["ITALIAN_RESTAURANT"];
-        const categoryID = poiCategoriesToID["ITALIAN_RESTAURANT"];
         const language = "en-GB";
-        const indexes: IndexTypesAbbreviation[] = ["POI"];
         const res = await search({
             query,
             geometries,
-            poiCategories,
-            language,
-            indexes
+            poiCategories: ["ITALIAN_RESTAURANT"],
+            language
         });
 
         expect(res.features).toEqual(
@@ -101,12 +85,23 @@ describe("Geometry Search service", () => {
                 expect.objectContaining({
                     properties: expect.objectContaining({
                         poi: expect.objectContaining({
-                            categoryIds: expect.arrayContaining([categoryID])
+                            categoryIds: expect.arrayContaining([poiCategoriesToID["ITALIAN_RESTAURANT"]]),
+                            classifications: expect.arrayContaining([expect.objectContaining({ code: "RESTAURANT" })])
                         })
                     })
                 })
             ])
         );
+    });
+
+    test("geometrySearch for EV charging stations", async () => {
+        const evStations = await search({
+            geometries,
+            query: "",
+            poiCategories: ["ELECTRIC_VEHICLE_STATION"],
+            limit: 5
+        });
+        expect(evStations.features).toEqual(expect.arrayContaining([expectPlaceTestFeature(evStationBaseTestProps)]));
     });
 
     test("geometrySearch fails to convert unsupported geometry types", async () => {
@@ -121,9 +116,7 @@ describe("Geometry Search service", () => {
         ];
         // @ts-ignore
         await expect(search({ query, geometries: incorrectGeometry })).rejects.toMatchObject(
-            expect.objectContaining({
-                message: "Invalid input"
-            })
+            expect.objectContaining({ message: "Invalid input" })
         );
     });
 

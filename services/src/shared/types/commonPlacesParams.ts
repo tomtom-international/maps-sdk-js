@@ -1,6 +1,10 @@
 import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "../serviceTypes";
-import { IndexTypesAbbreviation } from "./apiPlacesResponseTypes";
+
+/**
+ * Index representing the type of data to be searched.
+ */
+export type SearchIndexType = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
 
 /**
  * Common parameters to services related to places services (search, geocoding, reverse geocoding).
@@ -33,7 +37,7 @@ export type CommonPlacesParams<API_REQUEST, API_RESPONSE> = CommonServiceParams<
      * Extended postal code lists for geographies can be quite long, so they have to be explicitly requested when needed.
      * Ex. extendedPostalCodesFor=[PAD, Addr, POI]
      */
-    extendedPostalCodesFor?: IndexTypesAbbreviation[];
+    extendedPostalCodesFor?: SearchIndexType[];
 
     /**
      * Enables the return of a comma-separated mapcodes list.

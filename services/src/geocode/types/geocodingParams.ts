@@ -1,7 +1,7 @@
-import { CommonPlacesParams, CommonGeocodeAndFuzzySearchParams, IndexTypesAbbreviation } from "../../shared";
+import { CommonPlacesParams, CommonGeocodeAndFuzzySearchParams, SearchIndexType } from "../../shared";
 import { GeocodingResponseAPI } from "./apiTypes";
 
-type GeocodingIndexTypesAbbreviation = Exclude<IndexTypesAbbreviation, "POI">;
+type GeocodingIndexTypesAbbreviation = Exclude<SearchIndexType, "POI">;
 
 export type GeocodingParams = Omit<
     CommonPlacesParams<URL, GeocodingResponseAPI> & CommonGeocodeAndFuzzySearchParams,

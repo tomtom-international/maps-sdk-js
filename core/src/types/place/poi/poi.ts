@@ -20,6 +20,7 @@ export type POI = {
     classifications?: Classification[];
     timeZone?: TimeZone;
 };
+
 /**
  * @group Place
  * @category Types

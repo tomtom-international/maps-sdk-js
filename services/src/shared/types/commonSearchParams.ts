@@ -1,7 +1,6 @@
-import { ConnectorType, Fuel, POICategory } from "@anw/maps-sdk-js/core";
-import { CommonPlacesParams } from "./commonPlacesParams";
-import { IndexTypesAbbreviation } from "./apiPlacesResponseTypes";
-import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "./servicesTypes";
+import { ConnectorType, Fuel, OpeningHoursMode, POICategory } from "@anw/maps-sdk-js/core";
+import { CommonPlacesParams, SearchIndexType } from "./commonPlacesParams";
+import { RelatedPoisRequest, TimeZoneRequest } from "./servicesTypes";
 
 /**
  * Common parameters related to search services.
@@ -9,9 +8,9 @@ import { OpeningHoursRequest, RelatedPoisRequest, TimeZoneRequest } from "./serv
  */
 export type CommonSearchParams<API_REQUEST, API_RESPONSE> = CommonPlacesParams<API_REQUEST, API_RESPONSE> & {
     /**
-     * Parameter allows for fine-tuning Search by specifying which indexes to utilize for the search
+     * Parameter allows for fine-tuning Search by specifying which indexes to utilize for the search.
      */
-    indexes?: IndexTypesAbbreviation[];
+    indexes?: SearchIndexType[];
 
     /**
      * A list of categories which could be used to restrict the result to the Points Of Interest of specific categories.
@@ -46,7 +45,7 @@ export type CommonSearchParams<API_REQUEST, API_RESPONSE> = CommonPlacesParams<A
     /**
      * List of opening hours for a POI (Points of Interest).
      */
-    openingHours?: OpeningHoursRequest;
+    openingHours?: OpeningHoursMode;
 
     /**
      * Used to indicate the mode in which the timeZone object should be returned.

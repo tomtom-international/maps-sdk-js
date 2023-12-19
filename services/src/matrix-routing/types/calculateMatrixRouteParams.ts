@@ -11,6 +11,7 @@ export type MatrixRouteOptions = {
     routeType?: "fastest";
     traffic?: "historical" | "live";
     travelMode?: "car" | "truck" | "pedestrian";
+    // TODO: try to reuse VehicleDimensions type (make params more similar to calculate-route service)
     vehicleMaxSpeed?: number;
     vehicleWeight?: number;
     vehicleAxleWeight?: number;

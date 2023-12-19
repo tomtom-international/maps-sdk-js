@@ -62,7 +62,7 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
  *
  * This function returns the given place with EV availability aggregated in its properties, if applicable.
  * @param places The places for which to fetch EV charging availability.
- * The ones which aren't EV stations or have no availability info are returned as-is.
+ * The ones that aren't EV stations or have no availability info are returned as-is.
  */
 export const buildPlacesWithEVAvailability = async (places: Places): Promise<Places<EVChargingStationPlaceProps>> => {
     const placesWithAvailability = [];

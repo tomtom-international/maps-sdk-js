@@ -1,16 +1,18 @@
 import { Fuel, Place, POICategory, SearchPlaceProps, TomTomConfig } from "@anw/maps-sdk-js/core";
 import { search } from "../../search";
 import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
-import { IndexTypesAbbreviation } from "../../shared";
-import { baseSearchPlaceMandatoryProps } from "../../shared/tests/integrationTestUtils";
+import { SearchIndexType } from "../../shared";
+import {
+    baseSearchPlaceMandatoryProps,
+    evStationBaseTestProps,
+    expectPlaceTestFeature
+} from "../../shared/tests/integrationTestUtils";
 import { poiCategoriesToID } from "../../poi-categories/poiCategoriesToID";
 import { buildFuzzySearchRequest } from "../requestBuilder";
 import { parseFuzzySearchResponse } from "../responseParser";
 
 describe("Fuzzy Search service", () => {
-    beforeAll(() => {
-        TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
-    });
+    beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));
 
     const expectWorkingResult = expect.objectContaining<FuzzySearchResponse>({
         type: "FeatureCollection",
@@ -42,7 +44,7 @@ describe("Fuzzy Search service", () => {
         const timeZone = "iana";
         const openingHours = "nextSevenDays";
         const limit = 5;
-        const indexes: IndexTypesAbbreviation[] = ["POI"];
+        const indexes: SearchIndexType[] = ["POI"];
         const res = await search({
             query,
             poiCategories,
@@ -59,11 +61,30 @@ describe("Fuzzy Search service", () => {
         expect(res).toEqual(expectWorkingResult);
     });
 
+    test("fuzzy search for EV charging stations", async () => {
+        const sanFrancisco = [-122.4194, 37.7749];
+        const query = "tesla";
+        const evStations = await search({
+            query,
+            poiCategories: ["ELECTRIC_VEHICLE_STATION"],
+            limit: 10,
+            position: sanFrancisco
+        });
+
+        expect(evStations?.features?.length).toBeGreaterThan(0);
+        expect(evStations).toEqual({
+            type: "FeatureCollection",
+            bbox: expect.any(Array),
+            properties: expect.objectContaining({ query, geoBias: sanFrancisco }),
+            features: expect.arrayContaining([expectPlaceTestFeature(evStationBaseTestProps)])
+        });
+    });
+
     test("fuzzy search with a combination of poi category IDs & human readable poi category names", async () => {
         const query = "restaurant";
         const poiCategories: (number | POICategory)[] = ["SPANISH_RESTAURANT", "ITALIAN_RESTAURANT", 7315017];
         const language = "en-GB";
-        const indexes: IndexTypesAbbreviation[] = ["POI"];
+        const indexes: SearchIndexType[] = ["POI"];
         const res = await search({
             query,
             poiCategories,
