@@ -1,7 +1,7 @@
-import { Position } from "geojson";
 import { CommonServiceParams } from "../../shared";
 import { CalculateMatrixRouteRequestAPI } from "./apiRequestTypes";
 import { CalculateMatrixRouteResponseAPI } from "./apiResponseTypes";
+import { HasLngLat } from "core";
 
 type MatrixRouteAvoidable = "tollRoads" | "unpavedRoads";
 
@@ -30,18 +30,18 @@ export type CalculateMatrixRouteParams = CommonServiceParams<
     /**
      * A non-empty list of origin locations represented by points.
      * Value: An array of locations (latitude, longitude pairs).
-     * @see Post Origin field: {@link https://developer.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
+     * @see Post body fields: {@link https://developer.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
      * @default None
      */
-    origins: Position[];
+    origins: HasLngLat[];
 
     /**
      * A non-empty list of destination locations represented by points.
      * Value: An array of locations (latitude, longitude pairs).
-     * @see Post Origin field: {@link https://developer.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
+     * @see  Post body fields: {@link https://developer.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
      * @default None
      */
-    destinations: Position[];
+    destinations: HasLngLat[];
 
     options?: MatrixRouteOptions;
 };

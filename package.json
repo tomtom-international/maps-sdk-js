@@ -104,5 +104,8 @@
     "scripts": {
       "postbump": "./scripts/documentation/update-sdk-version-in-docs.sh && git add typedoc.json documentation/dev-portal/"
     }
+  },
+  "volta": {
+    "node": "18.19.0"
   }
 }

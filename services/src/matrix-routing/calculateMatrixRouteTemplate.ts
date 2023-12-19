@@ -1,5 +1,5 @@
 import { ServiceTemplate } from "../shared";
-import { fetchWith } from "../shared/fetch";
+import { post } from "../shared/fetch";
 import { FetchInput } from "../shared/types/fetch";
 import { matrixRouteValidationConfig } from "./calculateMatrixRouteRequestSchema";
 import { buildCalculateMatrixRouteRequest } from "./requestBuilder";
@@ -18,6 +18,6 @@ export type CalculateMatrixRouteTemplate = ServiceTemplate<
 export const calculateMatrixRouteTemplate: CalculateMatrixRouteTemplate = {
     requestValidation: matrixRouteValidationConfig,
     buildRequest: buildCalculateMatrixRouteRequest,
-    sendRequest: fetchWith,
+    sendRequest: post,
     parseResponse: parseCalculateMatrixRouteResponse
 };
