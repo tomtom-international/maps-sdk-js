@@ -1,8 +1,8 @@
 import { SectionProps, TrafficSectionProps } from "@anw/maps-sdk-js/core";
 import { Feature, FeatureCollection, LineString } from "geojson";
-import { RouteStyleProps } from "./displayRoutes";
+import { DisplayRouteRelatedProps } from "./displayRoutes";
 
-export type DisplaySectionProps = SectionProps & RouteStyleProps & { routeIndex?: number };
+export type DisplaySectionProps = SectionProps & DisplayRouteRelatedProps;
 
 /**
  * GeoJSON feature representing a route section of a certain type.

@@ -79,7 +79,7 @@ export type MapStyleLayerID = keyof typeof mapStyleLayerIDs;
  * Layers specification with optional before ID of the layer you want to put this layer on top.
  */
 export type LayersSpecWithOrder<L extends LayerSpecification = LayerSpecification> = {
-    layers: {
+    layers: Array<{
         /**
          * ID of the layer.
          */
@@ -92,5 +92,5 @@ export type LayersSpecWithOrder<L extends LayerSpecification = LayerSpecificatio
          * ID of the layer that this layer should be put on top.
          */
         beforeID?: string;
-    }[];
+    }>;
 };

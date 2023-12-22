@@ -2,13 +2,10 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 
 module.exports = {
-    entry: "./src/index.js",
+    entry: "./index.js",
     target: "web",
     mode: "development",
-    devServer: {
-        http2: true,
-        port: 9001
-    },
+    devServer: { http2: true, port: 9001 },
     plugins: [
         new HtmlWebpackPlugin({
             template: "./index.html",

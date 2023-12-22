@@ -1,5 +1,5 @@
 import {
-    DEFAULT_ROUTE_LAYERS_CONFIGURATION,
+    defaultRouteLayersConfig,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_FERRIES_LINE_LAYER_ID,
     ROUTE_FERRIES_SOURCE_ID,
@@ -250,7 +250,7 @@ describe("Routing tests", () => {
         await waitForMapIdle();
         expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#3f9cd9");
 
-        const updatedLayers = DEFAULT_ROUTE_LAYERS_CONFIGURATION.mainLine?.layers.map(({ id, layerSpec, ...rest }) => {
+        const updatedLayers = defaultRouteLayersConfig.mainLine?.layers.map(({ id, layerSpec, ...rest }) => {
             if (id === ROUTE_LINE_LAYER_ID) {
                 return {
                     id,

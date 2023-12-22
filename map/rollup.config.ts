@@ -3,6 +3,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import analyze from "rollup-plugin-analyzer";
+import image from "@rollup/plugin-image";
 // @ts-ignore
 import includePaths from "rollup-plugin-includepaths";
 
@@ -29,12 +30,13 @@ export default () => {
                 sourcemap: true
             },
             plugins: [
-                includePaths(includePathOptions),
                 // has to be before typescript plugin
+                includePaths(includePathOptions),
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
-                terser()
+                terser(),
+                image()
             ]
         },
         {
@@ -49,11 +51,12 @@ export default () => {
                 sourcemap: true
             },
             plugins: [
-                includePaths(includePathOptions),
                 // has to be before typescript plugin
+                includePaths(includePathOptions),
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
-                commonjs()
+                commonjs(),
+                image()
             ]
         },
         {
@@ -68,11 +71,12 @@ export default () => {
                 sourcemap: true
             },
             plugins: [
-                includePaths(includePathOptions),
                 // has to be before typescript plugin
+                includePaths(includePathOptions),
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
+                image(),
                 analyze({ summaryOnly: true, limit: 10 })
             ]
         }

@@ -31,7 +31,7 @@ export const TRAFFIC_INCIDENTS_SOURCE_ID = "vectorTilesIncidents";
  */
 export const TRAFFIC_FLOW_SOURCE_ID = "vectorTilesFlow";
 
-/* Start of Routing Source ids */
+/* Start of Routing Source and Layer ids */
 /**
  * Waypoints sources id
  */
@@ -142,5 +142,24 @@ export const ROUTE_EV_CHARGING_STATIONS_SOURCE_ID = "evChargingStations";
  * Route ev charging stations symbol layer id
  */
 export const ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID = "evChargingStationsSymbol";
-
+/**
+ * Route guidance instructions source ID.
+ */
+export const ROUTE_INSTRUCTIONS_SOURCE_ID = "routeInstructions";
+/**
+ * Foreground line for guidance instructions.
+ */
+export const ROUTE_INSTRUCTIONS_LINE_LAYER_ID = "instructionLine";
+/**
+ * Background outline for guidance instructions.
+ */
+export const ROUTE_INSTRUCTIONS_OUTLINE_LAYER_ID = "instructionOutline";
+/**
+ * Route guidance instruction arrows (tips) source ID.
+ */
+export const ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID = "routeInstructionArrows";
+/**
+ * Arrow tip image layer for instructions.
+ */
+export const ROUTE_INSTRUCTIONS_ARROW_LAYER_ID = "instructionArrowSymbol";
 /* End of Routing Source ids */

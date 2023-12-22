@@ -2,10 +2,11 @@ import { FeatureCollection } from "geojson";
 import { Routes } from "@anw/maps-sdk-js/core";
 import TEST_ROUTES_DATA from "./dummyRoutesWithSections.data.json";
 import SECTIONS_WITH_SELECTION from "./rebuildSectionsWithSelection.data.json";
-import { buildDisplayRouteSections, rebuildSectionsWithSelection } from "../routeSections";
+import { buildDisplayRouteSections } from "../routeSections";
 import { toDisplayTrafficSectionProps } from "../displayTrafficSectionProps";
 import { DisplayRouteProps } from "../../types/displayRoutes";
 import { RouteSections } from "../../types/routeSections";
+import { rebuildFeaturesWithRouteSelection } from "../routeSelection";
 
 const TEST_ROUTES = TEST_ROUTES_DATA as Routes<DisplayRouteProps>;
 
@@ -133,7 +134,7 @@ describe("Tests about building route sections", () => {
         `'%s`,
         // @ts-ignore
         (_name: string, inputSections: RouteSections, expectedSections: RouteSections) => {
-            expect(rebuildSectionsWithSelection(TEST_ROUTES, inputSections)).toStrictEqual(expectedSections);
+            expect(rebuildFeaturesWithRouteSelection(TEST_ROUTES, inputSections)).toStrictEqual(expectedSections);
         }
     );
 });

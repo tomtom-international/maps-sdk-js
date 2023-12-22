@@ -2,7 +2,6 @@ import isNil from "lodash/isNil";
 import { Route, Routes, SectionProps, SectionType } from "@anw/maps-sdk-js/core";
 import { DisplaySectionProps, RouteSection, RouteSections } from "../types/routeSections";
 import { DisplayRouteProps } from "../types/displayRoutes";
-import { GeoJSONSourceWithLayers } from "../../shared";
 
 const buildRouteSectionsFromRoute = <
     S extends SectionProps = SectionProps,
@@ -52,28 +51,3 @@ export const buildDisplayRouteSections = <
         buildRouteSectionsFromRoute<S, D>(route, sectionType, displaySectionPropsBuilder)
     )
 });
-
-/**
- * @ignore
- */
-export const rebuildSectionsWithSelection = (
-    routes: Routes<DisplayRouteProps>,
-    sections: RouteSections
-): RouteSections => ({
-    ...sections,
-    features: sections.features.map((section) => ({
-        ...section,
-        properties: {
-            ...section.properties,
-            routeStyle: routes.features[section.properties.routeIndex || 0].properties.routeStyle
-        }
-    }))
-});
-
-/**
- * @ignore
- */
-export const showSectionsWithRouteSelection = (
-    routesWithSelection: Routes<DisplayRouteProps>,
-    sourceWithLayers: GeoJSONSourceWithLayers<RouteSections>
-): void => sourceWithLayers.show(rebuildSectionsWithSelection(routesWithSelection, sourceWithLayers.shownFeatures));
