@@ -20,24 +20,24 @@ import {
     PossibleLaneSeparator,
     RoadShieldReference,
     RoadShieldSectionProps,
-    SpeedLimitSectionProps
+    SpeedLimitSectionProps,
+    Instruction
 } from "@anw/maps-sdk-js/core";
 import omit from "lodash/omit";
 import isNil from "lodash/isNil";
-import { LineString } from "geojson";
+import { LineString, Position } from "geojson";
 import {
     CalculateRouteResponseAPI,
     CurrentTypeAPI,
     GuidanceAPI,
     LegAPI,
     RouteAPI,
+    RoutePathPointAPI,
     SectionAPI,
     SummaryAPI,
     TrafficCategoryAPI
 } from "./types/apiResponseTypes";
 import { generateId } from "../shared/generateId";
-// import { CalculateRouteParams } from "./types/calculateRouteParams";
-// import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 
 const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined => {
     switch (apiCurrentType) {
@@ -226,16 +226,37 @@ const parseSections = (apiRoute: RouteAPI /*, params: CalculateRouteParams*/): S
     return result;
 };
 
-const parseGuidance = (apiGuidance: GuidanceAPI): Guidance => ({
-    instructions: apiGuidance.instructions.map((apiInstruction) => ({
-        ...apiInstruction,
-        maneuverPoint: [apiInstruction.maneuverPoint.longitude, apiInstruction.maneuverPoint.latitude],
-        routePath: apiInstruction.routePath.map((apiPoint) => ({
-            ...apiPoint,
-            point: [apiPoint.point.longitude, apiPoint.point.latitude]
-        }))
-    }))
-});
+const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => {
+    const instructions: Instruction[] = [];
+    let lastInstructionPathIndex = 0;
+
+    for (const apiInstruction of apiGuidance.instructions) {
+        const maneuverPoint = [apiInstruction.maneuverPoint.longitude, apiInstruction.maneuverPoint.latitude];
+
+        // we determine the path point index for the instruction by matching maneuverPoint to the path:
+        for (let pathIndex = lastInstructionPathIndex; pathIndex < path.length; pathIndex++) {
+            const pathPoint = path[pathIndex];
+            if (
+                (pathPoint[0] == maneuverPoint[0] && pathPoint[1] == maneuverPoint[1]) ||
+                pathIndex == path.length - 1
+            ) {
+                lastInstructionPathIndex = pathIndex;
+                break;
+            }
+        }
+        instructions.push({
+            ...apiInstruction,
+            maneuverPoint,
+            pathPointIndex: lastInstructionPathIndex,
+            routePath: apiInstruction.routePath.map((apiPoint: RoutePathPointAPI) => ({
+                ...apiPoint,
+                point: [apiPoint.point.longitude, apiPoint.point.latitude]
+            }))
+        });
+    }
+
+    return { instructions };
+};
 
 const parseRoute = (
     apiRoute: RouteAPI,
@@ -252,9 +273,9 @@ const parseRoute = (
         ...(bbox && { bbox }),
         properties: {
             id,
-            summary: parseSummary(apiRoute.summary /*, params*/),
-            sections: parseSections(apiRoute /*, params*/),
-            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance) }),
+            summary: parseSummary(apiRoute.summary),
+            sections: parseSections(apiRoute),
+            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance, geometry.coordinates) }),
             ...(apiRoutes.length > 1 && { index })
         }
     };
@@ -267,6 +288,7 @@ const parseRoute = (
  */
 export const parseCalculateRouteResponse = (
     apiResponse: CalculateRouteResponseAPI
+    // TODO: cleanup or restore input params to parse routing responses. They were used at least to calculate battery % from KWH values and maxCharge input.
     /*params: CalculateRouteParams*/
 ): Routes => {
     const features = apiResponse.routes.map((apiRoute, index, apiRoutes) =>

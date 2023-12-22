@@ -745,6 +745,7 @@
                   "latitude": 52.38686,
                   "longitude": 4.87489
                 },
+                "pathPointIndex": 0,
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
@@ -802,6 +803,7 @@
                     "text": "Haarlemmerweg"
                   }
                 },
+                "pathPointIndex": 2,
                 "routeOffsetInMeters": 35,
                 "routePath": [
                   {
@@ -849,6 +851,7 @@
                     "text": "Gosschalklaan"
                   }
                 },
+                "pathPointIndex": 2,
                 "routeOffsetInMeters": 56,
                 "routePath": [
                   {
@@ -11148,6 +11151,7 @@
                   "drivingSide": "RIGHT",
                   "maneuver": "DEPART",
                   "maneuverPoint": [4.81034, 52.47157],
+                  "pathPointIndex": 0,
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "roadShields": [
@@ -11196,6 +11200,7 @@
                   "drivingSide": "RIGHT",
                   "maneuver": "WAYPOINT_RIGHT",
                   "maneuverPoint": [4.81609, 52.47148],
+                  "pathPointIndex": 78,
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "roadShields": [
@@ -11264,6 +11269,7 @@
                   "drivingSide": "RIGHT",
                   "maneuver": "ROUNDABOUT_LEFT",
                   "maneuverPoint": [4.82201, 52.4728],
+                  "pathPointIndex": 78,
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
@@ -11374,6 +11380,7 @@
                   "isManeuverObligatory": false,
                   "maneuver": "TURN_RIGHT",
                   "maneuverPoint": [4.82161, 52.47362],
+                  "pathPointIndex": 78,
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {

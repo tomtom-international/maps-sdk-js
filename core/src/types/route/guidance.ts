@@ -262,6 +262,11 @@ export type SideRoad = {
  */
 export type Instruction = {
     /**
+     * The index of the point on the route path where the maneuver takes place.
+     * * maneuverPoint is expected to be equal to the path point at this index.
+     */
+    pathPointIndex: number;
+    /**
      * Location of the maneuver.
      */
     maneuverPoint: Position;

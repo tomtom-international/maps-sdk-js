@@ -133,7 +133,7 @@ export type RoutePathPointAPI = Omit<RoutePathPoint, "point"> & {
 /**
  * @ignore
  */
-export type InstructionAPI = Omit<Instruction, "maneuverPoint" | "routePath"> & {
+export type InstructionAPI = Omit<Instruction, "maneuverPoint" | "routePath" | "pathPointIndex"> & {
     maneuverPoint: LatitudeLongitudePointAPI;
     routePath: RoutePathPointAPI[];
 };
