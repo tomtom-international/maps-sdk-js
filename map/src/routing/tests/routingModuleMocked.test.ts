@@ -19,7 +19,6 @@ import { routeDeselectedOutline } from "../layers/routeMainLineLayers";
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
-// TODO: restore tests taking into account the embedded image assets!
 describe("Routing module tests", () => {
     // eslint-disable-next-line jest/expect-expect
     test("Basic flows", async () => {
@@ -72,11 +71,11 @@ describe("Routing module tests", () => {
                     .mockReturnValueOnce(instructionArrowsSource)
                     .mockReturnValueOnce(instructionArrowsSource)
                     .mockReturnValueOnce(instructionArrowsSource),
-
                 getLayer: jest.fn().mockReturnValue({}),
                 addLayer: jest.fn(),
                 removeLayer: jest.fn(),
                 hasImage: jest.fn().mockReturnValue(false),
+                addImage: jest.fn(),
                 loadImage: jest.fn(),
                 setLayoutProperty: jest.fn(),
                 setFilter: jest.fn(),

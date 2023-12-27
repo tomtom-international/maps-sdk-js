@@ -8,6 +8,9 @@ import {
 import { DisplayRouteProps } from "../types/displayRoutes";
 import calcBearing from "@turf/bearing";
 
+/**
+ * @ignore
+ */
 export const toDisplayInstructions = (routes: Routes<DisplayRouteProps>): DisplayInstructions => ({
     type: "FeatureCollection",
     features: routes.features.flatMap(
@@ -27,6 +30,9 @@ export const toDisplayInstructions = (routes: Routes<DisplayRouteProps>): Displa
     )
 });
 
+/**
+ * @ignore
+ */
 export const toDisplayInstructionArrows = (routes: Routes<DisplayRouteProps>): DisplayInstructionArrows => ({
     type: "FeatureCollection",
     features: routes.features.flatMap(
