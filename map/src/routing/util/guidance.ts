@@ -12,16 +12,18 @@ export const toDisplayInstructions = (routes: Routes<DisplayRouteProps>): Displa
     type: "FeatureCollection",
     features: routes.features.flatMap(
         (route, routeIndex) =>
-            route.properties.guidance?.instructions.map(
-                (instruction): DisplayInstruction => ({
-                    type: "Feature",
-                    geometry: {
-                        type: "LineString",
-                        coordinates: instruction.routePath.map((pathPoint) => pathPoint.point)
-                    },
-                    properties: { ...instruction, routeIndex, routeStyle: route.properties.routeStyle }
-                })
-            ) || []
+            route.properties.guidance?.instructions
+                ?.filter((instruction) => instruction.routePath?.length)
+                .map(
+                    (instruction): DisplayInstruction => ({
+                        type: "Feature",
+                        geometry: {
+                            type: "LineString",
+                            coordinates: instruction.routePath.map((pathPoint) => pathPoint.point)
+                        },
+                        properties: { ...instruction, routeIndex, routeStyle: route.properties.routeStyle }
+                    })
+                ) || []
     )
 });
 
@@ -30,7 +32,7 @@ export const toDisplayInstructionArrows = (routes: Routes<DisplayRouteProps>): D
     features: routes.features.flatMap(
         (route, routeIndex) =>
             route.properties.guidance?.instructions
-                .filter((instruction) => instruction.routePath?.length && instruction.routePath.length > 1)
+                ?.filter((instruction) => instruction.routePath?.length && instruction.routePath.length > 1)
                 .map((instruction): DisplayInstructionArrow => {
                     const instructionLastSegment = [
                         instruction.routePath[instruction.routePath.length - 2]?.point,

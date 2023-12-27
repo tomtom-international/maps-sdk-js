@@ -15,8 +15,8 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            localMapsSDKJSMap: path.resolve("../map/dist/map.cjs.min.js"),
-            "@anw/maps-sdk-js/core": path.resolve("../core/dist/core.cjs.min.js")
+            localMapsSDKJSMap: path.resolve("../map/dist/map.cjs.js"),
+            "@anw/maps-sdk-js/core": path.resolve("../core/dist/core.cjs.js")
         }
     }
 };
