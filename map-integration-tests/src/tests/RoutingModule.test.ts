@@ -77,6 +77,7 @@ describe("Routing tests", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
+    // TODO: update JSON data to include guidance, update tests to assert instructions visible when close
     test("Show and clear flows", async () => {
         await mapEnv.loadMap(
             { bounds: parsedTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },

@@ -10,7 +10,6 @@
     "strict": true,
     "outDir": ".",
     "target": "ES6",
-    "allowSyntheticDefaultImports": true,
     "paths": {
       "@anw/maps-sdk-js/core": ["./core"]
     },
