@@ -3,8 +3,8 @@ import { PolygonFeatures, Place, Places } from "@anw/maps-sdk-js/core";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
-import placesJSON from "./Events.test.data.json";
-import amsterdamGeometryData from "./GeometriesModule.test.data.json";
+import placesJSON from "./data/Events.test.data.json";
+import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
 import {
     getGeometriesSourceAndLayerIDs,
     getPlacesSourceAndLayerIDs,

@@ -192,14 +192,10 @@ const buildPOSTData = (params: CalculateRouteParams, types: GeoInputType[]): Cal
         // (if no paths in the given geoInputs nor LDEVR, there'll be no POST data, which will trigger a GET call)
         return null;
     }
-    if (ldevr) {
-        // TODO not ideal, if we can reuse the same POST data for both LDEVR and regular routing, we should
-        return { ...params.commonEVRoutingParams?.postData };
-    } else {
-        return {
-            ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types))
-        };
-    }
+
+    return {
+        ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types))
+    };
 };
 
 /**

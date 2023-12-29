@@ -156,18 +156,11 @@ import {
 
 const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRoutingParams): void => {
     if (evRoutingParams) {
-        urlParams.append("vehicleEngineType", evRoutingParams.vehicleEngineType);
+        urlParams.append("vehicleEngineType", "electric");
         urlParams.append("currentChargeInkWh", String(evRoutingParams.currentChargeInkWh));
         urlParams.append("minChargeAtDestinationInkWh", String(evRoutingParams.minChargeAtDestinationInkWh));
         urlParams.append("minChargeAtChargingStopsInkWh", String(evRoutingParams.minChargeAtChargingStopsInkWh));
         urlParams.append("vehicleModelId", evRoutingParams.vehicleModelId);
-        evRoutingParams.minDeviationDistance &&
-            urlParams.append("minDeviationDistance", String(evRoutingParams.minDeviationDistance));
-        evRoutingParams.minDeviationTime &&
-            urlParams.append("minDeviationTime", String(evRoutingParams.minDeviationTime));
-        evRoutingParams.supportingPointIndexOfOrigin &&
-            urlParams.append("supportingPointIndexOfOrigin", String(evRoutingParams.supportingPointIndexOfOrigin));
-        evRoutingParams.alternativeType && urlParams.append("alternativeType", evRoutingParams.alternativeType);
     }
 };
 
@@ -176,7 +169,7 @@ const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRo
  */
 export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: CommonRoutingParams): void => {
     if (!params.commonEVRoutingParams) {
-        // Orbis EV routing does not support cost model
+        // Orbis EV routing does not support cost models
         const costModel = params.costModel;
         appendByRepeatingParamName(urlParams, "avoid", costModel?.avoid);
         appendOptionalParam(urlParams, "traffic", costModel?.considerTraffic);

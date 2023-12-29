@@ -196,12 +196,6 @@ export type PointWaypoint = {
  */
 export type CommonEVRoutingParams = {
     /**
-     * This parameter has been deprecated. It may be removed in the future.
-     * The only allowed value for calculateLongDistanceEVRoute: electric
-     * @deprecated
-     */
-    vehicleEngineType: "electric";
-    /**
      * Specifies the current electric energy supply in kilowatt hours (kWh).
      * Minimum value: 0.0. Maximum value: vehicle's battery capacity defined by given vehicleModelId.
      */
@@ -221,81 +215,6 @@ export type CommonEVRoutingParams = {
      * Identifier of the vehicle model which should be used for routing.
      */
     vehicleModelId: string;
-    /**
-     * All alternative routes returned will follow the reference route (see the POST data parameters section)
-     * from the origin point of the calculateLongDistanceEVRoute request for at least this number of meters.
-     * Can only be used for a route update request.
-     * Default value:0
-     */
-    minDeviationDistance?: number;
-    /**
-     * All alternative routes returned will follow the reference route (see the POST data parameters section)
-     * from the origin point of the calculateLongDistanceEVRoute request for at least this number of seconds.
-     * Can only be used for a route update request.
-     * Default value:0
-     */
-    minDeviationTime?: number;
-    /**
-     * Largest index in the supportingPoints array (see the POST data parameters section) for which
-     * supportingPoints[supportingPointIndexOfOrigin] lies on or before the origin point.
-     * The Routing API uses this index as a hint to disambiguate situations where the supportingPoints in the POST data
-     * are not planar, or where they come back close to the origin at a later point in the reconstructed route.
-     * In these cases, the supportingPointIndexOfOrigin can explicitly identify if the origin is meant to be on the
-     * later part of the route, or not.
-     *
-     * Can only be used for a route update request.
-     * Minimum value: 0. Maximum value: Size of supportingPoints array - 1.
-     */
-    //TODO check if this is supported in POST calculate route request, not just for EV
-    supportingPointIndexOfOrigin?: number;
-    /**
-     * When maxAlternatives is greater than 0, allows to specify the objective of computing alternative routes:
-     * finding routes that are significantly different than the reference route, or finding routes that are better
-     * than the reference route. Possible values are:
-     * anyRoute: returns alternative routes that are significantly different from the reference route.
-     * betterRoute: only returns alternative routes that have smaller travel time. If there is a road block on the
-     * reference route, then any alternative that does not contain any blockages will be considered a better route.
-     * The summary in the route response will contain information (see the planningReason parameter) about the reason
-     * for the better alternative.
-     * Note: This optional parameter can only be used for a route update request.
-     * Default value: anyRoute Other values: betterRoute
-     */
-    alternativeType?: "anyRoute" | "betterRoute";
-
-    /**
-     * Some parameters can be provided using the HTTP POST method.
-     *
-     * The POST data should be in JSON format, see the Content-Type header.
-     * All POST data parameters are optional.
-     * It is an error to use the HTTP POST method if no POST data parameters are provided.
-     * There is an upper limit on the total size of the POST data.
-     *
-     * Exceeding this limit results in a response with the response code 413, indicating invalid POST data.
-     * The client must not rely on the exact value of this limit.
-     * The current limit is 10 MB.
-     * The POST data body can only contain avoidAreas JSON array, supportingPoints JSON array or pointWaypoints
-     * JSON array. The following table describes these parameters.
-     */
-    postData?: {
-        /**
-         * This is an array of shapes to avoid for planning routes. Supported shapes include rectangles.
-         * It can contain one of each supported shapes fields.
-         */
-        avoidAreas?: [Rectangle[]];
-        /**
-         * Locations to be used as input for route reconstruction.
-         *
-         * Can only be used for a route update request.
-         */
-        supportingPoints?: LatitudeLongitudePointAPI[];
-        /**
-         * An array of pointWaypoint objects, to be used to represent waypoints when reconstructing a route.
-         *
-         * If specified, the array must not be empty.
-         * Can only be used for a route update request.
-         */
-        pointWaypoints?: PointWaypoint[];
-    };
 };
 
 /**
@@ -328,6 +247,7 @@ export type CommonRoutingParams = {
     // when?: DepartArriveParams;
 
     /**
+     * TODO: refactor vehicle parameters in the future
      * Specifies the vehicle parameters to be used for the ldEV route calculation.
      */
     commonEVRoutingParams?: CommonEVRoutingParams;

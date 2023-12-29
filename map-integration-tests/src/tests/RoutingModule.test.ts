@@ -18,7 +18,7 @@ import {
 import { Routes, WaypointLike } from "@anw/maps-sdk-js/core";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import rotterdamToAmsterdamRoutes from "./RotterdamToAmsterdamRoute.data.json";
+import rotterdamToAmsterdamRoutes from "./data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json";
 import {
     getNumVisibleLayersBySource,
     getPaintProperty,

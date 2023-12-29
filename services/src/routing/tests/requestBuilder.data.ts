@@ -314,7 +314,6 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [8.624, 50.104]
             ],
             commonEVRoutingParams: {
-                vehicleEngineType: "electric",
                 currentChargeInkWh: 20,
                 minChargeAtDestinationInkWh: 4,
                 minChargeAtChargingStopsInkWh: 4,

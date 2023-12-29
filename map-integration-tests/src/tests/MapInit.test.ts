@@ -10,7 +10,7 @@ import {
     TRAFFIC_INCIDENTS_SOURCE_ID
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import mapInitTestData from "./MapInit.test.data.json";
+import mapInitTestData from "./data/MapInit.test.data.json";
 import {
     getLayerById,
     getNumVisibleLayersBySource,

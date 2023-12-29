@@ -176,7 +176,6 @@ describe("Calculate route integration tests", () => {
                 [8.624, 50.104]
             ],
             commonEVRoutingParams: {
-                vehicleEngineType: "electric",
                 currentChargeInkWh: 20,
                 minChargeAtDestinationInkWh: 4,
                 minChargeAtChargingStopsInkWh: 4,

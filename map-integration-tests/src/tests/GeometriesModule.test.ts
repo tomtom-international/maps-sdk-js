@@ -5,8 +5,8 @@ import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
 import { Position } from "geojson";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
-import amsterdamGeometryData from "./GeometriesModule.test.data.json";
-import netherlandsGeometryData from "./GeometriesModule-Netherlands.test.data.json";
+import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
+import netherlandsGeometryData from "./data/GeometriesModule-Netherlands.test.data.json";
 import {
     getGeometriesSourceAndLayerIDs,
     getNumVisibleLayersBySource,
