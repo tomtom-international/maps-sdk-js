@@ -6,6 +6,7 @@ import {
     ROUTE_FERRIES_LINE_LAYER_ID,
     ROUTE_FERRIES_SOURCE_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
+    ROUTE_INCIDENTS_SYMBOL_LAYER_ID,
     ROUTE_INSTRUCTIONS_ARROW_LAYER_ID,
     ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID,
     ROUTE_INSTRUCTIONS_LINE_LAYER_ID,
@@ -92,7 +93,7 @@ describe("Routing tests", () => {
 
     test("Show and clear flows", async () => {
         await mapEnv.loadMap(
-            { bounds: amsterdamToRotterdamRoutes.bbox },
+            { bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
         await initRouting();
@@ -238,15 +239,33 @@ describe("Routing tests", () => {
         await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(6));
         await waitForMapIdle();
 
+        // we should see some incident icons here:
+        const renderedIncidents = await waitUntilRenderedFeaturesChange([ROUTE_INCIDENTS_SYMBOL_LAYER_ID], 0, 2000);
+        expect(renderedIncidents).toHaveLength(2);
+
         const renderedEVStops = await waitUntilRenderedFeaturesChange(
             [ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID],
             0,
             2000
         );
         expect(renderedEVStops.length).toBeGreaterThan(2);
-        // TODO: verify EV charging stop properties
 
-        // TODO: zoom in close enough and verify instructions appear
+        // we now zoom in very close around the route start to spot some instructions:
+        await page.evaluate(() =>
+            (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.jumpTo({ center: [13.492, 52.507], zoom: 16 })
+        );
+        await waitForMapIdle();
+
+        // we only should see the origin waypoint here:
+        await waitForRenderedWaypoints(1);
+
+        // we should see some instructions on the map now:
+        const renderedInstructions = await waitUntilRenderedFeaturesChange(
+            [ROUTE_INSTRUCTIONS_LINE_LAYER_ID, ROUTE_INSTRUCTIONS_ARROW_LAYER_ID],
+            0,
+            2000
+        );
+        expect(renderedInstructions.length).toBeGreaterThan(1);
     });
 
     test("Waypoints rendering", async () => {
