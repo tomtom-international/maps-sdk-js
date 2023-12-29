@@ -1,9 +1,15 @@
 import {
     defaultRouteLayersConfig,
     ROUTE_DESELECTED_LINE_LAYER_ID,
+    ROUTE_EV_CHARGING_STATIONS_SOURCE_ID,
+    ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID,
     ROUTE_FERRIES_LINE_LAYER_ID,
     ROUTE_FERRIES_SOURCE_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
+    ROUTE_INSTRUCTIONS_ARROW_LAYER_ID,
+    ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID,
+    ROUTE_INSTRUCTIONS_LINE_LAYER_ID,
+    ROUTE_INSTRUCTIONS_SOURCE_ID,
     ROUTE_LINE_LAYER_ID,
     ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
@@ -18,14 +24,17 @@ import {
 import { Routes, WaypointLike } from "@anw/maps-sdk-js/core";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import rotterdamToAmsterdamRoutes from "./data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json";
+import rotterdamToAmsterdamRoutesJSON from "./data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json";
+import ldevrTestRoutesJSON from "./data/RoutingModuleLDEVR.test.data.json";
+
 import {
     getNumVisibleLayersBySource,
     getPaintProperty,
     initHillshade,
     setStyle,
     waitForMapIdle,
-    waitUntilRenderedFeatures
+    waitUntilRenderedFeatures,
+    waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
 
 const initRouting = async () =>
@@ -62,7 +71,8 @@ const waitForRenderedWaypoints = async (numWaypoint: number) =>
     waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
 
 // (We reparse the route because it contains Date objects):
-const parsedTestRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutes));
+const amsterdamToRotterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJSON));
+const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJSON));
 
 const NUM_WAYPOINT_LAYERS = 2;
 const NUM_ROUTE_LAYERS = 4;
@@ -71,16 +81,18 @@ const NUM_INCIDENT_LAYERS = 4;
 const NUM_FERRY_LAYERS = 2;
 const NUM_TUNNEL_LAYERS = 1;
 const NUM_TOLL_ROAD_LAYERS = 2;
+const NUM_EV_STATION_LAYERS = 1;
+const NUM_INSTRUCTION_LINE_LAYERS = 2;
+const NUM_INSTRUCTION_ARROW_LAYERS = 1;
 
 describe("Routing tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
 
-    // TODO: update JSON data to include guidance, update tests to assert instructions visible when close
     test("Show and clear flows", async () => {
         await mapEnv.loadMap(
-            { bounds: parsedTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },
+            { bounds: amsterdamToRotterdamRoutes.bbox },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
         await initRouting();
@@ -89,7 +101,7 @@ describe("Routing tests", () => {
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await showRoutes(parsedTestRoutes);
+        await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
 
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
@@ -101,6 +113,9 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(NUM_FERRY_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(NUM_TOLL_ROAD_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
+        // no guidance in the route
+        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
+
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
@@ -151,6 +166,7 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
 
         await clearWaypoints();
         await waitForMapIdle();
@@ -174,6 +190,63 @@ describe("Routing tests", () => {
         await waitForMapIdle();
         await waitForRenderedWaypoints(1);
         expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Show and clear flows using LDEVR route with guidance", async () => {
+        await mapEnv.loadMap(
+            { bounds: ldevrTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },
+            { style: { type: "published", id: "drivingLight", include: ["trafficIncidents", "poi"] } }
+        );
+        // We start zoomed far, asserting that some features won't be rendered:
+        await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(5));
+
+        await initRouting();
+
+        await showWaypoints([
+            [13.492, 52.507],
+            [8.624, 50.104]
+        ]);
+        await showRoutes(ldevrTestRoutes);
+        await waitForMapIdle();
+
+        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_EV_CHARGING_STATIONS_SOURCE_ID)).toBe(NUM_EV_STATION_LAYERS);
+        // guidance should be filtered from far but layers still visible
+        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(NUM_INSTRUCTION_LINE_LAYERS);
+        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID)).toBe(
+            NUM_INSTRUCTION_ARROW_LAYERS
+        );
+        // some sections don't have any data here, hence their layers stay invisible:
+        expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
+        // charging stops might be filtered out from far but layers still visible
+        expect(await getNumVisibleLayersBySource(ROUTE_EV_CHARGING_STATIONS_SOURCE_ID)).toBe(1);
+
+        await waitForRenderedWaypoints(2);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 2, 5000);
+        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        // Instructions are filtered at this zoom level
+        await waitUntilRenderedFeatures([ROUTE_INSTRUCTIONS_LINE_LAYER_ID, ROUTE_INSTRUCTIONS_ARROW_LAYER_ID], 0, 2000);
+        // EV stops are filtered at this zoom level
+        await waitUntilRenderedFeatures([ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID], 0, 2000);
+
+        // we zoom a bit closer to see EV charging stops and some incidents:
+        await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(6));
+        await waitForMapIdle();
+
+        const renderedEVStops = await waitUntilRenderedFeaturesChange(
+            [ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID],
+            0,
+            2000
+        );
+        expect(renderedEVStops.length).toBeGreaterThan(2);
+        // TODO: verify EV charging stop properties
+
+        // TODO: zoom in close enough and verify instructions appear
     });
 
     test("Waypoints rendering", async () => {
@@ -238,7 +311,7 @@ describe("Routing tests", () => {
 
     test("Updating configuration", async () => {
         await mapEnv.loadMap(
-            { fitBoundsOptions: { padding: 150 }, bounds: parsedTestRoutes.bbox },
+            { fitBoundsOptions: { padding: 150 }, bounds: amsterdamToRotterdamRoutes.bbox },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
         await initRouting();
@@ -247,7 +320,7 @@ describe("Routing tests", () => {
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await showRoutes(parsedTestRoutes);
+        await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
         expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#3f9cd9");
 

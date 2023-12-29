@@ -12,7 +12,7 @@ import {
 } from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
 import { Position } from "geojson";
-import { CalculateRouteParams, InputSectionTypes, InstructionsInfo } from "./types/calculateRouteParams";
+import { CalculateRouteParams, InputSectionTypes, GuidanceParams } from "./types/calculateRouteParams";
 import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
 import { FetchInput } from "../shared/types/fetch";
 import { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestTypes";
@@ -86,14 +86,14 @@ const appendSectionTypes = (
     appendByRepeatingParamName(urlParams, "sectionType", effectiveSectionTypes);
 };
 
-const appendInstructionsInfo = (urlParams: URLSearchParams, params?: CalculateRouteParams): void => {
-    if (params?.instructionsInfo) {
-        const instructionsInfo: InstructionsInfo = params.instructionsInfo;
-        urlParams.append("instructionsType", instructionsInfo.type);
-        urlParams.append("guidanceVersion", String(instructionsInfo.version));
-        urlParams.append("instructionPhonetics", instructionsInfo.phonetics);
-        urlParams.append("instructionRoadShieldReferences", instructionsInfo.roadShieldReferences);
-        urlParams.append("language", instructionsInfo.language);
+const appendGuidanceParams = (urlParams: URLSearchParams, params?: CalculateRouteParams): void => {
+    if (params?.guidance) {
+        const guidance: GuidanceParams = params.guidance;
+        urlParams.append("instructionsType", guidance.type);
+        urlParams.append("guidanceVersion", String(guidance.version || 2));
+        urlParams.append("instructionPhonetics", guidance.phonetics || "IPA");
+        urlParams.append("instructionRoadShieldReferences", guidance.roadShieldReferences || "all");
+        urlParams.append("language", params.language || "en-US");
     }
 };
 
@@ -110,7 +110,7 @@ const appendPathPOSTData = (
     supportingPoints: LatitudeLongitudePointAPI[],
     pointWaypoints: PointWaypointAPI[]
 ): void => {
-    // first we add the supportingPoints from the path coordinates:
+    // first, we add the supportingPoints from the path coordinates:
     const supportingPointsLengthBeforePath = supportingPoints.length;
     for (const position of getPositionsFromPath(pathGeoInput)) {
         supportingPoints.push(toLatLngPointAPI(position));
@@ -211,13 +211,13 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     appendCommonRoutingParams(urlParams, params);
     appendOptionalParam(urlParams, "computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
     params.currentHeading && urlParams.append("vehicleHeading", String(params.currentHeading));
-    appendInstructionsInfo(urlParams, params);
+    appendGuidanceParams(urlParams, params);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
-    appendSectionTypes(urlParams, params.sectionTypes, !!params.instructionsInfo);
+    appendSectionTypes(urlParams, params.sectionTypes, !!params.guidance?.type);
     params.extendedRouteRepresentations?.forEach((extendedRouteRepresentation) => {
         urlParams.append("extendedRouteRepresentation", extendedRouteRepresentation);
     });
-    urlParams.append("apiVersion", String(params.apiVersion || 1));
+    urlParams.append("apiVersion", String(params.apiVersion || isLDEVR(params) ? 2 : 1));
 
     const postData = buildPOSTData(params, geoInputTypes);
     return postData ? { method: "POST", url, data: postData } : { method: "GET", url };

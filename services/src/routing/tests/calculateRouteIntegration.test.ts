@@ -169,23 +169,25 @@ describe("Calculate route integration tests", () => {
         // expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
     });
 
-    test("LDEVR", async () => {
+    test("LDEVR with alternatives and guidance", async () => {
         const params: CalculateRouteParams = {
             geoInputs: [
                 [13.492, 52.507],
                 [8.624, 50.104]
             ],
+            maxAlternatives: 1,
             commonEVRoutingParams: {
                 currentChargeInkWh: 20,
                 minChargeAtDestinationInkWh: 4,
                 minChargeAtChargingStopsInkWh: 4,
                 vehicleModelId: "54B969E8-E28D-11EC-8FEA-0242AC120002"
             },
-            apiVersion: 2
+            guidance: { type: "coded" }
         };
 
         const result = await calculateRoute(params);
-        expect(result?.features?.length).toEqual(1);
+        console.log(JSON.stringify(result));
+        expect(result?.features?.length).toEqual(2);
         const routeFeature = result.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
         const routeProperties = routeFeature.properties;
@@ -220,6 +222,7 @@ describe("Calculate route integration tests", () => {
 
     test("Roses to Olot thrilling route with alternatives", async () => {
         const result = await calculateRoute({
+            language: "es-ES",
             geoInputs: [
                 [3.1748, 42.26297],
                 [2.48819, 42.18211]
@@ -235,12 +238,11 @@ describe("Calculate route integration tests", () => {
                 // }
             },
             computeAdditionalTravelTimeFor: "all",
-            instructionsInfo: {
+            guidance: {
                 type: "coded",
                 version: 2,
                 phonetics: "IPA",
-                roadShieldReferences: "all",
-                language: "es-ES"
+                roadShieldReferences: "all"
             },
             maxAlternatives: 2,
             sectionTypes: ["traffic", "ferry", "tollRoad", "lanes", "speedLimit", "roadShields"],
@@ -332,9 +334,6 @@ describe("Calculate route integration tests", () => {
 
     test("Calculate route with API request and response callbacks", async () => {
         const geoInputs = [
-            // TODO no route found with Orbis, so I commented it out
-            // [7.675106, 46.490793],
-            // [7.74328, 46.403849]
             [7.675106, 51.490793],
             [7.74328, 51.403849]
         ];

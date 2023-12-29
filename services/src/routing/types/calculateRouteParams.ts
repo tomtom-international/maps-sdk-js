@@ -27,14 +27,12 @@ export type InputSectionTypes = InputSectionType[];
 
 /**
  * The information about the instructions for Orbis guidance request.
- * For now the only two fields needed are choice of phonetics and language.
  */
-export type InstructionsInfo = {
+export type GuidanceParams = {
     type: "coded";
-    version: 2;
-    phonetics: "LHP" | "IPA";
-    roadShieldReferences: "all";
-    language: string;
+    version?: 2;
+    phonetics?: "LHP" | "IPA";
+    roadShieldReferences?: "all";
 };
 
 /**
@@ -91,8 +89,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * If alternative routes are requested, instructions will be generated for each route returned.
          * @default None
          */
-
-        instructionsInfo?: InstructionsInfo;
+        guidance?: GuidanceParams;
 
         /**
          * The number of desired alternative routes to be calculated.

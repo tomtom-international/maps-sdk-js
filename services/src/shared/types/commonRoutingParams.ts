@@ -253,7 +253,9 @@ export type CommonRoutingParams = {
     commonEVRoutingParams?: CommonEVRoutingParams;
 
     /**
-     * The version of the API to use. It defaults to 1 if not specified.
+     * The version of the API to use.
+     * * The SDK will use the right default when not specified.
+     * * Use it only if you really need to target a specific API version.
      */
     apiVersion?: number;
 };
