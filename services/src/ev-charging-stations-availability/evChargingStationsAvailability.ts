@@ -1,4 +1,5 @@
 import {
+    bboxFromGeoJSON,
     ChargingPark,
     EVChargingStationPlaceProps,
     EVChargingStationsAvailability,
@@ -62,15 +63,28 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
  *
  * This function returns the given place with EV availability aggregated in its properties, if applicable.
  * @param places The places for which to fetch EV charging availability.
+ * @param options Optional parameters.
  * The ones that aren't EV stations or have no availability info are returned as-is.
  */
-export const buildPlacesWithEVAvailability = async (places: Places): Promise<Places<EVChargingStationPlaceProps>> => {
+export const buildPlacesWithEVAvailability = async (
+    places: Places,
+    options: {
+        /**
+         * If true, places with unknown availability will be returned as-is. Otherwise, they will be filtered out.
+         * @default true
+         */
+        returnIfAvailabilityUnknown: boolean;
+    } = { returnIfAvailabilityUnknown: true }
+): Promise<Places<EVChargingStationPlaceProps>> => {
     const placesWithAvailability = [];
     for (const place of places.features) {
         // (We fetch the availabilities sequentially on purpose to prevent QPS limit errors)
-        placesWithAvailability.push(await buildPlaceWithEVAvailability(place));
+        const placeWithAvailability = await buildPlaceWithEVAvailability(place);
+        if (placeWithAvailability.properties.chargingPark?.availability || options.returnIfAvailabilityUnknown) {
+            placesWithAvailability.push(placeWithAvailability);
+        }
     }
-    return { ...places, features: placesWithAvailability };
+    return { ...places, features: placesWithAvailability, bbox: bboxFromGeoJSON(placesWithAvailability) };
 };
 
 export default evChargingStationsAvailability;

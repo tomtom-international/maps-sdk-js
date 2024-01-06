@@ -15,7 +15,7 @@ export const buildEVChargingStationsAvailabilityRequest = (params: EVChargingSta
     const url = new URL(buildURLBasePath(params));
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    // ev charging stations availability specific parameters:
+    // ev charging stations availability-specific parameters:
     params.id && urlParams.append("id", params.id);
     params.connectorTypes && urlParams.append("connectorSet", arrayToCSV(params.connectorTypes));
     !isNil(params.minPowerKW) && urlParams.append("minPowerKW", String(params.minPowerKW));

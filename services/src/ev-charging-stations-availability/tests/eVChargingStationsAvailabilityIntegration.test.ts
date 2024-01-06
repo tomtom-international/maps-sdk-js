@@ -82,15 +82,28 @@ describe("evChargingStationsAvailability integration tests", () => {
             query: "",
             poiCategories: ["ELECTRIC_VEHICLE_STATION"],
             position: [13.41273, 52.52308], // Berlin
-            limit: 3
+            limit: 10
         });
 
         const evStationsWithAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability);
-        const resultFeatures = evStationsWithAvailability.features;
-        expect(resultFeatures).toHaveLength(evStationsWithoutAvailability.features.length);
-        expect(resultFeatures.every((feature) => feature.properties.chargingPark?.connectors)).toBeTruthy();
-        expect(resultFeatures.every((feature) => feature.properties.chargingPark?.connectorCounts)).toBeTruthy();
-        expect(resultFeatures.some((feature) => feature.properties.chargingPark?.availability)).toBeTruthy();
+        const evStationFeatures = evStationsWithAvailability.features;
+        expect(evStationFeatures).toHaveLength(evStationsWithoutAvailability.features.length);
+        expect(evStationFeatures.every((feature) => feature.properties.chargingPark?.connectors)).toBe(true);
+        expect(evStationFeatures.every((feature) => feature.properties.chargingPark?.connectorCounts)).toBe(true);
+        expect(evStationFeatures.some((feature) => feature.properties.chargingPark?.availability)).toBe(true);
+
+        // we re-calculate now but filtering out the ones with unknown availability:
+        const filteredEVStationsWithAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability, {
+            returnIfAvailabilityUnknown: false
+        });
+
+        expect(filteredEVStationsWithAvailability.features.length).toBeLessThan(evStationFeatures.length);
+
+        expect(filteredEVStationsWithAvailability.features).toHaveLength(
+            evStationFeatures.filter((feature) => feature.properties.chargingPark?.availability).length
+        );
+
+        expect(filteredEVStationsWithAvailability.bbox).not.toEqual(evStationsWithAvailability.bbox);
     });
 
     test("EVChargingStationsAvailability with API request and response callbacks", async () => {
