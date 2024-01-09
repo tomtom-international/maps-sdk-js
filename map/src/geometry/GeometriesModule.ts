@@ -56,7 +56,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     }
 
     private constructor(map: TomTomMap, config?: GeometriesModuleConfig) {
-        super(map, config);
+        super("geojson", map, config);
     }
 
     /**
@@ -151,9 +151,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     /**
      * @ignore
      */
-    protected restoreDataAndConfig() {
+    protected restoreDataAndConfigImpl() {
         const previousShownFeatures = this.sourcesWithLayers.geometry.shownFeatures;
-        this.initSourcesWithLayers();
+        this.initSourcesWithLayers(this.config, true);
         this.config && this._applyConfig(this.config);
         this.show(previousShownFeatures);
     }
@@ -162,7 +162,8 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * Shows the given geometries on the map.
      * @param geometries The geometries to display.
      */
-    show(geometries: PolygonFeatures): void {
+    async show(geometries: PolygonFeatures) {
+        await this.waitUntilSourcesAndLayersAdded();
         const geometry = this.sourcesWithLayers.geometry;
         geometry.show(prepareGeometryForDisplay(geometries, this.config));
         this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(geometry.shownFeatures));
@@ -171,7 +172,8 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     /**
      * Clears the Geometry from the map.
      */
-    clear(): void {
+    async clear() {
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.geometry.clear();
     }
 

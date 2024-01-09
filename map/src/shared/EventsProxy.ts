@@ -179,7 +179,7 @@ export class EventsProxy extends AbstractEventProxy {
             return;
         }
 
-        // hoverChangeDetected: whether a change happened, such as no-hover -> hover or vice-versa:
+        // hoverChangeDetected: whether a change happened, such as no-hover -> hover or vice versa:
         // mouseInMotionOverHoveredFeature: whether the mouse is moving along the hovered feature (not stopped on it):
         const { hoverChanged, mouseInMotionOverHoveredFeature } = detectHoverState(
             ev.point,

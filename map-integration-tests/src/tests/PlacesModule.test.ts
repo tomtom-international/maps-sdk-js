@@ -60,7 +60,7 @@ describe("PlacesModule tests", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
-    test("Rendering single place", async () => {
+    test("Rendering a single place", async () => {
         await mapEnv.loadMap(
             { center: [-75.43974, 39.82295], zoom: 10 },
             { style: { type: "published", include: ["poi"] } }
@@ -73,7 +73,31 @@ describe("PlacesModule tests", () => {
         } as Place);
 
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs();
-        expect(await getNumVisibleLayers(sourceID)).toStrictEqual(2);
+        expect(await getNumVisibleLayers(sourceID)).toEqual(2);
+
+        const renderedPlaces = await waitUntilRenderedFeatures(layerIDs, 1, 10000);
+        compareToExpectedDisplayProps(renderedPlaces, [{ iconID: "default_pin", title: "Test Address" }]);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Rendering a place right after changing the style", async () => {
+        await mapEnv.loadMap(
+            { center: [-75.43974, 39.82295], zoom: 10 },
+            { style: { type: "published", include: ["poi"] } }
+        );
+        await initPlaces();
+        await setStyle("standardDark");
+        await showPlaces({
+            type: "Feature",
+            geometry: { type: "Point", coordinates: [-75.43974, 39.82295] },
+            properties: { address: { freeformAddress: "Test Address" } }
+        } as Place);
+
+        await waitForMapIdle();
+
+        const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs();
+        expect(await getNumVisibleLayers(sourceID)).toEqual(2);
 
         const renderedPlaces = await waitUntilRenderedFeatures(layerIDs, 1, 10000);
         compareToExpectedDisplayProps(renderedPlaces, [{ iconID: "default_pin", title: "Test Address" }]);

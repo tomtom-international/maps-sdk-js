@@ -173,7 +173,7 @@ describe("Calculate route integration tests", () => {
         const params: CalculateRouteParams = {
             geoInputs: [
                 [13.492, 52.507],
-                [8.624, 50.104]
+                [9.624, 50.104]
             ],
             maxAlternatives: 1,
             commonEVRoutingParams: {
@@ -186,7 +186,6 @@ describe("Calculate route integration tests", () => {
         };
 
         const result = await calculateRoute(params);
-        console.log(JSON.stringify(result));
         expect(result?.features?.length).toEqual(2);
         const routeFeature = result.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);

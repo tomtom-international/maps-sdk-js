@@ -35,7 +35,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
     }
 
     private constructor(map: TomTomMap, config?: HillshadeModuleConfig) {
-        super(map, config);
+        super("style", map, config);
     }
 
     /**

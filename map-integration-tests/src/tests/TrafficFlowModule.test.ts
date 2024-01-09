@@ -2,13 +2,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import { RoadCategory, TRAFFIC_FLOW_SOURCE_ID, FlowConfig, StyleModuleInitConfig, TrafficFlowFilters } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
-import {
-    getVisibleLayersBySource,
-    setStyle,
-    waitForMapIdle,
-    waitForTimeout,
-    waitUntilRenderedFeaturesChange
-} from "./util/TestUtils";
+import { getVisibleLayersBySource, setStyle, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
 
 const waitForRenderedFlowChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(
@@ -92,7 +86,6 @@ describe("Map vector tile traffic module tests", () => {
         // changing the map style: verifying the places are still shown (state restoration):
         await setStyle("standardDark");
         await waitForMapIdle();
-        await waitForTimeout(3000);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeTruthy();
 
         await resetConfig();
@@ -175,7 +168,6 @@ describe("Map vector tile traffic module tests", () => {
         // CHANGING THE MAP STYLE: verifying the config is still the same (state restoration):
         await setStyle("standardDark");
         await waitForMapIdle();
-        await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
         // FLOW assertions:
         renderedFlowSegments = await waitForRenderedFlowChange(0);

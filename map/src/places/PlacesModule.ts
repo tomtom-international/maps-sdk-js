@@ -44,7 +44,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     }
 
     private constructor(map: TomTomMap, config?: PlacesModuleConfig) {
-        super(map, config);
+        super("geojson", map, config);
     }
 
     /**
@@ -76,7 +76,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     /**
      * @ignore
      */
-    protected restoreDataAndConfig() {
+    protected restoreDataAndConfigImpl() {
         const previousShownFeatures = this.sourcesWithLayers.places.shownFeatures;
         this.initSourcesWithLayers(this.config, true);
         this.config && this._applyConfig(this.config);
@@ -85,23 +85,17 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
 
     /**
      * Apply icon configuration on shown features.
-     * Other config remains untouched
+     * Other config properties remain untouched
      * @param iconConfig the icon config to apply
      */
     applyIconConfig(iconConfig: PlaceIconConfig): void {
-        const config = {
-            ...this.config,
-            iconConfig
-        };
+        const config = { ...this.config, iconConfig };
         this.updateLayersAndData(config);
         this.config = config;
     }
 
     applyTextConfig(textConfig: PlaceTextConfig): void {
-        const config = {
-            ...this.config,
-            textConfig
-        };
+        const config = { ...this.config, textConfig };
         this.updateLayersAndData(config);
         this.config = config;
     }
@@ -114,10 +108,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     }
 
     setExtraFeatureProps(extraFeatureProps: { [key: string]: any }): void {
-        const config = {
-            ...this.config,
-            extraFeatureProps
-        };
+        const config = { ...this.config, extraFeatureProps };
         this.updateData(config);
         this.config = config;
     }
@@ -132,14 +123,16 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * Shows the given places on the map.
      * @param places
      */
-    show(places: Place | Place[] | Places): void {
+    async show(places: Place | Place[] | Places) {
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.mapLibreMap, this.config));
     }
 
     /**
      * Clears the places from the map.
      */
-    clear(): void {
+    async clear() {
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.places.clear();
     }
 

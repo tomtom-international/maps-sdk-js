@@ -2,11 +2,13 @@ import { Map } from "maplibre-gl";
 import { TomTomMap } from "../TomTomMap";
 import { EventsProxy } from "./EventsProxy";
 import { SourcesWithLayers, SourceWithLayerIDs } from "./types";
+import { MapModuleSource } from "./types/mapModule";
 
 /**
  * Base class for all Maps SDK map modules.
  */
 export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithLayers, CFG = undefined> {
+    private readonly sourceType: MapModuleSource;
     /**
      * @ignore
      */
@@ -34,15 +36,24 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
     /**
      * @ignore
      */
-    protected _initializing: boolean = true;
+    protected _initializing = true;
+
+    /**
+     * Indicates that this module is currently adding its sources and layers to the map, so during this time it might not function properly.
+     * @see waitUntilSourcesAndLayersAdded
+     * @private
+     */
+    private addingSourcesAndLayers = false;
 
     /**
      * Builds this module based on a given Maps SDK map.
      * @param tomtomMap The map. It may or may not be initialized at this stage,
      * but the module ensures to initialize itself once it is.
+     * @param sourceType Whether the module is based on a map style or on added GeoJSON data.
      * @param config Optional configuration to initialize directly as soon as the map is ready.
      */
-    protected constructor(tomtomMap: TomTomMap, config?: CFG) {
+    protected constructor(sourceType: MapModuleSource, tomtomMap: TomTomMap, config?: CFG) {
+        this.sourceType = sourceType;
         this.tomtomMap = tomtomMap;
         this.eventsProxy = tomtomMap._eventsProxy;
         this.tomtomMap.addStyleChangeHandler(() => this.restoreDataAndConfig());
@@ -62,6 +73,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * @ignore
      */
     protected initSourcesWithLayers(config?: CFG, restore?: boolean): void {
+        this.addingSourcesAndLayers = true;
         this.sourcesWithLayers = this._initSourcesWithLayers(config, restore);
         this._sourceAndLayerIDs = Object.fromEntries(
             Object.entries(this.sourcesWithLayers).map(([name, sourceWithLayers]) => [
@@ -72,6 +84,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         if (restore) {
             this.eventsProxy.updateIfRegistered(this.sourcesWithLayers);
         }
+        this.addingSourcesAndLayers = false;
     }
 
     /**
@@ -80,6 +93,19 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * @ignore
      */
     protected abstract _initSourcesWithLayers(config?: CFG, restore?: boolean): SOURCES_WITH_LAYERS;
+
+    protected async waitUntilSourcesAndLayersAdded(): Promise<void> {
+        if (this.addingSourcesAndLayers) {
+            await new Promise<void>((resolve) => {
+                const interval = setInterval(() => {
+                    if (!this.addingSourcesAndLayers) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, 200);
+            });
+        }
+    }
 
     /**
      * Applies the configuration to this module.
@@ -106,13 +132,25 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         this.applyConfig(undefined);
     }
 
+    private async restoreDataAndConfig() {
+        // defensively raising the state flag already to prevent race conditions:
+        this.addingSourcesAndLayers = true;
+        if (this.sourceType == "geojson") {
+            // (We use setTimeout to compensate for a MapLibre glitch where symbol layers can't get added right after
+            // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
+            setTimeout(() => this.restoreDataAndConfigImpl(), 250);
+        } else {
+            this.restoreDataAndConfigImpl();
+        }
+    }
+
     /**
      * implementation needed to restore the module state (data and config applied to the module).
      * to be used to restore module state after map style change
      * @protected
      * @ignore
      */
-    protected restoreDataAndConfig(): void {
+    protected restoreDataAndConfigImpl(): void {
         this.initSourcesWithLayers(this.config, true);
         this.config && this._applyConfig(this.config);
     }

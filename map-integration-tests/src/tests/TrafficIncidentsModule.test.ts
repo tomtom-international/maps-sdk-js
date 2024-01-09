@@ -16,7 +16,6 @@ import {
     initTrafficIncidents,
     setStyle,
     waitForMapIdle,
-    waitForTimeout,
     waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
 
@@ -143,7 +142,6 @@ describe("Map vector tile traffic incidents module tests", () => {
         // changing the map style: verifying the places are still shown (state restoration):
         await setStyle("standardDark");
         await waitForMapIdle();
-        await waitForTimeout(3000);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeTruthy();
 
         await resetConfig();
@@ -274,7 +272,6 @@ describe("Map vector tile traffic incidents module tests", () => {
             include: ["trafficIncidents", "poi"]
         });
         await waitForMapIdle();
-        await waitForTimeout(3000);
         expect(await getConfig()).toEqual(config);
 
         // Asserting similar things again:

@@ -29,7 +29,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
     }
 
     private constructor(map: TomTomMap, config?: BaseMapModuleConfig) {
-        super(map, config);
+        super("style", map, config);
     }
 
     /**

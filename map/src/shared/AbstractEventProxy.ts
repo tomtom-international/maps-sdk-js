@@ -15,31 +15,28 @@ type SourceEventHandlers = Partial<Record<EventType, SourceEventTypeHandler[]>>;
 //     vectorTiles: {
 //         click: [
 //             {
+//                 sourceWithLayers: SourceWithLayers reference,
 //                 layerIDs: ["Buildings", "Roads - Major"],
-//                 handler: UserEventsHandler...
+//                 fn: UserEventsHandler...
 //             },
 //             {
+//                 sourceWithLayers: SourceWithLayers reference,
 //                 layerIDs: ["Water", "Landuse - Parks],
-//                 handler: UserEventsHandler...
+//                 fn: UserEventsHandler...
 //             }
 //         ],
 //         hover: [
 //             {
+//                 sourceWithLayers: SourceWithLayers reference,
 //                 layerIDs: [...],
-//                 handler: UserEventsHandler...
+//                 fn: UserEventsHandler...
 //              }
 //         ]
 //     },
 type EventHandlers = Record<string, SourceEventHandlers>;
 
-const matchesLayers = (layers: LayerSpecification[], layerIDs: string[]): boolean => {
-    layerIDs.forEach((layerID, index) => {
-        if (layerID != layers[index].id) {
-            return false;
-        }
-    });
-    return true;
-};
+const matchesLayers = (layers: LayerSpecification[], layerIDs: string[]): boolean =>
+    layerIDs.every((layerID, index) => layerID == layers[index].id);
 
 /**
  * @ignore
@@ -49,10 +46,10 @@ export abstract class AbstractEventProxy {
     protected handlers: EventHandlers = {};
 
     /**
-     * Adds the given sources and layers as interactive, so we'll listen to them for hover and click.
+     * Adds the given layers as interactive, so we'll listen to them for hover and click.
      * @param sourceWithLayers The sources and layers to listen to.
      */
-    ensureAdded(sourceWithLayers: SourceWithLayers) {
+    private ensureInteractiveLayerIDsAdded(sourceWithLayers: SourceWithLayers) {
         sourceWithLayers._layerSpecs.forEach((layerSpec) => {
             if (!this.interactiveLayerIDs.includes(layerSpec.id)) {
                 this.interactiveLayerIDs.push(layerSpec.id);
@@ -71,7 +68,7 @@ export abstract class AbstractEventProxy {
         handlerFn: UserEventHandler<T>,
         type: EventType
     ) {
-        this.ensureAdded(sourceWithLayers);
+        this.ensureInteractiveLayerIDsAdded(sourceWithLayers);
         const sourceID = sourceWithLayers.source.id;
 
         if (!this.handlers[sourceID]) {
@@ -117,14 +114,6 @@ export abstract class AbstractEventProxy {
     }
 
     /**
-     * Returns whether this sourceWithLayers is registered for events (has handlers attached).
-     * @param sourcesWithLayers The sources and layers to listen to.
-     */
-    has(sourcesWithLayers: SourceWithLayers): boolean {
-        return this.hasSourceID(sourcesWithLayers.source.id);
-    }
-
-    /**
      * Returns whether this source is registered for events (has handlers attached).
      * @param sourceId The source id (should be linked to a SourceWithLayers instance).
      */
@@ -134,13 +123,21 @@ export abstract class AbstractEventProxy {
 
     /**
      * Updates the given sourcesWithLayers, if they have any handlers.
-     * * (This is typically called to refresh an existing, stale sourceWithLayers after a map style has changed).
+     * * (This is typically called to refresh any registered, stale sourceWithLayers references after a map style has changed).
      * @param sourcesWithLayers The new sources with layers to replace existing ones.
      */
     updateIfRegistered(sourcesWithLayers: SourcesWithLayers): void {
         for (const sourceWithLayers of Object.values(sourcesWithLayers)) {
-            if (sourceWithLayers && this.has(sourceWithLayers)) {
-                this.ensureAdded(sourceWithLayers);
+            const sourceHandlers = this.handlers[sourceWithLayers.source.id];
+            if (sourceHandlers) {
+                for (const sourceEventTypeHandlers of Object.values(sourceHandlers)) {
+                    for (const handler of sourceEventTypeHandlers) {
+                        if (sourceWithLayers.equalSourceAndLayerIDs(handler.sourceWithLayers)) {
+                            // We keep the reference fresh:
+                            handler.sourceWithLayers = sourceWithLayers;
+                        }
+                    }
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ import { ExpressionSpecification, SymbolLayerSpecification } from "maplibre-gl";
 export const isLayerLocalizable = (layer: SymbolLayerSpecification): boolean => {
     const textField = (layer.layout?.["text-field"] ?? "") as string | ExpressionSpecification;
     return textField
-        ? // tries to detect layers which has "text-field" that can be localized
+        ? // tries to detect layers which have a "text-field" that can be localized
           // ex. "text-field": "{name}" or "text-field": ["get", "name"]
           textField === "{name}" ||
               (textField.length == 2 && textField[1] == "name") ||

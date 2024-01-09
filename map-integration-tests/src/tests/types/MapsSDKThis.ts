@@ -27,6 +27,7 @@ export type MapsSDKThis = typeof globalThis & {
     pois?: POIsModule;
     hillshade?: HillshadeModule;
     places?: PlacesModule;
+    places2?: PlacesModule;
     geometries?: GeometriesModule;
     routing?: RoutingModule;
     // These properties are used for testing events in a map

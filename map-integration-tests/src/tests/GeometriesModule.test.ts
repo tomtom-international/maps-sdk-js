@@ -50,7 +50,7 @@ describe("Geometry integration tests", () => {
     const outsideAmsterdamNorth = [4.93236, 52.41518];
     const outsideAmsterdamSouth = [4.8799, 52.3087];
 
-    test("Show geometry in the map, default module config", async () => {
+    test("Show a geometry on the map, default module config", async () => {
         await mapEnv.loadMap({ bounds: geometryData.bbox as LngLatBoundsLike });
         await initGeometries();
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs();
@@ -71,6 +71,28 @@ describe("Geometry integration tests", () => {
         expect(await getNumVisibleLayers(sourceID)).toBe(0);
         await showGeometry(geometryData);
         expect(await getNumVisibleLayers(sourceID)).toBe(2);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Show a geometry on the map right after changing the map style", async () => {
+        await mapEnv.loadMap({ bounds: geometryData.bbox as LngLatBoundsLike });
+        await initGeometries();
+        const sourcesAndLayers = await getGeometriesSourceAndLayerIDs();
+        const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
+        await setStyle("standardDark");
+        await showGeometry(geometryData);
+        await waitForMapIdle();
+
+        expect(await getNumVisibleLayers(sourceID)).toBe(2);
+        // non-inverted polygon: fills inside but not the edges:
+        const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
+        await waitUntilRenderedGeometry(1, amsterdamCenter, layerIDs);
+        await waitUntilRenderedGeometry(1, amsterdamSouthEast, layerIDs);
+        await waitUntilRenderedGeometry(0, outsideAmsterdamNorth, layerIDs);
+        await waitUntilRenderedGeometry(0, outsideAmsterdamSouth, layerIDs);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test("Show multiple geometries in the map with title, default config", async () => {
@@ -95,6 +117,8 @@ describe("Geometry integration tests", () => {
                 properties: { title: JSON.parse(feature.properties.address).freeformAddress }
             });
         });
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test("Show multiple geometries in the map with title, custom config", async () => {
@@ -147,9 +171,10 @@ describe("Geometry integration tests", () => {
         await waitForMapIdle();
         layers = await getAllLayers();
         geometriesLayerIndex = findGeometriesLayerIndex();
-        // TODO: geometriesLayerIndex seems to come as -1, so maybe there's a bug?
-        // expect(geometriesLayerIndex).toBeGreaterThan(0);
+        expect(geometriesLayerIndex).toBeGreaterThan(0);
         lowestBuildingIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestBuilding);
         expect(geometriesLayerIndex).toBeLessThan(lowestBuildingIndex);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

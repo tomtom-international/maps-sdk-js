@@ -91,7 +91,7 @@ describe("Routing tests", () => {
 
     beforeAll(async () => mapEnv.loadPage());
 
-    test("Show and clear flows", async () => {
+    test("Multiple show and clear flows", async () => {
         await mapEnv.loadMap(
             { bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
@@ -104,6 +104,7 @@ describe("Routing tests", () => {
         ]);
         await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
 
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
@@ -127,6 +128,7 @@ describe("Routing tests", () => {
         // Changing the style, asserting that the route stays the same:
         await setStyle("standardDark");
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
@@ -137,11 +139,13 @@ describe("Routing tests", () => {
         // Adding hillshade to style, asserting that the route stays the same:
         await initHillshade({ ensureAddedToStyle: true });
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
 
         await selectRoute(2);
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 0, 2000);
@@ -155,11 +159,13 @@ describe("Routing tests", () => {
             include: ["trafficIncidents", "trafficFlow", "hillshade"]
         });
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
         await clearRoutes();
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
@@ -171,6 +177,7 @@ describe("Routing tests", () => {
 
         await clearWaypoints();
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
@@ -178,18 +185,76 @@ describe("Routing tests", () => {
         // Changing the style, asserting that the route stays the same:
         await setStyle("monoDark");
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
 
         await showWaypoints([[4.53074, 51.95102]]);
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         await waitForRenderedWaypoints(1);
 
         // Changing the style, asserting that the route stays the same:
         await setStyle("standardLight");
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitForRenderedWaypoints(1);
+
+        // Clearing routes but keeping waypoints, changing style, and showing routes right after:
+        await clearRoutes();
+        await setStyle("standardDark");
+        await showRoutes(amsterdamToRotterdamRoutes);
+        await waitForMapIdle();
+        await waitForRenderedWaypoints(1);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Showing a route right after changing the style", async () => {
+        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await initRouting();
+        await setStyle("monoLight");
+        await showRoutes(amsterdamToRotterdamRoutes);
+
+        await waitForMapIdle();
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Showing waypoints right after changing the style", async () => {
+        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await initRouting();
+        await setStyle("monoLight");
+        await showWaypoints([
+            [4.53074, 51.95102],
+            [4.88951, 52.37229]
+        ]);
+
+        await waitForMapIdle();
+        await waitForRenderedWaypoints(2);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 2000);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Showing waypoints first and right after changing the style", async () => {
+        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await initRouting();
+        await showWaypoints([
+            [4.53074, 51.95102],
+            [4.88951, 52.37229]
+        ]);
+        await setStyle("monoLight");
+
+        await waitForMapIdle();
+        await waitForRenderedWaypoints(2);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 2000);
+
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 

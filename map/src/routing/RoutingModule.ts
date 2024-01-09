@@ -63,7 +63,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     private constructor(map: TomTomMap, config?: RoutingModuleConfig) {
-        super(map, config);
+        super("geojson", map, config);
     }
 
     private createSourcesWithLayers(layersSpecs: RoutingLayersSpecs): RoutingSourcesWithLayers {
@@ -115,16 +115,14 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
-        // TODO: displaying traffic and EV stops require traffic and poi assets in the style. Should we at least verify their existence and log a warning if not present?
-
         // loading of extra assets if not present in the map style:
         // TODO: bring waypoint assets into SDK as lightweight SVGs which we can add to style and personalize a bit (coloring)
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
         this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
-
         this.addImageIfNotExisting(INSTRUCTION_ARROW_IMAGE_ID, instructionArrowIconImg);
+        // TODO: displaying traffic and EV stops require traffic and poi assets in the style. Should we at least verify their existence and log a warning if not present?
 
         this.layersSpecs = createLayersSpecs(mergeConfig(config).routeLayers);
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
@@ -132,6 +130,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
             this.mapLibreMap
         );
+
         return routingSourcesWithLayers;
     }
 
@@ -171,7 +170,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     /**
      * @ignore
      */
-    protected async restoreDataAndConfig() {
+    protected async restoreDataAndConfigImpl() {
         const previouslyShown = {
             waypoints: this.sourcesWithLayers.waypoints.shownFeatures,
             routeLines: this.sourcesWithLayers.routeLines.shownFeatures,
@@ -220,8 +219,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @param routes The routes to show.
      * @param options An optional selected index from the array of routes. Will make that route appear selected. Defaults to 0 (first/recommended route).
      */
-    showRoutes(routes: Routes, options?: ShowRoutesOptions) {
+    async showRoutes(routes: Routes, options?: ShowRoutesOptions) {
         const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.routeLines.show(displayRoutes);
         this.sourcesWithLayers.vehicleRestricted.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
         this.sourcesWithLayers.incidents.show(
@@ -239,7 +239,8 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * Clears any previously shown routes from the map.
      * * If nothing was shown before, nothing happens.
      */
-    clearRoutes() {
+    async clearRoutes() {
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.routeLines.clear();
         this.sourcesWithLayers.vehicleRestricted.clear();
         this.sourcesWithLayers.incidents.clear();
@@ -256,9 +257,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * * De-selects the previously selected route, if applicable.
      * @param index The route index to select. Must be within the existing rendered routes.
      */
-    selectRoute(index: number) {
+    async selectRoute(index: number) {
         const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.routeLines.shownFeatures, index);
 
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.routeLines.show(updatedRoutes);
         // TODO: simply update route style instead of regenerating EV stations again
         this.sourcesWithLayers.evChargingStations.show(toDisplayChargingStations(updatedRoutes));
@@ -275,11 +277,12 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * Shows the given waypoints on the map.
      * @param waypointsLike The waypoint-like inputs to show.
      */
-    showWaypoints(waypointsLike: PlanningWaypoint[] | Waypoints) {
+    async showWaypoints(waypointsLike: PlanningWaypoint[] | Waypoints) {
         const waypoints = Array.isArray(waypointsLike)
             ? toDisplayWaypoints(waypointsLike)
             : // FeatureCollection expected:
               toDisplayWaypoints(waypointsLike.features as PlanningWaypoint[]);
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.waypoints.show(waypoints);
     }
 
@@ -287,7 +290,8 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * Clears any previously shown waypoints from the map.
      * * If nothing was shown before, nothing happens.
      */
-    clearWaypoints() {
+    async clearWaypoints() {
+        await this.waitUntilSourcesAndLayersAdded();
         this.sourcesWithLayers.waypoints.clear();
     }
 

@@ -99,9 +99,7 @@ const setupBasemapClickHandler = async () =>
         });
     });
 
-// TODO: restore tests. They run well locally but fail in CI/CD
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip("Tests with user events", () => {
+describe("Tests with user events", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
@@ -190,22 +188,26 @@ describe.skip("Tests with user events", () => {
     });
 
     test("Hover and long hover states for a place", async () => {
+        const placePosition = await getPixelCoords(firstPlacePosition);
         await initPlaces();
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs()).layerIDs;
         await showPlaces(places);
         await waitForMapIdle();
         await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 5000);
-        await setupPlacesHoverHandlers();
 
-        const placePosition = await getPixelCoords(firstPlacePosition);
+        await setupPlacesHoverHandlers();
+        // Moving cursor over the place (hovering)
         await page.mouse.move(placePosition.x, placePosition.y);
         await waitForEventState("hover", placesLayerIDs);
+        // double-checking we still have the same number of rendered places:
+        await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
         // Moving cursor away from the place
         await page.mouse.move(placePosition.x - 100, placePosition.y - 50);
         await waitForEventState(undefined, placesLayerIDs);
         expect(await getNumHoversAndLongHovers()).toEqual([1, 0]);
+        await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
 
-        // Moving cursor back to the place
+        // Moving the cursor back to the place
         await page.mouse.move(placePosition.x, placePosition.y);
         await waitForEventState("hover", placesLayerIDs);
         // Waiting for a long-hover:
@@ -216,6 +218,30 @@ describe.skip("Tests with user events", () => {
         await page.mouse.move(placePosition.x - 100, placePosition.y - 50);
         await waitForEventState(undefined, placesLayerIDs);
         expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("hover events for a place shown after changing map style", async () => {
+        const placePosition = await getPixelCoords(firstPlacePosition);
+        // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
+        await initPlaces();
+        await setupPlacesClickHandler();
+
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs()).layerIDs;
+        await setStyle("standardDark");
+
+        // We show the places after the map style has changed.
+        // Now we'll test whether the events still work properly
+        // (internally meaning that the source and layers proper reference is still in the events proxy when restoring the PlacesModule after the style change):
+        await showPlaces(places);
+        await waitForMapIdle();
+        await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
+        // Moving cursor over the place (hovering)
+        await page.mouse.move(placePosition.x, placePosition.y);
+        await waitForEventState("hover", placesLayerIDs);
+        // double-checking we still have the same number of rendered places:
+        await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -380,9 +406,7 @@ describe.skip("Tests with user events", () => {
     });
 });
 
-// TODO: restore tests. They run well locally but fail in CI/CD
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip("Events custom configuration", () => {
+describe("Events custom configuration", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());

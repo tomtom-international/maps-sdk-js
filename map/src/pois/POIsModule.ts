@@ -70,7 +70,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
     }
 
     private constructor(map: TomTomMap, config?: POIsModuleConfig) {
-        super(map, config);
+        super("style", map, config);
     }
 
     /**

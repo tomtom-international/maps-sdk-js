@@ -46,7 +46,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     private constructor(map: TomTomMap, config?: IncidentsConfig) {
-        super(map, config);
+        super("style", map, config);
     }
 
     /**

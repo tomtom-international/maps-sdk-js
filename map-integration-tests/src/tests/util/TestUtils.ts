@@ -192,6 +192,8 @@ export const showPlaces = async (places: Place | Place[] | Places) =>
         (globalThis as MapsSDKThis).places?.show(inputPlaces);
     }, places);
 
+export const clearPlaces = async () => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
+
 export const initGeometries = async (config?: GeometriesModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;

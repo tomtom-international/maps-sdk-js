@@ -184,25 +184,43 @@ describe("Map utils - updateLayersAndSource", () => {
             } as unknown as Map);
 
         // empty arrays
-        updateLayersAndSource([], [], {} as AbstractSourceWithLayers, newMapMock());
+        updateLayersAndSource(
+            [],
+            [],
+            { _updateSourceAndLayerIDs: jest.fn() } as unknown as AbstractSourceWithLayers,
+            newMapMock()
+        );
 
         // remove one layer
         let mapMock = newMapMock();
         const someId = "someId";
+
+        const sourceWithLayersMock = {
+            _layerSpecs: [{ id: someId }],
+            _updateSourceAndLayerIDs: jest.fn()
+        };
+
         updateLayersAndSource(
             [],
             [{ id: someId } as ToBeAddedLayerSpecWithoutSource],
-            { _layerSpecs: [{ id: someId }] } as GeoJSONSourceWithLayers,
+            sourceWithLayersMock as unknown as GeoJSONSourceWithLayers,
             mapMock
         );
         expect(mapMock.removeLayer).toHaveBeenCalledTimes(1);
+        expect(sourceWithLayersMock._updateSourceAndLayerIDs).toHaveBeenCalled();
+
+        const sourceWithLayersMock2 = {
+            source: { id: "sourceId" },
+            _layerSpecs: [{ id: someId }],
+            _updateSourceAndLayerIDs: jest.fn()
+        };
 
         // add one layer
         mapMock = newMapMock();
         updateLayersAndSource(
             [{ id: someId } as ToBeAddedLayerSpecWithoutSource],
             [],
-            { source: { id: "sourceId" }, _layerSpecs: [{ id: someId }] } as GeoJSONSourceWithLayers,
+            sourceWithLayersMock2 as unknown as GeoJSONSourceWithLayers,
             mapMock
         );
 
@@ -211,14 +229,16 @@ describe("Map utils - updateLayersAndSource", () => {
         updateLayersAndSource(
             [{ id: "layerX", type: "line", layout: { prop0: "value0" } } as ToBeAddedLayerSpecWithoutSource],
             [{ id: "layerX", type: "line" }],
-            { source: { id: "sourceId" }, _layerSpecs: [{ id: someId }] } as GeoJSONSourceWithLayers,
+            sourceWithLayersMock2 as unknown as GeoJSONSourceWithLayers,
             mapMock
         );
         expect(mapMock.setLayoutProperty).toHaveBeenCalledTimes(1);
         expect(mapMock.setFilter).toHaveBeenCalledTimes(1);
         expect(mapMock.setPaintProperty).toHaveBeenCalledTimes(0);
+        expect(sourceWithLayersMock2._updateSourceAndLayerIDs).toHaveBeenCalledTimes(2);
     });
 });
+
 describe("Map utils - addLayersInCorrectOrder", () => {
     test("empty list case", () => {
         const mapMock = {} as unknown as Map;
@@ -226,7 +246,7 @@ describe("Map utils - addLayersInCorrectOrder", () => {
     });
 
     test("complex case with ordering", () => {
-        // adding complex case
+        // adding a complex case
         const mapMock = {
             addLayer: jest.fn(),
             setLayoutProperty: jest.fn(),

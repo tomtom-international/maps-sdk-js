@@ -42,7 +42,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     }
 
     private constructor(map: TomTomMap, config?: FlowConfig) {
-        super(map, config);
+        super("style", map, config);
     }
 
     /**

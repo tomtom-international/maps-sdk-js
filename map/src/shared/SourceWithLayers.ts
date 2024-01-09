@@ -15,7 +15,8 @@ import {
     ToBeAddedLayerSpec,
     ToBeAddedLayerSpecWithoutSource,
     CleanEventStatesOptions,
-    CleanEventStateOptions
+    CleanEventStateOptions,
+    SourceWithLayers
 } from "./types";
 import { FeatureCollection } from "geojson";
 import { asDefined } from "./assertionUtils";
@@ -29,7 +30,8 @@ export abstract class AbstractSourceWithLayers<
     RUNTIME_SOURCE extends Source = Source,
     LAYER_SPEC extends LayerSpecification = LayerSpecification
 > {
-    _layerSpecs: LAYER_SPEC[];
+    readonly _layerSpecs: LAYER_SPEC[];
+    private _sourceAndLayerIDs!: SourceWithLayerIDs;
 
     constructor(
         readonly map: Map,
@@ -37,6 +39,7 @@ export abstract class AbstractSourceWithLayers<
         layerSpecs: LAYER_SPEC[]
     ) {
         this._layerSpecs = layerSpecs;
+        this._updateSourceAndLayerIDs();
     }
 
     isAnyLayerVisible(filter?: LayerSpecFilter): boolean {
@@ -51,6 +54,10 @@ export abstract class AbstractSourceWithLayers<
         return filter ? this._layerSpecs.filter(filter) : this._layerSpecs;
     }
 
+    _updateSourceAndLayerIDs(): void {
+        this._sourceAndLayerIDs = { sourceID: this.source.id, layerIDs: this._layerSpecs.map((layer) => layer.id) };
+    }
+
     private isLayerVisible(layer: LayerSpecification): boolean {
         return this.map.getLayoutProperty(layer.id, "visibility") !== "none";
     }
@@ -62,7 +69,15 @@ export abstract class AbstractSourceWithLayers<
     }
 
     get sourceAndLayerIDs(): SourceWithLayerIDs {
-        return { sourceID: this.source.id, layerIDs: this._layerSpecs.map((layer) => layer.id) };
+        return this._sourceAndLayerIDs;
+    }
+
+    equalSourceAndLayerIDs(other: SourceWithLayers): boolean {
+        return (
+            this.sourceAndLayerIDs.sourceID == other.sourceAndLayerIDs.sourceID &&
+            this.sourceAndLayerIDs.layerIDs.length == other.sourceAndLayerIDs.layerIDs.length &&
+            this.sourceAndLayerIDs.layerIDs.every((id, index) => id == other.sourceAndLayerIDs.layerIDs[index])
+        );
     }
 }
 
@@ -102,7 +117,7 @@ export class StyleSourceWithLayers<
 }
 
 /**
- * Source with layers which originally is not in the map style but it's to be added after the map is initialized.
+ * Source with layers which originally is not in the map style, but it's to be added after the map is initialized.
  */
 export class AddedSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
@@ -134,10 +149,7 @@ export class AddedSourceWithLayers<
     }
 }
 
-const emptyFeatureCollection: FeatureCollection = {
-    type: "FeatureCollection",
-    features: []
-};
+const emptyFeatureCollection: FeatureCollection = { type: "FeatureCollection", features: [] };
 
 /**
  * @ignore

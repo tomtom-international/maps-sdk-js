@@ -13,7 +13,7 @@ describe("AbstractMapModule tests", () => {
 
         static async init(tomtomMap: TomTomMap, config?: StyleModuleConfig): Promise<TestModule> {
             await waitUntilMapIsReady(tomtomMap);
-            return new TestModule(tomtomMap, config);
+            return new TestModule("style", tomtomMap, config);
         }
 
         protected _initSourcesWithLayers(): Record<string, never> {
@@ -26,7 +26,7 @@ describe("AbstractMapModule tests", () => {
             return config;
         }
 
-        protected restoreDataAndConfig() {
+        protected restoreDataAndConfigImpl() {
             this.restored = true;
             this.config && this._applyConfig(this.config);
         }
