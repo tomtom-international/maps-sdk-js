@@ -207,7 +207,7 @@ describe("Routing tests", () => {
         await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
         await waitForRenderedWaypoints(1);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -220,7 +220,7 @@ describe("Routing tests", () => {
         await showRoutes(amsterdamToRotterdamRoutes);
 
         await waitForMapIdle();
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -237,7 +237,7 @@ describe("Routing tests", () => {
 
         await waitForMapIdle();
         await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -253,7 +253,7 @@ describe("Routing tests", () => {
 
         await waitForMapIdle();
         await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

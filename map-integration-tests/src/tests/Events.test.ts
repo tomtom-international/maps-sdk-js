@@ -190,6 +190,7 @@ describe("Tests with user events", () => {
     test("Hover and long hover states for a place", async () => {
         const placePosition = await getPixelCoords(firstPlacePosition);
         await initPlaces();
+        await waitForMapIdle();
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs()).layerIDs;
         await showPlaces(places);
         await waitForMapIdle();
@@ -227,7 +228,6 @@ describe("Tests with user events", () => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces();
         await setupPlacesClickHandler();
-
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs()).layerIDs;
         await setStyle("standardDark");
 
