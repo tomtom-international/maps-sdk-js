@@ -34,6 +34,7 @@ import {
     initHillshade,
     setStyle,
     waitForMapIdle,
+    waitForTimeout,
     waitUntilRenderedFeatures,
     waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
@@ -206,6 +207,7 @@ describe("Routing tests", () => {
         await setStyle("standardDark");
         await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
+        await waitForTimeout(2000);
         await waitForRenderedWaypoints(1);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
@@ -220,6 +222,7 @@ describe("Routing tests", () => {
         await showRoutes(amsterdamToRotterdamRoutes);
 
         await waitForMapIdle();
+        await waitForTimeout(2000);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
@@ -236,6 +239,7 @@ describe("Routing tests", () => {
         ]);
 
         await waitForMapIdle();
+        await waitForTimeout(2000);
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
 
