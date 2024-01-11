@@ -3,6 +3,7 @@ import { TomTomMap } from "../TomTomMap";
 import { EventsProxy } from "./EventsProxy";
 import { SourcesWithLayers, SourceWithLayerIDs } from "./types";
 import { MapModuleSource } from "./types/mapModule";
+import { waitUntilMapIsReady } from "./mapUtils";
 
 /**
  * Base class for all Maps SDK map modules.
@@ -40,10 +41,10 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
 
     /**
      * Indicates that this module is currently adding its sources and layers to the map, so during this time it might not function properly.
-     * @see waitUntilSourcesAndLayersAdded
+     * @see waitUntilModuleReady
      * @private
      */
-    private addingSourcesAndLayers = false;
+    private moduleReady = false;
 
     /**
      * Builds this module based on a given Maps SDK map.
@@ -73,7 +74,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * @ignore
      */
     protected initSourcesWithLayers(config?: CFG, restore?: boolean): void {
-        this.addingSourcesAndLayers = true;
+        this.moduleReady = false;
         this.sourcesWithLayers = this._initSourcesWithLayers(config, restore);
         this._sourceAndLayerIDs = Object.fromEntries(
             Object.entries(this.sourcesWithLayers).map(([name, sourceWithLayers]) => [
@@ -84,7 +85,11 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         if (restore) {
             this.eventsProxy.updateIfRegistered(this.sourcesWithLayers);
         }
-        this.addingSourcesAndLayers = false;
+        // Only if the map is still ready, we consider that the module is ready.
+        // Otherwise, we assume there's a quick style change in progress and expect that'll trigger the module to restore itself again.
+        if (this.tomtomMap.mapReady) {
+            this.moduleReady = true;
+        }
     }
 
     /**
@@ -94,11 +99,12 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      */
     protected abstract _initSourcesWithLayers(config?: CFG, restore?: boolean): SOURCES_WITH_LAYERS;
 
-    protected async waitUntilSourcesAndLayersAdded(): Promise<void> {
-        if (this.addingSourcesAndLayers) {
+    protected async waitUntilModuleReady(): Promise<void> {
+        await waitUntilMapIsReady(this.tomtomMap);
+        if (!this.moduleReady) {
             await new Promise<void>((resolve) => {
                 const interval = setInterval(() => {
-                    if (!this.addingSourcesAndLayers) {
+                    if (this.tomtomMap.mapReady && this.moduleReady) {
                         clearInterval(interval);
                         resolve();
                     }
@@ -111,7 +117,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      * Applies the configuration to this module.
      * @param config The configuration to apply. If undefined, the configuration will be reset to defaults.
      */
-    applyConfig(config: CFG | undefined): void {
+    applyConfig(config: CFG | undefined) {
         this.config = this._applyConfig(config);
     }
 
@@ -133,12 +139,12 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
     }
 
     private async restoreDataAndConfig() {
-        // defensively raising the state flag already to prevent race conditions:
-        this.addingSourcesAndLayers = true;
+        // defensively declaring the module as not ready to prevent race conditions:
+        this.moduleReady = false;
         if (this.sourceType == "geojson") {
             // (We use setTimeout to compensate for a MapLibre glitch where symbol layers can't get added right after
             // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
-            setTimeout(() => this.restoreDataAndConfigImpl(), 250);
+            setTimeout(() => this.restoreDataAndConfigImpl(), 400);
         } else {
             this.restoreDataAndConfigImpl();
         }

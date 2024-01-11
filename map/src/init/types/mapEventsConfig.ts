@@ -2,7 +2,7 @@ export type MapEventsConfig = {
     /**
      * Defines the event coordinates precision mode.
      * * box: features are queried within the padding box.
-     * * point: features are queried at the specific event point. Makes paddingBox irrelevant.
+     * * point: features are queried at the specific event point. Makes paddingBoxPx irrelevant.
      * * point-then-box: first the features are queried at the specific event point. If none returned, then they're queried within the padding box.
      * @default box
      */
@@ -40,7 +40,7 @@ export type MapEventsConfig = {
      */
     longHoverDelayAfterMapMoveMS?: number;
     /**
-     * Delay to trigger a long-hover event when map was still since the last long hover (milliseconds).
+     * Delay to trigger a long-hover event when the map was still since the last long hover (milliseconds).
      * @default 300
      */
     longHoverDelayOnStillMapMS?: number;

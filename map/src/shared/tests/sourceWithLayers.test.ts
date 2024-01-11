@@ -239,6 +239,47 @@ describe("AddedSourceWithLayers tests", () => {
             validate: false
         });
     });
+
+    test("equalSourceAndLayerIDs", () => {
+        const mapLibreMock = {
+            getLayer: jest.fn(),
+            getSource: jest.fn().mockReturnValue({ id: testSourceID }),
+            addLayer: jest.fn(),
+            setLayoutProperty: jest.fn(),
+            getStyle: jest.fn().mockReturnValue({
+                sources: { testSourceID: { id: testSourceID } },
+                layers: testLayerSpecs
+            })
+        } as unknown as Map;
+
+        const sourceWithLayersA = new AddedSourceWithLayers(
+            mapLibreMock,
+            testSourceID,
+            { type: "vector" },
+            testLayerSpecs
+        );
+
+        expect(sourceWithLayersA.equalSourceAndLayerIDs(sourceWithLayersA)).toBe(true);
+
+        const sourceWithLayersB = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, testToBeAddedLayerSpecs);
+        expect(sourceWithLayersA.equalSourceAndLayerIDs(sourceWithLayersB)).toBe(true);
+        expect(sourceWithLayersB.equalSourceAndLayerIDs(sourceWithLayersA)).toBe(true);
+
+        const anotherSource = new GeoJSONSourceWithLayers(mapLibreMock, "another-source", testToBeAddedLayerSpecs);
+        expect(sourceWithLayersB.equalSourceAndLayerIDs(anotherSource)).toBe(false);
+
+        const onlyOneLayer = new GeoJSONSourceWithLayers(mapLibreMock, testSourceID, [layer0]);
+        expect(sourceWithLayersB.equalSourceAndLayerIDs(onlyOneLayer)).toBe(false);
+        expect(anotherSource.equalSourceAndLayerIDs(onlyOneLayer)).toBe(false);
+
+        const styleSourceWithLayers = new StyleSourceWithLayers(mapLibreMock, { id: testSourceID } as Source);
+        expect(sourceWithLayersA.equalSourceAndLayerIDs(styleSourceWithLayers)).toBe(true);
+        expect(styleSourceWithLayers.equalSourceAndLayerIDs(sourceWithLayersA)).toBe(true);
+        expect(styleSourceWithLayers.equalSourceAndLayerIDs(sourceWithLayersB)).toBe(true);
+        expect(styleSourceWithLayers.equalSourceAndLayerIDs(anotherSource)).toBe(false);
+        expect(anotherSource.equalSourceAndLayerIDs(styleSourceWithLayers)).toBe(false);
+        expect(styleSourceWithLayers.equalSourceAndLayerIDs(onlyOneLayer)).toBe(false);
+    });
 });
 
 describe("GeoJSONSourceWithLayers", () => {

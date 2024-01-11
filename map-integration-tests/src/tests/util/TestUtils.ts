@@ -10,6 +10,7 @@ import {
     PlacesModuleConfig,
     poiLayerIDs,
     POIsModuleConfig,
+    SourceWithLayerIDs,
     StyleInput,
     StyleModuleInitConfig
 } from "map";
@@ -101,12 +102,12 @@ export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Positio
     page.evaluate(
         (inputLayerIDs, inputLngLat) => {
             const mapLibreMap = (globalThis as MapsSDKThis).mapLibreMap;
-            return mapLibreMap.queryRenderedFeatures(
-                inputLngLat && mapLibreMap.project(inputLngLat as [number, number]),
-                {
-                    layers: inputLayerIDs
-                }
-            );
+            const options = { layers: inputLayerIDs };
+            if (inputLngLat) {
+                return mapLibreMap.queryRenderedFeatures(mapLibreMap.project(inputLngLat as [number, number]), options);
+            } else {
+                return mapLibreMap.queryRenderedFeatures(options);
+            }
         },
         layerIDs,
         lngLat
@@ -169,14 +170,8 @@ export const getVisiblePOILayers = async () =>
 
 export const getNumVisiblePOILayers = async () => (await getVisiblePOILayers()).length;
 
-export const getPlacesSourceAndLayerIDs = async (): Promise<{ sourceID: string; layerIDs: string[] }> =>
-    page.evaluate(() => {
-        const places = (globalThis as MapsSDKThis).places;
-        return {
-            sourceID: places?.sourceAndLayerIDs.places.sourceID as string,
-            layerIDs: places?.sourceAndLayerIDs.places.layerIDs as string[]
-        };
-    });
+export const getPlacesSourceAndLayerIDs = async (): Promise<SourceWithLayerIDs> =>
+    page.evaluate(() => (globalThis as MapsSDKThis).places!.sourceAndLayerIDs.places);
 
 export const getGeometriesSourceAndLayerIDs = async () =>
     page.evaluate(() => (globalThis as MapsSDKThis).geometries?.sourceAndLayerIDs);

@@ -221,7 +221,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      */
     async showRoutes(routes: Routes, options?: ShowRoutesOptions) {
         const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.routeLines.show(displayRoutes);
         this.sourcesWithLayers.vehicleRestricted.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
         this.sourcesWithLayers.incidents.show(
@@ -240,7 +240,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * * If nothing was shown before, nothing happens.
      */
     async clearRoutes() {
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.routeLines.clear();
         this.sourcesWithLayers.vehicleRestricted.clear();
         this.sourcesWithLayers.incidents.clear();
@@ -260,7 +260,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     async selectRoute(index: number) {
         const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.routeLines.shownFeatures, index);
 
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.routeLines.show(updatedRoutes);
         // TODO: simply update route style instead of regenerating EV stations again
         this.sourcesWithLayers.evChargingStations.show(toDisplayChargingStations(updatedRoutes));
@@ -282,7 +282,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             ? toDisplayWaypoints(waypointsLike)
             : // FeatureCollection expected:
               toDisplayWaypoints(waypointsLike.features as PlanningWaypoint[]);
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.waypoints.show(waypoints);
     }
 
@@ -291,7 +291,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * * If nothing was shown before, nothing happens.
      */
     async clearWaypoints() {
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.waypoints.clear();
     }
 

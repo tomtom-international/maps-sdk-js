@@ -124,7 +124,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @param places
      */
     async show(places: Place | Place[] | Places) {
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.mapLibreMap, this.config));
     }
 
@@ -132,7 +132,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * Clears the places from the map.
      */
     async clear() {
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.places.clear();
     }
 

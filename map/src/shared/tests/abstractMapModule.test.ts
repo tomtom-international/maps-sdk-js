@@ -31,6 +31,10 @@ describe("AbstractMapModule tests", () => {
             this.config && this._applyConfig(this.config);
         }
 
+        async waitUntilModuleReady(): Promise<void> {
+            await super.waitUntilModuleReady();
+        }
+
         // Implement events, however it is not tested here.
         // get events(): EventsModule {
         //     return jest.fn() as unknown as EventsModule;
@@ -71,8 +75,6 @@ describe("AbstractMapModule tests", () => {
         } as unknown as TomTomMap;
 
         let testModule = await TestModule.init(tomtomMapMock);
-        // TODO: in theory this should be called
-        //expect(tomtomMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata");
 
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
@@ -104,11 +106,24 @@ describe("AbstractMapModule tests", () => {
 
         const testModule = await TestModule.init(tomtomMapMock);
         await new Promise((resolve) => setTimeout(resolve, 6000));
-        // TODO: in theory this should be called:
-        // expect(tomtomMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata");
 
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
         expect(testModule.getConfig()).toBeUndefined();
+    });
+
+    test("Wait until module is ready", async () => {
+        const tomtomMapMock = {
+            mapLibreMap: {
+                isStyleLoaded: jest.fn().mockReturnValue(false),
+                once: jest.fn().mockReturnValue(Promise.resolve())
+            } as unknown as Map,
+            addStyleChangeHandler: jest.fn(),
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
+        } as unknown as TomTomMap;
+
+        const testModule = await TestModule.init(tomtomMapMock);
+        await testModule.waitUntilModuleReady();
+        expect(testModule.initCalled).toBe(true);
     });
 });

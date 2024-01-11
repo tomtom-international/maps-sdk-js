@@ -163,7 +163,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @param geometries The geometries to display.
      */
     async show(geometries: PolygonFeatures) {
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         const geometry = this.sourcesWithLayers.geometry;
         geometry.show(prepareGeometryForDisplay(geometries, this.config));
         this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(geometry.shownFeatures));
@@ -173,7 +173,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * Clears the Geometry from the map.
      */
     async clear() {
-        await this.waitUntilSourcesAndLayersAdded();
+        await this.waitUntilModuleReady();
         this.sourcesWithLayers.geometry.clear();
     }
 

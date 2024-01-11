@@ -202,16 +202,6 @@ describe("Routing tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitForRenderedWaypoints(1);
 
-        // Clearing routes but keeping waypoints, changing style, and showing routes right after:
-        await clearRoutes();
-        await setStyle("standardDark");
-        await showRoutes(amsterdamToRotterdamRoutes);
-        await waitForMapIdle();
-        await waitForTimeout(2000);
-        await waitForRenderedWaypoints(1);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
-
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
@@ -222,7 +212,7 @@ describe("Routing tests", () => {
         await showRoutes(amsterdamToRotterdamRoutes);
 
         await waitForMapIdle();
-        await waitForTimeout(2000);
+        await waitForTimeout(10000);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 

@@ -16,7 +16,6 @@ import {
     setStyle,
     showGeometry,
     showPlaces,
-    tryBeforeTimeout,
     waitForMapIdle,
     waitForTimeout,
     waitUntilRenderedFeatures
@@ -99,6 +98,29 @@ const setupBasemapClickHandler = async () =>
         });
     });
 
+const waitForEventState = async (
+    expectedEventState: EventType | undefined,
+    layerIDs: string[]
+): Promise<EventType | undefined> =>
+    new Promise<EventType | undefined>((resolve, reject) => {
+        let eventState;
+        const intervalMS = 200;
+        const maxTries = 5000 / intervalMS;
+        let tries = 0;
+        const interval = setInterval(async () => {
+            eventState = (await queryRenderedFeatures(layerIDs))[0]?.properties?.eventState;
+            if (eventState == expectedEventState) {
+                clearInterval(interval);
+                resolve(eventState);
+            }
+            tries++;
+            if (tries > maxTries) {
+                clearInterval(interval);
+                reject(`Event state didn't match ${expectedEventState}. Last read value was ${eventState}`);
+            }
+        }, intervalMS);
+    });
+
 describe("Tests with user events", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
@@ -106,17 +128,9 @@ describe("Tests with user events", () => {
 
     // Reset test variables for each test
     beforeEach(async () => {
-        await mapEnv.loadMap(
-            { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
-            {
-                style: { type: "published", include: ["poi"] },
-                // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                events: { longHoverDelayAfterMapMoveMS: 2000, longHoverDelayOnStillMapMS: 1500 }
-            }
-        );
-
         await page.evaluate(() => {
             const mapSDKThis = globalThis as MapsSDKThis;
+            mapSDKThis._clickedLngLat = undefined;
             mapSDKThis._clickedTopFeature = undefined;
             mapSDKThis._clickedSourceWithLayers = undefined;
             mapSDKThis._clickedFeatures = undefined;
@@ -129,25 +143,16 @@ describe("Tests with user events", () => {
             mapSDKThis.places = undefined;
             mapSDKThis.geometries = undefined;
         });
-    });
 
-    const waitForEventState = async (
-        expectedEventState: EventType | undefined,
-        layerIDs: string[]
-    ): Promise<EventType | undefined> => {
-        return tryBeforeTimeout(
-            async (): Promise<EventType> => {
-                let eventState;
-                do {
-                    await waitForTimeout(100);
-                    eventState = (await queryRenderedFeatures(layerIDs))[0]?.properties?.eventState;
-                } while (eventState != expectedEventState);
-                return eventState;
-            },
-            `Event state didn't match ${expectedEventState}.`,
-            5000
+        await mapEnv.loadMap(
+            { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
+            {
+                style: { type: "published", include: ["poi"] },
+                // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
+                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 }
+            }
         );
-    };
+    });
 
     test("Click and contextmenu events for places", async () => {
         await initPlaces();
@@ -165,6 +170,7 @@ describe("Tests with user events", () => {
         expect(await getNumLeftAndRightClicks()).toEqual([0, 0]);
 
         await setupPlacesClickHandler();
+        await waitForTimeout(1000);
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         await waitForEventState("click", placesLayerIDs);
         expect(await getNumLeftAndRightClicks()).toEqual([1, 0]);
@@ -178,7 +184,7 @@ describe("Tests with user events", () => {
         await waitForEventState(undefined, placesLayerIDs);
         expect(await getNumLeftAndRightClicks()).toEqual([1, 1]);
 
-        // de-registering handlers, clicking again and asserting nothing happens:
+        // unregistering handlers, clicking again and asserting nothing happens:
         await deRegisterPlacesClickHandlers();
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         await waitForEventState(undefined, placesLayerIDs);
@@ -188,24 +194,27 @@ describe("Tests with user events", () => {
     });
 
     test("Hover and long hover states for a place", async () => {
-        const placePosition = await getPixelCoords(firstPlacePosition);
         await initPlaces();
         await waitForMapIdle();
+        const placePosition = await getPixelCoords(firstPlacePosition);
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs()).layerIDs;
         await showPlaces(places);
         await waitForMapIdle();
         await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 5000);
 
         await setupPlacesHoverHandlers();
+        expect(await getNumHoversAndLongHovers()).toEqual([0, 0]);
+
         // Moving cursor over the place (hovering)
         await page.mouse.move(placePosition.x, placePosition.y);
-        await waitForEventState("hover", placesLayerIDs);
-        // double-checking we still have the same number of rendered places:
-        await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
-        // Moving cursor away from the place
-        await page.mouse.move(placePosition.x - 100, placePosition.y - 50);
-        await waitForEventState(undefined, placesLayerIDs);
         expect(await getNumHoversAndLongHovers()).toEqual([1, 0]);
+        await waitForEventState("hover", placesLayerIDs);
+
+        // Moving cursor away from the place
+        await page.mouse.move(placePosition.x - 100, placePosition.y - 75);
+        expect(await getNumHoversAndLongHovers()).toEqual([1, 0]);
+        await waitForEventState(undefined, placesLayerIDs);
+        // double-checking we still have the same number of rendered places:
         await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
 
         // Moving the cursor back to the place
@@ -215,16 +224,16 @@ describe("Tests with user events", () => {
         await waitForTimeout(3000);
         await waitForEventState("long-hover", placesLayerIDs);
         expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
+
         // Moving away again:
-        await page.mouse.move(placePosition.x - 100, placePosition.y - 50);
+        await page.mouse.move(placePosition.x - 100, placePosition.y - 75);
         await waitForEventState(undefined, placesLayerIDs);
         expect(await getNumHoversAndLongHovers()).toEqual([2, 1]);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("hover events for a place shown after changing map style", async () => {
-        const placePosition = await getPixelCoords(firstPlacePosition);
+    test("Hover events for a place shown after changing map style", async () => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces();
         await setupPlacesClickHandler();
@@ -236,6 +245,7 @@ describe("Tests with user events", () => {
         // (internally meaning that the source and layers proper reference is still in the events proxy when restoring the PlacesModule after the style change):
         await showPlaces(places);
         await waitForMapIdle();
+        const placePosition = await getPixelCoords(firstPlacePosition);
         await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
         // Moving cursor over the place (hovering)
         await page.mouse.move(placePosition.x, placePosition.y);
@@ -292,7 +302,7 @@ describe("Tests with user events", () => {
         // Setting up handlers for places:
         await setupPlacesClickHandler();
 
-        // We click in the place and should not have geometry module returned in features parameter
+        // We click in the place and should not have a geometry module returned in features parameter
         const placePixelCoords = await getPixelCoords(firstPlacePosition);
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         const features = await page.evaluate(() => (globalThis as MapsSDKThis)._clickedFeatures);
@@ -349,7 +359,7 @@ describe("Tests with user events", () => {
             await page.evaluate(
                 () =>
                     (
-                        (globalThis as MapsSDKThis).mapLibreMap.queryRenderedFeatures(undefined, {
+                        (globalThis as MapsSDKThis).mapLibreMap.queryRenderedFeatures({
                             layers: ["Places - City"]
                         })?.[0].geometry as Point
                     ).coordinates
@@ -382,7 +392,7 @@ describe("Tests with user events", () => {
         });
         await page.evaluate(() => ((globalThis as any)._numOfClicks2 = 0));
 
-        // we click on the city label again. Even if the other base map module also listens to clicks, its layers are below
+        // We click on the city label again. Even if the other base map module also listens to clicks, its layers are below
         // so the first base map is the only one to fire the event:
         await page.mouse.click(baseMapCityFeature.x, baseMapCityFeature.y);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks)).toBe(2);

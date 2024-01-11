@@ -19,14 +19,6 @@ export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<void> =
     }
 };
 
-export const waitUntilMapIsLoaded = async (tomtomMap: TomTomMap): Promise<void> => {
-    if (!tomtomMap.mapReady || !tomtomMap.mapLibreMap.isStyleLoaded()) {
-        await tomtomMap.mapLibreMap.once("load");
-        // Recursively waiting for map to be ready (in case of style changes quickly in succession):
-        await waitUntilMapIsLoaded(tomtomMap);
-    }
-};
-
 /**
  * Wait until the source is ready.
  * @param tomtomMap The TomTomMap instance.
