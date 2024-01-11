@@ -83,14 +83,15 @@ describe("Geometry integration tests", () => {
         await setStyle("standardDark");
         await showGeometry(geometryData);
         await waitForMapIdle();
+        expect(mapEnv.consoleErrors).toHaveLength(0);
 
-        expect(await getNumVisibleLayers(sourceID)).toBe(2);
         // non-inverted polygon: fills inside but not the edges:
         const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
         await waitUntilRenderedGeometry(1, amsterdamCenter, layerIDs);
         await waitUntilRenderedGeometry(1, amsterdamSouthEast, layerIDs);
         await waitUntilRenderedGeometry(0, outsideAmsterdamNorth, layerIDs);
         await waitUntilRenderedGeometry(0, outsideAmsterdamSouth, layerIDs);
+        expect(await getNumVisibleLayers(sourceID)).toBe(2);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

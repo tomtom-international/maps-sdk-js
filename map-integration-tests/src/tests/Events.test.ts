@@ -310,7 +310,7 @@ describe("Tests with user events", () => {
         await showPlaces(places);
         await waitForMapIdle();
 
-        // changing the style in between, to double-check we can still register to events in base map after:
+        // changing the style in between, to double-check that we can still register to events in base map after:
         await setStyle("monoLight");
         await waitForMapIdle();
         await setupBasemapClickHandler();
