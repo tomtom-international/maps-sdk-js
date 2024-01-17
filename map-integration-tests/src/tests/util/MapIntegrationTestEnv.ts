@@ -15,6 +15,7 @@ export class MapIntegrationTestEnv {
     consoleErrors: string[] = [];
 
     async loadPage() {
+        this.consoleErrors = [];
         await page.goto("https://localhost:9001");
         page.on(
             "console",

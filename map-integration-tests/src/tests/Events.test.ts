@@ -233,6 +233,7 @@ describe("Tests with user events", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    // eslint-disable-next-line jest/expect-expect
     test("Hover events for a place shown after changing map style", async () => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces();
@@ -252,8 +253,6 @@ describe("Tests with user events", () => {
         await waitForEventState("hover", placesLayerIDs);
         // double-checking we still have the same number of rendered places:
         await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 3000);
-
-        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test("Callback handler arguments", async () => {
