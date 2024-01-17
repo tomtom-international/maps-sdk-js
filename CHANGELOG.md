@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.28...v0.3.1) (2024-01-17)
+
+
+### Features
+
+* Accept request params types to HasLngLat ([b11cc9f](https://github.com/tomtom-international/maps-sdk-js/commit/b11cc9fb2d657cdb2c32f549b2c5a579fd9b5089))
+* Add Matrix Routing support ([c66a122](https://github.com/tomtom-international/maps-sdk-js/commit/c66a1229fba63325ee68d09094724b345a67f495))
+* **ev:** new optional service parameter to filter out ev stations which have unknown availability ([8b68ce4](https://github.com/tomtom-international/maps-sdk-js/commit/8b68ce42f1d80d16943114613c83f17fcfcae401))
+* **map:** adding more poi categories into map category groups ([38b83e9](https://github.com/tomtom-international/maps-sdk-js/commit/38b83e9b8358186c9346b117a30dd508311cc3b8))
+* **map:** allowing to change visibility for selected layer groups in a base map module ([b0c4287](https://github.com/tomtom-international/maps-sdk-js/commit/b0c4287c7165d32d1e92f51c6bc9c719d119b6cc))
+* **map:** changing how we add parameters to setStyle to allow them to grow better in the future ([638aa53](https://github.com/tomtom-international/maps-sdk-js/commit/638aa5361e43e54623b75e4fec9f21a15c29b4df))
+* **map:** first ability to programmatically put and clean event states ([114985d](https://github.com/tomtom-international/maps-sdk-js/commit/114985dd545fe89c7f7267cf6170ff103c01e40f))
+* **map:** improvements displaying charging stations along route ([d26f4a7](https://github.com/tomtom-international/maps-sdk-js/commit/d26f4a760db3b6ee1ae0c6963a6ca759d2892242))
+* **map:** switching map display to Orbis ([f0ccef3](https://github.com/tomtom-international/maps-sdk-js/commit/f0ccef3009572e5dd821019ce8d748b94829567b))
+* **places:** improving place by id response and opening hours properties, and dep upgrades ([2babd19](https://github.com/tomtom-international/maps-sdk-js/commit/2babd1994f9725f172bcdad8e9d5eb1c11cbdd8f))
+* **places:** typing poicategory in place responses. ([fd792bf](https://github.com/tomtom-international/maps-sdk-js/commit/fd792bfe8efb0cb12fa718520256d4420beb79e7))
+* **routing:** adding path point index for each instruction when parsing a route ([c448689](https://github.com/tomtom-international/maps-sdk-js/commit/c4486895878b33068558a4d8127ce5979231ab03))
+* **routing:** cleaning up ldevr post parameters from sdk which should be better integrated in a future, to prevent examples with overlapping or confusing inputs. Updating map integration tests data file locations. ([86af87f](https://github.com/tomtom-international/maps-sdk-js/commit/86af87f942588b3d0d26ed0d60c2e1598482bb85))
+* **routing:** displaying guidance instructions along route line ([5ff152f](https://github.com/tomtom-international/maps-sdk-js/commit/5ff152f72bb87b18145a940adf3e6189a0393892))
+* **routing:** improving routing module tests ([fd766ce](https://github.com/tomtom-international/maps-sdk-js/commit/fd766ce2ced7e190bbeecddabcf5f1e8374680bc))
+* **routing:** making some guidance and api version parameters optional, adding ldver and guidance routing module tests ([8ec0d1d](https://github.com/tomtom-international/maps-sdk-js/commit/8ec0d1d30571ac5dcd725fb6cd8b06fa4d3f5ae8))
+
+
+### Bug Fixes
+
+* **charging_stations:** adding title and adding features for alternatives ([bd3d941](https://github.com/tomtom-international/maps-sdk-js/commit/bd3d9416d831e731996da47e8dd03454cc91de4d))
+* **charging_stations:** work in progress ([a782cf3](https://github.com/tomtom-international/maps-sdk-js/commit/a782cf330dc4dc16046aeef5d519427520235e61))
+* **charging_stations:** work in progress ([306100b](https://github.com/tomtom-international/maps-sdk-js/commit/306100b868a9e8697f5b77eaabea47c085bba2f5))
+* **EDXCE-89:** Adding TODO comments and updating a test ([d4cbff1](https://github.com/tomtom-international/maps-sdk-js/commit/d4cbff1cf9fb9c6d8ae3e04432d17dc54fda0f99))
+* **EDXCE-89:** improvements ([15d4ff2](https://github.com/tomtom-international/maps-sdk-js/commit/15d4ff256820f3398bb6dd9cbd2be58394aff48f))
+* **EDXCE-89:** Moving Routing service to Orbis from Genesis improvements and some cleanup ([b8c59fe](https://github.com/tomtom-international/maps-sdk-js/commit/b8c59fe31234713184ff8216de77ed484163fb55))
+* **EDXCE-89:** Moving Routing service to Orbis from Genesis, work in progress, added ldEV ([4799acd](https://github.com/tomtom-international/maps-sdk-js/commit/4799acd65ba8cf6a0a7f59f00ab54e5d3ad790e6))
+* **EDXCE-89:** Moving Routing service to Orbis from Genesis, work in progress, fixing tests ([240d888](https://github.com/tomtom-international/maps-sdk-js/commit/240d8889f55a77505d8cda3d95a66ff7ae75aa83))
+* **EDXCE-89:** Moving Routing service to Orbis from Genesis, work in progress, lots of commented out code ([e260215](https://github.com/tomtom-international/maps-sdk-js/commit/e2602152809115674a7abaa26066fa71c27069f9))
+* **EDXCE-89:** Moving Routing service to Orbis from Genesis, work in progress, reverting back vehicleRestricted ([51159ae](https://github.com/tomtom-international/maps-sdk-js/commit/51159aed3b597bb71087d794ce49cf6bc79a8d6b))
+* **EDXCE-89:** Moving Routing service to Orbis from Genesis, work in progress, support for new sections ([bd903dc](https://github.com/tomtom-international/maps-sdk-js/commit/bd903dc678dcedab524a9a8d374029e7445f02f3))
+* **map:** fixing petrol station map poi mapping ([07b79a9](https://github.com/tomtom-international/maps-sdk-js/commit/07b79a9ca93be6ba959ede7f21813186ac87f181))
+* **map:** hardening logic when styles and module changes are called quickly in succession ([68e6749](https://github.com/tomtom-international/maps-sdk-js/commit/68e67492a53feb9ee080f3f750a128769cd65781))
+* **map:** hardening logic when styles and module changes are called quickly in succession ([aaa50bc](https://github.com/tomtom-international/maps-sdk-js/commit/aaa50bc3a9ce7d8c5bb207d038e6d3ca4e17338d))
+* **map:** hardening logic when styles and module changes are called quickly in succession ([61bd4f5](https://github.com/tomtom-international/maps-sdk-js/commit/61bd4f5a68fc9dbff4a9c52d2972d4c1712f6732))
+* **map:** multiple fixes related to changing style vs events and showing geojson items ([54b2bf6](https://github.com/tomtom-international/maps-sdk-js/commit/54b2bf6bf92523417d504d3001a31c349368a6f7))
+* **map:** removing maxzoom for charging stations on route for now ([e9d8dc6](https://github.com/tomtom-international/maps-sdk-js/commit/e9d8dc69e576ab25add4a51721bc442f37f075c7))
+* **map:** trying to allow for style data handler errors and still call the following ones. And minor misc fixes. ([aa69f65](https://github.com/tomtom-international/maps-sdk-js/commit/aa69f654a992470d4b07ebd7c4344f307bce6f08))
+* **places:** attempting to mitigate strange glitch where showFeatures isn't updated in sdk geojson sources ([b9455a8](https://github.com/tomtom-international/maps-sdk-js/commit/b9455a8401b806e85ae0b71e79d69a5509d76155))
+* rename project in veracode, blackduck scan workflows ([84d2559](https://github.com/tomtom-international/maps-sdk-js/commit/84d25598581a16a7bd3562e120f2d4a8cceaff50))
+* **routing:** hardening the display of instruction lines on the map ([9a11f26](https://github.com/tomtom-international/maps-sdk-js/commit/9a11f2665e362c29743f9d8e872ef1c2610da3be))
+* **routing:** trying to fix ts check in tests project ([766f8f1](https://github.com/tomtom-international/maps-sdk-js/commit/766f8f1fbb6d04350c27d9b266420fb4a15b9f10))
+* **sdk:** flaky test mitigation ([7bace8f](https://github.com/tomtom-international/maps-sdk-js/commit/7bace8fdc842635964479d0b07656ac4923d8d9b))
+* **sdk:** helping tests run better in ci cd ([b25c499](https://github.com/tomtom-international/maps-sdk-js/commit/b25c4999fb4ef596997b6199949aa69348c2b360))
+* **sdk:** trying to make the geojson modules more resilient to quick changes in succession ([87b0937](https://github.com/tomtom-international/maps-sdk-js/commit/87b09377d74b8117b3da7f11074028452f3b8d83))
+* **sdk:** trying to stabilize tests in ci cd ([48acb9b](https://github.com/tomtom-international/maps-sdk-js/commit/48acb9b3ce1bd59e4181b1003fd85c822c61727b))
+* **tests:** enabling map mocked tests with local asset mocking ([ec13bbb](https://github.com/tomtom-international/maps-sdk-js/commit/ec13bbb0c856c8a613811ae33a7eece311f82e9f))
+* **tests:** enabling puppeteer tests to still run while SDK imports trigger detection of document object due to embedded sdk assets ([6b6c395](https://github.com/tomtom-international/maps-sdk-js/commit/6b6c395dedcfd48ccfa2f527e6d5b7c815b1b445))
+
 ### [0.2.28](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.27...v0.2.28) (2023-11-07)
 
 
