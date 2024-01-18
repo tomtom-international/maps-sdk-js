@@ -6,8 +6,8 @@
 [![TomTom Logo](documentation/images/tomtom-logo-big.svg)](https://www.tomtom.com/)
 
 # Maps SDK JS
-[**Examples**](https://hosted-examples.maps-sdk-js.tomtom.com/main/kitchen-sink/) |
-[**Documentation**](https://developer-staging.tomtom.com/maps-sdk-js/javascript/maps/documentation/overview/introduction) |
+[**Examples**](https://latest.examples.maps-sdk-js.tomtom.com) |
+[**Documentation**](https://developer-staging.tomtom.com/javascript/maps/documentation/overview/introduction) |
 [Request feature](https://github.com/tomtom-international/maps-sdk-js/discussions) |
 [Report bug](https://github.com/tomtom-international/maps-sdk-js/issues)
 
@@ -15,7 +15,7 @@
 
 Maps SDK JS is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://developer.tomtom.com/).
 
-<a href="https://hosted-examples.maps-sdk-js.tomtom.com/main/kitchen-sink/">
+<a href="https://latest.examples.maps-sdk-js.tomtom.com">
     <img src="documentation/images/sdk-examples-collage.png" style="width: 800px" alt="Example Thumbnails">
 </a>
 
