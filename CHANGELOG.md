@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.3.1...v0.3.2) (2024-01-26)
+
+
+### Features
+
+* **sdk:** removing poi style part since in orbis pois are now part of the base map. Pins are still not supported, when/if they come it'll require another sdk update ([535376c](https://github.com/tomtom-international/maps-sdk-js/commit/535376c89d082b380f979596187933ca3132866b))
+
 ### [0.3.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.2.28...v0.3.1) (2024-01-17)
 
 
