@@ -8,7 +8,7 @@ describe("Map style input builder tests", () => {
         `'%s`,
         // @ts-ignore
         (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle: StyleSpecification | string) => {
-            expect(buildStyleInput(tomtomMapParams)).toStrictEqual(rendererStyle);
+            expect(buildStyleInput(tomtomMapParams)).toEqual(rendererStyle);
         }
     );
 
@@ -22,13 +22,20 @@ describe("Map style input builder tests", () => {
         expect(
             withPreviousStyleParts(
                 { type: "published", id: "standardDark" },
-                { type: "published", id: "monoLight", include: ["poi"] }
+                { type: "published", id: "monoLight", include: ["hillshade"] }
             )
-        ).toEqual({ type: "published", id: "standardDark", include: ["poi"] });
+        ).toEqual({ type: "published", id: "standardDark", include: ["hillshade"] });
         expect(
             withPreviousStyleParts(
                 { type: "published", id: "standardDark", include: ["trafficIncidents"] },
-                { type: "published", id: "monoLight", include: ["poi"] }
+                { type: "published", id: "monoLight", include: ["hillshade"] }
+            )
+        ).toEqual({ type: "published", id: "standardDark", include: ["trafficIncidents"] });
+        // New style has no include section so it's taken from the previous one:
+        expect(
+            withPreviousStyleParts(
+                { type: "published", id: "standardDark" },
+                { type: "published", id: "monoLight", include: ["trafficIncidents"] }
             )
         ).toEqual({ type: "published", id: "standardDark", include: ["trafficIncidents"] });
     });

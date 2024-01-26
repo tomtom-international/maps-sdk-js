@@ -174,7 +174,7 @@ describe("Map vector tile traffic incidents module tests", () => {
 
         // changing the map style (and manually adding also poi part):
         // verifying the config is still the same (state restoration):
-        await setStyle({ type: "published", id: "standardDark", include: ["trafficIncidents", "poi"] });
+        await setStyle({ type: "published", id: "standardDark", include: ["trafficIncidents"] });
         await waitForMapIdle();
         expect(await getConfig()).toEqual(config);
 
@@ -226,7 +226,7 @@ describe("Map vector tile traffic incidents module tests", () => {
     test("Traffic incidents filtering with complex initial config", async () => {
         await mapEnv.loadMap(
             { zoom: 13, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["trafficIncidents", "poi"] } }
+            { style: { type: "published", include: ["trafficIncidents"] } }
         );
 
         const config: IncidentsConfig = {
@@ -266,11 +266,7 @@ describe("Map vector tile traffic incidents module tests", () => {
         ).toHaveLength(0);
 
         // CHANGING THE MAP STYLE: verifying the config is still the same (state restoration):
-        await setStyle({
-            type: "published",
-            id: "standardDark",
-            include: ["trafficIncidents", "poi"]
-        });
+        await setStyle({ type: "published", id: "standardDark", include: ["trafficIncidents"] });
         await waitForMapIdle();
         expect(await getConfig()).toEqual(config);
 

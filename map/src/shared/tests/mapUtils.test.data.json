@@ -1,10 +1,15 @@
 [
-  ["undefined style", null, "poi", { "type": "published", "include": ["poi"] }],
+  [
+    "undefined style",
+    null,
+    "trafficIncidents",
+    { "type": "published", "include": ["trafficIncidents"] }
+  ],
   [
     "Just string for published style",
     "monoLight",
-    "poi",
-    { "type": "published", "id": "monoLight", "include": ["poi"] }
+    "trafficIncidents",
+    { "type": "published", "id": "monoLight", "include": ["trafficIncidents"] }
   ],
   [
     "Style without includes already in it",
@@ -18,12 +23,12 @@
   ],
   [
     "Style with some includes already in it",
-    { "type": "published", "id": "standardLight", "include": ["poi"] },
+    { "type": "published", "id": "standardLight", "include": ["hillshade"] },
     "trafficIncidents",
     {
       "type": "published",
       "id": "standardLight",
-      "include": ["poi", "trafficIncidents"]
+      "include": ["hillshade", "trafficIncidents"]
     }
   ]
 ]

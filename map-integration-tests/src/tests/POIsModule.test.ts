@@ -67,10 +67,7 @@ describe("Map vector tile POI filtering tests", () => {
     });
 
     test("Vector tiles pois visibility changes in different ways", async () => {
-        await mapEnv.loadMap(
-            { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ zoom: 14, center: [-0.12621, 51.50394] });
 
         await initPOIs({ visible: false });
         expect(await getNumVisiblePOILayers()).toBe(0);
@@ -107,10 +104,7 @@ describe("Map vector tile POI filtering tests", () => {
     });
 
     test("Vector tiles pois filter starting with no config", async () => {
-        await mapEnv.loadMap(
-            { zoom: 16, center: [-0.12621, 51.50154] },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ zoom: 16, center: [-0.12621, 51.50154] });
         await initPOIs();
         await waitForMapIdle();
         let renderedPOIs = await waitForRenderedPOIsChange(0);
@@ -155,10 +149,7 @@ describe("Map vector tile POI filtering tests", () => {
     });
 
     test("Vector tiles pois filter while initializing with config", async () => {
-        await mapEnv.loadMap(
-            { zoom: 16, center: [-0.12621, 51.50154] },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ zoom: 16, center: [-0.12621, 51.50154] });
         // config poi layer to only include TRANSPORTATION_GROUP categories and expect all features to be from TRANSPORTATION_GROUP
         await initPOIs({ filters: { categories: { show: "only", values: ["TRANSPORTATION_GROUP"] } } });
         await waitForMapIdle();
@@ -219,10 +210,7 @@ describe("Map vector tile POI filtering tests", () => {
             // RAILROAD_STATION
             ["==", ["get", "category"], "railway_station"]
         ];
-        await mapEnv.loadMap(
-            { zoom: 16, center: [-0.12621, 51.50154] },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ zoom: 16, center: [-0.12621, 51.50154] });
         await initPOIs({ ensureAddedToStyle: true });
 
         // manually override existing POI layer filter to be able to verify it's combined with categories filter
@@ -263,10 +251,7 @@ describe("Map vector tile POI feature tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("Ensure required feature properties are defined", async () => {
-        await mapEnv.loadMap(
-            { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ zoom: 14, center: [-0.12621, 51.50394] });
 
         await initPOIs();
         await waitForMapIdle();

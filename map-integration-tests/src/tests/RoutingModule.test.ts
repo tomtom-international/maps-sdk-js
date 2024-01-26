@@ -255,7 +255,7 @@ describe("Routing tests", () => {
     test("Show and clear flows using LDEVR route with guidance", async () => {
         await mapEnv.loadMap(
             { bounds: ldevrTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },
-            { style: { type: "published", id: "drivingLight", include: ["trafficIncidents", "poi"] } }
+            { style: { type: "published", id: "drivingLight", include: ["trafficIncidents"] } }
         );
         // We start zoomed far, asserting that some features won't be rendered:
         await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(5));

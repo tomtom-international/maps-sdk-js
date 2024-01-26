@@ -3,50 +3,42 @@ import { StyleSpecification } from "maplibre-gl";
 import { PublishedStyle, PublishedStyleID, StyleInput, StyleModule, TomTomMapParams } from "./types/mapInit";
 
 const DEFAULT_PUBLISHED_STYLE = "standardLight";
-const URL_PREFIX =
-    "${baseURL}/maps/orbis/assets/styles/${version}/style.json?sourcesVersion=1&apiVersion=1&key=${apiKey}";
+const URL_PREFIX = "${baseURL}/maps/orbis/assets/styles/${version}/style.json?&apiVersion=1&key=${apiKey}";
 
 const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, string>> = {
     standardLight: {
         trafficIncidents: "incidents_light",
         trafficFlow: "flow_relative-light",
-        poi: "poi_dynamic-light",
         hillshade: "hillshade_light"
     },
     standardDark: {
         trafficIncidents: "incidents_dark",
         trafficFlow: "flow_relative-dark",
-        poi: "poi_dynamic-dark",
         hillshade: "hillshade_dark"
     },
     drivingLight: {
         trafficIncidents: "incidents_light",
         trafficFlow: "flow_relative-light",
-        poi: "poi_dynamic-light",
         hillshade: "hillshade_light"
     },
     drivingDark: {
         trafficIncidents: "incidents_dark",
         trafficFlow: "flow_relative-dark",
-        poi: "poi_dynamic-dark",
         hillshade: "hillshade_dark"
     },
     monoLight: {
         trafficIncidents: "incidents_light",
         trafficFlow: "flow_relative-light",
-        poi: "poi_dynamic-mono-light",
         hillshade: "hillshade_mono-light"
     },
     monoDark: {
         trafficIncidents: "incidents_dark",
         trafficFlow: "flow_relative-dark",
-        poi: "poi_dynamic-mono-dark",
         hillshade: "hillshade_mono-dark"
     },
     satellite: {
         trafficIncidents: "incidents_light",
         trafficFlow: "flow_relative-light",
-        poi: "poi_dynamic-satellite",
         hillshade: "hillshade_satellite"
     }
 };

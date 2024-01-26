@@ -137,7 +137,7 @@ describe("Map vector tile traffic module tests", () => {
     test("Traffic flow filtering with complex initial config", async () => {
         await mapEnv.loadMap(
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["trafficFlow", "poi"] } }
+            { style: { type: "published", include: ["trafficFlow"] } }
         );
 
         const config: FlowConfig = {

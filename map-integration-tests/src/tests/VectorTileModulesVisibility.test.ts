@@ -21,7 +21,7 @@ describe("Vector tile modules combined visibility tests, to ensure one module do
                 center: [-0.12621, 51.50394]
             },
             {
-                style: { type: "published", include: ["trafficIncidents", "trafficFlow", "poi", "hillshade"] }
+                style: { type: "published", include: ["trafficIncidents", "trafficFlow", "hillshade"] }
             }
         );
         await page.evaluate(async () => {

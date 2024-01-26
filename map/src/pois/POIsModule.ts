@@ -10,7 +10,7 @@ import {
 } from "../shared";
 import { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from "./types/poisModuleConfig";
 import { notInTheStyle } from "../shared/errorMessages";
-import { prepareForModuleInit } from "../shared/mapUtils";
+import { waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 import { MapStylePOICategory, toMapDisplayPOICategory } from "../places";
 import { poiCategoryGroups } from "./poiCategoryGroups";
@@ -64,8 +64,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
      * @returns {Promise} Returns a promise with a new instance of this module
      */
     static async get(map: TomTomMap, config?: StyleModuleInitConfig & POIsModuleConfig): Promise<POIsModule> {
-        // TODO: POIs are included in the Orbis base map for now:
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, POI_SOURCE_ID, "poi");
+        await waitUntilMapIsReady(map);
         return new POIsModule(map, config);
     }
 

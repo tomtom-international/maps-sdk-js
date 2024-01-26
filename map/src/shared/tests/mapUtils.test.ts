@@ -301,7 +301,7 @@ describe("Map utils - addLayersInCorrectOrder", () => {
 
 describe("Map utils - updateStyleWithStyleModule", () => {
     test("error case", () => {
-        expect(() => updateStyleWithModule({ type: "custom" }, "poi")).toThrow();
+        expect(() => updateStyleWithModule({ type: "custom" }, "trafficIncidents")).toThrow();
     });
 
     test.each(updateStyleData)(

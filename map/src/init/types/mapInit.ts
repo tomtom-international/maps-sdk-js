@@ -56,11 +56,9 @@ export type CustomStyle = {
  * Optional parameter to include modules when loading styles.
  * * trafficIncidents: Include traffic incidents
  * * trafficFlow: Include traffic flow
- * TODO: poi style part is redundant currently because POI layers and assets are already included
- * * pois: Include POIs (Points of Interest)
  * * hillshade: Include hillshade
  */
-export type StyleModule = "trafficIncidents" | "trafficFlow" | "poi" | "hillshade";
+export type StyleModule = "trafficIncidents" | "trafficFlow" | "hillshade";
 
 /**
  * Style to load on the map.

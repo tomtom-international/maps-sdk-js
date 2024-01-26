@@ -112,13 +112,13 @@ This is useful when you want to change the style at runtime. MapLibre will help 
 
 ## Including parts in a style
 When setting the map style, you can include parts into it with the `include` property in [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams).
-For example, including [pois](/javascript/maps/documentation/guides/map/pois) and [traffic incidents](/javascript/maps/documentation/guides/map/trafficIncidents):
+For example, including [hillshade](/javascript/maps/documentation/guides/map/hillshade) and [traffic incidents](/javascript/maps/documentation/guides/map/trafficIncidents):
 
 ```javascript
 import { TomTomMap } from "@anw/maps-sdk-js/map";
 const map = new TomTomMap(
     { container: "map" },
-    { style: { type: "published", include: ["poi", "trafficIncidents"] }}
+    { style: { type: "published", include: ["hillshade", "trafficIncidents"] }}
 );
 ```
 <br/>
@@ -137,7 +137,7 @@ import { TomTomMap } from "@anw/maps-sdk-js/map";
 import { TrafficIncidentsModule } from "@anw/maps-sdk-js/map";
 const map = new TomTomMap(
     { container: "map" },
-    { style: { type: "published", include: ["poi"] }}
+    { style: { type: "published", include: ["trafficIncidents"] }}
 );
 // This will automatically reload the style with traffic incidents in it while preserving previous SDK state:
 const incidents = TrafficIncidentsModule.get(map, { ensureAddedToStyle: true });

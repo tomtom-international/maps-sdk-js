@@ -147,7 +147,6 @@ describe("Tests with user events", () => {
         await mapEnv.loadMap(
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
-                style: { type: "published", include: ["poi"] },
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
                 events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 }
             }
@@ -425,7 +424,6 @@ describe("Events custom configuration", () => {
         await mapEnv.loadMap(
             { zoom: 10, center: [4.89067, 52.37313] },
             {
-                style: { type: "published", include: ["poi"] },
                 events: {
                     cursorOnMap: "help",
                     cursorOnMouseDown: "crosshair",
@@ -457,13 +455,7 @@ describe("Events custom configuration", () => {
 
     test("Point precision mode", async () => {
         // Amsterdam center
-        await mapEnv.loadMap(
-            { zoom: 10, center: [4.89067, 52.35313] },
-            {
-                style: { type: "published", include: ["poi"] },
-                events: { precisionMode: "point" }
-            }
-        );
+        await mapEnv.loadMap({ zoom: 10, center: [4.89067, 52.35313] }, { events: { precisionMode: "point" } });
 
         await initPlaces();
         await showPlaces(places);
@@ -483,10 +475,7 @@ describe("Events custom configuration", () => {
         // Amsterdam center
         await mapEnv.loadMap(
             { zoom: 10, center: [4.89067, 52.37313] },
-            {
-                style: { type: "published", include: ["poi"] },
-                events: { precisionMode: "point-then-box" }
-            }
+            { events: { precisionMode: "point-then-box" } }
         );
 
         await initPlaces();

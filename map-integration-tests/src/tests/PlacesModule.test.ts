@@ -61,10 +61,7 @@ describe("PlacesModule tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("Rendering a single place", async () => {
-        await mapEnv.loadMap(
-            { center: [-75.43974, 39.82295], zoom: 10 },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ center: [-75.43974, 39.82295], zoom: 10 });
         await initPlaces();
         await showPlaces({
             type: "Feature",
@@ -82,10 +79,7 @@ describe("PlacesModule tests", () => {
     });
 
     test("Rendering a place right after changing the style", async () => {
-        await mapEnv.loadMap(
-            { center: [-75.43974, 39.82295], zoom: 10 },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ center: [-75.43974, 39.82295], zoom: 10 });
         await initPlaces();
         await setStyle("standardDark");
         await showPlaces({
@@ -110,7 +104,7 @@ describe("PlacesModule tests", () => {
         // @ts-ignore
         async (_name: string, testPlaces: Places, expectedDisplayProps: PlaceDisplayProps[]) => {
             const bounds = await getBBox(testPlaces);
-            await mapEnv.loadMap({ bounds }, { style: { type: "published", include: ["poi"] } });
+            await mapEnv.loadMap({ bounds });
             await initPlaces();
             const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs();
             expect(await getNumVisibleLayers(sourceID)).toBe(0);
@@ -136,7 +130,7 @@ describe("PlacesModule tests", () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
 
             // once more, reloading the map, showing the same again:
-            await mapEnv.loadMap({ bounds }, { style: { type: "published", include: ["poi"] } });
+            await mapEnv.loadMap({ bounds });
             await initPlaces();
             const { layerIDs: nextLayerIDs } = await getPlacesSourceAndLayerIDs();
             await showPlaces(testPlaces);
@@ -177,7 +171,7 @@ describe("GeoJSON Places with init config tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap(
                 { bounds },
-                { style: { type: "published", include: ["trafficIncidents", "trafficFlow", "poi", "hillshade"] } }
+                { style: { type: "published", include: ["trafficIncidents", "trafficFlow", "hillshade"] } }
             );
             await initPlaces({ iconConfig: { iconStyle: "circle" } });
             const { layerIDs } = await getPlacesSourceAndLayerIDs();
@@ -208,7 +202,7 @@ describe("GeoJSON Places apply icon config tests", () => {
             const bounds = await getBBox(testPlaces);
             await mapEnv.loadMap(
                 { bounds },
-                { style: { type: "published", include: ["trafficIncidents", "trafficFlow", "poi", "hillshade"] } }
+                { style: { type: "published", include: ["trafficIncidents", "trafficFlow", "hillshade"] } }
             );
             await initPlaces();
             const { layerIDs } = await getPlacesSourceAndLayerIDs();
@@ -243,10 +237,7 @@ describe("Places module programmatic event state tests", () => {
     beforeAll(async () => mapEnv.loadPage());
 
     test("putEventState and cleanEventStates", async () => {
-        await mapEnv.loadMap(
-            { center: [-75.43974, 39.82295], zoom: 10 },
-            { style: { type: "published", include: ["poi"] } }
-        );
+        await mapEnv.loadMap({ center: [-75.43974, 39.82295], zoom: 10 });
         await initPlaces();
         await showPlaces([
             {

@@ -31,7 +31,7 @@
     {
       "style": {
         "type": "published",
-        "include": ["trafficFlow"]
+        "include": ["hillshade"]
       }
     }
   ],
@@ -41,7 +41,7 @@
     {
       "style": {
         "type": "published",
-        "include": ["trafficIncidents", "poi"]
+        "include": ["trafficIncidents"]
       }
     }
   ],
@@ -51,7 +51,7 @@
     {
       "style": {
         "type": "published",
-        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
     }
   ],
@@ -63,7 +63,7 @@
       "style": {
         "type": "published",
         "id": "standardDark",
-        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
     }
   ],
@@ -79,7 +79,7 @@
       "style": {
         "type": "published",
         "id": "monoLight",
-        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
     }
   ],
@@ -95,7 +95,7 @@
       "style": {
         "type": "published",
         "id": "monoDark",
-        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "hillshade"]
       }
     }
   ],
@@ -122,7 +122,7 @@
       "style": {
         "type": "published",
         "id": "satellite",
-        "include": ["trafficIncidents", "trafficFlow", "poi", "hillshade"]
+        "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
     }
   ]
