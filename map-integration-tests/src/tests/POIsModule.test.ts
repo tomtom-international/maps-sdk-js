@@ -1,24 +1,9 @@
 import { FilterSpecification, LngLatLike, MapGeoJSONFeature } from "maplibre-gl";
-import {
-    FilterablePOICategory,
-    getStyleCategories,
-    HILLSHADE_SOURCE_ID,
-    poiLayerIDs,
-    POIsModuleFeature,
-    TRAFFIC_FLOW_SOURCE_ID,
-    TRAFFIC_INCIDENTS_SOURCE_ID
-} from "map";
+import { FilterablePOICategory, getStyleCategories, poiLayerIDs, POIsModuleFeature } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { MapsSDKThis } from "./types/MapsSDKThis";
 import { Point } from "geojson";
-import {
-    getNumVisibleLayersBySource,
-    getNumVisiblePOILayers,
-    initPOIs,
-    waitForMapIdle,
-    waitForMapReady,
-    waitUntilRenderedFeaturesChange
-} from "./util/TestUtils";
+import { getNumVisiblePOILayers, initPOIs, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
 
 const waitForRenderedPOIsChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(["POI"], previousFeaturesCount, 10000);
@@ -37,34 +22,6 @@ describe("Map vector tile POI filtering tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
-
-    // TODO: POIs are in the base map in Orbis for now
-    test.skip("Failing to initialize if excluded from the style", async () => {
-        await mapEnv.loadMap({});
-        await expect(initPOIs()).rejects.toBeDefined();
-    });
-
-    test("Success to initialize if not included in the style, but auto adding it", async () => {
-        await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
-        await initPOIs({ ensureAddedToStyle: true });
-        await waitForMapReady();
-        expect(await getNumVisiblePOILayers()).toBeGreaterThan(0);
-        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBe(0);
-        expect(mapEnv.consoleErrors).toHaveLength(0);
-    });
-
-    test("Success to initialize if not included in the style, but auto adding it, invisible upfront", async () => {
-        await mapEnv.loadMap({ center: [7.12621, 48.50394], zoom: 8 });
-        await initPOIs({ ensureAddedToStyle: true, visible: false });
-        await waitForMapReady();
-        expect(await getNumVisiblePOILayers()).toBe(0);
-
-        await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(true));
-        expect(await getNumVisiblePOILayers()).toBeGreaterThan(0);
-        expect(mapEnv.consoleErrors).toHaveLength(0);
-    });
 
     test("Vector tiles pois visibility changes in different ways", async () => {
         await mapEnv.loadMap({ zoom: 14, center: [-0.12621, 51.50394] });
@@ -211,7 +168,7 @@ describe("Map vector tile POI filtering tests", () => {
             ["==", ["get", "category"], "railway_station"]
         ];
         await mapEnv.loadMap({ zoom: 16, center: [-0.12621, 51.50154] });
-        await initPOIs({ ensureAddedToStyle: true });
+        await initPOIs();
 
         // manually override existing POI layer filter to be able to verify it's combined with categories filter
         await page.evaluate(

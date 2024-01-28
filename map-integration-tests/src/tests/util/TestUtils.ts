@@ -222,7 +222,7 @@ export const initTrafficIncidents = async (config?: StyleModuleInitConfig & Inci
         );
     }, config);
 
-export const initPOIs = async (config?: StyleModuleInitConfig & POIsModuleConfig) =>
+export const initPOIs = async (config?: POIsModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, inputConfig);

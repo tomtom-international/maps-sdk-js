@@ -1,13 +1,6 @@
 import isNil from "lodash/isNil";
 import { FilterSpecification } from "maplibre-gl";
-import {
-    AbstractMapModule,
-    EventsModule,
-    POI_SOURCE_ID,
-    StyleModuleInitConfig,
-    StyleSourceWithLayers,
-    ValuesFilter
-} from "../shared";
+import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
 import { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from "./types/poisModuleConfig";
 import { notInTheStyle } from "../shared/errorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
@@ -63,7 +56,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async get(map: TomTomMap, config?: StyleModuleInitConfig & POIsModuleConfig): Promise<POIsModule> {
+    static async get(map: TomTomMap, config?: POIsModuleConfig): Promise<POIsModule> {
         await waitUntilMapIsReady(map);
         return new POIsModule(map, config);
     }
