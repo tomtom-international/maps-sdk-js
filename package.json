@@ -45,25 +45,6 @@
     "map",
     "map-integration-tests"
   ],
-  "exports": {
-    "./package.json": "./package.json",
-    "./core": {
-      "import": "./core/dist/core.es.js",
-      "require": "./core/dist/core.cjs.js",
-      "node": "./core/dist/core.cjs.js"
-    },
-    "./services": {
-      "import": "./services/dist/services.es.js",
-      "require": "./services/dist/services.cjs.js",
-      "node": "./services/dist/services.cjs.js"
-    },
-    "./map": {
-      "import": "./map/dist/map.es.js",
-      "require": "./map/dist/map.cjs.js",
-      "node": "./map/dist/map.cjs.js"
-    }
-  },
-  "types": "./index.d.ts",
   "dependencies": {
     "@types/geojson": "^7946.0.13",
     "@types/lodash": "^4.14.202",
