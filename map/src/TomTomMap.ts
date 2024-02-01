@@ -50,11 +50,9 @@ export class TomTomMap {
         this.mapLibreMap.once("styledata", () => this.handleStyleData(false));
         this._eventsProxy = new EventsProxy(this.mapLibreMap, this.params?.events);
         if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
-            mapLibreExported.setRTLTextPlugin(
-                "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
-                (error) => console.error("Something went wrong when setting RTL plugin", error),
-                true
-            );
+            mapLibreExported
+                .setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js", true)
+                .catch((error) => console.error("Something went wrong when setting RTL plugin", error));
         }
     }
 

@@ -15,7 +15,7 @@ jest.mock("maplibre-gl", () => ({
         }),
         getZoom: jest.fn()
     }),
-    setRTLTextPlugin: jest.fn(),
+    setRTLTextPlugin: jest.fn().mockResolvedValue(jest.fn()),
     getRTLTextPluginStatus: jest.fn()
 }));
 

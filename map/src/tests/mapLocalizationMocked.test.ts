@@ -14,7 +14,7 @@ jest.mock("maplibre-gl", () => ({
         on: jest.fn(),
         getZoom: jest.fn()
     }),
-    setRTLTextPlugin: jest.fn(),
+    setRTLTextPlugin: jest.fn().mockResolvedValue(jest.fn()),
     getRTLTextPluginStatus: jest.fn()
 }));
 
@@ -22,9 +22,7 @@ describe("Map localization mocked tests", () => {
     const mockedContainer = jest.fn() as unknown as HTMLElement;
     TomTomConfig.instance.put({ apiKey: "TEST_KEY" });
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
+    afterEach(() => jest.clearAllMocks());
 
     test("Localize map after initialization", () => {
         const tomtomMap = new TomTomMap({ container: mockedContainer });

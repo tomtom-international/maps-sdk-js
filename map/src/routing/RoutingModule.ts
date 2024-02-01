@@ -30,7 +30,7 @@ import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types
 import { buildDisplayRoutes } from "./util/routes";
 import { DisplayRouteProps } from "./types/displayRoutes";
 import { ShowRoutesOptions } from "./types/showRoutesOptions";
-import { addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
+import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 import { DisplayInstruction } from "./types/guidance";
 import { toDisplayInstructionArrows, toDisplayInstructions } from "./util/guidance";
@@ -122,7 +122,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
         this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
         this.addImageIfNotExisting(INSTRUCTION_ARROW_IMAGE_ID, instructionArrowIconImg);
-        // TODO: displaying traffic and EV stops require traffic and poi assets in the style. Should we at least verify their existence and log a warning if not present?
+        // TODO: displaying traffic requires traffic in the style. Should we at least verify their existence and log a warning if not present?
 
         this.layersSpecs = createLayersSpecs(mergeConfig(config).routeLayers);
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
@@ -200,18 +200,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     private addImageIfNotExisting(imageID: string, image: string | HTMLImageElement) {
-        if (!this.mapLibreMap.hasImage(imageID)) {
-            if (typeof image === "string") {
-                this.mapLibreMap.loadImage(image, (_, image) => {
-                    // double-checking just in case of a race condition with overlapping init:
-                    if (!this.mapLibreMap.hasImage(imageID)) {
-                        this.mapLibreMap.addImage(imageID, image as HTMLImageElement);
-                    }
-                });
-            } else {
-                this.mapLibreMap.addImage(imageID, image);
-            }
-        }
+        addImageIfNotExisting(this.mapLibreMap, imageID, image);
     }
 
     /**

@@ -315,3 +315,23 @@ export const prepareForModuleInit = async (
         await waitUntilSourceIsLoaded(map, sourceId);
     }
 };
+
+/**
+ * Adds the given image to the map (loading it if necessary) only if it's not already there.
+ * @ignore
+ */
+export const addImageIfNotExisting = async (map: Map, imageID: string, imageToLoad: string | HTMLImageElement) => {
+    if (!map.hasImage(imageID)) {
+        if (typeof imageToLoad === "string") {
+            // Expecting image URL, so the image needs to be downloaded first:
+            const loadedImage = await map.loadImage(imageToLoad);
+            // double-checking just in case of a race condition with overlapping call:
+            if (!map.hasImage(imageID)) {
+                map.addImage(imageID, loadedImage.data);
+            }
+        } else {
+            // Expecting HTMLImageElement, ready to be added:
+            map.addImage(imageID, imageToLoad);
+        }
+    }
+};

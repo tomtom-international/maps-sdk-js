@@ -76,7 +76,7 @@ describe("Routing module tests", () => {
                 removeLayer: jest.fn(),
                 hasImage: jest.fn().mockReturnValue(false),
                 addImage: jest.fn(),
-                loadImage: jest.fn(),
+                loadImage: jest.fn().mockResolvedValue(jest.fn()),
                 setLayoutProperty: jest.fn(),
                 setFilter: jest.fn(),
                 setPaintProperty: jest.fn()

@@ -1,8 +1,9 @@
 import { Map } from "maplibre-gl";
 import { Place, Places } from "@anw/maps-sdk-js/core";
 import { DisplayPlaceProps } from "./types/placeDisplayProps";
-import { CustomIcon, PlacesModuleConfig } from "./types/placesModuleConfig";
+import { PlacesModuleConfig } from "./types/placesModuleConfig";
 import { MapStylePOICategory, toMapDisplayPOICategory } from "../pois/poiCategoryMapping";
+import { addImageIfNotExisting } from "../shared/mapUtils";
 
 /**
  * Builds the title of the place to display it on the map.
@@ -10,22 +11,6 @@ import { MapStylePOICategory, toMapDisplayPOICategory } from "../pois/poiCategor
  */
 export const buildPlaceTitle = (place: Place): string =>
     place.properties.poi?.name || place.properties.address.freeformAddress;
-
-/**
- * @ignore
- */
-export const addMapIcon = (map: Map, classificationCode: MapStylePOICategory, customIcon: CustomIcon) => {
-    map.loadImage(customIcon.iconUrl, (e, image) => {
-        if (e) {
-            throw e;
-        }
-
-        if (map.hasImage(classificationCode.toLowerCase())) {
-            return;
-        }
-        image && map.addImage(classificationCode.toLowerCase(), image);
-    });
-};
 
 /**
  * Gets the map style sprite image ID to display on the map for the give place.
@@ -49,8 +34,9 @@ export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {},
 
     for (const customIcon of iconConfig.customIcons) {
         if (customIcon.category == classificationCode) {
-            addMapIcon(map, classificationCode, customIcon);
-            return classificationCode.toLowerCase();
+            const customIconID = classificationCode.toLowerCase();
+            addImageIfNotExisting(map, customIconID, customIcon.iconUrl);
+            return customIconID;
         }
     }
 

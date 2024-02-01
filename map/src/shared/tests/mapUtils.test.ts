@@ -1,6 +1,7 @@
 import { Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
 import { TomTomMap } from "../../TomTomMap";
 import {
+    addImageIfNotExisting,
     addLayers,
     changeLayerProps,
     deserializeFeatures,
@@ -357,5 +358,52 @@ describe("Map utils - tryToAddSourceToMapIfMissing", () => {
         expect(tomtomMapMock.setStyle).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
+    });
+});
+
+describe("addImageIfNotExisting tests", () => {
+    test("Add image while map already has it", () => {
+        const mapLibreMock = {
+            loadImage: jest.fn().mockResolvedValue(jest.fn()),
+            addImage: jest.fn(),
+            hasImage: jest.fn().mockReturnValue(true)
+        } as unknown as Map;
+
+        jest.spyOn(mapLibreMock, "addImage");
+        expect(async () => addImageIfNotExisting(mapLibreMock, "restaurant", "https://test.com")).not.toThrow();
+    });
+
+    test("Add image with race condition, when map already has it right after loading it", () => {
+        const mapLibreMock = {
+            loadImage: jest.fn().mockResolvedValue({ data: {} }),
+            addImage: jest.fn(),
+            hasImage: jest.fn().mockReturnValueOnce(false).mockReturnValueOnce(true)
+        } as unknown as Map;
+
+        expect(async () => addImageIfNotExisting(mapLibreMock, "restaurant", "https://test.com")).not.toThrow();
+        expect(mapLibreMock.loadImage).toHaveBeenCalledTimes(1);
+    });
+
+    test("Add image to map successfully", async () => {
+        const mapLibreMock = {
+            loadImage: jest.fn().mockResolvedValue(jest.fn()),
+            addImage: jest.fn(),
+            hasImage: jest.fn().mockReturnValue(false)
+        } as unknown as Map;
+        expect(async () => addImageIfNotExisting(mapLibreMock, "restaurant", "https://test.com")).not.toThrow();
+        expect(mapLibreMock.loadImage).toHaveBeenCalledTimes(1);
+    });
+
+    test("Add image while map load image has an error", async () => {
+        const error = new Error("image not found");
+        const mapLibreMock = {
+            loadImage: jest.fn().mockRejectedValue(error),
+            addImage: jest.fn(),
+            hasImage: jest.fn().mockReturnValue(false)
+        } as unknown as Map;
+
+        await expect(async () =>
+            addImageIfNotExisting(mapLibreMock, "restaurant", "https://test.com")
+        ).rejects.toMatchObject(error);
     });
 });

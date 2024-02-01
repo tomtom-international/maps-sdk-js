@@ -59,7 +59,7 @@
     "entryPoint": "./index.ts"
   },
   "peerDependencies": {
-    "maplibre-gl": "^3.6.2"
+    "maplibre-gl": "^4.0.0"
   },
   "dependencies": {
     "@turf/turf": "^6.5.0",
