@@ -1,5 +1,5 @@
 import { FilterSpecification, Map, MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
-import { generateTomTomCustomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core";
+import { generateTomTomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core";
 import { TomTomMap } from "../TomTomMap";
 import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
 import { AbstractSourceWithLayers } from "./SourceWithLayers";
@@ -63,14 +63,14 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
  * @ignore
  * @param params Global SDK Map configuration
  */
-export const injectCustomHeaders =
+export const injectTomTomHeaders =
     (params: Partial<GlobalConfig>) =>
     (url: string, resourceType?: ResourceType): RequestParameters => {
         if (url.includes("tomtom.com")) {
             if (resourceType === "Image") {
                 return { url };
             }
-            return { url, headers: { ...generateTomTomCustomHeaders(params) } };
+            return { url, headers: { ...generateTomTomHeaders(params) } };
         } else {
             return { url };
         }

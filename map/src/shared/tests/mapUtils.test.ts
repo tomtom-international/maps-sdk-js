@@ -5,7 +5,7 @@ import {
     addLayers,
     changeLayerProps,
     deserializeFeatures,
-    injectCustomHeaders,
+    injectTomTomHeaders,
     prepareForModuleInit,
     updateLayersAndSource,
     updateStyleWithModule,
@@ -62,14 +62,14 @@ describe("Map utils - deserializeFeatures", () => {
 describe("Map utils - injectCustomHeaders", () => {
     test("Return only url if it is not TomTom domain", () => {
         const url = "https://test.com";
-        const transformRequestFn = injectCustomHeaders({});
+        const transformRequestFn = injectTomTomHeaders({});
 
         expect(transformRequestFn(url)).toStrictEqual({ url });
     });
 
     test("Return custom headers if url if it is TomTom domain", () => {
         const url = "https://tomtom.com";
-        const transformRequestFn = injectCustomHeaders({});
+        const transformRequestFn = injectTomTomHeaders({});
         const headers = transformRequestFn(url);
 
         expect(headers).toMatchObject({
@@ -82,7 +82,7 @@ describe("Map utils - injectCustomHeaders", () => {
 
     test("Return only url if it is TomTom domain but an image resource", () => {
         const url = "https://tomtom.com";
-        const transformRequestFn = injectCustomHeaders({});
+        const transformRequestFn = injectTomTomHeaders({});
 
         expect(transformRequestFn(url, "Image" as ResourceType)).toStrictEqual({ url });
     });

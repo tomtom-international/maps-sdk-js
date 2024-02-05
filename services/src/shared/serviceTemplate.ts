@@ -1,5 +1,5 @@
 import axios from "axios";
-import { mergeFromGlobal, generateTomTomCustomHeaders } from "@anw/maps-sdk-js/core";
+import { mergeFromGlobal, generateTomTomHeaders } from "@anw/maps-sdk-js/core";
 import { buildResponseError, buildValidationError } from "./errors";
 import { ServiceName } from "./types/servicesTypes";
 import { CommonServiceParams, ServiceTemplate } from "./serviceTypes";
@@ -32,7 +32,7 @@ export const callService = async <PARAMS extends CommonServiceParams, API_REQUES
     }
     const apiRequest = template.buildRequest(mergedParams);
     // Inject custom headers:
-    axios.defaults.headers.common = { ...generateTomTomCustomHeaders(mergedParams) };
+    axios.defaults.headers.common = { ...generateTomTomHeaders(mergedParams) };
     params.onAPIRequest?.(apiRequest);
 
     try {

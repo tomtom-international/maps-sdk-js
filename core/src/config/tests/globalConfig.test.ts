@@ -1,9 +1,7 @@
 import { GlobalConfig, TomTomConfig, mergeFromGlobal } from "../globalConfig";
 
 describe("GlobalConfig", () => {
-    afterEach(() => {
-        TomTomConfig.instance.reset();
-    });
+    afterEach(() => TomTomConfig.instance.reset());
 
     test("TomTomConfig is a singleton", () => {
         // @ts-ignore
@@ -49,9 +47,7 @@ describe("GlobalConfig", () => {
 });
 
 describe("mergeFromGlobal tests", () => {
-    beforeEach(() => {
-        TomTomConfig.instance.reset();
-    });
+    beforeEach(() => TomTomConfig.instance.reset());
 
     test("mergeFromGlobal with default global config", () => {
         expect(mergeFromGlobal()).toEqual({ commonBaseURL: "https://api.tomtom.com", apiKey: "" });
@@ -86,13 +82,14 @@ describe("mergeFromGlobal tests", () => {
         expect(
             mergeFromGlobal({
                 randomProp: "blah",
-                apiKey: "CUSTOM_API_KEY",
+                accessToken: "OAUTH2_ACCESS_TOKEN",
                 commonBaseURL: "CUSTOM",
                 language: "es-ES"
             })
         ).toEqual({
             randomProp: "blah",
-            apiKey: "CUSTOM_API_KEY",
+            apiKey: "GLOBAL_API_KEY",
+            accessToken: "OAUTH2_ACCESS_TOKEN",
             commonBaseURL: "CUSTOM",
             language: "es-ES"
         });

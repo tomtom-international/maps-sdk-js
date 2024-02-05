@@ -13,7 +13,11 @@ export const appendCommonParams = (
     params: CommonServiceParams,
     routing?: boolean
 ): void => {
-    urlParams.append("key", params.apiKey as string);
+    if (!params.apiAccessToken) {
+        urlParams.append("key", params.apiKey as string);
+    }
+    // else: access token is injected as a header elsewhere (see injectTomTomHeaders function)
+
     //TODO not sure if this is the best way to handle this, but for routing, language is only supported in the URL
     // if you request guidance instructions
     !routing && params.language && urlParams.append("language", params.language);

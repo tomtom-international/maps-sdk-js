@@ -33,29 +33,26 @@ const validateTrackingId = (trackingId: string): string => {
 /**
  * Interface for TomTom custom headers
  * Those headers are added in every request to TomTom services
+ * * TomTom-User-Agent - Name and version of this SDK
+ * * Authorization - Bearer token for experimental OAuth2 support
  * Tracking-ID - @see https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
- * TomTom-User-Agent - Name and version of this SDK
  * @ignore
  */
 export interface TomTomCustomHeaders {
     "TomTom-User-Agent": string;
+    Authorization?: string;
     "Tracking-ID"?: string;
 }
 
 /**
- * Generate an object with TomTom custom headers values.
+ * Generates an object with TomTom custom header values for the given common parameters.
  *
  * @ignore
- * @param config Global SDK configuration
+ * @param params Global SDK configuration
  */
-export const generateTomTomCustomHeaders = (config: Partial<GlobalConfig>): TomTomCustomHeaders => {
-    const tomtomHeaders: TomTomCustomHeaders = {
-        "TomTom-User-Agent": `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`
-    };
-
-    if (config.trackingId) {
-        tomtomHeaders["Tracking-ID"] = validateTrackingId(config.trackingId);
-    }
-
-    return tomtomHeaders;
-};
+export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomCustomHeaders => ({
+    "TomTom-User-Agent": `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`,
+    // optional oauth2 access token:
+    ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
+    ...(params.trackingId && { "Tracking-ID": validateTrackingId(params.trackingId) })
+});

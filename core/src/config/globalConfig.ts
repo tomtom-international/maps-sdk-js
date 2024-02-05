@@ -16,6 +16,13 @@ export type GlobalConfig = {
     apiKey: string;
 
     /**
+     * An experimental alternative to the API Key which enables oauth2 access to APIs.
+     * * If provided, then the API key parameter will be ignored.
+     * @experimental
+     */
+    apiAccessToken?: string;
+
+    /**
      * Specifies an identifier for the request. It can be used to trace a call.
      * * The value must match the regular expression '^[a-zA-Z0-9-]{1,100}$'.
      * * An example of the format that matches this regular expression is UUID: (e.g., 9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1 ).

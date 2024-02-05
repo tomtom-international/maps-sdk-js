@@ -1,7 +1,7 @@
 import { MapOptions } from "maplibre-gl";
 import { MapLibreOptions, TomTomMapParams } from "./types/mapInit";
 import { buildStyleInput } from "./styleInputBuilder";
-import { injectCustomHeaders } from "../shared/mapUtils";
+import { injectTomTomHeaders } from "../shared/mapUtils";
 
 /**
  * @ignore
@@ -15,6 +15,6 @@ export const buildMapOptions = (mapLibreOptions: MapLibreOptions, tomtomMapParam
         attributionControl: false,
         validateStyle: false,
         maxTileCacheZoomLevels: 22,
-        transformRequest: injectCustomHeaders(tomtomMapParams)
+        transformRequest: injectTomTomHeaders(tomtomMapParams)
     };
 };
