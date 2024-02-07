@@ -1,6 +1,6 @@
-import { GlobalConfig } from "@anw/maps-sdk-js/core";
+import { GlobalConfig, TomTomHeaders } from "@anw/maps-sdk-js/core";
 import { SDKServiceError } from "./errors";
-import { ErrorObjAPI } from "./types/apiResponseErrorTypes";
+import { APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
 import { RequestValidationConfig } from "./types/validation";
 
 export type CommonServiceParams<API_REQUEST = any, API_RESPONSE = any> = Partial<GlobalConfig> & {
@@ -37,7 +37,10 @@ export type CommonServiceParams<API_REQUEST = any, API_RESPONSE = any> = Partial
     onAPIResponse?: (apiRequest: API_REQUEST, apiResponse: API_RESPONSE) => void;
 };
 
-export type ParseResponseError<T> = (apiError: ErrorObjAPI<T>, serviceName: string) => SDKServiceError;
+export type ParseResponseError<T = DefaultAPIResponseErrorBody> = (
+    apiError: APIErrorResponse<T>,
+    serviceName: string
+) => SDKServiceError;
 
 /**
  * Template functions for any service.
@@ -63,7 +66,7 @@ export type ServiceTemplate<
      * Sends the request to the API (e.g. via GET or POST, with or without custom headers).
      * @param request The request to send.
      */
-    sendRequest: (request: API_REQUEST) => Promise<API_RESPONSE>;
+    sendRequest: (request: API_REQUEST, headers: TomTomHeaders) => Promise<API_RESPONSE>;
 
     /**
      * Parses the API successful response before returning it to the caller.

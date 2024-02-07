@@ -1,9 +1,8 @@
-import { AxiosError } from "axios";
+import { ZodIssue } from "zod";
 import { ParseResponseError } from "./serviceTypes";
-import { APICode, DefaultAPIResponseError } from "./types/apiResponseErrorTypes";
+import { APICode, APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
 import { ValidationError } from "./validation";
 import { ServiceName } from "./types/servicesTypes";
-import { ZodIssue } from "zod";
 
 /**
  * Main Error Class for the whole SDK to help with error handling.
@@ -52,7 +51,7 @@ export class SDKServiceError extends SDKError {
  * @param error
  * @param serviceName
  */
-export const parseDefaultResponseError: ParseResponseError<DefaultAPIResponseError> = (error, serviceName) => {
+export const parseDefaultResponseError: ParseResponseError<DefaultAPIResponseErrorBody> = (error, serviceName) => {
     const { data, message, status } = error;
     // Different services uses property error or errorText or detailedError
     // Here we cover all situations as a default error parser
@@ -72,17 +71,12 @@ export const buildResponseError = (
     serviceName: ServiceName,
     parseResponseError?: ParseResponseError<unknown>
 ): SDKError => {
-    if (error instanceof AxiosError) {
-        const errorObj = {
-            status: error.response?.status,
-            data: error.response?.data,
-            message: error.message
-        };
-
+    if ((error as APIErrorResponse).status) {
+        const fetchError = error as APIErrorResponse;
         if (parseResponseError) {
-            return parseResponseError(errorObj, serviceName);
+            return parseResponseError(fetchError, serviceName);
         } else {
-            return parseDefaultResponseError(errorObj, serviceName);
+            return parseDefaultResponseError(fetchError, serviceName);
         }
     }
 

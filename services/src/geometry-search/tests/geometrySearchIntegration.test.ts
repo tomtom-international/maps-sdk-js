@@ -44,6 +44,7 @@ describe("Geometry Search service", () => {
     const expectWorkingResult = () =>
         expect.objectContaining<GeometrySearchResponse>({
             type: "FeatureCollection",
+            bbox: [expect.any(Number), expect.any(Number), expect.any(Number), expect.any(Number)],
             features: expect.arrayContaining<Place<SearchPlaceProps>>([expectPlaceTestFeature(basePOITestProps)])
         });
 

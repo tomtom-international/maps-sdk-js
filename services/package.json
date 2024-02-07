@@ -30,9 +30,6 @@
     "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
-  "peerDependencies": {
-    "axios": "^1.6.5"
-  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -43,7 +40,6 @@
     "@types/lodash": "^4.14.202",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
-    "axios-mock-adapter": "^1.22.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",

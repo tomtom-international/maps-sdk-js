@@ -7,7 +7,6 @@ dotenv.config({ path: path.resolve("../test-config/.env") });
 const config: Config = {
     testTimeout: 10000,
     preset: "ts-jest",
-    testEnvironment: "node",
     extensionsToTreatAsEsm: [".ts"],
     testPathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/node_modules/", "<rootDir>/.rollup.cache/"],
     moduleNameMapper: {

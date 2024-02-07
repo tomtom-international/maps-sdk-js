@@ -1,7 +1,7 @@
 /**
  * @ignore
  */
-export interface BaseAPIResponseError {
+export interface BaseAPIResponseErrorBody {
     /*
      * HTTP error code.
      */
@@ -29,7 +29,7 @@ export interface BaseAPIResponseError {
 /**
  * @ignore
  */
-export interface DefaultAPIResponseError extends BaseAPIResponseError {
+export interface DefaultAPIResponseErrorBody extends BaseAPIResponseErrorBody {
     /*
      * A human-readable description of the error code.
      */
@@ -64,12 +64,13 @@ export interface RoutingAPIResponseError {
 }
 
 /**
+ * Error returned by an API.
  * @ignore
  */
-export type ErrorObjAPI<T> = {
-    status: number | undefined;
+export type APIErrorResponse<T = DefaultAPIResponseErrorBody> = {
+    status?: number;
     message: string;
-    data: T;
+    data?: T;
 };
 
 /**

@@ -3,4 +3,4 @@ export * from "./lnglat";
 export * from "./geoInputs";
 export * from "./unitFormatters";
 export * from "./traffic";
-export * from "./customHeaders";
+export * from "./headers";

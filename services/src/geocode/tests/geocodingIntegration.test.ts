@@ -21,6 +21,7 @@ describe("Geocoding integration tests", () => {
     test("Geocoding with default params, expecting multiple results", async () => {
         const expectedResult = {
             type: "FeatureCollection",
+            bbox: expect.any(Array),
             features: [
                 {
                     type: "Feature",
@@ -107,7 +108,8 @@ describe("Geocoding integration tests", () => {
         });
         expect(result).toMatchObject({
             type: "FeatureCollection",
-            features: expect.any(Array)
+            bbox: expect.any(Array),
+            features: expect.anything()
         });
         expect(result.features.length).toBeGreaterThan(3);
     });

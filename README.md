@@ -30,7 +30,6 @@ npm i @anw/maps-sdk-js
 
 Additionally:
 * If you use the map: ```npm i maplibre-gl```
-* If you use services: ```npm i axios```
 
 (Learn more below)
 <br/><br/><br/>
@@ -83,11 +82,8 @@ The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/
 
 ### Getting Started with Services
 #### Using npm
-To maximize compatibility with both web and nodejs environments of multiple versions,
-the SDK Services uses [axios](https://www.npmjs.com/package/axios) and shares it with your project as a peer dependency.\
-The SDK is tested against the latest stable release from Axios.
 ```
-npm i @anw/maps-sdk-js axios
+npm i @anw/maps-sdk-js
 ```
 Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/services```
 <br/><br/>

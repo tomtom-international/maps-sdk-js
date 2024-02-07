@@ -63,20 +63,24 @@ describe("Map utils - injectCustomHeaders", () => {
     test("Return only url if it is not TomTom domain", () => {
         const url = "https://test.com";
         const transformRequestFn = injectTomTomHeaders({});
-
-        expect(transformRequestFn(url)).toStrictEqual({ url });
+        expect(transformRequestFn(url)).toEqual({ url });
     });
 
     test("Return custom headers if url if it is TomTom domain", () => {
         const url = "https://tomtom.com";
         const transformRequestFn = injectTomTomHeaders({});
         const headers = transformRequestFn(url);
+        expect(headers).toEqual({ url, headers: {} });
+    });
 
-        expect(headers).toMatchObject({
+    test("Return custom headers if url if it is TomTom domain with TomTom User Agent header", () => {
+        const url = "https://tomtom.com";
+        const transformRequestFn = injectTomTomHeaders({ tomtomUserAgent: true });
+        const headers = transformRequestFn(url);
+
+        expect(headers).toEqual({
             url,
-            headers: {
-                "TomTom-User-Agent": expect.stringContaining("TomTomSDKsMapsJS")
-            }
+            headers: { "TomTom-User-Agent": expect.stringContaining("TomTomSDKsMapsJS") }
         });
     });
 

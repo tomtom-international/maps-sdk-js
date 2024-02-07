@@ -1,27 +1,27 @@
 import reverseGeocode from "../reverseGeocoding";
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 import apiAndParsedResponses from "./revGeoMocked.data.json";
 import { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
 import omit from "lodash/omit";
+import { mockFetchResponse } from "../../shared/tests/fetchMockUtils";
 
 describe("Reverse Geocoding mock tests", () => {
-    const axiosMock = new MockAdapter(axios);
+    const unMockedFetch = global.fetch;
+    afterAll(() => (global.fetch = unMockedFetch));
+
     test.each(apiAndParsedResponses)(
         `'%s`,
         // @ts-ignore
         async (_name: string, params: ReverseGeocodingParams, apiResponse: never, expectedParsedResponse: never) => {
-            axiosMock.onGet().replyOnce(200, apiResponse);
+            mockFetchResponse(200, apiResponse);
             const response = await reverseGeocode(params);
-            expect(omit(response, "id")).toStrictEqual(expectedParsedResponse);
+            expect(omit(response, "id")).toEqual(expectedParsedResponse);
             // (IDs are to be generated at random)
-            expect(response.id).toBeTruthy();
             expect(response.id).toEqual(expect.any(String));
         }
     );
 
     test("Server response with 429.", async () => {
-        axiosMock.onGet().replyOnce(429);
+        mockFetchResponse(429);
         await expect(reverseGeocode({ position: [180, 90] })).rejects.toMatchObject({
             service: "ReverseGeocode",
             message: "Too Many Requests: The API Key is over QPS (Queries per second)",

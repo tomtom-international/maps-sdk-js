@@ -1,106 +1,103 @@
-import MockAdapter from "axios-mock-adapter";
-import axios from "axios";
 import { TomTomConfig } from "@anw/maps-sdk-js/core";
 import { fetchWith, get, post } from "../fetch";
 import { geocode } from "../../geocode";
-import { search } from "../../search";
-
-const axiosMock = new MockAdapter(axios);
+import { mockFetchResponse } from "./fetchMockUtils";
 
 describe("Fetch utility tests", () => {
+    const unMockedFetch = global.fetch;
+    afterAll(() => (global.fetch = unMockedFetch));
+
     describe("Get tests", () => {
+        const headers = { "TomTom-User-Agent": "TEST/1" };
+
         test("OK response", async () => {
-            axiosMock.onGet().replyOnce(200, { id: "some json" });
-            expect(await get(new URL("https://blah.com"))).toStrictEqual({ id: "some json" });
+            const fetchMock = mockFetchResponse(200, { id: "some json" });
+            expect(await get(new URL("https://blah1234.com"), headers)).toEqual({ id: "some json" });
+            expect(fetchMock).toHaveBeenCalledWith(new URL("https://blah1234.com"), { headers });
         });
 
-        test("Failed response from rejected axios promise", async () => {
-            axiosMock.onGet().replyOnce(410);
-            await expect(get(new URL("https://blah.com"))).rejects.toHaveProperty("response.status", 410);
-        });
-
-        test("Failed response", async () => {
-            axiosMock.onGet().timeoutOnce();
-            await expect(get(new URL("https://blah.com"))).rejects.toMatchObject({
-                config: {
-                    data: undefined
-                },
-                code: "ECONNABORTED"
-            });
+        test("Failed response from rejected promise", async () => {
+            mockFetchResponse(410);
+            await expect(get(new URL("https://blah1234.com"), headers)).rejects.toHaveProperty("status", 410);
         });
     });
 
     describe("Post tests", () => {
+        const headers = { "TomTom-User-Agent": "TEST/1" };
+
         test("OK response", async () => {
-            axiosMock.onPost().replyOnce(200, { id: "some json" });
-            expect(await post({ url: new URL("https://blah.com") })).toStrictEqual({ id: "some json" });
+            mockFetchResponse(200, { id: "some json" });
+            expect(await post({ url: new URL("https://blah1234.com") }, headers)).toEqual({ id: "some json" });
         });
 
-        test("Failed response from rejected axios promise", async () => {
-            axiosMock.onPost().replyOnce(410);
-            await expect(post({ url: new URL("https://blah.com") })).rejects.toHaveProperty("response.status", 410);
-        });
-
-        test("Failed response", async () => {
-            axiosMock.onPost().timeoutOnce();
-            await expect(post({ url: new URL("https://blah.com") })).rejects.toMatchObject({
-                config: {
-                    data: undefined
-                },
-                code: "ECONNABORTED"
-            });
+        test("Failed response from rejected promise", async () => {
+            mockFetchResponse(410);
+            await expect(post({ url: new URL("https://blah1234.com") }, headers)).rejects.toHaveProperty("status", 410);
         });
     });
 
     describe("Fetch-with tests", () => {
+        const headers = { "TomTom-User-Agent": "TEST/1" };
+
         test("OK GET response", async () => {
-            axiosMock.onGet().replyOnce(200, { id: "some json" });
-            expect(await fetchWith({ method: "GET", url: new URL("https://blah.com") })).toStrictEqual({
+            mockFetchResponse(200, { id: "some json" });
+            expect(await fetchWith({ method: "GET", url: new URL("https://blah1234.com") }, headers)).toStrictEqual({
                 id: "some json"
             });
         });
 
         test("OK POST response", async () => {
-            axiosMock.onPost().replyOnce(200, { id: "some json" });
-            expect(await fetchWith({ method: "POST", url: new URL("https://blah.com") })).toStrictEqual({
+            mockFetchResponse(200, { id: "some json" });
+            expect(await fetchWith({ method: "POST", url: new URL("https://blah1234.com") }, headers)).toStrictEqual({
                 id: "some json"
             });
         });
 
-        test("Failed POST response from rejected axios promise", async () => {
-            axiosMock.onPost().replyOnce(410);
-            await expect(fetchWith({ method: "POST", url: new URL("https://blah.com") })).rejects.toHaveProperty(
-                "response.status",
-                410
-            );
+        test("Failed POST response from rejected promise", async () => {
+            mockFetchResponse(410);
+            await expect(
+                fetchWith({ method: "POST", url: new URL("https://blah1234.com") }, headers)
+            ).rejects.toHaveProperty("status", 410);
         });
 
         test("Incorrect HTTP method", async () => {
             await expect(
-                fetchWith({ method: "UNSUPPORTED" as never, url: new URL("https://blah.com") })
+                fetchWith({ method: "UNSUPPORTED" as never, url: new URL("https://blah1234.com") }, headers)
             ).rejects.toHaveProperty("message", "Unsupported HTTP method received: UNSUPPORTED");
         });
     });
 
     describe("Tracking-ID header", () => {
         test("Set tracking-ID header per service", async () => {
-            axiosMock.onGet().replyOnce(200, { summary: {}, results: [] });
+            const fetchMock = mockFetchResponse(200, { summary: {}, results: [] });
             await geocode({ query: "teakhout", trackingId: "geocode-id" });
-            expect(axios.defaults.headers.common["Tracking-ID"]).toEqual("geocode-id");
+            expect(fetchMock).toHaveBeenCalledWith(
+                expect.any(URL),
+                expect.objectContaining({
+                    headers: expect.objectContaining({ "Tracking-ID": "geocode-id" })
+                })
+            );
         });
 
         test("Set global and per service trackingId header", async () => {
-            TomTomConfig.instance.put({
-                trackingId: "global-id"
-            });
-            axiosMock.onGet().reply(200, { summary: {}, results: [] });
-            axiosMock.onPost().reply(200, { summary: {}, results: [] });
+            TomTomConfig.instance.put({ trackingId: "global-id" });
 
+            const fetchMock = mockFetchResponse(200, { summary: {}, results: [] });
             await geocode({ query: "teakhout", trackingId: "geocode-id" });
-            expect(axios.defaults.headers.common["Tracking-ID"]).toEqual("geocode-id");
+            expect(fetchMock).toHaveBeenCalledWith(
+                expect.any(URL),
+                expect.objectContaining({
+                    headers: expect.objectContaining({ "Tracking-ID": "geocode-id" })
+                })
+            );
 
-            await search({ query: "cafe", geometries: [] });
-            expect(axios.defaults.headers.common["Tracking-ID"]).toEqual("global-id");
+            await geocode({ query: "cafe" });
+            expect(fetchMock).toHaveBeenCalledWith(
+                expect.any(URL),
+                expect.objectContaining({
+                    headers: expect.objectContaining({ "Tracking-ID": "global-id" })
+                })
+            );
         });
     });
 });

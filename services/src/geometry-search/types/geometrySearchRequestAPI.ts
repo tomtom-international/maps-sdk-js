@@ -1,4 +1,4 @@
-import { PostObject } from "../../shared/fetch";
+import { PostObject } from "../../shared/types/fetch";
 
 /**
  * @ignore

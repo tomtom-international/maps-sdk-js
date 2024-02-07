@@ -1,4 +1,4 @@
-import { PostObject } from "../shared/fetch";
+import { PostObject } from "../shared/types/fetch";
 import { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from "./types";
 import { positionToCSVLatLon } from "../shared/geometry";
 import { sampleWithinMaxLength } from "../shared/arrays";

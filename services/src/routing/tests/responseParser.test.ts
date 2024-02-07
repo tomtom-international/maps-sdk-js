@@ -6,7 +6,7 @@ import { parseCalculateRouteResponse } from "../responseParser";
 import { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
 import errorResponses from "./responseParserError.data.json";
 import { parseRoutingResponseError } from "../routingResponseErrorParser";
-import { ErrorObjAPI, RoutingAPIResponseError } from "../../shared/types/apiResponseErrorTypes";
+import { APIErrorResponse, RoutingAPIResponseError } from "../../shared/types/apiResponseErrorTypes";
 import { SDKServiceError } from "../../shared";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
@@ -51,7 +51,7 @@ describe("Routing - error response parsing tests", () => {
         // @ts-ignore
         async (
             _name: string,
-            apiResponseError: ErrorObjAPI<RoutingAPIResponseError>,
+            apiResponseError: APIErrorResponse<RoutingAPIResponseError>,
             expectedSDKError: SDKServiceError
         ) => {
             const sdkRoutingResponseError = parseRoutingResponseError(apiResponseError, "Routing");

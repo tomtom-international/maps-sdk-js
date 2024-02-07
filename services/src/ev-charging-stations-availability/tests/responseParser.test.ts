@@ -3,7 +3,7 @@ import apiAndParsedResponses from "./responseParser.data.json";
 import apiResponses from "./responseParserPerf.data.json";
 import { parseEVChargingStationsAvailabilityResponse } from "../responseParser";
 import errorResponses from "../tests/responseError.data.json";
-import { DefaultAPIResponseError, ErrorObjAPI } from "../../shared/types/apiResponseErrorTypes";
+import { APIErrorResponse } from "../../shared/types/apiResponseErrorTypes";
 import { SDKServiceError, ServiceName } from "../../shared";
 import { parseEVChargingStationsAvailabilityResponseError } from "../evChargingStationsAvailabilityResponseErrorParser";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
@@ -25,7 +25,7 @@ describe("Charging availability error response parsing tests", () => {
         // @ts-ignore
         (
             _name: string,
-            apiResponseError: ErrorObjAPI<DefaultAPIResponseError>,
+            apiResponseError: APIErrorResponse,
             serviceName: ServiceName,
             expectedSDKError: SDKServiceError
         ) => {

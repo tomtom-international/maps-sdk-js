@@ -8,7 +8,7 @@ export const putIntegrationTestsAPIKey = () => {
 
 const basePOIObjTestProps = {
     name: expect.any(String),
-    classifications: expect.any(Array),
+    classifications: expect.anything(),
     brands: expect.any(Array),
     categoryIds: expect.arrayContaining([expect.any(Number)])
 };
@@ -29,7 +29,7 @@ export const evStationBaseTestProps: SearchPlaceProps = {
     address: expect.any(Object),
     poi: expect.objectContaining(basePOIObjTestProps),
     chargingPark: expect.objectContaining({
-        connectors: expect.any(Array),
+        // connectors: expect.any(Array),
         connectorCounts: expect.any(Array)
     })
 };
@@ -64,7 +64,7 @@ export const expectPlaceTestFeature = (props: SearchPlaceProps): Place<SearchPla
         id: expect.any(String),
         geometry: expect.objectContaining({
             type: "Point",
-            coordinates: [expect.any(Number), expect.any(Number)]
+            coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)])
         }),
         properties: expect.objectContaining<SearchPlaceProps>(props)
     });

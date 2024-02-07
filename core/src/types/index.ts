@@ -22,3 +22,4 @@ export * from "./route/summary";
 export * from "./route/geoInputs";
 export * from "./view";
 export * from "./mapLanguageConfig";
+export * from "./headers";

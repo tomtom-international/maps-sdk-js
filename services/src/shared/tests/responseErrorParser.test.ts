@@ -1,5 +1,5 @@
 import errorResponses from "./responseError.data.json";
-import { DefaultAPIResponseError, ErrorObjAPI } from "../types/apiResponseErrorTypes";
+import { APIErrorResponse } from "../types/apiResponseErrorTypes";
 import { parseDefaultResponseError, SDKServiceError } from "../errors";
 import { ServiceName } from "../types/servicesTypes";
 
@@ -9,7 +9,7 @@ describe("Default error response parsing tests", () => {
         // @ts-ignore
         (
             _name: string,
-            apiResponseError: ErrorObjAPI<DefaultAPIResponseError>,
+            apiResponseError: APIErrorResponse,
             serviceName: ServiceName,
             expectedSDKError: SDKServiceError
         ) => {
