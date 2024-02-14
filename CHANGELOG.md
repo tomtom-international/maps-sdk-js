@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.4.2...v0.5.1) (2024-02-14)
+
+
+### Features
+
+* **services:** removing axios and replacing it with fetch, together with nodejs 21 support ([2cf7e5d](https://github.com/tomtom-international/maps-sdk-js/commit/2cf7e5dd00340ee2e71d835cef93bf3b5de87296))
+
 ### [0.4.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.4.1...v0.4.2) (2024-02-08)
 
 
