@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.4...v0.5.5) (2024-02-23)
+
+
+### Bug Fixes
+
+* **server:** attempt to skip loading the document object when in non-browser environments ([bb4d124](https://github.com/tomtom-international/maps-sdk-js/commit/bb4d124d6fef8c74eab87b29ee102d09e47ebdff))
+
 ### [0.5.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.3...v0.5.4) (2024-02-23)
 
 
