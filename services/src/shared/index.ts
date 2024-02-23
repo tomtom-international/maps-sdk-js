@@ -11,5 +11,6 @@ export * from "./types/commonGeocodeAndFuzzySearchParams";
 export * from "./types/commonRoutingParams";
 export * from "./types/vehicleParams";
 export * from "./types/searchSummary";
+export * from "./types/fetch";
 export * from "./serviceTypes";
 export * from "./errors";
