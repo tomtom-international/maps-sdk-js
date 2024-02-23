@@ -1,7 +1,9 @@
 import instructionArrowIcon from "./instruction-line-arrow.svg";
 
-const img = document?.createElement("img");
-if (img) {
+let img;
+
+if (document !== undefined) {
+    img = document?.createElement("img");
     img.src = instructionArrowIcon;
 }
 
