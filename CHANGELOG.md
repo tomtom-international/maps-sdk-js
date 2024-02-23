@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.1...v0.5.2) (2024-02-23)
+
+
+### Features
+
+* run blackduck workflow on PR and main pushes, populate result in a PR comment ([59edf06](https://github.com/tomtom-international/maps-sdk-js/commit/59edf06ce239d74e3f6cda3830e8a44db44332fd))
+* **services:** exporting fetch types to facilitate overrides and api monitoring by clients ([9f01231](https://github.com/tomtom-international/maps-sdk-js/commit/9f0123152231b6c7e257dc85dfdff8318027f37b))
+
 ### [0.5.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.4.2...v0.5.1) (2024-02-14)
 
 
