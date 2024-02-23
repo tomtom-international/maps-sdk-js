@@ -321,7 +321,7 @@ export const prepareForModuleInit = async (
  * @ignore
  */
 export const addImageIfNotExisting = async (map: Map, imageID: string, imageToLoad: string | HTMLImageElement) => {
-    if (!map.hasImage(imageID)) {
+    if (!map.hasImage(imageID) && imageToLoad) {
         if (typeof imageToLoad === "string") {
             // Expecting image URL, so the image needs to be downloaded first:
             const loadedImage = await map.loadImage(imageToLoad);
