@@ -17,7 +17,7 @@ import isNil from "lodash/isNil";
  * @group Shared
  * @category Functions
  */
-export const formatDuration = (seconds: number | undefined): string | null => {
+export const formatDuration = (seconds: number | undefined): string | undefined => {
     if (seconds) {
         // get the absolute value for seconds to calculate the right formatting
         const hours = Math.abs(seconds) / 3600;
@@ -33,15 +33,15 @@ export const formatDuration = (seconds: number | undefined): string | null => {
             return `${minutes.toString()} min`;
         }
     }
-    return null;
+    return undefined;
 };
 
 /**
- * Types of units SDK formatters work with.
+ * Types of distance units SDK formatters work with.
  * @group Shared
  * @category Types
  */
-export type UnitsType = "metric" | "imperial_us" | "imperial_uk";
+export type DistanceUnitsType = "metric" | "imperial_us" | "imperial_uk";
 
 const MILE_IN_METERS = 1609.344;
 const FEET_IN_METERS = 0.3048;
@@ -179,7 +179,7 @@ const formatUK = (meters: number): string => {
  * @group Shared
  * @category Functions
  */
-export const formatDistance = (meters: number, unitsType: UnitsType): string => {
+export const formatDistance = (meters: number, unitsType: DistanceUnitsType): string => {
     if (isNil(meters)) {
         return "";
     }

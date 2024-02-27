@@ -162,4 +162,12 @@ export const ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID = "routeInstructionArrows";
  * Arrow tip image layer for instructions.
  */
 export const ROUTE_INSTRUCTIONS_ARROW_LAYER_ID = "instructionArrowSymbol";
+/**
+ * Route summary bubbles point symbol source ID.
+ */
+export const ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID = "routeSummaryBubbles";
+/**
+ * Route summary bubbles point symbol layer ID.
+ */
+export const ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID = "routeSummaryBubbleSymbol";
 /* End of Routing Source ids */

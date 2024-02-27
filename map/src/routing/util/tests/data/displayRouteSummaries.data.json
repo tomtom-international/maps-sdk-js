@@ -1,0 +1,268 @@
+[
+  [
+    "No delays route",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [0, 0],
+              [1, 1],
+              [2, 2],
+              [3, 3]
+            ]
+          },
+          "properties": {
+            "index": 0,
+            "routeStyle": "selected",
+            "summary": {
+              "travelTimeInSeconds": 300,
+              "lengthInMeters": 1000
+            },
+            "sections": {}
+          }
+        }
+      ]
+    },
+    "metric",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [2, 2]
+          },
+          "properties": {
+            "routeIndex": 0,
+            "routeStyle": "selected",
+            "formattedDistance": "1 km",
+            "formattedDuration": "5 min"
+          }
+        }
+      ]
+    }
+  ],
+  [
+    "Route with 1 delay",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [0, 0],
+              [1, 1],
+              [2, 2],
+              [3, 3],
+              [4, 4],
+              [5, 5]
+            ]
+          },
+          "properties": {
+            "index": 0,
+            "routeStyle": "selected",
+            "summary": {
+              "travelTimeInSeconds": 300,
+              "lengthInMeters": 1000,
+              "trafficDelayInSeconds": 600
+            },
+            "sections": {
+              "traffic": [
+                {
+                  "magnitudeOfDelay": "moderate",
+                  "delayInSeconds": 600
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "imperial_uk",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [3, 3]
+          },
+          "properties": {
+            "routeIndex": 0,
+            "routeStyle": "selected",
+            "formattedDistance": "½ mi",
+            "formattedDuration": "5 min",
+            "magnitudeOfDelay": "moderate",
+            "formattedTraffic": "10 min"
+          }
+        }
+      ]
+    }
+  ],
+  [
+    "Route with 2 delays",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [0, 0],
+              [1, 1],
+              [2, 2],
+              [3, 3]
+            ]
+          },
+          "properties": {
+            "index": 0,
+            "routeStyle": "selected",
+            "summary": {
+              "travelTimeInSeconds": 300,
+              "lengthInMeters": 1000,
+              "trafficDelayInSeconds": 600
+            },
+            "sections": {
+              "traffic": [
+                {
+                  "magnitudeOfDelay": "minor",
+                  "delayInSeconds": 200
+                },
+                {
+                  "magnitudeOfDelay": "major",
+                  "delayInSeconds": 400
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "imperial_us",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [2, 2]
+          },
+          "properties": {
+            "routeIndex": 0,
+            "routeStyle": "selected",
+            "formattedDistance": "½ mi",
+            "formattedDuration": "5 min",
+            "magnitudeOfDelay": "major",
+            "formattedTraffic": "10 min"
+          }
+        }
+      ]
+    }
+  ],
+  [
+    "2 routes, one without delays, one with 2",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [0, 0],
+              [1, 1],
+              [2, 2],
+              [3, 3]
+            ]
+          },
+          "properties": {
+            "index": 0,
+            "routeStyle": "selected",
+            "summary": {
+              "travelTimeInSeconds": 400,
+              "lengthInMeters": 2500
+            },
+            "sections": {}
+          }
+        },
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [0, 0],
+              [1, 1],
+              [2, 2],
+              [3, 3]
+            ]
+          },
+          "properties": {
+            "index": 0,
+            "routeStyle": "selected",
+            "summary": {
+              "travelTimeInSeconds": 300,
+              "lengthInMeters": 1000,
+              "trafficDelayInSeconds": 800
+            },
+            "sections": {
+              "traffic": [
+                {
+                  "magnitudeOfDelay": "minor",
+                  "delayInSeconds": 500
+                },
+                {
+                  "magnitudeOfDelay": "minor",
+                  "delayInSeconds": 300
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "metric",
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [2, 2]
+          },
+          "properties": {
+            "routeIndex": 0,
+            "routeStyle": "selected",
+            "formattedDistance": "2.5 km",
+            "formattedDuration": "7 min"
+          }
+        },
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [2, 2]
+          },
+          "properties": {
+            "routeIndex": 0,
+            "routeStyle": "selected",
+            "formattedDistance": "1 km",
+            "formattedDuration": "5 min",
+            "magnitudeOfDelay": "minor",
+            "formattedTraffic": "13 min"
+          }
+        }
+      ]
+    }
+  ]
+]

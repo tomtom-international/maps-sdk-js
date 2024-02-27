@@ -19,7 +19,7 @@ const buildRouteSectionsFromRoute = <
         id: sectionProps.id,
         geometry: {
             type: "LineString",
-            coordinates: route.geometry.coordinates.slice(sectionProps.startPointIndex, sectionProps.endPointIndex)
+            coordinates: route.geometry.coordinates.slice(sectionProps.startPointIndex, sectionProps.endPointIndex + 1)
         },
         properties: {
             ...(displaySectionPropsBuilder ? displaySectionPropsBuilder(sectionProps, route.properties) : sectionProps),

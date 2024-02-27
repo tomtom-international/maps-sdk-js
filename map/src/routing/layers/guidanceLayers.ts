@@ -51,6 +51,6 @@ export const instructionArrow: LayerSpecTemplate<SymbolLayerSpecification> = {
         "icon-image": INSTRUCTION_ARROW_IMAGE_ID,
         "icon-rotation-alignment": "map",
         "icon-rotate": ["get", "lastPointBearingDegrees"],
-        "icon-size": ["interpolate", ["linear"], ["zoom"], 16, 0.5, 22, 1]
+        "icon-size": ["interpolate", ["linear"], ["zoom"], 16, 1, 22, 2]
     }
 };

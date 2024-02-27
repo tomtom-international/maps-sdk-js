@@ -1,6 +1,13 @@
 import { LineLayerSpecification } from "maplibre-gl";
 import { LayerSpecTemplate } from "../../shared";
-import { DESELECTED_ROUTE_FILTER, FOREGROUND_COLOR, FOREGROUND_LINE_WIDTH, SELECTED_ROUTE_FILTER } from "./shared";
+import {
+    DESELECTED_FOREGROUND_COLOR,
+    DESELECTED_OUTLINE_COLOR,
+    DESELECTED_ROUTE_FILTER,
+    FOREGROUND_COLOR,
+    FOREGROUND_LINE_WIDTH,
+    SELECTED_ROUTE_FILTER
+} from "./shared";
 
 /**
  * @ignore
@@ -21,7 +28,7 @@ export const routeDeselectedOutline: LayerSpecTemplate<LineLayerSpecification> =
     ...routeLineBaseTemplate,
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
-        "line-color": "#3F4A55",
+        "line-color": DESELECTED_OUTLINE_COLOR,
         "line-width": ["interpolate", ["linear"], ["zoom"], 1, 4, 5, 5, 10, 9, 18, 13]
     }
 };
@@ -33,7 +40,7 @@ export const routeDeselectedLine: LayerSpecTemplate<LineLayerSpecification> = {
     ...routeLineBaseTemplate,
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
-        "line-color": "#E0E2E3",
+        "line-color": DESELECTED_FOREGROUND_COLOR,
         "line-width": FOREGROUND_LINE_WIDTH
     }
 };
@@ -61,3 +68,12 @@ export const routeMainLine: LayerSpecTemplate<LineLayerSpecification> = {
         "line-width": FOREGROUND_LINE_WIDTH
     }
 };
+
+/**
+ * @ignore
+ */
+export const SELECTED_SUMMARY_POPUP_IMAGE_ID = "selected-route-summary-popup";
+/**
+ * @ignore
+ */
+export const DESELECTED_SUMMARY_POPUP_IMAGE_ID = "deselected-route-summary-popup";

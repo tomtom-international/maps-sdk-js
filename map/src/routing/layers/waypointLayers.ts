@@ -37,7 +37,7 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
             // else
             "bottom"
         ],
-        "icon-size": 0.425,
+        "icon-size": 0.85,
         "text-allow-overlap": true,
         "icon-allow-overlap": true
     }

@@ -14,6 +14,7 @@ import {
     ROUTE_INSTRUCTIONS_OUTLINE_LAYER_ID,
     ROUTE_LINE_LAYER_ID,
     ROUTE_OUTLINE_LAYER_ID,
+    ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID,
     ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
     ROUTE_TOLL_ROADS_SYMBOL,
     ROUTE_TUNNELS_LINE_LAYER_ID,
@@ -37,12 +38,13 @@ import { routeTunnelsLine } from "./routeTunnelSectionLayers";
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from "./routeVehicleRestrictedLayers";
 import { instructionArrow, instructionLine, instructionOutline } from "./guidanceLayers";
 import { RouteLayersConfig } from "../types/routeModuleConfig";
+import { summaryBubbleSymbolPoint } from "./summaryBubbleLayers";
 
 /**
  * Default implementation of the route layers.
  */
 export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
-    mainLine: {
+    mainLines: {
         layers: [
             {
                 id: ROUTE_DESELECTED_OUTLINE_LAYER_ID,
@@ -85,7 +87,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_INCIDENTS_SYMBOL_LAYER_ID,
                     layerSpec: routeIncidentsSymbol,
-                    beforeID: WAYPOINT_SYMBOLS_LAYER_ID
+                    beforeID: ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID
                 }
             ]
         },
@@ -94,7 +96,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID,
                     layerSpec: routeEVChargingStationSymbol,
-                    beforeID: WAYPOINT_SYMBOLS_LAYER_ID
+                    beforeID: ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID
                 }
             ]
         },
@@ -122,7 +124,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_TOLL_ROADS_SYMBOL,
                     layerSpec: routeTollRoadsSymbol,
-                    beforeID: WAYPOINT_SYMBOLS_LAYER_ID
+                    beforeID: ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID
                 }
             ]
         },
@@ -170,6 +172,15 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 id: ROUTE_INSTRUCTIONS_ARROW_LAYER_ID,
                 layerSpec: instructionArrow,
                 beforeID: ROUTE_INSTRUCTIONS_LINE_LAYER_ID
+            }
+        ]
+    },
+    summaryBubbles: {
+        layers: [
+            {
+                id: ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID,
+                layerSpec: summaryBubbleSymbolPoint,
+                beforeID: WAYPOINT_SYMBOLS_LAYER_ID
             }
         ]
     }

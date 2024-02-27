@@ -263,8 +263,8 @@ const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => 
 
 const parseRoute = (
     apiRoute: RouteAPI,
-    index: number,
-    apiRoutes: RouteAPI[] /*, params: CalculateRouteParams*/
+    index: number
+    /*, params: CalculateRouteParams*/
 ): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
     const bbox = bboxFromGeoJSON(geometry);
@@ -276,10 +276,10 @@ const parseRoute = (
         ...(bbox && { bbox }),
         properties: {
             id,
+            index,
             summary: parseSummary(apiRoute.summary),
             sections: parseSections(apiRoute),
-            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance, geometry.coordinates) }),
-            ...(apiRoutes.length > 1 && { index })
+            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance, geometry.coordinates) })
         }
     };
 };
@@ -294,9 +294,7 @@ export const parseCalculateRouteResponse = (
     // TODO: cleanup or restore input params to parse routing responses. They were used at least to calculate battery % from KWH values and maxCharge input.
     /*params: CalculateRouteParams*/
 ): Routes => {
-    const features = apiResponse.routes.map((apiRoute, index, apiRoutes) =>
-        parseRoute(apiRoute, index, apiRoutes /*, params*/)
-    );
+    const features = apiResponse.routes.map((apiRoute, index) => parseRoute(apiRoute, index /*, params*/));
     const bbox = bboxFromGeoJSON(features);
     return { type: "FeatureCollection", ...(bbox && { bbox }), features };
 };

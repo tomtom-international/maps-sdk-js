@@ -6,14 +6,15 @@ import {
     mapStyleLayerIDs,
     ROUTE_EV_CHARGING_STATIONS_SOURCE_ID,
     ROUTE_FERRIES_SOURCE_ID,
-    ROUTE_INSTRUCTIONS_SOURCE_ID,
     ROUTE_INCIDENTS_SOURCE_ID,
+    ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID,
+    ROUTE_INSTRUCTIONS_SOURCE_ID,
+    ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
     ROUTE_TUNNELS_SOURCE_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    WAYPOINTS_SOURCE_ID,
-    ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID
+    WAYPOINTS_SOURCE_ID
 } from "../shared";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
@@ -27,18 +28,33 @@ import { RoutingLayersSpecs, RoutingModuleConfig, RoutingSourcesWithLayers } fro
 import { buildDisplayRouteSections } from "./util/routeSections";
 import { toDisplayTrafficSectionProps } from "./util/displayTrafficSectionProps";
 import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/routeSections";
-import { buildDisplayRoutes } from "./util/routes";
-import { DisplayRouteProps } from "./types/displayRoutes";
+import { buildDisplayRoutes, buildDisplayRouteSummaries } from "./util/routes";
+import { DisplayRouteProps, DisplayRouteSummaryProps } from "./types/displayRoutes";
 import { ShowRoutesOptions } from "./types/showRoutesOptions";
 import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import { TomTomMap } from "../TomTomMap";
 import { DisplayInstruction } from "./types/guidance";
 import { toDisplayInstructionArrows, toDisplayInstructions } from "./util/guidance";
 import { showFeaturesWithRouteSelection } from "./util/routeSelection";
-import { instructionArrowIconImg } from "./resources";
+import { instructionArrowIconImg, summaryBubbleImageOptions, summaryMapBubbleImg, trafficImg } from "./resources";
 import { defaultRouteLayersConfig } from "./layers/defaultConfig";
-import { createLayersSpecs, mergeConfig } from "./util/config";
+import { createLayersSpecs, withDefaults } from "./util/config";
 import { INSTRUCTION_ARROW_IMAGE_ID } from "./layers/guidanceLayers";
+import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from "./layers/routeMainLineLayers";
+import { StyleImageMetadata } from "maplibre-gl";
+import {
+    DESELECTED_FOREGROUND_COLOR,
+    MAJOR_DELAY_COLOR,
+    MINOR_DELAY_LABEL_COLOR,
+    MODERATE_DELAY_COLOR,
+    UNKNOWN_DELAY_COLOR
+} from "./layers/shared";
+import {
+    TRAFFIC_CLEAR_IMAGE_ID,
+    TRAFFIC_MAJOR_IMAGE_ID,
+    TRAFFIC_MINOR_IMAGE_ID,
+    TRAFFIC_MODERATE_IMAGE_ID
+} from "./layers/summaryBubbleLayers";
 
 const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
 
@@ -68,7 +84,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
 
     private createSourcesWithLayers(layersSpecs: RoutingLayersSpecs): RoutingSourcesWithLayers {
         return {
-            routeLines: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, layersSpecs.routeLines, false),
+            mainLines: new GeoJSONSourceWithLayers(this.mapLibreMap, ROUTES_SOURCE_ID, layersSpecs.mainLines, false),
             waypoints: new GeoJSONSourceWithLayers(this.mapLibreMap, WAYPOINTS_SOURCE_ID, layersSpecs.waypoints, false),
             incidents: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
@@ -107,6 +123,12 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID,
                 layersSpecs.instructionArrows,
                 false
+            ),
+            summaryBubbles: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID,
+                layersSpecs.summaryBubbles,
+                false
             )
         };
     }
@@ -115,16 +137,36 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
+        const options = { pixelRatio: 2 };
         // loading of extra assets if not present in the map style:
         // TODO: bring waypoint assets into SDK as lightweight SVGs which we can add to style and personalize a bit (coloring)
-        this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`);
-        this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`);
-        this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`);
-        this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`);
-        this.addImageIfNotExisting(INSTRUCTION_ARROW_IMAGE_ID, instructionArrowIconImg);
+        this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`, options);
+        this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`, options);
+        this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`, options);
+        this.addImageIfNotExisting(
+            WAYPOINT_FINISH_IMAGE_ID,
+            `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`,
+            options
+        );
+        this.addImageIfNotExisting(INSTRUCTION_ARROW_IMAGE_ID, instructionArrowIconImg, options);
+        this.addImageIfNotExisting(
+            SELECTED_SUMMARY_POPUP_IMAGE_ID,
+            summaryMapBubbleImg(/*FOREGROUND_COLOR*/ "white"),
+            summaryBubbleImageOptions
+        );
+        this.addImageIfNotExisting(
+            DESELECTED_SUMMARY_POPUP_IMAGE_ID,
+            summaryMapBubbleImg(DESELECTED_FOREGROUND_COLOR),
+            summaryBubbleImageOptions
+        );
+        this.addImageIfNotExisting(TRAFFIC_CLEAR_IMAGE_ID, trafficImg(UNKNOWN_DELAY_COLOR), options);
+        this.addImageIfNotExisting(TRAFFIC_MAJOR_IMAGE_ID, trafficImg(MAJOR_DELAY_COLOR), options);
+        this.addImageIfNotExisting(TRAFFIC_MODERATE_IMAGE_ID, trafficImg(MODERATE_DELAY_COLOR), options);
+        this.addImageIfNotExisting(TRAFFIC_MINOR_IMAGE_ID, trafficImg(MINOR_DELAY_LABEL_COLOR), options);
+
         // TODO: displaying traffic requires traffic in the style. Should we at least verify their existence and log a warning if not present?
 
-        this.layersSpecs = createLayersSpecs(mergeConfig(config).routeLayers);
+        this.layersSpecs = createLayersSpecs(withDefaults(config).routeLayers);
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
         addLayers(
             Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
@@ -138,7 +180,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected _applyConfig(config?: RoutingModuleConfig) {
-        const mergedConfig = mergeConfig(config);
+        const mergedConfig = withDefaults(config);
 
         // If there was already some config set, we must update the changes:
         if (this.config) {
@@ -171,36 +213,26 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected async restoreDataAndConfigImpl() {
-        const previouslyShown = {
-            waypoints: this.sourcesWithLayers.waypoints.shownFeatures,
-            routeLines: this.sourcesWithLayers.routeLines.shownFeatures,
-            vehicleRestricted: this.sourcesWithLayers.vehicleRestricted.shownFeatures,
-            incidents: this.sourcesWithLayers.incidents.shownFeatures,
-            ferries: this.sourcesWithLayers.ferries.shownFeatures,
-            evChargingStations: this.sourcesWithLayers.evChargingStations.shownFeatures,
-            tunnels: this.sourcesWithLayers.tunnels.shownFeatures,
-            tollRoads: this.sourcesWithLayers.tollRoads.shownFeatures,
-            instructionLines: this.sourcesWithLayers.instructionLines.shownFeatures,
-            instructionArrows: this.sourcesWithLayers.instructionArrows.shownFeatures
-        };
+        const previouslyShown = Object.entries(this.sourcesWithLayers)
+            .map((entry) => ({
+                [entry[0]]: entry[1].shownFeatures
+            }))
+            .reduce((acc, item) => ({ ...acc, ...item }), {}) as Record<keyof RoutingSourcesWithLayers, any>;
 
         this.initSourcesWithLayers();
         this._applyConfig(this.config);
 
-        this.sourcesWithLayers.waypoints.show(previouslyShown.waypoints);
-        this.sourcesWithLayers.routeLines.show(previouslyShown.routeLines);
-        this.sourcesWithLayers.vehicleRestricted.show(previouslyShown.vehicleRestricted);
-        this.sourcesWithLayers.incidents.show(previouslyShown.incidents);
-        this.sourcesWithLayers.ferries.show(previouslyShown.ferries);
-        this.sourcesWithLayers.evChargingStations.show(previouslyShown.evChargingStations);
-        this.sourcesWithLayers.tunnels.show(previouslyShown.tunnels);
-        this.sourcesWithLayers.tollRoads.show(previouslyShown.tollRoads);
-        this.sourcesWithLayers.instructionLines.show(previouslyShown.instructionLines);
-        this.sourcesWithLayers.instructionArrows.show(previouslyShown.instructionArrows);
+        for (const key of Object.keys(previouslyShown) as (keyof RoutingSourcesWithLayers)[]) {
+            this.sourcesWithLayers[key].show(previouslyShown[key]);
+        }
     }
 
-    private addImageIfNotExisting(imageID: string, image: string | HTMLImageElement) {
-        addImageIfNotExisting(this.mapLibreMap, imageID, image);
+    private addImageIfNotExisting(
+        imageID: string,
+        image: string | HTMLImageElement,
+        options?: Partial<StyleImageMetadata>
+    ) {
+        addImageIfNotExisting(this.mapLibreMap, imageID, image, options);
     }
 
     /**
@@ -211,7 +243,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     async showRoutes(routes: Routes, options?: ShowRoutesOptions) {
         const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
         await this.waitUntilModuleReady();
-        this.sourcesWithLayers.routeLines.show(displayRoutes);
+        this.sourcesWithLayers.mainLines.show(displayRoutes);
         this.sourcesWithLayers.vehicleRestricted.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
         this.sourcesWithLayers.incidents.show(
             buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
@@ -222,6 +254,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.tollRoads.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
+        this.sourcesWithLayers.summaryBubbles.show(
+            buildDisplayRouteSummaries(displayRoutes, this.config!.distanceUnits!)
+        );
     }
 
     /**
@@ -230,15 +265,11 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      */
     async clearRoutes() {
         await this.waitUntilModuleReady();
-        this.sourcesWithLayers.routeLines.clear();
-        this.sourcesWithLayers.vehicleRestricted.clear();
-        this.sourcesWithLayers.incidents.clear();
-        this.sourcesWithLayers.ferries.clear();
-        this.sourcesWithLayers.evChargingStations.clear();
-        this.sourcesWithLayers.tollRoads.clear();
-        this.sourcesWithLayers.tunnels.clear();
-        this.sourcesWithLayers.instructionLines.clear();
-        this.sourcesWithLayers.instructionArrows.clear();
+        for (const key of Object.keys(this.sourcesWithLayers) as (keyof RoutingSourcesWithLayers)[]) {
+            if (key !== "waypoints") {
+                this.sourcesWithLayers[key as keyof RoutingSourcesWithLayers].clear();
+            }
+        }
     }
 
     /**
@@ -247,10 +278,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @param index The route index to select. Must be within the existing rendered routes.
      */
     async selectRoute(index: number) {
-        const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.routeLines.shownFeatures, index);
+        const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.mainLines.shownFeatures, index);
 
         await this.waitUntilModuleReady();
-        this.sourcesWithLayers.routeLines.show(updatedRoutes);
+        this.sourcesWithLayers.mainLines.show(updatedRoutes);
         // TODO: simply update route style instead of regenerating EV stations again
         this.sourcesWithLayers.evChargingStations.show(toDisplayChargingStations(updatedRoutes));
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.vehicleRestricted);
@@ -260,6 +291,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.tunnels);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.instructionLines);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.instructionArrows);
+        showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.summaryBubbles);
     }
 
     /**
@@ -290,9 +322,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      */
     get events() {
         return {
-            routeLines: new EventsModule<Route<DisplayRouteProps>>(
+            mainLines: new EventsModule<Route<DisplayRouteProps>>(
                 this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.routeLines
+                this.sourcesWithLayers.mainLines
             ),
             waypoints: new EventsModule<Waypoint>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.waypoints),
             vehicleRestricted: new EventsModule<RouteSection>(
@@ -313,6 +345,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             instructionLines: new EventsModule<DisplayInstruction>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.instructionLines
+            ),
+            summaryBubbles: new EventsModule<DisplayRouteSummaryProps>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.summaryBubbles
             )
         };
     }

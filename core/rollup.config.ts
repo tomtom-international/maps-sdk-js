@@ -85,6 +85,7 @@ export default () => {
                     __SDK_VERSION__: SDK_VERSION
                 }),
                 commonjs(),
+                terser({ module: true }),
                 analyze({ summaryOnly: true, limit: 10 })
             ]
         }

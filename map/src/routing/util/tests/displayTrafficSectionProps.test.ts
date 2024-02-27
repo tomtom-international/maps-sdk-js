@@ -1,8 +1,8 @@
 import { TrafficSectionProps } from "@anw/maps-sdk-js/core";
 import { toDisplayTrafficSectionProps, trafficSectionToIconID } from "../displayTrafficSectionProps";
 import { DisplayTrafficSectionProps } from "../../types/routeSections";
-import toIconIDTestData from "./toIconID.data.json";
-import toDisplayTrafficSectionPropsData from "./toDisplayTrafficSectionProps.data.json";
+import toIconIDTestData from "./data/toIconID.data.json";
+import toDisplayTrafficSectionPropsData from "./data/toDisplayTrafficSectionProps.data.json";
 
 describe("Traffic section builder tests", () => {
     test.each(toIconIDTestData)(

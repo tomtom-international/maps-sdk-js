@@ -1,4 +1,11 @@
-import { FilterSpecification, Map, MapGeoJSONFeature, RequestParameters, ResourceType } from "maplibre-gl";
+import {
+    FilterSpecification,
+    Map,
+    MapGeoJSONFeature,
+    RequestParameters,
+    ResourceType,
+    StyleImageMetadata
+} from "maplibre-gl";
 import { generateTomTomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core";
 import { TomTomMap } from "../TomTomMap";
 import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
@@ -320,18 +327,24 @@ export const prepareForModuleInit = async (
  * Adds the given image to the map (loading it if necessary) only if it's not already there.
  * @ignore
  */
-export const addImageIfNotExisting = async (map: Map, imageID: string, imageToLoad: string | HTMLImageElement) => {
+export const addImageIfNotExisting = async (
+    map: Map,
+    imageID: string,
+    imageToLoad: string | HTMLImageElement,
+    options?: Partial<StyleImageMetadata>
+) => {
     if (!map.hasImage(imageID) && imageToLoad) {
         if (typeof imageToLoad === "string") {
             // Expecting image URL, so the image needs to be downloaded first:
             const loadedImage = await map.loadImage(imageToLoad);
             // double-checking just in case of a race condition with overlapping call:
             if (!map.hasImage(imageID)) {
-                map.addImage(imageID, loadedImage.data);
+                map.addImage(imageID, loadedImage.data, options);
             }
         } else {
             // Expecting HTMLImageElement, ready to be added:
-            map.addImage(imageID, imageToLoad);
+            // (Defensive setTimeout to ensure the image is loaded)
+            setTimeout(() => map.addImage(imageID, imageToLoad, options));
         }
     }
 };

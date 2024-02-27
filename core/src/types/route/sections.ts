@@ -16,7 +16,7 @@ export type SectionProps = {
      */
     startPointIndex: number;
     /**
-     * The route path point index where this section ends.
+     * The (inclusive) route path point index where this section ends.
      */
     endPointIndex: number;
 };

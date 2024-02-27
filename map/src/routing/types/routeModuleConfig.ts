@@ -1,7 +1,7 @@
 import { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { GeoJSONSourceWithLayers, LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
-import { Routes, Waypoints } from "@anw/maps-sdk-js/core";
-import { DisplayRouteProps } from "./displayRoutes";
+import { DistanceUnitsType, Routes, Waypoints } from "@anw/maps-sdk-js/core";
+import { DisplayRouteProps, DisplayRouteSummaries } from "./displayRoutes";
 import { DisplayTrafficSectionProps, RouteSections } from "./routeSections";
 import { DisplayInstructionArrows, DisplayInstructions } from "./guidance";
 
@@ -11,9 +11,9 @@ import { DisplayInstructionArrows, DisplayInstructions } from "./guidance";
  */
 export type RouteLayersConfig = {
     /**
-     * Main line layers.
+     * Main route line layers.
      */
-    mainLine?: LayersSpecWithOrder<LineLayerSpecification>;
+    mainLines?: LayersSpecWithOrder<LineLayerSpecification>;
 
     /**
      * Waypoint layers.
@@ -21,7 +21,7 @@ export type RouteLayersConfig = {
     waypoints?: LayersSpecWithOrder<SymbolLayerSpecification>;
 
     /**
-     * Layer specifications for the sections.
+     * Layer specifications for the route sections.
      */
     sections?: {
         /**
@@ -58,12 +58,21 @@ export type RouteLayersConfig = {
      * Route guidance instruction arrows.
      */
     instructionArrows?: LayersSpecWithOrder;
+    /**
+     * Route summary bubbles.
+     */
+    summaryBubbles?: LayersSpecWithOrder;
 };
 
 /**
  * Parameters for the routing module.
  */
 export type RoutingModuleConfig = {
+    /**
+     * Units type to format distances where applicable.
+     * @default "metric"
+     */
+    distanceUnits?: DistanceUnitsType;
     /**
      * Overrides default layers configuration with the one supplied here.
      */
@@ -75,7 +84,7 @@ export type RoutingModuleConfig = {
  */
 export type RoutingSourcesWithLayers = {
     waypoints: GeoJSONSourceWithLayers<Waypoints>;
-    routeLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
+    mainLines: GeoJSONSourceWithLayers<Routes<DisplayRouteProps>>;
     // route sections:
     vehicleRestricted: GeoJSONSourceWithLayers<RouteSections>;
     incidents: GeoJSONSourceWithLayers<RouteSections<DisplayTrafficSectionProps>>;
@@ -85,6 +94,7 @@ export type RoutingSourcesWithLayers = {
     tunnels: GeoJSONSourceWithLayers<RouteSections>;
     instructionLines: GeoJSONSourceWithLayers<DisplayInstructions>;
     instructionArrows: GeoJSONSourceWithLayers<DisplayInstructionArrows>;
+    summaryBubbles: GeoJSONSourceWithLayers<DisplayRouteSummaries>;
 };
 
 /**

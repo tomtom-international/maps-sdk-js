@@ -73,6 +73,7 @@ export default () => {
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
+                terser({ module: true }),
                 analyze({ summaryOnly: true, limit: 10 })
             ]
         }

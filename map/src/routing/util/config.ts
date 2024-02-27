@@ -6,15 +6,13 @@ import { defaultRouteLayersConfig } from "../layers/defaultConfig";
  * @ignore
  */
 const mapLayerSpecs = (layerSpecs: LayersSpecWithOrder = { layers: [] }): ToBeAddedLayerSpecWithoutSource[] =>
-    layerSpecs.layers.map(
-        ({ layerSpec, id, beforeID }) => ({ ...layerSpec, id, beforeID } as ToBeAddedLayerSpecWithoutSource)
-    );
+    layerSpecs.layers.map(({ layerSpec, id, beforeID }) => ({ ...layerSpec, id, beforeID }));
 
 /**
  * @ignore
  */
 export const createLayersSpecs = (config: RouteLayersConfig = {}): RoutingLayersSpecs => ({
-    routeLines: mapLayerSpecs(config.mainLine),
+    mainLines: mapLayerSpecs(config.mainLines),
     waypoints: mapLayerSpecs(config.waypoints),
     ferries: mapLayerSpecs(config.sections?.ferry),
     evChargingStations: mapLayerSpecs(config.sections?.evChargingStations),
@@ -23,29 +21,34 @@ export const createLayersSpecs = (config: RouteLayersConfig = {}): RoutingLayers
     tunnels: mapLayerSpecs(config.sections?.tunnel),
     vehicleRestricted: mapLayerSpecs(config.sections?.vehicleRestricted),
     instructionLines: mapLayerSpecs(config.instructionLines),
-    instructionArrows: mapLayerSpecs(config.instructionArrows)
+    instructionArrows: mapLayerSpecs(config.instructionArrows),
+    summaryBubbles: mapLayerSpecs(config.summaryBubbles)
 });
 
 /**
  * @ignore
  */
-export const mergeConfig = (config: RoutingModuleConfig | undefined): RoutingModuleConfig => ({
-    ...(config ? config : {}),
-    routeLayers: {
-        mainLine: config?.routeLayers?.mainLine ?? defaultRouteLayersConfig.mainLine,
-        waypoints: config?.routeLayers?.waypoints ?? defaultRouteLayersConfig.waypoints,
-        sections: {
-            ferry: config?.routeLayers?.sections?.ferry ?? defaultRouteLayersConfig.sections?.ferry,
-            evChargingStations:
-                config?.routeLayers?.sections?.evChargingStations ??
-                defaultRouteLayersConfig.sections?.evChargingStations,
-            incident: config?.routeLayers?.sections?.incident ?? defaultRouteLayersConfig.sections?.incident,
-            tollRoad: config?.routeLayers?.sections?.tollRoad ?? defaultRouteLayersConfig.sections?.tollRoad,
-            tunnel: config?.routeLayers?.sections?.tunnel ?? defaultRouteLayersConfig.sections?.tunnel,
-            vehicleRestricted:
-                config?.routeLayers?.sections?.vehicleRestricted ?? defaultRouteLayersConfig.sections?.vehicleRestricted
-        },
-        instructionLines: config?.routeLayers?.instructionLines ?? defaultRouteLayersConfig.instructionLines,
-        instructionArrows: config?.routeLayers?.instructionArrows ?? defaultRouteLayersConfig.instructionArrows
-    }
-});
+export const withDefaults = (config: RoutingModuleConfig | undefined): RoutingModuleConfig => {
+    const layers = config?.routeLayers;
+    const sections = layers?.sections;
+    const defaultSections = defaultRouteLayersConfig.sections;
+    return {
+        ...(config ? config : {}),
+        distanceUnits: config?.distanceUnits ?? "metric",
+        routeLayers: {
+            mainLines: layers?.mainLines ?? defaultRouteLayersConfig.mainLines,
+            waypoints: layers?.waypoints ?? defaultRouteLayersConfig.waypoints,
+            sections: {
+                ferry: sections?.ferry ?? defaultSections?.ferry,
+                evChargingStations: sections?.evChargingStations ?? defaultSections?.evChargingStations,
+                incident: sections?.incident ?? defaultSections?.incident,
+                tollRoad: sections?.tollRoad ?? defaultSections?.tollRoad,
+                tunnel: sections?.tunnel ?? defaultSections?.tunnel,
+                vehicleRestricted: sections?.vehicleRestricted ?? defaultSections?.vehicleRestricted
+            },
+            instructionLines: layers?.instructionLines ?? defaultRouteLayersConfig.instructionLines,
+            instructionArrows: layers?.instructionArrows ?? defaultRouteLayersConfig.instructionArrows,
+            summaryBubbles: layers?.summaryBubbles ?? defaultRouteLayersConfig.summaryBubbles
+        }
+    };
+};

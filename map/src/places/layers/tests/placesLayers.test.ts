@@ -7,6 +7,7 @@ import {
     selectedPlaceLayerSpec
 } from "../placesLayers";
 import poiLayerSpec from "../../tests/poiLayerSpec.data.json";
+import { MAP_MEDIUM_FONT } from "../../../shared/layers/commonLayerProps";
 
 describe("Get places layer spec with circle or pin icon style config", () => {
     const mapLibreMock = jest.fn() as unknown as Map;
@@ -60,7 +61,7 @@ describe("Get places layer spec with circle or pin icon style config", () => {
                     textConfig: {
                         textSize: 5,
                         textField: ["get", "name"],
-                        textFont: ["Noto-Medium"],
+                        textFont: [MAP_MEDIUM_FONT],
                         textOffset: [0, 1],
                         textColor: "red",
                         textHaloColor: "white",
@@ -77,7 +78,7 @@ describe("Get places layer spec with circle or pin icon style config", () => {
                 layout: {
                     ...placesLayerSpec.layout,
                     "text-size": 5,
-                    "text-font": ["Noto-Medium"],
+                    "text-font": [MAP_MEDIUM_FONT],
                     "text-offset": [0, 1],
                     "text-field": ["get", "name"]
                 },
@@ -94,7 +95,7 @@ describe("Get places layer spec with circle or pin icon style config", () => {
                 layout: {
                     ...selectedPlaceLayerSpec.layout,
                     "text-size": 5,
-                    "text-font": ["Noto-Medium"],
+                    "text-font": [MAP_MEDIUM_FONT],
                     "text-offset": [0, 1],
                     "text-field": ["get", "name"]
                 },

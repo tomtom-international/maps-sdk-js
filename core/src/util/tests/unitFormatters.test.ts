@@ -2,8 +2,8 @@ import { formatDuration, formatDistance } from "../unitFormatters";
 
 describe("Unit formatters tests", () => {
     test("format duration", () => {
-        expect(formatDuration(0)).toBeNull();
-        expect(formatDuration(20)).toBeNull();
+        expect(formatDuration(0)).toBeUndefined();
+        expect(formatDuration(20)).toBeUndefined();
         expect(formatDuration(30)).toBe("1 min");
         expect(formatDuration(60)).toBe("1 min");
         expect(formatDuration(100)).toBe("2 min");

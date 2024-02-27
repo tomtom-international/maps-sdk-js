@@ -6,6 +6,7 @@ import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSp
 import { GeometriesModuleConfig } from "./types/geometriesModuleConfig";
 import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/geometryDisplayProps";
 import { SymbolLayerSpecWithoutSource } from "../shared";
+import { MAP_BOLD_FONT } from "../shared/layers/commonLayerProps";
 
 /**
  * Builds Geometry layer specifications for fill and outline layers.
@@ -100,7 +101,7 @@ export const buildGeometryTitleLayerSpec = (
             ...(textConfig?.textField && { "text-field": textConfig.textField }),
             "text-padding": 5,
             "text-size": 12,
-            "text-font": ["Noto-Bold"],
+            "text-font": [MAP_BOLD_FONT],
             "symbol-placement": "point"
         },
         paint: {

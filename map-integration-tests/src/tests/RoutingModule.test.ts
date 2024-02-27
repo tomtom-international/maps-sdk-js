@@ -12,6 +12,8 @@ import {
     ROUTE_INSTRUCTIONS_LINE_LAYER_ID,
     ROUTE_INSTRUCTIONS_SOURCE_ID,
     ROUTE_LINE_LAYER_ID,
+    ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID,
+    ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID,
     ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
     ROUTE_TUNNELS_SOURCE_ID,
@@ -32,6 +34,7 @@ import {
     getNumVisibleLayersBySource,
     getPaintProperty,
     initHillshade,
+    queryRenderedFeatures,
     setStyle,
     waitForMapIdle,
     waitForTimeout,
@@ -72,6 +75,11 @@ const clearWaypoints = async () => page.evaluate(() => (globalThis as MapsSDKThi
 const waitForRenderedWaypoints = async (numWaypoint: number) =>
     waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
 
+const getSelectedSummaryBubbleProps = async (): Promise<any | undefined> => {
+    const renderedBubbles = await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID]);
+    return renderedBubbles.find((f) => f.properties?.routeStyle == "selected")?.properties;
+};
+
 // (We reparse the route because it contains Date objects):
 const amsterdamToRotterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJSON));
 const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJSON));
@@ -86,11 +94,47 @@ const NUM_TOLL_ROAD_LAYERS = 2;
 const NUM_EV_STATION_LAYERS = 1;
 const NUM_INSTRUCTION_LINE_LAYERS = 2;
 const NUM_INSTRUCTION_ARROW_LAYERS = 1;
+const NUM_SUMMARY_BUBBLE_LAYERS = 1;
 
 describe("Routing tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
 
     beforeAll(async () => mapEnv.loadPage());
+
+    test("Basic routes and waypoints show and clear flows", async () => {
+        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await initRouting();
+
+        // Showing waypoints but not yet routes:
+        await showWaypoints([
+            [4.53074, 51.95102],
+            [4.88951, 52.37229]
+        ]);
+        await waitForMapIdle();
+        await waitForRenderedWaypoints(2);
+        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
+
+        // Showing routes, keeping waypoints:
+        await showRoutes(amsterdamToRotterdamRoutes);
+        await waitForMapIdle();
+        await waitForRenderedWaypoints(2);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
+
+        // clearing routes, but keeping waypoints:
+        await clearRoutes();
+        await waitForMapIdle();
+        await waitForRenderedWaypoints(2);
+        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
+
+        // clearing waypoints
+        await clearWaypoints();
+        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 
     test("Multiple show and clear flows", async () => {
         await mapEnv.loadMap(
@@ -118,6 +162,9 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
         // no guidance in the route
         expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(
+            NUM_SUMMARY_BUBBLE_LAYERS
+        );
 
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
@@ -125,6 +172,13 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
         await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
+        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
+        expect(await getSelectedSummaryBubbleProps()).toEqual({
+            routeStyle: "selected",
+            formattedDistance: "77 km",
+            formattedDuration: "1 hr 04 min",
+            formattedTraffic: "3 min"
+        });
 
         // Changing the style, asserting that the route stays the same:
         await setStyle("standardDark");
@@ -175,6 +229,7 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
 
         await clearWaypoints();
         await waitForMapIdle();
@@ -279,6 +334,10 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID)).toBe(
             NUM_INSTRUCTION_ARROW_LAYERS
         );
+        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(
+            NUM_SUMMARY_BUBBLE_LAYERS
+        );
+
         // some sections don't have any data here, hence their layers stay invisible:
         expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
@@ -293,6 +352,7 @@ describe("Routing tests", () => {
         await waitUntilRenderedFeatures([ROUTE_INSTRUCTIONS_LINE_LAYER_ID, ROUTE_INSTRUCTIONS_ARROW_LAYER_ID], 0, 2000);
         // EV stops are filtered at this zoom level
         await waitUntilRenderedFeatures([ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID], 0, 2000);
+        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(0);
 
         // we zoom a bit closer to see EV charging stops and some incidents:
         await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(6));
@@ -402,7 +462,7 @@ describe("Routing tests", () => {
         await waitForMapIdle();
         expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#3f9cd9");
 
-        const updatedLayers = defaultRouteLayersConfig.mainLine?.layers.map(({ id, layerSpec, ...rest }) => {
+        const updatedLayers = defaultRouteLayersConfig.mainLines?.layers.map(({ id, layerSpec, ...rest }) => {
             if (id === ROUTE_LINE_LAYER_ID) {
                 return {
                     id,
@@ -413,7 +473,7 @@ describe("Routing tests", () => {
             return { id, layerSpec, ...rest };
         });
 
-        const newConfig = { routeLayers: { mainLine: { layers: updatedLayers } } } as RoutingModuleConfig;
+        const newConfig = { routeLayers: { mainLines: { layers: updatedLayers } } };
         await applyConfig(newConfig);
         await waitForMapIdle();
         expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");

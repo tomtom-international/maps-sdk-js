@@ -3,7 +3,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import analyze from "rollup-plugin-analyzer";
-import image from "@rollup/plugin-image";
+import svg from "rollup-plugin-svg-import";
 // @ts-ignore
 import includePaths from "rollup-plugin-includepaths";
 
@@ -35,8 +35,8 @@ export default () => {
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
-                terser(),
-                image()
+                svg(),
+                terser()
             ]
         },
         {
@@ -56,7 +56,7 @@ export default () => {
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
-                image()
+                svg()
             ]
         },
         {
@@ -76,7 +76,8 @@ export default () => {
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
-                image(),
+                svg(),
+                terser({ module: true }),
                 analyze({ summaryOnly: true, limit: 10 })
             ]
         }

@@ -97,10 +97,10 @@ describe("Routing module tests", () => {
         routing.showWaypoints([]);
         routing.showWaypoints({ type: "FeatureCollection", features: [] });
         routing.clearWaypoints();
-        expect(routing.getLayerToRenderLinesUnder()).toStrictEqual(mapStyleLayerIDs.lowestLabel);
+        expect(routing.getLayerToRenderLinesUnder()).toEqual(mapStyleLayerIDs.lowestLabel);
         routing.applyConfig({
             routeLayers: {
-                mainLine: {
+                mainLines: {
                     layers: [
                         {
                             id: "a different id",
@@ -112,7 +112,7 @@ describe("Routing module tests", () => {
             }
         });
 
-        expect(routing.events.routeLines).toBeInstanceOf(EventsModule);
+        expect(routing.events.mainLines).toBeInstanceOf(EventsModule);
         expect(routing.events.waypoints).toBeInstanceOf(EventsModule);
         expect(routing.events.vehicleRestricted).toBeInstanceOf(EventsModule);
         expect(routing.events.incidents).toBeInstanceOf(EventsModule);

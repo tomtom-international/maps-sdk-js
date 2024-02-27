@@ -6,6 +6,7 @@ import {
     preparePlacesForDisplay,
     toPlaces
 } from "../preparePlacesForDisplay";
+import { MAP_MEDIUM_FONT } from "../../shared/layers/commonLayerProps";
 
 describe("toPlaces tests", () => {
     const testPlace0: Place = {
@@ -181,7 +182,7 @@ describe("test prepare places for display", () => {
                 textConfig: {
                     textSize: 5,
                     textField: ["get", "name"],
-                    textFont: ["Noto-Medium"]
+                    textFont: [MAP_MEDIUM_FONT]
                 },
                 extraFeatureProps: {
                     phone: getPhoneFun,
@@ -217,7 +218,7 @@ describe("test prepare places for display", () => {
                 textConfig: {
                     textSize: 5,
                     textField: (place) => place.properties.poi?.url || "No url found",
-                    textFont: ["Noto-Medium"]
+                    textFont: [MAP_MEDIUM_FONT]
                 }
             })
         ).toEqual({

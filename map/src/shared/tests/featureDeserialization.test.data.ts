@@ -1,3 +1,5 @@
+import { MAP_BOLD_FONT } from "../layers/commonLayerProps";
+
 export const serializedFeatureData = [
     {
         geometry: {
@@ -40,7 +42,7 @@ export const serializedFeatureData = [
                 },
                 "text-anchor": "top",
                 "text-offset": [0, 0.5],
-                "text-font": ["Noto-Bold"],
+                "text-font": [MAP_BOLD_FONT],
                 "text-size": 13.333333333333332,
                 "text-padding": 5,
                 "text-optional": true,

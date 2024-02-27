@@ -63,10 +63,9 @@ export type RouteProps = {
     guidance?: Guidance;
     /**
      * Index related to other routes.
-     * * Only available when there is more than one route. Then they are in natural array order: 0, 1, 2, 3...
      * * By default, the first route (index 0) is considered the main one, and the next one are alternatives.
      */
-    index?: number;
+    index: number;
 };
 
 /**

@@ -1,7 +1,13 @@
 import { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
 import { LayerSpecTemplate } from "../../shared";
-import { SELECTED_ROUTE_FILTER } from "./shared";
+import {
+    MAJOR_DELAY_COLOR,
+    MINOR_DELAY_LABEL_COLOR,
+    MODERATE_DELAY_COLOR,
+    SELECTED_ROUTE_FILTER,
+    UNKNOWN_DELAY_COLOR
+} from "./shared";
 
 const EXTRA_FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
     "interpolate",
@@ -33,9 +39,9 @@ export const routeIncidentsBGLine: LayerSpecTemplate<LineLayerSpecification> = {
             "minor",
             "#FFC105",
             "moderate",
-            "#FB2D09",
+            MODERATE_DELAY_COLOR,
             "major",
-            "#AD0000",
+            MAJOR_DELAY_COLOR,
             // other
             "#C7D2D8"
         ]
@@ -94,6 +100,24 @@ export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification
 /**
  * @ignore
  */
+export const magnitudeOfDelayTextColor: ExpressionSpecification = [
+    "match",
+    ["get", "magnitudeOfDelay"],
+    "minor",
+    MINOR_DELAY_LABEL_COLOR,
+    "moderate",
+    MODERATE_DELAY_COLOR,
+    "major",
+    MAJOR_DELAY_COLOR,
+    "indefinite",
+    "#666666",
+    // other
+    UNKNOWN_DELAY_COLOR
+];
+
+/**
+ * @ignore
+ */
 export const routeIncidentsSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,
     type: "symbol",
@@ -112,20 +136,7 @@ export const routeIncidentsSymbol: LayerSpecTemplate<SymbolLayerSpecification> =
         "text-size": ["interpolate", ["linear"], ["zoom"], 6, 11, 10, 13]
     },
     paint: {
-        "text-color": [
-            "match",
-            ["get", "magnitudeOfDelay"],
-            "minor",
-            "#f58240",
-            "moderate",
-            "#FB2D09",
-            "major",
-            "#AD0000",
-            "indefinite",
-            "#666666",
-            //other
-            "#000000"
-        ],
+        "text-color": magnitudeOfDelayTextColor,
         "text-halo-color": "#FFFFFF",
         "text-halo-width": 1
     }
