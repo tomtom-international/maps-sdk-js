@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.5...v0.5.6) (2024-02-27)
+
+
+### Bug Fixes
+
+* **routing:** fixing the mapping of instructions to path points ([72330f5](https://github.com/tomtom-international/maps-sdk-js/commit/72330f5eaad229b74bcf5b76152807505a92dc27))
+
 ### [0.5.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.4...v0.5.5) (2024-02-23)
 
 
