@@ -226,6 +226,10 @@ const parseSections = (apiRoute: RouteAPI /*, params: CalculateRouteParams*/): S
     return result;
 };
 
+const DELTA = 0.0001;
+
+const similar = (a: Position, b: Position): boolean => Math.abs(a[0] - b[0]) < DELTA && Math.abs(a[1] - b[1]) < DELTA;
+
 const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => {
     const instructions: Instruction[] = [];
     let lastInstructionPathIndex = 0;
@@ -235,12 +239,11 @@ const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => 
 
         // we determine the path point index for the instruction by matching maneuverPoint to the path:
         for (let pathIndex = lastInstructionPathIndex; pathIndex < path.length; pathIndex++) {
-            const pathPoint = path[pathIndex];
-            if (
-                (pathPoint[0] == maneuverPoint[0] && pathPoint[1] == maneuverPoint[1]) ||
-                pathIndex == path.length - 1
-            ) {
+            if (similar(path[pathIndex], maneuverPoint)) {
                 lastInstructionPathIndex = pathIndex;
+                break;
+            } else if (pathIndex === path.length - 1) {
+                // (we do not advance lastInstructionPathIndex here to prevent missing a whole path section while mapping following instructions)
                 break;
             }
         }

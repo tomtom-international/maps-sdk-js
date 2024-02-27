@@ -11200,7 +11200,7 @@
                   "drivingSide": "RIGHT",
                   "maneuver": "WAYPOINT_RIGHT",
                   "maneuverPoint": [4.81609, 52.47148],
-                  "pathPointIndex": 78,
+                  "pathPointIndex": 20,
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "roadShields": [
@@ -11269,7 +11269,7 @@
                   "drivingSide": "RIGHT",
                   "maneuver": "ROUNDABOUT_LEFT",
                   "maneuverPoint": [4.82201, 52.4728],
-                  "pathPointIndex": 78,
+                  "pathPointIndex": 42,
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
@@ -11380,7 +11380,7 @@
                   "isManeuverObligatory": false,
                   "maneuver": "TURN_RIGHT",
                   "maneuverPoint": [4.82161, 52.47362],
-                  "pathPointIndex": 78,
+                  "pathPointIndex": 52,
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
