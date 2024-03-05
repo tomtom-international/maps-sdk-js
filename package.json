@@ -6,7 +6,7 @@
     "clean": "npm run clean:dist -ws && npm run clean:cache -ws",
     "release:dry": "npx standard-version --dry-run",
     "release": "./scripts/release.sh && git push --follow-tags origin main",
-    "documentation": "./scripts/documentation/generate-api-reference.sh",
+    "documentation": "typedoc",
     "build:full": "npm run build:full -ws",
     "build": "npm run build -ws",
     "type-check": "npm run type-check -ws",
@@ -66,7 +66,6 @@
     "services": "*",
     "size-limit": "^9.0.0",
     "typedoc": "^0.25.7",
-    "typedoc-plugin-markdown": "4.0.0-next.10",
     "typedoc-plugin-missing-exports": "^2.1.0",
     "yaml": "^2.3.4"
   },
@@ -81,11 +80,6 @@
       "path": "map/dist/map*.js"
     }
   ],
-  "standard-version": {
-    "scripts": {
-      "postbump": "./scripts/documentation/update-sdk-version-in-docs.sh && git add typedoc.json documentation/dev-portal/"
-    }
-  },
   "volta": {
     "node": "21.6.1"
   }

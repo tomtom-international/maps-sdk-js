@@ -24,18 +24,14 @@
     "./services/src/customize"
   ],
   "entryPointStrategy": "resolve",
-  "entryDocument": "home.mdx",
   "out": "documentation/dev-portal/javascript/maps/documentation/api-reference",
   "readme": "none",
   "name": "Maps SDK for JavaScript",
   "internalModule": "internal",
   "excludeExternals": true,
   "plugin": [
-    "typedoc-plugin-markdown",
     "typedoc-plugin-missing-exports",
-    "./documentation/maps-sdk-theme/dist"
   ],
-  "theme": "maps-sdk-theme",
   "externalSymbolLinkMappings": {
     "maplibre-gl": {
       "Map": "https://maplibre.org/maplibre-gl-js-docs/api/map/",
@@ -48,22 +44,4 @@
   },
   "excludePrivate": true,
   "githubPages": false,
-  "kindsWithOwnFile": [
-    "class"
-  ],
-  "enableFrontmatter": true,
-  "hidePageTitle": true,
-  "hideBreadcrumbs": true,
-  "indexPageTitle": "Maps SDK for JavaScript - API Reference",
-  "preserveAnchorCasing": true,
-  "anchorFormat": "none",
-  "flattenOutputFiles": true,
-  "frontmatterGlobals": {
-    "titleTags": [
-      {
-        "label": "VERSION 0.5.6",
-        "color": "grey5"
-      }
-    ]
-  }
 }
