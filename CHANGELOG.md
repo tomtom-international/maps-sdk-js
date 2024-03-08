@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.6...v0.5.7) (2024-03-08)
+
+
+### Features
+
+* **routing:** first iteration for displaying bubbles with route summaries on the map ([be2cc3a](https://github.com/tomtom-international/maps-sdk-js/commit/be2cc3a8a4d163481f8b43b11172e0065d65546b))
+
 ### [0.5.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.5...v0.5.6) (2024-02-27)
 
 
