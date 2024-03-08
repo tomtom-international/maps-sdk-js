@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.1...v0.6.2) (2024-03-08)
+
+
+### Features
+
+* **routing:** automatically updating summary bubbles if distance units config is changed ([180f307](https://github.com/tomtom-international/maps-sdk-js/commit/180f307aad77e349a1ed3e5b3bb34a048fb9ced5))
+
 ### [0.6.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.7...v0.6.1) (2024-03-08)
 
 ### [0.5.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.5.6...v0.5.7) (2024-03-08)
