@@ -1,5 +1,6 @@
 import {
     defaultRouteLayersConfig,
+    HILLSHADE_SOURCE_ID,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_EV_CHARGING_STATIONS_SOURCE_ID,
     ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID,
@@ -21,6 +22,8 @@ import {
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
     RoutingModuleConfig,
+    TRAFFIC_FLOW_SOURCE_ID,
+    TRAFFIC_INCIDENTS_SOURCE_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
 } from "map";
@@ -42,11 +45,11 @@ import {
     waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
 
-const initRouting = async () =>
-    page.evaluate(async () => {
+const initRouting = async (config?: RoutingModuleConfig) =>
+    page.evaluate(async (inputConfig?: RoutingModuleConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.routing = await mapsSDKThis.MapsSDK.RoutingModule.init(mapsSDKThis.tomtomMap);
-    });
+        mapsSDKThis.routing = await mapsSDKThis.MapsSDK.RoutingModule.init(mapsSDKThis.tomtomMap, inputConfig);
+    }, config);
 
 const applyConfig = async (config: RoutingModuleConfig) =>
     page.evaluate((inputConfig: RoutingModuleConfig) => {
@@ -221,6 +224,9 @@ describe("Routing tests", () => {
         await clearRoutes();
         await waitForMapIdle();
         expect(mapEnv.consoleErrors).toHaveLength(0);
+        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
         expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
@@ -447,7 +453,7 @@ describe("Routing tests", () => {
         });
     });
 
-    test("Updating configuration", async () => {
+    test("Updating advanced layers configuration", async () => {
         await mapEnv.loadMap(
             { fitBoundsOptions: { padding: 150 }, bounds: amsterdamToRotterdamRoutes.bbox },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
@@ -482,6 +488,26 @@ describe("Routing tests", () => {
         await setStyle("monoLight");
         await waitForMapIdle();
         expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test("Distance units configuration", async () => {
+        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: amsterdamToRotterdamRoutes.bbox });
+        await initRouting({ distanceUnits: "imperial_us" });
+        await showRoutes(amsterdamToRotterdamRoutes);
+        await waitForMapIdle();
+        expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "48 mi" });
+
+        await applyConfig({ distanceUnits: "metric" });
+        await showRoutes(amsterdamToRotterdamRoutes);
+        await waitForMapIdle();
+        expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "77 km" });
+
+        await applyConfig({ distanceUnits: "imperial_uk" });
+        await showRoutes(amsterdamToRotterdamRoutes);
+        await waitForMapIdle();
+        expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "48 mi" });
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
