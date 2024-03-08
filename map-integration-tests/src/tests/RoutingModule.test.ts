@@ -40,7 +40,6 @@ import {
     queryRenderedFeatures,
     setStyle,
     waitForMapIdle,
-    waitForTimeout,
     waitUntilRenderedFeatures,
     waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
@@ -273,7 +272,6 @@ describe("Routing tests", () => {
         await showRoutes(amsterdamToRotterdamRoutes);
 
         await waitForMapIdle();
-        await waitForTimeout(10000);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
@@ -290,7 +288,6 @@ describe("Routing tests", () => {
         ]);
 
         await waitForMapIdle();
-        await waitForTimeout(2000);
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
 
@@ -500,12 +497,10 @@ describe("Routing tests", () => {
         expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "48 mi" });
 
         await applyConfig({ distanceUnits: "metric" });
-        await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
         expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "77 km" });
 
         await applyConfig({ distanceUnits: "imperial_uk" });
-        await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
         expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "48 mi" });
 

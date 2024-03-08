@@ -206,6 +206,18 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             listOfSources.forEach((source) => source.setLayersVisible(!!source.shownFeatures.features.length));
             this.layersSpecs = newLayersSpecs;
         }
+
+        // Summary bubbles have dedicated sources and contain distance-units dependent text ...
+        // ... so we need to re-show them if that config part changed:
+        if (
+            this.config?.distanceUnits != mergedConfig.distanceUnits &&
+            this.sourcesWithLayers.summaryBubbles.shownFeatures.features.length
+        ) {
+            this.sourcesWithLayers.summaryBubbles.show(
+                buildDisplayRouteSummaries(this.sourcesWithLayers.mainLines.shownFeatures, mergedConfig.distanceUnits!)
+            );
+        }
+
         return mergedConfig;
     }
 
