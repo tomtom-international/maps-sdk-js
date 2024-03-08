@@ -5,7 +5,7 @@ module.exports = {
     entry: "./index.js",
     target: "web",
     mode: "development",
-    devServer: { http2: true, port: 9001 },
+    devServer: { server: "https", port: 9001 },
     plugins: [
         new HtmlWebpackPlugin({
             template: "./index.html",
