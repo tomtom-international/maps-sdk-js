@@ -279,7 +279,8 @@ const parseRoute = (
             index,
             summary: parseSummary(apiRoute.summary),
             sections: parseSections(apiRoute),
-            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance, geometry.coordinates) })
+            ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance, geometry.coordinates) }),
+            ...(apiRoute.progress && { progress: apiRoute.progress })
         }
     };
 };

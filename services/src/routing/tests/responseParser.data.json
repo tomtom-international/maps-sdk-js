@@ -1601,7 +1601,29 @@
                 "sideRoads": []
               }
             ]
-          }
+          },
+          "progress": [
+            {
+              "pointIndex": 0,
+              "travelTimeInSeconds": 0,
+              "distanceInMeters": 0
+            },
+            {
+              "pointIndex": 7,
+              "travelTimeInSeconds": 54,
+              "distanceInMeters": 178
+            },
+            {
+              "pointIndex": 15,
+              "travelTimeInSeconds": 115,
+              "distanceInMeters": 485
+            },
+            {
+              "pointIndex": 30,
+              "travelTimeInSeconds": 178,
+              "distanceInMeters": 1004
+            }
+          ]
         },
         {
           "summary": {
@@ -7345,6 +7367,28 @@
                 }
               ]
             },
+            "progress": [
+              {
+                "pointIndex": 0,
+                "travelTimeInSeconds": 0,
+                "distanceInMeters": 0
+              },
+              {
+                "pointIndex": 7,
+                "travelTimeInSeconds": 54,
+                "distanceInMeters": 178
+              },
+              {
+                "pointIndex": 15,
+                "travelTimeInSeconds": 115,
+                "distanceInMeters": 485
+              },
+              {
+                "pointIndex": 30,
+                "travelTimeInSeconds": 178,
+                "distanceInMeters": 1004
+              }
+            ],
             "index": 0
           }
         },

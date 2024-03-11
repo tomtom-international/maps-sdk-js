@@ -36,7 +36,10 @@ export type GuidanceParams = {
 };
 
 /**
- * The extended representation of the set of routes provided as a response.
+ * The extended representation of the set of routes provided as a response. Possible values are:
+ * * **distance**: Includes distances to route polyline points in the response.
+ * * **travelTime**: Includes travel times to route polyline points in the response.
+ * @default ["distance", "travelTime"]
  */
 export type ExtendedRouteRepresentation = "distance" | "travelTime";
 
@@ -76,7 +79,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *
          * Allowed values: 0-359
          */
-        currentHeading?: number;
+        vehicleHeading?: number;
 
         /**
          * Specifies the extended representation of the set of routes provided as a response. Can be specified multiple times.
@@ -102,12 +105,31 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
 
         /**
          * Specifies which of the section types is reported in the route response.
-         * @default travelMode
+         * * sectionType can be specified multiple times (e.g., ...&sectionType=tollRoad&sectionType=tollVignette&...).
+         * * Possible values are:
+         *
+         * * **carTrain**: sections of the route that are car trains.
+         * * **ferry**: sections of the route that are ferries.
+         * * **tunnel**: sections of the route that are tunnels.
+         * * **motorway**: sections of the route that are motorways.
+         * * **pedestrian**: sections of the route that are only suited for pedestrians.
+         * * **tollRoad**: sections of the route that require a toll to be paid.
+         * * **toll**: sections of the route with the usage-based toll collection system (i.e., distance-based tolls, toll bridges and tunnels, weight-based tolls).
+         * * **tollVignette**: sections of the route that require a toll vignette to be present.
+         * * **country**: sections indicating which countries the route is in.
+         * * **travelMode**: sections in relation to the request parameter travelMode.
+         * * **traffic**: sections of the route that contain traffic information.
+         * * **carpool**: sections of the route that require use of carpool (HOV/High Occupancy Vehicle) lanes.
+         * * **urban**: sections of the route that are located within urban areas.
+         * * **unpaved**: sections of the route that are unpaved.
+         * * **lowEmissionZone**: sections of the route that are located within low-emission zones.
+         * * **roadShields**: Sections with road shield information. A road shield section contains:
+         * roadShieldReferences: A list of references for the road shields (roadShieldReference).
+         * Notes: If this section type is requested, calculateRouteResponse contains the additional field roadShieldAtlasReference.
+         * Please refer to the notes about the road shield atlas for further information.
+         * The road shields are only available in these supported countries.
+         * * **speedLimit**: Sections with legal speed limit information. maxSpeedLimitInKmh: The maximum legal speed limit in kilometers/hour. This can be time-dependent and/or vehicle-dependent. In the case of a time-dependent speed limit, the section will contain the speed limit effective at the time the planned route would enter this section.
+         * @default all
          */
         sectionTypes?: InputSectionTypes;
-
-        /**
-         * Specifies the precision of coordinates in the response. default: 5 decimals, full: 7 decimals.
-         */
-        coordinatePrecision?: "default" | "full";
     };

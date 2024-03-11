@@ -243,12 +243,13 @@ export type RoadShieldSectionProps = SectionProps & {
 export type SectionsProps = {
     leg: LegSectionProps[];
     carTrain?: SectionProps[];
-    country?: CountrySectionProps[];
     ferry?: SectionProps[];
     motorway?: SectionProps[];
     pedestrian?: SectionProps[];
     tollRoad?: SectionProps[];
+    toll: SectionProps[];
     tollVignette?: CountrySectionProps[];
+    country?: CountrySectionProps[];
     traffic?: TrafficSectionProps[];
     vehicleRestricted?: SectionProps[];
     tunnel?: SectionProps[];
@@ -257,8 +258,8 @@ export type SectionsProps = {
     carpool?: SectionProps[];
     lowEmissionZone?: SectionProps[];
     lanes?: LaneSectionProps[];
-    speedLimit?: SpeedLimitSectionProps[];
     roadShields?: RoadShieldSectionProps[];
+    speedLimit?: SpeedLimitSectionProps[];
 };
 
 /**
@@ -278,6 +279,7 @@ export const inputSectionTypes: SectionType[] = [
     "motorway",
     "pedestrian",
     "tollRoad",
+    "toll",
     "tollVignette",
     "country",
     "vehicleRestricted",

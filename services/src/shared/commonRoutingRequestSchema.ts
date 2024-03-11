@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { vehicleParametersSchema } from "./vehicleSchema";
+import { avoidableTypes } from "@anw/maps-sdk-js/core";
+import { routeTypes } from "./types/commonRoutingParams";
 
 /**
  * @ignore
@@ -8,9 +10,9 @@ export const commonRoutingRequestSchema = z
     .object({
         costModel: z
             .object({
-                avoid: z.string().array().optional(),
-                considerTraffic: z.boolean().optional(),
-                routeType: z.string().optional(),
+                avoid: z.array(z.enum(avoidableTypes)),
+                traffic: z.enum(["live", "historical"]).optional(),
+                routeType: z.enum(routeTypes).optional(),
                 thrillingParams: z
                     .object({
                         hilliness: z.enum(["low", "normal", "high"]).optional(),

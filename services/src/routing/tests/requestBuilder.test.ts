@@ -4,14 +4,17 @@ import { CalculateRouteParams } from "../types/calculateRouteParams";
 import { buildCalculateRouteRequest } from "../requestBuilder";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
-import { FetchInput } from "../../shared/types/fetch";
+import { FetchInput } from "../../shared";
 import { CalculateRoutePOSTDataAPI } from "../types/apiRequestTypes";
 
 describe("Calculate Route request building functional tests", () => {
     test.each(sdkAndAPIRequests)(
         "'%s'",
         (_name: string, params: CalculateRouteParams, apiRequest: FetchInput<CalculateRoutePOSTDataAPI>) => {
-            expect(buildCalculateRouteRequest(params)).toEqual(apiRequest);
+            // we reparse the objects to compare URL objects properly:
+            expect(JSON.parse(JSON.stringify(buildCalculateRouteRequest(params)))).toEqual(
+                JSON.parse(JSON.stringify(apiRequest))
+            );
         }
     );
 });

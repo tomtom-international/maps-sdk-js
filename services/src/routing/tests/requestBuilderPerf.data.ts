@@ -30,10 +30,10 @@ export const routeRequestParams: CalculateRouteParams = {
     ],
     costModel: {
         avoid: ["carpools", "ferries", "unpavedRoads", "tollRoads"],
-        considerTraffic: true,
-        routeType: "fastest"
+        traffic: "live",
+        routeType: "fast"
     },
-    currentHeading: 180,
+    vehicleHeading: 180,
     // TODO not supported in Orbis, change to correct implementation
     // instructionsType: "text",
     maxAlternatives: 3,
@@ -108,8 +108,7 @@ export const shortRouteRequestParams: CalculateRouteParams = {
     ],
     costModel: {
         avoid: ["tollRoads"],
-        considerTraffic: true,
-        routeType: "fastest"
+        routeType: "fast"
     },
     // TODO not supported in Orbis, change to correct implementation
     // instructionsType: "text",

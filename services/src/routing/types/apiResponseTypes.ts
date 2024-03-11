@@ -11,7 +11,8 @@ import {
     LaneDirection,
     PossibleLaneSeparator,
     RoadShieldReference,
-    ChargingParkLocation
+    ChargingParkLocation,
+    RouteProgress
 } from "@anw/maps-sdk-js/core";
 
 /**
@@ -153,6 +154,7 @@ export type RouteAPI = {
     sections: SectionAPI[];
     summary: SummaryAPI;
     guidance?: GuidanceAPI;
+    progress?: RouteProgress;
 };
 
 /**

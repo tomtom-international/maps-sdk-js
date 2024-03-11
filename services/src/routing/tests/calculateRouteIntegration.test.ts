@@ -53,7 +53,7 @@ describe("Calculate route integration tests", () => {
                     [7.84328, 46.403849], //TODO Lötschen Pass was not working with Orbis, so I moved point a little bit, it was originally [7.74328, 46.403849]
                     [1.32248, 51.111645]
                 ],
-                costModel: { considerTraffic: false, avoid: ["tunnels", "lowEmissionZones"] },
+                costModel: { traffic: "live", avoid: ["tunnels", "lowEmissionZones"], routeType: "efficient" },
                 sectionTypes: testInputSectionTypes
                 // TODO vehicle measurements are not working with Orbis, so I commented them out
                 // vehicle: {
@@ -107,6 +107,7 @@ describe("Calculate route integration tests", () => {
             )) {
                 expect(routeProperties.sections[inputSectionType]).toBeUndefined();
             }
+            expect(routeProperties.progress?.length).toBeGreaterThan(0);
         }
     );
 
@@ -167,6 +168,7 @@ describe("Calculate route integration tests", () => {
         // expect(sections.leg[0].summary.batteryConsumptionInkWh).toBeDefined();
         assertLegSectionBasics(sections.leg[1]);
         // expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
+        expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
     test("LDEVR with alternatives and guidance", async () => {
@@ -217,6 +219,8 @@ describe("Calculate route integration tests", () => {
         expect(lastLeg.summary.remainingChargeAtArrivalInPCT).toEqual(routeSummary.remainingChargeAtArrivalInPCT);
         // arriving at destination, not a charging stop:
         expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
+
+        expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
     test("Roses to Olot thrilling route with alternatives", async () => {
@@ -228,7 +232,7 @@ describe("Calculate route integration tests", () => {
             ],
             costModel: {
                 avoid: ["carpools", "ferries", "carTrains"],
-                considerTraffic: false,
+                traffic: "historical",
                 routeType: "thrilling"
                 // TODO no trhilling params with Orbis, so I commented them out
                 // thrillingParams: {
@@ -261,6 +265,7 @@ describe("Calculate route integration tests", () => {
             const routeProperties = routeFeature.properties;
             assertSummaryBasics(routeProperties.summary);
             expect(routeProperties.guidance).toBeDefined();
+            expect(routeProperties.progress?.length).toBeGreaterThan(0);
             const sections: SectionsProps = routeProperties.sections;
             expect(sections.leg).toHaveLength(1);
             assertLegSectionBasics(sections.leg[0]);
@@ -329,6 +334,8 @@ describe("Calculate route integration tests", () => {
         expect(routeWithEmbeddedRouteSections.urban?.length).toBeGreaterThan(
             reconstructedRouteSections.urban?.length || 0
         );
+
+        expect(reconstructedRoute.properties.progress?.length).toBeGreaterThan(0);
     });
 
     test("Calculate route with API request and response callbacks", async () => {

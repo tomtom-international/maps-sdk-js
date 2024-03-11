@@ -1,4 +1,4 @@
-import { CommonServiceParams } from "../../shared";
+import { CommonServiceParams, TrafficInput } from "../../shared";
 import { CalculateMatrixRouteRequestAPI } from "./apiRequestTypes";
 import { CalculateMatrixRouteResponseAPI } from "./apiResponseTypes";
 import { HasLngLat } from "core";
@@ -9,7 +9,7 @@ export type MatrixRouteOptions = {
     departAt?: Date | "any" | "now";
     arriveAt?: Date | "any";
     routeType?: "fastest";
-    traffic?: "historical" | "live";
+    traffic?: TrafficInput;
     travelMode?: "car" | "truck" | "pedestrian";
     // TODO: try to reuse VehicleDimensions type (make params more similar to calculate-route service)
     vehicleMaxSpeed?: number;

@@ -136,7 +136,7 @@ describe("Calculate route request schema validation", () => {
                     ],
                     costModel: {
                         avoid: "tollRoads" as never,
-                        considerTraffic: "true" as never
+                        traffic: true as never
                         // TODO not supported in Orbis
                         // thrillingParams: {
                         //     hilliness: "low",
@@ -144,7 +144,7 @@ describe("Calculate route request schema validation", () => {
                         // }
                     },
                     computeAdditionalTravelTimeFor: "first" as never,
-                    currentHeading: 360,
+                    vehicleHeading: 360,
                     // TODO not supported in Orbis in this way, to add check for the way Orbis does it
                     // instructionsType: "Coded" as never,
                     maxAlternatives: 6 as never,
@@ -173,13 +173,11 @@ describe("Calculate route request schema validation", () => {
                         path: ["costModel", "avoid"],
                         message: "Expected array, received string"
                     },
-                    {
+                    expect.objectContaining({
                         code: "invalid_type",
-                        expected: "boolean",
-                        received: "string",
-                        path: ["costModel", "considerTraffic"],
-                        message: "Expected boolean, received string"
-                    },
+                        received: "boolean",
+                        path: ["costModel", "traffic"]
+                    }),
                     // TODO not supported in Orbis
                     // {
                     //     received: "medium",
@@ -209,7 +207,7 @@ describe("Calculate route request schema validation", () => {
                         inclusive: true,
                         exact: false,
                         message: "Number must be less than or equal to 359.5",
-                        path: ["currentHeading"]
+                        path: ["vehicleHeading"]
                     },
                     // TODO not supported in Orbis
                     // {
@@ -236,16 +234,17 @@ describe("Calculate route request schema validation", () => {
                     //     path: ["routeRepresentation"],
                     //     message: "Invalid enum value. Expected 'polyline' | 'summaryOnly', received 'summary'"
                     // },
-                    {
+                    expect.objectContaining({
                         received: "motorways",
                         code: "invalid_enum_value",
-                        options: [
+                        options: expect.arrayContaining([
                             "carTrain",
                             "ferry",
                             "tunnel",
                             "motorway",
                             "pedestrian",
                             "tollRoad",
+                            "toll",
                             "tollVignette",
                             "country",
                             "vehicleRestricted",
@@ -257,15 +256,9 @@ describe("Calculate route request schema validation", () => {
                             "lanes",
                             "speedLimit",
                             "roadShields"
-                        ],
-                        path: ["sectionTypes", 1],
-                        message:
-                            "Invalid enum value. Expected 'carTrain' | 'ferry' | " +
-                            "'tunnel' | 'motorway' | 'pedestrian' | 'tollRoad' | 'tollVignette' | 'country' | " +
-                            "'vehicleRestricted' | 'traffic' | 'carpool' | 'urban' | " +
-                            "'unpaved' | 'lowEmissionZone' | 'lanes' | 'speedLimit' | " +
-                            "'roadShields', received 'motorways'"
-                    }
+                        ]),
+                        path: ["sectionTypes", 1]
+                    })
                     // TODO not supported in Orbis
                     // {
                     //     received: "arriveAt",

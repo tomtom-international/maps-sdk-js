@@ -2,24 +2,36 @@ import { customizeService } from "../../../index";
 
 describe("Using customize obj", () => {
     test("calc route request URL building tests using customize obj", () => {
+        // Using JSON parse and stringify to compare URL objects easily:
         expect(
-            customizeService.calculateRoute.buildCalculateRouteRequest({
-                apiKey: "API_KEY",
-                commonBaseURL: "https://api.tomtom.com",
-                geoInputs: [
-                    [4.88066, 52.37319],
-                    [4.49015, 52.16109]
-                ]
-            })
-        ).toMatchObject({
-            method: "GET",
-            url: new URL(
-                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?" +
-                    "key=API_KEY&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
-                    "&sectionType=pedestrian&sectionType=tollRoad&sectionType=tollVignette&sectionType=country" +
-                    "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
-                    "&sectionType=unpaved&sectionType=lowEmissionZone&apiVersion=1"
+            JSON.parse(
+                JSON.stringify(
+                    customizeService.calculateRoute.buildCalculateRouteRequest({
+                        apiKey: "API_KEY",
+                        commonBaseURL: "https://api.tomtom.com",
+                        geoInputs: [
+                            [4.88066, 52.37319],
+                            [4.49015, 52.16109]
+                        ]
+                    })
+                )
             )
-        });
+        ).toEqual(
+            JSON.parse(
+                JSON.stringify({
+                    method: "GET",
+                    url: new URL(
+                        "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?" +
+                            "apiVersion=2&key=API_KEY" +
+                            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                            "&sectionType=pedestrian&sectionType=tollRoad&sectionType=toll" +
+                            "&sectionType=tollVignette&sectionType=country" +
+                            "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
+                            "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                            "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
+                    )
+                })
+            )
+        );
     });
 });

@@ -15,7 +15,7 @@ const calculateRouteRequestSchemaMandatory = z.object({
 const calculateRouteRequestSchemaOptional = z
     .object({
         computeAdditionalTravelTimeFor: z.enum(["none", "all"]),
-        currentHeading: z.number().min(0).max(359.5),
+        vehicleHeading: z.number().min(0).max(359.5),
         // TODO add proper instructionsInfo check
         // instructionsType: z.enum(instructionsTypes),
         maxAlternatives: z.number().min(1).max(5),

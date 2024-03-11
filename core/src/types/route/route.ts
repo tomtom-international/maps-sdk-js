@@ -4,6 +4,19 @@ import { SectionsProps } from "./sections";
 import { RouteSummary } from "./summary";
 import { FeatureCollectionWithProperties } from "../extendedGeoJSON";
 
+export const avoidableTypes = [
+    "tollRoads",
+    "motorways",
+    "ferries",
+    "unpavedRoads",
+    "carpools",
+    "alreadyUsedRoads",
+    "borderCrossings",
+    "tunnels",
+    "carTrains",
+    "lowEmissionZones"
+] as const;
+
 /**
  * Specifies something that the route calculation should try to avoid when determining the route.
  * Possible values:
@@ -20,17 +33,7 @@ import { FeatureCollectionWithProperties } from "../extendedGeoJSON";
  * @group Route
  * @category Types
  */
-export type Avoidable =
-    | "tollRoads"
-    | "motorways"
-    | "ferries"
-    | "unpavedRoads"
-    | "carpools"
-    | "alreadyUsedRoads"
-    | "borderCrossings"
-    | "tunnels"
-    | "carTrains"
-    | "lowEmissionZones";
+export type Avoidable = (typeof avoidableTypes)[number];
 
 /**
  * Primary means of transportation to be used in a route.
@@ -38,6 +41,32 @@ export type Avoidable =
  * @category Types
  */
 export type TravelMode = "car"; // TODO no longer supported | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
+
+export type RouteProgressPoint = {
+    /**
+     * Index of the point in the route.
+     */
+    pointIndex: number;
+    /**
+     * Distance (in meters) from the start of the route to this point.
+     */
+    travelTimeInSeconds?: number;
+    /**
+     * Travel time (in seconds) from the start of the route to this point.
+     */
+    distanceInMeters?: number;
+};
+
+/**
+ * This field is included if extendedRouteRepresentations is used.
+ *
+ * * It always contains entries for the first and the last point in the route.
+ * * For any pair of consecutive entries in the progress array,
+ * progress for pointIndex values that are not explicitly present and are enclosed by said pair,
+ * can be linearly interpolated by summing up straight line distances of the leg points.
+ * * The Haversine formula is precise enough to compute such distances.
+ */
+export type RouteProgress = RouteProgressPoint[];
 
 /**
  * @group Route
@@ -61,6 +90,10 @@ export type RouteProps = {
      * Contains guidance related elements. This field is present only when guidance was requested and is available.
      */
     guidance?: Guidance;
+    /**
+     * Key distance and time progress along the route path.
+     */
+    progress?: RouteProgress;
     /**
      * Index related to other routes.
      * * By default, the first route (index 0) is considered the main one, and the next one are alternatives.

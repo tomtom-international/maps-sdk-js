@@ -172,7 +172,7 @@ export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: Co
         // Orbis EV routing does not support cost models
         const costModel = params.costModel;
         appendByRepeatingParamName(urlParams, "avoid", costModel?.avoid);
-        appendOptionalParam(urlParams, "traffic", costModel?.considerTraffic);
+        appendOptionalParam(urlParams, "traffic", costModel?.traffic);
         // TODO not supported in Orbis
         // appendWhenParams(urlParams, params.when);
         appendOptionalParam(urlParams, "routeType", costModel?.routeType);

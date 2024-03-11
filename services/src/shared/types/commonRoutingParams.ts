@@ -1,5 +1,4 @@
 import { Avoidable, TravelMode, ConnectorType, CurrentType } from "@anw/maps-sdk-js/core";
-import { LatitudeLongitudePointAPI } from "../../routing/types/apiResponseTypes";
 // import { VehicleParameters } from "./vehicleParams";
 
 /**
@@ -29,6 +28,18 @@ export type ThrillingParams = {
     windingness?: LNH;
 };
 
+export const routeTypes = ["fast", "short", "efficient", "thrilling"] as const;
+
+/**
+ * Decides how traffic is considered for computing routes.
+ * Possible values are:
+ * * live: In addition to historical travel times, routing and estimated travel time
+ * consider traffic jams and short- and long-term closures during the travel time window.
+ * * historical: Routing and estimated travel time consider historical travel times and long term closures.
+ * Traffic jams and short-term closures during the travel time window do not influence routing or travel time.
+ */
+export type TrafficInput = "live" | "historical";
+
 /**
  * Criteria that specifies what paths to prefer during routing.
  */
@@ -40,36 +51,28 @@ export type CostModel = {
     avoid?: Avoidable[];
 
     /**
-     * Determines if live traffic data should be used to calculate the route.
-     * It does not affect the returned traffic information for the calculated route.
-     *
-     * Possible values:
-     * * true (do consider all available traffic information during routing)
-     * * false (ignores current traffic data during routing) Note that although the current traffic data is
-     * ignored during routing, the effect of historic traffic on effective road speeds is still incorporated.
-     * @default true
+     * Decides how traffic is considered for computing routes.
+     * Possible values are:
+     * * live: In addition to historical travel times, routing and estimated travel time
+     * consider traffic jams and short- and long-term closures during the travel time window.
+     * * historical: Routing and estimated travel time consider historical travel times and long term closures.
+     * Traffic jams and short-term closures during the travel time window do not influence routing or travel time.
+     * @default live
      */
-    considerTraffic?: boolean;
+    traffic?: TrafficInput;
 
     /**
      * Specifies the type of optimization used when calculating routes.
+     * Possible values are:
      *
-     * * fastest: Route calculation is optimized by travel time, while keeping the routes sensible.
-     * For example, the calculation may avoid shortcuts along inconvenient
-     * side roads or long detours that only save very little time.
-     * * shortest: Route calculation is optimized by travel distance, while keeping the routes sensible.
-     * For example, straight routes are preferred over those incurring turns.
-     * * short: Route calculation is optimized such that a good compromise between
-     * small travel time and short travel distance is achieved.
-     * * eco: Route calculation is optimized such that a good compromise between small travel time
-     * and low fuel or energy consumption is achieved.
-     * * thrilling: Route calculation is optimized such that routes include interesting or challenging roads
-     * and use as few motorways as possible. You can choose the level of turns included and also the degree of hilliness.
-     * See "thrillingPreferences" parameters to set this.
+     * * **fast**: Route calculation is optimized by travel time, while keeping the routes sensible. For example, the calculation may avoid shortcuts along inconvenient side roads or long detours that only save very little time.
+     * * **short**: Route calculation is optimized such that a good compromise between small travel time and short travel distance is achieved.
+     * * **efficient**: Route calculation is optimized such that a good compromise between small travel time and low fuel or energy consumption is achieved.
+     * * **thrilling**: Route calculation is optimized such that routes include interesting or challenging roads and use as few motorways as possible.
      * There is a limit of 900km on routes planned with routeType=thrilling.
-     * @default fastest
+     * @default fast
      */
-    routeType?: "fastest" | "shortest" | "short" | "eco" | "thrilling";
+    routeType?: (typeof routeTypes)[number];
 
     /**
      * Optional parameters if the route type is "thrilling" to indicate how curvy and hilly the route should be.
@@ -92,24 +95,6 @@ export type DepartArriveParams<OPTION extends DepartArriveOption = DepartArriveO
      * The date and time to depart or arrive.
      */
     date: Date;
-};
-
-/**
- * The shape that can be used to avoid a certain area when planning ldEV routes.
- * Object describes an axis-aligned rectangle, defined using the fields southWestCorner and northEastCorner.
- * The maximum size of a rectangle is about 160x160 km.
- * It cannot cross the 180th meridian.
- * It must be between -80 and +80 degrees of latitude.
- */
-export type Rectangle = {
-    /**
-     * The bottom left corner of the rectangle.
-     */
-    southWestCorner: LatitudeLongitudePointAPI;
-    /**
-     * The top right corner of the rectangle.
-     */
-    northEastCorner: LatitudeLongitudePointAPI;
 };
 
 /**
@@ -165,30 +150,6 @@ export type ChargingInformationAtWaypoint = {
      * allowing for some additional time needed to use the charging facility.
      */
     chargingTimeInSeconds: number;
-};
-
-/**
- * Must contain one waypointSourceType and one supportingPointIndex object.
- * Can additionally contain one chargingInformationAtWaypoint object.
- */
-export type PointWaypoint = {
-    /**
-     * Denotes the source of the waypoint. Possible values:
-     *
-     * USER_DEFINED: a waypoint that was explicitly defined by the user.
-     * AUTO_GENERATED: a waypoint that was defined by the system (e.g., the charging stop that was provided
-     * as a result of the ldEV route enhancement).
-     */
-    waypointSourceType: "USER_DEFINED" | "AUTO_GENERATED";
-    /**
-     * An index into the supportingPoints array that denotes the location of the waypoint on the reference route.
-     * Must be inside supportingPoints array boundaries.
-     */
-    supportingPointIndex: number;
-    /**
-     * Specified if the waypoint is a charging stop.
-     */
-    chargingInformationAtWaypoint?: ChargingInformationAtWaypoint;
 };
 
 /**

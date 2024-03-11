@@ -14,7 +14,7 @@ import isNil from "lodash/isNil";
 import { Position } from "geojson";
 import { CalculateRouteParams, InputSectionTypes, GuidanceParams } from "./types/calculateRouteParams";
 import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
-import { FetchInput } from "../shared/types/fetch";
+import { FetchInput } from "../shared";
 import { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestTypes";
 import { LatitudeLongitudePointAPI } from "./types/apiResponseTypes";
 import { positionToCSVLatLon } from "../shared/geometry";
@@ -206,18 +206,18 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     const geoInputTypes = params.geoInputs.map(getGeoInputType);
     const url = new URL(`${buildURLBasePath(params)}/${buildLocationsString(params.geoInputs, geoInputTypes)}/json`);
     const urlParams: URLSearchParams = url.searchParams;
+    urlParams.append("apiVersion", "2");
 
     appendCommonParams(urlParams, params, true);
     appendCommonRoutingParams(urlParams, params);
     appendOptionalParam(urlParams, "computeTravelTimeFor", params.computeAdditionalTravelTimeFor);
-    params.currentHeading && urlParams.append("vehicleHeading", String(params.currentHeading));
+    params.vehicleHeading && urlParams.append("vehicleHeading", String(params.vehicleHeading));
     appendGuidanceParams(urlParams, params);
     !isNil(params.maxAlternatives) && urlParams.append("maxAlternatives", String(params.maxAlternatives));
     appendSectionTypes(urlParams, params.sectionTypes, !!params.guidance?.type);
-    params.extendedRouteRepresentations?.forEach((extendedRouteRepresentation) => {
-        urlParams.append("extendedRouteRepresentation", extendedRouteRepresentation);
-    });
-    urlParams.append("apiVersion", String(params.apiVersion || isLDEVR(params) ? 2 : 1));
+    (params.extendedRouteRepresentations || ["distance", "travelTime"]).forEach((representation) =>
+        urlParams.append("extendedRouteRepresentation", representation)
+    );
 
     const postData = buildPOSTData(params, geoInputTypes);
     return postData ? { method: "POST", url, data: postData } : { method: "GET", url };
