@@ -272,7 +272,8 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 [4.90066, 52.27317],
                 [4.49015, 52.16109]
-            ]
+            ],
+            costModel: { traffic: "live" }
             // TODO not supported in Orbis
             // vehicle: {
             //     dimensions: { weightKG: 3500 },
@@ -306,6 +307,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 "https://api.tomtom.com/maps/orbis/routing/calculateRoute/" +
                     "52.37317,4.89066:52.27317,4.90066:52.16109,4.49015/json?apiVersion=2&key=GLOBAL_API_KEY" +
+                    "&traffic=live" +
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
                     "&sectionType=pedestrian&sectionType=tollRoad&sectionType=toll" +
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +

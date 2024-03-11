@@ -3,7 +3,6 @@
  * @category Service
  */
 
-export * from "./types/apiPlacesResponseTypes";
 export * from "./types/servicesTypes";
 export * from "./types/commonPlacesParams";
 export * from "./types/commonSearchParams";

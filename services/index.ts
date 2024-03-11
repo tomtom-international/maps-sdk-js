@@ -2,9 +2,7 @@
  * This module contains functions that enable connection to TomTom services.
  * @module
  */
-export * from "./src/shared/serviceTemplate";
-export * from "./src/shared/serviceTypes";
-
+export * from "./src/shared";
 export * from "./src/revgeo";
 export * from "./src/geocode";
 export * from "./src/geometry-data";
