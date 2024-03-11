@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.3...v0.6.4) (2024-03-11)
+
+
+### Features
+
+* **routing:** migrating to orbis routing v2 ([b5ec0f2](https://github.com/tomtom-international/maps-sdk-js/commit/b5ec0f2f26ea035e3d1c5486d5aa3538723a17d0))
+
 ### [0.6.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.2...v0.6.3) (2024-03-08)
 
 ### [0.6.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.1...v0.6.2) (2024-03-08)
