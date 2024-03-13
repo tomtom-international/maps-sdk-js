@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.5...v0.6.6) (2024-03-13)
+
+
+### Bug Fixes
+
+* **routing:** fixing parsing of toll roads, hardening section parsing and improving position utils ([1de7738](https://github.com/tomtom-international/maps-sdk-js/commit/1de773824cc3c597c52a9021ad5b660788be04ad))
+
 ### [0.6.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.4...v0.6.5) (2024-03-11)
 
 ### [0.6.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.3...v0.6.4) (2024-03-11)
