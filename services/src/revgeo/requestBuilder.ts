@@ -1,6 +1,6 @@
 import isNil from "lodash/isNil";
 
-import { getLngLatArray } from "@anw/maps-sdk-js/core";
+import { getPositionStrict } from "@anw/maps-sdk-js/core";
 import { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
 import { arrayToCSV } from "../shared/arrays";
 import { CommonServiceParams } from "../shared";
@@ -14,7 +14,7 @@ const buildURLBasePath = (params: CommonServiceParams): string =>
  * @param params The reverse geocoding parameters, with global configuration already merged into them.
  */
 export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
-    const lngLat = getLngLatArray(params.position);
+    const lngLat = getPositionStrict(params.position);
     const url = new URL(`${buildURLBasePath(params)}/${lngLat[1]},${lngLat[0]}.json`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);

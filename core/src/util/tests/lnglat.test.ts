@@ -1,4 +1,4 @@
-import { getLngLatArray, toPointFeature } from "../lnglat";
+import { getPosition, getPositionStrict, toPointFeature } from "../lnglat";
 
 describe("toPointFeature tests", () => {
     test("passing LngLat to toPointFeature", () => {
@@ -13,17 +13,21 @@ describe("toPointFeature tests", () => {
     });
 });
 
-describe("getLngLatArray tests", () => {
+describe("getPosition tests", () => {
     test("is incorrect", () => {
-        expect(() => getLngLatArray(undefined as never)).toThrow();
-        expect(() => getLngLatArray({ random: "blah" } as never)).toThrow();
+        expect(getPosition(undefined as never)).toBeNull();
+        expect(getPosition({ random: "blah" } as never)).toBeNull();
+
+        expect(() => getPositionStrict(undefined as never)).toThrow();
+        expect(() => getPositionStrict({ random: "blah" } as never)).toThrow();
     });
     test("is coordinates", () => {
-        expect(getLngLatArray([52.467, 4.872])).toEqual([52.467, 4.872]);
+        expect(getPosition([52.467, 4.872])).toEqual([52.467, 4.872]);
+        expect(getPositionStrict([52.467, 4.872])).toEqual([52.467, 4.872]);
     });
     test("is point", () => {
         expect(
-            getLngLatArray({
+            getPosition({
                 type: "Point",
                 coordinates: [52.467, 4.872]
             })
@@ -31,7 +35,7 @@ describe("getLngLatArray tests", () => {
     });
     test("is feature", () => {
         expect(
-            getLngLatArray({
+            getPosition({
                 type: "Feature",
                 geometry: {
                     type: "Point",

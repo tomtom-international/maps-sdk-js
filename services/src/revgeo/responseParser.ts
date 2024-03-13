@@ -1,4 +1,4 @@
-import { getLngLatArray, toPointFeature } from "@anw/maps-sdk-js/core";
+import { getPositionStrict, toPointFeature } from "@anw/maps-sdk-js/core";
 import { apiToGeoJSONBBox, csvLatLngToPosition } from "../shared/geometry";
 import { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
 import { ReverseGeocodingResponse } from "./reverseGeocoding";
@@ -13,7 +13,7 @@ export const parseRevGeoResponse = (
     apiResponse: ReverseGeocodingResponseAPI,
     params: ReverseGeocodingParams
 ): ReverseGeocodingResponse => {
-    const pointFeature = toPointFeature(getLngLatArray(params.position));
+    const pointFeature = toPointFeature(getPositionStrict(params.position));
     const firstAPIResult = apiResponse.addresses[0];
     const { boundingBox, sideOfStreet, offsetPosition, ...address } = firstAPIResult.address;
     return {

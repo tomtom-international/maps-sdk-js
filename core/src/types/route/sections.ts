@@ -247,7 +247,7 @@ export type SectionsProps = {
     motorway?: SectionProps[];
     pedestrian?: SectionProps[];
     tollRoad?: SectionProps[];
-    toll: SectionProps[];
+    toll?: SectionProps[];
     tollVignette?: CountrySectionProps[];
     country?: CountrySectionProps[];
     traffic?: TrafficSectionProps[];

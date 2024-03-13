@@ -1,7 +1,7 @@
+import { HasLngLat } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams, TrafficInput } from "../../shared";
 import { CalculateMatrixRouteRequestAPI } from "./apiRequestTypes";
 import { CalculateMatrixRouteResponseAPI } from "./apiResponseTypes";
-import { HasLngLat } from "core";
 
 type MatrixRouteAvoidable = "tollRoads" | "unpavedRoads";
 

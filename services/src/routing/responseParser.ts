@@ -179,6 +179,8 @@ const getSectionMapping = (
             return { sectionType: "tollRoad", mappingFunction: toSectionProps };
         case "TOLL_VIGNETTE":
             return { sectionType: "tollVignette", mappingFunction: toCountrySectionProps };
+        case "TOLL":
+            return { sectionType: "toll", mappingFunction: toSectionProps };
         case "TRAFFIC":
             return { sectionType: "traffic", mappingFunction: toTrafficSectionProps };
         case "TRAVEL_MODE":
@@ -210,7 +212,7 @@ const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: Secti
 
     for (const apiSection of apiSections) {
         const sectionMapping = getSectionMapping(apiSection);
-        const mappedSection = sectionMapping.mappingFunction(apiSection);
+        const mappedSection = sectionMapping?.mappingFunction(apiSection);
         if (mappedSection) {
             ensureInit(sectionMapping.sectionType, result).push(mappedSection);
         }

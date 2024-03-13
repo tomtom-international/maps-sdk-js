@@ -2,7 +2,7 @@ import {
     GeoInput,
     GeoInputType,
     getGeoInputType,
-    getLngLatArray,
+    getPositionStrict,
     inputSectionTypes,
     inputSectionTypesWithGuidance,
     PathLike,
@@ -34,7 +34,7 @@ const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
 const buildLocationsStringFromWaypoints = (waypointInputs: WaypointLike[]): string =>
     waypointInputs
         .map((waypointInput: WaypointLike) => {
-            const lngLatString = positionToCSVLatLon(getLngLatArray(waypointInput));
+            const lngLatString = positionToCSVLatLon(getPositionStrict(waypointInput));
             const radius = getWaypointProps(waypointInput)?.radiusMeters;
             return radius ? `circle(${lngLatString},${radius})` : lngLatString;
         })
@@ -55,7 +55,7 @@ const getFirstAndLastPoints = (geoInputs: GeoInput[], types: GeoInputType[]): [P
         const positions = getPositionsFromPath(firstGeoInput as PathLike);
         firstPoint = positions[0];
     } else {
-        firstPoint = getLngLatArray(firstGeoInput as WaypointLike);
+        firstPoint = getPositionStrict(firstGeoInput as WaypointLike);
     }
 
     let lastPoint;
@@ -64,7 +64,7 @@ const getFirstAndLastPoints = (geoInputs: GeoInput[], types: GeoInputType[]): [P
         const positions = getPositionsFromPath(lastGeoInput as PathLike);
         lastPoint = positions[positions.length - 1];
     } else {
-        lastPoint = getLngLatArray(lastGeoInput as WaypointLike);
+        lastPoint = getPositionStrict(lastGeoInput as WaypointLike);
     }
 
     return [firstPoint, lastPoint];
@@ -151,7 +151,7 @@ const appendWaypointPOSTData = (
     pointWaypoints: PointWaypointAPI[]
 ) => {
     // individual points are treated like POST waypoints
-    supportingPoints.push(toLatLngPointAPI(getLngLatArray(waypoint)));
+    supportingPoints.push(toLatLngPointAPI(getPositionStrict(waypoint)));
     // for origin and destination we do not add pointWaypoints, since they end up as the URL "locations":
     if (geoInputIndex > 0 && geoInputIndex < geoInputs.length - 1) {
         pointWaypoints.push({

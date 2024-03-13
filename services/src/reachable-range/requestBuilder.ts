@@ -2,13 +2,13 @@ import { positionToCSVLatLon } from "../shared/geometry";
 import { appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
 import { ReachableRangeParams } from "./types/reachableRangeParams";
 import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
-import { getLngLatArray } from "@anw/maps-sdk-js/core";
+import { getPositionStrict } from "@anw/maps-sdk-js/core";
 // import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 
 const buildURLBasePath = (params: ReachableRangeParams): string =>
     params.customServiceBaseURL ||
     `${params.commonBaseURL}/routing/1/calculateReachableRange/${positionToCSVLatLon(
-        getLngLatArray(params.origin)
+        getPositionStrict(params.origin)
     )}/json`;
 
 // const toKWH = (chargePCT: number, engine: ElectricVehicleEngine): number =>

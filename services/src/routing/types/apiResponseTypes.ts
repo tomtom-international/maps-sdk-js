@@ -32,6 +32,7 @@ export type SectionTypeAPI =
     | "MOTORWAY"
     | "PEDESTRIAN"
     | "TOLL_ROAD"
+    | "TOLL"
     | "TOLL_VIGNETTE"
     | "TRAFFIC"
     | "TRAVEL_MODE"

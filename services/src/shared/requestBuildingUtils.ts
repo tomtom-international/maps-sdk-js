@@ -1,4 +1,4 @@
-import { getLngLatArray, HasLngLat, POICategory } from "@anw/maps-sdk-js/core";
+import { getPosition, HasLngLat, POICategory } from "@anw/maps-sdk-js/core";
 import { CommonServiceParams } from "./serviceTypes";
 import isNil from "lodash/isNil";
 import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
@@ -72,7 +72,7 @@ export const appendOptionalParam = (
  * @param position
  */
 export const appendLatLonParamsFromPosition = (urlParams: URLSearchParams, position: HasLngLat | undefined): void => {
-    const lngLat = position && getLngLatArray(position);
+    const lngLat = position && getPosition(position);
     if (lngLat) {
         urlParams.append("lat", String(lngLat[1]));
         urlParams.append("lon", String(lngLat[0]));
