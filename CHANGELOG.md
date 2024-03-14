@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.6...v0.6.7) (2024-03-14)
+
+
+### Bug Fixes
+
+* **traffic:** removing confusing unused type ([f566a98](https://github.com/tomtom-international/maps-sdk-js/commit/f566a9881ba1066e967f9b26c9efb5ea7454d3d7))
+
 ### [0.6.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.5...v0.6.6) (2024-03-13)
 
 
