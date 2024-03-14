@@ -164,17 +164,3 @@ export type IncidentsCommonConfig = StyleModuleConfig & {
 export type FlowConfig = StyleModuleConfig & {
     filters?: TrafficFlowFilters;
 };
-
-/**
- * Configuration for vector tiles traffic incidents and flow layers.
- */
-export type TrafficModuleConfig = StyleModuleConfig & {
-    /**
-     * Optional configuration for incidents.
-     */
-    incidents?: IncidentsConfig;
-    /**
-     * Optional configuration for flow.
-     */
-    flow?: FlowConfig;
-};
