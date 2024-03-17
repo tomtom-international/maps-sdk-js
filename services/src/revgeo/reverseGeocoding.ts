@@ -1,7 +1,8 @@
-import { Place, RevGeoAddressProps } from "@anw/maps-sdk-js/core";
-import { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
+import type { Place, RevGeoAddressProps } from "@anw/maps-sdk-js/core";
+import type { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
 import { callService } from "../shared/serviceTemplate";
-import { ReverseGeocodingTemplate, reverseGeocodingTemplate } from "./reverseGeocodingTemplate";
+import type { ReverseGeocodingTemplate } from "./reverseGeocodingTemplate";
+import { reverseGeocodingTemplate } from "./reverseGeocodingTemplate";
 
 export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
 

@@ -2,9 +2,9 @@ import omit from "lodash/omit";
 import apiAndParsedResponses from "./responseParser.data.json";
 import apiResponses from "./responseParserPerf.data.json";
 import { parseRevGeoResponse } from "../responseParser";
-import { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
-import { ReverseGeocodingResponse } from "../reverseGeocoding";
-import { ReverseGeocodingResponseAPI } from "../types/apiTypes";
+import type { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
+import type { ReverseGeocodingResponse } from "../reverseGeocoding";
+import type { ReverseGeocodingResponseAPI } from "../types/apiTypes";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 

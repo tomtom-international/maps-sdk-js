@@ -1,8 +1,9 @@
-import { Map } from "maplibre-gl";
-import { Place, Places } from "@anw/maps-sdk-js/core";
-import { DisplayPlaceProps } from "./types/placeDisplayProps";
-import { PlacesModuleConfig } from "./types/placesModuleConfig";
-import { MapStylePOICategory, toMapDisplayPOICategory } from "../pois/poiCategoryMapping";
+import type { Map } from "maplibre-gl";
+import type { Place, Places } from "@anw/maps-sdk-js/core";
+import type { DisplayPlaceProps } from "./types/placeDisplayProps";
+import type { PlacesModuleConfig } from "./types/placesModuleConfig";
+import type { MapStylePOICategory } from "../pois/poiCategoryMapping";
+import { toMapDisplayPOICategory } from "../pois/poiCategoryMapping";
 import { addImageIfNotExisting } from "../shared/mapUtils";
 
 /**

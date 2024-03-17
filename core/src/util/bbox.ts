@@ -1,4 +1,4 @@
-import {
+import type {
     BBox,
     Feature,
     FeatureCollection,
@@ -10,7 +10,7 @@ import {
     Polygon,
     Position
 } from "geojson";
-import { HasBBox, OptionalBBox } from "../types";
+import type { HasBBox, OptionalBBox } from "../types";
 
 /**
  * Calculates whether the given bbox has area (width and height).

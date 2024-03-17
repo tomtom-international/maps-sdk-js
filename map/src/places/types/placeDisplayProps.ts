@@ -1,5 +1,5 @@
-import { Anything, CommonPlaceProps } from "@anw/maps-sdk-js/core";
-import { SupportsEvents } from "../../shared";
+import type { Anything, CommonPlaceProps } from "@anw/maps-sdk-js/core";
+import type { SupportsEvents } from "../../shared";
 
 /**
  * Properties to display a place on the map.

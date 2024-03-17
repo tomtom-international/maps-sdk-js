@@ -1,4 +1,4 @@
-import { LayerSpecification } from "maplibre-gl";
+import type { LayerSpecification } from "maplibre-gl";
 import { buildLayerGroupFilter } from "../layerGroups";
 
 describe("Tests for logic related to layer group filtering", () => {

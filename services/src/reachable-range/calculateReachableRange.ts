@@ -1,6 +1,7 @@
-import { PolygonFeature, PolygonFeatures } from "@anw/maps-sdk-js/core";
-import { ReachableRangeParams } from "./types/reachableRangeParams";
-import { reachableRangeTemplate, ReachableRangeTemplate } from "./reachableRangeTemplate";
+import type { PolygonFeature, PolygonFeatures } from "@anw/maps-sdk-js/core";
+import type { ReachableRangeParams } from "./types/reachableRangeParams";
+import type { ReachableRangeTemplate } from "./reachableRangeTemplate";
+import { reachableRangeTemplate } from "./reachableRangeTemplate";
 import { callService } from "../shared/serviceTemplate";
 
 /**

@@ -1,14 +1,5 @@
-import {
-    HILLSHADE_SOURCE_ID,
-    MapLibreOptions,
-    mapStyleLayerIDs,
-    PublishedStyle,
-    StyleInput,
-    StyleModule,
-    TomTomMapParams,
-    TRAFFIC_FLOW_SOURCE_ID,
-    TRAFFIC_INCIDENTS_SOURCE_ID
-} from "map";
+import type { MapLibreOptions, PublishedStyle, StyleInput, StyleModule, TomTomMapParams } from "map";
+import { HILLSHADE_SOURCE_ID, mapStyleLayerIDs, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import mapInitTestData from "./data/MapInit.test.data.json";
 import {
@@ -18,7 +9,7 @@ import {
     setStyle,
     waitForMapReady
 } from "./util/TestUtils";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
     !!(style as PublishedStyle)?.include?.includes(module);

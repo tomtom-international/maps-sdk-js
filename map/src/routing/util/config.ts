@@ -1,5 +1,5 @@
-import { LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
-import { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from "../types/routeModuleConfig";
+import type { LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
+import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from "../types/routeModuleConfig";
 import { defaultRouteLayersConfig } from "../layers/defaultConfig";
 
 /**

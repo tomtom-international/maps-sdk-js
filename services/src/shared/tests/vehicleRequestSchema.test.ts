@@ -1,5 +1,5 @@
 import { ValidationError } from "../validation";
-import { VehicleParameters } from "../index";
+import type { VehicleParameters } from "../index";
 import { vehicleParametersSchema } from "../vehicleSchema";
 
 describe("Routing: Vehicle parameter request schema tests", () => {

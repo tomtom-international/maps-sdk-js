@@ -1,4 +1,4 @@
-import { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from "@anw/maps-sdk-js/core";
+import type { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from "@anw/maps-sdk-js/core";
 
 /**
  * @ignore

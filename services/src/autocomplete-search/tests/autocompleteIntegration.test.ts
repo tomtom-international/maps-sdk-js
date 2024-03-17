@@ -1,5 +1,10 @@
-import { TomTomConfig, Language } from "@anw/maps-sdk-js/core";
-import { AutocompleteSearchResponse, AutocompleteSearchResponseAPI, AutocompleteSearchSegmentType } from "../types";
+import type { Language } from "@anw/maps-sdk-js/core";
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
+import type {
+    AutocompleteSearchResponse,
+    AutocompleteSearchResponseAPI,
+    AutocompleteSearchSegmentType
+} from "../types";
 import autocompleteSearch from "../autocompleteSearch";
 
 const expectedResults = expect.arrayContaining([

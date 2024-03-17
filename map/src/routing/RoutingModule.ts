@@ -1,4 +1,4 @@
-import { Route, Routes, Waypoint, Waypoints } from "@anw/maps-sdk-js/core";
+import type { Route, Routes, Waypoint, Waypoints } from "@anw/maps-sdk-js/core";
 import {
     AbstractMapModule,
     EventsModule,
@@ -23,17 +23,17 @@ import {
     WAYPOINT_STOP_IMAGE_ID
 } from "./layers/waypointLayers";
 import { toDisplayChargingStations, toDisplayWaypoints } from "./util/waypointUtils";
-import { PlanningWaypoint } from "./types/planningWaypoint";
-import { RoutingLayersSpecs, RoutingModuleConfig, RoutingSourcesWithLayers } from "./types/routeModuleConfig";
+import type { PlanningWaypoint } from "./types/planningWaypoint";
+import type { RoutingLayersSpecs, RoutingModuleConfig, RoutingSourcesWithLayers } from "./types/routeModuleConfig";
 import { buildDisplayRouteSections } from "./util/routeSections";
 import { toDisplayTrafficSectionProps } from "./util/displayTrafficSectionProps";
-import { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/routeSections";
+import type { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/routeSections";
 import { buildDisplayRoutes, buildDisplayRouteSummaries } from "./util/routes";
-import { DisplayRouteProps, DisplayRouteSummaryProps } from "./types/displayRoutes";
-import { ShowRoutesOptions } from "./types/showRoutesOptions";
+import type { DisplayRouteProps, DisplayRouteSummaryProps } from "./types/displayRoutes";
+import type { ShowRoutesOptions } from "./types/showRoutesOptions";
 import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
-import { TomTomMap } from "../TomTomMap";
-import { DisplayInstruction } from "./types/guidance";
+import type { TomTomMap } from "../TomTomMap";
+import type { DisplayInstruction } from "./types/guidance";
 import { toDisplayInstructionArrows, toDisplayInstructions } from "./util/guidance";
 import { showFeaturesWithRouteSelection } from "./util/routeSelection";
 import { instructionArrowIconImg, summaryBubbleImageOptions, summaryMapBubbleImg, trafficImg } from "./resources";
@@ -41,7 +41,7 @@ import { defaultRouteLayersConfig } from "./layers/defaultConfig";
 import { createLayersSpecs, withDefaults } from "./util/config";
 import { INSTRUCTION_ARROW_IMAGE_ID } from "./layers/guidanceLayers";
 import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from "./layers/routeMainLineLayers";
-import { StyleImageMetadata } from "maplibre-gl";
+import type { StyleImageMetadata } from "maplibre-gl";
 import {
     DESELECTED_FOREGROUND_COLOR,
     MAJOR_DELAY_COLOR,

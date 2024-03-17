@@ -1,10 +1,10 @@
-import { GeocodingResponse } from "./types/geocodingResponse";
+import type { GeocodingResponse } from "./types/geocodingResponse";
 import { parseGeocodingResponse } from "./responseParser";
 import { buildGeocodingRequest } from "./requestBuilder";
 import { get } from "../shared/fetch";
-import { ServiceTemplate } from "../shared";
-import { GeocodingParams } from "./types/geocodingParams";
-import { GeocodingResponseAPI } from "./types/apiTypes";
+import type { ServiceTemplate } from "../shared";
+import type { GeocodingParams } from "./types/geocodingParams";
+import type { GeocodingResponseAPI } from "./types/apiTypes";
 import { geocodingRequestSchema } from "./geocodingRequestSchema";
 
 /**

@@ -1,6 +1,6 @@
-import { PolygonFeatures } from "@anw/maps-sdk-js/core";
+import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
 import apiAndParsedResponses from "./responseParser.data.json";
-import { GeometryDataResponseAPI } from "../types/apiTypes";
+import type { GeometryDataResponseAPI } from "../types/apiTypes";
 import { parseGeometryDataResponse } from "../responseParser";
 
 describe("Geometry Data response parser tests", () => {

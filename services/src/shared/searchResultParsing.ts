@@ -1,9 +1,15 @@
-import { Brand, Moment, OpeningHours, Place, SearchPlaceProps, TimeRange, toPointFeature } from "@anw/maps-sdk-js/core";
+import type { Brand, Moment, OpeningHours, Place, SearchPlaceProps, TimeRange } from "@anw/maps-sdk-js/core";
+import { toPointFeature } from "@anw/maps-sdk-js/core";
 import omit from "lodash/omit";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "./geometry";
-import { CommonSearchPlaceResultAPI, MomentAPI, OpeningHoursAPI, SummaryAPI } from "./types/apiPlacesResponseTypes";
+import type {
+    CommonSearchPlaceResultAPI,
+    MomentAPI,
+    OpeningHoursAPI,
+    SummaryAPI
+} from "./types/apiPlacesResponseTypes";
 import { toConnectorCounts } from "../ev-charging-stations-availability/connectorAvailability";
-import { SearchSummary } from "./types/searchSummary";
+import type { SearchSummary } from "./types/searchSummary";
 
 const parseYYYYMMDDDate = (dateYYYYMMDD: string): { year: number; month: number; day: number } => {
     const splitDate = dateYYYYMMDD.split("-");

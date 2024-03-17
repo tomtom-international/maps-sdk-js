@@ -1,9 +1,9 @@
-import {
+import type {
     ChargingPointAvailability,
-    ConnectorAvailability,
+    ChargingPointStatus,
     ChargingStation,
     Connector,
-    ChargingPointStatus
+    ConnectorAvailability
 } from "@anw/maps-sdk-js/core";
 
 /**

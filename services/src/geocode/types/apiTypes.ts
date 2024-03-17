@@ -1,4 +1,4 @@
-import {
+import type {
     AddressRangesAPI,
     BoundingBoxAPI,
     EntryPointAPI,
@@ -6,7 +6,7 @@ import {
     SummaryAPI,
     ViewportAPI
 } from "../../shared/types/apiPlacesResponseTypes";
-import { GeocodingProps } from "./geocodingResponse";
+import type { GeocodingProps } from "./geocodingResponse";
 
 /**
  * @ignore

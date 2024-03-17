@@ -2,7 +2,7 @@ import instructionArrowSVG from "./instruction-line-arrow.svg";
 import trafficSVG from "./traffic.svg";
 import summaryMapBubbleSVG from "./summary-map-bubble.svg";
 import { isDOMImageSupported, svgToImg } from "../../shared/imageUtils";
-import { StyleImageMetadata } from "maplibre-gl";
+import type { StyleImageMetadata } from "maplibre-gl";
 
 let instructionArrowIconImg: HTMLImageElement;
 

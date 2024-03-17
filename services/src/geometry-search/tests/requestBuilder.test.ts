@@ -1,7 +1,7 @@
 import { buildGeometrySearchRequest } from "../requestBuilder";
 import geometrySearchReqObjectsAndURLs from "./requestBuilder.data.json";
 import geometrySearchReqObjects from "./requestBuilderPerf.data.json";
-import { GeometrySearchParams, GeometrySearchPayloadAPI } from "../types";
+import type { GeometrySearchParams, GeometrySearchPayloadAPI } from "../types";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 

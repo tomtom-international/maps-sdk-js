@@ -1,5 +1,5 @@
-import { Feature, GeoJsonObject, Point } from "geojson";
-import { GeoInput, GeoInputType, HasLngLat, Waypoint } from "../types";
+import type { Feature, GeoJsonObject, Point } from "geojson";
+import type { GeoInput, GeoInputType, HasLngLat, Waypoint } from "../types";
 import { getPositionStrict, toPointFeature } from "./lnglat";
 
 /**

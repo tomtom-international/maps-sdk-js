@@ -1,11 +1,13 @@
 import isNil from "lodash/isNil";
-import { FilterSpecification } from "maplibre-gl";
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers, ValuesFilter } from "../shared";
-import { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from "./types/poisModuleConfig";
+import type { FilterSpecification } from "maplibre-gl";
+import type { ValuesFilter } from "../shared";
+import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from "../shared";
+import type { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from "./types/poisModuleConfig";
 import { notInTheStyle } from "../shared/errorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
-import { TomTomMap } from "../TomTomMap";
-import { MapStylePOICategory, toMapDisplayPOICategory } from "../places";
+import type { TomTomMap } from "../TomTomMap";
+import type { MapStylePOICategory } from "../places";
+import { toMapDisplayPOICategory } from "../places";
 import { poiCategoryGroups } from "./poiCategoryGroups";
 import { buildMappedValuesFilter, getMergedAllFilter } from "../shared/mapLibreFilterUtils";
 

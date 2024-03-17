@@ -1,5 +1,5 @@
-import { Language } from "@anw/maps-sdk-js/core";
-import { PlaceByIdParams } from "../types";
+import type { Language } from "@anw/maps-sdk-js/core";
+import type { PlaceByIdParams } from "../types";
 import placeByIdReqObjects from "../../place-by-id/tests/requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";

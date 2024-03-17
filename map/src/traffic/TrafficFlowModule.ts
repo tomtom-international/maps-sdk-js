@@ -1,18 +1,17 @@
+import type { LayerSpecWithSource, StyleModuleInitConfig } from "../shared";
 import {
     AbstractMapModule,
     EventsModule,
     filterLayersBySources,
-    LayerSpecWithSource,
-    StyleModuleInitConfig,
     StyleSourceWithLayers,
     TRAFFIC_FLOW_SOURCE_ID
 } from "../shared";
-import { FlowConfig, TrafficFlowFilters } from "./types/trafficModuleConfig";
-import { TomTomMap } from "../TomTomMap";
+import type { FlowConfig, TrafficFlowFilters } from "./types/trafficModuleConfig";
+import type { TomTomMap } from "../TomTomMap";
 import { prepareForModuleInit } from "../shared/mapUtils";
 import { notInTheStyle } from "../shared/errorMessages";
 import isNil from "lodash/isNil";
-import { FilterSpecification } from "maplibre-gl";
+import type { FilterSpecification } from "maplibre-gl";
 import { applyFilter, buildMapLibreFlowFilters } from "./filters/trafficFilters";
 import omitBy from "lodash/omitBy";
 

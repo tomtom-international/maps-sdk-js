@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
-import { StyleSpecification } from "maplibre-gl";
-import { PublishedStyle, PublishedStyleID, StyleInput, StyleModule, TomTomMapParams } from "./types/mapInit";
+import type { StyleSpecification } from "maplibre-gl";
+import type { PublishedStyle, PublishedStyleID, StyleInput, StyleModule, TomTomMapParams } from "./types/mapInit";
 
 const DEFAULT_PUBLISHED_STYLE = "standardLight";
 const URL_PREFIX = "${baseURL}/maps/orbis/assets/styles/${version}/style.json?&apiVersion=1&key=${apiKey}";

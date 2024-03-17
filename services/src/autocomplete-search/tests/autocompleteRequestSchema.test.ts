@@ -1,7 +1,8 @@
-import { TomTomConfig, Language } from "@anw/maps-sdk-js/core";
+import type { Language } from "@anw/maps-sdk-js/core";
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { autocompleteSearchRequestSchema } from "../autocompleteSearchRequestSchema";
-import { AutocompleteSearchParams } from "../types";
+import type { AutocompleteSearchParams } from "../types";
 import autocompleteSearchReqObjects from "./requestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/validation";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";

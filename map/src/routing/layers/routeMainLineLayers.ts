@@ -1,5 +1,5 @@
-import { LineLayerSpecification } from "maplibre-gl";
-import { LayerSpecTemplate } from "../../shared";
+import type { LineLayerSpecification } from "maplibre-gl";
+import type { LayerSpecTemplate } from "../../shared";
 import {
     DESELECTED_FOREGROUND_COLOR,
     DESELECTED_OUTLINE_COLOR,

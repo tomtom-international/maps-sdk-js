@@ -1,6 +1,6 @@
-import { ConnectorType, Fuel, OpeningHoursMode, POICategory } from "@anw/maps-sdk-js/core";
-import { CommonPlacesParams, SearchIndexType } from "./commonPlacesParams";
-import { RelatedPoisRequest, TimeZoneRequest } from "./servicesTypes";
+import type { ConnectorType, Fuel, OpeningHoursMode, POICategory } from "@anw/maps-sdk-js/core";
+import type { CommonPlacesParams, SearchIndexType } from "./commonPlacesParams";
+import type { RelatedPoisRequest, TimeZoneRequest } from "./servicesTypes";
 
 /**
  * Common parameters related to search services.

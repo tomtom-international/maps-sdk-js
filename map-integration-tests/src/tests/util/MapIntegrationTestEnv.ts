@@ -1,6 +1,6 @@
-import { TomTomMapParams, MapLibreOptions } from "map";
-import { MapsSDKThis } from "../types/MapsSDKThis";
-import { ConsoleMessage } from "puppeteer";
+import type { TomTomMapParams, MapLibreOptions } from "map";
+import type { MapsSDKThis } from "../types/MapsSDKThis";
+import type { ConsoleMessage } from "puppeteer";
 
 // @see https://github.com/puppeteer/puppeteer/issues/3397
 const parseConsoleMessage = async (message: ConsoleMessage): Promise<string> => {

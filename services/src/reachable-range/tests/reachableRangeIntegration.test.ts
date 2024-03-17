@@ -1,7 +1,8 @@
-import { isBBoxWithArea, PolygonFeature } from "@anw/maps-sdk-js/core";
+import type { PolygonFeature } from "@anw/maps-sdk-js/core";
+import { isBBoxWithArea } from "@anw/maps-sdk-js/core";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { calculateReachableRange, calculateReachableRanges } from "../calculateReachableRange";
-import { ReachableRangeParams } from "../types/reachableRangeParams";
+import type { ReachableRangeParams } from "../types/reachableRangeParams";
 
 describe.skip("Reachable Range integration tests", () => {
     beforeAll(() => putIntegrationTestsAPIKey());

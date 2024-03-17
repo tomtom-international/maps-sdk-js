@@ -1,4 +1,4 @@
-import { SymbolLayerSpecification } from "maplibre-gl";
+import type { SymbolLayerSpecification } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import { getLayerByID, putGlobalConfig, setLanguage, setStyle, waitForMapIdle } from "./util/TestUtils";
 

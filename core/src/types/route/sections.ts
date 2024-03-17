@@ -1,5 +1,5 @@
-import { LegSummary } from "./summary";
-import { RoadShieldReference } from "./guidance";
+import type { LegSummary } from "./summary";
+import type { RoadShieldReference } from "./guidance";
 
 /**
  * Base type for all route section properties.

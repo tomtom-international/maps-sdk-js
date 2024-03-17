@@ -1,9 +1,9 @@
 import isNil from "lodash/isNil";
-import { TomTomMap } from "../init";
+import type { TomTomMap } from "../init";
 import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from "../shared";
 import { notInTheStyle } from "../shared/errorMessages";
 import { waitUntilMapIsReady } from "../shared/mapUtils";
-import { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from "./types/baseMapModuleConfig";
+import type { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from "./types/baseMapModuleConfig";
 import { buildBaseMapLayerGroupFilter, buildLayerGroupFilter } from "./layerGroups";
 
 type BaseSourceAndLayers = {

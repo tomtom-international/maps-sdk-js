@@ -1,4 +1,4 @@
-import { LatitudeLongitudePointAPI } from "../../routing/types/apiResponseTypes";
+import type { LatitudeLongitudePointAPI } from "../../routing/types/apiResponseTypes";
 
 /**
  * @ignore

@@ -1,6 +1,6 @@
 import { positionToCSVLatLon } from "../shared/geometry";
 import { appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
-import { ReachableRangeParams } from "./types/reachableRangeParams";
+import type { ReachableRangeParams } from "./types/reachableRangeParams";
 import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
 import { getPositionStrict } from "@anw/maps-sdk-js/core";
 // import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";

@@ -1,16 +1,10 @@
-import {
-    inputSectionTypes,
-    LegSectionProps,
-    SummaryBase,
-    SectionProps,
-    SectionsProps,
-    SectionType
-} from "@anw/maps-sdk-js/core";
+import type { LegSectionProps, SummaryBase, SectionProps, SectionsProps, SectionType } from "@anw/maps-sdk-js/core";
+import { inputSectionTypes } from "@anw/maps-sdk-js/core";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { calculateRoute } from "../calculateRoute";
-import { CalculateRouteParams } from "../types/calculateRouteParams";
-import { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
-import { CalculateRouteRequestAPI } from "../types/apiRequestTypes";
+import type { CalculateRouteParams } from "../types/calculateRouteParams";
+import type { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
+import type { CalculateRouteRequestAPI } from "../types/apiRequestTypes";
 
 const assertSummaryBasics = (summary: SummaryBase): void => {
     expect(summary).toBeDefined();

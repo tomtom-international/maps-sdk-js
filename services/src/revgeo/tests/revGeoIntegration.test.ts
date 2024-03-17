@@ -2,7 +2,7 @@ import reverseGeocode from "../reverseGeocoding";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { SDKServiceError } from "../../shared";
 import { customizeService } from "../../../index";
-import { ReverseGeocodingResponseAPI } from "../types/apiTypes";
+import type { ReverseGeocodingResponseAPI } from "../types/apiTypes";
 
 describe("Reverse Geocoding integration test without API key", () => {
     test("Reverse Geocoding integration test without API key", async () => {

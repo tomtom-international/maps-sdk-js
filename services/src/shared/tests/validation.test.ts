@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { validateRequestSchema } from "../validation";
-import { SchemaRefinement } from "../types/validation";
+import type { SchemaRefinement } from "../types/validation";
 
 describe("Validation", () => {
     test("it should throw Validation error when schema validation fails", () => {

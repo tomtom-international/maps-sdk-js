@@ -1,9 +1,6 @@
 // import isNil from "lodash/isNil";
 import { appendByRepeatingParamName, appendOptionalParam } from "./requestBuildingUtils";
-import {
-    CommonEVRoutingParams,
-    CommonRoutingParams /*DepartArriveParams, ThrillingParams*/
-} from "./types/commonRoutingParams";
+import type { CommonEVRoutingParams, CommonRoutingParams } from "./types/commonRoutingParams";
 
 // TODO lot of functionality is not supported in Orbis but it may be supported in the future
 // import {

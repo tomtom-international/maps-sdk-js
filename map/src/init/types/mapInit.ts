@@ -1,6 +1,6 @@
-import { GlobalConfig } from "@anw/maps-sdk-js/core";
-import { MapOptions, StyleSpecification } from "maplibre-gl";
-import { MapEventsConfig } from "./mapEventsConfig";
+import type { GlobalConfig } from "@anw/maps-sdk-js/core";
+import type { MapOptions, StyleSpecification } from "maplibre-gl";
+import type { MapEventsConfig } from "./mapEventsConfig";
 
 export const publishedStyleIDs = [
     "standardLight",

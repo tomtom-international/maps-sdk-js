@@ -1,6 +1,6 @@
-import { LatitudeLongitudePointAPI } from "./apiResponseTypes";
-import { ChargingModel } from "../../shared/types/vehicleEngineParams";
-import { FetchInput } from "../../shared/types/fetch";
+import type { LatitudeLongitudePointAPI } from "./apiResponseTypes";
+import type { ChargingModel } from "../../shared/types/vehicleEngineParams";
+import type { FetchInput } from "../../shared";
 
 /**
  * @ignore

@@ -1,22 +1,17 @@
+import type { GeoInput, GeoInputType, PathLike, Waypoint, WaypointLike, WaypointProps } from "@anw/maps-sdk-js/core";
 import {
-    GeoInput,
-    GeoInputType,
     getGeoInputType,
     getPositionStrict,
     inputSectionTypes,
-    inputSectionTypesWithGuidance,
-    PathLike,
-    Waypoint,
-    WaypointLike,
-    WaypointProps
+    inputSectionTypesWithGuidance
 } from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
-import { Position } from "geojson";
-import { CalculateRouteParams, InputSectionTypes, GuidanceParams } from "./types/calculateRouteParams";
+import type { Position } from "geojson";
+import type { CalculateRouteParams, InputSectionTypes, GuidanceParams } from "./types/calculateRouteParams";
 import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
-import { FetchInput } from "../shared";
-import { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestTypes";
-import { LatitudeLongitudePointAPI } from "./types/apiResponseTypes";
+import type { FetchInput } from "../shared";
+import type { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestTypes";
+import type { LatitudeLongitudePointAPI } from "./types/apiResponseTypes";
 import { positionToCSVLatLon } from "../shared/geometry";
 import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
 // import { CommonEVRoutingParams } from "../shared";

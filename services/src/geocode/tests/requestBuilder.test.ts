@@ -1,5 +1,5 @@
 import { buildGeocodingRequest } from "../requestBuilder";
-import { GeocodingParams } from "../types/geocodingParams";
+import type { GeocodingParams } from "../types/geocodingParams";
 import geocodingReqObjectsAndURLs from "./requestBuilder.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import geocodingReqObjects from "./requestBuilderPerf.data.json";

@@ -1,6 +1,6 @@
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { fuzzySearchRequestSchema } from "../fuzzySearchRequestSchema";
-import { FuzzySearchParams } from "../types";
+import type { FuzzySearchParams } from "../types";
 import fuzzySearchReqObjects from "./requestBuilderPerf.data.json";
 import { validateRequestSchema } from "../../shared/validation";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";

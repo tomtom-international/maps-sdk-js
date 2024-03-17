@@ -1,3 +1,3 @@
-import { WaypointLike } from "@anw/maps-sdk-js/core";
+import type { WaypointLike } from "@anw/maps-sdk-js/core";
 
 export type PlanningWaypoint = WaypointLike | null;

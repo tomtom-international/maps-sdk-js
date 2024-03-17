@@ -1,5 +1,5 @@
-import { DelayMagnitude } from "@anw/maps-sdk-js/core";
-import { FilterShowMode, ValuesFilter, StyleModuleConfig } from "../../shared";
+import type { DelayMagnitude } from "@anw/maps-sdk-js/core";
+import type { FilterShowMode, ValuesFilter, StyleModuleConfig } from "../../shared";
 
 /**
  * Available incident categories.

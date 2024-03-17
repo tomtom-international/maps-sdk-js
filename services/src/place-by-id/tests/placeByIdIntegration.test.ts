@@ -1,6 +1,7 @@
 import { TomTomConfig } from "@anw/maps-sdk-js/core";
 
-import { placeById, PlaceByIdResponseAPI } from "..";
+import type { PlaceByIdResponseAPI } from "..";
+import { placeById } from "..";
 import {
     expectPlaceTestFeature,
     basePOITestProps,

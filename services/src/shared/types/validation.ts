@@ -1,4 +1,4 @@
-import { ZodObject, ZodRawShape } from "zod";
+import type { ZodObject, ZodRawShape } from "zod";
 
 /**
  * @ignore

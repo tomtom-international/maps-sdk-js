@@ -1,6 +1,6 @@
-import { LayerSpecification } from "maplibre-gl";
+import type { LayerSpecification } from "maplibre-gl";
 import { AbstractEventProxy } from "../AbstractEventProxy";
-import { StyleSourceWithLayers } from "../SourceWithLayers";
+import type { StyleSourceWithLayers } from "../SourceWithLayers";
 
 const sourceWithLayersMock = {
     places: {

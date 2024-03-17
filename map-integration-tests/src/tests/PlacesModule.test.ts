@@ -1,9 +1,9 @@
-import { HasBBox, Place, Places } from "@anw/maps-sdk-js/core";
-import { LocationDisplayProps, PlaceIconConfig } from "map";
-import { MapGeoJSONFeature } from "maplibre-gl";
+import type { HasBBox, Place, Places } from "@anw/maps-sdk-js/core";
+import type { LocationDisplayProps, PlaceIconConfig } from "map";
+import type { MapGeoJSONFeature } from "maplibre-gl";
 import sortBy from "lodash/sortBy";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import {
     getNumVisibleLayersBySource,
     getPlacesSourceAndLayerIDs,

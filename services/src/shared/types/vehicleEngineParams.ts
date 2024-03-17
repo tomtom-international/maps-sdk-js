@@ -1,4 +1,4 @@
-import { CurrentType, PlugType } from "@anw/maps-sdk-js/core";
+import type { CurrentType, PlugType } from "@anw/maps-sdk-js/core";
 
 /**
  * Specifies the speed-dependent component of consumption.

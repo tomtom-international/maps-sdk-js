@@ -1,5 +1,5 @@
 import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
-import { FuzzySearchParams } from "./types";
+import type { FuzzySearchParams } from "./types";
 import { appendByJoiningParamValue, appendOptionalParam } from "../shared/requestBuildingUtils";
 import { appendCommonSearchParams } from "../shared/commonSearchRequestBuilder";
 import { arrayToCSV } from "../shared/arrays";

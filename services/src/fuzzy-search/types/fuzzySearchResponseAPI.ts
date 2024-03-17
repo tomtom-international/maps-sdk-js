@@ -1,5 +1,5 @@
-import { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared/types/apiPlacesResponseTypes";
-import { BookmarkIntent, NearbyIntentDetails, W3WIntent } from "./fuzzySearchResponse";
+import type { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared/types/apiPlacesResponseTypes";
+import type { BookmarkIntent, NearbyIntentDetails, W3WIntent } from "./fuzzySearchResponse";
 
 /**
  * @ignore

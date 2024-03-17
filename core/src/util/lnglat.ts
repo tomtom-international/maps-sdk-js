@@ -1,5 +1,5 @@
-import { Feature, Point, Position } from "geojson";
-import { HasLngLat } from "../types";
+import type { Feature, Point, Position } from "geojson";
+import type { HasLngLat } from "../types";
 
 /**
  * Extracts the lng-lat position for the given object.

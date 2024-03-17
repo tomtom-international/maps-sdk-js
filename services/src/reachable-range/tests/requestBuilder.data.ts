@@ -1,4 +1,4 @@
-import { ReachableRangeParams } from "../types/reachableRangeParams";
+import type { ReachableRangeParams } from "../types/reachableRangeParams";
 
 export const sdkAndAPIRequests: [string, ReachableRangeParams, URL][] = [
     [

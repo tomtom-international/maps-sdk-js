@@ -1,4 +1,4 @@
-import { StyleModuleConfig } from "../../shared";
+import type { StyleModuleConfig } from "../../shared";
 
 export const baseMapLayerGroupNames = [
     "land",

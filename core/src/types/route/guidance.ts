@@ -1,4 +1,4 @@
-import { Position } from "geojson";
+import type { Position } from "geojson";
 
 /**
  * Indicates left-hand vs. right-hand side driving at the point of the maneuver.

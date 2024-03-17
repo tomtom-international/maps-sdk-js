@@ -1,4 +1,5 @@
-import { TomTomConfig, placeTypes, SearchPlaceProps, Place, OpeningHours, Moment } from "@anw/maps-sdk-js/core";
+import type { Moment, OpeningHours, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { placeTypes, TomTomConfig } from "@anw/maps-sdk-js/core";
 
 export const putIntegrationTestsAPIKey = () => {
     TomTomConfig.instance.put({

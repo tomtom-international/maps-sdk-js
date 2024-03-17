@@ -1,7 +1,7 @@
-import { Place, Places } from "@anw/maps-sdk-js/core";
-import { GeoJSONSource, Map } from "maplibre-gl";
+import type { Place, Places } from "@anw/maps-sdk-js/core";
+import type { GeoJSONSource, Map } from "maplibre-gl";
 import { PlacesModule } from "../PlacesModule";
-import { TomTomMap } from "../../TomTomMap";
+import type { TomTomMap } from "../../TomTomMap";
 import { EventsModule, PLACES_SOURCE_PREFIX_ID } from "../../shared";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.

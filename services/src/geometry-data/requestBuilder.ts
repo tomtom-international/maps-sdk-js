@@ -1,5 +1,5 @@
-import { Place, Places } from "@anw/maps-sdk-js/core";
-import { GeometriesInput, GeometryParams } from "./types/geometryDataParams";
+import type { Place, Places } from "@anw/maps-sdk-js/core";
+import type { GeometriesInput, GeometryParams } from "./types/geometryDataParams";
 import { appendOptionalParam } from "../shared/requestBuildingUtils";
 import { arrayToCSV } from "../shared/arrays";
 

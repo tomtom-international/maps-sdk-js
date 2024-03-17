@@ -1,4 +1,4 @@
-import { MapStylePOICategory } from "../places";
+import type { MapStylePOICategory } from "../places";
 
 export const poiCategoryGroups: Record<string, MapStylePOICategory[]> = {
     FOOD_DRINKS_GROUP: [

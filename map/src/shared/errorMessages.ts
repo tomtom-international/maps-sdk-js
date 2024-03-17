@@ -1,4 +1,4 @@
-import { StyleModule } from "../init";
+import type { StyleModule } from "../init";
 
 /**
  * @ignore

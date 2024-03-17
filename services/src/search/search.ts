@@ -1,11 +1,11 @@
-import { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
-import { GeometrySearchParams } from "../geometry-search";
+import type { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import type { GeometrySearchParams } from "../geometry-search";
 import { geometrySearch } from "../geometry-search/geometrySearch";
-import { GeometrySearchTemplate } from "../geometry-search/geometrySearchTemplate";
-import { FuzzySearchParams, QueryIntent } from "../fuzzy-search";
+import type { GeometrySearchTemplate } from "../geometry-search/geometrySearchTemplate";
+import type { FuzzySearchParams, QueryIntent } from "../fuzzy-search";
 import { fuzzySearch } from "../fuzzy-search/fuzzySearch";
-import { FuzzySearchTemplate } from "../fuzzy-search/fuzzySearchTemplate";
-import { SearchSummary } from "../shared";
+import type { FuzzySearchTemplate } from "../fuzzy-search/fuzzySearchTemplate";
+import type { SearchSummary } from "../shared";
 
 type SearchFeatureCollectionProps = SearchSummary & {
     queryIntent?: QueryIntent[];

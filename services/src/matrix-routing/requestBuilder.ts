@@ -1,8 +1,9 @@
-import { HasLngLat, getPositionStrict } from "@anw/maps-sdk-js/core";
+import type { HasLngLat } from "@anw/maps-sdk-js/core";
+import { getPositionStrict } from "@anw/maps-sdk-js/core";
 import { appendCommonParams } from "../shared/requestBuildingUtils";
-import { FetchInput } from "../shared";
-import { CalculateMatrixRoutePOSTDataAPI, LatitudeLongitudePointAPI } from "./types/apiRequestTypes";
-import { CalculateMatrixRouteParams } from "./types/calculateMatrixRouteParams";
+import type { FetchInput } from "../shared";
+import type { CalculateMatrixRoutePOSTDataAPI, LatitudeLongitudePointAPI } from "./types/apiRequestTypes";
+import type { CalculateMatrixRouteParams } from "./types/calculateMatrixRouteParams";
 
 const buildURLBasePath = (params: CalculateMatrixRouteParams): string =>
     params.customServiceBaseURL ?? `${params.commonBaseURL}/routing/matrix/2`;

@@ -1,4 +1,4 @@
-import { Map } from "maplibre-gl";
+import type { Map } from "maplibre-gl";
 import {
     EventsModule,
     mapStyleLayerIDs,
@@ -12,7 +12,7 @@ import {
     ROUTES_SOURCE_ID,
     WAYPOINTS_SOURCE_ID
 } from "../../shared";
-import { TomTomMap } from "../../TomTomMap";
+import type { TomTomMap } from "../../TomTomMap";
 import { RoutingModule } from "../RoutingModule";
 import { routeDeselectedOutline } from "../layers/routeMainLineLayers";
 

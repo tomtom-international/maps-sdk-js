@@ -1,7 +1,7 @@
-import { PolygonFeatures } from "@anw/maps-sdk-js/core";
-import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
+import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
+import type { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import { GeometriesModule } from "../GeometriesModule";
-import { TomTomMap } from "../../TomTomMap";
+import type { TomTomMap } from "../../TomTomMap";
 import amsterdamGeometryData from "./geometriesModuleMocked.test.data.json";
 import { mapStyleLayerIDs } from "../../shared";
 

@@ -1,5 +1,5 @@
-import { ConnectorType, EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
-import { CommonServiceParams } from "../../shared";
+import type { ConnectorType, EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
+import type { CommonServiceParams } from "../../shared";
 
 export type EVChargingStationsAvailabilityParams = CommonServiceParams<URL, EVChargingStationsAvailability> & {
     /**

@@ -1,6 +1,6 @@
-import { DelayMagnitude, RouteProps } from "@anw/maps-sdk-js/core";
-import { SupportsEvents } from "../../shared";
-import { FeatureCollection, Point } from "geojson";
+import type { DelayMagnitude, RouteProps } from "@anw/maps-sdk-js/core";
+import type { SupportsEvents } from "../../shared";
+import type { FeatureCollection, Point } from "geojson";
 
 /**
  * Specific props relating to a displayed route.

@@ -1,6 +1,7 @@
-import { BaseMapLayerGroupName, baseMapLayerGroupNames, BaseMapLayerGroups, poiLayerIDs } from "map";
+import type { BaseMapLayerGroupName, BaseMapLayerGroups } from "map";
+import { baseMapLayerGroupNames, poiLayerIDs } from "map";
 import { BASE_MAP_SOURCE_ID } from "map/src/shared";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import {
     getNumLayersBySource,

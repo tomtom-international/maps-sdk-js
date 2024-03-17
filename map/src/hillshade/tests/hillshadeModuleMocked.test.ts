@@ -1,6 +1,6 @@
-import { Map } from "maplibre-gl";
+import type { Map } from "maplibre-gl";
 import { HILLSHADE_SOURCE_ID } from "../../shared";
-import { TomTomMap } from "../../TomTomMap";
+import type { TomTomMap } from "../../TomTomMap";
 import { HillshadeModule } from "../HillshadeModule";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.

@@ -1,16 +1,13 @@
-import { MapGeoJSONFeature } from "maplibre-gl";
+import type { MapGeoJSONFeature } from "maplibre-gl";
 import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
+import type { IncidentCategory, RoadCategory, IncidentsConfig, TrafficIncidentsFilters } from "map";
 import {
     incidentCategories as availableIncidentCategories,
     incidentCategoriesMapping,
-    IncidentCategory,
-    RoadCategory,
-    TRAFFIC_INCIDENTS_SOURCE_ID,
-    IncidentsConfig,
-    TrafficIncidentsFilters
+    TRAFFIC_INCIDENTS_SOURCE_ID
 } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import {
     getVisibleLayersBySource,
     initTrafficIncidents,

@@ -1,5 +1,5 @@
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import { HILLSHADE_SOURCE_ID } from "map";
 import { assertNumber, getNumVisibleLayersBySource, getNumVisiblePOILayers } from "./util/TestUtils";
 

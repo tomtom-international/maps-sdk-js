@@ -1,5 +1,5 @@
-import { LayerSpecTemplate } from "../../shared";
-import { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import type { LayerSpecTemplate } from "../../shared";
+import type { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { SELECTED_ROUTE_FILTER } from "./shared";
 
 const commonProps = {

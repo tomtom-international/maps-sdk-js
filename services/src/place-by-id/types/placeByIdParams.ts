@@ -1,6 +1,6 @@
-import { CommonServiceParams, RelatedPoisRequest, TimeZoneRequest } from "../../shared";
-import { MapcodeType, OpeningHoursMode, View } from "@anw/maps-sdk-js/core";
-import { PlaceByIdResponseAPI } from "./placeByIdResponseAPI";
+import type { CommonServiceParams, RelatedPoisRequest, TimeZoneRequest } from "../../shared";
+import type { MapcodeType, OpeningHoursMode, View } from "@anw/maps-sdk-js/core";
+import type { PlaceByIdResponseAPI } from "./placeByIdResponseAPI";
 
 export type PlaceByIdOptionalParams = {
     /**

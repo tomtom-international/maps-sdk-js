@@ -1,6 +1,7 @@
-import { CommonPlaceProps, PolygonFeatures, Places } from "@anw/maps-sdk-js/core";
-import { GeometryDataParams, GeometryParams, GeometryPlaceParams } from "./types/geometryDataParams";
-import { GeometryDataTemplate, geometryDataTemplate } from "./geometryDataTemplate";
+import type { CommonPlaceProps, PolygonFeatures, Places } from "@anw/maps-sdk-js/core";
+import type { GeometryDataParams, GeometryParams, GeometryPlaceParams } from "./types/geometryDataParams";
+import type { GeometryDataTemplate } from "./geometryDataTemplate";
+import { geometryDataTemplate } from "./geometryDataTemplate";
 import { callService } from "../shared/serviceTemplate";
 
 /**

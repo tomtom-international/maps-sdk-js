@@ -1,6 +1,6 @@
 import { bboxFromGeoJSON, bboxOnlyIfWithArea } from "@anw/maps-sdk-js/core";
 
-import { FuzzySearchResponse, FuzzySearchResponseAPI, QueryIntent, QueryIntentAPI } from "./types";
+import type { FuzzySearchResponse, FuzzySearchResponseAPI, QueryIntent, QueryIntentAPI } from "./types";
 import { parseSearchAPIResult, parseSummaryAPI } from "../shared/searchResultParsing";
 import { latLonAPIToPosition } from "../shared/geometry";
 

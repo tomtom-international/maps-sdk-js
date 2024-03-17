@@ -1,20 +1,17 @@
-import { Place, Places } from "@anw/maps-sdk-js/core";
-import {
-    AbstractMapModule,
-    EventsModule,
-    PutEventStateOptions,
-    GeoJSONSourceWithLayers,
-    PLACES_SOURCE_PREFIX_ID,
-    SymbolLayerSpecWithoutSource,
+import type { Place, Places } from "@anw/maps-sdk-js/core";
+import type {
+    CleanEventStateOptions,
     CleanEventStatesOptions,
-    CleanEventStateOptions
+    PutEventStateOptions,
+    SymbolLayerSpecWithoutSource
 } from "../shared";
-import { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from "./types/placesModuleConfig";
-import { TomTomMap } from "../TomTomMap";
+import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from "../shared";
+import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from "./types/placesModuleConfig";
+import type { TomTomMap } from "../TomTomMap";
 import { changeLayersProps, waitUntilMapIsReady } from "../shared/mapUtils";
 import { preparePlacesForDisplay } from "./preparePlacesForDisplay";
 import { buildPlacesLayerSpecs } from "./layers/placesLayers";
-import { DisplayPlaceProps } from "./types/placeDisplayProps";
+import type { DisplayPlaceProps } from "./types/placeDisplayProps";
 
 /**
  * IDs of sources and layers for places module.

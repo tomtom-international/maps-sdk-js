@@ -1,6 +1,6 @@
-import { StyleSpecification } from "maplibre-gl";
+import type { StyleSpecification } from "maplibre-gl";
 import mapsSDKInitParamsAndMapStyles from "./styleInputBuilder.data.json";
-import { TomTomMapParams } from "../types/mapInit";
+import type { TomTomMapParams } from "../types/mapInit";
 import { buildStyleInput, withPreviousStyleParts } from "../styleInputBuilder";
 
 describe("Map style input builder tests", () => {

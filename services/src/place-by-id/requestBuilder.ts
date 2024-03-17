@@ -1,5 +1,5 @@
-import { PlaceByIdParams } from "./types";
-import { CommonServiceParams } from "../shared/serviceTypes";
+import type { PlaceByIdParams } from "./types";
+import type { CommonServiceParams } from "../shared";
 import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>

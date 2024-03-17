@@ -1,6 +1,6 @@
-import { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
-import { Position } from "geojson";
-import { SearchSummary } from "../../shared";
+import type { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import type { Position } from "geojson";
+import type { SearchSummary } from "../../shared";
 
 export type FuzzySearchResponse = Places<SearchPlaceProps, FuzzySearchFeatureCollectionProps>;
 

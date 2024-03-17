@@ -1,4 +1,4 @@
-import { POICategory } from "./category";
+import type { POICategory } from "./category";
 
 /**
  * @group Place

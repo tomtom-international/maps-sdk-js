@@ -1,4 +1,4 @@
-import { ChargingPark, ChargingPointStatus, ChargingStation, CommonPlaceProps, Connector } from "../..";
+import type { ChargingPark, ChargingPointStatus, ChargingStation, CommonPlaceProps, Connector } from "../..";
 
 /**
  * @group Place

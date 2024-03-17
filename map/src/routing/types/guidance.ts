@@ -1,6 +1,6 @@
-import { Feature, FeatureCollection, LineString, Point } from "geojson";
-import { Instruction } from "@anw/maps-sdk-js/core";
-import { DisplayRouteRelatedProps } from "./displayRoutes";
+import type { Feature, FeatureCollection, LineString, Point } from "geojson";
+import type { Instruction } from "@anw/maps-sdk-js/core";
+import type { DisplayRouteRelatedProps } from "./displayRoutes";
 
 export type DisplayInstructionArrowProps = {
     lastPointBearingDegrees: number;

@@ -1,11 +1,14 @@
 import isNil from "lodash/isNil";
-import { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
-import { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { bboxCenter, bboxFromCoordsArray, PolygonFeatures } from "@anw/maps-sdk-js/core";
-import { ColorPaletteOptions, colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/geometryLayers";
-import { GeometriesModuleConfig } from "./types/geometriesModuleConfig";
-import { DisplayGeometryProps, ExtraGeometryDisplayProps, GEOMETRY_TITLE_PROP } from "./types/geometryDisplayProps";
-import { SymbolLayerSpecWithoutSource } from "../shared";
+import type { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
+import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
+import { bboxCenter, bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
+import type { ColorPaletteOptions } from "./layers/geometryLayers";
+import { colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/geometryLayers";
+import type { GeometriesModuleConfig } from "./types/geometriesModuleConfig";
+import type { DisplayGeometryProps, ExtraGeometryDisplayProps } from "./types/geometryDisplayProps";
+import { GEOMETRY_TITLE_PROP } from "./types/geometryDisplayProps";
+import type { SymbolLayerSpecWithoutSource } from "../shared";
 import { MAP_BOLD_FONT } from "../shared/layers/commonLayerProps";
 
 /**

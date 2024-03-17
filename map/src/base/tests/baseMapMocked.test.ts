@@ -1,6 +1,6 @@
-import { Map } from "maplibre-gl";
+import type { Map } from "maplibre-gl";
 import { BASE_MAP_SOURCE_ID } from "../../shared";
-import { TomTomMap } from "../../TomTomMap";
+import type { TomTomMap } from "../../TomTomMap";
 import { BaseMapModule } from "../BaseMap";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.

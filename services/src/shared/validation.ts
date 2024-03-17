@@ -1,7 +1,7 @@
-import { ZodError, ZodIssue } from "zod";
+import type { ZodError, ZodIssue } from "zod";
 import { commonServiceRequestSchema } from "./commonParamsSchema";
-import { CommonServiceParams } from "./serviceTypes";
-import { RequestValidationConfig } from "./types/validation";
+import type { CommonServiceParams } from "./serviceTypes";
+import type { RequestValidationConfig } from "./types/validation";
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.

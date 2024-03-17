@@ -1,9 +1,7 @@
-import {
-    bboxFromGeoJSON,
+import type {
     CountrySectionProps,
     CurrentType,
     Guidance,
-    indexedMagnitudes,
     LegSectionProps,
     LegSummary,
     Route,
@@ -23,10 +21,11 @@ import {
     SpeedLimitSectionProps,
     Instruction
 } from "@anw/maps-sdk-js/core";
+import { bboxFromGeoJSON, indexedMagnitudes } from "@anw/maps-sdk-js/core";
 import omit from "lodash/omit";
 import isNil from "lodash/isNil";
-import { LineString, Position } from "geojson";
-import {
+import type { LineString, Position } from "geojson";
+import type {
     CalculateRouteResponseAPI,
     CurrentTypeAPI,
     GuidanceAPI,

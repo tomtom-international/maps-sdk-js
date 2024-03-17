@@ -1,6 +1,7 @@
-import { GeocodingResponse } from "./types/geocodingResponse";
-import { GeocodingParams } from "./types/geocodingParams";
-import { geocodingTemplate, GeocodingTemplate } from "./geocodingTemplate";
+import type { GeocodingResponse } from "./types/geocodingResponse";
+import type { GeocodingParams } from "./types/geocodingParams";
+import type { GeocodingTemplate } from "./geocodingTemplate";
+import { geocodingTemplate } from "./geocodingTemplate";
 import { callService } from "../shared/serviceTemplate";
 
 /**

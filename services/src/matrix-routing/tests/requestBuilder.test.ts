@@ -1,7 +1,7 @@
-import { FetchInput } from "../../shared/types/fetch";
+import type { FetchInput } from "../../shared";
 import { buildCalculateMatrixRouteRequest } from "../requestBuilder";
-import { CalculateMatrixRoutePOSTDataAPI } from "../types/apiRequestTypes";
-import { CalculateMatrixRouteParams } from "../types/calculateMatrixRouteParams";
+import type { CalculateMatrixRoutePOSTDataAPI } from "../types/apiRequestTypes";
+import type { CalculateMatrixRouteParams } from "../types/calculateMatrixRouteParams";
 import { sdkAndAPIRequests } from "./requestBuilder.data";
 
 describe("Matrix Routing - Request builder", () => {

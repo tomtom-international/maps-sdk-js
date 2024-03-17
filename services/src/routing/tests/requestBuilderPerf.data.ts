@@ -1,4 +1,4 @@
-import { CalculateRouteParams } from "../types/calculateRouteParams";
+import type { CalculateRouteParams } from "../types/calculateRouteParams";
 
 export const routeRequestParams: CalculateRouteParams = {
     apiKey: "APIKEY",

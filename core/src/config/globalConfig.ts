@@ -1,4 +1,4 @@
-import { Language } from "../types";
+import type { Language } from "../types";
 
 /**
  * Global configuration containing basic parameters.

@@ -1,5 +1,5 @@
-import { GeocodingParams } from "../types/geocodingParams";
-import { Polygon } from "geojson";
+import type { GeocodingParams } from "../types/geocodingParams";
+import type { Polygon } from "geojson";
 import geoCodingReqObjects from "../../geocode/tests/requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";

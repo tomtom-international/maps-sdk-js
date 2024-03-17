@@ -1,14 +1,13 @@
-import { Routes } from "@anw/maps-sdk-js/core";
-import { ServiceTemplate } from "../shared";
-import { CalculateRouteParams } from "./types/calculateRouteParams";
+import type { Routes } from "@anw/maps-sdk-js/core";
+import type { FetchInput, ServiceTemplate } from "../shared";
+import type { CalculateRouteParams } from "./types/calculateRouteParams";
 import { buildCalculateRouteRequest } from "./requestBuilder";
 import { parseCalculateRouteResponse } from "./responseParser";
 import { fetchWith } from "../shared/fetch";
-import { FetchInput } from "../shared/types/fetch";
-import { CalculateRouteResponseAPI } from "./types/apiResponseTypes";
+import type { CalculateRouteResponseAPI } from "./types/apiResponseTypes";
 import { parseRoutingResponseError } from "./routingResponseErrorParser";
 import { routeRequestValidationConfig } from "./calculateRouteRequestSchema";
-import { CalculateRoutePOSTDataAPI } from "./types/apiRequestTypes";
+import type { CalculateRoutePOSTDataAPI } from "./types/apiRequestTypes";
 
 export type CalculateRouteTemplate = ServiceTemplate<
     CalculateRouteParams,

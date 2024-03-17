@@ -1,8 +1,8 @@
 import { parseGeometrySearchResponse } from "./responseParser";
 import { buildGeometrySearchRequest } from "./requestBuilder";
 import { post } from "../shared/fetch";
-import { ServiceTemplate } from "../shared";
-import {
+import type { ServiceTemplate } from "../shared";
+import type {
     GeometrySearchParams,
     GeometrySearchResponse,
     GeometrySearchResponseAPI,

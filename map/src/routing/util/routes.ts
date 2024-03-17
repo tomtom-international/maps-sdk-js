@@ -1,13 +1,6 @@
-import {
-    DelayMagnitude,
-    DistanceUnitsType,
-    formatDistance,
-    formatDuration,
-    Route,
-    Routes,
-    TrafficSectionProps
-} from "@anw/maps-sdk-js/core";
-import { DisplayRouteProps, DisplayRouteSummaries } from "../types/displayRoutes";
+import type { DelayMagnitude, DistanceUnitsType, Route, Routes, TrafficSectionProps } from "@anw/maps-sdk-js/core";
+import { formatDistance, formatDuration } from "@anw/maps-sdk-js/core";
+import type { DisplayRouteProps, DisplayRouteSummaries } from "../types/displayRoutes";
 
 /**
  * Builds map display-ready routes, applying default style props.

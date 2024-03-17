@@ -1,4 +1,4 @@
-import { Place, Places } from "@anw/maps-sdk-js/core";
+import type { Place, Places } from "@anw/maps-sdk-js/core";
 import { buildGeometryDataRequest } from "../requestBuilder";
 
 describe("Geometry data request URL building functional tests", () => {

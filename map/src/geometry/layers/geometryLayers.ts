@@ -1,5 +1,5 @@
-import { FillLayerSpecification, LineLayerSpecification } from "maplibre-gl";
-import { LayerSpecTemplate } from "../../shared";
+import type { FillLayerSpecification, LineLayerSpecification } from "maplibre-gl";
+import type { LayerSpecTemplate } from "../../shared";
 import { GEOMETRY_COLOR_PROP } from "../types/geometryDisplayProps";
 
 export const colorPalettes = {

@@ -1,5 +1,5 @@
-import { GlobalConfig } from "../config/globalConfig";
-import { TomTomHeaders } from "../types";
+import type { GlobalConfig } from "../config/globalConfig";
+import type { TomTomHeaders } from "../types";
 
 /**
  * SDK name used TomTom custom header TomTom-User-Agent

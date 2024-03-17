@@ -1,10 +1,5 @@
-import {
-    accessibility,
-    EVChargingStationsAvailability,
-    ChargingPoint,
-    chargingPointStatus,
-    connectorTypes
-} from "@anw/maps-sdk-js/core";
+import type { ChargingPoint, EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
+import { accessibility, chargingPointStatus, connectorTypes } from "@anw/maps-sdk-js/core";
 import evChargingStationsAvailability, { buildPlacesWithEVAvailability } from "../evChargingStationsAvailability";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { SDKServiceError } from "../../shared";

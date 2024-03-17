@@ -1,4 +1,4 @@
-import { LocationDisplayProps } from "../../places";
+import type { LocationDisplayProps } from "../../places";
 
 export const START_INDEX = "start";
 export const MIDDLE_INDEX = "middle";

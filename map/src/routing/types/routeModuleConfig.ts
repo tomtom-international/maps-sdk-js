@@ -1,9 +1,9 @@
-import { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { GeoJSONSourceWithLayers, LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
-import { DistanceUnitsType, Routes, Waypoints } from "@anw/maps-sdk-js/core";
-import { DisplayRouteProps, DisplayRouteSummaries } from "./displayRoutes";
-import { DisplayTrafficSectionProps, RouteSections } from "./routeSections";
-import { DisplayInstructionArrows, DisplayInstructions } from "./guidance";
+import type { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import type { GeoJSONSourceWithLayers, LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
+import type { DistanceUnitsType, Routes, Waypoints } from "@anw/maps-sdk-js/core";
+import type { DisplayRouteProps, DisplayRouteSummaries } from "./displayRoutes";
+import type { DisplayTrafficSectionProps, RouteSections } from "./routeSections";
+import type { DisplayInstructionArrows, DisplayInstructions } from "./guidance";
 
 /**
  * Configuration for the route layers. Allows full control for all the route layers.

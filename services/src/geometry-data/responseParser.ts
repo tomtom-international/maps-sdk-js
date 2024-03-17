@@ -1,5 +1,6 @@
-import { bboxFromGeoJSON, PolygonFeatures } from "@anw/maps-sdk-js/core";
-import { GeometryDataResponseAPI } from "./types/apiTypes";
+import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
+import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
+import type { GeometryDataResponseAPI } from "./types/apiTypes";
 
 /**
  * Default geometry data API response parsing.

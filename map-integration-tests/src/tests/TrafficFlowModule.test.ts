@@ -1,7 +1,8 @@
-import { MapGeoJSONFeature } from "maplibre-gl";
-import { RoadCategory, TRAFFIC_FLOW_SOURCE_ID, FlowConfig, StyleModuleInitConfig, TrafficFlowFilters } from "map";
+import type { MapGeoJSONFeature } from "maplibre-gl";
+import type { RoadCategory, FlowConfig, StyleModuleInitConfig, TrafficFlowFilters } from "map";
+import { TRAFFIC_FLOW_SOURCE_ID } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import { getVisibleLayersBySource, setStyle, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
 
 const waitForRenderedFlowChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>

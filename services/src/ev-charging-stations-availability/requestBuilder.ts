@@ -1,6 +1,6 @@
 import isNil from "lodash/isNil";
 
-import { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
+import type { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
 import { appendCommonParams } from "../shared/requestBuildingUtils";
 import { arrayToCSV } from "../shared/arrays";
 

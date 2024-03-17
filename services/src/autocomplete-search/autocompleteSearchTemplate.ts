@@ -1,8 +1,8 @@
 import { parseAutocompleteSearchResponse } from "./responseParser";
 import { buildAutocompleteSearchRequest } from "./requestBuilder";
 import { get } from "../shared/fetch";
-import { ServiceTemplate } from "../shared";
-import { AutocompleteSearchParams, AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from "./types";
+import type { ServiceTemplate } from "../shared";
+import type { AutocompleteSearchParams, AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from "./types";
 import { autocompleteSearchRequestSchema } from "./autocompleteSearchRequestSchema";
 
 /**

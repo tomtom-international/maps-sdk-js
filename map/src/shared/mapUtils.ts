@@ -1,4 +1,4 @@
-import {
+import type {
     FilterSpecification,
     Map,
     MapGeoJSONFeature,
@@ -6,11 +6,12 @@ import {
     ResourceType,
     StyleImageMetadata
 } from "maplibre-gl";
-import { generateTomTomHeaders, GlobalConfig } from "@anw/maps-sdk-js/core";
-import { TomTomMap } from "../TomTomMap";
-import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
-import { AbstractSourceWithLayers } from "./SourceWithLayers";
-import { StyleInput, StyleModule } from "../init";
+import type { GlobalConfig } from "@anw/maps-sdk-js/core";
+import { generateTomTomHeaders } from "@anw/maps-sdk-js/core";
+import type { TomTomMap } from "../TomTomMap";
+import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
+import type { AbstractSourceWithLayers } from "./SourceWithLayers";
+import type { StyleInput, StyleModule } from "../init";
 import { cannotAddStyleModuleToCustomStyle } from "./errorMessages";
 
 /**

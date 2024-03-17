@@ -1,7 +1,7 @@
-import { Map } from "maplibre-gl";
+import type { Map } from "maplibre-gl";
 import { AbstractMapModule } from "../AbstractMapModule";
-import { StyleModuleConfig } from "../types";
-import { TomTomMap } from "../../TomTomMap";
+import type { StyleModuleConfig } from "../types";
+import type { TomTomMap } from "../../TomTomMap";
 import { waitUntilMapIsReady } from "../mapUtils";
 import Mock = jest.Mock;
 

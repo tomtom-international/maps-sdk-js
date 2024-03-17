@@ -1,7 +1,7 @@
-import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
+import type { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
 
-import { CommonServiceParams } from "../../shared";
-import { ReverseGeocodingResponseAPI } from "./apiTypes";
+import type { CommonServiceParams } from "../../shared";
+import type { ReverseGeocodingResponseAPI } from "./apiTypes";
 
 /**
  * @enum

@@ -1,4 +1,4 @@
-import { ExpressionSpecification } from "maplibre-gl";
+import type { ExpressionSpecification } from "maplibre-gl";
 
 export const MAP_BOLD_FONT = "Noto-Bold";
 export const MAP_REGULAR_FONT = "Noto-Regular";

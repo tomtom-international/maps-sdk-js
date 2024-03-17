@@ -1,29 +1,24 @@
-import {
+import type {
     BatteryCharging,
     CommonPlaceProps,
-    formatDuration,
     Routes,
     Waypoint,
     WaypointLike,
     Waypoints
 } from "@anw/maps-sdk-js/core";
-import { Point, Position } from "geojson";
-import {
-    FINISH_INDEX,
-    IndexType,
-    MIDDLE_INDEX,
-    START_INDEX,
-    WaypointDisplayProps
-} from "../types/waypointDisplayProps";
+import { formatDuration } from "@anw/maps-sdk-js/core";
+import type { Point, Position } from "geojson";
+import type { IndexType, WaypointDisplayProps } from "../types/waypointDisplayProps";
+import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from "../types/waypointDisplayProps";
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
     WAYPOINT_STOP_IMAGE_ID
 } from "../layers/waypointLayers";
-import { PlanningWaypoint } from "../types/planningWaypoint";
-import { LocationDisplayProps } from "../../places";
-import { DisplayRouteProps, RouteStyleProps } from "../types/displayRoutes";
+import type { PlanningWaypoint } from "../types/planningWaypoint";
+import type { LocationDisplayProps } from "../../places";
+import type { DisplayRouteProps, RouteStyleProps } from "../types/displayRoutes";
 
 const indexTypeFor = (index: number, arrayLength: number): IndexType =>
     index === 0 ? START_INDEX : index < arrayLength - 1 ? MIDDLE_INDEX : FINISH_INDEX;

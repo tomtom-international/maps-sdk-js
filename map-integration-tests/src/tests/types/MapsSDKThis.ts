@@ -1,5 +1,5 @@
-import { LngLatLike, Map, MapGeoJSONFeature } from "maplibre-gl";
-import {
+import type { LngLatLike, Map, MapGeoJSONFeature } from "maplibre-gl";
+import type {
     PlacesModule,
     GeometriesModule,
     TomTomMap,

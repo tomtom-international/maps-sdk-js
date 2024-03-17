@@ -1,5 +1,5 @@
 import { TomTomMapSource } from "../TomTomMapSource";
-import { Map, Source, SourceSpecification } from "maplibre-gl";
+import type { Map, Source, SourceSpecification } from "maplibre-gl";
 
 describe("TomTomMapSource tests", () => {
     const testSourceID = "TEST_SOURCE_ID";

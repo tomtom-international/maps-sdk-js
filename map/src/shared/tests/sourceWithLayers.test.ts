@@ -1,5 +1,5 @@
-import { LayerSpecification, Map, Source, VectorSourceSpecification } from "maplibre-gl";
-import { TomTomMapSource } from "../TomTomMapSource";
+import type { LayerSpecification, Map, Source, VectorSourceSpecification } from "maplibre-gl";
+import type { TomTomMapSource } from "../TomTomMapSource";
 import {
     AbstractSourceWithLayers,
     AddedSourceWithLayers,
@@ -7,7 +7,7 @@ import {
     StyleSourceWithLayers
 } from "../SourceWithLayers";
 import omit from "lodash/omit";
-import { FeatureCollection } from "geojson";
+import type { FeatureCollection } from "geojson";
 
 const testSourceID = "SOURCE_ID";
 const layer0 = { id: "layer0", type: "symbol", source: testSourceID } as LayerSpecification;

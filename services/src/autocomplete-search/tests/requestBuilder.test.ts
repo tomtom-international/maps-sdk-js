@@ -1,6 +1,6 @@
 import { buildAutocompleteSearchRequest } from "../requestBuilder";
 import autocompleteSearchReqObjectsAndURLs from "./requestBuilder.data.json";
-import { AutocompleteSearchParams } from "../types";
+import type { AutocompleteSearchParams } from "../types";
 import autocompleteSearchReqObjects from "./requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";

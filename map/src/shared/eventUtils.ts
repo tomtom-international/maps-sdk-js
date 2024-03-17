@@ -1,8 +1,8 @@
 import isNil from "lodash/isNil";
 import omit from "lodash/omit";
-import { EventType, SourceWithLayers } from "./types";
-import { Feature } from "geojson";
-import { MapGeoJSONFeature, Point2D } from "maplibre-gl";
+import type { EventType, SourceWithLayers } from "./types";
+import type { Feature } from "geojson";
+import type { MapGeoJSONFeature, Point2D } from "maplibre-gl";
 import { GeoJSONSourceWithLayers } from "./SourceWithLayers";
 import { areBothDefinedAndEqual } from "./mapUtils";
 

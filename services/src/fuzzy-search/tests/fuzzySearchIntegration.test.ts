@@ -1,7 +1,8 @@
-import { Fuel, Place, POICategory, SearchPlaceProps, TomTomConfig } from "@anw/maps-sdk-js/core";
+import type { Fuel, Place, POICategory, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
 import { search } from "../../search";
-import { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
-import { SearchIndexType } from "../../shared";
+import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
+import type { SearchIndexType } from "../../shared";
 import {
     baseSearchPlaceMandatoryProps,
     evStationBaseTestProps,

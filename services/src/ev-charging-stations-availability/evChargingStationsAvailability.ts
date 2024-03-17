@@ -1,17 +1,15 @@
-import {
-    bboxFromGeoJSON,
+import type {
     ChargingPark,
     EVChargingStationPlaceProps,
     EVChargingStationsAvailability,
     Place,
     Places
 } from "@anw/maps-sdk-js/core";
-import { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
+import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
+import type { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
 import { callService } from "../shared/serviceTemplate";
-import {
-    evChargingStationsAvailabilityTemplate,
-    EVChargingStationsAvailabilityTemplate
-} from "./evChargingStationsAvailabilityTemplate";
+import type { EVChargingStationsAvailabilityTemplate } from "./evChargingStationsAvailabilityTemplate";
+import { evChargingStationsAvailabilityTemplate } from "./evChargingStationsAvailabilityTemplate";
 
 /**
  * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.

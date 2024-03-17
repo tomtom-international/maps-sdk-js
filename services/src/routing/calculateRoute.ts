@@ -1,6 +1,7 @@
-import { Routes } from "@anw/maps-sdk-js/core";
-import { CalculateRouteParams } from "./types/calculateRouteParams";
-import { calculateRouteTemplate, CalculateRouteTemplate } from "./calculateRouteTemplate";
+import type { Routes } from "@anw/maps-sdk-js/core";
+import type { CalculateRouteParams } from "./types/calculateRouteParams";
+import type { CalculateRouteTemplate } from "./calculateRouteTemplate";
+import { calculateRouteTemplate } from "./calculateRouteTemplate";
 import { callService } from "../shared/serviceTemplate";
 
 /**

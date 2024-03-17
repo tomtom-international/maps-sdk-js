@@ -1,3 +1,4 @@
+import type { RoutingModuleConfig } from "map";
 import {
     defaultRouteLayersConfig,
     HILLSHADE_SOURCE_ID,
@@ -21,14 +22,13 @@ import {
     ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    RoutingModuleConfig,
     TRAFFIC_FLOW_SOURCE_ID,
     TRAFFIC_INCIDENTS_SOURCE_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
 } from "map";
-import { Routes, WaypointLike } from "@anw/maps-sdk-js/core";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { Routes, WaypointLike } from "@anw/maps-sdk-js/core";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutesJSON from "./data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json";
 import ldevrTestRoutesJSON from "./data/RoutingModuleLDEVR.test.data.json";

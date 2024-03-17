@@ -1,4 +1,5 @@
-import { GlobalConfig, TomTomConfig, mergeFromGlobal } from "../globalConfig";
+import type { GlobalConfig } from "../globalConfig";
+import { mergeFromGlobal, TomTomConfig } from "../globalConfig";
 
 describe("GlobalConfig", () => {
     afterEach(() => TomTomConfig.instance.reset());

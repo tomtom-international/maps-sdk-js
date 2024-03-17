@@ -1,4 +1,4 @@
-import {
+import type {
     GeoJSONSource,
     GeoJSONSourceSpecification,
     LayerSpecification,
@@ -7,18 +7,18 @@ import {
     SourceSpecification
 } from "maplibre-gl";
 import { TomTomMapSource } from "./TomTomMapSource";
-import {
-    PutEventStateOptions,
+import type {
+    CleanEventStateOptions,
+    CleanEventStatesOptions,
     LayerSpecFilter,
     LayerSpecWithSource,
+    PutEventStateOptions,
     SourceWithLayerIDs,
+    SourceWithLayers,
     ToBeAddedLayerSpec,
-    ToBeAddedLayerSpecWithoutSource,
-    CleanEventStatesOptions,
-    CleanEventStateOptions,
-    SourceWithLayers
+    ToBeAddedLayerSpecWithoutSource
 } from "./types";
-import { FeatureCollection } from "geojson";
+import type { FeatureCollection } from "geojson";
 import { asDefined } from "./assertionUtils";
 
 /**
@@ -128,7 +128,7 @@ export class AddedSourceWithLayers<
             map,
             new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceID, sourceSpec),
             // We ensure the source ID is assigned to the layers:
-            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID } as ToBeAddedLayerSpec))
+            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID }) as ToBeAddedLayerSpec)
         );
     }
 

@@ -1,5 +1,5 @@
-import { CommonPlaceProps, Place, Places, POICategory } from "@anw/maps-sdk-js/core";
-import { Map } from "maplibre-gl";
+import type { CommonPlaceProps, Place, Places, POICategory } from "@anw/maps-sdk-js/core";
+import type { Map } from "maplibre-gl";
 import {
     getIconIDForPlace,
     getPOILayerCategoryForPlace,

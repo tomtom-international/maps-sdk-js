@@ -1,6 +1,6 @@
-import { FetchInput } from "../../shared/types/fetch";
-import { CalculateMatrixRoutePOSTDataAPI } from "../types/apiRequestTypes";
-import { CalculateMatrixRouteParams } from "../types/calculateMatrixRouteParams";
+import type { FetchInput } from "../../shared";
+import type { CalculateMatrixRoutePOSTDataAPI } from "../types/apiRequestTypes";
+import type { CalculateMatrixRouteParams } from "../types/calculateMatrixRouteParams";
 
 export const sdkAndAPIRequests: [string, CalculateMatrixRouteParams, FetchInput<CalculateMatrixRoutePOSTDataAPI>][] = [
     [

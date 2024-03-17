@@ -1,4 +1,4 @@
-import { PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
+import type { PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
 import { parseSearchAPIResult } from "../shared/searchResultParsing";
 
 /**

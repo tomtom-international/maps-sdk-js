@@ -1,6 +1,6 @@
 import { buildFuzzySearchRequest } from "../requestBuilder";
 import fuzzySearchReqObjectsAndURLs from "./requestBuilder.data.json";
-import { FuzzySearchParams } from "../types";
+import type { FuzzySearchParams } from "../types";
 import fuzzySearchReqObjects from "./requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";

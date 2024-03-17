@@ -1,4 +1,4 @@
-import { Places, PlaceType, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import type { Places, PlaceType, SearchPlaceProps } from "@anw/maps-sdk-js/core";
 
 type GeocodingPlaceType = Exclude<PlaceType, "POI">;
 

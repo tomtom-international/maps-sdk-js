@@ -1,13 +1,13 @@
-import { Routes } from "@anw/maps-sdk-js/core";
-import { CalculateRouteParams } from "..";
+import type { Routes } from "@anw/maps-sdk-js/core";
+import type { CalculateRouteParams } from "..";
 import apiAndParsedResponses from "./responseParser.data.json";
 import longAPIResponse from "./responseParserPerf.data.json";
 import { parseCalculateRouteResponse } from "../responseParser";
-import { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
+import type { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
 import errorResponses from "./responseParserError.data.json";
 import { parseRoutingResponseError } from "../routingResponseErrorParser";
-import { APIErrorResponse, RoutingAPIResponseError } from "../../shared/types/apiResponseErrorTypes";
-import { SDKServiceError } from "../../shared";
+import type { APIErrorResponse, RoutingAPIResponseError } from "../../shared/types/apiResponseErrorTypes";
+import type { SDKServiceError } from "../../shared";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 

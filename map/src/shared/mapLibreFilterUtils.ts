@@ -1,5 +1,5 @@
-import { ExpressionFilterSpecification, FilterSpecification, LegacyFilterSpecification } from "maplibre-gl";
-import { FilterShowMode, FilterSyntaxVersion, MultiSyntaxFilter, ValuesFilter } from "./types";
+import type { ExpressionFilterSpecification, FilterSpecification, LegacyFilterSpecification } from "maplibre-gl";
+import type { FilterShowMode, FilterSyntaxVersion, MultiSyntaxFilter, ValuesFilter } from "./types";
 
 /**
  * @ignore

@@ -1,10 +1,10 @@
-import { ServiceTemplate } from "../shared";
-import { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
-import { ReverseGeocodingResponse } from "./reverseGeocoding";
+import type { ServiceTemplate } from "../shared";
+import type { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
+import type { ReverseGeocodingResponse } from "./reverseGeocoding";
 import { buildRevGeoRequest } from "./requestBuilder";
 import { get } from "../shared/fetch";
 import { parseRevGeoResponse } from "./responseParser";
-import { ReverseGeocodingResponseAPI } from "./types/apiTypes";
+import type { ReverseGeocodingResponseAPI } from "./types/apiTypes";
 import { revGeocodeRequestSchema } from "./revGeocodeRequestSchema";
 
 /**

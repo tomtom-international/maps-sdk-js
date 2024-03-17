@@ -1,7 +1,7 @@
-import { EventType } from "../types";
-import { Feature } from "geojson";
+import type { EventType } from "../types";
+import type { Feature } from "geojson";
 import { detectHoverState, putEventState } from "../eventUtils";
-import { MapGeoJSONFeature } from "maplibre-gl";
+import type { MapGeoJSONFeature } from "maplibre-gl";
 import { BASE_MAP_SOURCE_ID, POI_SOURCE_ID } from "../layers/sourcesIDs";
 
 describe("updateEventState related tests", () => {
@@ -13,7 +13,7 @@ describe("updateEventState related tests", () => {
                     eventState
                 }
             })
-        } as unknown as Feature);
+        }) as unknown as Feature;
 
     test("putEventState", () => {
         expect(putEventState("hover", "2", [])).toBeUndefined();

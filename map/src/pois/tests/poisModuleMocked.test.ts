@@ -1,5 +1,5 @@
-import { Map } from "maplibre-gl";
-import { TomTomMap } from "../../TomTomMap";
+import type { Map } from "maplibre-gl";
+import type { TomTomMap } from "../../TomTomMap";
 import { POIsModule } from "../POIsModule";
 import { POI_SOURCE_ID } from "../../shared";
 

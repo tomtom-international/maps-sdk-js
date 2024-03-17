@@ -1,4 +1,4 @@
-import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+import type { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 
 /**
  * Type that extends FeatureCollection and adding `properties` property to it.

@@ -1,5 +1,6 @@
-import { AutocompleteSearchParams, AutocompleteSearchResponse } from "./types";
-import { autocompleteSearchTemplate, AutocompleteSearchTemplate } from "./autocompleteSearchTemplate";
+import type { AutocompleteSearchParams, AutocompleteSearchResponse } from "./types";
+import type { AutocompleteSearchTemplate } from "./autocompleteSearchTemplate";
+import { autocompleteSearchTemplate } from "./autocompleteSearchTemplate";
 import { callService } from "../shared/serviceTemplate";
 
 /**

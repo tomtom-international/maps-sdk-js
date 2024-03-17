@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { getGeoInputType, inputSectionTypesWithGuidance, SectionType } from "@anw/maps-sdk-js/core";
+import type { SectionType } from "@anw/maps-sdk-js/core";
+import { getGeoInputType, inputSectionTypesWithGuidance } from "@anw/maps-sdk-js/core";
 import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from "../shared/geometriesSchema";
-import { CalculateRouteParams } from "./types/calculateRouteParams";
-import { SchemaRefinement } from "../shared/types/validation";
+import type { CalculateRouteParams } from "./types/calculateRouteParams";
+import type { SchemaRefinement } from "../shared/types/validation";
 import { commonRoutingRequestSchema } from "../shared/commonRoutingRequestSchema";
 
 const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);

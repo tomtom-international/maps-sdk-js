@@ -1,6 +1,6 @@
-import { Polygon } from "geojson";
+import type { Polygon } from "geojson";
 import geocode from "../geocoding";
-import { GeocodingResponseAPI } from "../types/apiTypes";
+import type { GeocodingResponseAPI } from "../types/apiTypes";
 import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
 import { SDKServiceError } from "../../shared";
 

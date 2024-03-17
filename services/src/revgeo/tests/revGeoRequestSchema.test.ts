@@ -1,4 +1,4 @@
-import { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
+import type { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
 import revGeoReqObjects from "../../revgeo/tests/requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { validateRequestSchema } from "../../shared/validation";

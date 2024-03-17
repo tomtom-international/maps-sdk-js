@@ -1,5 +1,5 @@
-import { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
-import { CommonServiceParams } from "../serviceTypes";
+import type { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
+import type { CommonServiceParams } from "../serviceTypes";
 
 /**
  * Index representing the type of data to be searched.

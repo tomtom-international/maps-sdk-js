@@ -1,15 +1,16 @@
-import { PolygonFeatures, TomTomConfig, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import type { PolygonFeatures, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
 import { search } from "../../search";
 import { parseGeometrySearchResponse } from "../responseParser";
 import { buildGeometrySearchRequest } from "../requestBuilder";
-import {
+import type {
     GeometrySearchParams,
     GeometrySearchRequestAPI,
     GeometrySearchResponse,
     GeometrySearchResponseAPI,
     SearchGeometryInput
 } from "../types";
-import { SearchIndexType } from "../../shared";
+import type { SearchIndexType } from "../../shared";
 import {
     expectPlaceTestFeature,
     basePOITestProps,

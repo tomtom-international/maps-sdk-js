@@ -1,4 +1,4 @@
-import { ExpressionSpecification } from "maplibre-gl";
+import type { ExpressionSpecification } from "maplibre-gl";
 
 /**
  * Main route line foreground color.

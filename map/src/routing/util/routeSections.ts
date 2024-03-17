@@ -1,7 +1,7 @@
 import isNil from "lodash/isNil";
-import { Route, Routes, SectionProps, SectionType } from "@anw/maps-sdk-js/core";
-import { DisplaySectionProps, RouteSection, RouteSections } from "../types/routeSections";
-import { DisplayRouteProps } from "../types/displayRoutes";
+import type { Route, Routes, SectionProps, SectionType } from "@anw/maps-sdk-js/core";
+import type { DisplaySectionProps, RouteSection, RouteSections } from "../types/routeSections";
+import type { DisplayRouteProps } from "../types/displayRoutes";
 
 const buildRouteSectionsFromRoute = <
     S extends SectionProps = SectionProps,

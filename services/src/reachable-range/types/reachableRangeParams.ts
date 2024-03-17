@@ -1,6 +1,6 @@
-import { HasLngLat } from "@anw/maps-sdk-js/core";
-import { CommonRoutingParams, CommonServiceParams, DepartArriveParams } from "../../shared";
-import { ReachableRangeResponseAPI } from "./apiResponseTypes";
+import type { HasLngLat } from "@anw/maps-sdk-js/core";
+import type { CommonRoutingParams, CommonServiceParams, DepartArriveParams } from "../../shared";
+import type { ReachableRangeResponseAPI } from "./apiResponseTypes";
 
 export const budgetTypes = [
     "timeMinutes",

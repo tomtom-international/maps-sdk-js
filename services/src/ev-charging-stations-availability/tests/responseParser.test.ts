@@ -1,10 +1,11 @@
-import { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
+import type { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
 import apiAndParsedResponses from "./responseParser.data.json";
 import apiResponses from "./responseParserPerf.data.json";
 import { parseEVChargingStationsAvailabilityResponse } from "../responseParser";
 import errorResponses from "../tests/responseError.data.json";
-import { APIErrorResponse } from "../../shared/types/apiResponseErrorTypes";
-import { SDKServiceError, ServiceName } from "../../shared";
+import type { APIErrorResponse } from "../../shared/types/apiResponseErrorTypes";
+import type { ServiceName } from "../../shared";
+import { SDKServiceError } from "../../shared";
 import { parseEVChargingStationsAvailabilityResponseError } from "../evChargingStationsAvailabilityResponseErrorParser";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";

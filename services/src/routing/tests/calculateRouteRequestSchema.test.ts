@@ -3,7 +3,7 @@ import { validateRequestSchema } from "../../shared/validation";
 import { routeRequestParams } from "./requestBuilderPerf.data";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 import { routeRequestValidationConfig } from "../calculateRouteRequestSchema";
-import { CalculateRouteParams } from "../types/calculateRouteParams";
+import type { CalculateRouteParams } from "../types/calculateRouteParams";
 
 describe("Calculate route request schema validation", () => {
     const apiKey = "APIKEY";

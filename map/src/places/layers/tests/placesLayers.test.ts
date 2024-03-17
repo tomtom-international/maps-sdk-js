@@ -1,4 +1,4 @@
-import { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
+import type { DataDrivenPropertyValueSpecification, Map } from "maplibre-gl";
 import {
     buildPlacesLayerSpecs,
     clickedPlaceLayerSpec,

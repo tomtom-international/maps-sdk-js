@@ -11,4 +11,4 @@ export * from "./EventsProxy";
 export * from "./EventsModule";
 export * from "./layers/sourcesIDs";
 export * from "./layers/layerIDs";
-export { MapFont } from "./layers/commonLayerProps";
+export type { MapFont } from "./layers/commonLayerProps";

@@ -1,5 +1,5 @@
-import { CommonSearchParams, CommonGeocodeAndFuzzySearchParams } from "../../shared";
-import { FuzzySearchResponseAPI } from "./fuzzySearchResponseAPI";
+import type { CommonSearchParams, CommonGeocodeAndFuzzySearchParams } from "../../shared";
+import type { FuzzySearchResponseAPI } from "./fuzzySearchResponseAPI";
 
 export type FuzzySearchParams = CommonSearchParams<URL, FuzzySearchResponseAPI> &
     CommonGeocodeAndFuzzySearchParams & {

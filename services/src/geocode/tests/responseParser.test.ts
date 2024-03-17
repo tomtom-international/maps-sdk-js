@@ -1,7 +1,7 @@
 import apiAndParsedResponses from "./responseParser.data.json";
 import { parseGeocodingResponse } from "../responseParser";
-import { GeocodingResponseAPI } from "../types/apiTypes";
-import { GeocodingResponse } from "../types/geocodingResponse";
+import type { GeocodingResponseAPI } from "../types/apiTypes";
+import type { GeocodingResponse } from "../types/geocodingResponse";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import geocodingAPIResponses from "./responseParserPerf.data.json";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";

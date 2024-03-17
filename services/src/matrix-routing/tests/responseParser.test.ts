@@ -1,5 +1,5 @@
 import { parseCalculateMatrixRouteResponse } from "../responseParser";
-import { CalculateMatrixRouteResponseAPI } from "../types/apiResponseTypes";
+import type { CalculateMatrixRouteResponseAPI } from "../types/apiResponseTypes";
 import apiAndParsedResponses from "./responseParser.data.json";
 
 describe("Matrix Route response parsing tests", () => {

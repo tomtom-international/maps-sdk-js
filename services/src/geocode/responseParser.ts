@@ -1,7 +1,8 @@
 import omit from "lodash/omit";
-import { bboxFromGeoJSON, bboxOnlyIfWithArea, GeographyType, Place, toPointFeature } from "@anw/maps-sdk-js/core";
-import { GeocodingProps, GeocodingResponse } from "./types/geocodingResponse";
-import { GeocodingResponseAPI, GeocodingResultAPI } from "./types/apiTypes";
+import type { GeographyType, Place } from "@anw/maps-sdk-js/core";
+import { bboxFromGeoJSON, bboxOnlyIfWithArea, toPointFeature } from "@anw/maps-sdk-js/core";
+import type { GeocodingProps, GeocodingResponse } from "./types/geocodingResponse";
+import type { GeocodingResponseAPI, GeocodingResultAPI } from "./types/apiTypes";
 import { apiToGeoJSONBBox, latLonAPIToPosition } from "../shared/geometry";
 
 const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {

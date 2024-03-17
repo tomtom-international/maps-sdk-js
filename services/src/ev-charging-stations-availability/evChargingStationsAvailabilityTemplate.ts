@@ -1,6 +1,6 @@
-import { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
-import { ServiceTemplate } from "../shared";
-import { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
+import type { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
+import type { ServiceTemplate } from "../shared";
+import type { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
 import { buildEVChargingStationsAvailabilityRequest } from "./requestBuilder";
 import { parseEVChargingStationsAvailabilityResponse } from "./responseParser";
 import { get } from "../shared/fetch";

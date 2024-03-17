@@ -1,5 +1,5 @@
-import { Position } from "geojson";
-import { AutocompleteSearchSegmentType } from "./autocompleteSearchParams";
+import type { Position } from "geojson";
+import type { AutocompleteSearchSegmentType } from "./autocompleteSearchParams";
 
 export type AutocompleteSearchResponse = {
     /**

@@ -1,5 +1,5 @@
-import { TomTomHeaders } from "@anw/maps-sdk-js/core";
-import { FetchInput, PostObject } from "./types/fetch";
+import type { TomTomHeaders } from "@anw/maps-sdk-js/core";
+import type { FetchInput, PostObject } from "./types/fetch";
 
 // Returns the response as a JSON object or throws an error if the response isn't successful.
 const returnOrThrow = async <T>(response: Response): Promise<T> => {

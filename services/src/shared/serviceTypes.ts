@@ -1,7 +1,7 @@
-import { GlobalConfig, TomTomHeaders } from "@anw/maps-sdk-js/core";
-import { SDKServiceError } from "./errors";
-import { APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
-import { RequestValidationConfig } from "./types/validation";
+import type { GlobalConfig, TomTomHeaders } from "@anw/maps-sdk-js/core";
+import type { SDKServiceError } from "./errors";
+import type { APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
+import type { RequestValidationConfig } from "./types/validation";
 
 export type CommonServiceParams<API_REQUEST = any, API_RESPONSE = any> = Partial<GlobalConfig> & {
     /**

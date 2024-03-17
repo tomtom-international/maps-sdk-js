@@ -1,4 +1,4 @@
-import { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
+import type { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
 import { toChargingPointAvailability, toConnectorBasedAvailabilities } from "./connectorAvailability";
 
 /**

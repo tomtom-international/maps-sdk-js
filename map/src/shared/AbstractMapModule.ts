@@ -1,8 +1,8 @@
-import { Map } from "maplibre-gl";
-import { TomTomMap } from "../TomTomMap";
-import { EventsProxy } from "./EventsProxy";
-import { SourcesWithLayers, SourceWithLayerIDs } from "./types";
-import { MapModuleSource } from "./types/mapModule";
+import type { Map } from "maplibre-gl";
+import type { TomTomMap } from "../TomTomMap";
+import type { EventsProxy } from "./EventsProxy";
+import type { SourcesWithLayers, SourceWithLayerIDs } from "./types";
+import type { MapModuleSource } from "./types/mapModule";
 import { waitUntilMapIsReady } from "./mapUtils";
 
 /**

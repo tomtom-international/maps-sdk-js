@@ -1,7 +1,7 @@
-import { FeatureCollection, Geometry } from "geojson";
-import { DisplayRouteProps, DisplayRouteRelatedProps } from "../types/displayRoutes";
-import { Routes } from "@anw/maps-sdk-js/core";
-import { GeoJSONSourceWithLayers } from "../../shared";
+import type { FeatureCollection, Geometry } from "geojson";
+import type { DisplayRouteProps, DisplayRouteRelatedProps } from "../types/displayRoutes";
+import type { Routes } from "@anw/maps-sdk-js/core";
+import type { GeoJSONSourceWithLayers } from "../../shared";
 
 /**
  * Rebuilds route-related display features such as sections or instructions, with the updated route selection based on the given routes.

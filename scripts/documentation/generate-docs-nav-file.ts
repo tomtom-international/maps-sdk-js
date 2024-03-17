@@ -7,8 +7,8 @@
  * of base-navigation.yml and written to a navigation.yml file.
  */
 
-import { readdirSync, readFileSync, writeFileSync } from "fs";
-import { resolve } from "path";
+import {readdirSync, readFileSync, writeFileSync} from "fs";
+import {resolve} from "path";
 
 const DOCUMENTATION_DIR_PATH = resolve(__dirname, "../../documentation/dev-portal/javascript/maps/documentation/");
 const API_REFERENCE_DIR_PATH = resolve(DOCUMENTATION_DIR_PATH, "api-reference");

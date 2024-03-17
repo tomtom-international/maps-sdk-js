@@ -1,5 +1,5 @@
-import { LngLat, MapGeoJSONFeature } from "maplibre-gl";
-import { SourceWithLayers } from "./mapsSDKLayerSpecs";
+import type { LngLat, MapGeoJSONFeature } from "maplibre-gl";
+import type { SourceWithLayers } from "./mapsSDKLayerSpecs";
 
 /**
  * Subtype for click events.

@@ -1,6 +1,6 @@
-import { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import type { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import { FOREGROUND_LINE_WIDTH, SELECTED_ROUTE_FILTER } from "./shared";
-import { LayerSpecTemplate } from "../../shared";
+import type { LayerSpecTemplate } from "../../shared";
 
 /**
  * @ignore

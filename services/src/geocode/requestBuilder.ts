@@ -1,7 +1,7 @@
 import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
 
-import { GeocodingParams } from "./types/geocodingParams";
+import type { GeocodingParams } from "./types/geocodingParams";
 import { arrayToCSV } from "../shared/arrays";
 import { appendCommonParams, appendLatLonParamsFromPosition } from "../shared/requestBuildingUtils";
 

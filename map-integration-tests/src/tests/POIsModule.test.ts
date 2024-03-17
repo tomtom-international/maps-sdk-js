@@ -1,8 +1,9 @@
-import { FilterSpecification, LngLatLike, MapGeoJSONFeature } from "maplibre-gl";
-import { FilterablePOICategory, getStyleCategories, poiLayerIDs, POIsModuleFeature } from "map";
+import type { FilterSpecification, LngLatLike, MapGeoJSONFeature } from "maplibre-gl";
+import type { FilterablePOICategory, POIsModuleFeature } from "map";
+import { getStyleCategories, poiLayerIDs } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { MapsSDKThis } from "./types/MapsSDKThis";
-import { Point } from "geojson";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
+import type { Point } from "geojson";
 import { getNumVisiblePOILayers, initPOIs, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
 
 const waitForRenderedPOIsChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>

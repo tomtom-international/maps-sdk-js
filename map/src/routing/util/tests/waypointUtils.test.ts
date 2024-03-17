@@ -1,5 +1,5 @@
-import { Position } from "geojson";
-import { Anything, Waypoint, WaypointProps } from "@anw/maps-sdk-js/core";
+import type { Position } from "geojson";
+import type { Anything, Waypoint, WaypointProps } from "@anw/maps-sdk-js/core";
 import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from "../waypointUtils";
 import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from "../../types/waypointDisplayProps";
 import {

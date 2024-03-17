@@ -1,5 +1,5 @@
 import { evChargingStationsAvailability } from "../evChargingStationsAvailability";
-import { EVChargingStationsAvailabilityParams } from "../types/evChargingStationsAvailabilityParams";
+import type { EVChargingStationsAvailabilityParams } from "../types/evChargingStationsAvailabilityParams";
 import requestObjects from "./requestBuilderPerf.data.json";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { evChargingStationsAvailabilityRequestSchema } from "../evChargingStationsAvailabilityRequestSchema";

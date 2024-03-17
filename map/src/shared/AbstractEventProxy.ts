@@ -1,6 +1,6 @@
 import remove from "lodash/remove";
-import { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
-import { EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from "./types";
+import type { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
+import type { EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from "./types";
 import isEmpty from "lodash/isEmpty";
 
 // TODO: add support for multiple handlers per source, layers, and event type?

@@ -1,4 +1,4 @@
-import { GeometrySearchResponse, GeometrySearchResponseAPI } from "../types";
+import type { GeometrySearchResponse, GeometrySearchResponseAPI } from "../types";
 import apiAndParsedResponses from "../../geometry-search/tests/responseParser.data.json";
 import apiResponses from "../../geometry-search/tests/responseParserPerf.data.json";
 import { parseGeometrySearchResponse } from "../responseParser";

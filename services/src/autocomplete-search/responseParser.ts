@@ -1,4 +1,4 @@
-import { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from "./types";
+import type { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from "./types";
 import { latLonAPIToPosition } from "../shared/geometry";
 
 /**

@@ -1,4 +1,4 @@
-import { ExpressionSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import type { ExpressionSpecification, SymbolLayerSpecification } from "maplibre-gl";
 
 /**
  * @ignore

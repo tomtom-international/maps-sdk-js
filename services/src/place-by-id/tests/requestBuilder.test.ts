@@ -1,6 +1,6 @@
 import { buildPlaceByIdRequest } from "../requestBuilder";
 import placeByIdReqObjects from "./requestBuilderPerf.data.json";
-import { PlaceByIdParams } from "../types";
+import type { PlaceByIdParams } from "../types";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 

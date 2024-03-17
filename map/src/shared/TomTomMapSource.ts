@@ -1,4 +1,4 @@
-import { Map, Source, SourceSpecification } from "maplibre-gl";
+import type { Map, Source, SourceSpecification } from "maplibre-gl";
 
 /**
  * Contains a source relevant for TomTom Maps SDK JS.
@@ -9,7 +9,11 @@ export class TomTomMapSource<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
     RUNTIME_SOURCE extends Source = Source
 > {
-    constructor(readonly id: string, readonly spec?: SOURCE_SPEC, public runtimeSource?: RUNTIME_SOURCE) {}
+    constructor(
+        readonly id: string,
+        readonly spec?: SOURCE_SPEC,
+        public runtimeSource?: RUNTIME_SOURCE
+    ) {}
 
     ensureAddedToMap(map: Map) {
         if (!this.runtimeSource) {

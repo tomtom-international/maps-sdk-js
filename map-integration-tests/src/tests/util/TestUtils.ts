@@ -1,20 +1,20 @@
-import { Position } from "geojson";
-import { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
-import { GlobalConfig, Language, Place, Places, PolygonFeatures } from "@anw/maps-sdk-js/core";
-import {
+import type { Position } from "geojson";
+import type { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
+import type { GlobalConfig, Language, Place, Places, PolygonFeatures } from "@anw/maps-sdk-js/core";
+import type {
     BaseMapModuleInitConfig,
     GeometriesModuleConfig,
     HillshadeModuleConfig,
     IncidentsConfig,
     LayerSpecWithSource,
     PlacesModuleConfig,
-    poiLayerIDs,
     POIsModuleConfig,
     SourceWithLayerIDs,
     StyleInput,
     StyleModuleInitConfig
 } from "map";
-import { MapsSDKThis } from "../types/MapsSDKThis";
+import { poiLayerIDs } from "map";
+import type { MapsSDKThis } from "../types/MapsSDKThis";
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);

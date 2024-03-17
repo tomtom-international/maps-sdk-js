@@ -1,7 +1,7 @@
-import { GeoInput, inputSectionTypes } from "@anw/maps-sdk-js/core";
-import { CommonRoutingParams, CommonServiceParams } from "../../shared";
-import { CalculateRouteRequestAPI } from "./apiRequestTypes";
-import { CalculateRouteResponseAPI } from "./apiResponseTypes";
+import type { GeoInput, inputSectionTypes } from "@anw/maps-sdk-js/core";
+import type { CommonRoutingParams, CommonServiceParams } from "../../shared";
+import type { CalculateRouteRequestAPI } from "./apiRequestTypes";
+import type { CalculateRouteResponseAPI } from "./apiResponseTypes";
 
 /**
  * Section type which can be requested in the route parameters.

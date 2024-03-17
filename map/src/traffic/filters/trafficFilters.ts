@@ -1,5 +1,5 @@
 import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
-import {
+import type {
     ExpressionFilterSpecification,
     FilterSpecification,
     Map,
@@ -7,16 +7,16 @@ import {
     LegacyFilterSpecification
 } from "maplibre-gl";
 import isNil from "lodash/isNil";
-import {
+import type {
     DelayFilter,
-    incidentCategoriesMapping,
     TrafficCommonFilter,
     TrafficFlowFilter,
     TrafficFlowFilters,
     TrafficIncidentsFilter,
     TrafficIncidentsFilters
 } from "../types/trafficModuleConfig";
-import { MultiSyntaxFilter, ValuesFilter } from "../../shared";
+import { incidentCategoriesMapping } from "../types/trafficModuleConfig";
+import type { MultiSyntaxFilter, ValuesFilter } from "../../shared";
 import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter } from "../../shared/mapLibreFilterUtils";
 
 const toMultiSyntaxAllFilter = (

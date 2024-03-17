@@ -1,6 +1,6 @@
 import reverseGeocode from "../reverseGeocoding";
 import apiAndParsedResponses from "./revGeoMocked.data.json";
-import { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
+import type { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
 import omit from "lodash/omit";
 import { mockFetchResponse } from "../../shared/tests/fetchMockUtils";
 

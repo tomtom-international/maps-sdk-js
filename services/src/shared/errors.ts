@@ -1,8 +1,9 @@
-import { ZodIssue } from "zod";
-import { ParseResponseError } from "./serviceTypes";
-import { APICode, APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
-import { ValidationError } from "./validation";
-import { ServiceName } from "./types/servicesTypes";
+import type { ZodIssue } from "zod";
+import type { ParseResponseError } from "./serviceTypes";
+import type { APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
+import { APICode } from "./types/apiResponseErrorTypes";
+import type { ValidationError } from "./validation";
+import type { ServiceName } from "./types/servicesTypes";
 
 /**
  * Main Error Class for the whole SDK to help with error handling.

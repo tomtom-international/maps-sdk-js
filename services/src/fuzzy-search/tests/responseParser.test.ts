@@ -1,4 +1,4 @@
-import { FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
+import type { FuzzySearchResponse, FuzzySearchResponseAPI } from "../types";
 import apiAndParsedResponses from "./responseParser.data.json";
 import { parseFuzzySearchResponse } from "../responseParser";
 import apiResponses from "./responseParserPerf.data.json";

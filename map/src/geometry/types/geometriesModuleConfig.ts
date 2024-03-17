@@ -1,6 +1,6 @@
-import { DataDrivenPropertyValueSpecification } from "maplibre-gl";
-import { ColorPaletteOptions } from "../layers/geometryLayers";
-import { MapStyleLayerID } from "../../shared";
+import type { DataDrivenPropertyValueSpecification } from "maplibre-gl";
+import type { ColorPaletteOptions } from "../layers/geometryLayers";
+import type { MapStyleLayerID } from "../../shared";
 
 /**
  * Places Color configuration

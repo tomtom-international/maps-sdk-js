@@ -1,8 +1,8 @@
-import { Point, Position } from "geojson";
-import { PolygonFeatures, Place, Places } from "@anw/maps-sdk-js/core";
-import { MapGeoJSONFeature } from "maplibre-gl";
+import type { Point, Position } from "geojson";
+import type { PolygonFeatures, Place, Places } from "@anw/maps-sdk-js/core";
+import type { MapGeoJSONFeature } from "maplibre-gl";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import placesJSON from "./data/Events.test.data.json";
 import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
 import {
@@ -20,7 +20,8 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
-import { EventType, BASE_MAP_SOURCE_ID } from "map";
+import type { EventType } from "map";
+import { BASE_MAP_SOURCE_ID } from "map";
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];

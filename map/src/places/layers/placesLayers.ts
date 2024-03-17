@@ -1,13 +1,13 @@
-import {
+import type {
     DataDrivenPropertyValueSpecification,
     ExpressionSpecification,
     Map,
     SymbolLayerSpecification
 } from "maplibre-gl";
-import { LayerSpecTemplate, SymbolLayerSpecWithoutSource } from "../../shared";
+import type { LayerSpecTemplate, SymbolLayerSpecWithoutSource } from "../../shared";
 import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
 import { ICON_ID, TITLE } from "../types/placeDisplayProps";
-import { PlacesModuleConfig } from "../types/placesModuleConfig";
+import type { PlacesModuleConfig } from "../types/placesModuleConfig";
 
 /**
  * @ignore

@@ -1,4 +1,4 @@
-import { AutocompleteSearchParams } from "./types";
+import type { AutocompleteSearchParams } from "./types";
 import {
     appendByJoiningParamValue,
     appendCommonParams,

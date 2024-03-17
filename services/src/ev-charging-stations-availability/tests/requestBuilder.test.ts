@@ -1,7 +1,7 @@
 import { buildEVChargingStationsAvailabilityRequest } from "../requestBuilder";
 import requestObjectsAndURLs from "./requestBuilder.data.json";
 import requestObjects from "./requestBuilderPerf.data.json";
-import { EVChargingStationsAvailabilityParams } from "../types/evChargingStationsAvailabilityParams";
+import type { EVChargingStationsAvailabilityParams } from "../types/evChargingStationsAvailabilityParams";
 import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
 import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
 

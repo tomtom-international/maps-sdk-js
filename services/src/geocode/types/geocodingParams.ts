@@ -1,5 +1,5 @@
-import { CommonPlacesParams, CommonGeocodeAndFuzzySearchParams, SearchIndexType } from "../../shared";
-import { GeocodingResponseAPI } from "./apiTypes";
+import type { CommonPlacesParams, CommonGeocodeAndFuzzySearchParams, SearchIndexType } from "../../shared";
+import type { GeocodingResponseAPI } from "./apiTypes";
 
 type GeocodingIndexTypesAbbreviation = Exclude<SearchIndexType, "POI">;
 

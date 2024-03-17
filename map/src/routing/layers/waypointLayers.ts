@@ -1,5 +1,5 @@
-import { SymbolLayerSpecification } from "maplibre-gl";
-import { LayerSpecTemplate } from "../../shared";
+import type { SymbolLayerSpecification } from "maplibre-gl";
+import type { LayerSpecTemplate } from "../../shared";
 import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
 import { INDEX_TYPE, MIDDLE_INDEX, STOP_DISPLAY_INDEX } from "../types/waypointDisplayProps";
 import { ICON_ID, TITLE } from "../../places";

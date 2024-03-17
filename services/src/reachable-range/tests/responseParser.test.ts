@@ -1,8 +1,8 @@
-import { PolygonFeature } from "@anw/maps-sdk-js/core";
+import type { PolygonFeature } from "@anw/maps-sdk-js/core";
 import { parseReachableRangeResponse } from "../responseParser";
 import apiAndParsedResponses from "./responseParser.data.json";
-import { ReachableRangeResponseAPI } from "../types/apiResponseTypes";
-import { ReachableRangeParams } from "../types/reachableRangeParams";
+import type { ReachableRangeResponseAPI } from "../types/apiResponseTypes";
+import type { ReachableRangeParams } from "../types/reachableRangeParams";
 
 describe.skip("Calculate Route response parsing functional tests", () => {
     // Functional tests:

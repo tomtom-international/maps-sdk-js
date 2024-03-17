@@ -1,4 +1,4 @@
-import { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from "../types";
+import type { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from "../types";
 import apiAndParsedResponses from "./responseParser.data.json";
 import { parseAutocompleteSearchResponse } from "../responseParser";
 import apiResponses from "./responseParserPerf.data.json";

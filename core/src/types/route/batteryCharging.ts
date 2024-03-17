@@ -1,5 +1,5 @@
-import { CurrentType } from "..";
-import { Position } from "geojson";
+import type { CurrentType } from "..";
+import type { Position } from "geojson";
 
 /**
  * Available plug types for EV charging.

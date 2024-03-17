@@ -1,4 +1,4 @@
-import { DelayMagnitude } from "../types";
+import type { DelayMagnitude } from "../types";
 
 /**
  * @ignore

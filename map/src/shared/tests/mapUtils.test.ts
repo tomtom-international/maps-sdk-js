@@ -1,5 +1,5 @@
-import { Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
-import { TomTomMap } from "../../TomTomMap";
+import type { Map, MapGeoJSONFeature, ResourceType } from "maplibre-gl";
+import type { TomTomMap } from "../../TomTomMap";
 import {
     addImageIfNotExisting,
     addLayers,
@@ -13,10 +13,10 @@ import {
 } from "../mapUtils";
 import { deserializedFeatureData, serializedFeatureData } from "./featureDeserialization.test.data";
 import poiLayerSpec from "../../places/tests/poiLayerSpec.data.json";
-import { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from "../SourceWithLayers";
-import { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "../types";
+import type { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from "../SourceWithLayers";
+import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "../types";
 import updateStyleData from "./mapUtils.test.data.json";
-import { StyleInput, StyleModule } from "../../init";
+import type { StyleInput, StyleModule } from "../../init";
 import { HILLSHADE_SOURCE_ID } from "../layers/sourcesIDs";
 
 const getTomTomMapMock = async (mapReady: boolean[]) =>
@@ -28,7 +28,7 @@ const getTomTomMapMock = async (mapReady: boolean[]) =>
         _eventsProxy: {
             add: jest.fn()
         }
-    } as unknown as TomTomMap);
+    }) as unknown as TomTomMap;
 
 describe("Map utils - waitUntilMapIsReady", () => {
     test("waitUntilMapIsReady resolve promise when mapReady or maplibre.isStyleLoaded are true", async () => {
@@ -103,7 +103,7 @@ describe("Map utils - changeLayerProps", () => {
                 setLayerZoomRange: jest.fn(),
                 getMaxZoom: jest.fn().mockReturnValueOnce(20),
                 getMinZoom: jest.fn().mockReturnValueOnce(3)
-            } as unknown as Map);
+            }) as unknown as Map;
 
         let mapLibreMock = newMapMock();
         changeLayerProps({ id: "layerX", layout: { prop0: "value0" } }, { id: "layerX" }, mapLibreMock);
@@ -186,7 +186,7 @@ describe("Map utils - updateLayersAndSource", () => {
                 setLayoutProperty: jest.fn(),
                 setPaintProperty: jest.fn(),
                 setFilter: jest.fn()
-            } as unknown as Map);
+            }) as unknown as Map;
 
         // empty arrays
         updateLayersAndSource(

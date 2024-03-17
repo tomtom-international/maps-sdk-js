@@ -1,9 +1,9 @@
 import isNil from "lodash/isNil";
 
 import { getPositionStrict } from "@anw/maps-sdk-js/core";
-import { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
+import type { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
 import { arrayToCSV } from "../shared/arrays";
-import { CommonServiceParams } from "../shared";
+import type { CommonServiceParams } from "../shared";
 import { appendCommonParams } from "../shared/requestBuildingUtils";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>

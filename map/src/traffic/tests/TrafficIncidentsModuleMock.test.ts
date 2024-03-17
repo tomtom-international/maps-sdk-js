@@ -1,6 +1,6 @@
-import { Map } from "maplibre-gl";
+import type { Map } from "maplibre-gl";
 import { TRAFFIC_INCIDENTS_SOURCE_ID } from "../../shared";
-import { TomTomMap } from "../../TomTomMap";
+import type { TomTomMap } from "../../TomTomMap";
 import { TrafficIncidentsModule } from "../TrafficIncidentsModule";
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.

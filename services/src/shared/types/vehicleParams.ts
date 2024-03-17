@@ -1,4 +1,4 @@
-import { VehicleEngine } from "./vehicleEngineParams";
+import type { VehicleEngine } from "./vehicleEngineParams";
 
 /**
  * Physical properties of the vehicle (sizes and weights).

@@ -37,7 +37,7 @@ import { routeTollRoadsOutline, routeTollRoadsSymbol } from "./routeTollRoadLaye
 import { routeTunnelsLine } from "./routeTunnelSectionLayers";
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from "./routeVehicleRestrictedLayers";
 import { instructionArrow, instructionLine, instructionOutline } from "./guidanceLayers";
-import { RouteLayersConfig } from "../types/routeModuleConfig";
+import type { RouteLayersConfig } from "../types/routeModuleConfig";
 import { summaryBubbleSymbolPoint } from "./summaryBubbleLayers";
 
 /**

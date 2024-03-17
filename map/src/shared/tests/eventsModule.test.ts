@@ -1,6 +1,6 @@
 import { EventsModule } from "../EventsModule";
-import { EventsProxy } from "../EventsProxy";
-import { StyleSourceWithLayers } from "../SourceWithLayers";
+import type { EventsProxy } from "../EventsProxy";
+import type { StyleSourceWithLayers } from "../SourceWithLayers";
 
 const mockedMapModule = { source: { id: "testModule" } } as StyleSourceWithLayers;
 const mockConsoleError = jest.spyOn(global.console, "error").mockImplementation();

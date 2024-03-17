@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
-import { ZodRawShape } from "zod/lib/types";
+import type { ZodRawShape } from "zod/lib/types";
 import { commonPlacesParamsSchema } from "../shared/commonPlacesParamsSchema";
 
 const poiCategoriesToIDZodObject = z.object(poiCategoriesToID as unknown as ZodRawShape);

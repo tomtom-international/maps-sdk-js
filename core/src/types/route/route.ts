@@ -1,8 +1,8 @@
-import { Feature, LineString } from "geojson";
-import { Guidance } from "./guidance";
-import { SectionsProps } from "./sections";
-import { RouteSummary } from "./summary";
-import { FeatureCollectionWithProperties } from "../extendedGeoJSON";
+import type { Feature, LineString } from "geojson";
+import type { Guidance } from "./guidance";
+import type { SectionsProps } from "./sections";
+import type { RouteSummary } from "./summary";
+import type { FeatureCollectionWithProperties } from "../extendedGeoJSON";
 
 export const avoidableTypes = [
     "tollRoads",

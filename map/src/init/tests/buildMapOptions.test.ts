@@ -1,6 +1,6 @@
-import { MapOptions } from "maplibre-gl";
+import type { MapOptions } from "maplibre-gl";
 import sdkAndRendererInitParams from "./buildMapOptions.data.json";
-import { MapLibreOptions, TomTomMapParams } from "../types/mapInit";
+import type { MapLibreOptions, TomTomMapParams } from "../types/mapInit";
 import { buildMapOptions } from "../buildMapOptions";
 
 describe("Renderer init params tests", () => {

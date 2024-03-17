@@ -1,6 +1,6 @@
-import { Place, Places } from "@anw/maps-sdk-js/core";
-import { CommonServiceParams } from "../../shared";
-import { GeometryDataResponseAPI } from "./apiTypes";
+import type { Place, Places } from "@anw/maps-sdk-js/core";
+import type { CommonServiceParams } from "../../shared";
+import type { GeometryDataResponseAPI } from "./apiTypes";
 
 /**
  * Geometry IDs or places containing them.

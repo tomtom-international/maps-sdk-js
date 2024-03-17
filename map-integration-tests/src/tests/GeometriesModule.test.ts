@@ -1,10 +1,11 @@
-import { PolygonFeatures } from "@anw/maps-sdk-js/core";
+import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
 
-import { DisplayGeometryProps, GeometryBeforeLayerConfig, mapStyleLayerIDs } from "map";
-import { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
-import { Position } from "geojson";
+import type { DisplayGeometryProps, GeometryBeforeLayerConfig } from "map";
+import { mapStyleLayerIDs } from "map";
+import type { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
+import type { Position } from "geojson";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
-import { MapsSDKThis } from "./types/MapsSDKThis";
+import type { MapsSDKThis } from "./types/MapsSDKThis";
 import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
 import netherlandsGeometryData from "./data/GeometriesModule-Netherlands.test.data.json";
 import {

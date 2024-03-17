@@ -1,8 +1,9 @@
 import mapLibreExported, { Map } from "maplibre-gl";
-import { BBox } from "geojson";
-import { Language, mergeFromGlobal } from "@anw/maps-sdk-js/core";
+import type { BBox } from "geojson";
+import type { Language } from "@anw/maps-sdk-js/core";
+import { mergeFromGlobal } from "@anw/maps-sdk-js/core";
 import isEqual from "lodash/isEqual";
-import { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
+import type { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
 import { buildMapOptions } from "./init/buildMapOptions";
 import { buildStyleInput, withPreviousStyleParts } from "./init/styleInputBuilder";
 import { EventsProxy } from "./shared";
