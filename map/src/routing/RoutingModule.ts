@@ -137,7 +137,17 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
+        // TODO: displaying traffic requires traffic in the style. Should we at least verify their existence and log a warning if not present?
+
+        this.layersSpecs = createLayersSpecs(withDefaults(config).routeLayers);
+        const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
+        addLayers(
+            Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
+            this.mapLibreMap
+        );
+
         const options = { pixelRatio: 2 };
+
         // loading of extra assets if not present in the map style:
         // TODO: bring waypoint assets into SDK as lightweight SVGs which we can add to style and personalize a bit (coloring)
         this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`, options);
@@ -163,15 +173,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.addImageIfNotExisting(TRAFFIC_MAJOR_IMAGE_ID, trafficImg(MAJOR_DELAY_COLOR), options);
         this.addImageIfNotExisting(TRAFFIC_MODERATE_IMAGE_ID, trafficImg(MODERATE_DELAY_COLOR), options);
         this.addImageIfNotExisting(TRAFFIC_MINOR_IMAGE_ID, trafficImg(MINOR_DELAY_LABEL_COLOR), options);
-
-        // TODO: displaying traffic requires traffic in the style. Should we at least verify their existence and log a warning if not present?
-
-        this.layersSpecs = createLayersSpecs(withDefaults(config).routeLayers);
-        const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
-        addLayers(
-            Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
-            this.mapLibreMap
-        );
 
         return routingSourcesWithLayers;
     }
