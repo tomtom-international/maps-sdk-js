@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.7...v0.6.8) (2024-03-18)
+
+
+### Features
+
+* **map:** default attribution control showing map copyrights ([e79a4c2](https://github.com/tomtom-international/maps-sdk-js/commit/e79a4c27c85f2cad12b741d8844dfdf70e018bc4))
+
+
+### Bug Fixes
+
+* **routing:** test stability hotfix ([c1ba464](https://github.com/tomtom-international/maps-sdk-js/commit/c1ba464edb6249867350b422702d8aa888c01e5d))
+
 ### [0.6.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.6...v0.6.7) (2024-03-14)
 
 
