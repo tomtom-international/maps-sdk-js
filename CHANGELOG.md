@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.8...v0.6.9) (2024-03-18)
+
+
+### Features
+
+* **routing:** allowing for default 0 value in maxAlternatives for convenience ([58da1ea](https://github.com/tomtom-international/maps-sdk-js/commit/58da1eaa230a2b4385d0d52b347b1385c4db0efc))
+
 ### [0.6.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.7...v0.6.8) (2024-03-18)
 
 
