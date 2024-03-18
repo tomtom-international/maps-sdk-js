@@ -12,7 +12,7 @@ export const buildMapOptions = (mapLibreOptions: MapLibreOptions, tomtomMapParam
     return {
         ...mapLibreOptions,
         style: buildStyleInput(tomtomMapParams),
-        attributionControl: false,
+        attributionControl: { compact: false },
         validateStyle: false,
         maxTileCacheZoomLevels: 22,
         transformRequest: injectTomTomHeaders(tomtomMapParams)

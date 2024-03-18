@@ -11,7 +11,7 @@
     {
       "container": "<div id='map'></div>",
       "style": "https://api-test.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_street-light",
-      "attributionControl": false
+      "attributionControl": { "compact": false }
     }
   ],
   [
@@ -40,7 +40,7 @@
       "minZoom": 2,
       "maxZoom": 20,
       "bearing": 90,
-      "attributionControl": false
+      "attributionControl": { "compact": false }
     }
   ],
   [
@@ -59,7 +59,7 @@
     {
       "container": "<div id='map'></div>",
       "style": "https://api-test.tomtom.com/maps/orbis/assets/styles/0.*/style.json?apiVersion=1&key=TEST_API_KEY&map=basic_street-light&trafficFlow=flow_relative-light&trafficIncidents=incidents_light",
-      "attributionControl": false
+      "attributionControl": { "compact": false }
     }
   ],
   [
@@ -78,7 +78,7 @@
     {
       "container": "<div id='map'></div>",
       "style": "https://api-test.tomtom.com/maps/orbis/assets/styles/0.*/style.json?apiVersion=1&key=TEST_API_KEY&map=basic_street-light&hillshade=hillshade_light",
-      "attributionControl": false
+      "attributionControl": { "compact": false }
     }
   ]
 ]

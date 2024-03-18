@@ -31,7 +31,7 @@ describe("Map initialization mocked tests", () => {
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
             style: "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_KEY&map=basic_street-light",
-            attributionControl: false,
+            attributionControl: { compact: false },
             validateStyle: false,
             maxTileCacheZoomLevels: 22,
             transformRequest: expect.any(Function)
@@ -57,7 +57,7 @@ describe("Map initialization mocked tests", () => {
             style: "https://custom-style.test.tomtom.com/foo/bar?key=TEST_KEY_2",
             zoom: 3,
             center: [10, 20],
-            attributionControl: false,
+            attributionControl: { compact: false },
             validateStyle: false,
             maxTileCacheZoomLevels: 22,
             transformRequest: expect.any(Function)

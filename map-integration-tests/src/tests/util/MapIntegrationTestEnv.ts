@@ -24,10 +24,11 @@ export class MapIntegrationTestEnv {
     }
 
     async loadMap(mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
-        this.consoleErrors = [];
         return page.evaluate(
             (pageMapLibreOptions, pageTomTomMapParams, pageAPIKey) => {
+                document.querySelector(".maplibregl-control-container")?.remove();
                 document.querySelector("canvas")?.remove();
+                this.consoleErrors = [];
                 const mapsSDKThis = globalThis as MapsSDKThis;
                 mapsSDKThis.tomtomMap = new mapsSDKThis.MapsSDK.TomTomMap(
                     { ...pageMapLibreOptions, container: "map" },
