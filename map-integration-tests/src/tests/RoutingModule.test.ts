@@ -40,6 +40,7 @@ import {
     queryRenderedFeatures,
     setStyle,
     waitForMapIdle,
+    waitForTimeout,
     waitUntilRenderedFeatures,
     waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
@@ -484,6 +485,7 @@ describe("Routing tests", () => {
         // Changing the style with extra poi included style part, asserting that the config stays the same:
         await setStyle("monoLight");
         await waitForMapIdle();
+        await waitForTimeout(1000);
         expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
