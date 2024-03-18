@@ -273,6 +273,7 @@ describe("Routing tests", () => {
         await showRoutes(amsterdamToRotterdamRoutes);
 
         await waitForMapIdle();
+        await waitForTimeout(2000);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
         await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
@@ -289,6 +290,7 @@ describe("Routing tests", () => {
         ]);
 
         await waitForMapIdle();
+        await waitForTimeout(2000);
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
 
@@ -305,6 +307,7 @@ describe("Routing tests", () => {
         await setStyle("monoLight");
 
         await waitForMapIdle();
+        await waitForTimeout(2000);
         await waitForRenderedWaypoints(2);
         await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
 
@@ -389,6 +392,7 @@ describe("Routing tests", () => {
             2000
         );
         expect(renderedInstructions.length).toBeGreaterThan(1);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test("Waypoints rendering", async () => {
@@ -449,6 +453,7 @@ describe("Routing tests", () => {
             indexType: "start",
             iconID: "waypointStart"
         });
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test("Updating advanced layers configuration", async () => {

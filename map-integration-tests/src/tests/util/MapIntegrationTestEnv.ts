@@ -24,6 +24,7 @@ export class MapIntegrationTestEnv {
     }
 
     async loadMap(mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
+        this.consoleErrors = [];
         return page.evaluate(
             (pageMapLibreOptions, pageTomTomMapParams, pageAPIKey) => {
                 document.querySelector(".maplibregl-control-container")?.remove();
