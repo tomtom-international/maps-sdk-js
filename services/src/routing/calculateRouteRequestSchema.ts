@@ -19,7 +19,7 @@ const calculateRouteRequestSchemaOptional = z
         vehicleHeading: z.number().min(0).max(359.5),
         // TODO add proper instructionsInfo check
         // instructionsType: z.enum(instructionsTypes),
-        maxAlternatives: z.number().min(1).max(5),
+        maxAlternatives: z.number().min(0).max(5),
         sectionTypes: z.array(z.enum(inputSectionTypesWithGuidance as [SectionType, ...SectionType[]]))
     })
     .partial();

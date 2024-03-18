@@ -101,7 +101,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * alternatives is larger than the service can calculate.
          * @default 0
          */
-        maxAlternatives?: 1 | 2 | 3 | 4 | 5;
+        maxAlternatives?: 0 | 1 | 2 | 3 | 4 | 5;
 
         /**
          * Specifies which of the section types is reported in the route response.
