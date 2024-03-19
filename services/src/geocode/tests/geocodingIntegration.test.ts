@@ -170,11 +170,21 @@ describe("Geocoding integration tests", () => {
         expect(result).toMatchObject(customParserExample);
     });
 
-    test("Geocoding with API response callback", async () => {
+    test("Geocoding with API request and response callbacks", async () => {
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
         const result = await geocode({ query: "Amsterdam", onAPIRequest, onAPIResponse });
         expect(result).toBeDefined();
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+    });
+
+    test("Geocoding with API request and response error callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        await expect(() =>
+            geocode({ query: "Amsterdam", commonBaseURL: "https://bljljljljl.com", onAPIRequest, onAPIResponse })
+        ).rejects.toThrow();
         expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
         expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });

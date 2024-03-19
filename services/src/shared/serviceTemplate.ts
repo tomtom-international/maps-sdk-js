@@ -39,6 +39,7 @@ export const callService = async <PARAMS extends CommonServiceParams, API_REQUES
         params.onAPIResponse?.(apiRequest, apiResponse);
         return template.parseResponse(apiResponse, mergedParams);
     } catch (e) {
+        params.onAPIResponse?.(apiRequest, e);
         return Promise.reject(buildResponseError(e, serviceName, template.parseResponseError));
     }
 };

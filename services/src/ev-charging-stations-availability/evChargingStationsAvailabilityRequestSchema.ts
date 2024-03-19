@@ -8,10 +8,11 @@ const evChargingStationsAvailabilityRequestMandatory = z.object({
 const evChargingStationsAvailabilityRequestOptional = z
     .object({
         connectorTypes: z.array(z.enum(connectorTypes)),
-        minPowerKW: z.number(),
-        maxPowerKW: z.number()
+        minPowerKW: z.number().positive(),
+        maxPowerKW: z.number().positive()
     })
     .partial();
+
 /**
  * @ignore
  */

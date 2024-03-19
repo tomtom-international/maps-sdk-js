@@ -154,4 +154,19 @@ describe("Reverse Geocoding integration tests", () => {
         expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
         expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
+
+    test("Reverse geocoding with API request and response error callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
+        await expect(() =>
+            reverseGeocode({
+                position: [5.72884, 52.33499],
+                apiKey: "INCORRECT",
+                onAPIRequest,
+                onAPIResponse
+            })
+        ).rejects.toThrow(expect.objectContaining({ status: 403 }));
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 403 }));
+    });
 });

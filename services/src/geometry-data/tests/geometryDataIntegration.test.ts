@@ -171,6 +171,23 @@ describe("Geometry data integration tests", () => {
         expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
         expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
+
+    test("Geometry Data with API error response callback", async () => {
+        const geometries = ["00004e4c-3100-3c00-0000-000059685013"];
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        await expect(() =>
+            geometryData({
+                geometries,
+                zoom: -1,
+                validateRequest: false,
+                onAPIRequest,
+                onAPIResponse
+            })
+        ).rejects.toThrow(expect.objectContaining({ status: 400 }));
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+    });
 });
 
 describe("Geometry with Places", () => {

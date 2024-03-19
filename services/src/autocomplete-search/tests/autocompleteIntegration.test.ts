@@ -105,4 +105,16 @@ describe("Autocomplete service", () => {
         expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
         expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
+
+    test("Autocomplete with API request and error response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const query = "cafe";
+        const language = "INCORRECT" as never;
+        await expect(() => autocompleteSearch({ query, language, onAPIRequest, onAPIResponse })).rejects.toThrow(
+            expect.objectContaining({ status: 400 })
+        );
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+    });
 });

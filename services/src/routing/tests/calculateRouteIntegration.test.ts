@@ -348,4 +348,22 @@ describe("Calculate route integration tests", () => {
         expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
         expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.anything());
     });
+
+    test("Calculate route with API request and error response callbacks", async () => {
+        const geoInputs = [
+            [7.675106, 51.490793],
+            [0, 0]
+        ];
+        const onAPIRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
+        const onAPIResponse = jest.fn() as (
+            request: CalculateRouteRequestAPI,
+            response: CalculateRouteResponseAPI
+        ) => void;
+        await expect(() => calculateRoute({ geoInputs, onAPIRequest, onAPIResponse })).rejects.toThrow(
+            expect.objectContaining({ status: 400 })
+        );
+        const expectedAPIRequest = { method: "GET", url: expect.any(URL) };
+        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
+        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.objectContaining({ status: 400 }));
+    });
 });

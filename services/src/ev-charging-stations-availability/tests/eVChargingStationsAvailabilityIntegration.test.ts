@@ -113,4 +113,20 @@ describe("evChargingStationsAvailability integration tests", () => {
         expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
         expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
+
+    test("EVChargingStationsAvailability with API request and error response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: EVChargingStationsAvailability) => void;
+        await expect(() =>
+            evChargingStationsAvailability({
+                id: "57e78da9-5b0e-44ff-bd0f-f54e3b24292b",
+                minPowerKW: 0,
+                validateRequest: false,
+                onAPIRequest,
+                onAPIResponse
+            })
+        ).rejects.toThrow(expect.objectContaining({ status: 400 }));
+        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+    });
 });

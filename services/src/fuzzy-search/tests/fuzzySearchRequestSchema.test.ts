@@ -59,6 +59,28 @@ describe("FuzzySearch Schema Validation", () => {
         );
     });
 
+    test("it should fail when max and min fuzzy levels are beyond boundaries", () => {
+        expect(() =>
+            validateRequestSchema(
+                { apiKey, query, minFuzzyLevel: -1, maxFuzzyLevel: 999 },
+                { schema: fuzzySearchRequestSchema }
+            )
+        ).toThrow(
+            expect.objectContaining({
+                errors: expect.arrayContaining([
+                    expect.objectContaining({
+                        path: ["minFuzzyLevel"],
+                        message: "Number must be greater than or equal to 1"
+                    }),
+                    expect.objectContaining({
+                        path: ["maxFuzzyLevel"],
+                        message: "Number must be less than or equal to 4"
+                    })
+                ])
+            })
+        );
+    });
+
     test("it should fail when typeahead has wrong value", () => {
         expect(() =>
             validateRequestSchema({ apiKey, query, typeahead: 1 }, { schema: fuzzySearchRequestSchema })

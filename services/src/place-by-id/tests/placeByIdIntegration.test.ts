@@ -48,4 +48,14 @@ describe("Place By Id API", () => {
         expect(place).toBeDefined();
         expect(onAPIResponse).toHaveBeenCalledWith(expect.anything(), expect.anything());
     });
+
+    test("placeById with API request and error response callbacks", async () => {
+        const entityId = "528009004250472";
+        const onAPIRequest = jest.fn() as (request: URL) => void;
+        const onAPIResponse = jest.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
+        await expect(() =>
+            placeById({ entityId, view: "INCORRECT" as never, validateRequest: false, onAPIRequest, onAPIResponse })
+        ).rejects.toThrow(expect.objectContaining({ status: 400 }));
+        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+    });
 });

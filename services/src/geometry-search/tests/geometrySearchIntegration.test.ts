@@ -200,4 +200,25 @@ describe("Geometry Search service", () => {
         expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
         expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.anything());
     });
+
+    test("geometrySearch with API request and error response callbacks", async () => {
+        const onAPIRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
+        const onAPIResponse = jest.fn() as (
+            request: GeometrySearchRequestAPI,
+            response: GeometrySearchResponseAPI
+        ) => void;
+        await expect(() =>
+            search({
+                query: "cafe",
+                geometries,
+                indexes: ["INCORRECT"] as never,
+                validateRequest: false,
+                onAPIRequest,
+                onAPIResponse
+            })
+        ).rejects.toThrow(expect.objectContaining({ status: 400 }));
+        const expectedAPIRequest = { url: expect.any(URL), data: expect.anything() };
+        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
+        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.objectContaining({ status: 400 }));
+    });
 });

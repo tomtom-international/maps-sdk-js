@@ -5,7 +5,7 @@ import { commonGeocodeAndFuzzySearchParamsSchema } from "../shared/commonGeocode
 const fuzzySearchRequestOptional = z
     .object({
         minFuzzyLevel: z.number().min(1).max(4),
-        mixFuzzyLevel: z.number().min(1).max(4)
+        maxFuzzyLevel: z.number().min(1).max(4)
     })
     .partial();
 

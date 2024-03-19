@@ -14,7 +14,8 @@ describe("EV Charging Stations availability schema validation", () => {
         const invalidParams: EVChargingStationsAvailabilityParams = {
             //@ts-ignore
             id: 555,
-            validateRequest: true,
+            minPowerKW: 0,
+            maxPowerKW: -1,
             apiKey,
             commonBaseURL
         };
@@ -30,7 +31,15 @@ describe("EV Charging Stations availability schema validation", () => {
                         code: "invalid_type",
                         path: ["id"],
                         message: "Expected string, received number"
-                    }
+                    },
+                    expect.objectContaining({
+                        path: ["minPowerKW"],
+                        message: "Number must be greater than 0"
+                    }),
+                    expect.objectContaining({
+                        path: ["maxPowerKW"],
+                        message: "Number must be greater than 0"
+                    })
                 ]
             })
         );
