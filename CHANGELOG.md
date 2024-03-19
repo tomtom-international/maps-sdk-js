@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.12](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.11...v0.6.12) (2024-03-19)
+
+
+### Features
+
+* **services:** calling onAPIRequest also when APIs respond with errors ([eb08672](https://github.com/tomtom-international/maps-sdk-js/commit/eb08672cbcd9be9c04e362e2223a0003d8c0f34c))
+
 ### [0.6.11](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.10...v0.6.11) (2024-03-18)
 
 
