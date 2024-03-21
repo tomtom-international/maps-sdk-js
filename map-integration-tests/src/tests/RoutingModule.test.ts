@@ -469,7 +469,7 @@ describe("Routing tests", () => {
         ]);
         await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
-        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#3f9cd9");
+        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#36A8F0");
 
         const updatedLayers = defaultRouteLayersConfig.mainLines?.layers.map(({ id, layerSpec, ...rest }) => {
             if (id === ROUTE_LINE_LAYER_ID) {

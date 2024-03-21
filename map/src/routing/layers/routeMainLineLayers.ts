@@ -1,4 +1,4 @@
-import type { LineLayerSpecification } from "maplibre-gl";
+import type { ExpressionSpecification, LineLayerSpecification } from "maplibre-gl";
 import type { LayerSpecTemplate } from "../../shared";
 import {
     DESELECTED_FOREGROUND_COLOR,
@@ -6,6 +6,7 @@ import {
     DESELECTED_ROUTE_FILTER,
     FOREGROUND_COLOR,
     FOREGROUND_LINE_WIDTH,
+    OUTLINE_COLOR,
     SELECTED_ROUTE_FILTER
 } from "./shared";
 
@@ -21,6 +22,8 @@ export const routeLineBaseTemplate: LayerSpecTemplate<LineLayerSpecification> = 
     }
 };
 
+const outlineLineWidth: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], 1, 5, 5, 6, 10, 10, 18, 14];
+
 /**
  * @ignore
  */
@@ -29,7 +32,7 @@ export const routeDeselectedOutline: LayerSpecTemplate<LineLayerSpecification> =
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
         "line-color": DESELECTED_OUTLINE_COLOR,
-        "line-width": ["interpolate", ["linear"], ["zoom"], 1, 4, 5, 5, 10, 9, 18, 13]
+        "line-width": outlineLineWidth
     }
 };
 
@@ -52,8 +55,8 @@ export const routeOutline: LayerSpecTemplate<LineLayerSpecification> = {
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
-        "line-color": "#FFFFFF",
-        "line-width": ["interpolate", ["linear"], ["zoom"], 1, 6, 5, 7, 10, 11, 18, 15]
+        "line-color": OUTLINE_COLOR,
+        "line-width": outlineLineWidth
     }
 };
 

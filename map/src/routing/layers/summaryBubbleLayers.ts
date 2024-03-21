@@ -1,6 +1,6 @@
 import type { LayerSpecTemplate } from "../../shared";
 import type { ExpressionSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { DESELECTED_OUTLINE_COLOR, SELECTED_ROUTE_FILTER } from "./shared";
+import { DESELECTED_SECONDARY_COLOR, SELECTED_ROUTE_FILTER } from "./shared";
 import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from "./routeMainLineLayers";
 import { MAP_BOLD_FONT, MAP_MEDIUM_FONT } from "../../shared/layers/commonLayerProps";
 import { magnitudeOfDelayTextColor } from "./routeTrafficSectionLayers";
@@ -51,12 +51,13 @@ export const summaryBubbleSymbolPoint: LayerSpecTemplate<SymbolLayerSpecificatio
             ["get", "formattedDuration"],
             {
                 "text-font": ["literal", [MAP_BOLD_FONT]],
-                "text-color": ["case", SELECTED_ROUTE_FILTER, "black", DESELECTED_OUTLINE_COLOR]
+                "text-color": ["case", SELECTED_ROUTE_FILTER, "black", DESELECTED_SECONDARY_COLOR]
             },
             "    ",
             ["get", "formattedDistance"],
-            { "text-color": DESELECTED_OUTLINE_COLOR },
+            { "text-color": DESELECTED_SECONDARY_COLOR },
             ["case", hasFormattedTraffic, "\n", ""],
+            {},
             [
                 "image",
                 [
@@ -76,7 +77,8 @@ export const summaryBubbleSymbolPoint: LayerSpecTemplate<SymbolLayerSpecificatio
                     ""
                 ]
             ],
-            ["concat", "    ", ["get", "formattedTraffic"]],
+            {},
+            ["concat", "  ", ["get", "formattedTraffic"]],
             {
                 "text-font": ["literal", [MAP_BOLD_FONT]],
                 "text-color": magnitudeOfDelayTextColor

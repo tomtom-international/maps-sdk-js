@@ -29,34 +29,36 @@ import { buildDisplayRouteSections } from "./util/routeSections";
 import { toDisplayTrafficSectionProps } from "./util/displayTrafficSectionProps";
 import type { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/routeSections";
 import { buildDisplayRoutes, buildDisplayRouteSummaries } from "./util/routes";
-import type { DisplayRouteProps, DisplayRouteSummaryProps } from "./types/displayRoutes";
+import type { DisplayRouteProps, DisplayRouteSummary } from "./types/displayRoutes";
 import type { ShowRoutesOptions } from "./types/showRoutesOptions";
 import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import type { TomTomMap } from "../TomTomMap";
 import type { DisplayInstruction } from "./types/guidance";
 import { toDisplayInstructionArrows, toDisplayInstructions } from "./util/guidance";
 import { showFeaturesWithRouteSelection } from "./util/routeSelection";
-import { instructionArrowIconImg, summaryBubbleImageOptions, summaryMapBubbleImg, trafficImg } from "./resources";
+import {
+    instructionArrowIconImg,
+    softWaypointIcon,
+    summaryBubbleImageOptions,
+    summaryMapBubbleImg,
+    trafficImg,
+    waypointFinishIcon,
+    waypointIcon,
+    waypointStartIcon
+} from "./resources";
 import { defaultRouteLayersConfig } from "./layers/defaultConfig";
 import { createLayersSpecs, withDefaults } from "./util/config";
 import { INSTRUCTION_ARROW_IMAGE_ID } from "./layers/guidanceLayers";
 import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from "./layers/routeMainLineLayers";
 import type { StyleImageMetadata } from "maplibre-gl";
-import {
-    DESELECTED_FOREGROUND_COLOR,
-    MAJOR_DELAY_COLOR,
-    MINOR_DELAY_LABEL_COLOR,
-    MODERATE_DELAY_COLOR,
-    UNKNOWN_DELAY_COLOR
-} from "./layers/shared";
+import { MAJOR_DELAY_COLOR, MINOR_DELAY_LABEL_COLOR, MODERATE_DELAY_COLOR, UNKNOWN_DELAY_COLOR } from "./layers/shared";
 import {
     TRAFFIC_CLEAR_IMAGE_ID,
     TRAFFIC_MAJOR_IMAGE_ID,
     TRAFFIC_MINOR_IMAGE_ID,
     TRAFFIC_MODERATE_IMAGE_ID
 } from "./layers/summaryBubbleLayers";
-
-const SDK_HOSTED_IMAGES_URL_BASE = "https://plan.tomtom.com/resources/images/";
+import type { WaypointDisplayProps } from "./types/waypointDisplayProps";
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
@@ -146,27 +148,22 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             this.mapLibreMap
         );
 
-        const options = { pixelRatio: 2 };
+        const options: Partial<StyleImageMetadata> = { pixelRatio: 2 };
 
         // loading of extra assets if not present in the map style:
-        // TODO: bring waypoint assets into SDK as lightweight SVGs which we can add to style and personalize a bit (coloring)
-        this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-start.png`, options);
-        this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-stop.png`, options);
-        this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-soft.png`, options);
-        this.addImageIfNotExisting(
-            WAYPOINT_FINISH_IMAGE_ID,
-            `${SDK_HOSTED_IMAGES_URL_BASE}waypoint-finish.png`,
-            options
-        );
+        this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, waypointStartIcon(), options);
+        this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, waypointIcon(), options);
+        this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, softWaypointIcon(), options);
+        this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, waypointFinishIcon(), options);
         this.addImageIfNotExisting(INSTRUCTION_ARROW_IMAGE_ID, instructionArrowIconImg, options);
         this.addImageIfNotExisting(
             SELECTED_SUMMARY_POPUP_IMAGE_ID,
-            summaryMapBubbleImg(/*FOREGROUND_COLOR*/ "white"),
+            summaryMapBubbleImg("white"),
             summaryBubbleImageOptions
         );
         this.addImageIfNotExisting(
             DESELECTED_SUMMARY_POPUP_IMAGE_ID,
-            summaryMapBubbleImg(DESELECTED_FOREGROUND_COLOR),
+            summaryMapBubbleImg("#EEEEEE"),
             summaryBubbleImageOptions
         );
         this.addImageIfNotExisting(TRAFFIC_CLEAR_IMAGE_ID, trafficImg(UNKNOWN_DELAY_COLOR), options);
@@ -339,7 +336,10 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.mainLines
             ),
-            waypoints: new EventsModule<Waypoint>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.waypoints),
+            waypoints: new EventsModule<Waypoint<WaypointDisplayProps>>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.waypoints
+            ),
             vehicleRestricted: new EventsModule<RouteSection>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.vehicleRestricted
@@ -359,7 +359,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.instructionLines
             ),
-            summaryBubbles: new EventsModule<DisplayRouteSummaryProps>(
+            summaryBubbles: new EventsModule<DisplayRouteSummary>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.summaryBubbles
             )

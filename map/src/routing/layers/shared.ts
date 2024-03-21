@@ -4,17 +4,29 @@ import type { ExpressionSpecification } from "maplibre-gl";
  * Main route line foreground color.
  * @ignore
  */
-export const FOREGROUND_COLOR = "#3f9cd9";
+export const FOREGROUND_COLOR = "#36A8F0";
+
+/**
+ * Main route outline color.
+ */
+export const OUTLINE_COLOR = "#105287";
 
 /**
  * Deselected route line foreground color.
+ * @ignore
  */
-export const DESELECTED_FOREGROUND_COLOR = "#E0E2E3";
+export const DESELECTED_FOREGROUND_COLOR = "#ABAFB3";
 
 /**
  * Deselected route line outline color.
+ * @ignore
  */
-export const DESELECTED_OUTLINE_COLOR = "#3F4A55";
+export const DESELECTED_OUTLINE_COLOR = "#3C4956";
+
+/**
+ * @ignore
+ */
+export const DESELECTED_SECONDARY_COLOR = "#727C85";
 
 /**
  * Main route line width based on zoom level.

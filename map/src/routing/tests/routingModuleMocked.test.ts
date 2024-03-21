@@ -6,6 +6,7 @@ import {
     ROUTE_INCIDENTS_SOURCE_ID,
     ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID,
     ROUTE_INSTRUCTIONS_SOURCE_ID,
+    ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID,
     ROUTE_TOLL_ROADS_SOURCE_ID,
     ROUTE_TUNNELS_SOURCE_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
@@ -31,6 +32,7 @@ describe("Routing module tests", () => {
         const tunnelsSource = { id: ROUTE_TUNNELS_SOURCE_ID, setData: jest.fn() };
         const instructionLinesSource = { id: ROUTE_INSTRUCTIONS_SOURCE_ID, setData: jest.fn() };
         const instructionArrowsSource = { id: ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID, setData: jest.fn() };
+        const summaryBubblesSource = { id: ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID, setData: jest.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest
@@ -70,7 +72,11 @@ describe("Routing module tests", () => {
                     .mockReturnValueOnce(instructionArrowsSource)
                     .mockReturnValueOnce(instructionArrowsSource)
                     .mockReturnValueOnce(instructionArrowsSource)
-                    .mockReturnValueOnce(instructionArrowsSource),
+                    .mockReturnValueOnce(instructionArrowsSource)
+                    .mockReturnValueOnce(summaryBubblesSource)
+                    .mockReturnValueOnce(summaryBubblesSource)
+                    .mockReturnValueOnce(summaryBubblesSource)
+                    .mockReturnValueOnce(summaryBubblesSource),
                 getLayer: jest.fn().mockReturnValue({}),
                 addLayer: jest.fn(),
                 removeLayer: jest.fn(),
@@ -120,5 +126,6 @@ describe("Routing module tests", () => {
         expect(routing.events.tollRoads).toBeInstanceOf(EventsModule);
         expect(routing.events.tunnels).toBeInstanceOf(EventsModule);
         expect(routing.events.instructionLines).toBeInstanceOf(EventsModule);
+        expect(routing.events.summaryBubbles).toBeInstanceOf(EventsModule);
     });
 });

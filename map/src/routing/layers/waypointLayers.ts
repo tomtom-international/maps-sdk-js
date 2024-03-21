@@ -1,4 +1,4 @@
-import type { SymbolLayerSpecification } from "maplibre-gl";
+import type { ExpressionSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import type { LayerSpecTemplate } from "../../shared";
 import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
 import { INDEX_TYPE, MIDDLE_INDEX, STOP_DISPLAY_INDEX } from "../types/waypointDisplayProps";
@@ -8,6 +8,12 @@ export const WAYPOINT_START_IMAGE_ID = "waypointStart";
 export const WAYPOINT_STOP_IMAGE_ID = "waypointStop";
 export const WAYPOINT_SOFT_IMAGE_ID = "waypointSoft";
 export const WAYPOINT_FINISH_IMAGE_ID = "waypointFinish";
+
+const isSoftWaypoint: ExpressionSpecification = [
+    "all",
+    ["==", ["get", INDEX_TYPE], MIDDLE_INDEX],
+    ["!", ["has", STOP_DISPLAY_INDEX]]
+];
 
 /**
  * @ignore
@@ -27,17 +33,19 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
         // optional centered text to indicate stop numbers (1, 2 ...):
         "text-field": ["get", STOP_DISPLAY_INDEX],
         "text-font": [MAP_BOLD_FONT],
-        "text-size": 13,
+        "text-size": ["interpolate", ["linear"], ["zoom"], 13, 13, 18, 15],
+        "text-anchor": "bottom",
+        "text-offset": [0, -0.9],
         "icon-image": ["get", ICON_ID],
         // pin vs circle:
         "icon-anchor": [
             "case",
-            ["==", ["get", INDEX_TYPE], MIDDLE_INDEX],
+            isSoftWaypoint,
             "center",
             // else
             "bottom"
         ],
-        "icon-size": 0.85,
+        "icon-size": ["interpolate", ["linear"], ["zoom"], 13, 0.7, 18, 1],
         "text-allow-overlap": true,
         "icon-allow-overlap": true
     }
@@ -58,13 +66,6 @@ export const waypointLabels: LayerSpecTemplate<SymbolLayerSpecification> = {
         "text-anchor": "top",
         "text-font": [MAP_BOLD_FONT],
         "text-size": DEFAULT_TEXT_SIZE,
-        // pin vs circle:
-        "text-offset": [
-            "case",
-            ["==", ["get", INDEX_TYPE], MIDDLE_INDEX],
-            ["literal", [0, 1.2]],
-            // else
-            ["literal", [0, 0]]
-        ]
+        "text-offset": [0, 0.4]
     }
 };
