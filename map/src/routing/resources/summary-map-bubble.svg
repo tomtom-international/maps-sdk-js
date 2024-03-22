@@ -1,11 +1,11 @@
-<svg width="160" height="65" viewBox="0 0 160 65" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#shadow-filter)">
-        <rect id="pin" x="81.8994" y="47" width="10" height="10" rx="2" transform="rotate(45 81.8994 47)" />
-        <rect id="bubble"  x="10" y="10" width="140" height="45" rx="12" />
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="65">
+    <g filter="url(#A)">
+        <rect id="pin" x="81.899" y="47" width="10" height="10" rx="2" transform="rotate(45 81.899 47)"/>
+        <rect id="bubble" x="10" y="10" width="140" height="45" rx="12"/>
     </g>
     <defs>
-        <filter id="shadow-filter">
-            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.3"/>
+        <filter id="A">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity=".3"/>
         </filter>
     </defs>
 </svg>
