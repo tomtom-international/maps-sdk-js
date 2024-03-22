@@ -28,6 +28,7 @@ describe("Using customize obj", () => {
                             "&sectionType=tollVignette&sectionType=country" +
                             "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
                             "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                            "&sectionType=speedLimit&sectionType=roadShields" +
                             "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
                     )
                 })

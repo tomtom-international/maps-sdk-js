@@ -287,15 +287,12 @@ export const inputSectionTypes: SectionType[] = [
     "carpool",
     "urban",
     "unpaved",
-    "lowEmissionZone"
-];
-
-export const inputSectionTypesWithGuidance: SectionType[] = [
-    ...inputSectionTypes,
-    "lanes",
+    "lowEmissionZone",
     "speedLimit",
     "roadShields"
 ];
+
+export const inputSectionTypesWithGuidance: SectionType[] = [...inputSectionTypes, "lanes"];
 
 /**
  * @group Route

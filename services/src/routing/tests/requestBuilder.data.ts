@@ -23,6 +23,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollRoad&sectionType=toll&sectionType=tollVignette" +
                     "&sectionType=country&sectionType=travelMode&sectionType=traffic&sectionType=carpool" +
                     "&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             )
         }
@@ -93,6 +94,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
                     "&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             )
         }
@@ -122,6 +124,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
                     "&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             )
         }
@@ -208,6 +211,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollRoad&sectionType=toll&sectionType=tollVignette&sectionType=country" +
                     "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             )
         }
@@ -259,6 +263,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollRoad&sectionType=toll&sectionType=tollVignette" +
                     "&sectionType=country&sectionType=travelMode&sectionType=traffic&sectionType=carpool" +
                     "&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             )
         }
@@ -313,6 +318,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
                     "&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             )
         }
@@ -345,6 +351,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollRoad&sectionType=toll" +
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
                     "&sectionType=carpool&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             ),
             data: {}
@@ -374,6 +381,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
                     "&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             ),
             data: {
@@ -430,6 +438,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollVignette&sectionType=country" +
                     "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             ),
             data: {
@@ -497,6 +506,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
                     "&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             ),
             data: {
@@ -561,6 +571,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     "&sectionType=tollRoad&sectionType=toll&sectionType=tollVignette&sectionType=country" +
                     "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
                     "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
                     "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
             ),
             data: {
