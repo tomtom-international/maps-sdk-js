@@ -38,8 +38,8 @@
     "@types/geojson": "^7946.0.14",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.0",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^27.9.0",
@@ -53,7 +53,7 @@
     "rollup-plugin-svg-import": "^3.0.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   },
   "typedoc": {
     "entryPoint": "./index.ts"
