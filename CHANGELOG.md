@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.15](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.14...v0.6.15) (2024-04-02)
+
+
+### Features
+
+* **routing:** improving types ([354c8cf](https://github.com/tomtom-international/maps-sdk-js/commit/354c8cfd74fc5931486d2d6feb43531db6a22f21))
+
 ### [0.6.14](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.13...v0.6.14) (2024-03-22)
 
 
