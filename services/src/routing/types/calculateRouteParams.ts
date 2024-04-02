@@ -43,6 +43,12 @@ export type GuidanceParams = {
  */
 export type ExtendedRouteRepresentation = "distance" | "travelTime";
 
+/**
+ * * none - do not compute additional travel times.
+ * * all - compute travel times for all types of traffic information. Specifying all results in the fields
+ */
+export type ComputeTravelTimeFor = "none" | "all";
+
 export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> &
     CommonRoutingParams & {
         /**
@@ -68,7 +74,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * liveTrafficIncidentsTravelTimeInSeconds being included in the summaries in the route response.
          * @default None
          */
-        computeAdditionalTravelTimeFor?: "none" | "all";
+        computeAdditionalTravelTimeFor?: ComputeTravelTimeFor;
 
         /**
          * The current heading at the starting point, in degrees starting at true North and continuing in a clockwise direction.
