@@ -5,7 +5,7 @@
       "commonBaseURL": "https://api.tomtom.com",
       "position": [1.12345, 23.45678]
     },
-    "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=undefined"
+    "https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?key=undefined&apiVersion=1"
   ],
   [
     "Reverse geocoding using custom URL",
@@ -22,7 +22,7 @@
       "roadUses": ["LimitedAccess", "Arterial"],
       "view": "AR"
     },
-    "https://api.tomtom.com/search/10/reverseGeocodeTest/-23.45678,-100.12345.json?key=ANOTHER_API_KEY&language=en-US&heading=30&number=10A&radius=30&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"
+    "https://api.tomtom.com/search/10/reverseGeocodeTest/-23.45678,-100.12345.json?key=ANOTHER_API_KEY&language=en-US&apiVersion=1&heading=30&number=10A&radius=30&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"
   ],
   [
     "Reverse geocoding with mandatory Params and an optional param - example 1",
@@ -32,7 +32,7 @@
       "commonBaseURL": "https://api.tomtom.com",
       "language": "en-GB"
     },
-    "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=en-GB"
+    "https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=en-GB&apiVersion=1"
   ],
   [
     "Reverse geocoding with mandatory Params and an optional param - example 2",
@@ -42,7 +42,7 @@
       "language": "es-ES",
       "position": [1.12345, 23.45678]
     },
-    "https://api-test.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GLOBAL_API_KEY&language=es-ES"
+    "https://api-test.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?key=GLOBAL_API_KEY&language=es-ES&apiVersion=1"
   ],
   [
     "Reverse geocoding with a combination of mandatory & optional params",
@@ -62,6 +62,6 @@
       "roadUses": ["LimitedAccess", "Arterial"],
       "view": "AR"
     },
-    "https://api.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=es-ES&allowFreeformNewline=true&entityType=Country%2CMunicipality&heading=30&mapcodes=Local%2CInternational&number=10A&radius=30&returnSpeedLimit=true&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"
+    "https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?key=GIVEN_API_KEY&language=es-ES&apiVersion=1&allowFreeformNewline=true&entityType=Country%2CMunicipality&heading=30&mapcodes=Local%2CInternational&number=10A&radius=30&returnSpeedLimit=true&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D"
   ]
 ]

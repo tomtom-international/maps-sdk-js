@@ -1,9 +1,10 @@
 import type { PlaceByIdParams } from "./types";
 import type { CommonServiceParams } from "../shared";
 import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
+import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}/search/2/place.json`;
+    params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/place.json`;
 
 /**
  * Default method for building place by id request from {@link PlaceByIdParams}
@@ -13,6 +14,7 @@ export const buildPlaceByIdRequest = (params: PlaceByIdParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
+    urlParams.append("apiVersion", "1");
     appendOptionalParam(urlParams, "entityId", params.entityId);
     appendByJoiningParamValue(urlParams, "mapcodes", params.mapcodes);
     appendOptionalParam(urlParams, "view", params.view);

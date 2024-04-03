@@ -105,7 +105,7 @@ describe("evChargingStationsAvailability integration tests", () => {
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: EVChargingStationsAvailability) => void;
         const result = await evChargingStationsAvailability({
-            id: "57e78da9-5b0e-44ff-bd0f-f54e3b24292b",
+            id: "f989fb91-4866-4d03-91b5-fc4a9e82ad52",
             onAPIRequest,
             onAPIResponse
         });

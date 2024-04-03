@@ -17,7 +17,7 @@ describe("Place By Id API", () => {
     });
 
     test("placeById works", async () => {
-        const entityId = "528009004250472";
+        const entityId = "8dDUmb0BqTQcdNzkYuAoFA";
         const place = await placeById({
             entityId,
             language: "en-GB",
@@ -30,9 +30,11 @@ describe("Place By Id API", () => {
         expect(place).toEqual(expectPlaceTestFeature(basePOITestProps));
     });
 
-    test("placeById for EV charging station with opening hours", async () => {
+    // TODO: opening hours not yet available in Orbis. Once POI TimeZones are available they should become supported again. ETA end of Q2 2024.
+    // eslint-disable-next-line jest/no-disabled-tests
+    test.skip("placeById for EV charging station with opening hours", async () => {
         const place = await placeById({
-            entityId: "IiD0PMyr5YVswOHZME6nmQ",
+            entityId: "40z9pjn_fZGYFuLAeEeXvQ",
             openingHours: "nextSevenDays"
         });
 
@@ -41,7 +43,7 @@ describe("Place By Id API", () => {
     });
 
     test("placeById with API request and response callbacks", async () => {
-        const entityId = "528009004250472";
+        const entityId = "8dDUmb0BqTQcdNzkYuAoFA";
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
         const place = await placeById({ entityId, onAPIRequest, onAPIResponse });
@@ -50,7 +52,7 @@ describe("Place By Id API", () => {
     });
 
     test("placeById with API request and error response callbacks", async () => {
-        const entityId = "528009004250472";
+        const entityId = "8dDUmb0BqTQcdNzkYuAoFA";
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
         await expect(() =>

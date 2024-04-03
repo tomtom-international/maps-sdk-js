@@ -2,7 +2,7 @@ import type { PostObject } from "../shared";
 import type { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from "./types";
 import { positionToCSVLatLon } from "../shared/geometry";
 import { sampleWithinMaxLength } from "../shared/arrays";
-import { appendCommonSearchParams } from "../shared/commonSearchRequestBuilder";
+import { appendCommonSearchParams, PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
 import { bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
 import type { MultiPolygon, Position } from "geojson";
 
@@ -63,7 +63,7 @@ const sdkGeometryToAPIGeometries = (searchGeometry: SearchGeometryInput): Geomet
 
 const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
     mergedOptions.customServiceBaseURL ||
-    `${mergedOptions.commonBaseURL}/search/2/geometrySearch/${mergedOptions.query}.json`;
+    `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/geometrySearch/${mergedOptions.query}.json`;
 
 /**
  * Default function for building a geometry search request from {@link GeometrySearchParams}

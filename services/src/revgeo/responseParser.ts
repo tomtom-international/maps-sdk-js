@@ -15,21 +15,23 @@ export const parseRevGeoResponse = (
 ): ReverseGeocodingResponse => {
     const pointFeature = toPointFeature(getPositionStrict(params.position));
     const firstAPIResult = apiResponse.addresses[0];
-    const { boundingBox, sideOfStreet, offsetPosition, ...address } = firstAPIResult.address;
+    const { boundingBox, sideOfStreet, offsetPosition, ...address } = firstAPIResult?.address || {};
     return {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...pointFeature,
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         id: `random_${Math.random()}`,
-        properties: {
-            type: firstAPIResult.entityType ? "Geography" : !address.streetNumber ? "Street" : "Point Address",
-            address,
-            ...(firstAPIResult.dataSources && { dataSources: firstAPIResult.dataSources }),
-            ...(firstAPIResult.mapcodes && { mapcodes: firstAPIResult.mapcodes }),
-            ...(sideOfStreet && { sideOfStreet }),
-            ...(offsetPosition && { offsetPosition: csvLatLngToPosition(offsetPosition) }),
-            // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
-            originalPosition: csvLatLngToPosition(firstAPIResult.position)
-        }
+        ...(firstAPIResult && {
+            properties: {
+                type: firstAPIResult?.entityType ? "Geography" : !address.streetNumber ? "Street" : "Point Address",
+                address,
+                ...(firstAPIResult.dataSources && { dataSources: firstAPIResult.dataSources }),
+                ...(firstAPIResult.mapcodes && { mapcodes: firstAPIResult.mapcodes }),
+                ...(sideOfStreet && { sideOfStreet }),
+                ...(offsetPosition && { offsetPosition: csvLatLngToPosition(offsetPosition) }),
+                // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
+                originalPosition: csvLatLngToPosition(firstAPIResult.position)
+            }
+        })
     };
 };

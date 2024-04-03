@@ -12,7 +12,9 @@ describe("Place by ID request URL building functional tests", () => {
                 apiKey: "testKey",
                 entityId: "testEntity"
             }).toString()
-        ).toStrictEqual("https://api-test.tomtom.com/search/2/place.json?key=testKey&entityId=testEntity");
+        ).toStrictEqual(
+            "https://api-test.tomtom.com/maps/orbis/places/place.json?key=testKey&apiVersion=1&entityId=testEntity"
+        );
     });
     test("Place by ID request URL building optional parameters request", () => {
         expect(
@@ -28,7 +30,7 @@ describe("Place by ID request URL building functional tests", () => {
                 relatedPois: "off"
             }).toString()
         ).toStrictEqual(
-            "https://api-test.tomtom.com/search/2/place.json?key=testKey&language=es-ES&entityId=testEntity&mapcodes=Local&view=Unified&openingHours=nextSevenDays&timeZone=iana&relatedPois=off"
+            "https://api-test.tomtom.com/maps/orbis/places/place.json?key=testKey&language=es-ES&apiVersion=1&entityId=testEntity&mapcodes=Local&view=Unified&openingHours=nextSevenDays&timeZone=iana&relatedPois=off"
         );
     });
 });

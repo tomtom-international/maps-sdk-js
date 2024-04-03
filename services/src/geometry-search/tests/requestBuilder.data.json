@@ -14,7 +14,7 @@
       "query": "Electric Charging Station"
     },
     {
-      "url": "https://api.tomtom.com/search/2/geometrySearch/Electric%20Charging%20Station.json?key=GLOBAL_API_KEY",
+      "url": "https://api.tomtom.com/maps/orbis/places/geometrySearch/Electric%20Charging%20Station.json?apiVersion=1&key=GLOBAL_API_KEY",
       "data": {
         "geometryList": [
           {
@@ -55,7 +55,7 @@
       "timeZone": "iana"
     },
     {
-      "url": "https://api-test.tomtom.com/search/2/geometrySearch/24x7%20restaurant.json?key=GLOBAL_API_KEY_2&language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana",
+      "url": "https://api-test.tomtom.com/maps/orbis/places/geometrySearch/24x7%20restaurant.json?apiVersion=1&key=GLOBAL_API_KEY_2&language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana",
       "data": {
         "geometryList": [
           {
@@ -104,7 +104,7 @@
       ]
     },
     {
-      "url": "https://test.api.tomtom.com/search/2/geometrySearch/London.json?key=GLOBAL_API_KEY&limit=20&idxSet=Geo%2CStr&entityTypeSet=Municipality%2CMunicipalitySubdivision%2CNeighbourhood",
+      "url": "https://test.api.tomtom.com/maps/orbis/places/geometrySearch/London.json?apiVersion=1&key=GLOBAL_API_KEY&limit=20&idxSet=Geo%2CStr&entityTypeSet=Municipality%2CMunicipalitySubdivision%2CNeighbourhood",
       "data": {
         "geometryList": [
           {
@@ -165,7 +165,7 @@
       ]
     },
     {
-      "url": "https://test.api.tomtom.com/search/2/geometrySearch/EV%20charging%20points.json?key=GLOBAL_API_KEY&connectorSet=IEC62196Type2Outlet%2CStandardHouseholdCountrySpecific%2CIEC62196Type2CableAttached%2CIEC62196Type3%2CIEC62196Type2CCS%2CIEC60309AC1PhaseBlue%2CIEC60309AC3PhaseRed%2CIEC60309DCWhite%2CIEC62196Type1%2CIEC62196Type1CCS&minPowerKW=20&maxPowerKW=43.2",
+      "url": "https://test.api.tomtom.com/maps/orbis/places/geometrySearch/EV%20charging%20points.json?apiVersion=1&key=GLOBAL_API_KEY&connectorSet=IEC62196Type2Outlet%2CStandardHouseholdCountrySpecific%2CIEC62196Type2CableAttached%2CIEC62196Type3%2CIEC62196Type2CCS%2CIEC60309AC1PhaseBlue%2CIEC60309AC3PhaseRed%2CIEC60309DCWhite%2CIEC62196Type1%2CIEC62196Type1CCS&minPowerKW=20&maxPowerKW=43.2",
       "data": {
         "geometryList": [
           {
@@ -221,7 +221,7 @@
       "poiBrands": ["Circle K", "X Fuel", "Sia Fuel", "Easy Fuel"]
     },
     {
-      "url": "https://test.api.tomtom.com/search/2/geometrySearch/Fuel%20Station.json?key=GLOBAL_API_KEY&fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel",
+      "url": "https://test.api.tomtom.com/maps/orbis/places/geometrySearch/Fuel%20Station.json?apiVersion=1&key=GLOBAL_API_KEY&fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel",
       "data": {
         "geometryList": [
           {
@@ -470,7 +470,7 @@
           }
         ]
       },
-      "url": "https://api.tomtom.com/search/2/geometrySearch/university.json?key=GLOBAL_API_KEY"
+      "url": "https://api.tomtom.com/maps/orbis/places/geometrySearch/university.json?apiVersion=1&key=GLOBAL_API_KEY"
     }
   ]
 ]

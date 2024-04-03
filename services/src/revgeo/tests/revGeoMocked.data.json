@@ -65,7 +65,7 @@
     "Default reverse geocoding - Korea",
     {
       "position": [126.97367, 37.57435],
-      "customServiceBaseURL": "https://kr-api.tomtom.com/search/2/reverseGeocode/"
+      "customServiceBaseURL": "https://kr-api.tomtom.com/maps/orbis/places/reverseGeocode/"
     },
     {
       "summary": {

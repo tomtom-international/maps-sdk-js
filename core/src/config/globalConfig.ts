@@ -54,8 +54,7 @@ export type GlobalConfig = {
 
     /**
      * Common base domain URL for all services, unless overwritten by any of them.
-     * Must end with /.
-     * @default https://api.tomtom.com/
+     * @default https://api.tomtom.com
      */
     commonBaseURL: string;
 };

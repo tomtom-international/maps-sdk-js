@@ -5,9 +5,10 @@ import type { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
 import { arrayToCSV } from "../shared/arrays";
 import type { CommonServiceParams } from "../shared";
 import { appendCommonParams } from "../shared/requestBuildingUtils";
+import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}/search/2/reverseGeocode`;
+    params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/reverseGeocode`;
 
 /**
  * Default function for building a reverse geocoding request from {@link ReverseGeocodingParams}
@@ -18,6 +19,8 @@ export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}/${lngLat[1]},${lngLat[0]}.json`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
+    urlParams.append("apiVersion", "1");
+
     // rev-geo specific parameters:
     params.allowFreeformNewline && urlParams.append("allowFreeformNewline", String(params.allowFreeformNewline));
     params.geographyType && urlParams.append("entityType", arrayToCSV(params.geographyType));

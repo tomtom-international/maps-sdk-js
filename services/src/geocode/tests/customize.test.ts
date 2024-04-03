@@ -10,6 +10,6 @@ describe("Using customize obj", () => {
                     query: "amsterdam"
                 })
                 .toString()
-        ).toStrictEqual("https://api.tomtom.com/search/2/geocode/amsterdam.json?key=API_KEY");
+        ).toStrictEqual("https://api.tomtom.com/maps/orbis/places/geocode/amsterdam.json?key=API_KEY&apiVersion=1");
     });
 });

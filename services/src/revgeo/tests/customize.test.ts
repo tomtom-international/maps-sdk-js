@@ -10,6 +10,8 @@ describe("Using customize obj", () => {
                     position: [1.12345, 23.45678]
                 })
                 .toString()
-        ).toStrictEqual("https://test.tomtom.com/search/2/reverseGeocode/23.45678,1.12345.json?key=API_KEY");
+        ).toStrictEqual(
+            "https://test.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?key=API_KEY&apiVersion=1"
+        );
     });
 });

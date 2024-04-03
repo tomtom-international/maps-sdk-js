@@ -43,8 +43,8 @@ describe("Geocoding integration tests", () => {
                             countryCode: "NL",
                             country: "Nederland",
                             countryCodeISO3: "NLD",
-                            freeformAddress: "Teakhout, Zaanstad",
-                            localName: "Zaanstad"
+                            freeformAddress: "Teakhout, Zaandam",
+                            localName: "Zaandam"
                         }
                     }
                 },
@@ -101,7 +101,8 @@ describe("Geocoding integration tests", () => {
             } as Polygon,
             extendedPostalCodesFor: ["Addr", "Str", "Geo"],
             mapcodes: ["International"],
-            view: "MA",
+            // TODO: not supported yet in Orbis:
+            // view: "MA",
             geographyTypes: ["Municipality", "MunicipalitySubdivision"],
             language: "en-GB",
             radiusMeters: 1000000
@@ -130,8 +131,8 @@ describe("Geocoding integration tests", () => {
                     countryCode: "NL",
                     country: "Nederland",
                     countryCodeISO3: "NLD",
-                    freeformAddress: "Teakhout, Zaanstad",
-                    localName: "Zaanstad"
+                    freeformAddress: "Teakhout, Zaandam",
+                    localName: "Zaandam"
                 },
                 position: {
                     lat: expect.any(Number),

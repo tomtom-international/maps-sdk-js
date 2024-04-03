@@ -9,6 +9,11 @@ import {
 import type { GeometrySearchParams } from "../geometry-search";
 
 /**
+ * @ignore
+ */
+export const PLACES_URL_PATH = "/maps/orbis/places";
+
+/**
  * Appends request parameters common to search APIs such as fuzzy + geometry search.
  * * Mutates the given searchURL with the appended parameters.
  * @param searchURL The search URL to append parameters to. Should come without any parameters at this point.
@@ -16,7 +21,7 @@ import type { GeometrySearchParams } from "../geometry-search";
  */
 export const appendCommonSearchParams = (searchURL: URL, params: FuzzySearchParams | GeometrySearchParams): void => {
     const urlParams = searchURL.searchParams;
-
+    urlParams.append("apiVersion", "1");
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, "limit", params.limit);
     appendLatLonParamsFromPosition(urlParams, params.position);

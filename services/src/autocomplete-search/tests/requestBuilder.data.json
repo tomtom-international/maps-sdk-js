@@ -6,7 +6,7 @@
       "commonBaseURL": "https://api.tomtom.com",
       "query": "gas"
     },
-    "https://api.tomtom.com/search/2/autocomplete/gas.json?key=GLOBAL_API_KEY&language=en-GB"
+    "https://api.tomtom.com/maps/orbis/places/autocomplete/gas.json?key=GLOBAL_API_KEY&language=en-GB&apiVersion=1"
   ],
   [
     "Autocomplete search with required parameters & optional parameters",
@@ -17,7 +17,7 @@
       "language": "nl-NL",
       "limit": 5
     },
-    "https://api.tomtom.com/search/2/autocomplete/McDonald's.json?key=GLOBAL_API_KEY&language=nl-NL&limit=5"
+    "https://api.tomtom.com/maps/orbis/places/autocomplete/McDonald's.json?key=GLOBAL_API_KEY&language=nl-NL&apiVersion=1&limit=5"
   ],
   [
     "Autocomplete search with specific result type and countries",
@@ -28,6 +28,6 @@
       "resultType": ["brand"],
       "countries": ["NL", "BE"]
     },
-    "https://api.tomtom.com/search/2/autocomplete/Starbucks.json?key=GLOBAL_API_KEY&language=en-GB&countrySet=NL%2CBE&resultSet=brand"
+    "https://api.tomtom.com/maps/orbis/places/autocomplete/Starbucks.json?key=GLOBAL_API_KEY&language=en-GB&apiVersion=1&countrySet=NL%2CBE&resultSet=brand"
   ]
 ]

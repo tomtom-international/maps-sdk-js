@@ -9,7 +9,9 @@ describe("Geometry data request URL building functional tests", () => {
                 apiKey: "TEST_API_KEY",
                 geometries: ["GEOMETRY_ID"]
             }).toString()
-        ).toStrictEqual("https://api.tomtom.com/search/2/additionalData.json?key=TEST_API_KEY&geometries=GEOMETRY_ID");
+        ).toStrictEqual(
+            "https://api.tomtom.com/maps/orbis/places/additionalData.json?key=TEST_API_KEY&apiVersion=1&geometries=GEOMETRY_ID"
+        );
 
         expect(
             buildGeometryDataRequest({
@@ -18,7 +20,7 @@ describe("Geometry data request URL building functional tests", () => {
                 geometries: ["GEOMETRY_ID_0", "GEOMETRY_ID_1"]
             }).toString()
         ).toStrictEqual(
-            "https://api.tomtom.com/search/2/additionalData.json?key=TEST_API_KEY&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1"
+            "https://api.tomtom.com/maps/orbis/places/additionalData.json?key=TEST_API_KEY&apiVersion=1&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1"
         );
 
         expect(
@@ -29,7 +31,7 @@ describe("Geometry data request URL building functional tests", () => {
                 zoom: 12
             }).toString()
         ).toStrictEqual(
-            "https://api.tomtom.com/search/2/additionalData.json?key=TEST_API_KEY&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1&geometriesZoom=12"
+            "https://api.tomtom.com/maps/orbis/places/additionalData.json?key=TEST_API_KEY&apiVersion=1&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1&geometriesZoom=12"
         );
 
         const testPlaces: Places = {
@@ -76,7 +78,7 @@ describe("Geometry data request URL building functional tests", () => {
                 zoom: 12
             }).toString()
         ).toStrictEqual(
-            "https://api.tomtom.com/search/2/additionalData.json?key=TEST_API_KEY&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
+            "https://api.tomtom.com/maps/orbis/places/additionalData.json?key=TEST_API_KEY&apiVersion=1&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
         );
         expect(
             buildGeometryDataRequest({
@@ -86,7 +88,7 @@ describe("Geometry data request URL building functional tests", () => {
                 zoom: 12
             }).toString()
         ).toStrictEqual(
-            "https://api.tomtom.com/search/2/additionalData.json?key=TEST_API_KEY&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
+            "https://api.tomtom.com/maps/orbis/places/additionalData.json?key=TEST_API_KEY&apiVersion=1&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
         );
 
         // Adding place without geometry ID:
@@ -98,7 +100,7 @@ describe("Geometry data request URL building functional tests", () => {
                 zoom: 12
             }).toString()
         ).toStrictEqual(
-            "https://api.tomtom.com/search/2/additionalData.json?key=TEST_API_KEY&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
+            "https://api.tomtom.com/maps/orbis/places/additionalData.json?key=TEST_API_KEY&apiVersion=1&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
         );
 
         // Adding place without geometry ID:
@@ -110,7 +112,7 @@ describe("Geometry data request URL building functional tests", () => {
                 zoom: 12
             }).toString()
         ).toStrictEqual(
-            "https://api.tomtom.com/search/2/additionalData.json?key=TEST_API_KEY&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
+            "https://api.tomtom.com/maps/orbis/places/additionalData.json?key=TEST_API_KEY&apiVersion=1&geometries=GEOMETRY_ID_0%2CGEOMETRY_ID_1%2CGEOMETRY_ID_2&geometriesZoom=12"
         );
     });
 });

@@ -31,8 +31,7 @@ describe("Fuzzy Search service", () => {
     });
 
     test("basic fuzzy search call", async () => {
-        const query = "home";
-        const res = await search({ query });
+        const res = await search({ query: "pizza" });
         expect(res).toEqual(expectWorkingResult);
     });
 

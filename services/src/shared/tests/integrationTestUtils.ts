@@ -55,7 +55,7 @@ export const evStationWithOpeningHoursTestProps: SearchPlaceProps = {
     ...evStationBaseTestProps,
     poi: expect.objectContaining({
         ...basePOIObjTestProps,
-        openingHours: openingHoursTestProps
+        openingHours: expect.objectContaining(openingHoursTestProps)
     })
 };
 

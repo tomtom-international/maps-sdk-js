@@ -4,9 +4,10 @@ import isNil from "lodash/isNil";
 import type { GeocodingParams } from "./types/geocodingParams";
 import { arrayToCSV } from "../shared/arrays";
 import { appendCommonParams, appendLatLonParamsFromPosition } from "../shared/requestBuildingUtils";
+import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
 
 const buildURLBasePath = (params: GeocodingParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}/search/2/geocode`;
+    params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/geocode`;
 
 /**
  * Default method for building geocoding request from {@link GeocodingParams}
@@ -16,6 +17,7 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}/${params.query}.json`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
+    urlParams.append("apiVersion", "1");
     // geocoding specific parameters:
     params.typeahead && urlParams.append("typeahead", String(params.typeahead));
     !isNil(params.limit) && urlParams.append("limit", String(params.limit));

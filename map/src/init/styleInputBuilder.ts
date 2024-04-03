@@ -42,18 +42,21 @@ const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, 
         hillshade: "hillshade_satellite"
     }
 };
-const publishedStyleURLTemplates: Record<PublishedStyleID, string> = {
-    standardLight: URL_PREFIX + "&map=basic_street-light",
-    standardDark: URL_PREFIX + "&map=basic_street-dark",
-    drivingLight: URL_PREFIX + "&map=basic_street-light-driving",
-    drivingDark: URL_PREFIX + "&map=basic_street-dark-driving",
-    monoLight: URL_PREFIX + "&map=basic_mono-light",
-    monoDark: URL_PREFIX + "&map=basic_mono-dark",
-    satellite: URL_PREFIX + "&map=basic_street-satellite"
+
+const baseMapStyleURLTemplate = (suffix: string): string => `${URL_PREFIX}&map=${suffix}`;
+
+const baseMapStyleURLTemplates: Record<PublishedStyleID, string> = {
+    standardLight: baseMapStyleURLTemplate("basic_street-light"),
+    standardDark: baseMapStyleURLTemplate("basic_street-dark"),
+    drivingLight: baseMapStyleURLTemplate("basic_street-light-driving"),
+    drivingDark: baseMapStyleURLTemplate("basic_street-dark-driving"),
+    monoLight: baseMapStyleURLTemplate("basic_mono-light"),
+    monoDark: baseMapStyleURLTemplate("basic_mono-dark"),
+    satellite: baseMapStyleURLTemplate("basic_street-satellite")
 };
 
-const buildPublishedStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
-    publishedStyleURLTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
+const buildBaseMapStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
+    baseMapStyleURLTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
         .replace("${baseURL}", baseURL)
         .replace("${version}", publishedStyle.version || "0.*")
         .replace("${apiKey}", apiKey);
@@ -72,7 +75,6 @@ const withAPIKey = (givenURL: string, apiKey: string): string => {
 };
 
 /**
- * @ignore
  * @param url The SDK parameters to convert to input renderer style.
  * @param publishedStyle style with included style modules to show in the style url.
  * @return The map style to load into the renderer.
@@ -105,16 +107,16 @@ export const buildStyleInput = (mapParams: TomTomMapParams): StyleSpecification 
     const apiKey = mapParams.apiKey;
 
     if (typeof style === "string") {
-        mapStyleUrl = buildPublishedStyleURL({ id: style }, baseURL, apiKey);
+        mapStyleUrl = buildBaseMapStyleURL({ id: style }, baseURL, apiKey);
     } else if (style?.type === "published") {
-        mapStyleUrl = buildPublishedStyleURL(style, baseURL, apiKey);
+        mapStyleUrl = buildBaseMapStyleURL(style, baseURL, apiKey);
         isIncludeEmpty = isEmpty(style.include);
     } else if (style?.type === "custom" && style?.url) {
         mapStyleUrl = withAPIKey(style.url, apiKey);
     } else if (style?.type === "custom" && style?.json) {
         mapStyleUrl = style.json;
     } else {
-        mapStyleUrl = buildPublishedStyleURL({ id: DEFAULT_PUBLISHED_STYLE }, baseURL, apiKey);
+        mapStyleUrl = buildBaseMapStyleURL({ id: DEFAULT_PUBLISHED_STYLE }, baseURL, apiKey);
     }
 
     return isIncludeEmpty ? mapStyleUrl : includeModulesOptions(mapStyleUrl as string, style as PublishedStyle);

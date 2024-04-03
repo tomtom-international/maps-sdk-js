@@ -5,10 +5,11 @@ import {
     appendLatLonParamsFromPosition,
     appendOptionalParam
 } from "../shared/requestBuildingUtils";
+import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
 
 const buildURLBasePath = (mergedOptions: AutocompleteSearchParams): string =>
     mergedOptions.customServiceBaseURL ||
-    `${mergedOptions.commonBaseURL}/search/2/autocomplete/${mergedOptions.query}.json`;
+    `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/autocomplete/${mergedOptions.query}.json`;
 
 /**
  * Default function for building autocomplete request from {@link AutocompleteSearchParams}
@@ -23,6 +24,7 @@ export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams)
      */
     params.language = params.language || "en-GB";
     appendCommonParams(urlParams, params);
+    urlParams.append("apiVersion", "1");
     appendOptionalParam(urlParams, "limit", params.limit);
     appendLatLonParamsFromPosition(urlParams, params.position);
     appendByJoiningParamValue(urlParams, "countrySet", params.countries);

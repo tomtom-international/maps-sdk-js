@@ -2,9 +2,10 @@ import type { Place, Places } from "@anw/maps-sdk-js/core";
 import type { GeometriesInput, GeometryParams } from "./types/geometryDataParams";
 import { appendOptionalParam } from "../shared/requestBuildingUtils";
 import { arrayToCSV } from "../shared/arrays";
+import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
 
 const buildURLBasePath = (params: GeometryParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}/search/2/additionalData.json`;
+    params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/additionalData.json`;
 
 const getGeometryIDs = (placesArray: Place[]): string[] =>
     placesArray.map((place) => place.properties.dataSources?.geometry?.id as string).filter((id) => id);
@@ -37,6 +38,7 @@ export const buildGeometryDataRequest = (params: GeometryParams): URL => {
     const urlParams = url.searchParams;
     // (no language in this service)
     urlParams.append("key", params.apiKey as string);
+    urlParams.append("apiVersion", "1");
     appendGeometries(urlParams, params.geometries);
     appendOptionalParam(urlParams, "geometriesZoom", params.zoom);
     return url;

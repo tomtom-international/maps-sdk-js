@@ -33,7 +33,7 @@ describe("Using customize obj", () => {
         ).toStrictEqual(
             JSON.parse(
                 JSON.stringify({
-                    url: "https://api.tomtom.com/search/2/geometrySearch/Electric%20Charging%20Station.json?key=API_KEY",
+                    url: "https://api.tomtom.com/maps/orbis/places/geometrySearch/Electric%20Charging%20Station.json?apiVersion=1&key=API_KEY",
                     data: {
                         geometryList: [
                             {
