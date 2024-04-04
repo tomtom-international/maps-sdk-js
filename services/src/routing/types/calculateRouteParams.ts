@@ -49,6 +49,12 @@ export type ExtendedRouteRepresentation = "distance" | "travelTime";
  */
 export type ComputeTravelTimeFor = "none" | "all";
 
+/**
+ * Allowed max number of route alternatives.
+ * @default 0
+ */
+export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
+
 export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> &
     CommonRoutingParams & {
         /**
@@ -107,7 +113,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * alternatives is larger than the service can calculate.
          * @default 0
          */
-        maxAlternatives?: 0 | 1 | 2 | 3 | 4 | 5;
+        maxAlternatives?: MaxNumberOfAlternatives;
 
         /**
          * Specifies which of the section types is reported in the route response.
