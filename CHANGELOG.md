@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.16](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.15...v0.6.16) (2024-04-04)
+
+
+### Features
+
+* **EDXCE-118:** switching places services to Orbis ([122f3b4](https://github.com/tomtom-international/maps-sdk-js/commit/122f3b4ab1bad28fdf5c8e57f37f36d7e5f6131a))
+
 ### [0.6.15](https://github.com/tomtom-international/maps-sdk-js/compare/v0.6.14...v0.6.15) (2024-04-02)
 
 
