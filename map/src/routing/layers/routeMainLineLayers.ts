@@ -1,4 +1,4 @@
-import type { ExpressionSpecification, LineLayerSpecification } from "maplibre-gl";
+import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import type { LayerSpecTemplate } from "../../shared";
 import {
     DESELECTED_FOREGROUND_COLOR,
@@ -69,6 +69,19 @@ export const routeMainLine: LayerSpecTemplate<LineLayerSpecification> = {
     paint: {
         "line-color": FOREGROUND_COLOR,
         "line-width": FOREGROUND_LINE_WIDTH
+    }
+};
+
+/**
+ * @ignore
+ */
+export const routeLineArrows: LayerSpecTemplate<SymbolLayerSpecification> = {
+    type: "symbol",
+    layout: {
+        "symbol-placement": "line",
+        "icon-image": "arrow",
+        // The current arrow icon seems to point backwards otherwise. Check with caution!
+        "icon-rotate": 180
     }
 };
 

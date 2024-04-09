@@ -88,7 +88,7 @@ const amsterdamToRotterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterda
 const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJSON));
 
 const NUM_WAYPOINT_LAYERS = 2;
-const NUM_ROUTE_LAYERS = 4;
+const NUM_ROUTE_LAYERS = 5;
 const NUM_VEHICLE_RESTRICTED_LAYERS = 2;
 const NUM_INCIDENT_LAYERS = 4;
 const NUM_FERRY_LAYERS = 2;

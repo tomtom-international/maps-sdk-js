@@ -12,6 +12,7 @@ import {
     ROUTE_INSTRUCTIONS_ARROW_LAYER_ID,
     ROUTE_INSTRUCTIONS_LINE_LAYER_ID,
     ROUTE_INSTRUCTIONS_OUTLINE_LAYER_ID,
+    ROUTE_LINE_ARROWS_LAYER_ID,
     ROUTE_LINE_LAYER_ID,
     ROUTE_OUTLINE_LAYER_ID,
     ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID,
@@ -23,7 +24,13 @@ import {
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID
 } from "../../shared";
-import { routeDeselectedLine, routeDeselectedOutline, routeMainLine, routeOutline } from "./routeMainLineLayers";
+import {
+    routeDeselectedLine,
+    routeDeselectedOutline,
+    routeLineArrows,
+    routeMainLine,
+    routeOutline
+} from "./routeMainLineLayers";
 import { waypointLabels, waypointSymbols } from "./waypointLayers";
 import {
     routeIncidentsBGLine,
@@ -57,7 +64,8 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 beforeID: mapStyleLayerIDs.lowestLabel
             },
             { id: ROUTE_OUTLINE_LAYER_ID, layerSpec: routeOutline, beforeID: mapStyleLayerIDs.lowestLabel },
-            { id: ROUTE_LINE_LAYER_ID, layerSpec: routeMainLine, beforeID: mapStyleLayerIDs.lowestLabel }
+            { id: ROUTE_LINE_LAYER_ID, layerSpec: routeMainLine, beforeID: mapStyleLayerIDs.lowestLabel },
+            { id: ROUTE_LINE_ARROWS_LAYER_ID, layerSpec: routeLineArrows, beforeID: mapStyleLayerIDs.lowestLabel }
         ]
     },
     waypoints: {
@@ -105,7 +113,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_FERRIES_LINE_LAYER_ID,
                     layerSpec: routeFerriesLine,
-                    beforeID: ROUTE_INCIDENTS_BACKGROUND_LAYER_ID
+                    beforeID: ROUTE_LINE_ARROWS_LAYER_ID
                 },
                 {
                     id: ROUTE_FERRIES_SYMBOL_LAYER_ID,
@@ -133,7 +141,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_TUNNELS_LINE_LAYER_ID,
                     layerSpec: routeTunnelsLine,
-                    beforeID: mapStyleLayerIDs.lowestLabel
+                    beforeID: ROUTE_LINE_ARROWS_LAYER_ID
                 }
             ]
         },
@@ -142,7 +150,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_VEHICLE_RESTRICTED_BACKGROUND_LAYER_ID,
                     layerSpec: routeVehicleRestrictedBackgroundLine,
-                    beforeID: mapStyleLayerIDs.lowestLabel
+                    beforeID: ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID
                 },
                 {
                     id: ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID,

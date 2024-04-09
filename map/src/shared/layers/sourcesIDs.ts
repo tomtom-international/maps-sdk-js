@@ -58,6 +58,10 @@ export const ROUTE_OUTLINE_LAYER_ID = "routesOutline";
  */
 export const ROUTE_LINE_LAYER_ID = "routesLine";
 /**
+ * Little arrows on the route lines to help indicate their direction.
+ */
+export const ROUTE_LINE_ARROWS_LAYER_ID = "routeLineArrows";
+/**
  * Route deselected outline layer id
  */
 export const ROUTE_DESELECTED_OUTLINE_LAYER_ID = "routesDeselectedOutline";

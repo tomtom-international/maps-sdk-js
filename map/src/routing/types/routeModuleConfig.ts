@@ -13,7 +13,7 @@ export type RouteLayersConfig = {
     /**
      * Main route line layers.
      */
-    mainLines?: LayersSpecWithOrder<LineLayerSpecification>;
+    mainLines?: LayersSpecWithOrder<LineLayerSpecification | SymbolLayerSpecification>;
 
     /**
      * Waypoint layers.

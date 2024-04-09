@@ -1,6 +1,6 @@
 import type { LineLayerSpecification } from "maplibre-gl";
 import type { LayerSpecTemplate } from "../../shared";
-import { FOREGROUND_COLOR, FOREGROUND_LINE_WIDTH, SELECTED_ROUTE_FILTER } from "./shared";
+import { FOREGROUND_COLOR, FOREGROUND_LINE_WIDTH, OUTLINE_COLOR, SELECTED_ROUTE_FILTER } from "./shared";
 
 /**
  * @ignore
@@ -12,7 +12,7 @@ export const routeVehicleRestrictedBackgroundLine: LayerSpecTemplate<LineLayerSp
         "line-join": "round"
     },
     paint: {
-        "line-color": "#12537D",
+        "line-color": OUTLINE_COLOR,
         "line-width": FOREGROUND_LINE_WIDTH
     }
 };
@@ -24,7 +24,8 @@ export const routeVehicleRestrictedDottedLine: LayerSpecTemplate<LineLayerSpecif
     filter: SELECTED_ROUTE_FILTER,
     type: "line",
     layout: {
-        "line-join": "round"
+        "line-join": "round",
+        "line-cap": "round"
     },
     paint: {
         "line-color": FOREGROUND_COLOR,
