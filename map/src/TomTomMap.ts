@@ -1,4 +1,4 @@
-import mapLibreExported, { Map } from "maplibre-gl";
+import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from "maplibre-gl";
 import type { BBox } from "geojson";
 import type { Language } from "@anw/maps-sdk-js/core";
 import { mergeFromGlobal } from "@anw/maps-sdk-js/core";
@@ -50,11 +50,15 @@ export class TomTomMap {
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.params));
         this.mapLibreMap.once("styledata", () => this.handleStyleData(false));
         this._eventsProxy = new EventsProxy(this.mapLibreMap, this.params?.events);
-        if (!["deferred", "loaded"].includes(mapLibreExported.getRTLTextPluginStatus())) {
-            mapLibreExported
-                .setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js", true)
-                .catch((error) => console.error("Something went wrong when setting RTL plugin", error));
-        }
+        // deferred (just in case), lazy loading of the RTL plugin:
+        setTimeout(() => {
+            if (!["deferred", "loaded"].includes(getRTLTextPluginStatus())) {
+                setRTLTextPlugin(
+                    "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
+                    true
+                ).catch((error) => console.error("Something went wrong when setting RTL plugin", error));
+            }
+        });
     }
 
     /**
