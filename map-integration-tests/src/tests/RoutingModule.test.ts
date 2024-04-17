@@ -78,7 +78,7 @@ const clearWaypoints = async () => page.evaluate(() => (globalThis as MapsSDKThi
 const waitForRenderedWaypoints = async (numWaypoint: number) =>
     waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
 
-const getSelectedSummaryBubbleProps = async (): Promise<any | undefined> => {
+const getSelectedSummaryBubbleProps = async (): Promise<any> => {
     const renderedBubbles = await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID]);
     return renderedBubbles.find((f) => f.properties?.routeStyle == "selected")?.properties;
 };
@@ -122,7 +122,7 @@ describe("Routing tests", () => {
         await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
         await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        expect((await queryRenderedFeatures([ROUTE_LINE_LAYER_ID])).length).toBeGreaterThanOrEqual(1);
         expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
 
         // clearing routes, but keeping waypoints:
@@ -320,7 +320,7 @@ describe("Routing tests", () => {
             { style: { type: "published", id: "drivingLight", include: ["trafficIncidents"] } }
         );
         // We start zoomed far, asserting that some features won't be rendered:
-        await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(5));
+        await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(3));
 
         await initRouting();
 
@@ -353,13 +353,14 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_EV_CHARGING_STATIONS_SOURCE_ID)).toBe(1);
 
         await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 2, 5000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
+        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 1, 2000);
         // Instructions are filtered at this zoom level
         await waitUntilRenderedFeatures([ROUTE_INSTRUCTIONS_LINE_LAYER_ID, ROUTE_INSTRUCTIONS_ARROW_LAYER_ID], 0, 2000);
         // EV stops are filtered at this zoom level
         await waitUntilRenderedFeatures([ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID], 0, 2000);
-        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(0);
+        // Summary bubbles also won't appear here:
+        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBe(0);
 
         // we zoom a bit closer to see EV charging stops and some incidents:
         await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(6));
@@ -375,6 +376,9 @@ describe("Routing tests", () => {
             2000
         );
         expect(renderedEVStops.length).toBeGreaterThan(2);
+
+        // Summary bubbles should now appear:
+        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(0);
 
         // we now zoom in very close around the route start to spot some instructions:
         await page.evaluate(() =>

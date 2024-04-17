@@ -9,7 +9,7 @@ import { MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
 export const routeEVChargingStationSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,
     type: "symbol",
-    minzoom: 6,
+    minzoom: 4,
     paint: {
         "text-color": "black",
         "text-halo-width": 1.5,
