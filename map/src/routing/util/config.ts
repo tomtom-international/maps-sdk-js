@@ -1,3 +1,4 @@
+import { TomTomConfig } from "@anw/maps-sdk-js/core";
 import type { LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
 import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from "../types/routeModuleConfig";
 import { defaultRouteLayersConfig } from "../layers/defaultConfig";
@@ -32,9 +33,12 @@ export const withDefaults = (config: RoutingModuleConfig | undefined): RoutingMo
     const layers = config?.routeLayers;
     const sections = layers?.sections;
     const defaultSections = defaultRouteLayersConfig.sections;
+    const globalDisplayUnits = TomTomConfig.instance.get().displayUnits;
+    const displayUnits = config?.displayUnits;
     return {
         ...(config ? config : {}),
-        distanceUnits: config?.distanceUnits ?? "metric",
+        // Global display units are first applied, and can then be overridden by the local configuration:
+        ...((globalDisplayUnits || displayUnits) && { ...globalDisplayUnits, ...displayUnits }),
         routeLayers: {
             mainLines: layers?.mainLines ?? defaultRouteLayersConfig.mainLines,
             waypoints: layers?.waypoints ?? defaultRouteLayersConfig.waypoints,

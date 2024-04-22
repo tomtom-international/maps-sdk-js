@@ -27,7 +27,7 @@
         }
       ]
     },
-    "metric",
+    {},
     {
       "type": "FeatureCollection",
       "features": [
@@ -85,7 +85,7 @@
         }
       ]
     },
-    "imperial_uk",
+    { "distance": { "type": "imperial_uk" } },
     {
       "type": "FeatureCollection",
       "features": [
@@ -147,7 +147,7 @@
         }
       ]
     },
-    "imperial_us",
+    { "distance": { "type": "imperial_us" }, "time": { "minutes": "MINUTES" } },
     {
       "type": "FeatureCollection",
       "features": [
@@ -161,9 +161,9 @@
             "routeIndex": 0,
             "routeStyle": "selected",
             "formattedDistance": "½ mi",
-            "formattedDuration": "5 min",
+            "formattedDuration": "5 MINUTES",
             "magnitudeOfDelay": "major",
-            "formattedTraffic": "10 min"
+            "formattedTraffic": "10 MINUTES"
           }
         }
       ]
@@ -230,7 +230,10 @@
         }
       ]
     },
-    "metric",
+    {
+      "distance": { "kilometers": "kilometros" },
+      "time": { "minutes": "MIN", "hours": "IGNORED" }
+    },
     {
       "type": "FeatureCollection",
       "features": [
@@ -243,8 +246,8 @@
           "properties": {
             "routeIndex": 0,
             "routeStyle": "selected",
-            "formattedDistance": "2.5 km",
-            "formattedDuration": "7 min"
+            "formattedDistance": "2.5 kilometros",
+            "formattedDuration": "7 MIN"
           }
         },
         {
@@ -256,10 +259,10 @@
           "properties": {
             "routeIndex": 0,
             "routeStyle": "selected",
-            "formattedDistance": "1 km",
-            "formattedDuration": "5 min",
+            "formattedDistance": "1 kilometros",
+            "formattedDuration": "5 MIN",
             "magnitudeOfDelay": "minor",
-            "formattedTraffic": "13 min"
+            "formattedTraffic": "13 MIN"
           }
         }
       ]

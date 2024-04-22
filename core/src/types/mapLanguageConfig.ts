@@ -6,8 +6,8 @@ const Languages = [
     "ngt-Latn", // Latin script will be used if available.
     "ar", // Arabic
     "bg-BG", // Bulgarian,
-    "zh-TW", // Chinese (Taiwan)
-    "zh-CN", // Chinese (Simplified)
+    "zh-Hant", // Chinese (Taiwan)
+    "zh-Hans", // Chinese (Simplified)
     "cs-CZ", // Czech
     "da-DK", // Danish
     "nl-NL", // Dutch

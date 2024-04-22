@@ -1,4 +1,4 @@
-import type { DelayMagnitude, DistanceUnitsType, Route, Routes, TrafficSectionProps } from "@anw/maps-sdk-js/core";
+import type { DelayMagnitude, DisplayUnits, Route, Routes, TrafficSectionProps } from "@anw/maps-sdk-js/core";
 import { formatDistance, formatDuration } from "@anw/maps-sdk-js/core";
 import type { DisplayRouteProps, DisplayRouteSummaries } from "../types/displayRoutes";
 
@@ -43,13 +43,13 @@ const summaryDelayMagnitude = (route: Route): DelayMagnitude | undefined => {
  */
 export const buildDisplayRouteSummaries = (
     routes: Routes<DisplayRouteProps>,
-    distanceUnits: DistanceUnitsType
+    displayUnits?: DisplayUnits
 ): DisplayRouteSummaries => ({
     type: "FeatureCollection",
     features: routes.features.map((route) => {
         const summary = route.properties.summary;
         const routeCoordinates = route.geometry.coordinates;
-        const formattedTraffic = formatDuration(summary.trafficDelayInSeconds);
+        const formattedTraffic = formatDuration(summary.trafficDelayInSeconds, displayUnits?.time);
         const magnitudeOfDelay = summaryDelayMagnitude(route);
         return {
             type: "Feature",
@@ -60,8 +60,8 @@ export const buildDisplayRouteSummaries = (
             properties: {
                 routeIndex: route.properties.index,
                 routeStyle: route.properties.routeStyle,
-                formattedDistance: formatDistance(summary.lengthInMeters, distanceUnits),
-                formattedDuration: formatDuration(summary.travelTimeInSeconds),
+                formattedDistance: formatDistance(summary.lengthInMeters, displayUnits?.distance),
+                formattedDuration: formatDuration(summary.travelTimeInSeconds, displayUnits?.time),
                 ...(magnitudeOfDelay && { magnitudeOfDelay }),
                 ...(formattedTraffic && { formattedTraffic })
             }

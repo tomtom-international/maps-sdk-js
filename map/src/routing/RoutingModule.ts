@@ -59,6 +59,7 @@ import {
     TRAFFIC_MODERATE_IMAGE_ID
 } from "./layers/summaryBubbleLayers";
 import type { WaypointDisplayProps } from "./types/waypointDisplayProps";
+import isEqual from "lodash/isEqual";
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.
@@ -208,11 +209,11 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         // Summary bubbles have dedicated sources and contain distance-units dependent text ...
         // ... so we need to re-show them if that config part changed:
         if (
-            this.config?.distanceUnits != mergedConfig.distanceUnits &&
+            !isEqual(this.config?.displayUnits, mergedConfig.displayUnits) &&
             this.sourcesWithLayers.summaryBubbles.shownFeatures.features.length
         ) {
             this.sourcesWithLayers.summaryBubbles.show(
-                buildDisplayRouteSummaries(this.sourcesWithLayers.mainLines.shownFeatures, mergedConfig.distanceUnits!)
+                buildDisplayRouteSummaries(this.sourcesWithLayers.mainLines.shownFeatures, mergedConfig.displayUnits)
             );
         }
 
@@ -265,7 +266,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
         this.sourcesWithLayers.summaryBubbles.show(
-            buildDisplayRouteSummaries(displayRoutes, this.config!.distanceUnits!)
+            buildDisplayRouteSummaries(displayRoutes, this.config?.displayUnits)
         );
     }
 

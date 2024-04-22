@@ -37,6 +37,7 @@ import {
     getNumVisibleLayersBySource,
     getPaintProperty,
     initHillshade,
+    putGlobalConfig,
     queryRenderedFeatures,
     setStyle,
     waitForMapIdle,
@@ -360,7 +361,7 @@ describe("Routing tests", () => {
         // EV stops are filtered at this zoom level
         await waitUntilRenderedFeatures([ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID], 0, 2000);
         // Summary bubbles also won't appear here:
-        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBe(0);
+        expect(await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).toHaveLength(0);
 
         // we zoom a bit closer to see EV charging stops and some incidents:
         await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(6));
@@ -500,20 +501,42 @@ describe("Routing tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Distance units configuration", async () => {
+    test("Distance and time units configuration", async () => {
         await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: amsterdamToRotterdamRoutes.bbox });
-        await initRouting({ distanceUnits: "imperial_us" });
+        await putGlobalConfig({ displayUnits: { time: { hours: "GLOBAL_HOURS", minutes: "GLOBAL_MINUTES" } } });
+
+        // routing hours override global config:
+        await initRouting({ displayUnits: { distance: { type: "imperial_us" }, time: { hours: "hours" } } });
         await showRoutes(amsterdamToRotterdamRoutes);
         await waitForMapIdle();
-        expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "48 mi" });
+        expect(await getSelectedSummaryBubbleProps()).toMatchObject({
+            formattedDistance: "48 mi",
+            formattedDuration: "1 hours 04 GLOBAL_MINUTES",
+            formattedTraffic: "3 GLOBAL_MINUTES"
+        });
 
-        await applyConfig({ distanceUnits: "metric" });
+        // We apply distance-only config, which means time config sticks back to global:
+        await applyConfig({ displayUnits: { distance: { type: "metric", kilometers: "kilometers" } } });
         await waitForMapIdle();
-        expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "77 km" });
+        expect(await getSelectedSummaryBubbleProps()).toMatchObject({
+            formattedDistance: "77 kilometers",
+            formattedDuration: "1 GLOBAL_HOURS 04 GLOBAL_MINUTES",
+            formattedTraffic: "3 GLOBAL_MINUTES"
+        });
 
-        await applyConfig({ distanceUnits: "imperial_uk" });
+        // We apply both some distance and time configs:
+        await applyConfig({
+            displayUnits: {
+                distance: { type: "imperial_uk", miles: "miles", kilometers: "IGNORED" },
+                time: { hours: "HR", minutes: "MIN" }
+            }
+        });
         await waitForMapIdle();
-        expect(await getSelectedSummaryBubbleProps()).toMatchObject({ formattedDistance: "48 mi" });
+        expect(await getSelectedSummaryBubbleProps()).toMatchObject({
+            formattedDistance: "48 miles",
+            formattedDuration: "1 HR 04 MIN",
+            formattedTraffic: "3 MIN"
+        });
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

@@ -1,4 +1,4 @@
-import type { DistanceUnitsType, Routes } from "@anw/maps-sdk-js/core";
+import type { DisplayUnits, Routes } from "@anw/maps-sdk-js/core";
 import { buildDisplayRoutes, buildDisplayRouteSummaries } from "../routes";
 import displayRouteSummariesData from "./data/displayRouteSummaries.data.json";
 import type { DisplayRouteProps, DisplayRouteSummaries } from "../../types/displayRoutes";
@@ -19,8 +19,8 @@ describe("Tests to test building display routes", () => {
         (
             _name: string,
             displayRoutes: Routes<DisplayRouteProps>,
-            unitsType: DistanceUnitsType,
+            displayUnits: DisplayUnits,
             expectedSummaries: DisplayRouteSummaries
-        ) => expect(buildDisplayRouteSummaries(displayRoutes, unitsType)).toEqual(expectedSummaries)
+        ) => expect(buildDisplayRouteSummaries(displayRoutes, displayUnits)).toEqual(expectedSummaries)
     );
 });

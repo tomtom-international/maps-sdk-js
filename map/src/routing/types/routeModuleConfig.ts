@@ -1,6 +1,6 @@
 import type { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
 import type { GeoJSONSourceWithLayers, LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
-import type { DistanceUnitsType, Routes, Waypoints } from "@anw/maps-sdk-js/core";
+import type { DisplayUnits, Routes, Waypoints } from "@anw/maps-sdk-js/core";
 import type { DisplayRouteProps, DisplayRouteSummaries } from "./displayRoutes";
 import type { DisplayTrafficSectionProps, RouteSections } from "./routeSections";
 import type { DisplayInstructionArrows, DisplayInstructions } from "./guidance";
@@ -69,10 +69,11 @@ export type RouteLayersConfig = {
  */
 export type RoutingModuleConfig = {
     /**
-     * Units type to format distances where applicable.
+     * Custom units to format distances where applicable.
+     * * Overrides the global configuration ones.
      * @default "metric"
      */
-    distanceUnits?: DistanceUnitsType;
+    displayUnits?: DisplayUnits;
     /**
      * Overrides default layers configuration with the one supplied here.
      */

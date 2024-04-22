@@ -1,4 +1,67 @@
 import type { Language } from "../types";
+import type { DistanceUnitsType } from "../util";
+
+/**
+ * Configuration to display distance-based units, such as meters, kilometers, miles, feet, and yards.
+ */
+export type DistanceDisplayUnits = {
+    /**
+     * Type of distance units.
+     */
+    type?: DistanceUnitsType;
+    /**
+     * Text to display kilometer units.
+     * @default "km"
+     */
+    kilometers?: string;
+    /**
+     * Text to display kilometer units.
+     * @default "m"
+     */
+    meters?: string;
+    /**
+     * Text to display mile units.
+     * @default "mi"
+     */
+    miles?: string;
+    /**
+     * Text to display feet units.
+     * @default "ft"
+     */
+    feet?: string;
+    /**
+     * Text to display yard units.
+     * @default "yd"
+     */
+    yards?: string;
+};
+
+export type TimeDisplayUnits = {
+    /**
+     * Text to display hour units.
+     * @default "h"
+     */
+    hours?: string;
+    /**
+     * Text to display minute units.
+     * @default "min"
+     */
+    minutes?: string;
+};
+
+/**
+ * Optional display units for time and distance.
+ */
+export type DisplayUnits = {
+    /**
+     * Optional display units for distance.
+     */
+    distance?: DistanceDisplayUnits;
+    /**
+     * Optional display units for time.
+     */
+    time?: TimeDisplayUnits;
+};
 
 /**
  * Global configuration containing basic parameters.
@@ -57,6 +120,13 @@ export type GlobalConfig = {
      * @default https://api.tomtom.com
      */
     commonBaseURL: string;
+
+    /**
+     * Optional display units for time and distance.
+     * * These are applied to the formatDistance and formatDuration utils, which are callable directly and also used to display map information.
+     * * If not provided, the default values will be used.
+     */
+    displayUnits?: DisplayUnits;
 };
 
 /**
