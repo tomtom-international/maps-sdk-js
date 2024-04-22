@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.6...v0.7.7) (2024-04-22)
+
+
+### Features
+
+* **units:** enabling new global and local configurations for distance and time display units ([5dc489c](https://github.com/tomtom-international/maps-sdk-js/commit/5dc489c2ac51b8d6f6561024147952749f5d89f5))
+
 ### [0.7.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.5...v0.7.6) (2024-04-22)
 
 
