@@ -1,24 +1,18 @@
-import isNil from "lodash/isNil";
-
-import type { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
+import type { ChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
 import { appendCommonParams } from "../shared/requestBuildingUtils";
-import { arrayToCSV } from "../shared/arrays";
+import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
 
-const buildURLBasePath = (params: EVChargingStationsAvailabilityParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}/search/3/chargingAvailability.json`;
+const buildURLBasePath = (params: ChargingStationsAvailabilityParams): string =>
+    params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/ev/id`;
 
 /**
- * Default method for building ev charging stations availability request from {@link EVChargingStationsAvailabilityParams}
+ * Default method for building ev charging stations availability request from {@link ChargingStationsAvailabilityParams}
  * @param params The charging availability parameters, with global configuration already merged into them.
  */
-export const buildEVChargingStationsAvailabilityRequest = (params: EVChargingStationsAvailabilityParams): URL => {
+export const buildEVChargingStationsAvailabilityRequest = (params: ChargingStationsAvailabilityParams): URL => {
     const url = new URL(buildURLBasePath(params));
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    // ev charging stations availability-specific parameters:
-    params.id && urlParams.append("id", params.id);
-    params.connectorTypes && urlParams.append("connectorSet", arrayToCSV(params.connectorTypes));
-    !isNil(params.minPowerKW) && urlParams.append("minPowerKW", String(params.minPowerKW));
-    !isNil(params.maxPowerKW) && urlParams.append("maxPowerKW", String(params.maxPowerKW));
+    urlParams.append("id", params.id);
     return url;
 };

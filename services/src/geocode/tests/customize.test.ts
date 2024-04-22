@@ -6,10 +6,11 @@ describe("Using customize obj", () => {
             customizeService.geocode
                 .buildGeocodingRequest({
                     apiKey: "API_KEY",
+                    apiVersion: 2,
                     commonBaseURL: "https://api.tomtom.com",
                     query: "amsterdam"
                 })
                 .toString()
-        ).toStrictEqual("https://api.tomtom.com/maps/orbis/places/geocode/amsterdam.json?key=API_KEY&apiVersion=1");
+        ).toStrictEqual("https://api.tomtom.com/maps/orbis/places/geocode/amsterdam.json?apiVersion=2&key=API_KEY");
     });
 });

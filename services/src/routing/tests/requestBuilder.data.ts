@@ -8,6 +8,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Default A-B route",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [4.89066, 52.37317],
@@ -32,6 +33,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Default A-B route with no sections",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [4.89066, 52.37317],
@@ -52,6 +54,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Default A-B route with specific sections",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [4.89066, 52.37317],
@@ -73,6 +76,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Default A-B-C route where B is a GeoJSON point feature",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 3,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [4.89066, 52.37317],
@@ -88,7 +92,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: "GET",
             url: new URL(
                 "https://api.tomtom.com/maps/orbis/routing/calculateRoute/" +
-                    "52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?apiVersion=2&key=GLOBAL_API_KEY" +
+                    "52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?apiVersion=3&key=GLOBAL_API_KEY" +
                     "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
                     "&sectionType=pedestrian&sectionType=tollRoad&sectionType=toll" +
                     "&sectionType=tollVignette&sectionType=country&sectionType=travelMode&sectionType=traffic" +
@@ -103,6 +107,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Default A-s-C route where s is a soft(circle) waypoint.",
         {
             apiKey: "API_KEY_X",
+            apiVersion: 2,
             commonBaseURL: "https://api-test.tomtom.com",
             geoInputs: [
                 [4.89066, 52.37317],
@@ -133,6 +138,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "A-B route with many optional parameters set to non default values and electric vehicle params",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             language: "es-ES",
             geoInputs: [
@@ -220,6 +226,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "A-B route with combustion vehicle parameters",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [4.89066, 52.37317],
@@ -272,6 +279,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "non-LDEVR A-B-C route with electric vehicle parameters",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [4.89066, 52.37317],
@@ -327,6 +335,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "LDEV A-B Route",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [13.492, 52.507],
@@ -337,8 +346,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 minChargeAtDestinationInkWh: 4,
                 minChargeAtChargingStopsInkWh: 4,
                 vehicleModelId: "54B969E8-E28D-11EC-8FEA-0242AC120002"
-            },
-            apiVersion: 2
+            }
         },
         {
             method: "POST",
@@ -361,6 +369,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Route based on a path to reconstruct",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [
@@ -399,6 +408,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Route calculated with waypointA - routeToEmbedB - waypointC",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [0, 0],
@@ -465,6 +475,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Route calculated with pathToEmbedA - routeToEmbedB",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 [
@@ -533,6 +544,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         "Route calculated with routeToEmbedA - waypointB - waypointC",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             geoInputs: [
                 {

@@ -17,7 +17,6 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}/${params.query}.json`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    urlParams.append("apiVersion", "1");
     // geocoding specific parameters:
     params.typeahead && urlParams.append("typeahead", String(params.typeahead));
     !isNil(params.limit) && urlParams.append("limit", String(params.limit));

@@ -7,6 +7,7 @@ describe("Using customize obj", () => {
                 JSON.stringify(
                     customizeService.geometrySearch.buildGeometrySearchRequest({
                         apiKey: "API_KEY",
+                        apiVersion: 1,
                         commonBaseURL: "https://api.tomtom.com",
                         geometries: [
                             {

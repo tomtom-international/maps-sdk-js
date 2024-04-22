@@ -1,350 +1,349 @@
 [
   [
-    "0: parsing actual API response",
+    "Parsing actual API response",
     {
-      "chargingParkId": "528009010040725",
-      "chargingStations": [
+      "summary": { "numResults": 1, "offset": 0, "totalResults": 1 },
+      "results": [
         {
-          "chargingStationId": "ffffffff-93e8-103f-0000-000000153b86",
-          "accessibility": "NoRestriction",
-          "chargingPoints": [
+          "id": "1f46c10e-ce37-4e99-8fdf-db22afe9c90b",
+          "name": "TotalEnergies",
+          "position": { "lat": 52.379945, "lon": 4.8768469 },
+          "chargingStations": [
             {
-              "evseId": "NL*NUO*EEVB*P1541136*2",
-              "status": "Available",
-              "connectors": [
+              "id": "7e159ce2-1336-11ed-91de-42010aa40034",
+              "chargingPoints": [
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 11.0,
-                  "voltageV": 400,
-                  "currentA": 16,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*NUO*EEVB*P1541136*1",
-              "status": "Available",
-              "connectors": [
+                  "capabilities": ["RemoteStartStopCapable", "RfidReader"],
+                  "connectors": [
+                    {
+                      "id": "2",
+                      "currentA": 25,
+                      "currentType": "AC3",
+                      "ratedPowerKW": 17,
+                      "type": "IEC62196Type2Outlet",
+                      "voltageV": 230
+                    }
+                  ],
+                  "evseId": "NL-GFX-ETNLP010397-2",
+                  "physicalReference": "TNLP010397",
+                  "status": "Occupied"
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 11.0,
-                  "voltageV": 400,
-                  "currentA": 16,
-                  "currentType": "AC3"
+                  "capabilities": ["RemoteStartStopCapable", "RfidReader"],
+                  "connectors": [
+                    {
+                      "id": "1",
+                      "currentA": 25,
+                      "currentType": "AC3",
+                      "ratedPowerKW": 17,
+                      "type": "IEC62196Type2Outlet",
+                      "voltageV": 230
+                    }
+                  ],
+                  "evseId": "NL-GFX-ETNLP010397-1",
+                  "physicalReference": "TNLP010397",
+                  "status": "Available"
                 }
               ]
             }
-          ]
+          ],
+          "address": {
+            "countryCode": "NL",
+            "countryCodeISO3": "NLD",
+            "country": "Netherlands",
+            "countrySubdivision": "North Holland",
+            "countrySubdivisionName": "North Holland",
+            "countrySubdivisionCode": "NH",
+            "freeformAddress": "Lodewijk Tripstraat 4A, 1052 ES Amsterdam",
+            "localName": "Amsterdam",
+            "municipality": "Amsterdam",
+            "postalCode": "1052 ES",
+            "streetNumber": "4A",
+            "streetName": "Lodewijk Tripstraat"
+          },
+          "openingHours": {
+            "mode": "nextSevenDays",
+            "timeRanges": [
+              {
+                "startTime": { "date": "2024-04-25", "hour": 0, "minute": 0 },
+                "endTime": { "date": "2024-05-02", "hour": 0, "minute": 0 }
+              }
+            ]
+          },
+          "timeZone": { "ianaId": "Europe/Amsterdam" },
+          "paymentOptions": [
+            {
+              "brands": [
+                { "name": "FISKER FLEX" },
+                { "name": "Plugsurfing" },
+                { "name": "Eneco" },
+                { "name": "Vattenfall InCharge - Incharge" },
+                { "name": "EVBox Charge" },
+                { "name": "Shell Recharge" },
+                { "name": "Vandebron" },
+                { "name": "FrCS" }
+              ]
+            }
+          ],
+          "accessType": "Public"
         }
       ]
     },
     {
-      "chargingParkId": "528009010040725",
+      "id": "1f46c10e-ce37-4e99-8fdf-db22afe9c90b",
+      "accessType": "Public",
       "chargingStations": [
         {
-          "chargingStationId": "ffffffff-93e8-103f-0000-000000153b86",
-          "accessibility": "NoRestriction",
+          "id": "7e159ce2-1336-11ed-91de-42010aa40034",
           "chargingPoints": [
             {
-              "evseId": "NL*NUO*EEVB*P1541136*2",
-              "status": "Available",
+              "capabilities": ["RemoteStartStopCapable", "RfidReader"],
               "connectors": [
                 {
+                  "id": "2",
+                  "currentA": 25,
+                  "currentType": "AC3",
+                  "ratedPowerKW": 17,
                   "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 11.0,
-                  "voltageV": 400,
-                  "currentA": 16,
-                  "currentType": "AC3"
+                  "voltageV": 230
                 }
-              ]
+              ],
+              "evseId": "NL-GFX-ETNLP010397-2",
+              "physicalReference": "TNLP010397",
+              "status": "Occupied"
             },
             {
-              "evseId": "NL*NUO*EEVB*P1541136*1",
-              "status": "Available",
+              "capabilities": ["RemoteStartStopCapable", "RfidReader"],
               "connectors": [
                 {
+                  "id": "1",
+                  "currentA": 25,
+                  "currentType": "AC3",
+                  "ratedPowerKW": 17,
                   "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 11.0,
-                  "voltageV": 400,
-                  "currentA": 16,
-                  "currentType": "AC3"
+                  "voltageV": 230
                 }
-              ]
+              ],
+              "evseId": "NL-GFX-ETNLP010397-1",
+              "physicalReference": "TNLP010397",
+              "status": "Available"
             }
           ]
         }
       ],
       "chargingPointAvailability": {
         "count": 2,
-        "statusCounts": {
-          "Available": 2
-        }
+        "statusCounts": { "Occupied": 1, "Available": 1 }
       },
       "connectorAvailabilities": [
         {
           "connector": {
+            "id": "2",
+            "currentA": 25,
+            "currentType": "AC3",
+            "ratedPowerKW": 17,
             "type": "IEC62196Type2Outlet",
-            "ratedPowerKW": 11,
-            "voltageV": 400,
-            "currentA": 16,
-            "currentType": "AC3"
+            "voltageV": 230
           },
           "count": 2,
-          "statusCounts": { "Available": 2 }
-        }
-      ]
-    }
-  ],
-  [
-    "1: API response with unknown availability status & unknown connector type",
-    {
-      "chargingParkId": "250009044727138",
-      "chargingStations": [
-        {
-          "chargingStationId": "ffffffff-ceec-437e-0000-000100153b86",
-          "accessibility": "NoRestriction",
-          "chargingPoints": [
-            {
-              "evseId": "209835220343544969",
-              "status": "Unknown",
-              "connectors": [
-                {
-                  "type": "Unknown"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "chargingStationId": "ffffffff-ceec-437e-0000-000000153b86",
-          "accessibility": "NoRestriction",
-          "chargingPoints": [
-            {
-              "evseId": "209835220343544969",
-              "status": "Unknown",
-              "connectors": [
-                {
-                  "type": "Unknown"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "chargingParkId": "250009044727138",
-      "chargingStations": [
-        {
-          "chargingStationId": "ffffffff-ceec-437e-0000-000100153b86",
-          "accessibility": "NoRestriction",
-          "chargingPoints": [
-            {
-              "evseId": "209835220343544969",
-              "status": "Unknown",
-              "connectors": [
-                {
-                  "type": "Unknown"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "chargingStationId": "ffffffff-ceec-437e-0000-000000153b86",
-          "accessibility": "NoRestriction",
-          "chargingPoints": [
-            {
-              "evseId": "209835220343544969",
-              "status": "Unknown",
-              "connectors": [
-                {
-                  "type": "Unknown"
-                }
-              ]
-            }
-          ]
+          "statusCounts": { "Occupied": 1, "Available": 1 }
         }
       ],
-      "chargingPointAvailability": {
-        "count": 2,
-        "statusCounts": {
-          "Unknown": 2
-        }
-      },
-      "connectorAvailabilities": [
-        {
-          "connector": { "type": "Unknown" },
-          "count": 2,
-          "statusCounts": { "Unknown": 2 }
-        }
-      ]
+      "openingHours": {
+        "mode": "nextSevenDays",
+        "timeRanges": [
+          {
+            "start": {
+              "dateYYYYMMDD": "2024-04-25",
+              "year": 2024,
+              "month": 4,
+              "day": 25,
+              "hour": 0,
+              "minute": 0
+            },
+            "end": {
+              "dateYYYYMMDD": "2024-05-02",
+              "year": 2024,
+              "month": 5,
+              "day": 2,
+              "hour": 0,
+              "minute": 0
+            }
+          }
+        ],
+        "alwaysOpenThisPeriod": true
+      }
     }
   ],
   [
-    "2: API response with multiple connector types & multiple occupancy status",
+    "API response with multiple connector types & multiple occupancy status",
     {
-      "chargingParkId": "250009012810643",
-      "chargingStations": [
+      "summary": { "numResults": 1, "offset": 0, "totalResults": 1 },
+      "results": [
         {
-          "chargingStationId": "00000000-2f1f-ebc3-0000-000000153b86",
-          "accessibility": "GenericRestriction",
-          "chargingPoints": [
+          "id": "250009012810643",
+          "accessType": "GenericRestriction",
+          "chargingStations": [
             {
-              "evseId": "FR*SAE*EHDV*2028",
-              "status": "Available",
-              "connectors": [
+              "id": "00000000-2f1f-ebc3-0000-000000153b86",
+              "chargingPoints": [
                 {
-                  "type": "StandardHouseholdCountrySpecific",
-                  "ratedPowerKW": 2.3,
-                  "voltageV": 230,
-                  "currentA": 10,
-                  "currentType": "AC1"
+                  "evseId": "FR*SAE*EHDV*2028",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "StandardHouseholdCountrySpecific",
+                      "ratedPowerKW": 2.3,
+                      "voltageV": 230,
+                      "currentA": 10,
+                      "currentType": "AC1"
+                    },
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
                 },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2011",
-              "status": "Available",
-              "connectors": [
-                {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2025",
-              "status": "Available",
-              "connectors": [
-                {
-                  "type": "StandardHouseholdCountrySpecific",
-                  "ratedPowerKW": 2.3,
-                  "voltageV": 230,
-                  "currentA": 10,
-                  "currentType": "AC1"
+                  "evseId": "FR*SAE*EHDV*2011",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
                 },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2010",
-              "status": "Available",
-              "connectors": [
-                {
-                  "type": "IEC62196Type2CableAttached",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2018",
-              "status": "Available",
-              "connectors": [
-                {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2026",
-              "status": "Available",
-              "connectors": [
-                {
-                  "type": "StandardHouseholdCountrySpecific",
-                  "ratedPowerKW": 2.3,
-                  "voltageV": 230,
-                  "currentA": 10,
-                  "currentType": "AC1"
+                  "evseId": "FR*SAE*EHDV*2025",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "StandardHouseholdCountrySpecific",
+                      "ratedPowerKW": 2.3,
+                      "voltageV": 230,
+                      "currentA": 10,
+                      "currentType": "AC1"
+                    },
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
                 },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2016",
-              "status": "Available",
-              "connectors": [
-                {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2030",
-              "status": "Occupied",
-              "connectors": [
-                {
-                  "type": "StandardHouseholdCountrySpecific",
-                  "ratedPowerKW": 2.3,
-                  "voltageV": 230,
-                  "currentA": 10,
-                  "currentType": "AC1"
+                  "evseId": "FR*SAE*EHDV*2010",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2CableAttached",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
                 },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2014",
-              "status": "Available",
-              "connectors": [
+                  "evseId": "FR*SAE*EHDV*2018",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "FR*SAE*EHDV*2012",
-              "status": "Available",
-              "connectors": [
+                  "evseId": "FR*SAE*EHDV*2026",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "StandardHouseholdCountrySpecific",
+                      "ratedPowerKW": 2.3,
+                      "voltageV": 230,
+                      "currentA": 10,
+                      "currentType": "AC1"
+                    },
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
+                  "evseId": "FR*SAE*EHDV*2016",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
+                },
+                {
+                  "evseId": "FR*SAE*EHDV*2030",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "StandardHouseholdCountrySpecific",
+                      "ratedPowerKW": 2.3,
+                      "voltageV": 230,
+                      "currentA": 10,
+                      "currentType": "AC1"
+                    },
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
+                {
+                  "evseId": "FR*SAE*EHDV*2014",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
+                },
+                {
+                  "evseId": "FR*SAE*EHDV*2012",
+                  "status": "Available",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
                 }
               ]
             }
@@ -353,11 +352,10 @@
       ]
     },
     {
-      "chargingParkId": "250009012810643",
+      "id": "250009012810643",
       "chargingStations": [
         {
-          "chargingStationId": "00000000-2f1f-ebc3-0000-000000153b86",
-          "accessibility": "GenericRestriction",
+          "id": "00000000-2f1f-ebc3-0000-000000153b86",
           "chargingPoints": [
             {
               "evseId": "FR*SAE*EHDV*2028",
@@ -576,13 +574,18 @@
     }
   ],
   [
-    "3: API response without charging stations",
+    "API response without charging stations",
     {
-      "chargingParkId": "250009044727138",
-      "chargingStations": []
+      "summary": { "numResults": 1, "offset": 0, "totalResults": 1 },
+      "results": [
+        {
+          "id": "250009044727138",
+          "chargingStations": []
+        }
+      ]
     },
     {
-      "chargingParkId": "250009044727138",
+      "id": "250009044727138",
       "chargingStations": [],
       "chargingPointAvailability": {
         "count": 0,

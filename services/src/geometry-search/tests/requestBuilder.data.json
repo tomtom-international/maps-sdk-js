@@ -3,6 +3,7 @@
     "Geometry search with required parameters",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://api.tomtom.com",
       "geometries": [
         {
@@ -30,6 +31,7 @@
     "Geometry search with required parameters & optional parameters",
     {
       "apiKey": "GLOBAL_API_KEY_2",
+      "apiVersion": 2,
       "commonBaseURL": "https://api-test.tomtom.com",
       "geometries": [
         {
@@ -55,7 +57,7 @@
       "timeZone": "iana"
     },
     {
-      "url": "https://api-test.tomtom.com/maps/orbis/places/geometrySearch/24x7%20restaurant.json?apiVersion=1&key=GLOBAL_API_KEY_2&language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana",
+      "url": "https://api-test.tomtom.com/maps/orbis/places/geometrySearch/24x7%20restaurant.json?apiVersion=2&key=GLOBAL_API_KEY_2&language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana",
       "data": {
         "geometryList": [
           {
@@ -75,6 +77,7 @@
     "Geometry search with required parameters & optional parameters such as indexes & entityType",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://test.api.tomtom.com",
       "geometries": [
         {
@@ -129,6 +132,7 @@
     "Geometry search for EV connectors within specific power range",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://test.api.tomtom.com",
       "geometries": [
         {
@@ -190,6 +194,7 @@
     "Geometry search for fuel station and with specific brands",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://test.api.tomtom.com",
       "geometries": [
         {
@@ -246,6 +251,7 @@
     "Geometry search with large feature collection that will be simplified",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://api.tomtom.com",
       "query": "university",
       "geometries": [

@@ -1,20 +1,21 @@
-import type { EVChargingStationsAvailability } from "@anw/maps-sdk-js/core";
+import type { ChargingStationsAvailability } from "@anw/maps-sdk-js/core";
 import type { ServiceTemplate } from "../shared";
-import type { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
+import type { ChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
 import { buildEVChargingStationsAvailabilityRequest } from "./requestBuilder";
 import { parseEVChargingStationsAvailabilityResponse } from "./responseParser";
 import { get } from "../shared/fetch";
 import { evChargingStationsAvailabilityRequestSchema } from "./evChargingStationsAvailabilityRequestSchema";
 import { parseEVChargingStationsAvailabilityResponseError } from "./evChargingStationsAvailabilityResponseErrorParser";
+import type { ChargingStationsAvailabilityResponseAPI } from "./types/apiTypes";
 
 /**
  * EV Charging Stations Availability service template type.
  */
 export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
-    EVChargingStationsAvailabilityParams,
+    ChargingStationsAvailabilityParams,
     URL,
-    EVChargingStationsAvailability,
-    EVChargingStationsAvailability
+    ChargingStationsAvailabilityResponseAPI,
+    ChargingStationsAvailability | undefined
 >;
 
 /**

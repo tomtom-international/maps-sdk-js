@@ -8,6 +8,7 @@ describe("Using customize obj", () => {
                 JSON.stringify(
                     customizeService.calculateRoute.buildCalculateRouteRequest({
                         apiKey: "API_KEY",
+                        apiVersion: 3,
                         commonBaseURL: "https://api.tomtom.com",
                         geoInputs: [
                             [4.88066, 52.37319],
@@ -22,7 +23,7 @@ describe("Using customize obj", () => {
                     method: "GET",
                     url: new URL(
                         "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?" +
-                            "apiVersion=2&key=API_KEY" +
+                            "apiVersion=3&key=API_KEY" +
                             "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
                             "&sectionType=pedestrian&sectionType=tollRoad&sectionType=toll" +
                             "&sectionType=tollVignette&sectionType=country" +

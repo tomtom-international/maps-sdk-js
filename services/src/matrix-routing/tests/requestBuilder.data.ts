@@ -7,6 +7,7 @@ export const sdkAndAPIRequests: [string, CalculateMatrixRouteParams, FetchInput<
         "Calculate Matrix with out options",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 1,
             commonBaseURL: "https://api.tomtom.com",
             origins: [
                 [4.89066, 52.37317],
@@ -19,7 +20,7 @@ export const sdkAndAPIRequests: [string, CalculateMatrixRouteParams, FetchInput<
         },
         {
             method: "POST",
-            url: new URL("https://api.tomtom.com/routing/matrix/2?key=GLOBAL_API_KEY"),
+            url: new URL("https://api.tomtom.com/routing/matrix/2?apiVersion=1&key=GLOBAL_API_KEY"),
             data: {
                 origins: [
                     {
@@ -56,6 +57,7 @@ export const sdkAndAPIRequests: [string, CalculateMatrixRouteParams, FetchInput<
         "Calculate matrix with options",
         {
             apiKey: "GLOBAL_API_KEY",
+            apiVersion: 2,
             commonBaseURL: "https://api.tomtom.com",
             origins: [
                 [4.89066, 52.37317],
@@ -80,7 +82,7 @@ export const sdkAndAPIRequests: [string, CalculateMatrixRouteParams, FetchInput<
         },
         {
             method: "POST",
-            url: new URL("https://api.tomtom.com/routing/matrix/2?key=GLOBAL_API_KEY"),
+            url: new URL("https://api.tomtom.com/routing/matrix/2?apiVersion=2&key=GLOBAL_API_KEY"),
             data: {
                 origins: [
                     {

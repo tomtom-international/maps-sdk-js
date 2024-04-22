@@ -1,4 +1,4 @@
-import { customizeService } from "../../..";
+import { customizeService } from "../../../index";
 
 describe("Using customize obj", () => {
     test("Charging availability request URL building tests using customize obj", () => {
@@ -6,10 +6,11 @@ describe("Using customize obj", () => {
             customizeService.evChargingStationsAvailability
                 .buildEVChargingStationsAvailabilityRequest({
                     apiKey: "API_KEY",
+                    apiVersion: 3,
                     commonBaseURL: "https://api.tomtom.com",
                     id: "12345"
                 })
                 .toString()
-        ).toStrictEqual("https://api.tomtom.com/search/3/chargingAvailability.json?key=API_KEY&id=12345");
+        ).toBe("https://api.tomtom.com/maps/orbis/places/ev/id?apiVersion=3&key=API_KEY&id=12345");
     });
 });

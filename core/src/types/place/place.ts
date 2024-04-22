@@ -1,9 +1,8 @@
 import type { Feature, Point, Position } from "geojson";
 import type { PlaceDataSources } from "./placeDataSources";
 import type { POI, RelatedPOI } from "./poi/poi";
-import type { Connector } from "./poi/connector";
 import type { FeatureCollectionWithProperties } from "../extendedGeoJSON";
-import type { ConnectorAvailability } from "./ev/evChargingStationsAvailability";
+import type { ChargingPark } from "./ev/evPlaceProps";
 
 /**
  * @group Place
@@ -217,24 +216,6 @@ export type AddressProperties = {
      * An address component which represents the name of a geographic area or locality that groups a number of addressable objects for addressing purposes, without being an administrative unit.
      */
     localName?: string;
-};
-
-/**
- * @group Place
- * @category Types
- */
-export type ChargingPark = {
-    /**
-     * The connectors offered in this charging park.
-     */
-    connectors: Connector[];
-    /**
-     * Counts per connector+power combinations. Useful to quickly display the available connectors.
-     *
-     * They do not contain real time availability.
-     * * When EV real time availability is present, use it instead of this one.
-     */
-    connectorCounts: Omit<ConnectorAvailability, "statusCounts">[];
 };
 
 /**

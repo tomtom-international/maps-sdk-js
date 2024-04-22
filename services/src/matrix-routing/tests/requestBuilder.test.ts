@@ -12,7 +12,10 @@ describe("Matrix Routing - Request builder", () => {
             params: CalculateMatrixRouteParams,
             apiRequest: FetchInput<CalculateMatrixRoutePOSTDataAPI>
         ) => {
-            expect(buildCalculateMatrixRouteRequest(params)).toEqual(apiRequest);
+            // we reparse the objects to compare URL objects properly:
+            expect(JSON.parse(JSON.stringify(buildCalculateMatrixRouteRequest(params)))).toEqual(
+                JSON.parse(JSON.stringify(apiRequest))
+            );
         }
     );
 });

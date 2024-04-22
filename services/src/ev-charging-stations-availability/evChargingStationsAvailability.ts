@@ -1,12 +1,12 @@
 import type {
     ChargingPark,
     EVChargingStationPlaceProps,
-    EVChargingStationsAvailability,
+    ChargingStationsAvailability,
     Place,
     Places
 } from "@anw/maps-sdk-js/core";
 import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
-import type { EVChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
+import type { ChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
 import { callService } from "../shared/serviceTemplate";
 import type { EVChargingStationsAvailabilityTemplate } from "./evChargingStationsAvailabilityTemplate";
 import { evChargingStationsAvailabilityTemplate } from "./evChargingStationsAvailabilityTemplate";
@@ -17,9 +17,9 @@ import { evChargingStationsAvailabilityTemplate } from "./evChargingStationsAvai
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
  */
 export const evChargingStationsAvailability = async (
-    params: EVChargingStationsAvailabilityParams,
+    params: ChargingStationsAvailabilityParams,
     customTemplate?: Partial<EVChargingStationsAvailabilityTemplate>
-): Promise<EVChargingStationsAvailability> =>
+): Promise<ChargingStationsAvailability | undefined> =>
     callService(
         params,
         { ...evChargingStationsAvailabilityTemplate, ...customTemplate },
@@ -39,16 +39,22 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
         return place;
     }
     try {
-        return {
-            ...place,
-            properties: {
-                ...place.properties,
-                chargingPark: {
-                    ...(place.properties.chargingPark as ChargingPark),
-                    availability: await evChargingStationsAvailability({ id: availabilityID })
-                }
-            }
-        };
+        const availability = await evChargingStationsAvailability({ id: availabilityID });
+        const poi = place.properties.poi;
+        return availability
+            ? {
+                  ...place,
+                  properties: {
+                      ...place.properties,
+                      // We override poi opening hours with the ones from the EV call, which might be better supported:
+                      ...(poi && { poi: { ...poi, openingHours: availability.openingHours } }),
+                      chargingPark: {
+                          ...(place.properties.chargingPark as ChargingPark),
+                          availability
+                      }
+                  }
+              }
+            : (place as Place<EVChargingStationPlaceProps>);
     } catch (e) {
         // (Likely a QPS limit error)
         console.error(e);

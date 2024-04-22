@@ -19,7 +19,6 @@ export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}/${lngLat[1]},${lngLat[0]}.json`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    urlParams.append("apiVersion", "1");
 
     // rev-geo specific parameters:
     params.allowFreeformNewline && urlParams.append("allowFreeformNewline", String(params.allowFreeformNewline));

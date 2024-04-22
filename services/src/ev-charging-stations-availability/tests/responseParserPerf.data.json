@@ -2,256 +2,260 @@
   [
     "EV charging stations availability api response",
     {
-      "chargingParkId": "528009002413828",
-      "chargingStations": [
+      "results": [
         {
-          "chargingStationId": "ffffffff-9c7d-d6bc-0000-000000153b86",
-          "accessibility": "GenericRestriction",
-          "chargingPoints": [
+          "id": "528009002413828",
+          "accessType": "GenericRestriction",
+          "chargingStations": [
             {
-              "evseId": "NL*LMS*E1702192*1",
-              "status": "Unknown",
-              "connectors": [
+              "id": "ffffffff-9c7d-d6bc-0000-000000153b86",
+              "chargingPoints": [
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702188*1",
-              "status": "Unknown",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702192*1",
+                  "status": "Unknown",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702713*1",
-              "status": "Unknown",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702188*1",
+                  "status": "Unknown",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702714*1",
-              "status": "Unknown",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702713*1",
+                  "status": "Unknown",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702718*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702714*1",
+                  "status": "Unknown",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702720*1",
-              "status": "Unknown",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702718*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702183*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702720*1",
+                  "status": "Unknown",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702186*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702183*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1706207*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702186*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 3.7,
-                  "voltageV": 230,
-                  "currentA": 16,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702710*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1706207*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 3.7,
+                      "voltageV": 230,
+                      "currentA": 16,
+                      "currentType": "AC1"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702719*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702710*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702717*1",
-              "status": "Unknown",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702719*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 7.4,
-                  "voltageV": 230,
-                  "currentA": 32,
-                  "currentType": "AC1"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702715*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702717*1",
+                  "status": "Unknown",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 7.4,
+                      "voltageV": 230,
+                      "currentA": 32,
+                      "currentType": "AC1"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 11.0,
-                  "voltageV": 400,
-                  "currentA": 16,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702712*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702715*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 11.0,
+                      "voltageV": 400,
+                      "currentA": 16,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702190*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702712*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702193*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702190*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702711*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702193*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702185*1",
-              "status": "Occupied",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702711*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2Outlet",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
-                }
-              ]
-            },
-            {
-              "evseId": "NL*LMS*E1702716*1",
-              "status": "Unknown",
-              "connectors": [
+                  "evseId": "NL*LMS*E1702185*1",
+                  "status": "Occupied",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2Outlet",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
+                },
                 {
-                  "type": "IEC62196Type2CableAttached",
-                  "ratedPowerKW": 22.0,
-                  "voltageV": 400,
-                  "currentA": 32,
-                  "currentType": "AC3"
+                  "evseId": "NL*LMS*E1702716*1",
+                  "status": "Unknown",
+                  "connectors": [
+                    {
+                      "type": "IEC62196Type2CableAttached",
+                      "ratedPowerKW": 22.0,
+                      "voltageV": 400,
+                      "currentA": 32,
+                      "currentType": "AC3"
+                    }
+                  ]
                 }
               ]
             }

@@ -14,6 +14,7 @@ export const appendCommonParams = (
     params: CommonServiceParams,
     routing?: boolean
 ): void => {
+    urlParams.append("apiVersion", String(params.apiVersion));
     if (!params.apiAccessToken) {
         urlParams.append("key", params.apiKey as string);
     }

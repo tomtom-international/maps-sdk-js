@@ -21,5 +21,6 @@ export const calculateRouteTemplate: CalculateRouteTemplate = {
     buildRequest: buildCalculateRouteRequest,
     sendRequest: fetchWith,
     parseResponse: parseCalculateRouteResponse,
-    parseResponseError: parseRoutingResponseError
+    parseResponseError: parseRoutingResponseError,
+    getAPIVersion: () => 2
 };

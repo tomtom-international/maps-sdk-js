@@ -21,7 +21,8 @@ export const callService = async <PARAMS extends CommonServiceParams, API_REQUES
     template: ServiceTemplate<PARAMS, API_REQUEST, API_RESPONSE, RESPONSE>,
     serviceName: ServiceName
 ): Promise<RESPONSE> => {
-    const mergedParams = mergeFromGlobal(params);
+    const customAPIVersion = template.getAPIVersion?.(params);
+    const mergedParams = mergeFromGlobal({ ...params, ...(customAPIVersion && { apiVersion: customAPIVersion }) });
     // (params.validateRequest defaults to true, thus true and undefined are the same)
     if (params.validateRequest == undefined || params.validateRequest) {
         try {

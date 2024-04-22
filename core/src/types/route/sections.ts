@@ -19,6 +19,32 @@ export type SectionProps = {
      * The (inclusive) route path point index where this section ends.
      */
     endPointIndex: number;
+    /**
+     * The start time of this section, in seconds since departure.
+     */
+    startTravelTimeInSeconds?: number;
+    /**
+     * The end time of this section, in seconds since departure.
+     */
+    endTravelTimeInSeconds?: number;
+    /**
+     * The duration in seconds through this section.
+     * * It is simply the difference between endTravelTimeSeconds and startTravelTimeSeconds.
+     */
+    durationInSeconds?: number;
+    /**
+     * The length or distance in meters since departure at the start of this section.
+     */
+    startLengthInMeters?: number;
+    /**
+     * The length or distance in meters since departure at the end of this section.
+     */
+    endLengthInMeters?: number;
+    /**
+     * The length or distance in meters along this section.
+     * * It is simply the difference between endDistanceMeters and startDistanceMeters.
+     */
+    lengthInMeters?: number;
 };
 
 /**
@@ -126,6 +152,7 @@ export type LegSectionProps = Omit<SectionProps, "startPointIndex" | "endPointIn
     endPointIndex?: number;
     /**
      * Summary information for this specific leg.
+     * TODO EDXCE-274: bring this at the base level instead of nested object? And then align on common fields with SectionProps
      */
     summary: LegSummary;
 };
@@ -269,6 +296,7 @@ export type SectionsProps = {
 export type SectionType = keyof SectionsProps;
 
 /**
+ * Route calculation request section types so they can be included in response.
  * @group Route
  * @category Variables
  */
@@ -290,12 +318,17 @@ export const inputSectionTypes: SectionType[] = [
     "lowEmissionZone",
     "speedLimit",
     "roadShields"
-];
+] as const;
 
-export const inputSectionTypesWithGuidance: SectionType[] = [...inputSectionTypes, "lanes"];
+/**
+ * Route calculation request section types, including guidance-related ones, so they can be included in response.
+ * @group Route
+ * @category Variables
+ */
+export const inputSectionTypesWithGuidance: SectionType[] = [...inputSectionTypes, "lanes"] as const;
 
 /**
  * @group Route
  * @category Variables
  */
-export const sectionTypes: SectionType[] = [...inputSectionTypesWithGuidance, "leg"];
+export const sectionTypes: SectionType[] = [...inputSectionTypesWithGuidance, "leg"] as const;

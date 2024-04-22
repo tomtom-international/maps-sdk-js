@@ -201,8 +201,6 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     const geoInputTypes = params.geoInputs.map(getGeoInputType);
     const url = new URL(`${buildURLBasePath(params)}/${buildLocationsString(params.geoInputs, geoInputTypes)}/json`);
     const urlParams: URLSearchParams = url.searchParams;
-    urlParams.append("apiVersion", "2");
-
     appendCommonParams(urlParams, params, true);
     appendCommonRoutingParams(urlParams, params);
     appendOptionalParam(urlParams, "computeTravelTimeFor", params.computeAdditionalTravelTimeFor);

@@ -14,7 +14,6 @@ export const buildPlaceByIdRequest = (params: PlaceByIdParams): URL => {
     const url = new URL(`${buildURLBasePath(params)}`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    urlParams.append("apiVersion", "1");
     appendOptionalParam(urlParams, "entityId", params.entityId);
     appendByJoiningParamValue(urlParams, "mapcodes", params.mapcodes);
     appendOptionalParam(urlParams, "view", params.view);

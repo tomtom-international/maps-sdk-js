@@ -1,7 +1,6 @@
 import type {
     AddressProperties,
     Brand,
-    ChargingPark,
     Classification,
     Connector,
     ConnectorType,
@@ -151,7 +150,7 @@ export type ConnectorAPI = Omit<Connector, "type"> & {
 /**
  * @ignore
  */
-export type ChargingParkAPI = Omit<ChargingPark, "connectors" | "connectorCounts"> & {
+export type ChargingParkAPI = {
     connectors: ConnectorAPI[];
 };
 

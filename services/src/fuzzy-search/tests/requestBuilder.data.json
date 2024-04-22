@@ -3,6 +3,7 @@
     "Fuzzy search with required parameters",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://api.tomtom.com",
       "query": "Restaurant"
     },
@@ -12,6 +13,7 @@
     "Fuzzy search with required parameters & optional parameters",
     {
       "apiKey": "GLOBAL_API_KEY_2",
+      "apiVersion": 1,
       "commonBaseURL": "https://api-test.tomtom.com",
       "query": "restaurant",
       "limit": 25,
@@ -29,6 +31,7 @@
     "Fuzzy search with required parameters & optional parameters such as indexes & entityType",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://test.api.tomtom.com",
       "query": "London",
       "limit": 20,
@@ -45,6 +48,7 @@
     "Fuzzy search for EV connectors within specific power range",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://test.api.tomtom.com",
       "query": "EV charging points",
       "minPowerKW": 20,
@@ -68,6 +72,7 @@
     "Fuzzy search for fuel station and with specific brands",
     {
       "apiKey": "GLOBAL_API_KEY",
+      "apiVersion": 1,
       "commonBaseURL": "https://test.api.tomtom.com",
       "query": "Fuel Station",
       "fuelTypes": [

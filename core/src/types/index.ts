@@ -2,14 +2,15 @@ export * from "./extendedGeoJSON";
 export * from "./polygonFeature";
 export * from "./place/place";
 export * from "./place/placeDataSources";
-export * from "./place/poi/chargingStation";
-export * from "./place/poi/connector";
+export * from "./place/ev/chargingStation";
+export * from "./place/ev/connector";
+export * from "./place/ev/chargingStationsAvailability";
+export * from "./place/ev/evPlaceProps";
 export * from "./place/poi/category";
 export * from "./place/poi/brand";
 export * from "./place/poi/classification";
 export * from "./place/poi/openingHours";
 export * from "./place/poi/poi";
-export * from "./place/ev/evChargingStationsAvailability";
 export * from "./timezone";
 export * from "./place/poi/fuel";
 

@@ -63,6 +63,14 @@ export type ServiceTemplate<
     buildRequest: (params: PARAMS) => API_REQUEST;
 
     /**
+     * Optional getter for the API version to use.
+     * * Useful for services that have an API version differing from the global config one.
+     * * If not provided, the API version from global or provided configuration will be used.
+     * @param params Input parameters to help determine the API version if needed.
+     */
+    getAPIVersion?: (params?: PARAMS) => number;
+
+    /**
      * Sends the request to the API (e.g. via GET or POST, with or without custom headers).
      * @param request The request to send.
      */

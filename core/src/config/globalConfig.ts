@@ -86,6 +86,12 @@ export type GlobalConfig = {
     apiAccessToken?: string;
 
     /**
+     * Determines the version of the API being called.
+     * @default 1 but each service and/or map can determine their own default.
+     */
+    apiVersion: number;
+
+    /**
      * Specifies an identifier for the request. It can be used to trace a call.
      * * The value must match the regular expression '^[a-zA-Z0-9-]{1,100}$'.
      * * An example of the format that matches this regular expression is UUID: (e.g., 9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1 ).
@@ -136,10 +142,10 @@ export type GlobalConfig = {
  */
 export const defaultConfig: GlobalConfig = {
     commonBaseURL: "https://api.tomtom.com",
-    apiKey: ""
+    apiKey: "",
+    apiVersion: 1
 };
 
-//TODO: add back `@group Configuration` when md plugin >=4.0.0-next.11
 /**
  * TomTom Maps SDK Global configuration singleton class.
  * It initializes to a default basic configuration.

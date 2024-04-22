@@ -21,7 +21,6 @@ export const PLACES_URL_PATH = "/maps/orbis/places";
  */
 export const appendCommonSearchParams = (searchURL: URL, params: FuzzySearchParams | GeometrySearchParams): void => {
     const urlParams = searchURL.searchParams;
-    urlParams.append("apiVersion", "1");
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, "limit", params.limit);
     appendLatLonParamsFromPosition(urlParams, params.position);

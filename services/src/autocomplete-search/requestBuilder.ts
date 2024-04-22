@@ -24,7 +24,6 @@ export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams)
      */
     params.language = params.language || "en-GB";
     appendCommonParams(urlParams, params);
-    urlParams.append("apiVersion", "1");
     appendOptionalParam(urlParams, "limit", params.limit);
     appendLatLonParamsFromPosition(urlParams, params.position);
     appendByJoiningParamValue(urlParams, "countrySet", params.countries);

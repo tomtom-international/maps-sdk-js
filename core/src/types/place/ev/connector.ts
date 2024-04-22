@@ -46,9 +46,28 @@ export type CurrentType = (typeof currentTypes)[number];
  * @category Types
  */
 export type Connector = {
+    /**
+     * Connector identifier.
+     */
+    id: string;
+    /**
+     * The connector type.
+     */
     type: ConnectorType;
+    /**
+     * Rated charging power in kilowatts[kW]
+     */
     ratedPowerKW: number;
-    currentA: number;
-    currentType: CurrentType;
+    /**
+     * The voltage of the connector in volts[V].
+     */
     voltageV: number;
+    /**
+     * The type of current in amperes[A].
+     */
+    currentA: number;
+    /**
+     * The type of current.
+     */
+    currentType: CurrentType;
 };

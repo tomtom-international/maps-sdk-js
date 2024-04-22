@@ -1,4 +1,6 @@
-import type { ChargingPark, ChargingPointStatus, ChargingStation, CommonPlaceProps, Connector } from "../..";
+import type { ChargingPointStatus, ChargingStation, ChargingStationsAccessType } from "./chargingStation";
+import type { Connector } from "./connector";
+import type { OpeningHours } from "../poi/openingHours";
 
 /**
  * @group Place
@@ -29,11 +31,11 @@ export type ConnectorAvailability = ChargingPointAvailability & {
  * @group Place
  * @category Types
  */
-export type EVChargingStationsAvailability = {
+export type ChargingStationsAvailability = {
     /**
      * The ID of the returned entity.
      */
-    chargingParkId: string;
+    id: string;
 
     /**
      * Charging stations.
@@ -44,37 +46,24 @@ export type EVChargingStationsAvailability = {
     /**
      * Charging point - based availability counts for these charging stations.
      * * Useful if you want to quickly display how many charging points are in each availability state.
-     * * Derived from chargingPoints.
+     * * Derived from chargingPoints within chargingStations.
      */
     chargingPointAvailability: ChargingPointAvailability;
 
     /**
      * Connector-based availability counts for these charging stations.
      * * Useful if you want to quickly display how many connector+power types are in each availability state.
-     * * Derived from chargingPoints.
+     * * Derived from chargingPoints within chargingStations.
      */
     connectorAvailabilities: ConnectorAvailability[];
-};
 
-/**
- * @group Place
- * @category Types
- */
-export type ChargingParkWithAvailability = ChargingPark & {
     /**
-     * EV Charging Station Availability.
-     * * Usually coming from a call to the EV Charging Station Availability service.
+     * Access type of the EV charging stations ("Public", "Authorized", "Restricted", "Private", "Unknown")
      */
-    availability?: EVChargingStationsAvailability;
-};
+    accessType: ChargingStationsAccessType;
 
-/**
- * @group Place
- * @category Types
- */
-export type EVChargingStationPlaceProps = Omit<CommonPlaceProps, "chargingPark"> & {
     /**
-     * Charging park with charging availability information, when available.
+     * Opening hours of the EV charging stations.
      */
-    chargingPark?: ChargingParkWithAvailability;
+    openingHours?: OpeningHours;
 };
