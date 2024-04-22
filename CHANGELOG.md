@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.5...v0.7.6) (2024-04-22)
+
+
+### Features
+
+* **units:** enabling new global and local configurations for distance and time display units ([85ca805](https://github.com/tomtom-international/maps-sdk-js/commit/85ca8054677651dfac97e316b7fc7d2ba26d16d1))
+
+
+### Bug Fixes
+
+* add .netrc file needed for blackduck scan ([c2cb1f2](https://github.com/tomtom-international/maps-sdk-js/commit/c2cb1f2afc771101c2061b1289bc7de515cbfb27))
+* add install step ([0e12c32](https://github.com/tomtom-international/maps-sdk-js/commit/0e12c32f387d198fac88a39e2f2e2e6627cacf15))
+* upgrade blackduck and python versions ([b637058](https://github.com/tomtom-international/maps-sdk-js/commit/b637058b34cb3aa3208012cbfae1f4806679f88b))
+
 ### [0.7.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.3...v0.7.5) (2024-04-18)
 
 ### [0.7.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.3...v0.7.4) (2024-04-18)
