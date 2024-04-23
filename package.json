@@ -1,6 +1,6 @@
 {
   "name": "@anw/maps-sdk-js",
-  "version": "0.7.8",
+  "version": "0.7.9",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
     "clean": "npm run clean:dist -ws && npm run clean:cache -ws",

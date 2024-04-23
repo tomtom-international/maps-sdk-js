@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.8...v0.7.9) (2024-04-23)
+
+
+### Bug Fixes
+
+* **routing:** hotfix to make route summary bubbles display more compact and mitigate unwanted word wrapping ([730e367](https://github.com/tomtom-international/maps-sdk-js/commit/730e3671d082986be080bf1d39af56cb04f48489))
+
 ### [0.7.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.7...v0.7.8) (2024-04-23)
 
 
