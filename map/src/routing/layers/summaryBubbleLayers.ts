@@ -53,8 +53,7 @@ export const summaryBubbleSymbolPoint: LayerSpecTemplate<SymbolLayerSpecificatio
                 "text-font": ["literal", [MAP_BOLD_FONT]],
                 "text-color": ["case", SELECTED_ROUTE_FILTER, "black", DESELECTED_SECONDARY_COLOR]
             },
-            "    ",
-            ["get", "formattedDistance"],
+            ["concat", "\t\t", ["get", "formattedDistance"]],
             { "text-color": DESELECTED_SECONDARY_COLOR },
             ["case", hasFormattedTraffic, "\n", ""],
             {},
@@ -78,7 +77,7 @@ export const summaryBubbleSymbolPoint: LayerSpecTemplate<SymbolLayerSpecificatio
                 ]
             ],
             {},
-            ["concat", "  ", ["get", "formattedTraffic"]],
+            ["case", hasFormattedTraffic, ["concat", "  ", ["get", "formattedTraffic"]], ""],
             {
                 "text-font": ["literal", [MAP_BOLD_FONT]],
                 "text-color": magnitudeOfDelayTextColor
