@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.7...v0.7.8) (2024-04-23)
+
+
+### Bug Fixes
+
+* **routing:** hotfix to show ev charging stations above most other layers on routes ([399d49b](https://github.com/tomtom-international/maps-sdk-js/commit/399d49bfbe53375204cb94dee53027b159fae670))
+
 ### [0.7.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.6...v0.7.7) (2024-04-22)
 
 
