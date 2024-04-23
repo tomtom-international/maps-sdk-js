@@ -95,7 +95,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_INCIDENTS_SYMBOL_LAYER_ID,
                     layerSpec: routeIncidentsSymbol,
-                    beforeID: ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID
+                    beforeID: ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID
                 }
             ]
         },
@@ -132,7 +132,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
                 {
                     id: ROUTE_TOLL_ROADS_SYMBOL,
                     layerSpec: routeTollRoadsSymbol,
-                    beforeID: ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID
+                    beforeID: ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID
                 }
             ]
         },
