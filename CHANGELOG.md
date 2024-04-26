@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.9...v0.8.1) (2024-04-26)
+
+
+### Features
+
+* **EDXCE-266:** migrating ev charging station by id to new orbis endpoint, with included refactoring ([75155f4](https://github.com/tomtom-international/maps-sdk-js/commit/75155f43a9646a4f1b97774b3bab9c1414a8816a))
+
 ### [0.7.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.8...v0.7.9) (2024-04-23)
 
 
