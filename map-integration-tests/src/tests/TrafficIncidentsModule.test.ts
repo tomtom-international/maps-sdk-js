@@ -175,7 +175,7 @@ describe("Map vector tile traffic incidents module tests", () => {
         await waitForMapIdle();
         expect(await getConfig()).toEqual(config);
 
-        const roadClosedIncidents = await waitForRenderedIncidentsChange(defaultIncidents.length);
+        const roadClosedIncidents = await waitForRenderedIncidentsChange(0);
         // we check that all the rendered incidents are of road_closed category:
         expect(getByIncidentCategories(roadClosedIncidents, ["road_closed"])).toHaveLength(roadClosedIncidents.length);
         expect(
