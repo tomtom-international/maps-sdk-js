@@ -4,7 +4,13 @@ import { getStyleCategories, poiLayerIDs } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import type { MapsSDKThis } from "./types/MapsSDKThis";
 import type { Point } from "geojson";
-import { getNumVisiblePOILayers, initPOIs, waitForMapIdle, waitUntilRenderedFeaturesChange } from "./util/TestUtils";
+import {
+    getNumVisiblePOILayers,
+    initPOIs,
+    queryRenderedFeatures,
+    waitForMapIdle,
+    waitUntilRenderedFeaturesChange
+} from "./util/TestUtils";
 
 const waitForRenderedPOIsChange = async (previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(["POI"], previousFeaturesCount, 10000);
@@ -78,7 +84,7 @@ describe("Map vector tile POI filtering tests", () => {
             })
         );
         await waitForMapIdle();
-        renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
+        renderedPOIs = await queryRenderedFeatures(["POI"]);
         expect(areSomeCategoriesIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(
             false
         );
@@ -88,7 +94,7 @@ describe("Map vector tile POI filtering tests", () => {
             (globalThis as MapsSDKThis).pois?.filterCategories({ show: "only", values: ["TRANSPORTATION_GROUP"] })
         );
         await waitForMapIdle();
-        renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
+        renderedPOIs = await queryRenderedFeatures(["POI"]);
         expect(renderedPOIs.length).toBeGreaterThan(0);
         expect(areAllCategoriesIncluded(renderedPOIs, ["TRANSPORTATION_GROUP"])).toBe(true);
 
@@ -96,7 +102,7 @@ describe("Map vector tile POI filtering tests", () => {
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         await waitForMapIdle();
 
-        renderedPOIs = await waitForRenderedPOIsChange(renderedPOIs.length);
+        renderedPOIs = await queryRenderedFeatures(["POI"]);
         expect(renderedPOIs.length).toBeGreaterThan(0);
         expect(areSomeCategoriesIncluded(renderedPOIs, ["TRANSPORTATION_GROUP", "IMPORTANT_TOURIST_ATTRACTION"])).toBe(
             true
