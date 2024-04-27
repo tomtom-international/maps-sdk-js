@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.1...v0.8.2) (2024-04-27)
+
+
+### Bug Fixes
+
+* **tests:** hardening POI map tests, removing unnecessary and misleading assertion, since changing POI filters doesn't mean number of visible POIs always changes ([9e4be40](https://github.com/tomtom-international/maps-sdk-js/commit/9e4be40658e70eaf925c8a1958a58aeb5b2c5373))
+
 ### [0.8.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.7.9...v0.8.1) (2024-04-26)
 
 
