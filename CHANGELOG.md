@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.2...v0.8.3) (2024-04-27)
+
+
+### Bug Fixes
+
+* **tests:** stabilizing traffic incident tests for situations where we only have road closures available ([d618e83](https://github.com/tomtom-international/maps-sdk-js/commit/d618e834bc0f7e369bcbbaae6676ae46b4f14daf))
+
 ### [0.8.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.1...v0.8.2) (2024-04-27)
 
 
