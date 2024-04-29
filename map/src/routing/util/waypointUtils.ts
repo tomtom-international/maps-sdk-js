@@ -105,11 +105,13 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
                     hardWaypointIndex++;
                 }
                 const title = buildWaypointTitle(waypoint);
+                const id = waypoint.id ?? generateId();
                 return {
                     ...waypoint,
-                    id: waypoint.id ?? generateId(),
+                    id,
                     properties: {
                         ...waypoint.properties,
+                        id,
                         index,
                         indexType,
                         ...(title && { title }),
@@ -146,10 +148,13 @@ export const toDisplayChargingStations = (
                 return null as unknown as Waypoint<LocationDisplayProps & RouteStyleProps>;
             }
             const waypoint = toWaypointFromPoint({ type: "Point", coordinates: chargingStation.coordinates });
+            const id = waypoint.id ?? generateId();
             chargingStations.push({
                 ...waypoint,
+                id,
                 properties: {
                     ...waypoint.properties,
+                    id,
                     // TODO consider using pin icon when available for Orbis
                     iconID: "poi-charging_location",
                     title: formatTitle(chargingInformationAtEndOfLeg),

@@ -67,6 +67,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [1, 2]
                     },
                     properties: {
+                        id: expect.any(String),
                         index: 0,
                         indexType: START_INDEX,
                         iconID: WAYPOINT_START_IMAGE_ID
@@ -85,6 +86,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [1, 2]
                     },
                     properties: {
+                        id: expect.any(String),
                         index: 1,
                         indexType: FINISH_INDEX,
                         iconID: WAYPOINT_FINISH_IMAGE_ID
@@ -103,6 +105,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [1, 2]
                     },
                     properties: {
+                        id: expect.any(String),
                         index: 1,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
@@ -135,6 +138,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [1, 2]
                     },
                     properties: {
+                        id: expect.any(String),
                         poi: {
                             name: "POI"
                         },
@@ -152,6 +156,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [3, 4]
                     },
                     properties: {
+                        id: expect.any(String),
                         radiusMeters: 25,
                         index: 1,
                         indexType: MIDDLE_INDEX,
@@ -166,6 +171,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [5, 6]
                     },
                     properties: {
+                        id: expect.any(String),
                         address: {
                             freeformAddress: "ADDRESS"
                         },
@@ -184,6 +190,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [9, 10]
                     },
                     properties: {
+                        id: expect.any(String),
                         index: 3,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
@@ -198,6 +205,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [11, 12]
                     },
                     properties: {
+                        id: expect.any(String),
                         index: 4,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
@@ -212,6 +220,7 @@ describe("GeoInputs util tests", () => {
                         coordinates: [13, 14]
                     },
                     properties: {
+                        id: "ALREADY_DEFINED",
                         address: {
                             freeformAddress: "ADDRESS2"
                         },
