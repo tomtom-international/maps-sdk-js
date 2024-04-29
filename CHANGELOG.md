@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.3...v0.8.4) (2024-04-29)
+
+
+### Bug Fixes
+
+* **EDXCE-282:** ensuring display waypoints always have feature IDs, which is needed for events and always good to have ([cc8b5a5](https://github.com/tomtom-international/maps-sdk-js/commit/cc8b5a544fceb73c8aeb05c8003aba5889d02063))
+
 ### [0.8.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.2...v0.8.3) (2024-04-27)
 
 
