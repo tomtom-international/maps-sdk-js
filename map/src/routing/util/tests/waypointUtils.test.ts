@@ -29,44 +29,39 @@ describe("GeoInputs util tests", () => {
                 geometry: { type: "Point", coordinates: [1, 2] },
                 properties: { address: { freeformAddress: "ADDRESS" } }
             })
-        ).toStrictEqual("ADDRESS");
-        expect(buildWaypointTitle(buildTestWaypoint({ poi: { name: "POI" } }, [1, 2]))).toStrictEqual("POI");
+        ).toBe("ADDRESS");
+        expect(buildWaypointTitle(buildTestWaypoint({ poi: { name: "POI" } }, [1, 2]))).toEqual("POI");
         expect(
             buildWaypointTitle(
                 buildTestWaypoint({ address: { freeformAddress: "ADDRESS" }, poi: { name: "POI" } }, [1, 2])
             )
-        ).toStrictEqual("POI");
+        ).toBe("POI");
     });
 
     test("Get image ID for waypoint", () => {
-        expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), START_INDEX)).toStrictEqual(
+        expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), START_INDEX)).toBe(WAYPOINT_START_IMAGE_ID);
+        expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), MIDDLE_INDEX)).toBe(WAYPOINT_STOP_IMAGE_ID);
+        expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), FINISH_INDEX)).toBe(WAYPOINT_FINISH_IMAGE_ID);
+        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 0 }, [1, 2]), START_INDEX)).toBe(
             WAYPOINT_START_IMAGE_ID
         );
-        expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), MIDDLE_INDEX)).toStrictEqual(
-            WAYPOINT_STOP_IMAGE_ID
-        );
-        expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), FINISH_INDEX)).toStrictEqual(
-            WAYPOINT_FINISH_IMAGE_ID
-        );
-        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 0 }, [1, 2]), START_INDEX)).toStrictEqual(
-            WAYPOINT_START_IMAGE_ID
-        );
-        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), START_INDEX)).toStrictEqual(
+        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), START_INDEX)).toBe(
             WAYPOINT_SOFT_IMAGE_ID
         );
-        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), MIDDLE_INDEX)).toStrictEqual(
+        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), MIDDLE_INDEX)).toBe(
             WAYPOINT_SOFT_IMAGE_ID
         );
     });
 
     test("To display waypoints", () => {
-        expect(toDisplayWaypoints([])).toStrictEqual({ type: "FeatureCollection", features: [] });
-        expect(toDisplayWaypoints([null])).toStrictEqual({ type: "FeatureCollection", features: [] });
-        expect(toDisplayWaypoints([buildTestWaypoint({}, [1, 2])])).toStrictEqual({
+        expect(toDisplayWaypoints([])).toEqual({ type: "FeatureCollection", features: [] });
+        expect(toDisplayWaypoints([null])).toEqual({ type: "FeatureCollection", features: [] });
+        expect(toDisplayWaypoints([buildTestWaypoint({}, [1, 2])])).toEqual({
             type: "FeatureCollection",
             features: [
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [1, 2]
@@ -79,11 +74,12 @@ describe("GeoInputs util tests", () => {
                 }
             ]
         });
-        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2])])).toStrictEqual({
+        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2])])).toEqual({
             type: "FeatureCollection",
             features: [
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [1, 2]
@@ -96,11 +92,12 @@ describe("GeoInputs util tests", () => {
                 }
             ]
         });
-        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2]), null])).toStrictEqual({
+        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2]), null])).toEqual({
             type: "FeatureCollection",
             features: [
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [1, 2]
@@ -121,13 +118,18 @@ describe("GeoInputs util tests", () => {
                 buildTestWaypoint({ address: { freeformAddress: "ADDRESS" } }, [5, 6]),
                 [9, 10],
                 { type: "Point", coordinates: [11, 12] },
-                { ...buildTestWaypoint({ address: { freeformAddress: "ADDRESS2" } }, [13, 14]), bbox: [1, 2, 3, 4] }
+                {
+                    ...buildTestWaypoint({ address: { freeformAddress: "ADDRESS2" } }, [13, 14]),
+                    bbox: [1, 2, 3, 4],
+                    id: "ALREADY_DEFINED"
+                }
             ])
-        ).toStrictEqual({
+        ).toEqual({
             type: "FeatureCollection",
             features: [
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [1, 2]
@@ -144,6 +146,7 @@ describe("GeoInputs util tests", () => {
                 },
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [3, 4]
@@ -157,6 +160,7 @@ describe("GeoInputs util tests", () => {
                 },
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [5, 6]
@@ -174,6 +178,7 @@ describe("GeoInputs util tests", () => {
                 },
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [9, 10]
@@ -187,6 +192,7 @@ describe("GeoInputs util tests", () => {
                 },
                 {
                     type: "Feature",
+                    id: expect.any(String),
                     geometry: {
                         type: "Point",
                         coordinates: [11, 12]
@@ -200,6 +206,7 @@ describe("GeoInputs util tests", () => {
                 },
                 {
                     type: "Feature",
+                    id: "ALREADY_DEFINED",
                     geometry: {
                         type: "Point",
                         coordinates: [13, 14]

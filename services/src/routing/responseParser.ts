@@ -21,7 +21,7 @@ import type {
     SpeedLimitSectionProps,
     Instruction
 } from "@anw/maps-sdk-js/core";
-import { bboxFromGeoJSON, indexedMagnitudes } from "@anw/maps-sdk-js/core";
+import { bboxFromGeoJSON, generateId, indexedMagnitudes } from "@anw/maps-sdk-js/core";
 import omit from "lodash/omit";
 import isNil from "lodash/isNil";
 import type { LineString, Position } from "geojson";
@@ -36,7 +36,6 @@ import type {
     SummaryAPI,
     TrafficCategoryAPI
 } from "./types/apiResponseTypes";
-import { generateId } from "../shared/generateId";
 
 const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined => {
     switch (apiCurrentType) {

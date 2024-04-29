@@ -6,7 +6,7 @@ import type {
     WaypointLike,
     Waypoints
 } from "@anw/maps-sdk-js/core";
-import { formatDuration } from "@anw/maps-sdk-js/core";
+import { formatDuration, generateId } from "@anw/maps-sdk-js/core";
 import type { Point, Position } from "geojson";
 import type { IndexType, WaypointDisplayProps } from "../types/waypointDisplayProps";
 import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from "../types/waypointDisplayProps";
@@ -107,6 +107,7 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
                 const title = buildWaypointTitle(waypoint);
                 return {
                     ...waypoint,
+                    id: waypoint.id ?? generateId(),
                     properties: {
                         ...waypoint.properties,
                         index,

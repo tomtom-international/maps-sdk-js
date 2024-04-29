@@ -1,4 +1,4 @@
-import { getPositionStrict, toPointFeature } from "@anw/maps-sdk-js/core";
+import { generateId, getPositionStrict, toPointFeature } from "@anw/maps-sdk-js/core";
 import { apiToGeoJSONBBox, csvLatLngToPosition } from "../shared/geometry";
 import type { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
 import type { ReverseGeocodingResponse } from "./reverseGeocoding";
@@ -20,7 +20,7 @@ export const parseRevGeoResponse = (
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...pointFeature,
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
-        id: `random_${Math.random()}`,
+        id: generateId(),
         ...(firstAPIResult && {
             properties: {
                 type: firstAPIResult?.entityType ? "Geography" : !address.streetNumber ? "Street" : "Point Address",
