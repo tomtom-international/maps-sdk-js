@@ -433,6 +433,7 @@ describe("Routing tests", () => {
 
         // rendered features array seem to come in reversed order from MapLibre:
         expect(renderedWaypoints[0].properties).toEqual({
+            id: expect.any(String),
             poi: '{"name":"This is a test POI."}',
             index: 3,
             indexType: "finish",
@@ -440,12 +441,14 @@ describe("Routing tests", () => {
             iconID: "waypointFinish"
         });
         expect(renderedWaypoints[1].properties).toEqual({
+            id: expect.any(String),
             index: 2,
             indexType: "middle",
             iconID: "waypointSoft",
             radiusMeters: 30
         });
         expect(renderedWaypoints[2].properties).toEqual({
+            id: expect.any(String),
             address: '{"freeformAddress":"This is a test address, 9999 Some Country"}',
             index: 1,
             indexType: "middle",
@@ -454,6 +457,7 @@ describe("Routing tests", () => {
             stopDisplayIndex: 1
         });
         expect(renderedWaypoints[3].properties).toEqual({
+            id: expect.any(String),
             index: 0,
             indexType: "start",
             iconID: "waypointStart"
