@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.6...v0.8.7) (2024-04-30)
+
+
+### Bug Fixes
+
+* **revgeo:** temporarily skipping flaky test, to be re-added later in a safer way ([ba6e131](https://github.com/tomtom-international/maps-sdk-js/commit/ba6e131351299a7823320fb9e64b82d6a28e844d))
+
 ### [0.8.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.5...v0.8.6) (2024-04-29)
 
 ### [0.8.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.4...v0.8.5) (2024-04-29)
