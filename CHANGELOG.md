@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.7...v0.8.8) (2024-04-30)
+
+
+### Bug Fixes
+
+* **routing:** fixing waypoints rendering tests ([c203cde](https://github.com/tomtom-international/maps-sdk-js/commit/c203cde93cc43e1929edf2685ca5dd2df815a0bd))
+
 ### [0.8.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.6...v0.8.7) (2024-04-30)
 
 
