@@ -1,4 +1,5 @@
-import type { RoutingModuleConfig } from "map";
+import type { MapGeoJSONFeature } from "maplibre-gl";
+import type { DisplayRouteSummaryProps, RoutingModuleConfig } from "map";
 import {
     defaultRouteLayersConfig,
     HILLSHADE_SOURCE_ID,
@@ -31,26 +32,22 @@ import type { Routes, WaypointLike } from "@anw/maps-sdk-js/core";
 import type { MapsSDKThis } from "./types/MapsSDKThis";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import rotterdamToAmsterdamRoutesJSON from "./data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json";
-import ldevrTestRoutesJSON from "./data/RoutingModuleLDEVR.test.data.json";
 
+import ldevrTestRoutesJSON from "./data/RoutingModuleLDEVR.test.data.json";
 import {
     getNumVisibleLayersBySource,
     getPaintProperty,
     initHillshade,
+    initRouting,
     putGlobalConfig,
     queryRenderedFeatures,
     setStyle,
+    showWaypoints,
     waitForMapIdle,
     waitForTimeout,
     waitUntilRenderedFeatures,
     waitUntilRenderedFeaturesChange
 } from "./util/TestUtils";
-
-const initRouting = async (config?: RoutingModuleConfig) =>
-    page.evaluate(async (inputConfig?: RoutingModuleConfig) => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.routing = await mapsSDKThis.MapsSDK.RoutingModule.init(mapsSDKThis.tomtomMap, inputConfig);
-    }, config);
 
 const applyConfig = async (config: RoutingModuleConfig) =>
     page.evaluate((inputConfig: RoutingModuleConfig) => {
@@ -69,23 +66,18 @@ const selectRoute = async (index: number) =>
 
 const clearRoutes = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearRoutes());
 
-const showWaypoints = async (waypoints: WaypointLike[]) =>
-    page.evaluate((inputWaypoints) => {
-        (globalThis as MapsSDKThis).routing?.showWaypoints(inputWaypoints);
-    }, waypoints);
-
 const clearWaypoints = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
 
 const waitForRenderedWaypoints = async (numWaypoint: number) =>
     waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
 
-const getSelectedSummaryBubbleProps = async (): Promise<any> => {
-    const renderedBubbles = await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID]);
-    return renderedBubbles.find((f) => f.properties?.routeStyle == "selected")?.properties;
+const getSelectedSummaryBubbleProps = async (): Promise<DisplayRouteSummaryProps | undefined> => {
+    const renderedBubbles: MapGeoJSONFeature[] = await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID]);
+    return renderedBubbles.find((f) => f.properties?.routeStyle == "selected")?.properties as DisplayRouteSummaryProps;
 };
 
 // (We reparse the route because it contains Date objects):
-const amsterdamToRotterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJSON));
+const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJSON));
 const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJSON));
 
 const NUM_WAYPOINT_LAYERS = 2;
@@ -100,13 +92,12 @@ const NUM_INSTRUCTION_LINE_LAYERS = 2;
 const NUM_INSTRUCTION_ARROW_LAYERS = 1;
 const NUM_SUMMARY_BUBBLE_LAYERS = 1;
 
-describe("Routing tests", () => {
+describe("Routing and waypoint display tests", () => {
     const mapEnv = new MapIntegrationTestEnv();
-
     beforeAll(async () => mapEnv.loadPage());
 
     test("Basic routes and waypoints show and clear flows", async () => {
-        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
         await initRouting();
 
         // Showing waypoints but not yet routes:
@@ -120,7 +111,7 @@ describe("Routing tests", () => {
         expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
 
         // Showing routes, keeping waypoints:
-        await showRoutes(amsterdamToRotterdamRoutes);
+        await showRoutes(rotterdamToAmsterdamRoutes);
         await waitForMapIdle();
         await waitForRenderedWaypoints(2);
         expect((await queryRenderedFeatures([ROUTE_LINE_LAYER_ID])).length).toBeGreaterThanOrEqual(1);
@@ -142,7 +133,7 @@ describe("Routing tests", () => {
 
     test("Multiple show and clear flows", async () => {
         await mapEnv.loadMap(
-            { bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
+            { bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
         await initRouting();
@@ -151,7 +142,7 @@ describe("Routing tests", () => {
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await showRoutes(amsterdamToRotterdamRoutes);
+        await showRoutes(rotterdamToAmsterdamRoutes);
         await waitForMapIdle();
         expect(mapEnv.consoleErrors).toHaveLength(0);
 
@@ -268,10 +259,10 @@ describe("Routing tests", () => {
     });
 
     test("Showing a route right after changing the style", async () => {
-        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
         await initRouting();
         await setStyle("monoLight");
-        await showRoutes(amsterdamToRotterdamRoutes);
+        await showRoutes(rotterdamToAmsterdamRoutes);
 
         await waitForMapIdle();
         await waitForTimeout(2000);
@@ -282,7 +273,7 @@ describe("Routing tests", () => {
     });
 
     test("Showing waypoints right after changing the style", async () => {
-        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
         await initRouting();
         await setStyle("monoLight");
         await showWaypoints([
@@ -299,7 +290,7 @@ describe("Routing tests", () => {
     });
 
     test("Showing waypoints first and right after changing the style", async () => {
-        await mapEnv.loadMap({ bounds: amsterdamToRotterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
+        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
         await initRouting();
         await showWaypoints([
             [4.53074, 51.95102],
@@ -467,7 +458,7 @@ describe("Routing tests", () => {
 
     test("Updating advanced layers configuration", async () => {
         await mapEnv.loadMap(
-            { fitBoundsOptions: { padding: 150 }, bounds: amsterdamToRotterdamRoutes.bbox },
+            { fitBoundsOptions: { padding: 150 }, bounds: rotterdamToAmsterdamRoutes.bbox },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
         await initRouting();
@@ -476,7 +467,7 @@ describe("Routing tests", () => {
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await showRoutes(amsterdamToRotterdamRoutes);
+        await showRoutes(rotterdamToAmsterdamRoutes);
         await waitForMapIdle();
         expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#36A8F0");
 
@@ -506,12 +497,12 @@ describe("Routing tests", () => {
     });
 
     test("Distance and time units configuration", async () => {
-        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: amsterdamToRotterdamRoutes.bbox });
+        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: rotterdamToAmsterdamRoutes.bbox });
         await putGlobalConfig({ displayUnits: { time: { hours: "GLOBAL_HOURS", minutes: "GLOBAL_MINUTES" } } });
 
         // routing hours override global config:
         await initRouting({ displayUnits: { distance: { type: "imperial_us" }, time: { hours: "hours" } } });
-        await showRoutes(amsterdamToRotterdamRoutes);
+        await showRoutes(rotterdamToAmsterdamRoutes);
         await waitForMapIdle();
         expect(await getSelectedSummaryBubbleProps()).toMatchObject({
             formattedDistance: "48 mi",

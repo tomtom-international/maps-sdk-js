@@ -10,8 +10,8 @@ import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
 import netherlandsGeometryData from "./data/GeometriesModule-Netherlands.test.data.json";
 import {
     getGeometriesSourceAndLayerIDs,
-    getNumVisibleLayersBySource,
     getLayerByID,
+    getNumVisibleLayersBySource,
     initGeometries,
     queryRenderedFeatures,
     setStyle,

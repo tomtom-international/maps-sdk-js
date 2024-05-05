@@ -34,6 +34,7 @@ describe("Map initialization mocked tests", () => {
             attributionControl: { compact: false },
             validateStyle: false,
             maxTileCacheZoomLevels: 22,
+            cancelPendingTileRequestsWhileZooming: false,
             transformRequest: expect.any(Function)
         });
     });
@@ -60,6 +61,7 @@ describe("Map initialization mocked tests", () => {
             attributionControl: { compact: false },
             validateStyle: false,
             maxTileCacheZoomLevels: 22,
+            cancelPendingTileRequestsWhileZooming: false,
             transformRequest: expect.any(Function)
         });
     });

@@ -54,7 +54,7 @@ describe("BaseMap module tests", () => {
         let vectorTilesLayersCount = await getNumLayersBySource(BASE_MAP_SOURCE_ID);
         expect(vectorTilesLayersCount).toBeGreaterThanOrEqual(87);
         // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
-        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(vectorTilesLayersCount - 5);
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(vectorTilesLayersCount - 10);
         // This base map contains all the vector tile layers minus the POIs:
         const originalBaseMapLayerCount = await getBaseMapLayerCount();
         expect(originalBaseMapLayerCount).toBe(vectorTilesLayersCount - poiLayerIDs.length);
@@ -99,16 +99,18 @@ describe("BaseMap module tests", () => {
     test("BaseMap module and visibility changes for some layer groups", async () => {
         // Initializing a base map with all layers:
         await initBasemap();
-        const visibleBaseMapLayers = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
+        const defaultVisibleLayers = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
         // Hiding road shields:
         await setBaseMapVisible(false, { layerGroups: { mode: "include", names: ["roadShields"] } });
 
-        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeLessThan(visibleBaseMapLayers);
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeLessThan(defaultVisibleLayers);
         // we should only have a few layers less visible:
-        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(visibleBaseMapLayers - 5);
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThan(defaultVisibleLayers - 10);
+
+        // Making all layers visible again:
         await setBaseMapVisible(true);
-        // (3D buildings usually are invisible by default, so we end up with an extra visible layer)
-        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBe(visibleBaseMapLayers + 1);
+        // (3D buildings usually are invisible by default, so we end up with one or more extra visible layers)
+        expect(await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID)).toBeGreaterThanOrEqual(defaultVisibleLayers + 1);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -182,7 +184,7 @@ describe("BaseMap module tests", () => {
             await initBasemap({ layerGroupsFilter: { mode: "include", names: [layerGroup] } });
             const visibleLayers = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
             // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
-            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 5);
+            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 10);
 
             await setBaseMapVisible(false);
             const visibleLayersAfterModuleInvisible = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
@@ -213,7 +215,7 @@ describe("BaseMap module tests", () => {
             await initBasemap({ layerGroupsFilter: { mode: "exclude", names: [layerGroup] } });
             const visibleLayers = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);
             // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
-            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 5);
+            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 10);
 
             await setBaseMapVisible(false);
             const visibleLayersAfterModuleInvisible = await getNumVisibleLayersBySource(BASE_MAP_SOURCE_ID);

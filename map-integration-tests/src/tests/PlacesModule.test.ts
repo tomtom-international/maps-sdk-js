@@ -36,7 +36,11 @@ const getNumVisibleLayers = async (sourceID: string) => getNumVisibleLayersBySou
 const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: LocationDisplayProps[]) =>
     expect(
         sortBy(
-            places.map((place) => ({ title: place.properties.title, iconID: place.properties.iconID })),
+            places.map((place) => ({
+                id: place.properties.id,
+                title: place.properties.title,
+                iconID: place.properties.iconID
+            })),
             "title"
         )
     ).toEqual(sortBy(expectedDisplayProps, "title"));
@@ -64,6 +68,7 @@ describe("PlacesModule tests", () => {
         await mapEnv.loadMap({ center: [-75.43974, 39.82295], zoom: 10 });
         await initPlaces();
         await showPlaces({
+            id: "placeID",
             type: "Feature",
             geometry: { type: "Point", coordinates: [-75.43974, 39.82295] },
             properties: { address: { freeformAddress: "Test Address" } }
@@ -73,7 +78,9 @@ describe("PlacesModule tests", () => {
         expect(await getNumVisibleLayers(sourceID)).toEqual(2);
 
         const renderedPlaces = await waitUntilRenderedFeatures(layerIDs, 1, 10000);
-        compareToExpectedDisplayProps(renderedPlaces, [{ iconID: "default_pin", title: "Test Address" }]);
+        compareToExpectedDisplayProps(renderedPlaces, [
+            { id: "placeID", iconID: "default_pin", title: "Test Address" }
+        ]);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -83,6 +90,7 @@ describe("PlacesModule tests", () => {
         await initPlaces();
         await setStyle("standardDark");
         await showPlaces({
+            id: "placeID2",
             type: "Feature",
             geometry: { type: "Point", coordinates: [-75.43974, 39.82295] },
             properties: { address: { freeformAddress: "Test Address" } }
@@ -94,7 +102,9 @@ describe("PlacesModule tests", () => {
         expect(await getNumVisibleLayers(sourceID)).toEqual(2);
 
         const renderedPlaces = await waitUntilRenderedFeatures(layerIDs, 1, 10000);
-        compareToExpectedDisplayProps(renderedPlaces, [{ iconID: "default_pin", title: "Test Address" }]);
+        compareToExpectedDisplayProps(renderedPlaces, [
+            { id: "placeID2", iconID: "default_pin", title: "Test Address" }
+        ]);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

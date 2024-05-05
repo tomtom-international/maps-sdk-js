@@ -1,6 +1,6 @@
 import type { MapGeoJSONFeature } from "maplibre-gl";
 import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
-import type { IncidentCategory, RoadCategory, IncidentsConfig, TrafficIncidentsFilters } from "map";
+import type { IncidentCategory, IncidentsConfig, RoadCategory, TrafficIncidentsFilters } from "map";
 import {
     incidentCategories as availableIncidentCategories,
     incidentCategoriesMapping,

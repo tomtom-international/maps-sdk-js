@@ -1,20 +1,31 @@
 import type { Position } from "geojson";
-import type { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
-import type { GlobalConfig, Language, Place, Places, PolygonFeatures } from "@anw/maps-sdk-js/core";
+import type { LayerSpecification, MapGeoJSONFeature, Point as MapLibrePoint } from "maplibre-gl";
+import type {
+    GlobalConfig,
+    Language,
+    Place,
+    Places,
+    PolygonFeatures,
+    WaypointLike,
+    Waypoints
+} from "@anw/maps-sdk-js/core";
 import type {
     BaseMapModuleInitConfig,
+    EventType,
     GeometriesModuleConfig,
     HillshadeModuleConfig,
     IncidentsConfig,
     LayerSpecWithSource,
     PlacesModuleConfig,
     POIsModuleConfig,
+    RoutingModuleConfig,
     SourceWithLayerIDs,
     StyleInput,
     StyleModuleInitConfig
 } from "map";
 import { poiLayerIDs } from "map";
 import type { MapsSDKThis } from "../types/MapsSDKThis";
+import type { WaypointDisplayProps } from "map/src/routing";
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);
@@ -248,3 +259,80 @@ export const putGlobalConfig = async (config: Partial<GlobalConfig>) =>
     page.evaluate((inputConfig) => {
         (globalThis as MapsSDKThis).MapsSDKCore.TomTomConfig.instance.put(inputConfig);
     }, config);
+
+export const initRouting = async (config?: RoutingModuleConfig) =>
+    page.evaluate(async (inputConfig?: RoutingModuleConfig) => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        mapsSDKThis.routing = await mapsSDKThis.MapsSDK.RoutingModule.init(mapsSDKThis.tomtomMap, inputConfig);
+    }, config);
+
+export const showWaypoints = async (waypoints: WaypointLike[]) =>
+    page.evaluate((inputWaypoints) => {
+        (globalThis as MapsSDKThis).routing?.showWaypoints(inputWaypoints);
+    }, waypoints);
+
+export const getWaypointLayers = async (): Promise<string[]> =>
+    page.evaluate(() => (globalThis as MapsSDKThis).routing?.sourceAndLayerIDs.waypoints.layerIDs ?? []);
+
+export const getDisplayWaypoints = async (): Promise<Waypoints<WaypointDisplayProps>> =>
+    page.evaluate(
+        () =>
+            ((globalThis as MapsSDKThis).routing as any).sourcesWithLayers.waypoints
+                .shownFeatures as Waypoints<WaypointDisplayProps>
+    );
+
+export const getPixelCoords = async (inputCoordinates: [number, number] | Position): Promise<MapLibrePoint> =>
+    page.evaluate(
+        (coordinates) => (globalThis as MapsSDKThis).mapLibreMap.project(coordinates as [number, number]),
+        inputCoordinates
+    );
+
+export const getCursor = async () =>
+    page.evaluate(() => {
+        const mapsSDKThis = globalThis as MapsSDKThis;
+        return mapsSDKThis.tomtomMap.mapLibreMap.getCanvas().style.cursor;
+    });
+
+export const getNumLeftAndRightClicks = async (): Promise<[number, number]> =>
+    page.evaluate(() => {
+        const sdkThis = globalThis as MapsSDKThis;
+        return [sdkThis._numOfClicks, sdkThis._numOfContextmenuClicks] as [number, number];
+    });
+
+export const getNumHoversAndLongHovers = async (): Promise<[number, number]> =>
+    page.evaluate(() => {
+        const sdkThis = globalThis as MapsSDKThis;
+        return [sdkThis._numOfHovers, sdkThis._numOfLongHovers] as [number, number];
+    });
+
+export const waitForEventState = async (
+    expectedEventState: EventType | undefined,
+    layerIDs: string[],
+    featureID?: string
+): Promise<EventType | undefined> =>
+    new Promise<EventType | undefined>((resolve, reject) => {
+        let eventState;
+        const intervalMS = 200;
+        const maxTries = 5000 / intervalMS;
+        let tries = 0;
+        const interval = setInterval(async () => {
+            const features = await queryRenderedFeatures(layerIDs);
+            const feature = featureID ? features.find((feature) => feature.id == featureID) : features[0];
+            eventState = feature?.properties?.eventState;
+            if (eventState == expectedEventState) {
+                clearInterval(interval);
+                resolve(eventState);
+            }
+            tries++;
+            if (tries > maxTries) {
+                clearInterval(interval);
+                reject(new Error(`Event state didn't match ${expectedEventState}. Last read value was ${eventState}`));
+            }
+        }, intervalMS);
+    });
+
+export const getHoveredTopFeature = async <T>(): Promise<T> =>
+    page.evaluate(() => (globalThis as MapsSDKThis)._hoveredTopFeature as T);
+
+export const getClickedTopFeature = async <T = MapGeoJSONFeature>(): Promise<T> =>
+    page.evaluate(() => (globalThis as MapsSDKThis)._clickedTopFeature as T);

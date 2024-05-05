@@ -1,5 +1,5 @@
 import type { MapGeoJSONFeature } from "maplibre-gl";
-import type { RoadCategory, FlowConfig, StyleModuleInitConfig, TrafficFlowFilters } from "map";
+import type { FlowConfig, RoadCategory, StyleModuleInitConfig, TrafficFlowFilters } from "map";
 import { TRAFFIC_FLOW_SOURCE_ID } from "map";
 import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
 import type { MapsSDKThis } from "./types/MapsSDKThis";

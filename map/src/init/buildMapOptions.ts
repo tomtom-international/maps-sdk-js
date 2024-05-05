@@ -10,11 +10,15 @@ import { injectTomTomHeaders } from "../shared/mapUtils";
  */
 export const buildMapOptions = (mapLibreOptions: MapLibreOptions, tomtomMapParams: TomTomMapParams): MapOptions => {
     return {
-        ...mapLibreOptions,
-        style: buildStyleInput(tomtomMapParams),
-        attributionControl: { compact: false },
+        // defaults (can be overwritten by given options)
         validateStyle: false,
         maxTileCacheZoomLevels: 22,
+        cancelPendingTileRequestsWhileZooming: false,
+        // given options:
+        ...mapLibreOptions,
+        // SDK overrides (won't have any effect via given options):
+        style: buildStyleInput(tomtomMapParams),
+        attributionControl: { compact: false },
         transformRequest: injectTomTomHeaders(tomtomMapParams)
     };
 };

@@ -111,7 +111,7 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
                     id,
                     properties: {
                         ...waypoint.properties,
-                        id,
+                        id, // adding id in display properties due to GeoJSONSourceWithLayers promoteID feature
                         index,
                         indexType,
                         ...(title && { title }),

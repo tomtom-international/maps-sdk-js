@@ -15,8 +15,6 @@ describe("Renderer init params tests", () => {
         ) => {
             expect(buildMapOptions(mapLibreOptions, tomtomMapParams)).toEqual({
                 ...rendererOptions,
-                validateStyle: false,
-                maxTileCacheZoomLevels: 22,
                 transformRequest: expect.any(Function)
             });
         }

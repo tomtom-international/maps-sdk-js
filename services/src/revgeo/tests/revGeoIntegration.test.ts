@@ -78,33 +78,37 @@ describe("Reverse Geocoding integration tests", () => {
         expect(result).toBeDefined();
     });
 
-    // Skipped, too flaky, perhaps when map data stabilizes...?
-    // eslint-disable-next-line jest/no-disabled-tests
-    test.skip("Reverse geocoding with house number input", async () => {
-        // Point by Singel 144:
-        const result = await reverseGeocode({ position: [4.89, 52.37552] });
-
-        expect(result?.properties?.address.streetNumber).toBe("144");
-        expect(result?.properties?.sideOfStreet).toBeUndefined();
-        expect(result?.properties?.offsetPosition).toBeUndefined();
-
+    test("Reverse geocoding with house number input", async () => {
         const overhoeksPlein = [4.90224, 52.38388];
         // Point by Overhoeksplein, ensuring 21B:
-        let resultWithNumber = await reverseGeocode({ position: overhoeksPlein, number: "23A" });
-        expect(resultWithNumber?.properties?.address.streetNumber).toBe("23A");
-        expect(resultWithNumber?.properties?.sideOfStreet).toBe("R");
-        expect(resultWithNumber?.properties?.offsetPosition).toBeDefined();
-
-        // Point by Overhoeksplein, ensuring 23M:
-        resultWithNumber = await reverseGeocode({ position: overhoeksPlein, number: "23M" });
-        expect(resultWithNumber?.properties?.address.streetNumber).toBe("23M");
-        expect(resultWithNumber?.properties?.sideOfStreet).toBe("R");
-        expect(resultWithNumber?.properties?.offsetPosition).toBeDefined();
-
-        // Point around Regency Street 57, side of street undefined
-        const resultWithNumberOtherSide = await reverseGeocode({ position: [-0.12734, 51.49534], number: "7" });
-        expect(resultWithNumberOtherSide?.properties?.address.streetNumber).toBe("7");
-        expect(resultWithNumberOtherSide?.properties?.sideOfStreet).toBeUndefined();
+        const resultWithNumber = await reverseGeocode({ position: overhoeksPlein, number: "23A" });
+        expect(resultWithNumber).toMatchObject({
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: [4.90224, 52.38388]
+            },
+            bbox: expect.any(Array),
+            id: expect.any(String),
+            properties: {
+                type: "Point Address",
+                address: {
+                    routeNumbers: [],
+                    street: "Overhoeksplein",
+                    streetName: "Overhoeksplein",
+                    countryCode: "NL",
+                    countrySubdivision: "Noord-Holland",
+                    municipality: "Amsterdam",
+                    postalCode: expect.any(String),
+                    municipalitySubdivision: "Amsterdam Havens",
+                    country: "Nederland",
+                    countryCodeISO3: "NLD",
+                    freeformAddress: "Overhoeksplein 23A, 1031 KS Amsterdam",
+                    localName: "Amsterdam"
+                },
+                originalPosition: expect.any(Array)
+            }
+        });
     });
 
     test("Reverse geocoding from the sea with small radius", async () => {

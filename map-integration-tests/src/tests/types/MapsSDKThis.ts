@@ -1,15 +1,15 @@
 import type { LngLatLike, Map, MapGeoJSONFeature } from "maplibre-gl";
 import type {
-    PlacesModule,
+    BaseMapModule,
     GeometriesModule,
-    TomTomMap,
+    HillshadeModule,
+    PlacesModule,
+    POIsModule,
     RoutingModule,
     SourceWithLayers,
-    POIsModule,
-    HillshadeModule,
-    BaseMapModule,
-    TrafficIncidentsModule,
-    TrafficFlowModule
+    TomTomMap,
+    TrafficFlowModule,
+    TrafficIncidentsModule
 } from "map";
 
 export type MapsSDKThis = typeof globalThis & {
@@ -34,6 +34,7 @@ export type MapsSDKThis = typeof globalThis & {
     // It's initialized by 0 and you can assert the count of:
     // Hovers
     _numOfHovers: number;
+    _hoveredTopFeature?: unknown;
     // Clicks
     _numOfClicks: number;
     // Right click
