@@ -2,8 +2,7 @@ module.exports = {
     launch: {
         headless: "new",
         args: ["--ignore-certificate-errors", "--window-size=800,750"],
-        product: "chrome",
-        waitForInitialPage: false
+        product: "chrome"
     },
     server: {
         command: "npm run start-webpack-dev-server",
