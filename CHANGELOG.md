@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.10](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.9...v0.8.10) (2024-05-06)
+
+
+### Features
+
+* **EDXCE-275-EDXCE-282:** upgrading to maplibre 4.2.0 with disabled pending tiles canceling, adding waypoint event tests, and splitting events tests ([d981c25](https://github.com/tomtom-international/maps-sdk-js/commit/d981c259c6bab72b1a6c02fdee201184ada63be2))
+
 ### [0.8.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.8...v0.8.9) (2024-05-06)
 
 
