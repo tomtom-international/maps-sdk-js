@@ -17,7 +17,7 @@ describe("Place By Id API", () => {
     });
 
     test("placeById works", async () => {
-        const entityId = "8dDUmb0BqTQcdNzkYuAoFA";
+        const entityId = "FD3yZ3ADZ4h2w_Fl9Acm0w";
         const place = await placeById({
             entityId,
             language: "en-GB",
@@ -34,7 +34,7 @@ describe("Place By Id API", () => {
     // eslint-disable-next-line jest/no-disabled-tests
     test.skip("placeById for EV charging station with opening hours", async () => {
         const place = await placeById({
-            entityId: "40z9pjn_fZGYFuLAeEeXvQ",
+            entityId: "5xJ_SaD2QbJmkNiMfu6_Og",
             openingHours: "nextSevenDays"
         });
 
@@ -43,7 +43,7 @@ describe("Place By Id API", () => {
     });
 
     test("placeById with API request and response callbacks", async () => {
-        const entityId = "8dDUmb0BqTQcdNzkYuAoFA";
+        const entityId = "FD3yZ3ADZ4h2w_Fl9Acm0w";
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
         const place = await placeById({ entityId, onAPIRequest, onAPIResponse });
@@ -52,7 +52,7 @@ describe("Place By Id API", () => {
     });
 
     test("placeById with API request and error response callbacks", async () => {
-        const entityId = "8dDUmb0BqTQcdNzkYuAoFA";
+        const entityId = "FD3yZ3ADZ4h2w_Fl9Acm0w";
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
         await expect(() =>

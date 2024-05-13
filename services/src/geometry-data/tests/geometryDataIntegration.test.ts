@@ -34,15 +34,15 @@ describe("Geometry data integration tests", () => {
         TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
     });
 
-    test("Geometry data of Schiphol airport", async () => {
-        const result = await geometryData({ geometries: ["1162304972"] });
+    test("Geometry data of some place", async () => {
+        const result = await geometryData({ geometries: ["10794339"] });
         expect(result).toMatchObject({
             type: "FeatureCollection",
             bbox: expect.any(Array),
             features: [
                 {
                     type: "Feature",
-                    id: "1162304972",
+                    id: "10794339",
                     properties: {},
                     bbox: expect.any(Array),
                     geometry: {
@@ -54,15 +54,15 @@ describe("Geometry data integration tests", () => {
         });
     });
 
-    test("Geometry data of Spain", async () => {
-        const result = await geometryData({ geometries: ["1284393703"], zoom: 5 });
+    test("Geometry data of a country with MultiPolygon", async () => {
+        const result = await geometryData({ geometries: ["10792745"], zoom: 5 });
         expect(result).toMatchObject({
             type: "FeatureCollection",
             bbox: expect.any(Array),
             features: [
                 {
                     type: "Feature",
-                    id: "1284393703",
+                    id: "10792745",
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
@@ -75,9 +75,9 @@ describe("Geometry data integration tests", () => {
     });
 
     test("Geometry data of the communities of Catalonia, Madrid, and Canary Islands", async () => {
-        const cataloniaGeometryID = "1251563328";
-        const madridGeometryID = "1213671370";
-        const canaryIslandsGeometryID = "1174938150";
+        const cataloniaGeometryID = "21505330";
+        const madridGeometryID = "18999766";
+        const canaryIslandsGeometryID = "12672113";
 
         const result = await geometryData({
             geometries: [cataloniaGeometryID, madridGeometryID, canaryIslandsGeometryID],
@@ -125,9 +125,9 @@ describe("Geometry data integration tests", () => {
         "Geometry data of the communities of Catalonia, Madrid, and Canary Islands " +
             "where Madrid UUID is incorrect and won't be found",
         async () => {
-            const cataloniaGeometryID = "1251563328";
+            const cataloniaGeometryID = "21505330";
             const madridGeometryID = "INCORRECT";
-            const canaryIslandsGeometryID = "1174938150";
+            const canaryIslandsGeometryID = "12672113";
 
             const result = await geometryData({
                 geometries: [cataloniaGeometryID, madridGeometryID, canaryIslandsGeometryID],
@@ -163,7 +163,7 @@ describe("Geometry data integration tests", () => {
     );
 
     test("Geometry Data with API response callback", async () => {
-        const geometries = ["1251563328"];
+        const geometries = ["10794339"];
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
         const result = await geometryData({ geometries, zoom: 10, onAPIRequest, onAPIResponse });
@@ -174,7 +174,7 @@ describe("Geometry data integration tests", () => {
     });
 
     test("Geometry Data with API error response callback", async () => {
-        const geometries = ["1251563328"];
+        const geometries = ["10794339"];
         const onAPIRequest = jest.fn() as (request: URL) => void;
         const onAPIResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
         await expect(() =>
@@ -194,7 +194,7 @@ describe("Geometry data integration tests", () => {
 describe("Geometry with Places", () => {
     test("Build a geometry response with places properties - integration", async () => {
         const result = await geometryData({ geometries: places as unknown as Places });
-        const azoresGeometryId = "1238932136";
+        const azoresGeometryId = "20313022";
         const azoresRegion = result?.features.find((feature) => feature.id === azoresGeometryId);
 
         expect(azoresRegion?.properties).toMatchObject({
