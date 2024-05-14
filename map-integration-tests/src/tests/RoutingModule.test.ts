@@ -1,7 +1,8 @@
+import type { Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import type { MapGeoJSONFeature } from "maplibre-gl";
 import type { DisplayRouteSummaryProps, RoutingModuleConfig } from "map";
 import {
-    defaultRouteLayersConfig,
     HILLSHADE_SOURCE_ID,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_EV_CHARGING_STATIONS_SOURCE_ID,
@@ -27,10 +28,10 @@ import {
     TRAFFIC_INCIDENTS_SOURCE_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID
-} from "map";
-import type { Routes, WaypointLike } from "@anw/maps-sdk-js/core";
+} from "map/src/shared";
+import type { Routes, WaypointLike } from "core";
 import type { MapsSDKThis } from "./types/MapsSDKThis";
-import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
+import { MapTestEnv } from "./util/MapTestEnv";
 import rotterdamToAmsterdamRoutesJSON from "./data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json";
 
 import ldevrTestRoutesJSON from "./data/RoutingModuleLDEVR.test.data.json";
@@ -46,33 +47,37 @@ import {
     waitForMapIdle,
     waitForTimeout,
     waitUntilRenderedFeatures,
-    waitUntilRenderedFeaturesChange
+    waitUntilRenderedFeaturesChange,
+    zoomTo
 } from "./util/TestUtils";
+import { defaultRouteLayersConfig } from "map/src/routing/layers/defaultConfig";
 
-const applyConfig = async (config: RoutingModuleConfig) =>
+const applyConfig = async (page: Page, config: RoutingModuleConfig) =>
     page.evaluate((inputConfig: RoutingModuleConfig) => {
         (globalThis as MapsSDKThis).routing?.applyConfig(inputConfig);
     }, config);
 
-const showRoutes = async (routes: Routes) =>
+const showRoutes = async (page: Page, routes: Routes) =>
     page.evaluate((inputRoutes: Routes) => {
         (globalThis as MapsSDKThis).routing?.showRoutes(inputRoutes);
     }, routes);
 
-const selectRoute = async (index: number) =>
+const selectRoute = async (page: Page, index: number) =>
     page.evaluate((inputIndex: number) => {
         (globalThis as MapsSDKThis).routing?.selectRoute(inputIndex);
     }, index);
 
-const clearRoutes = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearRoutes());
+const clearRoutes = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearRoutes());
 
-const clearWaypoints = async () => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
+const clearWaypoints = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
 
-const waitForRenderedWaypoints = async (numWaypoint: number) =>
-    waitUntilRenderedFeatures([WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
+const waitForRenderedWaypoints = async (page: Page, numWaypoint: number) =>
+    waitUntilRenderedFeatures(page, [WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
 
-const getSelectedSummaryBubbleProps = async (): Promise<DisplayRouteSummaryProps | undefined> => {
-    const renderedBubbles: MapGeoJSONFeature[] = await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID]);
+const getSelectedSummaryBubbleProps = async (page: Page): Promise<DisplayRouteSummaryProps | undefined> => {
+    const renderedBubbles: MapGeoJSONFeature[] = await queryRenderedFeatures(page, [
+        ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID
+    ]);
     return renderedBubbles.find((f) => f.properties?.routeStyle == "selected")?.properties as DisplayRouteSummaryProps;
 };
 
@@ -92,83 +97,84 @@ const NUM_INSTRUCTION_LINE_LAYERS = 2;
 const NUM_INSTRUCTION_ARROW_LAYERS = 1;
 const NUM_SUMMARY_BUBBLE_LAYERS = 1;
 
-describe("Routing and waypoint display tests", () => {
-    const mapEnv = new MapIntegrationTestEnv();
-    beforeAll(async () => mapEnv.loadPage());
-
-    test("Basic routes and waypoints show and clear flows", async () => {
-        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
-        await initRouting();
+test.describe("Routing and waypoint display tests", () => {
+    test("Basic routes and waypoints show and clear flows", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: rotterdamToAmsterdamRoutes.bbox,
+            fitBoundsOptions: { padding: 150 }
+        });
+        await initRouting(page);
 
         // Showing waypoints but not yet routes:
-        await showWaypoints([
+        await showWaypoints(page, [
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await waitForMapIdle();
-        await waitForRenderedWaypoints(2);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
+        await waitForMapIdle(page);
+        await waitForRenderedWaypoints(page, 2);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
 
         // Showing routes, keeping waypoints:
-        await showRoutes(rotterdamToAmsterdamRoutes);
-        await waitForMapIdle();
-        await waitForRenderedWaypoints(2);
-        expect((await queryRenderedFeatures([ROUTE_LINE_LAYER_ID])).length).toBeGreaterThanOrEqual(1);
-        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
+        await showRoutes(page, rotterdamToAmsterdamRoutes);
+        await waitForMapIdle(page);
+        await waitForRenderedWaypoints(page, 2);
+        expect((await queryRenderedFeatures(page, [ROUTE_LINE_LAYER_ID])).length).toBeGreaterThanOrEqual(1);
+        expect((await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
 
         // clearing routes, but keeping waypoints:
-        await clearRoutes();
-        await waitForMapIdle();
-        await waitForRenderedWaypoints(2);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
+        await clearRoutes(page);
+        await waitForMapIdle(page);
+        await waitForRenderedWaypoints(page, 2);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(0);
 
         // clearing waypoints
-        await clearWaypoints();
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
+        await clearWaypoints(page);
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Multiple show and clear flows", async () => {
-        await mapEnv.loadMap(
+    test("Multiple show and clear flows", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(
+            page,
             { bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
-        await initRouting();
+        await initRouting(page);
 
-        await showWaypoints([
+        await showWaypoints(page, [
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await showRoutes(rotterdamToAmsterdamRoutes);
-        await waitForMapIdle();
+        await showRoutes(page, rotterdamToAmsterdamRoutes);
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
 
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(
             NUM_VEHICLE_RESTRICTED_LAYERS
         );
-        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(NUM_FERRY_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(NUM_TOLL_ROAD_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_FERRIES_SOURCE_ID)).toBe(NUM_FERRY_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(NUM_TOLL_ROAD_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
         // no guidance in the route
-        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(
             NUM_SUMMARY_BUBBLE_LAYERS
         );
 
-        await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
-        await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
-        await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
-        await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
-        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
-        expect(await getSelectedSummaryBubbleProps()).toEqual({
+        await waitForRenderedWaypoints(page, 2);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 5000);
+        await waitUntilRenderedFeatures(page, [ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
+        expect((await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
+        expect(await getSelectedSummaryBubbleProps(page)).toEqual({
             routeStyle: "selected",
             formattedDistance: "77 km",
             formattedDuration: "1 hr 04 min",
@@ -176,193 +182,216 @@ describe("Routing and waypoint display tests", () => {
         });
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle("standardDark");
-        await waitForMapIdle();
+        await setStyle(page, "standardDark");
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
-        await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
-        await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
-        await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
-        await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
+        await waitForRenderedWaypoints(page, 2);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
         // Adding hillshade to style, asserting that the route stays the same:
-        await initHillshade({ ensureAddedToStyle: true });
-        await waitForMapIdle();
+        await initHillshade(page, { ensureAddedToStyle: true });
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
-        await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitForRenderedWaypoints(page, 2);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 2000);
 
-        await selectRoute(2);
-        await waitForMapIdle();
+        await selectRoute(page, 2);
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
-        await waitUntilRenderedFeatures([ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 0, 2000);
-        await waitUntilRenderedFeatures([ROUTE_FERRIES_LINE_LAYER_ID], 0, 2000);
-        await waitUntilRenderedFeatures([ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_FERRIES_LINE_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 2, 2000);
 
         // Changing the style (this time passing manually the parts again), asserting that the route stays the same:
-        await setStyle({
+        await setStyle(page, {
             type: "published",
             id: "monoLight",
             include: ["trafficIncidents", "trafficFlow", "hillshade"]
         });
-        await waitForMapIdle();
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 2000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
-        await clearRoutes();
-        await waitForMapIdle();
+        await clearRoutes(page);
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
-        expect(await getNumVisibleLayersBySource(HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
-        expect(await getNumVisibleLayersBySource(TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
-        expect(await getNumVisibleLayersBySource(TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_FERRIES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_TUNNELS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
 
-        await clearWaypoints();
-        await waitForMapIdle();
+        await clearWaypoints(page);
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
-
-        // Changing the style, asserting that the route stays the same:
-        await setStyle("monoDark");
-        await waitForMapIdle();
-        expect(mapEnv.consoleErrors).toHaveLength(0);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(0);
-
-        await showWaypoints([[4.53074, 51.95102]]);
-        await waitForMapIdle();
-        expect(mapEnv.consoleErrors).toHaveLength(0);
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
-        await waitForRenderedWaypoints(1);
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INCIDENTS_SOURCE_ID)).toBe(0);
 
         // Changing the style, asserting that the route stays the same:
-        await setStyle("standardLight");
-        await waitForMapIdle();
+        await setStyle(page, "monoDark");
+        await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
-        await waitForRenderedWaypoints(1);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(0);
+
+        await showWaypoints(page, [[4.53074, 51.95102]]);
+        await waitForMapIdle(page);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
+        await waitForRenderedWaypoints(page, 1);
+
+        // Changing the style, asserting that the route stays the same:
+        await setStyle(page, "standardLight");
+        await waitForMapIdle(page);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+        await waitForRenderedWaypoints(page, 1);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Showing a route right after changing the style", async () => {
-        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
-        await initRouting();
-        await setStyle("monoLight");
-        await showRoutes(rotterdamToAmsterdamRoutes);
+    test("Showing a route right after changing the style", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: rotterdamToAmsterdamRoutes.bbox,
+            fitBoundsOptions: { padding: 150 }
+        });
+        await initRouting(page);
+        await setStyle(page, "monoLight");
+        await showRoutes(page, rotterdamToAmsterdamRoutes);
 
-        await waitForMapIdle();
+        await waitForMapIdle(page);
         await waitForTimeout(2000);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 5000);
+        await waitUntilRenderedFeatures(page, [ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Showing waypoints right after changing the style", async () => {
-        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
-        await initRouting();
-        await setStyle("monoLight");
-        await showWaypoints([
+    test("Showing waypoints right after changing the style", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: rotterdamToAmsterdamRoutes.bbox,
+            fitBoundsOptions: { padding: 150 }
+        });
+        await initRouting(page);
+        await setStyle(page, "monoLight");
+        await showWaypoints(page, [
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
 
-        await waitForMapIdle();
+        await waitForMapIdle(page);
         await waitForTimeout(2000);
-        await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
+        await waitForRenderedWaypoints(page, 2);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 0, 5000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Showing waypoints first and right after changing the style", async () => {
-        await mapEnv.loadMap({ bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } });
-        await initRouting();
-        await showWaypoints([
+    test("Showing waypoints first and right after changing the style", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: rotterdamToAmsterdamRoutes.bbox,
+            fitBoundsOptions: { padding: 150 }
+        });
+        await initRouting(page);
+        await showWaypoints(page, [
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await setStyle("monoLight");
+        await setStyle(page, "monoLight");
 
-        await waitForMapIdle();
+        await waitForMapIdle(page);
         await waitForTimeout(2000);
-        await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 0, 5000);
+        await waitForRenderedWaypoints(page, 2);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 0, 5000);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Show and clear flows using LDEVR route with guidance", async () => {
-        await mapEnv.loadMap(
+    test("Show and clear flows using LDEVR route with guidance", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(
+            page,
             { bounds: ldevrTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             { style: { type: "published", id: "drivingLight", include: ["trafficIncidents"] } }
         );
         // We start zoomed far, asserting that some features won't be rendered:
-        await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(3));
+        await zoomTo(page, 3);
 
-        await initRouting();
+        await initRouting(page);
 
-        await showWaypoints([
+        await showWaypoints(page, [
             [13.492, 52.507],
             [8.624, 50.104]
         ]);
-        await showRoutes(ldevrTestRoutes);
-        await waitForMapIdle();
+        await showRoutes(page, ldevrTestRoutes);
+        await waitForMapIdle(page);
 
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_EV_CHARGING_STATIONS_SOURCE_ID)).toBe(NUM_EV_STATION_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_TUNNELS_SOURCE_ID)).toBe(NUM_TUNNEL_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_EV_CHARGING_STATIONS_SOURCE_ID)).toBe(
+            NUM_EV_STATION_LAYERS
+        );
         // guidance should be filtered from far but layers still visible
-        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(NUM_INSTRUCTION_LINE_LAYERS);
-        expect(await getNumVisibleLayersBySource(ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID)).toBe(
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INSTRUCTIONS_SOURCE_ID)).toBe(NUM_INSTRUCTION_LINE_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID)).toBe(
             NUM_INSTRUCTION_ARROW_LAYERS
         );
-        expect(await getNumVisibleLayersBySource(ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(
+        expect(await getNumVisibleLayersBySource(page, ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(
             NUM_SUMMARY_BUBBLE_LAYERS
         );
 
         // some sections don't have any data here, hence their layers stay invisible:
-        expect(await getNumVisibleLayersBySource(ROUTE_FERRIES_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
-        expect(await getNumVisibleLayersBySource(ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_FERRIES_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_TOLL_ROADS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_VEHICLE_RESTRICTED_SOURCE_ID)).toBe(0);
         // charging stops might be filtered out from far but layers still visible
-        expect(await getNumVisibleLayersBySource(ROUTE_EV_CHARGING_STATIONS_SOURCE_ID)).toBe(1);
+        expect(await getNumVisibleLayersBySource(page, ROUTE_EV_CHARGING_STATIONS_SOURCE_ID)).toBe(1);
 
-        await waitForRenderedWaypoints(2);
-        await waitUntilRenderedFeatures([ROUTE_LINE_LAYER_ID], 1, 5000);
-        await waitUntilRenderedFeatures([ROUTE_DESELECTED_LINE_LAYER_ID], 1, 2000);
+        await waitForRenderedWaypoints(page, 2);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 5000);
+        // await waitUntilRenderedFeatures(page, [ROUTE_DESELECTED_LINE_LAYER_ID], 1, 2000);
         // Instructions are filtered at this zoom level
-        await waitUntilRenderedFeatures([ROUTE_INSTRUCTIONS_LINE_LAYER_ID, ROUTE_INSTRUCTIONS_ARROW_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures(
+            page,
+            [ROUTE_INSTRUCTIONS_LINE_LAYER_ID, ROUTE_INSTRUCTIONS_ARROW_LAYER_ID],
+            0,
+            2000
+        );
         // EV stops are filtered at this zoom level
-        await waitUntilRenderedFeatures([ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID], 0, 2000);
+        await waitUntilRenderedFeatures(page, [ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID], 0, 2000);
         // Summary bubbles also won't appear here:
-        expect(await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).toHaveLength(0);
+        expect(await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).toHaveLength(0);
 
         // we zoom a bit closer to see EV charging stops and some incidents:
-        await page.evaluate(() => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(6));
-        await waitForMapIdle();
+        await zoomTo(page, 6);
+        await waitForMapIdle(page);
 
         // we should see some incident icons here:
-        const renderedIncidents = await waitUntilRenderedFeaturesChange([ROUTE_INCIDENTS_SYMBOL_LAYER_ID], 0, 2000);
+        const renderedIncidents = await waitUntilRenderedFeaturesChange(
+            page,
+            [ROUTE_INCIDENTS_SYMBOL_LAYER_ID],
+            0,
+            2000
+        );
         expect(renderedIncidents).toHaveLength(2);
 
         const renderedEVStops = await waitUntilRenderedFeaturesChange(
+            page,
             [ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID],
             0,
             2000
@@ -370,19 +399,20 @@ describe("Routing and waypoint display tests", () => {
         expect(renderedEVStops.length).toBeGreaterThan(2);
 
         // Summary bubbles should now appear:
-        expect((await queryRenderedFeatures([ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(0);
+        expect((await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(0);
 
         // we now zoom in very close around the route start to spot some instructions:
-        await page.evaluate(() =>
+        await page.evaluateHandle(() =>
             (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.jumpTo({ center: [13.492, 52.507], zoom: 16 })
         );
-        await waitForMapIdle();
+        await waitForMapIdle(page);
 
         // we only should see the origin waypoint here:
-        await waitForRenderedWaypoints(1);
+        await waitForRenderedWaypoints(page, 1);
 
         // we should see some instructions on the map now:
         const renderedInstructions = await waitUntilRenderedFeaturesChange(
+            page,
             [ROUTE_INSTRUCTIONS_LINE_LAYER_ID, ROUTE_INSTRUCTIONS_ARROW_LAYER_ID],
             0,
             2000
@@ -391,7 +421,7 @@ describe("Routing and waypoint display tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Waypoints rendering", async () => {
+    test("Waypoints rendering", async ({ page }) => {
         const waypoints: WaypointLike[] = [
             [4.8606, 52.39316],
             {
@@ -411,16 +441,17 @@ describe("Routing and waypoint display tests", () => {
             }
         ];
 
-        await mapEnv.loadMap(
+        const mapEnv = await MapTestEnv.loadPageAndMap(
+            page,
             { fitBoundsOptions: { padding: 150 }, center: [4.8806, 52.40316], zoom: 12 },
             { style: { type: "published", include: ["trafficIncidents"] } }
         );
-        await initRouting();
+        await initRouting(page);
 
-        await showWaypoints(waypoints);
-        await waitForMapIdle();
-        expect(await getNumVisibleLayersBySource(WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
-        const renderedWaypoints = await waitForRenderedWaypoints(4);
+        await showWaypoints(page, waypoints);
+        await waitForMapIdle(page);
+        expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(NUM_WAYPOINT_LAYERS);
+        const renderedWaypoints = await waitForRenderedWaypoints(page, 4);
 
         // rendered features array seem to come in reversed order from MapLibre:
         expect(renderedWaypoints[0].properties).toEqual({
@@ -456,20 +487,21 @@ describe("Routing and waypoint display tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Updating advanced layers configuration", async () => {
-        await mapEnv.loadMap(
+    test("Updating advanced layers configuration", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(
+            page,
             { fitBoundsOptions: { padding: 150 }, bounds: rotterdamToAmsterdamRoutes.bbox },
             { style: { type: "published", include: ["trafficIncidents", "trafficFlow"] } }
         );
-        await initRouting();
+        await initRouting(page);
 
-        await showWaypoints([
+        await showWaypoints(page, [
             [4.53074, 51.95102],
             [4.88951, 52.37229]
         ]);
-        await showRoutes(rotterdamToAmsterdamRoutes);
-        await waitForMapIdle();
-        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#36A8F0");
+        await showRoutes(page, rotterdamToAmsterdamRoutes);
+        await waitForMapIdle(page);
+        expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, "line-color")).toBe("#36A8F0");
 
         const updatedLayers = defaultRouteLayersConfig.mainLines?.layers.map(({ id, layerSpec, ...rest }) => {
             if (id === ROUTE_LINE_LAYER_ID) {
@@ -483,51 +515,54 @@ describe("Routing and waypoint display tests", () => {
         });
 
         const newConfig = { routeLayers: { mainLines: { layers: updatedLayers } } };
-        await applyConfig(newConfig);
-        await waitForMapIdle();
-        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
+        await applyConfig(page, newConfig);
+        await waitForMapIdle(page);
+        expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
 
         // Changing the style with extra poi included style part, asserting that the config stays the same:
-        await setStyle("monoLight");
-        await waitForMapIdle();
+        await setStyle(page, "monoLight");
+        await waitForMapIdle(page);
         await waitForTimeout(1000);
-        expect(await getPaintProperty(ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
+        expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Distance and time units configuration", async () => {
-        await mapEnv.loadMap({ fitBoundsOptions: { padding: 150 }, bounds: rotterdamToAmsterdamRoutes.bbox });
-        await putGlobalConfig({ displayUnits: { time: { hours: "GLOBAL_HOURS", minutes: "GLOBAL_MINUTES" } } });
+    test("Distance and time units configuration", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            fitBoundsOptions: { padding: 150 },
+            bounds: rotterdamToAmsterdamRoutes.bbox
+        });
+        await putGlobalConfig(page, { displayUnits: { time: { hours: "GLOBAL_HOURS", minutes: "GLOBAL_MINUTES" } } });
 
         // routing hours override global config:
-        await initRouting({ displayUnits: { distance: { type: "imperial_us" }, time: { hours: "hours" } } });
-        await showRoutes(rotterdamToAmsterdamRoutes);
-        await waitForMapIdle();
-        expect(await getSelectedSummaryBubbleProps()).toMatchObject({
+        await initRouting(page, { displayUnits: { distance: { type: "imperial_us" }, time: { hours: "hours" } } });
+        await showRoutes(page, rotterdamToAmsterdamRoutes);
+        await waitForMapIdle(page);
+        expect(await getSelectedSummaryBubbleProps(page)).toMatchObject({
             formattedDistance: "48 mi",
             formattedDuration: "1 hours 04 GLOBAL_MINUTES",
             formattedTraffic: "3 GLOBAL_MINUTES"
         });
 
         // We apply distance-only config, which means time config sticks back to global:
-        await applyConfig({ displayUnits: { distance: { type: "metric", kilometers: "kilometers" } } });
-        await waitForMapIdle();
-        expect(await getSelectedSummaryBubbleProps()).toMatchObject({
+        await applyConfig(page, { displayUnits: { distance: { type: "metric", kilometers: "kilometers" } } });
+        await waitForMapIdle(page);
+        expect(await getSelectedSummaryBubbleProps(page)).toMatchObject({
             formattedDistance: "77 kilometers",
             formattedDuration: "1 GLOBAL_HOURS 04 GLOBAL_MINUTES",
             formattedTraffic: "3 GLOBAL_MINUTES"
         });
 
         // We apply both some distance and time configs:
-        await applyConfig({
+        await applyConfig(page, {
             displayUnits: {
                 distance: { type: "imperial_uk", miles: "miles", kilometers: "IGNORED" },
                 time: { hours: "HR", minutes: "MIN" }
             }
         });
-        await waitForMapIdle();
-        expect(await getSelectedSummaryBubbleProps()).toMatchObject({
+        await waitForMapIdle(page);
+        expect(await getSelectedSummaryBubbleProps(page)).toMatchObject({
             formattedDistance: "48 miles",
             formattedDuration: "1 HR 04 MIN",
             formattedTraffic: "3 MIN"

@@ -1,6 +1,6 @@
 import type { MapLibreOptions, TomTomMapParams } from "map";
 import type { MapsSDKThis } from "../types/MapsSDKThis";
-import type { ConsoleMessage } from "puppeteer";
+import type { ConsoleMessage, Page } from "@playwright/test";
 
 // @see https://github.com/puppeteer/puppeteer/issues/3397
 const parseConsoleMessage = async (message: ConsoleMessage): Promise<string> => {
@@ -11,7 +11,7 @@ const parseConsoleMessage = async (message: ConsoleMessage): Promise<string> => 
     return messages.join(" | ");
 };
 
-const resetMapModules = async () =>
+const resetMapModules = async (page: Page) =>
     page.evaluate(() => {
         const mapSDKThis = globalThis as MapsSDKThis;
         mapSDKThis.baseMap = undefined;
@@ -26,7 +26,7 @@ const resetMapModules = async () =>
         mapSDKThis.routing = undefined;
     });
 
-const resetEventsTestData = async () =>
+const resetEventsTestData = async (page: Page) =>
     page.evaluate(() => {
         const mapSDKThis = globalThis as MapsSDKThis;
         mapSDKThis._clickedLngLat = undefined;
@@ -40,10 +40,10 @@ const resetEventsTestData = async () =>
         mapSDKThis._hoveredTopFeature = undefined;
     });
 
-export class MapIntegrationTestEnv {
+export class MapTestEnv {
     consoleErrors: string[] = [];
 
-    async loadPage() {
+    async loadPage(page: Page) {
         this.consoleErrors = [];
         await page.goto("https://localhost:9001");
         page.on(
@@ -52,25 +52,44 @@ export class MapIntegrationTestEnv {
         );
     }
 
-    async loadMap(mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
+    async loadMap(page: Page, mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
         this.consoleErrors = [];
-        await resetMapModules();
-        await resetEventsTestData();
+        await resetMapModules(page);
+        await resetEventsTestData(page);
         await page.evaluate(
-            (pageMapLibreOptions, pageTomTomMapParams, pageAPIKey) => {
-                document.querySelector(".maplibregl-control-container")?.remove();
-                document.querySelector("canvas")?.remove();
+            // @ts-ignore
+            ({ mapLibreOptions, tomtomMapParams, apiKey }) => {
                 this.consoleErrors = [];
                 const mapsSDKThis = globalThis as MapsSDKThis;
+                mapsSDKThis.mapLibreMap?.remove();
+                document.querySelector(".maplibregl-control-container")?.remove();
+                document.querySelector("canvas")?.remove();
                 mapsSDKThis.tomtomMap = new mapsSDKThis.MapsSDK.TomTomMap(
-                    { ...pageMapLibreOptions, container: "map" },
-                    { ...pageTomTomMapParams, apiKey: pageAPIKey }
+                    { ...mapLibreOptions, container: "map" },
+                    { ...tomtomMapParams, apiKey }
                 );
                 mapsSDKThis.mapLibreMap = mapsSDKThis.tomtomMap.mapLibreMap;
             },
-            mapLibreOptions,
-            tomtomMapParams,
-            process.env.API_KEY
+            { mapLibreOptions, tomtomMapParams, apiKey: process.env.API_KEY }
         );
+    }
+
+    async loadPageAndMap(
+        page: Page,
+        mapLibreOptions: Partial<MapLibreOptions>,
+        tomtomMapParams?: Partial<TomTomMapParams>
+    ) {
+        await this.loadPage(page);
+        await this.loadMap(page, mapLibreOptions, tomtomMapParams);
+    }
+
+    static async loadPageAndMap(
+        page: Page,
+        mapLibreOptions: Partial<MapLibreOptions>,
+        tomtomMapParams?: Partial<TomTomMapParams>
+    ) {
+        const env = new MapTestEnv();
+        await env.loadPageAndMap(page, mapLibreOptions, tomtomMapParams);
+        return env;
     }
 }

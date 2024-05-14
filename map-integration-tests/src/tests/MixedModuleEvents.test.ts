@@ -1,7 +1,9 @@
+import type { Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import type { Position } from "geojson";
-import type { Place, Places, PolygonFeatures } from "@anw/maps-sdk-js/core";
+import type { Place, Places, PolygonFeatures } from "core";
 import type { MapGeoJSONFeature } from "maplibre-gl";
-import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
+import { MapTestEnv } from "./util/MapTestEnv";
 import type { MapsSDKThis } from "./types/MapsSDKThis";
 import placesJSON from "./data/PlacesModuleEvents.test.data.json";
 import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
@@ -19,20 +21,20 @@ import {
     waitForMapIdle,
     waitUntilRenderedFeatures
 } from "./util/TestUtils";
-import { BASE_MAP_SOURCE_ID } from "map";
+import { BASE_MAP_SOURCE_ID } from "map/src/shared";
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
 const geometryData = amsterdamGeometryData as PolygonFeatures;
 
-const setupGeometryHoverHandlers = async () =>
+const setupGeometryHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.geometries?.events.on("hover", () => mapsSDKThis._numOfHovers++);
         mapsSDKThis.geometries?.events.on("long-hover", () => mapsSDKThis._numOfLongHovers++);
     });
 
-const setupPlacesClickHandler = async () =>
+const setupPlacesClickHandler = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.places?.events.on("click", (topFeature, _, features) => {
@@ -43,13 +45,14 @@ const setupPlacesClickHandler = async () =>
     });
 
 const waitUntilRenderedGeometry = async (
+    page: Page,
     numFeatures: number,
     position: Position,
     layerIDs: string[]
-): Promise<MapGeoJSONFeature[]> => waitUntilRenderedFeatures(layerIDs, numFeatures, 3000, position);
+): Promise<MapGeoJSONFeature[]> => waitUntilRenderedFeatures(page, layerIDs, numFeatures, 3000, position);
 
-const setupBasemapClickHandler = async () =>
-    page.evaluate(async () => {
+const setupBasemapClickHandler = async (page: Page) =>
+    page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.baseMap?.events.on("click", (topFeature, _, features) => {
             mapsSDKThis._clickedTopFeature = topFeature;
@@ -57,13 +60,13 @@ const setupBasemapClickHandler = async () =>
         });
     });
 
-describe("Tests with user events", () => {
-    const mapEnv = new MapIntegrationTestEnv();
-    beforeAll(async () => mapEnv.loadPage());
+test.describe("Tests with user events", () => {
+    const mapEnv = new MapTestEnv();
 
     // Reset test variables for each test
-    beforeEach(async () => {
-        await mapEnv.loadMap(
+    test.beforeEach(async ({ page }) => {
+        await mapEnv.loadPageAndMap(
+            page,
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
@@ -72,57 +75,58 @@ describe("Tests with user events", () => {
         );
     });
 
-    test("Events combining different map modules", async () => {
-        await initGeometries();
-        await showGeometry(geometryData);
-        const geometrySourcesAndLayerIDs = await getGeometriesSourceAndLayerIDs();
+    test("Events combining different map modules", async ({ page }) => {
+        await initGeometries(page);
+        await showGeometry(page, geometryData);
+        const geometrySourcesAndLayerIDs = await getGeometriesSourceAndLayerIDs(page);
         await waitUntilRenderedGeometry(
+            page,
             1,
             [4.89067, 52.37313],
             geometrySourcesAndLayerIDs?.geometry.layerIDs as string[]
         );
 
-        await initPlaces();
-        await showPlaces(places);
-        await waitForMapIdle();
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs()).layerIDs;
-        await waitUntilRenderedFeatures(placesLayerIDs, places.features.length, 5000);
+        await initPlaces(page);
+        await showPlaces(page, places);
+        await waitForMapIdle(page);
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
         // Setting up handlers for places:
-        await setupPlacesClickHandler();
+        await setupPlacesClickHandler(page);
 
         // We click in the place and should not have a geometry module returned in features parameter
-        const placePixelCoords = await getPixelCoords(firstPlacePosition);
+        const placePixelCoords = await getPixelCoords(page, firstPlacePosition);
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         const features = await page.evaluate(() => (globalThis as MapsSDKThis)._clickedFeatures);
         expect(features).toHaveLength(1);
         expect(features?.[0].layer.id).toEqual(placesLayerIDs[0]);
 
         // we register a hover handler for geometries
-        await setupGeometryHoverHandlers();
+        await setupGeometryHoverHandlers(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Events with Places and BaseMap modules", async () => {
-        await initBasemap();
-        await initPlaces();
-        await showPlaces(places);
-        await waitForMapIdle();
+    test("Events with Places and BaseMap modules", async ({ page }) => {
+        await initBasemap(page);
+        await initPlaces(page);
+        await showPlaces(page, places);
+        await waitForMapIdle(page);
 
         // changing the style in between, to double-check that we can still register to events in base map after:
-        await setStyle("monoLight");
-        await waitForMapIdle();
-        await setupBasemapClickHandler();
+        await setStyle(page, "monoLight");
+        await waitForMapIdle(page);
+        await setupBasemapClickHandler(page);
 
         // Click on a POI and gets the under layer from basemap as we don't have a event register por Places.
-        const placePosition = await getPixelCoords(firstPlacePosition);
+        const placePosition = await getPixelCoords(page, firstPlacePosition);
         await page.mouse.click(placePosition.x, placePosition.y);
-        const topBaseMapFeature = await getClickedTopFeature();
+        const topBaseMapFeature = await getClickedTopFeature(page);
         expect(topBaseMapFeature?.source).toBe(BASE_MAP_SOURCE_ID);
 
-        await setupPlacesClickHandler();
+        await setupPlacesClickHandler(page);
 
         await page.mouse.click(placePosition.x, placePosition.y);
-        const topPlaceFeature = await getClickedTopFeature<Place>();
+        const topPlaceFeature = await getClickedTopFeature<Place>(page);
         expect(topPlaceFeature).toEqual({
             ...places.features[0],
             properties: {

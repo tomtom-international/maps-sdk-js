@@ -1,58 +1,61 @@
+import { test, expect } from "@playwright/test";
 import type { SymbolLayerSpecification } from "maplibre-gl";
-import { MapIntegrationTestEnv } from "./util/MapIntegrationTestEnv";
+import { MapTestEnv } from "./util/MapTestEnv";
 import { getLayerByID, putGlobalConfig, setLanguage, setStyle, waitForMapIdle } from "./util/TestUtils";
 
 const localizedExpression = (lang: string) => ["coalesce", ["get", `name_${lang}`], ["get", "name"]];
 
-describe("Map localization tests", () => {
-    const mapEnv = new MapIntegrationTestEnv();
-
-    beforeAll(async () => mapEnv.loadPage());
-
+test.describe("Map localization tests", () => {
     const countryLayerID = "Places - Country name";
     const cityLayerID = "Places - City";
 
-    test("default map localization with language value in sdk config", async () => {
-        await putGlobalConfig({ language: "ar" });
-        await mapEnv.loadMap({ zoom: 12, minZoom: 2, center: [-0.12621, 51.50394] });
-        await waitForMapIdle();
+    test("default map localization with language value in sdk config", async ({ page }) => {
+        const mapEnv = new MapTestEnv();
+        await mapEnv.loadPage(page);
+        await putGlobalConfig(page, { language: "ar" });
+        await mapEnv.loadMap(page, { zoom: 12, minZoom: 2, center: [-0.12621, 51.50394] });
+        await waitForMapIdle(page);
 
-        const countryLayerWithARText = (await getLayerByID(countryLayerID)) as SymbolLayerSpecification;
-        const largeCityLayerWithARText = (await getLayerByID(cityLayerID)) as SymbolLayerSpecification;
+        const countryLayerWithARText = (await getLayerByID(page, countryLayerID)) as SymbolLayerSpecification;
+        const largeCityLayerWithARText = (await getLayerByID(page, cityLayerID)) as SymbolLayerSpecification;
         expect(countryLayerWithARText?.layout?.["text-field"]).toEqual(localizedExpression("ar"));
         expect(largeCityLayerWithARText?.layout?.["text-field"]).toEqual(localizedExpression("ar"));
 
-        await setLanguage("es-ES");
-        const countryLayerWithENText = (await getLayerByID(countryLayerID)) as SymbolLayerSpecification;
-        const largeCityLayerWithENText = (await getLayerByID(cityLayerID)) as SymbolLayerSpecification;
+        await setLanguage(page, "es-ES");
+        const countryLayerWithENText = (await getLayerByID(page, countryLayerID)) as SymbolLayerSpecification;
+        const largeCityLayerWithENText = (await getLayerByID(page, cityLayerID)) as SymbolLayerSpecification;
         expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(localizedExpression("es"));
         expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(localizedExpression("es"));
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Map localization to multiple languages", async () => {
-        await mapEnv.loadMap({ zoom: 12, center: [-0.12621, 51.50394] });
-        await waitForMapIdle();
+    test("Map localization to multiple languages", async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { zoom: 12, center: [-0.12621, 51.50394] });
+        await waitForMapIdle(page);
 
-        await setLanguage("en-GB");
-        const countryLayerWithENText = (await getLayerByID(countryLayerID)) as SymbolLayerSpecification;
-        const largeCityLayerWithENText = (await getLayerByID(cityLayerID)) as SymbolLayerSpecification;
+        await setLanguage(page, "en-GB");
+        const countryLayerWithENText = (await getLayerByID(page, countryLayerID)) as SymbolLayerSpecification;
+        const largeCityLayerWithENText = (await getLayerByID(page, cityLayerID)) as SymbolLayerSpecification;
         expect(countryLayerWithENText?.layout?.["text-field"]).toEqual(localizedExpression("en"));
         expect(largeCityLayerWithENText?.layout?.["text-field"]).toEqual(localizedExpression("en"));
 
-        await setLanguage("nl-NL");
-        await waitForMapIdle();
-        let countryLayerWithNLText = (await getLayerByID(countryLayerID)) as SymbolLayerSpecification;
-        let largeCityLayerWithNLText = (await getLayerByID(cityLayerID)) as SymbolLayerSpecification;
+        await setLanguage(page, "nl-NL");
+        await waitForMapIdle(page);
+        let countryLayerWithNLText = (await getLayerByID(page, countryLayerID)) as SymbolLayerSpecification;
+        let largeCityLayerWithNLText = (await getLayerByID(page, cityLayerID)) as SymbolLayerSpecification;
         expect(countryLayerWithNLText?.layout?.["text-field"]).toEqual(localizedExpression("nl"));
         expect(largeCityLayerWithNLText?.layout?.["text-field"]).toEqual(localizedExpression("nl"));
 
         // changing style, verifying nothing has changed:
-        await setStyle("monoLight");
-        await waitForMapIdle();
+        await setStyle(page, "monoLight");
+        await waitForMapIdle(page);
 
-        countryLayerWithNLText = (await getLayerByID(countryLayerID)) as SymbolLayerSpecification;
-        largeCityLayerWithNLText = (await getLayerByID(cityLayerID)) as SymbolLayerSpecification;
+        countryLayerWithNLText = (await getLayerByID(page, countryLayerID)) as SymbolLayerSpecification;
+        largeCityLayerWithNLText = (await getLayerByID(page, cityLayerID)) as SymbolLayerSpecification;
         expect(countryLayerWithNLText?.layout?.["text-field"]).toEqual(localizedExpression("nl"));
         expect(largeCityLayerWithNLText?.layout?.["text-field"]).toEqual(localizedExpression("nl"));
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

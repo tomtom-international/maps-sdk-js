@@ -15,3 +15,8 @@ documentation/dev-portal/javascript/maps/documentation/api-reference/
 documentation/dev-portal/javascript/maps/documentation/navigation.yml
 
 .eslintcache
+
+**/test-results/
+**/playwright-report/
+**/blob-report/
+**/playwright/.cache/

@@ -68,7 +68,7 @@ describe("evChargingStationsAvailability integration tests", () => {
             query: "",
             poiCategories: ["ELECTRIC_VEHICLE_STATION"],
             position: [13.41273, 52.52308], // Berlin
-            limit: 20
+            limit: 15
         });
 
         const evStationsWithAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability);

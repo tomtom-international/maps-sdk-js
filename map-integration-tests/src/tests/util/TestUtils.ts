@@ -1,14 +1,7 @@
+import { expect } from "@playwright/test";
 import type { Position } from "geojson";
-import type { LayerSpecification, MapGeoJSONFeature, Point as MapLibrePoint } from "maplibre-gl";
-import type {
-    GlobalConfig,
-    Language,
-    Place,
-    Places,
-    PolygonFeatures,
-    WaypointLike,
-    Waypoints
-} from "@anw/maps-sdk-js/core";
+import type { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
+import type { GlobalConfig, Language, Place, Places, PolygonFeatures, WaypointLike, Waypoints } from "core";
 import type {
     BaseMapModuleInitConfig,
     EventType,
@@ -23,16 +16,17 @@ import type {
     StyleInput,
     StyleModuleInitConfig
 } from "map";
-import { poiLayerIDs } from "map";
-import type { MapsSDKThis } from "../types/MapsSDKThis";
+import { poiLayerIDs } from "map/src/pois";
 import type { WaypointDisplayProps } from "map/src/routing";
+import type { MapsSDKThis } from "../types/MapsSDKThis";
+import type { Page } from "@playwright/test";
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);
 
 export const waitForTimeout = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const waitForMapReady = async () =>
+export const waitForMapReady = async (page: Page) =>
     tryBeforeTimeout(
         () =>
             page.evaluate((): Promise<boolean> => {
@@ -49,20 +43,20 @@ export const waitForMapReady = async () =>
         10000
     );
 
-export const waitForMapIdle = async () =>
-    page.evaluate(async () => (globalThis as MapsSDKThis).mapLibreMap.once("idle"));
+export const waitForMapIdle = async (page: Page) =>
+    page.evaluateHandle(async () => (globalThis as MapsSDKThis).mapLibreMap.once("idle"));
 
-export const getLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>
+export const getLayersBySource = async (page: Page, sourceID: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceID) => {
         return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
             .layers.filter((layer) => (layer as LayerSpecWithSource).source === pageSourceID) as LayerSpecWithSource[];
     }, sourceID);
 
-export const getNumLayersBySource = async (sourceID: string): Promise<number> =>
-    (await getLayersBySource(sourceID))?.length;
+export const getNumLayersBySource = async (page: Page, sourceID: string): Promise<number> =>
+    (await getLayersBySource(page, sourceID))?.length;
 
-export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerSpecWithSource[]> =>
+export const getVisibleLayersBySource = async (page: Page, sourceID: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceID) => {
         return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
@@ -71,7 +65,7 @@ export const getVisibleLayersBySource = async (sourceID: string): Promise<LayerS
             ) as LayerSpecWithSource[];
     }, sourceID);
 
-export const getLayerById = async (layerId: string): Promise<LayerSpecWithSource> =>
+export const getLayerById = async (page: Page, layerId: string): Promise<LayerSpecWithSource> =>
     page.evaluate(
         (pageLayerID) =>
             (globalThis as MapsSDKThis).mapLibreMap
@@ -81,7 +75,7 @@ export const getLayerById = async (layerId: string): Promise<LayerSpecWithSource
         layerId
     );
 
-export const getLayersByIds = async (layerIds: string[]): Promise<LayerSpecWithSource[]> =>
+export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<LayerSpecWithSource[]> =>
     page.evaluate(
         (pageLayerIDs) =>
             (globalThis as MapsSDKThis).mapLibreMap
@@ -90,16 +84,14 @@ export const getLayersByIds = async (layerIds: string[]): Promise<LayerSpecWithS
         layerIds
     );
 
-export const getPaintProperty = async (layerID: string, propertyName: string) =>
+export const getPaintProperty = async (page: Page, layerID: string, propertyName: string) =>
     page.evaluate(
-        (inputLayerID, inputPropertyName) =>
-            (globalThis as MapsSDKThis).mapLibreMap.getPaintProperty(inputLayerID, inputPropertyName),
-        layerID,
-        propertyName
+        ({ layerID, propertyName }) => (globalThis as MapsSDKThis).mapLibreMap.getPaintProperty(layerID, propertyName),
+        { layerID, propertyName }
     );
 
-export const getNumVisibleLayersBySource = async (sourceID: string): Promise<number> =>
-    (await getVisibleLayersBySource(sourceID))?.length;
+export const getNumVisibleLayersBySource = async (page: Page, sourceID: string): Promise<number> =>
+    (await getVisibleLayersBySource(page, sourceID))?.length;
 
 export const assertNumber = (value: number, positiveVsZero: boolean) => {
     if (positiveVsZero) {
@@ -109,22 +101,26 @@ export const assertNumber = (value: number, positiveVsZero: boolean) => {
     }
 };
 
-export const queryRenderedFeatures = async (layerIDs: string[], lngLat?: Position): Promise<MapGeoJSONFeature[]> =>
+export const queryRenderedFeatures = async (
+    page: Page,
+    layerIDs: string[],
+    lngLat?: Position
+): Promise<MapGeoJSONFeature[]> =>
     page.evaluate(
-        (inputLayerIDs, inputLngLat) => {
+        ({ layerIDs, lngLat }) => {
             const mapLibreMap = (globalThis as MapsSDKThis).mapLibreMap;
-            const options = { layers: inputLayerIDs };
-            if (inputLngLat) {
-                return mapLibreMap.queryRenderedFeatures(mapLibreMap.project(inputLngLat as [number, number]), options);
+            const options = { layers: layerIDs };
+            if (lngLat) {
+                return mapLibreMap.queryRenderedFeatures(mapLibreMap.project(lngLat as [number, number]), options);
             } else {
                 return mapLibreMap.queryRenderedFeatures(options);
             }
         },
-        layerIDs,
-        lngLat
+        { layerIDs, lngLat }
     );
 
 export const waitUntilRenderedFeatures = async (
+    page: Page,
     layerIDs: string[],
     expectNumFeatures: number,
     timeoutMS: number,
@@ -135,7 +131,7 @@ export const waitUntilRenderedFeatures = async (
             let currentFeatures: MapGeoJSONFeature[] = [];
             do {
                 await waitForTimeout(500);
-                currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
+                currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
             } while (currentFeatures.length != expectNumFeatures);
             return currentFeatures;
         },
@@ -144,6 +140,7 @@ export const waitUntilRenderedFeatures = async (
     );
 
 export const waitUntilRenderedFeaturesChange = async (
+    page: Page,
     layerIDs: string[],
     previousNumFeatures: number,
     timeoutMS: number,
@@ -154,7 +151,7 @@ export const waitUntilRenderedFeaturesChange = async (
             let currentFeatures: MapGeoJSONFeature[];
             do {
                 await waitForTimeout(500);
-                currentFeatures = await queryRenderedFeatures(layerIDs, lngLat);
+                currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
             } while (currentFeatures.length == previousNumFeatures);
             return currentFeatures;
         },
@@ -162,69 +159,70 @@ export const waitUntilRenderedFeaturesChange = async (
         timeoutMS
     );
 
-export const getLayerByID = async (layerID: string): Promise<LayerSpecification> =>
+export const getLayerByID = async (page: Page, layerID: string): Promise<LayerSpecification> =>
     page.evaluate((symbolLayerID) => {
         return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
             .layers.filter((layer) => layer.id === symbolLayerID)[0];
     }, layerID);
 
-export const isLayerVisible = async (layerID: string): Promise<boolean> =>
+export const isLayerVisible = async (page: Page, layerID: string): Promise<boolean> =>
     page.evaluate((inputLayerID) => {
         return (globalThis as MapsSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, "visibility") !== "none";
     }, layerID);
 
-export const getPOILayers = async () => getLayersByIds(poiLayerIDs);
+export const getPOILayers = async (page: Page) => getLayersByIds(page, poiLayerIDs);
 
-export const getVisiblePOILayers = async () =>
-    (await getPOILayers()).filter((layer) => layer.layout?.visibility !== "none");
+export const getVisiblePOILayers = async (page: Page) =>
+    (await getPOILayers(page)).filter((layer) => layer.layout?.visibility !== "none");
 
-export const getNumVisiblePOILayers = async () => (await getVisiblePOILayers()).length;
+export const getNumVisiblePOILayers = async (page: Page) => (await getVisiblePOILayers(page)).length;
 
-export const getPlacesSourceAndLayerIDs = async (): Promise<SourceWithLayerIDs> =>
+export const getPlacesSourceAndLayerIDs = async (page: Page): Promise<SourceWithLayerIDs> =>
     page.evaluate(() => (globalThis as MapsSDKThis).places!.sourceAndLayerIDs.places);
 
-export const getGeometriesSourceAndLayerIDs = async () =>
+export const getGeometriesSourceAndLayerIDs = async (page: Page) =>
     page.evaluate(() => (globalThis as MapsSDKThis).geometries?.sourceAndLayerIDs);
 
-export const initPlaces = async (config?: PlacesModuleConfig) =>
+export const initPlaces = async (page: Page, config?: PlacesModuleConfig) =>
+    // @ts-ignore
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.places = await mapsSDKThis.MapsSDK.PlacesModule.init(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const showPlaces = async (places: Place | Place[] | Places) =>
+export const showPlaces = async (page: Page, places: Place | Place[] | Places) =>
     page.evaluate((inputPlaces) => {
         (globalThis as MapsSDKThis).places?.show(inputPlaces);
     }, places);
 
-export const clearPlaces = async () => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
+export const clearPlaces = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
 
-export const initGeometries = async (config?: GeometriesModuleConfig) =>
+export const initGeometries = async (page: Page, config?: GeometriesModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.geometries = await mapsSDKThis.MapsSDK.GeometriesModule.init(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const showGeometry = async (geometry: PolygonFeatures) =>
+export const showGeometry = async (page: Page, geometry: PolygonFeatures) =>
     page.evaluate(
         (inputGeometry: PolygonFeatures) => (globalThis as MapsSDKThis).geometries?.show(inputGeometry),
         geometry
     );
 
-export const initBasemap = async (config?: BaseMapModuleInitConfig) =>
+export const initBasemap = async (page: Page, config?: BaseMapModuleInitConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.baseMap = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const initBasemap2 = async (config?: BaseMapModuleInitConfig) =>
+export const initBasemap2 = async (page: Page, config?: BaseMapModuleInitConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.baseMap2 = await mapsSDKThis.MapsSDK.BaseMapModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const initTrafficIncidents = async (config?: StyleModuleInitConfig & IncidentsConfig) =>
+export const initTrafficIncidents = async (page: Page, config?: StyleModuleInitConfig & IncidentsConfig) =>
     page.evaluate(async (inputConfig?) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.trafficIncidents = await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(
@@ -233,79 +231,85 @@ export const initTrafficIncidents = async (config?: StyleModuleInitConfig & Inci
         );
     }, config);
 
-export const initPOIs = async (config?: POIsModuleConfig) =>
+export const initPOIs = async (page: Page, config?: POIsModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.pois = await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const initHillshade = async (config?: StyleModuleInitConfig & HillshadeModuleConfig) =>
+export const initHillshade = async (page: Page, config?: StyleModuleInitConfig & HillshadeModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.hillshade = await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const setStyle = async (style: StyleInput) =>
+export const setStyle = async (page: Page, style: StyleInput) =>
+    // @ts-ignore
     page.evaluate((pageStyleInput) => {
         (globalThis as MapsSDKThis).tomtomMap.setStyle(pageStyleInput);
     }, style);
 
-export const setLanguage = async (language: Language) =>
+export const setLanguage = async (page: Page, language: Language) =>
     page.evaluate((inputLanguage) => {
         (globalThis as MapsSDKThis).tomtomMap.setLanguage(inputLanguage);
     }, language);
 
-export const putGlobalConfig = async (config: Partial<GlobalConfig>) =>
+export const putGlobalConfig = async (page: Page, config: Partial<GlobalConfig>) =>
     page.evaluate((inputConfig) => {
         (globalThis as MapsSDKThis).MapsSDKCore.TomTomConfig.instance.put(inputConfig);
     }, config);
 
-export const initRouting = async (config?: RoutingModuleConfig) =>
+export const initRouting = async (page: Page, config?: RoutingModuleConfig) =>
     page.evaluate(async (inputConfig?: RoutingModuleConfig) => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.routing = await mapsSDKThis.MapsSDK.RoutingModule.init(mapsSDKThis.tomtomMap, inputConfig);
     }, config);
 
-export const showWaypoints = async (waypoints: WaypointLike[]) =>
+export const showWaypoints = async (page: Page, waypoints: WaypointLike[]) =>
     page.evaluate((inputWaypoints) => {
         (globalThis as MapsSDKThis).routing?.showWaypoints(inputWaypoints);
     }, waypoints);
 
-export const getWaypointLayers = async (): Promise<string[]> =>
+export const getWaypointLayers = async (page: Page): Promise<string[]> =>
     page.evaluate(() => (globalThis as MapsSDKThis).routing?.sourceAndLayerIDs.waypoints.layerIDs ?? []);
 
-export const getDisplayWaypoints = async (): Promise<Waypoints<WaypointDisplayProps>> =>
+export const getDisplayWaypoints = async (page: Page): Promise<Waypoints<WaypointDisplayProps>> =>
     page.evaluate(
         () =>
             ((globalThis as MapsSDKThis).routing as any).sourcesWithLayers.waypoints
                 .shownFeatures as Waypoints<WaypointDisplayProps>
     );
 
-export const getPixelCoords = async (inputCoordinates: [number, number] | Position): Promise<MapLibrePoint> =>
-    page.evaluate(
-        (coordinates) => (globalThis as MapsSDKThis).mapLibreMap.project(coordinates as [number, number]),
-        inputCoordinates
-    );
+export const getPixelCoords = async (
+    page: Page,
+    inputCoordinates: [number, number] | Position
+): Promise<{ x: number; y: number }> =>
+    page.evaluate((coordinates) => {
+        const point = (globalThis as MapsSDKThis).mapLibreMap.project(coordinates as [number, number]);
+        // we ensure to return a simple serializable object:
+        return { x: point.x, y: point.y };
+    }, inputCoordinates);
 
-export const getCursor = async () =>
+export const getCursor = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
         return mapsSDKThis.tomtomMap.mapLibreMap.getCanvas().style.cursor;
     });
 
-export const getNumLeftAndRightClicks = async (): Promise<[number, number]> =>
+export const getNumLeftAndRightClicks = async (page: Page): Promise<[number, number]> =>
     page.evaluate(() => {
         const sdkThis = globalThis as MapsSDKThis;
         return [sdkThis._numOfClicks, sdkThis._numOfContextmenuClicks] as [number, number];
     });
 
-export const getNumHoversAndLongHovers = async (): Promise<[number, number]> =>
+export const getNumHoversAndLongHovers = async (page: Page): Promise<[number, number]> =>
     page.evaluate(() => {
         const sdkThis = globalThis as MapsSDKThis;
         return [sdkThis._numOfHovers, sdkThis._numOfLongHovers] as [number, number];
     });
 
 export const waitForEventState = async (
+    page: Page,
     expectedEventState: EventType | undefined,
     layerIDs: string[],
     featureID?: string
@@ -316,7 +320,7 @@ export const waitForEventState = async (
         const maxTries = 5000 / intervalMS;
         let tries = 0;
         const interval = setInterval(async () => {
-            const features = await queryRenderedFeatures(layerIDs);
+            const features = await queryRenderedFeatures(page, layerIDs);
             const feature = featureID ? features.find((feature) => feature.id == featureID) : features[0];
             eventState = feature?.properties?.eventState;
             if (eventState == expectedEventState) {
@@ -331,8 +335,11 @@ export const waitForEventState = async (
         }, intervalMS);
     });
 
-export const getHoveredTopFeature = async <T>(): Promise<T> =>
+export const getHoveredTopFeature = async <T>(page: Page): Promise<T> =>
     page.evaluate(() => (globalThis as MapsSDKThis)._hoveredTopFeature as T);
 
-export const getClickedTopFeature = async <T = MapGeoJSONFeature>(): Promise<T> =>
+export const getClickedTopFeature = async <T = MapGeoJSONFeature>(page: Page): Promise<T> =>
     page.evaluate(() => (globalThis as MapsSDKThis)._clickedTopFeature as T);
+
+export const zoomTo = async (page: Page, zoom: number) =>
+    page.evaluateHandle((zoom) => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(zoom), zoom);
