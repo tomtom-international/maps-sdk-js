@@ -9,6 +9,6 @@ import type { RoutingAPIResponseError } from "../shared/types/apiResponseErrorTy
  */
 export const parseRoutingResponseError: ParseResponseError<RoutingAPIResponseError> = (apiError, serviceName) => {
     const { data, message, status } = apiError;
-    const errorMessage = data?.error?.description || message;
+    const errorMessage = data?.error?.description || data?.detailedError?.message || message;
     return new SDKServiceError(errorMessage, serviceName, status);
 };
