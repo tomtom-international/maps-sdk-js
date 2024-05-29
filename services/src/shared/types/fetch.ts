@@ -11,3 +11,8 @@ export type PostObject<D> = { url: URL; data?: D };
  * @ignore
  */
 export type FetchInput<POST_DATA = void> = { method: "GET"; url: URL } | ({ method: "POST" } & PostObject<POST_DATA>);
+
+export type ParsedFetchResponse<T> = Promise<{
+    data: Promise<T>;
+    status: number;
+}>;

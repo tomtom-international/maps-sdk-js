@@ -1,9 +1,8 @@
 import type { TomTomHeaders } from "@anw/maps-sdk-js/core";
-import type { FetchInput, PostObject } from "./types/fetch";
-import type { ServiceResponse } from "./serviceTypes";
+import type { FetchInput, PostObject, ParsedFetchResponse } from "./types/fetch";
 
 // Returns the response as a JSON object or throws an error if the response isn't successful.
-const returnOrThrow = async <T>(response: Response): ServiceResponse<T> => {
+const returnOrThrow = async <T>(response: Response): ParsedFetchResponse<T> => {
     if (response.ok) {
         return { data: await response.json(), status: response.status };
     }
@@ -31,7 +30,7 @@ const returnOrThrow = async <T>(response: Response): ServiceResponse<T> => {
  * @param url The URL to fetch.
  * @param headers The headers to be sent with the request.
  */
-export const get = async <T>(url: URL, headers: TomTomHeaders): ServiceResponse<T> =>
+export const get = async <T>(url: URL, headers: TomTomHeaders): ParsedFetchResponse<T> =>
     returnOrThrow(await fetch(url, { headers }));
 
 /**
@@ -41,7 +40,7 @@ export const get = async <T>(url: URL, headers: TomTomHeaders): ServiceResponse<
  * @param input The POST object with URL and optional payload.
  * @param headers The headers to be sent with the request.
  */
-export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): ServiceResponse<T> =>
+export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): ParsedFetchResponse<T> =>
     returnOrThrow(
         await fetch(input.url, {
             method: "POST",
@@ -57,7 +56,7 @@ export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): 
  * @param headers The headers to be sent with the request.
  * @ignore
  */
-export const fetchWith = async <T, D = void>(input: FetchInput<D>, headers: TomTomHeaders): ServiceResponse<T> => {
+export const fetchWith = async <T, D = void>(input: FetchInput<D>, headers: TomTomHeaders): ParsedFetchResponse<T> => {
     const method = input.method;
     if (method === "GET") {
         return get<T>(input.url, headers);

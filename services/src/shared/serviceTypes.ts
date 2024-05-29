@@ -2,6 +2,7 @@ import type { GlobalConfig, TomTomHeaders } from "@anw/maps-sdk-js/core";
 import type { SDKServiceError } from "./errors";
 import type { APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
 import type { RequestValidationConfig } from "./types/validation";
+import type { ParsedFetchResponse } from "./types/fetch";
 
 export type CommonServiceParams<API_REQUEST = any, API_RESPONSE = any> = Partial<GlobalConfig> & {
     /**
@@ -74,7 +75,7 @@ export type ServiceTemplate<
      * Sends the request to the API (e.g. via GET or POST, with or without custom headers).
      * @param request The request to send.
      */
-    sendRequest: (request: API_REQUEST, headers: TomTomHeaders) => ServiceResponse<API_RESPONSE>;
+    sendRequest: (request: API_REQUEST, headers: TomTomHeaders) => ParsedFetchResponse<API_RESPONSE>;
 
     /**
      * Parses the API successful response before returning it to the caller.
@@ -88,8 +89,3 @@ export type ServiceTemplate<
      */
     parseResponseError?: ParseResponseError<any>;
 };
-
-export type ServiceResponse<T> = Promise<{
-    data: Promise<T>;
-    status: number;
-}>;
