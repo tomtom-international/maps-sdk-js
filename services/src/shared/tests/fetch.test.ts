@@ -12,7 +12,13 @@ describe("Fetch utility tests", () => {
 
         test("OK response", async () => {
             const fetchMock = mockFetchResponse(200, { id: "some json" });
-            expect(await get(new URL("https://blah1234.com"), headers)).toEqual({ id: "some json" });
+            expect(await get(new URL("https://blah1234.com"), headers)).toEqual({
+                data: {
+                    id: "some json"
+                },
+                status: 200,
+                statusText: undefined
+            });
             expect(fetchMock).toHaveBeenCalledWith(new URL("https://blah1234.com"), { headers });
         });
 
@@ -27,7 +33,13 @@ describe("Fetch utility tests", () => {
 
         test("OK response", async () => {
             mockFetchResponse(200, { id: "some json" });
-            expect(await post({ url: new URL("https://blah1234.com") }, headers)).toEqual({ id: "some json" });
+            expect(await post({ url: new URL("https://blah1234.com") }, headers)).toEqual({
+                data: {
+                    id: "some json"
+                },
+                status: 200,
+                statusText: undefined
+            });
         });
 
         test("Failed response from rejected promise", async () => {
@@ -42,14 +54,22 @@ describe("Fetch utility tests", () => {
         test("OK GET response", async () => {
             mockFetchResponse(200, { id: "some json" });
             expect(await fetchWith({ method: "GET", url: new URL("https://blah1234.com") }, headers)).toStrictEqual({
-                id: "some json"
+                data: {
+                    id: "some json"
+                },
+                status: 200,
+                statusText: undefined
             });
         });
 
         test("OK POST response", async () => {
             mockFetchResponse(200, { id: "some json" });
             expect(await fetchWith({ method: "POST", url: new URL("https://blah1234.com") }, headers)).toStrictEqual({
-                id: "some json"
+                data: {
+                    id: "some json"
+                },
+                status: 200,
+                statusText: undefined
             });
         });
 
