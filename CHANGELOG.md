@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.15](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.14...v0.8.15) (2024-05-29)
+
+
+### Features
+
+* pass info about response status to onAPIResponse ([21f5a86](https://github.com/tomtom-international/maps-sdk-js/commit/21f5a86ac66dbd1a302352276d6ffef08235bf5c))
+
+
+### Bug Fixes
+
+* error handling logic ([3abd700](https://github.com/tomtom-international/maps-sdk-js/commit/3abd700cf0981fee7bda49333ad276ecdbc4cba7))
+* fetch test after changing returned response format ([0c9ee1c](https://github.com/tomtom-international/maps-sdk-js/commit/0c9ee1c581ea59d72be4c2489af002258e1dcd50))
+
 ### [0.8.14](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.13...v0.8.14) (2024-05-16)
 
 ### [0.8.13](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.12...v0.8.13) (2024-05-13)
