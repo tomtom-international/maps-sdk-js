@@ -4,27 +4,24 @@ import type { ServiceResponse } from "./serviceTypes";
 
 // Returns the response as a JSON object or throws an error if the response isn't successful.
 const returnOrThrow = async <T>(response: Response): ServiceResponse<T> => {
+    if (response.ok) {
+        return { data: await response.json(), status: response.status, statusText: response.statusText };
+    }
     let message, errorBody;
-    if (!response.ok) {
-        // clone response to allow multiple uses of body object.
-        // (try to parse as JSON first and as test if it throws an error)
-        const responseClone = response.clone();
-        if (!response.bodyUsed) {
-            try {
-                // if response body is not a valid JSON it will throw an error,
-                errorBody = await response.json();
-                message = errorBody?.errorText || errorBody?.message || errorBody?.detailedError?.message;
-            } catch (e) {
-                // so it's handled in catch as text (ex. "<h1>Developer Inactive</h1>")
-                errorBody = await responseClone.text();
-                message = response.statusText;
-            }
-        } else {
+    const contentType = response.headers.get("content-type");
+    const responseClone = response.clone();
+    if (!response.bodyUsed) {
+        if (contentType?.includes("application/json")) {
+            errorBody = await response.json();
+            message = errorBody?.errorText || errorBody?.message || errorBody?.detailedError?.message;
+        } else if (contentType?.includes("text/xml")) {
+            errorBody = await responseClone.text();
             message = response.statusText;
         }
-        throw { status: response.status, message, data: errorBody };
+    } else {
+        message = response.statusText;
     }
-    return { data: await response.json(), status: response.status, statusText: response.statusText };
+    throw { status: response.status, message, data: errorBody };
 };
 
 /**
