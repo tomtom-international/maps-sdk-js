@@ -92,5 +92,4 @@ export type ServiceTemplate<
 export type ServiceResponse<T> = Promise<{
     data: Promise<T>;
     status: number;
-    statusText: string;
 }>;

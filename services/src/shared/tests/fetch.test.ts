@@ -16,8 +16,7 @@ describe("Fetch utility tests", () => {
                 data: {
                     id: "some json"
                 },
-                status: 200,
-                statusText: undefined
+                status: 200
             });
             expect(fetchMock).toHaveBeenCalledWith(new URL("https://blah1234.com"), { headers });
         });
@@ -37,8 +36,7 @@ describe("Fetch utility tests", () => {
                 data: {
                     id: "some json"
                 },
-                status: 200,
-                statusText: undefined
+                status: 200
             });
         });
 
@@ -57,8 +55,7 @@ describe("Fetch utility tests", () => {
                 data: {
                     id: "some json"
                 },
-                status: 200,
-                statusText: undefined
+                status: 200
             });
         });
 
@@ -68,8 +65,7 @@ describe("Fetch utility tests", () => {
                 data: {
                     id: "some json"
                 },
-                status: 200,
-                statusText: undefined
+                status: 200
             });
         });
 

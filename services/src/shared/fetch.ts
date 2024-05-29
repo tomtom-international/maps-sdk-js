@@ -5,7 +5,7 @@ import type { ServiceResponse } from "./serviceTypes";
 // Returns the response as a JSON object or throws an error if the response isn't successful.
 const returnOrThrow = async <T>(response: Response): ServiceResponse<T> => {
     if (response.ok) {
-        return { data: await response.json(), status: response.status, statusText: response.statusText };
+        return { data: await response.json(), status: response.status };
     }
     let message, errorBody;
     const contentType = response.headers.get("content-type");
