@@ -1,8 +1,9 @@
 import type { TomTomHeaders } from "@anw/maps-sdk-js/core";
 import type { FetchInput, PostObject } from "./types/fetch";
+import type { ServiceResponse } from "./serviceTypes";
 
 // Returns the response as a JSON object or throws an error if the response isn't successful.
-const returnOrThrow = async <T>(response: Response): Promise<T> => {
+const returnOrThrow = async <T>(response: Response): ServiceResponse<T> => {
     let message, errorBody;
     if (!response.ok) {
         // clone response to allow multiple uses of body object.
@@ -23,7 +24,7 @@ const returnOrThrow = async <T>(response: Response): Promise<T> => {
         }
         throw { status: response.status, message, data: errorBody };
     }
-    return await response.json();
+    return { data: await response.json(), status: response.status, statusText: response.statusText };
 };
 
 /**
@@ -33,7 +34,7 @@ const returnOrThrow = async <T>(response: Response): Promise<T> => {
  * @param url The URL to fetch.
  * @param headers The headers to be sent with the request.
  */
-export const get = async <T>(url: URL, headers: TomTomHeaders): Promise<T> =>
+export const get = async <T>(url: URL, headers: TomTomHeaders): ServiceResponse<T> =>
     returnOrThrow(await fetch(url, { headers }));
 
 /**
@@ -43,7 +44,7 @@ export const get = async <T>(url: URL, headers: TomTomHeaders): Promise<T> =>
  * @param input The POST object with URL and optional payload.
  * @param headers The headers to be sent with the request.
  */
-export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): Promise<T> =>
+export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): ServiceResponse<T> =>
     returnOrThrow(
         await fetch(input.url, {
             method: "POST",
@@ -59,7 +60,7 @@ export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): 
  * @param headers The headers to be sent with the request.
  * @ignore
  */
-export const fetchWith = async <T, D = void>(input: FetchInput<D>, headers: TomTomHeaders): Promise<T> => {
+export const fetchWith = async <T, D = void>(input: FetchInput<D>, headers: TomTomHeaders): ServiceResponse<T> => {
     const method = input.method;
     if (method === "GET") {
         return get<T>(input.url, headers);

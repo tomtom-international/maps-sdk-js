@@ -74,7 +74,7 @@ export type ServiceTemplate<
      * Sends the request to the API (e.g. via GET or POST, with or without custom headers).
      * @param request The request to send.
      */
-    sendRequest: (request: API_REQUEST, headers: TomTomHeaders) => Promise<API_RESPONSE>;
+    sendRequest: (request: API_REQUEST, headers: TomTomHeaders) => ServiceResponse<API_RESPONSE>;
 
     /**
      * Parses the API successful response before returning it to the caller.
@@ -88,3 +88,9 @@ export type ServiceTemplate<
      */
     parseResponseError?: ParseResponseError<any>;
 };
+
+export type ServiceResponse<T> = Promise<{
+    data: Promise<T>;
+    status: number;
+    statusText: string;
+}>;
