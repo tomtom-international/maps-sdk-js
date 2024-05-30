@@ -8,13 +8,12 @@ const returnOrThrow = async <T>(response: Response): ParsedFetchResponse<T> => {
     }
     let message, errorBody;
     const contentType = response.headers.get("content-type");
-    const responseClone = response.clone();
     if (!response.bodyUsed) {
         if (contentType?.includes("application/json")) {
             errorBody = await response.json();
             message = errorBody?.errorText || errorBody?.message || errorBody?.detailedError?.message;
         } else if (contentType?.includes("text/xml")) {
-            errorBody = await responseClone.text();
+            errorBody = await response.text();
             message = response.statusText;
         }
     } else {

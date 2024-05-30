@@ -4,9 +4,6 @@ export const mockFetchResponse = (status: number, response?: any) =>
             ok: status == 200,
             status,
             json: () => Promise.resolve(response),
-            clone: function () {
-                return this;
-            },
             headers: {
                 get: () => "application/json"
             }
