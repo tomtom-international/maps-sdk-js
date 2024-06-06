@@ -243,7 +243,6 @@ describe("Calculate route request schema validation", () => {
                             "tunnel",
                             "motorway",
                             "pedestrian",
-                            "tollRoad",
                             "toll",
                             "tollVignette",
                             "country",

@@ -273,7 +273,6 @@ export type SectionsProps = {
     ferry?: SectionProps[];
     motorway?: SectionProps[];
     pedestrian?: SectionProps[];
-    tollRoad?: SectionProps[];
     toll?: SectionProps[];
     tollVignette?: CountrySectionProps[];
     country?: CountrySectionProps[];
@@ -306,7 +305,6 @@ export const inputSectionTypes: SectionType[] = [
     "tunnel",
     "motorway",
     "pedestrian",
-    "tollRoad",
     "toll",
     "tollVignette",
     "country",

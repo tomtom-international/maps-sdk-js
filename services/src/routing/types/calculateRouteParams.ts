@@ -117,7 +117,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
 
         /**
          * Specifies which of the section types is reported in the route response.
-         * * sectionType can be specified multiple times (e.g., ...&sectionType=tollRoad&sectionType=tollVignette&...).
+         * * sectionType can be specified multiple times (e.g., ...&sectionType=toll&sectionType=tollVignette&...).
          * * Possible values are:
          *
          * * **carTrain**: sections of the route that are car trains.
@@ -125,7 +125,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * * **tunnel**: sections of the route that are tunnels.
          * * **motorway**: sections of the route that are motorways.
          * * **pedestrian**: sections of the route that are only suited for pedestrians.
-         * * **tollRoad**: sections of the route that require a toll to be paid.
          * * **toll**: sections of the route with the usage-based toll collection system (i.e., distance-based tolls, toll bridges and tunnels, weight-based tolls).
          * * **tollVignette**: sections of the route that require a toll vignette to be present.
          * * **country**: sections indicating which countries the route is in.

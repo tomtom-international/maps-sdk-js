@@ -262,7 +262,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.evChargingStations.show(toDisplayChargingStations(displayRoutes));
         this.sourcesWithLayers.ferries.show(buildDisplayRouteSections(displayRoutes, "ferry"));
         this.sourcesWithLayers.tunnels.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
-        this.sourcesWithLayers.tollRoads.show(buildDisplayRouteSections(displayRoutes, "tollRoad"));
+        this.sourcesWithLayers.tollRoads.show(buildDisplayRouteSections(displayRoutes, "toll"));
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
         this.sourcesWithLayers.summaryBubbles.show(

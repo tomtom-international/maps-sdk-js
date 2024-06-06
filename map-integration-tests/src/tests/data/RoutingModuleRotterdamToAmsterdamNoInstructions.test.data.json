@@ -1230,7 +1230,7 @@
               "endPointIndex": 973
             }
           ],
-          "tollRoad": [
+          "toll": [
             {
               "startPointIndex": 450,
               "endPointIndex": 973
@@ -4561,7 +4561,7 @@
               }
             }
           ],
-          "tollRoad": [
+          "toll": [
             {
               "startPointIndex": 350,
               "endPointIndex": 400

@@ -34,12 +34,7 @@ describe("Calculate route integration tests", () => {
         "Route from Kandersteg to Dover via Lötschen Pass with specified " +
             "sectionTypes and combustion vehicle parameters",
         async () => {
-            const testInputSectionTypes: SectionType[] = [
-                "carTrain",
-                "motorway",
-                "tollRoad",
-                "urban" /*, TODO "tollVignette" not being there because Lötschen Pass was not working  */
-            ];
+            const testInputSectionTypes: SectionType[] = ["carTrain", "motorway", "toll", "urban"];
 
             const result = await calculateRoute({
                 geoInputs: [
@@ -242,7 +237,7 @@ describe("Calculate route integration tests", () => {
                 roadShieldReferences: "all"
             },
             maxAlternatives: 2,
-            sectionTypes: ["traffic", "ferry", "tollRoad", "lanes", "speedLimit", "roadShields"],
+            sectionTypes: ["traffic", "ferry", "toll", "lanes", "speedLimit", "roadShields"],
             travelMode: "car"
             // TODO no travel mode motorcycle with Orbis, or option to se when, so I commented it out
             // travelMode: "motorcycle",

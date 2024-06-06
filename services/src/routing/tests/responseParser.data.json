@@ -664,11 +664,6 @@
               "sectionType": "URBAN"
             },
             {
-              "startPointIndex": 0,
-              "endPointIndex": 10,
-              "sectionType": "TOLL_ROAD"
-            },
-            {
               "startPointIndex": 10,
               "endPointIndex": 50,
               "sectionType": "TOLL"
@@ -6600,12 +6595,6 @@
                     "historicTrafficTravelTimeInSeconds": 713,
                     "liveTrafficIncidentsTravelTimeInSeconds": 951
                   }
-                }
-              ],
-              "tollRoad": [
-                {
-                  "startPointIndex": 0,
-                  "endPointIndex": 10
                 }
               ],
               "toll": [

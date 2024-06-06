@@ -173,8 +173,6 @@ const getSectionMapping = (
             return { sectionType: "motorway", mappingFunction: toSectionProps };
         case "PEDESTRIAN":
             return { sectionType: "pedestrian", mappingFunction: toSectionProps };
-        case "TOLL_ROAD":
-            return { sectionType: "tollRoad", mappingFunction: toSectionProps };
         case "TOLL_VIGNETTE":
             return { sectionType: "tollVignette", mappingFunction: toCountrySectionProps };
         case "TOLL":

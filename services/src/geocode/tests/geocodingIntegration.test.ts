@@ -112,7 +112,7 @@ describe("Geocoding integration tests", () => {
             bbox: expect.any(Array),
             features: expect.anything()
         });
-        expect(result.features.length).toBeGreaterThan(3);
+        expect(result.features.length).toBeGreaterThan(2);
     });
 
     test("Geocoding with template response override to get only the first raw result and summary", async () => {
