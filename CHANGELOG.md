@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.17](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.16...v0.8.17) (2024-06-06)
+
+
+### Bug Fixes
+
+* **edxce-337:** removing legacy tollRoad section type in favor of the new "toll" one, while keeping tollVignette even if not supported yet ([5da658c](https://github.com/tomtom-international/maps-sdk-js/commit/5da658cd81e55611696a6c4c712a818b3a846acf))
+
 ### [0.8.16](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.15...v0.8.16) (2024-05-30)
 
 ### [0.8.15](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.14...v0.8.15) (2024-05-29)
