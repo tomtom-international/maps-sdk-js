@@ -22,7 +22,7 @@ export const SELECTED_COLOR = "#3f9cd9";
 /**
  * @ignore
  */
-export const PIN_ICON_SIZE: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], 10, 0.7, 16, 0.85];
+export const PIN_ICON_SIZE: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], 10, 0.8, 16, 1, 22, 1.2];
 
 const isClick: ExpressionSpecification = ["in", ["get", "eventState"], ["literal", ["click", "contextmenu"]]];
 
