@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.19](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.18...v0.8.19) (2024-06-13)
+
+
+### Bug Fixes
+
+* **map:** moving summary bubble layer to the top ([5928ed9](https://github.com/tomtom-international/maps-sdk-js/commit/5928ed9cc0c42221ec2a4885e7f94e744643a78f))
+
 ### [0.8.18](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.17...v0.8.18) (2024-06-07)
 
 ### [0.8.17](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.16...v0.8.17) (2024-06-06)
