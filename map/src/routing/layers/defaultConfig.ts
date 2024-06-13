@@ -187,8 +187,7 @@ export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
         layers: [
             {
                 id: ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID,
-                layerSpec: summaryBubbleSymbolPoint,
-                beforeID: WAYPOINT_SYMBOLS_LAYER_ID
+                layerSpec: summaryBubbleSymbolPoint
             }
         ]
     }

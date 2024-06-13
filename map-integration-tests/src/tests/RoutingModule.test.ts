@@ -374,8 +374,8 @@ test.describe("Routing and waypoint display tests", () => {
         );
         // EV stops are filtered at this zoom level
         await waitUntilRenderedFeatures(page, [ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID], 0, 2000);
-        // Summary bubbles also won't appear here:
-        expect(await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).toHaveLength(0);
+        // Summary bubbles has been moved to the top and it should show up here:
+        expect(await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).toHaveLength(1);
 
         // we zoom a bit closer to see EV charging stops and some incidents:
         await zoomTo(page, 6);
