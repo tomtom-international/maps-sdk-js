@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.20](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.19...v0.8.20) (2024-06-20)
+
+
+### Features
+
+* **routing:** adding basic entry points support when calculating routes and displaying waypoints ([0feadb4](https://github.com/tomtom-international/maps-sdk-js/commit/0feadb4ce909d7c7f3b2bed6da14a26a6a704343))
+
 ### [0.8.19](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.18...v0.8.19) (2024-06-13)
 
 
