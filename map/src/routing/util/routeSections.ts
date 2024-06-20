@@ -35,7 +35,7 @@ const buildRouteSectionsFromRoute = <
  * @param displaySectionPropsBuilder An optional function which will convert each section props into an extended display-ready version.
  * @ignore
  */
-export const buildDisplayRouteSections = <
+export const toDisplayRouteSections = <
     S extends SectionProps = SectionProps,
     D extends DisplaySectionProps = DisplaySectionProps
 >(

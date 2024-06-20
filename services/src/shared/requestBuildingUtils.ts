@@ -71,13 +71,13 @@ export const appendOptionalParam = (
  * Adds lat and lon parameters to the url.
  * @ignore
  * @param urlParams
- * @param position
+ * @param hasLngLat
  */
-export const appendLatLonParamsFromPosition = (urlParams: URLSearchParams, position: HasLngLat | undefined): void => {
-    const lngLat = position && getPosition(position);
-    if (lngLat) {
-        urlParams.append("lat", String(lngLat[1]));
-        urlParams.append("lon", String(lngLat[0]));
+export const appendLatLonParamsFromPosition = (urlParams: URLSearchParams, hasLngLat: HasLngLat | undefined): void => {
+    const position = getPosition(hasLngLat);
+    if (position) {
+        urlParams.append("lat", String(position[1]));
+        urlParams.append("lon", String(position[0]));
     }
 };
 

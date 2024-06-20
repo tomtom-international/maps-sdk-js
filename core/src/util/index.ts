@@ -1,5 +1,5 @@
 export * from "./bbox";
-export * from "./lnglat";
+export * from "./lngLat";
 export * from "./geoInputs";
 export * from "./unitFormatters";
 export * from "./traffic";

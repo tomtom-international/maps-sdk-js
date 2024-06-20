@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import type { MapGeoJSONFeature } from "maplibre-gl";
 import type { DisplayRouteSummaryProps, RoutingModuleConfig } from "map";
 import {
@@ -503,7 +503,7 @@ test.describe("Routing and waypoint display tests", () => {
         await waitForMapIdle(page);
         expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, "line-color")).toBe("#36A8F0");
 
-        const updatedLayers = defaultRouteLayersConfig.mainLines?.layers.map(({ id, layerSpec, ...rest }) => {
+        const updatedLayers = defaultRouteLayersConfig.mainLines?.map(({ id, layerSpec, ...rest }) => {
             if (id === ROUTE_LINE_LAYER_ID) {
                 return {
                     id,
@@ -514,7 +514,7 @@ test.describe("Routing and waypoint display tests", () => {
             return { id, layerSpec, ...rest };
         });
 
-        const newConfig = { routeLayers: { mainLines: { layers: updatedLayers } } };
+        const newConfig = { layers: { mainLines: updatedLayers } };
         await applyConfig(page, newConfig);
         await waitForMapIdle(page);
         expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, "line-color")).toBe("#ff0000");

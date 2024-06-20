@@ -1,6 +1,6 @@
 import type { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import type { GeoJSONSourceWithLayers, LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
-import type { DisplayUnits, Routes, Waypoints } from "@anw/maps-sdk-js/core";
+import type { GeoJSONSourceWithLayers, LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
+import type { DisplayUnits, GetPositionEntryPointOption, Routes, Waypoints } from "@anw/maps-sdk-js/core";
 import type { DisplayRouteProps, DisplayRouteSummaries } from "./displayRoutes";
 import type { DisplayTrafficSectionProps, RouteSections } from "./routeSections";
 import type { DisplayInstructionArrows, DisplayInstructions } from "./guidance";
@@ -14,12 +14,12 @@ export type RouteLayersConfig = {
     /**
      * Main route line layers.
      */
-    mainLines?: LayersSpecWithOrder<LineLayerSpecification | SymbolLayerSpecification>;
+    mainLines?: LayerSpecsWithOrder<LineLayerSpecification | SymbolLayerSpecification>;
 
     /**
      * Waypoint layers.
      */
-    waypoints?: LayersSpecWithOrder<SymbolLayerSpecification>;
+    waypoints?: LayerSpecsWithOrder<SymbolLayerSpecification>;
 
     /**
      * Layer specifications for the route sections.
@@ -28,41 +28,51 @@ export type RouteLayersConfig = {
         /**
          * Ferry section layers.
          */
-        ferry?: LayersSpecWithOrder;
+        ferry?: LayerSpecsWithOrder;
         /**
          * Incident section layers.
          */
-        incident?: LayersSpecWithOrder;
+        incident?: LayerSpecsWithOrder;
         /**
          * Legs section layers, for EV routing.
          */
-        evChargingStations?: LayersSpecWithOrder;
+        evChargingStations?: LayerSpecsWithOrder;
         /**
          * Toll road section layers.
          */
-        tollRoad?: LayersSpecWithOrder;
+        tollRoad?: LayerSpecsWithOrder;
         /**
          * Tunnel section layers.
          */
-        tunnel?: LayersSpecWithOrder;
+        tunnel?: LayerSpecsWithOrder;
         /**
          * Incident vehicle restricted layers.
          */
-        vehicleRestricted?: LayersSpecWithOrder;
+        vehicleRestricted?: LayerSpecsWithOrder;
     };
 
     /**
      * Route guidance instruction lines.
      */
-    instructionLines?: LayersSpecWithOrder;
+    instructionLines?: LayerSpecsWithOrder;
     /**
      * Route guidance instruction arrows.
      */
-    instructionArrows?: LayersSpecWithOrder;
+    instructionArrows?: LayerSpecsWithOrder;
     /**
      * Route summary bubbles.
      */
-    summaryBubbles?: LayersSpecWithOrder;
+    summaryBubbles?: LayerSpecsWithOrder;
+};
+
+export type WaypointsSourceConfig = {
+    /**
+     * Option to control how entry points are used when displaying waypoints on the map.
+     * * main-when-available: the waypoint coordinates will be replaced with the main entry point coordinates if available.
+     * * ignore: the waypoint coordinates will be used as is.
+     * @default ignore
+     */
+    entryPoints?: GetPositionEntryPointOption;
 };
 
 /**
@@ -75,10 +85,16 @@ export type RoutingModuleConfig = {
      * @default "metric"
      */
     displayUnits?: DisplayUnits;
+
+    /**
+     * Configuration for the waypoints source, allowing to control the data used to display waypoints.
+     */
+    waypointsSource?: WaypointsSourceConfig;
+
     /**
      * Overrides default layers configuration with the one supplied here.
      */
-    routeLayers?: RouteLayersConfig;
+    layers?: RouteLayersConfig;
 };
 
 /**

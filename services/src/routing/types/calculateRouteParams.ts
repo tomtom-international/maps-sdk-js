@@ -2,6 +2,7 @@ import type { GeoInput, inputSectionTypes } from "@anw/maps-sdk-js/core";
 import type { CommonRoutingParams, CommonServiceParams } from "../../shared";
 import type { CalculateRouteRequestAPI } from "./apiRequestTypes";
 import type { CalculateRouteResponseAPI } from "./apiResponseTypes";
+import type { GetPositionEntryPointOption } from "core/src/types/lngLat";
 
 /**
  * Section type which can be requested in the route parameters.
@@ -68,6 +69,15 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * @default None
          */
         geoInputs: GeoInput[];
+
+        /**
+         * Specifies how available entry points are to be used for routing.
+         * * Using entry points can help improve route accuracy and prevent unwanted routing to inaccessible locations.
+         * * For example, routing to the main entrance of an airport instead of the airport's center location.
+         * * Alternatively, wou can also explicitly set the entry points for each waypoint.
+         * @default "main-when-available"
+         */
+        useEntryPoints?: GetPositionEntryPointOption;
 
         /**
          * Specifies whether to return additional travel times using different types of traffic information (none,

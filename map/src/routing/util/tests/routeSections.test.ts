@@ -2,7 +2,7 @@ import type { FeatureCollection } from "geojson";
 import type { Routes } from "@anw/maps-sdk-js/core";
 import TEST_ROUTES_DATA from "./data/dummyRoutesWithSections.data.json";
 import SECTIONS_WITH_SELECTION from "./data/rebuildSectionsWithSelection.data.json";
-import { buildDisplayRouteSections } from "../routeSections";
+import { toDisplayRouteSections } from "../routeSections";
 import { toDisplayTrafficSectionProps } from "../displayTrafficSectionProps";
 import type { DisplayRouteProps } from "../../types/displayRoutes";
 import type { RouteSections } from "../../types/routeSections";
@@ -16,9 +16,9 @@ const TEST_ID = "123";
 
 describe("Tests about building route sections", () => {
     test("Build route sections", () => {
-        expect(buildDisplayRouteSections(TEST_ROUTES, "carTrain")).toEqual(EMPTY_FEATURE_COLLECTION);
-        expect(buildDisplayRouteSections(TEST_ROUTES, "carTrain22" as never)).toEqual(EMPTY_FEATURE_COLLECTION);
-        expect(buildDisplayRouteSections(TEST_ROUTES, "ferry")).toEqual({
+        expect(toDisplayRouteSections(TEST_ROUTES, "carTrain")).toEqual(EMPTY_FEATURE_COLLECTION);
+        expect(toDisplayRouteSections(TEST_ROUTES, "carTrain22" as never)).toEqual(EMPTY_FEATURE_COLLECTION);
+        expect(toDisplayRouteSections(TEST_ROUTES, "ferry")).toEqual({
             type: "FeatureCollection",
             features: [
                 {
@@ -61,7 +61,7 @@ describe("Tests about building route sections", () => {
         });
 
         // Traffic sections as-is:
-        expect(buildDisplayRouteSections(TEST_ROUTES, "traffic")).toEqual({
+        expect(toDisplayRouteSections(TEST_ROUTES, "traffic")).toEqual({
             type: "FeatureCollection",
             features: [
                 {
@@ -90,7 +90,7 @@ describe("Tests about building route sections", () => {
         });
 
         // Traffic section, passing its display props function:
-        expect(buildDisplayRouteSections(TEST_ROUTES, "traffic", toDisplayTrafficSectionProps)).toEqual({
+        expect(toDisplayRouteSections(TEST_ROUTES, "traffic", toDisplayTrafficSectionProps)).toEqual({
             type: "FeatureCollection",
             features: [
                 {

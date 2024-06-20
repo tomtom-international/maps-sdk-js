@@ -105,16 +105,14 @@ describe("Routing module tests", () => {
         routing.clearWaypoints();
         expect(routing.getLayerToRenderLinesUnder()).toEqual(mapStyleLayerIDs.lowestLabel);
         routing.applyConfig({
-            routeLayers: {
-                mainLines: {
-                    layers: [
-                        {
-                            id: "a different id",
-                            layerSpec: routeDeselectedOutline,
-                            beforeID: mapStyleLayerIDs.lowestLabel
-                        }
-                    ]
-                }
+            layers: {
+                mainLines: [
+                    {
+                        id: "a different id",
+                        layerSpec: routeDeselectedOutline,
+                        beforeID: mapStyleLayerIDs.lowestLabel
+                    }
+                ]
             }
         });
 

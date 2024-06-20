@@ -56,21 +56,42 @@ describe("GeoInputs util tests", () => {
     test("To display waypoints", () => {
         expect(toDisplayWaypoints([])).toEqual({ type: "FeatureCollection", features: [] });
         expect(toDisplayWaypoints([null])).toEqual({ type: "FeatureCollection", features: [] });
-        expect(toDisplayWaypoints([buildTestWaypoint({}, [1, 2])])).toEqual({
+        expect(
+            toDisplayWaypoints([buildTestWaypoint({ entryPoints: [{ type: "main", position: [44, 55] }] }, [1, 2])])
+        ).toEqual({
             type: "FeatureCollection",
             features: [
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [1, 2]
-                    },
+                    geometry: { type: "Point", coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
                         index: 0,
                         indexType: START_INDEX,
-                        iconID: WAYPOINT_START_IMAGE_ID
+                        iconID: WAYPOINT_START_IMAGE_ID,
+                        entryPoints: [{ type: "main", position: [44, 55] }]
+                    }
+                }
+            ]
+        });
+        expect(
+            toDisplayWaypoints([buildTestWaypoint({ entryPoints: [{ type: "main", position: [44, 55] }] }, [1, 2])], {
+                entryPoints: "main-when-available"
+            })
+        ).toEqual({
+            type: "FeatureCollection",
+            features: [
+                {
+                    type: "Feature",
+                    id: expect.any(String),
+                    geometry: { type: "Point", coordinates: [44, 55] },
+                    properties: {
+                        id: expect.any(String),
+                        index: 0,
+                        indexType: START_INDEX,
+                        iconID: WAYPOINT_START_IMAGE_ID,
+                        entryPoints: [{ type: "main", position: [44, 55] }]
                     }
                 }
             ]
@@ -81,10 +102,7 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [1, 2]
-                    },
+                    geometry: { type: "Point", coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
                         index: 1,
@@ -100,10 +118,7 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [1, 2]
-                    },
+                    geometry: { type: "Point", coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
                         index: 1,
@@ -133,15 +148,10 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [1, 2]
-                    },
+                    geometry: { type: "Point", coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
-                        poi: {
-                            name: "POI"
-                        },
+                        poi: { name: "POI" },
                         index: 0,
                         indexType: START_INDEX,
                         iconID: WAYPOINT_START_IMAGE_ID,
@@ -151,10 +161,7 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [3, 4]
-                    },
+                    geometry: { type: "Point", coordinates: [3, 4] },
                     properties: {
                         id: expect.any(String),
                         radiusMeters: 25,
@@ -166,15 +173,10 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [5, 6]
-                    },
+                    geometry: { type: "Point", coordinates: [5, 6] },
                     properties: {
                         id: expect.any(String),
-                        address: {
-                            freeformAddress: "ADDRESS"
-                        },
+                        address: { freeformAddress: "ADDRESS" },
                         index: 2,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
@@ -185,10 +187,7 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [9, 10]
-                    },
+                    geometry: { type: "Point", coordinates: [9, 10] },
                     properties: {
                         id: expect.any(String),
                         index: 3,
@@ -200,10 +199,7 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: expect.any(String),
-                    geometry: {
-                        type: "Point",
-                        coordinates: [11, 12]
-                    },
+                    geometry: { type: "Point", coordinates: [11, 12] },
                     properties: {
                         id: expect.any(String),
                         index: 4,
@@ -215,15 +211,10 @@ describe("GeoInputs util tests", () => {
                 {
                     type: "Feature",
                     id: "ALREADY_DEFINED",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [13, 14]
-                    },
+                    geometry: { type: "Point", coordinates: [13, 14] },
                     properties: {
                         id: "ALREADY_DEFINED",
-                        address: {
-                            freeformAddress: "ADDRESS2"
-                        },
+                        address: { freeformAddress: "ADDRESS2" },
                         index: 5,
                         indexType: FINISH_INDEX,
                         iconID: WAYPOINT_FINISH_IMAGE_ID,

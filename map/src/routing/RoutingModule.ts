@@ -25,12 +25,12 @@ import {
 import { toDisplayChargingStations, toDisplayWaypoints } from "./util/waypointUtils";
 import type { PlanningWaypoint } from "./types/planningWaypoint";
 import type { RoutingLayersSpecs, RoutingModuleConfig, RoutingSourcesWithLayers } from "./types/routeModuleConfig";
-import { buildDisplayRouteSections } from "./util/routeSections";
+import { toDisplayRouteSections } from "./util/routeSections";
 import { toDisplayTrafficSectionProps } from "./util/displayTrafficSectionProps";
 import type { DisplayTrafficSectionProps, RouteSection, RouteSections } from "./types/routeSections";
-import { buildDisplayRoutes, buildDisplayRouteSummaries } from "./util/routes";
+import { toDisplayRoutes, toDisplayRouteSummaries } from "./util/routes";
 import type { DisplayRouteProps, DisplayRouteSummary } from "./types/displayRoutes";
-import type { ShowRoutesOptions } from "./types/showRoutesOptions";
+import type { ShowRoutesOptions } from "./types/showOptions";
 import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from "../shared/mapUtils";
 import type { TomTomMap } from "../TomTomMap";
 import type { DisplayInstruction } from "./types/guidance";
@@ -75,7 +75,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      */
     static async init(
         tomtomMap: TomTomMap,
-        config: RoutingModuleConfig = { routeLayers: defaultRouteLayersConfig }
+        config: RoutingModuleConfig = { layers: defaultRouteLayersConfig }
     ): Promise<RoutingModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new RoutingModule(tomtomMap, config);
@@ -142,7 +142,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
         // TODO: displaying traffic requires traffic in the style. Should we at least verify their existence and log a warning if not present?
 
-        this.layersSpecs = createLayersSpecs(withDefaults(config).routeLayers);
+        this.layersSpecs = createLayersSpecs(withDefaults(config).layers);
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
         addLayers(
             Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
@@ -184,7 +184,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         // If there was already some config set, we must update the changes:
         if (this.config) {
             // replace existing configuration with new one
-            const newLayersSpecs = createLayersSpecs(mergedConfig?.routeLayers || defaultRouteLayersConfig);
+            const newLayersSpecs = createLayersSpecs(mergedConfig?.layers ?? defaultRouteLayersConfig);
 
             // here we assume that keys for layer specs and sources are the same, please keep it that way to simplify the logic
             Object.keys(newLayersSpecs).forEach((layersSpecs) => {
@@ -213,7 +213,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             this.sourcesWithLayers.summaryBubbles.shownFeatures.features.length
         ) {
             this.sourcesWithLayers.summaryBubbles.show(
-                buildDisplayRouteSummaries(this.sourcesWithLayers.mainLines.shownFeatures, mergedConfig.displayUnits)
+                toDisplayRouteSummaries(this.sourcesWithLayers.mainLines.shownFeatures, mergedConfig.displayUnits)
             );
         }
 
@@ -252,22 +252,20 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @param options An optional selected index from the array of routes. Will make that route appear selected. Defaults to 0 (first/recommended route).
      */
     async showRoutes(routes: Routes, options?: ShowRoutesOptions) {
-        const displayRoutes = buildDisplayRoutes(routes, options?.selectedIndex);
+        const displayRoutes = toDisplayRoutes(routes, options?.selectedIndex);
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.mainLines.show(displayRoutes);
-        this.sourcesWithLayers.vehicleRestricted.show(buildDisplayRouteSections(displayRoutes, "vehicleRestricted"));
+        this.sourcesWithLayers.vehicleRestricted.show(toDisplayRouteSections(displayRoutes, "vehicleRestricted"));
         this.sourcesWithLayers.incidents.show(
-            buildDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
+            toDisplayRouteSections(displayRoutes, "traffic", toDisplayTrafficSectionProps)
         );
         this.sourcesWithLayers.evChargingStations.show(toDisplayChargingStations(displayRoutes));
-        this.sourcesWithLayers.ferries.show(buildDisplayRouteSections(displayRoutes, "ferry"));
-        this.sourcesWithLayers.tunnels.show(buildDisplayRouteSections(displayRoutes, "tunnel"));
-        this.sourcesWithLayers.tollRoads.show(buildDisplayRouteSections(displayRoutes, "toll"));
+        this.sourcesWithLayers.ferries.show(toDisplayRouteSections(displayRoutes, "ferry"));
+        this.sourcesWithLayers.tunnels.show(toDisplayRouteSections(displayRoutes, "tunnel"));
+        this.sourcesWithLayers.tollRoads.show(toDisplayRouteSections(displayRoutes, "toll"));
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
-        this.sourcesWithLayers.summaryBubbles.show(
-            buildDisplayRouteSummaries(displayRoutes, this.config?.displayUnits)
-        );
+        this.sourcesWithLayers.summaryBubbles.show(toDisplayRouteSummaries(displayRoutes, this.config?.displayUnits));
     }
 
     /**
@@ -289,7 +287,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @param index The route index to select. Must be within the existing rendered routes.
      */
     async selectRoute(index: number) {
-        const updatedRoutes = buildDisplayRoutes(this.sourcesWithLayers.mainLines.shownFeatures, index);
+        const updatedRoutes = toDisplayRoutes(this.sourcesWithLayers.mainLines.shownFeatures, index);
 
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.mainLines.show(updatedRoutes);
@@ -307,15 +305,15 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
 
     /**
      * Shows the given waypoints on the map.
-     * @param waypointsLike The waypoint-like inputs to show.
+     * @param waypoints The waypoint-like inputs to show.
      */
-    async showWaypoints(waypointsLike: PlanningWaypoint[] | Waypoints) {
-        const waypoints = Array.isArray(waypointsLike)
-            ? toDisplayWaypoints(waypointsLike)
+    async showWaypoints(waypoints: PlanningWaypoint[] | Waypoints) {
+        const displayWaypoints = Array.isArray(waypoints)
+            ? toDisplayWaypoints(waypoints, this.config?.waypointsSource)
             : // FeatureCollection expected:
-              toDisplayWaypoints(waypointsLike.features as PlanningWaypoint[]);
+              toDisplayWaypoints(waypoints.features as PlanningWaypoint[], this.config?.waypointsSource);
         await this.waitUntilModuleReady();
-        this.sourcesWithLayers.waypoints.show(waypoints);
+        this.sourcesWithLayers.waypoints.show(displayWaypoints);
     }
 
     /**

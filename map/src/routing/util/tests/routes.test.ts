@@ -1,14 +1,14 @@
 import type { DisplayUnits, Routes } from "@anw/maps-sdk-js/core";
-import { buildDisplayRoutes, buildDisplayRouteSummaries } from "../routes";
+import { toDisplayRoutes, toDisplayRouteSummaries } from "../routes";
 import displayRouteSummariesData from "./data/displayRouteSummaries.data.json";
 import type { DisplayRouteProps, DisplayRouteSummaries } from "../../types/displayRoutes";
 
 describe("Tests to test building display routes", () => {
     test("Build display routes", () => {
-        expect(buildDisplayRoutes({ features: [{ properties: {} }] } as Routes)).toEqual({
+        expect(toDisplayRoutes({ features: [{ properties: {} }] } as Routes)).toEqual({
             features: [{ properties: { routeStyle: "selected" } }]
         });
-        expect(buildDisplayRoutes({ features: [{ properties: {} }, { properties: {} }] } as Routes)).toEqual({
+        expect(toDisplayRoutes({ features: [{ properties: {} }, { properties: {} }] } as Routes)).toEqual({
             features: [{ properties: { routeStyle: "selected" } }, { properties: { routeStyle: "deselected" } }]
         });
     });
@@ -21,6 +21,6 @@ describe("Tests to test building display routes", () => {
             displayRoutes: Routes<DisplayRouteProps>,
             displayUnits: DisplayUnits,
             expectedSummaries: DisplayRouteSummaries
-        ) => expect(buildDisplayRouteSummaries(displayRoutes, displayUnits)).toEqual(expectedSummaries)
+        ) => expect(toDisplayRouteSummaries(displayRoutes, displayUnits)).toEqual(expectedSummaries)
     );
 });

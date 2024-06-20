@@ -102,14 +102,21 @@ export type AddressRanges = {
 };
 
 /**
+ * The type of entry point.
+ * * main: the main entry point of a place. There can be at most only one.
+ * * minor: a minor or secondary entry point of a place. There can be multiple.
+ */
+export type EntryPointType = "main" | "minor";
+
+/**
  * @group Place
  * @category Types
  */
 export type EntryPoint = {
     /**
-     * The main entry point.
+     * The type of the entry point.
      */
-    type: "main" | "minor";
+    type: EntryPointType;
     /**
      * If present, represents the type of access for the POI.
      * Example: FrontDoor

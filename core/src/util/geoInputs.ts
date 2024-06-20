@@ -1,6 +1,6 @@
 import type { Feature, GeoJsonObject, Point } from "geojson";
 import type { GeoInput, GeoInputType, HasLngLat, Waypoint } from "../types";
-import { getPositionStrict, toPointFeature } from "./lnglat";
+import { getPositionStrict, toPointFeature } from "./lngLat";
 
 /**
  * Builds a soft waypoint object with the given location coordinates and radius.
@@ -16,13 +16,7 @@ export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Wayp
     } else {
         inputAsFeature = hasLngLat as Feature<Point>;
     }
-    return {
-        ...inputAsFeature,
-        properties: {
-            ...inputAsFeature.properties,
-            radiusMeters
-        }
-    };
+    return { ...inputAsFeature, properties: { ...inputAsFeature.properties, radiusMeters } };
 };
 
 /**

@@ -104,6 +104,67 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         }
     ],
     [
+        "Default A-B route where B is a GeoJSON point feature with entry points",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            apiVersion: 3,
+            commonBaseURL: "https://api.tomtom.com",
+            geoInputs: [
+                [4.89066, 52.37317],
+                {
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: [4.49015, 52.16109] },
+                    properties: { entryPoints: [{ type: "main", position: [5, 53] }] }
+                }
+            ]
+        },
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/" +
+                    "52.37317,4.89066:53,5/json?apiVersion=3&key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette" +
+                    "&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
+                    "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
+            )
+        }
+    ],
+    [
+        "Default A-B route where B is a GeoJSON point feature with entry points but we'll ignore them",
+        {
+            apiKey: "GLOBAL_API_KEY",
+            apiVersion: 3,
+            commonBaseURL: "https://api.tomtom.com",
+            geoInputs: [
+                [4.89066, 52.37317],
+                {
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: [4.49015, 52.16109] },
+                    properties: { entryPoints: [{ type: "main", position: [5, 53] }] }
+                }
+            ],
+            useEntryPoints: "ignore"
+        },
+        {
+            method: "GET",
+            url: new URL(
+                "https://api.tomtom.com/maps/orbis/routing/calculateRoute/" +
+                    "52.37317,4.89066:52.16109,4.49015/json?apiVersion=3&key=GLOBAL_API_KEY" +
+                    "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
+                    "&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette" +
+                    "&sectionType=country&sectionType=travelMode&sectionType=traffic" +
+                    "&sectionType=carpool&sectionType=urban" +
+                    "&sectionType=unpaved&sectionType=lowEmissionZone" +
+                    "&sectionType=speedLimit&sectionType=roadShields" +
+                    "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
+            )
+        }
+    ],
+    [
         "Default A-s-C route where s is a soft(circle) waypoint.",
         {
             apiKey: "API_KEY_X",

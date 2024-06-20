@@ -1,13 +1,13 @@
 import { TomTomConfig } from "@anw/maps-sdk-js/core";
-import type { LayersSpecWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
+import type { LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
 import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from "../types/routeModuleConfig";
 import { defaultRouteLayersConfig } from "../layers/defaultConfig";
 
 /**
  * @ignore
  */
-const mapLayerSpecs = (layerSpecs: LayersSpecWithOrder = { layers: [] }): ToBeAddedLayerSpecWithoutSource[] =>
-    layerSpecs.layers.map(({ layerSpec, id, beforeID }) => ({ ...layerSpec, id, beforeID }));
+const mapLayerSpecs = (layerSpecs: LayerSpecsWithOrder = []): ToBeAddedLayerSpecWithoutSource[] =>
+    layerSpecs.map(({ layerSpec, id, beforeID }) => ({ ...layerSpec, id, beforeID }));
 
 /**
  * @ignore
@@ -30,7 +30,7 @@ export const createLayersSpecs = (config: RouteLayersConfig = {}): RoutingLayers
  * @ignore
  */
 export const withDefaults = (config: RoutingModuleConfig | undefined): RoutingModuleConfig => {
-    const layers = config?.routeLayers;
+    const layers = config?.layers;
     const sections = layers?.sections;
     const defaultSections = defaultRouteLayersConfig.sections;
     const globalDisplayUnits = TomTomConfig.instance.get().displayUnits;
@@ -39,7 +39,7 @@ export const withDefaults = (config: RoutingModuleConfig | undefined): RoutingMo
         ...(config ? config : {}),
         // Global display units are first applied, and can then be overridden by the local configuration:
         ...((globalDisplayUnits || displayUnits) && { ...globalDisplayUnits, ...displayUnits }),
-        routeLayers: {
+        layers: {
             mainLines: layers?.mainLines ?? defaultRouteLayersConfig.mainLines,
             waypoints: layers?.waypoints ?? defaultRouteLayersConfig.waypoints,
             sections: {

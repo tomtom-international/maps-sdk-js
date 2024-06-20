@@ -1,4 +1,12 @@
-import type { GeoInput, GeoInputType, PathLike, Waypoint, WaypointLike, WaypointProps } from "@anw/maps-sdk-js/core";
+import type {
+    GeoInput,
+    GeoInputType,
+    GetPositionEntryPointOption,
+    PathLike,
+    Waypoint,
+    WaypointLike,
+    WaypointProps
+} from "@anw/maps-sdk-js/core";
 import {
     getGeoInputType,
     getPositionStrict,
@@ -7,14 +15,13 @@ import {
 } from "@anw/maps-sdk-js/core";
 import isNil from "lodash/isNil";
 import type { Position } from "geojson";
-import type { CalculateRouteParams, InputSectionTypes, GuidanceParams } from "./types/calculateRouteParams";
+import type { CalculateRouteParams, GuidanceParams, InputSectionTypes } from "./types/calculateRouteParams";
 import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
 import type { FetchInput } from "../shared";
 import type { CalculateRoutePOSTDataAPI, PointWaypointAPI } from "./types/apiRequestTypes";
 import type { LatitudeLongitudePointAPI } from "./types/apiResponseTypes";
 import { positionToCSVLatLon } from "../shared/geometry";
 import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
-// import { CommonEVRoutingParams } from "../shared";
 
 // Are these params about Long Distance EV Routing:
 const isLDEVR = (params: CalculateRouteParams): boolean => !!params.commonEVRoutingParams;
@@ -26,16 +33,21 @@ const buildURLBasePath = (params: CalculateRouteParams): string =>
 const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
 
-const buildLocationsStringFromWaypoints = (waypointInputs: WaypointLike[]): string =>
+const defaultUseEntryPointOption: GetPositionEntryPointOption = "main-when-available";
+
+const buildLocationsStringFromWaypoints = (
+    waypointInputs: WaypointLike[],
+    useEntryPoint: GetPositionEntryPointOption
+): string =>
     waypointInputs
         .map((waypointInput: WaypointLike) => {
-            const lngLatString = positionToCSVLatLon(getPositionStrict(waypointInput));
+            const lngLatString = positionToCSVLatLon(getPositionStrict(waypointInput, { useEntryPoint }));
             const radius = getWaypointProps(waypointInput)?.radiusMeters;
             return radius ? `circle(${lngLatString},${radius})` : lngLatString;
         })
         .join(":");
 
-export const getPositionsFromPath = (pathLike: PathLike): Position[] => {
+const getPositionsFromPath = (pathLike: PathLike): Position[] => {
     if (Array.isArray(pathLike)) {
         return pathLike;
     } else {
@@ -43,14 +55,18 @@ export const getPositionsFromPath = (pathLike: PathLike): Position[] => {
     }
 };
 
-const getFirstAndLastPoints = (geoInputs: GeoInput[], types: GeoInputType[]): [Position, Position] => {
+const getFirstAndLastPoints = (
+    geoInputs: GeoInput[],
+    types: GeoInputType[],
+    useEntryPoint: GetPositionEntryPointOption
+): [Position, Position] => {
     let firstPoint;
     const firstGeoInput = geoInputs[0];
     if (types[0] === "path") {
         const positions = getPositionsFromPath(firstGeoInput as PathLike);
         firstPoint = positions[0];
     } else {
-        firstPoint = getPositionStrict(firstGeoInput as WaypointLike);
+        firstPoint = getPositionStrict(firstGeoInput as WaypointLike, { useEntryPoint });
     }
 
     let lastPoint;
@@ -59,15 +75,22 @@ const getFirstAndLastPoints = (geoInputs: GeoInput[], types: GeoInputType[]): [P
         const positions = getPositionsFromPath(lastGeoInput as PathLike);
         lastPoint = positions[positions.length - 1];
     } else {
-        lastPoint = getPositionStrict(lastGeoInput as WaypointLike);
+        lastPoint = getPositionStrict(lastGeoInput as WaypointLike, { useEntryPoint });
     }
 
     return [firstPoint, lastPoint];
 };
 
-const buildLocationsString = (geoInputs: GeoInput[], geoInputTypes: GeoInputType[]): string =>
+const buildLocationsString = (
+    geoInputs: GeoInput[],
+    geoInputTypes: GeoInputType[],
+    useEntryPoint: GetPositionEntryPointOption
+): string =>
     buildLocationsStringFromWaypoints(
-        geoInputTypes.includes("path") ? getFirstAndLastPoints(geoInputs, geoInputTypes) : (geoInputs as WaypointLike[])
+        geoInputTypes.includes("path")
+            ? getFirstAndLastPoints(geoInputs, geoInputTypes, useEntryPoint)
+            : (geoInputs as WaypointLike[]),
+        useEntryPoint
     );
 
 const appendSectionTypes = (
@@ -143,10 +166,11 @@ const appendWaypointPOSTData = (
     geoInputIndex: number,
     geoInputs: GeoInput[],
     supportingPoints: LatitudeLongitudePointAPI[],
-    pointWaypoints: PointWaypointAPI[]
+    pointWaypoints: PointWaypointAPI[],
+    useEntryPoint: GetPositionEntryPointOption
 ) => {
     // individual points are treated like POST waypoints
-    supportingPoints.push(toLatLngPointAPI(getPositionStrict(waypoint)));
+    supportingPoints.push(toLatLngPointAPI(getPositionStrict(waypoint, { useEntryPoint })));
     // for origin and destination we do not add pointWaypoints, since they end up as the URL "locations":
     if (geoInputIndex > 0 && geoInputIndex < geoInputs.length - 1) {
         pointWaypoints.push({
@@ -158,7 +182,8 @@ const appendWaypointPOSTData = (
 
 const buildGeoInputsPOSTData = (
     geoInputs: GeoInput[],
-    types: GeoInputType[]
+    types: GeoInputType[],
+    useEntryPoints: GetPositionEntryPointOption
 ): { supportingPoints: LatitudeLongitudePointAPI[]; pointWaypoints?: PointWaypointAPI[] } => {
     const supportingPoints: LatitudeLongitudePointAPI[] = [];
     const pointWaypoints: PointWaypointAPI[] = [];
@@ -172,7 +197,8 @@ const buildGeoInputsPOSTData = (
                 geoInputIndex,
                 geoInputs,
                 supportingPoints,
-                pointWaypoints
+                pointWaypoints,
+                useEntryPoints
             );
         }
     });
@@ -180,7 +206,11 @@ const buildGeoInputsPOSTData = (
     return { supportingPoints, ...(pointWaypoints.length && { pointWaypoints }) };
 };
 
-const buildPOSTData = (params: CalculateRouteParams, types: GeoInputType[]): CalculateRoutePOSTDataAPI | null => {
+const buildPOSTData = (
+    params: CalculateRouteParams,
+    types: GeoInputType[],
+    useEntryPoints: GetPositionEntryPointOption
+): CalculateRoutePOSTDataAPI | null => {
     const pathsIncluded = types.includes("path");
     const ldevr = isLDEVR(params);
     if (!pathsIncluded && !ldevr) {
@@ -189,7 +219,7 @@ const buildPOSTData = (params: CalculateRouteParams, types: GeoInputType[]): Cal
     }
 
     return {
-        ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types))
+        ...(pathsIncluded && buildGeoInputsPOSTData(params.geoInputs, types, useEntryPoints))
     };
 };
 
@@ -199,7 +229,10 @@ const buildPOSTData = (params: CalculateRouteParams, types: GeoInputType[]): Cal
  */
 export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchInput<CalculateRoutePOSTDataAPI> => {
     const geoInputTypes = params.geoInputs.map(getGeoInputType);
-    const url = new URL(`${buildURLBasePath(params)}/${buildLocationsString(params.geoInputs, geoInputTypes)}/json`);
+    const useEntryPoints = params.useEntryPoints ?? defaultUseEntryPointOption;
+    const url = new URL(
+        `${buildURLBasePath(params)}/${buildLocationsString(params.geoInputs, geoInputTypes, useEntryPoints)}/json`
+    );
     const urlParams: URLSearchParams = url.searchParams;
     appendCommonParams(urlParams, params, true);
     appendCommonRoutingParams(urlParams, params);
@@ -212,6 +245,6 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
         urlParams.append("extendedRouteRepresentation", representation)
     );
 
-    const postData = buildPOSTData(params, geoInputTypes);
+    const postData = buildPOSTData(params, geoInputTypes, useEntryPoints);
     return postData ? { method: "POST", url, data: postData } : { method: "GET", url };
 };

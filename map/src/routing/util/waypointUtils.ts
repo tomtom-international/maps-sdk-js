@@ -6,7 +6,7 @@ import type {
     WaypointLike,
     Waypoints
 } from "@anw/maps-sdk-js/core";
-import { formatDuration, generateId } from "@anw/maps-sdk-js/core";
+import { formatDuration, generateId, getPosition } from "@anw/maps-sdk-js/core";
 import type { Point, Position } from "geojson";
 import type { IndexType, WaypointDisplayProps } from "../types/waypointDisplayProps";
 import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from "../types/waypointDisplayProps";
@@ -19,6 +19,7 @@ import {
 import type { PlanningWaypoint } from "../types/planningWaypoint";
 import type { LocationDisplayProps } from "../../places";
 import type { DisplayRouteProps, RouteStyleProps } from "../types/displayRoutes";
+import type { WaypointsSourceConfig } from "../types/routeModuleConfig";
 
 const indexTypeFor = (index: number, arrayLength: number): IndexType =>
     index === 0 ? START_INDEX : index < arrayLength - 1 ? MIDDLE_INDEX : FINISH_INDEX;
@@ -83,8 +84,12 @@ export const isHardWaypoint = (waypoint: Waypoint): boolean => !waypoint.propert
 /**
  * Generates display-ready waypoints for the given planning context ones.
  * @param waypoints The planning context waypoints.
+ * @param options
  */
-export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<WaypointDisplayProps> => {
+export const toDisplayWaypoints = (
+    waypoints: PlanningWaypoint[],
+    options?: WaypointsSourceConfig
+): Waypoints<WaypointDisplayProps> => {
     // Since waypoints are of mixed types (hard and soft), we need to calculate the hard-only indexes
     // in case we have stops with numbered icons:
     let hardWaypointIndex = -1;
@@ -109,6 +114,13 @@ export const toDisplayWaypoints = (waypoints: PlanningWaypoint[]): Waypoints<Way
                 return {
                     ...waypoint,
                     id,
+                    ...(options?.entryPoints === "main-when-available" && {
+                        geometry: {
+                            type: "Point",
+                            // We replace the waypoint coordinates with their main entry point ones:
+                            coordinates: getPosition(waypoint, { useEntryPoint: "main-when-available" })
+                        } as Point
+                    }),
                     properties: {
                         ...waypoint.properties,
                         id, // adding id in display properties due to GeoJSONSourceWithLayers promoteID feature

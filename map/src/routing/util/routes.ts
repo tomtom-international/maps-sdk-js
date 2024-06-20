@@ -6,7 +6,7 @@ import type { DisplayRouteProps, DisplayRouteSummaries } from "../types/displayR
  * Builds map display-ready routes, applying default style props.
  * @ignore
  */
-export const buildDisplayRoutes = (routes: Routes, selectedIndex = 0): Routes<DisplayRouteProps> => ({
+export const toDisplayRoutes = (routes: Routes, selectedIndex = 0): Routes<DisplayRouteProps> => ({
     ...routes,
     features: routes.features.map((route, index) => ({
         ...route,
@@ -41,7 +41,7 @@ const summaryDelayMagnitude = (route: Route): DelayMagnitude | undefined => {
  * Builds map display-ready route summaries based on display routes.
  * @ignore
  */
-export const buildDisplayRouteSummaries = (
+export const toDisplayRouteSummaries = (
     routes: Routes<DisplayRouteProps>,
     displayUnits?: DisplayUnits
 ): DisplayRouteSummaries => ({
