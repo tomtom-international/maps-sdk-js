@@ -2,7 +2,6 @@ import type { MapLibreOptions, TomTomMapParams } from "map";
 import type { MapsSDKThis } from "../types/MapsSDKThis";
 import type { ConsoleMessage, Page } from "@playwright/test";
 
-// @see https://github.com/puppeteer/puppeteer/issues/3397
 const parseConsoleMessage = async (message: ConsoleMessage): Promise<string> => {
     if (message.text() != "JSHandle@error") {
         return message.text();
@@ -46,6 +45,8 @@ export class MapTestEnv {
     async loadPage(page: Page) {
         this.consoleErrors = [];
         await page.goto("https://localhost:9001");
+
+        // TODO: get rid of puppeteer stuff from parseConsoleMessage and also detect pageerrors
         page.on(
             "console",
             async (message) => message.type() === "error" && this.consoleErrors.push(await parseConsoleMessage(message))
