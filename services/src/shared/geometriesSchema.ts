@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 
 /**
  * @ignore
@@ -26,13 +26,15 @@ export const geometrySchema = z
             z.array(z.array(z.array(z.number()))),
             z.array(z.array(z.array(z.array(z.number()))))
         ]),
-        radius: z.number().optional(),
-        radiusMeters: z.number().optional(),
-        bbox: z.array(z.number()).optional()
+        radius: z.optional(z.number()),
+        radiusMeters: z.optional(z.number()),
+        bbox: z.optional(z.array(z.number()))
     })
-    .refine(
-        (data) => (data.type === "Circle" ? Boolean(data.radius) : true),
-        'type: "Circle" must have radius property'
+    .check(
+        z.refine(
+            (data) => (data.type === "Circle" ? Boolean(data.radius) : true),
+            'type: "Circle" must have radius property'
+        )
     );
 
 /**
@@ -41,9 +43,9 @@ export const geometrySchema = z
 export const featureSchema = z.object({
     type: z.literal("Feature"),
     geometry: geometrySchema,
-    id: z.union([z.string(), z.number()]).optional(),
+    id: z.optional(z.union([z.string(), z.number()])),
     properties: z.any(),
-    bbox: z.array(z.number()).optional()
+    bbox: z.optional(z.array(z.number()))
 });
 
 /**
@@ -52,20 +54,24 @@ export const featureSchema = z.object({
 export const featureCollectionSchema = z.object({
     type: z.literal("FeatureCollection"),
     features: z.array(featureSchema),
-    id: z.union([z.string(), z.number()]).optional(),
+    id: z.optional(z.union([z.string(), z.number()])),
     properties: z.any(),
-    bbox: z.array(z.number()).optional()
+    bbox: z.optional(z.array(z.number()))
 });
 
 /**
  * @ignore
  */
 export const hasLngLatSchema = z.union([
-    z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)]),
-    z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90), z.number()]),
+    z.tuple([z.number().check(z.minimum(-180), z.maximum(180)), z.number().check(z.minimum(-90), z.maximum(90))]),
+    z.tuple([
+        z.number().check(z.minimum(-180), z.maximum(180)),
+        z.number().check(z.minimum(-90), z.maximum(90)),
+        z.number()
+    ]),
     z.object({
         type: z.literal("Point"),
-        coordinates: z.number().array()
+        coordinates: z.array(z.number())
     }),
     featureSchema
 ]);
@@ -73,14 +79,14 @@ export const hasLngLatSchema = z.union([
 /**
  * @ignore
  */
-const geoJSONBBoxSchema = z.array(z.number()).length(4).or(z.array(z.number()).length(6));
+const geoJSONBBoxSchema = z.union([z.array(z.number()).check(z.length(4)), z.array(z.number()).check(z.length(6))]);
 
 /**
  * @ignore
  */
-export const geoJSONObjectSchema = geometrySchema.or(featureSchema).or(featureCollectionSchema);
+export const geoJSONObjectSchema = z.union([geometrySchema, featureSchema, featureCollectionSchema]);
 
 /**
  * @ignore
  */
-export const hasBBoxSchema = geoJSONBBoxSchema.or(geoJSONObjectSchema).or(z.array(geoJSONObjectSchema));
+export const hasBBoxSchema = z.union([geoJSONBBoxSchema, geoJSONObjectSchema, z.array(geoJSONObjectSchema)]);

@@ -1,23 +1,23 @@
 import { views } from "@anw/maps-sdk-js/core";
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { hasLngLatSchema } from "./geometriesSchema";
 
 const placesParamsMandatory = z.object({
     query: z.string()
 });
 
-const placesParamsOptional = z
-    .object({
+const placesParamsOptional = z.partial(
+    z.object({
         position: hasLngLatSchema,
-        limit: z.number().max(100),
-        extendedPostalCodesFor: z.string().array(),
-        mapcodes: z.string().array(),
+        limit: z.number().check(z.maximum(100)),
+        extendedPostalCodesFor: z.array(z.string()),
+        mapcodes: z.array(z.string()),
         view: z.enum(views),
-        geographyTypes: z.string().array()
+        geographyTypes: z.array(z.string())
     })
-    .partial();
+);
 
 /**
  * @ignore
  */
-export const commonPlacesParamsSchema = placesParamsMandatory.merge(placesParamsOptional);
+export const commonPlacesParamsSchema = z.extend(placesParamsMandatory, placesParamsOptional).shape;

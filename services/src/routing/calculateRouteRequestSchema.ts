@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import type { SectionType } from "@anw/maps-sdk-js/core";
 import { getGeoInputType, inputSectionTypesWithGuidance } from "@anw/maps-sdk-js/core";
 import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from "../shared/geometriesSchema";
@@ -10,23 +10,24 @@ const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);
 const pathLikeSchema = z.union([lineStringCoordsSchema, featureSchema]);
 
 const calculateRouteRequestSchemaMandatory = z.object({
-    geoInputs: z.array(z.union([waypointLikeSchema, pathLikeSchema])).min(1)
+    geoInputs: z.array(z.union([waypointLikeSchema, pathLikeSchema])).check(z.minLength(1))
 });
 
-const calculateRouteRequestSchemaOptional = z
-    .object({
+const calculateRouteRequestSchemaOptional = z.partial(
+    z.object({
         computeAdditionalTravelTimeFor: z.enum(["none", "all"]),
-        vehicleHeading: z.number().min(0).max(359.5),
+        vehicleHeading: z.number().check(z.minimum(0), z.maximum(359.5)),
         // TODO add proper instructionsInfo check
         // instructionsType: z.enum(instructionsTypes),
-        maxAlternatives: z.number().min(0).max(5),
+        maxAlternatives: z.number().check(z.minimum(0), z.maximum(5)),
         sectionTypes: z.array(z.enum(inputSectionTypesWithGuidance as [SectionType, ...SectionType[]]))
     })
-    .partial();
+);
 
-const calculateRouteRequestSchema = commonRoutingRequestSchema
-    .merge(calculateRouteRequestSchemaMandatory)
-    .merge(calculateRouteRequestSchemaOptional);
+const calculateRouteRequestSchema = z.extend(
+    commonRoutingRequestSchema,
+    z.extend(calculateRouteRequestSchemaMandatory, calculateRouteRequestSchemaOptional).shape
+).shape;
 
 const calculateRouteGeoInputsRefinement: SchemaRefinement<CalculateRouteParams> = {
     check: (data: CalculateRouteParams): boolean => {

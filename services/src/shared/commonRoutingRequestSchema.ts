@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { vehicleParametersSchema } from "./vehicleSchema";
 import { avoidableTypes } from "@anw/maps-sdk-js/core";
 import { routeTypes } from "./types/commonRoutingParams";
@@ -6,21 +6,21 @@ import { routeTypes } from "./types/commonRoutingParams";
 /**
  * @ignore
  */
-export const commonRoutingRequestSchema = z
-    .object({
-        costModel: z
-            .object({
+export const commonRoutingRequestSchema = z.partial(
+    z.object({
+        costModel: z.partial(
+            z.object({
                 avoid: z.array(z.enum(avoidableTypes)),
-                traffic: z.enum(["live", "historical"]).optional(),
-                routeType: z.enum(routeTypes).optional(),
-                thrillingParams: z
-                    .object({
-                        hilliness: z.enum(["low", "normal", "high"]).optional(),
-                        windingness: z.enum(["low", "normal", "high"]).optional()
+                traffic: z.optional(z.enum(["live", "historical"])),
+                routeType: z.optional(z.enum(routeTypes)),
+                thrillingParams: z.optional(
+                    z.object({
+                        hilliness: z.optional(z.enum(["low", "normal", "high"])),
+                        windingness: z.optional(z.enum(["low", "normal", "high"]))
                     })
-                    .optional()
+                )
             })
-            .partial(),
+        ),
         travelMode: z.string(),
         vehicle: vehicleParametersSchema,
         when: z.object({
@@ -28,4 +28,4 @@ export const commonRoutingRequestSchema = z
             date: z.date()
         })
     })
-    .partial();
+);

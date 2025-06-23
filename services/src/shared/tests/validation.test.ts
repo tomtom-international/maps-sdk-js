@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { validateRequestSchema } from "../validation";
 import type { SchemaRefinement } from "../types/validation";
 
@@ -55,7 +55,7 @@ describe("Validation", () => {
 
     test("it should fail when commonBaseURL or customServiceBaseURL is not passed", () => {
         const schema = z.object({
-            position: z.number().array().nonempty()
+            position: z.array(z.number()).check(z.minLength(1))
         });
 
         const params = {
@@ -78,9 +78,9 @@ describe("Validation", () => {
 
     test("custom refinements", () => {
         const schema = z.object({
-            optionalA: z.string().optional(),
-            optionalA2: z.string().optional(),
-            optionalB: z.string().optional()
+            optionalA: z.optional(z.string()),
+            optionalA2: z.optional(z.string()),
+            optionalB: z.optional(z.string())
         });
 
         const optionalAParamRefinement: SchemaRefinement = {

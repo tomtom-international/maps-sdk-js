@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { views } from "@anw/maps-sdk-js/core";
 import { hasLngLatSchema } from "../shared/geometriesSchema";
 
@@ -6,23 +6,23 @@ const revGeocodeRequestMandatory = z.object({
     position: hasLngLatSchema
 });
 
-const revGeocodeRequestOptional = z
-    .object({
+const revGeocodeRequestOptional = z.partial(
+    z.object({
         allowFreeformNewline: z.boolean(),
-        geographyType: z.string().array(),
-        heading: z.number().min(-360).max(360),
-        mapcodes: z.string().array(),
+        geographyType: z.array(z.string()),
+        heading: z.number().check(z.minimum(-360), z.maximum(360)),
+        mapcodes: z.array(z.string()),
         number: z.string(),
         radiusMeters: z.number(),
         returnMatchType: z.boolean(),
         returnRoadUse: z.boolean(),
         returnSpeedLimit: z.boolean(),
-        roadUses: z.string().array(),
+        roadUses: z.array(z.string()),
         view: z.enum(views)
     })
-    .partial();
+);
 
 /**
  * @ignore
  */
-export const revGeocodeRequestSchema = revGeocodeRequestMandatory.merge(revGeocodeRequestOptional);
+export const revGeocodeRequestSchema = z.extend(revGeocodeRequestMandatory, revGeocodeRequestOptional).shape;

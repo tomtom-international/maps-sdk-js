@@ -1,4 +1,4 @@
-import type { ZodIssue } from "zod";
+import type { $ZodIssue } from "zod/dist/types/v4/core/errors";
 import type { ParseResponseError } from "./serviceTypes";
 import type { APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
 import { APICode } from "./types/apiResponseErrorTypes";
@@ -15,8 +15,8 @@ import type { ServiceName } from "./types/servicesTypes";
 export class SDKError extends Error {
     constructor(
         message: string,
-        private service: string,
-        private errors?: ZodIssue[]
+        private readonly service: string,
+        private readonly errors?: $ZodIssue[]
     ) {
         super(message);
 

@@ -14,8 +14,8 @@ export type CommonServiceParams<API_REQUEST = any, API_RESPONSE = any> = Partial
 
     /**
      * Optional, validation of input request schema.
-     ** Providing true or skipping this param will result in input request schema validation,
-     ** Providing false will skip schema validation
+     ** Enabled by default.
+     ** Providing false will skip schema validation.
      * @default=true
      */
     validateRequest?: boolean;

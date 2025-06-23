@@ -1,15 +1,15 @@
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { hasBBoxSchema } from "./geometriesSchema";
 
 /**
  * @ignore
  */
-export const commonGeocodeAndFuzzySearchParamsSchema = z
-    .object({
+export const commonGeocodeAndFuzzySearchParamsSchema = z.partial(
+    z.object({
         typeahead: z.boolean(),
-        offset: z.number().max(1900),
+        offset: z.number().check(z.maximum(1900)),
         radiusMeters: z.number(),
         boundingBox: hasBBoxSchema,
-        countries: z.string().array()
+        countries: z.array(z.string())
     })
-    .partial();
+);

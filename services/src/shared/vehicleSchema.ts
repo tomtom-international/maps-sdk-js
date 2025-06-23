@@ -1,80 +1,82 @@
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { currentTypes, plugTypes } from "@anw/maps-sdk-js/core";
 
-const efficiencySchema = z
-    .object({
-        efficiency: z
-            .object({
-                acceleration: z.number().min(0).max(1),
-                deceleration: z.number().min(0).max(1),
-                uphill: z.number().min(0).max(1),
-                downhill: z.number().min(0).max(1)
+const efficiencySchema = z.partial(
+    z.object({
+        efficiency: z.partial(
+            z.object({
+                acceleration: z.number().check(z.minimum(0), z.maximum(1)),
+                deceleration: z.number().check(z.minimum(0), z.maximum(1)),
+                uphill: z.number().check(z.minimum(0), z.maximum(1)),
+                downhill: z.number().check(z.minimum(0), z.maximum(1))
             })
-            .partial()
+        )
     })
-    .partial();
+);
 
 const combustionModelSchema = z.object({
-    consumption: efficiencySchema.merge(
+    consumption: z.extend(
+        efficiencySchema,
         z.object({
-            speedsToConsumptionsLiters: z
-                .array(
+            speedsToConsumptionsLiters: z.optional(
+                z.array(
                     z.object({
                         speedKMH: z.number(),
                         consumptionUnitsPer100KM: z.number()
                     })
                 )
-                .optional(),
-            auxiliaryPowerInLitersPerHour: z.number().optional(),
-            fuelEnergyDensityInMJoulesPerLiter: z.number().optional()
+            ),
+            auxiliaryPowerInLitersPerHour: z.optional(z.number()),
+            fuelEnergyDensityInMJoulesPerLiter: z.optional(z.number())
         })
     )
 });
 
 const chargingConnectorSchema = z.object({
     currentType: z.enum(currentTypes),
-    plugTypes: z.array(z.enum(plugTypes)).min(1),
-    efficiency: z.number().optional(),
-    baseLoadInkW: z.number().optional(),
-    maxPowerInkW: z.number().optional(),
-    maxVoltageInV: z.number().optional(),
-    maxCurrentInA: z.number().optional(),
-    voltageRange: z
-        .object({
-            minVoltageInV: z.number().optional(),
-            maxVoltageInV: z.number().optional()
+    plugTypes: z.array(z.enum(plugTypes)).check(z.minLength(1)),
+    efficiency: z.optional(z.number()),
+    baseLoadInkW: z.optional(z.number()),
+    maxPowerInkW: z.optional(z.number()),
+    maxVoltageInV: z.optional(z.number()),
+    maxCurrentInA: z.optional(z.number()),
+    voltageRange: z.optional(
+        z.object({
+            minVoltageInV: z.optional(z.number()),
+            maxVoltageInV: z.optional(z.number())
         })
-        .optional()
+    )
 });
 
 const batteryCurveSchema = z.object({
-    stateOfChargeInkWh: z.number().min(0),
-    maxPowerInkW: z.number().positive()
+    stateOfChargeInkWh: z.number().check(z.minimum(0)),
+    maxPowerInkW: z.number().check(z.positive())
 });
 
 const electricEngineModelSchema = z.object({
-    consumption: efficiencySchema.merge(
+    consumption: z.extend(
+        efficiencySchema,
         z.object({
-            speedsToConsumptionsKWH: z
-                .array(
+            speedsToConsumptionsKWH: z.optional(
+                z.array(
                     z.object({
                         speedKMH: z.number(),
                         consumptionUnitsPer100KM: z.number()
                     })
                 )
-                .optional(),
-            auxiliaryPowerInkW: z.number().optional(),
-            consumptionInKWHPerKMAltitudeGain: z.number().max(500.0).optional(),
-            recuperationInKWHPerKMAltitudeLoss: z.number().optional()
+            ),
+            auxiliaryPowerInkW: z.optional(z.number()),
+            consumptionInKWHPerKMAltitudeGain: z.optional(z.number().check(z.maximum(500))),
+            recuperationInKWHPerKMAltitudeLoss: z.optional(z.number())
         })
     ),
-    charging: z
-        .object({
+    charging: z.optional(
+        z.object({
             maxChargeKWH: z.number(),
-            batteryCurve: z.array(batteryCurveSchema).optional(),
-            connectors: z.array(chargingConnectorSchema).min(1).optional()
+            batteryCurve: z.optional(z.array(batteryCurveSchema)),
+            connectors: z.optional(z.array(chargingConnectorSchema).check(z.minLength(1)))
         })
-        .optional()
+    )
 });
 
 const combustionEngineSchema = z.object({
@@ -83,40 +85,40 @@ const combustionEngineSchema = z.object({
     model: combustionModelSchema
 });
 
-const pct = z.number().min(0).max(100);
+const pct = z.number().check(z.minimum(0), z.maximum(100));
 
 const electricEngineSchema = z.object({
     type: z.literal("electric"),
     currentChargePCT: pct,
     model: electricEngineModelSchema,
-    chargingPreferences: z
-        .object({
+    chargingPreferences: z.optional(
+        z.object({
             minChargeAtDestinationPCT: pct,
             minChargeAtChargingStopsPCT: pct
         })
-        .optional()
+    )
 });
 
-const vehicleDimensionsSchema = z
-    .object({
+const vehicleDimensionsSchema = z.partial(
+    z.object({
         lengthMeters: z.number(),
         widthMeters: z.number(),
         heightMeters: z.number(),
         weightKG: z.number(),
         axleWeightKG: z.number()
     })
-    .partial();
+);
 
 /**
  * @ignore
  */
-export const vehicleParametersSchema = z
-    .object({
+export const vehicleParametersSchema = z.partial(
+    z.object({
         engine: z.discriminatedUnion("type", [combustionEngineSchema, electricEngineSchema]),
         dimensions: vehicleDimensionsSchema,
-        loadTypes: z.string().array(),
-        maxSpeedKMH: z.number().min(0).max(250),
+        loadTypes: z.array(z.string()),
+        maxSpeedKMH: z.number().check(z.minimum(0), z.maximum(250)),
         adrCode: z.enum(["B", "C", "D", "E"]),
         commercial: z.boolean()
     })
-    .partial();
+);

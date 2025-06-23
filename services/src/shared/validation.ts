@@ -1,4 +1,5 @@
-import type { ZodError, ZodIssue } from "zod";
+import { z } from "zod/v4-mini";
+import type { $ZodError, $ZodIssue } from "zod/dist/types/v4/core/errors";
 import { commonServiceRequestSchema } from "./commonParamsSchema";
 import type { CommonServiceParams } from "./serviceTypes";
 import type { RequestValidationConfig } from "./types/validation";
@@ -9,11 +10,11 @@ import type { RequestValidationConfig } from "./types/validation";
  * @ignore
  */
 export class ValidationError extends Error {
-    errors: ZodIssue[];
+    errors: $ZodIssue[];
 
-    constructor(error: ZodError) {
-        super(error.errors[0].message);
-        this.errors = error.errors;
+    constructor(error: $ZodError) {
+        super(error.issues[0].message);
+        this.errors = error.issues;
     }
 }
 
@@ -26,12 +27,15 @@ export const validateRequestSchema = <T extends CommonServiceParams>(
     params: T,
     config?: RequestValidationConfig
 ): T => {
+    const requestSchema = config?.schema
+        ? z.extend(commonServiceRequestSchema, config.schema)
+        : commonServiceRequestSchema;
     // If there's no schema provided, we still validate the common params:
-    const mergedSchema = (
-        config?.schema ? commonServiceRequestSchema.merge(config.schema) : commonServiceRequestSchema
-    ).refine(
-        (data) => "commonBaseURL" in data || "customServiceBaseURL" in data,
-        "commonBaseURL or customServiceBaseURL is required"
+    const mergedSchema = requestSchema.check(
+        z.refine(
+            (data) => "commonBaseURL" in data || "customServiceBaseURL" in data,
+            "commonBaseURL or customServiceBaseURL is required"
+        )
     );
 
     // Adding optional refinements:
@@ -39,7 +43,7 @@ export const validateRequestSchema = <T extends CommonServiceParams>(
     if (config?.refinements?.length) {
         refinedMergedSchema = mergedSchema;
         for (const refinement of config.refinements) {
-            refinedMergedSchema = refinedMergedSchema.refine(refinement.check, refinement.message);
+            refinedMergedSchema = refinedMergedSchema.check(z.refine(refinement.check, refinement.message));
         }
     }
 
