@@ -1,11 +1,11 @@
-import type { CommonPlacesParams, CommonGeocodeAndFuzzySearchParams, SearchIndexType } from "../../shared";
-import type { GeocodingResponseAPI } from "./apiTypes";
+import type { CommonGeocodeAndFuzzySearchParams, CommonPlacesParams, SearchIndexType } from '../../shared';
+import type { GeocodingResponseAPI } from './apiTypes';
 
-type GeocodingIndexTypesAbbreviation = Exclude<SearchIndexType, "POI">;
+type GeocodingIndexTypesAbbreviation = Exclude<SearchIndexType, 'POI'>;
 
 export type GeocodingParams = Omit<
     CommonPlacesParams<URL, GeocodingResponseAPI> & CommonGeocodeAndFuzzySearchParams,
-    "extendedPostalCodesFor"
+    'extendedPostalCodesFor'
 > & {
     /**
      * Indexes for which extended postal codes should be included in the results.

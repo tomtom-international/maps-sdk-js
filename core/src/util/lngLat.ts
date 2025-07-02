@@ -1,8 +1,8 @@
-import type { Feature, Point, Position } from "geojson";
-import type { EntryPoint, GetPositionOptions, HasLngLat, Place } from "../types";
+import type { Feature, Point, Position } from 'geojson';
+import type { EntryPoint, GetPositionOptions, HasLngLat, Place } from '../types';
 
 const getMainEntryPoint = (place: Place): EntryPoint | undefined =>
-    place?.properties?.entryPoints?.find((entryPoint) => entryPoint.type === "main");
+    place?.properties?.entryPoints?.find((entryPoint) => entryPoint.type === 'main');
 
 /**
  * Extracts the lng-lat position for the given object.
@@ -14,12 +14,14 @@ export const getPosition = (hasLngLat: HasLngLat | undefined, options?: GetPosit
         if (Array.isArray(hasLngLat)) {
             // GeoJSON Position (lng-lat):
             return hasLngLat;
-        } else if ((hasLngLat as Point).coordinates) {
+        }
+        if ((hasLngLat as Point).coordinates) {
             // GeoJSON Point Geometry:
             return (hasLngLat as Point).coordinates;
-        } else if ((hasLngLat as Feature).geometry) {
+        }
+        if ((hasLngLat as Feature).geometry) {
             // GeoJSON Point Feature:
-            if (options?.useEntryPoint == "main-when-available") {
+            if (options?.useEntryPoint === 'main-when-available') {
                 const mainEntryPoint = getMainEntryPoint(hasLngLat as Place);
                 return mainEntryPoint?.position ?? (hasLngLat as Feature<Point>).geometry.coordinates;
             }
@@ -49,7 +51,7 @@ export const getPositionStrict = (hasLngLat: HasLngLat, options?: GetPositionOpt
  * @param lngLat
  */
 export const toPointFeature = (lngLat: Position): Feature<Point> => ({
-    type: "Feature",
-    geometry: { type: "Point", coordinates: lngLat } as Point,
-    properties: {}
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: lngLat } as Point,
+    properties: {},
 });

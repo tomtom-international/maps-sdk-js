@@ -1,24 +1,24 @@
-import { test, expect } from "@playwright/test";
-import { HILLSHADE_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from "map/src/shared";
-import type { MapsSDKThis } from "./types/MapsSDKThis";
-import { MapTestEnv } from "./util/MapTestEnv";
+import { expect, test } from '@playwright/test';
+import { HILLSHADE_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from 'map/src/shared';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getNumVisibleLayersBySource,
     initHillshade,
     setStyle,
     waitForMapIdle,
-    waitForMapReady
-} from "./util/TestUtils";
+    waitForMapReady,
+} from './util/TestUtils';
 
-test.describe("Map vector tiles hillshade module tests", () => {
+test.describe('Map vector tiles hillshade module tests', () => {
     const mapEnv = new MapTestEnv();
 
-    test("Failing to initialize if excluded from the style", async ({ page }) => {
+    test('Failing to initialize if excluded from the style', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { center: [7.12621, 48.50394], zoom: 8 });
         await expect(initHillshade(page)).rejects.toBeDefined();
     });
 
-    test("Success to initialize if not included in the style, but auto adding it", async ({ page }) => {
+    test('Success to initialize if not included in the style, but auto adding it', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { center: [7.12621, 48.50394], zoom: 8 });
         await initHillshade(page, { ensureAddedToStyle: true });
         await waitForMapReady(page);
@@ -26,13 +26,13 @@ test.describe("Map vector tiles hillshade module tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Success to initialize if included in the style, also with auto-inclusion flag (ignored)", async ({
-        page
+    test('Success to initialize if included in the style, also with auto-inclusion flag (ignored)', async ({
+        page,
     }) => {
         await mapEnv.loadPageAndMap(
             page,
             { center: [7.12621, 48.50394], zoom: 8 },
-            { style: { type: "published", include: ["hillshade"] } }
+            { style: { type: 'published', include: ['hillshade'] } },
         );
         await initHillshade(page, { ensureAddedToStyle: true });
         await waitForMapReady(page);
@@ -46,11 +46,11 @@ test.describe("Map vector tiles hillshade module tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Vector tiles hillshade visibility changes in different ways", async ({ page }) => {
+    test('Vector tiles hillshade visibility changes in different ways', async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["hillshade"] } }
+            { style: { type: 'published', include: ['hillshade'] } },
         );
 
         await initHillshade(page, { visible: false });
@@ -85,7 +85,7 @@ test.describe("Map vector tiles hillshade module tests", () => {
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
 
         // changing style at runtime, verifying hillshade is still there:
-        await setStyle(page, "monoLight");
+        await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
 

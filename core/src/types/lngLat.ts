@@ -3,7 +3,7 @@
  * * main-when-available: if available, the main entry point will be used, otherwise the default position of the place.
  * * ignore: the default position of the place will be used.
  */
-export type GetPositionEntryPointOption = "main-when-available" | "ignore";
+export type GetPositionEntryPointOption = 'main-when-available' | 'ignore';
 
 /**
  * Options for the getPosition call to further control the extraction of the position.

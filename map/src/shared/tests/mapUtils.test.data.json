@@ -1,10 +1,5 @@
 [
-  [
-    "undefined style",
-    null,
-    "trafficIncidents",
-    { "type": "published", "include": ["trafficIncidents"] }
-  ],
+  ["undefined style", null, "trafficIncidents", { "type": "published", "include": ["trafficIncidents"] }],
   [
     "Just string for published style",
     "monoLight",

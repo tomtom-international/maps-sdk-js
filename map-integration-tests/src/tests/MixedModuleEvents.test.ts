@@ -1,12 +1,12 @@
-import type { Page } from "@playwright/test";
-import { test, expect } from "@playwright/test";
-import type { Position } from "geojson";
-import type { Place, Places, PolygonFeatures } from "core";
-import type { MapGeoJSONFeature } from "maplibre-gl";
-import { MapTestEnv } from "./util/MapTestEnv";
-import type { MapsSDKThis } from "./types/MapsSDKThis";
-import placesJSON from "./data/PlacesModuleEvents.test.data.json";
-import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
+import type { Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import type { Position } from 'geojson';
+import type { Place, Places, PolygonFeatures } from 'core';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
+import { MapTestEnv } from './util/MapTestEnv';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import placesJSON from './data/PlacesModuleEvents.test.data.json';
+import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
 import {
     getClickedTopFeature,
     getGeometriesSourceAndLayerIDs,
@@ -19,9 +19,9 @@ import {
     showGeometry,
     showPlaces,
     waitForMapIdle,
-    waitUntilRenderedFeatures
-} from "./util/TestUtils";
-import { BASE_MAP_SOURCE_ID } from "map/src/shared";
+    waitUntilRenderedFeatures,
+} from './util/TestUtils';
+import { BASE_MAP_SOURCE_ID } from 'map/src/shared';
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
@@ -30,37 +30,37 @@ const geometryData = amsterdamGeometryData as PolygonFeatures;
 const setupGeometryHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.geometries?.events.on("hover", () => mapsSDKThis._numOfHovers++);
-        mapsSDKThis.geometries?.events.on("long-hover", () => mapsSDKThis._numOfLongHovers++);
+        mapsSDKThis.geometries?.events.on('hover', () => mapsSDKThis._numOfHovers++);
+        mapsSDKThis.geometries?.events.on('long-hover', () => mapsSDKThis._numOfLongHovers++);
     });
 
 const setupPlacesClickHandler = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places?.events.on("click", (topFeature, _, features) => {
+        mapsSDKThis.places?.events.on('click', (topFeature, _, features) => {
             mapsSDKThis._clickedTopFeature = topFeature;
             mapsSDKThis._clickedFeatures = features;
         });
-        mapsSDKThis.places?.events.on("contextmenu", () => mapsSDKThis._numOfContextmenuClicks++);
+        mapsSDKThis.places?.events.on('contextmenu', () => mapsSDKThis._numOfContextmenuClicks++);
     });
 
 const waitUntilRenderedGeometry = async (
     page: Page,
     numFeatures: number,
     position: Position,
-    layerIDs: string[]
+    layerIDs: string[],
 ): Promise<MapGeoJSONFeature[]> => waitUntilRenderedFeatures(page, layerIDs, numFeatures, 3000, position);
 
 const setupBasemapClickHandler = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.baseMap?.events.on("click", (topFeature, _, features) => {
+        mapsSDKThis.baseMap?.events.on('click', (topFeature, _, features) => {
             mapsSDKThis._clickedTopFeature = topFeature;
             mapsSDKThis._clickedFeatures = features;
         });
     });
 
-test.describe("Tests with user events", () => {
+test.describe('Tests with user events', () => {
     const mapEnv = new MapTestEnv();
 
     // Reset test variables for each test
@@ -70,12 +70,12 @@ test.describe("Tests with user events", () => {
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 }
-            }
+                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+            },
         );
     });
 
-    test("Events combining different map modules", async ({ page }) => {
+    test('Events combining different map modules', async ({ page }) => {
         await initGeometries(page);
         await showGeometry(page, geometryData);
         const geometrySourcesAndLayerIDs = await getGeometriesSourceAndLayerIDs(page);
@@ -83,7 +83,7 @@ test.describe("Tests with user events", () => {
             page,
             1,
             [4.89067, 52.37313],
-            geometrySourcesAndLayerIDs?.geometry.layerIDs as string[]
+            geometrySourcesAndLayerIDs?.geometry.layerIDs as string[],
         );
 
         await initPlaces(page);
@@ -106,14 +106,14 @@ test.describe("Tests with user events", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Events with Places and BaseMap modules", async ({ page }) => {
+    test('Events with Places and BaseMap modules', async ({ page }) => {
         await initBasemap(page);
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
 
         // changing the style in between, to double-check that we can still register to events in base map after:
-        await setStyle(page, "monoLight");
+        await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
         await setupBasemapClickHandler(page);
 
@@ -131,11 +131,11 @@ test.describe("Tests with user events", () => {
             ...places.features[0],
             properties: {
                 ...places.features[0].properties,
-                eventState: "click",
-                iconID: "poi-parking_facility",
-                title: "H32 Sportfondsenbad Amsterdam-Oost",
-                id: expect.anything()
-            }
+                eventState: 'click',
+                iconID: 'poi-parking_facility',
+                title: 'H32 Sportfondsenbad Amsterdam-Oost',
+                id: expect.anything(),
+            },
         });
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

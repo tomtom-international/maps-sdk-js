@@ -8,9 +8,9 @@ import type {
     MultiPolygon,
     Point,
     Polygon,
-    Position
-} from "geojson";
-import type { HasBBox, OptionalBBox } from "../types";
+    Position,
+} from 'geojson';
+import type { HasBBox, OptionalBBox } from '../types';
 
 /**
  * Calculates whether the given bbox has area (width and height).
@@ -48,7 +48,7 @@ export const bboxExpandedWithPosition = (positionToContain: Position, bboxToExpa
               // max longitude:
               bboxToExpand[2] < positionToContain[0] ? positionToContain[0] : bboxToExpand[2],
               // max latitude:
-              bboxToExpand[3] < positionToContain[1] ? positionToContain[1] : bboxToExpand[3]
+              bboxToExpand[3] < positionToContain[1] ? positionToContain[1] : bboxToExpand[3],
           ]
         : // single point bbox with no size:
           [positionToContain[0], positionToContain[1], positionToContain[0], positionToContain[1]];
@@ -71,7 +71,7 @@ export const bboxExpandedWithBBox = (bboxToContain: OptionalBBox, bboxToExpand?:
         // max longitude:
         bboxToExpand[2] < bboxToContain[2] ? bboxToContain[2] : bboxToExpand[2],
         // max latitude:
-        bboxToExpand[3] < bboxToContain[3] ? bboxToContain[3] : bboxToExpand[3]
+        bboxToExpand[3] < bboxToContain[3] ? bboxToContain[3] : bboxToExpand[3],
     ];
 };
 
@@ -96,13 +96,13 @@ export const bboxFromCoordsArray = (coordinates: Position[] | undefined): Option
     if (!length) {
         return undefined;
     }
-    let bbox = undefined;
+    let bbox: OptionalBBox;
     const indexInterval = Math.ceil(length / 1000);
     for (let i = 0; i < length; i += indexInterval) {
         bbox = bboxExpandedWithPosition(coordinates[i], bbox);
     }
     // (we ensure that if we had intervals greater than 1, the last position is always included in the calculation)
-    return indexInterval == 1 ? bbox : bboxExpandedWithPosition(coordinates[length - 1], bbox);
+    return indexInterval === 1 ? bbox : bboxExpandedWithPosition(coordinates[length - 1], bbox);
 };
 
 /**
@@ -127,11 +127,10 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
     // Else...
     // Already a BBox:
     if (Array.isArray(hasBBox)) {
-        if (typeof hasBBox[0] === "number") {
+        if (typeof hasBBox[0] === 'number') {
             return hasBBox.length >= 4 ? (hasBBox as OptionalBBox) : undefined;
-        } else {
-            return bboxFromBBoxes(hasBBox.map((geoJSONItem) => bboxFromGeoJSON(geoJSONItem as GeoJsonObject)));
         }
+        return bboxFromBBoxes(hasBBox.map((geoJSONItem) => bboxFromGeoJSON(geoJSONItem as GeoJsonObject)));
     }
     // Else...
     // Already containing a BBox:
@@ -142,25 +141,25 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
     // Else...
     // Needs direct or recursive bbox extraction/calculation:
     switch (geoJSON.type) {
-        case "Feature":
+        case 'Feature':
             return bboxFromGeoJSON((geoJSON as Feature).geometry);
-        case "FeatureCollection":
+        case 'FeatureCollection':
             return bboxFromBBoxes((geoJSON as FeatureCollection).features.map(bboxFromGeoJSON));
-        case "GeometryCollection":
+        case 'GeometryCollection':
             return bboxFromBBoxes((geoJSON as GeometryCollection).geometries.map(bboxFromGeoJSON));
-        case "Point":
+        case 'Point':
             return bboxExpandedWithPosition((geoJSON as Point).coordinates);
-        case "LineString":
-        case "MultiPoint":
+        case 'LineString':
+        case 'MultiPoint':
             // (LineString and MultiPoint both have the same coordinates type)
             return bboxFromCoordsArray((geoJSON as LineString).coordinates);
-        case "MultiLineString":
-        case "Polygon":
+        case 'MultiLineString':
+        case 'Polygon':
             // (MultiLineString and Polygon both have the same coordinates type)
             return bboxFromBBoxes((geoJSON as Polygon).coordinates.map(bboxFromCoordsArray));
-        case "MultiPolygon":
+        case 'MultiPolygon':
             return bboxFromBBoxes(
-                (geoJSON as MultiPolygon).coordinates.flatMap((polygon) => polygon.map(bboxFromCoordsArray))
+                (geoJSON as MultiPolygon).coordinates.flatMap((polygon) => polygon.map(bboxFromCoordsArray)),
             );
         default:
             return undefined;

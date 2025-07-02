@@ -1,21 +1,21 @@
-import type { FeatureCollection, Point } from "geojson";
-import type { SymbolLayerSpecification } from "maplibre-gl";
-import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
-import type { SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from "../shared";
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from "../shared";
+import type { FeatureCollection, Point } from 'geojson';
+import type { SymbolLayerSpecification } from 'maplibre-gl';
+import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
+import type { SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from '../shared';
+import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
 import type {
-    GeometryBeforeLayerConfig,
     GeometriesModuleConfig,
-    GeometryTextConfig
-} from "./types/geometriesModuleConfig";
-import type { TomTomMap } from "../TomTomMap";
-import { changeLayerProps, waitUntilMapIsReady } from "../shared/mapUtils";
+    GeometryBeforeLayerConfig,
+    GeometryTextConfig,
+} from './types/geometriesModuleConfig';
+import type { TomTomMap } from '../TomTomMap';
+import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import {
     buildGeometryLayerSpecs,
     buildGeometryTitleLayerSpec,
     prepareGeometryForDisplay,
-    prepareTitleForDisplay
-} from "./prepareGeometryForDisplay";
+    prepareTitleForDisplay,
+} from './prepareGeometryForDisplay';
 
 /**
  * IDs of sources and layers from a geometry module.
@@ -54,7 +54,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     }
 
     private constructor(map: TomTomMap, config?: GeometriesModuleConfig) {
-        super("geojson", map, config);
+        super('geojson', map, config);
     }
 
     /**
@@ -74,7 +74,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpecs(
             this.fillLayerID,
             this.outlineLayerID,
-            config
+            config,
         );
         const titleLayerSpec = buildGeometryTitleLayerSpec(this.titleLayerID, config);
         this.titleLayerSpecs = titleLayerSpec;
@@ -84,11 +84,11 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         return {
             geometry: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, [
                 { ...geometryFillSpec },
-                { ...geometryOutlineSpec }
+                { ...geometryOutlineSpec },
             ]),
             geometryLabel: new GeoJSONSourceWithLayers(this.mapLibreMap, this.titleSourceID, [
-                titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>
-            ])
+                titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>,
+            ]),
         };
     }
 
@@ -107,13 +107,13 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
 
     private moveBeforeLayerID(beforeLayerId?: string) {
         this.sourcesWithLayers.geometry.sourceAndLayerIDs.layerIDs.forEach((layer) =>
-            this.mapLibreMap.moveLayer(layer, beforeLayerId)
+            this.mapLibreMap.moveLayer(layer, beforeLayerId),
         );
     }
 
     moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig) {
         this.config = { ...this.config, beforeLayerConfig: layerConfig };
-        this.moveBeforeLayerID(layerConfig == "top" ? this.titleLayerID : mapStyleLayerIDs[layerConfig]);
+        this.moveBeforeLayerID(layerConfig === 'top' ? this.titleLayerID : mapStyleLayerIDs[layerConfig]);
     }
 
     /**
@@ -124,7 +124,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         const config = { ...this.config, textConfig };
         this.updateLayerAndData(config);
         this.sourcesWithLayers.geometryLabel.show(
-            prepareTitleForDisplay(this.sourcesWithLayers.geometry.shownFeatures)
+            prepareTitleForDisplay(this.sourcesWithLayers.geometry.shownFeatures),
         );
         this.config = config;
     }
@@ -133,7 +133,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpecs(
             this.fillLayerID,
             this.outlineLayerID,
-            config
+            config,
         );
         const newTitleLayerSpecs = buildGeometryTitleLayerSpec(this.titleLayerID, config);
 

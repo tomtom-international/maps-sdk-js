@@ -1,8 +1,8 @@
-import type { GeocodingResponse } from "./types/geocodingResponse";
-import type { GeocodingParams } from "./types/geocodingParams";
-import type { GeocodingTemplate } from "./geocodingTemplate";
-import { geocodingTemplate } from "./geocodingTemplate";
-import { callService } from "../shared/serviceTemplate";
+import type { GeocodingResponse } from './types/geocodingResponse';
+import type { GeocodingParams } from './types/geocodingParams';
+import type { GeocodingTemplate } from './geocodingTemplate';
+import { geocodingTemplate } from './geocodingTemplate';
+import { callService } from '../shared/serviceTemplate';
 
 /**
  * In many cases, the complete Search service might be too much.
@@ -20,7 +20,7 @@ import { callService } from "../shared/serviceTemplate";
  */
 export const geocode = async (
     params: GeocodingParams,
-    customTemplate?: Partial<GeocodingTemplate>
-): Promise<GeocodingResponse> => callService(params, { ...geocodingTemplate, ...customTemplate }, "Geocode");
+    customTemplate?: Partial<GeocodingTemplate>,
+): Promise<GeocodingResponse> => callService(params, { ...geocodingTemplate, ...customTemplate }, 'Geocode');
 
 export default geocode;

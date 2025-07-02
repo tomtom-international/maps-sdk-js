@@ -1,6 +1,6 @@
-import type { DelayMagnitude, RouteProps } from "@anw/maps-sdk-js/core";
-import type { SupportsEvents } from "../../shared";
-import type { Feature, FeatureCollection, Point } from "geojson";
+import type { DelayMagnitude, RouteProps } from '@anw/maps-sdk-js/core';
+import type { SupportsEvents } from '../../shared';
+import type { Feature, FeatureCollection, Point } from 'geojson';
 
 /**
  * Specific props relating to a displayed route.
@@ -9,7 +9,7 @@ export type RouteStyleProps = {
     /**
      * Style of the route.
      */
-    routeStyle: "selected" | "deselected";
+    routeStyle: 'selected' | 'deselected';
 };
 
 export type DisplayRouteRelatedProps = RouteStyleProps & { routeIndex: number };

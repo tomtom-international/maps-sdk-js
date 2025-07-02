@@ -1,6 +1,6 @@
-import type { Connector } from "./connector";
-import type { ConnectorAvailability, ChargingStationsAvailability } from "./chargingStationsAvailability";
-import type { CommonPlaceProps } from "../place";
+import type { Connector } from './connector';
+import type { ChargingStationsAvailability, ConnectorAvailability } from './chargingStationsAvailability';
+import type { CommonPlaceProps } from '../place';
 
 /**
  * @group Place
@@ -17,7 +17,7 @@ export type ChargingPark = {
      * They do not contain real time availability.
      * * When EV real time availability is present, use it instead of this one.
      */
-    connectorCounts: Omit<ConnectorAvailability, "statusCounts">[];
+    connectorCounts: Omit<ConnectorAvailability, 'statusCounts'>[];
 };
 
 /**
@@ -36,7 +36,7 @@ export type ChargingParkWithAvailability = ChargingPark & {
  * @group Place
  * @category Types
  */
-export type EVChargingStationPlaceProps = Omit<CommonPlaceProps, "chargingPark"> & {
+export type EVChargingStationPlaceProps = Omit<CommonPlaceProps, 'chargingPark'> & {
     /**
      * Charging park with charging availability information, when available.
      */

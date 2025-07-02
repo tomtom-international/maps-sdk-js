@@ -1,9 +1,9 @@
-import type { ExpressionFilterSpecification, LegacyFilterSpecification } from "maplibre-gl";
+import type { ExpressionFilterSpecification, LegacyFilterSpecification } from 'maplibre-gl';
 
 /**
  * @ignore
  */
-export type FilterSyntaxVersion = "expression" | "legacy";
+export type FilterSyntaxVersion = 'expression' | 'legacy';
 
 /**
  * @ignore

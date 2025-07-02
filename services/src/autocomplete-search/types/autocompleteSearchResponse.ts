@@ -1,5 +1,5 @@
-import type { Position } from "geojson";
-import type { AutocompleteSearchSegmentType } from "./autocompleteSearchParams";
+import type { Position } from 'geojson';
+import type { AutocompleteSearchSegmentType } from './autocompleteSearchParams';
 
 export type AutocompleteSearchResponse = {
     /**
@@ -85,11 +85,11 @@ export type AutocompleteSearchMatch = {
 };
 
 export type AutocompleteSearchBrandSegment = AutocompleteGenericSearchSegment & {
-    type: "brand";
+    type: 'brand';
 };
 
 export type AutocompleteSearchCategorySegment = AutocompleteGenericSearchSegment & {
-    type: "category";
+    type: 'category';
     /**
      * This can be used to restrict the results of other search endpoints to the Points Of Interest (POI) of specific categories.
      * See the poiCategories parameter in the Search service documentation
@@ -104,5 +104,5 @@ export type AutocompleteSearchCategorySegment = AutocompleteGenericSearchSegment
 };
 
 export type AutocompleteSearchPlaintextSegment = AutocompleteGenericSearchSegment & {
-    type: "plaintext";
+    type: 'plaintext';
 };

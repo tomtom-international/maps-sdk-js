@@ -1,6 +1,6 @@
 // import isNil from "lodash/isNil";
-import { appendByRepeatingParamName, appendOptionalParam } from "./requestBuildingUtils";
-import type { CommonEVRoutingParams, CommonRoutingParams } from "./types/commonRoutingParams";
+import { appendByRepeatingParamName, appendOptionalParam } from './requestBuildingUtils';
+import type { CommonEVRoutingParams, CommonRoutingParams } from './types/commonRoutingParams';
 
 // TODO lot of functionality is not supported in Orbis but it may be supported in the future
 // import {
@@ -17,9 +17,9 @@ import type { CommonEVRoutingParams, CommonRoutingParams } from "./types/commonR
 // const appendWhenParams = (urlParams: URLSearchParams, when?: DepartArriveParams): void => {
 //     if (when?.date) {
 //         const formattedDate = when.date.toISOString();
-//         if (when.option == "departAt") {
+//         if (when.option === "departAt") {
 //             urlParams.append("departAt", formattedDate);
-//         } else if (when.option == "arriveBy") {
+//         } else if (when.option === "arriveBy") {
 //             urlParams.append("arriveAt", formattedDate);
 //         }
 //     }
@@ -153,11 +153,11 @@ import type { CommonEVRoutingParams, CommonRoutingParams } from "./types/commonR
 
 const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRoutingParams): void => {
     if (evRoutingParams) {
-        urlParams.append("vehicleEngineType", "electric");
-        urlParams.append("currentChargeInkWh", String(evRoutingParams.currentChargeInkWh));
-        urlParams.append("minChargeAtDestinationInkWh", String(evRoutingParams.minChargeAtDestinationInkWh));
-        urlParams.append("minChargeAtChargingStopsInkWh", String(evRoutingParams.minChargeAtChargingStopsInkWh));
-        urlParams.append("vehicleModelId", evRoutingParams.vehicleModelId);
+        urlParams.append('vehicleEngineType', 'electric');
+        urlParams.append('currentChargeInkWh', String(evRoutingParams.currentChargeInkWh));
+        urlParams.append('minChargeAtDestinationInkWh', String(evRoutingParams.minChargeAtDestinationInkWh));
+        urlParams.append('minChargeAtChargingStopsInkWh', String(evRoutingParams.minChargeAtChargingStopsInkWh));
+        urlParams.append('vehicleModelId', evRoutingParams.vehicleModelId);
     }
 };
 
@@ -168,16 +168,16 @@ export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: Co
     if (!params.commonEVRoutingParams) {
         // Orbis EV routing does not support cost models
         const costModel = params.costModel;
-        appendByRepeatingParamName(urlParams, "avoid", costModel?.avoid);
-        appendOptionalParam(urlParams, "traffic", costModel?.traffic);
+        appendByRepeatingParamName(urlParams, 'avoid', costModel?.avoid);
+        appendOptionalParam(urlParams, 'traffic', costModel?.traffic);
         // TODO not supported in Orbis
         // appendWhenParams(urlParams, params.when);
-        appendOptionalParam(urlParams, "routeType", costModel?.routeType);
-        if (costModel?.routeType == "thrilling") {
+        appendOptionalParam(urlParams, 'routeType', costModel?.routeType);
+        if (costModel?.routeType === 'thrilling') {
             // TODO not supported in Orbis
             // appendThrillingParams(urlParams, costModel.thrillingParams);
         }
     }
-    appendOptionalParam(urlParams, "travelMode", params.travelMode);
+    appendOptionalParam(urlParams, 'travelMode', params.travelMode);
     appendEVParams(urlParams, params.commonEVRoutingParams);
 };

@@ -8,10 +8,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [0, 1]
-            ]
+            "coordinates": [[0, 0], [0, 1]]
           },
           "properties": {
             "startPointIndex": 0,
@@ -29,10 +26,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [0, 1]
-            ]
+            "coordinates": [[0, 0], [0, 1]]
           },
           "properties": {
             "startPointIndex": 0,
@@ -53,10 +47,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [0, 1]
-            ]
+            "coordinates": [[0, 0], [0, 1]]
           },
           "properties": {
             "startPointIndex": 0,
@@ -69,10 +60,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [1, 0],
-              [1, 1]
-            ]
+            "coordinates": [[1, 0], [1, 1]]
           },
           "properties": {
             "startPointIndex": 2,
@@ -90,10 +78,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [0, 1]
-            ]
+            "coordinates": [[0, 0], [0, 1]]
           },
           "properties": {
             "startPointIndex": 0,
@@ -106,10 +91,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [1, 0],
-              [1, 1]
-            ]
+            "coordinates": [[1, 0], [1, 1]]
           },
           "properties": {
             "startPointIndex": 2,

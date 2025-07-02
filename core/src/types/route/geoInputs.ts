@@ -1,7 +1,7 @@
-import type { Feature, FeatureCollection, Point, Position } from "geojson";
-import type { Anything } from "../generic";
-import type { HasLngLat } from "../polygonFeature";
-import type { Route } from "./route";
+import type { Feature, FeatureCollection, Point, Position } from 'geojson';
+import type { Anything } from '../generic';
+import type { HasLngLat } from '../polygonFeature';
+import type { Route } from './route';
 
 /**
  * GeoInputs-specific properties.
@@ -74,4 +74,4 @@ export type GeoInput = WaypointLike | PathLike;
  * @group Route
  * @category Types
  */
-export type GeoInputType = "waypoint" | "path";
+export type GeoInputType = 'waypoint' | 'path';

@@ -1,5 +1,5 @@
-import type { Anything, CommonPlaceProps } from "@anw/maps-sdk-js/core";
-import type { SupportsEvents } from "../../shared";
+import type { Anything, CommonPlaceProps } from '@anw/maps-sdk-js/core';
+import type { SupportsEvents } from '../../shared';
 
 /**
  * Extra properties to display color and title for a geometry on the map.
@@ -18,9 +18,9 @@ export type DisplayGeometryProps = CommonPlaceProps & ExtraGeometryDisplayProps;
 /**
  * @ignore
  */
-export const GEOMETRY_TITLE_PROP = "title";
+export const GEOMETRY_TITLE_PROP = 'title';
 
 /**
  * @ignore
  */
-export const GEOMETRY_COLOR_PROP = "color";
+export const GEOMETRY_COLOR_PROP = 'color';

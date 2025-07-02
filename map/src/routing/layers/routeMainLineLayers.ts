@@ -1,5 +1,5 @@
-import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import type { LayerSpecTemplate } from "../../shared";
+import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { LayerSpecTemplate } from '../../shared';
 import {
     DESELECTED_FOREGROUND_COLOR,
     DESELECTED_OUTLINE_COLOR,
@@ -7,22 +7,22 @@ import {
     FOREGROUND_COLOR,
     FOREGROUND_LINE_WIDTH,
     OUTLINE_COLOR,
-    SELECTED_ROUTE_FILTER
-} from "./shared";
+    SELECTED_ROUTE_FILTER,
+} from './shared';
 
 /**
  * @ignore
  */
 export const routeLineBaseTemplate: LayerSpecTemplate<LineLayerSpecification> = {
-    type: "line",
+    type: 'line',
     layout: {
-        "line-join": "round",
-        "line-cap": "round",
-        "line-sort-key": ["get", "index"]
-    }
+        'line-join': 'round',
+        'line-cap': 'round',
+        'line-sort-key': ['get', 'index'],
+    },
 };
 
-const outlineLineWidth: ExpressionSpecification = ["interpolate", ["linear"], ["zoom"], 1, 5, 5, 6, 10, 10, 18, 14];
+const outlineLineWidth: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 1, 5, 5, 6, 10, 10, 18, 14];
 
 /**
  * @ignore
@@ -31,9 +31,9 @@ export const routeDeselectedOutline: LayerSpecTemplate<LineLayerSpecification> =
     ...routeLineBaseTemplate,
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
-        "line-color": DESELECTED_OUTLINE_COLOR,
-        "line-width": outlineLineWidth
-    }
+        'line-color': DESELECTED_OUTLINE_COLOR,
+        'line-width': outlineLineWidth,
+    },
 };
 
 /**
@@ -43,9 +43,9 @@ export const routeDeselectedLine: LayerSpecTemplate<LineLayerSpecification> = {
     ...routeLineBaseTemplate,
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
-        "line-color": DESELECTED_FOREGROUND_COLOR,
-        "line-width": FOREGROUND_LINE_WIDTH
-    }
+        'line-color': DESELECTED_FOREGROUND_COLOR,
+        'line-width': FOREGROUND_LINE_WIDTH,
+    },
 };
 
 /**
@@ -55,9 +55,9 @@ export const routeOutline: LayerSpecTemplate<LineLayerSpecification> = {
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
-        "line-color": OUTLINE_COLOR,
-        "line-width": outlineLineWidth
-    }
+        'line-color': OUTLINE_COLOR,
+        'line-width': outlineLineWidth,
+    },
 };
 
 /**
@@ -67,29 +67,29 @@ export const routeMainLine: LayerSpecTemplate<LineLayerSpecification> = {
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
-        "line-color": FOREGROUND_COLOR,
-        "line-width": FOREGROUND_LINE_WIDTH
-    }
+        'line-color': FOREGROUND_COLOR,
+        'line-width': FOREGROUND_LINE_WIDTH,
+    },
 };
 
 /**
  * @ignore
  */
 export const routeLineArrows: LayerSpecTemplate<SymbolLayerSpecification> = {
-    type: "symbol",
+    type: 'symbol',
     layout: {
-        "symbol-placement": "line",
-        "icon-image": "arrow",
+        'symbol-placement': 'line',
+        'icon-image': 'arrow',
         // The current arrow icon seems to point backwards otherwise. Check with caution!
-        "icon-rotate": 180
-    }
+        'icon-rotate': 180,
+    },
 };
 
 /**
  * @ignore
  */
-export const SELECTED_SUMMARY_POPUP_IMAGE_ID = "selected-route-summary-popup";
+export const SELECTED_SUMMARY_POPUP_IMAGE_ID = 'selected-route-summary-popup';
 /**
  * @ignore
  */
-export const DESELECTED_SUMMARY_POPUP_IMAGE_ID = "deselected-route-summary-popup";
+export const DESELECTED_SUMMARY_POPUP_IMAGE_ID = 'deselected-route-summary-popup';

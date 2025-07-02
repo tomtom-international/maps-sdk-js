@@ -12,24 +12,20 @@ const getVersionNumbers = (version: string) => {
 };
 
 const resolveResult = (result: string) => {
-    process.stdout.write(result, "utf-8");
+    process.stdout.write(result, 'utf-8');
     process.exit();
 };
 
-let version = "";
+let version = '';
 
 if (!remoteVersion) {
     // new alias or re-creation of the old one
     version = localVersion;
 } else {
-    const [l_maj, l_min, l_patch] = getVersionNumbers(localVersion);
-    const [r_maj, r_min, r_patch] = getVersionNumbers(remoteVersion);
+    const [lMaj, lMin, lPatch] = getVersionNumbers(localVersion);
+    const [rMaj, rMin, rPatch] = getVersionNumbers(remoteVersion);
 
-    if (
-        l_maj > r_maj ||
-        (l_maj === r_maj && l_min > r_min) ||
-        (l_maj === r_maj && l_min === r_min && l_patch >= r_patch)
-    ) {
+    if (lMaj > rMaj || (lMaj === rMaj && lMin > rMin) || (lMaj === rMaj && lMin === rMin && lPatch >= rPatch)) {
         version = localVersion;
     } else {
         version = remoteVersion;

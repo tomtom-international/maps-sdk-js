@@ -1,8 +1,8 @@
-import type { CommonPlaceProps, PolygonFeatures, Places } from "@anw/maps-sdk-js/core";
-import type { GeometryDataParams, GeometryParams, GeometryPlaceParams } from "./types/geometryDataParams";
-import type { GeometryDataTemplate } from "./geometryDataTemplate";
-import { geometryDataTemplate } from "./geometryDataTemplate";
-import { callService } from "../shared/serviceTemplate";
+import type { CommonPlaceProps, Places, PolygonFeatures } from '@anw/maps-sdk-js/core';
+import type { GeometryDataParams, GeometryParams, GeometryPlaceParams } from './types/geometryDataParams';
+import type { GeometryDataTemplate } from './geometryDataTemplate';
+import { geometryDataTemplate } from './geometryDataTemplate';
+import { callService } from '../shared/serviceTemplate';
 
 /**
  * Merge our internal Places "properties" response with Geometry data
@@ -18,12 +18,12 @@ const mergePlacesWithGeometries = (places: Places, geometries: PolygonFeatures):
             if (geometryId) {
                 acc[geometryId] = {
                     ...place.properties,
-                    placeCoordinates: place.geometry.coordinates
+                    placeCoordinates: place.geometry.coordinates,
                 };
             }
             return acc;
         },
-        {} as Record<string, unknown>
+        {} as Record<string, unknown>,
     );
 
     const features = geometries.features.map((feature) => {
@@ -35,9 +35,9 @@ const mergePlacesWithGeometries = (places: Places, geometries: PolygonFeatures):
     });
 
     return {
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         bbox: geometries.bbox,
-        features
+        features,
     } as PolygonFeatures<CommonPlaceProps>;
 };
 
@@ -50,17 +50,17 @@ const mergePlacesWithGeometries = (places: Places, geometries: PolygonFeatures):
  */
 export async function geometryData(
     params: GeometryDataParams,
-    customTemplate?: Partial<GeometryDataTemplate>
+    customTemplate?: Partial<GeometryDataTemplate>,
 ): Promise<PolygonFeatures>;
 export async function geometryData(
     params: GeometryPlaceParams,
-    customTemplate?: Partial<GeometryDataTemplate>
+    customTemplate?: Partial<GeometryDataTemplate>,
 ): Promise<PolygonFeatures<CommonPlaceProps>>;
 export async function geometryData(params: GeometryParams, customTemplate?: Partial<GeometryDataTemplate>) {
-    const geometryResult = await callService(params, { ...geometryDataTemplate, ...customTemplate }, "GeometryData");
+    const geometryResult = await callService(params, { ...geometryDataTemplate, ...customTemplate }, 'GeometryData');
 
     // If params.geometries is a FeatureCollection(Place), the properties will be merged with geometry results.
-    if (!Array.isArray(params.geometries) && params.geometries.type === "FeatureCollection") {
+    if (!Array.isArray(params.geometries) && params.geometries.type === 'FeatureCollection') {
         return mergePlacesWithGeometries(params.geometries, geometryResult);
     }
 

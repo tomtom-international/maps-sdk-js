@@ -1,7 +1,7 @@
-import type { MapOptions } from "maplibre-gl";
-import type { MapLibreOptions, TomTomMapParams } from "./types/mapInit";
-import { buildStyleInput } from "./styleInputBuilder";
-import { injectTomTomHeaders } from "../shared/mapUtils";
+import type { MapOptions } from 'maplibre-gl';
+import type { MapLibreOptions, TomTomMapParams } from './types/mapInit';
+import { buildStyleInput } from './styleInputBuilder';
+import { injectTomTomHeaders } from '../shared/mapUtils';
 
 /**
  * @ignore
@@ -19,6 +19,6 @@ export const buildMapOptions = (mapLibreOptions: MapLibreOptions, tomtomMapParam
         // SDK overrides (won't have any effect via given options):
         style: buildStyleInput(tomtomMapParams),
         attributionControl: { compact: false },
-        transformRequest: injectTomTomHeaders(tomtomMapParams)
+        transformRequest: injectTomTomHeaders(tomtomMapParams),
     };
 };

@@ -1,9 +1,9 @@
-import { z } from "zod/v4-mini";
-import { views } from "@anw/maps-sdk-js/core";
-import { hasLngLatSchema } from "../shared/geometriesSchema";
+import { z } from 'zod/v4-mini';
+import { views } from '@anw/maps-sdk-js/core';
+import { hasLngLatSchema } from '../shared/geometriesSchema';
 
 const revGeocodeRequestMandatory = z.object({
-    position: hasLngLatSchema
+    position: hasLngLatSchema,
 });
 
 const revGeocodeRequestOptional = z.partial(
@@ -18,8 +18,8 @@ const revGeocodeRequestOptional = z.partial(
         returnRoadUse: z.boolean(),
         returnSpeedLimit: z.boolean(),
         roadUses: z.array(z.string()),
-        view: z.enum(views)
-    })
+        view: z.enum(views),
+    }),
 );
 
 /**

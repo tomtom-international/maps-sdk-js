@@ -1,24 +1,24 @@
-import { z } from "zod/v4-mini";
-import { hasLngLatSchema } from "../shared/geometriesSchema";
-import { budgetTypes } from "./types/reachableRangeParams";
-import { commonRoutingRequestSchema } from "../shared/commonRoutingRequestSchema";
+import { z } from 'zod/v4-mini';
+import { hasLngLatSchema } from '../shared/geometriesSchema';
+import { budgetTypes } from './types/reachableRangeParams';
+import { commonRoutingRequestSchema } from '../shared/commonRoutingRequestSchema';
 // import { SchemaRefinement } from "../shared/types/validation";
 
 const reachableRangeRequestSchemaMandatory = z.object({
     origin: hasLngLatSchema,
     budget: z.object({
         type: z.enum(budgetTypes),
-        value: z.number().check(z.minimum(0))
-    })
+        value: z.number().check(z.minimum(0)),
+    }),
 });
 
 const reachableRangeRequestSchemaOptional = z.object({
-    maxFerryLengthMeters: z.optional(z.number().check(z.minimum(0)))
+    maxFerryLengthMeters: z.optional(z.number().check(z.minimum(0))),
 });
 
 const reachableRangeRequestSchema = z.extend(
     commonRoutingRequestSchema,
-    z.extend(reachableRangeRequestSchemaMandatory, reachableRangeRequestSchemaOptional).shape
+    z.extend(reachableRangeRequestSchemaMandatory, reachableRangeRequestSchemaOptional).shape,
 ).shape;
 
 // const departArriveRefinement: SchemaRefinement<ReachableRangeParams> = {
@@ -29,7 +29,7 @@ const reachableRangeRequestSchema = z.extend(
 // const evRangeRefinement: SchemaRefinement<ReachableRangeParams> = {
 //     check: (data: ReachableRangeParams): boolean =>
 //         !(
-//             (data.budget.type == "remainingChargeCPT" || data.budget.type == "spentChargePCT") &&
+//             (data.budget.type === "remainingChargeCPT" || data.budget.type === "spentChargePCT") &&
 //             data.vehicle?.engine?.type != "electric"
 //         ),
 //     message: "With an EV reachable range, the vehicle parameters must be set, with 'electric' engine type"
@@ -37,7 +37,7 @@ const reachableRangeRequestSchema = z.extend(
 //
 // const fuelRangeRefinement: SchemaRefinement<ReachableRangeParams> = {
 //     check: (data: ReachableRangeParams): boolean =>
-//         !(data.budget.type == "spentFuelLiters" && data.vehicle?.engine?.type != "combustion"),
+//         !(data.budget.type === "spentFuelLiters" && data.vehicle?.engine?.type != "combustion"),
 //     message: "With a fuel reachable range, the vehicle parameters must be set, with 'combustion' engine type"
 // };
 
@@ -45,6 +45,6 @@ const reachableRangeRequestSchema = z.extend(
  * @ignore
  */
 export const reachableRangeRequestValidationConfig = {
-    schema: reachableRangeRequestSchema
+    schema: reachableRangeRequestSchema,
     // refinements: [evRangeRefinement, fuelRangeRefinement, departArriveRefinement]
 };

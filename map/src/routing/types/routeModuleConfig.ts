@@ -1,10 +1,10 @@
-import type { LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import type { GeoJSONSourceWithLayers, LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
-import type { DisplayUnits, GetPositionEntryPointOption, Routes, Waypoints } from "@anw/maps-sdk-js/core";
-import type { DisplayRouteProps, DisplayRouteSummaries } from "./displayRoutes";
-import type { DisplayTrafficSectionProps, RouteSections } from "./routeSections";
-import type { DisplayInstructionArrows, DisplayInstructions } from "./guidance";
-import type { WaypointDisplayProps } from "./waypointDisplayProps";
+import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { GeoJSONSourceWithLayers, LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from '../../shared';
+import type { DisplayUnits, GetPositionEntryPointOption, Routes, Waypoints } from '@anw/maps-sdk-js/core';
+import type { DisplayRouteProps, DisplayRouteSummaries } from './displayRoutes';
+import type { DisplayTrafficSectionProps, RouteSections } from './routeSections';
+import type { DisplayInstructionArrows, DisplayInstructions } from './guidance';
+import type { WaypointDisplayProps } from './waypointDisplayProps';
 
 /**
  * Configuration for the route layers. Allows full control for all the route layers.

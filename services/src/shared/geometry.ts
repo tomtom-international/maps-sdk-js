@@ -1,12 +1,12 @@
-import type { BBox, Position } from "geojson";
-import type { BoundingBoxAPI, BoundingBoxTopLeftAPI, LatLonAPI } from "./types/apiPlacesResponseTypes";
+import type { BBox, Position } from 'geojson';
+import type { BoundingBoxAPI, BoundingBoxTopLeftAPI, LatLonAPI } from './types/apiPlacesResponseTypes';
 
 /**
  * @ignore
  * @param csv
  */
 export const csvLatLngToPosition = (csv: string): Position => {
-    const splitLatLng = csv.split(",");
+    const splitLatLng = csv.split(',');
     return [Number(splitLatLng[1]), Number(splitLatLng[0])];
 };
 

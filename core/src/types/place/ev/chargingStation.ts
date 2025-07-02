@@ -1,10 +1,10 @@
-import type { Connector } from "./connector";
+import type { Connector } from './connector';
 
 /**
  * @group Place
  * @category Variables
  */
-export const chargingStationAccessTypes = ["Public", "Authorized", "Restricted", "Private", "Unknown"] as const;
+export const chargingStationAccessTypes = ['Public', 'Authorized', 'Restricted', 'Private', 'Unknown'] as const;
 
 /**
  * Access type of the charging station.
@@ -17,7 +17,7 @@ export type ChargingStationsAccessType = (typeof chargingStationAccessTypes)[num
  * @group Place
  * @category Variables
  */
-export const chargingPointStatus = ["Available", "Reserved", "Occupied", "OutOfService", "Unknown"] as const;
+export const chargingPointStatus = ['Available', 'Reserved', 'Occupied', 'OutOfService', 'Unknown'] as const;
 
 /**
  * @group Place
@@ -31,21 +31,21 @@ export type ChargingPointStatus = (typeof chargingPointStatus)[number];
  * @category Variables
  */
 export const chargingPointCapabilities = [
-    "ChargingProfileCapable",
-    "ChargingPreferencesCapable",
-    "ChipCardSupport",
-    "ContactlessCardSupport",
-    "CreditCardPayable",
-    "DebitCardPayable",
-    "PedTerminal",
-    "RemoteStartStopCapable",
-    "Reservable",
-    "RfidReader",
-    "StartSessionConnectorRequired",
-    "TokenGroupCapable",
-    "UnlockCapable",
-    "PlugAndCharge",
-    "Unknown"
+    'ChargingProfileCapable',
+    'ChargingPreferencesCapable',
+    'ChipCardSupport',
+    'ContactlessCardSupport',
+    'CreditCardPayable',
+    'DebitCardPayable',
+    'PedTerminal',
+    'RemoteStartStopCapable',
+    'Reservable',
+    'RfidReader',
+    'StartSessionConnectorRequired',
+    'TokenGroupCapable',
+    'UnlockCapable',
+    'PlugAndCharge',
+    'Unknown',
 ] as const;
 
 /**
@@ -74,7 +74,7 @@ export type ChargingPointCapability = (typeof chargingPointCapabilities)[number]
  * @group Place
  * @category Variables
  */
-export const chargingPointRestrictions = ["EvOnly", "Plugged", "Disabled", "Customers", "Motorcycles"] as const;
+export const chargingPointRestrictions = ['EvOnly', 'Plugged', 'Disabled', 'Customers', 'Motorcycles'] as const;
 
 /**
  * Restriction of the charging point:

@@ -1,18 +1,18 @@
-import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import { MAP_BOLD_FONT } from "../../shared/layers/commonLayerProps";
-import type { LayerSpecTemplate } from "../../shared";
+import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
+import type { LayerSpecTemplate } from '../../shared';
 import {
     MAJOR_DELAY_COLOR,
     MINOR_DELAY_LABEL_COLOR,
     MODERATE_DELAY_COLOR,
     SELECTED_ROUTE_FILTER,
-    UNKNOWN_DELAY_COLOR
-} from "./shared";
+    UNKNOWN_DELAY_COLOR,
+} from './shared';
 
 const EXTRA_FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
-    "interpolate",
-    ["linear"],
-    ["zoom"],
+    'interpolate',
+    ['linear'],
+    ['zoom'],
     1,
     2,
     5,
@@ -20,99 +20,99 @@ const EXTRA_FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
     10,
     4,
     18,
-    6
+    6,
 ];
 
 /**
  * @ignore
  */
 export const routeIncidentsBGLine: LayerSpecTemplate<LineLayerSpecification> = {
-    type: "line",
+    type: 'line',
     layout: {
-        "line-join": "round"
+        'line-join': 'round',
     },
     paint: {
-        "line-width": EXTRA_FOREGROUND_LINE_WIDTH,
-        "line-color": [
-            "match",
-            ["get", "magnitudeOfDelay"],
-            "minor",
-            "#FFC105",
-            "moderate",
+        'line-width': EXTRA_FOREGROUND_LINE_WIDTH,
+        'line-color': [
+            'match',
+            ['get', 'magnitudeOfDelay'],
+            'minor',
+            '#FFC105',
+            'moderate',
             MODERATE_DELAY_COLOR,
-            "major",
+            'major',
             MAJOR_DELAY_COLOR,
             // other
-            "#C7D2D8"
-        ]
-    }
+            '#C7D2D8',
+        ],
+    },
 };
 
 /**
  * @ignore
  */
 export const routeIncidentsDashedLine: LayerSpecTemplate<LineLayerSpecification> = {
-    type: "line",
-    filter: ["in", ["get", "magnitudeOfDelay"], ["literal", ["unknown", "indefinite"]]],
+    type: 'line',
+    filter: ['in', ['get', 'magnitudeOfDelay'], ['literal', ['unknown', 'indefinite']]],
     layout: {
-        "line-join": "round"
+        'line-join': 'round',
     },
     paint: {
-        "line-width": EXTRA_FOREGROUND_LINE_WIDTH,
-        "line-color": [
-            "match",
-            ["get", "magnitudeOfDelay"],
-            "unknown",
-            "rgba(190, 39, 27, 1)",
+        'line-width': EXTRA_FOREGROUND_LINE_WIDTH,
+        'line-color': [
+            'match',
+            ['get', 'magnitudeOfDelay'],
+            'unknown',
+            'rgba(190, 39, 27, 1)',
             // other (undefined):
-            "rgba(137, 150, 168, 1)"
+            'rgba(137, 150, 168, 1)',
         ],
-        "line-dasharray": [1.5, 1]
-    }
+        'line-dasharray': [1.5, 1],
+    },
 };
 
 /**
  * @ignore
  */
 export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification> = {
-    type: "line",
-    filter: ["in", ["get", "magnitudeOfDelay"], ["literal", ["minor", "moderate", "major"]]],
+    type: 'line',
+    filter: ['in', ['get', 'magnitudeOfDelay'], ['literal', ['minor', 'moderate', 'major']]],
     layout: {
-        "line-join": "round"
+        'line-join': 'round',
     },
     paint: {
-        "line-width": EXTRA_FOREGROUND_LINE_WIDTH,
-        "line-pattern": [
-            "match",
-            ["get", "magnitudeOfDelay"],
-            "minor",
-            "traffic-incidents-slow",
-            "moderate",
-            "traffic-incidents-queueing",
-            "major",
-            "traffic-incidents-stationary",
+        'line-width': EXTRA_FOREGROUND_LINE_WIDTH,
+        'line-pattern': [
+            'match',
+            ['get', 'magnitudeOfDelay'],
+            'minor',
+            'traffic-incidents-slow',
+            'moderate',
+            'traffic-incidents-queueing',
+            'major',
+            'traffic-incidents-stationary',
             // other
-            "traffic-diagonal-unknown"
-        ]
-    }
+            'traffic-diagonal-unknown',
+        ],
+    },
 };
 
 /**
  * @ignore
  */
 export const magnitudeOfDelayTextColor: ExpressionSpecification = [
-    "match",
-    ["get", "magnitudeOfDelay"],
-    "minor",
+    'match',
+    ['get', 'magnitudeOfDelay'],
+    'minor',
     MINOR_DELAY_LABEL_COLOR,
-    "moderate",
+    'moderate',
     MODERATE_DELAY_COLOR,
-    "major",
+    'major',
     MAJOR_DELAY_COLOR,
-    "indefinite",
-    "#666666",
+    'indefinite',
+    '#666666',
     // other
-    UNKNOWN_DELAY_COLOR
+    UNKNOWN_DELAY_COLOR,
 ];
 
 /**
@@ -120,24 +120,24 @@ export const magnitudeOfDelayTextColor: ExpressionSpecification = [
  */
 export const routeIncidentsSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,
-    type: "symbol",
+    type: 'symbol',
     minzoom: 6,
     layout: {
-        "symbol-placement": "point",
-        "symbol-avoid-edges": true,
-        "icon-anchor": "bottom",
-        "icon-ignore-placement": true,
-        "icon-size": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 12, 1],
-        "icon-image": ["get", "iconID"],
-        "text-field": ["get", "title"],
-        "text-font": [MAP_BOLD_FONT],
-        "text-optional": true,
-        "text-anchor": "top",
-        "text-size": ["interpolate", ["linear"], ["zoom"], 6, 11, 10, 13]
+        'symbol-placement': 'point',
+        'symbol-avoid-edges': true,
+        'icon-anchor': 'bottom',
+        'icon-ignore-placement': true,
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 6, 0.8, 12, 1],
+        'icon-image': ['get', 'iconID'],
+        'text-field': ['get', 'title'],
+        'text-font': [MAP_BOLD_FONT],
+        'text-optional': true,
+        'text-anchor': 'top',
+        'text-size': ['interpolate', ['linear'], ['zoom'], 6, 11, 10, 13],
     },
     paint: {
-        "text-color": magnitudeOfDelayTextColor,
-        "text-halo-color": "#FFFFFF",
-        "text-halo-width": 1
-    }
+        'text-color': magnitudeOfDelayTextColor,
+        'text-halo-color': '#FFFFFF',
+        'text-halo-width': 1,
+    },
 };

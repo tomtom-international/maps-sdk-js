@@ -1,12 +1,12 @@
-import type { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
+import type { GeographyType, HasLngLat, MapcodeType, View } from '@anw/maps-sdk-js/core';
 
-import type { CommonServiceParams } from "../../shared";
-import type { ReverseGeocodingResponseAPI } from "./apiTypes";
+import type { CommonServiceParams } from '../../shared';
+import type { ReverseGeocodingResponseAPI } from './apiTypes';
 
 /**
  * @enum
  */
-export type RoadUse = "LimitedAccess" | "Arterial" | "Terminal" | "Ramp" | "Rotary" | "LocalStreet";
+export type RoadUse = 'LimitedAccess' | 'Arterial' | 'Terminal' | 'Ramp' | 'Rotary' | 'LocalStreet';
 
 export type ReverseGeocodingMandatoryParams = {
     /**

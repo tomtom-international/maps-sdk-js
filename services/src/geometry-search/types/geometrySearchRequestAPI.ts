@@ -1,10 +1,10 @@
-import type { PostObject } from "../../shared";
+import type { PostObject } from '../../shared';
 
 /**
  * @ignore
  */
 export type PolygonAPI = {
-    type: "POLYGON";
+    type: 'POLYGON';
     vertices: string[];
 };
 
@@ -12,7 +12,7 @@ export type PolygonAPI = {
  * @ignore
  */
 export type CircleAPI = {
-    type: "CIRCLE";
+    type: 'CIRCLE';
     position: string;
     radius: number;
 };

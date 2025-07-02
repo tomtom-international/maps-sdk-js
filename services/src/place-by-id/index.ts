@@ -3,6 +3,6 @@
  * @category Service
  */
 
-export * from "./placeById";
-export * from "./placeByIdTemplate";
-export * from "./types";
+export * from './placeById';
+export * from './placeByIdTemplate';
+export type * from './types';

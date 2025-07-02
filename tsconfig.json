@@ -8,12 +8,10 @@
     "moduleResolution": "Node",
     "sourceMap": true,
     "strict": true,
-    "outDir": ".",
     "target": "ES6",
     "paths": {
       "@anw/maps-sdk-js/core": ["./core"]
-    },
-    "typeRoots": ["./node_modules/@types", "./types"]
+    }
   },
-  "exclude": ["node_modules", "rollup.config.ts", ".rollup.cache/", "dist", "__mocks__"]
+  "exclude": ["node_modules", ".rollup.cache/", "dist", "__mocks__"]
 }

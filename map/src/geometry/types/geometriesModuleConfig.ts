@@ -1,6 +1,6 @@
-import type { DataDrivenPropertyValueSpecification } from "maplibre-gl";
-import type { ColorPaletteOptions } from "../layers/geometryLayers";
-import type { MapStyleLayerID } from "../../shared";
+import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
+import type { ColorPaletteOptions } from '../layers/geometryLayers';
+import type { MapStyleLayerID } from '../../shared';
 
 /**
  * Places Color configuration
@@ -32,7 +32,7 @@ export type GeometryLineConfig = {
 /**
  * Geometry layer position config. This option allows you to move the geometry layer position below a pre-defined layer.
  */
-export type GeometryBeforeLayerConfig = "top" | MapStyleLayerID;
+export type GeometryBeforeLayerConfig = 'top' | MapStyleLayerID;
 
 /**
  * Geometry layer configuration

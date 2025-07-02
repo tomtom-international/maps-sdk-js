@@ -4,17 +4,17 @@
  */
 export type PlaceDataSources = {
     /**
-     * Information about the charging stations availability. Only present if type == POI.
+     * Information about the charging stations availability. Only present if type === POI.
      */
     chargingAvailability?: ChargingAvailabilityDataSource;
 
     /**
-     * Information about the geometric shape of the result. Only present if type == Geography or POI.
+     * Information about the geometric shape of the result. Only present if type === Geography or POI.
      */
     geometry?: GeometryDataSource;
 
     /**
-     * Additional data about POI. Only present if type == POI.
+     * Additional data about POI. Only present if type === POI.
      */
     poiDetails?: PoiDetailsDataSource;
 };

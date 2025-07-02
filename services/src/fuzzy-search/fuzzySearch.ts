@@ -1,7 +1,7 @@
-import type { FuzzySearchParams, FuzzySearchResponse } from "./types";
-import type { FuzzySearchTemplate } from "./fuzzySearchTemplate";
-import { fuzzySearchTemplate } from "./fuzzySearchTemplate";
-import { callService } from "../shared/serviceTemplate";
+import type { FuzzySearchParams, FuzzySearchResponse } from './types';
+import type { FuzzySearchTemplate } from './fuzzySearchTemplate';
+import { fuzzySearchTemplate } from './fuzzySearchTemplate';
+import { callService } from '../shared/serviceTemplate';
 
 /**
  *
@@ -11,7 +11,7 @@ import { callService } from "../shared/serviceTemplate";
  */
 export const fuzzySearch = async (
     params: FuzzySearchParams,
-    customTemplate?: Partial<FuzzySearchTemplate>
-): Promise<FuzzySearchResponse> => callService(params, { ...fuzzySearchTemplate, ...customTemplate }, "FuzzySearch");
+    customTemplate?: Partial<FuzzySearchTemplate>,
+): Promise<FuzzySearchResponse> => callService(params, { ...fuzzySearchTemplate, ...customTemplate }, 'FuzzySearch');
 
 export default fuzzySearch;

@@ -3,6 +3,6 @@
  * @category Map
  */
 
-export * from "./types/mapInit";
-export * from "./types/mapEventsConfig";
-export * from "../TomTomMap";
+export * from './types/mapInit';
+export type * from './types/mapEventsConfig';
+export * from '../TomTomMap';

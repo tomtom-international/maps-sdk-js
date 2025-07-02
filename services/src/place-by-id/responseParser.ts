@@ -1,5 +1,5 @@
-import type { PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
-import { parseSearchAPIResult } from "../shared/searchResultParsing";
+import type { PlaceByIdResponse, PlaceByIdResponseAPI } from './types';
+import { parseSearchAPIResult } from '../shared/searchResultParsing';
 
 /**
  * Default method for parsing place by id response.

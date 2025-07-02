@@ -3,6 +3,6 @@
  */
 export type ServiceName = string;
 
-export type RelatedPoisRequest = "child" | "parent" | "all" | "off";
+export type RelatedPoisRequest = 'child' | 'parent' | 'all' | 'off';
 
-export type TimeZoneRequest = "iana";
+export type TimeZoneRequest = 'iana';

@@ -1,10 +1,10 @@
-import isNil from "lodash/isNil";
-import type { HillshadeModuleConfig } from ".";
-import type { StyleModuleInitConfig } from "../shared";
-import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from "../shared";
-import { notInTheStyle } from "../shared/errorMessages";
-import type { TomTomMap } from "../TomTomMap";
-import { prepareForModuleInit } from "../shared/mapUtils";
+import isNil from 'lodash/isNil';
+import type { HillshadeModuleConfig } from '.';
+import type { StyleModuleInitConfig } from '../shared';
+import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from '../shared';
+import { notInTheStyle } from '../shared/errorMessages';
+import type { TomTomMap } from '../TomTomMap';
+import { prepareForModuleInit } from '../shared/mapUtils';
 
 /**
  * IDs of sources and layers for hillshade module.
@@ -25,12 +25,12 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * @returns {Promise} Returns a promise with a new instance of this module
      */
     static async get(map: TomTomMap, config?: StyleModuleInitConfig & HillshadeModuleConfig): Promise<HillshadeModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, HILLSHADE_SOURCE_ID, "hillshade");
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, HILLSHADE_SOURCE_ID, 'hillshade');
         return new HillshadeModule(map, config);
     }
 
     private constructor(map: TomTomMap, config?: HillshadeModuleConfig) {
-        super("style", map, config);
+        super('style', map, config);
     }
 
     /**
@@ -60,7 +60,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
     setVisible(visible: boolean): void {
         this.config = {
             ...this.config,
-            visible
+            visible,
         };
 
         if (this.tomtomMap.mapReady) {

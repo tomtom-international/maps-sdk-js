@@ -1,4 +1,4 @@
-import type { POICategory } from "@anw/maps-sdk-js/core";
+import type { POICategory } from '@anw/maps-sdk-js/core';
 
 /**
  * POI categories were retrieved from https://developer.tomtom.com/search-api/documentation/poi-categories-service/poi-categories
@@ -607,5 +607,5 @@ export const poiCategoriesToID: Record<POICategory, number> = {
     FRONTIER_CROSSING: 7366,
     MOUNTAIN_PASS: 9935,
     TOLL_GATE: 7375,
-    FERRY_TERMINAL: 7352
+    FERRY_TERMINAL: 7352,
 };

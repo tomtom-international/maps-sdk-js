@@ -1,6 +1,6 @@
-import type { SectionProps, TrafficSectionProps } from "@anw/maps-sdk-js/core";
-import type { Feature, FeatureCollection, LineString } from "geojson";
-import type { DisplayRouteRelatedProps } from "./displayRoutes";
+import type { SectionProps, TrafficSectionProps } from '@anw/maps-sdk-js/core';
+import type { Feature, FeatureCollection, LineString } from 'geojson';
+import type { DisplayRouteRelatedProps } from './displayRoutes';
 
 export type DisplaySectionProps = SectionProps & DisplayRouteRelatedProps;
 

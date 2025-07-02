@@ -1,7 +1,7 @@
-import type { GeometrySearchParams, GeometrySearchResponse } from "./types";
-import type { GeometrySearchTemplate } from "./geometrySearchTemplate";
-import { geometrySearchTemplate } from "./geometrySearchTemplate";
-import { callService } from "../shared/serviceTemplate";
+import type { GeometrySearchParams, GeometrySearchResponse } from './types';
+import type { GeometrySearchTemplate } from './geometrySearchTemplate';
+import { geometrySearchTemplate } from './geometrySearchTemplate';
+import { callService } from '../shared/serviceTemplate';
 
 /**
  *
@@ -11,8 +11,8 @@ import { callService } from "../shared/serviceTemplate";
  */
 export const geometrySearch = async (
     params: GeometrySearchParams,
-    customTemplate?: Partial<GeometrySearchTemplate>
+    customTemplate?: Partial<GeometrySearchTemplate>,
 ): Promise<GeometrySearchResponse> =>
-    callService(params, { ...geometrySearchTemplate, ...customTemplate }, "GeometrySearch");
+    callService(params, { ...geometrySearchTemplate, ...customTemplate }, 'GeometrySearch');
 
 export default geometrySearch;

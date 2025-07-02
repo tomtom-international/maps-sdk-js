@@ -1,6 +1,6 @@
-import type { Position } from "geojson";
+import type { Position } from 'geojson';
 
-type SummaryQueryType = "NEARBY" | "NON_NEAR";
+type SummaryQueryType = 'NEARBY' | 'NON_NEAR';
 
 /**
  * Common summary object returned from Search API calls.

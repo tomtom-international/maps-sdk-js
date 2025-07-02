@@ -1,4 +1,4 @@
-import type { Map } from "maplibre-gl";
+import type { Map } from 'maplibre-gl';
 import {
     EventsModule,
     mapStyleLayerIDs,
@@ -11,18 +11,17 @@ import {
     ROUTE_TUNNELS_SOURCE_ID,
     ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
     ROUTES_SOURCE_ID,
-    WAYPOINTS_SOURCE_ID
-} from "../../shared";
-import type { TomTomMap } from "../../TomTomMap";
-import { RoutingModule } from "../RoutingModule";
-import { routeDeselectedOutline } from "../layers/routeMainLineLayers";
+    WAYPOINTS_SOURCE_ID,
+} from '../../shared';
+import type { TomTomMap } from '../../TomTomMap';
+import { RoutingModule } from '../RoutingModule';
+import { routeDeselectedOutline } from '../layers/routeMainLineLayers';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
-describe("Routing module tests", () => {
-    // eslint-disable-next-line jest/expect-expect
-    test("Basic flows", async () => {
+describe('Routing module tests', () => {
+    test('Basic flows', async () => {
         const waypointsSource = { id: WAYPOINTS_SOURCE_ID, setData: jest.fn() };
         const routesSource = { id: ROUTES_SOURCE_ID, setData: jest.fn() };
         const vehicleRestrictedSource = { id: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, setData: jest.fn() };
@@ -85,35 +84,35 @@ describe("Routing module tests", () => {
                 loadImage: jest.fn().mockResolvedValue(jest.fn()),
                 setLayoutProperty: jest.fn(),
                 setFilter: jest.fn(),
-                setPaintProperty: jest.fn()
+                setPaintProperty: jest.fn(),
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
-                ensureAdded: jest.fn()
+                ensureAdded: jest.fn(),
             },
             addStyleChangeHandler: jest.fn(),
             once: jest.fn().mockReturnValue(Promise.resolve()),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const routing = await RoutingModule.init(tomtomMapMock);
-        routing.showRoutes({ type: "FeatureCollection", features: [] });
+        routing.showRoutes({ type: 'FeatureCollection', features: [] });
         routing.selectRoute(0);
         routing.clearRoutes();
         routing.showWaypoints([]);
-        routing.showWaypoints({ type: "FeatureCollection", features: [] });
+        routing.showWaypoints({ type: 'FeatureCollection', features: [] });
         routing.clearWaypoints();
         expect(routing.getLayerToRenderLinesUnder()).toEqual(mapStyleLayerIDs.lowestLabel);
         routing.applyConfig({
             layers: {
                 mainLines: [
                     {
-                        id: "a different id",
+                        id: 'a different id',
                         layerSpec: routeDeselectedOutline,
-                        beforeID: mapStyleLayerIDs.lowestLabel
-                    }
-                ]
-            }
+                        beforeID: mapStyleLayerIDs.lowestLabel,
+                    },
+                ],
+            },
         });
 
         expect(routing.events.mainLines).toBeInstanceOf(EventsModule);

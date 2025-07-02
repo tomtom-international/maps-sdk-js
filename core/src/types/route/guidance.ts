@@ -1,11 +1,11 @@
-import type { Position } from "geojson";
+import type { Position } from 'geojson';
 
 /**
  * Indicates left-hand vs. right-hand side driving at the point of the maneuver.
  * @group Route
  * @category Types
  */
-export type DrivingSide = "LEFT" | "RIGHT";
+export type DrivingSide = 'LEFT' | 'RIGHT';
 
 /**
  * The properties of road.
@@ -15,7 +15,7 @@ export type DrivingSide = "LEFT" | "RIGHT";
  * @group Route
  * @category Types
  */
-export type RoadInformationProperty = "URBAN" | "MOTORWAY" | "CONTROLLED_ACCESS";
+export type RoadInformationProperty = 'URBAN' | 'MOTORWAY' | 'CONTROLLED_ACCESS';
 
 /**
  * Type of landmarks that can be used in instructions.
@@ -23,14 +23,14 @@ export type RoadInformationProperty = "URBAN" | "MOTORWAY" | "CONTROLLED_ACCESS"
  * @category Types
  */
 export type Landmark =
-    | "END_OF_ROAD"
-    | "AT_TRAFFIC_LIGHT"
-    | "ON_TO_BRIDGE"
-    | "ON_BRIDGE"
-    | "AFTER_BRIDGE"
-    | "INTO_TUNNEL"
-    | "INSIDE_TUNNEL"
-    | "AFTER_TUNNEL";
+    | 'END_OF_ROAD'
+    | 'AT_TRAFFIC_LIGHT'
+    | 'ON_TO_BRIDGE'
+    | 'ON_BRIDGE'
+    | 'AFTER_BRIDGE'
+    | 'INTO_TUNNEL'
+    | 'INSIDE_TUNNEL'
+    | 'AFTER_TUNNEL';
 
 /**
  * Description of the maneuver, for example: arrive or turn right.
@@ -39,57 +39,57 @@ export type Landmark =
  * @category Types
  */
 export type Maneuver =
-    | "DEPART"
-    | "WAYPOINT_LEFT"
-    | "WAYPOINT_RIGHT"
-    | "WAYPOINT_REACHED"
-    | "WAYPOINT_AHEAD"
-    | "ARRIVE"
-    | "ARRIVE_LEFT"
-    | "ARRIVE_RIGHT"
-    | "ARRIVE_AHEAD"
-    | "STRAIGHT"
-    | "KEEP_LEFT"
-    | "KEEP_RIGHT"
-    | "SLIGHT_RIGHT"
-    | "TURN_RIGHT"
-    | "SHARP_RIGHT"
-    | "SLIGHT_LEFT"
-    | "TURN_LEFT"
-    | "SHARP_LEFT"
-    | "MAKE_UTURN"
-    | "ROUNDABOUT_STRAIGHT"
-    | "ROUNDABOUT_SHARP_RIGHT"
-    | "ROUNDABOUT_RIGHT"
-    | "ROUNDABOUT_SLIGHT_RIGHT"
-    | "ROUNDABOUT_SLIGHT_LEFT"
-    | "ROUNDABOUT_LEFT"
-    | "ROUNDABOUT_SHARP_LEFT"
-    | "ROUNDABOUT_BACK"
-    | "EXIT_ROUNDABOUT"
-    | "EXIT_MOTORWAY_LEFT"
-    | "EXIT_MOTORWAY_RIGHT"
-    | "SWITCH_MOTORWAY_LEFT"
-    | "SWITCH_MOTORWAY_RIGHT"
-    | "ENTER_CARPOOL_LANE_LEFT"
-    | "ENTER_CARPOOL_LANE_RIGHT"
-    | "EXIT_CARPOOL_LANE_LEFT"
-    | "EXIT_CARPOOL_LANE_RIGHT"
-    | "MERGE_LEFT_LANE"
-    | "MERGE_RIGHT_LANE"
-    | "TAKE_SHIP_FERRY"
-    | "TAKE_CAR_TRAIN"
-    | "LEAVE_SHIP_FERRY"
-    | "LEAVE_CAR_TRAIN"
-    | "CROSS_BORDER"
-    | "TOLLGATE";
+    | 'DEPART'
+    | 'WAYPOINT_LEFT'
+    | 'WAYPOINT_RIGHT'
+    | 'WAYPOINT_REACHED'
+    | 'WAYPOINT_AHEAD'
+    | 'ARRIVE'
+    | 'ARRIVE_LEFT'
+    | 'ARRIVE_RIGHT'
+    | 'ARRIVE_AHEAD'
+    | 'STRAIGHT'
+    | 'KEEP_LEFT'
+    | 'KEEP_RIGHT'
+    | 'SLIGHT_RIGHT'
+    | 'TURN_RIGHT'
+    | 'SHARP_RIGHT'
+    | 'SLIGHT_LEFT'
+    | 'TURN_LEFT'
+    | 'SHARP_LEFT'
+    | 'MAKE_UTURN'
+    | 'ROUNDABOUT_STRAIGHT'
+    | 'ROUNDABOUT_SHARP_RIGHT'
+    | 'ROUNDABOUT_RIGHT'
+    | 'ROUNDABOUT_SLIGHT_RIGHT'
+    | 'ROUNDABOUT_SLIGHT_LEFT'
+    | 'ROUNDABOUT_LEFT'
+    | 'ROUNDABOUT_SHARP_LEFT'
+    | 'ROUNDABOUT_BACK'
+    | 'EXIT_ROUNDABOUT'
+    | 'EXIT_MOTORWAY_LEFT'
+    | 'EXIT_MOTORWAY_RIGHT'
+    | 'SWITCH_MOTORWAY_LEFT'
+    | 'SWITCH_MOTORWAY_RIGHT'
+    | 'ENTER_CARPOOL_LANE_LEFT'
+    | 'ENTER_CARPOOL_LANE_RIGHT'
+    | 'EXIT_CARPOOL_LANE_LEFT'
+    | 'EXIT_CARPOOL_LANE_RIGHT'
+    | 'MERGE_LEFT_LANE'
+    | 'MERGE_RIGHT_LANE'
+    | 'TAKE_SHIP_FERRY'
+    | 'TAKE_CAR_TRAIN'
+    | 'LEAVE_SHIP_FERRY'
+    | 'LEAVE_CAR_TRAIN'
+    | 'CROSS_BORDER'
+    | 'TOLLGATE';
 
 /**
  * Side from where the road connects to the route.
  * @group Route
  * @category Types
  */
-export type SideRoadSide = "LEFT" | "RIGHT" | "LEFT_AND_RIGHT";
+export type SideRoadSide = 'LEFT' | 'RIGHT' | 'LEFT_AND_RIGHT';
 
 /**
  * Available toll payment options.
@@ -97,17 +97,17 @@ export type SideRoadSide = "LEFT" | "RIGHT" | "LEFT_AND_RIGHT";
  * @category Types
  */
 export type TollPaymentType =
-    | "CASH_COINS_AND_BILLS"
-    | "CASH_BILLS_ONLY"
-    | "CASH_COINS_ONLY"
-    | "CASH_EXACT_CHANGE"
-    | "CREDIT_CARD"
-    | "DEBIT_CARD"
-    | "TRAVEL_CARD"
-    | "ETC"
-    | "ETC_TRANSPONDER"
-    | "ETC_VIDEO_CAMERA"
-    | "SUBSCRIPTION";
+    | 'CASH_COINS_AND_BILLS'
+    | 'CASH_BILLS_ONLY'
+    | 'CASH_COINS_ONLY'
+    | 'CASH_EXACT_CHANGE'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'TRAVEL_CARD'
+    | 'ETC'
+    | 'ETC_TRANSPONDER'
+    | 'ETC_VIDEO_CAMERA'
+    | 'SUBSCRIPTION';
 
 /**
  * Route path point and its metadata.

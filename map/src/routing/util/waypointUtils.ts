@@ -4,22 +4,22 @@ import type {
     Routes,
     Waypoint,
     WaypointLike,
-    Waypoints
-} from "@anw/maps-sdk-js/core";
-import { formatDuration, generateId, getPosition } from "@anw/maps-sdk-js/core";
-import type { Point, Position } from "geojson";
-import type { IndexType, WaypointDisplayProps } from "../types/waypointDisplayProps";
-import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from "../types/waypointDisplayProps";
+    Waypoints,
+} from '@anw/maps-sdk-js/core';
+import { formatDuration, generateId, getPosition } from '@anw/maps-sdk-js/core';
+import type { Point, Position } from 'geojson';
+import type { IndexType, WaypointDisplayProps } from '../types/waypointDisplayProps';
+import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../types/waypointDisplayProps';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
-    WAYPOINT_STOP_IMAGE_ID
-} from "../layers/waypointLayers";
-import type { PlanningWaypoint } from "../types/planningWaypoint";
-import type { LocationDisplayProps } from "../../places";
-import type { DisplayRouteProps, RouteStyleProps } from "../types/displayRoutes";
-import type { WaypointsSourceConfig } from "../types/routeModuleConfig";
+    WAYPOINT_STOP_IMAGE_ID,
+} from '../layers/waypointLayers';
+import type { PlanningWaypoint } from '../types/planningWaypoint';
+import type { LocationDisplayProps } from '../../places';
+import type { DisplayRouteProps, RouteStyleProps } from '../types/displayRoutes';
+import type { WaypointsSourceConfig } from '../types/routeModuleConfig';
 
 const indexTypeFor = (index: number, arrayLength: number): IndexType =>
     index === 0 ? START_INDEX : index < arrayLength - 1 ? MIDDLE_INDEX : FINISH_INDEX;
@@ -36,42 +36,41 @@ export const buildWaypointTitle = (waypoint: Waypoint): string | undefined => {
 export const getImageIDForWaypoint = (waypoint: Waypoint, indexType: IndexType): string => {
     if (waypoint.properties.radiusMeters) {
         return WAYPOINT_SOFT_IMAGE_ID;
-    } else {
-        switch (indexType) {
-            case "start":
-                return WAYPOINT_START_IMAGE_ID;
-            case "finish":
-                return WAYPOINT_FINISH_IMAGE_ID;
-            default:
-                return WAYPOINT_STOP_IMAGE_ID;
-        }
+    }
+    switch (indexType) {
+        case 'start':
+            return WAYPOINT_START_IMAGE_ID;
+        case 'finish':
+            return WAYPOINT_FINISH_IMAGE_ID;
+        default:
+            return WAYPOINT_STOP_IMAGE_ID;
     }
 };
 
 const toWaypointFromPosition = (position: Position): Waypoint => ({
-    type: "Feature",
+    type: 'Feature',
     geometry: {
-        type: "Point",
-        coordinates: position
+        type: 'Point',
+        coordinates: position,
     },
-    properties: {}
+    properties: {},
 });
 
 const toWaypointFromPoint = (point: Point): Waypoint => ({
-    type: "Feature",
+    type: 'Feature',
     geometry: point,
     properties: {},
-    ...(point.bbox && { bbox: point.bbox })
+    ...(point.bbox && { bbox: point.bbox }),
 });
 
 const asWaypoint = (waypointInput: WaypointLike): Waypoint => {
     if (Array.isArray(waypointInput)) {
         return toWaypointFromPosition(waypointInput);
-    } else if (waypointInput.type === "Point") {
-        return toWaypointFromPoint(waypointInput);
-    } else {
-        return waypointInput as Waypoint;
     }
+    if (waypointInput.type === 'Point') {
+        return toWaypointFromPoint(waypointInput);
+    }
+    return waypointInput as Waypoint;
 };
 
 /**
@@ -88,13 +87,13 @@ export const isHardWaypoint = (waypoint: Waypoint): boolean => !waypoint.propert
  */
 export const toDisplayWaypoints = (
     waypoints: PlanningWaypoint[],
-    options?: WaypointsSourceConfig
+    options?: WaypointsSourceConfig,
 ): Waypoints<WaypointDisplayProps> => {
     // Since waypoints are of mixed types (hard and soft), we need to calculate the hard-only indexes
     // in case we have stops with numbered icons:
     let hardWaypointIndex = -1;
     return {
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         features: waypoints
             .map((waypointInput, index) => {
                 if (!waypointInput) {
@@ -114,12 +113,12 @@ export const toDisplayWaypoints = (
                 return {
                     ...waypoint,
                     id,
-                    ...(options?.entryPoints === "main-when-available" && {
+                    ...(options?.entryPoints === 'main-when-available' && {
                         geometry: {
-                            type: "Point",
+                            type: 'Point',
                             // We replace the waypoint coordinates with their main entry point ones:
-                            coordinates: getPosition(waypoint, { useEntryPoint: "main-when-available" })
-                        } as Point
+                            coordinates: getPosition(waypoint, { useEntryPoint: 'main-when-available' }),
+                        } as Point,
                     }),
                     properties: {
                         ...waypoint.properties,
@@ -128,11 +127,11 @@ export const toDisplayWaypoints = (
                         indexType,
                         ...(title && { title }),
                         iconID: getImageIDForWaypoint(waypoint, indexType),
-                        ...(hardWaypoint && indexType === MIDDLE_INDEX && { stopDisplayIndex: hardWaypointIndex })
-                    }
+                        ...(hardWaypoint && indexType === MIDDLE_INDEX && { stopDisplayIndex: hardWaypointIndex }),
+                    },
                 };
             })
-            .filter((feature) => feature)
+            .filter((feature) => feature),
     };
 };
 
@@ -140,7 +139,7 @@ const formatTitle = (chargingInformation: BatteryCharging): string | undefined =
     return `${chargingInformation.chargingParkOperatorName} (${chargingInformation.chargingParkPowerInkW}kW)\n${
         chargingInformation.chargingParkName !== chargingInformation.chargingParkOperatorName
             ? chargingInformation.chargingParkName
-            : ""
+            : ''
     }\n${formatDuration(chargingInformation.chargingTimeInSeconds)}`;
 };
 
@@ -149,7 +148,7 @@ const formatTitle = (chargingInformation: BatteryCharging): string | undefined =
  * @param routes The routes return for ldEV.
  */
 export const toDisplayChargingStations = (
-    routes: Routes<DisplayRouteProps>
+    routes: Routes<DisplayRouteProps>,
 ): Waypoints<LocationDisplayProps & RouteStyleProps> => {
     const chargingStations: Waypoint<LocationDisplayProps & RouteStyleProps>[] = [];
     routes.features.forEach((route) => {
@@ -159,7 +158,7 @@ export const toDisplayChargingStations = (
             if (!chargingInformationAtEndOfLeg || !chargingStation) {
                 return null as unknown as Waypoint<LocationDisplayProps & RouteStyleProps>;
             }
-            const waypoint = toWaypointFromPoint({ type: "Point", coordinates: chargingStation.coordinates });
+            const waypoint = toWaypointFromPoint({ type: 'Point', coordinates: chargingStation.coordinates });
             const id = waypoint.id ?? generateId();
             chargingStations.push({
                 ...waypoint,
@@ -168,15 +167,15 @@ export const toDisplayChargingStations = (
                     ...waypoint.properties,
                     id,
                     // TODO consider using pin icon when available for Orbis
-                    iconID: "poi-charging_location",
+                    iconID: 'poi-charging_location',
                     title: formatTitle(chargingInformationAtEndOfLeg),
-                    routeStyle: route.properties.routeStyle
-                }
+                    routeStyle: route.properties.routeStyle,
+                },
             });
         });
     });
     return {
-        type: "FeatureCollection",
-        features: chargingStations.filter((feature) => feature)
+        type: 'FeatureCollection',
+        features: chargingStations.filter((feature) => feature),
     };
 };

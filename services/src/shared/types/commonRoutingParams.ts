@@ -1,10 +1,10 @@
-import type { Avoidable, ConnectorType, CurrentType, TravelMode } from "@anw/maps-sdk-js/core";
+import type { Avoidable, ConnectorType, CurrentType, TravelMode } from '@anw/maps-sdk-js/core';
 // import { VehicleParameters } from "./vehicleParams";
 
 /**
  * Basic low/normal/high option.
  */
-export type LNH = "low" | "normal" | "high";
+export type LNH = 'low' | 'normal' | 'high';
 
 /**
  * Options applicable to the thrilling route type.
@@ -28,7 +28,7 @@ export type ThrillingParams = {
     windingness?: LNH;
 };
 
-export const routeTypes = ["fast", "short", "efficient", "thrilling"] as const;
+export const routeTypes = ['fast', 'short', 'efficient', 'thrilling'] as const;
 
 /**
  * Decides how traffic is considered for computing routes.
@@ -38,7 +38,7 @@ export const routeTypes = ["fast", "short", "efficient", "thrilling"] as const;
  * * historical: Routing and estimated travel time consider historical travel times and long term closures.
  * Traffic jams and short-term closures during the travel time window do not influence routing or travel time.
  */
-export type TrafficInput = "live" | "historical";
+export type TrafficInput = 'live' | 'historical';
 
 /**
  * Criteria that specifies what paths to prefer during routing.
@@ -81,16 +81,16 @@ export type CostModel = {
     // thrillingParams?: ThrillingParams;
 };
 
-type DepartArriveOption = "departAt" | "arriveBy";
+type DepartArriveOption = 'departAt' | 'arriveBy';
 
 /**
  * Specifies when to depart (start traveling) or to arrive (finish traveling).
  */
-export type DepartArriveParams<OPTION extends DepartArriveOption = DepartArriveOption> = {
+export type DepartArriveParams<Option extends DepartArriveOption = DepartArriveOption> = {
     /**
      * Whether to specify a departure or arrive time (when allowed).
      */
-    option: OPTION;
+    option: Option;
     /**
      * The date and time to depart or arrive.
      */

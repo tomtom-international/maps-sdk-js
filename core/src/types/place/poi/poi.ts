@@ -1,12 +1,14 @@
-import type { OpeningHours } from "./openingHours";
-import type { Classification } from "./classification";
-import type { TimeZone } from "../../timezone";
+import type { OpeningHours } from './openingHours';
+import type { Classification } from './classification';
+import type { TimeZone } from '../../timezone';
 
 /**
  * Place of interest information.
  * @group Place
  * @category Types
  */
+
+// biome-ignore lint/style/useNamingConvention: Using acronym
 export type POI = {
     name: string;
     phone?: string;
@@ -29,7 +31,7 @@ export type RelatedPOI = {
     /**
      * Relation type between this POI and the main one which refers to it.
      */
-    relationType: "child" | "parent";
+    relationType: 'child' | 'parent';
     /**
      * Pass this as entityId to the Place by ID service to fetch additional data for the Point Of Interest.
      */

@@ -1,24 +1,24 @@
-import type { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } from "maplibre-gl";
-import { AbstractEventProxy } from "./AbstractEventProxy";
-import type { ClickEventType, SourceWithLayers } from "./types";
-import type { MapEventsConfig } from "../init";
-import { deserializeFeatures } from "./mapUtils";
-import { detectHoverState, updateEventState } from "./eventUtils";
+import type { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } from 'maplibre-gl';
+import { AbstractEventProxy } from './AbstractEventProxy';
+import type { ClickEventType, SourceWithLayers } from './types';
+import type { MapEventsConfig } from '../init';
+import { deserializeFeatures } from './mapUtils';
+import { detectHoverState, updateEventState } from './eventUtils';
 
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
-    precisionMode: "box",
+    precisionMode: 'box',
     paddingBoxPx: 5,
-    cursorOnHover: "pointer",
-    cursorOnMouseDown: "grabbing",
-    cursorOnMap: "default",
+    cursorOnHover: 'pointer',
+    cursorOnMouseDown: 'grabbing',
+    cursorOnMap: 'default',
     /**
      * Delayed hover control:
      * * The first hover we do after the map moves is longer
      */
     longHoverDelayAfterMapMoveMS: 800,
     /* Followup hovers with the same non-moving map are quicker ("hovering around mode") */
-    longHoverDelayOnStillMapMS: 300
+    longHoverDelayOnStillMapMS: 300,
 };
 
 /**
@@ -57,14 +57,14 @@ export class EventsProxy extends AbstractEventProxy {
     }
 
     private listenToEvents() {
-        this.map.on("mousemove", (ev) => this.onMouseMove(ev));
-        this.map.on("movestart", () => this.onMouseStart());
-        this.map.on("mouseout", () => this.onMouseOut());
-        this.map.on("mouseover", (ev) => this.onMouseMove(ev));
-        this.map.on("mousedown", () => this.onMouseDown());
-        this.map.on("mouseup", () => this.onMouseUp());
-        this.map.on("click", (ev) => this.onMapClick("click", ev));
-        this.map.on("contextmenu", (ev) => this.onMapClick("contextmenu", ev));
+        this.map.on('mousemove', (ev) => this.onMouseMove(ev));
+        this.map.on('movestart', () => this.onMouseStart());
+        this.map.on('mouseout', () => this.onMouseOut());
+        this.map.on('mouseover', (ev) => this.onMouseMove(ev));
+        this.map.on('mousedown', () => this.onMouseDown());
+        this.map.on('mouseup', () => this.onMouseUp());
+        this.map.on('click', (ev) => this.onMapClick('click', ev));
+        this.map.on('contextmenu', (ev) => this.onMapClick('contextmenu', ev));
     }
 
     // Enable/Disable Events
@@ -81,7 +81,7 @@ export class EventsProxy extends AbstractEventProxy {
             // sw:
             [point.x - padding, point.y + padding],
             // ne:
-            [point.x + padding, point.y - padding]
+            [point.x + padding, point.y - padding],
         ];
     }
 
@@ -94,10 +94,10 @@ export class EventsProxy extends AbstractEventProxy {
         const precision = this.config.precisionMode;
         // first attempt right in the given coordinates:
         const renderedFeatures =
-            precision == "point-then-box" || precision == "point"
+            precision === 'point-then-box' || precision === 'point'
                 ? this.map.queryRenderedFeatures(point as PointLike, options)
                 : [];
-        return renderedFeatures.length || precision == "point"
+        return renderedFeatures.length || precision === 'point'
             ? renderedFeatures
             : // second attempt using padded bounds (trying to hit something slightly further from the pointer location)
               this.map.queryRenderedFeatures(this.toPaddedBounds(point), options);
@@ -113,7 +113,7 @@ export class EventsProxy extends AbstractEventProxy {
             () => this.handleLongHoverTimeout(),
             this.firstDelayedHoverSinceMapMove
                 ? this.config.longHoverDelayAfterMapMoveMS
-                : this.config.longHoverDelayOnStillMapMS
+                : this.config.longHoverDelayOnStillMapMS,
         );
     }
 
@@ -123,21 +123,21 @@ export class EventsProxy extends AbstractEventProxy {
 
         if (this.hoveringSourceWithLayers) {
             const eventState = updateEventState(
-                "long-hover",
+                'long-hover',
                 this.hoveringFeature,
                 undefined,
                 this.hoveringSourceWithLayers,
-                undefined
+                undefined,
             );
 
-            this.findHandlers(["long-hover"], this.hoveringFeature?.source, this.hoveringFeature?.layer.id).forEach(
+            this.findHandlers(['long-hover'], this.hoveringFeature?.source, this.hoveringFeature?.layer.id).forEach(
                 (handler) =>
                     handler.fn(
                         eventState.feature,
                         this.hoveringLngLat as LngLat,
                         this.hoveringFeatures as MapGeoJSONFeature[],
-                        this.hoveringSourceWithLayers as SourceWithLayers
-                    )
+                        this.hoveringSourceWithLayers as SourceWithLayers,
+                    ),
             );
         }
     }
@@ -185,7 +185,7 @@ export class EventsProxy extends AbstractEventProxy {
             ev.point,
             hoveredTopFeature,
             this.hoveringPoint,
-            this.hoveringFeature
+            this.hoveringFeature,
         );
 
         if (hoverChanged || mouseInMotionOverHoveredFeature) {
@@ -199,9 +199,9 @@ export class EventsProxy extends AbstractEventProxy {
             // We do so because basic hovering states indicate a feature is interactive.
             // (e.g. if there's a click handler, we'll still apply basic hover states, even if we don't fire hover events)
             const allHandlers = this.findHandlers(
-                ["hover", "long-hover", "click", "contextmenu"],
+                ['hover', 'long-hover', 'click', 'contextmenu'],
                 hoveredTopFeature?.source,
-                hoveredTopFeature?.layer.id
+                hoveredTopFeature?.layer.id,
             );
 
             // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
@@ -211,17 +211,17 @@ export class EventsProxy extends AbstractEventProxy {
                 this.updateCursor(prevHoveredFeature);
 
                 const eventState = updateEventState(
-                    "hover",
+                    'hover',
                     this.hoveringFeature,
                     prevHoveredFeature,
                     this.hoveringSourceWithLayers,
-                    prevHoveredSourceWithLayers
+                    prevHoveredSourceWithLayers,
                 );
 
                 const hoverHandlers = this.findHandlers(
-                    ["hover"],
+                    ['hover'],
                     hoveredTopFeature?.source,
-                    hoveredTopFeature?.layer.id
+                    hoveredTopFeature?.layer.id,
                 );
 
                 for (const handler of hoverHandlers) {
@@ -259,7 +259,7 @@ export class EventsProxy extends AbstractEventProxy {
         const clickHandlers = this.findHandlers(
             [clickType],
             this.lastClickedFeature?.source,
-            this.lastClickedFeature?.layer.id
+            this.lastClickedFeature?.layer.id,
         );
 
         // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
@@ -270,7 +270,7 @@ export class EventsProxy extends AbstractEventProxy {
             this.lastClickedFeature,
             prevClickedFeature,
             this.lastClickedSourceWithLayers,
-            prevClickedSourceWithLayers
+            prevClickedSourceWithLayers,
         );
 
         for (const handler of clickHandlers) {

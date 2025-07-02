@@ -1,9 +1,9 @@
-import type { HasLngLat } from "@anw/maps-sdk-js/core";
-import { getPositionStrict } from "@anw/maps-sdk-js/core";
-import { appendCommonParams } from "../shared/requestBuildingUtils";
-import type { FetchInput } from "../shared";
-import type { CalculateMatrixRoutePOSTDataAPI, LatitudeLongitudePointAPI } from "./types/apiRequestTypes";
-import type { CalculateMatrixRouteParams } from "./types/calculateMatrixRouteParams";
+import type { HasLngLat } from '@anw/maps-sdk-js/core';
+import { getPositionStrict } from '@anw/maps-sdk-js/core';
+import { appendCommonParams } from '../shared/requestBuildingUtils';
+import type { FetchInput } from '../shared';
+import type { CalculateMatrixRoutePOSTDataAPI, LatitudeLongitudePointAPI } from './types/apiRequestTypes';
+import type { CalculateMatrixRouteParams } from './types/calculateMatrixRouteParams';
 
 const buildURLBasePath = (params: CalculateMatrixRouteParams): string =>
     params.customServiceBaseURL ?? `${params.commonBaseURL}/routing/matrix/2`;
@@ -17,7 +17,7 @@ const transformPositionArrayToObj = (positions: HasLngLat[]): LatitudeLongitudeP
 const buildPOSTData = (params: CalculateMatrixRouteParams): CalculateMatrixRoutePOSTDataAPI => {
     const basePostData: CalculateMatrixRoutePOSTDataAPI = {
         origins: transformPositionArrayToObj(params.origins),
-        destinations: transformPositionArrayToObj(params.destinations)
+        destinations: transformPositionArrayToObj(params.destinations),
     };
 
     if (params.options) {
@@ -31,15 +31,15 @@ const buildPOSTData = (params: CalculateMatrixRouteParams): CalculateMatrixRoute
  * @ignore
  */
 export const buildCalculateMatrixRouteRequest = (
-    params: CalculateMatrixRouteParams
+    params: CalculateMatrixRouteParams,
 ): FetchInput<CalculateMatrixRoutePOSTDataAPI> => {
     const url = new URL(`${buildURLBasePath(params)}`);
     const urlParams: URLSearchParams = url.searchParams;
     appendCommonParams(urlParams, params);
 
     return {
-        method: "POST",
+        method: 'POST',
         url,
-        data: buildPOSTData(params)
+        data: buildPOSTData(params),
     };
 };

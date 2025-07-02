@@ -1,5 +1,5 @@
-import type { FetchInput } from "../../shared";
-import type { MatrixRouteOptions } from "./calculateMatrixRouteParams";
+import type { FetchInput } from '../../shared';
+import type { MatrixRouteOptions } from './calculateMatrixRouteParams';
 
 /**
  * @ignore

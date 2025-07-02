@@ -1,5 +1,5 @@
-import type { AutocompleteSearchContext, AutocompleteSearchResult } from "./autocompleteSearchResponse";
-import type { LatLonAPI } from "../../shared/types/apiPlacesResponseTypes";
+import type { AutocompleteSearchContext, AutocompleteSearchResult } from './autocompleteSearchResponse';
+import type { LatLonAPI } from '../../shared/types/apiPlacesResponseTypes';
 
 /**
  * @ignore
@@ -12,7 +12,7 @@ export type AutocompleteSearchResponseAPI = {
 /**
  * @ignore
  */
-export type AutocompleteSearchContextAPI = Omit<AutocompleteSearchContext, "geoBias"> & {
+export type AutocompleteSearchContextAPI = Omit<AutocompleteSearchContext, 'geoBias'> & {
     geoBias?: AutocompleteSearchResultGeoBiasAPI;
 };
 

@@ -2,29 +2,29 @@ import type {
     CountrySectionProps,
     CurrentType,
     Guidance,
+    Instruction,
+    LaneDirection,
+    LaneSectionProps,
     LegSectionProps,
     LegSummary,
+    PossibleLaneSeparator,
+    RoadShieldReference,
+    RoadShieldSectionProps,
     Route,
     Routes,
     RouteSummary,
     SectionProps,
     SectionsProps,
     SectionType,
+    SpeedLimitSectionProps,
     TrafficCategory,
     TrafficIncidentTEC,
     TrafficSectionProps,
-    LaneDirection,
-    LaneSectionProps,
-    PossibleLaneSeparator,
-    RoadShieldReference,
-    RoadShieldSectionProps,
-    SpeedLimitSectionProps,
-    Instruction
-} from "@anw/maps-sdk-js/core";
-import { bboxFromGeoJSON, generateId, indexedMagnitudes } from "@anw/maps-sdk-js/core";
-import omit from "lodash/omit";
-import isNil from "lodash/isNil";
-import type { LineString, Position } from "geojson";
+} from '@anw/maps-sdk-js/core';
+import { bboxFromGeoJSON, generateId, indexedMagnitudes } from '@anw/maps-sdk-js/core';
+import omit from 'lodash/omit';
+import isNil from 'lodash/isNil';
+import type { LineString, Position } from 'geojson';
 import type {
     CalculateRouteResponseAPI,
     CurrentTypeAPI,
@@ -34,17 +34,17 @@ import type {
     RoutePathPointAPI,
     SectionAPI,
     SummaryAPI,
-    TrafficCategoryAPI
-} from "./types/apiResponseTypes";
+    TrafficCategoryAPI,
+} from './types/apiResponseTypes';
 
 const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined => {
     switch (apiCurrentType) {
-        case "Direct_Current":
-            return "DC";
-        case "Alternating_Current_1_Phase":
-            return "AC1";
-        case "Alternating_Current_3_Phase":
-            return "AC3";
+        case 'Direct_Current':
+            return 'DC';
+        case 'Alternating_Current_1_Phase':
+            return 'AC1';
+        case 'Alternating_Current_3_Phase':
+            return 'AC3';
         default:
             return undefined;
     }
@@ -59,15 +59,15 @@ const parseSummary = (apiSummary: SummaryAPI): RouteSummary | LegSummary => {
         arrivalTime: new Date(apiSummary.arrivalTime),
         ...(apiSummary.chargingInformationAtEndOfLeg && {
             chargingInformationAtEndOfLeg: {
-                ...omit(apiSummary.chargingInformationAtEndOfLeg, ["chargingConnectionInfo", "chargingParkLocation"]),
+                ...omit(apiSummary.chargingInformationAtEndOfLeg, ['chargingConnectionInfo', 'chargingParkLocation']),
                 ...(chargingParkLocation && {
                     chargingParkLocation: {
-                        ...omit(chargingParkLocation, "coordinate"),
+                        ...omit(chargingParkLocation, 'coordinate'),
                         coordinates: [
                             chargingParkLocation.coordinate.longitude,
-                            chargingParkLocation.coordinate.latitude
-                        ]
-                    }
+                            chargingParkLocation.coordinate.latitude,
+                        ],
+                    },
                 }),
                 ...(chargingConnectionInfo && {
                     chargingConnectionInfo: {
@@ -75,19 +75,19 @@ const parseSummary = (apiSummary: SummaryAPI): RouteSummary | LegSummary => {
                         currentInA: chargingConnectionInfo.chargingCurrentInA,
                         voltageInV: chargingConnectionInfo.chargingVoltageInV,
                         chargingPowerInkW: chargingConnectionInfo.chargingPowerInkW,
-                        currentType: toCurrentType(chargingConnectionInfo.chargingCurrentType)
-                    }
-                })
-            }
-        })
+                        currentType: toCurrentType(chargingConnectionInfo.chargingCurrentType),
+                    },
+                }),
+            },
+        }),
     };
 };
 
 const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
-    type: "LineString",
+    type: 'LineString',
     coordinates: apiRouteLegs.flatMap((apiLeg) =>
-        apiLeg.points?.map((apiPoint) => [apiPoint.longitude, apiPoint.latitude])
-    )
+        apiLeg.points?.map((apiPoint) => [apiPoint.longitude, apiPoint.latitude]),
+    ),
 });
 
 const parseLegSectionProps = (apiLegs: LegAPI[] /*, params: CalculateRouteParams*/): LegSectionProps[] =>
@@ -107,7 +107,7 @@ const parseLegSectionProps = (apiLegs: LegAPI[] /*, params: CalculateRouteParams
             ...(!isNil(lastLegEndPointIndex) && { startPointIndex: lastLegEndPointIndex }),
             ...(endPointIndex && { endPointIndex }),
             summary: parseSummary(nextApiLeg.summary /*, params*/),
-            id: generateId()
+            id: generateId(),
         });
         return accumulatedParsedLegs;
     }, []);
@@ -115,16 +115,16 @@ const parseLegSectionProps = (apiLegs: LegAPI[] /*, params: CalculateRouteParams
 const toSectionProps = (apiSection: SectionAPI): SectionProps => ({
     id: generateId(),
     startPointIndex: apiSection.startPointIndex,
-    endPointIndex: apiSection.endPointIndex
+    endPointIndex: apiSection.endPointIndex,
 });
 
 const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => ({
     ...toSectionProps(apiSection),
-    countryCodeISO3: apiSection.countryCode as string
+    countryCodeISO3: apiSection.countryCode as string,
 });
 
 const toVehicleRestrictedSectionProps = (apiSection: SectionAPI): SectionProps | null =>
-    apiSection.travelMode === "other" ? toSectionProps(apiSection) : null;
+    apiSection.travelMode === 'other' ? toSectionProps(apiSection) : null;
 
 const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => ({
     ...toSectionProps(apiSection),
@@ -132,24 +132,24 @@ const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => (
     effectiveSpeedInKmh: apiSection.effectiveSpeedInKmh,
     simpleCategory: (apiSection.simpleCategory as TrafficCategoryAPI).toLowerCase() as TrafficCategory,
     magnitudeOfDelay: indexedMagnitudes[apiSection.magnitudeOfDelay as number],
-    tec: apiSection.tec as TrafficIncidentTEC
+    tec: apiSection.tec as TrafficIncidentTEC,
 });
 
 const toLaneSectionProps = (apiSection: SectionAPI): LaneSectionProps => ({
     ...toSectionProps(apiSection),
     lanes: apiSection.lanes as LaneDirection[],
     laneSeparators: apiSection.laneSeparators as PossibleLaneSeparator[],
-    properties: apiSection.properties
+    properties: apiSection.properties,
 });
 
 const toSpeedLimitSectionProps = (apiSection: SectionAPI): SpeedLimitSectionProps => ({
     ...toSectionProps(apiSection),
-    maxSpeedLimitInKmh: apiSection.maxSpeedLimitInKmh as number
+    maxSpeedLimitInKmh: apiSection.maxSpeedLimitInKmh as number,
 });
 
 const toRoadShieldsSectionProps = (apiSection: SectionAPI): RoadShieldSectionProps => ({
     ...toSectionProps(apiSection),
-    roadShieldReferences: apiSection.roadShieldReferences as RoadShieldReference[]
+    roadShieldReferences: apiSection.roadShieldReferences as RoadShieldReference[],
 });
 
 const ensureInit = <S extends SectionProps>(sectionType: SectionType, result: SectionsProps): S[] => {
@@ -160,44 +160,44 @@ const ensureInit = <S extends SectionProps>(sectionType: SectionType, result: Se
 };
 
 const getSectionMapping = (
-    apiSection: SectionAPI
+    apiSection: SectionAPI,
 ): { sectionType: SectionType; mappingFunction: (apiSection: SectionAPI) => SectionProps | null } => {
     switch (apiSection.sectionType) {
-        case "CAR_TRAIN":
-            return { sectionType: "carTrain", mappingFunction: toSectionProps };
-        case "COUNTRY":
-            return { sectionType: "country", mappingFunction: toCountrySectionProps };
-        case "FERRY":
-            return { sectionType: "ferry", mappingFunction: toSectionProps };
-        case "MOTORWAY":
-            return { sectionType: "motorway", mappingFunction: toSectionProps };
-        case "PEDESTRIAN":
-            return { sectionType: "pedestrian", mappingFunction: toSectionProps };
-        case "TOLL_VIGNETTE":
-            return { sectionType: "tollVignette", mappingFunction: toCountrySectionProps };
-        case "TOLL":
-            return { sectionType: "toll", mappingFunction: toSectionProps };
-        case "TRAFFIC":
-            return { sectionType: "traffic", mappingFunction: toTrafficSectionProps };
-        case "TRAVEL_MODE":
+        case 'CAR_TRAIN':
+            return { sectionType: 'carTrain', mappingFunction: toSectionProps };
+        case 'COUNTRY':
+            return { sectionType: 'country', mappingFunction: toCountrySectionProps };
+        case 'FERRY':
+            return { sectionType: 'ferry', mappingFunction: toSectionProps };
+        case 'MOTORWAY':
+            return { sectionType: 'motorway', mappingFunction: toSectionProps };
+        case 'PEDESTRIAN':
+            return { sectionType: 'pedestrian', mappingFunction: toSectionProps };
+        case 'TOLL_VIGNETTE':
+            return { sectionType: 'tollVignette', mappingFunction: toCountrySectionProps };
+        case 'TOLL':
+            return { sectionType: 'toll', mappingFunction: toSectionProps };
+        case 'TRAFFIC':
+            return { sectionType: 'traffic', mappingFunction: toTrafficSectionProps };
+        case 'TRAVEL_MODE':
             // NOTE: vehicleRestricted sections come from TRAVEL_MODE "other" ones:
-            return { sectionType: "vehicleRestricted", mappingFunction: toVehicleRestrictedSectionProps };
-        case "TUNNEL":
-            return { sectionType: "tunnel", mappingFunction: toSectionProps };
-        case "UNPAVED":
-            return { sectionType: "unpaved", mappingFunction: toSectionProps };
-        case "URBAN":
-            return { sectionType: "urban", mappingFunction: toSectionProps };
-        case "CARPOOL":
-            return { sectionType: "carpool", mappingFunction: toSectionProps };
-        case "LOW_EMISSION_ZONE":
-            return { sectionType: "lowEmissionZone", mappingFunction: toSectionProps };
-        case "LANES":
-            return { sectionType: "lanes", mappingFunction: toLaneSectionProps };
-        case "SPEED_LIMIT":
-            return { sectionType: "speedLimit", mappingFunction: toSpeedLimitSectionProps };
-        case "ROAD_SHIELDS":
-            return { sectionType: "roadShields", mappingFunction: toRoadShieldsSectionProps };
+            return { sectionType: 'vehicleRestricted', mappingFunction: toVehicleRestrictedSectionProps };
+        case 'TUNNEL':
+            return { sectionType: 'tunnel', mappingFunction: toSectionProps };
+        case 'UNPAVED':
+            return { sectionType: 'unpaved', mappingFunction: toSectionProps };
+        case 'URBAN':
+            return { sectionType: 'urban', mappingFunction: toSectionProps };
+        case 'CARPOOL':
+            return { sectionType: 'carpool', mappingFunction: toSectionProps };
+        case 'LOW_EMISSION_ZONE':
+            return { sectionType: 'lowEmissionZone', mappingFunction: toSectionProps };
+        case 'LANES':
+            return { sectionType: 'lanes', mappingFunction: toLaneSectionProps };
+        case 'SPEED_LIMIT':
+            return { sectionType: 'speedLimit', mappingFunction: toSpeedLimitSectionProps };
+        case 'ROAD_SHIELDS':
+            return { sectionType: 'roadShields', mappingFunction: toRoadShieldsSectionProps };
     }
 };
 
@@ -217,7 +217,7 @@ const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: Secti
 
 const parseSections = (apiRoute: RouteAPI /*, params: CalculateRouteParams*/): SectionsProps => {
     const result = {
-        leg: parseLegSectionProps(apiRoute.legs /*, params*/)
+        leg: parseLegSectionProps(apiRoute.legs /*, params*/),
         // (the rest of sections are parsed below)
     } as SectionsProps;
     parseSectionsAndAppendToResult(apiRoute.sections, result);
@@ -240,7 +240,8 @@ const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => 
             if (similar(path[pathIndex], maneuverPoint)) {
                 lastInstructionPathIndex = pathIndex;
                 break;
-            } else if (pathIndex === path.length - 1) {
+            }
+            if (pathIndex === path.length - 1) {
                 // (we do not advance lastInstructionPathIndex here to prevent missing a whole path section while mapping following instructions)
                 break;
             }
@@ -251,8 +252,8 @@ const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => 
             pathPointIndex: lastInstructionPathIndex,
             routePath: apiInstruction.routePath.map((apiPoint: RoutePathPointAPI) => ({
                 ...apiPoint,
-                point: [apiPoint.point.longitude, apiPoint.point.latitude]
-            }))
+                point: [apiPoint.point.longitude, apiPoint.point.latitude],
+            })),
         });
     }
 
@@ -261,14 +262,14 @@ const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => 
 
 const parseRoute = (
     apiRoute: RouteAPI,
-    index: number
+    index: number,
     /*, params: CalculateRouteParams*/
 ): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
     const bbox = bboxFromGeoJSON(geometry);
     const id = generateId();
     return {
-        type: "Feature",
+        type: 'Feature',
         geometry,
         id,
         ...(bbox && { bbox }),
@@ -278,8 +279,8 @@ const parseRoute = (
             summary: parseSummary(apiRoute.summary),
             sections: parseSections(apiRoute),
             ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance, geometry.coordinates) }),
-            ...(apiRoute.progress && { progress: apiRoute.progress })
-        }
+            ...(apiRoute.progress && { progress: apiRoute.progress }),
+        },
     };
 };
 
@@ -289,11 +290,11 @@ const parseRoute = (
  * @param params The params used to calculate this route.
  */
 export const parseCalculateRouteResponse = (
-    apiResponse: CalculateRouteResponseAPI
+    apiResponse: CalculateRouteResponseAPI,
     // TODO: cleanup or restore input params to parse routing responses. They were used at least to calculate battery % from KWH values and maxCharge input.
     /*params: CalculateRouteParams*/
 ): Routes => {
     const features = apiResponse.routes.map((apiRoute, index) => parseRoute(apiRoute, index /*, params*/));
     const bbox = bboxFromGeoJSON(features);
-    return { type: "FeatureCollection", ...(bbox && { bbox }), features };
+    return { type: 'FeatureCollection', ...(bbox && { bbox }), features };
 };

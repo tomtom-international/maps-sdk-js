@@ -1,5 +1,5 @@
-import type { ExpressionFilterSpecification, FilterSpecification, LegacyFilterSpecification } from "maplibre-gl";
-import type { FilterShowMode, FilterSyntaxVersion, MultiSyntaxFilter, ValuesFilter } from "./types";
+import type { ExpressionFilterSpecification, FilterSpecification, LegacyFilterSpecification } from 'maplibre-gl';
+import type { FilterShowMode, FilterSyntaxVersion, MultiSyntaxFilter, ValuesFilter } from './types';
 
 /**
  * @ignore
@@ -13,29 +13,29 @@ const isExpressionFilter = (filter: FilterSpecification): filter is ExpressionFi
         return false;
     }
     switch (filter[0]) {
-        case "has":
-            return filter.length >= 2 && filter[1] !== "$id" && filter[1] !== "$type";
+        case 'has':
+            return filter.length >= 2 && filter[1] !== '$id' && filter[1] !== '$type';
 
-        case "in":
-            return filter.length >= 3 && (typeof filter[1] !== "string" || Array.isArray(filter[2]));
+        case 'in':
+            return filter.length >= 3 && (typeof filter[1] !== 'string' || Array.isArray(filter[2]));
 
-        case "!in":
-        case "!has":
-        case "none":
+        case '!in':
+        case '!has':
+        case 'none':
             return false;
 
-        case "==":
-        case "!=":
-        case ">":
-        case ">=":
-        case "<":
-        case "<=":
+        case '==':
+        case '!=':
+        case '>':
+        case '>=':
+        case '<':
+        case '<=':
             return filter.length !== 3 || Array.isArray(filter[1]) || Array.isArray(filter[2]);
 
-        case "any":
-        case "all":
+        case 'any':
+        case 'all':
             for (const f of filter.slice(1)) {
-                if (!isExpressionFilter(f as FilterSpecification) && typeof f !== "boolean") {
+                if (!isExpressionFilter(f as FilterSpecification) && typeof f !== 'boolean') {
                     return false;
                 }
             }
@@ -50,7 +50,7 @@ const isExpressionFilter = (filter: FilterSpecification): filter is ExpressionFi
  * @ignore
  */
 export const getSyntaxVersion = (expression: FilterSpecification): FilterSyntaxVersion =>
-    isExpressionFilter(expression) ? "expression" : "legacy";
+    isExpressionFilter(expression) ? 'expression' : 'legacy';
 
 /**
  * @ignore
@@ -58,14 +58,14 @@ export const getSyntaxVersion = (expression: FilterSpecification): FilterSyntaxV
 export const getMergedAnyFilter = (filters: MultiSyntaxFilter[]): MultiSyntaxFilter | null => {
     if (!filters?.length) {
         return null;
-    } else if (filters.length === 1) {
-        return filters[0];
-    } else {
-        return {
-            expression: ["any", ...filters.map((filter) => filter?.expression)],
-            legacy: ["any", ...filters.map((filter) => filter?.legacy)]
-        };
     }
+    if (filters.length === 1) {
+        return filters[0];
+    }
+    return {
+        expression: ['any', ...filters.map((filter) => filter?.expression)],
+        legacy: ['any', ...filters.map((filter) => filter?.legacy)],
+    };
 };
 
 /**
@@ -73,13 +73,12 @@ export const getMergedAnyFilter = (filters: MultiSyntaxFilter[]): MultiSyntaxFil
  */
 export const getMergedAllFilter = (
     filterToAdd: MultiSyntaxFilter,
-    originalFilter: FilterSpecification | undefined
+    originalFilter: FilterSpecification | undefined,
 ): FilterSpecification => {
     if (originalFilter) {
-        return ["all", filterToAdd[getSyntaxVersion(originalFilter)], originalFilter] as FilterSpecification;
-    } else {
-        return filterToAdd.expression;
+        return ['all', filterToAdd[getSyntaxVersion(originalFilter)], originalFilter] as FilterSpecification;
     }
+    return filterToAdd.expression;
 };
 
 /**
@@ -88,28 +87,26 @@ export const getMergedAllFilter = (
 export const buildMappedValuesFilter = <T>(
     propName: string,
     showMode: FilterShowMode,
-    values: T[]
+    values: T[],
 ): MultiSyntaxFilter => {
     if (values.length === 1) {
-        const comparator = showMode === "only" ? "==" : "!=";
+        const comparator = showMode === 'only' ? '==' : '!=';
         return {
-            expression: [comparator, ["get", propName], values[0]] as ExpressionFilterSpecification,
-            legacy: [comparator, propName, values[0]] as LegacyFilterSpecification
+            expression: [comparator, ['get', propName], values[0]] as ExpressionFilterSpecification,
+            legacy: [comparator, propName, values[0]] as LegacyFilterSpecification,
         };
-    } else {
-        const filterArrayNew = ["in", ["get", propName], ["literal", values]];
-        if (showMode === "only") {
-            return {
-                expression: filterArrayNew as ExpressionFilterSpecification,
-                legacy: ["in", propName, ...values] as LegacyFilterSpecification
-            };
-        } else {
-            return {
-                expression: ["!", filterArrayNew as ExpressionFilterSpecification],
-                legacy: ["!in", propName, ...values] as LegacyFilterSpecification
-            };
-        }
     }
+    const filterArrayNew = ['in', ['get', propName], ['literal', values]];
+    if (showMode === 'only') {
+        return {
+            expression: filterArrayNew as ExpressionFilterSpecification,
+            legacy: ['in', propName, ...values] as LegacyFilterSpecification,
+        };
+    }
+    return {
+        expression: ['!', filterArrayNew as ExpressionFilterSpecification],
+        legacy: ['!in', propName, ...values] as LegacyFilterSpecification,
+    };
 };
 
 /**
@@ -118,6 +115,6 @@ export const buildMappedValuesFilter = <T>(
 export const buildValuesFilter = <T>(
     propName: string,
     filter: ValuesFilter<T>,
-    valuesMapping?: (value: T) => unknown
+    valuesMapping?: (value: T) => unknown,
 ): MultiSyntaxFilter =>
     buildMappedValuesFilter(propName, filter.show, valuesMapping ? filter.values.map(valuesMapping) : filter.values);

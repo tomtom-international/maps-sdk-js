@@ -1,4 +1,4 @@
-export * from "./geometrySearchResponse";
-export * from "./geometrySearchParams";
-export * from "./geometrySearchRequestAPI";
-export * from "./geometrySearchResponseAPI";
+export type * from './geometrySearchResponse';
+export type * from './geometrySearchParams';
+export type * from './geometrySearchRequestAPI';
+export type * from './geometrySearchResponseAPI';

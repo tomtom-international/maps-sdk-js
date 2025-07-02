@@ -1,18 +1,19 @@
-import type { TomTomHeaders } from "@anw/maps-sdk-js/core";
-import type { FetchInput, PostObject, ParsedFetchResponse } from "./types/fetch";
+import type { TomTomHeaders } from '@anw/maps-sdk-js/core';
+import type { FetchInput, ParsedFetchResponse, PostObject } from './types/fetch';
 
 // Returns the response as a JSON object or throws an error if the response isn't successful.
 const returnOrThrow = async <T>(response: Response): ParsedFetchResponse<T> => {
     if (response.ok) {
         return { data: await response.json(), status: response.status };
     }
-    let message, errorBody;
-    const contentType = response.headers.get("content-type");
+    let message: string | undefined;
+    let errorBody;
+    const contentType = response.headers.get('content-type');
     if (!response.bodyUsed) {
-        if (contentType?.includes("application/json")) {
+        if (contentType?.includes('application/json')) {
             errorBody = await response.json();
-            message = errorBody?.errorText || errorBody?.message || errorBody?.detailedError?.message;
-        } else if (contentType?.includes("text/xml")) {
+            message = errorBody?.errorText ?? errorBody?.message ?? errorBody?.detailedError?.message;
+        } else if (contentType?.includes('text/xml')) {
             errorBody = await response.text();
             message = response.statusText;
         }
@@ -42,10 +43,10 @@ export const get = async <T>(url: URL, headers: TomTomHeaders): ParsedFetchRespo
 export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): ParsedFetchResponse<T> =>
     returnOrThrow(
         await fetch(input.url, {
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify(input.data),
-            headers: { ...headers, "Content-Type": "application/json" }
-        })
+            headers: { ...headers, 'Content-Type': 'application/json' },
+        }),
     );
 
 /**
@@ -57,11 +58,11 @@ export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): 
  */
 export const fetchWith = async <T, D = void>(input: FetchInput<D>, headers: TomTomHeaders): ParsedFetchResponse<T> => {
     const method = input.method;
-    if (method === "GET") {
+    if (method === 'GET') {
         return get<T>(input.url, headers);
-    } else if (method === "POST") {
-        return post<T, D>(input, headers);
-    } else {
-        throw Error(`Unsupported HTTP method received: ${method}`);
     }
+    if (method === 'POST') {
+        return post<T, D>(input, headers);
+    }
+    throw Error(`Unsupported HTTP method received: ${method}`);
 };

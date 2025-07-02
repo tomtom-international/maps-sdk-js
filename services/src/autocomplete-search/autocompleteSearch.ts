@@ -1,7 +1,7 @@
-import type { AutocompleteSearchParams, AutocompleteSearchResponse } from "./types";
-import type { AutocompleteSearchTemplate } from "./autocompleteSearchTemplate";
-import { autocompleteSearchTemplate } from "./autocompleteSearchTemplate";
-import { callService } from "../shared/serviceTemplate";
+import type { AutocompleteSearchParams, AutocompleteSearchResponse } from './types';
+import type { AutocompleteSearchTemplate } from './autocompleteSearchTemplate';
+import { autocompleteSearchTemplate } from './autocompleteSearchTemplate';
+import { callService } from '../shared/serviceTemplate';
 
 /**
  * The Autocomplete API enables you to make a more meaningful Search API call by recognizing entities inside an input query and offering them as query terms.
@@ -11,8 +11,8 @@ import { callService } from "../shared/serviceTemplate";
  */
 export const autocompleteSearch = async (
     params: AutocompleteSearchParams,
-    customTemplate?: Partial<AutocompleteSearchTemplate>
+    customTemplate?: Partial<AutocompleteSearchTemplate>,
 ): Promise<AutocompleteSearchResponse> =>
-    callService(params, { ...autocompleteSearchTemplate, ...customTemplate }, "Autocomplete");
+    callService(params, { ...autocompleteSearchTemplate, ...customTemplate }, 'Autocomplete');
 
 export default autocompleteSearch;

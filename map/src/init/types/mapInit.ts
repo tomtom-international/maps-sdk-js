@@ -1,16 +1,16 @@
-import type { GlobalConfig } from "@anw/maps-sdk-js/core";
-import type { MapOptions, StyleSpecification } from "maplibre-gl";
-import type { MapEventsConfig } from "./mapEventsConfig";
+import type { GlobalConfig } from '@anw/maps-sdk-js/core';
+import type { MapOptions, StyleSpecification } from 'maplibre-gl';
+import type { MapEventsConfig } from './mapEventsConfig';
 
 export const publishedStyleIDs = [
-    "standardLight",
-    "standardDark",
+    'standardLight',
+    'standardDark',
     // TODO: driving styles not supported in Orbis for now
-    "drivingLight",
-    "drivingDark",
-    "monoLight",
-    "monoDark",
-    "satellite"
+    'drivingLight',
+    'drivingDark',
+    'monoLight',
+    'monoDark',
+    'satellite',
 ] as const;
 
 /**
@@ -58,7 +58,7 @@ export type CustomStyle = {
  * * trafficFlow: Include traffic flow
  * * hillshade: Include hillshade
  */
-export type StyleModule = "trafficIncidents" | "trafficFlow" | "hillshade";
+export type StyleModule = 'trafficIncidents' | 'trafficFlow' | 'hillshade';
 
 /**
  * Style to load on the map.
@@ -69,8 +69,8 @@ export type StyleModule = "trafficIncidents" | "trafficFlow" | "hillshade";
  */
 export type StyleInput =
     | PublishedStyleID
-    | (PublishedStyle & { type: "published" })
-    | (CustomStyle & { type: "custom" });
+    | (PublishedStyle & { type: 'published' })
+    | (CustomStyle & { type: 'custom' });
 
 export type TomTomMapParams = GlobalConfig & {
     /**
@@ -84,4 +84,4 @@ export type TomTomMapParams = GlobalConfig & {
     events?: MapEventsConfig;
 };
 
-export type MapLibreOptions = Omit<MapOptions, "style" | "attributionControl">;
+export type MapLibreOptions = Omit<MapOptions, 'style' | 'attributionControl'>;

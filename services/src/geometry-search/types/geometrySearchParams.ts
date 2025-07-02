@@ -1,8 +1,8 @@
-import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
-import type { MultiPolygon, Polygon, Position } from "geojson";
-import type { CommonSearchParams } from "../../shared";
-import type { GeometrySearchResponseAPI } from "./geometrySearchResponseAPI";
-import type { GeometrySearchRequestAPI } from "./geometrySearchRequestAPI";
+import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
+import type { MultiPolygon, Polygon, Position } from 'geojson';
+import type { CommonSearchParams } from '../../shared';
+import type { GeometrySearchResponseAPI } from './geometrySearchResponseAPI';
+import type { GeometrySearchRequestAPI } from './geometrySearchRequestAPI';
 
 export type GeometrySearchParams = CommonSearchParams<GeometrySearchRequestAPI, GeometrySearchResponseAPI> & {
     /**
@@ -14,7 +14,7 @@ export type GeometrySearchParams = CommonSearchParams<GeometrySearchRequestAPI, 
 
 // geo-json does not support circle as a Geometry shape
 export interface Circle {
-    type: "Circle";
+    type: 'Circle';
     coordinates: Position;
     radius: number;
 }

@@ -1,9 +1,9 @@
-import type { Map } from "maplibre-gl";
-import type { TomTomMap } from "../TomTomMap";
-import type { EventsProxy } from "./EventsProxy";
-import type { SourcesWithLayers, SourceWithLayerIDs } from "./types";
-import type { MapModuleSource } from "./types/mapModule";
-import { waitUntilMapIsReady } from "./mapUtils";
+import type { Map } from 'maplibre-gl';
+import type { TomTomMap } from '../TomTomMap';
+import type { EventsProxy } from './EventsProxy';
+import type { SourcesWithLayers, SourceWithLayerIDs } from './types';
+import type { MapModuleSource } from './types/mapModule';
+import { waitUntilMapIsReady } from './mapUtils';
 
 /**
  * Base class for all Maps SDK map modules.
@@ -79,8 +79,8 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         this._sourceAndLayerIDs = Object.fromEntries(
             Object.entries(this.sourcesWithLayers).map(([name, sourceWithLayers]) => [
                 name,
-                sourceWithLayers.sourceAndLayerIDs
-            ])
+                sourceWithLayers.sourceAndLayerIDs,
+            ]),
         ) as Record<keyof SOURCES_WITH_LAYERS, SourceWithLayerIDs>;
         if (restore) {
             this.eventsProxy.updateIfRegistered(this.sourcesWithLayers);
@@ -141,7 +141,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
     private async restoreDataAndConfig() {
         // defensively declaring the module as not ready to prevent race conditions:
         this.moduleReady = false;
-        if (this.sourceType == "geojson") {
+        if (this.sourceType === 'geojson') {
             // (We use setTimeout to compensate for a MapLibre glitch where symbol layers can't get added right after
             // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
             setTimeout(() => this.restoreDataAndConfigImpl(), 400);

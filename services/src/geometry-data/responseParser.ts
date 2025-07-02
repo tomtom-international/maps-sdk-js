@@ -1,6 +1,6 @@
-import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
-import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
-import type { GeometryDataResponseAPI } from "./types/apiTypes";
+import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
+import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
+import type { GeometryDataResponseAPI } from './types/apiTypes';
 
 /**
  * Default geometry data API response parsing.
@@ -14,13 +14,13 @@ export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI):
         .flatMap((data) =>
             (data.geometryData as PolygonFeatures)?.features.map((feature) => ({
                 ...feature,
-                bbox: bboxFromGeoJSON(feature.geometry)
-            }))
+                bbox: bboxFromGeoJSON(feature.geometry),
+            })),
         )
         .filter((feature) => feature);
     return {
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         bbox: bboxFromGeoJSON(features),
-        features
+        features,
     };
 };

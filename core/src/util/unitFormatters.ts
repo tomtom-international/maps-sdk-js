@@ -1,9 +1,9 @@
-import isNil from "lodash/isNil";
-import type { DistanceDisplayUnits, TimeDisplayUnits } from "../config/globalConfig";
-import { TomTomConfig } from "../config/globalConfig";
+import isNil from 'lodash/isNil';
+import type { DistanceDisplayUnits, TimeDisplayUnits } from '../config/globalConfig';
+import { TomTomConfig } from '../config/globalConfig';
 
-const minuteUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.minutes ?? "min";
-const hourUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.hours ?? "hr";
+const minuteUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.minutes ?? 'min';
+const hourUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.hours ?? 'hr';
 
 /**
  * Returns a display-friendly version, in minutes and hours if needed, of the given duration in seconds.
@@ -33,12 +33,12 @@ export const formatDuration = (seconds: number | undefined, options?: TimeDispla
             minutes = 0;
             flooredHours++;
         }
-        options = { ...TomTomConfig.instance.get().displayUnits?.time, ...options };
+        const mergedOptions = { ...TomTomConfig.instance.get().displayUnits?.time, ...options };
         if (flooredHours) {
-            // eslint-disable-next-line max-len
-            return `${flooredHours} ${hourUnits(options)} ${minutes.toString().padStart(2, "0")} ${minuteUnits(options)}`;
-        } else if (minutes) {
-            return `${minutes.toString()} ${minuteUnits(options)}`;
+            return `${flooredHours} ${hourUnits(mergedOptions)} ${minutes.toString().padStart(2, '0')} ${minuteUnits(mergedOptions)}`;
+        }
+        if (minutes) {
+            return `${minutes.toString()} ${minuteUnits(mergedOptions)}`;
         }
     }
     return undefined;
@@ -49,31 +49,33 @@ export const formatDuration = (seconds: number | undefined, options?: TimeDispla
  * @group Shared
  * @category Types
  */
-export type DistanceUnitsType = "metric" | "imperial_us" | "imperial_uk";
+export type DistanceUnitsType = 'metric' | 'imperial_us' | 'imperial_uk';
 
 const MILE_IN_METERS = 1609.344;
 const FEET_IN_METERS = 0.3048;
 const YARD_IN_METERS = 0.9144;
 
-const meterUnits = (displayUnits?: DistanceDisplayUnits): string => displayUnits?.meters ?? "m";
-const kmUnits = (displayUnits?: DistanceDisplayUnits): string => displayUnits?.kilometers ?? "km";
+const meterUnits = (displayUnits?: DistanceDisplayUnits): string => displayUnits?.meters ?? 'm';
+const kmUnits = (displayUnits?: DistanceDisplayUnits): string => displayUnits?.kilometers ?? 'km';
 
 const formatMetric = (meters: number, displayUnits: DistanceDisplayUnits): string => {
     const absMeters = Math.abs(meters);
     if (absMeters < 10) {
         return `${meters} ${meterUnits(displayUnits)}`;
-    } else if (absMeters < 500) {
+    }
+    if (absMeters < 500) {
         return `${Math.round(meters / 10) * 10} ${meterUnits(displayUnits)}`;
-    } else if (absMeters < 1000) {
+    }
+    if (absMeters < 1000) {
         const roundedMeters = Math.round(meters / 100) * 100;
         return roundedMeters === 1000 || roundedMeters === -1000
-            ? `${meters < 0 ? "-" : ""}1 ${kmUnits(displayUnits)}`
+            ? `${meters < 0 ? '-' : ''}1 ${kmUnits(displayUnits)}`
             : `${roundedMeters} ${meterUnits(displayUnits)}`;
-    } else if (absMeters < 10000) {
-        return `${(Math.round(meters / 100) * 100) / 1000} ${kmUnits(displayUnits)}`;
-    } else {
-        return `${Math.round(meters / 1000)} ${kmUnits(displayUnits)}`;
     }
+    if (absMeters < 10000) {
+        return `${(Math.round(meters / 100) * 100) / 1000} ${kmUnits(displayUnits)}`;
+    }
+    return `${Math.round(meters / 1000)} ${kmUnits(displayUnits)}`;
 };
 
 const formatFeet = (meters: number, feetUnits: string): string => {
@@ -81,85 +83,82 @@ const formatFeet = (meters: number, feetUnits: string): string => {
     const absFeet = Math.abs(feet);
     if (absFeet < 30) {
         return `${feet} ${feetUnits}`;
-    } else if (absFeet < 500) {
-        return `${Math.round(feet / 10) * 10} ${feetUnits}`;
-    } else {
-        return `${Math.round(feet / 100) * 100} ${feetUnits}`;
     }
+    if (absFeet < 500) {
+        return `${Math.round(feet / 10) * 10} ${feetUnits}`;
+    }
+    return `${Math.round(feet / 100) * 100} ${feetUnits}`;
 };
 
 const formatYards = (meters: number, yardUnits: string): string => {
     const yards = Math.round(meters / YARD_IN_METERS);
     if (Math.abs(yards) < 10) {
         return `${Math.round(yards)} ${yardUnits}`;
-    } else {
-        return `${Math.round(yards / 10) * 10} ${yardUnits}`;
     }
+    return `${Math.round(yards / 10) * 10} ${yardUnits}`;
 };
 
 const formatUSMilesLessThanThree = (miles: number, absMiles: number, mileUnits: string): string => {
-    const milesInteger = parseInt(absMiles.toString());
+    const milesInteger = Number.parseInt(absMiles.toString());
     const milesFloat = absMiles - milesInteger;
-    const sign = miles < 0 ? "-" : "";
+    const sign = miles < 0 ? '-' : '';
     if (milesFloat < 0.125) {
         return `${sign}${milesInteger} ${mileUnits}`;
-    } else {
-        const showIntegerIfNotZero = milesInteger > 0 ? milesInteger : "";
-        if (milesFloat < 0.375) {
-            return `${sign}${showIntegerIfNotZero}¼ ${mileUnits}`;
-        } else if (milesFloat < 0.625) {
-            return `${sign}${showIntegerIfNotZero}½ ${mileUnits}`;
-        } else if (milesFloat < 0.875) {
-            return `${sign}${showIntegerIfNotZero}¾ ${mileUnits}`;
-        } else {
-            return `${sign}${milesInteger + 1} ${mileUnits}`;
-        }
     }
+    const showIntegerIfNotZero = milesInteger > 0 ? milesInteger : '';
+    if (milesFloat < 0.375) {
+        return `${sign}${showIntegerIfNotZero}¼ ${mileUnits}`;
+    }
+    if (milesFloat < 0.625) {
+        return `${sign}${showIntegerIfNotZero}½ ${mileUnits}`;
+    }
+    if (milesFloat < 0.875) {
+        return `${sign}${showIntegerIfNotZero}¾ ${mileUnits}`;
+    }
+    return `${sign}${milesInteger + 1} ${mileUnits}`;
 };
 
 const formatUSMilesLessThanTen = (miles: number, absMiles: number, mileUnits: string): string => {
-    const milesInteger = parseInt(absMiles.toString());
+    const milesInteger = Number.parseInt(absMiles.toString());
     const milesFloat = absMiles - milesInteger;
-    const sign = miles < 0 ? "-" : "";
+    const sign = miles < 0 ? '-' : '';
     if (milesFloat < 0.25) {
         return `${sign}${milesInteger} ${mileUnits}`;
-    } else if (milesFloat < 0.75) {
-        return `${sign}${milesInteger}½ ${mileUnits}`;
-    } else {
-        return `${sign}${milesInteger + 1} ${mileUnits}`;
     }
+    if (milesFloat < 0.75) {
+        return `${sign}${milesInteger}½ ${mileUnits}`;
+    }
+    return `${sign}${milesInteger + 1} ${mileUnits}`;
 };
 
 const formatMiles = (miles: number, absMiles: number, mileUnits: string): string => {
     if (absMiles < 3) {
         return formatUSMilesLessThanThree(miles, absMiles, mileUnits);
-    } else if (absMiles < 10) {
-        return formatUSMilesLessThanTen(miles, absMiles, mileUnits);
-    } else {
-        return `${Math.round(miles)} ${mileUnits}`;
     }
+    if (absMiles < 10) {
+        return formatUSMilesLessThanTen(miles, absMiles, mileUnits);
+    }
+    return `${Math.round(miles)} ${mileUnits}`;
 };
 
-const mileUnitsWithDefault = (displayUnits: DistanceDisplayUnits): string => displayUnits.miles ?? "mi";
+const mileUnitsWithDefault = (displayUnits: DistanceDisplayUnits): string => displayUnits.miles ?? 'mi';
 
 const formatUS = (meters: number, displayUnits: DistanceDisplayUnits): string => {
     const miles = meters / MILE_IN_METERS;
     const absMiles = Math.abs(miles);
     if (absMiles < 0.125) {
-        return formatFeet(meters, displayUnits.feet ?? "ft");
-    } else {
-        return formatMiles(miles, absMiles, mileUnitsWithDefault(displayUnits));
+        return formatFeet(meters, displayUnits.feet ?? 'ft');
     }
+    return formatMiles(miles, absMiles, mileUnitsWithDefault(displayUnits));
 };
 
 const formatUK = (meters: number, displayUnits: DistanceDisplayUnits): string => {
     const miles = meters / MILE_IN_METERS;
     const absMiles = Math.abs(miles);
     if (absMiles < 0.125) {
-        return formatYards(meters, displayUnits.yards ?? "yd");
-    } else {
-        return formatMiles(miles, absMiles, mileUnitsWithDefault(displayUnits));
+        return formatYards(meters, displayUnits.yards ?? 'yd');
     }
+    return formatMiles(miles, absMiles, mileUnitsWithDefault(displayUnits));
 };
 
 /**
@@ -194,16 +193,16 @@ const formatUK = (meters: number, displayUnits: DistanceDisplayUnits): string =>
  */
 export const formatDistance = (meters: number, options?: DistanceDisplayUnits): string => {
     if (isNil(meters)) {
-        return "";
+        return '';
     }
-    options = { ...TomTomConfig.instance.get().displayUnits?.distance, ...options };
-    const unitsType = options?.type ?? "metric";
+    const mergedOptions = { ...TomTomConfig.instance.get().displayUnits?.distance, ...options };
+    const unitsType = mergedOptions?.type ?? 'metric';
     switch (unitsType) {
-        case "metric":
-            return formatMetric(meters, options);
-        case "imperial_us":
-            return formatUS(meters, options);
-        case "imperial_uk":
-            return formatUK(meters, options);
+        case 'metric':
+            return formatMetric(meters, mergedOptions);
+        case 'imperial_us':
+            return formatUS(meters, mergedOptions);
+        case 'imperial_uk':
+            return formatUK(meters, mergedOptions);
     }
 };

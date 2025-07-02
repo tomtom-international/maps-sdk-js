@@ -1,4 +1,4 @@
-import type { VehicleEngine } from "./vehicleEngineParams";
+import type { VehicleEngine } from './vehicleEngineParams';
 
 /**
  * Physical properties of the vehicle (sizes and weights).
@@ -49,18 +49,18 @@ export type VehicleDimensions = {
 };
 
 export const loadTypes = [
-    "USHazmatClass1",
-    "USHazmatClass2",
-    "USHazmatClass3",
-    "USHazmatClass4",
-    "USHazmatClass5",
-    "USHazmatClass6",
-    "USHazmatClass7",
-    "USHazmatClass8",
-    "USHazmatClass9",
-    "otherHazmatExplosive",
-    "otherHazmatGeneral",
-    "otherHazmatHarmfulToWater"
+    'USHazmatClass1',
+    'USHazmatClass2',
+    'USHazmatClass3',
+    'USHazmatClass4',
+    'USHazmatClass5',
+    'USHazmatClass6',
+    'USHazmatClass7',
+    'USHazmatClass8',
+    'USHazmatClass9',
+    'otherHazmatExplosive',
+    'otherHazmatGeneral',
+    'otherHazmatHarmfulToWater',
 ];
 
 /**
@@ -120,7 +120,7 @@ export type VehicleParameters = {
      * The adrCode and loadType parameters are independent; please provide both if applicable.
      * @see https://unece.org/about-adr
      */
-    adrCode?: "B" | "C" | "D" | "E";
+    adrCode?: 'B' | 'C' | 'D' | 'E';
     /**
      *
      * The vehicle is used for commercial purposes (big letters on the side) and thus may not be allowed to drive on some roads.

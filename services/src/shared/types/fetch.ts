@@ -10,7 +10,7 @@ export type PostObject<D> = { url: URL; data?: D };
  * * POST method comes with a URL and optional POST data.
  * @ignore
  */
-export type FetchInput<POST_DATA = void> = { method: "GET"; url: URL } | ({ method: "POST" } & PostObject<POST_DATA>);
+export type FetchInput<PostData = void> = { method: 'GET'; url: URL } | ({ method: 'POST' } & PostObject<PostData>);
 
 export type ParsedFetchResponse<T> = Promise<{
     data: Promise<T>;

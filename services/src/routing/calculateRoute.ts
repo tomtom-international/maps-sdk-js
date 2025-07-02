@@ -1,8 +1,8 @@
-import type { Routes } from "@anw/maps-sdk-js/core";
-import type { CalculateRouteParams } from "./types/calculateRouteParams";
-import type { CalculateRouteTemplate } from "./calculateRouteTemplate";
-import { calculateRouteTemplate } from "./calculateRouteTemplate";
-import { callService } from "../shared/serviceTemplate";
+import type { Routes } from '@anw/maps-sdk-js/core';
+import type { CalculateRouteParams } from './types/calculateRouteParams';
+import type { CalculateRouteTemplate } from './calculateRouteTemplate';
+import { calculateRouteTemplate } from './calculateRouteTemplate';
+import { callService } from '../shared/serviceTemplate';
 
 /**
  * The Calculate Route service calculates a route between an origin and a destination,
@@ -19,5 +19,5 @@ import { callService } from "../shared/serviceTemplate";
  */
 export const calculateRoute = async (
     params: CalculateRouteParams,
-    customTemplate?: Partial<CalculateRouteTemplate>
-): Promise<Routes> => callService(params, { ...calculateRouteTemplate, ...customTemplate }, "Routing");
+    customTemplate?: Partial<CalculateRouteTemplate>,
+): Promise<Routes> => callService(params, { ...calculateRouteTemplate, ...customTemplate }, 'Routing');

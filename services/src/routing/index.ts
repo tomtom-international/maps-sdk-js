@@ -3,5 +3,5 @@
  * @category Service
  */
 
-export * from "./types/calculateRouteParams";
-export * from "./calculateRoute";
+export type * from './types/calculateRouteParams';
+export * from './calculateRoute';

@@ -1,4 +1,4 @@
-import type { RoutingAPIResponseError } from "../../shared/types/apiResponseErrorTypes";
+import type { RoutingAPIResponseError } from '../../shared/types/apiResponseErrorTypes';
 
 export type MatrixRouteSummary = {
     lengthInMeters: number;
@@ -22,7 +22,7 @@ export type MatrixRouteResponseData = {
     originIndex: number;
     destinationIndex: number;
     routeSummary?: MatrixRouteSummary;
-    detailedError?: RoutingAPIResponseError["detailedError"];
+    detailedError?: RoutingAPIResponseError['detailedError'];
 };
 
 /**

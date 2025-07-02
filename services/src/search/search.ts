@@ -1,11 +1,11 @@
-import type { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
-import type { GeometrySearchParams } from "../geometry-search";
-import { geometrySearch } from "../geometry-search/geometrySearch";
-import type { GeometrySearchTemplate } from "../geometry-search/geometrySearchTemplate";
-import type { FuzzySearchParams, QueryIntent } from "../fuzzy-search";
-import { fuzzySearch } from "../fuzzy-search/fuzzySearch";
-import type { FuzzySearchTemplate } from "../fuzzy-search/fuzzySearchTemplate";
-import type { SearchSummary } from "../shared";
+import type { Places, SearchPlaceProps } from '@anw/maps-sdk-js/core';
+import type { GeometrySearchParams } from '../geometry-search';
+import { geometrySearch } from '../geometry-search/geometrySearch';
+import type { GeometrySearchTemplate } from '../geometry-search/geometrySearchTemplate';
+import type { FuzzySearchParams, QueryIntent } from '../fuzzy-search';
+import { fuzzySearch } from '../fuzzy-search/fuzzySearch';
+import type { FuzzySearchTemplate } from '../fuzzy-search/fuzzySearchTemplate';
+import type { SearchSummary } from '../shared';
 
 type SearchFeatureCollectionProps = SearchSummary & {
     queryIntent?: QueryIntent[];
@@ -20,9 +20,9 @@ export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionPro
  */
 export const search = async (
     params: GeometrySearchParams | FuzzySearchParams,
-    customTemplate?: Partial<GeometrySearchTemplate | FuzzySearchTemplate>
+    customTemplate?: Partial<GeometrySearchTemplate | FuzzySearchTemplate>,
 ): Promise<SearchResponse> =>
-    "geometries" in params
+    'geometries' in params
         ? geometrySearch(params, customTemplate as GeometrySearchTemplate)
         : fuzzySearch(params, customTemplate as FuzzySearchTemplate);
 

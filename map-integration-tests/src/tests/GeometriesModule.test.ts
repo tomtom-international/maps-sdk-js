@@ -1,14 +1,14 @@
-import type { Page } from "@playwright/test";
-import { test, expect } from "@playwright/test";
-import type { PolygonFeatures } from "core";
-import type { DisplayGeometryProps, GeometryBeforeLayerConfig } from "map";
-import { mapStyleLayerIDs } from "map/src/shared";
-import type { LngLatBoundsLike, MapGeoJSONFeature } from "maplibre-gl";
-import type { Position } from "geojson";
-import { MapTestEnv } from "./util/MapTestEnv";
-import type { MapsSDKThis } from "./types/MapsSDKThis";
-import amsterdamGeometryData from "./data/GeometriesModule.test.data.json";
-import netherlandsGeometryData from "./data/GeometriesModule-Netherlands.test.data.json";
+import type { Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import type { PolygonFeatures } from 'core';
+import type { DisplayGeometryProps, GeometryBeforeLayerConfig } from 'map';
+import { mapStyleLayerIDs } from 'map/src/shared';
+import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
+import type { Position } from 'geojson';
+import { MapTestEnv } from './util/MapTestEnv';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
+import netherlandsGeometryData from './data/GeometriesModule-Netherlands.test.data.json';
 import {
     getGeometriesSourceAndLayerIDs,
     getLayerByID,
@@ -19,8 +19,8 @@ import {
     showGeometry,
     waitForMapIdle,
     waitForTimeout,
-    waitUntilRenderedFeatures
-} from "./util/TestUtils";
+    waitUntilRenderedFeatures,
+} from './util/TestUtils';
 
 const getNumVisibleLayers = async (page: Page, sourceID: string) => getNumVisibleLayersBySource(page, sourceID);
 
@@ -38,10 +38,10 @@ const waitUntilRenderedGeometry = async (
     page: Page,
     numFeatures: number,
     position: Position,
-    layerIDs: string[]
+    layerIDs: string[],
 ): Promise<MapGeoJSONFeature[]> => waitUntilRenderedFeatures(page, layerIDs, numFeatures, 3000, position);
 
-test.describe("Geometry integration tests", () => {
+test.describe('Geometry integration tests', () => {
     const geometryData = amsterdamGeometryData as PolygonFeatures;
     const netherlandsData = netherlandsGeometryData as unknown as PolygonFeatures<DisplayGeometryProps>;
 
@@ -51,7 +51,7 @@ test.describe("Geometry integration tests", () => {
     const outsideAmsterdamNorth = [4.93236, 52.41518];
     const outsideAmsterdamSouth = [4.8799, 52.3087];
 
-    test("Show a geometry on the map, default module config", async ({ page }) => {
+    test('Show a geometry on the map, default module config', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox as LngLatBoundsLike });
         await initGeometries(page);
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
@@ -76,12 +76,12 @@ test.describe("Geometry integration tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Show a geometry on the map right after changing the map style", async ({ page }) => {
+    test('Show a geometry on the map right after changing the map style', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox as LngLatBoundsLike });
         await initGeometries(page);
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
         const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
-        await setStyle(page, "standardDark");
+        await setStyle(page, 'standardDark');
         await showGeometry(page, geometryData);
         await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -97,7 +97,7 @@ test.describe("Geometry integration tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Show multiple geometries in the map with title, default config", async ({ page }) => {
+    test('Show multiple geometries in the map with title, default config', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox as LngLatBoundsLike });
         await initGeometries(page);
 
@@ -116,18 +116,18 @@ test.describe("Geometry integration tests", () => {
         expect(features).toHaveLength(12);
         features.forEach((feature) => {
             expect(feature).toMatchObject({
-                properties: { title: JSON.parse(feature.properties.address).freeformAddress }
+                properties: { title: JSON.parse(feature.properties.address).freeformAddress },
             });
         });
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Show multiple geometries in the map with title, custom config", async ({ page }) => {
+    test('Show multiple geometries in the map with title, custom config', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox as LngLatBoundsLike });
         await initGeometries(page, {
-            colorConfig: { fillColor: "#00ccbb", fillOpacity: 0.6 },
-            textConfig: { textField: "CustomText" }
+            colorConfig: { fillColor: '#00ccbb', fillOpacity: 0.6 },
+            textConfig: { textField: 'CustomText' },
         });
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
         const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
@@ -146,14 +146,14 @@ test.describe("Geometry integration tests", () => {
         const features = await queryRenderedFeatures(page, titleLayerIDs);
         expect(features).toHaveLength(12);
         features.forEach((feature) => {
-            expect(feature).toMatchObject({ properties: { title: "CustomText", color: "#00ccbb" } });
+            expect(feature).toMatchObject({ properties: { title: 'CustomText', color: '#00ccbb' } });
         });
 
         const geometryFillLayer = await getLayerByID(page, firstGeometryLayerID);
         // @ts-ignore
-        expect(geometryFillLayer.paint["fill-opacity"]).toBe(0.6);
+        expect(geometryFillLayer.paint['fill-opacity']).toBe(0.6);
 
-        await moveBeforeLayer(page, "lowestRoadLine");
+        await moveBeforeLayer(page, 'lowestRoadLine');
         await waitForMapIdle(page);
         let layers = await getAllLayers(page);
         const findGeometriesLayerIndex = () => layers.findIndex((layer) => layer.id === firstGeometryLayerID);
@@ -162,7 +162,7 @@ test.describe("Geometry integration tests", () => {
         const lowestRoadLineIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestRoadLine);
         expect(geometriesLayerIndex).toBeLessThan(lowestRoadLineIndex);
 
-        await moveBeforeLayer(page, "lowestBuilding");
+        await moveBeforeLayer(page, 'lowestBuilding');
         await waitForMapIdle(page);
         layers = await getAllLayers(page);
         geometriesLayerIndex = findGeometriesLayerIndex();
@@ -171,7 +171,7 @@ test.describe("Geometry integration tests", () => {
         expect(geometriesLayerIndex).toBeLessThan(lowestBuildingIndex);
 
         // changing map style and verifying again:
-        await setStyle(page, "standardDark");
+        await setStyle(page, 'standardDark');
         await waitForMapIdle(page);
         // Extra defensive wait since there might be a brief idle moment between changing style and restoring geometries:
         await waitForTimeout(1000);

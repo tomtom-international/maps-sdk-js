@@ -6,7 +6,7 @@ export type MapEventsConfig = {
      * * point-then-box: first the features are queried at the specific event point. If none returned, then they're queried within the padding box.
      * @default box
      */
-    precisionMode?: "box" | "point" | "point-then-box";
+    precisionMode?: 'box' | 'point' | 'point-then-box';
     /**
      * Optional padding box to be inserted around the event point, in pixels.
      * * Ignored if precisionMode is set to "point".

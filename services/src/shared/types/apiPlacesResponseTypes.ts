@@ -7,9 +7,9 @@ import type {
     EntryPoint,
     OpeningHours,
     SearchPlaceProps,
-    TimeZone
-} from "@anw/maps-sdk-js/core";
-import type { SearchSummary } from "./searchSummary";
+    TimeZone,
+} from '@anw/maps-sdk-js/core';
+import type { SearchSummary } from './searchSummary';
 
 /**
  * @ignore
@@ -57,7 +57,7 @@ export type BoundingBoxAPI = BoundingBoxTopLeftAPI | BoundingBoxSouthWestAPI;
 /**
  * @ignore
  */
-export type EntryPointAPI = Omit<EntryPoint, "position"> & {
+export type EntryPointAPI = Omit<EntryPoint, 'position'> & {
     /**
      * Position of the entry point.
      */
@@ -89,7 +89,7 @@ export type AddressRangesAPI = {
 /**
  * @ignore
  */
-export type SummaryAPI = Omit<SearchSummary, "geoBias"> & {
+export type SummaryAPI = Omit<SearchSummary, 'geoBias'> & {
     geoBias?: LatLonAPI;
 };
 
@@ -118,7 +118,7 @@ export type TimeRangeAPI = {
 /**
  * @ignore
  */
-export type OpeningHoursAPI = Omit<OpeningHours, "alwaysOpenThisPeriod" | "timeRanges"> & {
+export type OpeningHoursAPI = Omit<OpeningHours, 'alwaysOpenThisPeriod' | 'timeRanges'> & {
     timeRanges: TimeRangeAPI[];
 };
 
@@ -143,7 +143,7 @@ export type POIAPI = {
 /**
  * @ignore
  */
-export type ConnectorAPI = Omit<Connector, "type"> & {
+export type ConnectorAPI = Omit<Connector, 'type'> & {
     connectorType: ConnectorType;
 };
 
@@ -159,7 +159,7 @@ export type ChargingParkAPI = {
  */
 export type CommonSearchPlaceResultAPI = Omit<
     SearchPlaceProps,
-    "distance" | "position" | "addressRanges" | "geographyType" | "entryPoints" | "chargingPark"
+    'distance' | 'position' | 'addressRanges' | 'geographyType' | 'entryPoints' | 'chargingPark'
 > & {
     id: string;
     position: LatLonAPI;

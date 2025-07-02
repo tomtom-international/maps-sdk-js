@@ -22,14 +22,7 @@
       "radiusMeters": 30,
       "returnRoadUse": true,
       "returnSpeedLimit": true,
-      "roadUses": [
-        "LimitedAccess",
-        "Arterial",
-        "Terminal",
-        "Ramp",
-        "Rotary",
-        "LocalStreet"
-      ],
+      "roadUses": ["LimitedAccess", "Arterial", "Terminal", "Ramp", "Rotary", "LocalStreet"],
       "view": "AR"
     }
   ]

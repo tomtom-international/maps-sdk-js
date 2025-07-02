@@ -1,6 +1,6 @@
-import type { Feature, GeoJsonObject, Point } from "geojson";
-import type { GeoInput, GeoInputType, HasLngLat, Waypoint } from "../types";
-import { getPositionStrict, toPointFeature } from "./lngLat";
+import type { Feature, GeoJsonObject, Point } from 'geojson';
+import type { GeoInput, GeoInputType, HasLngLat, Waypoint } from '../types';
+import { getPositionStrict, toPointFeature } from './lngLat';
 
 /**
  * Builds a soft waypoint object with the given location coordinates and radius.
@@ -11,7 +11,7 @@ import { getPositionStrict, toPointFeature } from "./lngLat";
  */
 export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Waypoint => {
     let inputAsFeature: Feature<Point>;
-    if (Array.isArray(hasLngLat) || (hasLngLat as GeoJsonObject).type !== "Feature") {
+    if (Array.isArray(hasLngLat) || (hasLngLat as GeoJsonObject).type !== 'Feature') {
         inputAsFeature = toPointFeature(getPositionStrict(hasLngLat));
     } else {
         inputAsFeature = hasLngLat as Feature<Point>;
@@ -26,18 +26,16 @@ export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Wayp
 export const getGeoInputType = (geoInput: GeoInput): GeoInputType => {
     if (Array.isArray(geoInput)) {
         if (Array.isArray(geoInput[0])) {
-            return "path";
-        } else {
-            return "waypoint";
+            return 'path';
         }
-    } else if (geoInput.type === "Feature") {
-        if (geoInput.geometry.type === "LineString") {
-            return "path";
-        } else {
-            return "waypoint";
-        }
-    } else {
-        // assuming Point geometries:
-        return "waypoint";
+        return 'waypoint';
     }
+    if (geoInput.type === 'Feature') {
+        if (geoInput.geometry.type === 'LineString') {
+            return 'path';
+        }
+        return 'waypoint';
+    }
+    // assuming Point geometries:
+    return 'waypoint';
 };

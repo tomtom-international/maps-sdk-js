@@ -1,21 +1,21 @@
-import type { StyleModuleConfig } from "../../shared";
+import type { StyleModuleConfig } from '../../shared';
 
 export const baseMapLayerGroupNames = [
-    "land",
-    "water",
-    "borders",
-    "buildings2D",
-    "buildings3D",
-    "houseNumbers",
-    "roadLines",
-    "roadLabels",
-    "roadShields",
-    "placeLabels",
-    "smallerTownLabels",
-    "cityLabels",
-    "capitalLabels",
-    "stateLabels",
-    "countryLabels"
+    'land',
+    'water',
+    'borders',
+    'buildings2D',
+    'buildings3D',
+    'houseNumbers',
+    'roadLines',
+    'roadLabels',
+    'roadShields',
+    'placeLabels',
+    'smallerTownLabels',
+    'cityLabels',
+    'capitalLabels',
+    'stateLabels',
+    'countryLabels',
 ] as const;
 
 /**
@@ -35,7 +35,7 @@ export type BaseMapLayerGroups = {
      * * included: only the specified groups are considered
      * * excluded: all the base map groups except the specified ones are considered
      */
-    mode: "include" | "exclude";
+    mode: 'include' | 'exclude';
     /**
      * The names for the groups to be included or excluded.
      */

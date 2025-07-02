@@ -1,10 +1,10 @@
-import type { LegSectionProps, SummaryBase, SectionProps, SectionsProps, SectionType } from "@anw/maps-sdk-js/core";
-import { inputSectionTypes } from "@anw/maps-sdk-js/core";
-import { putIntegrationTestsAPIKey } from "../../shared/tests/integrationTestUtils";
-import { calculateRoute } from "../calculateRoute";
-import type { CalculateRouteParams } from "../types/calculateRouteParams";
-import type { CalculateRouteResponseAPI } from "../types/apiResponseTypes";
-import type { CalculateRouteRequestAPI } from "../types/apiRequestTypes";
+import type { LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@anw/maps-sdk-js/core';
+import { inputSectionTypes } from '@anw/maps-sdk-js/core';
+import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
+import { calculateRoute } from '../calculateRoute';
+import type { CalculateRouteParams } from '../types/calculateRouteParams';
+import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
+import type { CalculateRouteRequestAPI } from '../types/apiRequestTypes';
 
 const assertSummaryBasics = (summary: SummaryBase): void => {
     expect(summary).toBeDefined();
@@ -27,23 +27,23 @@ const assertSectionBasics = (section: SectionProps): void => {
     expect(section.endPointIndex).toBeDefined();
 };
 
-describe("Calculate route integration tests", () => {
+describe('Calculate route integration tests', () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
     test(
-        "Route from Kandersteg to Dover via Lötschen Pass with specified " +
-            "sectionTypes and combustion vehicle parameters",
+        'Route from Kandersteg to Dover via Lötschen Pass with specified ' +
+            'sectionTypes and combustion vehicle parameters',
         async () => {
-            const testInputSectionTypes: SectionType[] = ["carTrain", "motorway", "toll", "urban"];
+            const testInputSectionTypes: SectionType[] = ['carTrain', 'motorway', 'toll', 'urban'];
 
             const result = await calculateRoute({
                 geoInputs: [
                     [7.675106, 46.490793],
                     [7.84328, 46.403849], //TODO Lötschen Pass was not working with Orbis, so I moved point a little bit, it was originally [7.74328, 46.403849]
-                    [1.32248, 51.111645]
+                    [1.32248, 51.111645],
                 ],
-                costModel: { traffic: "live", avoid: ["tunnels", "lowEmissionZones"], routeType: "efficient" },
-                sectionTypes: testInputSectionTypes
+                costModel: { traffic: 'live', avoid: ['tunnels', 'lowEmissionZones'], routeType: 'efficient' },
+                sectionTypes: testInputSectionTypes,
                 // TODO vehicle measurements are not working with Orbis, so I commented them out
                 // vehicle: {
                 //     dimensions: { weightKG: 1500 },
@@ -92,16 +92,16 @@ describe("Calculate route integration tests", () => {
             }
             // Asserting the lack of unrequested sections in the response:
             for (const inputSectionType of inputSectionTypes.filter(
-                (sectionType) => !["leg", ...testInputSectionTypes].includes(sectionType)
+                (sectionType) => !['leg', ...testInputSectionTypes].includes(sectionType),
             )) {
                 expect(routeProperties.sections[inputSectionType]).toBeUndefined();
             }
             expect(routeProperties.progress?.length).toBeGreaterThan(0);
-        }
+        },
     );
 
     // TODO test doesn't make sense any more because of the new routing engine, so I commented it out
-    test.skip("Amsterdam to Leiden to Rotterdam with electric vehicle parameters (non - LDEVR)", async () => {
+    test.skip('Amsterdam to Leiden to Rotterdam with electric vehicle parameters (non - LDEVR)', async () => {
         const result = await calculateRoute({
             geoInputs: [
                 [4.89066, 52.37317],
@@ -116,8 +116,8 @@ describe("Calculate route integration tests", () => {
                 //     },
                 //     properties: { radiusMeters: 20 }
                 // },
-                [4.47059, 51.92291]
-            ]
+                [4.47059, 51.92291],
+            ],
             // TODO vehicle measurements are not working with Orbis, so I commented them out
             // vehicle: {
             //     dimensions: {
@@ -160,20 +160,20 @@ describe("Calculate route integration tests", () => {
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
-    test("LDEVR with alternatives and guidance", async () => {
+    test('LDEVR with alternatives and guidance', async () => {
         const params: CalculateRouteParams = {
             geoInputs: [
                 [13.492, 52.507],
-                [9.624, 50.104]
+                [9.624, 50.104],
             ],
             maxAlternatives: 1,
             commonEVRoutingParams: {
                 currentChargeInkWh: 20,
                 minChargeAtDestinationInkWh: 4,
                 minChargeAtChargingStopsInkWh: 4,
-                vehicleModelId: "54B969E8-E28D-11EC-8FEA-0242AC120002"
+                vehicleModelId: '54B969E8-E28D-11EC-8FEA-0242AC120002',
             },
-            guidance: { type: "coded" }
+            guidance: { type: 'coded' },
         };
 
         const result = await calculateRoute(params);
@@ -212,33 +212,33 @@ describe("Calculate route integration tests", () => {
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
-    test("Roses to Olot thrilling route with alternatives", async () => {
+    test('Roses to Olot thrilling route with alternatives', async () => {
         const result = await calculateRoute({
-            language: "es-ES",
+            language: 'es-ES',
             geoInputs: [
                 [3.1748, 42.26297],
-                [2.48819, 42.18211]
+                [2.48819, 42.18211],
             ],
             costModel: {
-                avoid: ["carpools", "ferries", "carTrains"],
-                traffic: "historical",
-                routeType: "thrilling"
+                avoid: ['carpools', 'ferries', 'carTrains'],
+                traffic: 'historical',
+                routeType: 'thrilling',
                 // TODO no trhilling params with Orbis, so I commented them out
                 // thrillingParams: {
                 //     hilliness: "low",
                 //     windingness: "high"
                 // }
             },
-            computeAdditionalTravelTimeFor: "all",
+            computeAdditionalTravelTimeFor: 'all',
             guidance: {
-                type: "coded",
+                type: 'coded',
                 version: 2,
-                phonetics: "IPA",
-                roadShieldReferences: "all"
+                phonetics: 'IPA',
+                roadShieldReferences: 'all',
             },
             maxAlternatives: 2,
-            sectionTypes: ["traffic", "ferry", "toll", "lanes", "speedLimit", "roadShields"],
-            travelMode: "car"
+            sectionTypes: ['traffic', 'ferry', 'toll', 'lanes', 'speedLimit', 'roadShields'],
+            travelMode: 'car',
             // TODO no travel mode motorcycle with Orbis, or option to se when, so I commented it out
             // travelMode: "motorcycle",
             // when: {
@@ -266,15 +266,15 @@ describe("Calculate route integration tests", () => {
         }
     });
 
-    test("Route reconstruction flows", async () => {
+    test('Route reconstruction flows', async () => {
         const firstRoute = (
             await calculateRoute({
                 // Amsterdam to Leiden to Rotterdam
                 geoInputs: [
                     [4.89066, 52.37317],
                     [4.49015, 52.16109],
-                    [4.47059, 51.92291]
-                ]
+                    [4.47059, 51.92291],
+                ],
             })
         ).features[0];
 
@@ -292,7 +292,7 @@ describe("Calculate route integration tests", () => {
         // checking that the first and reconstructed routes have the same origin and destination points:
         expect(firstRouteCoords[0]).toStrictEqual(reconstructedRouteCoords[0]);
         expect(firstRouteCoords[firstRouteCoords.length - 1]).toStrictEqual(
-            reconstructedRouteCoords[reconstructedRouteCoords.length - 1]
+            reconstructedRouteCoords[reconstructedRouteCoords.length - 1],
         );
 
         // comparing sections (the amount of sections for each type should be the same):
@@ -307,7 +307,7 @@ describe("Calculate route integration tests", () => {
         // with new origin in Zaandam and new destination in Dordrecht
         const routeWithEmbeddedRoute = (
             await calculateRoute({
-                geoInputs: [[4.82409, 52.43924], reconstructedRoute, [4.6684, 51.81111]]
+                geoInputs: [[4.82409, 52.43924], reconstructedRoute, [4.6684, 51.81111]],
             })
         ).features[0];
 
@@ -321,43 +321,43 @@ describe("Calculate route integration tests", () => {
         // 2 more legs expected before and after the embedded route:
         expect(routeWithEmbeddedRouteSections.leg).toHaveLength(reconstructedRouteSections.leg.length + 2);
         expect(routeWithEmbeddedRouteSections.urban?.length).toBeGreaterThan(
-            reconstructedRouteSections.urban?.length || 0
+            reconstructedRouteSections.urban?.length || 0,
         );
 
         expect(reconstructedRoute.properties.progress?.length).toBeGreaterThan(0);
     });
 
-    test("Calculate route with API request and response callbacks", async () => {
+    test('Calculate route with API request and response callbacks', async () => {
         const geoInputs = [
             [7.675106, 51.490793],
-            [7.74328, 51.403849]
+            [7.74328, 51.403849],
         ];
         const onAPIRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
         const onAPIResponse = jest.fn() as (
             request: CalculateRouteRequestAPI,
-            response: CalculateRouteResponseAPI
+            response: CalculateRouteResponseAPI,
         ) => void;
         const result = await calculateRoute({ geoInputs, onAPIRequest, onAPIResponse });
         expect(result).toBeDefined();
-        const expectedAPIRequest = { method: "GET", url: expect.any(URL) };
+        const expectedAPIRequest = { method: 'GET', url: expect.any(URL) };
         expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
         expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.anything());
     });
 
-    test("Calculate route with API request and error response callbacks", async () => {
+    test('Calculate route with API request and error response callbacks', async () => {
         const geoInputs = [
             [7.675106, 51.490793],
-            [0, 0]
+            [0, 0],
         ];
         const onAPIRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
         const onAPIResponse = jest.fn() as (
             request: CalculateRouteRequestAPI,
-            response: CalculateRouteResponseAPI
+            response: CalculateRouteResponseAPI,
         ) => void;
         await expect(() => calculateRoute({ geoInputs, onAPIRequest, onAPIResponse })).rejects.toThrow(
-            expect.objectContaining({ status: 400 })
+            expect.objectContaining({ status: 400 }),
         );
-        const expectedAPIRequest = { method: "GET", url: expect.any(URL) };
+        const expectedAPIRequest = { method: 'GET', url: expect.any(URL) };
         expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
         expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.objectContaining({ status: 400 }));
     });

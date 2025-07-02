@@ -1,14 +1,14 @@
-import type { ConnectorType, Fuel, OpeningHoursMode, POICategory } from "@anw/maps-sdk-js/core";
-import type { CommonPlacesParams, SearchIndexType } from "./commonPlacesParams";
-import type { RelatedPoisRequest, TimeZoneRequest } from "./servicesTypes";
+import type { ConnectorType, Fuel, OpeningHoursMode, POICategory } from '@anw/maps-sdk-js/core';
+import type { CommonPlacesParams, SearchIndexType } from './commonPlacesParams';
+import type { RelatedPoisRequest, TimeZoneRequest } from './servicesTypes';
 
 /**
  * Common parameters related to search services.
  * @see https://developer.tomtom.com/search-api/documentation/search-service/search-service
  */
-export type CommonSearchParams<API_REQUEST, API_RESPONSE> = CommonPlacesParams<API_REQUEST, API_RESPONSE> & {
+export type CommonSearchParams<ApiRequest, ApiResponse> = CommonPlacesParams<ApiRequest, ApiResponse> & {
     /**
-     * Parameter allows for fine-tuning Search by specifying which indexes to utilize for the search.
+     * Parameter allows for fine-tuning Search by specifying which indexes to use for the search.
      */
     indexes?: SearchIndexType[];
 

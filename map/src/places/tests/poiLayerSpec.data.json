@@ -4,10 +4,7 @@
     "icon-image": "{icon}",
     "icon-padding": 5,
     "icon-size": {
-      "stops": [
-        [10, 0.7],
-        [18, 1]
-      ]
+      "stops": [[10, 0.7], [18, 1]]
     },
     "symbol-placement": "point",
     "symbol-sort-key": ["get", "priority"],

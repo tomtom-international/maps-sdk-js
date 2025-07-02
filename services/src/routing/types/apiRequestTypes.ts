@@ -1,16 +1,16 @@
-import type { LatitudeLongitudePointAPI } from "./apiResponseTypes";
-import type { ChargingModel } from "../../shared/types/vehicleEngineParams";
-import type { FetchInput } from "../../shared";
+import type { LatitudeLongitudePointAPI } from './apiResponseTypes';
+import type { ChargingModel } from '../../shared/types/vehicleEngineParams';
+import type { FetchInput } from '../../shared';
 
 /**
  * @ignore
  */
 export type PointWaypointAPI = {
-    waypointSourceType: "USER_DEFINED" | "AUTO_GENERATED";
+    waypointSourceType: 'USER_DEFINED' | 'AUTO_GENERATED';
     supportingPointIndex: number;
 };
 
-export type ChargingParametersAPI = Omit<ChargingModel, "maxChargeKWH">;
+export type ChargingParametersAPI = Omit<ChargingModel, 'maxChargeKWH'>;
 
 /**
  * @ignore

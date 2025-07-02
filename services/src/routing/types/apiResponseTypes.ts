@@ -1,19 +1,19 @@
 import type {
     BatteryCharging,
+    ChargingParkLocation,
     Guidance,
     Instruction,
+    LaneDirection,
     LegSummary,
     PlugType,
+    PossibleLaneSeparator,
+    RoadShieldReference,
+    RoutePathPoint,
+    RouteProgress,
     RouteSummary,
     TrafficIncidentTEC,
     TravelMode,
-    RoutePathPoint,
-    LaneDirection,
-    PossibleLaneSeparator,
-    RoadShieldReference,
-    ChargingParkLocation,
-    RouteProgress
-} from "@anw/maps-sdk-js/core";
+} from '@anw/maps-sdk-js/core';
 
 /**
  * @ignore
@@ -26,28 +26,28 @@ export type ReportAPI = {
  * @ignore
  */
 export type SectionTypeAPI =
-    | "CAR_TRAIN"
-    | "COUNTRY"
-    | "FERRY"
-    | "MOTORWAY"
-    | "PEDESTRIAN"
-    | "TOLL"
-    | "TOLL_VIGNETTE"
-    | "TRAFFIC"
-    | "TRAVEL_MODE"
-    | "TUNNEL"
-    | "UNPAVED"
-    | "URBAN"
-    | "CARPOOL"
-    | "LOW_EMISSION_ZONE"
-    | "LANES"
-    | "SPEED_LIMIT"
-    | "ROAD_SHIELDS";
+    | 'CAR_TRAIN'
+    | 'COUNTRY'
+    | 'FERRY'
+    | 'MOTORWAY'
+    | 'PEDESTRIAN'
+    | 'TOLL'
+    | 'TOLL_VIGNETTE'
+    | 'TRAFFIC'
+    | 'TRAVEL_MODE'
+    | 'TUNNEL'
+    | 'UNPAVED'
+    | 'URBAN'
+    | 'CARPOOL'
+    | 'LOW_EMISSION_ZONE'
+    | 'LANES'
+    | 'SPEED_LIMIT'
+    | 'ROAD_SHIELDS';
 
 /**
  * @ignore
  */
-export type TrafficCategoryAPI = "JAM" | "ROAD_WORK" | "ROAD_CLOSURE" | "OTHER";
+export type TrafficCategoryAPI = 'JAM' | 'ROAD_WORK' | 'ROAD_CLOSURE' | 'OTHER';
 
 /**
  * @ignore
@@ -56,7 +56,7 @@ export type SectionAPI = {
     sectionType: SectionTypeAPI;
     startPointIndex: number;
     endPointIndex: number;
-    travelMode?: TravelMode | "other";
+    travelMode?: TravelMode | 'other';
     countryCode?: string;
     simpleCategory?: TrafficCategoryAPI;
     magnitudeOfDelay?: number;
@@ -73,7 +73,7 @@ export type SectionAPI = {
 /**
  * @ignore
  */
-export type CurrentTypeAPI = "Direct_Current" | "Alternating_Current_1_Phase" | "Alternating_Current_3_Phase";
+export type CurrentTypeAPI = 'Direct_Current' | 'Alternating_Current_1_Phase' | 'Alternating_Current_3_Phase';
 
 // We focus on defining the (internal) API type reusing as much as possible from the SDK one.
 // This helps to track how the parsing logic "forwards" all the API parts which are the same in SDK.
@@ -82,19 +82,19 @@ export type CurrentTypeAPI = "Direct_Current" | "Alternating_Current_1_Phase" | 
  */
 export type SummaryAPI = Omit<
     RouteSummary & LegSummary,
-    | "arrivalTime"
-    | "departureTime"
-    | "batteryConsumptionInPCT"
-    | "remainingChargeAtArrivalInPCT"
-    | "chargingInformationAtEndOfLeg"
+    | 'arrivalTime'
+    | 'departureTime'
+    | 'batteryConsumptionInPCT'
+    | 'remainingChargeAtArrivalInPCT'
+    | 'chargingInformationAtEndOfLeg'
 > & {
     arrivalTime: string;
     departureTime: string;
     chargingInformationAtEndOfLeg?: Omit<
         BatteryCharging,
-        "targetChargePCT" | "chargingConnectionInfo" | "chargingParkLocation"
+        'targetChargePCT' | 'chargingConnectionInfo' | 'chargingParkLocation'
     > & {
-        chargingParkLocation: Omit<ChargingParkLocation, "coordinates"> & {
+        chargingParkLocation: Omit<ChargingParkLocation, 'coordinates'> & {
             coordinate: LatitudeLongitudePointAPI;
         };
         chargingConnectionInfo: {
@@ -127,14 +127,14 @@ export type LegAPI = {
 /**
  * @ignore
  */
-export type RoutePathPointAPI = Omit<RoutePathPoint, "point"> & {
+export type RoutePathPointAPI = Omit<RoutePathPoint, 'point'> & {
     point: LatitudeLongitudePointAPI;
 };
 
 /**
  * @ignore
  */
-export type InstructionAPI = Omit<Instruction, "maneuverPoint" | "routePath" | "pathPointIndex"> & {
+export type InstructionAPI = Omit<Instruction, 'maneuverPoint' | 'routePath' | 'pathPointIndex'> & {
     maneuverPoint: LatitudeLongitudePointAPI;
     routePath: RoutePathPointAPI[];
 };
@@ -142,7 +142,7 @@ export type InstructionAPI = Omit<Instruction, "maneuverPoint" | "routePath" | "
 /**
  * @ignore
  */
-export type GuidanceAPI = Omit<Guidance, "instructions"> & {
+export type GuidanceAPI = Omit<Guidance, 'instructions'> & {
     instructions: InstructionAPI[];
 };
 

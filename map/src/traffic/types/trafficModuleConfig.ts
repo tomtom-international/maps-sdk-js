@@ -1,23 +1,23 @@
-import type { DelayMagnitude } from "@anw/maps-sdk-js/core";
-import type { FilterShowMode, ValuesFilter, StyleModuleConfig } from "../../shared";
+import type { DelayMagnitude } from '@anw/maps-sdk-js/core';
+import type { FilterShowMode, StyleModuleConfig, ValuesFilter } from '../../shared';
 
 /**
  * Available incident categories.
  */
 export const incidentCategories = [
-    "unknown",
-    "accident",
-    "fog",
-    "dangerous_conditions",
-    "rain",
-    "ice",
-    "jam",
-    "lane_closed",
-    "road_closed",
-    "road_works",
-    "wind",
-    "flooding",
-    "broken_down_vehicle"
+    'unknown',
+    'accident',
+    'fog',
+    'dangerous_conditions',
+    'rain',
+    'ice',
+    'jam',
+    'lane_closed',
+    'road_closed',
+    'road_works',
+    'wind',
+    'flooding',
+    'broken_down_vehicle',
 ] as const;
 
 /**
@@ -41,13 +41,13 @@ export const incidentCategoriesMapping: Record<IncidentCategory, number> = {
     road_works: 9,
     wind: 10,
     flooding: 11,
-    broken_down_vehicle: 14
+    broken_down_vehicle: 14,
 } as const;
 
 /**
  * Available road categories.
  */
-export const roadCategories = ["motorway", "trunk", "primary", "secondary", "tertiary", "street"] as const;
+export const roadCategories = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'street'] as const;
 
 /**
  * Available road categories.
@@ -57,7 +57,7 @@ export type RoadCategory = (typeof roadCategories)[number];
 /**
  * Available tertiary road sub-categories.
  */
-export const tertiaryRoadCategories = ["connecting", "major_local"] as const;
+export const tertiaryRoadCategories = ['connecting', 'major_local'] as const;
 /**
  * Available tertiary road sub-categories.
  */
@@ -66,7 +66,7 @@ export type TertiaryRoadCategory = (typeof tertiaryRoadCategories)[number];
 /**
  * Available street road sub-categories.
  */
-export const streetRoadCategories = ["local", "minor_local"] as const;
+export const streetRoadCategories = ['local', 'minor_local'] as const;
 /**
  * Available street road sub-categories.
  */

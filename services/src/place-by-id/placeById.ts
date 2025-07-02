@@ -1,7 +1,7 @@
-import { callService } from "../shared/serviceTemplate";
-import type { PlaceByIdParams, PlaceByIdResponse } from "./types";
-import type { PlaceByIdTemplate } from "./placeByIdTemplate";
-import { placeByIdTemplate } from "./placeByIdTemplate";
+import { callService } from '../shared/serviceTemplate';
+import type { PlaceByIdParams, PlaceByIdResponse } from './types';
+import type { PlaceByIdTemplate } from './placeByIdTemplate';
+import { placeByIdTemplate } from './placeByIdTemplate';
 
 /**
  *
@@ -11,7 +11,7 @@ import { placeByIdTemplate } from "./placeByIdTemplate";
  */
 export const placeById = async (
     params: PlaceByIdParams,
-    customTemplate?: Partial<PlaceByIdTemplate>
-): Promise<PlaceByIdResponse> => callService(params, { ...placeByIdTemplate, ...customTemplate }, "PlaceById");
+    customTemplate?: Partial<PlaceByIdTemplate>,
+): Promise<PlaceByIdResponse> => callService(params, { ...placeByIdTemplate, ...customTemplate }, 'PlaceById');
 
 export default placeById;

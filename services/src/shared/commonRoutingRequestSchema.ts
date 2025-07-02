@@ -1,7 +1,7 @@
-import { z } from "zod/v4-mini";
-import { vehicleParametersSchema } from "./vehicleSchema";
-import { avoidableTypes } from "@anw/maps-sdk-js/core";
-import { routeTypes } from "./types/commonRoutingParams";
+import { z } from 'zod/v4-mini';
+import { vehicleParametersSchema } from './vehicleSchema';
+import { avoidableTypes } from '@anw/maps-sdk-js/core';
+import { routeTypes } from './types/commonRoutingParams';
 
 /**
  * @ignore
@@ -11,21 +11,21 @@ export const commonRoutingRequestSchema = z.partial(
         costModel: z.partial(
             z.object({
                 avoid: z.array(z.enum(avoidableTypes)),
-                traffic: z.optional(z.enum(["live", "historical"])),
+                traffic: z.optional(z.enum(['live', 'historical'])),
                 routeType: z.optional(z.enum(routeTypes)),
                 thrillingParams: z.optional(
                     z.object({
-                        hilliness: z.optional(z.enum(["low", "normal", "high"])),
-                        windingness: z.optional(z.enum(["low", "normal", "high"]))
-                    })
-                )
-            })
+                        hilliness: z.optional(z.enum(['low', 'normal', 'high'])),
+                        windingness: z.optional(z.enum(['low', 'normal', 'high'])),
+                    }),
+                ),
+            }),
         ),
         travelMode: z.string(),
         vehicle: vehicleParametersSchema,
         when: z.object({
-            option: z.enum(["departAt", "arriveBy"]),
-            date: z.date()
-        })
-    })
+            option: z.enum(['departAt', 'arriveBy']),
+            date: z.date(),
+        }),
+    }),
 );

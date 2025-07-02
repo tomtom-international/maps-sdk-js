@@ -1,10 +1,6 @@
 [
   ["All defaults", {}, {}],
-  [
-    "Defaults with style object input, yet no added parts",
-    {},
-    { "style": { "type": "published" } }
-  ],
+  ["Defaults with style object input, yet no added parts", {}, { "style": { "type": "published" } }],
   [
     "Defaults with traffic incidents",
     {},
@@ -67,11 +63,7 @@
       }
     }
   ],
-  [
-    "Mono light map, basic",
-    { "zoom": 14, "minZoom": 2 },
-    { "style": "monoLight" }
-  ],
+  ["Mono light map, basic", { "zoom": 14, "minZoom": 2 }, { "style": "monoLight" }],
   [
     "Mono light map, with included parts",
     { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
@@ -83,11 +75,7 @@
       }
     }
   ],
-  [
-    "Mono dark map, basic",
-    { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
-    { "style": "monoDark" }
-  ],
+  ["Mono dark map, basic", { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] }, { "style": "monoDark" }],
   [
     "Mono dark map, with included parts",
     { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
@@ -99,11 +87,7 @@
       }
     }
   ],
-  [
-    "Satellite map, basic",
-    { "zoom": 12, "minZoom": 2, "center": [-0.12621, 51.50394] },
-    { "style": "satellite" }
-  ],
+  ["Satellite map, basic", { "zoom": 12, "minZoom": 2, "center": [-0.12621, 51.50394] }, { "style": "satellite" }],
   [
     "Satellite map, with hillshade",
     { "zoom": 10, "minZoom": 2, "center": [-0.12621, 51.50394] },

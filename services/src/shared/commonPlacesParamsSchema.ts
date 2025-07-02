@@ -1,9 +1,9 @@
-import { views } from "@anw/maps-sdk-js/core";
-import { z } from "zod/v4-mini";
-import { hasLngLatSchema } from "./geometriesSchema";
+import { views } from '@anw/maps-sdk-js/core';
+import { z } from 'zod/v4-mini';
+import { hasLngLatSchema } from './geometriesSchema';
 
 const placesParamsMandatory = z.object({
-    query: z.string()
+    query: z.string(),
 });
 
 const placesParamsOptional = z.partial(
@@ -13,8 +13,8 @@ const placesParamsOptional = z.partial(
         extendedPostalCodesFor: z.array(z.string()),
         mapcodes: z.array(z.string()),
         view: z.enum(views),
-        geographyTypes: z.array(z.string())
-    })
+        geographyTypes: z.array(z.string()),
+    }),
 );
 
 /**

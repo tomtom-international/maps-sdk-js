@@ -1,19 +1,19 @@
-import type { LngLat, MapGeoJSONFeature } from "maplibre-gl";
-import type { SourceWithLayers } from "./mapsSDKLayerSpecs";
+import type { LngLat, MapGeoJSONFeature } from 'maplibre-gl';
+import type { SourceWithLayers } from './mapsSDKLayerSpecs';
 
 /**
  * Subtype for click events.
  * * click: regular click or tap
  * * contextmenu: right-click
  */
-export type ClickEventType = "click" | "contextmenu";
+export type ClickEventType = 'click' | 'contextmenu';
 
 /**
  * Subtype for hover events.
  * * hover: immediate hover
  * * long-hover: hovering over an item for long enough (depending on config, usually more than half a second)
  */
-export type HoverEventType = "hover" | "long-hover";
+export type HoverEventType = 'hover' | 'long-hover';
 
 /**
  * Type of user event supported by the SDK beyond basic MapLibre support.
@@ -40,7 +40,7 @@ export type PutEventStateOptions = {
      * * add: set the event state in this feature regardless of what other features already have.
      * @default put
      */
-    mode?: "put" | "add";
+    mode?: 'put' | 'add';
 
     /**
      * Whether to show the feature after updating the event state.
@@ -103,5 +103,5 @@ export type UserEventHandler<T> = (
     topFeature: T,
     lngLat: LngLat,
     allEventFeatures: MapGeoJSONFeature[],
-    sourceWithLayers: SourceWithLayers
+    sourceWithLayers: SourceWithLayers,
 ) => void;

@@ -1,46 +1,46 @@
-import { buildPlaceByIdRequest } from "../requestBuilder";
-import placeByIdReqObjects from "./requestBuilderPerf.data.json";
-import type { PlaceByIdParams } from "../types";
-import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
+import { buildPlaceByIdRequest } from '../requestBuilder';
+import placeByIdReqObjects from './requestBuilderPerf.data.json';
+import type { PlaceByIdParams } from '../types';
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 
-describe("Place by ID request URL building functional tests", () => {
-    test("Place by ID request URL building mandatory parameters request", () => {
+describe('Place by ID request URL building functional tests', () => {
+    test('Place by ID request URL building mandatory parameters request', () => {
         expect(
             buildPlaceByIdRequest({
-                commonBaseURL: "https://api-test.tomtom.com",
-                apiKey: "testKey",
+                commonBaseURL: 'https://api-test.tomtom.com',
+                apiKey: 'testKey',
                 apiVersion: 1,
-                entityId: "testEntity"
-            }).toString()
+                entityId: 'testEntity',
+            }).toString(),
         ).toStrictEqual(
-            "https://api-test.tomtom.com/maps/orbis/places/place.json?apiVersion=1&key=testKey&entityId=testEntity"
+            'https://api-test.tomtom.com/maps/orbis/places/place.json?apiVersion=1&key=testKey&entityId=testEntity',
         );
     });
-    test("Place by ID request URL building optional parameters request", () => {
+    test('Place by ID request URL building optional parameters request', () => {
         expect(
             buildPlaceByIdRequest({
-                commonBaseURL: "https://api-test.tomtom.com",
-                apiKey: "testKey",
+                commonBaseURL: 'https://api-test.tomtom.com',
+                apiKey: 'testKey',
                 apiVersion: 2,
-                language: "es-ES",
-                entityId: "testEntity",
-                mapcodes: ["Local"],
-                view: "Unified",
-                openingHours: "nextSevenDays",
-                timeZone: "iana",
-                relatedPois: "off"
-            }).toString()
+                language: 'es-ES',
+                entityId: 'testEntity',
+                mapcodes: ['Local'],
+                view: 'Unified',
+                openingHours: 'nextSevenDays',
+                timeZone: 'iana',
+                relatedPois: 'off',
+            }).toString(),
         ).toStrictEqual(
-            "https://api-test.tomtom.com/maps/orbis/places/place.json?apiVersion=2&key=testKey&language=es-ES&entityId=testEntity&mapcodes=Local&view=Unified&openingHours=nextSevenDays&timeZone=iana&relatedPois=off"
+            'https://api-test.tomtom.com/maps/orbis/places/place.json?apiVersion=2&key=testKey&language=es-ES&entityId=testEntity&mapcodes=Local&view=Unified&openingHours=nextSevenDays&timeZone=iana&relatedPois=off',
         );
     });
 });
 
-describe("PlaceById request URL performance tests", () => {
-    test("PlaceById request URL performance test", () => {
+describe('PlaceById request URL performance tests', () => {
+    test('PlaceById request URL performance test', () => {
         expect(
-            bestExecutionTimeMS(() => buildPlaceByIdRequest(placeByIdReqObjects as PlaceByIdParams), 10)
+            bestExecutionTimeMS(() => buildPlaceByIdRequest(placeByIdReqObjects as PlaceByIdParams), 10),
         ).toBeLessThan(MAX_EXEC_TIMES_MS.placeById.requestBuilding);
     });
 });

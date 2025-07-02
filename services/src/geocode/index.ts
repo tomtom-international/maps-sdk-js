@@ -2,6 +2,6 @@
  * @module geocoding
  * @category Service
  */
-export * from "./types/geocodingResponse";
-export * from "./types/geocodingParams";
-export * from "./geocoding";
+export type * from './types/geocodingResponse';
+export type * from './types/geocodingParams';
+export * from './geocoding';

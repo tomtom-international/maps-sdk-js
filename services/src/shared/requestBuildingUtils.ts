@@ -1,8 +1,8 @@
-import type { HasLngLat, POICategory } from "@anw/maps-sdk-js/core";
-import { getPosition } from "@anw/maps-sdk-js/core";
-import type { CommonServiceParams } from "./serviceTypes";
-import isNil from "lodash/isNil";
-import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
+import type { HasLngLat, POICategory } from '@anw/maps-sdk-js/core';
+import { getPosition } from '@anw/maps-sdk-js/core';
+import type { CommonServiceParams } from './serviceTypes';
+import isNil from 'lodash/isNil';
+import { poiCategoriesToID } from '../poi-categories/poiCategoriesToID';
 
 /**
  * @ignore
@@ -12,17 +12,17 @@ import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
 export const appendCommonParams = (
     urlParams: URLSearchParams,
     params: CommonServiceParams,
-    routing?: boolean
+    routing?: boolean,
 ): void => {
-    urlParams.append("apiVersion", String(params.apiVersion));
+    urlParams.append('apiVersion', String(params.apiVersion));
     if (!params.apiAccessToken) {
-        urlParams.append("key", params.apiKey as string);
+        urlParams.append('key', params.apiKey as string);
     }
     // else: access token is injected as a header elsewhere (see injectTomTomHeaders function)
 
     //TODO not sure if this is the best way to handle this, but for routing, language is only supported in the URL
     // if you request guidance instructions
-    !routing && params.language && urlParams.append("language", params.language);
+    !routing && params.language && urlParams.append('language', params.language);
 };
 
 /**
@@ -36,7 +36,7 @@ export const appendCommonParams = (
 export const appendByRepeatingParamName = (
     urlParams: URLSearchParams,
     paramName: string,
-    paramArray?: string[]
+    paramArray?: string[],
 ): void => {
     for (const param of paramArray || []) {
         urlParams.append(paramName, param);
@@ -49,10 +49,10 @@ export const appendByRepeatingParamName = (
 export const appendByJoiningParamValue = (
     urlParams: URLSearchParams,
     name: string,
-    values?: string[] | number[] | (string | number)[]
+    values?: string[] | number[] | (string | number)[],
 ): void => {
     if (Array.isArray(values) && values.length > 0) {
-        urlParams.append(name, values.join(","));
+        urlParams.append(name, values.join(','));
     }
 };
 
@@ -62,7 +62,7 @@ export const appendByJoiningParamValue = (
 export const appendOptionalParam = (
     urlParams: URLSearchParams,
     name: string,
-    value?: string | number | boolean
+    value?: string | number | boolean,
 ): void => {
     !isNil(value) && urlParams.append(name, String(value));
 };
@@ -76,8 +76,8 @@ export const appendOptionalParam = (
 export const appendLatLonParamsFromPosition = (urlParams: URLSearchParams, hasLngLat: HasLngLat | undefined): void => {
     const position = getPosition(hasLngLat);
     if (position) {
-        urlParams.append("lat", String(position[1]));
-        urlParams.append("lon", String(position[0]));
+        urlParams.append('lat', String(position[1]));
+        urlParams.append('lon', String(position[0]));
     }
 };
 
@@ -88,7 +88,7 @@ export const appendLatLonParamsFromPosition = (urlParams: URLSearchParams, hasLn
  */
 export const mapPOICategoriesToIDs = (poiCategories: (number | POICategory)[]): number[] => {
     return poiCategories.map((poiCategory) => {
-        if (typeof poiCategory !== "number") {
+        if (typeof poiCategory !== 'number') {
             return poiCategoriesToID[poiCategory];
         }
         return poiCategory;

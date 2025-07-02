@@ -1,14 +1,14 @@
-import { positionToCSVLatLon } from "../shared/geometry";
-import { appendCommonParams, appendOptionalParam } from "../shared/requestBuildingUtils";
-import type { ReachableRangeParams } from "./types/reachableRangeParams";
-import { appendCommonRoutingParams } from "../shared/commonRoutingRequestBuilder";
-import { getPositionStrict } from "@anw/maps-sdk-js/core";
+import { positionToCSVLatLon } from '../shared/geometry';
+import { appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
+import type { ReachableRangeParams } from './types/reachableRangeParams';
+import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
+import { getPositionStrict } from '@anw/maps-sdk-js/core';
 // import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 
 const buildURLBasePath = (params: ReachableRangeParams): string =>
     params.customServiceBaseURL ||
     `${params.commonBaseURL}/routing/1/calculateReachableRange/${positionToCSVLatLon(
-        getPositionStrict(params.origin)
+        getPositionStrict(params.origin),
     )}/json`;
 
 // const toKWH = (chargePCT: number, engine: ElectricVehicleEngine): number =>
@@ -61,6 +61,6 @@ export const buildReachableRangeRequest = (params: ReachableRangeParams): URL =>
     appendCommonParams(urlParams, params);
     appendCommonRoutingParams(urlParams, params);
     // appendBudget(urlParams, params);
-    appendOptionalParam(urlParams, "maxFerryLengthInMeters", params.maxFerryLengthMeters);
+    appendOptionalParam(urlParams, 'maxFerryLengthInMeters', params.maxFerryLengthMeters);
     return url;
 };

@@ -1,4 +1,4 @@
-import type { BatteryCharging } from "./batteryCharging";
+import type { BatteryCharging } from './batteryCharging';
 
 /**
  * Common summary type for a route or route leg.

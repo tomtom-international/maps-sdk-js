@@ -1,13 +1,13 @@
-import type { HasLngLat } from "@anw/maps-sdk-js/core";
-import type { CommonRoutingParams, CommonServiceParams, DepartArriveParams } from "../../shared";
-import type { ReachableRangeResponseAPI } from "./apiResponseTypes";
+import type { HasLngLat } from '@anw/maps-sdk-js/core';
+import type { CommonRoutingParams, CommonServiceParams, DepartArriveParams } from '../../shared';
+import type { ReachableRangeResponseAPI } from './apiResponseTypes';
 
 export const budgetTypes = [
-    "timeMinutes",
-    "remainingChargeCPT",
-    "spentChargePCT",
-    "spentFuelLiters",
-    "distanceKM"
+    'timeMinutes',
+    'remainingChargeCPT',
+    'spentChargePCT',
+    'spentFuelLiters',
+    'distanceKM',
 ] as const;
 
 export type BudgetType = (typeof budgetTypes)[number];
@@ -39,7 +39,7 @@ export type ReachableRangeOwnParams = {
      * If past dates are supplied or in a way that are impossible to achieve then it will default to departing now.
      * @default depart now
      */
-    when?: DepartArriveParams<"departAt">;
+    when?: DepartArriveParams<'departAt'>;
 };
 
 export type ReachableRangeParams = CommonServiceParams<URL, ReachableRangeResponseAPI> &

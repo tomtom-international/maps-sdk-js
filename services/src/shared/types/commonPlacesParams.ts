@@ -1,15 +1,15 @@
-import type { GeographyType, HasLngLat, MapcodeType, View } from "@anw/maps-sdk-js/core";
-import type { CommonServiceParams } from "../serviceTypes";
+import type { GeographyType, HasLngLat, MapcodeType, View } from '@anw/maps-sdk-js/core';
+import type { CommonServiceParams } from '../serviceTypes';
 
 /**
  * Index representing the type of data to be searched.
  */
-export type SearchIndexType = "Geo" | "PAD" | "Addr" | "Str" | "XStr" | "POI";
+export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
 
 /**
  * Common parameters to services related to places services (search, geocoding, reverse geocoding).
  */
-export type CommonPlacesParams<API_REQUEST, API_RESPONSE> = CommonServiceParams<API_REQUEST, API_RESPONSE> & {
+export type CommonPlacesParams<ApiRequest, ApiResponse> = CommonServiceParams<ApiRequest, ApiResponse> & {
     /**
      * Query string. Must be properly URL encoded (mandatory).
      */

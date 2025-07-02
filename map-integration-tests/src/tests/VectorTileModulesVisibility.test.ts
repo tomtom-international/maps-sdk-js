@@ -1,9 +1,9 @@
-import type { Page } from "@playwright/test";
-import { test, expect } from "@playwright/test";
-import { MapTestEnv } from "./util/MapTestEnv";
-import type { MapsSDKThis } from "./types/MapsSDKThis";
-import { HILLSHADE_SOURCE_ID } from "map/src/shared";
-import { assertNumber, getNumVisibleLayersBySource, getNumVisiblePOILayers } from "./util/TestUtils";
+import type { Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { MapTestEnv } from './util/MapTestEnv';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import { HILLSHADE_SOURCE_ID } from 'map/src/shared';
+import { assertNumber, getNumVisibleLayersBySource, getNumVisiblePOILayers } from './util/TestUtils';
 
 test.describe("Vector tile modules combined visibility tests, to ensure one module doesn't step on another", () => {
     const mapEnv = new MapTestEnv();
@@ -14,21 +14,21 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
     const assertHillshadeVisibility = async (page: Page, hillshadeVisible: boolean) =>
         assertNumber(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID), hillshadeVisible);
 
-    test("Vector tiles traffic/pois/hillshade visibility", async ({ page }) => {
+    test('Vector tiles traffic/pois/hillshade visibility', async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
             {
                 zoom: 14,
-                center: [-0.12621, 51.50394]
+                center: [-0.12621, 51.50394],
             },
             {
-                style: { type: "published", include: ["trafficIncidents", "trafficFlow", "hillshade"] }
-            }
+                style: { type: 'published', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] },
+            },
         );
         await page.evaluate(async () => {
             const sdkThis = globalThis as MapsSDKThis;
             sdkThis.trafficIncidents = await sdkThis.MapsSDK.TrafficIncidentsModule.get(sdkThis.tomtomMap, {
-                visible: false
+                visible: false,
             });
             sdkThis.trafficFlow = await sdkThis.MapsSDK.TrafficFlowModule.get(sdkThis.tomtomMap, { visible: false });
             sdkThis.pois = await sdkThis.MapsSDK.POIsModule.get(sdkThis.tomtomMap, { visible: false });
@@ -66,7 +66,7 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
 
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
         expect(
-            await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())
+            await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible()),
         ).toBeFalsy();
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBe(true);
         await assertPOIsVisibility(page, false);

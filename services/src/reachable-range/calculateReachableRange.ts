@@ -1,8 +1,8 @@
-import type { PolygonFeature, PolygonFeatures } from "@anw/maps-sdk-js/core";
-import type { ReachableRangeParams } from "./types/reachableRangeParams";
-import type { ReachableRangeTemplate } from "./reachableRangeTemplate";
-import { reachableRangeTemplate } from "./reachableRangeTemplate";
-import { callService } from "../shared/serviceTemplate";
+import type { PolygonFeature, PolygonFeatures } from '@anw/maps-sdk-js/core';
+import type { ReachableRangeParams } from './types/reachableRangeParams';
+import type { ReachableRangeTemplate } from './reachableRangeTemplate';
+import { reachableRangeTemplate } from './reachableRangeTemplate';
+import { callService } from '../shared/serviceTemplate';
 
 /**
  * The Calculate Reachable Range service calculates a set of locations that can be reached from the origin point.
@@ -14,9 +14,9 @@ import { callService } from "../shared/serviceTemplate";
  */
 export const calculateReachableRange = async (
     params: ReachableRangeParams,
-    customTemplate?: Partial<ReachableRangeTemplate>
+    customTemplate?: Partial<ReachableRangeTemplate>,
 ): Promise<PolygonFeature<ReachableRangeParams>> =>
-    callService(params, { ...reachableRangeTemplate, ...customTemplate }, "Reachable Range");
+    callService(params, { ...reachableRangeTemplate, ...customTemplate }, 'Reachable Range');
 
 /**
  * The Calculate Reachable Ranges service calculates a set of locations that can be reached from the origin point.
@@ -30,12 +30,12 @@ export const calculateReachableRange = async (
  */
 export const calculateReachableRanges = async (
     paramsArray: ReachableRangeParams[],
-    customTemplate?: Partial<ReachableRangeTemplate>
+    customTemplate?: Partial<ReachableRangeTemplate>,
 ): Promise<PolygonFeatures<ReachableRangeParams>> => {
     const features = [];
     for (const params of paramsArray) {
         // we sequentially fetch reachable ranges (less speed but better to prevent QPS limit breaches):
         features.push(await calculateReachableRange(params, customTemplate));
     }
-    return { type: "FeatureCollection", features: features };
+    return { type: 'FeatureCollection', features: features };
 };

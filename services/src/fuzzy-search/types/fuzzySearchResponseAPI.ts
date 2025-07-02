@@ -1,5 +1,5 @@
-import type { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared/types/apiPlacesResponseTypes";
-import type { BookmarkIntent, NearbyIntentDetails, W3WIntent } from "./fuzzySearchResponse";
+import type { CommonSearchPlaceResultAPI, SummaryAPI } from '../../shared/types/apiPlacesResponseTypes';
+import type { BookmarkIntent, NearbyIntentDetails, W3WIntent } from './fuzzySearchResponse';
 
 /**
  * @ignore
@@ -34,7 +34,7 @@ export type CoordinateIntentAPI = {
     /**
      * the query is a coordinate in one of the supported formats (e.g., "48.858380, 2.294440").
      */
-    type: "COORDINATE";
+    type: 'COORDINATE';
     details: CoordinateIntentDetailsAPI;
 };
 
@@ -45,7 +45,7 @@ export type NearbyIntentAPI = {
     /**
      * the query asks for some entity in the proximity of another entity (e.g., "hotel near Lyon").
      */
-    type: "NEARBY";
+    type: 'NEARBY';
     details: NearbyIntentDetailsAPI;
 };
 
@@ -67,7 +67,7 @@ export type CoordinateIntentDetailsAPI = {
 /**
  * @ignore
  */
-export type NearbyIntentDetailsAPI = Omit<NearbyIntentDetails, "position"> & {
+export type NearbyIntentDetailsAPI = Omit<NearbyIntentDetails, 'position'> & {
     /**
      * Latitude of the place, near which the user searches for something.
      * For example, for the input restaurant near Berlin central station this is the position of "Berlin Central Station".

@@ -1,12 +1,12 @@
-import type { StyleImageMetadata } from "maplibre-gl";
-import instructionArrowSVG from "./instruction-line-arrow.svg";
-import trafficSVG from "./traffic.svg";
-import summaryMapBubbleSVG from "./summary-map-bubble.svg";
-import { isDOMImageSupported, svgToImg } from "../../shared/imageUtils";
-import pinSVG from "./pin.svg";
-import circleSVG from "./circle.svg";
-import startSVG from "./start.svg";
-import finishSVG from "./finish.svg";
+import type { StyleImageMetadata } from 'maplibre-gl';
+import instructionArrowSVG from './instruction-line-arrow.svg';
+import trafficSVG from './traffic.svg';
+import summaryMapBubbleSVG from './summary-map-bubble.svg';
+import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
+import pinSVG from './pin.svg';
+import circleSVG from './circle.svg';
+import startSVG from './start.svg';
+import finishSVG from './finish.svg';
 
 let instructionArrowIconImg: HTMLImageElement;
 
@@ -29,8 +29,8 @@ export const summaryMapBubbleImg = (color: string): HTMLImageElement => {
         return undefined as never as HTMLImageElement;
     }
     const svg: SVGElement = summaryMapBubbleSVG();
-    svg.querySelector("#bubble")!.setAttribute("fill", color);
-    svg.querySelector("#pin")!.setAttribute("fill", color);
+    svg.querySelector('#bubble')?.setAttribute('fill', color);
+    svg.querySelector('#pin')?.setAttribute('fill', color);
     return svgToImg(svg);
 };
 
@@ -43,10 +43,10 @@ export const summaryBubbleImageOptions: Partial<StyleImageMetadata> = {
     pixelRatio: 2,
     stretchX: [
         [20, 45],
-        [100, 130]
+        [100, 130],
     ],
     stretchY: [[20, 35]],
-    content: [10, 10, 130, 45]
+    content: [10, 10, 130, 45],
 };
 
 /**
@@ -59,9 +59,9 @@ export const trafficImg = (color: string): HTMLImageElement => {
         return undefined as never as HTMLImageElement;
     }
     const svg: SVGElement = trafficSVG();
-    const main = svg.querySelector("#main") as Element;
-    main.setAttribute("transform", "scale(2)");
-    main.setAttribute("fill", color);
+    const main = svg.querySelector('#main') as Element;
+    main.setAttribute('transform', 'scale(2)');
+    main.setAttribute('fill', color);
     return svgToImg(svg);
 };
 
@@ -74,7 +74,9 @@ export const waypointIcon = (foregroundSVG?: SVGElement): HTMLImageElement => {
         return undefined as never as HTMLImageElement;
     }
     const svg = pinSVG();
-    foregroundSVG && svg.appendChild(foregroundSVG);
+    if (foregroundSVG) {
+        svg.appendChild(foregroundSVG);
+    }
     return svgToImg(svg);
 };
 

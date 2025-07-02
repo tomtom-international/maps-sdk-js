@@ -1,6 +1,6 @@
-import type { Places, SearchPlaceProps } from "@anw/maps-sdk-js/core";
-import type { Position } from "geojson";
-import type { SearchSummary } from "../../shared";
+import type { Places, SearchPlaceProps } from '@anw/maps-sdk-js/core';
+import type { Position } from 'geojson';
+import type { SearchSummary } from '../../shared';
 
 export type FuzzySearchResponse = Places<SearchPlaceProps, FuzzySearchFeatureCollectionProps>;
 
@@ -14,7 +14,7 @@ export type CoordinateIntent = {
     /**
      * the query is a coordinate in one of the supported formats (e.g., "48.858380, 2.294440").
      */
-    type: "COORDINATE";
+    type: 'COORDINATE';
     details: CoordinateIntentDetails;
 };
 
@@ -22,7 +22,7 @@ export type NearbyIntent = {
     /**
      * the query asks for some entity in the proximity of another entity (e.g., "hotel near Lyon").
      */
-    type: "NEARBY";
+    type: 'NEARBY';
     details: NearbyIntentDetails;
 };
 
@@ -30,7 +30,7 @@ export type W3WIntent = {
     /**
      * the query contains a (likely) what3words code (e.g., "///classic.calls.replace").
      */
-    type: "W3W";
+    type: 'W3W';
     details: W3WIntentDetails;
 };
 
@@ -38,7 +38,7 @@ export type BookmarkIntent = {
     /**
      * the query contains one or more keywords that can refer to saved locations (e.g., "home").
      */
-    type: "BOOKMARK";
+    type: 'BOOKMARK';
     details: BookmarkIntentDetails;
 };
 

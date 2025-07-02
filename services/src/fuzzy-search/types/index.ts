@@ -1,3 +1,3 @@
-export * from "./fuzzySearchResponse";
-export * from "./fuzzySearchParams";
-export * from "./fuzzySearchResponseAPI";
+export type * from './fuzzySearchResponse';
+export type * from './fuzzySearchParams';
+export type * from './fuzzySearchResponseAPI';

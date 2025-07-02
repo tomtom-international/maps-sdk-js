@@ -3,6 +3,6 @@
  * @category Map
  */
 
-export * from "./types/poisModuleConfig";
-export * from "./POIsModule";
-export * from "./poiCategoryGroups";
+export type * from './types/poisModuleConfig';
+export * from './POIsModule';
+export * from './poiCategoryGroups';

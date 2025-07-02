@@ -1,19 +1,19 @@
-import type { LayerSpecWithSource, StyleModuleInitConfig } from "../shared";
+import type { LayerSpecWithSource, StyleModuleInitConfig } from '../shared';
 import {
     AbstractMapModule,
     EventsModule,
     filterLayersBySources,
     StyleSourceWithLayers,
-    TRAFFIC_FLOW_SOURCE_ID
-} from "../shared";
-import type { FlowConfig, TrafficFlowFilters } from "./types/trafficModuleConfig";
-import type { TomTomMap } from "../TomTomMap";
-import { prepareForModuleInit } from "../shared/mapUtils";
-import { notInTheStyle } from "../shared/errorMessages";
-import isNil from "lodash/isNil";
-import type { FilterSpecification } from "maplibre-gl";
-import { applyFilter, buildMapLibreFlowFilters } from "./filters/trafficFilters";
-import omitBy from "lodash/omitBy";
+    TRAFFIC_FLOW_SOURCE_ID,
+} from '../shared';
+import type { FlowConfig, TrafficFlowFilters } from './types/trafficModuleConfig';
+import type { TomTomMap } from '../TomTomMap';
+import { prepareForModuleInit } from '../shared/mapUtils';
+import { notInTheStyle } from '../shared/errorMessages';
+import isNil from 'lodash/isNil';
+import type { FilterSpecification } from 'maplibre-gl';
+import { applyFilter, buildMapLibreFlowFilters } from './filters/trafficFilters';
+import omitBy from 'lodash/omitBy';
 
 /**
  * IDs of sources and layers for traffic flow module.
@@ -36,12 +36,12 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @returns {Promise} Returns a promise with a new instance of this module
      */
     static async get(map: TomTomMap, config?: StyleModuleInitConfig & FlowConfig): Promise<TrafficFlowModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_FLOW_SOURCE_ID, "trafficFlow");
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_FLOW_SOURCE_ID, 'trafficFlow');
         return new TrafficFlowModule(map, config);
     }
 
     private constructor(map: TomTomMap, config?: FlowConfig) {
-        super("style", map, config);
+        super('style', map, config);
     }
 
     /**
@@ -102,9 +102,9 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
             this.config = omitBy(
                 {
                     ...this.config,
-                    filters: filters
+                    filters: filters,
                 },
-                isNil
+                isNil,
             );
         }
     }

@@ -1,24 +1,24 @@
-import isNil from "lodash/isNil";
-import omit from "lodash/omit";
-import type { EventType, SourceWithLayers } from "./types";
-import type { Feature } from "geojson";
-import type { MapGeoJSONFeature, Point2D } from "maplibre-gl";
-import { GeoJSONSourceWithLayers } from "./SourceWithLayers";
-import { areBothDefinedAndEqual } from "./mapUtils";
+import isNil from 'lodash/isNil';
+import omit from 'lodash/omit';
+import type { EventType, SourceWithLayers } from './types';
+import type { Feature } from 'geojson';
+import type { MapGeoJSONFeature, Point2D } from 'maplibre-gl';
+import { GeoJSONSourceWithLayers } from './SourceWithLayers';
+import { areBothDefinedAndEqual } from './mapUtils';
 
 type IndexedFeature<F extends Feature = Feature> = { feature: F; index: number };
 
 const findFeatureByID = (features: Feature[], id: string | number | undefined): IndexedFeature | undefined => {
     for (let i = 0; i < features.length; i++) {
         const feature = features[i];
-        if (feature.id == id) {
+        if (feature.id === id) {
             return { feature, index: i };
         }
     }
     return undefined;
 };
 
-const isHighPriority = (eventType: EventType): boolean => eventType == "click" || eventType == "contextmenu";
+const isHighPriority = (eventType: EventType): boolean => eventType === 'click' || eventType === 'contextmenu';
 
 /**
  * Puts or removes the given event state to the right feature in featuresToUpdate based on the
@@ -33,16 +33,16 @@ export const putEventState = (
     eventState: EventType,
     featureID: string | number | undefined,
     featuresToUpdate: Feature[], // "featuresToUpdate" will be mutated
-    mode: "updateInProps" | "removeFromProps" = "updateInProps"
+    mode: 'updateInProps' | 'removeFromProps' = 'updateInProps',
 ): number | undefined => {
     const { feature, index } = findFeatureByID(featuresToUpdate, featureID) || {};
     if (feature && (!isHighPriority(feature.properties?.eventState) || isHighPriority(eventState))) {
         const updatedFeature = {
             ...feature,
             properties:
-                mode == "updateInProps"
+                mode === 'updateInProps'
                     ? { ...feature?.properties, eventState }
-                    : omit(feature?.properties, "eventState")
+                    : omit(feature?.properties, 'eventState'),
         };
         featuresToUpdate.splice(index as number, 1, updatedFeature);
         return index;
@@ -53,10 +53,10 @@ export const putEventState = (
 const removeEventStateAndShow = (
     newEventType: EventType,
     rawFeature: MapGeoJSONFeature,
-    sourceWithLayers: GeoJSONSourceWithLayers
+    sourceWithLayers: GeoJSONSourceWithLayers,
 ): void => {
     const prevFeaturesToUpdate = [...sourceWithLayers.shownFeatures.features];
-    const updatedIndex = putEventState(newEventType, rawFeature.id, prevFeaturesToUpdate, "removeFromProps");
+    const updatedIndex = putEventState(newEventType, rawFeature.id, prevFeaturesToUpdate, 'removeFromProps');
     if (!isNil(updatedIndex)) {
         sourceWithLayers.show({ ...sourceWithLayers.shownFeatures, features: prevFeaturesToUpdate });
     }
@@ -77,7 +77,7 @@ export const updateEventState = (
     eventFeature: MapGeoJSONFeature | undefined,
     prevEventFeature: MapGeoJSONFeature | undefined,
     sourceWithLayers: SourceWithLayers | undefined,
-    prevSourceWithLayers: SourceWithLayers | undefined
+    prevSourceWithLayers: SourceWithLayers | undefined,
 ): Partial<IndexedFeature> => {
     if (eventFeature && sourceWithLayers instanceof GeoJSONSourceWithLayers) {
         const featuresToUpdate = [...sourceWithLayers.shownFeatures.features];
@@ -85,9 +85,9 @@ export const updateEventState = (
 
         if (prevEventFeature && !areBothDefinedAndEqual(prevEventFeature, eventFeature)) {
             // (we have both current and prev features for this event type)
-            if (prevSourceWithLayers == sourceWithLayers) {
+            if (prevSourceWithLayers === sourceWithLayers) {
                 // we undo the event state from prev feature next to the new one (they will be shown below):
-                putEventState(eventState, prevEventFeature.id, featuresToUpdate, "removeFromProps");
+                putEventState(eventState, prevEventFeature.id, featuresToUpdate, 'removeFromProps');
             } else if (prevSourceWithLayers instanceof GeoJSONSourceWithLayers) {
                 // the prev feature is in other source/layers, so we update and show them:
                 removeEventStateAndShow(eventState, prevEventFeature, prevSourceWithLayers);
@@ -96,16 +96,15 @@ export const updateEventState = (
 
         sourceWithLayers.show({
             ...sourceWithLayers.shownFeatures,
-            features: featuresToUpdate
+            features: featuresToUpdate,
         });
 
         return { feature: featuresToUpdate[updatedIndex], index: updatedIndex };
-    } else {
-        if (prevEventFeature && prevSourceWithLayers instanceof GeoJSONSourceWithLayers) {
-            removeEventStateAndShow(eventState, prevEventFeature, prevSourceWithLayers);
-        }
-        return { feature: eventFeature };
     }
+    if (prevEventFeature && prevSourceWithLayers instanceof GeoJSONSourceWithLayers) {
+        removeEventStateAndShow(eventState, prevEventFeature, prevSourceWithLayers);
+    }
+    return { feature: eventFeature };
 };
 
 /**
@@ -120,7 +119,7 @@ export const detectHoverState = (
     hoveringPoint: Point2D,
     hoveringFeature: MapGeoJSONFeature | undefined,
     prevHoveredPoint: Point2D | undefined,
-    prevHoveredFeature: MapGeoJSONFeature | undefined
+    prevHoveredFeature: MapGeoJSONFeature | undefined,
 ): {
     /**
      * Whether a hover state change happened, such as no-hover -> hover or vice-versa.
@@ -134,7 +133,8 @@ export const detectHoverState = (
     if (hoveringFeature) {
         if (!prevHoveredFeature) {
             return { hoverChanged: true };
-        } else if (
+        }
+        if (
             (hoveringFeature.id && hoveringFeature.id !== prevHoveredFeature.id) ||
             (hoveringFeature.properties.id && hoveringFeature.properties.id !== prevHoveredFeature.properties.id) ||
             hoveringFeature.source !== prevHoveredFeature.source ||
@@ -144,14 +144,13 @@ export const detectHoverState = (
         ) {
             // hovering from one feature to another one (from the same or different layer/source):
             return { hoverChanged: true };
-        } else {
-            // (else we're hovering along the same feature)
-            if (
-                prevHoveredPoint &&
-                (hoveringPoint.x - prevHoveredPoint.x != 0 || hoveringPoint.y - prevHoveredPoint.y != 0)
-            ) {
-                return { mouseInMotionOverHoveredFeature: true };
-            }
+        }
+        // (else we're hovering along the same feature)
+        if (
+            prevHoveredPoint &&
+            (hoveringPoint.x - prevHoveredPoint.x != 0 || hoveringPoint.y - prevHoveredPoint.y != 0)
+        ) {
+            return { mouseInMotionOverHoveredFeature: true };
         }
     } else if (prevHoveredFeature) {
         return { hoverChanged: true };

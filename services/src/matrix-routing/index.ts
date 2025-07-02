@@ -3,5 +3,5 @@
  * @category Service
  */
 
-export * from "./types/calculateMatrixRouteParams";
-export * from "./calculateMatrixRoute";
+export type * from './types/calculateMatrixRouteParams';
+export * from './calculateMatrixRoute';

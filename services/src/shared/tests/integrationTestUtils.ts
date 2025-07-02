@@ -1,5 +1,5 @@
-import type { Moment, OpeningHours, Place, SearchPlaceProps } from "@anw/maps-sdk-js/core";
-import { placeTypes, TomTomConfig } from "@anw/maps-sdk-js/core";
+import type { Moment, OpeningHours, Place, SearchPlaceProps } from '@anw/maps-sdk-js/core';
+import { placeTypes, TomTomConfig } from '@anw/maps-sdk-js/core';
 
 export const putIntegrationTestsAPIKey = () => {
     TomTomConfig.instance.put({
@@ -11,28 +11,28 @@ const basePOIObjTestProps = {
     name: expect.any(String),
     classifications: expect.anything(),
     brands: expect.any(Array),
-    categoryIds: expect.arrayContaining([expect.any(Number)])
+    categoryIds: expect.arrayContaining([expect.any(Number)]),
 };
 
 export const basePOITestProps: SearchPlaceProps = {
-    type: "POI",
+    type: 'POI',
     score: expect.any(Number),
     info: expect.any(String),
     address: expect.any(Object),
     entryPoints: expect.arrayContaining([expect.any(Object)]),
-    poi: expect.objectContaining(basePOIObjTestProps)
+    poi: expect.objectContaining(basePOIObjTestProps),
 };
 
 export const evStationBaseTestProps: SearchPlaceProps = {
-    type: "POI",
+    type: 'POI',
     score: expect.any(Number),
     info: expect.any(String),
     address: expect.any(Object),
     poi: expect.objectContaining(basePOIObjTestProps),
     chargingPark: expect.objectContaining({
         // connectors: expect.any(Array),
-        connectorCounts: expect.any(Array)
-    })
+        connectorCounts: expect.any(Array),
+    }),
 };
 
 const momentTestProps: Moment = {
@@ -42,36 +42,36 @@ const momentTestProps: Moment = {
     hour: expect.any(Number),
     minute: expect.any(Number),
     month: expect.any(Number),
-    year: expect.any(Number)
+    year: expect.any(Number),
 };
 
 const openingHoursTestProps: OpeningHours = {
-    mode: "nextSevenDays",
+    mode: 'nextSevenDays',
     alwaysOpenThisPeriod: expect.any(Boolean),
-    timeRanges: expect.arrayContaining([{ start: momentTestProps, end: momentTestProps }])
+    timeRanges: expect.arrayContaining([{ start: momentTestProps, end: momentTestProps }]),
 };
 
 export const evStationWithOpeningHoursTestProps: SearchPlaceProps = {
     ...evStationBaseTestProps,
     poi: expect.objectContaining({
         ...basePOIObjTestProps,
-        openingHours: expect.objectContaining(openingHoursTestProps)
-    })
+        openingHours: expect.objectContaining(openingHoursTestProps),
+    }),
 };
 
 export const expectPlaceTestFeature = (props: SearchPlaceProps): Place<SearchPlaceProps> =>
     expect.objectContaining({
-        type: "Feature",
+        type: 'Feature',
         id: expect.any(String),
         geometry: expect.objectContaining({
-            type: "Point",
-            coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)])
+            type: 'Point',
+            coordinates: expect.arrayContaining([expect.any(Number), expect.any(Number)]),
         }),
-        properties: expect.objectContaining<SearchPlaceProps>(props)
+        properties: expect.objectContaining<SearchPlaceProps>(props),
     });
 
-const placeRegex = new RegExp(placeTypes.join("|"));
+const placeRegex = new RegExp(placeTypes.join('|'));
 export const baseSearchPlaceMandatoryProps: SearchPlaceProps = {
     type: expect.stringMatching(placeRegex),
-    address: expect.any(Object)
+    address: expect.any(Object),
 };

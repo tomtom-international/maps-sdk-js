@@ -1,5 +1,5 @@
-import type { Anything, CommonPlaceProps } from "@anw/maps-sdk-js/core";
-import type { SupportsEvents } from "../../shared";
+import type { Anything, CommonPlaceProps } from '@anw/maps-sdk-js/core';
+import type { SupportsEvents } from '../../shared';
 
 /**
  * Properties to display a place on the map.
@@ -34,9 +34,9 @@ export type DisplayPlaceProps = CommonPlaceProps & LocationDisplayProps;
 /**
  * @ignore
  */
-export const TITLE = "title";
+export const TITLE = 'title';
 
 /**
  * @ignore
  */
-export const ICON_ID = "iconID";
+export const ICON_ID = 'iconID';

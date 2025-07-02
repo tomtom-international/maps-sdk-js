@@ -7,8 +7,8 @@ import type {
     MultiPolygon,
     Point,
     Polygon,
-    Position
-} from "geojson";
+    Position,
+} from 'geojson';
 
 /**
  * An GeoJSON input type that consists of, or has, a [lng, lat] Position.

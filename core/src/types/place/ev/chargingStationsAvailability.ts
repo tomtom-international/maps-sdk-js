@@ -1,6 +1,6 @@
-import type { ChargingPointStatus, ChargingStation, ChargingStationsAccessType } from "./chargingStation";
-import type { Connector } from "./connector";
-import type { OpeningHours } from "../poi/openingHours";
+import type { ChargingPointStatus, ChargingStation, ChargingStationsAccessType } from './chargingStation';
+import type { Connector } from './connector';
+import type { OpeningHours } from '../poi/openingHours';
 
 /**
  * @group Place

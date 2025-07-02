@@ -1,16 +1,16 @@
-import type { HasLngLat } from "@anw/maps-sdk-js/core";
-import type { CommonServiceParams, TrafficInput } from "../../shared";
-import type { CalculateMatrixRouteRequestAPI } from "./apiRequestTypes";
-import type { CalculateMatrixRouteResponseAPI } from "./apiResponseTypes";
+import type { HasLngLat } from '@anw/maps-sdk-js/core';
+import type { CommonServiceParams, TrafficInput } from '../../shared';
+import type { CalculateMatrixRouteRequestAPI } from './apiRequestTypes';
+import type { CalculateMatrixRouteResponseAPI } from './apiResponseTypes';
 
-type MatrixRouteAvoidable = "tollRoads" | "unpavedRoads";
+type MatrixRouteAvoidable = 'tollRoads' | 'unpavedRoads';
 
 export type MatrixRouteOptions = {
-    departAt?: Date | "any" | "now";
-    arriveAt?: Date | "any";
-    routeType?: "fastest";
+    departAt?: Date | 'any' | 'now';
+    arriveAt?: Date | 'any';
+    routeType?: 'fastest';
     traffic?: TrafficInput;
-    travelMode?: "car" | "truck" | "pedestrian";
+    travelMode?: 'car' | 'truck' | 'pedestrian';
     // TODO: try to reuse VehicleDimensions type (make params more similar to calculate-route service)
     vehicleMaxSpeed?: number;
     vehicleWeight?: number;

@@ -1,60 +1,60 @@
-import { customizeService } from "../../../index";
+import { customizeService } from '../../../index';
 
-describe("Using customize obj", () => {
-    test("Geometry Search request URL building tests using customize obj", () => {
+describe('Using customize obj', () => {
+    test('Geometry Search request URL building tests using customize obj', () => {
         expect(
             JSON.parse(
                 JSON.stringify(
                     customizeService.geometrySearch.buildGeometrySearchRequest({
-                        apiKey: "API_KEY",
+                        apiKey: 'API_KEY',
                         apiVersion: 1,
-                        commonBaseURL: "https://api.tomtom.com",
+                        commonBaseURL: 'https://api.tomtom.com',
                         geometries: [
                             {
-                                type: "Polygon",
+                                type: 'Polygon',
                                 coordinates: [
                                     [
                                         [2.28266, 48.8828],
                                         [2.31842, 48.82377],
                                         [2.41268, 48.84003],
-                                        [2.38927, 48.89776]
-                                    ]
-                                ]
+                                        [2.38927, 48.89776],
+                                    ],
+                                ],
                             },
                             {
-                                type: "Circle",
+                                type: 'Circle',
                                 coordinates: [2.30046, 48.37394],
-                                radius: 2000
-                            }
+                                radius: 2000,
+                            },
                         ],
-                        query: "Electric Charging Station"
-                    })
-                )
-            )
+                        query: 'Electric Charging Station',
+                    }),
+                ),
+            ),
         ).toStrictEqual(
             JSON.parse(
                 JSON.stringify({
-                    url: "https://api.tomtom.com/maps/orbis/places/geometrySearch/Electric%20Charging%20Station.json?apiVersion=1&key=API_KEY",
+                    url: 'https://api.tomtom.com/maps/orbis/places/geometrySearch/Electric%20Charging%20Station.json?apiVersion=1&key=API_KEY',
                     data: {
                         geometryList: [
                             {
-                                type: "POLYGON",
+                                type: 'POLYGON',
                                 vertices: [
-                                    "48.8828,2.28266",
-                                    "48.82377,2.31842",
-                                    "48.84003,2.41268",
-                                    "48.89776,2.38927"
-                                ]
+                                    '48.8828,2.28266',
+                                    '48.82377,2.31842',
+                                    '48.84003,2.41268',
+                                    '48.89776,2.38927',
+                                ],
                             },
                             {
-                                type: "CIRCLE",
+                                type: 'CIRCLE',
                                 radius: 2000,
-                                position: "48.37394,2.30046"
-                            }
-                        ]
-                    }
-                })
-            )
+                                position: '48.37394,2.30046',
+                            },
+                        ],
+                    },
+                }),
+            ),
         );
     });
 });

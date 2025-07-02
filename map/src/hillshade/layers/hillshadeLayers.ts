@@ -1,1 +1,1 @@
-export const HILLSHADE_SOURCE_ID = "hillshade";
+export const HILLSHADE_SOURCE_ID = 'hillshade';

@@ -1,22 +1,22 @@
-import type { Feature, Point, Position } from "geojson";
-import type { PlaceDataSources } from "./placeDataSources";
-import type { POI, RelatedPOI } from "./poi/poi";
-import type { FeatureCollectionWithProperties } from "../extendedGeoJSON";
-import type { ChargingPark } from "./ev/evPlaceProps";
+import type { Feature, Point, Position } from 'geojson';
+import type { PlaceDataSources } from './placeDataSources';
+import type { POI, RelatedPOI } from './poi/poi';
+import type { FeatureCollectionWithProperties } from '../extendedGeoJSON';
+import type { ChargingPark } from './ev/evPlaceProps';
 
 /**
  * @group Place
  * @category Variables
  */
 export const geographyTypes = [
-    "Country",
-    "CountrySubdivision",
-    "CountrySecondarySubdivision",
-    "CountryTertiarySubdivision",
-    "Municipality",
-    "MunicipalitySubdivision",
-    "Neighbourhood",
-    "PostalCodeArea"
+    'Country',
+    'CountrySubdivision',
+    'CountrySecondarySubdivision',
+    'CountryTertiarySubdivision',
+    'Municipality',
+    'MunicipalitySubdivision',
+    'Neighbourhood',
+    'PostalCodeArea',
 ] as const;
 
 /**
@@ -45,7 +45,7 @@ export type GeographyType = (typeof geographyTypes)[number];
  * @group Place
  * @category Types
  */
-export type MapcodeType = "Local" | "International" | "Alternative";
+export type MapcodeType = 'Local' | 'International' | 'Alternative';
 /**
  * @group Place
  * @category Types
@@ -106,7 +106,7 @@ export type AddressRanges = {
  * * main: the main entry point of a place. There can be at most only one.
  * * minor: a minor or secondary entry point of a place. There can be multiple.
  */
-export type EntryPointType = "main" | "minor";
+export type EntryPointType = 'main' | 'minor';
 
 /**
  * @group Place
@@ -132,7 +132,7 @@ export type EntryPoint = {
  * @group Place
  * @category Variables
  */
-export const placeTypes = ["POI", "Street", "Geography", "Point Address", "Address Range", "Cross Street"] as const;
+export const placeTypes = ['POI', 'Street', 'Geography', 'Point Address', 'Address Range', 'Cross Street'] as const;
 
 /**
  * @group Place
@@ -241,7 +241,7 @@ export type CommonPlaceProps = {
     /**
      * Type of geography entity,
      * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
-     * Only present if type == Geography.
+     * Only present if type === Geography.
      */
     geographyType?: GeographyType[];
     /**
@@ -257,7 +257,7 @@ export type CommonPlaceProps = {
      */
     addressRanges?: AddressRanges;
     /**
-     * Information about the Points of Interest in the result. Optional section. Only present if CommonPlaceProps.type == POI
+     * Information about the Points of Interest in the result. Optional section. Only present if CommonPlaceProps.type === POI
      */
     poi?: POI;
     /**
@@ -279,7 +279,7 @@ export type CommonPlaceProps = {
  * @group Place
  * @category Types
  */
-export type SideOfStreet = "L" | "R";
+export type SideOfStreet = 'L' | 'R';
 
 /**
  * @group Place
@@ -325,7 +325,7 @@ export type SearchPlaceProps = CommonPlaceProps & {
  * @group Place
  * @category Types
  */
-export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, "id"> & {
+export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, 'id'> & {
     /**
      * Identifier for this place.
      * * It's the same GeoJSON Feature id, but made a mandatory string.
@@ -340,7 +340,7 @@ export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<
  */
 export type Places<P extends CommonPlaceProps = CommonPlaceProps, FeatureCollectionProps = unknown> = Omit<
     FeatureCollectionWithProperties<Point, P, FeatureCollectionProps>,
-    "features"
+    'features'
 > & {
     features: Place<P>[];
 };

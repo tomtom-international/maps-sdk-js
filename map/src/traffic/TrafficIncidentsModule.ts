@@ -1,20 +1,20 @@
-import type { LayerSpecWithSource, StyleModuleInitConfig } from "../shared";
+import type { LayerSpecWithSource, StyleModuleInitConfig } from '../shared';
 import {
     AbstractMapModule,
     EventsModule,
     filterLayersBySources,
     StyleSourceWithLayers,
-    TRAFFIC_INCIDENTS_SOURCE_ID
-} from "../shared";
-import type { IncidentsConfig, TrafficIncidentsFilters } from "./types/trafficModuleConfig";
-import type { TomTomMap } from "../TomTomMap";
-import { prepareForModuleInit } from "../shared/mapUtils";
-import { notInTheStyle } from "../shared/errorMessages";
-import isNil from "lodash/isNil";
-import type { FilterSpecification } from "maplibre-gl";
-import { applyFilter, buildMapLibreIncidentFilters } from "./filters/trafficFilters";
-import omitBy from "lodash/omitBy";
-import isEmpty from "lodash/isEmpty";
+    TRAFFIC_INCIDENTS_SOURCE_ID,
+} from '../shared';
+import type { IncidentsConfig, TrafficIncidentsFilters } from './types/trafficModuleConfig';
+import type { TomTomMap } from '../TomTomMap';
+import { prepareForModuleInit } from '../shared/mapUtils';
+import { notInTheStyle } from '../shared/errorMessages';
+import isNil from 'lodash/isNil';
+import type { FilterSpecification } from 'maplibre-gl';
+import { applyFilter, buildMapLibreIncidentFilters } from './filters/trafficFilters';
+import omitBy from 'lodash/omitBy';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * IDs of sources and layers for traffic incidents module.
@@ -38,14 +38,14 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      */
     static async get(
         map: TomTomMap,
-        config?: StyleModuleInitConfig & IncidentsConfig
+        config?: StyleModuleInitConfig & IncidentsConfig,
     ): Promise<TrafficIncidentsModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_INCIDENTS_SOURCE_ID, "trafficIncidents");
+        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_INCIDENTS_SOURCE_ID, 'trafficIncidents');
         return new TrafficIncidentsModule(map, config);
     }
 
     private constructor(map: TomTomMap, config?: IncidentsConfig) {
-        super("style", map, config);
+        super('style', map, config);
     }
 
     /**
@@ -93,7 +93,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     private _filter(
         incidentFilters: TrafficIncidentsFilters | undefined,
         iconFilters: TrafficIncidentsFilters | undefined,
-        updateConfig = true
+        updateConfig = true,
     ) {
         if (this.tomtomMap.mapReady) {
             if (incidentFilters?.any?.length) {
@@ -119,9 +119,9 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
                 {
                     ...this.config,
                     filters: incidentFilters,
-                    icons: { ...this.config?.icons, filters: iconFilters }
+                    icons: { ...this.config?.icons, filters: iconFilters },
                 },
-                isNil
+                isNil,
             );
         }
     }
@@ -131,11 +131,11 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     private getSymbolLayers(): LayerSpecWithSource[] {
-        return this.getLayers().filter((layer) => layer.type == "symbol");
+        return this.getLayers().filter((layer) => layer.type === 'symbol');
     }
 
     private getNonSymbolLayers(): LayerSpecWithSource[] {
-        return this.getLayers().filter((layer) => layer.type != "symbol");
+        return this.getLayers().filter((layer) => layer.type != 'symbol');
     }
 
     /**
@@ -147,13 +147,13 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
             // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
             this.config = {
                 ...this.config,
-                icons: { ...this.config?.icons, visible }
+                icons: { ...this.config?.icons, visible },
             };
 
             if (this.tomtomMap.mapReady) {
                 this.sourcesWithLayers.trafficIncidents.setLayersVisible(
                     visible,
-                    (layerSpec) => layerSpec.type === "symbol"
+                    (layerSpec) => layerSpec.type === 'symbol',
                 );
             }
         }
@@ -182,7 +182,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * Returns whether any traffic incident symbol layers are visible.
      */
     anyIconLayersVisible(): boolean {
-        return !!this.sourcesWithLayers.trafficIncidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === "symbol");
+        return !!this.sourcesWithLayers.trafficIncidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === 'symbol');
     }
 
     /**

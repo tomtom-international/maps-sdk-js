@@ -1,11 +1,11 @@
-import type { AutocompleteSearchParams } from "./types";
+import type { AutocompleteSearchParams } from './types';
 import {
     appendByJoiningParamValue,
     appendCommonParams,
     appendLatLonParamsFromPosition,
-    appendOptionalParam
-} from "../shared/requestBuildingUtils";
-import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
+    appendOptionalParam,
+} from '../shared/requestBuildingUtils';
+import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 
 const buildURLBasePath = (mergedOptions: AutocompleteSearchParams): string =>
     mergedOptions.customServiceBaseURL ||
@@ -22,13 +22,13 @@ export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams)
      * Auto-complete service defaults the language to en-GB if not specified explicitly as service param
      * Or global config
      */
-    params.language = params.language || "en-GB";
+    params.language = params.language || 'en-GB';
     appendCommonParams(urlParams, params);
-    appendOptionalParam(urlParams, "limit", params.limit);
+    appendOptionalParam(urlParams, 'limit', params.limit);
     appendLatLonParamsFromPosition(urlParams, params.position);
-    appendByJoiningParamValue(urlParams, "countrySet", params.countries);
-    appendOptionalParam(urlParams, "radius", params.radiusMeters);
-    appendByJoiningParamValue(urlParams, "resultSet", params.resultType);
+    appendByJoiningParamValue(urlParams, 'countrySet', params.countries);
+    appendOptionalParam(urlParams, 'radius', params.radiusMeters);
+    appendByJoiningParamValue(urlParams, 'resultSet', params.resultType);
 
     return url;
 };

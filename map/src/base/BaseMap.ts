@@ -1,10 +1,10 @@
-import isNil from "lodash/isNil";
-import type { TomTomMap } from "../init";
-import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from "../shared";
-import { notInTheStyle } from "../shared/errorMessages";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
-import type { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from "./types/baseMapModuleConfig";
-import { buildBaseMapLayerGroupFilter, buildLayerGroupFilter } from "./layerGroups";
+import isNil from 'lodash/isNil';
+import type { TomTomMap } from '../init';
+import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from '../shared';
+import { notInTheStyle } from '../shared/errorMessages';
+import { waitUntilMapIsReady } from '../shared/mapUtils';
+import type { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from './types/baseMapModuleConfig';
+import { buildBaseMapLayerGroupFilter, buildLayerGroupFilter } from './layerGroups';
 
 type BaseSourceAndLayers = {
     vectorTiles: StyleSourceWithLayers;
@@ -29,7 +29,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
     }
 
     private constructor(map: TomTomMap, config?: BaseMapModuleConfig) {
-        super("style", map, config);
+        super('style', map, config);
     }
 
     /**
@@ -45,8 +45,8 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
             vectorTiles: new StyleSourceWithLayers(
                 this.mapLibreMap,
                 source,
-                buildBaseMapLayerGroupFilter(config?.layerGroupsFilter)
-            )
+                buildBaseMapLayerGroupFilter(config?.layerGroupsFilter),
+            ),
         };
     }
 
@@ -86,7 +86,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.vectorTiles.setLayersVisible(
                 visible,
-                options?.layerGroups && buildLayerGroupFilter(options?.layerGroups)
+                options?.layerGroups && buildLayerGroupFilter(options.layerGroups),
             );
         }
     }

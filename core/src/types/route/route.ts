@@ -1,20 +1,20 @@
-import type { Feature, LineString } from "geojson";
-import type { Guidance } from "./guidance";
-import type { SectionsProps } from "./sections";
-import type { RouteSummary } from "./summary";
-import type { FeatureCollectionWithProperties } from "../extendedGeoJSON";
+import type { Feature, LineString } from 'geojson';
+import type { Guidance } from './guidance';
+import type { SectionsProps } from './sections';
+import type { RouteSummary } from './summary';
+import type { FeatureCollectionWithProperties } from '../extendedGeoJSON';
 
 export const avoidableTypes = [
-    "tollRoads",
-    "motorways",
-    "ferries",
-    "unpavedRoads",
-    "carpools",
-    "alreadyUsedRoads",
-    "borderCrossings",
-    "tunnels",
-    "carTrains",
-    "lowEmissionZones"
+    'tollRoads',
+    'motorways',
+    'ferries',
+    'unpavedRoads',
+    'carpools',
+    'alreadyUsedRoads',
+    'borderCrossings',
+    'tunnels',
+    'carTrains',
+    'lowEmissionZones',
 ] as const;
 
 /**
@@ -40,7 +40,7 @@ export type Avoidable = (typeof avoidableTypes)[number];
  * @group Route
  * @category Types
  */
-export type TravelMode = "car"; // TODO no longer supported | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
+export type TravelMode = 'car'; // TODO no longer supported | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
 
 export type RouteProgressPoint = {
     /**
@@ -113,5 +113,5 @@ export type Route<P extends RouteProps = RouteProps> = Feature<LineString, P>;
  */
 export type Routes<
     P extends RouteProps = RouteProps,
-    FeatureCollectionProps = unknown
+    FeatureCollectionProps = unknown,
 > = FeatureCollectionWithProperties<LineString, P, FeatureCollectionProps>;

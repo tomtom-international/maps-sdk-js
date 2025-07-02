@@ -1,9 +1,9 @@
-import type { $ZodIssue } from "zod/dist/types/v4/core/errors";
-import type { ParseResponseError } from "./serviceTypes";
-import type { APIErrorResponse, DefaultAPIResponseErrorBody } from "./types/apiResponseErrorTypes";
-import { APICode } from "./types/apiResponseErrorTypes";
-import type { ValidationError } from "./validation";
-import type { ServiceName } from "./types/servicesTypes";
+import type { $ZodIssue } from 'zod/dist/types/v4/core/errors';
+import type { ParseResponseError } from './serviceTypes';
+import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiResponseErrorTypes';
+import { APICode } from './types/apiResponseErrorTypes';
+import type { ValidationError } from './validation';
+import type { ServiceName } from './types/servicesTypes';
 
 /**
  * Main Error Class for the whole SDK to help with error handling.
@@ -16,7 +16,7 @@ export class SDKError extends Error {
     constructor(
         message: string,
         private readonly service: string,
-        private readonly errors?: $ZodIssue[]
+        private readonly errors?: $ZodIssue[],
     ) {
         super(message);
 
@@ -27,8 +27,8 @@ export class SDKError extends Error {
 }
 
 export const APIErrorCode: { readonly [K in APICode as number]: string } = {
-    [APICode.TOO_MANY_REQUESTS]: "Too Many Requests: The API Key is over QPS (Queries per second)",
-    [APICode.FORBIDDEN]: "Request failed with status code 403"
+    [APICode.TOO_MANY_REQUESTS]: 'Too Many Requests: The API Key is over QPS (Queries per second)',
+    [APICode.FORBIDDEN]: 'Request failed with status code 403',
 };
 
 /**
@@ -74,15 +74,14 @@ export const parseDefaultResponseError: ParseResponseError<DefaultAPIResponseErr
 export const buildResponseError = (
     error: unknown,
     serviceName: ServiceName,
-    parseResponseError?: ParseResponseError<unknown>
+    parseResponseError?: ParseResponseError<unknown>,
 ): SDKError => {
     if ((error as APIErrorResponse).status) {
         const fetchError = error as APIErrorResponse;
         if (parseResponseError) {
             return parseResponseError(fetchError, serviceName);
-        } else {
-            return parseDefaultResponseError(fetchError, serviceName);
         }
+        return parseDefaultResponseError(fetchError, serviceName);
     }
 
     return new SDKError((error as Error).message, serviceName);

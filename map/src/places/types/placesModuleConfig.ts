@@ -1,13 +1,13 @@
-import type { DataDrivenPropertyValueSpecification } from "maplibre-gl";
-import type { Place } from "@anw/maps-sdk-js/core";
-import type { MapStylePOICategory } from "../../pois/poiCategoryMapping";
-import type { MapFont } from "../../shared";
+import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
+import type { Place } from '@anw/maps-sdk-js/core';
+import type { MapStylePOICategory } from '../../pois/poiCategoryMapping';
+import type { MapFont } from '../../shared';
 
 /**
  * Possible options for places icon style
  * "poi-like" will mimic poi layer style
  */
-export type IconStyle = "pin" | "circle" | "poi-like";
+export type IconStyle = 'pin' | 'circle' | 'poi-like';
 
 /**
  * Custom Icon configuration for places

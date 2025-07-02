@@ -29,9 +29,7 @@
   "name": "Maps SDK for JavaScript",
   "internalModule": "internal",
   "excludeExternals": true,
-  "plugin": [
-    "typedoc-plugin-missing-exports",
-  ],
+  "plugin": ["typedoc-plugin-missing-exports"],
   "externalSymbolLinkMappings": {
     "maplibre-gl": {
       "Map": "https://maplibre.org/maplibre-gl-js-docs/api/map/",
@@ -43,5 +41,5 @@
     }
   },
   "excludePrivate": true,
-  "githubPages": false,
+  "githubPages": false
 }

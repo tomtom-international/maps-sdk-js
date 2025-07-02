@@ -1,8 +1,8 @@
-import { z } from "zod/v4-mini";
-import type { $ZodError, $ZodIssue } from "zod/dist/types/v4/core/errors";
-import { commonServiceRequestSchema } from "./commonParamsSchema";
-import type { CommonServiceParams } from "./serviceTypes";
-import type { RequestValidationConfig } from "./types/validation";
+import { z } from 'zod/v4-mini';
+import type { $ZodError, $ZodIssue } from 'zod/dist/types/v4/core/errors';
+import { commonServiceRequestSchema } from './commonParamsSchema';
+import type { CommonServiceParams } from './serviceTypes';
+import type { RequestValidationConfig } from './types/validation';
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.
@@ -25,7 +25,7 @@ export class ValidationError extends Error {
  */
 export const validateRequestSchema = <T extends CommonServiceParams>(
     params: T,
-    config?: RequestValidationConfig
+    config?: RequestValidationConfig,
 ): T => {
     const requestSchema = config?.schema
         ? z.extend(commonServiceRequestSchema, config.schema)
@@ -33,13 +33,13 @@ export const validateRequestSchema = <T extends CommonServiceParams>(
     // If there's no schema provided, we still validate the common params:
     const mergedSchema = requestSchema.check(
         z.refine(
-            (data) => "commonBaseURL" in data || "customServiceBaseURL" in data,
-            "commonBaseURL or customServiceBaseURL is required"
-        )
+            (data) => 'commonBaseURL' in data || 'customServiceBaseURL' in data,
+            'commonBaseURL or customServiceBaseURL is required',
+        ),
     );
 
     // Adding optional refinements:
-    let refinedMergedSchema;
+    let refinedMergedSchema: typeof mergedSchema | undefined;
     if (config?.refinements?.length) {
         refinedMergedSchema = mergedSchema;
         for (const refinement of config.refinements) {

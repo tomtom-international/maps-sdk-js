@@ -1,4 +1,4 @@
-import type { CurrentType, PlugType } from "@anw/maps-sdk-js/core";
+import type { CurrentType, PlugType } from '@anw/maps-sdk-js/core';
 
 /**
  * Specifies the speed-dependent component of consumption.
@@ -6,7 +6,7 @@ import type { CurrentType, PlugType } from "@anw/maps-sdk-js/core";
  * The list defines points on a consumption curve.
  *
  * Consumption rates for speeds not in the list are found as follows:
- * By linear interpolation, if the given speed lies in between two speeds in the list.
+ * By linear interpolation if the given speed lies in between two speeds in the list.
  * By linear extrapolation otherwise, assuming a constant (&ΔConsumption/&ΔSpeed) determined by the nearest two points in the list.
  *
  * The list must contain between 1 and 25 points (inclusive), and may not contain duplicate points for the same speed.
@@ -281,7 +281,7 @@ export type ChargingPreferences = {
 /**
  * The available engine types.
  */
-export const engineTypes = ["combustion", "electric"] as const;
+export const engineTypes = ['combustion', 'electric'] as const;
 
 /**
  * The engine type of the vehicle.
@@ -303,7 +303,7 @@ export type VehicleEngineBase<E extends VehicleEngineType, M extends CombustionE
     model: M;
 };
 
-export type CombustionVehicleEngine = VehicleEngineBase<"combustion", CombustionEngineModel> & {
+export type CombustionVehicleEngine = VehicleEngineBase<'combustion', CombustionEngineModel> & {
     /**
      * Specifies the current supply of fuel in liters.
      *
@@ -323,7 +323,7 @@ export type ElectricEngineModel = {
     charging?: ChargingModel;
 };
 
-export type ElectricVehicleEngine = VehicleEngineBase<"electric", ElectricEngineModel> & {
+export type ElectricVehicleEngine = VehicleEngineBase<'electric', ElectricEngineModel> & {
     /**
      * Specifies the current battery charge in %.
      * * Note: Requires model.charging.maxChargeKWH to be set.

@@ -1,8 +1,8 @@
-import type { Place, RevGeoAddressProps } from "@anw/maps-sdk-js/core";
-import type { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
-import { callService } from "../shared/serviceTemplate";
-import type { ReverseGeocodingTemplate } from "./reverseGeocodingTemplate";
-import { reverseGeocodingTemplate } from "./reverseGeocodingTemplate";
+import type { Place, RevGeoAddressProps } from '@anw/maps-sdk-js/core';
+import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
+import { callService } from '../shared/serviceTemplate';
+import type { ReverseGeocodingTemplate } from './reverseGeocodingTemplate';
+import { reverseGeocodingTemplate } from './reverseGeocodingTemplate';
 
 export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
 
@@ -16,8 +16,8 @@ export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
  */
 export const reverseGeocode = async (
     params: ReverseGeocodingParams,
-    customTemplate?: Partial<ReverseGeocodingTemplate>
+    customTemplate?: Partial<ReverseGeocodingTemplate>,
 ): Promise<ReverseGeocodingResponse> =>
-    callService(params, { ...reverseGeocodingTemplate, ...customTemplate }, "ReverseGeocode");
+    callService(params, { ...reverseGeocodingTemplate, ...customTemplate }, 'ReverseGeocode');
 
 export default reverseGeocode;

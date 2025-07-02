@@ -1,8 +1,8 @@
-import { parseCalculateMatrixRouteResponse } from "../responseParser";
-import type { CalculateMatrixRouteResponseAPI } from "../types/apiResponseTypes";
-import apiAndParsedResponses from "./responseParser.data.json";
+import { parseCalculateMatrixRouteResponse } from '../responseParser';
+import type { CalculateMatrixRouteResponseAPI } from '../types/apiResponseTypes';
+import apiAndParsedResponses from './responseParser.data.json';
 
-describe("Matrix Route response parsing tests", () => {
+describe('Matrix Route response parsing tests', () => {
     // Functional tests:
     test.each(apiAndParsedResponses)(
         "'%s'",
@@ -10,9 +10,9 @@ describe("Matrix Route response parsing tests", () => {
         (
             _name: string,
             apiResponse: CalculateMatrixRouteResponseAPI,
-            parsedResponse: CalculateMatrixRouteResponseAPI
+            parsedResponse: CalculateMatrixRouteResponseAPI,
         ) => {
             expect(parseCalculateMatrixRouteResponse(apiResponse)).toEqual(parsedResponse);
-        }
+        },
     );
 });

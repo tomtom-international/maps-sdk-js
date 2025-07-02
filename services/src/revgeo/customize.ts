@@ -1,10 +1,10 @@
-import { buildRevGeoRequest } from "./requestBuilder";
-import { parseRevGeoResponse } from "./responseParser";
-import { reverseGeocodingTemplate } from "./reverseGeocodingTemplate";
+import { buildRevGeoRequest } from './requestBuilder';
+import { parseRevGeoResponse } from './responseParser';
+import { reverseGeocodingTemplate } from './reverseGeocodingTemplate';
 
 const customize = {
     buildRevGeoRequest,
     parseRevGeoResponse,
-    reverseGeocodingTemplate
+    reverseGeocodingTemplate,
 };
 export default customize;

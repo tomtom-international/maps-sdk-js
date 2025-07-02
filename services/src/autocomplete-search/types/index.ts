@@ -1,3 +1,3 @@
-export * from "./autocompleteSearchResponse";
-export * from "./autocompleteSearchParams";
-export * from "./autocompleteSearchResponseAPI";
+export type * from './autocompleteSearchResponse';
+export type * from './autocompleteSearchParams';
+export type * from './autocompleteSearchResponseAPI';

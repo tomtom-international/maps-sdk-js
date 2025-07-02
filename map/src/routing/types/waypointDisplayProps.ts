@@ -1,8 +1,8 @@
-import type { LocationDisplayProps } from "../../places";
+import type { LocationDisplayProps } from '../../places';
 
-export const START_INDEX = "start";
-export const MIDDLE_INDEX = "middle";
-export const FINISH_INDEX = "finish";
+export const START_INDEX = 'start';
+export const MIDDLE_INDEX = 'middle';
+export const FINISH_INDEX = 'finish';
 
 /**
  * @ignore
@@ -32,9 +32,9 @@ export type WaypointDisplayProps = LocationDisplayProps & {
 /**
  * @ignore
  */
-export const INDEX_TYPE = "indexType";
+export const INDEX_TYPE = 'indexType';
 
 /**
  * @ignore
  */
-export const STOP_DISPLAY_INDEX = "stopDisplayIndex";
+export const STOP_DISPLAY_INDEX = 'stopDisplayIndex';

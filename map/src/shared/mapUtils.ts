@@ -4,15 +4,15 @@ import type {
     MapGeoJSONFeature,
     RequestParameters,
     ResourceType,
-    StyleImageMetadata
-} from "maplibre-gl";
-import type { GlobalConfig } from "@anw/maps-sdk-js/core";
-import { generateTomTomHeaders } from "@anw/maps-sdk-js/core";
-import type { TomTomMap } from "../TomTomMap";
-import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from "./types";
-import type { AbstractSourceWithLayers } from "./SourceWithLayers";
-import type { StyleInput, StyleModule } from "../init";
-import { cannotAddStyleModuleToCustomStyle } from "./errorMessages";
+    StyleImageMetadata,
+} from 'maplibre-gl';
+import type { GlobalConfig } from '@anw/maps-sdk-js/core';
+import { generateTomTomHeaders } from '@anw/maps-sdk-js/core';
+import type { TomTomMap } from '../TomTomMap';
+import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
+import type { AbstractSourceWithLayers } from './SourceWithLayers';
+import type { StyleInput, StyleModule } from '../init';
+import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 
 /**
  * Wait until the map is ready
@@ -21,7 +21,7 @@ import { cannotAddStyleModuleToCustomStyle } from "./errorMessages";
  */
 export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<void> => {
     if (!tomtomMap.mapReady) {
-        await tomtomMap.mapLibreMap.once("styledata");
+        await tomtomMap.mapLibreMap.once('styledata');
         // Recursively waiting for map to be ready (in case of style changes quickly in succession):
         await waitUntilMapIsReady(tomtomMap);
     }
@@ -35,7 +35,7 @@ export const waitUntilMapIsReady = async (tomtomMap: TomTomMap): Promise<void> =
  */
 export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: string): Promise<void> => {
     if (!tomtomMap.mapLibreMap.getSource(sourceId) || !tomtomMap.mapLibreMap.isSourceLoaded(sourceId)) {
-        await tomtomMap.mapLibreMap.once("sourcedata");
+        await tomtomMap.mapLibreMap.once('sourcedata');
     }
 };
 
@@ -54,7 +54,7 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
         }
 
         for (const key in feature.properties) {
-            if (typeof feature.properties[key] === "string") {
+            if (typeof feature.properties[key] === 'string') {
                 try {
                     feature.properties[key] = JSON.parse(feature.properties[key] as string);
                 } catch (e) {
@@ -74,14 +74,13 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
 export const injectTomTomHeaders =
     (params: Partial<GlobalConfig>) =>
     (url: string, resourceType?: ResourceType): RequestParameters => {
-        if (url.includes("tomtom.com")) {
-            if (resourceType === "Image") {
+        if (url.includes('tomtom.com')) {
+            if (resourceType === 'Image') {
                 return { url };
             }
             return { url, headers: { ...generateTomTomHeaders(params) } };
-        } else {
-            return { url };
         }
+        return { url };
     };
 
 /**
@@ -90,7 +89,7 @@ export const injectTomTomHeaders =
  */
 export const areBothDefinedAndEqual = (
     featureA: MapGeoJSONFeature | undefined,
-    featureB: MapGeoJSONFeature | undefined
+    featureB: MapGeoJSONFeature | undefined,
 ): boolean => !!featureA && !!featureB && featureA.id === featureB.id;
 
 type LayerProps = {
@@ -117,7 +116,7 @@ export const changeLayerProps = (newLayerProps: LayerProps, prevLayerProps: Laye
         map.setLayerZoomRange(
             layerID,
             newLayerProps.minzoom ? newLayerProps.minzoom : map.getMinZoom(),
-            newLayerProps.maxzoom ? newLayerProps.maxzoom : map.getMaxZoom()
+            newLayerProps.maxzoom ? newLayerProps.maxzoom : map.getMaxZoom(),
         );
     }
     map.setFilter(layerID, newLayerProps.filter, { validate: false });
@@ -167,16 +166,16 @@ export const updateLayersAndSource = (
     newLayersSpecs: ToBeAddedLayerSpecWithoutSource[],
     oldLayersSpecs: ToBeAddedLayerSpecWithoutSource[],
     sourceWithLayers: AbstractSourceWithLayers,
-    map: Map
+    map: Map,
 ): void => {
     // map layers by id in object for easier access, reduces number of loops
     const newLayersMap: Record<string, ToBeAddedLayerSpecWithoutSource> = newLayersSpecs.reduce(
         (acc, cur) => ({ ...acc, [cur.id]: cur }),
-        {}
+        {},
     );
     const oldLayersMap: Record<string, ToBeAddedLayerSpecWithoutSource> = oldLayersSpecs.reduce(
         (acc, cur) => ({ ...acc, [cur.id]: cur }),
-        {}
+        {},
     );
 
     // we need to store layers in four arrays, layers to add ID, layers to remove ID and layers to update
@@ -214,7 +213,7 @@ export const updateLayersAndSource = (
         // add layer spec and map
         const toBeAddedLayerSpec: ToBeAddedLayerSpec = {
             ...newLayersMap[layerId],
-            source: sourceWithLayers.source.id
+            source: sourceWithLayers.source.id,
         } as ToBeAddedLayerSpec;
         layerSpecs.push(toBeAddedLayerSpec);
     });
@@ -235,7 +234,7 @@ export const addLayers = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => 
     const addLayer = (layer: ToBeAddedLayerSpec): void => {
         // we can safely add this layer
         if (!map.getLayer(layer.id)) {
-            map.addLayer({ ...layer, layout: { ...layer.layout, visibility: "none" } }, layer.beforeID);
+            map.addLayer({ ...layer, layout: { ...layer.layout, visibility: 'none' } }, layer.beforeID);
         }
         layerIdsAlreadyOnMap.add(layer.id);
     };
@@ -281,21 +280,19 @@ export const addLayers = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => 
  */
 export const updateStyleWithModule = (style: StyleInput | undefined, styleModule: StyleModule): StyleInput => {
     switch (typeof style) {
-        case "undefined":
-            return { type: "published", include: [styleModule] };
-        case "string":
+        case 'undefined':
+            return { type: 'published', include: [styleModule] };
+        case 'string':
             // this is a published style
-            return { type: "published", id: style, include: [styleModule] };
+            return { type: 'published', id: style, include: [styleModule] };
         default:
-            if (style.type === "published") {
+            if (style.type === 'published') {
                 if (style.include) {
                     return { ...style, include: [...style.include, styleModule] };
-                } else {
-                    return { ...style, include: [styleModule] };
                 }
-            } else {
-                throw cannotAddStyleModuleToCustomStyle(styleModule);
+                return { ...style, include: [styleModule] };
             }
+            throw cannotAddStyleModuleToCustomStyle(styleModule);
     }
 };
 
@@ -311,13 +308,13 @@ export const prepareForModuleInit = async (
     map: TomTomMap,
     ensureAddedToStyle: boolean | undefined,
     sourceId: string,
-    styleModule: StyleModule
+    styleModule: StyleModule,
 ): Promise<void> => {
     await waitUntilMapIsReady(map);
     if (ensureAddedToStyle && !map.mapLibreMap.getSource(sourceId)) {
         if (!map.mapLibreMap.isStyleLoaded()) {
             // we let the map settle before changing its style again, so the previous style/data load goes smoother:
-            await map.mapLibreMap.once("idle");
+            await map.mapLibreMap.once('idle');
         }
         map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
         await waitUntilSourceIsLoaded(map, sourceId);
@@ -332,10 +329,10 @@ export const addImageIfNotExisting = async (
     map: Map,
     imageID: string,
     imageToLoad: string | HTMLImageElement,
-    options?: Partial<StyleImageMetadata>
+    options?: Partial<StyleImageMetadata>,
 ) => {
     if (!map.hasImage(imageID) && imageToLoad) {
-        if (typeof imageToLoad === "string") {
+        if (typeof imageToLoad === 'string') {
             // Expecting image URL, so the image needs to be downloaded first:
             const loadedImage = await map.loadImage(imageToLoad);
             // double-checking just in case of a race condition with overlapping call:

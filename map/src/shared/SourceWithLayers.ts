@@ -4,9 +4,9 @@ import type {
     LayerSpecification,
     Map,
     Source,
-    SourceSpecification
-} from "maplibre-gl";
-import { TomTomMapSource } from "./TomTomMapSource";
+    SourceSpecification,
+} from 'maplibre-gl';
+import { TomTomMapSource } from './TomTomMapSource';
 import type {
     CleanEventStateOptions,
     CleanEventStatesOptions,
@@ -16,10 +16,10 @@ import type {
     SourceWithLayerIDs,
     SourceWithLayers,
     ToBeAddedLayerSpec,
-    ToBeAddedLayerSpecWithoutSource
-} from "./types";
-import type { FeatureCollection } from "geojson";
-import { asDefined } from "./assertionUtils";
+    ToBeAddedLayerSpecWithoutSource,
+} from './types';
+import type { FeatureCollection } from 'geojson';
+import { asDefined } from './assertionUtils';
 
 /**
  * Contains a source and the layers to render its data.
@@ -28,7 +28,7 @@ import { asDefined } from "./assertionUtils";
 export abstract class AbstractSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
     RUNTIME_SOURCE extends Source = Source,
-    LAYER_SPEC extends LayerSpecification = LayerSpecification
+    LAYER_SPEC extends LayerSpecification = LayerSpecification,
 > {
     readonly _layerSpecs: LAYER_SPEC[];
     private _sourceAndLayerIDs!: SourceWithLayerIDs;
@@ -36,7 +36,7 @@ export abstract class AbstractSourceWithLayers<
     constructor(
         readonly map: Map,
         readonly source: TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>,
-        layerSpecs: LAYER_SPEC[]
+        layerSpecs: LAYER_SPEC[],
     ) {
         this._layerSpecs = layerSpecs;
         this._updateSourceAndLayerIDs();
@@ -59,12 +59,12 @@ export abstract class AbstractSourceWithLayers<
     }
 
     private isLayerVisible(layer: LayerSpecification): boolean {
-        return this.map.getLayoutProperty(layer.id, "visibility") !== "none";
+        return this.map.getLayoutProperty(layer.id, 'visibility') !== 'none';
     }
 
     setLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {
         for (const layerSpec of this.getLayerSpecs(filter)) {
-            this.map.setLayoutProperty(layerSpec.id, "visibility", visible ? "visible" : "none", { validate: false });
+            this.map.setLayoutProperty(layerSpec.id, 'visibility', visible ? 'visible' : 'none', { validate: false });
         }
     }
 
@@ -74,9 +74,9 @@ export abstract class AbstractSourceWithLayers<
 
     equalSourceAndLayerIDs(other: SourceWithLayers): boolean {
         return (
-            this.sourceAndLayerIDs.sourceID == other.sourceAndLayerIDs.sourceID &&
-            this.sourceAndLayerIDs.layerIDs.length == other.sourceAndLayerIDs.layerIDs.length &&
-            this.sourceAndLayerIDs.layerIDs.every((id, index) => id == other.sourceAndLayerIDs.layerIDs[index])
+            this.sourceAndLayerIDs.sourceID === other.sourceAndLayerIDs.sourceID &&
+            this.sourceAndLayerIDs.layerIDs.length === other.sourceAndLayerIDs.layerIDs.length &&
+            this.sourceAndLayerIDs.layerIDs.every((id, index) => id === other.sourceAndLayerIDs.layerIDs[index])
         );
     }
 }
@@ -97,7 +97,7 @@ export const filterLayersBySources = (loadedMap: Map, sourceIDs: string[]): Laye
  */
 export class StyleSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
-    RUNTIME_SOURCE extends Source = Source
+    RUNTIME_SOURCE extends Source = Source,
 > extends AbstractSourceWithLayers<SourceSpecification, RUNTIME_SOURCE> {
     constructor(map: Map, runtimeSource: RUNTIME_SOURCE, filter?: LayerSpecFilter) {
         let layers = filterLayersBySources(map, [runtimeSource.id]);
@@ -109,9 +109,9 @@ export class StyleSourceWithLayers<
             new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(
                 runtimeSource.id,
                 map.getStyle().sources[runtimeSource.id] as SOURCE_SPEC,
-                runtimeSource
+                runtimeSource,
             ),
-            layers
+            layers,
         );
     }
 }
@@ -121,14 +121,14 @@ export class StyleSourceWithLayers<
  */
 export class AddedSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
-    RUNTIME_SOURCE extends Source = Source
+    RUNTIME_SOURCE extends Source = Source,
 > extends AbstractSourceWithLayers<SOURCE_SPEC, RUNTIME_SOURCE, ToBeAddedLayerSpec> {
     constructor(map: Map, sourceID: string, sourceSpec: SOURCE_SPEC, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
         super(
             map,
             new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceID, sourceSpec),
             // We ensure the source ID is assigned to the layers:
-            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID }) as ToBeAddedLayerSpec)
+            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID }) as ToBeAddedLayerSpec),
         );
     }
 
@@ -149,7 +149,7 @@ export class AddedSourceWithLayers<
     }
 }
 
-const emptyFeatureCollection: FeatureCollection = { type: "FeatureCollection", features: [] };
+const emptyFeatureCollection: FeatureCollection = { type: 'FeatureCollection', features: [] };
 
 /**
  * @ignore
@@ -163,7 +163,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
     constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[], addLayersToMap = true) {
         // MapLibre does not reuse the given feature ID. Either we generate it on the fly or use the one from properties via promotedId value.
         // We must generate "id" property based on the feature id on the fly on "prepareForDisplay" functions.
-        super(map, sourceID, { type: "geojson", data: emptyFeatureCollection, promoteId: "id" }, layerSpecs);
+        super(map, sourceID, { type: 'geojson', data: emptyFeatureCollection, promoteId: 'id' }, layerSpecs);
         this.ensureAddedToMapWithVisibility(false, addLayersToMap);
     }
 
@@ -178,10 +178,10 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
     }
 
     putEventState(options: PutEventStateOptions) {
-        const mode = options.mode || "put";
-        if (mode == "put") {
+        const mode = options.mode || 'put';
+        if (mode === 'put') {
             for (const feature of this.shownFeatures.features) {
-                if (feature.properties?.eventState == options.state) {
+                if (feature.properties?.eventState === options.state) {
                     delete feature.properties.eventState;
                 }
             }

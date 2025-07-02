@@ -1,5 +1,5 @@
-import type { Language } from "../types";
-import type { DistanceUnitsType } from "../util";
+import type { Language } from '../types';
+import type { DistanceUnitsType } from '../util';
 
 /**
  * Configuration to display distance-based units, such as meters, kilometers, miles, feet, and yards.
@@ -141,9 +141,9 @@ export type GlobalConfig = {
  * @category Variables
  */
 export const defaultConfig: GlobalConfig = {
-    commonBaseURL: "https://api.tomtom.com",
-    apiKey: "",
-    apiVersion: 1
+    commonBaseURL: 'https://api.tomtom.com',
+    apiKey: '',
+    apiVersion: 1,
 };
 
 /**
@@ -186,5 +186,5 @@ export class TomTomConfig {
  */
 export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(givenConfig: T = {} as T): T => ({
     ...TomTomConfig.instance.get(),
-    ...givenConfig
+    ...givenConfig,
 });

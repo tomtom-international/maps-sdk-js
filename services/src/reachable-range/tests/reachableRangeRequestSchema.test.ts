@@ -1,66 +1,66 @@
-import { validateRequestSchema } from "../../shared/validation";
-import type { ReachableRangeParams } from "../types/reachableRangeParams";
-import { reachableRangeRequestValidationConfig } from "../reachableRangeRequestSchema";
+import { validateRequestSchema } from '../../shared/validation';
+import type { ReachableRangeParams } from '../types/reachableRangeParams';
+import { reachableRangeRequestValidationConfig } from '../reachableRangeRequestSchema';
 
-describe.skip("Reachable range request schema validation", () => {
-    const apiKey = "APIKEY";
-    const commonBaseURL = "https://api-test.tomtom.com";
+describe.skip('Reachable range request schema validation', () => {
+    const apiKey = 'APIKEY';
+    const commonBaseURL = 'https://api-test.tomtom.com';
     const config = reachableRangeRequestValidationConfig;
 
     test("it should fail when api Key isn't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { budget: { type: "timeMinutes", value: 30 }, origin: [10, 20], commonBaseURL },
-                config
+                { budget: { type: 'timeMinutes', value: 30 }, origin: [10, 20], commonBaseURL },
+                config,
             );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "Required",
-                errors: [expect.objectContaining({ path: ["apiKey"] })]
-            })
+                message: 'Required',
+                errors: [expect.objectContaining({ path: ['apiKey'] })],
+            }),
         );
     });
 
     test("it should fail when common base URL isn't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { budget: { type: "timeMinutes", value: 30 }, origin: [10, 20], apiKey },
-                config
+                { budget: { type: 'timeMinutes', value: 30 }, origin: [10, 20], apiKey },
+                config,
             );
 
         expect(validationCall).toThrow(
-            expect.objectContaining({ message: "commonBaseURL or customServiceBaseURL is required" })
+            expect.objectContaining({ message: 'commonBaseURL or customServiceBaseURL is required' }),
         );
     });
 
     test("it should fail when origin isn't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { budget: { type: "timeMinutes", value: 30 }, apiKey, commonBaseURL } as never,
-                config
+                { budget: { type: 'timeMinutes', value: 30 }, apiKey, commonBaseURL } as never,
+                config,
             );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "Invalid input",
-                errors: [expect.objectContaining({ path: ["origin"] })]
-            })
+                message: 'Invalid input',
+                errors: [expect.objectContaining({ path: ['origin'] })],
+            }),
         );
     });
 
     test("it should fail when origin isn't well defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { origin: "wrong" as never, budget: { type: "timeMinutes", value: 30 }, apiKey, commonBaseURL },
-                config
+                { origin: 'wrong' as never, budget: { type: 'timeMinutes', value: 30 }, apiKey, commonBaseURL },
+                config,
             );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "Invalid input",
-                errors: [expect.objectContaining({ path: ["origin"] })]
-            })
+                message: 'Invalid input',
+                errors: [expect.objectContaining({ path: ['origin'] })],
+            }),
         );
     });
 
@@ -70,48 +70,48 @@ describe.skip("Reachable range request schema validation", () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "Required",
-                errors: [expect.objectContaining({ path: ["budget"] })]
-            })
+                message: 'Required',
+                errors: [expect.objectContaining({ path: ['budget'] })],
+            }),
         );
     });
 
-    test("it should fail when trying to input arrival time (only departAt allowed)", () => {
+    test('it should fail when trying to input arrival time (only departAt allowed)', () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 {
                     origin: [10, 20],
-                    budget: { type: "distanceKM", value: 100 },
+                    budget: { type: 'distanceKM', value: 100 },
                     when: {
-                        option: "arriveBy" as never,
-                        date: new Date()
+                        option: 'arriveBy' as never,
+                        date: new Date(),
                     },
                     apiKey,
-                    commonBaseURL
+                    commonBaseURL,
                 },
-                config
+                config,
             );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
                 message:
-                    "When calculating a reachable range, departure date-time can be specified, " +
-                    "but not arrival date-time"
-            })
+                    'When calculating a reachable range, departure date-time can be specified, ' +
+                    'but not arrival date-time',
+            }),
         );
     });
 
     test("it should fail when budget is EV but vehicle params aren't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { origin: [10, 20], budget: { type: "remainingChargeCPT", value: 50 }, apiKey, commonBaseURL },
-                config
+                { origin: [10, 20], budget: { type: 'remainingChargeCPT', value: 50 }, apiKey, commonBaseURL },
+                config,
             );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "With an EV reachable range, the vehicle parameters must be set, with 'electric' engine type"
-            })
+                message: "With an EV reachable range, the vehicle parameters must be set, with 'electric' engine type",
+            }),
         );
     });
 
@@ -120,29 +120,29 @@ describe.skip("Reachable range request schema validation", () => {
             validateRequestSchema<ReachableRangeParams>(
                 {
                     origin: [10, 20],
-                    budget: { type: "remainingChargeCPT", value: 50 },
+                    budget: { type: 'remainingChargeCPT', value: 50 },
                     // vehicle: {
                     //     // model missing:
                     //     engine: { type: "electric", currentChargePCT: 50 } as never
                     // },
                     apiKey,
-                    commonBaseURL
+                    commonBaseURL,
                 },
-                config
+                config,
             );
 
         expect(validationCall).toThrow(
             // (More detailed tests done in scope of vehicle params validation itself)
-            expect.objectContaining({ message: "Required" })
+            expect.objectContaining({ message: 'Required' }),
         );
     });
 
-    test("it should fail when budget is EV but vehicle params are for combustion", () => {
+    test('it should fail when budget is EV but vehicle params are for combustion', () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 {
                     origin: [10, 20],
-                    budget: { type: "remainingChargeCPT", value: 50 },
+                    budget: { type: 'remainingChargeCPT', value: 50 },
                     // vehicle: {
                     //     engine: {
                     //         type: "combustion",
@@ -155,30 +155,30 @@ describe.skip("Reachable range request schema validation", () => {
                     //     }
                     // },
                     apiKey,
-                    commonBaseURL
+                    commonBaseURL,
                 },
-                config
+                config,
             );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "With an EV reachable range, the vehicle parameters must be set, with 'electric' engine type"
-            })
+                message: "With an EV reachable range, the vehicle parameters must be set, with 'electric' engine type",
+            }),
         );
     });
 
     test("it should fail when budget is about fuel but vehicle params aren't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { origin: [10, 20], budget: { type: "spentFuelLiters", value: 35 }, apiKey, commonBaseURL },
-                config
+                { origin: [10, 20], budget: { type: 'spentFuelLiters', value: 35 }, apiKey, commonBaseURL },
+                config,
             );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
                 message:
-                    "With a fuel reachable range, the vehicle parameters must be set, with 'combustion' engine type"
-            })
+                    "With a fuel reachable range, the vehicle parameters must be set, with 'combustion' engine type",
+            }),
         );
     });
 });

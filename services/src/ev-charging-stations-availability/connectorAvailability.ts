@@ -3,8 +3,8 @@ import type {
     ChargingPointStatus,
     ChargingStation,
     Connector,
-    ConnectorAvailability
-} from "@anw/maps-sdk-js/core";
+    ConnectorAvailability,
+} from '@anw/maps-sdk-js/core';
 
 /**
  * @ignore
@@ -23,16 +23,16 @@ export const toChargingPointAvailability = (chargingStations: ChargingStation[])
 
 // Two connectors can be considered equal when they have the same type and power:
 const areEqual = (connectorA: Connector, connectorB: Connector) =>
-    connectorA.type == connectorB.type && connectorA.ratedPowerKW == connectorB.ratedPowerKW;
+    connectorA.type === connectorB.type && connectorA.ratedPowerKW === connectorB.ratedPowerKW;
 
 const addConnectorStatus = (
     connectors: Connector[],
     status: ChargingPointStatus | undefined,
-    availabilities: ConnectorAvailability[]
+    availabilities: ConnectorAvailability[],
 ): void => {
     for (const connector of connectors) {
         const existingAvailability = availabilities.find((connectorAvailability) =>
-            areEqual(connector, connectorAvailability.connector)
+            areEqual(connector, connectorAvailability.connector),
         );
         if (existingAvailability) {
             existingAvailability.count++;
@@ -46,9 +46,9 @@ const addConnectorStatus = (
                 count: 1,
                 statusCounts: status
                     ? {
-                          [status]: 1
+                          [status]: 1,
                       }
-                    : {}
+                    : {},
             });
         }
     }

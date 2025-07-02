@@ -1,29 +1,29 @@
-import type { Page } from "@playwright/test";
-import { test, expect } from "@playwright/test";
-import type { MapGeoJSONFeature } from "maplibre-gl";
-import { indexedMagnitudes } from "core";
-import type { IncidentCategory, IncidentsConfig, RoadCategory, TrafficIncidentsFilters } from "map";
-import { incidentCategories as availableIncidentCategories, incidentCategoriesMapping } from "map/src/traffic";
-import { TRAFFIC_INCIDENTS_SOURCE_ID } from "map/src/shared";
-import { MapTestEnv } from "./util/MapTestEnv";
-import type { MapsSDKThis } from "./types/MapsSDKThis";
+import type { Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
+import { indexedMagnitudes } from 'core';
+import type { IncidentCategory, IncidentsConfig, RoadCategory, TrafficIncidentsFilters } from 'map';
+import { incidentCategories as availableIncidentCategories, incidentCategoriesMapping } from 'map/src/traffic';
+import { TRAFFIC_INCIDENTS_SOURCE_ID } from 'map/src/shared';
+import { MapTestEnv } from './util/MapTestEnv';
+import type { MapsSDKThis } from './types/MapsSDKThis';
 import {
     getVisibleLayersBySource,
     initTrafficIncidents,
     setStyle,
     waitForMapIdle,
-    waitUntilRenderedFeaturesChange
-} from "./util/TestUtils";
+    waitUntilRenderedFeaturesChange,
+} from './util/TestUtils';
 
 const waitForRenderedIncidentsChange = async (
     page: Page,
-    previousFeaturesCount: number
+    previousFeaturesCount: number,
 ): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(
         page,
         (await getVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).map((layer) => layer.id),
         previousFeaturesCount,
-        20000
+        20000,
     );
 
 const mapIncidentCategories = (categories: IncidentCategory[]): number[] =>
@@ -31,14 +31,14 @@ const mapIncidentCategories = (categories: IncidentCategory[]): number[] =>
 
 const getByIncidentCategories = (
     renderedIncidents: MapGeoJSONFeature[],
-    incidentCategories: IncidentCategory[]
+    incidentCategories: IncidentCategory[],
 ): MapGeoJSONFeature[] =>
     renderedIncidents.filter((incident) =>
-        mapIncidentCategories(incidentCategories).includes(incident.properties["icon_category_0"])
+        mapIncidentCategories(incidentCategories).includes(incident.properties['icon_category_0']),
     );
 
 const getByRoadCategories = (renderedItems: MapGeoJSONFeature[], roadCategories: RoadCategory[]): MapGeoJSONFeature[] =>
-    renderedItems.filter((incident) => roadCategories.includes(incident.properties["road_category"]));
+    renderedItems.filter((incident) => roadCategories.includes(incident.properties['road_category']));
 
 const getConfig = async (page: Page): Promise<IncidentsConfig | undefined> =>
     page.evaluate(async () => (globalThis as MapsSDKThis).trafficIncidents?.getConfig());
@@ -52,27 +52,27 @@ const unsetIncidents = async (page: Page) =>
 const resetConfig = async (page: Page) =>
     page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.resetConfig());
 
-test.describe("Map vector tile traffic incidents module tests", () => {
+test.describe('Map vector tile traffic incidents module tests', () => {
     const mapEnv = new MapTestEnv();
 
     test.afterEach(async ({ page }) => unsetIncidents(page));
 
-    test("Failing to initialize if fully excluded from the style", async ({ page }) => {
+    test('Failing to initialize if fully excluded from the style', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, {});
         await expect(initTrafficIncidents(page)).rejects.toBeDefined();
     });
 
-    test("Auto initialize if fully excluded from the style", async ({ page }) => {
+    test('Auto initialize if fully excluded from the style', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, {});
         await initTrafficIncidents(page, { ensureAddedToStyle: true });
         expect(await page.evaluate(() => !!(globalThis as MapsSDKThis).trafficIncidents)).toBe(true);
     });
 
-    test("Vector tiles traffic incidents visibility changes in different ways", async ({ page }) => {
+    test('Vector tiles traffic incidents visibility changes in different ways', async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["trafficIncidents"] } }
+            { style: { type: 'published', include: ['trafficIncidents'] } },
         );
         expect(await getConfig(page)).toBeUndefined();
 
@@ -91,14 +91,14 @@ test.describe("Map vector tile traffic incidents module tests", () => {
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setIconsVisible(true));
         expect(await getConfig(page)).toEqual({ visible: false, icons: { visible: true } });
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(
-            true
+            true,
         );
 
         // re-applying config again:
         await applyConfig(page, await getConfig(page));
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(
-            true
+            true,
         );
         expect(await getConfig(page)).toEqual({ visible: false, icons: { visible: true } });
 
@@ -108,12 +108,12 @@ test.describe("Map vector tile traffic incidents module tests", () => {
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setIconsVisible(false));
         expect(
-            await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())
+            await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible()),
         ).toBeFalsy();
 
         expect(await getConfig(page)).toEqual({
             visible: false,
-            icons: { visible: false }
+            icons: { visible: false },
         });
 
         await applyConfig(page, { visible: undefined });
@@ -125,14 +125,14 @@ test.describe("Map vector tile traffic incidents module tests", () => {
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setIconsVisible(false));
         expect(
-            await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())
+            await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible()),
         ).toBeFalsy();
         expect(await getConfig(page)).toEqual({ visible: true, icons: { visible: false } });
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(
-            true
+            true,
         );
         expect(await getConfig(page)).toEqual({ visible: true });
 
@@ -141,7 +141,7 @@ test.describe("Map vector tile traffic incidents module tests", () => {
         expect(await getConfig(page)).toBeUndefined();
 
         // changing the map style: verifying the places are still shown (state restoration):
-        await setStyle(page, "standardDark");
+        await setStyle(page, 'standardDark');
         await waitForMapIdle(page);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
 
@@ -152,11 +152,11 @@ test.describe("Map vector tile traffic incidents module tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Traffic incidents filtering with config changes", async ({ page }) => {
+    test('Traffic incidents filtering with config changes', async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 13, center: [-0.12621, 51.50394] }, // London
-            { style: { type: "published", include: ["trafficIncidents"] } }
+            { style: { type: 'published', include: ['trafficIncidents'] } },
         );
         await initTrafficIncidents(page);
         expect(await getConfig(page)).toBeUndefined();
@@ -164,10 +164,10 @@ test.describe("Map vector tile traffic incidents module tests", () => {
 
         const defaultIncidents = await waitForRenderedIncidentsChange(page, 0);
         expect(defaultIncidents.length).toBeGreaterThan(4);
-        expect(getByIncidentCategories(defaultIncidents, ["road_closed"]).length).toBeGreaterThan(0);
+        expect(getByIncidentCategories(defaultIncidents, ['road_closed']).length).toBeGreaterThan(0);
 
         let config: IncidentsConfig = {
-            filters: { any: [{ incidentCategories: { show: "only", values: ["road_closed"] } }] }
+            filters: { any: [{ incidentCategories: { show: 'only', values: ['road_closed'] } }] },
         };
 
         // Showing road closures only:
@@ -176,27 +176,27 @@ test.describe("Map vector tile traffic incidents module tests", () => {
 
         // changing the map style (and manually adding also poi part):
         // verifying the config is still the same (state restoration):
-        await setStyle(page, { type: "published", id: "standardDark", include: ["trafficIncidents"] });
+        await setStyle(page, { type: 'published', id: 'standardDark', include: ['trafficIncidents'] });
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
         const roadClosedIncidents = await waitForRenderedIncidentsChange(page, 0);
         // we check that all the rendered incidents are of road_closed category:
-        expect(getByIncidentCategories(roadClosedIncidents, ["road_closed"])).toHaveLength(roadClosedIncidents.length);
+        expect(getByIncidentCategories(roadClosedIncidents, ['road_closed'])).toHaveLength(roadClosedIncidents.length);
         expect(
             getByIncidentCategories(
                 roadClosedIncidents,
-                availableIncidentCategories.filter((category) => category != "road_closed")
-            )
+                availableIncidentCategories.filter((category) => category != 'road_closed'),
+            ),
         ).toHaveLength(0);
 
         config = {
             filters: {
                 any: [
-                    { incidentCategories: { show: "only", values: ["road_closed"] } },
-                    { roadCategories: { show: "only", values: ["motorway", "trunk", "primary"] } }
-                ]
-            }
+                    { incidentCategories: { show: 'only', values: ['road_closed'] } },
+                    { roadCategories: { show: 'only', values: ['motorway', 'trunk', 'primary'] } },
+                ],
+            },
         };
 
         // Changing filter to show road closures and major roads:
@@ -204,7 +204,7 @@ test.describe("Map vector tile traffic incidents module tests", () => {
         expect(await getConfig(page)).toEqual(config);
 
         // changing the map style: verifying the config is still the same (state restoration):
-        await setStyle(page, "monoLight");
+        await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
@@ -213,8 +213,8 @@ test.describe("Map vector tile traffic incidents module tests", () => {
         // The addition of major road and road_closed incidents should be greater or equal than the total
         // (since there can be overlap due to the "any"/"or" filter)
         expect(
-            getByRoadCategories(roadClosedAndMajorRoadIncidents, ["motorway", "trunk", "primary"]).length +
-                getByIncidentCategories(roadClosedAndMajorRoadIncidents, ["road_closed"]).length
+            getByRoadCategories(roadClosedAndMajorRoadIncidents, ['motorway', 'trunk', 'primary']).length +
+                getByIncidentCategories(roadClosedAndMajorRoadIncidents, ['road_closed']).length,
         ).toBeGreaterThanOrEqual(roadClosedAndMajorRoadIncidents.length);
 
         // We reset the config and assert that we have the same amount of incidents as the beginning:
@@ -225,23 +225,23 @@ test.describe("Map vector tile traffic incidents module tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Traffic incidents filtering with complex initial config", async ({ page }) => {
+    test('Traffic incidents filtering with complex initial config', async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 13, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["trafficIncidents"] } }
+            { style: { type: 'published', include: ['trafficIncidents'] } },
         );
 
         const config: IncidentsConfig = {
             filters: {
                 any: [
                     {
-                        magnitudes: { show: "only", values: ["moderate", "major"] },
-                        delays: { minDelayMinutes: 5 }
+                        magnitudes: { show: 'only', values: ['moderate', 'major'] },
+                        delays: { minDelayMinutes: 5 },
                     },
-                    { incidentCategories: { show: "only", values: ["road_closed"] } }
-                ]
-            }
+                    { incidentCategories: { show: 'only', values: ['road_closed'] } },
+                ],
+            },
         };
 
         await initTrafficIncidents(page, config);
@@ -254,22 +254,22 @@ test.describe("Map vector tile traffic incidents module tests", () => {
 
         // There should be no incidents that have delays, and such delays are less than 5 min:
         expect(
-            renderedIncidents.filter((incident) => incident.properties.delay && incident.properties.delay < 300)
+            renderedIncidents.filter((incident) => incident.properties.delay && incident.properties.delay < 300),
         ).toHaveLength(0);
 
-        expect(getByIncidentCategories(renderedIncidents, ["road_closed"]).length).toBeGreaterThan(0);
+        expect(getByIncidentCategories(renderedIncidents, ['road_closed']).length).toBeGreaterThan(0);
 
         // We only allow for moderate, major and indefinite (because of road closures) magnitudes:
         expect(
             renderedIncidents.filter((incident) =>
-                [indexedMagnitudes.indexOf("unknown"), indexedMagnitudes.indexOf("minor")].includes(
-                    incident.properties.magnitude
-                )
-            )
+                [indexedMagnitudes.indexOf('unknown'), indexedMagnitudes.indexOf('minor')].includes(
+                    incident.properties.magnitude,
+                ),
+            ),
         ).toHaveLength(0);
 
         // CHANGING THE MAP STYLE: verifying the config is still the same (state restoration):
-        await setStyle(page, { type: "published", id: "standardDark", include: ["trafficIncidents"] });
+        await setStyle(page, { type: 'published', id: 'standardDark', include: ['trafficIncidents'] });
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
@@ -277,79 +277,79 @@ test.describe("Map vector tile traffic incidents module tests", () => {
         // INCIDENTS assertions:
         renderedIncidents = await waitForRenderedIncidentsChange(page, 0);
         expect(
-            renderedIncidents.filter((incident) => incident.properties.delay && incident.properties.delay < 300)
+            renderedIncidents.filter((incident) => incident.properties.delay && incident.properties.delay < 300),
         ).toHaveLength(0);
-        expect(getByIncidentCategories(renderedIncidents, ["road_closed"]).length).toBeGreaterThan(0);
+        expect(getByIncidentCategories(renderedIncidents, ['road_closed']).length).toBeGreaterThan(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     // (We'll verify that using dedicated methods for filtering and visibility do not affect each other)
-    test("Traffic visibility and filtering with dedicated methods", async ({ page }) => {
+    test('Traffic visibility and filtering with dedicated methods', async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
             // London:
             { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: "published", include: ["trafficIncidents"] } }
+            { style: { type: 'published', include: ['trafficIncidents'] } },
         );
 
         await initTrafficIncidents(page);
 
         const incidentFilters: TrafficIncidentsFilters = {
-            any: [{ incidentCategories: { show: "only", values: ["road_closed"] } }]
+            any: [{ incidentCategories: { show: 'only', values: ['road_closed'] } }],
         };
         // Showing road closures only:
         await page.evaluate(
             async (inputIncidentFilters) => (globalThis as MapsSDKThis).trafficIncidents?.filter(inputIncidentFilters),
-            incidentFilters
+            incidentFilters,
         );
         expect(await getConfig(page)).toEqual({
             filters: incidentFilters,
-            icons: {}
+            icons: {},
         });
         // (changing incidents filter directly shouldn't affect flow visibility):
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(
-            true
+            true,
         );
         await waitForMapIdle(page);
         const roadClosedIncidents = await waitForRenderedIncidentsChange(page, 0);
         // we check that all the rendered incidents are of road_closed category:
-        expect(getByIncidentCategories(roadClosedIncidents, ["road_closed"])).toHaveLength(roadClosedIncidents.length);
+        expect(getByIncidentCategories(roadClosedIncidents, ['road_closed'])).toHaveLength(roadClosedIncidents.length);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(false));
         expect(await getConfig(page)).toEqual({
             visible: false,
             filters: incidentFilters,
-            icons: {}
+            icons: {},
         });
 
         await page.evaluate(
             async (inputIncidentFilters) =>
                 (globalThis as MapsSDKThis).trafficIncidents?.filter(inputIncidentFilters, inputIncidentFilters),
-            incidentFilters
+            incidentFilters,
         );
         expect(await getConfig(page)).toEqual({
             visible: false,
             filters: incidentFilters,
-            icons: { filters: incidentFilters }
+            icons: { filters: incidentFilters },
         });
 
         await page.evaluate(
             async (inputIncidentFilters) => (globalThis as MapsSDKThis).trafficIncidents?.filter(inputIncidentFilters),
-            incidentFilters
+            incidentFilters,
         );
         expect(await getConfig(page)).toEqual({
             visible: false,
             filters: incidentFilters,
-            icons: {}
+            icons: {},
         });
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
         expect(await getConfig(page)).toEqual({
             visible: true,
             filters: incidentFilters,
-            icons: {}
+            icons: {},
         });
     });
 });

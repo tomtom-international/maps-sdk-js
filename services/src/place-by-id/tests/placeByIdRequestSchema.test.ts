@@ -1,21 +1,21 @@
-import type { Language } from "@anw/maps-sdk-js/core";
-import type { PlaceByIdParams } from "../types";
-import placeByIdReqObjects from "../../place-by-id/tests/requestBuilderPerf.data.json";
-import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { validateRequestSchema } from "../../shared/validation";
-import { placeByIdRequestSchema } from "../placeByIdSchema";
-import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
+import type { Language } from '@anw/maps-sdk-js/core';
+import type { PlaceByIdParams } from '../types';
+import placeByIdReqObjects from '../../place-by-id/tests/requestBuilderPerf.data.json';
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { validateRequestSchema } from '../../shared/validation';
+import { placeByIdRequestSchema } from '../placeByIdSchema';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 
-describe("Place By Id API", () => {
-    const apiKey = "APIKEY";
-    const commonBaseURL = "https://api-test.tomtom.com";
+describe('Place By Id API', () => {
+    const apiKey = 'APIKEY';
+    const commonBaseURL = 'https://api-test.tomtom.com';
     const entityId = 528009004250472; // Invalid value, entityId is a string
-    const language: Language = "en-GB";
-    const view = "Unified";
-    const timeZone = "iana";
-    const openingHours = "nextSevenDays";
+    const language: Language = 'en-GB';
+    const view = 'Unified';
+    const timeZone = 'iana';
+    const openingHours = 'nextSevenDays';
 
-    test("it should throw Validation error with invalid entityId", () => {
+    test('it should throw Validation error with invalid entityId', () => {
         const invalidParams = {
             apiKey,
             commonBaseURL,
@@ -23,25 +23,25 @@ describe("Place By Id API", () => {
             language,
             view,
             timeZone,
-            openingHours
+            openingHours,
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: placeByIdRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "string",
-                        received: "number",
-                        path: ["entityId"],
-                        message: "Expected string, received number"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'string',
+                        received: 'number',
+                        path: ['entityId'],
+                        message: 'Expected string, received number',
+                    },
+                ],
+            }),
         );
     });
 
-    test("it should throw Validation error when missing entityId", () => {
+    test('it should throw Validation error when missing entityId', () => {
         expect(() =>
             validateRequestSchema(
                 {
@@ -50,33 +50,33 @@ describe("Place By Id API", () => {
                     language,
                     view,
                     timeZone,
-                    openingHours
+                    openingHours,
                 },
-                { schema: placeByIdRequestSchema }
-            )
+                { schema: placeByIdRequestSchema },
+            ),
         ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "string",
-                        received: "undefined",
-                        path: ["entityId"],
-                        message: "Required"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'string',
+                        received: 'undefined',
+                        path: ['entityId'],
+                        message: 'Required',
+                    },
+                ],
+            }),
         );
     });
 });
 
-describe("PlaceById request schema performance tests", () => {
-    test("PlaceById request schema performance test", () => {
+describe('PlaceById request schema performance tests', () => {
+    test('PlaceById request schema performance test', () => {
         expect(
             bestExecutionTimeMS(
                 () => validateRequestSchema(placeByIdReqObjects as PlaceByIdParams, { schema: placeByIdRequestSchema }),
-                10
-            )
+                10,
+            ),
         ).toBeLessThan(MAX_EXEC_TIMES_MS.placeById.schemaValidation);
     });
 });

@@ -1,15 +1,15 @@
-import isNil from "lodash/isNil";
-import type { FeatureCollection, Feature, Point, Position, GeoJsonProperties, Polygon, MultiPolygon } from "geojson";
-import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import type { PolygonFeatures } from "@anw/maps-sdk-js/core";
-import { bboxCenter, bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
-import type { ColorPaletteOptions } from "./layers/geometryLayers";
-import { colorPalettes, geometryFillSpec, geometryOutlineSpec } from "./layers/geometryLayers";
-import type { GeometriesModuleConfig } from "./types/geometriesModuleConfig";
-import type { DisplayGeometryProps, ExtraGeometryDisplayProps } from "./types/geometryDisplayProps";
-import { GEOMETRY_TITLE_PROP } from "./types/geometryDisplayProps";
-import type { SymbolLayerSpecWithoutSource } from "../shared";
-import { MAP_BOLD_FONT } from "../shared/layers/commonLayerProps";
+import isNil from 'lodash/isNil';
+import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
+import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
+import { bboxCenter, bboxFromCoordsArray } from '@anw/maps-sdk-js/core';
+import type { ColorPaletteOptions } from './layers/geometryLayers';
+import { colorPalettes, geometryFillSpec, geometryOutlineSpec } from './layers/geometryLayers';
+import type { GeometriesModuleConfig } from './types/geometriesModuleConfig';
+import type { DisplayGeometryProps, ExtraGeometryDisplayProps } from './types/geometryDisplayProps';
+import { GEOMETRY_TITLE_PROP } from './types/geometryDisplayProps';
+import type { SymbolLayerSpecWithoutSource } from '../shared';
+import { MAP_BOLD_FONT } from '../shared/layers/commonLayerProps';
 
 /**
  * Builds Geometry layer specifications for fill and outline layers.
@@ -18,7 +18,7 @@ import { MAP_BOLD_FONT } from "../shared/layers/commonLayerProps";
 export const buildGeometryLayerSpecs = (
     fillLayerID: string,
     outlineLayerID: string,
-    config?: GeometriesModuleConfig
+    config?: GeometriesModuleConfig,
 ): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
     const colorConfig = config?.colorConfig;
     const lineConfig = config?.lineConfig;
@@ -28,9 +28,9 @@ export const buildGeometryLayerSpecs = (
         id: fillLayerID,
         paint: {
             ...geometryFillSpec.paint,
-            ...(!isNil(colorConfig?.fillOpacity) && { "fill-opacity": colorConfig?.fillOpacity }),
-            ...(colorConfig?.fillColor && { "fill-color": ["get", "color"] })
-        }
+            ...(!isNil(colorConfig?.fillOpacity) && { 'fill-opacity': colorConfig?.fillOpacity }),
+            ...(colorConfig?.fillColor && { 'fill-color': ['get', 'color'] }),
+        },
     } as unknown as SymbolLayerSpecWithoutSource;
 
     const outlineLayerSpec = {
@@ -38,10 +38,10 @@ export const buildGeometryLayerSpecs = (
         id: outlineLayerID,
         paint: {
             ...geometryOutlineSpec.paint,
-            ...(!isNil(lineConfig?.lineColor) && { "line-color": lineConfig?.lineColor }),
-            ...(!isNil(lineConfig?.lineWidth) && { "line-width": lineConfig?.lineWidth }),
-            ...(!isNil(lineConfig?.lineOpacity) && { "line-opacity": lineConfig?.lineOpacity })
-        }
+            ...(!isNil(lineConfig?.lineColor) && { 'line-color': lineConfig?.lineColor }),
+            ...(!isNil(lineConfig?.lineWidth) && { 'line-width': lineConfig?.lineWidth }),
+            ...(!isNil(lineConfig?.lineOpacity) && { 'line-opacity': lineConfig?.lineOpacity }),
+        },
     } as unknown as SymbolLayerSpecWithoutSource;
 
     return [fillLayerSpec, outlineLayerSpec];
@@ -55,7 +55,7 @@ export const buildGeometryLayerSpecs = (
  */
 const buildTitle = (
     feature: Feature<Polygon | MultiPolygon, DisplayGeometryProps | GeoJsonProperties>,
-    config: GeometriesModuleConfig
+    config: GeometriesModuleConfig,
 ): DataDrivenPropertyValueSpecification<string> | string | undefined => {
     if (config.textConfig?.textField) {
         return config.textConfig.textField;
@@ -71,11 +71,11 @@ const buildTitle = (
  */
 const buildColor = (
     config: GeometriesModuleConfig,
-    index: number
+    index: number,
 ): DataDrivenPropertyValueSpecification<string> | string | undefined => {
     const color = config?.colorConfig?.fillColor;
 
-    if (typeof color === "string" && colorPalettes[color as ColorPaletteOptions]) {
+    if (typeof color === 'string' && colorPalettes[color as ColorPaletteOptions]) {
         const palette = colorPalettes[color as ColorPaletteOptions];
         return palette[index % palette.length];
     }
@@ -92,27 +92,27 @@ const buildColor = (
  */
 export const buildGeometryTitleLayerSpec = (
     layerID: string,
-    config?: GeometriesModuleConfig
-): Omit<SymbolLayerSpecification, "source"> => {
+    config?: GeometriesModuleConfig,
+): Omit<SymbolLayerSpecification, 'source'> => {
     const textConfig = config?.textConfig;
 
     return {
-        type: "symbol",
+        type: 'symbol',
         id: layerID,
         layout: {
-            "text-field": ["get", GEOMETRY_TITLE_PROP],
-            ...(textConfig?.textField && { "text-field": textConfig.textField }),
-            "text-padding": 5,
-            "text-size": 12,
-            "text-font": [MAP_BOLD_FONT],
-            "symbol-placement": "point"
+            'text-field': ['get', GEOMETRY_TITLE_PROP],
+            ...(textConfig?.textField && { 'text-field': textConfig.textField }),
+            'text-padding': 5,
+            'text-size': 12,
+            'text-font': [MAP_BOLD_FONT],
+            'symbol-placement': 'point',
         },
         paint: {
-            "text-color": "#333333",
-            "text-halo-color": "#FFFFFF",
-            "text-halo-width": ["interpolate", ["linear"], ["zoom"], 6, 1, 10, 1.5],
-            "text-translate-anchor": "viewport"
-        }
+            'text-color': '#333333',
+            'text-halo-color': '#FFFFFF',
+            'text-halo-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 10, 1.5],
+            'text-translate-anchor': 'viewport',
+        },
     };
 };
 
@@ -126,14 +126,14 @@ export const buildGeometryTitleLayerSpec = (
  */
 export const prepareGeometryForDisplay = (
     geometry: PolygonFeatures<GeoJsonProperties | DisplayGeometryProps>,
-    config: GeometriesModuleConfig = {}
+    config: GeometriesModuleConfig = {},
 ): PolygonFeatures<ExtraGeometryDisplayProps> => ({
     ...geometry,
     features: geometry.features.map((feature, index) => {
         const title = feature.properties?.title ? feature.properties.title : buildTitle(feature, config);
         const color = feature.properties?.color ? feature.properties.color : buildColor(config, index);
         return { ...feature, properties: { ...feature.properties, title, color } };
-    })
+    }),
 });
 
 /**
@@ -160,7 +160,7 @@ export const prepareTitleForDisplay = (geometries: PolygonFeatures<GeoJsonProper
 
         if (feature.properties?.placeCoordinates) {
             coordinates = feature.properties?.placeCoordinates;
-        } else if (feature.geometry.type === "MultiPolygon") {
+        } else if (feature.geometry.type === 'MultiPolygon') {
             const biggestPolygon = getLongestArray(feature.geometry.coordinates);
             const bbox = bboxFromCoordsArray(biggestPolygon);
             coordinates = (bbox && bboxCenter(bbox)) || null;
@@ -169,11 +169,11 @@ export const prepareTitleForDisplay = (geometries: PolygonFeatures<GeoJsonProper
         }
 
         return {
-            type: "Feature",
-            geometry: { type: "Point", coordinates },
-            properties: feature.properties
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates },
+            properties: feature.properties,
         } as Feature<Point>;
     });
 
-    return { type: "FeatureCollection", bbox: geometries.bbox, features };
+    return { type: 'FeatureCollection', bbox: geometries.bbox, features };
 };

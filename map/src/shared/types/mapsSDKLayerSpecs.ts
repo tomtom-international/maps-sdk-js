@@ -1,6 +1,6 @@
-import type { BackgroundLayerSpecification, LayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
-import type { GeoJSONSourceWithLayers, StyleSourceWithLayers } from "../SourceWithLayers";
-import type { mapStyleLayerIDs } from "../layers/layerIDs";
+import type { BackgroundLayerSpecification, LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { GeoJSONSourceWithLayers, StyleSourceWithLayers } from '../SourceWithLayers';
+import type { mapStyleLayerIDs } from '../layers/layerIDs';
 
 /**
  * Layer specification that supports a data source.
@@ -30,19 +30,19 @@ export type ToBeAddedLayerSpec<L extends LayerSpecification = LayerSpecification
  */
 export type ToBeAddedLayerSpecWithoutSource<L extends LayerSpecification = LayerSpecification> = Omit<
     ToBeAddedLayerSpec<L>,
-    "source"
+    'source'
 >;
 
 /**
  * TomTom Maps SDK layer specifications template, without ID nor source, to be still initialized in some map module.
  * @ignore
  */
-export type LayerSpecTemplate<L extends LayerSpecification> = Omit<L, "id" | "source">;
+export type LayerSpecTemplate<L extends LayerSpecification> = Omit<L, 'id' | 'source'>;
 
 /**
  * @ignore
  */
-export type SymbolLayerSpecWithoutSource = Omit<SymbolLayerSpecification, "source">;
+export type SymbolLayerSpecWithoutSource = Omit<SymbolLayerSpecification, 'source'>;
 
 /**
  * Function signature to filter layers.

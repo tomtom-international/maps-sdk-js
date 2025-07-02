@@ -1,4 +1,4 @@
-import { z } from "zod/v4-mini";
+import { z } from 'zod/v4-mini';
 
 /**
  * @ignore
@@ -8,6 +8,6 @@ export const commonServiceRequestSchema = z.partial(
         apiKey: z.string(),
         commonBaseURL: z.string(),
         customServiceBaseURL: z.string(),
-        language: z.string()
-    })
+        language: z.string(),
+    }),
 );

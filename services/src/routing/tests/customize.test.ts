@@ -1,38 +1,38 @@
-import { customizeService } from "../../../index";
+import { customizeService } from '../../../index';
 
-describe("Using customize obj", () => {
-    test("calc route request URL building tests using customize obj", () => {
+describe('Using customize obj', () => {
+    test('calc route request URL building tests using customize obj', () => {
         // Using JSON parse and stringify to compare URL objects easily:
         expect(
             JSON.parse(
                 JSON.stringify(
                     customizeService.calculateRoute.buildCalculateRouteRequest({
-                        apiKey: "API_KEY",
+                        apiKey: 'API_KEY',
                         apiVersion: 3,
-                        commonBaseURL: "https://api.tomtom.com",
+                        commonBaseURL: 'https://api.tomtom.com',
                         geoInputs: [
                             [4.88066, 52.37319],
-                            [4.49015, 52.16109]
-                        ]
-                    })
-                )
-            )
+                            [4.49015, 52.16109],
+                        ],
+                    }),
+                ),
+            ),
         ).toEqual(
             JSON.parse(
                 JSON.stringify({
-                    method: "GET",
+                    method: 'GET',
                     url: new URL(
-                        "https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?" +
-                            "apiVersion=3&key=API_KEY" +
-                            "&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway" +
-                            "&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country" +
-                            "&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban" +
-                            "&sectionType=unpaved&sectionType=lowEmissionZone" +
-                            "&sectionType=speedLimit&sectionType=roadShields" +
-                            "&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime"
-                    )
-                })
-            )
+                        'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?' +
+                            'apiVersion=3&key=API_KEY' +
+                            '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                            '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
+                            '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
+                            '&sectionType=unpaved&sectionType=lowEmissionZone' +
+                            '&sectionType=speedLimit&sectionType=roadShields' +
+                            '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
+                    ),
+                }),
+            ),
         );
     });
 });

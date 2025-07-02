@@ -1,41 +1,41 @@
-import { indexedMagnitudes } from "@anw/maps-sdk-js/core";
+import { indexedMagnitudes } from '@anw/maps-sdk-js/core';
 import type {
     ExpressionFilterSpecification,
     FilterSpecification,
-    Map,
     LayerSpecification,
-    LegacyFilterSpecification
-} from "maplibre-gl";
-import isNil from "lodash/isNil";
+    LegacyFilterSpecification,
+    Map,
+} from 'maplibre-gl';
+import isNil from 'lodash/isNil';
 import type {
     DelayFilter,
     TrafficCommonFilter,
     TrafficFlowFilter,
     TrafficFlowFilters,
     TrafficIncidentsFilter,
-    TrafficIncidentsFilters
-} from "../types/trafficModuleConfig";
-import { incidentCategoriesMapping } from "../types/trafficModuleConfig";
-import type { MultiSyntaxFilter, ValuesFilter } from "../../shared";
-import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter } from "../../shared/mapLibreFilterUtils";
+    TrafficIncidentsFilters,
+} from '../types/trafficModuleConfig';
+import { incidentCategoriesMapping } from '../types/trafficModuleConfig';
+import type { MultiSyntaxFilter, ValuesFilter } from '../../shared';
+import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter } from '../../shared/mapLibreFilterUtils';
 
 const toMultiSyntaxAllFilter = (
     newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[]
+    legacySyntaxExpressions: unknown[],
 ): MultiSyntaxFilter | null => {
     if (!newSyntaxExpressions.length) {
         return null;
-    } else if (newSyntaxExpressions.length === 1) {
+    }
+    if (newSyntaxExpressions.length === 1) {
         return {
             expression: newSyntaxExpressions[0] as ExpressionFilterSpecification,
-            legacy: legacySyntaxExpressions[0] as LegacyFilterSpecification
-        };
-    } else {
-        return {
-            expression: ["all", ...newSyntaxExpressions] as ExpressionFilterSpecification,
-            legacy: ["all", ...legacySyntaxExpressions] as LegacyFilterSpecification
+            legacy: legacySyntaxExpressions[0] as LegacyFilterSpecification,
         };
     }
+    return {
+        expression: ['all', ...newSyntaxExpressions] as ExpressionFilterSpecification,
+        legacy: ['all', ...legacySyntaxExpressions] as LegacyFilterSpecification,
+    };
 };
 
 const delayFilterToMapLibre = (delayFilter: DelayFilter): MultiSyntaxFilter | null => {
@@ -44,22 +44,22 @@ const delayFilterToMapLibre = (delayFilter: DelayFilter): MultiSyntaxFilter | nu
     if (delayFilter.mustHaveDelay && delayFilter.minDelayMinutes) {
         // there must be a delay and with the min specified value:
         const delaySeconds = delayFilter.minDelayMinutes * 60;
-        newSyntaxExpressions.push([">=", ["get", "delay"], delaySeconds]);
-        legacySyntaxExpressions.push([">=", "delay", delaySeconds]);
+        newSyntaxExpressions.push(['>=', ['get', 'delay'], delaySeconds]);
+        legacySyntaxExpressions.push(['>=', 'delay', delaySeconds]);
     } else if (delayFilter.mustHaveDelay) {
         // just expects a delay of any kind
-        newSyntaxExpressions.push([">", ["get", "delay"], 0]);
-        legacySyntaxExpressions.push([">", "delay", 0]);
+        newSyntaxExpressions.push(['>', ['get', 'delay'], 0]);
+        legacySyntaxExpressions.push(['>', 'delay', 0]);
     } else if (delayFilter.minDelayMinutes) {
         // Min delay expected, but also allows for non-existing delays:
         const delaySeconds = delayFilter.minDelayMinutes * 60;
         newSyntaxExpressions.push([
-            "any",
-            ["!", ["has", "delay"]],
-            ["==", ["get", "delay"], 0],
-            [">=", ["get", "delay"], delaySeconds]
+            'any',
+            ['!', ['has', 'delay']],
+            ['==', ['get', 'delay'], 0],
+            ['>=', ['get', 'delay'], delaySeconds],
         ]);
-        legacySyntaxExpressions.push(["any", ["!has", "delay"], ["==", "delay", 0], [">=", "delay", delaySeconds]]);
+        legacySyntaxExpressions.push(['any', ['!has', 'delay'], ['==', 'delay', 0], ['>=', 'delay', delaySeconds]]);
     }
     return toMultiSyntaxAllFilter(newSyntaxExpressions, legacySyntaxExpressions);
 };
@@ -67,7 +67,7 @@ const delayFilterToMapLibre = (delayFilter: DelayFilter): MultiSyntaxFilter | nu
 const addFilter = (
     filter: MultiSyntaxFilter | undefined | null,
     newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[]
+    legacySyntaxExpressions: unknown[],
 ) => {
     if (filter) {
         newSyntaxExpressions.push(filter.expression);
@@ -79,7 +79,7 @@ const addValuesFilter = (
     valuesFilter: ValuesFilter<string> | undefined,
     propName: string,
     newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[]
+    legacySyntaxExpressions: unknown[],
 ) => {
     if (valuesFilter) {
         addFilter(buildValuesFilter(propName, valuesFilter), newSyntaxExpressions, legacySyntaxExpressions);
@@ -89,10 +89,10 @@ const addValuesFilter = (
 const addCommonFilterExpressions = (
     sdkFilter: TrafficCommonFilter,
     newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[]
+    legacySyntaxExpressions: unknown[],
 ): void => {
-    addValuesFilter(sdkFilter.roadCategories, "road_category", newSyntaxExpressions, legacySyntaxExpressions);
-    addValuesFilter(sdkFilter.roadSubCategories, "road_subcategory", newSyntaxExpressions, legacySyntaxExpressions);
+    addValuesFilter(sdkFilter.roadCategories, 'road_category', newSyntaxExpressions, legacySyntaxExpressions);
+    addValuesFilter(sdkFilter.roadSubCategories, 'road_subcategory', newSyntaxExpressions, legacySyntaxExpressions);
 };
 
 const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): MultiSyntaxFilter | null => {
@@ -103,15 +103,15 @@ const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): MultiS
 
     if (sdkFilter.incidentCategories) {
         const incidentCategoryFilter = buildValuesFilter(
-            "icon_category_0",
+            'icon_category_0',
             sdkFilter.incidentCategories,
-            (value) => incidentCategoriesMapping[value]
+            (value) => incidentCategoriesMapping[value],
         );
         addFilter(incidentCategoryFilter, newSyntaxExpressions, legacySyntaxExpressions);
     }
     if (sdkFilter.magnitudes) {
-        const magnitudesFilter = buildValuesFilter("magnitude", sdkFilter.magnitudes, (magnitude) =>
-            indexedMagnitudes.indexOf(magnitude)
+        const magnitudesFilter = buildValuesFilter('magnitude', sdkFilter.magnitudes, (magnitude) =>
+            indexedMagnitudes.indexOf(magnitude),
         );
         addFilter(magnitudesFilter, newSyntaxExpressions, legacySyntaxExpressions);
     }
@@ -128,12 +128,11 @@ const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): MultiS
 export const buildMapLibreIncidentFilters = (incidentFilters: TrafficIncidentsFilters): MultiSyntaxFilter | null => {
     if (!incidentFilters?.any?.length) {
         return null;
-    } else {
-        const mapLibreFilters = incidentFilters.any
-            .map(buildMapLibreIncidentsFilter)
-            .filter((mapLibreFilter) => !isNil(mapLibreFilter)) as MultiSyntaxFilter[];
-        return getMergedAnyFilter(mapLibreFilters);
     }
+    const mapLibreFilters = incidentFilters.any
+        .map(buildMapLibreIncidentsFilter)
+        .filter((mapLibreFilter) => !isNil(mapLibreFilter)) as MultiSyntaxFilter[];
+    return getMergedAnyFilter(mapLibreFilters);
 };
 
 const buildMapLibreFlowFilter = (sdkFilter: TrafficFlowFilter): MultiSyntaxFilter | null => {
@@ -142,9 +141,9 @@ const buildMapLibreFlowFilter = (sdkFilter: TrafficFlowFilter): MultiSyntaxFilte
 
     addCommonFilterExpressions(sdkFilter, newSyntaxExpressions, legacySyntaxExpressions);
     if (sdkFilter.showRoadClosures) {
-        const operator = sdkFilter.showRoadClosures == "only" ? "==" : "!=";
-        newSyntaxExpressions.push([operator, ["get", "road_closure"], true]);
-        legacySyntaxExpressions.push([operator, "road_closure", true]);
+        const operator = sdkFilter.showRoadClosures === 'only' ? '==' : '!=';
+        newSyntaxExpressions.push([operator, ['get', 'road_closure'], true]);
+        legacySyntaxExpressions.push([operator, 'road_closure', true]);
     }
 
     return toMultiSyntaxAllFilter(newSyntaxExpressions, legacySyntaxExpressions);
@@ -156,12 +155,11 @@ const buildMapLibreFlowFilter = (sdkFilter: TrafficFlowFilter): MultiSyntaxFilte
 export const buildMapLibreFlowFilters = (flowFilters: TrafficFlowFilters): MultiSyntaxFilter | null => {
     if (!flowFilters?.any?.length) {
         return null;
-    } else {
-        const mapLibreFilters = flowFilters.any
-            .map(buildMapLibreFlowFilter)
-            .filter((mapLibreFilter) => !isNil(mapLibreFilter)) as MultiSyntaxFilter[];
-        return getMergedAnyFilter(mapLibreFilters);
     }
+    const mapLibreFilters = flowFilters.any
+        .map(buildMapLibreFlowFilter)
+        .filter((mapLibreFilter) => !isNil(mapLibreFilter)) as MultiSyntaxFilter[];
+    return getMergedAnyFilter(mapLibreFilters);
 };
 
 /**
@@ -175,12 +173,12 @@ export const applyFilter = (
     filter: MultiSyntaxFilter | undefined,
     layers: LayerSpecification[],
     mapLibreMap: Map,
-    originalFilters: Record<string, FilterSpecification | undefined>
+    originalFilters: Record<string, FilterSpecification | undefined>,
 ) => {
     for (const layer of layers) {
         mapLibreMap.setFilter(
             layer.id,
-            filter ? getMergedAllFilter(filter, originalFilters[layer.id]) : originalFilters[layer.id]
+            filter ? getMergedAllFilter(filter, originalFilters[layer.id]) : originalFilters[layer.id],
         );
     }
 };

@@ -1,33 +1,33 @@
-import commonjs from "@rollup/plugin-commonjs";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import typescript from "@rollup/plugin-typescript";
-import terser from "@rollup/plugin-terser";
-import analyze from "rollup-plugin-analyzer";
-import svg from "rollup-plugin-svg-import";
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
+import terser from '@rollup/plugin-terser';
+import analyze from 'rollup-plugin-analyzer';
+import svg from 'rollup-plugin-svg-import';
 // @ts-ignore
-import includePaths from "rollup-plugin-includepaths";
+import includePaths from 'rollup-plugin-includepaths';
 
 const includePathOptions = {
     include: {},
     paths: [],
-    external: ["@anw/maps-sdk-js/core", "maplibre-gl"],
-    extensions: [".js", ".json"]
+    external: ['@anw/maps-sdk-js/core', 'maplibre-gl'],
+    extensions: ['.js', '.json'],
 };
 
 const typescriptOptions = {
-    tsconfig: "./tsconfig.json",
+    tsconfig: './tsconfig.json',
     outputToFilesystem: true,
-    exclude: ["**/*.test.ts"]
+    exclude: ['**/*.test.ts'],
 };
 
 export default () => {
     return [
         {
-            input: "./index.ts",
+            input: './index.ts',
             output: {
-                file: "./dist/map.cjs.min.js",
-                format: "cjs",
-                sourcemap: true
+                file: './dist/map.cjs.min.js',
+                format: 'cjs',
+                sourcemap: true,
             },
             plugins: [
                 // has to be before typescript plugin
@@ -36,19 +36,19 @@ export default () => {
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 svg(),
-                terser()
-            ]
+                terser(),
+            ],
         },
         {
-            input: "./index.ts",
+            input: './index.ts',
             watch: {
-                include: "./**",
-                clearScreen: false
+                include: './**',
+                clearScreen: false,
             },
             output: {
-                file: "./dist/map.cjs.js",
-                format: "cjs",
-                sourcemap: true
+                file: './dist/map.cjs.js',
+                format: 'cjs',
+                sourcemap: true,
             },
             plugins: [
                 // has to be before typescript plugin
@@ -56,19 +56,19 @@ export default () => {
                 nodeResolve({ browser: true }),
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
-                svg()
-            ]
+                svg(),
+            ],
         },
         {
-            input: "./index.ts",
+            input: './index.ts',
             watch: {
-                include: "./**",
-                clearScreen: false
+                include: './**',
+                clearScreen: false,
             },
             output: {
-                file: "./dist/map.es.js",
-                format: "es",
-                sourcemap: true
+                file: './dist/map.es.js',
+                format: 'es',
+                sourcemap: true,
             },
             plugins: [
                 // has to be before typescript plugin
@@ -78,8 +78,8 @@ export default () => {
                 commonjs(),
                 svg(),
                 terser({ module: true }),
-                analyze({ summaryOnly: true, limit: 10 })
-            ]
-        }
+                analyze({ summaryOnly: true, limit: 10 }),
+            ],
+        },
     ];
 };

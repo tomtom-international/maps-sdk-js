@@ -1,17 +1,17 @@
-import type { Place, Places } from "@anw/maps-sdk-js/core";
+import type { Place, Places } from '@anw/maps-sdk-js/core';
 import type {
     CleanEventStateOptions,
     CleanEventStatesOptions,
     PutEventStateOptions,
-    SymbolLayerSpecWithoutSource
-} from "../shared";
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from "../shared";
-import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from "./types/placesModuleConfig";
-import type { TomTomMap } from "../TomTomMap";
-import { changeLayersProps, waitUntilMapIsReady } from "../shared/mapUtils";
-import { preparePlacesForDisplay } from "./preparePlacesForDisplay";
-import { buildPlacesLayerSpecs } from "./layers/placesLayers";
-import type { DisplayPlaceProps } from "./types/placeDisplayProps";
+    SymbolLayerSpecWithoutSource,
+} from '../shared';
+import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from '../shared';
+import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from './types/placesModuleConfig';
+import type { TomTomMap } from '../TomTomMap';
+import { changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
+import { preparePlacesForDisplay } from './preparePlacesForDisplay';
+import { buildPlacesLayerSpecs } from './layers/placesLayers';
+import type { DisplayPlaceProps } from './types/placeDisplayProps';
 
 /**
  * IDs of sources and layers for places module.
@@ -41,7 +41,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     }
 
     private constructor(map: TomTomMap, config?: PlacesModuleConfig) {
-        super("geojson", map, config);
+        super('geojson', map, config);
     }
 
     /**
@@ -112,7 +112,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
 
     private updateData(config: PlacesModuleConfig): void {
         this.sourcesWithLayers.places.source.runtimeSource?.setData(
-            preparePlacesForDisplay(this.sourcesWithLayers.places.shownFeatures, this.mapLibreMap, config)
+            preparePlacesForDisplay(this.sourcesWithLayers.places.shownFeatures, this.mapLibreMap, config),
         );
     }
 

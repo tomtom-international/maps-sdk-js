@@ -73,11 +73,5 @@
     "RFID",
     "EDXCE"
   ],
-  "ignorePaths": [
-    "**/dist/**",
-    "package.json",
-    "package-lock.json",
-    "**/coverage/**",
-    "**/tests/**"
-  ]
+  "ignorePaths": ["**/dist/**", "package.json", "package-lock.json", "**/coverage/**", "**/tests/**"]
 }

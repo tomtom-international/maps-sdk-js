@@ -1,13 +1,13 @@
-import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from "maplibre-gl";
-import type { BBox } from "geojson";
-import type { Language } from "@anw/maps-sdk-js/core";
-import { mergeFromGlobal } from "@anw/maps-sdk-js/core";
-import isEqual from "lodash/isEqual";
-import type { MapLibreOptions, StyleInput, TomTomMapParams } from "./init";
-import { buildMapOptions } from "./init/buildMapOptions";
-import { buildStyleInput, withPreviousStyleParts } from "./init/styleInputBuilder";
-import { EventsProxy } from "./shared";
-import { isLayerLocalizable } from "./shared/localization";
+import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';
+import type { BBox } from 'geojson';
+import type { Language } from '@anw/maps-sdk-js/core';
+import { mergeFromGlobal } from '@anw/maps-sdk-js/core';
+import isEqual from 'lodash/isEqual';
+import type { MapLibreOptions, StyleInput, TomTomMapParams } from './init';
+import { buildMapOptions } from './init/buildMapOptions';
+import { buildStyleInput, withPreviousStyleParts } from './init/styleInputBuilder';
+import { EventsProxy } from './shared';
+import { isLayerLocalizable } from './shared/localization';
 
 /**
  * The TomTom Map object is the entry point to display the TomTom live map on your web application.
@@ -48,15 +48,15 @@ export class TomTomMap {
     constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
         this.params = mergeFromGlobal(mapParams) as TomTomMapParams;
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.params));
-        this.mapLibreMap.once("styledata", () => this.handleStyleData(false));
+        this.mapLibreMap.once('styledata', () => this.handleStyleData(false));
         this._eventsProxy = new EventsProxy(this.mapLibreMap, this.params?.events);
         // deferred (just in case), lazy loading of the RTL plugin:
         setTimeout(() => {
-            if (!["deferred", "loaded"].includes(getRTLTextPluginStatus())) {
+            if (!['deferred', 'loaded'].includes(getRTLTextPluginStatus())) {
                 setRTLTextPlugin(
-                    "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
-                    true
-                ).catch((error) => console.error("Something went wrong when setting RTL plugin", error));
+                    'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',
+                    true,
+                ).catch((error) => console.error('Something went wrong when setting RTL plugin', error));
             }
         });
     }
@@ -73,7 +73,7 @@ export class TomTomMap {
         this.mapReady = false;
         const effectiveStyle = options.keepState ? withPreviousStyleParts(style, this.params.style) : style;
         this.params = { ...this.params, style: effectiveStyle };
-        this.mapLibreMap.once("styledata", () => {
+        this.mapLibreMap.once('styledata', () => {
             // We only handle the style data change if the applied style is still the same as the one we set,
             // to prevent race conditions when handling stale styles applied quickly in succession.
             // (If the current style parameters are different, there's likely a new style being set, which will trigger the handler soon after)
@@ -93,13 +93,13 @@ export class TomTomMap {
 
     private _setLanguage(language: Language) {
         this.params = { ...this.params, language };
-        const mapLanguage = language?.includes("-") ? language.split("-")[0] : language;
+        const mapLanguage = language?.includes('-') ? language.split('-')[0] : language;
         this.mapLibreMap.getStyle().layers.forEach((layer) => {
-            if (layer.type == "symbol" && isLayerLocalizable(layer)) {
+            if (layer.type === 'symbol' && isLayerLocalizable(layer)) {
                 const textFieldValue = mapLanguage
-                    ? ["coalesce", ["get", `name_${mapLanguage}`], ["get", "name"]]
-                    : ["get", "name"];
-                this.mapLibreMap.setLayoutProperty(layer.id, "text-field", textFieldValue, { validate: false });
+                    ? ['coalesce', ['get', `name_${mapLanguage}`], ['get', 'name']]
+                    : ['get', 'name'];
+                this.mapLibreMap.setLayoutProperty(layer.id, 'text-field', textFieldValue, { validate: false });
             }
         });
     }
@@ -115,7 +115,7 @@ export class TomTomMap {
         if (this.mapReady) {
             this._setLanguage(language);
         } else {
-            this.mapLibreMap.once("styledata", () => this.setLanguage(language));
+            this.mapLibreMap.once('styledata', () => this.setLanguage(language));
         }
     }
 

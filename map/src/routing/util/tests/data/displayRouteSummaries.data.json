@@ -8,12 +8,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [1, 1],
-              [2, 2],
-              [3, 3]
-            ]
+            "coordinates": [[0, 0], [1, 1], [2, 2], [3, 3]]
           },
           "properties": {
             "index": 0,
@@ -56,14 +51,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [1, 1],
-              [2, 2],
-              [3, 3],
-              [4, 4],
-              [5, 5]
-            ]
+            "coordinates": [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]]
           },
           "properties": {
             "index": 0,
@@ -116,12 +104,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [1, 1],
-              [2, 2],
-              [3, 3]
-            ]
+            "coordinates": [[0, 0], [1, 1], [2, 2], [3, 3]]
           },
           "properties": {
             "index": 0,
@@ -178,12 +161,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [1, 1],
-              [2, 2],
-              [3, 3]
-            ]
+            "coordinates": [[0, 0], [1, 1], [2, 2], [3, 3]]
           },
           "properties": {
             "index": 0,
@@ -199,12 +177,7 @@
           "type": "Feature",
           "geometry": {
             "type": "LineString",
-            "coordinates": [
-              [0, 0],
-              [1, 1],
-              [2, 2],
-              [3, 3]
-            ]
+            "coordinates": [[0, 0], [1, 1], [2, 2], [3, 3]]
           },
           "properties": {
             "index": 0,

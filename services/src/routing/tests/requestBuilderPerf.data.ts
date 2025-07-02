@@ -1,21 +1,21 @@
-import type { CalculateRouteParams } from "../types/calculateRouteParams";
+import type { CalculateRouteParams } from '../types/calculateRouteParams';
 
 export const routeRequestParams: CalculateRouteParams = {
-    apiKey: "APIKEY",
-    commonBaseURL: "https://api.tomtom.com",
+    apiKey: 'APIKEY',
+    commonBaseURL: 'https://api.tomtom.com',
     geoInputs: [
         [13.41144, 52.52343],
         [12.261188845147501, 52.30496106764048],
         [11.339420206492264, 52.314014331366934],
         {
-            type: "Feature",
+            type: 'Feature',
             geometry: {
-                type: "Point",
-                coordinates: [10.874140452495482, 52.378404663191446]
+                type: 'Point',
+                coordinates: [10.874140452495482, 52.378404663191446],
             },
             properties: {
-                radiusMeters: 10391
-            }
+                radiusMeters: 10391,
+            },
         },
         [10.277207424270273, 52.414625638793154],
         [9.427315041133511, 52.29791537992651],
@@ -26,12 +26,12 @@ export const routeRequestParams: CalculateRouteParams = {
         [11.298248205823, 51.609168151709866],
         [11.640013026405398, 51.629703208547966],
         [12.202271279614138, 51.997746920777786],
-        [13.41144, 52.52343]
+        [13.41144, 52.52343],
     ],
     costModel: {
-        avoid: ["carpools", "ferries", "unpavedRoads", "tollRoads"],
-        traffic: "live",
-        routeType: "fast"
+        avoid: ['carpools', 'ferries', 'unpavedRoads', 'tollRoads'],
+        traffic: 'live',
+        routeType: 'fast',
     },
     vehicleHeading: 180,
     // TODO not supported in Orbis, change to correct implementation
@@ -39,20 +39,20 @@ export const routeRequestParams: CalculateRouteParams = {
     maxAlternatives: 3,
 
     sectionTypes: [
-        "carTrain",
-        "ferry",
-        "tunnel",
-        "motorway",
-        "pedestrian",
-        "toll",
-        "country",
-        "vehicleRestricted",
-        "traffic",
-        "urban",
-        "unpaved",
-        "carpool"
+        'carTrain',
+        'ferry',
+        'tunnel',
+        'motorway',
+        'pedestrian',
+        'toll',
+        'country',
+        'vehicleRestricted',
+        'traffic',
+        'urban',
+        'unpaved',
+        'carpool',
     ],
-    travelMode: "car"
+    travelMode: 'car',
     // TODO not supported in Orbis
     // vehicle: {
     //     dimensions: {
@@ -88,46 +88,46 @@ export const routeRequestParams: CalculateRouteParams = {
 };
 
 export const shortRouteRequestParams: CalculateRouteParams = {
-    apiKey: "APIKEY",
-    commonBaseURL: "https://api.tomtom.com",
+    apiKey: 'APIKEY',
+    commonBaseURL: 'https://api.tomtom.com',
     geoInputs: [
         [4.76364, 52.31064],
         [4.31276, 52.00427],
         {
-            type: "Feature",
+            type: 'Feature',
             geometry: {
-                type: "Point",
-                coordinates: [4.70512, 51.82878]
+                type: 'Point',
+                coordinates: [4.70512, 51.82878],
             },
             properties: {
-                radiusMeters: 20
-            }
+                radiusMeters: 20,
+            },
         },
-        [3.72227, 51.05382]
+        [3.72227, 51.05382],
     ],
     costModel: {
-        avoid: ["tollRoads"],
-        routeType: "fast"
+        avoid: ['tollRoads'],
+        routeType: 'fast',
     },
     // TODO not supported in Orbis, change to correct implementation
     // instructionsType: "text",
     maxAlternatives: 3,
     sectionTypes: [
-        "carTrain",
-        "ferry",
-        "tunnel",
-        "motorway",
-        "pedestrian",
-        "toll",
-        "tollVignette",
-        "country",
-        "vehicleRestricted",
-        "traffic",
-        "urban",
-        "unpaved",
-        "carpool"
+        'carTrain',
+        'ferry',
+        'tunnel',
+        'motorway',
+        'pedestrian',
+        'toll',
+        'tollVignette',
+        'country',
+        'vehicleRestricted',
+        'traffic',
+        'urban',
+        'unpaved',
+        'carpool',
     ],
-    travelMode: "car"
+    travelMode: 'car',
     // TODO not supported in Orbis
     // when: {
     //     option: "arriveBy",

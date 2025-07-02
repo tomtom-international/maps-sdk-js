@@ -1,7 +1,7 @@
-import { TomTomConfig } from "@anw/maps-sdk-js/core";
-import type { LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from "../../shared";
-import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from "../types/routeModuleConfig";
-import { defaultRouteLayersConfig } from "../layers/defaultConfig";
+import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import type { LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from '../../shared';
+import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from '../types/routeModuleConfig';
+import { defaultRouteLayersConfig } from '../layers/defaultConfig';
 
 /**
  * @ignore
@@ -23,7 +23,7 @@ export const createLayersSpecs = (config: RouteLayersConfig = {}): RoutingLayers
     vehicleRestricted: mapLayerSpecs(config.sections?.vehicleRestricted),
     instructionLines: mapLayerSpecs(config.instructionLines),
     instructionArrows: mapLayerSpecs(config.instructionArrows),
-    summaryBubbles: mapLayerSpecs(config.summaryBubbles)
+    summaryBubbles: mapLayerSpecs(config.summaryBubbles),
 });
 
 /**
@@ -48,11 +48,11 @@ export const withDefaults = (config: RoutingModuleConfig | undefined): RoutingMo
                 incident: sections?.incident ?? defaultSections?.incident,
                 tollRoad: sections?.tollRoad ?? defaultSections?.tollRoad,
                 tunnel: sections?.tunnel ?? defaultSections?.tunnel,
-                vehicleRestricted: sections?.vehicleRestricted ?? defaultSections?.vehicleRestricted
+                vehicleRestricted: sections?.vehicleRestricted ?? defaultSections?.vehicleRestricted,
             },
             instructionLines: layers?.instructionLines ?? defaultRouteLayersConfig.instructionLines,
             instructionArrows: layers?.instructionArrows ?? defaultRouteLayersConfig.instructionArrows,
-            summaryBubbles: layers?.summaryBubbles ?? defaultRouteLayersConfig.summaryBubbles
-        }
+            summaryBubbles: layers?.summaryBubbles ?? defaultRouteLayersConfig.summaryBubbles,
+        },
     };
 };

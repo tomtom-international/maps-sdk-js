@@ -1,4 +1,4 @@
-import type { HasBBox } from "@anw/maps-sdk-js/core";
+import type { HasBBox } from '@anw/maps-sdk-js/core';
 
 /**
  * Common parameters between fuzzy search and geocoding.

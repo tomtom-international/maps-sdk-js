@@ -1,9 +1,9 @@
-import type { Page } from "@playwright/test";
-import { test, expect } from "@playwright/test";
-import type { EventType } from "map";
-import type { Waypoint } from "core";
-import { WAYPOINT_SYMBOLS_LAYER_ID } from "map/src/shared";
-import { MapTestEnv } from "./util/MapTestEnv";
+import type { Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import type { EventType } from 'map';
+import type { Waypoint } from 'core';
+import { WAYPOINT_SYMBOLS_LAYER_ID } from 'map/src/shared';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getClickedTopFeature,
     getDisplayWaypoints,
@@ -14,10 +14,10 @@ import {
     initRouting,
     showWaypoints,
     waitForEventState,
-    waitForMapIdle
-} from "./util/TestUtils";
-import rotterdamToAmsterdamRoutesJSON from "./data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json";
-import type { MapsSDKThis } from "./types/MapsSDKThis";
+    waitForMapIdle,
+} from './util/TestUtils';
+import rotterdamToAmsterdamRoutesJSON from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
+import type { MapsSDKThis } from './types/MapsSDKThis';
 
 // (We reparse the route because it contains Date objects):
 const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJSON));
@@ -25,11 +25,11 @@ const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterda
 const setupWaypointsHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.routing?.events.waypoints.on("hover", (waypoint) => {
+        mapsSDKThis.routing?.events.waypoints.on('hover', (waypoint) => {
             mapsSDKThis._numOfHovers++;
             mapsSDKThis._hoveredTopFeature = waypoint;
         });
-        mapsSDKThis.routing?.events.waypoints.on("long-hover", (waypoint) => {
+        mapsSDKThis.routing?.events.waypoints.on('long-hover', (waypoint) => {
             mapsSDKThis._numOfLongHovers++;
             mapsSDKThis._hoveredTopFeature = waypoint;
         });
@@ -38,18 +38,18 @@ const setupWaypointsHoverHandlers = async (page: Page) =>
 const clearWaypointsHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.routing?.events.waypoints.off("hover");
-        mapsSDKThis.routing?.events.waypoints.off("long-hover");
+        mapsSDKThis.routing?.events.waypoints.off('hover');
+        mapsSDKThis.routing?.events.waypoints.off('long-hover');
     });
 
 const setupWaypointsClickHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.routing?.events.waypoints.on("click", (waypoint) => {
+        mapsSDKThis.routing?.events.waypoints.on('click', (waypoint) => {
             mapsSDKThis._numOfClicks++;
             mapsSDKThis._clickedTopFeature = waypoint;
         });
-        mapsSDKThis.routing?.events.waypoints.on("contextmenu", (waypoint) => {
+        mapsSDKThis.routing?.events.waypoints.on('contextmenu', (waypoint) => {
             mapsSDKThis._numOfContextmenuClicks++;
             mapsSDKThis._clickedTopFeature = waypoint;
         });
@@ -58,14 +58,14 @@ const setupWaypointsClickHandlers = async (page: Page) =>
 const clearWaypointsClickHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.routing?.events.waypoints.off("click");
-        mapsSDKThis.routing?.events.waypoints.off("contextmenu");
+        mapsSDKThis.routing?.events.waypoints.off('click');
+        mapsSDKThis.routing?.events.waypoints.off('contextmenu');
     });
 
 const waitForWaypointsEventState = async (page: Page, eventState: EventType | undefined, id?: string) =>
     waitForEventState(page, eventState, [WAYPOINT_SYMBOLS_LAYER_ID], id);
 
-test.describe("Routing and waypoint events tests", () => {
+test.describe('Routing and waypoint events tests', () => {
     const mapEnv = new MapTestEnv();
     test.beforeEach(async ({ page }) => {
         await mapEnv.loadPageAndMap(
@@ -73,8 +73,8 @@ test.describe("Routing and waypoint events tests", () => {
             { bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 }
-            }
+                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+            },
         );
         await initRouting(page);
         await waitForMapIdle(page);
@@ -89,7 +89,7 @@ test.describe("Routing and waypoint events tests", () => {
     const waypoint1Coords = [4.63, 52.05];
     const waypoint2Coords = [4.88951, 52.37229];
 
-    test("Hovering and clicking on a single waypoint without handlers", async ({ page }) => {
+    test('Hovering and clicking on a single waypoint without handlers', async ({ page }) => {
         await showWaypoints(page, [waypoint0Coords]);
         await waitForMapIdle(page);
         const waypoint0PixelCoords = await getPixelCoords(page, waypoint0Coords);
@@ -109,7 +109,7 @@ test.describe("Routing and waypoint events tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Hovering on a single waypoint shown by coordinates", async ({ page }) => {
+    test('Hovering on a single waypoint shown by coordinates', async ({ page }) => {
         await setupWaypointsHoverHandlers(page);
         await showWaypoints(page, [waypoint0Coords]);
         await waitForMapIdle(page);
@@ -117,22 +117,22 @@ test.describe("Routing and waypoint events tests", () => {
         const waypoint0PixelCoords = await getPixelCoords(page, waypoint0Coords);
         await page.mouse.move(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
 
-        await waitForWaypointsEventState(page, "hover");
+        await waitForWaypointsEventState(page, 'hover');
         expect(await getNumHoversAndLongHovers(page)).toEqual([1, 0]);
         expect(await getHoveredTopFeature<Waypoint>(page)).toMatchObject({
             id: expect.any(String),
-            type: "Feature",
-            geometry: { type: "Point", coordinates: waypoint0Coords },
-            properties: { id: expect.any(String), eventState: "hover" }
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: waypoint0Coords },
+            properties: { id: expect.any(String), eventState: 'hover' },
         });
 
-        await waitForWaypointsEventState(page, "long-hover");
+        await waitForWaypointsEventState(page, 'long-hover');
         expect(await getNumHoversAndLongHovers(page)).toEqual([1, 1]);
         expect(await getHoveredTopFeature<Waypoint>(page)).toMatchObject({
             id: expect.any(String),
-            type: "Feature",
-            geometry: { type: "Point", coordinates: waypoint0Coords },
-            properties: { id: expect.any(String), eventState: "long-hover" }
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: waypoint0Coords },
+            properties: { id: expect.any(String), eventState: 'long-hover' },
         });
 
         // Hovering away from the waypoint:
@@ -142,7 +142,7 @@ test.describe("Routing and waypoint events tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Clicking on a single waypoint shown by coordinates", async ({ page }) => {
+    test('Clicking on a single waypoint shown by coordinates', async ({ page }) => {
         await setupWaypointsClickHandlers(page);
         await showWaypoints(page, [waypoint0Coords]);
         await waitForMapIdle(page);
@@ -150,23 +150,23 @@ test.describe("Routing and waypoint events tests", () => {
         const waypoint0PixelCoords = await getPixelCoords(page, waypoint0Coords);
         await page.mouse.click(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
 
-        await waitForWaypointsEventState(page, "click");
+        await waitForWaypointsEventState(page, 'click');
         expect(await getNumLeftAndRightClicks(page)).toEqual([1, 0]);
         expect(await getClickedTopFeature<Waypoint>(page)).toMatchObject({
             id: expect.any(String),
-            type: "Feature",
-            geometry: { type: "Point", coordinates: waypoint0Coords },
-            properties: { id: expect.any(String), eventState: "click" }
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: waypoint0Coords },
+            properties: { id: expect.any(String), eventState: 'click' },
         });
 
-        await page.mouse.click(waypoint0PixelCoords.x, waypoint0PixelCoords.y, { button: "right" });
-        await waitForWaypointsEventState(page, "contextmenu");
+        await page.mouse.click(waypoint0PixelCoords.x, waypoint0PixelCoords.y, { button: 'right' });
+        await waitForWaypointsEventState(page, 'contextmenu');
         expect(await getNumLeftAndRightClicks(page)).toEqual([1, 1]);
         expect(await getClickedTopFeature<Waypoint>(page)).toMatchObject({
             id: expect.any(String),
-            type: "Feature",
-            geometry: { type: "Point", coordinates: waypoint0Coords },
-            properties: { id: expect.any(String), eventState: "contextmenu" }
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: waypoint0Coords },
+            properties: { id: expect.any(String), eventState: 'contextmenu' },
         });
 
         // Clicking away from the waypoint:
@@ -176,16 +176,16 @@ test.describe("Routing and waypoint events tests", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Hovering and clicking on single waypoint feature", async ({ page }) => {
+    test('Hovering and clicking on single waypoint feature', async ({ page }) => {
         await setupWaypointsHoverHandlers(page);
         await setupWaypointsClickHandlers(page);
-        const id = "waypoint0";
+        const id = 'waypoint0';
 
         const waypointFeature: Waypoint = {
             id,
-            type: "Feature",
-            geometry: { type: "Point", coordinates: waypoint0Coords },
-            properties: {}
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: waypoint0Coords },
+            properties: {},
         };
 
         await showWaypoints(page, [waypointFeature]);
@@ -194,31 +194,31 @@ test.describe("Routing and waypoint events tests", () => {
         const waypoint0PixelCoords = await getPixelCoords(page, waypoint0Coords);
         await page.mouse.move(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
 
-        await waitForWaypointsEventState(page, "hover");
+        await waitForWaypointsEventState(page, 'hover');
         expect(await getHoveredTopFeature(page)).toMatchObject({
             ...waypointFeature,
-            properties: { id, eventState: "hover" }
+            properties: { id, eventState: 'hover' },
         });
 
         await page.mouse.click(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
-        await waitForWaypointsEventState(page, "click");
+        await waitForWaypointsEventState(page, 'click');
         expect(await getClickedTopFeature(page)).toMatchObject({
             ...waypointFeature,
-            properties: { id, eventState: "click" }
+            properties: { id, eventState: 'click' },
         });
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Hovering and clicking on multiple waypoints", async ({ page }) => {
+    test('Hovering and clicking on multiple waypoints', async ({ page }) => {
         await setupWaypointsClickHandlers(page);
         await setupWaypointsHoverHandlers(page);
 
         const waypoint1Feature: Waypoint = {
-            id: "waypoint1",
-            type: "Feature",
-            geometry: { type: "Point", coordinates: waypoint1Coords },
-            properties: {}
+            id: 'waypoint1',
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: waypoint1Coords },
+            properties: {},
         };
 
         await showWaypoints(page, [waypoint0Coords, waypoint1Feature, waypoint2Coords]);
@@ -229,7 +229,7 @@ test.describe("Routing and waypoint events tests", () => {
         const waitForEventStates = async (
             state0: EventType | undefined,
             state1: EventType | undefined,
-            state2: EventType | undefined
+            state2: EventType | undefined,
         ) => {
             await waitForWaypointsEventState(page, state0, shownWaypointIds[0]);
             await waitForWaypointsEventState(page, state1, shownWaypointIds[1]);
@@ -242,45 +242,45 @@ test.describe("Routing and waypoint events tests", () => {
 
         // We hover on each waypoint:
         await page.mouse.move(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
-        await waitForEventStates("hover", undefined, undefined);
+        await waitForEventStates('hover', undefined, undefined);
         expect(await getNumHoversAndLongHovers(page)).toEqual([1, 0]);
 
         await page.mouse.move(waypoint1PixelCoords.x, waypoint1PixelCoords.y);
-        await waitForEventStates(undefined, "hover", undefined);
+        await waitForEventStates(undefined, 'hover', undefined);
         expect(await getNumHoversAndLongHovers(page)).toEqual([2, 0]);
 
         await page.mouse.move(waypoint2PixelCoords.x, waypoint2PixelCoords.y);
-        await waitForEventStates(undefined, undefined, "hover");
+        await waitForEventStates(undefined, undefined, 'hover');
         expect(await getNumHoversAndLongHovers(page)).toEqual([3, 0]);
         // waiting in last waypoint until long-hover:
-        await waitForEventStates(undefined, undefined, "long-hover");
+        await waitForEventStates(undefined, undefined, 'long-hover');
         expect(await getNumHoversAndLongHovers(page)).toEqual([3, 1]);
 
         // Now we click on each waypoint:
         await page.mouse.click(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
-        await waitForEventStates("click", undefined, undefined);
+        await waitForEventStates('click', undefined, undefined);
         expect(await getNumLeftAndRightClicks(page)).toEqual([1, 0]);
 
         await page.mouse.click(waypoint1PixelCoords.x, waypoint1PixelCoords.y);
-        await waitForEventStates(undefined, "click", undefined);
+        await waitForEventStates(undefined, 'click', undefined);
         expect(await getNumLeftAndRightClicks(page)).toEqual([2, 0]);
 
-        await page.mouse.click(waypoint2PixelCoords.x, waypoint2PixelCoords.y, { button: "right" });
-        await waitForEventStates(undefined, undefined, "contextmenu");
+        await page.mouse.click(waypoint2PixelCoords.x, waypoint2PixelCoords.y, { button: 'right' });
+        await waitForEventStates(undefined, undefined, 'contextmenu');
         expect(await getNumLeftAndRightClicks(page)).toEqual([2, 1]);
 
         await page.mouse.click(waypoint2PixelCoords.x, waypoint2PixelCoords.y);
-        await waitForEventStates(undefined, undefined, "click");
+        await waitForEventStates(undefined, undefined, 'click');
         expect(await getNumLeftAndRightClicks(page)).toEqual([3, 1]);
 
         // While the last waypoint is clicked, we hover on the first waypoint:
         await page.mouse.move(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
         // Click states are high priority, so they remain even if hovering elsewhere:
-        await waitForEventStates("hover", undefined, "click");
+        await waitForEventStates('hover', undefined, 'click');
 
         // Now we hover far away from the waypoints:
         await page.mouse.move(waypoint0PixelCoords.x - 100, waypoint0PixelCoords.y - 100);
-        await waitForEventStates(undefined, undefined, "click");
+        await waitForEventStates(undefined, undefined, 'click');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

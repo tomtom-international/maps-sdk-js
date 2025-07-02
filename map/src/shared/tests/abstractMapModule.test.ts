@@ -1,11 +1,11 @@
-import type { Map } from "maplibre-gl";
-import { AbstractMapModule } from "../AbstractMapModule";
-import type { StyleModuleConfig } from "../types";
-import type { TomTomMap } from "../../TomTomMap";
-import { waitUntilMapIsReady } from "../mapUtils";
+import type { Map } from 'maplibre-gl';
+import { AbstractMapModule } from '../AbstractMapModule';
+import type { StyleModuleConfig } from '../types';
+import type { TomTomMap } from '../../TomTomMap';
+import { waitUntilMapIsReady } from '../mapUtils';
 import Mock = jest.Mock;
 
-describe("AbstractMapModule tests", () => {
+describe('AbstractMapModule tests', () => {
     class TestModule extends AbstractMapModule<Record<string, never>, StyleModuleConfig> {
         initCalled?: boolean;
         configApplied?: StyleModuleConfig | null;
@@ -13,7 +13,7 @@ describe("AbstractMapModule tests", () => {
 
         static async init(tomtomMap: TomTomMap, config?: StyleModuleConfig): Promise<TestModule> {
             await waitUntilMapIsReady(tomtomMap);
-            return new TestModule("style", tomtomMap, config);
+            return new TestModule('style', tomtomMap, config);
         }
 
         protected _initSourcesWithLayers(): Record<string, never> {
@@ -41,14 +41,14 @@ describe("AbstractMapModule tests", () => {
         // }
     }
 
-    test("Constructor with style loaded", async () => {
+    test('Constructor with style loaded', async () => {
         const tomtomMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(true),
-                once: jest.fn()
+                once: jest.fn(),
             } as unknown as Map,
             addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(true)
+            mapReady: jest.fn().mockReturnValue(true),
         } as unknown as TomTomMap;
 
         let testModule = await TestModule.init(tomtomMapMock);
@@ -65,13 +65,13 @@ describe("AbstractMapModule tests", () => {
         expect(testModule.getConfig()).toStrictEqual(testConfig);
     });
 
-    test("Constructor with style not loaded yet", async () => {
+    test('Constructor with style not loaded yet', async () => {
         const tomtomMapMock = {
             mapLibreMap: {
-                once: jest.fn()
+                once: jest.fn(),
             } as unknown as Map,
             addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false)
+            mapReady: jest.fn().mockReturnValue(false),
         } as unknown as TomTomMap;
 
         let testModule = await TestModule.init(tomtomMapMock);
@@ -94,14 +94,14 @@ describe("AbstractMapModule tests", () => {
         expect(testModule.getConfig()).toStrictEqual(testConfig);
     });
 
-    test("Constructor with style not loaded yet and style data timeout", async () => {
+    test('Constructor with style not loaded yet and style data timeout', async () => {
         const tomtomMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
-                once: jest.fn().mockReturnValue(Promise.resolve())
+                once: jest.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const testModule = await TestModule.init(tomtomMapMock);
@@ -112,14 +112,14 @@ describe("AbstractMapModule tests", () => {
         expect(testModule.getConfig()).toBeUndefined();
     });
 
-    test("Wait until module is ready", async () => {
+    test('Wait until module is ready', async () => {
         const tomtomMapMock = {
             mapLibreMap: {
                 isStyleLoaded: jest.fn().mockReturnValue(false),
-                once: jest.fn().mockReturnValue(Promise.resolve())
+                once: jest.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const testModule = await TestModule.init(tomtomMapMock);

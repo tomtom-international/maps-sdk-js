@@ -1,228 +1,228 @@
-import type { Position } from "geojson";
-import type { Anything, Waypoint, WaypointProps } from "@anw/maps-sdk-js/core";
-import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from "../waypointUtils";
-import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from "../../types/waypointDisplayProps";
+import type { Position } from 'geojson';
+import type { Anything, Waypoint, WaypointProps } from '@anw/maps-sdk-js/core';
+import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from '../waypointUtils';
+import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../../types/waypointDisplayProps';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
-    WAYPOINT_STOP_IMAGE_ID
-} from "../../layers/waypointLayers";
+    WAYPOINT_STOP_IMAGE_ID,
+} from '../../layers/waypointLayers';
 
 const buildTestWaypoint = (properties: WaypointProps & Anything, coordinates: Position): Waypoint => ({
-    type: "Feature",
+    type: 'Feature',
     geometry: {
-        type: "Point",
-        coordinates
+        type: 'Point',
+        coordinates,
     },
-    properties
+    properties,
 });
 
-describe("GeoInputs util tests", () => {
-    test("Build waypoint title", () => {
+describe('GeoInputs util tests', () => {
+    test('Build waypoint title', () => {
         expect(buildWaypointTitle(null as never)).toBeUndefined();
         expect(buildWaypointTitle(buildTestWaypoint({}, [1, 2]))).toBeUndefined();
         expect(buildWaypointTitle(buildTestWaypoint({ address: {} }, [1, 2]))).toBeUndefined();
         expect(
             buildWaypointTitle({
-                type: "Feature",
-                geometry: { type: "Point", coordinates: [1, 2] },
-                properties: { address: { freeformAddress: "ADDRESS" } }
-            })
-        ).toBe("ADDRESS");
-        expect(buildWaypointTitle(buildTestWaypoint({ poi: { name: "POI" } }, [1, 2]))).toEqual("POI");
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [1, 2] },
+                properties: { address: { freeformAddress: 'ADDRESS' } },
+            }),
+        ).toBe('ADDRESS');
+        expect(buildWaypointTitle(buildTestWaypoint({ poi: { name: 'POI' } }, [1, 2]))).toEqual('POI');
         expect(
             buildWaypointTitle(
-                buildTestWaypoint({ address: { freeformAddress: "ADDRESS" }, poi: { name: "POI" } }, [1, 2])
-            )
-        ).toBe("POI");
+                buildTestWaypoint({ address: { freeformAddress: 'ADDRESS' }, poi: { name: 'POI' } }, [1, 2]),
+            ),
+        ).toBe('POI');
     });
 
-    test("Get image ID for waypoint", () => {
+    test('Get image ID for waypoint', () => {
         expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), START_INDEX)).toBe(WAYPOINT_START_IMAGE_ID);
         expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), MIDDLE_INDEX)).toBe(WAYPOINT_STOP_IMAGE_ID);
         expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), FINISH_INDEX)).toBe(WAYPOINT_FINISH_IMAGE_ID);
         expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 0 }, [1, 2]), START_INDEX)).toBe(
-            WAYPOINT_START_IMAGE_ID
+            WAYPOINT_START_IMAGE_ID,
         );
         expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), START_INDEX)).toBe(
-            WAYPOINT_SOFT_IMAGE_ID
+            WAYPOINT_SOFT_IMAGE_ID,
         );
         expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), MIDDLE_INDEX)).toBe(
-            WAYPOINT_SOFT_IMAGE_ID
+            WAYPOINT_SOFT_IMAGE_ID,
         );
     });
 
-    test("To display waypoints", () => {
-        expect(toDisplayWaypoints([])).toEqual({ type: "FeatureCollection", features: [] });
-        expect(toDisplayWaypoints([null])).toEqual({ type: "FeatureCollection", features: [] });
+    test('To display waypoints', () => {
+        expect(toDisplayWaypoints([])).toEqual({ type: 'FeatureCollection', features: [] });
+        expect(toDisplayWaypoints([null])).toEqual({ type: 'FeatureCollection', features: [] });
         expect(
-            toDisplayWaypoints([buildTestWaypoint({ entryPoints: [{ type: "main", position: [44, 55] }] }, [1, 2])])
+            toDisplayWaypoints([buildTestWaypoint({ entryPoints: [{ type: 'main', position: [44, 55] }] }, [1, 2])]),
         ).toEqual({
-            type: "FeatureCollection",
+            type: 'FeatureCollection',
             features: [
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [1, 2] },
+                    geometry: { type: 'Point', coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
                         index: 0,
                         indexType: START_INDEX,
                         iconID: WAYPOINT_START_IMAGE_ID,
-                        entryPoints: [{ type: "main", position: [44, 55] }]
-                    }
-                }
-            ]
+                        entryPoints: [{ type: 'main', position: [44, 55] }],
+                    },
+                },
+            ],
         });
         expect(
-            toDisplayWaypoints([buildTestWaypoint({ entryPoints: [{ type: "main", position: [44, 55] }] }, [1, 2])], {
-                entryPoints: "main-when-available"
-            })
+            toDisplayWaypoints([buildTestWaypoint({ entryPoints: [{ type: 'main', position: [44, 55] }] }, [1, 2])], {
+                entryPoints: 'main-when-available',
+            }),
         ).toEqual({
-            type: "FeatureCollection",
+            type: 'FeatureCollection',
             features: [
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [44, 55] },
+                    geometry: { type: 'Point', coordinates: [44, 55] },
                     properties: {
                         id: expect.any(String),
                         index: 0,
                         indexType: START_INDEX,
                         iconID: WAYPOINT_START_IMAGE_ID,
-                        entryPoints: [{ type: "main", position: [44, 55] }]
-                    }
-                }
-            ]
+                        entryPoints: [{ type: 'main', position: [44, 55] }],
+                    },
+                },
+            ],
         });
         expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2])])).toEqual({
-            type: "FeatureCollection",
+            type: 'FeatureCollection',
             features: [
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [1, 2] },
+                    geometry: { type: 'Point', coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
                         index: 1,
                         indexType: FINISH_INDEX,
-                        iconID: WAYPOINT_FINISH_IMAGE_ID
-                    }
-                }
-            ]
+                        iconID: WAYPOINT_FINISH_IMAGE_ID,
+                    },
+                },
+            ],
         });
         expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2]), null])).toEqual({
-            type: "FeatureCollection",
+            type: 'FeatureCollection',
             features: [
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [1, 2] },
+                    geometry: { type: 'Point', coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
                         index: 1,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
-                        stopDisplayIndex: 1
-                    }
-                }
-            ]
+                        stopDisplayIndex: 1,
+                    },
+                },
+            ],
         });
         expect(
             toDisplayWaypoints([
-                buildTestWaypoint({ poi: { name: "POI" } }, [1, 2]),
+                buildTestWaypoint({ poi: { name: 'POI' } }, [1, 2]),
                 buildTestWaypoint({ radiusMeters: 25 }, [3, 4]),
-                buildTestWaypoint({ address: { freeformAddress: "ADDRESS" } }, [5, 6]),
+                buildTestWaypoint({ address: { freeformAddress: 'ADDRESS' } }, [5, 6]),
                 [9, 10],
-                { type: "Point", coordinates: [11, 12] },
+                { type: 'Point', coordinates: [11, 12] },
                 {
-                    ...buildTestWaypoint({ address: { freeformAddress: "ADDRESS2" } }, [13, 14]),
+                    ...buildTestWaypoint({ address: { freeformAddress: 'ADDRESS2' } }, [13, 14]),
                     bbox: [1, 2, 3, 4],
-                    id: "ALREADY_DEFINED"
-                }
-            ])
+                    id: 'ALREADY_DEFINED',
+                },
+            ]),
         ).toEqual({
-            type: "FeatureCollection",
+            type: 'FeatureCollection',
             features: [
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [1, 2] },
+                    geometry: { type: 'Point', coordinates: [1, 2] },
                     properties: {
                         id: expect.any(String),
-                        poi: { name: "POI" },
+                        poi: { name: 'POI' },
                         index: 0,
                         indexType: START_INDEX,
                         iconID: WAYPOINT_START_IMAGE_ID,
-                        title: "POI"
-                    }
+                        title: 'POI',
+                    },
                 },
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [3, 4] },
+                    geometry: { type: 'Point', coordinates: [3, 4] },
                     properties: {
                         id: expect.any(String),
                         radiusMeters: 25,
                         index: 1,
                         indexType: MIDDLE_INDEX,
-                        iconID: WAYPOINT_SOFT_IMAGE_ID
-                    }
+                        iconID: WAYPOINT_SOFT_IMAGE_ID,
+                    },
                 },
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [5, 6] },
+                    geometry: { type: 'Point', coordinates: [5, 6] },
                     properties: {
                         id: expect.any(String),
-                        address: { freeformAddress: "ADDRESS" },
+                        address: { freeformAddress: 'ADDRESS' },
                         index: 2,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
-                        title: "ADDRESS",
-                        stopDisplayIndex: 1
-                    }
+                        title: 'ADDRESS',
+                        stopDisplayIndex: 1,
+                    },
                 },
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [9, 10] },
+                    geometry: { type: 'Point', coordinates: [9, 10] },
                     properties: {
                         id: expect.any(String),
                         index: 3,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
-                        stopDisplayIndex: 2
-                    }
+                        stopDisplayIndex: 2,
+                    },
                 },
                 {
-                    type: "Feature",
+                    type: 'Feature',
                     id: expect.any(String),
-                    geometry: { type: "Point", coordinates: [11, 12] },
+                    geometry: { type: 'Point', coordinates: [11, 12] },
                     properties: {
                         id: expect.any(String),
                         index: 4,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
-                        stopDisplayIndex: 3
-                    }
+                        stopDisplayIndex: 3,
+                    },
                 },
                 {
-                    type: "Feature",
-                    id: "ALREADY_DEFINED",
-                    geometry: { type: "Point", coordinates: [13, 14] },
+                    type: 'Feature',
+                    id: 'ALREADY_DEFINED',
+                    geometry: { type: 'Point', coordinates: [13, 14] },
                     properties: {
-                        id: "ALREADY_DEFINED",
-                        address: { freeformAddress: "ADDRESS2" },
+                        id: 'ALREADY_DEFINED',
+                        address: { freeformAddress: 'ADDRESS2' },
                         index: 5,
                         indexType: FINISH_INDEX,
                         iconID: WAYPOINT_FINISH_IMAGE_ID,
-                        title: "ADDRESS2"
+                        title: 'ADDRESS2',
                     },
-                    bbox: [1, 2, 3, 4]
-                }
-            ]
+                    bbox: [1, 2, 3, 4],
+                },
+            ],
         });
     });
 });

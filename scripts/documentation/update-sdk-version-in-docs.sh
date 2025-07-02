@@ -15,7 +15,7 @@ TARGET_FILES="./documentation/dev-portal/javascript/maps/documentation/overview 
 
 # -i flag differs between sed for MacOS and Linux
 # Loop over all static docs (overview + guides) and replace the version label with the new version label
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [[ "$OSTYPE" === "darwin"* ]]; then
   find $TARGET_FILES -type f -name "*.mdx" -exec sed -r -i '' "$SED_EXPRESSION" {} +
 else
   find $TARGET_FILES -type f -name "*.mdx" -exec sed -r -i "$SED_EXPRESSION" {} +

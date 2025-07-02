@@ -1,4 +1,4 @@
-import type { CommonSearchPlaceResultAPI, SummaryAPI } from "../../shared/types/apiPlacesResponseTypes";
+import type { CommonSearchPlaceResultAPI, SummaryAPI } from '../../shared/types/apiPlacesResponseTypes';
 
 /**
  * @ignore

@@ -1,6 +1,6 @@
-import type { DelayMagnitude } from "../types";
+import type { DelayMagnitude } from '../types';
 
 /**
  * @ignore
  */
-export const indexedMagnitudes: DelayMagnitude[] = ["unknown", "minor", "moderate", "major", "indefinite"];
+export const indexedMagnitudes: DelayMagnitude[] = ['unknown', 'minor', 'moderate', 'major', 'indefinite'];

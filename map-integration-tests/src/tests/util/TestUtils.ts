@@ -1,7 +1,8 @@
-import { expect } from "@playwright/test";
-import type { Position } from "geojson";
-import type { LayerSpecification, MapGeoJSONFeature } from "maplibre-gl";
-import type { GlobalConfig, Language, Place, Places, PolygonFeatures, WaypointLike, Waypoints } from "core";
+import type { Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Position } from 'geojson';
+import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
+import type { GlobalConfig, Language, Place, Places, PolygonFeatures, WaypointLike, Waypoints } from 'core';
 import type {
     BaseMapModuleInitConfig,
     EventType,
@@ -14,12 +15,11 @@ import type {
     RoutingModuleConfig,
     SourceWithLayerIDs,
     StyleInput,
-    StyleModuleInitConfig
-} from "map";
-import { poiLayerIDs } from "map/src/pois";
-import type { WaypointDisplayProps } from "map/src/routing";
-import type { MapsSDKThis } from "../types/MapsSDKThis";
-import type { Page } from "@playwright/test";
+    StyleModuleInitConfig,
+} from 'map';
+import { poiLayerIDs } from 'map/src/pois';
+import type { WaypointDisplayProps } from 'map/src/routing';
+import type { MapsSDKThis } from '../types/MapsSDKThis';
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMSG)), timeoutMS))]);
@@ -35,16 +35,16 @@ export const waitForMapReady = async (page: Page) =>
                     if (mapsSDKThis.tomtomMap.mapReady) {
                         resolve(true);
                     } else {
-                        mapsSDKThis.mapLibreMap.once("styledata", () => resolve(true));
+                        mapsSDKThis.mapLibreMap.once('styledata', () => resolve(true));
                     }
                 });
             }),
-        "Map style did not load",
-        10000
+        'Map style did not load',
+        10000,
     );
 
 export const waitForMapIdle = async (page: Page) =>
-    page.evaluateHandle(async () => (globalThis as MapsSDKThis).mapLibreMap.once("idle"));
+    page.evaluateHandle(async () => (globalThis as MapsSDKThis).mapLibreMap.once('idle'));
 
 export const getLayersBySource = async (page: Page, sourceID: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceID) => {
@@ -61,7 +61,8 @@ export const getVisibleLayersBySource = async (page: Page, sourceID: string): Pr
         return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
             .layers.filter(
-                (layer) => (layer as LayerSpecWithSource).source === pageSourceID && layer.layout?.visibility !== "none"
+                (layer) =>
+                    (layer as LayerSpecWithSource).source === pageSourceID && layer.layout?.visibility !== 'none',
             ) as LayerSpecWithSource[];
     }, sourceID);
 
@@ -72,7 +73,7 @@ export const getLayerById = async (page: Page, layerId: string): Promise<LayerSp
                 .getStyle()
                 .layers.filter((layer) => layer.id === pageLayerID)
                 .shift() as LayerSpecWithSource,
-        layerId
+        layerId,
     );
 
 export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<LayerSpecWithSource[]> =>
@@ -81,13 +82,13 @@ export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<La
             (globalThis as MapsSDKThis).mapLibreMap
                 .getStyle()
                 .layers.filter((layer) => pageLayerIDs.includes(layer.id)) as LayerSpecWithSource[],
-        layerIds
+        layerIds,
     );
 
 export const getPaintProperty = async (page: Page, layerID: string, propertyName: string) =>
     page.evaluate(
         ({ layerID, propertyName }) => (globalThis as MapsSDKThis).mapLibreMap.getPaintProperty(layerID, propertyName),
-        { layerID, propertyName }
+        { layerID, propertyName },
     );
 
 export const getNumVisibleLayersBySource = async (page: Page, sourceID: string): Promise<number> =>
@@ -104,7 +105,7 @@ export const assertNumber = (value: number, positiveVsZero: boolean) => {
 export const queryRenderedFeatures = async (
     page: Page,
     layerIDs: string[],
-    lngLat?: Position
+    lngLat?: Position,
 ): Promise<MapGeoJSONFeature[]> =>
     page.evaluate(
         ({ layerIDs, lngLat }) => {
@@ -112,11 +113,10 @@ export const queryRenderedFeatures = async (
             const options = { layers: layerIDs };
             if (lngLat) {
                 return mapLibreMap.queryRenderedFeatures(mapLibreMap.project(lngLat as [number, number]), options);
-            } else {
-                return mapLibreMap.queryRenderedFeatures(options);
             }
+            return mapLibreMap.queryRenderedFeatures(options);
         },
-        { layerIDs, lngLat }
+        { layerIDs, lngLat },
     );
 
 export const waitUntilRenderedFeatures = async (
@@ -124,7 +124,7 @@ export const waitUntilRenderedFeatures = async (
     layerIDs: string[],
     expectNumFeatures: number,
     timeoutMS: number,
-    lngLat?: Position
+    lngLat?: Position,
 ): Promise<MapGeoJSONFeature[]> =>
     tryBeforeTimeout(
         async (): Promise<MapGeoJSONFeature[]> => {
@@ -136,7 +136,7 @@ export const waitUntilRenderedFeatures = async (
             return currentFeatures;
         },
         `Features didn't match ${expectNumFeatures} count for layers: ${layerIDs}.`,
-        timeoutMS
+        timeoutMS,
     );
 
 export const waitUntilRenderedFeaturesChange = async (
@@ -144,7 +144,7 @@ export const waitUntilRenderedFeaturesChange = async (
     layerIDs: string[],
     previousNumFeatures: number,
     timeoutMS: number,
-    lngLat?: Position
+    lngLat?: Position,
 ): Promise<MapGeoJSONFeature[]> =>
     tryBeforeTimeout(
         async (): Promise<MapGeoJSONFeature[]> => {
@@ -152,11 +152,11 @@ export const waitUntilRenderedFeaturesChange = async (
             do {
                 await waitForTimeout(500);
                 currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
-            } while (currentFeatures.length == previousNumFeatures);
+            } while (currentFeatures.length === previousNumFeatures);
             return currentFeatures;
         },
         `Features didn't change from ${previousNumFeatures} for layers: ${layerIDs}.`,
-        timeoutMS
+        timeoutMS,
     );
 
 export const getLayerByID = async (page: Page, layerID: string): Promise<LayerSpecification> =>
@@ -168,13 +168,13 @@ export const getLayerByID = async (page: Page, layerID: string): Promise<LayerSp
 
 export const isLayerVisible = async (page: Page, layerID: string): Promise<boolean> =>
     page.evaluate((inputLayerID) => {
-        return (globalThis as MapsSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, "visibility") !== "none";
+        return (globalThis as MapsSDKThis).mapLibreMap.getLayoutProperty(inputLayerID, 'visibility') !== 'none';
     }, layerID);
 
 export const getPOILayers = async (page: Page) => getLayersByIds(page, poiLayerIDs);
 
 export const getVisiblePOILayers = async (page: Page) =>
-    (await getPOILayers(page)).filter((layer) => layer.layout?.visibility !== "none");
+    (await getPOILayers(page)).filter((layer) => layer.layout?.visibility !== 'none');
 
 export const getNumVisiblePOILayers = async (page: Page) => (await getVisiblePOILayers(page)).length;
 
@@ -207,7 +207,7 @@ export const initGeometries = async (page: Page, config?: GeometriesModuleConfig
 export const showGeometry = async (page: Page, geometry: PolygonFeatures) =>
     page.evaluate(
         (inputGeometry: PolygonFeatures) => (globalThis as MapsSDKThis).geometries?.show(inputGeometry),
-        geometry
+        geometry,
     );
 
 export const initBasemap = async (page: Page, config?: BaseMapModuleInitConfig) =>
@@ -227,7 +227,7 @@ export const initTrafficIncidents = async (page: Page, config?: StyleModuleInitC
         const mapsSDKThis = globalThis as MapsSDKThis;
         mapsSDKThis.trafficIncidents = await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(
             mapsSDKThis.tomtomMap,
-            inputConfig
+            inputConfig,
         );
     }, config);
 
@@ -277,12 +277,12 @@ export const getDisplayWaypoints = async (page: Page): Promise<Waypoints<Waypoin
     page.evaluate(
         () =>
             ((globalThis as MapsSDKThis).routing as any).sourcesWithLayers.waypoints
-                .shownFeatures as Waypoints<WaypointDisplayProps>
+                .shownFeatures as Waypoints<WaypointDisplayProps>,
     );
 
 export const getPixelCoords = async (
     page: Page,
-    inputCoordinates: [number, number] | Position
+    inputCoordinates: [number, number] | Position,
 ): Promise<{ x: number; y: number }> =>
     page.evaluate((coordinates) => {
         const point = (globalThis as MapsSDKThis).mapLibreMap.project(coordinates as [number, number]);
@@ -312,7 +312,7 @@ export const waitForEventState = async (
     page: Page,
     expectedEventState: EventType | undefined,
     layerIDs: string[],
-    featureID?: string
+    featureID?: string,
 ): Promise<EventType | undefined> =>
     new Promise<EventType | undefined>((resolve, reject) => {
         let eventState;
@@ -321,9 +321,9 @@ export const waitForEventState = async (
         let tries = 0;
         const interval = setInterval(async () => {
             const features = await queryRenderedFeatures(page, layerIDs);
-            const feature = featureID ? features.find((feature) => feature.id == featureID) : features[0];
+            const feature = featureID ? features.find((feature) => feature.id === featureID) : features[0];
             eventState = feature?.properties?.eventState;
-            if (eventState == expectedEventState) {
+            if (eventState === expectedEventState) {
                 clearInterval(interval);
                 resolve(eventState);
             }

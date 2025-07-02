@@ -1,14 +1,14 @@
-import type { GlobalConfig } from "../config/globalConfig";
-import type { TomTomHeaders } from "../types";
+import type { GlobalConfig } from '../config/globalConfig';
+import type { TomTomHeaders } from '../types';
 
 /**
  * SDK name used TomTom custom header TomTom-User-Agent
  * @ignore
  */
-export const TOMTOM_USER_AGENT_SDK_NAME = "TomTomSDKsMapsJS";
+export const TOMTOM_USER_AGENT_SDK_NAME = 'TomTomSDKsMapsJS';
 // Rollup replace plugin will literally replace __SDK_VERSION__ to the actual root package
 // version in build time
-const SDK_VERSION = "__SDK_VERSION__";
+const SDK_VERSION = '__SDK_VERSION__';
 
 /**
  * Validate if the string to be used in the Tracking-ID header is valid.
@@ -23,8 +23,7 @@ const validateTrackingId = (trackingId: string): string => {
         // returned and the request will fail. To avoid this issue, we throw an error before
         // the request is made.
         throw new TypeError(
-            // eslint-disable-next-line max-len
-            `a string matching regular expression ^[a-zA-Z0-9-]{1,100}$ is expected, but ${trackingId} ['${typeof trackingId}'] given`
+            `a string matching regular expression ^[a-zA-Z0-9-]{1,100}$ is expected, but ${trackingId} ['${typeof trackingId}'] given`,
         );
     }
 
@@ -39,9 +38,10 @@ const validateTrackingId = (trackingId: string): string => {
  */
 export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHeaders => ({
     ...(params.tomtomUserAgent && {
-        "TomTom-User-Agent": `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`
+        'TomTom-User-Agent': `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`,
     }),
     // optional oauth2 access token:
+    // biome-ignore lint/style/useNamingConvention: mapping to header name
     ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
-    ...(params.trackingId && { "Tracking-ID": validateTrackingId(params.trackingId) })
+    ...(params.trackingId && { 'Tracking-ID': validateTrackingId(params.trackingId) }),
 });

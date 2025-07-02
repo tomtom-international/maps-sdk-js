@@ -1,15 +1,15 @@
-import isNil from "lodash/isNil";
-import type { FilterSpecification } from "maplibre-gl";
-import type { ValuesFilter } from "../shared";
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from "../shared";
-import type { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from "./types/poisModuleConfig";
-import { notInTheStyle } from "../shared/errorMessages";
-import { waitUntilMapIsReady } from "../shared/mapUtils";
-import type { TomTomMap } from "../TomTomMap";
-import type { MapStylePOICategory } from "../places";
-import { toMapDisplayPOICategory } from "../places";
-import { poiCategoryGroups } from "./poiCategoryGroups";
-import { buildMappedValuesFilter, getMergedAllFilter } from "../shared/mapLibreFilterUtils";
+import isNil from 'lodash/isNil';
+import type { FilterSpecification } from 'maplibre-gl';
+import type { ValuesFilter } from '../shared';
+import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from '../shared';
+import type { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from './types/poisModuleConfig';
+import { notInTheStyle } from '../shared/errorMessages';
+import { waitUntilMapIsReady } from '../shared/mapUtils';
+import type { TomTomMap } from '../TomTomMap';
+import type { MapStylePOICategory } from '../places';
+import { toMapDisplayPOICategory } from '../places';
+import { poiCategoryGroups } from './poiCategoryGroups';
+import { buildMappedValuesFilter, getMergedAllFilter } from '../shared/mapLibreFilterUtils';
 
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.
@@ -42,7 +42,7 @@ type POIsSourcesAndLayers = {
 /**
  * Layer IDs for POIs on the map.
  */
-export const poiLayerIDs = ["POI", "POI - Micro"];
+export const poiLayerIDs = ['POI', 'POI - Micro'];
 
 /**
  * Vector tile POIs map module.
@@ -64,7 +64,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
     }
 
     private constructor(map: TomTomMap, config?: POIsModuleConfig) {
-        super("style", map, config);
+        super('style', map, config);
     }
 
     /**
@@ -76,7 +76,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
             throw notInTheStyle(`init ${POIsModule.name} with source ID ${POI_SOURCE_ID}`);
         }
         const poi = new StyleSourceWithLayers(this.mapLibreMap, poiRuntimeSource, (layer) =>
-            poiLayerIDs.includes(layer.id)
+            poiLayerIDs.includes(layer.id),
         );
         // TODO: check if the layers are present in the style, and if not, throw exception?
         const mainLayer = poi.sourceAndLayerIDs.layerIDs[0];
@@ -108,7 +108,7 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
     setVisible(visible: boolean): void {
         this.config = {
             ...this.config,
-            visible
+            visible,
         };
 
         if (this.tomtomMap.mapReady) {
@@ -125,18 +125,18 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
         if (categoriesFilter) {
             if (this.tomtomMap.mapReady) {
                 const poiFilter = buildMappedValuesFilter(
-                    "category",
+                    'category',
                     categoriesFilter.show,
-                    getStyleCategories(categoriesFilter.values)
+                    getStyleCategories(categoriesFilter.values),
                 );
 
-                this.mapLibreMap.setFilter("POI", getMergedAllFilter(poiFilter, this.originalFilter));
+                this.mapLibreMap.setFilter('POI', getMergedAllFilter(poiFilter, this.originalFilter));
             }
             this.config = {
                 ...this.config,
                 filters: {
-                    categories: categoriesFilter
-                }
+                    categories: categoriesFilter,
+                },
             };
         } else if (this.categoriesFilter) {
             // reset categories config to default
@@ -144,14 +144,14 @@ export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModu
                 ...this.config,
                 filters: {
                     categories: {
-                        show: "all_except",
-                        values: []
-                    }
-                }
+                        show: 'all_except',
+                        values: [],
+                    },
+                },
             };
             if (this.tomtomMap.mapReady) {
                 // Applies default:
-                this.mapLibreMap.setFilter("POI", this.originalFilter);
+                this.mapLibreMap.setFilter('POI', this.originalFilter);
             }
         }
 

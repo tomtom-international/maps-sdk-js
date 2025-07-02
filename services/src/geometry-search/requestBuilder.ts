@@ -1,10 +1,10 @@
-import type { PostObject } from "../shared";
-import type { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from "./types";
-import { positionToCSVLatLon } from "../shared/geometry";
-import { sampleWithinMaxLength } from "../shared/arrays";
-import { appendCommonSearchParams, PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
-import { bboxFromCoordsArray } from "@anw/maps-sdk-js/core";
-import type { MultiPolygon, Position } from "geojson";
+import type { PostObject } from '../shared';
+import type { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from './types';
+import { positionToCSVLatLon } from '../shared/geometry';
+import { sampleWithinMaxLength } from '../shared/arrays';
+import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { bboxFromCoordsArray } from '@anw/maps-sdk-js/core';
+import type { MultiPolygon, Position } from 'geojson';
 
 const findFiftyLargestPolygons = (searchGeometry: MultiPolygon): Position[][][] => {
     // we calculate the size of each polygon based on bounding box (simplified)
@@ -24,36 +24,35 @@ const findFiftyLargestPolygons = (searchGeometry: MultiPolygon): Position[][][] 
 
 const sdkGeometryToAPIGeometries = (searchGeometry: SearchGeometryInput): GeometryAPI[] => {
     switch (searchGeometry.type) {
-        case "Circle":
+        case 'Circle':
             return [
                 {
-                    type: "CIRCLE",
+                    type: 'CIRCLE',
                     radius: searchGeometry.radius,
-                    position: positionToCSVLatLon(searchGeometry.coordinates)
-                }
+                    position: positionToCSVLatLon(searchGeometry.coordinates),
+                },
             ];
-        case "Polygon":
+        case 'Polygon':
             return [
                 {
-                    type: "POLYGON",
+                    type: 'POLYGON',
                     vertices: sampleWithinMaxLength(searchGeometry.coordinates[0], 50).map((coord) =>
-                        positionToCSVLatLon(coord)
-                    )
-                }
+                        positionToCSVLatLon(coord),
+                    ),
+                },
             ];
-        case "MultiPolygon": {
+        case 'MultiPolygon': {
             if (searchGeometry.coordinates.length > 50) {
                 // we have too many polygons for the service to work
                 return findFiftyLargestPolygons(searchGeometry).flatMap((polygonCoords) =>
-                    sdkGeometryToAPIGeometries({ type: "Polygon", coordinates: polygonCoords })
-                );
-            } else {
-                return searchGeometry.coordinates.flatMap((polygonCoords) =>
-                    sdkGeometryToAPIGeometries({ type: "Polygon", coordinates: polygonCoords })
+                    sdkGeometryToAPIGeometries({ type: 'Polygon', coordinates: polygonCoords }),
                 );
             }
+            return searchGeometry.coordinates.flatMap((polygonCoords) =>
+                sdkGeometryToAPIGeometries({ type: 'Polygon', coordinates: polygonCoords }),
+            );
         }
-        case "FeatureCollection":
+        case 'FeatureCollection':
             return searchGeometry.features.flatMap((feature) => sdkGeometryToAPIGeometries(feature.geometry));
         default:
             // @ts-ignore
@@ -62,7 +61,7 @@ const sdkGeometryToAPIGeometries = (searchGeometry: SearchGeometryInput): Geomet
 };
 
 const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
-    mergedOptions.customServiceBaseURL ||
+    mergedOptions.customServiceBaseURL ??
     `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/geometrySearch/${mergedOptions.query}.json`;
 
 /**
@@ -76,7 +75,7 @@ export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostOb
     return {
         url,
         data: {
-            geometryList: params.geometries.flatMap(sdkGeometryToAPIGeometries)
-        }
+            geometryList: params.geometries.flatMap(sdkGeometryToAPIGeometries),
+        },
     };
 };

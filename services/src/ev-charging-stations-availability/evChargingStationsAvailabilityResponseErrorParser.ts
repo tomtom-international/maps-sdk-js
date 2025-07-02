@@ -1,5 +1,5 @@
-import type { ParseResponseError } from "../shared";
-import { SDKServiceError } from "../shared";
+import type { ParseResponseError } from '../shared';
+import { SDKServiceError } from '../shared';
 
 /**
  * @ignore

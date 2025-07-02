@@ -1,8 +1,8 @@
-import type { Place, Places } from "@anw/maps-sdk-js/core";
-import type { GeometriesInput, GeometryParams } from "./types/geometryDataParams";
-import { appendOptionalParam } from "../shared/requestBuildingUtils";
-import { arrayToCSV } from "../shared/arrays";
-import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
+import type { Place, Places } from '@anw/maps-sdk-js/core';
+import type { GeometriesInput, GeometryParams } from './types/geometryDataParams';
+import { appendOptionalParam } from '../shared/requestBuildingUtils';
+import { arrayToCSV } from '../shared/arrays';
+import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 
 const buildURLBasePath = (params: GeometryParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/additionalData.json`;
@@ -16,7 +16,7 @@ const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInpu
 
     if (Array.isArray(geometries)) {
         // (assuming min and max length already validated)
-        if (typeof geometries[0] === "string") {
+        if (typeof geometries[0] === 'string') {
             geometryIDs = geometries as string[];
         } else {
             geometryIDs = getGeometryIDs(geometries as Place[]);
@@ -26,7 +26,7 @@ const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInpu
         geometryIDs = getGeometryIDs(geometries.features);
     }
 
-    urlParams.append("geometries", arrayToCSV(geometryIDs));
+    urlParams.append('geometries', arrayToCSV(geometryIDs));
 };
 
 /**
@@ -37,9 +37,9 @@ export const buildGeometryDataRequest = (params: GeometryParams): URL => {
     const url = new URL(buildURLBasePath(params));
     const urlParams = url.searchParams;
     // (no language in this service)
-    urlParams.append("apiVersion", String(params.apiVersion));
-    urlParams.append("key", params.apiKey as string);
+    urlParams.append('apiVersion', String(params.apiVersion));
+    urlParams.append('key', params.apiKey as string);
     appendGeometries(urlParams, params.geometries);
-    appendOptionalParam(urlParams, "geometriesZoom", params.zoom);
+    appendOptionalParam(urlParams, 'geometriesZoom', params.zoom);
     return url;
 };

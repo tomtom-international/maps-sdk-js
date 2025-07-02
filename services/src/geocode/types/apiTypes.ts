@@ -4,16 +4,16 @@ import type {
     EntryPointAPI,
     LatLonAPI,
     SummaryAPI,
-    ViewportAPI
-} from "../../shared/types/apiPlacesResponseTypes";
-import type { GeocodingProps } from "./geocodingResponse";
+    ViewportAPI,
+} from '../../shared/types/apiPlacesResponseTypes';
+import type { GeocodingProps } from './geocodingResponse';
 
 /**
  * @ignore
  */
 export type GeocodingResultAPI = Omit<
     GeocodingProps,
-    "distance" | "position" | "boundingBox" | "addressRanges" | "geographyType" | "entryPoints"
+    'distance' | 'position' | 'boundingBox' | 'addressRanges' | 'geographyType' | 'entryPoints'
 > & {
     id: string;
     position: LatLonAPI;

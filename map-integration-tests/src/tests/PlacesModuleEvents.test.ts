@@ -1,7 +1,7 @@
-import type { Page } from "@playwright/test";
-import { test, expect } from "@playwright/test";
-import type { Places } from "core";
-import { MapTestEnv } from "./util/MapTestEnv";
+import type { Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import type { Places } from 'core';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getCursor,
     getNumHoversAndLongHovers,
@@ -14,38 +14,38 @@ import {
     waitForEventState,
     waitForMapIdle,
     waitForTimeout,
-    waitUntilRenderedFeatures
-} from "./util/TestUtils";
-import placesJSON from "./data/PlacesModuleEvents.test.data.json";
-import type { MapsSDKThis } from "./types/MapsSDKThis";
+    waitUntilRenderedFeatures,
+} from './util/TestUtils';
+import placesJSON from './data/PlacesModuleEvents.test.data.json';
+import type { MapsSDKThis } from './types/MapsSDKThis';
 
 const deRegisterPlacesClickHandlers = async (page: Page) =>
-    page.evaluate(() => (globalThis as MapsSDKThis).places?.events.off("click"));
+    page.evaluate(() => (globalThis as MapsSDKThis).places?.events.off('click'));
 
 const setupPlacesHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places?.events.on("hover", () => mapsSDKThis._numOfHovers++);
-        mapsSDKThis.places?.events.on("long-hover", () => mapsSDKThis._numOfLongHovers++);
+        mapsSDKThis.places?.events.on('hover', () => mapsSDKThis._numOfHovers++);
+        mapsSDKThis.places?.events.on('long-hover', () => mapsSDKThis._numOfLongHovers++);
     });
 
 const setupPlacesClickHandler = async (page: Page) =>
     page.evaluate(() => {
         const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places?.events.on("click", (topFeature, lnglat, features, sourceWithLayers) => {
+        mapsSDKThis.places?.events.on('click', (topFeature, lnglat, features, sourceWithLayers) => {
             mapsSDKThis._numOfClicks++;
             mapsSDKThis._clickedTopFeature = topFeature;
             mapsSDKThis._clickedLngLat = lnglat;
             mapsSDKThis._clickedFeatures = features;
             mapsSDKThis._clickedSourceWithLayers = sourceWithLayers;
         });
-        mapsSDKThis.places?.events.on("contextmenu", () => mapsSDKThis._numOfContextmenuClicks++);
+        mapsSDKThis.places?.events.on('contextmenu', () => mapsSDKThis._numOfContextmenuClicks++);
     });
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
 
-test.describe("Tests with user events related to PlacesModule", () => {
+test.describe('Tests with user events related to PlacesModule', () => {
     const mapEnv = new MapTestEnv();
 
     // Reset test variables for each test
@@ -55,12 +55,12 @@ test.describe("Tests with user events related to PlacesModule", () => {
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 }
-            }
+                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+            },
         );
     });
 
-    test("Click and contextmenu events for places", async ({ page }) => {
+    test('Click and contextmenu events for places', async ({ page }) => {
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
@@ -78,11 +78,11 @@ test.describe("Tests with user events related to PlacesModule", () => {
         await setupPlacesClickHandler(page);
         await waitForTimeout(1000);
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
-        await waitForEventState(page, "click", placesLayerIDs);
+        await waitForEventState(page, 'click', placesLayerIDs);
         expect(await getNumLeftAndRightClicks(page)).toEqual([1, 0]);
 
-        await page.mouse.click(placePixelCoords.x, placePixelCoords.y, { button: "right" });
-        await waitForEventState(page, "contextmenu", placesLayerIDs);
+        await page.mouse.click(placePixelCoords.x, placePixelCoords.y, { button: 'right' });
+        await waitForEventState(page, 'contextmenu', placesLayerIDs);
         expect(await getNumLeftAndRightClicks(page)).toEqual([1, 1]);
 
         // clicking away:
@@ -99,7 +99,7 @@ test.describe("Tests with user events related to PlacesModule", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Hover and long hover states for a place", async ({ page }) => {
+    test('Hover and long hover states for a place', async ({ page }) => {
         await initPlaces(page);
         await waitForMapIdle(page);
         const placePosition = await getPixelCoords(page, firstPlacePosition);
@@ -114,7 +114,7 @@ test.describe("Tests with user events related to PlacesModule", () => {
         // Moving cursor over the place (hovering)
         await page.mouse.move(placePosition.x, placePosition.y);
         expect(await getNumHoversAndLongHovers(page)).toEqual([1, 0]);
-        await waitForEventState(page, "hover", placesLayerIDs);
+        await waitForEventState(page, 'hover', placesLayerIDs);
 
         // Moving cursor away from the place
         await page.mouse.move(placePosition.x - 100, placePosition.y - 75);
@@ -125,10 +125,10 @@ test.describe("Tests with user events related to PlacesModule", () => {
 
         // Moving the cursor back to the place
         await page.mouse.move(placePosition.x, placePosition.y);
-        await waitForEventState(page, "hover", placesLayerIDs);
+        await waitForEventState(page, 'hover', placesLayerIDs);
         // Waiting for a long-hover:
         await waitForTimeout(3000);
-        await waitForEventState(page, "long-hover", placesLayerIDs);
+        await waitForEventState(page, 'long-hover', placesLayerIDs);
         expect(await getNumHoversAndLongHovers(page)).toEqual([2, 1]);
 
         // Moving away again:
@@ -139,13 +139,12 @@ test.describe("Tests with user events related to PlacesModule", () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    // eslint-disable-next-line jest/expect-expect
-    test("Hover events for a place shown after changing map style", async ({ page }) => {
+    test('Hover events for a place shown after changing map style', async ({ page }) => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces(page);
         await setupPlacesClickHandler(page);
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
-        await setStyle(page, "standardDark");
+        await setStyle(page, 'standardDark');
 
         // We show the places after the map style has changed.
         // Now we'll test whether the events still work properly
@@ -156,12 +155,12 @@ test.describe("Tests with user events related to PlacesModule", () => {
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 3000);
         // Moving cursor over the place (hovering)
         await page.mouse.move(placePosition.x, placePosition.y);
-        await waitForEventState(page, "hover", placesLayerIDs);
+        await waitForEventState(page, 'hover', placesLayerIDs);
         // double-checking we still have the same number of rendered places:
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 3000);
     });
 
-    test("Callback handler arguments", async ({ page }) => {
+    test('Callback handler arguments', async ({ page }) => {
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
@@ -179,42 +178,42 @@ test.describe("Tests with user events related to PlacesModule", () => {
 
         expect(lngLat).toMatchObject({ lng: expect.any(Number), lat: expect.any(Number) });
         expect(features).toHaveLength(1);
-        expect(features).toContainEqual(expect.objectContaining({ type: "Feature" }));
+        expect(features).toContainEqual(expect.objectContaining({ type: 'Feature' }));
         expect(layerSpecs).toHaveLength(2);
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
         expect(layerSpecs).toEqual([
             expect.objectContaining({ source: sourceID, id: layerIDs[0] }),
-            expect.objectContaining({ source: sourceID, id: layerIDs[1] })
+            expect.objectContaining({ source: sourceID, id: layerIDs[1] }),
         ]);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });
 
-test.describe("Events custom configuration", () => {
+test.describe('Events custom configuration', () => {
     const mapEnv = new MapTestEnv();
 
-    test("Custom cursor", async ({ page }) => {
+    test('Custom cursor', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.37313] },
             {
                 events: {
-                    cursorOnMap: "help",
-                    cursorOnMouseDown: "crosshair",
-                    cursorOnHover: "wait"
-                }
-            }
+                    cursorOnMap: 'help',
+                    cursorOnMouseDown: 'crosshair',
+                    cursorOnHover: 'wait',
+                },
+            },
         );
 
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        expect(await getCursor(page)).toBe("help");
+        expect(await getCursor(page)).toBe('help');
         await page.mouse.down();
-        expect(await getCursor(page)).toBe("crosshair");
+        expect(await getCursor(page)).toBe('crosshair');
         await page.mouse.up();
-        expect(await getCursor(page)).toBe("help");
+        expect(await getCursor(page)).toBe('help');
 
         await setupPlacesHoverHandlers(page);
         await waitForTimeout(1000);
@@ -222,17 +221,17 @@ test.describe("Events custom configuration", () => {
         await page.mouse.move(placePixelCoords.x, placePixelCoords.y);
 
         await waitForTimeout(500);
-        expect(await getCursor(page)).toBe("wait");
+        expect(await getCursor(page)).toBe('wait');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Point precision mode", async ({ page }) => {
+    test('Point precision mode', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.35313] },
-            { events: { precisionMode: "point" } }
+            { events: { precisionMode: 'point' } },
         );
 
         await initPlaces(page);
@@ -244,17 +243,17 @@ test.describe("Events custom configuration", () => {
         await page.mouse.move(placePixelCoords.x, placePixelCoords.y);
 
         await waitForTimeout(500);
-        expect(await getCursor(page)).toBe("pointer");
+        expect(await getCursor(page)).toBe('pointer');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("Point-then-box precision mode", async ({ page }) => {
+    test('Point-then-box precision mode', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.37313] },
-            { events: { precisionMode: "point-then-box" } }
+            { events: { precisionMode: 'point-then-box' } },
         );
 
         await initPlaces(page);
@@ -266,7 +265,7 @@ test.describe("Events custom configuration", () => {
         await page.mouse.move(placePixelCoords.x, placePixelCoords.y);
 
         await waitForTimeout(500);
-        expect(await getCursor(page)).toBe("pointer");
+        expect(await getCursor(page)).toBe('pointer');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

@@ -1,9 +1,9 @@
-import { layers } from "./localization.data";
-import { isLayerLocalizable } from "../localization";
-import type { LayerSpecification, SymbolLayerSpecification } from "maplibre-gl";
+import { layers } from './localization.data';
+import { isLayerLocalizable } from '../localization';
+import type { LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 
-describe("test isLayerLocalizable function", () => {
-    const symbolLayers = layers.filter((layerObj) => (layerObj[1] as LayerSpecification).type === "symbol");
+describe('test isLayerLocalizable function', () => {
+    const symbolLayers = layers.filter((layerObj) => (layerObj[1] as LayerSpecification).type === 'symbol');
     //@ts-ignore
     test.each(symbolLayers)("'%s'", (_name: string, input: SymbolLayerSpecification, output: boolean) => {
         expect(isLayerLocalizable(input)).toBe(output);

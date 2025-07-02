@@ -1,9 +1,9 @@
-import type { ServiceTemplate } from "../shared";
-import { get } from "../shared/fetch";
-import { placeByIdRequestSchema } from "./placeByIdSchema";
-import type { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from "./types";
-import { buildPlaceByIdRequest } from "./requestBuilder";
-import { parsePlaceByIdResponse } from "./responseParser";
+import type { ServiceTemplate } from '../shared';
+import { get } from '../shared/fetch';
+import { placeByIdRequestSchema } from './placeByIdSchema';
+import type { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from './types';
+import { buildPlaceByIdRequest } from './requestBuilder';
+import { parsePlaceByIdResponse } from './responseParser';
 
 /**
  * Place By Is template type.
@@ -17,5 +17,5 @@ export const placeByIdTemplate: PlaceByIdTemplate = {
     requestValidation: { schema: placeByIdRequestSchema },
     buildRequest: buildPlaceByIdRequest,
     sendRequest: get,
-    parseResponse: parsePlaceByIdResponse
+    parseResponse: parsePlaceByIdResponse,
 };

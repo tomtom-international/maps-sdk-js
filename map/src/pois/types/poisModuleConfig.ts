@@ -1,7 +1,7 @@
-import type { StyleModuleConfig, ValuesFilter } from "../../shared";
-import type { MapStylePOICategory } from "../../places";
-import type { POICategoryGroup } from "../poiCategoryGroups";
-import type { MapGeoJSONFeature } from "maplibre-gl";
+import type { StyleModuleConfig, ValuesFilter } from '../../shared';
+import type { MapStylePOICategory } from '../../places';
+import type { POICategoryGroup } from '../poiCategoryGroups';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
 
 /**
  * A POI classification or group which can be filtered.
@@ -22,7 +22,7 @@ export type POIsModuleConfig = StyleModuleConfig & {
 /**
  * A GeoJSON feature describing a POI vector tile on the map.
  */
-export type POIsModuleFeature = Omit<MapGeoJSONFeature, "properties"> & {
+export type POIsModuleFeature = Omit<MapGeoJSONFeature, 'properties'> & {
     properties: {
         /**
          * A unique Point of Interest identifier that can be used across other TomTom services.

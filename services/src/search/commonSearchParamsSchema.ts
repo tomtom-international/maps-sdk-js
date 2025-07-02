@@ -1,6 +1,6 @@
-import { z, type ZodMiniObject } from "zod/v4-mini";
-import { poiCategoriesToID } from "../poi-categories/poiCategoriesToID";
-import { commonPlacesParamsSchema } from "../shared/commonPlacesParamsSchema";
+import { z, type ZodMiniObject } from 'zod/v4-mini';
+import { poiCategoriesToID } from '../poi-categories/poiCategoriesToID';
+import { commonPlacesParamsSchema } from '../shared/commonPlacesParamsSchema';
 
 const poiCategoriesToIDZodObject = z.object(poiCategoriesToID) as unknown as ZodMiniObject;
 
@@ -17,8 +17,8 @@ const searchExtraParamsOptional = z.partial(
         minPowerKW: z.number(),
         maxPowerKW: z.number(),
         minFuzzyLevel: z.number(),
-        mixFuzzyLevel: z.number()
-    })
+        mixFuzzyLevel: z.number(),
+    }),
 );
 
 /**

@@ -1,4 +1,4 @@
-import type { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from "@anw/maps-sdk-js/core";
+import type { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from '@anw/maps-sdk-js/core';
 
 /**
  * @ignore
@@ -14,7 +14,7 @@ export type ReverseGeocodingResponseAPI = {
                 boundingBox: {
                     northEast: string;
                     southWest: string;
-                    entity: "position";
+                    entity: 'position';
                 };
                 sideOfStreet: SideOfStreet;
                 offsetPosition: string;
@@ -23,6 +23,6 @@ export type ReverseGeocodingResponseAPI = {
             entityType: PlaceType;
             mapcodes?: Mapcode[];
             position: string;
-        }
+        },
     ];
 };

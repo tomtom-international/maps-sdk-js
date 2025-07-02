@@ -1,41 +1,41 @@
-import type { ExpressionSpecification } from "maplibre-gl";
+import type { ExpressionSpecification } from 'maplibre-gl';
 
 /**
  * Main route line foreground color.
  * @ignore
  */
-export const FOREGROUND_COLOR = "#36A8F0";
+export const FOREGROUND_COLOR = '#36A8F0';
 
 /**
  * Main route outline color.
  */
-export const OUTLINE_COLOR = "#105287";
+export const OUTLINE_COLOR = '#105287';
 
 /**
  * Deselected route line foreground color.
  * @ignore
  */
-export const DESELECTED_FOREGROUND_COLOR = "#ABAFB3";
+export const DESELECTED_FOREGROUND_COLOR = '#ABAFB3';
 
 /**
  * Deselected route line outline color.
  * @ignore
  */
-export const DESELECTED_OUTLINE_COLOR = "#3C4956";
+export const DESELECTED_OUTLINE_COLOR = '#3C4956';
 
 /**
  * @ignore
  */
-export const DESELECTED_SECONDARY_COLOR = "#727C85";
+export const DESELECTED_SECONDARY_COLOR = '#727C85';
 
 /**
  * Main route line width based on zoom level.
  * @ignore
  */
 export const FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
-    "interpolate",
-    ["linear"],
-    ["zoom"],
+    'interpolate',
+    ['linear'],
+    ['zoom'],
     1,
     3,
     5,
@@ -43,34 +43,34 @@ export const FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
     10,
     7,
     18,
-    10
+    10,
 ];
 
 /**
  * Used for showing/hiding layer depending on layer being part of selected route or not.
  * @ignore
  */
-export const SELECTED_ROUTE_FILTER: ExpressionSpecification = ["==", ["get", "routeStyle"], "selected"];
+export const SELECTED_ROUTE_FILTER: ExpressionSpecification = ['==', ['get', 'routeStyle'], 'selected'];
 
 /**
  * Used for hiding/showing layer depending on layer being part of selected route or not.
  * @ignore
  */
-export const DESELECTED_ROUTE_FILTER: ExpressionSpecification = ["==", ["get", "routeStyle"], "deselected"];
+export const DESELECTED_ROUTE_FILTER: ExpressionSpecification = ['==', ['get', 'routeStyle'], 'deselected'];
 
 /**
  * @ignore
  */
-export const MAJOR_DELAY_COLOR = "#AD0000";
+export const MAJOR_DELAY_COLOR = '#AD0000';
 /**
  * @ignore
  */
-export const MODERATE_DELAY_COLOR = "#FB2D09";
+export const MODERATE_DELAY_COLOR = '#FB2D09';
 /**
  * @ignore
  */
-export const MINOR_DELAY_LABEL_COLOR = "#f58240";
+export const MINOR_DELAY_LABEL_COLOR = '#f58240';
 /**
  * @ignore
  */
-export const UNKNOWN_DELAY_COLOR = "#000000";
+export const UNKNOWN_DELAY_COLOR = '#000000';

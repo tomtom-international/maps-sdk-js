@@ -1,7 +1,7 @@
-import { bboxFromGeoJSON, bboxOnlyIfWithArea } from "@anw/maps-sdk-js/core";
+import { bboxFromGeoJSON, bboxOnlyIfWithArea } from '@anw/maps-sdk-js/core';
 
-import type { GeometrySearchResponse, GeometrySearchResponseAPI } from "./types";
-import { parseSearchAPIResult, parseSummaryAPI } from "../shared/searchResultParsing";
+import type { GeometrySearchResponse, GeometrySearchResponseAPI } from './types';
+import { parseSearchAPIResult, parseSummaryAPI } from '../shared/searchResultParsing';
 
 /**
  * Default function to parse a geometry search response.
@@ -11,11 +11,11 @@ export const parseGeometrySearchResponse = (apiResponse: GeometrySearchResponseA
     const features = apiResponse.results.map(parseSearchAPIResult);
     const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
     return {
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         properties: {
-            ...parseSummaryAPI(apiResponse.summary)
+            ...parseSummaryAPI(apiResponse.summary),
         },
         features,
-        ...(bbox && { bbox })
+        ...(bbox && { bbox }),
     };
 };

@@ -1,4 +1,4 @@
-import isNil from "lodash/isNil";
+import isNil from 'lodash/isNil';
 
 /**
  * Throws an error if the given value is not defined.

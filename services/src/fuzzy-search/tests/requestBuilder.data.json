@@ -36,11 +36,7 @@
       "query": "London",
       "limit": 20,
       "indexes": ["Geo", "Str"],
-      "geographyTypes": [
-        "Municipality",
-        "MunicipalitySubdivision",
-        "Neighbourhood"
-      ]
+      "geographyTypes": ["Municipality", "MunicipalitySubdivision", "Neighbourhood"]
     },
     "https://test.api.tomtom.com/maps/orbis/places/search/London.json?apiVersion=1&key=GLOBAL_API_KEY&limit=20&idxSet=Geo%2CStr&entityTypeSet=Municipality%2CMunicipalitySubdivision%2CNeighbourhood"
   ],
@@ -75,14 +71,7 @@
       "apiVersion": 1,
       "commonBaseURL": "https://test.api.tomtom.com",
       "query": "Fuel Station",
-      "fuelTypes": [
-        "Petrol",
-        "Diesel",
-        "LPG",
-        "Biodiesel",
-        "AdBlue",
-        "DieselForCommercialVehicles"
-      ],
+      "fuelTypes": ["Petrol", "Diesel", "LPG", "Biodiesel", "AdBlue", "DieselForCommercialVehicles"],
       "poiBrands": ["Circle K", "X Fuel", "Sia Fuel", "Easy Fuel"]
     },
     "https://test.api.tomtom.com/maps/orbis/places/search/Fuel%20Station.json?apiVersion=1&key=GLOBAL_API_KEY&fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel"

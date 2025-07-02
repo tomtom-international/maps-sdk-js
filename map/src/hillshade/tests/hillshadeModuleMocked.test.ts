@@ -1,30 +1,30 @@
-import type { Map } from "maplibre-gl";
-import { HILLSHADE_SOURCE_ID } from "../../shared";
-import type { TomTomMap } from "../../TomTomMap";
-import { HillshadeModule } from "../HillshadeModule";
+import type { Map } from 'maplibre-gl';
+import { HILLSHADE_SOURCE_ID } from '../../shared';
+import type { TomTomMap } from '../../TomTomMap';
+import { HillshadeModule } from '../HillshadeModule';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
-describe("Vector tiles Hillshade module tests", () => {
-    test("Initializing module with config", async () => {
+describe('Vector tiles Hillshade module tests', () => {
+    test('Initializing module with config', async () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
                 once: jest.fn().mockReturnValue(Promise.resolve()),
                 getSource: jest.fn().mockReturnValue(hillshadeSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } })
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
-                ensureAdded: jest.fn()
+                ensureAdded: jest.fn(),
             },
             addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock, {
-            visible: false
+            visible: false,
         });
         expect(hillshade).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
@@ -35,19 +35,19 @@ describe("Vector tiles Hillshade module tests", () => {
         hillshade.isVisible();
     });
 
-    test("Initializing module with no config", async () => {
+    test('Initializing module with no config', async () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: jest.fn().mockReturnValue(hillshadeSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } })
+                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
             } as unknown as Map,
             _eventsProxy: {
                 add: jest.fn(),
-                ensureAdded: jest.fn()
+                ensureAdded: jest.fn(),
             },
             addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true)
+            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock);

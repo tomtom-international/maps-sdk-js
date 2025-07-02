@@ -1,5 +1,5 @@
-import type { LegSummary } from "./summary";
-import type { RoadShieldReference } from "./guidance";
+import type { LegSummary } from './summary';
+import type { RoadShieldReference } from './guidance';
 
 /**
  * Base type for all route section properties.
@@ -64,14 +64,14 @@ export type CountrySectionProps = SectionProps & {
  * @group Route
  * @category Types
  */
-export type TrafficCategory = "jam" | "road_work" | "road_closure" | "other";
+export type TrafficCategory = 'jam' | 'road_work' | 'road_closure' | 'other';
 
 /**
  * The magnitude of the delay for the traffic incident.
  * @group Route
  * @category Types
  */
-export type DelayMagnitude = "unknown" | "minor" | "moderate" | "major" | "indefinite";
+export type DelayMagnitude = 'unknown' | 'minor' | 'moderate' | 'major' | 'indefinite';
 
 /**
  * Describes what caused a traffic incident, based on TPEG2-TEC standard.
@@ -141,7 +141,7 @@ export type TrafficSectionProps = SectionProps & {
  * @group Route
  * @category Types
  */
-export type LegSectionProps = Omit<SectionProps, "startPointIndex" | "endPointIndex"> & {
+export type LegSectionProps = Omit<SectionProps, 'startPointIndex' | 'endPointIndex'> & {
     /**
      * The route path point index where this section starts. Only available if the route polyline is also available.
      */
@@ -163,15 +163,15 @@ export type LegSectionProps = Omit<SectionProps, "startPointIndex" | "endPointIn
  * @category Types
  */
 export type PossibleLaneDirection =
-    | "STRAIGHT"
-    | "SLIGHT_RIGHT"
-    | "RIGHT"
-    | "SHARP_RIGHT"
-    | "RIGHT_U_TURN"
-    | "SLIGHT_LEFT"
-    | "LEFT"
-    | "SHARP_LEFT"
-    | "LEFT_U_TURN";
+    | 'STRAIGHT'
+    | 'SLIGHT_RIGHT'
+    | 'RIGHT'
+    | 'SHARP_RIGHT'
+    | 'RIGHT_U_TURN'
+    | 'SLIGHT_LEFT'
+    | 'LEFT'
+    | 'SHARP_LEFT'
+    | 'LEFT_U_TURN';
 
 /**
  * Lane direction object, containing the possible directions for a lane and the follow direction.
@@ -195,22 +195,22 @@ export type LaneDirection = {
  * @category Types
  */
 export type PossibleLaneSeparator =
-    | "UNKNOWN"
-    | "NO_MARKING"
-    | "LONG_DASHED"
-    | "DOUBLE_SOLID"
-    | "SINGLE_SOLID"
-    | "SOLID_DASHED"
-    | "DASHED_SOLID"
-    | "SHORT_DASHED"
-    | "SHADED_AREA_MARKING"
-    | "DASHED_BLOCKS"
-    | "DOUBLE_DASHED"
-    | "CROSSING_ALERT"
-    | "PHYSICAL_DIVIDER"
-    | "PHYSICAL_DIVIDER_LESS_THAN_3M"
-    | "PHYSICAL_DIVIDER_GUARDRAIL"
-    | "CURB";
+    | 'UNKNOWN'
+    | 'NO_MARKING'
+    | 'LONG_DASHED'
+    | 'DOUBLE_SOLID'
+    | 'SINGLE_SOLID'
+    | 'SOLID_DASHED'
+    | 'DASHED_SOLID'
+    | 'SHORT_DASHED'
+    | 'SHADED_AREA_MARKING'
+    | 'DASHED_BLOCKS'
+    | 'DOUBLE_DASHED'
+    | 'CROSSING_ALERT'
+    | 'PHYSICAL_DIVIDER'
+    | 'PHYSICAL_DIVIDER_LESS_THAN_3M'
+    | 'PHYSICAL_DIVIDER_GUARDRAIL'
+    | 'CURB';
 /**
  * Section representing a lane configuration.
  * @group Route
@@ -300,22 +300,22 @@ export type SectionType = keyof SectionsProps;
  * @category Variables
  */
 export const inputSectionTypes: SectionType[] = [
-    "carTrain",
-    "ferry",
-    "tunnel",
-    "motorway",
-    "pedestrian",
-    "toll",
-    "tollVignette",
-    "country",
-    "vehicleRestricted",
-    "traffic",
-    "carpool",
-    "urban",
-    "unpaved",
-    "lowEmissionZone",
-    "speedLimit",
-    "roadShields"
+    'carTrain',
+    'ferry',
+    'tunnel',
+    'motorway',
+    'pedestrian',
+    'toll',
+    'tollVignette',
+    'country',
+    'vehicleRestricted',
+    'traffic',
+    'carpool',
+    'urban',
+    'unpaved',
+    'lowEmissionZone',
+    'speedLimit',
+    'roadShields',
 ] as const;
 
 /**
@@ -323,10 +323,10 @@ export const inputSectionTypes: SectionType[] = [
  * @group Route
  * @category Variables
  */
-export const inputSectionTypesWithGuidance: SectionType[] = [...inputSectionTypes, "lanes"] as const;
+export const inputSectionTypesWithGuidance: SectionType[] = [...inputSectionTypes, 'lanes'] as const;
 
 /**
  * @group Route
  * @category Variables
  */
-export const sectionTypes: SectionType[] = [...inputSectionTypesWithGuidance, "leg"] as const;
+export const sectionTypes: SectionType[] = [...inputSectionTypesWithGuidance, 'leg'] as const;

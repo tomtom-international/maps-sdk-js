@@ -1,11 +1,11 @@
-import isNil from "lodash/isNil";
+import isNil from 'lodash/isNil';
 
-import { getPositionStrict } from "@anw/maps-sdk-js/core";
-import type { ReverseGeocodingParams } from "./types/reverseGeocodingParams";
-import { arrayToCSV } from "../shared/arrays";
-import type { CommonServiceParams } from "../shared";
-import { appendCommonParams } from "../shared/requestBuildingUtils";
-import { PLACES_URL_PATH } from "../shared/commonSearchRequestBuilder";
+import { getPositionStrict } from '@anw/maps-sdk-js/core';
+import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
+import { arrayToCSV } from '../shared/arrays';
+import type { CommonServiceParams } from '../shared';
+import { appendCommonParams } from '../shared/requestBuildingUtils';
+import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/reverseGeocode`;
@@ -21,14 +21,14 @@ export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
     appendCommonParams(urlParams, params);
 
     // rev-geo specific parameters:
-    params.allowFreeformNewline && urlParams.append("allowFreeformNewline", String(params.allowFreeformNewline));
-    params.geographyType && urlParams.append("entityType", arrayToCSV(params.geographyType));
-    !isNil(params.heading) && urlParams.append("heading", String(params.heading));
-    params.mapcodes && urlParams.append("mapcodes", arrayToCSV(params.mapcodes));
-    params.number && urlParams.append("number", params.number);
-    !isNil(params.radiusMeters) && urlParams.append("radius", String(params.radiusMeters));
-    params.returnSpeedLimit && urlParams.append("returnSpeedLimit", String(params.returnSpeedLimit));
-    params.returnRoadUse && urlParams.append("returnRoadUse", String(params.returnRoadUse));
-    params.roadUses && urlParams.append("roadUse", JSON.stringify(params.roadUses));
+    params.allowFreeformNewline && urlParams.append('allowFreeformNewline', String(params.allowFreeformNewline));
+    params.geographyType && urlParams.append('entityType', arrayToCSV(params.geographyType));
+    !isNil(params.heading) && urlParams.append('heading', String(params.heading));
+    params.mapcodes && urlParams.append('mapcodes', arrayToCSV(params.mapcodes));
+    params.number && urlParams.append('number', params.number);
+    !isNil(params.radiusMeters) && urlParams.append('radius', String(params.radiusMeters));
+    params.returnSpeedLimit && urlParams.append('returnSpeedLimit', String(params.returnSpeedLimit));
+    params.returnRoadUse && urlParams.append('returnRoadUse', String(params.returnRoadUse));
+    params.roadUses && urlParams.append('roadUse', JSON.stringify(params.roadUses));
     return url;
 };

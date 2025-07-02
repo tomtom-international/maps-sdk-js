@@ -1,15 +1,15 @@
 import type {
     ChargingPark,
-    EVChargingStationPlaceProps,
     ChargingStationsAvailability,
+    EVChargingStationPlaceProps,
     Place,
-    Places
-} from "@anw/maps-sdk-js/core";
-import { bboxFromGeoJSON } from "@anw/maps-sdk-js/core";
-import type { ChargingStationsAvailabilityParams } from "./types/evChargingStationsAvailabilityParams";
-import { callService } from "../shared/serviceTemplate";
-import type { EVChargingStationsAvailabilityTemplate } from "./evChargingStationsAvailabilityTemplate";
-import { evChargingStationsAvailabilityTemplate } from "./evChargingStationsAvailabilityTemplate";
+    Places,
+} from '@anw/maps-sdk-js/core';
+import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
+import type { ChargingStationsAvailabilityParams } from './types/evChargingStationsAvailabilityParams';
+import { callService } from '../shared/serviceTemplate';
+import type { EVChargingStationsAvailabilityTemplate } from './evChargingStationsAvailabilityTemplate';
+import { evChargingStationsAvailabilityTemplate } from './evChargingStationsAvailabilityTemplate';
 
 /**
  * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.
@@ -18,12 +18,12 @@ import { evChargingStationsAvailabilityTemplate } from "./evChargingStationsAvai
  */
 export const evChargingStationsAvailability = async (
     params: ChargingStationsAvailabilityParams,
-    customTemplate?: Partial<EVChargingStationsAvailabilityTemplate>
+    customTemplate?: Partial<EVChargingStationsAvailabilityTemplate>,
 ): Promise<ChargingStationsAvailability | undefined> =>
     callService(
         params,
         { ...evChargingStationsAvailabilityTemplate, ...customTemplate },
-        "EVChargingStationsAvailability"
+        'EVChargingStationsAvailability',
     );
 
 /**
@@ -50,9 +50,9 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
                       ...(poi && { poi: { ...poi, openingHours: availability.openingHours } }),
                       chargingPark: {
                           ...(place.properties.chargingPark as ChargingPark),
-                          availability
-                      }
-                  }
+                          availability,
+                      },
+                  },
               }
             : (place as Place<EVChargingStationPlaceProps>);
     } catch (e) {
@@ -78,7 +78,7 @@ export const buildPlacesWithEVAvailability = async (
          * @default true
          */
         returnIfAvailabilityUnknown: boolean;
-    } = { returnIfAvailabilityUnknown: true }
+    } = { returnIfAvailabilityUnknown: true },
 ): Promise<Places<EVChargingStationPlaceProps>> => {
     const placesWithAvailability = [];
     for (const place of places.features) {

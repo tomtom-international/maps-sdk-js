@@ -10,11 +10,13 @@
     "build:full": "npm run build:full -ws",
     "build": "npm run build -ws",
     "type-check": "npm run type-check -ws",
-    "lint": "npm run lint -ws",
-    "format": "npm run format -ws",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint . --write",
+    "format": "biome format .",
+    "format:fix": "biome format . --write",
     "test": "npm run test -ws",
     "prepare": "node scripts/prepare.js",
-    "pre-commit": "lint-staged"
+    "pre-commit": ""
   },
   "publishConfig": {
     "registry": "https://tomtom.jfrog.io/artifactory/api/npm/maps-sdk-js-npm-local/"
@@ -47,24 +49,21 @@
   ],
   "dependencies": {
     "@types/geojson": "^7946.0.16",
-    "@types/lodash": "^4.17.18",
-    "uuid": "^9.0.1"
+    "@types/lodash": "^4.17.20",
+    "globals": "^16.3.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@size-limit/file": "^11.1.1",
+    "@biomejs/biome": "^2.0.6",
+    "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
-    "@types/uuid": "^9.0.8",
-    "cspell": "^8.19.4",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jest": "^27.9.0",
-    "eslint-plugin-prettier": "^5.5.0",
+    "@types/uuid": "^10.0.0",
+    "cspell": "^9.1.2",
     "handlebars": "^4.7.8",
     "husky": "^8.0.3",
-    "lint-staged": "^15.5.2",
-    "prettier": "^3.5.3",
-    "size-limit": "^11.1.1",
-    "typedoc": "^0.25.13",
-    "typedoc-plugin-missing-exports": "^2.3.0",
+    "size-limit": "^11.2.0",
+    "typedoc": "^0.28.7",
+    "typedoc-plugin-missing-exports": "^4.0.0",
     "webpack-dev-server": "^5.2.2",
     "yaml": "^2.8.0"
   },

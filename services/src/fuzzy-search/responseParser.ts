@@ -1,27 +1,27 @@
-import { bboxFromGeoJSON, bboxOnlyIfWithArea } from "@anw/maps-sdk-js/core";
+import { bboxFromGeoJSON, bboxOnlyIfWithArea } from '@anw/maps-sdk-js/core';
 
-import type { FuzzySearchResponse, FuzzySearchResponseAPI, QueryIntent, QueryIntentAPI } from "./types";
-import { parseSearchAPIResult, parseSummaryAPI } from "../shared/searchResultParsing";
-import { latLonAPIToPosition } from "../shared/geometry";
+import type { FuzzySearchResponse, FuzzySearchResponseAPI, QueryIntent, QueryIntentAPI } from './types';
+import { parseSearchAPIResult, parseSummaryAPI } from '../shared/searchResultParsing';
+import { latLonAPIToPosition } from '../shared/geometry';
 
 const queryIntentAPIToSDK = (intentAPI: QueryIntentAPI): QueryIntent => {
     let intent;
     switch (intentAPI.type) {
-        case "COORDINATE":
+        case 'COORDINATE':
             intent = { ...intentAPI, details: { position: latLonAPIToPosition(intentAPI.details) } };
             break;
-        case "NEARBY":
+        case 'NEARBY':
             intent = {
                 ...intentAPI,
                 details: {
                     position: latLonAPIToPosition({ lon: intentAPI.details.lon, lat: intentAPI.details.lat }),
                     text: intentAPI.details.text,
-                    query: intentAPI.details.query
-                }
+                    query: intentAPI.details.query,
+                },
             };
             break;
-        case "BOOKMARK":
-        case "W3W":
+        case 'BOOKMARK':
+        case 'W3W':
             intent = intentAPI;
     }
     return intent;
@@ -35,12 +35,12 @@ export const parseFuzzySearchResponse = (apiResponse: FuzzySearchResponseAPI): F
     const features = apiResponse.results.map(parseSearchAPIResult);
     const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
     return {
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         properties: {
             ...parseSummaryAPI(apiResponse.summary),
-            queryIntent: apiResponse.summary.queryIntent.map(queryIntentAPIToSDK)
+            queryIntent: apiResponse.summary.queryIntent.map(queryIntentAPIToSDK),
         },
         features,
-        ...(bbox && { bbox })
+        ...(bbox && { bbox }),
     };
 };

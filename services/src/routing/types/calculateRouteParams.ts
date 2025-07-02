@@ -1,8 +1,8 @@
-import type { GeoInput, inputSectionTypes } from "@anw/maps-sdk-js/core";
-import type { CommonRoutingParams, CommonServiceParams } from "../../shared";
-import type { CalculateRouteRequestAPI } from "./apiRequestTypes";
-import type { CalculateRouteResponseAPI } from "./apiResponseTypes";
-import type { GetPositionEntryPointOption } from "core/src/types/lngLat";
+import type { GeoInput, inputSectionTypes } from '@anw/maps-sdk-js/core';
+import type { CommonRoutingParams, CommonServiceParams } from '../../shared';
+import type { CalculateRouteRequestAPI } from './apiRequestTypes';
+import type { CalculateRouteResponseAPI } from './apiResponseTypes';
+import type { GetPositionEntryPointOption } from 'core/src/types/lngLat';
 
 /**
  * Section type which can be requested in the route parameters.
@@ -30,10 +30,10 @@ export type InputSectionTypes = InputSectionType[];
  * The information about the instructions for Orbis guidance request.
  */
 export type GuidanceParams = {
-    type: "coded";
+    type: 'coded';
     version?: 2;
-    phonetics?: "LHP" | "IPA";
-    roadShieldReferences?: "all";
+    phonetics?: 'LHP' | 'IPA';
+    roadShieldReferences?: 'all';
 };
 
 /**
@@ -42,13 +42,13 @@ export type GuidanceParams = {
  * * **travelTime**: Includes travel times to route polyline points in the response.
  * @default ["distance", "travelTime"]
  */
-export type ExtendedRouteRepresentation = "distance" | "travelTime";
+export type ExtendedRouteRepresentation = 'distance' | 'travelTime';
 
 /**
  * * none - do not compute additional travel times.
  * * all - compute travel times for all types of traffic information. Specifying all results in the fields
  */
-export type ComputeTravelTimeFor = "none" | "all";
+export type ComputeTravelTimeFor = 'none' | 'all';
 
 /**
  * Allowed max number of route alternatives.

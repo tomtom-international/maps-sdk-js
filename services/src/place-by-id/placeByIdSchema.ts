@@ -1,8 +1,8 @@
-import { z } from "zod/v4-mini";
-import { views } from "@anw/maps-sdk-js/core";
+import { z } from 'zod/v4-mini';
+import { views } from '@anw/maps-sdk-js/core';
 
 const placeByIdRequestMandatory = z.object({
-    entityId: z.string()
+    entityId: z.string(),
 });
 
 const placeByIdRequestOptional = z.partial(
@@ -11,8 +11,8 @@ const placeByIdRequestOptional = z.partial(
         view: z.enum(views),
         openingHours: z.string(),
         timeZone: z.string(),
-        relatedPois: z.string()
-    })
+        relatedPois: z.string(),
+    }),
 );
 
 /**

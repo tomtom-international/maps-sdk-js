@@ -1,13 +1,13 @@
-import type { MapLibreOptions, TomTomMapParams } from "map";
-import type { MapsSDKThis } from "../types/MapsSDKThis";
-import type { ConsoleMessage, Page } from "@playwright/test";
+import type { MapLibreOptions, TomTomMapParams } from 'map';
+import type { MapsSDKThis } from '../types/MapsSDKThis';
+import type { ConsoleMessage, Page } from '@playwright/test';
 
 const parseConsoleMessage = async (message: ConsoleMessage): Promise<string> => {
-    if (message.text() != "JSHandle@error") {
+    if (message.text() != 'JSHandle@error') {
         return message.text();
     }
-    const messages = await Promise.all(message.args().map((arg) => arg.getProperty("message")));
-    return messages.join(" | ");
+    const messages = await Promise.all(message.args().map((arg) => arg.getProperty('message')));
+    return messages.join(' | ');
 };
 
 const resetMapModules = async (page: Page) =>
@@ -44,12 +44,13 @@ export class MapTestEnv {
 
     async loadPage(page: Page) {
         this.consoleErrors = [];
-        await page.goto("https://localhost:9001");
+        await page.goto('https://localhost:9001');
 
         // TODO: get rid of puppeteer stuff from parseConsoleMessage and also detect pageerrors
         page.on(
-            "console",
-            async (message) => message.type() === "error" && this.consoleErrors.push(await parseConsoleMessage(message))
+            'console',
+            async (message) =>
+                message.type() === 'error' && this.consoleErrors.push(await parseConsoleMessage(message)),
         );
     }
 
@@ -63,22 +64,22 @@ export class MapTestEnv {
                 this.consoleErrors = [];
                 const mapsSDKThis = globalThis as MapsSDKThis;
                 mapsSDKThis.mapLibreMap?.remove();
-                document.querySelector(".maplibregl-control-container")?.remove();
-                document.querySelector("canvas")?.remove();
+                document.querySelector('.maplibregl-control-container')?.remove();
+                document.querySelector('canvas')?.remove();
                 mapsSDKThis.tomtomMap = new mapsSDKThis.MapsSDK.TomTomMap(
-                    { ...mapLibreOptions, container: "map" },
-                    { ...tomtomMapParams, apiKey }
+                    { ...mapLibreOptions, container: 'map' },
+                    { ...tomtomMapParams, apiKey },
                 );
                 mapsSDKThis.mapLibreMap = mapsSDKThis.tomtomMap.mapLibreMap;
             },
-            { mapLibreOptions, tomtomMapParams, apiKey: process.env.API_KEY }
+            { mapLibreOptions, tomtomMapParams, apiKey: process.env.API_KEY },
         );
     }
 
     async loadPageAndMap(
         page: Page,
         mapLibreOptions: Partial<MapLibreOptions>,
-        tomtomMapParams?: Partial<TomTomMapParams>
+        tomtomMapParams?: Partial<TomTomMapParams>,
     ) {
         await this.loadPage(page);
         await this.loadMap(page, mapLibreOptions, tomtomMapParams);
@@ -87,7 +88,7 @@ export class MapTestEnv {
     static async loadPageAndMap(
         page: Page,
         mapLibreOptions: Partial<MapLibreOptions>,
-        tomtomMapParams?: Partial<TomTomMapParams>
+        tomtomMapParams?: Partial<TomTomMapParams>,
     ) {
         const env = new MapTestEnv();
         await env.loadPageAndMap(page, mapLibreOptions, tomtomMapParams);

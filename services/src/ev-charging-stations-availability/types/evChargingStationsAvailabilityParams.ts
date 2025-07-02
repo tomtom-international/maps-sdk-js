@@ -1,5 +1,5 @@
-import type { CommonServiceParams } from "../../shared";
-import type { ChargingStationsAvailabilityResponseAPI } from "./apiTypes";
+import type { CommonServiceParams } from '../../shared';
+import type { ChargingStationsAvailabilityResponseAPI } from './apiTypes';
 
 export type ChargingStationsAvailabilityParams = CommonServiceParams<URL, ChargingStationsAvailabilityResponseAPI> & {
     /**

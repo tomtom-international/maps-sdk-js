@@ -1,9 +1,9 @@
-import { generateTomTomHeaders, mergeFromGlobal } from "@anw/maps-sdk-js/core";
-import { buildResponseError, buildValidationError } from "./errors";
-import type { ServiceName } from "./types/servicesTypes";
-import type { CommonServiceParams, ServiceTemplate } from "./serviceTypes";
-import type { ValidationError } from "./validation";
-import { validateRequestSchema } from "./validation";
+import { generateTomTomHeaders, mergeFromGlobal } from '@anw/maps-sdk-js/core';
+import { buildResponseError, buildValidationError } from './errors';
+import type { ServiceName } from './types/servicesTypes';
+import type { CommonServiceParams, ServiceTemplate } from './serviceTypes';
+import type { ValidationError } from './validation';
+import { validateRequestSchema } from './validation';
 
 /**
  * @ignore
@@ -16,15 +16,15 @@ import { validateRequestSchema } from "./validation";
  * @param template The implementation of the template steps.
  * @param serviceName The name of the service.
  */
-export const callService = async <PARAMS extends CommonServiceParams, API_REQUEST, API_RESPONSE, RESPONSE>(
+export const callService = async <PARAMS extends CommonServiceParams, ApiRequest, ApiResponse, RESPONSE>(
     params: PARAMS,
-    template: ServiceTemplate<PARAMS, API_REQUEST, API_RESPONSE, RESPONSE>,
-    serviceName: ServiceName
+    template: ServiceTemplate<PARAMS, ApiRequest, ApiResponse, RESPONSE>,
+    serviceName: ServiceName,
 ): Promise<RESPONSE> => {
     const customAPIVersion = template.getAPIVersion?.(params);
     const mergedParams = mergeFromGlobal({ ...params, ...(customAPIVersion && { apiVersion: customAPIVersion }) });
     // (params.validateRequest defaults to true, thus true and undefined are the same)
-    if (params.validateRequest == undefined || params.validateRequest) {
+    if (params.validateRequest === undefined || params.validateRequest) {
         try {
             validateRequestSchema<PARAMS>(mergedParams, template.requestValidation);
         } catch (e) {

@@ -3,7 +3,7 @@
  * @param input
  */
 export const arrayToCSV = (input: unknown | unknown[]): string =>
-    !input ? "" : Array.isArray(input) ? input.join(",") : typeof input == "string" ? input : String(input);
+    !input ? '' : Array.isArray(input) ? input.join(',') : typeof input === 'string' ? input : String(input);
 
 /**
  * Samples, if necessary, the given array to fit within the given max length.

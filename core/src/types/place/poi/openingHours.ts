@@ -28,7 +28,7 @@ export type TimeRange = {
  * @group Place
  * @category Types
  */
-export type OpeningHoursMode = "nextSevenDays";
+export type OpeningHoursMode = 'nextSevenDays';
 
 /**
  * @group Place

@@ -1,97 +1,97 @@
-import type { ReverseGeocodingParams } from "../types/reverseGeocodingParams";
-import revGeoReqObjects from "../../revgeo/tests/requestBuilderPerf.data.json";
-import { bestExecutionTimeMS } from "core/src/util/tests/performanceTestUtils";
-import { validateRequestSchema } from "../../shared/validation";
-import { revGeocodeRequestSchema } from "../revGeocodeRequestSchema";
-import { MAX_EXEC_TIMES_MS } from "../../shared/tests/perfConfig";
+import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
+import revGeoReqObjects from '../../revgeo/tests/requestBuilderPerf.data.json';
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { validateRequestSchema } from '../../shared/validation';
+import { revGeocodeRequestSchema } from '../revGeocodeRequestSchema';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 
-describe("ReverseGeocoding schema validation", () => {
-    const apiKey = "APIKEY";
-    const commonBaseURL = "https://api-test.tomtom.com";
-    test("it should fail when position is an invalid param - case 1", () => {
+describe('ReverseGeocoding schema validation', () => {
+    const apiKey = 'APIKEY';
+    const commonBaseURL = 'https://api-test.tomtom.com';
+    test('it should fail when position is an invalid param - case 1', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
             commonBaseURL,
             // @ts-ignore
-            position: { lon: -122.420679, lat: 37.772537 }
+            position: { lon: -122.420679, lat: 37.772537 },
         };
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            "Invalid input"
+            'Invalid input',
         );
     });
 
-    test("it should fail when latitude/longitude is out of range", () => {
+    test('it should fail when latitude/longitude is out of range', () => {
         expect(() =>
             validateRequestSchema(
                 {
                     apiKey,
                     commonBaseURL,
-                    position: [200, -95]
+                    position: [200, -95],
                 },
-                { schema: revGeocodeRequestSchema }
-            )
+                { schema: revGeocodeRequestSchema },
+            ),
         ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "too_big",
+                        code: 'too_big',
                         maximum: 180,
-                        type: "number",
+                        type: 'number',
                         inclusive: true,
                         exact: false,
-                        message: "Number must be less than or equal to 180",
-                        path: ["position", 0]
+                        message: 'Number must be less than or equal to 180',
+                        path: ['position', 0],
                     },
                     {
-                        code: "too_small",
+                        code: 'too_small',
                         minimum: -90,
-                        type: "number",
+                        type: 'number',
                         inclusive: true,
                         exact: false,
-                        message: "Number must be greater than or equal to -90",
-                        path: ["position", 1]
-                    }
-                ]
-            })
+                        message: 'Number must be greater than or equal to -90',
+                        path: ['position', 1],
+                    },
+                ],
+            }),
         );
     });
 
-    test("it should fail when position is an invalid param - case 2", () => {
+    test('it should fail when position is an invalid param - case 2', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
             commonBaseURL,
             // @ts-ignore
-            position: (-122.420679, 37.772537)
+            position: (-122.420679, 37.772537),
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            "Invalid input"
+            'Invalid input',
         );
     });
 
-    test("it should fail when position is an invalid param - case 3", () => {
+    test('it should fail when position is an invalid param - case 3', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
             commonBaseURL,
             // @ts-ignore
-            position: "-122.420679, 37.772537"
+            position: '-122.420679, 37.772537',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            "Invalid input"
+            'Invalid input',
         );
     });
 
-    test("it should fail when position is absent", () => {
+    test('it should fail when position is absent', () => {
         // @ts-ignore
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
             commonBaseURL,
-            geographyType: ["Country"]
+            geographyType: ['Country'],
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            "Invalid input"
+            'Invalid input',
         );
     });
 
@@ -101,23 +101,23 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            heading: 361
+            heading: 361,
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "too_big",
+                        code: 'too_big',
                         maximum: 360,
-                        type: "number",
+                        type: 'number',
                         inclusive: true,
                         exact: false,
-                        message: "Number must be less than or equal to 360",
-                        path: ["heading"]
-                    }
-                ]
-            })
+                        message: 'Number must be less than or equal to 360',
+                        path: ['heading'],
+                    },
+                ],
+            }),
         );
     });
 
@@ -127,21 +127,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            heading: "180"
+            heading: '180',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "number",
-                        received: "string",
-                        path: ["heading"],
-                        message: "Expected number, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'number',
+                        received: 'string',
+                        path: ['heading'],
+                        message: 'Expected number, received string',
+                    },
+                ],
+            }),
         );
     });
 
@@ -151,21 +151,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            mapcodes: "Local"
+            mapcodes: 'Local',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "array",
-                        received: "string",
-                        path: ["mapcodes"],
-                        message: "Expected array, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'array',
+                        received: 'string',
+                        path: ['mapcodes'],
+                        message: 'Expected array, received string',
+                    },
+                ],
+            }),
         );
     });
 
@@ -175,21 +175,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            number: 36
+            number: 36,
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "string",
-                        received: "number",
-                        path: ["number"],
-                        message: "Expected string, received number"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'string',
+                        received: 'number',
+                        path: ['number'],
+                        message: 'Expected string, received number',
+                    },
+                ],
+            }),
         );
     });
 
@@ -199,21 +199,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            radiusMeters: "2000"
+            radiusMeters: '2000',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "number",
-                        received: "string",
-                        path: ["radiusMeters"],
-                        message: "Expected number, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'number',
+                        received: 'string',
+                        path: ['radiusMeters'],
+                        message: 'Expected number, received string',
+                    },
+                ],
+            }),
         );
     });
 
@@ -223,21 +223,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            geographyType: "Country"
+            geographyType: 'Country',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "array",
-                        received: "string",
-                        path: ["geographyType"],
-                        message: "Expected array, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'array',
+                        received: 'string',
+                        path: ['geographyType'],
+                        message: 'Expected array, received string',
+                    },
+                ],
+            }),
         );
     });
 
@@ -247,21 +247,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            returnRoadUse: "LimitedAccess"
+            returnRoadUse: 'LimitedAccess',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "boolean",
-                        received: "string",
-                        path: ["returnRoadUse"],
-                        message: "Expected boolean, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'boolean',
+                        received: 'string',
+                        path: ['returnRoadUse'],
+                        message: 'Expected boolean, received string',
+                    },
+                ],
+            }),
         );
     });
 
@@ -271,21 +271,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            allowFreeformNewline: "true"
+            allowFreeformNewline: 'true',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "boolean",
-                        received: "string",
-                        path: ["allowFreeformNewline"],
-                        message: "Expected boolean, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'boolean',
+                        received: 'string',
+                        path: ['allowFreeformNewline'],
+                        message: 'Expected boolean, received string',
+                    },
+                ],
+            }),
         );
     });
 
@@ -295,21 +295,21 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            returnSpeedLimit: "true"
+            returnSpeedLimit: 'true',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "boolean",
-                        received: "string",
-                        path: ["returnSpeedLimit"],
-                        message: "Expected boolean, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'boolean',
+                        received: 'string',
+                        path: ['returnSpeedLimit'],
+                        message: 'Expected boolean, received string',
+                    },
+                ],
+            }),
         );
     });
 
@@ -319,59 +319,59 @@ describe("ReverseGeocoding schema validation", () => {
             commonBaseURL,
             position: [-122.420679, 37.772537],
             // @ts-ignore
-            returnMatchType: "true"
+            returnMatchType: 'true',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        code: "invalid_type",
-                        expected: "boolean",
-                        received: "string",
-                        path: ["returnMatchType"],
-                        message: "Expected boolean, received string"
-                    }
-                ]
-            })
+                        code: 'invalid_type',
+                        expected: 'boolean',
+                        received: 'string',
+                        path: ['returnMatchType'],
+                        message: 'Expected boolean, received string',
+                    },
+                ],
+            }),
         );
     });
 
-    test("it should fail when view is an invalid param", () => {
+    test('it should fail when view is an invalid param', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
             commonBaseURL,
             position: [-122.420679, 37.772537],
             //@ts-ignore
-            view: "MAA"
+            view: 'MAA',
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
                 errors: [
                     {
-                        received: "MAA",
-                        code: "invalid_enum_value",
-                        options: ["Unified", "AR", "IN", "PK", "IL", "MA", "RU", "TR", "CN"],
-                        path: ["view"],
+                        received: 'MAA',
+                        code: 'invalid_enum_value',
+                        options: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
+                        path: ['view'],
                         message:
                             "Invalid enum value. Expected 'Unified' | " +
-                            "'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'"
-                    }
-                ]
-            })
+                            "'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'",
+                    },
+                ],
+            }),
         );
     });
 });
 
-describe("Rev-Geo request schema performance tests", () => {
+describe('Rev-Geo request schema performance tests', () => {
     test.each(revGeoReqObjects)(
         "'%s'",
         // @ts-ignore
         (_title: string, params: ReverseGeocodingParams) => {
             expect(
-                bestExecutionTimeMS(() => validateRequestSchema(params, { schema: revGeocodeRequestSchema }), 10)
+                bestExecutionTimeMS(() => validateRequestSchema(params, { schema: revGeocodeRequestSchema }), 10),
             ).toBeLessThan(MAX_EXEC_TIMES_MS.revGeo.schemaValidation);
-        }
+        },
     );
 });

@@ -76,7 +76,7 @@ export type APIErrorResponse<T = DefaultAPIResponseErrorBody> = {
 /**
  * @ignore
  */
-export const enum APICode {
+export enum APICode {
     TOO_MANY_REQUESTS = 429,
-    FORBIDDEN = 403
+    FORBIDDEN = 403,
 }

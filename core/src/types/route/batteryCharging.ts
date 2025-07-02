@@ -1,5 +1,5 @@
-import type { CurrentType } from "..";
-import type { Position } from "geojson";
+import type { CurrentType } from '..';
+import type { Position } from 'geojson';
 
 /**
  * Available plug types for EV charging.
@@ -7,34 +7,34 @@ import type { Position } from "geojson";
  * @category Variables
  */
 export const plugTypes = [
-    "Small_Paddle_Inductive",
-    "Large_Paddle_Inductive",
-    "IEC_60309_1_Phase",
-    "IEC_60309_3_Phase",
-    "IEC_62196_Type_1_Outlet",
-    "IEC_62196_Type_2_Outlet",
-    "IEC_62196_Type_3_Outlet",
-    "IEC_62196_Type_1_Connector_Cable_Attached",
-    "IEC_62196_Type_2_Connector_Cable_Attached",
-    "IEC_62196_Type_3_Connector_Cable_Attached",
-    "Combo_to_IEC_62196_Type_1_Base",
-    "Combo_to_IEC_62196_Type_2_Base",
-    "Type_E_French_Standard_CEE_7_5",
-    "Type_F_Schuko_CEE_7_4",
-    "Type_G_British_Standard_BS_1363",
-    "Type_J_Swiss_Standard_SEV_1011",
-    "China_GB_Part_2",
-    "China_GB_Part_3",
-    "IEC_309_DC_Plug",
-    "AVCON_Connector",
-    "Tesla_Connector",
-    "NEMA_5_20",
-    "CHAdeMO",
-    "SAE_J1772",
-    "TEPCO",
-    "Better_Place_Socket",
-    "Marechal_Socket",
-    "Standard_Household_Country_Specific"
+    'Small_Paddle_Inductive',
+    'Large_Paddle_Inductive',
+    'IEC_60309_1_Phase',
+    'IEC_60309_3_Phase',
+    'IEC_62196_Type_1_Outlet',
+    'IEC_62196_Type_2_Outlet',
+    'IEC_62196_Type_3_Outlet',
+    'IEC_62196_Type_1_Connector_Cable_Attached',
+    'IEC_62196_Type_2_Connector_Cable_Attached',
+    'IEC_62196_Type_3_Connector_Cable_Attached',
+    'Combo_to_IEC_62196_Type_1_Base',
+    'Combo_to_IEC_62196_Type_2_Base',
+    'Type_E_French_Standard_CEE_7_5',
+    'Type_F_Schuko_CEE_7_4',
+    'Type_G_British_Standard_BS_1363',
+    'Type_J_Swiss_Standard_SEV_1011',
+    'China_GB_Part_2',
+    'China_GB_Part_3',
+    'IEC_309_DC_Plug',
+    'AVCON_Connector',
+    'Tesla_Connector',
+    'NEMA_5_20',
+    'CHAdeMO',
+    'SAE_J1772',
+    'TEPCO',
+    'Better_Place_Socket',
+    'Marechal_Socket',
+    'Standard_Household_Country_Specific',
 ] as const;
 
 /**
@@ -113,7 +113,7 @@ export type ChargingParkLocation = {
  * @group Route
  * @category Variables
  */
-export const paymentMethods = ["No_Payment", "Subscription", "Direct"] as const;
+export const paymentMethods = ['No_Payment', 'Subscription', 'Direct'] as const;
 
 /**
  * Payment method for a charging station.
@@ -186,7 +186,7 @@ export type BatteryCharging = {
     /**
      * The source of the charging stop at the end of this leg.
      */
-    chargingStopType?: "Auto_Generated" | "User_Defined";
+    chargingStopType?: 'Auto_Generated' | 'User_Defined';
 
     /**
      * Payment options for the charging stop.
