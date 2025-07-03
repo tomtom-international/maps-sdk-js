@@ -8,7 +8,7 @@ import type { GeometrySearchParams, SearchGeometryInput } from '../types';
 describe('GeometrySearch Schema Validation', () => {
     const config = { schema: geometrySearchRequestSchema };
     const apiKey = 'APIKEY';
-    const commonBaseURL = 'https://api-test.tomtom.com';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
 
     const geometries: SearchGeometryInput[] = [
         {
@@ -34,7 +34,7 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema<GeometrySearchParams>(
                 {
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                     query: 'restaurant',
                     geometries,
                     poiCategories: [7315, 7315081],
@@ -49,7 +49,7 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema(
                 {
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                     query: 'restaurant',
                     geometries,
                     poiCategories: ['ITALIAN_RESTAURANT', 'FRENCH_RESTAURANT'],
@@ -62,7 +62,7 @@ describe('GeometrySearch Schema Validation', () => {
     test('it should fail when missing coordinates property', () => {
         expect(() =>
             validateRequestSchema(
-                { query: 'cafe', geometries: [{ type: 'Circle', radius: 6000 }], apiKey, commonBaseURL },
+                { query: 'cafe', geometries: [{ type: 'Circle', radius: 6000 }], apiKey, commonBaseURL: commonBaseUrl },
                 config,
             ),
         ).toThrow('Invalid input');
@@ -75,7 +75,7 @@ describe('GeometrySearch Schema Validation', () => {
                     query: 'cafe',
                     geometries: [{ radius: 6000, coordinates: [37.71205, -121.36434] }],
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                 },
                 config,
             ),
@@ -84,7 +84,9 @@ describe('GeometrySearch Schema Validation', () => {
 
     test('it should fail when geometryList property is missing', () => {
         const query = 'cafe';
-        expect(() => validateRequestSchema({ query, apiKey, commonBaseURL }, config)).toThrow('Required');
+        expect(() => validateRequestSchema({ query, apiKey, commonBaseURL: commonBaseUrl }, config)).toThrow(
+            'Required',
+        );
     });
 
     test('it should fail when type Circle is missing radius property', () => {
@@ -97,12 +99,15 @@ describe('GeometrySearch Schema Validation', () => {
         ];
 
         expect(() =>
-            validateRequestSchema({ query, geometries: [incorrectGeometry], apiKey, commonBaseURL }, config),
+            validateRequestSchema(
+                { query, geometries: [incorrectGeometry], apiKey, commonBaseURL: commonBaseUrl },
+                config,
+            ),
         ).toThrow('Invalid input');
     });
 
     test('it should fail when query is missing', () => {
-        expect(() => validateRequestSchema({ geometries, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() => validateRequestSchema({ geometries, apiKey, commonBaseURL: commonBaseUrl }, config)).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -119,7 +124,9 @@ describe('GeometrySearch Schema Validation', () => {
 
     test('it should fail when query is not of type string', () => {
         const query = undefined;
-        expect(() => validateRequestSchema({ query, geometries, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -138,7 +145,9 @@ describe('GeometrySearch Schema Validation', () => {
         const query = 'Fuel Station';
         const mapcodes = 'Local';
 
-        expect(() => validateRequestSchema({ query, geometries, mapcodes, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, mapcodes, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -156,7 +165,9 @@ describe('GeometrySearch Schema Validation', () => {
     test('it should fail when view is not amongst the defined enums', () => {
         const query = 'POI';
         const view = 'CH';
-        expect(() => validateRequestSchema({ query, geometries, view, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, view, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -177,7 +188,9 @@ describe('GeometrySearch Schema Validation', () => {
         const query = 'Noe Valley, San Francisco';
         const indexes = 'STR';
 
-        expect(() => validateRequestSchema({ query, geometries, indexes, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, indexes, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -197,7 +210,7 @@ describe('GeometrySearch Schema Validation', () => {
         const poiCategories = 7315025;
 
         expect(() =>
-            validateRequestSchema({ query, geometries, poiCategories, apiKey, commonBaseURL }, config),
+            validateRequestSchema({ query, geometries, poiCategories, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
                 errors: [
@@ -218,7 +231,7 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema(
                 {
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                     query: 'Restaurant',
                     geometries,
                     // @ts-ignore
@@ -233,7 +246,9 @@ describe('GeometrySearch Schema Validation', () => {
         const query = 'Restaurant';
         const poiBrands = 'TomTom';
 
-        expect(() => validateRequestSchema({ query, geometries, poiBrands, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, poiBrands, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -252,7 +267,9 @@ describe('GeometrySearch Schema Validation', () => {
         const query = 'EV';
         const connectors = 'IEC62196Type1';
 
-        expect(() => validateRequestSchema({ query, geometries, connectors, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, connectors, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -271,7 +288,9 @@ describe('GeometrySearch Schema Validation', () => {
         const query = 'EV';
         const fuelTypes = 'AdBlue';
 
-        expect(() => validateRequestSchema({ query, geometries, fuelTypes, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, fuelTypes, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {
@@ -291,7 +310,7 @@ describe('GeometrySearch Schema Validation', () => {
         const geographyTypes = 'Municipality';
 
         expect(() =>
-            validateRequestSchema({ query, geometries, geographyTypes, apiKey, commonBaseURL }, config),
+            validateRequestSchema({ query, geometries, geographyTypes, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
                 errors: [
@@ -310,7 +329,9 @@ describe('GeometrySearch Schema Validation', () => {
     test('it should fail when lan and lon parameters are not between permitted values', () => {
         const query = 'EV';
         const position = [-200, 95];
-        expect(() => validateRequestSchema({ query, geometries, position, apiKey, commonBaseURL }, config)).toThrow(
+        expect(() =>
+            validateRequestSchema({ query, geometries, position, apiKey, commonBaseURL: commonBaseUrl }, config),
+        ).toThrow(
             expect.objectContaining({
                 errors: [
                     {

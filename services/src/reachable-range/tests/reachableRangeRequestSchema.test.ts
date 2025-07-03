@@ -4,13 +4,13 @@ import type { ReachableRangeParams } from '../types/reachableRangeParams';
 
 describe.skip('Reachable range request schema validation', () => {
     const apiKey = 'APIKEY';
-    const commonBaseURL = 'https://api-test.tomtom.com';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
     const config = reachableRangeRequestValidationConfig;
 
     test("it should fail when api Key isn't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { budget: { type: 'timeMinutes', value: 30 }, origin: [10, 20], commonBaseURL },
+                { budget: { type: 'timeMinutes', value: 30 }, origin: [10, 20], commonBaseURL: commonBaseUrl },
                 config,
             );
 
@@ -37,7 +37,7 @@ describe.skip('Reachable range request schema validation', () => {
     test("it should fail when origin isn't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { budget: { type: 'timeMinutes', value: 30 }, apiKey, commonBaseURL } as never,
+                { budget: { type: 'timeMinutes', value: 30 }, apiKey, commonBaseURL: commonBaseUrl } as never,
                 config,
             );
 
@@ -52,7 +52,12 @@ describe.skip('Reachable range request schema validation', () => {
     test("it should fail when origin isn't well defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { origin: 'wrong' as never, budget: { type: 'timeMinutes', value: 30 }, apiKey, commonBaseURL },
+                {
+                    origin: 'wrong' as never,
+                    budget: { type: 'timeMinutes', value: 30 },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
                 config,
             );
 
@@ -66,7 +71,10 @@ describe.skip('Reachable range request schema validation', () => {
 
     test("it should fail when budget isn't defined", () => {
         const validationCall = () =>
-            validateRequestSchema<ReachableRangeParams>({ origin: [10, 20], apiKey, commonBaseURL } as never, config);
+            validateRequestSchema<ReachableRangeParams>(
+                { origin: [10, 20], apiKey, commonBaseURL: commonBaseUrl } as never,
+                config,
+            );
 
         expect(validationCall).toThrow(
             expect.objectContaining({
@@ -87,7 +95,7 @@ describe.skip('Reachable range request schema validation', () => {
                         date: new Date(),
                     },
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                 },
                 config,
             );
@@ -104,7 +112,12 @@ describe.skip('Reachable range request schema validation', () => {
     test("it should fail when budget is EV but vehicle params aren't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { origin: [10, 20], budget: { type: 'remainingChargeCPT', value: 50 }, apiKey, commonBaseURL },
+                {
+                    origin: [10, 20],
+                    budget: { type: 'remainingChargeCPT', value: 50 },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
                 config,
             );
 
@@ -126,7 +139,7 @@ describe.skip('Reachable range request schema validation', () => {
                     //     engine: { type: "electric", currentChargePCT: 50 } as never
                     // },
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                 },
                 config,
             );
@@ -155,7 +168,7 @@ describe.skip('Reachable range request schema validation', () => {
                     //     }
                     // },
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                 },
                 config,
             );
@@ -170,7 +183,12 @@ describe.skip('Reachable range request schema validation', () => {
     test("it should fail when budget is about fuel but vehicle params aren't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
-                { origin: [10, 20], budget: { type: 'spentFuelLiters', value: 35 }, apiKey, commonBaseURL },
+                {
+                    origin: [10, 20],
+                    budget: { type: 'spentFuelLiters', value: 35 },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
                 config,
             );
 

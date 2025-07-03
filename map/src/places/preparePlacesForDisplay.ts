@@ -25,23 +25,23 @@ export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {},
     const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOICategory;
 
     // TODO: wait for pin support in Orbis
-    const iconID = (classificationCode && `poi-${toMapDisplayPOICategory(classificationCode)}`) || 'default_pin';
+    const iconId = (classificationCode && `poi-${toMapDisplayPOICategory(classificationCode)}`) || 'default_pin';
     // const effectiveIconID = iconStyle === "pin" ? `${iconID}_pin` : iconID;
-    const effectiveIconID = iconStyle === 'pin' ? iconID : iconID;
+    const effectiveIconId = iconStyle === 'pin' ? iconId : iconId;
 
     if (!iconConfig?.customIcons || !map) {
-        return effectiveIconID;
+        return effectiveIconId;
     }
 
     for (const customIcon of iconConfig.customIcons) {
         if (customIcon.category === classificationCode) {
-            const customIconID = classificationCode.toLowerCase();
-            addImageIfNotExisting(map, customIconID, customIcon.iconUrl);
-            return customIconID;
+            const customIconId = classificationCode.toLowerCase();
+            addImageIfNotExisting(map, customIconId, customIcon.iconUrl);
+            return customIconId;
         }
     }
 
-    return effectiveIconID;
+    return effectiveIconId;
 };
 
 /**

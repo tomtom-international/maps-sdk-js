@@ -4,7 +4,7 @@ import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiR
 import type { ParsedFetchResponse } from './types/fetch';
 import type { RequestValidationConfig } from './types/validation';
 
-export type CommonServiceParams<ApiRequest, ApiResponse> = Partial<GlobalConfig> & {
+export type CommonServiceParams<ApiRequest = any, ApiResponse = any> = Partial<GlobalConfig> & {
     /**
      * Optional, custom base URL for the service.
      ** Should contain the URL until the part that will change per service call.

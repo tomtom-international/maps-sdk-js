@@ -8,7 +8,7 @@ import evChargingStationsAvailabilityCustomize from '../ev-charging-stations-ava
 import geocodeCustomize from '../geocode/customize';
 import geometryDataCustomize from '../geometry-data/customize';
 import geometrySearchCustomize from '../geometry-search/customize';
-import placeByIDCustomize from '../place-by-id/customize';
+import placeByIdCustomize from '../place-by-id/customize';
 import reachableRangeCustomize from '../reachable-range/customize';
 import revgeoCustomize from '../revgeo/customize';
 import routingCustomize from '../routing/customize';
@@ -24,6 +24,6 @@ export const customizeService = {
     calculateRoute: routingCustomize,
     reachableRange: reachableRangeCustomize,
     evChargingStationsAvailability: evChargingStationsAvailabilityCustomize,
-    placeByID: placeByIDCustomize,
+    placeByID: placeByIdCustomize,
     autocompleteSearch: autocompleteCustomize,
 };

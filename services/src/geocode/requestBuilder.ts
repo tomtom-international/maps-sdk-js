@@ -5,7 +5,7 @@ import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 import { appendCommonParams, appendLatLonParamsFromPosition } from '../shared/requestBuildingUtils';
 import type { GeocodingParams } from './types/geocodingParams';
 
-const buildURLBasePath = (params: GeocodingParams): string =>
+const buildUrlBasePath = (params: GeocodingParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/geocode`;
 
 /**
@@ -13,7 +13,7 @@ const buildURLBasePath = (params: GeocodingParams): string =>
  * @param params The geocoding parameters, with global configuration already merged into them.
  */
 export const buildGeocodingRequest = (params: GeocodingParams): URL => {
-    const url = new URL(`${buildURLBasePath(params)}/${params.query}.json`);
+    const url = new URL(`${buildUrlBasePath(params)}/${params.query}.json`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
     // geocoding specific parameters:

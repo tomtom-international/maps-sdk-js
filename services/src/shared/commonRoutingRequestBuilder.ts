@@ -151,7 +151,7 @@ import type { CommonEVRoutingParams, CommonRoutingParams } from './types/commonR
 //     }
 // };
 
-const appendEVParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRoutingParams): void => {
+const appendEvParams = (urlParams: URLSearchParams, evRoutingParams?: CommonEVRoutingParams): void => {
     if (evRoutingParams) {
         urlParams.append('vehicleEngineType', 'electric');
         urlParams.append('currentChargeInkWh', String(evRoutingParams.currentChargeInkWh));
@@ -179,5 +179,5 @@ export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: Co
         }
     }
     appendOptionalParam(urlParams, 'travelMode', params.travelMode);
-    appendEVParams(urlParams, params.commonEVRoutingParams);
+    appendEvParams(urlParams, params.commonEVRoutingParams);
 };

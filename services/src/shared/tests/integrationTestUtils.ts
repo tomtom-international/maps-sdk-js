@@ -7,7 +7,7 @@ export const putIntegrationTestsAPIKey = () => {
     });
 };
 
-const basePOIObjTestProps = {
+const basePoiObjTestProps = {
     name: expect.any(String),
     classifications: expect.anything(),
     brands: expect.any(Array),
@@ -20,7 +20,7 @@ export const basePOITestProps: SearchPlaceProps = {
     info: expect.any(String),
     address: expect.any(Object),
     entryPoints: expect.arrayContaining([expect.any(Object)]),
-    poi: expect.objectContaining(basePOIObjTestProps),
+    poi: expect.objectContaining(basePoiObjTestProps),
 };
 
 export const evStationBaseTestProps: SearchPlaceProps = {
@@ -28,7 +28,7 @@ export const evStationBaseTestProps: SearchPlaceProps = {
     score: expect.any(Number),
     info: expect.any(String),
     address: expect.any(Object),
-    poi: expect.objectContaining(basePOIObjTestProps),
+    poi: expect.objectContaining(basePoiObjTestProps),
     chargingPark: expect.objectContaining({
         // connectors: expect.any(Array),
         connectorCounts: expect.any(Array),
@@ -54,7 +54,7 @@ const openingHoursTestProps: OpeningHours = {
 export const evStationWithOpeningHoursTestProps: SearchPlaceProps = {
     ...evStationBaseTestProps,
     poi: expect.objectContaining({
-        ...basePOIObjTestProps,
+        ...basePoiObjTestProps,
         openingHours: expect.objectContaining(openingHoursTestProps),
     }),
 };

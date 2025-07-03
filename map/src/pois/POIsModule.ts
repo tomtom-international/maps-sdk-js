@@ -31,7 +31,7 @@ export const getStyleCategories = (categories: FilterablePOICategory[]): string[
 /**
  * IDs of sources and layers for places of interest module.
  */
-type POIsSourcesAndLayers = {
+type PoIsSourcesAndLayers = {
     /**
      * Places of interest with corresponding layer ids.
      * TODO: technically source ID is vectorTiles if POIs stay included in base map for Orbis
@@ -48,7 +48,7 @@ export const poiLayerIDs = ['POI', 'POI - Micro'];
  * Vector tile POIs map module.
  * * Refers to the POIs layer from the vector map.
  */
-export class POIsModule extends AbstractMapModule<POIsSourcesAndLayers, POIsModuleConfig> {
+export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModuleConfig> {
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
     private originalFilter?: FilterSpecification;
 

@@ -4,7 +4,7 @@ import { parseGeocodingResponse } from '../responseParser';
 import type { GeocodingResponseAPI } from '../types/apiTypes';
 import type { GeocodingResponse } from '../types/geocodingResponse';
 import apiAndParsedResponses from './responseParser.data.json';
-import geocodingAPIResponses from './responseParserPerf.data.json';
+import geocodingApiResponses from './responseParserPerf.data.json';
 
 describe('Geocode response parsing tests', () => {
     test.each(apiAndParsedResponses)(
@@ -17,7 +17,7 @@ describe('Geocode response parsing tests', () => {
 });
 
 describe('Geocoding service response parser performance tests', () => {
-    test.each(geocodingAPIResponses)(
+    test.each(geocodingApiResponses)(
         "'%s'",
         // @ts-ignore
         (apiResponse: GeocodingResponseAPI) => {

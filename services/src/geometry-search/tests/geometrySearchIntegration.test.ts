@@ -189,21 +189,26 @@ describe('Geometry Search service', () => {
     });
 
     test('geometrySearch with API request and response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
-        const onAPIResponse = jest.fn() as (
+        const onApiRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
+        const onApiResponse = jest.fn() as (
             request: GeometrySearchRequestAPI,
             response: GeometrySearchResponseAPI,
         ) => void;
-        const result = await search({ query: 'cafe', geometries, onAPIRequest, onAPIResponse });
+        const result = await search({
+            query: 'cafe',
+            geometries,
+            onAPIRequest: onApiRequest,
+            onAPIResponse: onApiResponse,
+        });
         expect(result).toBeDefined();
-        const expectedAPIRequest = { url: expect.any(URL), data: expect.anything() };
-        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
-        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.anything());
+        const expectedApiRequest = { url: expect.any(URL), data: expect.anything() };
+        expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
+        expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.anything());
     });
 
     test('geometrySearch with API request and error response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
-        const onAPIResponse = jest.fn() as (
+        const onApiRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
+        const onApiResponse = jest.fn() as (
             request: GeometrySearchRequestAPI,
             response: GeometrySearchResponseAPI,
         ) => void;
@@ -213,12 +218,12 @@ describe('Geometry Search service', () => {
                 geometries,
                 indexes: ['INCORRECT'] as never,
                 validateRequest: false,
-                onAPIRequest,
-                onAPIResponse,
+                onAPIRequest: onApiRequest,
+                onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        const expectedAPIRequest = { url: expect.any(URL), data: expect.anything() };
-        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
-        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.objectContaining({ status: 400 }));
+        const expectedApiRequest = { url: expect.any(URL), data: expect.anything() };
+        expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
+        expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.objectContaining({ status: 400 }));
     });
 });

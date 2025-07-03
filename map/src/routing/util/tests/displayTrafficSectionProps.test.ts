@@ -2,14 +2,14 @@ import type { TrafficSectionProps } from '@anw/maps-sdk-js/core';
 import type { DisplayTrafficSectionProps } from '../../types/routeSections';
 import { toDisplayTrafficSectionProps, trafficSectionToIconID } from '../displayTrafficSectionProps';
 import toDisplayTrafficSectionPropsData from './data/toDisplayTrafficSectionProps.data.json';
-import toIconIDTestData from './data/toIconID.data.json';
+import toIconIdTestData from './data/toIconID.data.json';
 
 describe('Traffic section builder tests', () => {
-    test.each(toIconIDTestData)(
+    test.each(toIconIdTestData)(
         "'%s'",
         // @ts-ignore
-        (_name: string, sectionProps: TrafficSectionProps, expectedIconID: string) => {
-            expect(trafficSectionToIconID(sectionProps)).toStrictEqual(expectedIconID);
+        (_name: string, sectionProps: TrafficSectionProps, expectedIconId: string) => {
+            expect(trafficSectionToIconID(sectionProps)).toStrictEqual(expectedIconId);
         },
     );
 

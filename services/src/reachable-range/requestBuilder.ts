@@ -6,7 +6,7 @@ import type { ReachableRangeParams } from './types/reachableRangeParams';
 
 // import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";
 
-const buildURLBasePath = (params: ReachableRangeParams): string =>
+const buildUrlBasePath = (params: ReachableRangeParams): string =>
     params.customServiceBaseURL ||
     `${params.commonBaseURL}/routing/1/calculateReachableRange/${positionToCSVLatLon(
         getPositionStrict(params.origin),
@@ -57,7 +57,7 @@ const buildURLBasePath = (params: ReachableRangeParams): string =>
  * @returns
  */
 export const buildReachableRangeRequest = (params: ReachableRangeParams): URL => {
-    const url = new URL(buildURLBasePath(params));
+    const url = new URL(buildUrlBasePath(params));
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
     appendCommonRoutingParams(urlParams, params);

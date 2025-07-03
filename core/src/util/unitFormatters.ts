@@ -98,7 +98,7 @@ const formatYards = (meters: number, yardUnits: string): string => {
     return `${Math.round(yards / 10) * 10} ${yardUnits}`;
 };
 
-const formatUSMilesLessThanThree = (miles: number, absMiles: number, mileUnits: string): string => {
+const formatUsMilesLessThanThree = (miles: number, absMiles: number, mileUnits: string): string => {
     const milesInteger = Number.parseInt(absMiles.toString());
     const milesFloat = absMiles - milesInteger;
     const sign = miles < 0 ? '-' : '';
@@ -118,7 +118,7 @@ const formatUSMilesLessThanThree = (miles: number, absMiles: number, mileUnits: 
     return `${sign}${milesInteger + 1} ${mileUnits}`;
 };
 
-const formatUSMilesLessThanTen = (miles: number, absMiles: number, mileUnits: string): string => {
+const formatUsMilesLessThanTen = (miles: number, absMiles: number, mileUnits: string): string => {
     const milesInteger = Number.parseInt(absMiles.toString());
     const milesFloat = absMiles - milesInteger;
     const sign = miles < 0 ? '-' : '';
@@ -133,17 +133,17 @@ const formatUSMilesLessThanTen = (miles: number, absMiles: number, mileUnits: st
 
 const formatMiles = (miles: number, absMiles: number, mileUnits: string): string => {
     if (absMiles < 3) {
-        return formatUSMilesLessThanThree(miles, absMiles, mileUnits);
+        return formatUsMilesLessThanThree(miles, absMiles, mileUnits);
     }
     if (absMiles < 10) {
-        return formatUSMilesLessThanTen(miles, absMiles, mileUnits);
+        return formatUsMilesLessThanTen(miles, absMiles, mileUnits);
     }
     return `${Math.round(miles)} ${mileUnits}`;
 };
 
 const mileUnitsWithDefault = (displayUnits: DistanceDisplayUnits): string => displayUnits.miles ?? 'mi';
 
-const formatUS = (meters: number, displayUnits: DistanceDisplayUnits): string => {
+const formatUs = (meters: number, displayUnits: DistanceDisplayUnits): string => {
     const miles = meters / MILE_IN_METERS;
     const absMiles = Math.abs(miles);
     if (absMiles < 0.125) {
@@ -152,7 +152,7 @@ const formatUS = (meters: number, displayUnits: DistanceDisplayUnits): string =>
     return formatMiles(miles, absMiles, mileUnitsWithDefault(displayUnits));
 };
 
-const formatUK = (meters: number, displayUnits: DistanceDisplayUnits): string => {
+const formatUk = (meters: number, displayUnits: DistanceDisplayUnits): string => {
     const miles = meters / MILE_IN_METERS;
     const absMiles = Math.abs(miles);
     if (absMiles < 0.125) {
@@ -201,8 +201,8 @@ export const formatDistance = (meters: number, options?: DistanceDisplayUnits): 
         case 'metric':
             return formatMetric(meters, mergedOptions);
         case 'imperial_us':
-            return formatUS(meters, mergedOptions);
+            return formatUs(meters, mergedOptions);
         case 'imperial_uk':
-            return formatUK(meters, mergedOptions);
+            return formatUk(meters, mergedOptions);
     }
 };

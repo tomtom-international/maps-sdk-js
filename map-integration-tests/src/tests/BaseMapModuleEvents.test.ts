@@ -39,10 +39,10 @@ test.describe('Tests with user events related to Base Map', () => {
 
         // only first base map listens to click events for now:
         await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.baseMap?.events.on('click', (topFeature) => {
-                mapsSDKThis._numOfClicks++;
-                mapsSDKThis._clickedTopFeature = topFeature;
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            mapsSdkThis.baseMap?.events.on('click', (topFeature) => {
+                mapsSdkThis._numOfClicks++;
+                mapsSdkThis._clickedTopFeature = topFeature;
             });
         });
 
@@ -53,10 +53,10 @@ test.describe('Tests with user events related to Base Map', () => {
 
         // now we register a click handler for the second base map:
         await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.baseMap2?.events.on('click', (topFeature) => {
-                (mapsSDKThis as any)._numOfClicks2++;
-                (mapsSDKThis as any)._clickedTopFeature2 = topFeature;
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            mapsSdkThis.baseMap2?.events.on('click', (topFeature) => {
+                (mapsSdkThis as any)._numOfClicks2++;
+                (mapsSdkThis as any)._clickedTopFeature2 = topFeature;
             });
         });
         await page.evaluate(() => ((globalThis as any)._numOfClicks2 = 0));

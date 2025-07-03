@@ -14,23 +14,23 @@ export const parseRevGeoResponse = (
     params: ReverseGeocodingParams,
 ): ReverseGeocodingResponse => {
     const pointFeature = toPointFeature(getPositionStrict(params.position));
-    const firstAPIResult = apiResponse.addresses[0];
-    const { boundingBox, sideOfStreet, offsetPosition, ...address } = firstAPIResult?.address || {};
+    const firstApiResult = apiResponse.addresses[0];
+    const { boundingBox, sideOfStreet, offsetPosition, ...address } = firstApiResult?.address || {};
     return {
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
         ...pointFeature,
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         id: generateId(),
-        ...(firstAPIResult && {
+        ...(firstApiResult && {
             properties: {
-                type: firstAPIResult?.entityType ? 'Geography' : !address.streetNumber ? 'Street' : 'Point Address',
+                type: firstApiResult?.entityType ? 'Geography' : !address.streetNumber ? 'Street' : 'Point Address',
                 address,
-                ...(firstAPIResult.dataSources && { dataSources: firstAPIResult.dataSources }),
-                ...(firstAPIResult.mapcodes && { mapcodes: firstAPIResult.mapcodes }),
+                ...(firstApiResult.dataSources && { dataSources: firstApiResult.dataSources }),
+                ...(firstApiResult.mapcodes && { mapcodes: firstApiResult.mapcodes }),
                 ...(sideOfStreet && { sideOfStreet }),
                 ...(offsetPosition && { offsetPosition: csvLatLngToPosition(offsetPosition) }),
                 // The reverse geocoded coordinates are secondary and set in the GeoJSON properties:
-                originalPosition: csvLatLngToPosition(firstAPIResult.position),
+                originalPosition: csvLatLngToPosition(firstApiResult.position),
             },
         }),
     };

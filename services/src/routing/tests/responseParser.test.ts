@@ -9,7 +9,7 @@ import { parseRoutingResponseError } from '../routingResponseErrorParser';
 import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
 import apiAndParsedResponses from './responseParser.data.json';
 import errorResponses from './responseParserError.data.json';
-import longAPIResponse from './responseParserPerf.data.json';
+import longApiResponse from './responseParserPerf.data.json';
 
 describe('Calculate Route response parsing functional tests', () => {
     // Functional tests:
@@ -37,7 +37,7 @@ describe('Calculate Route response parsing performance tests', () => {
         () => {
             expect(
                 bestExecutionTimeMS(
-                    () => parseCalculateRouteResponse(longAPIResponse as CalculateRouteResponseAPI /*, {} as never*/),
+                    () => parseCalculateRouteResponse(longApiResponse as CalculateRouteResponseAPI /*, {} as never*/),
                     20,
                 ),
             ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.responseParsing);
@@ -52,10 +52,10 @@ describe('Routing - error response parsing tests', () => {
         async (
             _name: string,
             apiResponseError: APIErrorResponse<RoutingAPIResponseError>,
-            expectedSDKError: SDKServiceError,
+            expectedSdkError: SDKServiceError,
         ) => {
             const sdkRoutingResponseError = parseRoutingResponseError(apiResponseError, 'Routing');
-            expect(sdkRoutingResponseError).toMatchObject(expectedSDKError);
+            expect(sdkRoutingResponseError).toMatchObject(expectedSdkError);
         },
     );
 });

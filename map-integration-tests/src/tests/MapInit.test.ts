@@ -56,11 +56,11 @@ test.describe('Map Init tests', () => {
         await mapEnv.loadPageAndMap(page, { center: [7.12621, 48.50394], zoom: 10 });
 
         await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            await mapsSDKThis.MapsSDK.POIsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
-            await mapsSDKThis.MapsSDK.HillshadeModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
-            await mapsSDKThis.MapsSDK.TrafficIncidentsModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
-            await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, { ensureAddedToStyle: true });
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            await mapsSdkThis.MapsSDK.POIsModule.get(mapsSdkThis.tomtomMap, { ensureAddedToStyle: true });
+            await mapsSdkThis.MapsSDK.HillshadeModule.get(mapsSdkThis.tomtomMap, { ensureAddedToStyle: true });
+            await mapsSdkThis.MapsSDK.TrafficIncidentsModule.get(mapsSdkThis.tomtomMap, { ensureAddedToStyle: true });
+            await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap, { ensureAddedToStyle: true });
         });
 
         expect(await getNumVisiblePOILayers(page)).toBeGreaterThan(0);

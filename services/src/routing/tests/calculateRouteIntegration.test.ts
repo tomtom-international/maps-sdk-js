@@ -332,16 +332,16 @@ describe('Calculate route integration tests', () => {
             [7.675106, 51.490793],
             [7.74328, 51.403849],
         ];
-        const onAPIRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
-        const onAPIResponse = jest.fn() as (
+        const onApiRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
+        const onApiResponse = jest.fn() as (
             request: CalculateRouteRequestAPI,
             response: CalculateRouteResponseAPI,
         ) => void;
-        const result = await calculateRoute({ geoInputs, onAPIRequest, onAPIResponse });
+        const result = await calculateRoute({ geoInputs, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
-        const expectedAPIRequest = { method: 'GET', url: expect.any(URL) };
-        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
-        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.anything());
+        const expectedApiRequest = { method: 'GET', url: expect.any(URL) };
+        expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
+        expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.anything());
     });
 
     test('Calculate route with API request and error response callbacks', async () => {
@@ -349,16 +349,16 @@ describe('Calculate route integration tests', () => {
             [7.675106, 51.490793],
             [0, 0],
         ];
-        const onAPIRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
-        const onAPIResponse = jest.fn() as (
+        const onApiRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
+        const onApiResponse = jest.fn() as (
             request: CalculateRouteRequestAPI,
             response: CalculateRouteResponseAPI,
         ) => void;
-        await expect(() => calculateRoute({ geoInputs, onAPIRequest, onAPIResponse })).rejects.toThrow(
-            expect.objectContaining({ status: 400 }),
-        );
-        const expectedAPIRequest = { method: 'GET', url: expect.any(URL) };
-        expect(onAPIRequest).toHaveBeenCalledWith(expectedAPIRequest);
-        expect(onAPIResponse).toHaveBeenCalledWith(expectedAPIRequest, expect.objectContaining({ status: 400 }));
+        await expect(() =>
+            calculateRoute({ geoInputs, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
+        ).rejects.toThrow(expect.objectContaining({ status: 400 }));
+        const expectedApiRequest = { method: 'GET', url: expect.any(URL) };
+        expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
+        expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.objectContaining({ status: 400 }));
     });
 });

@@ -130,36 +130,36 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
         if (typeof hasBBox[0] === 'number') {
             return hasBBox.length >= 4 ? (hasBBox as OptionalBBox) : undefined;
         }
-        return bboxFromBBoxes(hasBBox.map((geoJSONItem) => bboxFromGeoJSON(geoJSONItem as GeoJsonObject)));
+        return bboxFromBBoxes(hasBBox.map((geoJsonItem) => bboxFromGeoJSON(geoJsonItem as GeoJsonObject)));
     }
     // Else...
     // Already containing a BBox:
-    const geoJSON = hasBBox as GeoJsonObject;
-    if (geoJSON.bbox) {
-        return geoJSON.bbox;
+    const geoJson = hasBBox as GeoJsonObject;
+    if (geoJson.bbox) {
+        return geoJson.bbox;
     }
     // Else...
     // Needs direct or recursive bbox extraction/calculation:
-    switch (geoJSON.type) {
+    switch (geoJson.type) {
         case 'Feature':
-            return bboxFromGeoJSON((geoJSON as Feature).geometry);
+            return bboxFromGeoJSON((geoJson as Feature).geometry);
         case 'FeatureCollection':
-            return bboxFromBBoxes((geoJSON as FeatureCollection).features.map(bboxFromGeoJSON));
+            return bboxFromBBoxes((geoJson as FeatureCollection).features.map(bboxFromGeoJSON));
         case 'GeometryCollection':
-            return bboxFromBBoxes((geoJSON as GeometryCollection).geometries.map(bboxFromGeoJSON));
+            return bboxFromBBoxes((geoJson as GeometryCollection).geometries.map(bboxFromGeoJSON));
         case 'Point':
-            return bboxExpandedWithPosition((geoJSON as Point).coordinates);
+            return bboxExpandedWithPosition((geoJson as Point).coordinates);
         case 'LineString':
         case 'MultiPoint':
             // (LineString and MultiPoint both have the same coordinates type)
-            return bboxFromCoordsArray((geoJSON as LineString).coordinates);
+            return bboxFromCoordsArray((geoJson as LineString).coordinates);
         case 'MultiLineString':
         case 'Polygon':
             // (MultiLineString and Polygon both have the same coordinates type)
-            return bboxFromBBoxes((geoJSON as Polygon).coordinates.map(bboxFromCoordsArray));
+            return bboxFromBBoxes((geoJson as Polygon).coordinates.map(bboxFromCoordsArray));
         case 'MultiPolygon':
             return bboxFromBBoxes(
-                (geoJSON as MultiPolygon).coordinates.flatMap((polygon) => polygon.map(bboxFromCoordsArray)),
+                (geoJson as MultiPolygon).coordinates.flatMap((polygon) => polygon.map(bboxFromCoordsArray)),
             );
         default:
             return undefined;
@@ -175,8 +175,8 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
  * @param geoJSON
  * @param bboxToExpand
  */
-export const bboxExpandedWithGeoJSON = (geoJSON: GeoJsonObject, bboxToExpand?: BBox): OptionalBBox =>
-    bboxExpandedWithBBox(bboxFromGeoJSON(geoJSON), bboxToExpand);
+export const bboxExpandedWithGeoJSON = (geoJson: GeoJsonObject, bboxToExpand?: BBox): OptionalBBox =>
+    bboxExpandedWithBBox(bboxFromGeoJSON(geoJson), bboxToExpand);
 
 /**
  * Calculate the center of bbox

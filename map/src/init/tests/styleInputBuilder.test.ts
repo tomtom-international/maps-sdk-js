@@ -1,10 +1,10 @@
 import type { StyleSpecification } from 'maplibre-gl';
 import { buildStyleInput, withPreviousStyleParts } from '../styleInputBuilder';
 import type { TomTomMapParams } from '../types/mapInit';
-import mapsSDKInitParamsAndMapStyles from './styleInputBuilder.data.json';
+import mapsSdkInitParamsAndMapStyles from './styleInputBuilder.data.json';
 
 describe('Map style input builder tests', () => {
-    test.each(mapsSDKInitParamsAndMapStyles)(
+    test.each(mapsSdkInitParamsAndMapStyles)(
         `'%s`,
         // @ts-ignore
         (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle: StyleSpecification | string) => {

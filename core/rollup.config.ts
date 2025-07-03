@@ -7,14 +7,14 @@ import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import analyze from 'rollup-plugin-analyzer';
 
-const getSDKVersion = () => {
+const getSdkVersion = () => {
     const fileContent = fs.readFileSync(path.resolve('..', './package.json'), { encoding: 'utf-8', flag: 'r' });
     const fileContentSerialized = JSON.parse(fileContent);
 
     return fileContentSerialized.version;
 };
 
-const SDK_VERSION = getSDKVersion();
+const SDK_VERSION = getSdkVersion();
 
 const typescriptOptions = {
     tsconfig: './tsconfig.json',

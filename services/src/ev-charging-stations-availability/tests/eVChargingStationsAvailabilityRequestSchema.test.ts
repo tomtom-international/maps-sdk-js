@@ -6,14 +6,14 @@ import type { ChargingStationsAvailabilityParams } from '../types/evChargingStat
 
 describe('EV Charging Stations availability schema validation', () => {
     const apiKey = 'APIKEY';
-    const commonBaseURL = 'https://api-test.tomtom.com';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
 
     test('it should fail when id is an invalid param', () => {
         const invalidParams: ChargingStationsAvailabilityParams = {
             //@ts-ignore
             id: 555,
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
 
         expect(() =>
@@ -36,7 +36,7 @@ describe('EV Charging Stations availability schema validation', () => {
     test('it should fail when connectorTypes is invalid and id is missing', () => {
         const invalidParams: ChargingStationsAvailabilityParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         } as never;
         expect(() =>
             validateRequestSchema(invalidParams, { schema: evChargingStationsAvailabilityRequestSchema }),

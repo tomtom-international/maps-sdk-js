@@ -88,7 +88,7 @@ describe('Validation', () => {
             message: 'If optionalA2 is present, then optionalA must be present as well.',
         };
 
-        const optionalABParamRefinement: SchemaRefinement = {
+        const optionalAbParamRefinement: SchemaRefinement = {
             check: (data) => !('optionalA' in data && 'optionalB' in data),
             message: 'optionalA and optionalB cannot both be present.',
         };
@@ -100,7 +100,7 @@ describe('Validation', () => {
                     commonBaseURL: 'COMMON_BASE_URL',
                     optionalA2: 'test2',
                 },
-                { schema, refinements: [optionalAParamRefinement, optionalABParamRefinement] },
+                { schema, refinements: [optionalAParamRefinement, optionalAbParamRefinement] },
             ),
         ).toThrow('If optionalA2 is present, then optionalA must be present as well.');
 
@@ -112,7 +112,7 @@ describe('Validation', () => {
                     optionalA: 'testA',
                     optionalB: 'testB',
                 },
-                { schema, refinements: [optionalAParamRefinement, optionalABParamRefinement] },
+                { schema, refinements: [optionalAParamRefinement, optionalAbParamRefinement] },
             ),
         ).toThrow('optionalA and optionalB cannot both be present.');
     });

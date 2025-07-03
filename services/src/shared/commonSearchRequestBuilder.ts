@@ -19,8 +19,8 @@ export const PLACES_URL_PATH = '/maps/orbis/places';
  * @param searchURL The search URL to append parameters to. Should come without any parameters at this point.
  * @param params The search parameters, with global configuration already merged into them.
  */
-export const appendCommonSearchParams = (searchURL: URL, params: FuzzySearchParams | GeometrySearchParams): void => {
-    const urlParams = searchURL.searchParams;
+export const appendCommonSearchParams = (searchUrl: URL, params: FuzzySearchParams | GeometrySearchParams): void => {
+    const urlParams = searchUrl.searchParams;
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, 'limit', params.limit);
     appendLatLonParamsFromPosition(urlParams, params.position);

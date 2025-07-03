@@ -2,38 +2,38 @@ import type { Map, Source, SourceSpecification } from 'maplibre-gl';
 import { TomTomMapSource } from '../TomTomMapSource';
 
 describe('TomTomMapSource tests', () => {
-    const testSourceID = 'TEST_SOURCE_ID';
+    const testSourceId = 'TEST_SOURCE_ID';
     const testSourceSpec = { source: 'spec' } as unknown as SourceSpecification;
-    const testRuntimeSource = { id: testSourceID } as unknown as Source;
+    const testRuntimeSource = { id: testSourceId } as unknown as Source;
 
     test('Constructor', () => {
-        let mapSource = new TomTomMapSource(testSourceID, testSourceSpec);
-        expect(mapSource.id).toStrictEqual(testSourceID);
+        let mapSource = new TomTomMapSource(testSourceId, testSourceSpec);
+        expect(mapSource.id).toStrictEqual(testSourceId);
         expect(mapSource.spec).toStrictEqual(testSourceSpec);
         expect(mapSource.runtimeSource).toBeUndefined();
 
-        mapSource = new TomTomMapSource(testSourceID, testSourceSpec, testRuntimeSource);
-        expect(mapSource.id).toStrictEqual(testSourceID);
+        mapSource = new TomTomMapSource(testSourceId, testSourceSpec, testRuntimeSource);
+        expect(mapSource.id).toStrictEqual(testSourceId);
         expect(mapSource.spec).toStrictEqual(testSourceSpec);
         expect(mapSource.runtimeSource).toStrictEqual(testRuntimeSource);
     });
 
     test('ensureAddedToMap when source not yet in the map', () => {
-        const mapSource = new TomTomMapSource(testSourceID, testSourceSpec);
+        const mapSource = new TomTomMapSource(testSourceId, testSourceSpec);
         const mapLibreMock = {
             getSource: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(testRuntimeSource),
             addSource: jest.fn(),
         } as unknown as Map;
 
         mapSource.ensureAddedToMap(mapLibreMock);
-        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceID);
-        expect(mapLibreMock.addSource).toHaveBeenCalledWith(testSourceID, testSourceSpec);
-        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceID);
+        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceId);
+        expect(mapLibreMock.addSource).toHaveBeenCalledWith(testSourceId, testSourceSpec);
+        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceId);
         expect(mapSource.runtimeSource).toStrictEqual(testRuntimeSource);
     });
 
     test('ensureAddedToMap when source already in the map', () => {
-        const mapSource = new TomTomMapSource(testSourceID, testSourceSpec, testRuntimeSource);
+        const mapSource = new TomTomMapSource(testSourceId, testSourceSpec, testRuntimeSource);
         const mapLibreMock = jest.fn() as unknown as Map;
 
         mapSource.ensureAddedToMap(mapLibreMock);
@@ -42,16 +42,16 @@ describe('TomTomMapSource tests', () => {
     });
 
     test('ensureAddedToMap when source already in the map but not set as runtimeSource', () => {
-        const mapSource = new TomTomMapSource(testSourceID, testSourceSpec);
+        const mapSource = new TomTomMapSource(testSourceId, testSourceSpec);
         const mapLibreMock = {
             getSource: jest.fn().mockReturnValue(testRuntimeSource),
             addSource: jest.fn(),
         } as unknown as Map;
 
         mapSource.ensureAddedToMap(mapLibreMock);
-        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceID);
+        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceId);
         expect(mapLibreMock.addSource).not.toHaveBeenCalled();
-        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceID);
+        expect(mapLibreMock.getSource).toHaveBeenCalledWith(testSourceId);
         expect(mapSource.runtimeSource).toStrictEqual(testRuntimeSource);
     });
 });

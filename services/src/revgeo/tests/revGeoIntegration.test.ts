@@ -21,7 +21,7 @@ describe('Reverse Geocoding integration tests', () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
     test('Default reverse geocoding', async () => {
-        const exampleSDKResponse = {
+        const exampleSdkResponse = {
             type: 'Feature',
             geometry: {
                 type: 'Point',
@@ -49,7 +49,7 @@ describe('Reverse Geocoding integration tests', () => {
             },
         };
         const result = await reverseGeocode({ position: [5.72884, 52.33499] });
-        expect(result).toMatchObject(exampleSDKResponse);
+        expect(result).toMatchObject(exampleSdkResponse);
     });
 
     test('Localized reverse geocoding', async () => {
@@ -159,26 +159,30 @@ describe('Reverse Geocoding integration tests', () => {
     });
 
     test('Reverse geocoding with API request and response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
-        const result = await reverseGeocode({ position: [5.72884, 52.33499], onAPIRequest, onAPIResponse });
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
+        const result = await reverseGeocode({
+            position: [5.72884, 52.33499],
+            onAPIRequest: onApiRequest,
+            onAPIResponse: onApiResponse,
+        });
         expect(result).toBeDefined();
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 
     test('Reverse geocoding with API request and response error callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
         await expect(() =>
             reverseGeocode({
                 position: [5.72884, 52.33499],
                 apiKey: 'INCORRECT',
-                onAPIRequest,
-                onAPIResponse,
+                onAPIRequest: onApiRequest,
+                onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 403 }));
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 403 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 403 }));
     });
 });

@@ -79,7 +79,7 @@ export const hasLngLatSchema = z.union([
 /**
  * @ignore
  */
-const geoJSONBBoxSchema = z.union([z.array(z.number()).check(z.length(4)), z.array(z.number()).check(z.length(6))]);
+const geoJsonbBoxSchema = z.union([z.array(z.number()).check(z.length(4)), z.array(z.number()).check(z.length(6))]);
 
 /**
  * @ignore
@@ -89,4 +89,4 @@ export const geoJSONObjectSchema = z.union([geometrySchema, featureSchema, featu
 /**
  * @ignore
  */
-export const hasBBoxSchema = z.union([geoJSONBBoxSchema, geoJSONObjectSchema, z.array(geoJSONObjectSchema)]);
+export const hasBBoxSchema = z.union([geoJsonbBoxSchema, geoJSONObjectSchema, z.array(geoJSONObjectSchema)]);

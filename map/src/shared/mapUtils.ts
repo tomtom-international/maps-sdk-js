@@ -56,9 +56,10 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
         for (const key in feature.properties) {
             if (typeof feature.properties[key] === 'string') {
                 try {
-                    feature.properties[key] = JSON.parse(feature.properties[key] as string);
+                    feature.properties[key] = JSON.parse(feature.properties[key]);
                 } catch (e) {
                     // We ignore the error if the object can't be parsed and continue.
+                    console.warn('Cannot deserialize feature property', key, 'with value', feature.properties[key], e);
                 }
             }
         }
@@ -111,31 +112,31 @@ type LayerProps = {
  * @param map
  */
 export const changeLayerProps = (newLayerProps: LayerProps, prevLayerProps: LayerProps, map: Map) => {
-    const layerID = newLayerProps.id;
+    const layerId = newLayerProps.id;
     if (newLayerProps.maxzoom !== prevLayerProps.maxzoom || newLayerProps.minzoom !== prevLayerProps.minzoom) {
         map.setLayerZoomRange(
-            layerID,
-            newLayerProps.minzoom ? newLayerProps.minzoom : map.getMinZoom(),
-            newLayerProps.maxzoom ? newLayerProps.maxzoom : map.getMaxZoom(),
+            layerId,
+            newLayerProps.minzoom ?? map.getMinZoom(),
+            newLayerProps.maxzoom ?? map.getMaxZoom(),
         );
     }
-    map.setFilter(layerID, newLayerProps.filter, { validate: false });
-    for (const property of Object.keys(prevLayerProps.layout || [])) {
+    map.setFilter(layerId, newLayerProps.filter, { validate: false });
+    for (const property of Object.keys(prevLayerProps.layout ?? [])) {
         if (!newLayerProps.layout?.[property]) {
-            map.setLayoutProperty(layerID, property, undefined, { validate: false });
+            map.setLayoutProperty(layerId, property, undefined, { validate: false });
         }
     }
-    for (const property of Object.keys(prevLayerProps.paint || [])) {
+    for (const property of Object.keys(prevLayerProps.paint ?? [])) {
         if (!newLayerProps.paint?.[property]) {
-            map.setPaintProperty(layerID, property, undefined, { validate: false });
+            map.setPaintProperty(layerId, property, undefined, { validate: false });
         }
     }
-    for (const [property, value] of Object.entries(newLayerProps.paint || [])) {
-        map.setPaintProperty(layerID, property, value, { validate: false });
+    for (const [property, value] of Object.entries(newLayerProps.paint ?? [])) {
+        map.setPaintProperty(layerId, property, value, { validate: false });
     }
 
-    for (const [property, value] of Object.entries(newLayerProps.layout || [])) {
-        map.setLayoutProperty(layerID, property, value, { validate: false });
+    for (const [property, value] of Object.entries(newLayerProps.layout ?? [])) {
+        map.setLayoutProperty(layerId, property, value, { validate: false });
     }
 };
 
@@ -246,20 +247,18 @@ export const addLayers = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => 
             if (layerIdsAlreadyOnMap.has(layer.beforeID) || map.getLayer(layer.beforeID)) {
                 layerIdsAlreadyOnMap.add(layer.beforeID);
                 addLayer(layer);
-            } else {
+            } else if (mapIdDependency[layer.beforeID]) {
                 // we cannot add this layer yet
-                if (mapIdDependency[layer.beforeID]) {
-                    mapIdDependency[layer.beforeID].push(layer);
-                } else {
-                    mapIdDependency[layer.beforeID] = [layer];
-                }
+                mapIdDependency[layer.beforeID].push(layer);
+            } else {
+                mapIdDependency[layer.beforeID] = [layer];
             }
         } else {
             addLayer(layer);
         }
     });
 
-    // try to process rest of layers
+    // try to process the rest of layers
     while (Object.keys(mapIdDependency).length > 0) {
         const idsWeCanProcess = Object.keys(mapIdDependency).filter((id) => layerIdsAlreadyOnMap.has(id));
         if (idsWeCanProcess.length === 0) {
@@ -327,22 +326,22 @@ export const prepareForModuleInit = async (
  */
 export const addImageIfNotExisting = async (
     map: Map,
-    imageID: string,
+    imageId: string,
     imageToLoad: string | HTMLImageElement,
     options?: Partial<StyleImageMetadata>,
 ) => {
-    if (!map.hasImage(imageID) && imageToLoad) {
+    if (!map.hasImage(imageId) && imageToLoad) {
         if (typeof imageToLoad === 'string') {
             // Expecting image URL, so the image needs to be downloaded first:
             const loadedImage = await map.loadImage(imageToLoad);
             // double-checking just in case of a race condition with overlapping call:
-            if (!map.hasImage(imageID)) {
-                map.addImage(imageID, loadedImage.data, options);
+            if (!map.hasImage(imageId)) {
+                map.addImage(imageId, loadedImage.data, options);
             }
         } else {
             // Expecting HTMLImageElement, ready to be added:
             // (Defensive setTimeout to ensure the image is loaded)
-            setTimeout(() => map.addImage(imageID, imageToLoad, options));
+            setTimeout(() => map.addImage(imageId, imageToLoad, options));
         }
     }
 };

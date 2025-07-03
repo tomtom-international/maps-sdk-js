@@ -5,7 +5,7 @@ import type { Position } from 'geojson';
 import { BASE_MAP_SOURCE_ID } from 'map/src/shared';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
-import placesJSON from './data/PlacesModuleEvents.test.data.json';
+import placesJson from './data/PlacesModuleEvents.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
@@ -23,25 +23,25 @@ import {
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
-const places = placesJSON as Places;
+const places = placesJson as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
 const geometryData = amsterdamGeometryData as PolygonFeatures;
 
 const setupGeometryHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.geometries?.events.on('hover', () => mapsSDKThis._numOfHovers++);
-        mapsSDKThis.geometries?.events.on('long-hover', () => mapsSDKThis._numOfLongHovers++);
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.geometries?.events.on('hover', () => mapsSdkThis._numOfHovers++);
+        mapsSdkThis.geometries?.events.on('long-hover', () => mapsSdkThis._numOfLongHovers++);
     });
 
 const setupPlacesClickHandler = async (page: Page) =>
     page.evaluate(() => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places?.events.on('click', (topFeature, _, features) => {
-            mapsSDKThis._clickedTopFeature = topFeature;
-            mapsSDKThis._clickedFeatures = features;
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.places?.events.on('click', (topFeature, _, features) => {
+            mapsSdkThis._clickedTopFeature = topFeature;
+            mapsSdkThis._clickedFeatures = features;
         });
-        mapsSDKThis.places?.events.on('contextmenu', () => mapsSDKThis._numOfContextmenuClicks++);
+        mapsSdkThis.places?.events.on('contextmenu', () => mapsSdkThis._numOfContextmenuClicks++);
     });
 
 const waitUntilRenderedGeometry = async (
@@ -53,10 +53,10 @@ const waitUntilRenderedGeometry = async (
 
 const setupBasemapClickHandler = async (page: Page) =>
     page.evaluate(() => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.baseMap?.events.on('click', (topFeature, _, features) => {
-            mapsSDKThis._clickedTopFeature = topFeature;
-            mapsSDKThis._clickedFeatures = features;
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.baseMap?.events.on('click', (topFeature, _, features) => {
+            mapsSdkThis._clickedTopFeature = topFeature;
+            mapsSdkThis._clickedFeatures = features;
         });
     });
 

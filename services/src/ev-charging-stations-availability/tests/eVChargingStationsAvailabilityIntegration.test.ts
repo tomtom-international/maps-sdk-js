@@ -81,44 +81,44 @@ describe('evChargingStationsAvailability integration tests', () => {
         expect(evStationFeatures.some((feature) => feature.properties.poi?.openingHours)).toBe(true);
 
         // we re-calculate now but filtering out the ones with unknown availability:
-        const filteredEVStationsWithAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability, {
+        const filteredEvStationsWithAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability, {
             returnIfAvailabilityUnknown: false,
         });
 
-        expect(filteredEVStationsWithAvailability.features.length).toBeLessThan(evStationFeatures.length);
+        expect(filteredEvStationsWithAvailability.features.length).toBeLessThan(evStationFeatures.length);
 
-        expect(filteredEVStationsWithAvailability.features).toHaveLength(
+        expect(filteredEvStationsWithAvailability.features).toHaveLength(
             evStationFeatures.filter((feature) => feature.properties.chargingPark?.availability).length,
         );
 
-        expect(filteredEVStationsWithAvailability.bbox).not.toEqual(evStationsWithAvailability.bbox);
+        expect(filteredEvStationsWithAvailability.bbox).not.toEqual(evStationsWithAvailability.bbox);
     });
 
     test('ChargingStationsAvailability with API request and response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
         const result = await evChargingStationsAvailability({
             id: 'f989fb91-4866-4d03-91b5-fc4a9e82ad52',
-            onAPIRequest,
-            onAPIResponse,
+            onAPIRequest: onApiRequest,
+            onAPIResponse: onApiResponse,
         });
         expect(result?.chargingStations.length).toBeGreaterThan(0);
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 
     test('ChargingStationsAvailability with API request and error response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
         await expect(() =>
             evChargingStationsAvailability({
                 id: '57e78da9-5b0e-44ff-bd0f-f54e3b24292b',
                 apiKey: 'invalid',
-                onAPIRequest,
-                onAPIResponse,
+                onAPIRequest: onApiRequest,
+                onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 403 }));
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 403 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 403 }));
     });
 });

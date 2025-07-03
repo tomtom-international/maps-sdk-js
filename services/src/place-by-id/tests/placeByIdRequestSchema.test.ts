@@ -8,7 +8,7 @@ import type { PlaceByIdParams } from '../types';
 
 describe('Place By Id API', () => {
     const apiKey = 'APIKEY';
-    const commonBaseURL = 'https://api-test.tomtom.com';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
     const entityId = 528009004250472; // Invalid value, entityId is a string
     const language: Language = 'en-GB';
     const view = 'Unified';
@@ -18,7 +18,7 @@ describe('Place By Id API', () => {
     test('it should throw Validation error with invalid entityId', () => {
         const invalidParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             entityId,
             language,
             view,
@@ -46,7 +46,7 @@ describe('Place By Id API', () => {
             validateRequestSchema(
                 {
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                     language,
                     view,
                     timeZone,

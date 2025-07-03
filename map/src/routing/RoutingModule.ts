@@ -239,11 +239,11 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     private addImageIfNotExisting(
-        imageID: string,
+        imageId: string,
         image: string | HTMLImageElement,
         options?: Partial<StyleImageMetadata>,
     ) {
-        addImageIfNotExisting(this.mapLibreMap, imageID, image, options);
+        addImageIfNotExisting(this.mapLibreMap, imageId, image, options);
     }
 
     /**

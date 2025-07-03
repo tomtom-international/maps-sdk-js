@@ -8,7 +8,7 @@ import type { EventType, SourceWithLayers } from './types';
 
 type IndexedFeature<F extends Feature = Feature> = { feature: F; index: number };
 
-const findFeatureByID = (features: Feature[], id: string | number | undefined): IndexedFeature | undefined => {
+const findFeatureById = (features: Feature[], id: string | number | undefined): IndexedFeature | undefined => {
     for (let i = 0; i < features.length; i++) {
         const feature = features[i];
         if (feature.id === id) {
@@ -31,11 +31,11 @@ const isHighPriority = (eventType: EventType): boolean => eventType === 'click' 
  */
 export const putEventState = (
     eventState: EventType,
-    featureID: string | number | undefined,
+    featureId: string | number | undefined,
     featuresToUpdate: Feature[], // "featuresToUpdate" will be mutated
     mode: 'updateInProps' | 'removeFromProps' = 'updateInProps',
 ): number | undefined => {
-    const { feature, index } = findFeatureByID(featuresToUpdate, featureID) || {};
+    const { feature, index } = findFeatureById(featuresToUpdate, featureId) || {};
     if (feature && (!isHighPriority(feature.properties?.eventState) || isHighPriority(eventState))) {
         const updatedFeature = {
             ...feature,

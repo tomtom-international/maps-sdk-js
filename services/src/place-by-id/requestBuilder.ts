@@ -3,7 +3,7 @@ import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
 import type { PlaceByIdParams } from './types';
 
-const buildURLBasePath = (params: CommonServiceParams): string =>
+const buildUrlBasePath = (params: CommonServiceParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/place.json`;
 
 /**
@@ -11,7 +11,7 @@ const buildURLBasePath = (params: CommonServiceParams): string =>
  * @param params The place by id parameters, with global configuration already merged into them.
  */
 export const buildPlaceByIdRequest = (params: PlaceByIdParams): URL => {
-    const url = new URL(`${buildURLBasePath(params)}`);
+    const url = new URL(`${buildUrlBasePath(params)}`);
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, 'entityId', params.entityId);

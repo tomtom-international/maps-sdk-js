@@ -3,25 +3,25 @@ import { latLonAPIToPosition } from '../shared/geometry';
 import { parseSearchAPIResult, parseSummaryAPI } from '../shared/searchResultParsing';
 import type { FuzzySearchResponse, FuzzySearchResponseAPI, QueryIntent, QueryIntentAPI } from './types';
 
-const queryIntentAPIToSDK = (intentAPI: QueryIntentAPI): QueryIntent => {
+const queryIntentApiToSdk = (intentApi: QueryIntentAPI): QueryIntent => {
     let intent;
-    switch (intentAPI.type) {
+    switch (intentApi.type) {
         case 'COORDINATE':
-            intent = { ...intentAPI, details: { position: latLonAPIToPosition(intentAPI.details) } };
+            intent = { ...intentApi, details: { position: latLonAPIToPosition(intentApi.details) } };
             break;
         case 'NEARBY':
             intent = {
-                ...intentAPI,
+                ...intentApi,
                 details: {
-                    position: latLonAPIToPosition({ lon: intentAPI.details.lon, lat: intentAPI.details.lat }),
-                    text: intentAPI.details.text,
-                    query: intentAPI.details.query,
+                    position: latLonAPIToPosition({ lon: intentApi.details.lon, lat: intentApi.details.lat }),
+                    text: intentApi.details.text,
+                    query: intentApi.details.query,
                 },
             };
             break;
         case 'BOOKMARK':
         case 'W3W':
-            intent = intentAPI;
+            intent = intentApi;
     }
     return intent;
 };
@@ -37,7 +37,7 @@ export const parseFuzzySearchResponse = (apiResponse: FuzzySearchResponseAPI): F
         type: 'FeatureCollection',
         properties: {
             ...parseSummaryAPI(apiResponse.summary),
-            queryIntent: apiResponse.summary.queryIntent.map(queryIntentAPIToSDK),
+            queryIntent: apiResponse.summary.queryIntent.map(queryIntentApiToSdk),
         },
         features,
         ...(bbox && { bbox }),

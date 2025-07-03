@@ -2,7 +2,7 @@ import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 import { appendCommonParams } from '../shared/requestBuildingUtils';
 import type { ChargingStationsAvailabilityParams } from './types/evChargingStationsAvailabilityParams';
 
-const buildURLBasePath = (params: ChargingStationsAvailabilityParams): string =>
+const buildUrlBasePath = (params: ChargingStationsAvailabilityParams): string =>
     params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/ev/id`;
 
 /**
@@ -10,7 +10,7 @@ const buildURLBasePath = (params: ChargingStationsAvailabilityParams): string =>
  * @param params The charging availability parameters, with global configuration already merged into them.
  */
 export const buildEVChargingStationsAvailabilityRequest = (params: ChargingStationsAvailabilityParams): URL => {
-    const url = new URL(buildURLBasePath(params));
+    const url = new URL(buildUrlBasePath(params));
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
     urlParams.append('id', params.id);

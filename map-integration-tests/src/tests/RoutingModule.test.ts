@@ -31,8 +31,8 @@ import {
     WAYPOINTS_SOURCE_ID,
 } from 'map/src/shared';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
-import ldevrTestRoutesJSON from './data/RoutingModuleLDEVR.test.data.json';
-import rotterdamToAmsterdamRoutesJSON from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
+import ldevrTestRoutesJson from './data/RoutingModuleLDEVR.test.data.json';
+import rotterdamToAmsterdamRoutesJson from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
@@ -81,8 +81,8 @@ const getSelectedSummaryBubbleProps = async (page: Page): Promise<DisplayRouteSu
 };
 
 // (We reparse the route because it contains Date objects):
-const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJSON));
-const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJSON));
+const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJson));
+const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJson));
 
 const NUM_WAYPOINT_LAYERS = 2;
 const NUM_ROUTE_LAYERS = 5;
@@ -389,13 +389,13 @@ test.describe('Routing and waypoint display tests', () => {
         );
         expect(renderedIncidents).toHaveLength(2);
 
-        const renderedEVStops = await waitUntilRenderedFeaturesChange(
+        const renderedEvStops = await waitUntilRenderedFeaturesChange(
             page,
             [ROUTE_EV_CHARGING_STATIONS_SYMBOL_LAYER_ID],
             0,
             2000,
         );
-        expect(renderedEVStops.length).toBeGreaterThan(2);
+        expect(renderedEvStops.length).toBeGreaterThan(2);
 
         // Summary bubbles should now appear:
         expect((await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(0);

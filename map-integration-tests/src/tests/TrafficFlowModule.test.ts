@@ -20,8 +20,8 @@ const getByRoadCategories = (renderedItems: MapGeoJSONFeature[], roadCategories:
 
 const initTrafficFlow = async (page: Page, config?: StyleModuleInitConfig & FlowConfig) =>
     page.evaluate(async (inputConfig?) => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.trafficFlow = await mapsSDKThis.MapsSDK.TrafficFlowModule.get(mapsSDKThis.tomtomMap, inputConfig);
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.trafficFlow = await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
 const isFlowVisible = async (page: Page): Promise<boolean> =>

@@ -12,10 +12,10 @@ describe('Default error response parsing tests', () => {
             _name: string,
             apiResponseError: APIErrorResponse,
             serviceName: ServiceName,
-            expectedSDKError: SDKServiceError,
+            expectedSdkError: SDKServiceError,
         ) => {
             const sdkResponseError = parseDefaultResponseError(apiResponseError, serviceName);
-            expect(sdkResponseError).toMatchObject(expectedSDKError);
+            expect(sdkResponseError).toMatchObject(expectedSdkError);
         },
     );
 });

@@ -7,7 +7,7 @@ import {
 } from '../shared/requestBuildingUtils';
 import type { AutocompleteSearchParams } from './types';
 
-const buildURLBasePath = (mergedOptions: AutocompleteSearchParams): string =>
+const buildUrlBasePath = (mergedOptions: AutocompleteSearchParams): string =>
     mergedOptions.customServiceBaseURL ||
     `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/autocomplete/${mergedOptions.query}.json`;
 
@@ -16,7 +16,7 @@ const buildURLBasePath = (mergedOptions: AutocompleteSearchParams): string =>
  * @param params The autocomplete parameters, with global configuration already merged into them.
  */
 export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams): URL => {
-    const url = new URL(`${buildURLBasePath(params)}`);
+    const url = new URL(`${buildUrlBasePath(params)}`);
     const urlParams = url.searchParams;
     /**
      * Auto-complete service defaults the language to en-GB if not specified explicitly as service param

@@ -16,8 +16,8 @@ import { GEOMETRY_TITLE_PROP } from './types/geometryDisplayProps';
  * @ignore
  */
 export const buildGeometryLayerSpecs = (
-    fillLayerID: string,
-    outlineLayerID: string,
+    fillLayerId: string,
+    outlineLayerId: string,
     config?: GeometriesModuleConfig,
 ): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
     const colorConfig = config?.colorConfig;
@@ -25,7 +25,7 @@ export const buildGeometryLayerSpecs = (
 
     const fillLayerSpec = {
         ...geometryFillSpec,
-        id: fillLayerID,
+        id: fillLayerId,
         paint: {
             ...geometryFillSpec.paint,
             ...(!isNil(colorConfig?.fillOpacity) && { 'fill-opacity': colorConfig?.fillOpacity }),
@@ -35,7 +35,7 @@ export const buildGeometryLayerSpecs = (
 
     const outlineLayerSpec = {
         ...geometryOutlineSpec,
-        id: outlineLayerID,
+        id: outlineLayerId,
         paint: {
             ...geometryOutlineSpec.paint,
             ...(!isNil(lineConfig?.lineColor) && { 'line-color': lineConfig?.lineColor }),
@@ -91,14 +91,14 @@ const buildColor = (
  * @ignore
  */
 export const buildGeometryTitleLayerSpec = (
-    layerID: string,
+    layerId: string,
     config?: GeometriesModuleConfig,
 ): Omit<SymbolLayerSpecification, 'source'> => {
     const textConfig = config?.textConfig;
 
     return {
         type: 'symbol',
-        id: layerID,
+        id: layerId,
         layout: {
             'text-field': ['get', GEOMETRY_TITLE_PROP],
             ...(textConfig?.textField && { 'text-field': textConfig.textField }),

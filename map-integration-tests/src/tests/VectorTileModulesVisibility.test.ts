@@ -8,7 +8,7 @@ import { assertNumber, getNumVisibleLayersBySource, getNumVisiblePOILayers } fro
 test.describe("Vector tile modules combined visibility tests, to ensure one module doesn't step on another", () => {
     const mapEnv = new MapTestEnv();
 
-    const assertPOIsVisibility = async (page: Page, poisVisible: boolean) =>
+    const assertPoIsVisibility = async (page: Page, poisVisible: boolean) =>
         assertNumber(await getNumVisiblePOILayers(page), poisVisible);
 
     const assertHillshadeVisibility = async (page: Page, hillshadeVisible: boolean) =>
@@ -37,7 +37,7 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
 
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeFalsy();
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeFalsy();
-        await assertPOIsVisibility(page, false);
+        await assertPoIsVisibility(page, false);
         await assertHillshadeVisibility(page, false);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
@@ -47,7 +47,7 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
 
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBe(true);
-        await assertPOIsVisibility(page, true);
+        await assertPoIsVisibility(page, true);
         await assertHillshadeVisibility(page, true);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(false));
@@ -57,7 +57,7 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
 
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeFalsy();
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeFalsy();
-        await assertPOIsVisibility(page, false);
+        await assertPoIsVisibility(page, false);
         await assertHillshadeVisibility(page, false);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
@@ -69,12 +69,12 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
             await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible()),
         ).toBeFalsy();
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBe(true);
-        await assertPOIsVisibility(page, false);
+        await assertPoIsVisibility(page, false);
         await assertHillshadeVisibility(page, false);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.setVisible(false));
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBeFalsy();
-        await assertPOIsVisibility(page, false);
+        await assertPoIsVisibility(page, false);
         await assertHillshadeVisibility(page, false);
 
         // re-setting configs (thus expecting default to be re-applied)
@@ -85,7 +85,7 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
 
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBe(true);
-        await assertPOIsVisibility(page, true);
+        await assertPoIsVisibility(page, true);
         await assertHillshadeVisibility(page, true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);

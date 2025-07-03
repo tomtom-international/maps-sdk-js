@@ -7,7 +7,7 @@ import { routeRequestParams } from './requestBuilderPerf.data';
 
 describe('Calculate route request schema validation', () => {
     const apiKey = 'APIKEY';
-    const commonBaseURL = 'https://api-test.tomtom.com';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
 
     test('it should fail when latitude & longitude are out of range', () => {
         const validationCall = () =>
@@ -18,7 +18,7 @@ describe('Calculate route request schema validation', () => {
                         [-200, -180],
                     ],
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                 },
                 routeRequestValidationConfig,
             );
@@ -69,7 +69,7 @@ describe('Calculate route request schema validation', () => {
     test('it should fail when format of location is incorrect - example 1', () => {
         const validationCall = () =>
             validateRequestSchema<CalculateRouteParams>(
-                { geoInputs: '4.89066,52.37317:4.49015,52.16109' as never, apiKey, commonBaseURL },
+                { geoInputs: '4.89066,52.37317:4.49015,52.16109' as never, apiKey, commonBaseURL: commonBaseUrl },
                 routeRequestValidationConfig,
             );
         expect(validationCall).toThrow(
@@ -89,14 +89,17 @@ describe('Calculate route request schema validation', () => {
 
     test('it should fail when there are not enough waypoints - none sent', () => {
         expect(() =>
-            validateRequestSchema({ geoInputs: [], apiKey, commonBaseURL }, routeRequestValidationConfig),
+            validateRequestSchema(
+                { geoInputs: [], apiKey, commonBaseURL: commonBaseUrl },
+                routeRequestValidationConfig,
+            ),
         ).toThrow('Array must contain at least 1 element(s)');
     });
 
     test('it should fail when there are not enough waypoints - one sent', () => {
         expect(() =>
             validateRequestSchema(
-                { geoInputs: [[4.89066, 52.37317]], apiKey, commonBaseURL },
+                { geoInputs: [[4.89066, 52.37317]], apiKey, commonBaseURL: commonBaseUrl },
                 routeRequestValidationConfig,
             ),
         ).toThrow(
@@ -108,7 +111,7 @@ describe('Calculate route request schema validation', () => {
     test('it should fail when geoInputs param is missing', () => {
         expect(() =>
             validateRequestSchema<CalculateRouteParams>(
-                { apiKey, commonBaseURL } as never,
+                { apiKey, commonBaseURL: commonBaseUrl } as never,
                 routeRequestValidationConfig,
             ),
         ).toThrow(
@@ -158,7 +161,7 @@ describe('Calculate route request schema validation', () => {
                     // },
                     sectionTypes: ['tunnel', 'motorways'] as never,
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                 },
                 routeRequestValidationConfig,
             );

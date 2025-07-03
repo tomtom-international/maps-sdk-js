@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Places } from 'core';
-import placesJSON from './data/PlacesModuleEvents.test.data.json';
+import placesJson from './data/PlacesModuleEvents.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
@@ -24,25 +24,25 @@ const deRegisterPlacesClickHandlers = async (page: Page) =>
 
 const setupPlacesHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places?.events.on('hover', () => mapsSDKThis._numOfHovers++);
-        mapsSDKThis.places?.events.on('long-hover', () => mapsSDKThis._numOfLongHovers++);
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.places?.events.on('hover', () => mapsSdkThis._numOfHovers++);
+        mapsSdkThis.places?.events.on('long-hover', () => mapsSdkThis._numOfLongHovers++);
     });
 
 const setupPlacesClickHandler = async (page: Page) =>
     page.evaluate(() => {
-        const mapsSDKThis = globalThis as MapsSDKThis;
-        mapsSDKThis.places?.events.on('click', (topFeature, lnglat, features, sourceWithLayers) => {
-            mapsSDKThis._numOfClicks++;
-            mapsSDKThis._clickedTopFeature = topFeature;
-            mapsSDKThis._clickedLngLat = lnglat;
-            mapsSDKThis._clickedFeatures = features;
-            mapsSDKThis._clickedSourceWithLayers = sourceWithLayers;
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.places?.events.on('click', (topFeature, lnglat, features, sourceWithLayers) => {
+            mapsSdkThis._numOfClicks++;
+            mapsSdkThis._clickedTopFeature = topFeature;
+            mapsSdkThis._clickedLngLat = lnglat;
+            mapsSdkThis._clickedFeatures = features;
+            mapsSdkThis._clickedSourceWithLayers = sourceWithLayers;
         });
-        mapsSDKThis.places?.events.on('contextmenu', () => mapsSDKThis._numOfContextmenuClicks++);
+        mapsSdkThis.places?.events.on('contextmenu', () => mapsSdkThis._numOfContextmenuClicks++);
     });
 
-const places = placesJSON as Places;
+const places = placesJson as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
 
 test.describe('Tests with user events related to PlacesModule', () => {

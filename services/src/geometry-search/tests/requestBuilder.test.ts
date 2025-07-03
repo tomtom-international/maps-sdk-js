@@ -2,11 +2,11 @@ import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { buildGeometrySearchRequest } from '../requestBuilder';
 import type { GeometrySearchParams, GeometrySearchPayloadAPI } from '../types';
-import geometrySearchReqObjectsAndURLs from './requestBuilder.data.json';
+import geometrySearchReqObjectsAndUrLs from './requestBuilder.data.json';
 import geometrySearchReqObjects from './requestBuilderPerf.data.json';
 
 describe('Calculate Geometry Search request URL building tests', () => {
-    test.each(geometrySearchReqObjectsAndURLs)(
+    test.each(geometrySearchReqObjectsAndUrLs)(
         "'%s'",
         // @ts-ignore
         (_name: string, params: GeometrySearchParams, requestData: GeometrySearchPayloadAPI) => {

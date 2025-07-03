@@ -1,7 +1,7 @@
 /* Prepare for npm installation */
 
-const isCI = process.env.CI !== undefined;
+const isCi = process.env.CI !== undefined;
 
-if (!isCI) {
+if (!isCi) {
     require('husky').install();
 }

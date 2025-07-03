@@ -8,7 +8,7 @@ import type { GeocodingParams } from '../types/geocodingParams';
 
 describe('Geocoding schema validation', () => {
     const apiKey = 'APIKEY';
-    const commonBaseURL = 'https://api-test.tomtom.com';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
 
     test('it should fail when view is an invalid param', () => {
         const invalidParams: GeocodingParams = {
@@ -16,7 +16,7 @@ describe('Geocoding schema validation', () => {
             //@ts-ignore
             view: 'MAA', // Invalid value, it should be of type View
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
 
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
@@ -42,7 +42,7 @@ describe('Geocoding schema validation', () => {
             typeahead: true,
             limit: 1500, // Invalid value, limit <= 100
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -66,7 +66,7 @@ describe('Geocoding schema validation', () => {
             query: 'amsterdam',
             offset: 1901, // Invalid value, offset <= 1900
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -91,7 +91,7 @@ describe('Geocoding schema validation', () => {
             // @ts-ignore
             countries: 'NLD',
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -113,7 +113,7 @@ describe('Geocoding schema validation', () => {
         const invalidParams: GeocodingParams = {
             limit: 100,
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -135,7 +135,7 @@ describe('Geocoding schema validation', () => {
             // @ts-ignore
             query: 33601,
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -169,7 +169,7 @@ describe('Geocoding schema validation', () => {
             // @ts-ignore
             radiusMeters: '1000',
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -192,7 +192,7 @@ describe('Geocoding schema validation', () => {
             // @ts-ignore
             extendedPostalCodesFor: 'Addr',
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -215,7 +215,7 @@ describe('Geocoding schema validation', () => {
             // @ts-ignore
             mapcodes: 'Local',
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -238,7 +238,7 @@ describe('Geocoding schema validation', () => {
             // @ts-ignore
             geographyTypes: 'Municipality',
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
@@ -260,7 +260,7 @@ describe('Geocoding schema validation', () => {
             query: 'Minnesota',
             position: [46.6144, -93.1432], //Inverted coords for Minnesota
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({

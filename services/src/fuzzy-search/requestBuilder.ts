@@ -4,7 +4,7 @@ import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearc
 import { appendByJoiningParamValue, appendOptionalParam } from '../shared/requestBuildingUtils';
 import type { FuzzySearchParams } from './types';
 
-const buildURLBasePath = (mergedOptions: FuzzySearchParams): string =>
+const buildUrlBasePath = (mergedOptions: FuzzySearchParams): string =>
     mergedOptions.customServiceBaseURL ??
     `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/search/${mergedOptions.query}.json`;
 
@@ -13,7 +13,7 @@ const buildURLBasePath = (mergedOptions: FuzzySearchParams): string =>
  * @param params The fuzzy search parameters, with global configuration already merged into them.
  */
 export const buildFuzzySearchRequest = (params: FuzzySearchParams): URL => {
-    const url = new URL(`${buildURLBasePath(params)}`);
+    const url = new URL(`${buildUrlBasePath(params)}`);
     appendCommonSearchParams(url, params);
     const urlParams = url.searchParams;
     appendOptionalParam(urlParams, 'typeahead', params.typeahead);

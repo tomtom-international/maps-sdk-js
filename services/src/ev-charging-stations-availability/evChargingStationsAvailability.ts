@@ -34,12 +34,12 @@ export const evChargingStationsAvailability = async (
  * If it's not an EV station or has no availability info, it will be returned as-is.
  */
 export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<EVChargingStationPlaceProps>> => {
-    const availabilityID = place.properties.dataSources?.chargingAvailability?.id;
-    if (!availabilityID) {
+    const availabilityId = place.properties.dataSources?.chargingAvailability?.id;
+    if (!availabilityId) {
         return place;
     }
     try {
-        const availability = await evChargingStationsAvailability({ id: availabilityID });
+        const availability = await evChargingStationsAvailability({ id: availabilityId });
         const poi = place.properties.poi;
         return availability
             ? {

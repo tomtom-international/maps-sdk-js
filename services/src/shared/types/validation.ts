@@ -3,13 +3,13 @@ import type { ZodMiniObject } from 'zod/v4-mini';
 /**
  * @ignore
  */
-export type SchemaRefinement<T> = { check: (data: T) => boolean; message: string };
+export type SchemaRefinement<T = any> = { check: (data: T) => boolean; message: string };
 
 /**
  * Configuration for services request validation.
  * @ignore
  */
-export type RequestValidationConfig<Params> = {
+export type RequestValidationConfig<Params = any> = {
     /**
      * Schema from Zod for validating input parameters.
      * This will be compiled and used for validation.

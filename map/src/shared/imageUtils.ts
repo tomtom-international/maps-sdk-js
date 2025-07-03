@@ -7,11 +7,11 @@ export const isDOMImageSupported = (): boolean =>
 /**
  * @ignore
  */
-export const svgToImg = (svgDOMElement: Node): HTMLImageElement => {
+export const svgToImg = (svgDomElement: Node): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
     const img = document.createElement('img');
-    img.src = `data:image/svg+xml;base64,${btoa(new XMLSerializer().serializeToString(svgDOMElement))}`;
+    img.src = `data:image/svg+xml;base64,${btoa(new XMLSerializer().serializeToString(svgDomElement))}`;
     return img;
 };

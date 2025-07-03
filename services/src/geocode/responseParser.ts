@@ -5,7 +5,7 @@ import { apiToGeoJSONBBox, latLonAPIToPosition } from '../shared/geometry';
 import type { GeocodingResponseAPI, GeocodingResultAPI } from './types/apiTypes';
 import type { GeocodingProps, GeocodingResponse } from './types/geocodingResponse';
 
-const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
+const parseApiResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
     const { position, boundingBox, dist, entryPoints, addressRanges, entityType, id, ...rest } = result;
 
     return {
@@ -39,7 +39,7 @@ const parseAPIResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
  */
 export const parseGeocodingResponse = (apiResponse: GeocodingResponseAPI): GeocodingResponse => {
     const results = apiResponse.results;
-    const features = results.map(parseAPIResult);
+    const features = results.map(parseApiResult);
     const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
     return {
         type: 'FeatureCollection',

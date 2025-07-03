@@ -3,7 +3,7 @@ import type { POICategory } from '@anw/maps-sdk-js/core';
 /**
  * @ignore
  */
-const mapDisplayPOICategoryMappings: Partial<Record<POICategory, string>> = {
+const mapDisplayPoiCategoryMappings: Partial<Record<POICategory, string>> = {
     ACCESS_GATEWAY: 'access_gateway',
     ADVENTURE_SPORTS_FACILITY: 'adventure_sports_facility',
     ADVENTURE_SPORTS_VENUE: 'adventure_sports_venue',
@@ -134,13 +134,13 @@ const mapDisplayPOICategoryMappings: Partial<Record<POICategory, string>> = {
     ZOOS_ARBORETA_BOTANICAL_GARDEN: 'zoo_or_aquarium',
 };
 
-export type MapStylePOICategory = keyof typeof mapDisplayPOICategoryMappings;
+export type MapStylePOICategory = keyof typeof mapDisplayPoiCategoryMappings;
 
 /**
  * @ignore
  */
 export const toMapDisplayPOICategory = (category: POICategory): string =>
     // if it's one of the different categories between search and poi layer, use poi layer category
-    category in mapDisplayPOICategoryMappings
-        ? (mapDisplayPOICategoryMappings[category] as string)
+    category in mapDisplayPoiCategoryMappings
+        ? (mapDisplayPoiCategoryMappings[category] as string)
         : category.toLowerCase();

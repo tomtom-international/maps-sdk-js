@@ -2,15 +2,15 @@ import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { buildFuzzySearchRequest } from '../requestBuilder';
 import type { FuzzySearchParams } from '../types';
-import fuzzySearchReqObjectsAndURLs from './requestBuilder.data.json';
+import fuzzySearchReqObjectsAndUrLs from './requestBuilder.data.json';
 import fuzzySearchReqObjects from './requestBuilderPerf.data.json';
 
 describe('Calculate Fuzzy Search request URL building tests', () => {
-    test.each(fuzzySearchReqObjectsAndURLs)(
+    test.each(fuzzySearchReqObjectsAndUrLs)(
         "'%s'",
         // @ts-ignore
-        (_name: string, params: FuzzySearchParams, requestURL: string) => {
-            expect(buildFuzzySearchRequest(params).toString()).toStrictEqual(requestURL);
+        (_name: string, params: FuzzySearchParams, requestUrl: string) => {
+            expect(buildFuzzySearchRequest(params).toString()).toStrictEqual(requestUrl);
         },
     );
 });

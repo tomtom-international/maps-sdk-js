@@ -2,15 +2,15 @@ import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { buildAutocompleteSearchRequest } from '../requestBuilder';
 import type { AutocompleteSearchParams } from '../types';
-import autocompleteSearchReqObjectsAndURLs from './requestBuilder.data.json';
+import autocompleteSearchReqObjectsAndUrLs from './requestBuilder.data.json';
 import autocompleteSearchReqObjects from './requestBuilderPerf.data.json';
 
 describe('Autocomplete Search request URL building tests', () => {
-    test.each(autocompleteSearchReqObjectsAndURLs)(
+    test.each(autocompleteSearchReqObjectsAndUrLs)(
         "'%s'",
         // @ts-ignore
-        (_name: string, params: AutocompleteSearchParams, requestURL: string) => {
-            expect(buildAutocompleteSearchRequest(params).toString()).toStrictEqual(requestURL);
+        (_name: string, params: AutocompleteSearchParams, requestUrl: string) => {
+            expect(buildAutocompleteSearchRequest(params).toString()).toStrictEqual(requestUrl);
         },
     );
 });

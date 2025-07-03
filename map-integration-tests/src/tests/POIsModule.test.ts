@@ -15,16 +15,16 @@ import {
     waitUntilRenderedFeaturesChange,
 } from './util/TestUtils';
 
-const waitForRenderedPOIsChange = async (page: Page, previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
+const waitForRenderedPoIsChange = async (page: Page, previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>
     waitUntilRenderedFeaturesChange(page, ['POI'], previousFeaturesCount, 10000);
 
-const areSomeCategoriesIncluded = (renderedPOIs: MapGeoJSONFeature[], filteredCategories: FilterablePOICategory[]) =>
-    renderedPOIs
+const areSomeCategoriesIncluded = (renderedPoIs: MapGeoJSONFeature[], filteredCategories: FilterablePOICategory[]) =>
+    renderedPoIs
         .map((poi) => poi.properties.category)
         .some((category) => getStyleCategories(filteredCategories).includes(category));
 
-const areAllCategoriesIncluded = (renderedPOIs: MapGeoJSONFeature[], filteredCategories: FilterablePOICategory[]) =>
-    renderedPOIs
+const areAllCategoriesIncluded = (renderedPoIs: MapGeoJSONFeature[], filteredCategories: FilterablePOICategory[]) =>
+    renderedPoIs
         .map((poi) => poi.properties.category)
         .every((category) => getStyleCategories(filteredCategories).includes(category));
 
@@ -70,8 +70,8 @@ test.describe('Map vector tile POI filtering tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { zoom: 16, center: [-0.12621, 51.50154] });
         await initPOIs(page);
         await waitForMapIdle(page);
-        let renderedPOIs = await waitForRenderedPOIsChange(page, 0);
-        expect(areSomeCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
+        let renderedPoIs = await waitForRenderedPoIsChange(page, 0);
+        expect(areSomeCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
             true,
         );
 
@@ -83,8 +83,8 @@ test.describe('Map vector tile POI filtering tests', () => {
             }),
         );
         await waitForMapIdle(page);
-        renderedPOIs = await queryRenderedFeatures(page, ['POI']);
-        expect(areSomeCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
+        renderedPoIs = await queryRenderedFeatures(page, ['POI']);
+        expect(areSomeCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
             false,
         );
 
@@ -93,20 +93,20 @@ test.describe('Map vector tile POI filtering tests', () => {
             (globalThis as MapsSDKThis).pois?.filterCategories({ show: 'only', values: ['TRANSPORTATION_GROUP'] }),
         );
         await waitForMapIdle(page);
-        renderedPOIs = await queryRenderedFeatures(page, ['POI']);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areAllCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP'])).toBe(true);
+        renderedPoIs = await queryRenderedFeatures(page, ['POI']);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areAllCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP'])).toBe(true);
 
         // resetting config:
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         await waitForMapIdle(page);
 
-        renderedPOIs = await queryRenderedFeatures(page, ['POI']);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areSomeCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
+        renderedPoIs = await queryRenderedFeatures(page, ['POI']);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areSomeCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
             true,
         );
-        expect(areAllCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP'])).toBe(false);
+        expect(areAllCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP'])).toBe(false);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -117,9 +117,9 @@ test.describe('Map vector tile POI filtering tests', () => {
         await initPOIs(page, { filters: { categories: { show: 'only', values: ['TRANSPORTATION_GROUP'] } } });
         await waitForMapIdle(page);
 
-        let renderedPOIs = await waitForRenderedPOIsChange(page, 0);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areAllCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP'])).toBe(true);
+        let renderedPoIs = await waitForRenderedPoIsChange(page, 0);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areAllCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP'])).toBe(true);
 
         // set filter to include only and expect all features to be from the included category values
         await page.evaluate(() =>
@@ -129,9 +129,9 @@ test.describe('Map vector tile POI filtering tests', () => {
             }),
         );
         await waitForMapIdle(page);
-        renderedPOIs = await waitForRenderedPOIsChange(page, renderedPOIs.length);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areAllCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
+        renderedPoIs = await waitForRenderedPoIsChange(page, renderedPoIs.length);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areAllCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
             true,
         );
 
@@ -143,24 +143,24 @@ test.describe('Map vector tile POI filtering tests', () => {
             }),
         );
         await waitForMapIdle(page);
-        renderedPOIs = await waitForRenderedPOIsChange(page, renderedPOIs.length);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areSomeCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP'])).toBe(false);
+        renderedPoIs = await waitForRenderedPoIsChange(page, renderedPoIs.length);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areSomeCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP'])).toBe(false);
 
         // setting visibility to false:
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.setVisible(false));
         expect(await getNumVisiblePOILayers(page)).toBe(0);
         await waitForMapIdle(page);
-        renderedPOIs = await waitForRenderedPOIsChange(page, renderedPOIs.length);
-        expect(renderedPOIs).toHaveLength(0);
+        renderedPoIs = await waitForRenderedPoIsChange(page, renderedPoIs.length);
+        expect(renderedPoIs).toHaveLength(0);
 
         // re-setting config:
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         expect(await getNumVisiblePOILayers(page)).toBe(poiLayerIDs.length);
         await waitForMapIdle(page);
-        renderedPOIs = await waitForRenderedPOIsChange(page, renderedPOIs.length);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areAllCategoriesIncluded(renderedPOIs, ['TRANSPORTATION_GROUP'])).toBe(false);
+        renderedPoIs = await waitForRenderedPoIsChange(page, renderedPoIs.length);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areAllCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP'])).toBe(false);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -188,9 +188,9 @@ test.describe('Map vector tile POI filtering tests', () => {
                 (globalThis as MapsSDKThis).pois.originalFilter = inputExistingFilter;
             }, existingFilter);
         await waitForMapIdle(page);
-        let renderedPOIs = await waitForRenderedPOIsChange(page, 0);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areAllCategoriesIncluded(renderedPOIs, ['IMPORTANT_TOURIST_ATTRACTION', 'RAILWAY_STATION'])).toBe(true);
+        let renderedPoIs = await waitForRenderedPoIsChange(page, 0);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areAllCategoriesIncluded(renderedPoIs, ['IMPORTANT_TOURIST_ATTRACTION', 'RAILWAY_STATION'])).toBe(true);
 
         await page.evaluate(() =>
             (globalThis as MapsSDKThis).pois?.filterCategories({
@@ -199,9 +199,9 @@ test.describe('Map vector tile POI filtering tests', () => {
             }),
         );
         await waitForMapIdle(page);
-        renderedPOIs = await waitForRenderedPOIsChange(page, renderedPOIs.length);
-        expect(renderedPOIs.length).toBeGreaterThan(0);
-        expect(areAllCategoriesIncluded(renderedPOIs, ['RAILWAY_STATION'])).toBe(true);
+        renderedPoIs = await waitForRenderedPoIsChange(page, renderedPoIs.length);
+        expect(renderedPoIs.length).toBeGreaterThan(0);
+        expect(areAllCategoriesIncluded(renderedPoIs, ['RAILWAY_STATION'])).toBe(true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -215,17 +215,17 @@ test.describe('Map vector tile POI feature tests', () => {
         await waitForMapIdle(page);
 
         const poiCoordinates: Position = await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            const geometry = mapsSDKThis.mapLibreMap.queryRenderedFeatures({ layers: ['POI'] })[0].geometry as Point;
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            const geometry = mapsSdkThis.mapLibreMap.queryRenderedFeatures({ layers: ['POI'] })[0].geometry as Point;
             return geometry.coordinates;
         });
 
         const pixelCoordinates = await getPixelCoords(page, poiCoordinates);
 
         await page.evaluate(async () => {
-            const mapsSDKThis = globalThis as MapsSDKThis;
-            mapsSDKThis.pois?.events.on('click', (topFeature) => {
-                mapsSDKThis._clickedTopFeature = topFeature;
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            mapsSdkThis.pois?.events.on('click', (topFeature) => {
+                mapsSdkThis._clickedTopFeature = topFeature;
             });
         });
 

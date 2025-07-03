@@ -47,11 +47,11 @@ describe('Charging availability error response parsing tests', () => {
             _name: string,
             apiResponseError: APIErrorResponse,
             serviceName: ServiceName,
-            expectedSDKError: SDKServiceError,
+            expectedSdkError: SDKServiceError,
         ) => {
             const sdkResponseError = parseEVChargingStationsAvailabilityResponseError(apiResponseError, serviceName);
             expect(sdkResponseError).toBeInstanceOf(SDKServiceError);
-            expect(sdkResponseError).toMatchObject(expectedSDKError);
+            expect(sdkResponseError).toMatchObject(expectedSdkError);
         },
     );
 });

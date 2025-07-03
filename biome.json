@@ -14,17 +14,19 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "suspicious": {
-        "noShadowRestrictedNames": "info",
-        "noExplicitAny": "info"
-      },
+      "recommended": false,
       "style": {
-        "useNamingConvention": {
-          "level": "info",
-          "options": {
-            "strictCase": false
-          }
-        }
+        "useNamingConvention": "off",
+        "noNonNullAssertion": "warn",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "warn",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "warn"
       },
       "correctness": {
         "noUnusedVariables": "error"

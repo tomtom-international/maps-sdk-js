@@ -36,7 +36,7 @@ type SourceEventHandlers = Partial<Record<EventType, SourceEventTypeHandler[]>>;
 type EventHandlers = Record<string, SourceEventHandlers>;
 
 const matchesLayers = (layers: LayerSpecification[], layerIDs: string[]): boolean =>
-    layerIDs.every((layerID, index) => layerID === layers[index].id);
+    layerIDs.every((layerId, index) => layerId === layers[index].id);
 
 /**
  * @ignore
@@ -69,14 +69,14 @@ export abstract class AbstractEventProxy {
         type: EventType,
     ) {
         this.ensureInteractiveLayerIDsAdded(sourceWithLayers);
-        const sourceID = sourceWithLayers.source.id;
+        const sourceId = sourceWithLayers.source.id;
 
-        if (!this.handlers[sourceID]) {
-            this.handlers[sourceID] = { [type]: [] };
+        if (!this.handlers[sourceId]) {
+            this.handlers[sourceId] = { [type]: [] };
         }
-        this.handlers[sourceID][type] ??= [];
+        this.handlers[sourceId][type] ??= [];
 
-        this.handlers[sourceID][type]?.push({
+        this.handlers[sourceId][type]?.push({
             sourceWithLayers,
             layerIDs: sourceWithLayers._layerSpecs.map((layer) => layer.id),
             fn: handlerFn,
@@ -146,17 +146,17 @@ export abstract class AbstractEventProxy {
 
     protected findHandlers = (
         types: EventType[],
-        sourceID: string | undefined,
-        layerID: string | undefined,
+        sourceId: string | undefined,
+        layerId: string | undefined,
     ): SourceEventTypeHandler[] =>
-        (sourceID &&
-            layerID &&
+        (sourceId &&
+            layerId &&
             types.flatMap((type) => {
-                const sourceEventTypeHandlers = this.handlers[sourceID]?.[type];
+                const sourceEventTypeHandlers = this.handlers[sourceId]?.[type];
                 return sourceEventTypeHandlers?.length === 1
                     ? // if there's only handler for that source and type, we just return it, no need to match layers:
                       sourceEventTypeHandlers
-                    : this.handlers[sourceID]?.[type]?.filter((handler) => handler.layerIDs.includes(layerID)) || [];
+                    : this.handlers[sourceId]?.[type]?.filter((handler) => handler.layerIDs.includes(layerId)) || [];
             })) ||
         [];
 }

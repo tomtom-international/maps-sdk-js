@@ -12,31 +12,31 @@ const parseConsoleMessage = async (message: ConsoleMessage): Promise<string> => 
 
 const resetMapModules = async (page: Page) =>
     page.evaluate(() => {
-        const mapSDKThis = globalThis as MapsSDKThis;
-        mapSDKThis.baseMap = undefined;
-        mapSDKThis.baseMap2 = undefined;
-        mapSDKThis.trafficIncidents = undefined;
-        mapSDKThis.trafficFlow = undefined;
-        mapSDKThis.pois = undefined;
-        mapSDKThis.hillshade = undefined;
-        mapSDKThis.places = undefined;
-        mapSDKThis.places2 = undefined;
-        mapSDKThis.geometries = undefined;
-        mapSDKThis.routing = undefined;
+        const mapSdkThis = globalThis as MapsSDKThis;
+        mapSdkThis.baseMap = undefined;
+        mapSdkThis.baseMap2 = undefined;
+        mapSdkThis.trafficIncidents = undefined;
+        mapSdkThis.trafficFlow = undefined;
+        mapSdkThis.pois = undefined;
+        mapSdkThis.hillshade = undefined;
+        mapSdkThis.places = undefined;
+        mapSdkThis.places2 = undefined;
+        mapSdkThis.geometries = undefined;
+        mapSdkThis.routing = undefined;
     });
 
 const resetEventsTestData = async (page: Page) =>
     page.evaluate(() => {
-        const mapSDKThis = globalThis as MapsSDKThis;
-        mapSDKThis._clickedLngLat = undefined;
-        mapSDKThis._clickedTopFeature = undefined;
-        mapSDKThis._clickedSourceWithLayers = undefined;
-        mapSDKThis._clickedFeatures = undefined;
-        mapSDKThis._numOfClicks = 0;
-        mapSDKThis._numOfContextmenuClicks = 0;
-        mapSDKThis._numOfHovers = 0;
-        mapSDKThis._numOfLongHovers = 0;
-        mapSDKThis._hoveredTopFeature = undefined;
+        const mapSdkThis = globalThis as MapsSDKThis;
+        mapSdkThis._clickedLngLat = undefined;
+        mapSdkThis._clickedTopFeature = undefined;
+        mapSdkThis._clickedSourceWithLayers = undefined;
+        mapSdkThis._clickedFeatures = undefined;
+        mapSdkThis._numOfClicks = 0;
+        mapSdkThis._numOfContextmenuClicks = 0;
+        mapSdkThis._numOfHovers = 0;
+        mapSdkThis._numOfLongHovers = 0;
+        mapSdkThis._hoveredTopFeature = undefined;
     });
 
 export class MapTestEnv {
@@ -62,15 +62,15 @@ export class MapTestEnv {
             // @ts-ignore
             ({ mapLibreOptions, tomtomMapParams, apiKey }) => {
                 this.consoleErrors = [];
-                const mapsSDKThis = globalThis as MapsSDKThis;
-                mapsSDKThis.mapLibreMap?.remove();
+                const mapsSdkThis = globalThis as MapsSDKThis;
+                mapsSdkThis.mapLibreMap?.remove();
                 document.querySelector('.maplibregl-control-container')?.remove();
                 document.querySelector('canvas')?.remove();
-                mapsSDKThis.tomtomMap = new mapsSDKThis.MapsSDK.TomTomMap(
+                mapsSdkThis.tomtomMap = new mapsSdkThis.MapsSDK.TomTomMap(
                     { ...mapLibreOptions, container: 'map' },
                     { ...tomtomMapParams, apiKey },
                 );
-                mapsSDKThis.mapLibreMap = mapsSDKThis.tomtomMap.mapLibreMap;
+                mapsSdkThis.mapLibreMap = mapsSdkThis.tomtomMap.mapLibreMap;
             },
             { mapLibreOptions, tomtomMapParams, apiKey: process.env.API_KEY },
         );

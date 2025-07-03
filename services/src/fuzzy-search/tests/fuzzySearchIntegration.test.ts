@@ -175,21 +175,27 @@ describe('Fuzzy Search service', () => {
     });
 
     test('Fuzzy search with API request and response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
-        const result = await search({ query: 'restaurant', onAPIRequest, onAPIResponse });
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
+        const result = await search({ query: 'restaurant', onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 
     test('Fuzzy search with API request and error response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
         await expect(() =>
-            search({ query: 'restaurant', maxFuzzyLevel: 999, validateRequest: false, onAPIRequest, onAPIResponse }),
+            search({
+                query: 'restaurant',
+                maxFuzzyLevel: 999,
+                validateRequest: false,
+                onAPIRequest: onApiRequest,
+                onAPIResponse: onApiResponse,
+            }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
     });
 });

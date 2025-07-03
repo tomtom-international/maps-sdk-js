@@ -123,12 +123,12 @@ export class AddedSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
     RUNTIME_SOURCE extends Source = Source,
 > extends AbstractSourceWithLayers<SOURCE_SPEC, RUNTIME_SOURCE, ToBeAddedLayerSpec> {
-    constructor(map: Map, sourceID: string, sourceSpec: SOURCE_SPEC, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
+    constructor(map: Map, sourceId: string, sourceSpec: SOURCE_SPEC, layerSpecs: ToBeAddedLayerSpecWithoutSource[]) {
         super(
             map,
-            new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceID, sourceSpec),
+            new TomTomMapSource<SOURCE_SPEC, RUNTIME_SOURCE>(sourceId, sourceSpec),
             // We ensure the source ID is assigned to the layers:
-            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceID }) as ToBeAddedLayerSpec),
+            layerSpecs.map((layerSpec) => ({ ...layerSpec, source: sourceId }) as ToBeAddedLayerSpec),
         );
     }
 
@@ -160,10 +160,10 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
 > {
     shownFeatures: T = emptyFeatureCollection as T;
 
-    constructor(map: Map, sourceID: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[], addLayersToMap = true) {
+    constructor(map: Map, sourceId: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[], addLayersToMap = true) {
         // MapLibre does not reuse the given feature ID. Either we generate it on the fly or use the one from properties via promotedId value.
         // We must generate "id" property based on the feature id on the fly on "prepareForDisplay" functions.
-        super(map, sourceID, { type: 'geojson', data: emptyFeatureCollection, promoteId: 'id' }, layerSpecs);
+        super(map, sourceId, { type: 'geojson', data: emptyFeatureCollection, promoteId: 'id' }, layerSpecs);
         this.ensureAddedToMapWithVisibility(false, addLayersToMap);
     }
 

@@ -7,11 +7,11 @@ import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
 
 describe('ReverseGeocoding schema validation', () => {
     const apiKey = 'APIKEY';
-    const commonBaseURL = 'https://api-test.tomtom.com';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
     test('it should fail when position is an invalid param - case 1', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             // @ts-ignore
             position: { lon: -122.420679, lat: 37.772537 },
         };
@@ -25,7 +25,7 @@ describe('ReverseGeocoding schema validation', () => {
             validateRequestSchema(
                 {
                     apiKey,
-                    commonBaseURL,
+                    commonBaseURL: commonBaseUrl,
                     position: [200, -95],
                 },
                 { schema: revGeocodeRequestSchema },
@@ -59,7 +59,7 @@ describe('ReverseGeocoding schema validation', () => {
     test('it should fail when position is an invalid param - case 2', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             // @ts-ignore
             position: (-122.420679, 37.772537),
         };
@@ -72,7 +72,7 @@ describe('ReverseGeocoding schema validation', () => {
     test('it should fail when position is an invalid param - case 3', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             // @ts-ignore
             position: '-122.420679, 37.772537',
         };
@@ -86,7 +86,7 @@ describe('ReverseGeocoding schema validation', () => {
         // @ts-ignore
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             geographyType: ['Country'],
         };
 
@@ -98,7 +98,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when heading isn't less than or equal to 360", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             heading: 361,
@@ -124,7 +124,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when heading isn't in number format", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             heading: '180',
@@ -148,7 +148,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when mapcode isn't of type string array", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             mapcodes: 'Local',
@@ -172,7 +172,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when param number isn't in string format", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             number: 36,
@@ -196,7 +196,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when param radius isn't in number format", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             radiusMeters: '2000',
@@ -220,7 +220,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when param geography isn't a string array", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             geographyType: 'Country',
@@ -244,7 +244,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when param returnRoadUse isn't of type string array", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             returnRoadUse: 'LimitedAccess',
@@ -268,7 +268,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when param allowFreeformNewline isn't of type boolean", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             allowFreeformNewline: 'true',
@@ -292,7 +292,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when param returnSpeedLimit isn't of type boolean", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             returnSpeedLimit: 'true',
@@ -316,7 +316,7 @@ describe('ReverseGeocoding schema validation', () => {
     test("it should fail when param returnMatchType isn't of type boolean", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             // @ts-ignore
             returnMatchType: 'true',
@@ -340,7 +340,7 @@ describe('ReverseGeocoding schema validation', () => {
     test('it should fail when view is an invalid param', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
-            commonBaseURL,
+            commonBaseURL: commonBaseUrl,
             position: [-122.420679, 37.772537],
             //@ts-ignore
             view: 'MAA',

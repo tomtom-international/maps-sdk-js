@@ -124,7 +124,7 @@ export const getTextSizeSpec = (
     return JSON.parse(JSON.stringify(textSize)?.replace(/name/g, TITLE));
 };
 
-const buildPOILikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecification> => {
+const buildPoiLikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecification> => {
     const poiLayer = (map.getStyle().layers.filter((layer) => layer.id === 'POI')[0] as SymbolLayerSpecification) || {};
     const textSize = poiLayer.layout?.['text-size'];
     return {
@@ -150,7 +150,7 @@ export const buildPlacesLayerSpecs = (
 ): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
     const layerSpecs =
         config?.iconConfig?.iconStyle === 'poi-like'
-            ? [buildPOILikeLayerSpec(map), clickedPlaceLayerSpec]
+            ? [buildPoiLikeLayerSpec(map), clickedPlaceLayerSpec]
             : [placesLayerSpec, selectedPlaceLayerSpec];
     // (The first layer is the main one, the next one, on top, is used for the "selected" place)
     return layerSpecs.map((spec, index) =>

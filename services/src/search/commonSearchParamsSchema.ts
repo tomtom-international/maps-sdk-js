@@ -2,12 +2,12 @@ import { type ZodMiniObject, z } from 'zod/v4-mini';
 import { poiCategoriesToID } from '../poi-categories/poiCategoriesToID';
 import { commonPlacesParamsSchema } from '../shared/commonPlacesParamsSchema';
 
-const poiCategoriesToIDZodObject = z.object(poiCategoriesToID) as unknown as ZodMiniObject;
+const poiCategoriesToIdZodObject = z.object(poiCategoriesToID) as unknown as ZodMiniObject;
 
 const searchExtraParamsOptional = z.partial(
     z.object({
         indexes: z.array(z.string()),
-        poiCategories: z.array(z.union([z.number(), z.keyof(poiCategoriesToIDZodObject)])),
+        poiCategories: z.array(z.union([z.number(), z.keyof(poiCategoriesToIdZodObject)])),
         poiBrands: z.array(z.string()),
         connectors: z.array(z.string()),
         fuelTypes: z.array(z.string()),

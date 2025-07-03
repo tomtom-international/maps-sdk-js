@@ -96,25 +96,30 @@ describe('Autocomplete service', () => {
     });
 
     test('Autocomplete with API request and response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
         const query = 'cafe';
         const language = 'en-GB';
-        const result = await autocompleteSearch({ query, language, onAPIRequest, onAPIResponse });
+        const result = await autocompleteSearch({
+            query,
+            language,
+            onAPIRequest: onApiRequest,
+            onAPIResponse: onApiResponse,
+        });
         expect(result).toEqual(basicResponse);
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 
     test('Autocomplete with API request and error response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
         const query = 'cafe';
         const language = 'INCORRECT' as never;
-        await expect(() => autocompleteSearch({ query, language, onAPIRequest, onAPIResponse })).rejects.toThrow(
-            expect.objectContaining({ status: 400 }),
-        );
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+        await expect(() =>
+            autocompleteSearch({ query, language, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
+        ).rejects.toThrow(expect.objectContaining({ status: 400 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
     });
 });

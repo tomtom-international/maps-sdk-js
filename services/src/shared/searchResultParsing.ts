@@ -11,8 +11,8 @@ import type {
 } from './types/apiPlacesResponseTypes';
 import type { SearchSummary } from './types/searchSummary';
 
-const parseYYYYMMDDDate = (dateYYYYMMDD: string): { year: number; month: number; day: number } => {
-    const splitDate = dateYYYYMMDD.split('-');
+const parseYyyymmddDate = (dateYyyymmdd: string): { year: number; month: number; day: number } => {
+    const splitDate = dateYyyymmdd.split('-');
     return {
         year: Number.parseInt(splitDate[0]),
         month: Number.parseInt(splitDate[1]),
@@ -20,16 +20,16 @@ const parseYYYYMMDDDate = (dateYYYYMMDD: string): { year: number; month: number;
     };
 };
 
-const parseMoment = (momentAPI: MomentAPI): Moment => {
-    const { year, month, day } = parseYYYYMMDDDate(momentAPI.date);
+const parseMoment = (momentApi: MomentAPI): Moment => {
+    const { year, month, day } = parseYyyymmddDate(momentApi.date);
     return {
-        dateYYYYMMDD: momentAPI.date,
+        dateYYYYMMDD: momentApi.date,
         year,
         month,
         day,
-        hour: momentAPI.hour,
-        minute: momentAPI.minute,
-        date: new Date(year, month - 1, day, momentAPI.hour, momentAPI.minute),
+        hour: momentApi.hour,
+        minute: momentApi.minute,
+        date: new Date(year, month - 1, day, momentApi.hour, momentApi.minute),
     };
 };
 
@@ -39,15 +39,15 @@ const alwaysOpenInThisPeriod = (timeRanges: TimeRange[]): boolean =>
 /**
  * @ignore
  */
-export const parseOpeningHours = (openingHoursAPI: OpeningHoursAPI): OpeningHours => {
-    const timeRanges = openingHoursAPI.timeRanges.map(
-        (timeRangeAPI): TimeRange => ({
-            start: parseMoment(timeRangeAPI.startTime),
-            end: parseMoment(timeRangeAPI.endTime),
+export const parseOpeningHours = (openingHoursApi: OpeningHoursAPI): OpeningHours => {
+    const timeRanges = openingHoursApi.timeRanges.map(
+        (timeRangeApi): TimeRange => ({
+            start: parseMoment(timeRangeApi.startTime),
+            end: parseMoment(timeRangeApi.endTime),
         }),
     );
     return {
-        mode: openingHoursAPI.mode,
+        mode: openingHoursApi.mode,
         timeRanges,
         alwaysOpenThisPeriod: alwaysOpenInThisPeriod(timeRanges),
     };

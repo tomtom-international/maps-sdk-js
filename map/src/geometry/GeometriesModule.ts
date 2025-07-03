@@ -65,10 +65,10 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
             GeometriesModule.lastInstanceIndex++;
             this.sourceID = `geometry-${GeometriesModule.lastInstanceIndex}`;
             this.titleSourceID = `geometryTitle-${GeometriesModule.lastInstanceIndex}`;
-            const layerIDPrefix = `geometry-${GeometriesModule.lastInstanceIndex}`;
-            this.fillLayerID = `${layerIDPrefix}_Fill`;
-            this.outlineLayerID = `${layerIDPrefix}_Outline`;
-            this.titleLayerID = `${layerIDPrefix}_Title`;
+            const layerIdPrefix = `geometry-${GeometriesModule.lastInstanceIndex}`;
+            this.fillLayerID = `${layerIdPrefix}_Fill`;
+            this.outlineLayerID = `${layerIdPrefix}_Outline`;
+            this.titleLayerID = `${layerIdPrefix}_Title`;
         }
 
         const [geometryFillSpec, geometryOutlineSpec] = buildGeometryLayerSpecs(

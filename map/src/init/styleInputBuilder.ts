@@ -44,26 +44,26 @@ const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, 
     },
 };
 
-const baseMapStyleURLTemplate = (suffix: string): string => `${URL_PREFIX}&map=${suffix}`;
+const baseMapStyleUrlTemplate = (suffix: string): string => `${URL_PREFIX}&map=${suffix}`;
 
-const baseMapStyleURLTemplates: Record<PublishedStyleID, string> = {
-    standardLight: baseMapStyleURLTemplate('basic_street-light'),
-    standardDark: baseMapStyleURLTemplate('basic_street-dark'),
-    drivingLight: baseMapStyleURLTemplate('basic_street-light-driving'),
-    drivingDark: baseMapStyleURLTemplate('basic_street-dark-driving'),
-    monoLight: baseMapStyleURLTemplate('basic_mono-light'),
-    monoDark: baseMapStyleURLTemplate('basic_mono-dark'),
-    satellite: baseMapStyleURLTemplate('basic_street-satellite'),
+const baseMapStyleUrlTemplates: Record<PublishedStyleID, string> = {
+    standardLight: baseMapStyleUrlTemplate('basic_street-light'),
+    standardDark: baseMapStyleUrlTemplate('basic_street-dark'),
+    drivingLight: baseMapStyleUrlTemplate('basic_street-light-driving'),
+    drivingDark: baseMapStyleUrlTemplate('basic_street-dark-driving'),
+    monoLight: baseMapStyleUrlTemplate('basic_mono-light'),
+    monoDark: baseMapStyleUrlTemplate('basic_mono-dark'),
+    satellite: baseMapStyleUrlTemplate('basic_street-satellite'),
 };
 
-const buildBaseMapStyleURL = (publishedStyle: PublishedStyle, baseURL: string, apiKey: string): string =>
-    baseMapStyleURLTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
-        .replace('${baseURL}', baseURL)
+const buildBaseMapStyleUrl = (publishedStyle: PublishedStyle, baseUrl: string, apiKey: string): string =>
+    baseMapStyleUrlTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
+        .replace('${baseURL}', baseUrl)
         .replace('${version}', publishedStyle.version ?? '0.*')
         .replace('${apiKey}', apiKey);
 
-const withAPIKey = (givenURL: string, apiKey: string): string => {
-    const url = new URL(givenURL);
+const withApiKey = (givenUrl: string, apiKey: string): string => {
+    const url = new URL(givenUrl);
     if (!url.searchParams.has('key')) {
         url.searchParams.set('key', apiKey);
     } else {
@@ -104,20 +104,20 @@ export const buildStyleInput = (mapParams: TomTomMapParams): StyleSpecification 
     let mapStyleUrl: StyleSpecification | string;
     let isIncludeEmpty = true;
     const style = mapParams.style;
-    const baseURL = mapParams.commonBaseURL;
+    const baseUrl = mapParams.commonBaseURL;
     const apiKey = mapParams.apiKey;
 
     if (typeof style === 'string') {
-        mapStyleUrl = buildBaseMapStyleURL({ id: style }, baseURL, apiKey);
+        mapStyleUrl = buildBaseMapStyleUrl({ id: style }, baseUrl, apiKey);
     } else if (style?.type === 'published') {
-        mapStyleUrl = buildBaseMapStyleURL(style, baseURL, apiKey);
+        mapStyleUrl = buildBaseMapStyleUrl(style, baseUrl, apiKey);
         isIncludeEmpty = isEmpty(style.include);
     } else if (style?.type === 'custom' && style?.url) {
-        mapStyleUrl = withAPIKey(style.url, apiKey);
+        mapStyleUrl = withApiKey(style.url, apiKey);
     } else if (style?.type === 'custom' && style?.json) {
         mapStyleUrl = style.json;
     } else {
-        mapStyleUrl = buildBaseMapStyleURL({ id: DEFAULT_PUBLISHED_STYLE }, baseURL, apiKey);
+        mapStyleUrl = buildBaseMapStyleUrl({ id: DEFAULT_PUBLISHED_STYLE }, baseUrl, apiKey);
     }
 
     return isIncludeEmpty ? mapStyleUrl : includeModulesOptions(mapStyleUrl as string, style as PublishedStyle);

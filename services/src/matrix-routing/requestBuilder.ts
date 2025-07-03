@@ -5,7 +5,7 @@ import { appendCommonParams } from '../shared/requestBuildingUtils';
 import type { CalculateMatrixRoutePOSTDataAPI, LatitudeLongitudePointAPI } from './types/apiRequestTypes';
 import type { CalculateMatrixRouteParams } from './types/calculateMatrixRouteParams';
 
-const buildURLBasePath = (params: CalculateMatrixRouteParams): string =>
+const buildUrlBasePath = (params: CalculateMatrixRouteParams): string =>
     params.customServiceBaseURL ?? `${params.commonBaseURL}/routing/matrix/2`;
 
 const transformPositionArrayToObj = (positions: HasLngLat[]): LatitudeLongitudePointAPI[] =>
@@ -14,7 +14,7 @@ const transformPositionArrayToObj = (positions: HasLngLat[]): LatitudeLongitudeP
         return { point: { longitude, latitude } };
     });
 
-const buildPOSTData = (params: CalculateMatrixRouteParams): CalculateMatrixRoutePOSTDataAPI => {
+const buildPostData = (params: CalculateMatrixRouteParams): CalculateMatrixRoutePOSTDataAPI => {
     const basePostData: CalculateMatrixRoutePOSTDataAPI = {
         origins: transformPositionArrayToObj(params.origins),
         destinations: transformPositionArrayToObj(params.destinations),
@@ -33,13 +33,13 @@ const buildPOSTData = (params: CalculateMatrixRouteParams): CalculateMatrixRoute
 export const buildCalculateMatrixRouteRequest = (
     params: CalculateMatrixRouteParams,
 ): FetchInput<CalculateMatrixRoutePOSTDataAPI> => {
-    const url = new URL(`${buildURLBasePath(params)}`);
+    const url = new URL(`${buildUrlBasePath(params)}`);
     const urlParams: URLSearchParams = url.searchParams;
     appendCommonParams(urlParams, params);
 
     return {
         method: 'POST',
         url,
-        data: buildPOSTData(params),
+        data: buildPostData(params),
     };
 };

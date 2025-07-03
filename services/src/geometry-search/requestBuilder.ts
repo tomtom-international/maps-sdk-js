@@ -22,7 +22,7 @@ const findFiftyLargestPolygons = (searchGeometry: MultiPolygon): Position[][][] 
     return [...polygonSizeMap.keys()];
 };
 
-const sdkGeometryToAPIGeometries = (searchGeometry: SearchGeometryInput): GeometryAPI[] => {
+const sdkGeometryToApiGeometries = (searchGeometry: SearchGeometryInput): GeometryAPI[] => {
     switch (searchGeometry.type) {
         case 'Circle':
             return [
@@ -45,22 +45,22 @@ const sdkGeometryToAPIGeometries = (searchGeometry: SearchGeometryInput): Geomet
             if (searchGeometry.coordinates.length > 50) {
                 // we have too many polygons for the service to work
                 return findFiftyLargestPolygons(searchGeometry).flatMap((polygonCoords) =>
-                    sdkGeometryToAPIGeometries({ type: 'Polygon', coordinates: polygonCoords }),
+                    sdkGeometryToApiGeometries({ type: 'Polygon', coordinates: polygonCoords }),
                 );
             }
             return searchGeometry.coordinates.flatMap((polygonCoords) =>
-                sdkGeometryToAPIGeometries({ type: 'Polygon', coordinates: polygonCoords }),
+                sdkGeometryToApiGeometries({ type: 'Polygon', coordinates: polygonCoords }),
             );
         }
         case 'FeatureCollection':
-            return searchGeometry.features.flatMap((feature) => sdkGeometryToAPIGeometries(feature.geometry));
+            return searchGeometry.features.flatMap((feature) => sdkGeometryToApiGeometries(feature.geometry));
         default:
             // @ts-ignore
             throw new Error(`Type ${(searchGeometry as unknown).type} is not supported`);
     }
 };
 
-const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
+const buildUrlBasePath = (mergedOptions: GeometrySearchParams): string =>
     mergedOptions.customServiceBaseURL ??
     `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/geometrySearch/${mergedOptions.query}.json`;
 
@@ -69,13 +69,13 @@ const buildURLBasePath = (mergedOptions: GeometrySearchParams): string =>
  * @param params The geometry search parameters, with global configuration already merged into them.
  */
 export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostObject<GeometrySearchPayloadAPI> => {
-    const url = new URL(`${buildURLBasePath(params)}`);
+    const url = new URL(`${buildUrlBasePath(params)}`);
     appendCommonSearchParams(url, params);
 
     return {
         url,
         data: {
-            geometryList: params.geometries.flatMap(sdkGeometryToAPIGeometries),
+            geometryList: params.geometries.flatMap(sdkGeometryToApiGeometries),
         },
     };
 };

@@ -75,12 +75,12 @@ describe('Geometry data integration tests', () => {
     });
 
     test('Geometry data of the communities of Catalonia, Madrid, and Canary Islands', async () => {
-        const cataloniaGeometryID = '21505330';
-        const madridGeometryID = '18999766';
-        const canaryIslandsGeometryID = '12672113';
+        const cataloniaGeometryId = '21505330';
+        const madridGeometryId = '18999766';
+        const canaryIslandsGeometryId = '12672113';
 
         const result = await geometryData({
-            geometries: [cataloniaGeometryID, madridGeometryID, canaryIslandsGeometryID],
+            geometries: [cataloniaGeometryId, madridGeometryId, canaryIslandsGeometryId],
             zoom: 10,
         });
         expect(result).toMatchObject({
@@ -89,7 +89,7 @@ describe('Geometry data integration tests', () => {
             features: [
                 {
                     type: 'Feature',
-                    id: cataloniaGeometryID,
+                    id: cataloniaGeometryId,
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
@@ -99,7 +99,7 @@ describe('Geometry data integration tests', () => {
                 },
                 {
                     type: 'Feature',
-                    id: madridGeometryID,
+                    id: madridGeometryId,
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
@@ -109,7 +109,7 @@ describe('Geometry data integration tests', () => {
                 },
                 {
                     type: 'Feature',
-                    id: canaryIslandsGeometryID,
+                    id: canaryIslandsGeometryId,
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
@@ -125,12 +125,12 @@ describe('Geometry data integration tests', () => {
         'Geometry data of the communities of Catalonia, Madrid, and Canary Islands ' +
             "where Madrid UUID is incorrect and won't be found",
         async () => {
-            const cataloniaGeometryID = '21505330';
-            const madridGeometryID = 'INCORRECT';
-            const canaryIslandsGeometryID = '12672113';
+            const cataloniaGeometryId = '21505330';
+            const madridGeometryId = 'INCORRECT';
+            const canaryIslandsGeometryId = '12672113';
 
             const result = await geometryData({
-                geometries: [cataloniaGeometryID, madridGeometryID, canaryIslandsGeometryID],
+                geometries: [cataloniaGeometryId, madridGeometryId, canaryIslandsGeometryId],
                 zoom: 4,
             });
             expect(result).toMatchObject({
@@ -139,7 +139,7 @@ describe('Geometry data integration tests', () => {
                 features: [
                     {
                         type: 'Feature',
-                        id: cataloniaGeometryID,
+                        id: cataloniaGeometryId,
                         bbox: expect.any(Array),
                         properties: {},
                         geometry: {
@@ -149,7 +149,7 @@ describe('Geometry data integration tests', () => {
                     },
                     {
                         type: 'Feature',
-                        id: canaryIslandsGeometryID,
+                        id: canaryIslandsGeometryId,
                         bbox: expect.any(Array),
                         properties: {},
                         geometry: {
@@ -164,30 +164,35 @@ describe('Geometry data integration tests', () => {
 
     test('Geometry Data with API response callback', async () => {
         const geometries = ['10794339'];
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
-        const result = await geometryData({ geometries, zoom: 10, onAPIRequest, onAPIResponse });
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        const result = await geometryData({
+            geometries,
+            zoom: 10,
+            onAPIRequest: onApiRequest,
+            onAPIResponse: onApiResponse,
+        });
         expect(result).toBeDefined();
         expect(result.features.length).toBeGreaterThan(0);
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 
     test('Geometry Data with API error response callback', async () => {
         const geometries = ['10794339'];
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
         await expect(() =>
             geometryData({
                 geometries,
                 zoom: -1,
                 validateRequest: false,
-                onAPIRequest,
-                onAPIResponse,
+                onAPIRequest: onApiRequest,
+                onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
     });
 });
 

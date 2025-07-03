@@ -4,7 +4,7 @@ import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 import { appendOptionalParam } from '../shared/requestBuildingUtils';
 import type { GeometriesInput, GeometryParams } from './types/geometryDataParams';
 
-const buildURLBasePath = (params: GeometryParams): string =>
+const buildUrlBasePath = (params: GeometryParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/additionalData.json`;
 
 const getGeometryIDs = (placesArray: Place[]): string[] =>
@@ -34,7 +34,7 @@ const appendGeometries = (urlParams: URLSearchParams, geometries: GeometriesInpu
  * @param params The geometry data parameters, with global configuration already merged into them.
  */
 export const buildGeometryDataRequest = (params: GeometryParams): URL => {
-    const url = new URL(buildURLBasePath(params));
+    const url = new URL(buildUrlBasePath(params));
     const urlParams = url.searchParams;
     // (no language in this service)
     urlParams.append('apiVersion', String(params.apiVersion));

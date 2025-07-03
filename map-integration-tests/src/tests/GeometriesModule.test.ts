@@ -22,9 +22,9 @@ import {
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
-const getNumVisibleLayers = async (page: Page, sourceID: string) => getNumVisibleLayersBySource(page, sourceID);
+const getNumVisibleLayers = async (page: Page, sourceId: string) => getNumVisibleLayersBySource(page, sourceId);
 
-const getNumVisibleTitleLayers = async (page: Page, sourceID: string) => getNumVisibleLayersBySource(page, sourceID);
+const getNumVisibleTitleLayers = async (page: Page, sourceId: string) => getNumVisibleLayersBySource(page, sourceId);
 
 const clearGeometry = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).geometries?.clear());
 
@@ -55,12 +55,12 @@ test.describe('Geometry integration tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox as LngLatBoundsLike });
         await initGeometries(page);
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
-        const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
+        const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
         await waitForMapIdle(page);
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(0);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(0);
 
         await showGeometry(page, geometryData);
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
         // non-inverted polygon: fills inside but not the edges:
         const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
         await waitUntilRenderedGeometry(page, 1, amsterdamCenter, layerIDs);
@@ -69,9 +69,9 @@ test.describe('Geometry integration tests', () => {
         await waitUntilRenderedGeometry(page, 0, outsideAmsterdamSouth, layerIDs);
 
         await clearGeometry(page);
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(0);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(0);
         await showGeometry(page, geometryData);
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -80,7 +80,7 @@ test.describe('Geometry integration tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox as LngLatBoundsLike });
         await initGeometries(page);
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
-        const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
+        const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
         await setStyle(page, 'standardDark');
         await showGeometry(page, geometryData);
         await waitForMapIdle(page);
@@ -92,7 +92,7 @@ test.describe('Geometry integration tests', () => {
         await waitUntilRenderedGeometry(page, 1, amsterdamSouthEast, layerIDs);
         await waitUntilRenderedGeometry(page, 0, outsideAmsterdamNorth, layerIDs);
         await waitUntilRenderedGeometry(page, 0, outsideAmsterdamSouth, layerIDs);
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -102,14 +102,14 @@ test.describe('Geometry integration tests', () => {
         await initGeometries(page);
 
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
-        const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
-        const titleSourceID = sourcesAndLayers?.geometryLabel?.sourceID as string;
+        const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
+        const titleSourceId = sourcesAndLayers?.geometryLabel?.sourceID as string;
         const titleLayerIDs = sourcesAndLayers?.geometryLabel?.layerIDs as string[];
 
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(0);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(0);
         await showGeometry(page, netherlandsData);
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
-        expect(await getNumVisibleTitleLayers(page, titleSourceID)).toBe(1);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
+        expect(await getNumVisibleTitleLayers(page, titleSourceId)).toBe(1);
 
         await waitForMapIdle(page);
         const features = await queryRenderedFeatures(page, titleLayerIDs);
@@ -130,17 +130,17 @@ test.describe('Geometry integration tests', () => {
             textConfig: { textField: 'CustomText' },
         });
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
-        const sourceID = sourcesAndLayers?.geometry?.sourceID as string;
+        const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
         const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
-        const firstGeometryLayerID = layerIDs[0];
-        const titleSourceID = sourcesAndLayers?.geometryLabel?.sourceID as string;
+        const firstGeometryLayerId = layerIDs[0];
+        const titleSourceId = sourcesAndLayers?.geometryLabel?.sourceID as string;
         const titleLayerIDs = sourcesAndLayers?.geometryLabel?.layerIDs as string[];
 
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(0);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(0);
 
         await showGeometry(page, netherlandsData);
-        expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
-        expect(await getNumVisibleTitleLayers(page, titleSourceID)).toBe(1);
+        expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
+        expect(await getNumVisibleTitleLayers(page, titleSourceId)).toBe(1);
 
         await waitForMapIdle(page);
         const features = await queryRenderedFeatures(page, titleLayerIDs);
@@ -149,14 +149,14 @@ test.describe('Geometry integration tests', () => {
             expect(feature).toMatchObject({ properties: { title: 'CustomText', color: '#00ccbb' } });
         });
 
-        const geometryFillLayer = await getLayerByID(page, firstGeometryLayerID);
+        const geometryFillLayer = await getLayerByID(page, firstGeometryLayerId);
         // @ts-ignore
         expect(geometryFillLayer.paint['fill-opacity']).toBe(0.6);
 
         await moveBeforeLayer(page, 'lowestRoadLine');
         await waitForMapIdle(page);
         let layers = await getAllLayers(page);
-        const findGeometriesLayerIndex = () => layers.findIndex((layer) => layer.id === firstGeometryLayerID);
+        const findGeometriesLayerIndex = () => layers.findIndex((layer) => layer.id === firstGeometryLayerId);
         let geometriesLayerIndex = findGeometriesLayerIndex();
         expect(geometriesLayerIndex).toBeGreaterThan(0);
         const lowestRoadLineIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestRoadLine);

@@ -14,13 +14,16 @@ describe('Autocomplete Schema Validation', () => {
         });
     });
 
-    const commonBaseURL = 'https://tomtom.com';
+    const commonBaseUrl = 'https://tomtom.com';
     const apiKey = 'API_KEY';
     const query = 'cafe';
 
     test('it should fail when query is missing', () => {
         expect(() =>
-            validateRequestSchema({ commonBaseURL, apiKey }, { schema: autocompleteSearchRequestSchema }),
+            validateRequestSchema(
+                { commonBaseURL: commonBaseUrl, apiKey },
+                { schema: autocompleteSearchRequestSchema },
+            ),
         ).toThrow(
             expect.objectContaining({
                 errors: [
@@ -40,7 +43,7 @@ describe('Autocomplete Schema Validation', () => {
         const queryNum = 5;
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query: queryNum },
+                { commonBaseURL: commonBaseUrl, apiKey, query: queryNum },
                 { schema: autocompleteSearchRequestSchema },
             ),
         ).toThrow(
@@ -62,7 +65,7 @@ describe('Autocomplete Schema Validation', () => {
         const countries = 'NL';
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query, countries },
+                { commonBaseURL: commonBaseUrl, apiKey, query, countries },
                 { schema: autocompleteSearchRequestSchema },
             ),
         ).toThrow(
@@ -84,7 +87,7 @@ describe('Autocomplete Schema Validation', () => {
         const resultType = 5;
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query, resultType },
+                { commonBaseURL: commonBaseUrl, apiKey, query, resultType },
                 { schema: autocompleteSearchRequestSchema },
             ),
         ).toThrow(
@@ -105,7 +108,7 @@ describe('Autocomplete Schema Validation', () => {
     test('it should fail when radiusMeters is of type string', () => {
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL, apiKey, query, radiusMeters: '600' },
+                { commonBaseURL: commonBaseUrl, apiKey, query, radiusMeters: '600' },
                 { schema: autocompleteSearchRequestSchema },
             ),
         ).toThrow(

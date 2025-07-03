@@ -172,21 +172,26 @@ describe('Geocoding integration tests', () => {
     });
 
     test('Geocoding with API request and response callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
-        const result = await geocode({ query: 'Amsterdam', onAPIRequest, onAPIResponse });
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        const result = await geocode({ query: 'Amsterdam', onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 
     test('Geocoding with API request and response error callbacks', async () => {
-        const onAPIRequest = jest.fn() as (request: URL) => void;
-        const onAPIResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        const onApiRequest = jest.fn() as (request: URL) => void;
+        const onApiResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
         await expect(() =>
-            geocode({ query: 'Amsterdam', commonBaseURL: 'https://bljljljljl.com', onAPIRequest, onAPIResponse }),
+            geocode({
+                query: 'Amsterdam',
+                commonBaseURL: 'https://bljljljljl.com',
+                onAPIRequest: onApiRequest,
+                onAPIResponse: onApiResponse,
+            }),
         ).rejects.toThrow();
-        expect(onAPIRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onAPIResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
     });
 });

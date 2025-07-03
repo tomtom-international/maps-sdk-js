@@ -7,7 +7,7 @@ import type { LocationDisplayProps, PlaceIconConfig } from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
 import placesTestData from './data/PlacesModule.test.data.json';
 import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';
-import expectedPOILikeFeatureProps from './data/PlacesModulePOILikeProps.test.data.json';
+import expectedPoiLikeFeatureProps from './data/PlacesModulePOILikeProps.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
@@ -31,7 +31,7 @@ const applyIconConfig = async (page: Page, iconConfig?: PlaceIconConfig) =>
 
 const clearPlaces = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
 
-const getNumVisibleLayers = async (page: Page, sourceID: string) => getNumVisibleLayersBySource(page, sourceID);
+const getNumVisibleLayers = async (page: Page, sourceId: string) => getNumVisibleLayersBySource(page, sourceId);
 
 const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: LocationDisplayProps[]) =>
     expect(
@@ -45,7 +45,7 @@ const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisp
         ),
     ).toEqual(sortBy(expectedDisplayProps, 'title'));
 
-const compareToExpectedPOILikeDisplayProps = (
+const compareToExpectedPoiLikeDisplayProps = (
     places: MapGeoJSONFeature[],
     expectedDisplayProps: LocationDisplayProps[],
 ) => {
@@ -214,7 +214,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             await waitForMapIdle(page);
             // poi-like places avoid collisions, thus likely resulting in less num of rendered features:
             renderedPlaces = await queryRenderedFeatures(page, layerIDs);
-            compareToExpectedPOILikeDisplayProps(renderedPlaces, expectedPOILikeFeatureProps[name as never]);
+            compareToExpectedPoiLikeDisplayProps(renderedPlaces, expectedPoiLikeFeatureProps[name as never]);
             expect(mapEnv.consoleErrors).toHaveLength(0);
         });
     }
