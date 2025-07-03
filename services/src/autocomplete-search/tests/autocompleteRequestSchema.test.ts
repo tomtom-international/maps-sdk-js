@@ -1,11 +1,11 @@
 import type { Language } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { validateRequestSchema } from '../../shared/validation';
 import { autocompleteSearchRequestSchema } from '../autocompleteSearchRequestSchema';
 import type { AutocompleteSearchParams } from '../types';
 import autocompleteSearchReqObjects from './requestBuilderPerf.data.json';
-import { validateRequestSchema } from '../../shared/validation';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 
 describe('Autocomplete Schema Validation', () => {
     beforeAll(() => {

@@ -1,7 +1,7 @@
 import type { SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
-import { SELECTED_ROUTE_FILTER } from './shared';
 import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
+import { SELECTED_ROUTE_FILTER } from './shared';
 
 /**
  * @ignore

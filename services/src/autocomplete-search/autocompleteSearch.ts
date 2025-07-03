@@ -1,7 +1,7 @@
-import type { AutocompleteSearchParams, AutocompleteSearchResponse } from './types';
+import { callService } from '../shared/serviceTemplate';
 import type { AutocompleteSearchTemplate } from './autocompleteSearchTemplate';
 import { autocompleteSearchTemplate } from './autocompleteSearchTemplate';
-import { callService } from '../shared/serviceTemplate';
+import type { AutocompleteSearchParams, AutocompleteSearchResponse } from './types';
 
 /**
  * The Autocomplete API enables you to make a more meaningful Search API call by recognizing entities inside an input query and offering them as query terms.

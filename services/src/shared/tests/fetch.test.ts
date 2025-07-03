@@ -1,6 +1,6 @@
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
-import { fetchWith, get, post } from '../fetch';
 import { geocode } from '../../geocode';
+import { fetchWith, get, post } from '../fetch';
 import { mockFetchResponse } from './fetchMockUtils';
 
 describe('Fetch utility tests', () => {

@@ -1,8 +1,8 @@
 import type { Feature, Point, Position } from 'geojson';
-import type { PlaceDataSources } from './placeDataSources';
-import type { POI, RelatedPOI } from './poi/poi';
 import type { FeatureCollectionWithProperties } from '../extendedGeoJSON';
 import type { ChargingPark } from './ev/evPlaceProps';
+import type { PlaceDataSources } from './placeDataSources';
+import type { POI, RelatedPOI } from './poi/poi';
 
 /**
  * @group Place

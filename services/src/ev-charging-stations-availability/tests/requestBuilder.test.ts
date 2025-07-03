@@ -1,6 +1,6 @@
-import { buildEVChargingStationsAvailabilityRequest } from '../requestBuilder';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { buildEVChargingStationsAvailabilityRequest } from '../requestBuilder';
 
 describe('EV charging stations availability URL building functional tests', () => {
     test('Basic EV request building', () => {

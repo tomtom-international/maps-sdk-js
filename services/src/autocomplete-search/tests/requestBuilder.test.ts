@@ -1,9 +1,9 @@
-import { buildAutocompleteSearchRequest } from '../requestBuilder';
-import autocompleteSearchReqObjectsAndURLs from './requestBuilder.data.json';
-import type { AutocompleteSearchParams } from '../types';
-import autocompleteSearchReqObjects from './requestBuilderPerf.data.json';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { buildAutocompleteSearchRequest } from '../requestBuilder';
+import type { AutocompleteSearchParams } from '../types';
+import autocompleteSearchReqObjectsAndURLs from './requestBuilder.data.json';
+import autocompleteSearchReqObjects from './requestBuilderPerf.data.json';
 
 describe('Autocomplete Search request URL building tests', () => {
     test.each(autocompleteSearchReqObjectsAndURLs)(

@@ -1,10 +1,10 @@
-import apiAndParsedResponses from './responseParser.data.json';
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { parseGeocodingResponse } from '../responseParser';
 import type { GeocodingResponseAPI } from '../types/apiTypes';
 import type { GeocodingResponse } from '../types/geocodingResponse';
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import apiAndParsedResponses from './responseParser.data.json';
 import geocodingAPIResponses from './responseParserPerf.data.json';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 
 describe('Geocode response parsing tests', () => {
     test.each(apiAndParsedResponses)(

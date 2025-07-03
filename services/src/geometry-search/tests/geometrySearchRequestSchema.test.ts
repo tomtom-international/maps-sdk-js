@@ -1,9 +1,9 @@
-import type { GeometrySearchParams, SearchGeometryInput } from '../types';
-import { geometrySearchRequestSchema } from '../geometrySearchRequestSchema';
-import geometrySearchReqObjects from '../../geometry-search/tests/requestBuilderPerf.data.json';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
-import { validateRequestSchema } from '../../shared/validation';
+import geometrySearchReqObjects from '../../geometry-search/tests/requestBuilderPerf.data.json';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { validateRequestSchema } from '../../shared/validation';
+import { geometrySearchRequestSchema } from '../geometrySearchRequestSchema';
+import type { GeometrySearchParams, SearchGeometryInput } from '../types';
 
 describe('GeometrySearch Schema Validation', () => {
     const config = { schema: geometrySearchRequestSchema };

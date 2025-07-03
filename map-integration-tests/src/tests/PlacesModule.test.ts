@@ -2,11 +2,14 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Place, Places } from 'core';
 import { bboxFromGeoJSON } from 'core/src/util';
+import sortBy from 'lodash/sortBy';
 import type { LocationDisplayProps, PlaceIconConfig } from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
-import sortBy from 'lodash/sortBy';
-import { MapTestEnv } from './util/MapTestEnv';
+import placesTestData from './data/PlacesModule.test.data.json';
+import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';
+import expectedPOILikeFeatureProps from './data/PlacesModulePOILikeProps.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getNumVisibleLayersBySource,
     getPlacesSourceAndLayerIDs,
@@ -19,9 +22,6 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
-import placesTestData from './data/PlacesModule.test.data.json';
-import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';
-import expectedPOILikeFeatureProps from './data/PlacesModulePOILikeProps.test.data.json';
 
 const applyIconConfig = async (page: Page, iconConfig?: PlaceIconConfig) =>
     page.evaluate(

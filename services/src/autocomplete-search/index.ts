@@ -3,5 +3,5 @@
  * @category Service
  */
 
-export type * from './types';
 export * from './autocompleteSearch';
+export type * from './types';

@@ -1,10 +1,10 @@
-import type { Map } from 'maplibre-gl';
 import type { Place, Places } from '@anw/maps-sdk-js/core';
-import type { DisplayPlaceProps } from './types/placeDisplayProps';
-import type { PlacesModuleConfig } from './types/placesModuleConfig';
+import type { Map } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../pois/poiCategoryMapping';
 import { toMapDisplayPOICategory } from '../pois/poiCategoryMapping';
 import { addImageIfNotExisting } from '../shared/mapUtils';
+import type { DisplayPlaceProps } from './types/placeDisplayProps';
+import type { PlacesModuleConfig } from './types/placesModuleConfig';
 
 /**
  * Builds the title of the place to display it on the map.

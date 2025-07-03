@@ -1,5 +1,8 @@
 import type { Map, MapGeoJSONFeature, ResourceType } from 'maplibre-gl';
+import type { StyleInput, StyleModule } from '../../init';
+import poiLayerSpec from '../../places/tests/poiLayerSpec.data.json';
 import type { TomTomMap } from '../../TomTomMap';
+import { HILLSHADE_SOURCE_ID } from '../layers/sourcesIDs';
 import {
     addImageIfNotExisting,
     addLayers,
@@ -11,13 +14,10 @@ import {
     updateStyleWithModule,
     waitUntilMapIsReady,
 } from '../mapUtils';
-import { deserializedFeatureData, serializedFeatureData } from './featureDeserialization.test.data';
-import poiLayerSpec from '../../places/tests/poiLayerSpec.data.json';
 import type { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from '../SourceWithLayers';
 import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from '../types';
+import { deserializedFeatureData, serializedFeatureData } from './featureDeserialization.test.data';
 import updateStyleData from './mapUtils.test.data.json';
-import type { StyleInput, StyleModule } from '../../init';
-import { HILLSHADE_SOURCE_ID } from '../layers/sourcesIDs';
 
 const getTomTomMapMock = async (mapReady: boolean[]) =>
     ({

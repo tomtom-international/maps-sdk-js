@@ -13,15 +13,15 @@ import {
     inputSectionTypes,
     inputSectionTypesWithGuidance,
 } from '@anw/maps-sdk-js/core';
-import isNil from 'lodash/isNil';
 import type { Position } from 'geojson';
-import type { CalculateRouteParams, GuidanceParams, InputSectionTypes } from './types/calculateRouteParams';
-import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
+import isNil from 'lodash/isNil';
 import type { FetchInput } from '../shared';
+import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
+import { positionToCSVLatLon } from '../shared/geometry';
+import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
 import type { CalculateRoutePOSTDataAPI, PointWaypointAPI } from './types/apiRequestTypes';
 import type { LatitudeLongitudePointAPI } from './types/apiResponseTypes';
-import { positionToCSVLatLon } from '../shared/geometry';
-import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
+import type { CalculateRouteParams, GuidanceParams, InputSectionTypes } from './types/calculateRouteParams';
 
 // Are these params about Long Distance EV Routing:
 const isLDEVR = (params: CalculateRouteParams): boolean => !!params.commonEVRoutingParams;

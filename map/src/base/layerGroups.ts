@@ -1,7 +1,7 @@
-import type { BaseMapLayerGroupName, BaseMapLayerGroups } from './types/baseMapModuleConfig';
 import type { LayerSpecification } from 'maplibre-gl';
-import type { LayerSpecFilter } from '../shared';
 import { poiLayerIDs } from '../pois';
+import type { LayerSpecFilter } from '../shared';
+import type { BaseMapLayerGroupName, BaseMapLayerGroups } from './types/baseMapModuleConfig';
 
 type LayerGroupMapping = {
     layerIDMatches: string[];

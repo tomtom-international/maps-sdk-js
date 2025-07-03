@@ -1,8 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import type { Position } from 'geojson';
-import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
 import type { GlobalConfig, Language, Place, Places, PolygonFeatures, WaypointLike, Waypoints } from 'core';
+import type { Position } from 'geojson';
 import type {
     BaseMapModuleInitConfig,
     EventType,
@@ -19,6 +18,7 @@ import type {
 } from 'map';
 import { poiLayerIDs } from 'map/src/pois';
 import type { WaypointDisplayProps } from 'map/src/routing';
+import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
 import type { MapsSDKThis } from '../types/MapsSDKThis';
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMSG: string, timeoutMS: number): Promise<T> =>

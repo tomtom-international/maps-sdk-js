@@ -1,4 +1,4 @@
-import { z, type ZodMiniObject } from 'zod/v4-mini';
+import { type ZodMiniObject, z } from 'zod/v4-mini';
 import { poiCategoriesToID } from '../poi-categories/poiCategoriesToID';
 import { commonPlacesParamsSchema } from '../shared/commonPlacesParamsSchema';
 

@@ -1,10 +1,10 @@
+import type { Feature } from 'geojson';
 import isNil from 'lodash/isNil';
 import omit from 'lodash/omit';
-import type { EventType, SourceWithLayers } from './types';
-import type { Feature } from 'geojson';
 import type { MapGeoJSONFeature, Point2D } from 'maplibre-gl';
-import { GeoJSONSourceWithLayers } from './SourceWithLayers';
 import { areBothDefinedAndEqual } from './mapUtils';
+import { GeoJSONSourceWithLayers } from './SourceWithLayers';
+import type { EventType, SourceWithLayers } from './types';
 
 type IndexedFeature<F extends Feature = Feature> = { feature: F; index: number };
 

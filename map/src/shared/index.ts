@@ -3,12 +3,12 @@
  * @category Map
  */
 
-export type * from './types';
-export * from './SourceWithLayers';
 export * from './AbstractMapModule';
-export * from './TomTomMapSource';
-export * from './EventsProxy';
 export * from './EventsModule';
-export * from './layers/sourcesIDs';
-export * from './layers/layerIDs';
+export * from './EventsProxy';
 export type { MapFont } from './layers/commonLayerProps';
+export * from './layers/layerIDs';
+export * from './layers/sourcesIDs';
+export * from './SourceWithLayers';
+export * from './TomTomMapSource';
+export type * from './types';

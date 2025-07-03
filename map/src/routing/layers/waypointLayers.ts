@@ -1,8 +1,8 @@
 import type { ExpressionSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import { ICON_ID, TITLE } from '../../places';
 import type { LayerSpecTemplate } from '../../shared';
 import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
 import { INDEX_TYPE, MIDDLE_INDEX, STOP_DISPLAY_INDEX } from '../types/waypointDisplayProps';
-import { ICON_ID, TITLE } from '../../places';
 
 export const WAYPOINT_START_IMAGE_ID = 'waypointStart';
 export const WAYPOINT_STOP_IMAGE_ID = 'waypointStop';

@@ -1,7 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { MapGeoJSONFeature } from 'maplibre-gl';
+import type { Routes, WaypointLike } from 'core';
 import type { DisplayRouteSummaryProps, RoutingModuleConfig } from 'map';
+import { defaultRouteLayersConfig } from 'map/src/routing/layers/defaultConfig';
 import {
     HILLSHADE_SOURCE_ID,
     ROUTE_DESELECTED_LINE_LAYER_ID,
@@ -29,12 +30,11 @@ import {
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID,
 } from 'map/src/shared';
-import type { Routes, WaypointLike } from 'core';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
+import ldevrTestRoutesJSON from './data/RoutingModuleLDEVR.test.data.json';
+import rotterdamToAmsterdamRoutesJSON from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
-import rotterdamToAmsterdamRoutesJSON from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
-
-import ldevrTestRoutesJSON from './data/RoutingModuleLDEVR.test.data.json';
 import {
     getNumVisibleLayersBySource,
     getPaintProperty,
@@ -50,7 +50,6 @@ import {
     waitUntilRenderedFeaturesChange,
     zoomTo,
 } from './util/TestUtils';
-import { defaultRouteLayersConfig } from 'map/src/routing/layers/defaultConfig';
 
 const applyConfig = async (page: Page, config: RoutingModuleConfig) =>
     page.evaluate((inputConfig: RoutingModuleConfig) => {

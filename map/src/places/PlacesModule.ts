@@ -6,12 +6,12 @@ import type {
     SymbolLayerSpecWithoutSource,
 } from '../shared';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from '../shared';
-import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from './types/placesModuleConfig';
-import type { TomTomMap } from '../TomTomMap';
 import { changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
-import { preparePlacesForDisplay } from './preparePlacesForDisplay';
+import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
+import { preparePlacesForDisplay } from './preparePlacesForDisplay';
 import type { DisplayPlaceProps } from './types/placeDisplayProps';
+import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from './types/placesModuleConfig';
 
 /**
  * IDs of sources and layers for places module.

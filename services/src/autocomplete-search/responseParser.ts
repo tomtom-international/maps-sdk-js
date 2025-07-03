@@ -1,5 +1,5 @@
-import type { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from './types';
 import { latLonAPIToPosition } from '../shared/geometry';
+import type { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from './types';
 
 /**
  * Default function to parse autocomplete response.

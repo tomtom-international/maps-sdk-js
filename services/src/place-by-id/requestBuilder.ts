@@ -1,7 +1,7 @@
-import type { PlaceByIdParams } from './types';
 import type { CommonServiceParams } from '../shared';
-import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
 import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
+import type { PlaceByIdParams } from './types';
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/place.json`;

@@ -1,7 +1,7 @@
-import type { GeometrySearchParams, GeometrySearchResponse } from './types';
+import { callService } from '../shared/serviceTemplate';
 import type { GeometrySearchTemplate } from './geometrySearchTemplate';
 import { geometrySearchTemplate } from './geometrySearchTemplate';
-import { callService } from '../shared/serviceTemplate';
+import type { GeometrySearchParams, GeometrySearchResponse } from './types';
 
 /**
  *

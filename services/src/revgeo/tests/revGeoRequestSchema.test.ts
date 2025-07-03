@@ -1,9 +1,9 @@
-import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
-import revGeoReqObjects from '../../revgeo/tests/requestBuilderPerf.data.json';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import revGeoReqObjects from '../../revgeo/tests/requestBuilderPerf.data.json';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { validateRequestSchema } from '../../shared/validation';
 import { revGeocodeRequestSchema } from '../revGeocodeRequestSchema';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
 
 describe('ReverseGeocoding schema validation', () => {
     const apiKey = 'APIKEY';

@@ -1,15 +1,15 @@
 import isNil from 'lodash/isNil';
 import type { FilterSpecification } from 'maplibre-gl';
-import type { ValuesFilter } from '../shared';
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from '../shared';
-import type { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from './types/poisModuleConfig';
-import { notInTheStyle } from '../shared/errorMessages';
-import { waitUntilMapIsReady } from '../shared/mapUtils';
-import type { TomTomMap } from '../TomTomMap';
 import type { MapStylePOICategory } from '../places';
 import { toMapDisplayPOICategory } from '../places';
-import { poiCategoryGroups } from './poiCategoryGroups';
+import type { ValuesFilter } from '../shared';
+import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from '../shared';
+import { notInTheStyle } from '../shared/errorMessages';
 import { buildMappedValuesFilter, getMergedAllFilter } from '../shared/mapLibreFilterUtils';
+import { waitUntilMapIsReady } from '../shared/mapUtils';
+import type { TomTomMap } from '../TomTomMap';
+import { poiCategoryGroups } from './poiCategoryGroups';
+import type { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from './types/poisModuleConfig';
 
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.

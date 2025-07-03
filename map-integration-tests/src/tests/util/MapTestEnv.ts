@@ -1,6 +1,6 @@
+import type { ConsoleMessage, Page } from '@playwright/test';
 import type { MapLibreOptions, TomTomMapParams } from 'map';
 import type { MapsSDKThis } from '../types/MapsSDKThis';
-import type { ConsoleMessage, Page } from '@playwright/test';
 
 const parseConsoleMessage = async (message: ConsoleMessage): Promise<string> => {
     if (message.text() != 'JSHandle@error') {

@@ -1,11 +1,11 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { FilterSpecification, MapGeoJSONFeature } from 'maplibre-gl';
+import type { Point, Position } from 'geojson';
 import type { FilterablePOICategory, POIsModuleFeature } from 'map';
 import { getStyleCategories, poiLayerIDs } from 'map/src/pois';
-import { MapTestEnv } from './util/MapTestEnv';
+import type { FilterSpecification, MapGeoJSONFeature } from 'maplibre-gl';
 import type { MapsSDKThis } from './types/MapsSDKThis';
-import type { Point, Position } from 'geojson';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getNumVisiblePOILayers,
     getPixelCoords,

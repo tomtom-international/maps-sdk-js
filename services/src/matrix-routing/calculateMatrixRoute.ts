@@ -1,7 +1,7 @@
 import { callService } from '../shared/serviceTemplate';
-import type { CalculateMatrixRouteParams } from './types/calculateMatrixRouteParams';
 import { calculateMatrixRouteTemplate } from './calculateMatrixRouteTemplate';
 import type { CalculateMatrixRouteResponseAPI } from './types/apiResponseTypes';
+import type { CalculateMatrixRouteParams } from './types/calculateMatrixRouteParams';
 
 export const calculateMatrixRoute = async (
     params: CalculateMatrixRouteParams,

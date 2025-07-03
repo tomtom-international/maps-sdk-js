@@ -1,9 +1,9 @@
-import { parseFuzzySearchResponse } from './responseParser';
-import { buildFuzzySearchRequest } from './requestBuilder';
-import { get } from '../shared/fetch';
 import type { ServiceTemplate } from '../shared';
-import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from './types';
+import { get } from '../shared/fetch';
 import { fuzzySearchRequestSchema } from './fuzzySearchRequestSchema';
+import { buildFuzzySearchRequest } from './requestBuilder';
+import { parseFuzzySearchResponse } from './responseParser';
+import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from './types';
 
 /**
  * Fuzzy search service template type.

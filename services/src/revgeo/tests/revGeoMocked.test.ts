@@ -1,8 +1,8 @@
-import reverseGeocode from '../reverseGeocoding';
-import apiAndParsedResponses from './revGeoMocked.data.json';
-import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
 import omit from 'lodash/omit';
 import { mockFetchResponse } from '../../shared/tests/fetchMockUtils';
+import reverseGeocode from '../reverseGeocoding';
+import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
+import apiAndParsedResponses from './revGeoMocked.data.json';
 
 describe('Reverse Geocoding mock tests', () => {
     const unMockedFetch = global.fetch;

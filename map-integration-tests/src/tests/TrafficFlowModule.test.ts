@@ -1,10 +1,10 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { FlowConfig, RoadCategory, StyleModuleInitConfig, TrafficFlowFilters } from 'map';
 import { TRAFFIC_FLOW_SOURCE_ID } from 'map/src/shared';
-import { MapTestEnv } from './util/MapTestEnv';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import { getVisibleLayersBySource, setStyle, waitForMapIdle, waitUntilRenderedFeaturesChange } from './util/TestUtils';
 
 const waitForRenderedFlowChange = async (page: Page, previousFeaturesCount: number): Promise<MapGeoJSONFeature[]> =>

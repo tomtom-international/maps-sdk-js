@@ -1,5 +1,5 @@
-import { z } from 'zod/v4-mini';
 import { views } from '@anw/maps-sdk-js/core';
+import { z } from 'zod/v4-mini';
 
 const placeByIdRequestMandatory = z.object({
     entityId: z.string(),

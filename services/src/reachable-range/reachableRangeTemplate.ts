@@ -1,11 +1,11 @@
 import type { PolygonFeature } from '@anw/maps-sdk-js/core';
 import type { ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
-import type { ReachableRangeResponseAPI } from './types/apiResponseTypes';
-import type { ReachableRangeParams } from './types/reachableRangeParams';
+import { reachableRangeRequestValidationConfig } from './reachableRangeRequestSchema';
 import { buildReachableRangeRequest } from './requestBuilder';
 import { parseReachableRangeResponse } from './responseParser';
-import { reachableRangeRequestValidationConfig } from './reachableRangeRequestSchema';
+import type { ReachableRangeResponseAPI } from './types/apiResponseTypes';
+import type { ReachableRangeParams } from './types/reachableRangeParams';
 
 export type ReachableRangeTemplate = ServiceTemplate<
     ReachableRangeParams,

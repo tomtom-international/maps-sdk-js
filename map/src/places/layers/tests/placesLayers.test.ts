@@ -1,4 +1,6 @@
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
+import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
+import poiLayerSpec from '../../tests/poiLayerSpec.data.json';
 import {
     buildPlacesLayerSpecs,
     clickedPlaceLayerSpec,
@@ -6,8 +8,6 @@ import {
     placesLayerSpec,
     selectedPlaceLayerSpec,
 } from '../placesLayers';
-import poiLayerSpec from '../../tests/poiLayerSpec.data.json';
-import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
 
 describe('Get places layer spec with circle or pin icon style config', () => {
     const mapLibreMock = jest.fn() as unknown as Map;

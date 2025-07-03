@@ -1,5 +1,5 @@
-import { parseOpeningHours } from '../searchResultParsing';
 import type { OpeningHours } from '@anw/maps-sdk-js/core';
+import { parseOpeningHours } from '../searchResultParsing';
 
 describe('Parse API Opening Hours tests', () => {
     test('Parse API Opening Hours always open', () => {

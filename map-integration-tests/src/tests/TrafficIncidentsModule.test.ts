@@ -1,12 +1,12 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { MapGeoJSONFeature } from 'maplibre-gl';
 import { indexedMagnitudes } from 'core';
 import type { IncidentCategory, IncidentsConfig, RoadCategory, TrafficIncidentsFilters } from 'map';
-import { incidentCategories as availableIncidentCategories, incidentCategoriesMapping } from 'map/src/traffic';
 import { TRAFFIC_INCIDENTS_SOURCE_ID } from 'map/src/shared';
-import { MapTestEnv } from './util/MapTestEnv';
+import { incidentCategories as availableIncidentCategories, incidentCategoriesMapping } from 'map/src/traffic';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getVisibleLayersBySource,
     initTrafficIncidents,

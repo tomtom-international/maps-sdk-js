@@ -1,10 +1,10 @@
-import type { GeocodingParams } from '../types/geocodingParams';
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import type { Polygon } from 'geojson';
 import geoCodingReqObjects from '../../geocode/tests/requestBuilderPerf.data.json';
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { validateRequestSchema } from '../../shared/validation';
 import { geocodingRequestSchema } from '../geocodingRequestSchema';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import type { GeocodingParams } from '../types/geocodingParams';
 
 describe('Geocoding schema validation', () => {
     const apiKey = 'APIKEY';

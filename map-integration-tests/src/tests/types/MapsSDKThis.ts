@@ -1,4 +1,3 @@
-import type { LngLatLike, Map, MapGeoJSONFeature } from 'maplibre-gl';
 import type {
     BaseMapModule,
     GeometriesModule,
@@ -11,6 +10,7 @@ import type {
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from 'map';
+import type { LngLatLike, Map, MapGeoJSONFeature } from 'maplibre-gl';
 
 export type MapsSDKThis = typeof globalThis & {
     // @ts-ignore

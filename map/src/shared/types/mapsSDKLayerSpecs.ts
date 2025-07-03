@@ -1,6 +1,6 @@
 import type { BackgroundLayerSpecification, LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import type { GeoJSONSourceWithLayers, StyleSourceWithLayers } from '../SourceWithLayers';
 import type { mapStyleLayerIDs } from '../layers/layerIDs';
+import type { GeoJSONSourceWithLayers, StyleSourceWithLayers } from '../SourceWithLayers';
 
 /**
  * Layer specification that supports a data source.

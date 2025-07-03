@@ -1,10 +1,10 @@
-import type { PostObject } from '../shared';
-import type { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from './types';
-import { positionToCSVLatLon } from '../shared/geometry';
-import { sampleWithinMaxLength } from '../shared/arrays';
-import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 import { bboxFromCoordsArray } from '@anw/maps-sdk-js/core';
 import type { MultiPolygon, Position } from 'geojson';
+import type { PostObject } from '../shared';
+import { sampleWithinMaxLength } from '../shared/arrays';
+import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { positionToCSVLatLon } from '../shared/geometry';
+import type { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from './types';
 
 const findFiftyLargestPolygons = (searchGeometry: MultiPolygon): Position[][][] => {
     // we calculate the size of each polygon based on bounding box (simplified)

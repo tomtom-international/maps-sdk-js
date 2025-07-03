@@ -1,14 +1,14 @@
-import { parseGeometrySearchResponse } from './responseParser';
-import { buildGeometrySearchRequest } from './requestBuilder';
-import { post } from '../shared/fetch';
 import type { ServiceTemplate } from '../shared';
+import { post } from '../shared/fetch';
+import { geometrySearchRequestSchema } from './geometrySearchRequestSchema';
+import { buildGeometrySearchRequest } from './requestBuilder';
+import { parseGeometrySearchResponse } from './responseParser';
 import type {
     GeometrySearchParams,
     GeometrySearchRequestAPI,
     GeometrySearchResponse,
     GeometrySearchResponseAPI,
 } from './types';
-import { geometrySearchRequestSchema } from './geometrySearchRequestSchema';
 
 /**
  * Geometry search service template type.

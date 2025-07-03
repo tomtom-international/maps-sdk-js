@@ -1,11 +1,11 @@
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 import analyze from 'rollup-plugin-analyzer';
-import svg from 'rollup-plugin-svg-import';
 // @ts-ignore
 import includePaths from 'rollup-plugin-includepaths';
+import svg from 'rollup-plugin-svg-import';
 
 const includePathOptions = {
     include: {},

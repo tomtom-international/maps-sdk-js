@@ -1,9 +1,9 @@
 import type { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } from 'maplibre-gl';
-import { AbstractEventProxy } from './AbstractEventProxy';
-import type { ClickEventType, SourceWithLayers } from './types';
 import type { MapEventsConfig } from '../init';
-import { deserializeFeatures } from './mapUtils';
+import { AbstractEventProxy } from './AbstractEventProxy';
 import { detectHoverState, updateEventState } from './eventUtils';
+import { deserializeFeatures } from './mapUtils';
+import type { ClickEventType, SourceWithLayers } from './types';
 
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {

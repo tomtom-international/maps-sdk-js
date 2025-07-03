@@ -1,12 +1,13 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { Position } from 'geojson';
 import type { Place, Places, PolygonFeatures } from 'core';
+import type { Position } from 'geojson';
+import { BASE_MAP_SOURCE_ID } from 'map/src/shared';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
-import { MapTestEnv } from './util/MapTestEnv';
-import type { MapsSDKThis } from './types/MapsSDKThis';
-import placesJSON from './data/PlacesModuleEvents.test.data.json';
 import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
+import placesJSON from './data/PlacesModuleEvents.test.data.json';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getClickedTopFeature,
     getGeometriesSourceAndLayerIDs,
@@ -21,7 +22,6 @@ import {
     waitForMapIdle,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
-import { BASE_MAP_SOURCE_ID } from 'map/src/shared';
 
 const places = placesJSON as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];

@@ -1,4 +1,5 @@
 import type { FuzzySearchParams } from '../fuzzy-search';
+import type { GeometrySearchParams } from '../geometry-search';
 import {
     appendByJoiningParamValue,
     appendCommonParams,
@@ -6,7 +7,6 @@ import {
     appendOptionalParam,
     mapPOICategoriesToIDs,
 } from './requestBuildingUtils';
-import type { GeometrySearchParams } from '../geometry-search';
 
 /**
  * @ignore

@@ -1,11 +1,11 @@
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import type { FetchInput } from '../../shared';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { buildCalculateRouteRequest } from '../requestBuilder';
+import type { CalculateRoutePOSTDataAPI } from '../types/apiRequestTypes';
+import type { CalculateRouteParams } from '../types/calculateRouteParams';
 import { sdkAndAPIRequests } from './requestBuilder.data';
 import { routeRequestParams, shortRouteRequestParams } from './requestBuilderPerf.data';
-import type { CalculateRouteParams } from '../types/calculateRouteParams';
-import { buildCalculateRouteRequest } from '../requestBuilder';
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
-import type { FetchInput } from '../../shared';
-import type { CalculateRoutePOSTDataAPI } from '../types/apiRequestTypes';
 
 describe('Calculate Route request building functional tests', () => {
     test.each(sdkAndAPIRequests)(

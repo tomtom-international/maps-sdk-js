@@ -1,11 +1,11 @@
-import type { GeocodingResponse } from './types/geocodingResponse';
-import { parseGeocodingResponse } from './responseParser';
-import { buildGeocodingRequest } from './requestBuilder';
-import { get } from '../shared/fetch';
 import type { ServiceTemplate } from '../shared';
-import type { GeocodingParams } from './types/geocodingParams';
-import type { GeocodingResponseAPI } from './types/apiTypes';
+import { get } from '../shared/fetch';
 import { geocodingRequestSchema } from './geocodingRequestSchema';
+import { buildGeocodingRequest } from './requestBuilder';
+import { parseGeocodingResponse } from './responseParser';
+import type { GeocodingResponseAPI } from './types/apiTypes';
+import type { GeocodingParams } from './types/geocodingParams';
+import type { GeocodingResponse } from './types/geocodingResponse';
 
 /**
  * Geocoding service template type.

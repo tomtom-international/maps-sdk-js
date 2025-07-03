@@ -1,5 +1,5 @@
-import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import type { Place } from '@anw/maps-sdk-js/core';
+import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../../pois/poiCategoryMapping';
 import type { MapFont } from '../../shared';
 

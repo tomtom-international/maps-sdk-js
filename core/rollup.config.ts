@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
-import terser from '@rollup/plugin-terser';
-import analyze from 'rollup-plugin-analyzer';
 import replace from '@rollup/plugin-replace';
+import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import analyze from 'rollup-plugin-analyzer';
 
 const getSDKVersion = () => {
     const fileContent = fs.readFileSync(path.resolve('..', './package.json'), { encoding: 'utf-8', flag: 'r' });

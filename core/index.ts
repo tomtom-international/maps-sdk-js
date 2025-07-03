@@ -3,6 +3,7 @@
  * @module
  * @category Core
  */
-export * from './src/types';
+
 export * from './src/config/globalConfig';
+export * from './src/types';
 export * from './src/util';

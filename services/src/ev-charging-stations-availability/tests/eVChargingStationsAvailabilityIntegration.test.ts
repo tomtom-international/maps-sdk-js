@@ -1,9 +1,9 @@
 import type { ChargingPoint, ChargingStationsAvailability } from '@anw/maps-sdk-js/core';
 import { chargingPointStatus, chargingStationAccessTypes, connectorTypes } from '@anw/maps-sdk-js/core';
-import evChargingStationsAvailability, { buildPlacesWithEVAvailability } from '../evChargingStationsAvailability';
-import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
-import { SDKServiceError } from '../../shared';
 import { search } from '../../search';
+import { SDKServiceError } from '../../shared';
+import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
+import evChargingStationsAvailability, { buildPlacesWithEVAvailability } from '../evChargingStationsAvailability';
 import type { ChargingStationsAvailabilityResponseAPI } from '../types/apiTypes';
 
 describe('charging availability errors', () => {

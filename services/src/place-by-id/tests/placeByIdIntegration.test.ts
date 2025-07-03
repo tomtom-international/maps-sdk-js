@@ -1,12 +1,11 @@
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
-
-import type { PlaceByIdResponseAPI } from '..';
-import { placeById } from '..';
 import {
     basePOITestProps,
     evStationWithOpeningHoursTestProps,
     expectPlaceTestFeature,
 } from '../../shared/tests/integrationTestUtils';
+import type { PlaceByIdResponseAPI } from '..';
+import { placeById } from '..';
 
 describe('Place By Id API', () => {
     beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));

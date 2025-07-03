@@ -1,8 +1,10 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { EventType } from 'map';
 import type { Waypoint } from 'core';
+import type { EventType } from 'map';
 import { WAYPOINT_SYMBOLS_LAYER_ID } from 'map/src/shared';
+import rotterdamToAmsterdamRoutesJSON from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
+import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getClickedTopFeature,
@@ -16,8 +18,6 @@ import {
     waitForEventState,
     waitForMapIdle,
 } from './util/TestUtils';
-import rotterdamToAmsterdamRoutesJSON from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
-import type { MapsSDKThis } from './types/MapsSDKThis';
 
 // (We reparse the route because it contains Date objects):
 const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJSON));

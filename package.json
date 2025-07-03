@@ -11,7 +11,7 @@
     "build": "npm run build -ws",
     "type-check": "npm run type-check -ws",
     "lint": "biome lint .",
-    "lint:fix": "biome lint . --write",
+    "lint:fix": "biome check . --write && biome lint . --write",
     "format": "biome format .",
     "format:fix": "biome format . --write",
     "test": "npm run test -ws",

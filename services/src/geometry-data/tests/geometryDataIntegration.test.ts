@@ -1,8 +1,8 @@
 import type { Places } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
 import { geometryData } from '../geometryData';
-import places from './geometryDataIntegration.data.json';
 import type { GeometryDataResponseAPI } from '../types/apiTypes';
+import places from './geometryDataIntegration.data.json';
 
 describe('Geometry data errors', () => {
     test('Geometry data test without API key', async () => {

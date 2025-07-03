@@ -1,12 +1,12 @@
 import type { Routes } from '@anw/maps-sdk-js/core';
+import calcBearing from '@turf/bearing';
+import type { DisplayRouteProps } from '../types/displayRoutes';
 import type {
     DisplayInstruction,
     DisplayInstructionArrow,
     DisplayInstructionArrows,
     DisplayInstructions,
 } from '../types/guidance';
-import type { DisplayRouteProps } from '../types/displayRoutes';
-import calcBearing from '@turf/bearing';
 
 /**
  * @ignore

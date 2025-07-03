@@ -1,9 +1,9 @@
-import type { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from '../types';
-import apiAndParsedResponses from './responseParser.data.json';
-import { parseAutocompleteSearchResponse } from '../responseParser';
-import apiResponses from './responseParserPerf.data.json';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { parseAutocompleteSearchResponse } from '../responseParser';
+import type { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from '../types';
+import apiAndParsedResponses from './responseParser.data.json';
+import apiResponses from './responseParserPerf.data.json';
 
 describe('Autocomplete response parser tests', () => {
     test.each(apiAndParsedResponses)(

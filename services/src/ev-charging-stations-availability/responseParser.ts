@@ -1,7 +1,7 @@
 import type { ChargingStationsAvailability } from '@anw/maps-sdk-js/core';
+import { parseOpeningHours } from '../shared/searchResultParsing';
 import { toChargingPointAvailability, toConnectorBasedAvailabilities } from './connectorAvailability';
 import type { ChargingStationsAvailabilityResponseAPI } from './types/apiTypes';
-import { parseOpeningHours } from '../shared/searchResultParsing';
 
 /**
  * Default method for parsing ev charging stations availability from {@link ChargingStationsAvailability}

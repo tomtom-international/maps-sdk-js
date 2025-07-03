@@ -8,18 +8,18 @@ import type {
 } from '@anw/maps-sdk-js/core';
 import { formatDuration, generateId, getPosition } from '@anw/maps-sdk-js/core';
 import type { Point, Position } from 'geojson';
-import type { IndexType, WaypointDisplayProps } from '../types/waypointDisplayProps';
-import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../types/waypointDisplayProps';
+import type { LocationDisplayProps } from '../../places';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
     WAYPOINT_STOP_IMAGE_ID,
 } from '../layers/waypointLayers';
-import type { PlanningWaypoint } from '../types/planningWaypoint';
-import type { LocationDisplayProps } from '../../places';
 import type { DisplayRouteProps, RouteStyleProps } from '../types/displayRoutes';
+import type { PlanningWaypoint } from '../types/planningWaypoint';
 import type { WaypointsSourceConfig } from '../types/routeModuleConfig';
+import type { IndexType, WaypointDisplayProps } from '../types/waypointDisplayProps';
+import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../types/waypointDisplayProps';
 
 const indexTypeFor = (index: number, arrayLength: number): IndexType =>
     index === 0 ? START_INDEX : index < arrayLength - 1 ? MIDDLE_INDEX : FINISH_INDEX;

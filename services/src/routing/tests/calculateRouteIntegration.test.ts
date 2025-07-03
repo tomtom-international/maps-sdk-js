@@ -2,9 +2,9 @@ import type { LegSectionProps, SectionProps, SectionsProps, SectionType, Summary
 import { inputSectionTypes } from '@anw/maps-sdk-js/core';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { calculateRoute } from '../calculateRoute';
-import type { CalculateRouteParams } from '../types/calculateRouteParams';
-import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
 import type { CalculateRouteRequestAPI } from '../types/apiRequestTypes';
+import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
+import type { CalculateRouteParams } from '../types/calculateRouteParams';
 
 const assertSummaryBasics = (summary: SummaryBase): void => {
     expect(summary).toBeDefined();

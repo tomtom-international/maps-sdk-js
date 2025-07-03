@@ -1,9 +1,9 @@
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
-import { validateRequestSchema } from '../../shared/validation';
-import { routeRequestParams } from './requestBuilderPerf.data';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { validateRequestSchema } from '../../shared/validation';
 import { routeRequestValidationConfig } from '../calculateRouteRequestSchema';
 import type { CalculateRouteParams } from '../types/calculateRouteParams';
+import { routeRequestParams } from './requestBuilderPerf.data';
 
 describe('Calculate route request schema validation', () => {
     const apiKey = 'APIKEY';

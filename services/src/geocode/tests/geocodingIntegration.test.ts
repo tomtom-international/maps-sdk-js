@@ -1,8 +1,8 @@
 import type { Polygon } from 'geojson';
+import { SDKServiceError } from '../../shared';
+import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import geocode from '../geocoding';
 import type { GeocodingResponseAPI } from '../types/apiTypes';
-import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
-import { SDKServiceError } from '../../shared';
 
 describe('Geocoding errors', () => {
     test('Geocoding test without API key', async () => {

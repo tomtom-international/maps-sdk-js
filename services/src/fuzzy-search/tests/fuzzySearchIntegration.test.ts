@@ -1,16 +1,16 @@
 import type { Fuel, Place, POICategory, SearchPlaceProps } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { search } from '../../search';
-import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from '../types';
 import type { SearchIndexType } from '../../shared';
 import {
     baseSearchPlaceMandatoryProps,
     evStationBaseTestProps,
     expectPlaceTestFeature,
 } from '../../shared/tests/integrationTestUtils';
-import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { buildFuzzySearchRequest } from '../requestBuilder';
 import { parseFuzzySearchResponse } from '../responseParser';
+import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from '../types';
 
 describe('Fuzzy Search service', () => {
     beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));

@@ -1,5 +1,5 @@
-import type { LayerSpecTemplate } from '../../shared';
 import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { LayerSpecTemplate } from '../../shared';
 import { SELECTED_ROUTE_FILTER } from './shared';
 
 /**

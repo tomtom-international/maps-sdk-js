@@ -1,7 +1,7 @@
-import type { FuzzySearchParams, FuzzySearchResponse } from './types';
+import { callService } from '../shared/serviceTemplate';
 import type { FuzzySearchTemplate } from './fuzzySearchTemplate';
 import { fuzzySearchTemplate } from './fuzzySearchTemplate';
-import { callService } from '../shared/serviceTemplate';
+import type { FuzzySearchParams, FuzzySearchResponse } from './types';
 
 /**
  *

@@ -1,6 +1,6 @@
+import { geometryDataTemplate } from './geometryDataTemplate';
 import { buildGeometryDataRequest } from './requestBuilder';
 import { parseGeometryDataResponse } from './responseParser';
-import { geometryDataTemplate } from './geometryDataTemplate';
 
 const customize = {
     buildGeometryDataRequest,

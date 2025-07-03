@@ -1,9 +1,9 @@
 import type { ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { placeByIdRequestSchema } from './placeByIdSchema';
-import type { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from './types';
 import { buildPlaceByIdRequest } from './requestBuilder';
 import { parsePlaceByIdResponse } from './responseParser';
+import type { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from './types';
 
 /**
  * Place By Is template type.

@@ -1,12 +1,12 @@
 import type { StyleImageMetadata } from 'maplibre-gl';
-import instructionArrowSVG from './instruction-line-arrow.svg';
-import trafficSVG from './traffic.svg';
-import summaryMapBubbleSVG from './summary-map-bubble.svg';
 import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
-import pinSVG from './pin.svg';
 import circleSVG from './circle.svg';
-import startSVG from './start.svg';
 import finishSVG from './finish.svg';
+import instructionArrowSVG from './instruction-line-arrow.svg';
+import pinSVG from './pin.svg';
+import startSVG from './start.svg';
+import summaryMapBubbleSVG from './summary-map-bubble.svg';
+import trafficSVG from './traffic.svg';
 
 let instructionArrowIconImg: HTMLImageElement;
 

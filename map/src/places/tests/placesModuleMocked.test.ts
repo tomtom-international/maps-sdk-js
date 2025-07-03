@@ -1,8 +1,8 @@
 import type { Place, Places } from '@anw/maps-sdk-js/core';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
-import { PlacesModule } from '../PlacesModule';
-import type { TomTomMap } from '../../TomTomMap';
 import { EventsModule, PLACES_SOURCE_PREFIX_ID } from '../../shared';
+import type { TomTomMap } from '../../TomTomMap';
+import { PlacesModule } from '../PlacesModule';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

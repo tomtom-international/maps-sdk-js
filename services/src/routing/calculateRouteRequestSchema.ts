@@ -1,10 +1,10 @@
-import { z } from 'zod/v4-mini';
 import type { SectionType } from '@anw/maps-sdk-js/core';
 import { getGeoInputType, inputSectionTypesWithGuidance } from '@anw/maps-sdk-js/core';
-import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from '../shared/geometriesSchema';
-import type { CalculateRouteParams } from './types/calculateRouteParams';
-import type { SchemaRefinement } from '../shared/types/validation';
+import { z } from 'zod/v4-mini';
 import { commonRoutingRequestSchema } from '../shared/commonRoutingRequestSchema';
+import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from '../shared/geometriesSchema';
+import type { SchemaRefinement } from '../shared/types/validation';
+import type { CalculateRouteParams } from './types/calculateRouteParams';
 
 const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);
 const pathLikeSchema = z.union([lineStringCoordsSchema, featureSchema]);

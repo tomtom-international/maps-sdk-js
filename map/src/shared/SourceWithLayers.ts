@@ -1,3 +1,4 @@
+import type { FeatureCollection } from 'geojson';
 import type {
     GeoJSONSource,
     GeoJSONSourceSpecification,
@@ -6,6 +7,7 @@ import type {
     Source,
     SourceSpecification,
 } from 'maplibre-gl';
+import { asDefined } from './assertionUtils';
 import { TomTomMapSource } from './TomTomMapSource';
 import type {
     CleanEventStateOptions,
@@ -18,8 +20,6 @@ import type {
     ToBeAddedLayerSpec,
     ToBeAddedLayerSpecWithoutSource,
 } from './types';
-import type { FeatureCollection } from 'geojson';
-import { asDefined } from './assertionUtils';
 
 /**
  * Contains a source and the layers to render its data.

@@ -6,10 +6,10 @@ import type {
     Places,
 } from '@anw/maps-sdk-js/core';
 import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
-import type { ChargingStationsAvailabilityParams } from './types/evChargingStationsAvailabilityParams';
 import { callService } from '../shared/serviceTemplate';
 import type { EVChargingStationsAvailabilityTemplate } from './evChargingStationsAvailabilityTemplate';
 import { evChargingStationsAvailabilityTemplate } from './evChargingStationsAvailabilityTemplate';
+import type { ChargingStationsAvailabilityParams } from './types/evChargingStationsAvailabilityParams';
 
 /**
  * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.

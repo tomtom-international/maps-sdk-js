@@ -1,7 +1,6 @@
 import { bboxFromGeoJSON, bboxOnlyIfWithArea } from '@anw/maps-sdk-js/core';
-
-import type { GeometrySearchResponse, GeometrySearchResponseAPI } from './types';
 import { parseSearchAPIResult, parseSummaryAPI } from '../shared/searchResultParsing';
+import type { GeometrySearchResponse, GeometrySearchResponseAPI } from './types';
 
 /**
  * Default function to parse a geometry search response.

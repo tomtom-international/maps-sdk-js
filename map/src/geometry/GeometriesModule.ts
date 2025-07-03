@@ -1,21 +1,21 @@
+import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
 import type { FeatureCollection, Point } from 'geojson';
 import type { SymbolLayerSpecification } from 'maplibre-gl';
-import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
 import type { SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from '../shared';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
-import type {
-    GeometriesModuleConfig,
-    GeometryBeforeLayerConfig,
-    GeometryTextConfig,
-} from './types/geometriesModuleConfig';
-import type { TomTomMap } from '../TomTomMap';
 import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
+import type { TomTomMap } from '../TomTomMap';
 import {
     buildGeometryLayerSpecs,
     buildGeometryTitleLayerSpec,
     prepareGeometryForDisplay,
     prepareTitleForDisplay,
 } from './prepareGeometryForDisplay';
+import type {
+    GeometriesModuleConfig,
+    GeometryBeforeLayerConfig,
+    GeometryTextConfig,
+} from './types/geometriesModuleConfig';
 
 /**
  * IDs of sources and layers from a geometry module.

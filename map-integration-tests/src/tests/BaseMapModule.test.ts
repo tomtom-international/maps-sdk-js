@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { BaseMapLayerGroupName, BaseMapLayerGroups } from 'map/src/base';
 import { baseMapLayerGroupNames } from 'map/src/base';
+import { poiLayerIDs } from 'map/src/pois';
 import { BASE_MAP_SOURCE_ID } from 'map/src/shared';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
@@ -12,7 +13,6 @@ import {
     initBasemap2,
     waitForMapReady,
 } from './util/TestUtils';
-import { poiLayerIDs } from 'map/src/pois';
 
 const getBaseMapLayerCount = async (page: Page): Promise<number> =>
     page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.sourceAndLayerIDs.vectorTiles.layerIDs.length as number);

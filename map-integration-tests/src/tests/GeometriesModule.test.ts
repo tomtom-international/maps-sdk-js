@@ -1,14 +1,14 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { PolygonFeatures } from 'core';
+import type { Position } from 'geojson';
 import type { DisplayGeometryProps, GeometryBeforeLayerConfig } from 'map';
 import { mapStyleLayerIDs } from 'map/src/shared';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
-import type { Position } from 'geojson';
-import { MapTestEnv } from './util/MapTestEnv';
-import type { MapsSDKThis } from './types/MapsSDKThis';
 import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
 import netherlandsGeometryData from './data/GeometriesModule-Netherlands.test.data.json';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getGeometriesSourceAndLayerIDs,
     getLayerByID,

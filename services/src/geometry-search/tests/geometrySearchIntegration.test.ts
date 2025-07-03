@@ -1,8 +1,15 @@
 import type { Place, PolygonFeatures, SearchPlaceProps } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { search } from '../../search';
-import { parseGeometrySearchResponse } from '../responseParser';
+import type { SearchIndexType } from '../../shared';
+import {
+    basePOITestProps,
+    evStationBaseTestProps,
+    expectPlaceTestFeature,
+} from '../../shared/tests/integrationTestUtils';
 import { buildGeometrySearchRequest } from '../requestBuilder';
+import { parseGeometrySearchResponse } from '../responseParser';
 import type {
     GeometrySearchParams,
     GeometrySearchRequestAPI,
@@ -10,15 +17,8 @@ import type {
     GeometrySearchResponseAPI,
     SearchGeometryInput,
 } from '../types';
-import type { SearchIndexType } from '../../shared';
-import {
-    basePOITestProps,
-    evStationBaseTestProps,
-    expectPlaceTestFeature,
-} from '../../shared/tests/integrationTestUtils';
-import realGeometryDataInput from './realGeometryDataInput.json';
 import hugeMultiPolygonDataInput from './hugeMultiPolygonDataInput.json';
-import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
+import realGeometryDataInput from './realGeometryDataInput.json';
 
 describe('Geometry Search service', () => {
     const geometries: SearchGeometryInput[] = [

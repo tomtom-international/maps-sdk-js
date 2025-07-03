@@ -1,6 +1,6 @@
-import type { Connector } from './connector';
-import type { ChargingStationsAvailability, ConnectorAvailability } from './chargingStationsAvailability';
 import type { CommonPlaceProps } from '../place';
+import type { ChargingStationsAvailability, ConnectorAvailability } from './chargingStationsAvailability';
+import type { Connector } from './connector';
 
 /**
  * @group Place

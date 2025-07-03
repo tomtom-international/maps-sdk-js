@@ -1,7 +1,7 @@
 import type { MapOptions } from 'maplibre-gl';
-import type { MapLibreOptions, TomTomMapParams } from './types/mapInit';
-import { buildStyleInput } from './styleInputBuilder';
 import { injectTomTomHeaders } from '../shared/mapUtils';
+import { buildStyleInput } from './styleInputBuilder';
+import type { MapLibreOptions, TomTomMapParams } from './types/mapInit';
 
 /**
  * @ignore

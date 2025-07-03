@@ -1,6 +1,6 @@
-import type { OpeningHours } from './openingHours';
-import type { Classification } from './classification';
 import type { TimeZone } from '../../timezone';
+import type { Classification } from './classification';
+import type { OpeningHours } from './openingHours';
 
 /**
  * Place of interest information.

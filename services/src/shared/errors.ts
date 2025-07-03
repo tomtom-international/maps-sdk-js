@@ -2,8 +2,8 @@ import type { $ZodIssue } from 'zod/dist/types/v4/core/errors';
 import type { ParseResponseError } from './serviceTypes';
 import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiResponseErrorTypes';
 import { APICode } from './types/apiResponseErrorTypes';
-import type { ValidationError } from './validation';
 import type { ServiceName } from './types/servicesTypes';
+import type { ValidationError } from './validation';
 
 /**
  * Main Error Class for the whole SDK to help with error handling.

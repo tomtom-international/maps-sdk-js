@@ -1,11 +1,10 @@
-import isNil from 'lodash/isNil';
-
 import { getPositionStrict } from '@anw/maps-sdk-js/core';
-import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
-import { arrayToCSV } from '../shared/arrays';
+import isNil from 'lodash/isNil';
 import type { CommonServiceParams } from '../shared';
-import { appendCommonParams } from '../shared/requestBuildingUtils';
+import { arrayToCSV } from '../shared/arrays';
 import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { appendCommonParams } from '../shared/requestBuildingUtils';
+import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
 
 const buildURLBasePath = (params: CommonServiceParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/reverseGeocode`;

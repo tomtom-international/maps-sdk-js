@@ -1,6 +1,6 @@
 import { validateRequestSchema } from '../../shared/validation';
-import type { ReachableRangeParams } from '../types/reachableRangeParams';
 import { reachableRangeRequestValidationConfig } from '../reachableRangeRequestSchema';
+import type { ReachableRangeParams } from '../types/reachableRangeParams';
 
 describe.skip('Reachable range request schema validation', () => {
     const apiKey = 'APIKEY';

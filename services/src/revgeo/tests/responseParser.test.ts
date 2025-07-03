@@ -1,12 +1,12 @@
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import omit from 'lodash/omit';
-import apiAndParsedResponses from './responseParser.data.json';
-import apiResponses from './responseParserPerf.data.json';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { parseRevGeoResponse } from '../responseParser';
-import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
 import type { ReverseGeocodingResponse } from '../reverseGeocoding';
 import type { ReverseGeocodingResponseAPI } from '../types/apiTypes';
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
+import apiAndParsedResponses from './responseParser.data.json';
+import apiResponses from './responseParserPerf.data.json';
 
 describe('ReverseGeocode response parsing tests', () => {
     test.each(apiAndParsedResponses)(

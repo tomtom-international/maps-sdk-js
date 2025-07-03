@@ -24,6 +24,10 @@ import {
     WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
 } from '../../shared';
+import type { RouteLayersConfig } from '../types/routeModuleConfig';
+import { routeEVChargingStationSymbol } from './evChargingStationLayers';
+import { instructionArrow, instructionLine, instructionOutline } from './guidanceLayers';
+import { routeFerriesLine, routeFerriesSymbol } from './routeFerrySectionLayers';
 import {
     routeDeselectedLine,
     routeDeselectedOutline,
@@ -31,21 +35,17 @@ import {
     routeMainLine,
     routeOutline,
 } from './routeMainLineLayers';
-import { waypointLabels, waypointSymbols } from './waypointLayers';
+import { routeTollRoadsOutline, routeTollRoadsSymbol } from './routeTollRoadLayers';
 import {
     routeIncidentsBGLine,
     routeIncidentsDashedLine,
     routeIncidentsPatternLine,
     routeIncidentsSymbol,
 } from './routeTrafficSectionLayers';
-import { routeEVChargingStationSymbol } from './evChargingStationLayers';
-import { routeFerriesLine, routeFerriesSymbol } from './routeFerrySectionLayers';
-import { routeTollRoadsOutline, routeTollRoadsSymbol } from './routeTollRoadLayers';
 import { routeTunnelsLine } from './routeTunnelSectionLayers';
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from './routeVehicleRestrictedLayers';
-import { instructionArrow, instructionLine, instructionOutline } from './guidanceLayers';
-import type { RouteLayersConfig } from '../types/routeModuleConfig';
 import { summaryBubbleSymbolPoint } from './summaryBubbleLayers';
+import { waypointLabels, waypointSymbols } from './waypointLayers';
 
 /**
  * Default implementation of the route layers.

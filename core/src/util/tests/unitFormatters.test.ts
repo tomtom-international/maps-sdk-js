@@ -1,5 +1,5 @@
-import { formatDistance, formatDuration } from '../unitFormatters';
 import { TomTomConfig } from '../../config/globalConfig';
+import { formatDistance, formatDuration } from '../unitFormatters';
 
 describe('Unit formatters tests', () => {
     beforeEach(() => TomTomConfig.instance.reset());

@@ -1,8 +1,8 @@
 import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
 import type { MultiPolygon, Polygon, Position } from 'geojson';
 import type { CommonSearchParams } from '../../shared';
-import type { GeometrySearchResponseAPI } from './geometrySearchResponseAPI';
 import type { GeometrySearchRequestAPI } from './geometrySearchRequestAPI';
+import type { GeometrySearchResponseAPI } from './geometrySearchResponseAPI';
 
 export type GeometrySearchParams = CommonSearchParams<GeometrySearchRequestAPI, GeometrySearchResponseAPI> & {
     /**

@@ -1,9 +1,9 @@
-import type { GeometrySearchResponse, GeometrySearchResponseAPI } from '../types';
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import apiAndParsedResponses from '../../geometry-search/tests/responseParser.data.json';
 import apiResponses from '../../geometry-search/tests/responseParserPerf.data.json';
-import { parseGeometrySearchResponse } from '../responseParser';
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { parseGeometrySearchResponse } from '../responseParser';
+import type { GeometrySearchResponse, GeometrySearchResponseAPI } from '../types';
 
 describe('Geometry Search response parser tests', () => {
     test.each(apiAndParsedResponses)(

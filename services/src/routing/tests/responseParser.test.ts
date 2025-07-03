@@ -1,15 +1,15 @@
 import type { Routes } from '@anw/maps-sdk-js/core';
-import type { CalculateRouteParams } from '..';
-import apiAndParsedResponses from './responseParser.data.json';
-import longAPIResponse from './responseParserPerf.data.json';
-import { parseCalculateRouteResponse } from '../responseParser';
-import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
-import errorResponses from './responseParserError.data.json';
-import { parseRoutingResponseError } from '../routingResponseErrorParser';
-import type { APIErrorResponse, RoutingAPIResponseError } from '../../shared/types/apiResponseErrorTypes';
-import type { SDKServiceError } from '../../shared';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import type { SDKServiceError } from '../../shared';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import type { APIErrorResponse, RoutingAPIResponseError } from '../../shared/types/apiResponseErrorTypes';
+import type { CalculateRouteParams } from '..';
+import { parseCalculateRouteResponse } from '../responseParser';
+import { parseRoutingResponseError } from '../routingResponseErrorParser';
+import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
+import apiAndParsedResponses from './responseParser.data.json';
+import errorResponses from './responseParserError.data.json';
+import longAPIResponse from './responseParserPerf.data.json';
 
 describe('Calculate Route response parsing functional tests', () => {
     // Functional tests:

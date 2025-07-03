@@ -3,8 +3,8 @@ import type { TomTomMap } from '../init';
 import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
-import type { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from './types/baseMapModuleConfig';
 import { buildBaseMapLayerGroupFilter, buildLayerGroupFilter } from './layerGroups';
+import type { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from './types/baseMapModuleConfig';
 
 type BaseSourceAndLayers = {
     vectorTiles: StyleSourceWithLayers;

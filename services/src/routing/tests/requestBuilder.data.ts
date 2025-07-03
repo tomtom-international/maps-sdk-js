@@ -1,7 +1,7 @@
 import type { Route } from '@anw/maps-sdk-js/core';
-import type { CalculateRouteParams } from '../types/calculateRouteParams';
 import type { FetchInput } from '../../shared';
 import type { CalculateRoutePOSTDataAPI } from '../types/apiRequestTypes';
+import type { CalculateRouteParams } from '../types/calculateRouteParams';
 
 export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<CalculateRoutePOSTDataAPI>][] = [
     [

@@ -1,7 +1,7 @@
-import { z } from 'zod/v4-mini';
-import { vehicleParametersSchema } from './vehicleSchema';
 import { avoidableTypes } from '@anw/maps-sdk-js/core';
+import { z } from 'zod/v4-mini';
 import { routeTypes } from './types/commonRoutingParams';
+import { vehicleParametersSchema } from './vehicleSchema';
 
 /**
  * @ignore

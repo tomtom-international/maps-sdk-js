@@ -1,15 +1,15 @@
-import isNil from 'lodash/isNil';
-import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
-import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
 import { bboxCenter, bboxFromCoordsArray } from '@anw/maps-sdk-js/core';
+import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
+import isNil from 'lodash/isNil';
+import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { SymbolLayerSpecWithoutSource } from '../shared';
+import { MAP_BOLD_FONT } from '../shared/layers/commonLayerProps';
 import type { ColorPaletteOptions } from './layers/geometryLayers';
 import { colorPalettes, geometryFillSpec, geometryOutlineSpec } from './layers/geometryLayers';
 import type { GeometriesModuleConfig } from './types/geometriesModuleConfig';
 import type { DisplayGeometryProps, ExtraGeometryDisplayProps } from './types/geometryDisplayProps';
 import { GEOMETRY_TITLE_PROP } from './types/geometryDisplayProps';
-import type { SymbolLayerSpecWithoutSource } from '../shared';
-import { MAP_BOLD_FONT } from '../shared/layers/commonLayerProps';
 
 /**
  * Builds Geometry layer specifications for fill and outline layers.

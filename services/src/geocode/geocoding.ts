@@ -1,8 +1,8 @@
-import type { GeocodingResponse } from './types/geocodingResponse';
-import type { GeocodingParams } from './types/geocodingParams';
+import { callService } from '../shared/serviceTemplate';
 import type { GeocodingTemplate } from './geocodingTemplate';
 import { geocodingTemplate } from './geocodingTemplate';
-import { callService } from '../shared/serviceTemplate';
+import type { GeocodingParams } from './types/geocodingParams';
+import type { GeocodingResponse } from './types/geocodingResponse';
 
 /**
  * In many cases, the complete Search service might be too much.

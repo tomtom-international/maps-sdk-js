@@ -1,9 +1,9 @@
-import reverseGeocodeReqObjectsAndURLS from './requestBuilder.data.json';
-import reverseGeocodeReqObjects from './requestBuilderPerf.data.json';
-import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
-import { buildRevGeoRequest } from '../requestBuilder';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { buildRevGeoRequest } from '../requestBuilder';
+import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
+import reverseGeocodeReqObjectsAndURLS from './requestBuilder.data.json';
+import reverseGeocodeReqObjects from './requestBuilderPerf.data.json';
 
 describe('Reverse Geocoding request URL building functional tests', () => {
     test.each(reverseGeocodeReqObjectsAndURLS)(

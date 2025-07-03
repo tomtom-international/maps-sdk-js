@@ -1,6 +1,6 @@
-import type { ChargingStationsAvailabilityParams } from './types/evChargingStationsAvailabilityParams';
-import { appendCommonParams } from '../shared/requestBuildingUtils';
 import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { appendCommonParams } from '../shared/requestBuildingUtils';
+import type { ChargingStationsAvailabilityParams } from './types/evChargingStationsAvailabilityParams';
 
 const buildURLBasePath = (params: ChargingStationsAvailabilityParams): string =>
     params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/ev/id`;

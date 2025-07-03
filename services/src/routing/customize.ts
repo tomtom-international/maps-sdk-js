@@ -1,6 +1,6 @@
+import { calculateRouteTemplate } from './calculateRouteTemplate';
 import { buildCalculateRouteRequest } from './requestBuilder';
 import { parseCalculateRouteResponse } from './responseParser';
-import { calculateRouteTemplate } from './calculateRouteTemplate';
 
 const customize = {
     buildCalculateRouteRequest,

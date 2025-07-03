@@ -1,8 +1,8 @@
 import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
-import type { FuzzySearchParams } from './types';
-import { appendByJoiningParamValue, appendOptionalParam } from '../shared/requestBuildingUtils';
 import { arrayToCSV } from '../shared/arrays';
 import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { appendByJoiningParamValue, appendOptionalParam } from '../shared/requestBuildingUtils';
+import type { FuzzySearchParams } from './types';
 
 const buildURLBasePath = (mergedOptions: FuzzySearchParams): string =>
     mergedOptions.customServiceBaseURL ??

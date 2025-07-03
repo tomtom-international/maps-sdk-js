@@ -1,10 +1,10 @@
 import type { Language } from '@anw/maps-sdk-js/core';
-import type { PlaceByIdParams } from '../types';
-import placeByIdReqObjects from '../../place-by-id/tests/requestBuilderPerf.data.json';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import placeByIdReqObjects from '../../place-by-id/tests/requestBuilderPerf.data.json';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { validateRequestSchema } from '../../shared/validation';
 import { placeByIdRequestSchema } from '../placeByIdSchema';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import type { PlaceByIdParams } from '../types';
 
 describe('Place By Id API', () => {
     const apiKey = 'APIKEY';

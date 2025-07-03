@@ -1,9 +1,9 @@
 import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
-import { GeometriesModule } from '../GeometriesModule';
-import type { TomTomMap } from '../../TomTomMap';
-import amsterdamGeometryData from './geometriesModuleMocked.test.data.json';
 import { mapStyleLayerIDs } from '../../shared';
+import type { TomTomMap } from '../../TomTomMap';
+import { GeometriesModule } from '../GeometriesModule';
+import amsterdamGeometryData from './geometriesModuleMocked.test.data.json';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

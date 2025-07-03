@@ -1,7 +1,7 @@
 import { generateTomTomHeaders, mergeFromGlobal } from '@anw/maps-sdk-js/core';
 import { buildResponseError, buildValidationError } from './errors';
-import type { ServiceName } from './types/servicesTypes';
 import type { CommonServiceParams, ServiceTemplate } from './serviceTypes';
+import type { ServiceName } from './types/servicesTypes';
 import type { ValidationError } from './validation';
 import { validateRequestSchema } from './validation';
 

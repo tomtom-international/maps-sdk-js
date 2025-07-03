@@ -1,7 +1,7 @@
 import type { DisplayUnits, Routes } from '@anw/maps-sdk-js/core';
-import { toDisplayRoutes, toDisplayRouteSummaries } from '../routes';
-import displayRouteSummariesData from './data/displayRouteSummaries.data.json';
 import type { DisplayRouteProps, DisplayRouteSummaries } from '../../types/displayRoutes';
+import { toDisplayRouteSummaries, toDisplayRoutes } from '../routes';
+import displayRouteSummariesData from './data/displayRouteSummaries.data.json';
 
 describe('Tests to test building display routes', () => {
     test('Build display routes', () => {

@@ -1,6 +1,6 @@
 import type { LineLayerSpecification } from 'maplibre-gl';
-import { FOREGROUND_LINE_WIDTH, SELECTED_ROUTE_FILTER } from './shared';
 import type { LayerSpecTemplate } from '../../shared';
+import { FOREGROUND_LINE_WIDTH, SELECTED_ROUTE_FILTER } from './shared';
 
 /**
  * @ignore

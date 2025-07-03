@@ -1,4 +1,6 @@
 import type { Route, Routes, Waypoint, Waypoints } from '@anw/maps-sdk-js/core';
+import isEqual from 'lodash/isEqual';
+import type { StyleImageMetadata } from 'maplibre-gl';
 import {
     AbstractMapModule,
     EventsModule,
@@ -16,26 +18,24 @@ import {
     ROUTES_SOURCE_ID,
     WAYPOINTS_SOURCE_ID,
 } from '../shared';
+import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
+import type { TomTomMap } from '../TomTomMap';
+import { defaultRouteLayersConfig } from './layers/defaultConfig';
+import { INSTRUCTION_ARROW_IMAGE_ID } from './layers/guidanceLayers';
+import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './layers/routeMainLineLayers';
+import { MAJOR_DELAY_COLOR, MINOR_DELAY_LABEL_COLOR, MODERATE_DELAY_COLOR, UNKNOWN_DELAY_COLOR } from './layers/shared';
+import {
+    TRAFFIC_CLEAR_IMAGE_ID,
+    TRAFFIC_MAJOR_IMAGE_ID,
+    TRAFFIC_MINOR_IMAGE_ID,
+    TRAFFIC_MODERATE_IMAGE_ID,
+} from './layers/summaryBubbleLayers';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
     WAYPOINT_STOP_IMAGE_ID,
 } from './layers/waypointLayers';
-import { toDisplayChargingStations, toDisplayWaypoints } from './util/waypointUtils';
-import type { PlanningWaypoint } from './types/planningWaypoint';
-import type { RoutingLayersSpecs, RoutingModuleConfig, RoutingSourcesWithLayers } from './types/routeModuleConfig';
-import { toDisplayRouteSections } from './util/routeSections';
-import { toDisplayTrafficSectionProps } from './util/displayTrafficSectionProps';
-import type { DisplayTrafficSectionProps, RouteSection, RouteSections } from './types/routeSections';
-import { toDisplayRoutes, toDisplayRouteSummaries } from './util/routes';
-import type { DisplayRouteProps, DisplayRouteSummary } from './types/displayRoutes';
-import type { ShowRoutesOptions } from './types/showOptions';
-import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
-import type { TomTomMap } from '../TomTomMap';
-import type { DisplayInstruction } from './types/guidance';
-import { toDisplayInstructionArrows, toDisplayInstructions } from './util/guidance';
-import { showFeaturesWithRouteSelection } from './util/routeSelection';
 import {
     instructionArrowIconImg,
     softWaypointIcon,
@@ -46,20 +46,20 @@ import {
     waypointIcon,
     waypointStartIcon,
 } from './resources';
-import { defaultRouteLayersConfig } from './layers/defaultConfig';
-import { createLayersSpecs, withDefaults } from './util/config';
-import { INSTRUCTION_ARROW_IMAGE_ID } from './layers/guidanceLayers';
-import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './layers/routeMainLineLayers';
-import type { StyleImageMetadata } from 'maplibre-gl';
-import { MAJOR_DELAY_COLOR, MINOR_DELAY_LABEL_COLOR, MODERATE_DELAY_COLOR, UNKNOWN_DELAY_COLOR } from './layers/shared';
-import {
-    TRAFFIC_CLEAR_IMAGE_ID,
-    TRAFFIC_MAJOR_IMAGE_ID,
-    TRAFFIC_MINOR_IMAGE_ID,
-    TRAFFIC_MODERATE_IMAGE_ID,
-} from './layers/summaryBubbleLayers';
+import type { DisplayRouteProps, DisplayRouteSummary } from './types/displayRoutes';
+import type { DisplayInstruction } from './types/guidance';
+import type { PlanningWaypoint } from './types/planningWaypoint';
+import type { RoutingLayersSpecs, RoutingModuleConfig, RoutingSourcesWithLayers } from './types/routeModuleConfig';
+import type { DisplayTrafficSectionProps, RouteSection, RouteSections } from './types/routeSections';
+import type { ShowRoutesOptions } from './types/showOptions';
 import type { WaypointDisplayProps } from './types/waypointDisplayProps';
-import isEqual from 'lodash/isEqual';
+import { createLayersSpecs, withDefaults } from './util/config';
+import { toDisplayTrafficSectionProps } from './util/displayTrafficSectionProps';
+import { toDisplayInstructionArrows, toDisplayInstructions } from './util/guidance';
+import { toDisplayRouteSections } from './util/routeSections';
+import { showFeaturesWithRouteSelection } from './util/routeSelection';
+import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
+import { toDisplayChargingStations, toDisplayWaypoints } from './util/waypointUtils';
 
 /**
  * The routing module is responsible for styling and display of routes and waypoints to the map.

@@ -1,15 +1,15 @@
 import type { ChargingStationsAvailability } from '@anw/maps-sdk-js/core';
-import apiAndParsedResponses from './responseParser.data.json';
-import apiResponses from './responseParserPerf.data.json';
-import { parseEVChargingStationsAvailabilityResponse } from '../responseParser';
-import errorResponses from '../tests/responseError.data.json';
-import type { APIErrorResponse } from '../../shared/types/apiResponseErrorTypes';
+import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import type { ServiceName } from '../../shared';
 import { SDKServiceError } from '../../shared';
-import { parseEVChargingStationsAvailabilityResponseError } from '../evChargingStationsAvailabilityResponseErrorParser';
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import type { APIErrorResponse } from '../../shared/types/apiResponseErrorTypes';
+import { parseEVChargingStationsAvailabilityResponseError } from '../evChargingStationsAvailabilityResponseErrorParser';
+import { parseEVChargingStationsAvailabilityResponse } from '../responseParser';
+import errorResponses from '../tests/responseError.data.json';
 import type { ChargingStationsAvailabilityResponseAPI } from '../types/apiTypes';
+import apiAndParsedResponses from './responseParser.data.json';
+import apiResponses from './responseParserPerf.data.json';
 
 describe('Charging availability response parsing tests', () => {
     test.each(apiAndParsedResponses)(

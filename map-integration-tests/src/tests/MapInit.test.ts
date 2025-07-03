@@ -6,8 +6,9 @@ import {
     TRAFFIC_FLOW_SOURCE_ID,
     TRAFFIC_INCIDENTS_SOURCE_ID,
 } from 'map/src/shared';
-import { MapTestEnv } from './util/MapTestEnv';
 import mapInitTestData from './data/MapInit.test.data.json';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import {
     getLayerById,
     getNumVisibleLayersBySource,
@@ -15,7 +16,6 @@ import {
     setStyle,
     waitForMapReady,
 } from './util/TestUtils';
-import type { MapsSDKThis } from './types/MapsSDKThis';
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
     !!(style as PublishedStyle)?.include?.includes(module);

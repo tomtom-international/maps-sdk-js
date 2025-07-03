@@ -1,8 +1,8 @@
-import type { EventType } from '../types';
 import type { Feature } from 'geojson';
-import { detectHoverState, putEventState } from '../eventUtils';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
+import { detectHoverState, putEventState } from '../eventUtils';
 import { BASE_MAP_SOURCE_ID, POI_SOURCE_ID } from '../layers/sourcesIDs';
+import type { EventType } from '../types';
 
 describe('updateEventState related tests', () => {
     const testFeature = (id: string | number | undefined, eventState?: EventType): Feature =>

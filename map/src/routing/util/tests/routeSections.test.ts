@@ -1,12 +1,12 @@
-import type { FeatureCollection } from 'geojson';
 import type { Routes } from '@anw/maps-sdk-js/core';
-import TEST_ROUTES_DATA from './data/dummyRoutesWithSections.data.json';
-import SECTIONS_WITH_SELECTION from './data/rebuildSectionsWithSelection.data.json';
-import { toDisplayRouteSections } from '../routeSections';
-import { toDisplayTrafficSectionProps } from '../displayTrafficSectionProps';
+import type { FeatureCollection } from 'geojson';
 import type { DisplayRouteProps } from '../../types/displayRoutes';
 import type { RouteSections } from '../../types/routeSections';
+import { toDisplayTrafficSectionProps } from '../displayTrafficSectionProps';
+import { toDisplayRouteSections } from '../routeSections';
 import { rebuildFeaturesWithRouteSelection } from '../routeSelection';
+import TEST_ROUTES_DATA from './data/dummyRoutesWithSections.data.json';
+import SECTIONS_WITH_SELECTION from './data/rebuildSectionsWithSelection.data.json';
 
 const TEST_ROUTES = TEST_ROUTES_DATA as Routes<DisplayRouteProps>;
 

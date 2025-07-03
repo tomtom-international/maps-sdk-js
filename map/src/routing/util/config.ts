@@ -1,7 +1,7 @@
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
 import type { LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from '../../shared';
-import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from '../types/routeModuleConfig';
 import { defaultRouteLayersConfig } from '../layers/defaultConfig';
+import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from '../types/routeModuleConfig';
 
 /**
  * @ignore

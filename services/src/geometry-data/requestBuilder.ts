@@ -1,8 +1,8 @@
 import type { Place, Places } from '@anw/maps-sdk-js/core';
-import type { GeometriesInput, GeometryParams } from './types/geometryDataParams';
-import { appendOptionalParam } from '../shared/requestBuildingUtils';
 import { arrayToCSV } from '../shared/arrays';
 import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { appendOptionalParam } from '../shared/requestBuildingUtils';
+import type { GeometriesInput, GeometryParams } from './types/geometryDataParams';
 
 const buildURLBasePath = (params: GeometryParams): string =>
     params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/additionalData.json`;

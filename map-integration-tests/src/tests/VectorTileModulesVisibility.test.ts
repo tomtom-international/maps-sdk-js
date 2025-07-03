@@ -1,8 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { MapTestEnv } from './util/MapTestEnv';
-import type { MapsSDKThis } from './types/MapsSDKThis';
 import { HILLSHADE_SOURCE_ID } from 'map/src/shared';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
 import { assertNumber, getNumVisibleLayersBySource, getNumVisiblePOILayers } from './util/TestUtils';
 
 test.describe("Vector tile modules combined visibility tests, to ensure one module doesn't step on another", () => {

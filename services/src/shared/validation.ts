@@ -1,5 +1,5 @@
-import { z } from 'zod/v4-mini';
 import type { $ZodError, $ZodIssue } from 'zod/dist/types/v4/core/errors';
+import { z } from 'zod/v4-mini';
 import { commonServiceRequestSchema } from './commonParamsSchema';
 import type { CommonServiceParams } from './serviceTypes';
 import type { RequestValidationConfig } from './types/validation';

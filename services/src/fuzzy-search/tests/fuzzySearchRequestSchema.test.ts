@@ -1,9 +1,9 @@
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { validateRequestSchema } from '../../shared/validation';
 import { fuzzySearchRequestSchema } from '../fuzzySearchRequestSchema';
 import type { FuzzySearchParams } from '../types';
 import fuzzySearchReqObjects from './requestBuilderPerf.data.json';
-import { validateRequestSchema } from '../../shared/validation';
-import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 
 describe('FuzzySearch Schema Validation', () => {
     const apiKey = 'API_KEY';

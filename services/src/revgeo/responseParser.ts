@@ -1,8 +1,8 @@
 import { generateId, getPositionStrict, toPointFeature } from '@anw/maps-sdk-js/core';
 import { apiToGeoJSONBBox, csvLatLngToPosition } from '../shared/geometry';
-import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
 import type { ReverseGeocodingResponse } from './reverseGeocoding';
 import type { ReverseGeocodingResponseAPI } from './types/apiTypes';
+import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
 
 /**
  * Default method for parsing reverse geocoding request from {@link ReverseGeocodingResponse}

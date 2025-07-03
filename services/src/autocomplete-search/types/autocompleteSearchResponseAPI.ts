@@ -1,5 +1,5 @@
-import type { AutocompleteSearchContext, AutocompleteSearchResult } from './autocompleteSearchResponse';
 import type { LatLonAPI } from '../../shared/types/apiPlacesResponseTypes';
+import type { AutocompleteSearchContext, AutocompleteSearchResult } from './autocompleteSearchResponse';
 
 /**
  * @ignore

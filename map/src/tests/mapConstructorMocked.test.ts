@@ -1,5 +1,5 @@
-import { Map } from 'maplibre-gl';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { Map } from 'maplibre-gl';
 import { TomTomMap } from '../TomTomMap';
 
 jest.mock('maplibre-gl', () => ({

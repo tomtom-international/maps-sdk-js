@@ -1,3 +1,5 @@
+import type { GlobalConfig } from '@anw/maps-sdk-js/core';
+import { generateTomTomHeaders } from '@anw/maps-sdk-js/core';
 import type {
     FilterSpecification,
     Map,
@@ -6,13 +8,11 @@ import type {
     ResourceType,
     StyleImageMetadata,
 } from 'maplibre-gl';
-import type { GlobalConfig } from '@anw/maps-sdk-js/core';
-import { generateTomTomHeaders } from '@anw/maps-sdk-js/core';
-import type { TomTomMap } from '../TomTomMap';
-import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
-import type { AbstractSourceWithLayers } from './SourceWithLayers';
 import type { StyleInput, StyleModule } from '../init';
+import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
+import type { AbstractSourceWithLayers } from './SourceWithLayers';
+import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
 
 /**
  * Wait until the map is ready

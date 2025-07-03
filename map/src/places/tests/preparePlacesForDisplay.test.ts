@@ -1,12 +1,12 @@
 import type { CommonPlaceProps, Place, Places, POICategory } from '@anw/maps-sdk-js/core';
 import type { Map } from 'maplibre-gl';
+import { MAP_MEDIUM_FONT } from '../../shared/layers/commonLayerProps';
 import {
     getIconIDForPlace,
     getPOILayerCategoryForPlace,
     preparePlacesForDisplay,
     toPlaces,
 } from '../preparePlacesForDisplay';
-import { MAP_MEDIUM_FONT } from '../../shared/layers/commonLayerProps';
 
 describe('toPlaces tests', () => {
     const testPlace0: Place = {

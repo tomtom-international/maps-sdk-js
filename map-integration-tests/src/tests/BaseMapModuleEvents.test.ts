@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { MapTestEnv } from './util/MapTestEnv';
-import { getClickedTopFeature, getPixelCoords, initBasemap, initBasemap2, waitForMapIdle } from './util/TestUtils';
-import type { MapsSDKThis } from './types/MapsSDKThis';
 import type { Point } from 'geojson';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
+import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapTestEnv } from './util/MapTestEnv';
+import { getClickedTopFeature, getPixelCoords, initBasemap, initBasemap2, waitForMapIdle } from './util/TestUtils';
 
 test.describe('Tests with user events related to Base Map', () => {
     const mapEnv = new MapTestEnv();

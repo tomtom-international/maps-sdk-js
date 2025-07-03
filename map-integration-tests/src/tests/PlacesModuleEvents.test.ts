@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Places } from 'core';
+import placesJSON from './data/PlacesModuleEvents.test.data.json';
+import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getCursor,
@@ -16,8 +18,6 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
-import placesJSON from './data/PlacesModuleEvents.test.data.json';
-import type { MapsSDKThis } from './types/MapsSDKThis';
 
 const deRegisterPlacesClickHandlers = async (page: Page) =>
     page.evaluate(() => (globalThis as MapsSDKThis).places?.events.off('click'));

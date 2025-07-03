@@ -1,7 +1,7 @@
 import { callService } from '../shared/serviceTemplate';
-import type { PlaceByIdParams, PlaceByIdResponse } from './types';
 import type { PlaceByIdTemplate } from './placeByIdTemplate';
 import { placeByIdTemplate } from './placeByIdTemplate';
+import type { PlaceByIdParams, PlaceByIdResponse } from './types';
 
 /**
  *

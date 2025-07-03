@@ -2,15 +2,16 @@
  * @module services-customization
  * @category Service
  */
-import revgeoCustomize from '../revgeo/customize';
+
+import autocompleteCustomize from '../autocomplete-search/customize';
+import evChargingStationsAvailabilityCustomize from '../ev-charging-stations-availability/customize';
 import geocodeCustomize from '../geocode/customize';
 import geometryDataCustomize from '../geometry-data/customize';
 import geometrySearchCustomize from '../geometry-search/customize';
-import routingCustomize from '../routing/customize';
-import reachableRangeCustomize from '../reachable-range/customize';
-import evChargingStationsAvailabilityCustomize from '../ev-charging-stations-availability/customize';
 import placeByIDCustomize from '../place-by-id/customize';
-import autocompleteCustomize from '../autocomplete-search/customize';
+import reachableRangeCustomize from '../reachable-range/customize';
+import revgeoCustomize from '../revgeo/customize';
+import routingCustomize from '../routing/customize';
 
 /**
  * Access to service implementation parts for customization.

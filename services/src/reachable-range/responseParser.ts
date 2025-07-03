@@ -1,7 +1,7 @@
-import type { Polygon } from 'geojson';
-import type { ReachableRangeResponseAPI } from './types/apiResponseTypes';
 import type { PolygonFeature } from '@anw/maps-sdk-js/core';
 import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
+import type { Polygon } from 'geojson';
+import type { ReachableRangeResponseAPI } from './types/apiResponseTypes';
 import type { ReachableRangeParams } from './types/reachableRangeParams';
 
 /**

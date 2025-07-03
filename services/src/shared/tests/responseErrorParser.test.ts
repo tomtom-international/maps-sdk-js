@@ -1,8 +1,8 @@
-import errorResponses from './responseError.data.json';
-import type { APIErrorResponse } from '../types/apiResponseErrorTypes';
 import type { SDKServiceError } from '../errors';
 import { parseDefaultResponseError } from '../errors';
+import type { APIErrorResponse } from '../types/apiResponseErrorTypes';
 import type { ServiceName } from '../types/servicesTypes';
+import errorResponses from './responseError.data.json';
 
 describe('Default error response parsing tests', () => {
     test.each(errorResponses)(

@@ -1,6 +1,6 @@
+import { reachableRangeTemplate } from './reachableRangeTemplate';
 import { buildReachableRangeRequest } from './requestBuilder';
 import { parseReachableRangeResponse } from './responseParser';
-import { reachableRangeTemplate } from './reachableRangeTemplate';
 
 const customize = {
     buildReachableRangeRequest,

@@ -1,8 +1,8 @@
-import { buildPlaceByIdRequest } from '../requestBuilder';
-import placeByIdReqObjects from './requestBuilderPerf.data.json';
-import type { PlaceByIdParams } from '../types';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { buildPlaceByIdRequest } from '../requestBuilder';
+import type { PlaceByIdParams } from '../types';
+import placeByIdReqObjects from './requestBuilderPerf.data.json';
 
 describe('Place by ID request URL building functional tests', () => {
     test('Place by ID request URL building mandatory parameters request', () => {

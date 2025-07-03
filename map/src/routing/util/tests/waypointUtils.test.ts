@@ -1,13 +1,13 @@
-import type { Position } from 'geojson';
 import type { Anything, Waypoint, WaypointProps } from '@anw/maps-sdk-js/core';
-import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from '../waypointUtils';
-import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../../types/waypointDisplayProps';
+import type { Position } from 'geojson';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
     WAYPOINT_STOP_IMAGE_ID,
 } from '../../layers/waypointLayers';
+import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../../types/waypointDisplayProps';
+import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from '../waypointUtils';
 
 const buildTestWaypoint = (properties: WaypointProps & Anything, coordinates: Position): Waypoint => ({
     type: 'Feature',

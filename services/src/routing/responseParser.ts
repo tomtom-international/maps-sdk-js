@@ -11,8 +11,8 @@ import type {
     RoadShieldReference,
     RoadShieldSectionProps,
     Route,
-    Routes,
     RouteSummary,
+    Routes,
     SectionProps,
     SectionsProps,
     SectionType,
@@ -22,9 +22,9 @@ import type {
     TrafficSectionProps,
 } from '@anw/maps-sdk-js/core';
 import { bboxFromGeoJSON, generateId, indexedMagnitudes } from '@anw/maps-sdk-js/core';
-import omit from 'lodash/omit';
-import isNil from 'lodash/isNil';
 import type { LineString, Position } from 'geojson';
+import isNil from 'lodash/isNil';
+import omit from 'lodash/omit';
 import type {
     CalculateRouteResponseAPI,
     CurrentTypeAPI,

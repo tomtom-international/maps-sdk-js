@@ -1,9 +1,9 @@
 import type { Map } from 'maplibre-gl';
 import type { TomTomMap } from '../TomTomMap';
 import type { EventsProxy } from './EventsProxy';
+import { waitUntilMapIsReady } from './mapUtils';
 import type { SourcesWithLayers, SourceWithLayerIDs } from './types';
 import type { MapModuleSource } from './types/mapModule';
-import { waitUntilMapIsReady } from './mapUtils';
 
 /**
  * Base class for all Maps SDK map modules.

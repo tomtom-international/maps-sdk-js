@@ -3,6 +3,6 @@
  * @category Map
  */
 
-export * from './types/trafficModuleConfig';
 export * from './TrafficFlowModule';
 export * from './TrafficIncidentsModule';
+export * from './types/trafficModuleConfig';

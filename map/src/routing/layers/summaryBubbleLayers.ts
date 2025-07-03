@@ -1,9 +1,9 @@
-import type { LayerSpecTemplate } from '../../shared';
 import type { ExpressionSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import { DESELECTED_SECONDARY_COLOR, SELECTED_ROUTE_FILTER } from './shared';
-import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './routeMainLineLayers';
+import type { LayerSpecTemplate } from '../../shared';
 import { MAP_BOLD_FONT, MAP_MEDIUM_FONT } from '../../shared/layers/commonLayerProps';
+import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './routeMainLineLayers';
 import { magnitudeOfDelayTextColor } from './routeTrafficSectionLayers';
+import { DESELECTED_SECONDARY_COLOR, SELECTED_ROUTE_FILTER } from './shared';
 
 /**
  * @ignore

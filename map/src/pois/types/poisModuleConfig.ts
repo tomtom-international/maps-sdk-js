@@ -1,7 +1,7 @@
-import type { StyleModuleConfig, ValuesFilter } from '../../shared';
-import type { MapStylePOICategory } from '../../places';
-import type { POICategoryGroup } from '../poiCategoryGroups';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
+import type { MapStylePOICategory } from '../../places';
+import type { StyleModuleConfig, ValuesFilter } from '../../shared';
+import type { POICategoryGroup } from '../poiCategoryGroups';
 
 /**
  * A POI classification or group which can be filtered.

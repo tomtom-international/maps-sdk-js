@@ -1,6 +1,6 @@
 import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
 import type { LayerSpecTemplate } from '../../shared';
+import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
 import {
     MAJOR_DELAY_COLOR,
     MINOR_DELAY_LABEL_COLOR,
