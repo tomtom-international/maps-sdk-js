@@ -1,4 +1,4 @@
-import { $ZodError } from 'zod/dist/types/v4/core/errors';
+import { $ZodError } from 'zod/v4/core';
 import { hasLngLatSchema } from '../geometriesSchema';
 
 describe('PolygonFeatures schema validation', () => {

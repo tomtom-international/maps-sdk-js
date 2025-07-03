@@ -1,4 +1,4 @@
-import type { $ZodIssue } from 'zod/dist/types/v4/core/errors';
+import { $ZodIssue } from 'zod/v4/core';
 import type { ParseResponseError } from './serviceTypes';
 import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiResponseErrorTypes';
 import { APICode } from './types/apiResponseErrorTypes';
