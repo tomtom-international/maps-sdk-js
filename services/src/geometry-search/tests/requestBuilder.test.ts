@@ -28,7 +28,6 @@ describe('Calculate Geometry Search request URL building tests', () => {
         ).toThrow();
     };
 
-    // eslint-disable-next-line jest/expect-expect
     test('Incorrect geometry type supplied', () => {
         expectToThrow('Point');
         expectToThrow('MultiPoint');

@@ -20,13 +20,11 @@ describe.skip('Reachable Range integration tests', () => {
         expect(result.properties).toHaveProperty('commonBaseURL');
     };
 
-    // eslint-disable-next-line jest/expect-expect
     test('Time-based reachable range', async () => {
         const params: ReachableRangeParams = { origin, budget: { type: 'timeMinutes', value: 15 } };
         expectBasics(await calculateReachableRange(params), params);
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('Time-based reachable range with departure date', async () => {
         const params: ReachableRangeParams = {
             origin,
@@ -36,13 +34,11 @@ describe.skip('Reachable Range integration tests', () => {
         expectBasics(await calculateReachableRange(params), params);
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('Distance-based reachable range', async () => {
         const params: ReachableRangeParams = { origin, budget: { type: 'distanceKM', value: 5 } };
         expectBasics(await calculateReachableRange(params), params);
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('EV reachable range for remaining charge PCT', async () => {
         const params: ReachableRangeParams = {
             origin,
@@ -66,7 +62,6 @@ describe.skip('Reachable Range integration tests', () => {
         expectBasics(await calculateReachableRange(params), params);
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('EV reachable range for spent charge PCT', async () => {
         const params: ReachableRangeParams = {
             origin,
@@ -91,7 +86,6 @@ describe.skip('Reachable Range integration tests', () => {
         expectBasics(await calculateReachableRange(params), params);
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('Fuel-based reachable range', async () => {
         const params: ReachableRangeParams = {
             origin,

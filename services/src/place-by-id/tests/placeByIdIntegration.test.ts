@@ -30,7 +30,6 @@ describe('Place By Id API', () => {
     });
 
     // TODO: opening hours not yet available in Orbis. Once POI TimeZones are available they should become supported again. ETA end of Q2 2024.
-    // eslint-disable-next-line jest/no-disabled-tests
     test.skip('placeById for EV charging station with opening hours', async () => {
         const place = await placeById({
             entityId: '5xJ_SaD2QbJmkNiMfu6_Og',

@@ -8,9 +8,9 @@ title: Quality control
 
 We use 2 tools to measure and control our code quality and "Pull request" practice. Tools eliminate trivial issues like "unused vars" or even infinite discussions like "spaces vs tabs", "formatting", "lines per function", "loop nesting levels" in PRs. Those escalate pretty quickly, so lets just automate that thing and forget it :) Nobody forbids Judgment Days from time to time for our coding standards, so no worries.
 
-## Prettier and ESLint
+## Linting
 
-These tools are working together and integrate with the most popular IDE's like Intellij IDEA. Command line interface is also available. Just run the next command to see it in action:
+We leverage Biome for formatting and linting. Command line interface is also available. Just run the next command to see it in action:
 
 ```shell
 # all workspaces

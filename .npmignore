@@ -16,8 +16,6 @@ documentation/
 
 scripts/
 **/tsconfig.json
-**/.eslintignore
-**/.eslintrc
 **/.prettierrc.js
 **/jest.config.ts
 **/rollup.config.ts
