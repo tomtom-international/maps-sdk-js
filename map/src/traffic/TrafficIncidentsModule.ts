@@ -1,6 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
-import omitBy from 'lodash/omitBy';
+import { isEmpty, isNil, omitBy } from 'lodash-es';
 import type { FilterSpecification } from 'maplibre-gl';
 import type { LayerSpecWithSource, StyleModuleInitConfig } from '../shared';
 import {

@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noTemplateCurlyInString: the templates are used to build the style URLs */
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash-es';
 import type { StyleSpecification } from 'maplibre-gl';
 import type { PublishedStyle, PublishedStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
 

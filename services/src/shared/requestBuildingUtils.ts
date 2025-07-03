@@ -1,6 +1,6 @@
 import type { HasLngLat, POICategory } from '@anw/maps-sdk-js/core';
 import { getPosition } from '@anw/maps-sdk-js/core';
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
 import { poiCategoriesToID } from '../poi-categories/poiCategoriesToID';
 import type { CommonServiceParams } from './serviceTypes';
 

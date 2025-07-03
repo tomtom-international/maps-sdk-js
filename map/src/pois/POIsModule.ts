@@ -1,4 +1,4 @@
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
 import type { FilterSpecification } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../places';
 import { toMapDisplayPOICategory } from '../places';

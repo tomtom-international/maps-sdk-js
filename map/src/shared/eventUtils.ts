@@ -1,6 +1,5 @@
 import type { Feature } from 'geojson';
-import isNil from 'lodash/isNil';
-import omit from 'lodash/omit';
+import { isNil, omit } from 'lodash-es';
 import type { MapGeoJSONFeature, Point2D } from 'maplibre-gl';
 import { areBothDefinedAndEqual } from './mapUtils';
 import { GeoJSONSourceWithLayers } from './SourceWithLayers';

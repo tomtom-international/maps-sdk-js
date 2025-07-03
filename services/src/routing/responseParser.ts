@@ -23,8 +23,7 @@ import type {
 } from '@anw/maps-sdk-js/core';
 import { bboxFromGeoJSON, generateId, indexedMagnitudes } from '@anw/maps-sdk-js/core';
 import type { LineString, Position } from 'geojson';
-import isNil from 'lodash/isNil';
-import omit from 'lodash/omit';
+import { isNil, omit } from 'lodash-es';
 import type {
     CalculateRouteResponseAPI,
     CurrentTypeAPI,

@@ -1,7 +1,7 @@
 import type { Language } from '@anw/maps-sdk-js/core';
 import { mergeFromGlobal } from '@anw/maps-sdk-js/core';
 import type { BBox } from 'geojson';
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash-es';
 import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';
 import type { MapLibreOptions, StyleInput, TomTomMapParams } from './init';
 import { buildMapOptions } from './init/buildMapOptions';

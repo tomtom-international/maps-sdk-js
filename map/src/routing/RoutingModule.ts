@@ -1,5 +1,5 @@
 import type { Route, Routes, Waypoint, Waypoints } from '@anw/maps-sdk-js/core';
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash-es';
 import type { StyleImageMetadata } from 'maplibre-gl';
 import {
     AbstractMapModule,

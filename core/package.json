@@ -36,7 +36,7 @@
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/geojson": "^7946.0.16",
     "@types/jest": "^30.0.0",
-    "jest": "^30.0.3",
+    "jest": "^30.0.4",
     "rimraf": "^6.0.1",
     "rollup": "^4.44.1",
     "rollup-plugin-analyzer": "^4.0.0",

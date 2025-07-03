@@ -1,4 +1,4 @@
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
 import type { DistanceDisplayUnits, TimeDisplayUnits } from '../config/globalConfig';
 import { TomTomConfig } from '../config/globalConfig';
 

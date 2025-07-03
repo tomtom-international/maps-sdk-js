@@ -1,5 +1,5 @@
 import type { FeatureCollection } from 'geojson';
-import omit from 'lodash/omit';
+import { omit } from 'lodash-es';
 import type { LayerSpecification, Map, Source, VectorSourceSpecification } from 'maplibre-gl';
 import {
     AbstractSourceWithLayers,

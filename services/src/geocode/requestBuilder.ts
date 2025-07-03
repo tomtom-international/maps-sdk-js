@@ -1,5 +1,5 @@
 import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
 import { arrayToCSV } from '../shared/arrays';
 import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 import { appendCommonParams, appendLatLonParamsFromPosition } from '../shared/requestBuildingUtils';

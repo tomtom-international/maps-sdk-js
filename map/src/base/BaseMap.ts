@@ -1,4 +1,5 @@
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
+
 import type { TomTomMap } from '../init';
 import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';

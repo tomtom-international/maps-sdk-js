@@ -1,7 +1,7 @@
 import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
 import { bboxCenter, bboxFromCoordsArray } from '@anw/maps-sdk-js/core';
 import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { SymbolLayerSpecWithoutSource } from '../shared';
 import { MAP_BOLD_FONT } from '../shared/layers/commonLayerProps';

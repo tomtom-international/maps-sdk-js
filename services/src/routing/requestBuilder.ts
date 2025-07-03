@@ -14,7 +14,7 @@ import {
     inputSectionTypesWithGuidance,
 } from '@anw/maps-sdk-js/core';
 import type { Position } from 'geojson';
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
 import type { FetchInput } from '../shared';
 import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
 import { positionToCSVLatLon } from '../shared/geometry';

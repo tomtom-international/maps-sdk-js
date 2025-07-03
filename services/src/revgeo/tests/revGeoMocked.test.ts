@@ -1,4 +1,4 @@
-import omit from 'lodash/omit';
+import { omit } from 'lodash-es';
 import { mockFetchResponse } from '../../shared/tests/fetchMockUtils';
 import reverseGeocode from '../reverseGeocoding';
 import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';

@@ -1,5 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-import remove from 'lodash/remove';
+import { isEmpty, remove } from 'lodash-es';
 import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
 import type { EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from './types';
 

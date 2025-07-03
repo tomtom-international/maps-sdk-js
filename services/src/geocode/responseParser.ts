@@ -1,6 +1,6 @@
 import type { GeographyType, Place } from '@anw/maps-sdk-js/core';
 import { bboxFromGeoJSON, bboxOnlyIfWithArea, toPointFeature } from '@anw/maps-sdk-js/core';
-import omit from 'lodash/omit';
+import { omit } from 'lodash-es';
 import { apiToGeoJSONBBox, latLonAPIToPosition } from '../shared/geometry';
 import type { GeocodingResponseAPI, GeocodingResultAPI } from './types/apiTypes';
 import type { GeocodingProps, GeocodingResponse } from './types/geocodingResponse';

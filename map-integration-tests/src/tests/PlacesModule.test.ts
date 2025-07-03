@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Place, Places } from 'core';
 import { bboxFromGeoJSON } from 'core/src/util';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'lodash-es';
 import type { LocationDisplayProps, PlaceIconConfig } from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
 import placesTestData from './data/PlacesModule.test.data.json';
