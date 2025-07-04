@@ -8,6 +8,7 @@ const config: Config = {
     testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/', '<rootDir>/.rollup.cache/'],
     moduleNameMapper: {
         '@anw/maps-sdk-js/core': 'core',
+        '^lodash-es$': 'lodash', // Jest doesn't have strong ES modules compatibility
     },
     setupFilesAfterEnv: ['./jest.globalSetup.js'],
     transform: {
