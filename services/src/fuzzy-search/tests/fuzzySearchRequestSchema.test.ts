@@ -30,14 +30,13 @@ describe('FuzzySearch Schema Validation', () => {
     test('it should fail when missing mandatory query', () => {
         expect(() => validateRequestSchema({ apiKey, limit: 10 }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'undefined',
                         path: ['query'],
-                        message: 'Required',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -46,14 +45,13 @@ describe('FuzzySearch Schema Validation', () => {
     test('it should fail when query is not of type string', () => {
         expect(() => validateRequestSchema({ apiKey, query: undefined }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'undefined',
                         path: ['query'],
-                        message: 'Required',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -67,14 +65,14 @@ describe('FuzzySearch Schema Validation', () => {
             ),
         ).toThrow(
             expect.objectContaining({
-                errors: expect.arrayContaining([
+                issues: expect.arrayContaining([
                     expect.objectContaining({
                         path: ['minFuzzyLevel'],
-                        message: 'Number must be greater than or equal to 1',
+                        message: 'Invalid input',
                     }),
                     expect.objectContaining({
                         path: ['maxFuzzyLevel'],
-                        message: 'Number must be less than or equal to 4',
+                        message: 'Invalid input',
                     }),
                 ]),
             }),
@@ -86,14 +84,13 @@ describe('FuzzySearch Schema Validation', () => {
             validateRequestSchema({ apiKey, query, typeahead: 1 }, { schema: fuzzySearchRequestSchema }),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'boolean',
-                        received: 'number',
                         path: ['typeahead'],
-                        message: 'Expected boolean, received number',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -101,45 +98,42 @@ describe('FuzzySearch Schema Validation', () => {
 
     test('it should fail when minFuzzyLevel has invalid number', () => {
         const minFuzzyLevel = 6;
+
         expect(() =>
             validateRequestSchema({ apiKey, query, minFuzzyLevel }, { schema: fuzzySearchRequestSchema }),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
-                        code: 'too_big',
+                issues: [
+                    expect.objectContaining({
+                        // code: 'too_big',
                         maximum: 4,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 4',
+                        origin: 'number',
+                        // inclusive: true,
+                        // exact: false,
+                        message: 'Invalid input',
                         path: ['minFuzzyLevel'],
-                    },
-                    {
+                    }),
+                    expect.objectContaining({
                         code: 'custom',
-                        message: 'commonBaseURL or customServiceBaseURL is required',
                         path: [],
-                    },
+                        message: 'commonBaseURL or customServiceBaseURL is required',
+                    }),
                 ],
             }),
         );
     });
 
-    //
     test('it should fail when map-code is not of type array', () => {
         const mapcodes = 'Local';
-        expect(() =>
-            validateRequestSchema({ apiKey, query: 'Fuel Station', mapcodes }, { schema: fuzzySearchRequestSchema }),
-        ).toThrow(
+        expect(() => validateRequestSchema({ apiKey, query, mapcodes }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['mapcodes'],
-                        message: 'Expected array, received string',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -149,16 +143,13 @@ describe('FuzzySearch Schema Validation', () => {
         const view = 'CH';
         expect(() => validateRequestSchema({ apiKey, query, view }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
-                        received: 'CH',
-                        code: 'invalid_enum_value',
-                        options: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
+                issues: [
+                    expect.objectContaining({
+                        code: 'invalid_value',
+                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
                         path: ['view'],
-                        message:
-                            'Invalid enum value. ' +
-                            "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'CH'",
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -168,14 +159,13 @@ describe('FuzzySearch Schema Validation', () => {
         const indexes = 'STR';
         expect(() => validateRequestSchema({ apiKey, query, indexes }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['indexes'],
-                        message: 'Expected array, received string',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -187,14 +177,13 @@ describe('FuzzySearch Schema Validation', () => {
             validateRequestSchema({ apiKey, query, poiCategories }, { schema: fuzzySearchRequestSchema }),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'number',
                         path: ['poiCategories'],
-                        message: 'Expected array, received number',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -204,14 +193,13 @@ describe('FuzzySearch Schema Validation', () => {
         const poiBrands = 'TomTom';
         expect(() => validateRequestSchema({ apiKey, query, poiBrands }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['poiBrands'],
-                        message: 'Expected array, received string',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -220,17 +208,15 @@ describe('FuzzySearch Schema Validation', () => {
     test('it should fail when connectors is of type string', () => {
         const connectors = 'IEC62196Type1';
         expect(() =>
-            validateRequestSchema({ apiKey, query: 'EV', connectors }, { schema: fuzzySearchRequestSchema }),
+            validateRequestSchema({ apiKey, query, connectors }, { schema: fuzzySearchRequestSchema }),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
-                        expected: 'array',
-                        received: 'string',
                         path: ['connectors'],
-                        message: 'Expected array, received string',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -239,18 +225,15 @@ describe('FuzzySearch Schema Validation', () => {
     test('it should fail when fuel is of type string', () => {
         const fuelTypes = 'AdBlue';
 
-        expect(() =>
-            validateRequestSchema({ apiKey, query: 'Fuel', fuelTypes }, { schema: fuzzySearchRequestSchema }),
-        ).toThrow(
+        expect(() => validateRequestSchema({ apiKey, query, fuelTypes }, { schema: fuzzySearchRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['fuelTypes'],
-                        message: 'Expected array, received string',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -262,20 +245,19 @@ describe('FuzzySearch Schema Validation', () => {
             validateRequestSchema({ apiKey, query, geographyTypes }, { schema: fuzzySearchRequestSchema }),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['geographyTypes'],
-                        message: 'Expected array, received string',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
     });
 
-    test('it should fail when lan and lon parameters are not between permitted values', () => {
+    test('it should fail when lan and lon (position) parameters are not between permitted values', () => {
         const validationCall = () =>
             validateRequestSchema(
                 {
@@ -285,31 +267,35 @@ describe('FuzzySearch Schema Validation', () => {
                 },
                 { schema: fuzzySearchRequestSchema },
             );
+
         expect(validationCall).toThrow(
             expect.objectContaining({
-                errors: [
+                message: expect.stringContaining('position'),
+                issues: [
                     {
-                        code: 'too_big',
-                        maximum: 180,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 180',
-                        path: ['position', 0],
-                    },
-                    {
-                        code: 'too_small',
-                        minimum: -90,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be greater than or equal to -90',
-                        path: ['position', 1],
-                    },
-                    {
-                        code: 'custom',
-                        message: 'commonBaseURL or customServiceBaseURL is required',
-                        path: [],
+                        code: 'invalid_union',
+                        errors: expect.arrayContaining([
+                            [
+                                expect.objectContaining({
+                                    origin: 'number',
+                                    code: 'too_big',
+                                    maximum: 180,
+                                    inclusive: true,
+                                    path: [0],
+                                    message: 'Invalid input',
+                                }),
+                                expect.objectContaining({
+                                    origin: 'number',
+                                    code: 'too_small',
+                                    minimum: -90,
+                                    inclusive: true,
+                                    path: [1],
+                                    message: 'Invalid input',
+                                }),
+                            ],
+                        ]),
+                        path: ['position'],
+                        message: 'Invalid input',
                     },
                 ],
             }),

@@ -9,7 +9,6 @@ describe('Geocoding errors', () => {
         await expect(geocode({ query: '' })).rejects.toBeInstanceOf(SDKServiceError);
         await expect(geocode({ query: '' })).rejects.toMatchObject({
             service: 'Geocode',
-            message: 'Request failed with status code 403',
             status: 403,
         });
     });

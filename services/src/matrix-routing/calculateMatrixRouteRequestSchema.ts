@@ -41,8 +41,8 @@ const calculateMatrixRouteSchemaOptional = z.partial(
 
 const calculateMatrixRouteSchema = z.extend(
     calculateMatrixRouteSchemaMandatory,
-    calculateMatrixRouteSchemaOptional,
-).shape;
+    calculateMatrixRouteSchemaOptional.shape,
+);
 
 /**
  * @ignore

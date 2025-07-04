@@ -59,6 +59,11 @@ describe('Autocomplete service', () => {
         });
     });
 
+    beforeEach(async () => {
+        // We enforce a delay before each test to avoid hitting the API rate limits.
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 2000));
+    });
+
     test('autocomplete call with required parameters', async () => {
         const query = 'cafe';
         const language = 'en-GB';
@@ -67,7 +72,7 @@ describe('Autocomplete service', () => {
     });
 
     test('autocomplete with option parameters', async () => {
-        const query = 'Indiaas restaurant';
+        const query = 'Indian restaurant';
         const position = [4.81875, 51.85335];
         const limit = 5;
         const countries = ['NL', 'FR'];

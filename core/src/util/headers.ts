@@ -41,7 +41,6 @@ export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHead
         'TomTom-User-Agent': `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`,
     }),
     // optional oauth2 access token:
-    // biome-ignore lint/style/useNamingConvention: mapping to header name
     ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
     ...(params.trackingId && { 'Tracking-ID': validateTrackingId(params.trackingId) }),
 });

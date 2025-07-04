@@ -42,6 +42,11 @@ describe('Geometry Search service', () => {
 
     beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));
 
+    beforeEach(async () => {
+        // We enforce a delay before each test to avoid hitting the API rate limits.
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 2000));
+    });
+
     const expectWorkingResult = () =>
         expect.objectContaining<GeometrySearchResponse>({
             type: 'FeatureCollection',
@@ -115,10 +120,9 @@ describe('Geometry Search service', () => {
                 coordinates: [37.71205, -121.36434],
                 radius: 6000,
             },
-        ];
-        // @ts-ignore
+        ] as never;
         await expect(search({ query, geometries: incorrectGeometry })).rejects.toMatchObject(
-            expect.objectContaining({ message: 'Invalid input' }),
+            expect.objectContaining({ message: expect.stringContaining('geometries') }),
         );
     });
 

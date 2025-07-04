@@ -10,11 +10,11 @@ import type { RequestValidationConfig } from './types/validation';
  * @ignore
  */
 export class ValidationError extends Error {
-    errors: $ZodIssue[];
+    issues: $ZodIssue[];
 
-    constructor(error: $ZodError) {
-        super(error.issues[0].message);
-        this.errors = error.issues;
+    constructor(zodError: $ZodError) {
+        super(z.prettifyError(zodError));
+        this.issues = zodError.issues;
     }
 }
 
@@ -28,7 +28,7 @@ export const validateRequestSchema = <T extends CommonServiceParams>(
     config?: RequestValidationConfig,
 ): T => {
     const requestSchema = config?.schema
-        ? z.extend(commonServiceRequestSchema, config.schema)
+        ? z.extend(commonServiceRequestSchema, config.schema.shape)
         : commonServiceRequestSchema;
     // If there's no schema provided, we still validate the common params:
     const mergedSchema = requestSchema.check(
@@ -47,7 +47,7 @@ export const validateRequestSchema = <T extends CommonServiceParams>(
         }
     }
 
-    const validation = (refinedMergedSchema || mergedSchema).safeParse(params);
+    const validation = (refinedMergedSchema ?? mergedSchema).safeParse(params);
     if (!validation.success) {
         throw new ValidationError(validation.error);
     }

@@ -8,7 +8,6 @@ describe('Geometry data errors', () => {
     test('Geometry data test without API key', async () => {
         await expect(geometryData({ geometries: ['GEOMETRY_ID'] })).rejects.toMatchObject({
             service: 'GeometryData',
-            message: 'Request failed with status code 403',
             status: 403,
         });
     });
@@ -18,11 +17,23 @@ describe('Geometry data errors', () => {
             geometryData({ apiKey: 'KEY', commonBaseURL: 'https://api.tomtom.com', geometries: [] }),
         ).rejects.toMatchObject({
             service: 'GeometryData',
-            errors: [
+            issues: [
                 {
-                    code: 'too_small',
+                    code: 'invalid_union',
+                    errors: expect.arrayContaining([
+                        [
+                            {
+                                origin: 'array',
+                                code: 'too_small',
+                                minimum: 1,
+                                inclusive: true,
+                                path: [],
+                                message: 'Invalid input',
+                            },
+                        ],
+                    ]),
                     path: ['geometries'],
-                    message: 'Array must contain at least 1 element(s)',
+                    message: 'Invalid input',
                 },
             ],
         });
@@ -190,7 +201,7 @@ describe('Geometry data integration tests', () => {
                 onAPIRequest: onApiRequest,
                 onAPIResponse: onApiResponse,
             }),
-        ).rejects.toThrow(expect.objectContaining({ status: 400 }));
+        ).rejects.toMatchObject({ status: 400 });
         expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
         expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
     });

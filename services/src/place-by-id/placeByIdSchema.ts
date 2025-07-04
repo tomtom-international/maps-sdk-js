@@ -18,4 +18,4 @@ const placeByIdRequestOptional = z.partial(
 /**
  * @ignore
  */
-export const placeByIdRequestSchema = z.extend(placeByIdRequestMandatory, placeByIdRequestOptional).shape;
+export const placeByIdRequestSchema = z.extend(placeByIdRequestMandatory, placeByIdRequestOptional.shape);

@@ -20,14 +20,13 @@ describe('EV Charging Stations availability schema validation', () => {
             validateRequestSchema(invalidParams, { schema: evChargingStationsAvailabilityRequestSchema }),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         expected: 'string',
-                        received: 'number',
                         code: 'invalid_type',
                         path: ['id'],
-                        message: 'Expected string, received number',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -42,14 +41,13 @@ describe('EV Charging Stations availability schema validation', () => {
             validateRequestSchema(invalidParams, { schema: evChargingStationsAvailabilityRequestSchema }),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
-                        received: 'undefined',
                         expected: 'string',
-                        message: 'Required',
+                        message: 'Invalid input',
                         path: ['id'],
-                    },
+                    }),
                 ],
             }),
         );

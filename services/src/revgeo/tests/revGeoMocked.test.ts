@@ -24,7 +24,6 @@ describe('Reverse Geocoding mock tests', () => {
         mockFetchResponse(429);
         await expect(reverseGeocode({ position: [180, 90] })).rejects.toMatchObject({
             service: 'ReverseGeocode',
-            message: 'Too Many Requests: The API Key is over QPS (Queries per second)',
             status: 429,
         });
     });

@@ -13,13 +13,12 @@ describe('Routing: Vehicle parameter request schema tests', () => {
     test('it should fail when format of vehicle dimensions are incorrect', async () => {
         expect(() => validate({ dimensions: { weightKG: '1900' as never } })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                         path: ['dimensions', 'weightKG'],
-                        received: 'string',
                     },
                 ],
             }),
@@ -53,67 +52,64 @@ describe('Routing: Vehicle parameter request schema tests', () => {
                     },
                 },
             }),
-        ).toThrow("Invalid discriminator value. Expected 'combustion' | 'electric'");
+        ).toThrow('✖ Invalid input\n  → at engine.type');
     });
 
     test('it should fail when format of efficiency within vehicle consumption is incorrect', () => {
-        expect(() =>
-            validate({
-                engine: {
-                    type: 'electric',
-                    currentChargePCT: 50,
-                    model: {
-                        charging: { maxChargeKWH: 85 },
-                        consumption: {
-                            speedsToConsumptionsKWH: [
-                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 },
-                            ],
-                            auxiliaryPowerInkW: 1.7,
-                            efficiency: {
-                                acceleration: '0.66' as never,
-                                deceleration: 1.2,
-                                uphill: -0.1,
-                                downhill: '0.73' as never,
-                            },
+        const validationInput = {
+            engine: {
+                type: 'electric',
+                currentChargePCT: 50,
+                model: {
+                    charging: { maxChargeKWH: 85 },
+                    consumption: {
+                        speedsToConsumptionsKWH: [
+                            { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+                            { speedKMH: 130, consumptionUnitsPer100KM: 21.3 },
+                        ],
+                        auxiliaryPowerInkW: 1.7,
+                        efficiency: {
+                            acceleration: '0.66' as never,
+                            deceleration: 1.2,
+                            uphill: -0.1,
+                            downhill: '0.73' as never,
                         },
                     },
                 },
-            }),
-        ).toThrow(
+            },
+        } as VehicleParameters;
+
+        expect(() => validate(validationInput)).toThrow(
             expect.objectContaining({
-                errors: expect.arrayContaining([
+                message: expect.stringMatching(/acceleration[\s\S]*deceleration[\s\S]*uphill[\s\S]*downhill/),
+                issues: expect.arrayContaining([
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'efficiency', 'acceleration'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'too_big',
                         maximum: 1,
-                        type: 'number',
+                        origin: 'number',
                         inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 1',
+                        message: 'Invalid input',
                         path: ['engine', 'model', 'consumption', 'efficiency', 'deceleration'],
                     },
                     {
                         code: 'too_small',
                         minimum: 0,
-                        type: 'number',
+                        origin: 'number',
                         inclusive: true,
-                        exact: false,
-                        message: 'Number must be greater than or equal to 0',
+                        message: 'Invalid input',
                         path: ['engine', 'model', 'consumption', 'efficiency', 'uphill'],
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'efficiency', 'downhill'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                 ]),
             }),
@@ -148,18 +144,16 @@ describe('Routing: Vehicle parameter request schema tests', () => {
             }),
         ).toThrow(
             expect.objectContaining({
-                errors: expect.arrayContaining([
+                issues: expect.arrayContaining([
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'speedsToConsumptionsKWH', 0, 'speedKMH'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: [
                             'engine',
                             'model',
@@ -168,44 +162,39 @@ describe('Routing: Vehicle parameter request schema tests', () => {
                             1,
                             'consumptionUnitsPer100KM',
                         ],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'auxiliaryPowerInkW'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'too_big',
                         maximum: 500,
-                        type: 'number',
+                        origin: 'number',
                         inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 500',
+                        message: 'Invalid input',
                         path: ['engine', 'model', 'consumption', 'consumptionInKWHPerKMAltitudeGain'],
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'recuperationInKWHPerKMAltitudeLoss'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'currentChargePCT'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'charging', 'maxChargeKWH'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                 ]),
             }),
@@ -232,18 +221,16 @@ describe('Routing: Vehicle parameter request schema tests', () => {
             }),
         ).toThrow(
             expect.objectContaining({
-                errors: expect.arrayContaining([
+                issues: expect.arrayContaining([
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'speedsToConsumptionsLiters', 0, 'speedKMH'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: [
                             'engine',
                             'model',
@@ -252,28 +239,25 @@ describe('Routing: Vehicle parameter request schema tests', () => {
                             1,
                             'consumptionUnitsPer100KM',
                         ],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'auxiliaryPowerInLitersPerHour'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'model', 'consumption', 'fuelEnergyDensityInMJoulesPerLiter'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['engine', 'currentFuelInLiters'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                 ]),
             }),

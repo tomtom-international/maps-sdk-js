@@ -24,4 +24,4 @@ const searchExtraParamsOptional = z.partial(
 /**
  * @ignore
  */
-export const commonSearchParamsSchema = z.extend(commonPlacesParamsSchema, searchExtraParamsOptional).shape;
+export const commonSearchParamsSchema = z.extend(commonPlacesParamsSchema, searchExtraParamsOptional.shape);

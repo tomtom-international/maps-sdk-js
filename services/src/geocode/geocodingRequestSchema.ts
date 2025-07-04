@@ -5,4 +5,4 @@ import { commonPlacesParamsSchema } from '../shared/commonPlacesParamsSchema';
 /**
  * @ignore
  */
-export const geocodingRequestSchema = z.extend(commonPlacesParamsSchema, commonGeocodeAndFuzzySearchParamsSchema).shape;
+export const geocodingRequestSchema = z.extend(commonPlacesParamsSchema, commonGeocodeAndFuzzySearchParamsSchema.shape);

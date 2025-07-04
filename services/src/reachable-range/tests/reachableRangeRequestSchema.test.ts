@@ -16,8 +16,8 @@ describe.skip('Reachable range request schema validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: 'Required',
-                errors: [expect.objectContaining({ path: ['apiKey'] })],
+                message: 'Invalid input',
+                issues: [expect.objectContaining({ path: ['apiKey'] })],
             }),
         );
     });
@@ -29,9 +29,7 @@ describe.skip('Reachable range request schema validation', () => {
                 config,
             );
 
-        expect(validationCall).toThrow(
-            expect.objectContaining({ message: 'commonBaseURL or customServiceBaseURL is required' }),
-        );
+        expect(validationCall).toThrow(expect.objectContaining({ message: 'Invalid input' }));
     });
 
     test("it should fail when origin isn't defined", () => {
@@ -44,7 +42,7 @@ describe.skip('Reachable range request schema validation', () => {
         expect(validationCall).toThrow(
             expect.objectContaining({
                 message: 'Invalid input',
-                errors: [expect.objectContaining({ path: ['origin'] })],
+                issues: [expect.objectContaining({ path: ['origin'] })],
             }),
         );
     });
@@ -64,7 +62,7 @@ describe.skip('Reachable range request schema validation', () => {
         expect(validationCall).toThrow(
             expect.objectContaining({
                 message: 'Invalid input',
-                errors: [expect.objectContaining({ path: ['origin'] })],
+                issues: [expect.objectContaining({ path: ['origin'] })],
             }),
         );
     });
@@ -78,8 +76,8 @@ describe.skip('Reachable range request schema validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: 'Required',
-                errors: [expect.objectContaining({ path: ['budget'] })],
+                message: 'Invalid input',
+                issues: [expect.objectContaining({ path: ['budget'] })],
             }),
         );
     });
@@ -123,7 +121,7 @@ describe.skip('Reachable range request schema validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "With an EV reachable range, the vehicle parameters must be set, with 'electric' engine type",
+                message: 'Invalid input',
             }),
         );
     });
@@ -146,7 +144,7 @@ describe.skip('Reachable range request schema validation', () => {
 
         expect(validationCall).toThrow(
             // (More detailed tests done in scope of vehicle params validation itself)
-            expect.objectContaining({ message: 'Required' }),
+            expect.objectContaining({ message: 'Invalid input' }),
         );
     });
 
@@ -175,7 +173,7 @@ describe.skip('Reachable range request schema validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: "With an EV reachable range, the vehicle parameters must be set, with 'electric' engine type",
+                message: 'Invalid input',
             }),
         );
     });

@@ -16,7 +16,7 @@ export class SDKError extends Error {
     constructor(
         message: string,
         private readonly service: string,
-        private readonly errors?: $ZodIssue[],
+        private readonly issues?: $ZodIssue[],
     ) {
         super(message);
 
@@ -93,4 +93,4 @@ export const buildResponseError = (
  * @param serviceName
  */
 export const buildValidationError = (error: ValidationError, serviceName: ServiceName): SDKError =>
-    new SDKError(error.message, serviceName, error.errors);
+    new SDKError(error.message, serviceName, error.issues);

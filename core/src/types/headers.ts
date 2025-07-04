@@ -9,7 +9,6 @@
  */
 export type TomTomHeaders = {
     'TomTom-User-Agent'?: string;
-    // biome-ignore lint/style/useNamingConvention: mapping to header name
     Authorization?: string;
     'Tracking-ID'?: string;
 };

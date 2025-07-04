@@ -21,16 +21,14 @@ describe('Geocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
-                        received: 'MAA',
-                        code: 'invalid_enum_value',
-                        options: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
+                message: expect.stringContaining('view'),
+                issues: [
+                    expect.objectContaining({
+                        code: 'invalid_value',
+                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
                         path: ['view'],
-                        message:
-                            'Invalid enum value. ' +
-                            "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'",
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -44,18 +42,17 @@ describe('Geocoding schema validation', () => {
             apiKey,
             commonBaseURL: commonBaseUrl,
         };
+
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                message: expect.stringContaining('limit'),
+                issues: [
+                    expect.objectContaining({
                         code: 'too_big',
                         maximum: 100,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 100',
+                        message: 'Invalid input',
                         path: ['limit'],
-                    },
+                    }),
                 ],
             }),
         );
@@ -70,16 +67,14 @@ describe('Geocoding schema validation', () => {
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                message: expect.stringContaining('offset'),
+                issues: [
+                    expect.objectContaining({
                         code: 'too_big',
                         maximum: 1900,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 1900',
+                        message: 'Invalid input',
                         path: ['offset'],
-                    },
+                    }),
                 ],
             }),
         );
@@ -93,16 +88,16 @@ describe('Geocoding schema validation', () => {
             apiKey,
             commonBaseURL: commonBaseUrl,
         };
+
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['countries'],
-                        message: 'Expected array, received string',
-                    },
+                        message: 'Invalid input',
+                    }),
                 ],
             }),
         );
@@ -117,14 +112,12 @@ describe('Geocoding schema validation', () => {
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'undefined',
-                        message: 'Required',
                         path: ['query'],
-                    },
+                    }),
                 ],
             }),
         );
@@ -137,20 +130,21 @@ describe('Geocoding schema validation', () => {
             apiKey,
             commonBaseURL: commonBaseUrl,
         };
+
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'number',
-                        message: 'Expected string, received number',
+                        message: 'Invalid input',
                         path: ['query'],
-                    },
+                    }),
                 ],
             }),
         );
     });
+
     test('it should fail when radius is incorrect', () => {
         const invalidParams: GeocodingParams = {
             query: 'London',
@@ -173,14 +167,13 @@ describe('Geocoding schema validation', () => {
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                         path: ['radiusMeters'],
-                    },
+                    }),
                 ],
             }),
         );
@@ -196,14 +189,13 @@ describe('Geocoding schema validation', () => {
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                         path: ['extendedPostalCodesFor'],
-                    },
+                    }),
                 ],
             }),
         );
@@ -219,14 +211,13 @@ describe('Geocoding schema validation', () => {
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                         path: ['mapcodes'],
-                    },
+                    }),
                 ],
             }),
         );
@@ -242,14 +233,13 @@ describe('Geocoding schema validation', () => {
         };
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                issues: [
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                         path: ['geographyTypes'],
-                    },
+                    }),
                 ],
             }),
         );
@@ -258,22 +248,18 @@ describe('Geocoding schema validation', () => {
     test('it should fail when position lat/lon is out of range', () => {
         const invalidParams: GeocodingParams = {
             query: 'Minnesota',
-            position: [46.6144, -93.1432], //Inverted coords for Minnesota
+            position: [46.6144, -93.1432], // Inverted coords for Minnesota
             apiKey,
             commonBaseURL: commonBaseUrl,
         };
+
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
-                        code: 'too_small',
-                        minimum: -90,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be greater than or equal to -90',
-                        path: ['position', 1],
-                    },
+                message: expect.stringContaining('position'),
+                issues: [
+                    expect.objectContaining({
+                        code: 'invalid_union',
+                    }),
                 ],
             }),
         );

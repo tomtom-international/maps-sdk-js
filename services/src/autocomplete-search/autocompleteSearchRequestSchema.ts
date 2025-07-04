@@ -20,5 +20,5 @@ const autocompleteSearchRequestOptional = z.partial(
  */
 export const autocompleteSearchRequestSchema = z.extend(
     autocompleteSearchRequestMandatory,
-    autocompleteSearchRequestOptional,
-).shape;
+    autocompleteSearchRequestOptional.shape,
+);

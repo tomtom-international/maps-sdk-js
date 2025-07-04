@@ -47,21 +47,21 @@ export type ParseResponseError<T = DefaultAPIResponseErrorBody> = (
  * Template functions for any service.
  */
 export type ServiceTemplate<
-    PARAMS extends CommonServiceParams<ApiRequest, ApiResponse>,
+    Params extends CommonServiceParams<ApiRequest, ApiResponse>,
     ApiRequest,
     ApiResponse,
-    RESPONSE,
+    Response,
 > = {
     /**
      * Optional configuration for request validation.
      */
-    requestValidation?: RequestValidationConfig<PARAMS>;
+    requestValidation?: RequestValidationConfig<Params>;
 
     /**
      * Builds the request to be sent to the API.
      * @param params The parameters to build the request from.
      */
-    buildRequest: (params: PARAMS) => ApiRequest;
+    buildRequest: (params: Params) => ApiRequest;
 
     /**
      * Optional getter for the API version to use.
@@ -69,7 +69,7 @@ export type ServiceTemplate<
      * * If not provided, the API version from global or provided configuration will be used.
      * @param params Input parameters to help determine the API version if needed.
      */
-    getAPIVersion?: (params?: PARAMS) => number;
+    getAPIVersion?: (params?: Params) => number;
 
     /**
      * Sends the request to the API (e.g. via GET or POST, with or without custom headers).
@@ -82,7 +82,7 @@ export type ServiceTemplate<
      * @param apiResponse The API response to parse.
      * @param params The call parameters, if applicable for this service.
      */
-    parseResponse: (apiResponse: ApiResponse, params: PARAMS) => RESPONSE;
+    parseResponse: (apiResponse: ApiResponse, params: Params) => Response;
 
     /**
      * Parses an API response error before throwing it back to the caller.

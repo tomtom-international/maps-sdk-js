@@ -28,13 +28,12 @@ describe('Place By Id API', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: placeByIdRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'number',
                         path: ['entityId'],
-                        message: 'Expected string, received number',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -56,13 +55,12 @@ describe('Place By Id API', () => {
             ),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'undefined',
                         path: ['entityId'],
-                        message: 'Required',
+                        message: 'Invalid input',
                     },
                 ],
             }),

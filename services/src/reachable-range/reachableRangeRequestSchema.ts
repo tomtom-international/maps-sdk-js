@@ -19,8 +19,8 @@ const reachableRangeRequestSchemaOptional = z.object({
 
 const reachableRangeRequestSchema = z.extend(
     commonRoutingRequestSchema,
-    z.extend(reachableRangeRequestSchemaMandatory, reachableRangeRequestSchemaOptional).shape,
-).shape;
+    z.extend(reachableRangeRequestSchemaMandatory, reachableRangeRequestSchemaOptional.shape).shape,
+);
 
 // const departArriveRefinement: SchemaRefinement<ReachableRangeParams> = {
 //     check: (data: ReachableRangeParams): boolean => (data.when?.option as string) != "arriveBy",

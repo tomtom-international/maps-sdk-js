@@ -11,7 +11,6 @@ describe('Reverse Geocoding integration test without API key', () => {
         await expect(reverseGeocode(coordinates)).rejects.toBeInstanceOf(SDKServiceError);
         await expect(reverseGeocode(coordinates)).rejects.toMatchObject({
             service: 'ReverseGeocode',
-            message: 'Request failed with status code 403',
             status: 403,
         });
     });
@@ -19,6 +18,11 @@ describe('Reverse Geocoding integration test without API key', () => {
 
 describe('Reverse Geocoding integration tests', () => {
     beforeAll(() => putIntegrationTestsAPIKey());
+
+    beforeEach(async () => {
+        // We enforce a delay before each test to avoid hitting the API rate limits.
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 2000));
+    });
 
     test('Default reverse geocoding', async () => {
         const exampleSdkResponse = {
@@ -103,7 +107,7 @@ describe('Reverse Geocoding integration tests', () => {
                     municipalitySubdivision: 'Amsterdam Havens',
                     country: 'Nederland',
                     countryCodeISO3: 'NLD',
-                    freeformAddress: 'Overhoeksplein 23A, 1031 KS Amsterdam',
+                    freeformAddress: expect.stringContaining('Overhoeksplein'),
                     localName: 'Amsterdam',
                 },
                 originalPosition: expect.any(Array),

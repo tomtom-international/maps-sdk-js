@@ -13,20 +13,18 @@ describe('Validation', () => {
 
         expect(() => validateRequestSchema(params as never, { schema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'undefined',
                         path: ['apiKey'],
-                        message: 'Required',
+                        message: 'Invalid input',
                     },
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['position'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -41,12 +39,12 @@ describe('Validation', () => {
 
             expect(() => validateRequestSchema(params)).toThrow(
                 expect.objectContaining({
-                    errors: [
-                        {
+                    message: expect.stringContaining('commonBaseURL or customServiceBaseURL is required'),
+                    issues: [
+                        expect.objectContaining({
                             code: 'custom',
-                            message: 'commonBaseURL or customServiceBaseURL is required',
                             path: [],
-                        },
+                        }),
                     ],
                 }),
             );
@@ -65,12 +63,12 @@ describe('Validation', () => {
 
         expect(() => validateRequestSchema(params, { schema })).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
+                message: expect.stringContaining('commonBaseURL or customServiceBaseURL is required'),
+                issues: [
+                    expect.objectContaining({
                         code: 'custom',
-                        message: 'commonBaseURL or customServiceBaseURL is required',
                         path: [],
-                    },
+                    }),
                 ],
             }),
         );

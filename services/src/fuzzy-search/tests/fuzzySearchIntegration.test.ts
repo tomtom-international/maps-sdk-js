@@ -15,6 +15,11 @@ import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } f
 describe('Fuzzy Search service', () => {
     beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));
 
+    beforeEach(async () => {
+        // We enforce a delay before each test to avoid hitting the API rate limits.
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 2000));
+    });
+
     const expectWorkingResult = expect.objectContaining<FuzzySearchResponse>({
         type: 'FeatureCollection',
         features: expect.arrayContaining<Place<SearchPlaceProps>>([
@@ -122,7 +127,7 @@ describe('Fuzzy Search service', () => {
 
     test('fuzzy search buildRequest hook modifies url', async () => {
         const query = 'cafe';
-        const newQuery = 'parking';
+        const newQuery = 'restaurant';
         const res = await search(
             { query },
             {
@@ -137,6 +142,10 @@ describe('Fuzzy Search service', () => {
         expect(res).toEqual(
             expect.objectContaining({
                 type: 'FeatureCollection',
+                properties: expect.objectContaining({
+                    query: newQuery,
+                    totalResults: expect.any(Number),
+                }),
                 features: expect.arrayContaining([
                     expect.objectContaining({
                         properties: expect.objectContaining({

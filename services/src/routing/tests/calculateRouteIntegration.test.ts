@@ -39,7 +39,7 @@ describe('Calculate route integration tests', () => {
             const result = await calculateRoute({
                 geoInputs: [
                     [7.675106, 46.490793],
-                    [7.84328, 46.403849], //TODO Lötschen Pass was not working with Orbis, so I moved point a little bit, it was originally [7.74328, 46.403849]
+                    [7.74328, 46.403849],
                     [1.32248, 51.111645],
                 ],
                 costModel: { traffic: 'live', avoid: ['tunnels', 'lowEmissionZones'], routeType: 'efficient' },

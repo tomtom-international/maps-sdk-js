@@ -20,4 +20,4 @@ const placesParamsOptional = z.partial(
 /**
  * @ignore
  */
-export const commonPlacesParamsSchema = z.extend(placesParamsMandatory, placesParamsOptional).shape;
+export const commonPlacesParamsSchema = z.extend(placesParamsMandatory, placesParamsOptional.shape);

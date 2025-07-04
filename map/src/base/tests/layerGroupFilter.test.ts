@@ -17,7 +17,8 @@ describe('Tests for logic related to layer group filtering', () => {
     ] as LayerSpecification[];
 
     test('build layer group filter in include mode', () => {
-        expect(buildLayerGroupFilter({ mode: 'include', names: [] })).toBeUndefined();
+        // Include nothing:
+        expect(testLayers.filter(buildLayerGroupFilter({ mode: 'include', names: [] }))).toEqual([]);
 
         expect(testLayers.filter(buildLayerGroupFilter({ mode: 'include', names: ['land'] }))).toEqual([
             { id: 'LULC - Built-up area', type: 'fill' },
@@ -58,7 +59,8 @@ describe('Tests for logic related to layer group filtering', () => {
     });
 
     test('build layer group filter in exclude mode', () => {
-        expect(buildLayerGroupFilter({ mode: 'exclude', names: [] })).toBeUndefined();
+        // Exclude nothing:
+        expect(testLayers.filter(buildLayerGroupFilter({ mode: 'exclude', names: [] }))).toEqual(testLayers);
 
         expect(testLayers.filter(buildLayerGroupFilter({ mode: 'exclude', names: ['buildings3D'] }))).toEqual([
             { id: 'Buildings - Outline', type: 'line' },

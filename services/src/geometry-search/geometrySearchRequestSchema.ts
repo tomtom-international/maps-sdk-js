@@ -9,4 +9,4 @@ const geometrySearchRequestMandatory = z.object({
 /**
  * @ignore
  */
-export const geometrySearchRequestSchema = z.extend(commonSearchParamsSchema, geometrySearchRequestMandatory).shape;
+export const geometrySearchRequestSchema = z.extend(commonSearchParamsSchema, geometrySearchRequestMandatory.shape);

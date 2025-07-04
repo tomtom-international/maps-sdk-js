@@ -25,4 +25,4 @@ const revGeocodeRequestOptional = z.partial(
 /**
  * @ignore
  */
-export const revGeocodeRequestSchema = z.extend(revGeocodeRequestMandatory, revGeocodeRequestOptional).shape;
+export const revGeocodeRequestSchema = z.extend(revGeocodeRequestMandatory, revGeocodeRequestOptional.shape);

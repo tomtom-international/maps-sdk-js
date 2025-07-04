@@ -32,25 +32,10 @@ describe('ReverseGeocoding schema validation', () => {
             ),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
-                        code: 'too_big',
-                        maximum: 180,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 180',
-                        path: ['position', 0],
-                    },
-                    {
-                        code: 'too_small',
-                        minimum: -90,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be greater than or equal to -90',
-                        path: ['position', 1],
-                    },
+                issues: [
+                    expect.objectContaining({
+                        code: 'invalid_union',
+                    }),
                 ],
             }),
         );
@@ -106,14 +91,13 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'too_big',
                         maximum: 360,
-                        type: 'number',
+                        origin: 'number',
                         inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 360',
+                        message: 'Invalid input',
                         path: ['heading'],
                     },
                 ],
@@ -132,13 +116,12 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['heading'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -156,13 +139,12 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['mapcodes'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -180,13 +162,12 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'number',
                         path: ['number'],
-                        message: 'Expected string, received number',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -204,13 +185,12 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'number',
-                        received: 'string',
                         path: ['radiusMeters'],
-                        message: 'Expected number, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -228,13 +208,12 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['geographyType'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -252,13 +231,13 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'boolean',
-                        received: 'string',
+
                         path: ['returnRoadUse'],
-                        message: 'Expected boolean, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -276,13 +255,13 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'boolean',
-                        received: 'string',
+
                         path: ['allowFreeformNewline'],
-                        message: 'Expected boolean, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -300,13 +279,13 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'boolean',
-                        received: 'string',
+
                         path: ['returnSpeedLimit'],
-                        message: 'Expected boolean, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -324,13 +303,13 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'boolean',
-                        received: 'string',
+
                         path: ['returnMatchType'],
-                        message: 'Expected boolean, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -348,15 +327,12 @@ describe('ReverseGeocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
-                        received: 'MAA',
-                        code: 'invalid_enum_value',
-                        options: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
+                        code: 'invalid_value',
+                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
                         path: ['view'],
-                        message:
-                            "Invalid enum value. Expected 'Unified' | " +
-                            "'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'MAA'",
+                        message: 'Invalid input',
                     },
                 ],
             }),

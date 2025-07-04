@@ -28,7 +28,7 @@ const combustionModelSchema = z.object({
             ),
             auxiliaryPowerInLitersPerHour: z.optional(z.number()),
             fuelEnergyDensityInMJoulesPerLiter: z.optional(z.number()),
-        }),
+        }).shape,
     ),
 });
 
@@ -68,7 +68,7 @@ const electricEngineModelSchema = z.object({
             auxiliaryPowerInkW: z.optional(z.number()),
             consumptionInKWHPerKMAltitudeGain: z.optional(z.number().check(z.maximum(500))),
             recuperationInKWHPerKMAltitudeLoss: z.optional(z.number()),
-        }),
+        }).shape,
     ),
     charging: z.optional(
         z.object({

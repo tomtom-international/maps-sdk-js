@@ -7,6 +7,6 @@ import { SDKServiceError } from '../shared';
  * @param serviceName
  */
 export const parseEVChargingStationsAvailabilityResponseError: ParseResponseError = (apiError, serviceName) => {
-    const errorMessage = apiError.data?.detailedError?.message || apiError.message;
+    const errorMessage = apiError.data?.detailedError?.message ?? apiError.message;
     return new SDKServiceError(errorMessage, serviceName, apiError.status);
 };

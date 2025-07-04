@@ -37,7 +37,6 @@ export default () => {
                 typescript(typescriptOptions), //needed for correct order
                 replace({
                     preventAssignment: true,
-                    // biome-ignore lint/style/useNamingConvention: custom param name
                     __SDK_VERSION__: SDK_VERSION,
                 }),
                 commonjs(),
@@ -61,7 +60,6 @@ export default () => {
                 typescript(typescriptOptions), //needed for correct order
                 replace({
                     preventAssignment: true,
-                    // biome-ignore lint/style/useNamingConvention: custom param name
                     __SDK_VERSION__: SDK_VERSION,
                 }),
                 commonjs(),
@@ -84,7 +82,6 @@ export default () => {
                 typescript(typescriptOptions), //needed for correct order
                 replace({
                     preventAssignment: true,
-                    // biome-ignore lint/style/useNamingConvention: custom param name
                     __SDK_VERSION__: SDK_VERSION,
                 }),
                 commonjs(),

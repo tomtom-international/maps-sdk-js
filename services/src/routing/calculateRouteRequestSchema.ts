@@ -26,8 +26,8 @@ const calculateRouteRequestSchemaOptional = z.partial(
 
 const calculateRouteRequestSchema = z.extend(
     commonRoutingRequestSchema,
-    z.extend(calculateRouteRequestSchemaMandatory, calculateRouteRequestSchemaOptional).shape,
-).shape;
+    z.extend(calculateRouteRequestSchemaMandatory, calculateRouteRequestSchemaOptional.shape).shape,
+);
 
 const calculateRouteGeoInputsRefinement: SchemaRefinement<CalculateRouteParams> = {
     check: (data: CalculateRouteParams): boolean => {

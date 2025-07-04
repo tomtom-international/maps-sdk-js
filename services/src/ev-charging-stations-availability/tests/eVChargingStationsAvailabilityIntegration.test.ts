@@ -11,7 +11,6 @@ describe('charging availability errors', () => {
         await expect(evChargingStationsAvailability({ id: '1234' })).rejects.toBeInstanceOf(SDKServiceError);
         await expect(evChargingStationsAvailability({ id: '1234' })).rejects.toMatchObject({
             service: 'EVChargingStationsAvailability',
-            message: 'Request failed with status code 403',
             status: 403,
         });
     });

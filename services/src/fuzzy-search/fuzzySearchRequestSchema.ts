@@ -14,5 +14,5 @@ const fuzzySearchRequestOptional = z.partial(
  */
 export const fuzzySearchRequestSchema = z.extend(
     commonSearchParamsSchema,
-    z.extend(commonGeocodeAndFuzzySearchParamsSchema, fuzzySearchRequestOptional).shape,
-).shape;
+    z.extend(commonGeocodeAndFuzzySearchParamsSchema, fuzzySearchRequestOptional.shape).shape,
+);

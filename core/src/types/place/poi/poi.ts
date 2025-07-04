@@ -8,7 +8,6 @@ import type { OpeningHours } from './openingHours';
  * @category Types
  */
 
-// biome-ignore lint/style/useNamingConvention: Using acronym
 export type POI = {
     name: string;
     phone?: string;

@@ -14,4 +14,4 @@ const geometryDataRequestOptional = z.partial(
     }),
 );
 
-export const geometryDataRequestSchema = z.extend(geometryDataRequestMandatory, geometryDataRequestOptional).shape;
+export const geometryDataRequestSchema = z.extend(geometryDataRequestMandatory, geometryDataRequestOptional.shape);

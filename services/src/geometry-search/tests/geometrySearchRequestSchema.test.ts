@@ -85,7 +85,7 @@ describe('GeometrySearch Schema Validation', () => {
     test('it should fail when geometryList property is missing', () => {
         const query = 'cafe';
         expect(() => validateRequestSchema({ query, apiKey, commonBaseURL: commonBaseUrl }, config)).toThrow(
-            'Required',
+            'Invalid input',
         );
     });
 
@@ -109,13 +109,12 @@ describe('GeometrySearch Schema Validation', () => {
     test('it should fail when query is missing', () => {
         expect(() => validateRequestSchema({ geometries, apiKey, commonBaseURL: commonBaseUrl }, config)).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'undefined',
                         path: ['query'],
-                        message: 'Required',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -128,13 +127,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'string',
-                        received: 'undefined',
                         path: ['query'],
-                        message: 'Required',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -149,13 +147,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, mapcodes, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['mapcodes'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -169,15 +166,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, view, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
-                        received: 'CH',
-                        code: 'invalid_enum_value',
-                        options: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
+                        code: 'invalid_value',
+                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
                         path: ['view'],
-                        message:
-                            'Invalid enum value. ' +
-                            "Expected 'Unified' | 'AR' | 'IN' | 'PK' | 'IL' | 'MA' | 'RU' | 'TR' | 'CN', received 'CH'",
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -192,13 +186,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, indexes, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['indexes'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -213,13 +206,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, poiCategories, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         expected: 'array',
-                        received: 'number',
                         code: 'invalid_type',
                         path: ['poiCategories'],
-                        message: 'Expected array, received number',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -250,13 +242,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, poiBrands, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['poiBrands'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -271,13 +262,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, connectors, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['connectors'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -292,13 +282,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, fuelTypes, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['fuelTypes'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -313,13 +302,12 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, geographyTypes, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
+                issues: [
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        received: 'string',
                         path: ['geographyTypes'],
-                        message: 'Expected array, received string',
+                        message: 'Invalid input',
                     },
                 ],
             }),
@@ -333,25 +321,10 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, position, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                errors: [
-                    {
-                        code: 'too_small',
-                        minimum: -180,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be greater than or equal to -180',
-                        path: ['position', 0],
-                    },
-                    {
-                        code: 'too_big',
-                        maximum: 90,
-                        type: 'number',
-                        inclusive: true,
-                        exact: false,
-                        message: 'Number must be less than or equal to 90',
-                        path: ['position', 1],
-                    },
+                issues: [
+                    expect.objectContaining({
+                        code: 'invalid_union',
+                    }),
                 ],
             }),
         );
