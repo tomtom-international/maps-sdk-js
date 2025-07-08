@@ -217,7 +217,7 @@ describe('test prepare places for display', () => {
                 iconConfig: { iconStyle: 'poi-like' },
                 textConfig: {
                     textSize: 5,
-                    textField: (place) => place.properties.poi?.url || 'No url found',
+                    textField: (place) => place.properties.poi?.url ?? 'No url found',
                     textFont: [MAP_MEDIUM_FONT],
                 },
             }),

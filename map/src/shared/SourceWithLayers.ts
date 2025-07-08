@@ -178,7 +178,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
     }
 
     putEventState(options: PutEventStateOptions) {
-        const mode = options.mode || 'put';
+        const mode = options.mode ?? 'put';
         if (mode === 'put') {
             for (const feature of this.shownFeatures.features) {
                 if (feature.properties?.eventState === options.state) {

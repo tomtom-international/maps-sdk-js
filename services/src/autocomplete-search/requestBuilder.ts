@@ -22,7 +22,7 @@ export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams)
      * Auto-complete service defaults the language to en-GB if not specified explicitly as service param
      * Or global config
      */
-    params.language = params.language || 'en-GB';
+    params.language = params.language ?? 'en-GB';
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, 'limit', params.limit);
     appendLatLonParamsFromPosition(urlParams, params.position);

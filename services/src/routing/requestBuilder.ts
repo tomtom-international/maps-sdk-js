@@ -107,10 +107,10 @@ const appendGuidanceParams = (urlParams: URLSearchParams, params?: CalculateRout
     if (params?.guidance) {
         const guidance: GuidanceParams = params.guidance;
         urlParams.append('instructionsType', guidance.type);
-        urlParams.append('guidanceVersion', String(guidance.version || 2));
-        urlParams.append('instructionPhonetics', guidance.phonetics || 'IPA');
-        urlParams.append('instructionRoadShieldReferences', guidance.roadShieldReferences || 'all');
-        urlParams.append('language', params.language || 'en-US');
+        urlParams.append('guidanceVersion', String(guidance.version ?? 2));
+        urlParams.append('instructionPhonetics', guidance.phonetics ?? 'IPA');
+        urlParams.append('instructionRoadShieldReferences', guidance.roadShieldReferences ?? 'all');
+        urlParams.append('language', params.language ?? 'en-US');
     }
 };
 

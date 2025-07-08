@@ -321,7 +321,7 @@ describe('Calculate route integration tests', () => {
         // 2 more legs expected before and after the embedded route:
         expect(routeWithEmbeddedRouteSections.leg).toHaveLength(reconstructedRouteSections.leg.length + 2);
         expect(routeWithEmbeddedRouteSections.urban?.length).toBeGreaterThan(
-            reconstructedRouteSections.urban?.length || 0,
+            reconstructedRouteSections.urban?.length ?? 0,
         );
 
         expect(reconstructedRoute.properties.progress?.length).toBeGreaterThan(0);

@@ -114,7 +114,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
             buildPlacesLayerSpecs(
                 {
                     textConfig: {
-                        textField: (place) => place.properties.poi?.name || 'No name found',
+                        textField: (place) => place.properties.poi?.name ?? 'No name found',
                         textColor: 'green',
                     },
                 },
