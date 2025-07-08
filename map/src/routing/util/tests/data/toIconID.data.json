@@ -30,7 +30,7 @@
         ]
       }
     },
-    "traffic_no_delay_jam"
+    "traffic-incidents-no_delay-jam"
   ],
   [
     "Undefined (via code) delay magnitude jam",
@@ -44,7 +44,7 @@
         ]
       }
     },
-    "traffic_no_delay_jam"
+    "traffic-incidents-no_delay-jam"
   ],
   [
     "Unknown delay magnitude jam",
@@ -58,7 +58,7 @@
         ]
       }
     },
-    "traffic_no_delay_jam"
+    "traffic-incidents-no_delay-jam"
   ],
   [
     "Minor jam",
@@ -72,7 +72,7 @@
         ]
       }
     },
-    "traffic_slow_jam"
+    "traffic-incidents-minor-jam"
   ],
   [
     "Major danger",
@@ -86,7 +86,7 @@
         ]
       }
     },
-    "traffic_stationary_danger"
+    "traffic-incidents-major-danger"
   ],
   [
     "Road closed with minor magnitude",
@@ -100,7 +100,7 @@
         ]
       }
     },
-    "traffic_road_closed"
+    "traffic-incidents-road_closed"
   ],
   [
     "Road closed with major magnitude",
@@ -114,7 +114,7 @@
         ]
       }
     },
-    "traffic_road_closed"
+    "traffic-incidents-road_closed"
   ],
   [
     "Road closed with undefined magnitude",
@@ -127,6 +127,6 @@
         ]
       }
     },
-    "traffic_road_closed"
+    "traffic-incidents-road_closed"
   ]
 ]

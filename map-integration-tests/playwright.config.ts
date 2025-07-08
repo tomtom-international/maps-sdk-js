@@ -27,7 +27,6 @@ export default defineConfig({
         ignoreHTTPSErrors: true,
         headless: true,
         screenshot: 'only-on-failure',
-        viewport: { width: 800, height: 750 },
         /* Base URL to use in actions like `await page.goto('/')`. */
         baseURL: 'https://localhost:9001/',
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */

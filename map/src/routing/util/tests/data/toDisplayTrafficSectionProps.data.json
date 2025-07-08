@@ -22,7 +22,7 @@
           }
         ]
       },
-      "iconID": "traffic_queueing_jam",
+      "iconID": "traffic-incidents-moderate-jam",
       "title": "3 min"
     }
   ],
@@ -45,7 +45,7 @@
           }
         ]
       },
-      "iconID": "traffic_no_delay_lane_closed"
+      "iconID": "traffic-incidents-no_delay-lane_closed"
     }
   ],
   [
@@ -77,7 +77,7 @@
           }
         ]
       },
-      "iconID": "traffic_stationary_weather_rain",
+      "iconID": "traffic-incidents-major-weather_rain",
       "title": "10 min"
     }
   ]

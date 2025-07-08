@@ -3,11 +3,11 @@ import { formatDuration } from '@anw/maps-sdk-js/core';
 import type { DisplayTrafficSectionProps } from '../types/routeSections';
 
 const delayMagnitudeToIconPrefix: Record<DelayMagnitude, string> = {
-    unknown: 'traffic_no_delay',
-    minor: 'traffic_slow',
-    moderate: 'traffic_queueing',
-    major: 'traffic_stationary',
-    indefinite: 'traffic_no_delay',
+    unknown: 'traffic-incidents-no_delay',
+    minor: 'traffic-incidents-minor',
+    moderate: 'traffic-incidents-moderate',
+    major: 'traffic-incidents-major',
+    indefinite: 'traffic-incidents-no_delay',
 };
 
 const tecCauseToIconSuffix: Record<number, string> = {
@@ -32,11 +32,11 @@ export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): strin
         return null;
     }
     const magnitudePrefix =
-        // ("traffic_road_closed" is an exception)
+        // ("traffic-incidents-road_closed" is an exception)
         tecIconSuffix === 'road_closed'
-            ? 'traffic'
-            : delayMagnitudeToIconPrefix[sectionProps.magnitudeOfDelay || 'unknown'];
-    return `${magnitudePrefix}_${tecIconSuffix}`;
+            ? 'traffic-incidents'
+            : delayMagnitudeToIconPrefix[sectionProps.magnitudeOfDelay ?? 'unknown'];
+    return `${magnitudePrefix}-${tecIconSuffix}`;
 };
 
 /**

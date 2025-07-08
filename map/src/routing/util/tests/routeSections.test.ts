@@ -111,7 +111,7 @@ describe('Tests about building route sections', () => {
                         magnitudeOfDelay: 'moderate',
                         delayInSeconds: 350,
                         tec: { causes: [{ mainCauseCode: 19 }] },
-                        iconID: 'traffic_queueing_weather_rain',
+                        iconID: 'traffic-incidents-moderate-weather_rain',
                         title: '6 min',
                         routeIndex: 1,
                         routeStyle: 'deselected',

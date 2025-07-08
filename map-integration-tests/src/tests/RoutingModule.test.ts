@@ -27,6 +27,7 @@ import {
     ROUTES_SOURCE_ID,
     TRAFFIC_FLOW_SOURCE_ID,
     TRAFFIC_INCIDENTS_SOURCE_ID,
+    WAYPOINT_LABELS_LAYER_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID,
 } from 'map/src/shared';
@@ -70,8 +71,8 @@ const clearRoutes = async (page: Page) => page.evaluate(() => (globalThis as Map
 
 const clearWaypoints = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
 
-const waitForRenderedWaypoints = async (page: Page, numWaypoint: number) =>
-    waitUntilRenderedFeatures(page, [WAYPOINT_SYMBOLS_LAYER_ID], numWaypoint, 5000);
+const waitForRenderedWaypoints = async (page: Page, numWaypoints: number) =>
+    waitUntilRenderedFeatures(page, [WAYPOINT_SYMBOLS_LAYER_ID], numWaypoints, 5000);
 
 const getSelectedSummaryBubbleProps = async (page: Page): Promise<DisplayRouteSummaryProps | undefined> => {
     const renderedBubbles: MapGeoJSONFeature[] = await queryRenderedFeatures(page, [
