@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.21](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.20...v0.8.21) (2025-07-08)
+
+
+### Bug Fixes
+
+* added bdtrc file ([78094a6](https://github.com/tomtom-international/maps-sdk-js/commit/78094a6edbcddb8dd586fede8a61fa173d7f7ab6))
+* map features after breaking style changes ([a4e2d96](https://github.com/tomtom-international/maps-sdk-js/commit/a4e2d96982aa195dcf01278cba0f641b6975cd8c))
+* revert script accidental change ([b26b598](https://github.com/tomtom-international/maps-sdk-js/commit/b26b59897e81448fff00c4255471794dabe95189))
+* schemas and tests after upgrading ([57dde5e](https://github.com/tomtom-international/maps-sdk-js/commit/57dde5ee3ab20495f02dc196b2e6d9252474eca3))
+* updated version of blackduck action ([7cd9888](https://github.com/tomtom-international/maps-sdk-js/commit/7cd988812c4ee6328657ea556fc06119edf7b2ff))
+
 ### [0.8.20](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.19...v0.8.20) (2024-06-20)
 
 
