@@ -36,7 +36,7 @@
     "@types/lodash-es": "^4.17.12",
     "jest": "^30.0.4",
     "rimraf": "^6.0.1",
-    "rollup": "^4.44.1",
+    "rollup": "^4.45.1",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-includepaths": "^0.2.4",
     "rollup-plugin-svg-import": "^3.0.0",
@@ -48,7 +48,7 @@
     "entryPoint": "./index.ts"
   },
   "peerDependencies": {
-    "maplibre-gl": ">=5.6.1"
+    "maplibre-gl": "^5.6.1"
   },
   "dependencies": {
     "@turf/bearing": "^7.2.0",
