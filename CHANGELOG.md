@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.23](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.22...v0.8.23) (2025-07-24)
+
+
+### Bug Fixes
+
+* schema test ([62a1bbc](https://github.com/tomtom-international/maps-sdk-js/commit/62a1bbc22ac575cd259a557b6a1d867ced74726b))
+
 ### [0.8.22](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.21...v0.8.22) (2025-07-22)
 
 ### [0.8.21](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.20...v0.8.21) (2025-07-08)
