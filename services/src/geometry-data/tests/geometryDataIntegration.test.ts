@@ -19,19 +19,10 @@ describe('Geometry data errors', () => {
             service: 'GeometryData',
             issues: [
                 {
-                    code: 'invalid_union',
-                    errors: expect.arrayContaining([
-                        [
-                            {
-                                origin: 'array',
-                                code: 'too_small',
-                                minimum: 1,
-                                inclusive: true,
-                                path: [],
-                                message: 'Invalid input',
-                            },
-                        ],
-                    ]),
+                    origin: 'array',
+                    code: 'too_small',
+                    minimum: 1,
+                    inclusive: true,
                     path: ['geometries'],
                     message: 'Invalid input',
                 },

@@ -32,11 +32,11 @@ describe('ReverseGeocoding schema validation', () => {
             ),
         ).toThrow(
             expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_union',
-                    }),
-                ],
+                message: '✖ Invalid input\n' + '  → at position[0]\n' + '✖ Invalid input\n' + '  → at position[1]',
+                issues: expect.arrayContaining([
+                    expect.objectContaining({ code: 'too_big' }),
+                    expect.objectContaining({ code: 'too_small' }),
+                ]),
             }),
         );
     });

@@ -25,203 +25,33 @@ describe('Calculate route request schema validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: expect.stringContaining('geoInputs'),
-                issues: [
-                    {
-                        code: 'invalid_union',
-                        errors: expect.arrayContaining([
-                            [
-                                {
-                                    code: 'invalid_union',
-                                    errors: expect.arrayContaining([
-                                        expect.arrayContaining([
-                                            expect.objectContaining({
-                                                code: 'invalid_union',
-                                                errors: expect.arrayContaining([
-                                                    [
-                                                        {
-                                                            origin: 'number',
-                                                            code: 'too_big',
-                                                            maximum: 180,
-                                                            inclusive: true,
-                                                            path: [0],
-                                                            message: 'Invalid input',
-                                                        },
-                                                        {
-                                                            origin: 'number',
-                                                            code: 'too_big',
-                                                            maximum: 90,
-                                                            inclusive: true,
-                                                            path: [1],
-                                                            message: 'Invalid input',
-                                                        },
-                                                    ],
-                                                ]),
-                                            }),
-                                        ]),
-                                    ]),
-                                    path: [],
-                                    message: 'Invalid input',
-                                },
-                            ],
-                            [
-                                {
-                                    code: 'invalid_union',
-                                    errors: [
-                                        [
-                                            {
-                                                expected: 'array',
-                                                code: 'invalid_type',
-                                                path: [0],
-                                                message: 'Invalid input',
-                                            },
-                                            {
-                                                expected: 'array',
-                                                code: 'invalid_type',
-                                                path: [1],
-                                                message: 'Invalid input',
-                                            },
-                                        ],
-                                        [
-                                            {
-                                                expected: 'object',
-                                                code: 'invalid_type',
-                                                path: [],
-                                                message: 'Invalid input',
-                                            },
-                                        ],
-                                    ],
-                                    path: [],
-                                    message: 'Invalid input',
-                                },
-                            ],
-                        ]),
-                        path: ['geoInputs', 0],
-                        message: 'Invalid input',
-                    },
-                    {
-                        code: 'invalid_union',
-                        errors: [
-                            [
-                                {
-                                    code: 'invalid_union',
-                                    errors: [
-                                        [
-                                            {
-                                                code: 'invalid_union',
-                                                errors: [
-                                                    [
-                                                        {
-                                                            origin: 'number',
-                                                            code: 'too_small',
-                                                            minimum: -180,
-                                                            inclusive: true,
-                                                            path: [0],
-                                                            message: 'Invalid input',
-                                                        },
-                                                        {
-                                                            origin: 'number',
-                                                            code: 'too_small',
-                                                            minimum: -90,
-                                                            inclusive: true,
-                                                            path: [1],
-                                                            message: 'Invalid input',
-                                                        },
-                                                    ],
-                                                    [
-                                                        {
-                                                            origin: 'number',
-                                                            code: 'too_small',
-                                                            minimum: -180,
-                                                            inclusive: true,
-                                                            path: [0],
-                                                            message: 'Invalid input',
-                                                        },
-                                                        {
-                                                            origin: 'number',
-                                                            code: 'too_small',
-                                                            minimum: -90,
-                                                            inclusive: true,
-                                                            path: [1],
-                                                            message: 'Invalid input',
-                                                        },
-                                                        {
-                                                            expected: 'number',
-                                                            code: 'invalid_type',
-                                                            path: [2],
-                                                            message: 'Invalid input',
-                                                        },
-                                                    ],
-                                                    [
-                                                        {
-                                                            expected: 'object',
-                                                            code: 'invalid_type',
-                                                            path: [],
-                                                            message: 'Invalid input',
-                                                        },
-                                                    ],
-                                                    [
-                                                        {
-                                                            expected: 'object',
-                                                            code: 'invalid_type',
-                                                            path: [],
-                                                            message: 'Invalid input',
-                                                        },
-                                                    ],
-                                                ],
-                                                path: [],
-                                                message: 'Invalid input',
-                                            },
-                                        ],
-                                        [
-                                            {
-                                                expected: 'object',
-                                                code: 'invalid_type',
-                                                path: [],
-                                                message: 'Invalid input',
-                                            },
-                                        ],
-                                    ],
-                                    path: [],
-                                    message: 'Invalid input',
-                                },
-                            ],
-                            [
-                                {
-                                    code: 'invalid_union',
-                                    errors: [
-                                        [
-                                            {
-                                                expected: 'array',
-                                                code: 'invalid_type',
-                                                path: [0],
-                                                message: 'Invalid input',
-                                            },
-                                            {
-                                                expected: 'array',
-                                                code: 'invalid_type',
-                                                path: [1],
-                                                message: 'Invalid input',
-                                            },
-                                        ],
-                                        [
-                                            {
-                                                expected: 'object',
-                                                code: 'invalid_type',
-                                                path: [],
-                                                message: 'Invalid input',
-                                            },
-                                        ],
-                                    ],
-                                    path: [],
-                                    message: 'Invalid input',
-                                },
-                            ],
-                        ],
-                        path: ['geoInputs', 1],
-                        message: 'Invalid input',
-                    },
-                ],
+                message: expect.stringContaining('Invalid input'),
+                issues: expect.arrayContaining([
+                    expect.objectContaining({
+                        origin: 'number',
+                        code: 'too_big',
+                        maximum: 180,
+                        path: ['geoInputs', 0, 0],
+                    }),
+                    expect.objectContaining({
+                        origin: 'number',
+                        code: 'too_big',
+                        maximum: 90,
+                        path: ['geoInputs', 0, 1],
+                    }),
+                    expect.objectContaining({
+                        origin: 'number',
+                        code: 'too_small',
+                        minimum: -180,
+                        path: ['geoInputs', 1, 0],
+                    }),
+                    expect.objectContaining({
+                        origin: 'number',
+                        code: 'too_small',
+                        minimum: -90,
+                        path: ['geoInputs', 1, 1],
+                    }),
+                ]),
             }),
         );
     });

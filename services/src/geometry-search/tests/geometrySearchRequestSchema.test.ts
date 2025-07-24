@@ -321,11 +321,10 @@ describe('GeometrySearch Schema Validation', () => {
             validateRequestSchema({ query, geometries, position, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
             expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_union',
-                    }),
-                ],
+                issues: expect.arrayContaining([
+                    expect.objectContaining({ code: 'too_small' }),
+                    expect.objectContaining({ code: 'too_big' }),
+                ]),
             }),
         );
     });

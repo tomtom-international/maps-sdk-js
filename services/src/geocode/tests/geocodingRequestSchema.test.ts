@@ -255,12 +255,12 @@ describe('Geocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                message: expect.stringContaining('position'),
-                issues: [
+                message: expect.stringContaining('Invalid input'),
+                issues: expect.arrayContaining([
                     expect.objectContaining({
-                        code: 'invalid_union',
+                        code: 'too_small',
                     }),
-                ],
+                ]),
             }),
         );
     });

@@ -270,34 +270,23 @@ describe('FuzzySearch Schema Validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: expect.stringContaining('position'),
-                issues: [
-                    {
-                        code: 'invalid_union',
-                        errors: expect.arrayContaining([
-                            [
-                                expect.objectContaining({
-                                    origin: 'number',
-                                    code: 'too_big',
-                                    maximum: 180,
-                                    inclusive: true,
-                                    path: [0],
-                                    message: 'Invalid input',
-                                }),
-                                expect.objectContaining({
-                                    origin: 'number',
-                                    code: 'too_small',
-                                    minimum: -90,
-                                    inclusive: true,
-                                    path: [1],
-                                    message: 'Invalid input',
-                                }),
-                            ],
-                        ]),
-                        path: ['position'],
-                        message: 'Invalid input',
-                    },
-                ],
+                issues: expect.arrayContaining([
+                    expect.objectContaining({
+                        message: expect.stringContaining('commonBaseURL or customServiceBaseURL is required'),
+                    }),
+                    expect.objectContaining({
+                        origin: 'number',
+                        code: 'too_big',
+                        maximum: 180,
+                        path: ['position', 0],
+                    }),
+                    expect.objectContaining({
+                        origin: 'number',
+                        code: 'too_small',
+                        minimum: -90,
+                        path: ['position', 1],
+                    }),
+                ]),
             }),
         );
     });
