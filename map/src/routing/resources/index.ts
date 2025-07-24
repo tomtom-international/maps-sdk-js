@@ -3,7 +3,7 @@ import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
 import circleSvg from './circle.svg';
 import finishSvg from './finish.svg';
 import instructionArrowSvg from './instruction-line-arrow.svg';
-import pinSvg from './pin.svg';
+import pinSvg from '../../shared/resources/pin.svg';
 import startSvg from './start.svg';
 import summaryMapBubbleSvg from './summary-map-bubble.svg';
 import trafficSvg from './traffic.svg';
