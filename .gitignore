@@ -18,3 +18,6 @@ documentation/dev-portal/javascript/maps/documentation/navigation.yml
 **/playwright-report/
 **/blob-report/
 **/playwright/.cache/
+
+# Rollup visualizer stats
+**/stats.html

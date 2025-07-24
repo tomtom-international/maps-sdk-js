@@ -5,6 +5,7 @@ import typescript from '@rollup/plugin-typescript';
 import analyze from 'rollup-plugin-analyzer';
 // @ts-ignore
 import includePaths from 'rollup-plugin-includepaths';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const includePathOptions = {
     include: {},
@@ -74,6 +75,7 @@ export default () => {
                 typescript(typescriptOptions), //needed for correct order
                 commonjs(),
                 terser({ module: true }),
+                visualizer(),
                 analyze({ summaryOnly: true, limit: 10 }),
             ],
         },

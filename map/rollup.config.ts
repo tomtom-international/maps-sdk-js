@@ -6,6 +6,7 @@ import analyze from 'rollup-plugin-analyzer';
 // @ts-ignore
 import includePaths from 'rollup-plugin-includepaths';
 import svg from 'rollup-plugin-svg-import';
+import { visualizer } from "rollup-plugin-visualizer";
 
 const includePathOptions = {
     include: {},
@@ -78,6 +79,7 @@ export default () => {
                 commonjs(),
                 svg(),
                 terser({ module: true }),
+                visualizer(),
                 analyze({ summaryOnly: true, limit: 10 }),
             ],
         },
