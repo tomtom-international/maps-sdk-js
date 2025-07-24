@@ -145,17 +145,17 @@ export type TrafficFlowFilters = {
 };
 
 /**
- * Traffic incidents configuration.
- */
-export type IncidentsConfig = IncidentsCommonConfig & {
-    icons?: IncidentsCommonConfig;
-};
-
-/**
  * Common properties for traffic incident lines and icons.
  */
 export type IncidentsCommonConfig = StyleModuleConfig & {
     filters?: TrafficIncidentsFilters;
+};
+
+/**
+ * Traffic incidents configuration.
+ */
+export type IncidentsConfig = IncidentsCommonConfig & {
+    icons?: IncidentsCommonConfig;
 };
 
 /**
