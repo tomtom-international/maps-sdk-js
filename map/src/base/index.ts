@@ -3,5 +3,5 @@
  * @category Map
  */
 
-export * from './BaseMap';
+export * from './BaseMapModule';
 export * from './types/baseMapModuleConfig';

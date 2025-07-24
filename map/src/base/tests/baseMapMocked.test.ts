@@ -1,7 +1,7 @@
 import type { Map } from 'maplibre-gl';
 import { BASE_MAP_SOURCE_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
-import { BaseMapModule } from '../BaseMap';
+import { BaseMapModule } from '../BaseMapModule';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
