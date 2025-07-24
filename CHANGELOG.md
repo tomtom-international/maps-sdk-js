@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.24](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.23...v0.8.24) (2025-07-24)
+
+
+### Bug Fixes
+
+* pin location ([cd002e3](https://github.com/tomtom-international/maps-sdk-js/commit/cd002e322643d73307d61ff5b61e7e8886c4a60e))
+
 ### [0.8.23](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.22...v0.8.23) (2025-07-24)
 
 
