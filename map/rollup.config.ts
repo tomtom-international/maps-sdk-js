@@ -6,7 +6,7 @@ import analyze from 'rollup-plugin-analyzer';
 // @ts-ignore
 import includePaths from 'rollup-plugin-includepaths';
 import svg from 'rollup-plugin-svg-import';
-import { visualizer } from "rollup-plugin-visualizer";
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const includePathOptions = {
     include: {},
