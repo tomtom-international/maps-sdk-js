@@ -44,9 +44,9 @@ see the [docs](./docs.md) for more information about our documentation.
 
 ```shell
 # dry run mode to check the version number and release notes
-npm run release:dry
+pnpm release:dry
 # the actual release
-npm run release
+pnpm release
 ```
 
 Please note, that releasing script works only in the main git branch. So make sure you've created PR, passed review and build checks before releasing anything. Anyway, it will throw an error, so no worries.

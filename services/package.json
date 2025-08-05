@@ -6,14 +6,14 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage --no-cache",
-    "build": "rollup -c --configPlugin typescript",
-    "build:full": "npm run type-check && npm run build",
-    "build:watch": "rollup -c --configPlugin typescript --watch",
+    "build": "pnpm clean:dist && rollup -c --configPlugin typescript",
+    "build:full": "pnpm type-check && pnpm build",
+    "build:watch": "pnpm build --watch",
     "type-check": "tsc --noEmit",
     "update-dependencies": "npx npm-check-updates -u --packageFile package.json",
     "clean:dist": "rimraf ./dist",
     "clean:cache": "rimraf ./.rollup.cache",
-    "clean": "npm run clean:dist && npm run clean:cache"
+    "clean": "pnpm clean:dist && pnpm clean:cache"
   },
   "types": "./dist/index.d.ts",
   "author": "GO SDK JS Team",
@@ -32,8 +32,9 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/geojson": "^7946.0.16",
+    "@types/node": "^24.2.0",
     "@types/jest": "^30.0.0",
-    "@types/lodash-es": "^4.17.12",
+    "@types/lodash-es": "catalog:",
     "dotenv": "^17.2.1",
     "jest": "^30.0.5",
     "rimraf": "^6.0.1",
@@ -41,15 +42,17 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-includepaths": "^0.2.4",
     "rollup-plugin-visualizer": "^6.0.3",
+    "tslib": "^2.8.1",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "catalog:"
   },
   "typedoc": {
     "entryPoint": "./index.ts"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
-    "zod": "^4.0.5"
+    "core": "workspace:*",
+    "lodash-es": "catalog:",
+    "zod": "^4.0.15"
   }
 }

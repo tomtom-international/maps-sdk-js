@@ -2,6 +2,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+import type { RollupOptions } from 'rollup';
 import analyze from 'rollup-plugin-analyzer';
 // @ts-ignore
 import includePaths from 'rollup-plugin-includepaths';
@@ -18,10 +19,10 @@ const includePathOptions = {
 const typescriptOptions = {
     tsconfig: './tsconfig.json',
     outputToFilesystem: true,
-    exclude: ['**/*.test.ts'],
+    exclude: ['**/*.test.ts', '**/jest.config.ts', '**/rollup.config.ts'],
 };
 
-export default () => {
+export default (): RollupOptions[] => {
     return [
         {
             input: './index.ts',

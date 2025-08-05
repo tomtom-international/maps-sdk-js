@@ -2,10 +2,8 @@
   "name": "map-integration-tests",
   "description": "Runs integration tests by starting a local web server with a page that contains the SDK code.",
   "scripts": {
-    "test": "npx playwright install chromium && playwright test",
+    "test": "pnpm exec playwright install --with-deps chromium && pnpm exec playwright test",
     "test:coverage": "",
-    "build": "",
-    "build:full": "npm run type-check && npm run build",
     "start-webpack-dev-server": "webpack serve",
     "type-check": "tsc --noEmit",
     "update-dependencies": "npx npm-check-updates -u --packageFile package.json"
@@ -22,12 +20,17 @@
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "devDependencies": {
     "@playwright/test": "^1.54.2",
+    "@types/lodash-es": "catalog:",
     "@types/node": "^24.2.0",
+    "core": "workspace:*",
     "dotenv": "^17.2.1",
+    "lodash-es": "catalog:",
+    "map": "workspace:*",
+    "maplibre-gl": "catalog:",
     "html-webpack-plugin": "^5.6.3",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2",
+    "typescript": "catalog:",
     "webpack": "^5.101.0",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"

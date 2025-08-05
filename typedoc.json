@@ -23,12 +23,12 @@
     "./services/src/autocomplete-search",
     "./services/src/customize"
   ],
-  "entryPointStrategy": "resolve",
   "out": "documentation/dev-portal/javascript/maps/documentation/api-reference",
   "readme": "none",
   "name": "Maps SDK for JavaScript",
   "internalModule": "internal",
   "excludeExternals": true,
+  "exclude": ["**/*.test.ts"],
   "plugin": ["typedoc-plugin-missing-exports"],
   "externalSymbolLinkMappings": {
     "maplibre-gl": {

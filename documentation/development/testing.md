@@ -21,11 +21,11 @@ Generation of test coverage reports
 
 ```shell
 # all workspaces
-npm run test:coverage -ws
+pnpm test:coverage
 # specific workspaces
-npm run test:coverage -w core
-npm run test:coverage -w map
-npm run test:coverage -w services
+pnpm -F core test:coverage 
+pnpm -F map test:coverage
+pnpm -F services test:coverage
 ```
 
 Reports appear in workspace directories:

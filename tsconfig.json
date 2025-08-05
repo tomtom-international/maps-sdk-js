@@ -8,7 +8,8 @@
     "moduleResolution": "Node",
     "sourceMap": true,
     "strict": true,
-    "target": "ES6",
+    "useDefineForClassFields": false,
+    "target": "ESNext",
     "paths": {
       "@anw/maps-sdk-js/core": ["./core"]
     }

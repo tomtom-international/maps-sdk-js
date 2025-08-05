@@ -14,11 +14,11 @@ For manual update of all dependencies at once use next commands:
 
 ```shell
 # all workspaces
-npm run update-dependencies -ws
+pnpm update-dependencies -ws
 # specific workspaces
-npm run update-dependencies -w core
-npm run update-dependencies -w map
-npm run update-dependencies -w services
+pnpm update-dependencies -w core
+pnpm update-dependencies -w map
+pnpm update-dependencies -w services
 ```
 
 ## Dependabot

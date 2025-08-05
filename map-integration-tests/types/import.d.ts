@@ -1,13 +1,4 @@
-declare module '*.png' {
-    const value: any;
-    export default value;
-}
-
-declare module '*.jpg' {
-    const value: any;
-    export default value;
-}
-
+// We need this for now because of type check dependencies with SDK SVG assets themselves.
 declare module '*.svg' {
     const value: any;
     export default value;

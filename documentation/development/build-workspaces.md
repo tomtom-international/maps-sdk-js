@@ -12,11 +12,11 @@ Repository is organised with multiple workspaces that have to be build independe
 
 ```shell
 # all workspaces
-npm run build:full -ws
+pnpm build:full -ws
 # specific workspaces
-npm run build:full -w core
-npm run build:full -w map
-npm run build:full -w services
+pnpm build:full -w core
+pnpm build:full -w map
+pnpm build:full -w services
 ```
 
 Next build directories will appear:

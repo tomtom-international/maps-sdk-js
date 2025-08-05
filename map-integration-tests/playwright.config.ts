@@ -39,7 +39,7 @@ export default defineConfig({
     /* Run your local dev server before starting the tests */
     webServer: {
         ignoreHTTPSErrors: true,
-        command: 'npm run start-webpack-dev-server',
+        command: 'pnpm start-webpack-dev-server',
         url: 'https://localhost:9001/',
         reuseExistingServer: !process.env.CI,
     },

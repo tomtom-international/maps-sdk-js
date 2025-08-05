@@ -5,6 +5,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+import type { RollupOptions } from 'rollup';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -20,10 +21,10 @@ const SDK_VERSION = getSdkVersion();
 const typescriptOptions = {
     tsconfig: './tsconfig.json',
     outputToFilesystem: true,
-    exclude: ['**/*.test.ts'],
+    exclude: ['**/*.test.ts', '**/jest.config.ts', '**/rollup.config.ts'],
 };
 
-export default () => {
+export default (): RollupOptions[] => {
     return [
         {
             input: './index.ts',

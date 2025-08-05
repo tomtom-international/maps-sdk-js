@@ -36,6 +36,7 @@ git clone https://github.com/tomtom-international/maps-sdk-js.git
 ## Installation
 
 ```shell
+# TODO: update documentation
 # all workspaces
 npm i -ws
 npm ci -ws

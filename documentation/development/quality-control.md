@@ -14,9 +14,9 @@ We leverage Biome for formatting and linting. Command line interface is also ava
 
 ```shell
 # all workspaces
-npm run -ws lint
+pnpm -ws lint
 # with attempt to fix in all workspaces
-npm run -ws lint:fix
+pnpm -ws lint:fix
 ```
 
 ## SonarQube
@@ -25,11 +25,3 @@ SonarQube scan workflow executes the static quality control analysis and publish
 TomTom. See [this SonarQube project](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc).
 
 SonarQube integration supports PR comments, so when the SonarQube workflow executes it notifies about the new issues immediately.
-
-
-## Pre-commit hooks
-
-We use [Husky](https://github.com/typicode/husky) together with [lint-staged](https://github.com/okonet/lint-staged)
-to set pre-commit hooks for staged files. This helps us catch linting, formatting and spelling errors before they're pushed
-on the repo, making our PR reviews easier and keeping small mistakes out of the codebase.
-

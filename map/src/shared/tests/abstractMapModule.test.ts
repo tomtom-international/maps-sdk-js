@@ -4,8 +4,6 @@ import { AbstractMapModule } from '../AbstractMapModule';
 import { waitUntilMapIsReady } from '../mapUtils';
 import type { StyleModuleConfig } from '../types';
 
-import Mock = jest.Mock;
-
 describe('AbstractMapModule tests', () => {
     class TestModule extends AbstractMapModule<Record<string, never>, StyleModuleConfig> {
         initCalled?: boolean;
@@ -82,7 +80,7 @@ describe('AbstractMapModule tests', () => {
         expect(testModule.getConfig()).toBeUndefined();
 
         // Repeating test with config -----------------------:
-        (tomtomMapMock.mapLibreMap.once as Mock).mockClear();
+        (tomtomMapMock.mapLibreMap.once as jest.Mock).mockClear();
 
         const testConfig = { visible: false };
         testModule = await TestModule.init(tomtomMapMock, testConfig);

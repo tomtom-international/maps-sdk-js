@@ -1,0 +1,12 @@
+packages:
+  - core
+  - services
+  - map
+  - map-integration-tests
+
+# https://pnpm.io/catalogs
+catalog:
+  "@types/lodash-es": ^4.17.12
+  lodash-es: ^4.17.21
+  maplibre-gl: ">=5.6.1"
+  typescript: ^5.9.2
