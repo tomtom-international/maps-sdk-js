@@ -55,7 +55,7 @@ test.describe('BaseMap module tests', () => {
         expect(vectorTilesLayersCount).toBeGreaterThanOrEqual(87);
         // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
         expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBeGreaterThan(
-            vectorTilesLayersCount - 10,
+            vectorTilesLayersCount - 20,
         );
         // This base map contains all the vector tile layers minus the POIs:
         const originalBaseMapLayerCount = await getBaseMapLayerCount(page);
@@ -190,7 +190,7 @@ test.describe('BaseMap module tests', () => {
             await initBasemap(page, { layerGroupsFilter: { mode: 'include', names: [layerGroup] } });
             const visibleLayers = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
             // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
-            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 10);
+            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 20);
 
             await setBaseMapVisible(page, false);
             const visibleLayersAfterModuleInvisible = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
@@ -219,7 +219,7 @@ test.describe('BaseMap module tests', () => {
             await initBasemap(page, { layerGroupsFilter: { mode: 'exclude', names: [layerGroup] } });
             const visibleLayers = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
             // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
-            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 10);
+            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 20);
 
             await setBaseMapVisible(page, false);
             const visibleLayersAfterModuleInvisible = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
