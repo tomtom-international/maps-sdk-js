@@ -4,9 +4,9 @@
   "main": "main.js",
   "module": "./dist/map.es.js",
   "scripts": {
-    "test": "jest",
-    "test:coverage": "jest --coverage --no-cache",
-    "build": "pnpm clean:dist && rollup -c --configPlugin typescript",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build": "pnpm clean:dist && vite build",
     "build:watch": "pnpm build --watch",
     "build:full": "pnpm type-check && pnpm build",
     "type-check": "tsc --noEmit",
@@ -27,24 +27,18 @@
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.6",
-    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^12.1.4",
     "@types/geojson": "^7946.0.16",
-    "@types/jest": "^30.0.0",
     "@types/lodash-es": "catalog:",
-    "jest": "^30.0.5",
+    "@vitest/coverage-v8": "catalog:",
     "rimraf": "^6.0.1",
-    "rollup": "^4.46.2",
     "rollup-plugin-analyzer": "^4.0.0",
-    "rollup-plugin-includepaths": "^0.2.4",
-    "rollup-plugin-svg-import": "^3.0.0",
     "rollup-plugin-visualizer": "^6.0.3",
-    "tslib": "^2.8.1",
-    "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vite-plugin-dts": "catalog:"
   },
   "typedoc": {
     "entryPoint": "./index.ts"

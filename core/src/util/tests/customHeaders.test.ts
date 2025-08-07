@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { generateTomTomHeaders, TOMTOM_USER_AGENT_SDK_NAME } from '../headers';
 
 describe('CustomHeaders', () => {

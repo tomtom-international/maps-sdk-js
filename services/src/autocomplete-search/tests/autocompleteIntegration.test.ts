@@ -1,5 +1,5 @@
-import type { Language } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import autocompleteSearch from '../autocompleteSearch';
 import type {
     AutocompleteSearchResponse,
@@ -55,7 +55,6 @@ describe('Autocomplete service', () => {
     beforeAll(() => {
         TomTomConfig.instance.put({
             apiKey: process.env.API_KEY,
-            language: process.env.LANGUAGE as Language,
         });
     });
 
@@ -101,8 +100,8 @@ describe('Autocomplete service', () => {
     });
 
     test('Autocomplete with API request and response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
         const query = 'cafe';
         const language = 'en-GB';
         const result = await autocompleteSearch({
@@ -117,8 +116,8 @@ describe('Autocomplete service', () => {
     });
 
     test('Autocomplete with API request and error response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
         const query = 'cafe';
         const language = 'INCORRECT' as never;
         await expect(() =>

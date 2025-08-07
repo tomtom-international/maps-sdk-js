@@ -1,4 +1,5 @@
 import type { Map, Source, SourceSpecification } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { TomTomMapSource } from '../TomTomMapSource';
 
 describe('TomTomMapSource tests', () => {
@@ -21,8 +22,8 @@ describe('TomTomMapSource tests', () => {
     test('ensureAddedToMap when source not yet in the map', () => {
         const mapSource = new TomTomMapSource(testSourceId, testSourceSpec);
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(testRuntimeSource),
-            addSource: jest.fn(),
+            getSource: vi.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(testRuntimeSource),
+            addSource: vi.fn(),
         } as unknown as Map;
 
         mapSource.ensureAddedToMap(mapLibreMock);
@@ -34,7 +35,7 @@ describe('TomTomMapSource tests', () => {
 
     test('ensureAddedToMap when source already in the map', () => {
         const mapSource = new TomTomMapSource(testSourceId, testSourceSpec, testRuntimeSource);
-        const mapLibreMock = jest.fn() as unknown as Map;
+        const mapLibreMock = vi.fn() as unknown as Map;
 
         mapSource.ensureAddedToMap(mapLibreMock);
         expect(mapSource.runtimeSource).toStrictEqual(testRuntimeSource);
@@ -44,8 +45,8 @@ describe('TomTomMapSource tests', () => {
     test('ensureAddedToMap when source already in the map but not set as runtimeSource', () => {
         const mapSource = new TomTomMapSource(testSourceId, testSourceSpec);
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue(testRuntimeSource),
-            addSource: jest.fn(),
+            getSource: vi.fn().mockReturnValue(testRuntimeSource),
+            addSource: vi.fn(),
         } as unknown as Map;
 
         mapSource.ensureAddedToMap(mapLibreMock);

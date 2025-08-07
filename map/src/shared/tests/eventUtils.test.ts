@@ -1,5 +1,6 @@
 import type { Feature } from 'geojson';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
+import { describe, expect, test } from 'vitest';
 import { detectHoverState, putEventState } from '../eventUtils';
 import { BASE_MAP_SOURCE_ID, POI_SOURCE_ID } from '../layers/sourcesIDs';
 import type { EventType } from '../types';

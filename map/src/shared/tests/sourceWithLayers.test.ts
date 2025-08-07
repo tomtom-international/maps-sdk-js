@@ -1,6 +1,7 @@
 import type { FeatureCollection } from 'geojson';
 import { omit } from 'lodash-es';
 import type { LayerSpecification, Map, Source, VectorSourceSpecification } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import {
     AbstractSourceWithLayers,
     AddedSourceWithLayers,
@@ -20,7 +21,7 @@ describe('AbstractSourceWithLayers tests', () => {
     const testTomTomMapSource = { id: testSourceId } as TomTomMapSource;
 
     test('Constructor', () => {
-        const mapLibreMock = jest.fn() as unknown as Map;
+        const mapLibreMock = vi.fn() as unknown as Map;
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
         expect(sourceWithLayers.map).toEqual(mapLibreMock);
         expect(sourceWithLayers.source).toEqual(testTomTomMapSource);
@@ -29,14 +30,14 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible true', () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockReturnValueOnce('visible').mockReturnValueOnce('none'),
+            getLayoutProperty: vi.fn().mockReturnValueOnce('visible').mockReturnValueOnce('none'),
         } as unknown as Map;
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).isAnyLayerVisible()).toBe(
             true,
         );
 
         // ----------------------
-        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce('none').mockReturnValueOnce(undefined); // undefined defaults to visible
+        mapLibreMock.getLayoutProperty = vi.fn().mockReturnValueOnce('none').mockReturnValueOnce(undefined); // undefined defaults to visible
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).isAnyLayerVisible()).toBe(
             true,
         );
@@ -44,7 +45,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible with filter', () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockReturnValueOnce('visible'),
+            getLayoutProperty: vi.fn().mockReturnValueOnce('visible'),
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
@@ -54,7 +55,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible false', () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockReturnValueOnce('none').mockReturnValueOnce('none'),
+            getLayoutProperty: vi.fn().mockReturnValueOnce('none').mockReturnValueOnce('none'),
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
@@ -63,7 +64,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible false with filter', () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockReturnValueOnce('none'),
+            getLayoutProperty: vi.fn().mockReturnValueOnce('none'),
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
@@ -72,14 +73,14 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('areAllLayersVisible true', () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockReturnValueOnce('visible').mockReturnValueOnce('visible'),
+            getLayoutProperty: vi.fn().mockReturnValueOnce('visible').mockReturnValueOnce('visible'),
         } as unknown as Map;
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             true,
         );
 
         // ----------------------
-        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce('visible').mockReturnValueOnce(undefined); // undefined defaults to visible
+        mapLibreMock.getLayoutProperty = vi.fn().mockReturnValueOnce('visible').mockReturnValueOnce(undefined); // undefined defaults to visible
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             true,
         );
@@ -87,14 +88,14 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('areAllLayersVisible false', () => {
         const mapLibreMock = {
-            getLayoutProperty: jest.fn().mockReturnValueOnce('none').mockReturnValueOnce('none'),
+            getLayoutProperty: vi.fn().mockReturnValueOnce('none').mockReturnValueOnce('none'),
         } as unknown as Map;
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             false,
         );
 
         // ----------------------
-        mapLibreMock.getLayoutProperty = jest.fn().mockReturnValueOnce('none').mockReturnValueOnce(undefined); // undefined defaults to visible
+        mapLibreMock.getLayoutProperty = vi.fn().mockReturnValueOnce('none').mockReturnValueOnce(undefined); // undefined defaults to visible
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
             false,
         );
@@ -103,7 +104,7 @@ describe('AbstractSourceWithLayers tests', () => {
     test('areAllLayersVisible with filter', () => {
         const mapLibreMock = {
             // layer0 visible, layer1 hidden:
-            getLayoutProperty: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce('none'),
+            getLayoutProperty: vi.fn().mockReturnValueOnce(undefined).mockReturnValueOnce('none'),
         } as unknown as Map;
         expect(
             new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible(
@@ -120,7 +121,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setAllLayersVisible true', () => {
         const mapLibreMock = {
-            setLayoutProperty: jest.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
@@ -135,7 +136,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setAllLayersVisible true with filter', () => {
         const mapLibreMock = {
-            setLayoutProperty: jest.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
@@ -148,7 +149,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setVisible false', () => {
         const mapLibreMock = {
-            setLayoutProperty: jest.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
@@ -163,7 +164,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setVisible false with filter', () => {
         const mapLibreMock = {
-            setLayoutProperty: jest.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
         const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
@@ -178,7 +179,7 @@ describe('AbstractSourceWithLayers tests', () => {
 describe('StyleSourceWithLayers tests', () => {
     test('constructor', () => {
         const mapLibreMock = {
-            getStyle: jest.fn().mockReturnValue({
+            getStyle: vi.fn().mockReturnValue({
                 sources: { testSourceID: { id: testSourceId } },
                 layers: testLayerSpecs,
             }),
@@ -194,7 +195,7 @@ describe('StyleSourceWithLayers tests', () => {
 
 describe('AddedSourceWithLayers tests', () => {
     test('constructor', () => {
-        const mapLibreMock = jest.fn() as unknown as Map;
+        const mapLibreMock = vi.fn() as unknown as Map;
         const sourceSpec: VectorSourceSpecification = { type: 'vector' };
         const sourceWithLayers = new AddedSourceWithLayers(
             mapLibreMock,
@@ -210,13 +211,13 @@ describe('AddedSourceWithLayers tests', () => {
 
     test('ensureAddedToMapWithVisibility', () => {
         const mapLibreMock = {
-            getLayer: jest
+            getLayer: vi
                 .fn()
                 .mockReturnValueOnce(undefined) // layer0 isn't yet there so it will be added
                 .mockReturnValueOnce(layer1),
-            getSource: jest.fn().mockReturnValue({ id: testSourceId }),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId }),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
         const sourceWithLayers = new AddedSourceWithLayers(
@@ -242,11 +243,11 @@ describe('AddedSourceWithLayers tests', () => {
 
     test('equalSourceAndLayerIDs', () => {
         const mapLibreMock = {
-            getLayer: jest.fn(),
-            getSource: jest.fn().mockReturnValue({ id: testSourceId }),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
-            getStyle: jest.fn().mockReturnValue({
+            getLayer: vi.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId }),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
+            getStyle: vi.fn().mockReturnValue({
                 sources: { testSourceID: { id: testSourceId } },
                 layers: testLayerSpecs,
             }),
@@ -285,10 +286,10 @@ describe('AddedSourceWithLayers tests', () => {
 describe('GeoJSONSourceWithLayers', () => {
     test('Constructor', () => {
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceId }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         expect(sourceWithLayers.map).toEqual(mapLibreMock);
@@ -304,10 +305,10 @@ describe('GeoJSONSourceWithLayers', () => {
 
     test('show empty collection', () => {
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceId, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         const emptyFeatures = {
@@ -319,10 +320,10 @@ describe('GeoJSONSourceWithLayers', () => {
 
     test('show filled collection', () => {
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceId, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         const features = {
@@ -334,10 +335,10 @@ describe('GeoJSONSourceWithLayers', () => {
 
     test('clear', () => {
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceId, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         sourceWithLayers.clear();
@@ -349,10 +350,10 @@ describe('GeoJSONSourceWithLayers', () => {
         } as FeatureCollection;
 
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceId, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         sourceWithLayers.show(features);
@@ -414,10 +415,10 @@ describe('GeoJSONSourceWithLayers', () => {
         } as FeatureCollection;
 
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceId, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         sourceWithLayers.show(features);
@@ -452,10 +453,10 @@ describe('GeoJSONSourceWithLayers', () => {
         } as unknown as FeatureCollection;
 
         const mapLibreMock = {
-            getSource: jest.fn().mockReturnValue({ id: testSourceId, setData: jest.fn() }),
-            getLayer: jest.fn(),
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         sourceWithLayers.show(features);

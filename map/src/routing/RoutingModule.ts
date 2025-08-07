@@ -58,7 +58,7 @@ import { toDisplayTrafficSectionProps } from './util/displayTrafficSectionProps'
 import { toDisplayInstructionArrows, toDisplayInstructions } from './util/guidance';
 import { toDisplayRouteSections } from './util/routeSections';
 import { showFeaturesWithRouteSelection } from './util/routeSelection';
-import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
+import { toDisplayRoutes, toDisplayRouteSummaries } from './util/routes';
 import { toDisplayChargingStations, toDisplayWaypoints } from './util/waypointUtils';
 
 /**

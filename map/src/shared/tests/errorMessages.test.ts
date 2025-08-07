@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { notInTheStyle } from '../errorMessages';
 
 describe('Error messages tests', () => {

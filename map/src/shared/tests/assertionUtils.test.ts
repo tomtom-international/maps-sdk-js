@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { asDefined, assertDefined } from '../assertionUtils';
 
 describe('Test related to assertion utils', () => {

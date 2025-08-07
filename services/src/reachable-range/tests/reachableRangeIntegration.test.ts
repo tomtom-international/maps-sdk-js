@@ -1,5 +1,6 @@
 import type { PolygonFeature } from '@anw/maps-sdk-js/core';
 import { isBBoxWithArea } from '@anw/maps-sdk-js/core';
+import { beforeAll, describe, expect, test } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { calculateReachableRange, calculateReachableRanges } from '../calculateReachableRange';
 import type { ReachableRangeParams } from '../types/reachableRangeParams';

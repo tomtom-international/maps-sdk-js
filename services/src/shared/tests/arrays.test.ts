@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { arrayToCSV, sampleWithinMaxLength } from '../arrays';
 
 describe('Array utility tests', () => {

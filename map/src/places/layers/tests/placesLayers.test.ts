@@ -1,4 +1,5 @@
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
 import poiLayerSpec from '../../tests/poiLayerSpec.data.json';
 import {
@@ -10,7 +11,7 @@ import {
 } from '../placesLayers';
 
 describe('Get places layer spec with circle or pin icon style config', () => {
-    const mapLibreMock = jest.fn() as unknown as Map;
+    const mapLibreMock = vi.fn() as unknown as Map;
 
     test('Get places layer spec no config', () => {
         expect(buildPlacesLayerSpecs(undefined, 'placesSymbols-2', mapLibreMock)).toEqual([
@@ -158,7 +159,7 @@ describe('Get places layer spec with poi-like icon style config', () => {
     });
 
     const mapLibreMock = {
-        getStyle: jest.fn().mockReturnValue({ layers: [poiLayerSpec] }),
+        getStyle: vi.fn().mockReturnValue({ layers: [poiLayerSpec] }),
     } as unknown as Map;
 
     test('Get places layer spec with poi-like icon style config', () => {

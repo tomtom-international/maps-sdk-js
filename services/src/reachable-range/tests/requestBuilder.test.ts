@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { buildReachableRangeRequest } from '../requestBuilder';
 import type { ReachableRangeParams } from '../types/reachableRangeParams';
 import { sdkAndAPIRequests } from './requestBuilder.data';

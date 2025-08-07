@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { apiToGeoJSONBBox, csvLatLngToPosition, positionToCSVLatLon } from '../geometry';
 
 describe('Geometry tests', () => {

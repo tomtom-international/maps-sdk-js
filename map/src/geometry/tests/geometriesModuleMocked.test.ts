@@ -1,5 +1,6 @@
 import type { PolygonFeatures } from '@anw/maps-sdk-js/core';
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { mapStyleLayerIDs } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { GeometriesModule } from '../GeometriesModule';
@@ -10,26 +11,26 @@ import amsterdamGeometryData from './geometriesModuleMocked.test.data.json';
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('Geometry module tests', () => {
     test('Basic flows', async () => {
-        const geometrySource = { id: 'sourceID', setData: jest.fn() };
+        const geometrySource = { id: 'sourceID', setData: vi.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
-                once: jest.fn().mockReturnValue(Promise.resolve()),
-                getSource: jest.fn().mockReturnValue(geometrySource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { geometrySourceID: {} } }),
-                getLayer: jest.fn(),
-                addLayer: jest.fn(),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
-                setLayoutProperty: jest.fn(),
-                setPaintProperty: jest.fn(),
-                setFilter: jest.fn(),
-                moveLayer: jest.fn(),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
+                getSource: vi.fn().mockReturnValue(geometrySource),
+                getStyle: vi.fn().mockReturnValue({ layers: [{}], sources: { geometrySourceID: {} } }),
+                getLayer: vi.fn(),
+                addLayer: vi.fn(),
+                isStyleLoaded: vi.fn().mockReturnValue(true),
+                setLayoutProperty: vi.fn(),
+                setPaintProperty: vi.fn(),
+                setFilter: vi.fn(),
+                moveLayer: vi.fn(),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const geometryConfig = { colorConfig: { fillColor: 'warm' }, textConfig: { textField: 'title' } };
@@ -40,10 +41,10 @@ describe('Geometry module tests', () => {
         let geometry = await GeometriesModule.init(tomtomMapMock, geometryConfig);
         // to be able to spy on private methods
         const geometryAny: any = geometry;
-        jest.spyOn(geometryAny, 'applyConfig');
-        jest.spyOn(geometryAny, 'applyTextConfig');
-        jest.spyOn(geometryAny, 'updateLayerAndData');
-        jest.spyOn(geometryAny, 'moveBeforeLayerID');
+        vi.spyOn(geometryAny, 'applyConfig');
+        vi.spyOn(geometryAny, 'applyTextConfig');
+        vi.spyOn(geometryAny, 'updateLayerAndData');
+        vi.spyOn(geometryAny, 'moveBeforeLayerID');
         expect(geometry.getConfig()).toMatchObject(geometryConfig);
         geometry.applyTextConfig({ textField });
         expect(geometryAny.applyTextConfig).toHaveBeenCalledWith({ textField });

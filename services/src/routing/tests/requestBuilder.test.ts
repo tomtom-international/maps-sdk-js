@@ -1,4 +1,5 @@
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { describe, expect, test } from 'vitest';
 import type { FetchInput } from '../../shared';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { buildCalculateRouteRequest } from '../requestBuilder';

@@ -1,4 +1,5 @@
 import type { OpeningHours } from '@anw/maps-sdk-js/core';
+import { describe, expect, test } from 'vitest';
 import { parseOpeningHours } from '../searchResultParsing';
 
 describe('Parse API Opening Hours tests', () => {

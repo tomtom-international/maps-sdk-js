@@ -1,4 +1,5 @@
 import type { LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import { describe, expect, test } from 'vitest';
 import { isLayerLocalizable } from '../localization';
 import { layers } from './localization.data';
 

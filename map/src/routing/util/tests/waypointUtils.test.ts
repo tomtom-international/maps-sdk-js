@@ -1,5 +1,6 @@
 import type { Anything, Waypoint, WaypointProps } from '@anw/maps-sdk-js/core';
 import type { Position } from 'geojson';
+import { describe, expect, test, vi } from 'vitest';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,

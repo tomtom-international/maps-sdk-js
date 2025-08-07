@@ -1,4 +1,5 @@
 import type { TrafficSectionProps } from '@anw/maps-sdk-js/core';
+import { describe, expect, test } from 'vitest';
 import type { DisplayTrafficSectionProps } from '../../types/routeSections';
 import { toDisplayTrafficSectionProps, trafficSectionToIconID } from '../displayTrafficSectionProps';
 import toDisplayTrafficSectionPropsData from './data/toDisplayTrafficSectionProps.data.json';

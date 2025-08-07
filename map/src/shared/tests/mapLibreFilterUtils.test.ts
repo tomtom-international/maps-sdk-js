@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter, getSyntaxVersion } from '../mapLibreFilterUtils';
 
 describe('MapLibreUtils tests', () => {

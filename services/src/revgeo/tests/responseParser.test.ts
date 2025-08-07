@@ -1,5 +1,6 @@
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { omit } from 'lodash-es';
+import { describe, expect, test } from 'vitest';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { parseRevGeoResponse } from '../responseParser';
 import type { ReverseGeocodingResponse } from '../reverseGeocoding';

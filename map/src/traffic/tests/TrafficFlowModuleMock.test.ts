@@ -1,4 +1,5 @@
 import type { Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { TRAFFIC_FLOW_SOURCE_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { TrafficFlowModule } from '../TrafficFlowModule';
@@ -10,18 +11,18 @@ describe('Vector tiles traffic flow module tests', () => {
     function createMockMap(flowSource: { id: string }): TomTomMap {
         return {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(flowSource),
-                getStyle: jest
+                getSource: vi.fn().mockReturnValueOnce(flowSource),
+                getStyle: vi
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                once: jest.fn().mockReturnValue(Promise.resolve()),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
     }
     test('Initializing module with config', async () => {

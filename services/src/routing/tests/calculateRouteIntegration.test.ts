@@ -1,5 +1,6 @@
 import type { LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@anw/maps-sdk-js/core';
 import { inputSectionTypes } from '@anw/maps-sdk-js/core';
+import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { calculateRoute } from '../calculateRoute';
 import type { CalculateRouteRequestAPI } from '../types/apiRequestTypes';
@@ -332,8 +333,8 @@ describe('Calculate route integration tests', () => {
             [7.675106, 51.490793],
             [7.74328, 51.403849],
         ];
-        const onApiRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
-        const onApiResponse = jest.fn() as (
+        const onApiRequest = vi.fn() as (request: CalculateRouteRequestAPI) => void;
+        const onApiResponse = vi.fn() as (
             request: CalculateRouteRequestAPI,
             response: CalculateRouteResponseAPI,
         ) => void;
@@ -349,8 +350,8 @@ describe('Calculate route integration tests', () => {
             [7.675106, 51.490793],
             [0, 0],
         ];
-        const onApiRequest = jest.fn() as (request: CalculateRouteRequestAPI) => void;
-        const onApiResponse = jest.fn() as (
+        const onApiRequest = vi.fn() as (request: CalculateRouteRequestAPI) => void;
+        const onApiResponse = vi.fn() as (
             request: CalculateRouteRequestAPI,
             response: CalculateRouteResponseAPI,
         ) => void;

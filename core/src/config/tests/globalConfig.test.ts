@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import type { GlobalConfig } from '../globalConfig';
 import { mergeFromGlobal, TomTomConfig } from '../globalConfig';
 

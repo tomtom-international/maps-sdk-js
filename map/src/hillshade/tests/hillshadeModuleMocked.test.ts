@@ -1,4 +1,5 @@
 import type { Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { HILLSHADE_SOURCE_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { HillshadeModule } from '../HillshadeModule';
@@ -11,16 +12,16 @@ describe('Vector tiles Hillshade module tests', () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
-                once: jest.fn().mockReturnValue(Promise.resolve()),
-                getSource: jest.fn().mockReturnValue(hillshadeSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
+                getSource: vi.fn().mockReturnValue(hillshadeSource),
+                getStyle: vi.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock, {
@@ -39,15 +40,15 @@ describe('Vector tiles Hillshade module tests', () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValue(hillshadeSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
+                getSource: vi.fn().mockReturnValue(hillshadeSource),
+                getStyle: vi.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const hillshade = await HillshadeModule.get(tomtomMapMock);

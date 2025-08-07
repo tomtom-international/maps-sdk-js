@@ -1,14 +1,15 @@
+import { afterAll, describe, expect, test, vi } from 'vitest';
 import { EventsModule } from '../EventsModule';
 import type { EventsProxy } from '../EventsProxy';
 import type { StyleSourceWithLayers } from '../SourceWithLayers';
 
 const mockedMapModule = { source: { id: 'testModule' } } as StyleSourceWithLayers;
-const mockConsoleError = jest.spyOn(global.console, 'error').mockImplementation();
+const mockConsoleError = vi.spyOn(global.console, 'error').mockImplementation(vi.fn());
 
 describe('EventsModule tests', () => {
     const MockEventProxy = {
-        addEventHandler: jest.fn(),
-        remove: jest.fn(),
+        addEventHandler: vi.fn(),
+        remove: vi.fn(),
     } as unknown as EventsProxy;
 
     afterAll(() => {
@@ -17,7 +18,7 @@ describe('EventsModule tests', () => {
 
     test('Add an event', () => {
         const event = new EventsModule(MockEventProxy, mockedMapModule);
-        const callback = jest.fn();
+        const callback = vi.fn();
 
         event.on('click', callback);
 

@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import type { VehicleParameters } from '../index';
 import { ValidationError } from '../validation';
 import { vehicleParametersSchema } from '../vehicleSchema';

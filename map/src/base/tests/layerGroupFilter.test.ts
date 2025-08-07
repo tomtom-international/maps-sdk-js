@@ -1,4 +1,5 @@
 import type { LayerSpecification } from 'maplibre-gl';
+import { describe, expect, test } from 'vitest';
 import { buildLayerGroupFilter } from '../layerGroups';
 
 describe('Tests for logic related to layer group filtering', () => {

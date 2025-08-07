@@ -1,6 +1,5 @@
-import type { Language } from '@anw/maps-sdk-js/core';
-import { TomTomConfig } from '@anw/maps-sdk-js/core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { describe, expect, test } from 'vitest';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { validateRequestSchema } from '../../shared/validation';
 import { autocompleteSearchRequestSchema } from '../autocompleteSearchRequestSchema';
@@ -8,12 +7,6 @@ import type { AutocompleteSearchParams } from '../types';
 import autocompleteSearchReqObjects from './requestBuilderPerf.data.json';
 
 describe('Autocomplete Schema Validation', () => {
-    beforeAll(() => {
-        TomTomConfig.instance.put({
-            language: process.env.LANGUAGE as Language,
-        });
-    });
-
     const commonBaseUrl = 'https://tomtom.com';
     const apiKey = 'API_KEY';
     const query = 'cafe';

@@ -1,4 +1,5 @@
 import type { StyleSpecification } from 'maplibre-gl';
+import { describe, expect, test } from 'vitest';
 import { buildStyleInput, withPreviousStyleParts } from '../styleInputBuilder';
 import type { TomTomMapParams } from '../types/mapInit';
 import mapsSdkInitParamsAndMapStyles from './styleInputBuilder.data.json';

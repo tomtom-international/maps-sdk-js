@@ -1,5 +1,6 @@
 import type { Places } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { geometryData } from '../geometryData';
 import type { GeometryDataResponseAPI } from '../types/apiTypes';
 import places from './geometryDataIntegration.data.json';
@@ -34,6 +35,11 @@ describe('Geometry data errors', () => {
 describe('Geometry data integration tests', () => {
     beforeAll(() => {
         TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+    });
+
+    beforeEach(async () => {
+        // We enforce a delay before each test to avoid hitting the API rate limits.
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 2000));
     });
 
     test('Geometry data of some place', async () => {
@@ -166,8 +172,8 @@ describe('Geometry data integration tests', () => {
 
     test('Geometry Data with API response callback', async () => {
         const geometries = ['10794339'];
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
         const result = await geometryData({
             geometries,
             zoom: 10,
@@ -182,8 +188,8 @@ describe('Geometry data integration tests', () => {
 
     test('Geometry Data with API error response callback', async () => {
         const geometries = ['10794339'];
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
         await expect(() =>
             geometryData({
                 geometries,

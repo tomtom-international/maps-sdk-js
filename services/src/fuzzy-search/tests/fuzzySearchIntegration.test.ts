@@ -1,5 +1,6 @@
 import type { Fuel, Place, POICategory, SearchPlaceProps } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { search } from '../../search';
 import type { SearchIndexType } from '../../shared';
@@ -184,8 +185,8 @@ describe('Fuzzy Search service', () => {
     });
 
     test('Fuzzy search with API request and response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
         const result = await search({ query: 'restaurant', onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
         expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
@@ -193,8 +194,8 @@ describe('Fuzzy Search service', () => {
     });
 
     test('Fuzzy search with API request and error response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
         await expect(() =>
             search({
                 query: 'restaurant',

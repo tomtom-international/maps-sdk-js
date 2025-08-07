@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { z } from 'zod/v4-mini';
 import type { SchemaRefinement } from '../types/validation';
 import { validateRequestSchema } from '../validation';

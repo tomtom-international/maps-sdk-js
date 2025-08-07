@@ -1,4 +1,5 @@
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { afterAll, describe, expect, test } from 'vitest';
 import { geocode } from '../../geocode';
 import { fetchWith, get, post } from '../fetch';
 import { mockFetchResponse } from './fetchMockUtils';

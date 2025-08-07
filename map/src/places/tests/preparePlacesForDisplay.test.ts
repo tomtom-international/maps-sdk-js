@@ -1,5 +1,6 @@
 import type { CommonPlaceProps, Place, Places, POICategory } from '@anw/maps-sdk-js/core';
 import type { Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { MAP_MEDIUM_FONT } from '../../shared/layers/commonLayerProps';
 import {
     getIconIDForPlace,
@@ -59,9 +60,9 @@ describe('Get Icon ID for a given Place tests', () => {
 
     test('Get Icon ID for a given Place with custom config', () => {
         const mapLibreMock = {
-            loadImage: jest.fn().mockResolvedValue(jest.fn()),
-            addImage: jest.fn(),
-            hasImage: jest.fn().mockReturnValue(false),
+            loadImage: vi.fn().mockResolvedValue(vi.fn()),
+            addImage: vi.fn(),
+            hasImage: vi.fn().mockReturnValue(false),
         } as unknown as Map;
 
         expect(
@@ -127,7 +128,7 @@ describe('Get mapped poi layer category for a place', () => {
 });
 
 describe('test prepare places for display', () => {
-    const mapLibreMock = jest.fn() as unknown as Map;
+    const mapLibreMock = vi.fn() as unknown as Map;
     const places: Places = {
         type: 'FeatureCollection',
         features: [

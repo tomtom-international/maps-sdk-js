@@ -1,18 +1,18 @@
 import type { StyleImageMetadata } from 'maplibre-gl';
 import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
-import circleSvg from './circle.svg';
-import finishSvg from './finish.svg';
-import instructionArrowSvg from './instruction-line-arrow.svg';
-import pinSvg from '../../shared/resources/pin.svg';
-import startSvg from './start.svg';
-import summaryMapBubbleSvg from './summary-map-bubble.svg';
-import trafficSvg from './traffic.svg';
+import { parseSvg, pinSvg } from '../../shared/resources';
+import circleSvgRaw from './circle.svg?raw';
+import finishSvgRaw from './finish.svg?raw';
+import instructionArrowSvgRaw from './instruction-line-arrow.svg?raw';
+import startSvgRaw from './start.svg?raw';
+import summaryMapBubbleSvgRaw from './summary-map-bubble.svg?raw';
+import trafficSvgRaw from './traffic.svg?raw';
 
 let instructionArrowIconImg: HTMLImageElement;
 
 // defensive check for SSR
 if (isDOMImageSupported()) {
-    instructionArrowIconImg = svgToImg(instructionArrowSvg());
+    instructionArrowIconImg = svgToImg(parseSvg(instructionArrowSvgRaw));
 }
 
 /**
@@ -28,7 +28,7 @@ export const summaryMapBubbleImg = (color: string): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    const svg: SVGElement = summaryMapBubbleSvg();
+    const svg: SVGElement = parseSvg(summaryMapBubbleSvgRaw);
     svg.querySelector('#bubble')?.setAttribute('fill', color);
     svg.querySelector('#pin')?.setAttribute('fill', color);
     return svgToImg(svg);
@@ -58,7 +58,7 @@ export const trafficImg = (color: string): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    const svg: SVGElement = trafficSvg();
+    const svg: SVGElement = parseSvg(trafficSvgRaw);
     const main = svg.querySelector('#main') as Element;
     main.setAttribute('transform', 'scale(2)');
     main.setAttribute('fill', color);
@@ -88,7 +88,7 @@ export const waypointStartIcon = (): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    return waypointIcon(startSvg());
+    return waypointIcon(parseSvg(startSvgRaw));
 };
 
 /**
@@ -99,7 +99,7 @@ export const waypointFinishIcon = (): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    return waypointIcon(finishSvg());
+    return waypointIcon(parseSvg(finishSvgRaw));
 };
 
 /**
@@ -110,5 +110,5 @@ export const softWaypointIcon = (): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    return svgToImg(circleSvg());
+    return svgToImg(parseSvg(circleSvgRaw));
 };

@@ -1,5 +1,6 @@
 import type { ChargingPoint, ChargingStationsAvailability } from '@anw/maps-sdk-js/core';
 import { chargingPointStatus, chargingStationAccessTypes, connectorTypes } from '@anw/maps-sdk-js/core';
+import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { search } from '../../search';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
@@ -94,8 +95,8 @@ describe('evChargingStationsAvailability integration tests', () => {
     });
 
     test('ChargingStationsAvailability with API request and response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
         const result = await evChargingStationsAvailability({
             id: 'f989fb91-4866-4d03-91b5-fc4a9e82ad52',
             onAPIRequest: onApiRequest,
@@ -107,8 +108,8 @@ describe('evChargingStationsAvailability integration tests', () => {
     });
 
     test('ChargingStationsAvailability with API request and error response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;
         await expect(() =>
             evChargingStationsAvailability({
                 id: '57e78da9-5b0e-44ff-bd0f-f54e3b24292b',

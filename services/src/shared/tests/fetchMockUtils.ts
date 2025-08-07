@@ -1,5 +1,7 @@
+import { vi } from 'vitest';
+
 export const mockFetchResponse = (status: number, response?: any) =>
-    jest.spyOn(global, 'fetch').mockImplementation(() =>
+    vi.spyOn(global, 'fetch').mockImplementation(() =>
         Promise.resolve({
             ok: status === 200,
             status,

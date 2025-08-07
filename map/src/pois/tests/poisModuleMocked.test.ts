@@ -1,4 +1,5 @@
 import type { Map } from 'maplibre-gl';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { POI_SOURCE_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { POIsModule } from '../POIsModule';
@@ -13,19 +14,19 @@ describe('Vector tiles POI module tests', () => {
         const poiSource = { id: POI_SOURCE_ID };
         tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(poiSource),
-                getStyle: jest.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
-                setFilter: jest.fn(),
-                getFilter: jest.fn(),
-                getLayer: jest.fn(),
-                once: jest.fn().mockReturnValue(Promise.resolve()),
+                getSource: vi.fn().mockReturnValueOnce(poiSource),
+                getStyle: vi.fn().mockReturnValue({ layers: [{}], sources: { poiSourceID: {} } }),
+                setFilter: vi.fn(),
+                getFilter: vi.fn(),
+                getLayer: vi.fn(),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
     });
 
@@ -59,7 +60,7 @@ describe('Vector tiles POI module tests', () => {
             },
         });
 
-        jest.spyOn(pois, 'filterCategories');
+        vi.spyOn(pois, 'filterCategories');
         expect(pois).toBeDefined();
         pois.filterCategories({
             show: 'all_except',

@@ -1,26 +1,27 @@
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
 import { Map } from 'maplibre-gl';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { TomTomMap } from '../TomTomMap';
 
-jest.mock('maplibre-gl', () => ({
-    Map: jest.fn().mockReturnValue({
-        getStyle: jest.fn().mockReturnValue({ layers: [{}] }),
-        isStyleLoaded: jest.fn().mockReturnValue(false),
-        once: jest.fn(),
-        on: jest.fn(),
-        getCanvas: jest.fn().mockReturnValue({
+vi.mock('maplibre-gl', () => ({
+    Map: vi.fn().mockReturnValue({
+        getStyle: vi.fn().mockReturnValue({ layers: [{}] }),
+        isStyleLoaded: vi.fn().mockReturnValue(false),
+        once: vi.fn(),
+        on: vi.fn(),
+        getCanvas: vi.fn().mockReturnValue({
             style: {
                 cursor: '',
             },
         }),
-        getZoom: jest.fn(),
+        getZoom: vi.fn(),
     }),
-    setRTLTextPlugin: jest.fn().mockResolvedValue(jest.fn()),
-    getRTLTextPluginStatus: jest.fn(),
+    setRTLTextPlugin: vi.fn().mockResolvedValue(vi.fn()),
+    getRTLTextPluginStatus: vi.fn(),
 }));
 
 describe('Map initialization mocked tests', () => {
-    const mockedContainer = jest.fn() as unknown as HTMLElement;
+    const mockedContainer = vi.fn() as unknown as HTMLElement;
 
     beforeEach(() => TomTomConfig.instance.reset());
 

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from 'vitest';
 import { TomTomConfig } from '../../config/globalConfig';
 import { formatDistance, formatDuration } from '../unitFormatters';
 

@@ -1,5 +1,6 @@
 import type { Place, Places } from '@anw/maps-sdk-js/core';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { EventsModule, PLACES_SOURCE_PREFIX_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { PlacesModule } from '../PlacesModule';
@@ -9,24 +10,24 @@ import { PlacesModule } from '../PlacesModule';
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('GeoJSON Places module tests', () => {
     test('Basic flows', async () => {
-        const placesSource: Partial<GeoJSONSource> = { id: PLACES_SOURCE_PREFIX_ID, setData: jest.fn() };
+        const placesSource: Partial<GeoJSONSource> = { id: PLACES_SOURCE_PREFIX_ID, setData: vi.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValue(placesSource),
-                getLayer: jest.fn(),
-                getStyle: jest.fn().mockReturnValue({ layers: [] }),
-                addLayer: jest.fn(),
-                setLayoutProperty: jest.fn(),
-                setPaintProperty: jest.fn(),
-                setFilter: jest.fn(),
-                once: jest.fn().mockReturnValue(Promise.resolve()),
+                getSource: vi.fn().mockReturnValue(placesSource),
+                getLayer: vi.fn(),
+                getStyle: vi.fn().mockReturnValue({ layers: [] }),
+                addLayer: vi.fn(),
+                setLayoutProperty: vi.fn(),
+                setPaintProperty: vi.fn(),
+                setFilter: vi.fn(),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const testPlaces = {
@@ -45,9 +46,9 @@ describe('GeoJSON Places module tests', () => {
         places.show(testPlaces);
         // to be able to spy on private methods
         const placesAny: any = places;
-        jest.spyOn(placesAny, 'updateLayersAndData');
-        jest.spyOn(placesAny, 'updateData');
-        jest.spyOn(tomtomMapMock.mapLibreMap, 'getStyle');
+        vi.spyOn(placesAny, 'updateLayersAndData');
+        vi.spyOn(placesAny, 'updateData');
+        vi.spyOn(tomtomMapMock.mapLibreMap, 'getStyle');
         places.applyConfig({ iconConfig: { iconStyle: 'poi-like' } });
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
         expect(placesAny.updateData).toHaveBeenCalledTimes(1);

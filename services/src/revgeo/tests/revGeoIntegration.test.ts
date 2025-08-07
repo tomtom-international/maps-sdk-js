@@ -1,3 +1,4 @@
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { customizeService } from '../../../index';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
@@ -163,8 +164,8 @@ describe('Reverse Geocoding integration tests', () => {
     });
 
     test('Reverse geocoding with API request and response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
         const result = await reverseGeocode({
             position: [5.72884, 52.33499],
             onAPIRequest: onApiRequest,
@@ -176,8 +177,8 @@ describe('Reverse Geocoding integration tests', () => {
     });
 
     test('Reverse geocoding with API request and response error callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: ReverseGeocodingResponseAPI) => void;
         await expect(() =>
             reverseGeocode({
                 position: [5.72884, 52.33499],

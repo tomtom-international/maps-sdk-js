@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { customizeService } from '../../../index';
 
 describe.skip('Using customize obj', () => {

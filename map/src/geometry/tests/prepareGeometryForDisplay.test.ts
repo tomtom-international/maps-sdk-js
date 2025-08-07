@@ -1,4 +1,5 @@
 import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import { describe, expect, test } from 'vitest';
 import type { ColorPaletteOptions } from '../layers/geometryLayers';
 import { colorPalettes } from '../layers/geometryLayers';
 import {

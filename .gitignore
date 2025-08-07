@@ -20,4 +20,4 @@ documentation/dev-portal/javascript/maps/documentation/navigation.yml
 **/playwright/.cache/
 
 # Rollup visualizer stats
-**/stats.html
+**/*stats.html

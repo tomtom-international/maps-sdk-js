@@ -1,4 +1,5 @@
 import type { Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import { TRAFFIC_INCIDENTS_SOURCE_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { TrafficIncidentsModule } from '../TrafficIncidentsModule';
@@ -11,19 +12,19 @@ describe('Vector tiles traffic module tests', () => {
         const incidentsSource = { id: TRAFFIC_INCIDENTS_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(incidentsSource),
-                getStyle: jest
+                getSource: vi.fn().mockReturnValueOnce(incidentsSource),
+                getStyle: vi
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
-                once: jest.fn().mockReturnValue(Promise.resolve()),
+                isStyleLoaded: vi.fn().mockReturnValue(true),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const trafficIncidentsModule = await TrafficIncidentsModule.get(tomtomMapMock, {
@@ -58,18 +59,18 @@ describe('Vector tiles traffic module tests', () => {
         const incidentsSource = { id: TRAFFIC_INCIDENTS_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(undefined),
-                getStyle: jest
+                getSource: vi.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(undefined),
+                getStyle: vi
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                once: jest.fn().mockReturnValue(Promise.resolve()),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const trafficIncidentsModule = await TrafficIncidentsModule.get(tomtomMapMock);

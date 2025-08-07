@@ -1,5 +1,6 @@
 import type { Routes } from '@anw/maps-sdk-js/core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
+import { describe, expect, test } from 'vitest';
 import type { SDKServiceError } from '../../shared';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import type { APIErrorResponse, RoutingAPIResponseError } from '../../shared/types/apiResponseErrorTypes';

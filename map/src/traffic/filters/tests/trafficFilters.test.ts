@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from '../trafficFilters';
 
 describe('Traffic filter tests', () => {

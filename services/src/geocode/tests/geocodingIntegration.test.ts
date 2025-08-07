@@ -1,4 +1,5 @@
 import type { Polygon } from 'geojson';
+import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import geocode from '../geocoding';
@@ -171,8 +172,8 @@ describe('Geocoding integration tests', () => {
     });
 
     test('Geocoding with API request and response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: GeocodingResponseAPI) => void;
         const result = await geocode({ query: 'Amsterdam', onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
         expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
@@ -180,8 +181,8 @@ describe('Geocoding integration tests', () => {
     });
 
     test('Geocoding with API request and response error callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: URL) => void;
-        const onApiResponse = jest.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: URL) => void;
+        const onApiResponse = vi.fn() as (request: URL, response: GeocodingResponseAPI) => void;
         await expect(() =>
             geocode({
                 query: 'Amsterdam',

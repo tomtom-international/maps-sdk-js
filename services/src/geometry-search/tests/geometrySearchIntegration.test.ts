@@ -1,5 +1,6 @@
 import type { Place, PolygonFeatures, SearchPlaceProps } from '@anw/maps-sdk-js/core';
 import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { search } from '../../search';
 import type { SearchIndexType } from '../../shared';
@@ -193,8 +194,8 @@ describe('Geometry Search service', () => {
     });
 
     test('geometrySearch with API request and response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
-        const onApiResponse = jest.fn() as (
+        const onApiRequest = vi.fn() as (request: GeometrySearchRequestAPI) => void;
+        const onApiResponse = vi.fn() as (
             request: GeometrySearchRequestAPI,
             response: GeometrySearchResponseAPI,
         ) => void;
@@ -211,8 +212,8 @@ describe('Geometry Search service', () => {
     });
 
     test('geometrySearch with API request and error response callbacks', async () => {
-        const onApiRequest = jest.fn() as (request: GeometrySearchRequestAPI) => void;
-        const onApiResponse = jest.fn() as (
+        const onApiRequest = vi.fn() as (request: GeometrySearchRequestAPI) => void;
+        const onApiResponse = vi.fn() as (
             request: GeometrySearchRequestAPI,
             response: GeometrySearchResponseAPI,
         ) => void;

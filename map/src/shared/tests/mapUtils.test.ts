@@ -1,4 +1,5 @@
 import type { Map, MapGeoJSONFeature, ResourceType } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import type { StyleInput, StyleModule } from '../../init';
 import poiLayerSpec from '../../places/tests/poiLayerSpec.data.json';
 import type { TomTomMap } from '../../TomTomMap';
@@ -21,12 +22,12 @@ import updateStyleData from './mapUtils.test.data.json';
 
 const getTomTomMapMock = async (mapReady: boolean[]) =>
     ({
-        mapReady: jest.fn().mockReturnValue(mapReady[0]).mockReturnValue(mapReady[1]).mockReturnValue(mapReady[2]),
+        mapReady: vi.fn().mockReturnValue(mapReady[0]).mockReturnValue(mapReady[1]).mockReturnValue(mapReady[2]),
         mapLibreMap: {
-            once: jest.fn((_, callback) => callback()),
+            once: vi.fn((_, callback) => callback()),
         },
         _eventsProxy: {
-            add: jest.fn(),
+            add: vi.fn(),
         },
     }) as unknown as TomTomMap;
 
@@ -96,13 +97,13 @@ describe('Map utils - changeLayerProps', () => {
     test('all cases', () => {
         const newMapMock = (): Map =>
             ({
-                getStyle: jest.fn().mockReturnValue({ layers: [poiLayerSpec] }),
-                setLayoutProperty: jest.fn(),
-                setPaintProperty: jest.fn(),
-                setFilter: jest.fn(),
-                setLayerZoomRange: jest.fn(),
-                getMaxZoom: jest.fn().mockReturnValueOnce(20),
-                getMinZoom: jest.fn().mockReturnValueOnce(3),
+                getStyle: vi.fn().mockReturnValue({ layers: [poiLayerSpec] }),
+                setLayoutProperty: vi.fn(),
+                setPaintProperty: vi.fn(),
+                setFilter: vi.fn(),
+                setLayerZoomRange: vi.fn(),
+                getMaxZoom: vi.fn().mockReturnValueOnce(20),
+                getMinZoom: vi.fn().mockReturnValueOnce(3),
             }) as unknown as Map;
 
         let mapLibreMock = newMapMock();
@@ -182,17 +183,17 @@ describe('Map utils - updateLayersAndSource', () => {
     test('all cases', () => {
         const newMapMock = (): Map =>
             ({
-                removeLayer: jest.fn(),
-                setLayoutProperty: jest.fn(),
-                setPaintProperty: jest.fn(),
-                setFilter: jest.fn(),
+                removeLayer: vi.fn(),
+                setLayoutProperty: vi.fn(),
+                setPaintProperty: vi.fn(),
+                setFilter: vi.fn(),
             }) as unknown as Map;
 
         // empty arrays
         updateLayersAndSource(
             [],
             [],
-            { _updateSourceAndLayerIDs: jest.fn() } as unknown as AbstractSourceWithLayers,
+            { _updateSourceAndLayerIDs: vi.fn() } as unknown as AbstractSourceWithLayers,
             newMapMock(),
         );
 
@@ -202,7 +203,7 @@ describe('Map utils - updateLayersAndSource', () => {
 
         const sourceWithLayersMock = {
             _layerSpecs: [{ id: someId }],
-            _updateSourceAndLayerIDs: jest.fn(),
+            _updateSourceAndLayerIDs: vi.fn(),
         };
 
         updateLayersAndSource(
@@ -217,7 +218,7 @@ describe('Map utils - updateLayersAndSource', () => {
         const sourceWithLayersMock2 = {
             source: { id: 'sourceId' },
             _layerSpecs: [{ id: someId }],
-            _updateSourceAndLayerIDs: jest.fn(),
+            _updateSourceAndLayerIDs: vi.fn(),
         };
 
         // add one layer
@@ -253,9 +254,9 @@ describe('Map utils - addLayersInCorrectOrder', () => {
     test('complex case with ordering', () => {
         // adding a complex case
         const mapMock = {
-            addLayer: jest.fn(),
-            setLayoutProperty: jest.fn(),
-            getLayer: jest
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
+            getLayer: vi
                 .fn()
                 .mockReturnValueOnce(undefined)
                 .mockReturnValueOnce(undefined)
@@ -294,7 +295,7 @@ describe('Map utils - addLayersInCorrectOrder', () => {
 
     test('error case', () => {
         const mapMock = {
-            getLayer: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(undefined),
+            getLayer: vi.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(undefined),
         } as unknown as Map;
         const id1 = 'id1';
         const id2 = 'id2';
@@ -323,16 +324,16 @@ describe('Map utils - tryToAddSourceToMapIfMissing', () => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
         const mapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(hillshadeSource),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
-                once: jest.fn().mockReturnValue(Promise.resolve()),
+                getSource: vi.fn().mockReturnValueOnce(hillshadeSource),
+                isStyleLoaded: vi.fn().mockReturnValue(true),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         await prepareForModuleInit(mapMock, true, HILLSHADE_SOURCE_ID, 'hillshade');
@@ -342,19 +343,19 @@ describe('Map utils - tryToAddSourceToMapIfMissing', () => {
     test('Initializing module with no source', async () => {
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(jest.fn()),
-                isStyleLoaded: jest.fn().mockReturnValue(true),
-                isSourceLoaded: jest.fn().mockReturnValue(true),
-                once: jest.fn().mockReturnValue(Promise.resolve()),
+                getSource: vi.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(vi.fn()),
+                isStyleLoaded: vi.fn().mockReturnValue(true),
+                isSourceLoaded: vi.fn().mockReturnValue(true),
+                once: vi.fn().mockReturnValue(Promise.resolve()),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            getStyle: jest.fn(),
-            setStyle: jest.fn(),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            getStyle: vi.fn(),
+            setStyle: vi.fn(),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         await prepareForModuleInit(tomtomMapMock, true, HILLSHADE_SOURCE_ID, 'hillshade');
@@ -368,20 +369,20 @@ describe('Map utils - tryToAddSourceToMapIfMissing', () => {
 describe('addImageIfNotExisting tests', () => {
     test('Add image while map already has it', () => {
         const mapLibreMock = {
-            loadImage: jest.fn().mockResolvedValue(jest.fn()),
-            addImage: jest.fn(),
-            hasImage: jest.fn().mockReturnValue(true),
+            loadImage: vi.fn().mockResolvedValue(vi.fn()),
+            addImage: vi.fn(),
+            hasImage: vi.fn().mockReturnValue(true),
         } as unknown as Map;
 
-        jest.spyOn(mapLibreMock, 'addImage');
+        vi.spyOn(mapLibreMock, 'addImage');
         expect(async () => addImageIfNotExisting(mapLibreMock, 'restaurant', 'https://test.com')).not.toThrow();
     });
 
     test('Add image with race condition, when map already has it right after loading it', () => {
         const mapLibreMock = {
-            loadImage: jest.fn().mockResolvedValue({ data: {} }),
-            addImage: jest.fn(),
-            hasImage: jest.fn().mockReturnValueOnce(false).mockReturnValueOnce(true),
+            loadImage: vi.fn().mockResolvedValue({ data: {} }),
+            addImage: vi.fn(),
+            hasImage: vi.fn().mockReturnValueOnce(false).mockReturnValueOnce(true),
         } as unknown as Map;
 
         expect(async () => addImageIfNotExisting(mapLibreMock, 'restaurant', 'https://test.com')).not.toThrow();
@@ -390,9 +391,9 @@ describe('addImageIfNotExisting tests', () => {
 
     test('Add image to map successfully', async () => {
         const mapLibreMock = {
-            loadImage: jest.fn().mockResolvedValue(jest.fn()),
-            addImage: jest.fn(),
-            hasImage: jest.fn().mockReturnValue(false),
+            loadImage: vi.fn().mockResolvedValue(vi.fn()),
+            addImage: vi.fn(),
+            hasImage: vi.fn().mockReturnValue(false),
         } as unknown as Map;
         expect(async () => addImageIfNotExisting(mapLibreMock, 'restaurant', 'https://test.com')).not.toThrow();
         expect(mapLibreMock.loadImage).toHaveBeenCalledTimes(1);
@@ -401,9 +402,9 @@ describe('addImageIfNotExisting tests', () => {
     test('Add image while map load image has an error', async () => {
         const error = new Error('image not found');
         const mapLibreMock = {
-            loadImage: jest.fn().mockRejectedValue(error),
-            addImage: jest.fn(),
-            hasImage: jest.fn().mockReturnValue(false),
+            loadImage: vi.fn().mockRejectedValue(error),
+            addImage: vi.fn(),
+            hasImage: vi.fn().mockReturnValue(false),
         } as unknown as Map;
 
         await expect(async () =>

@@ -9,6 +9,7 @@ import type {
     Polygon,
     Position,
 } from 'geojson';
+import { describe, expect, test } from 'vitest';
 import {
     bboxCenter,
     bboxExpandedWithBBox,

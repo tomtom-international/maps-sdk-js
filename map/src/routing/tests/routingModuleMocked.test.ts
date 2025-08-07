@@ -1,4 +1,5 @@
 import type { Map } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
 import {
     EventsModule,
     mapStyleLayerIDs,
@@ -22,19 +23,19 @@ import { RoutingModule } from '../RoutingModule';
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('Routing module tests', () => {
     test('Basic flows', async () => {
-        const waypointsSource = { id: WAYPOINTS_SOURCE_ID, setData: jest.fn() };
-        const routesSource = { id: ROUTES_SOURCE_ID, setData: jest.fn() };
-        const vehicleRestrictedSource = { id: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, setData: jest.fn() };
-        const incidentsSource = { id: ROUTE_INCIDENTS_SOURCE_ID, setData: jest.fn() };
-        const ferriesSource = { id: ROUTE_FERRIES_SOURCE_ID, setData: jest.fn() };
-        const tollRoadsSource = { id: ROUTE_TOLL_ROADS_SOURCE_ID, setData: jest.fn() };
-        const tunnelsSource = { id: ROUTE_TUNNELS_SOURCE_ID, setData: jest.fn() };
-        const instructionLinesSource = { id: ROUTE_INSTRUCTIONS_SOURCE_ID, setData: jest.fn() };
-        const instructionArrowsSource = { id: ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID, setData: jest.fn() };
-        const summaryBubblesSource = { id: ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID, setData: jest.fn() };
+        const waypointsSource = { id: WAYPOINTS_SOURCE_ID, setData: vi.fn() };
+        const routesSource = { id: ROUTES_SOURCE_ID, setData: vi.fn() };
+        const vehicleRestrictedSource = { id: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, setData: vi.fn() };
+        const incidentsSource = { id: ROUTE_INCIDENTS_SOURCE_ID, setData: vi.fn() };
+        const ferriesSource = { id: ROUTE_FERRIES_SOURCE_ID, setData: vi.fn() };
+        const tollRoadsSource = { id: ROUTE_TOLL_ROADS_SOURCE_ID, setData: vi.fn() };
+        const tunnelsSource = { id: ROUTE_TUNNELS_SOURCE_ID, setData: vi.fn() };
+        const instructionLinesSource = { id: ROUTE_INSTRUCTIONS_SOURCE_ID, setData: vi.fn() };
+        const instructionArrowsSource = { id: ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID, setData: vi.fn() };
+        const summaryBubblesSource = { id: ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID, setData: vi.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: jest
+                getSource: vi
                     .fn()
                     .mockReturnValueOnce(waypointsSource)
                     .mockReturnValueOnce(waypointsSource)
@@ -76,23 +77,23 @@ describe('Routing module tests', () => {
                     .mockReturnValueOnce(summaryBubblesSource)
                     .mockReturnValueOnce(summaryBubblesSource)
                     .mockReturnValueOnce(summaryBubblesSource),
-                getLayer: jest.fn().mockReturnValue({}),
-                addLayer: jest.fn(),
-                removeLayer: jest.fn(),
-                hasImage: jest.fn().mockReturnValue(false),
-                addImage: jest.fn(),
-                loadImage: jest.fn().mockResolvedValue(jest.fn()),
-                setLayoutProperty: jest.fn(),
-                setFilter: jest.fn(),
-                setPaintProperty: jest.fn(),
+                getLayer: vi.fn().mockReturnValue({}),
+                addLayer: vi.fn(),
+                removeLayer: vi.fn(),
+                hasImage: vi.fn().mockReturnValue(false),
+                addImage: vi.fn(),
+                loadImage: vi.fn().mockResolvedValue(vi.fn()),
+                setLayoutProperty: vi.fn(),
+                setFilter: vi.fn(),
+                setPaintProperty: vi.fn(),
             } as unknown as Map,
             _eventsProxy: {
-                add: jest.fn(),
-                ensureAdded: jest.fn(),
+                add: vi.fn(),
+                ensureAdded: vi.fn(),
             },
-            addStyleChangeHandler: jest.fn(),
-            once: jest.fn().mockReturnValue(Promise.resolve()),
-            mapReady: jest.fn().mockReturnValue(false).mockReturnValue(true),
+            addStyleChangeHandler: vi.fn(),
+            once: vi.fn().mockReturnValue(Promise.resolve()),
+            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
         const routing = await RoutingModule.init(tomtomMapMock);

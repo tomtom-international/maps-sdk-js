@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import type { SDKServiceError } from '../errors';
 import { parseDefaultResponseError } from '../errors';
 import type { APIErrorResponse } from '../types/apiResponseErrorTypes';
