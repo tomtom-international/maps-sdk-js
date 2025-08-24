@@ -170,6 +170,9 @@ importers:
       rollup-plugin-analyzer:
         specifier: ^4.0.0
         version: 4.0.0
+      rollup-plugin-svg-import:
+        specifier: ^3.0.0
+        version: 3.0.0(rollup@4.47.1)
       rollup-plugin-visualizer:
         specifier: ^6.0.3
         version: 6.0.3(rollup@4.47.1)
@@ -2914,6 +2917,12 @@ packages:
 
   rollup-plugin-includepaths@0.2.4:
     resolution: {integrity: sha512-iZen+XKVExeCzk7jeSZPJKL7B67slZNr8GXSC5ROBXtDGXDBH8wdjMfdNW5hf9kPt+tHyIvWh3wlE9bPrZL24g==}
+
+  rollup-plugin-svg-import@3.0.0:
+    resolution: {integrity: sha512-5fUESTM5hdqJojrwO53JQUO7NespLNx4iLeMsToQfuaGGqGT5sz85Ns5gCDNxLO6yBPbn7p0A/6YA+Rq3clg4Q==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      rollup: ^3.0.0||^4.0.0
 
   rollup-plugin-visualizer@6.0.3:
     resolution: {integrity: sha512-ZU41GwrkDcCpVoffviuM9Clwjy5fcUxlz0oMoTXTYsK+tcIFzbdacnrr2n8TXcHxbGKKXtOdjxM2HUS4HjkwIw==}
@@ -6234,6 +6243,11 @@ snapshots:
   rollup-plugin-analyzer@4.0.0: {}
 
   rollup-plugin-includepaths@0.2.4: {}
+
+  rollup-plugin-svg-import@3.0.0(rollup@4.47.1):
+    dependencies:
+      '@rollup/pluginutils': 5.2.0(rollup@4.47.1)
+      rollup: 4.47.1
 
   rollup-plugin-visualizer@6.0.3(rollup@4.47.1):
     dependencies:

@@ -29,8 +29,8 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
     "@types/geojson": "^7946.0.16",
-    "@types/node": "^24.2.0",
     "@types/lodash-es": "catalog:",
+    "@types/node": "^24.3.0",
     "@vitest/coverage-v8": "catalog:",
     "dotenv": "^17.2.1",
     "rimraf": "^6.0.1",
@@ -39,8 +39,8 @@
     "ts-node": "^10.9.2",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "vite-plugin-dts": "catalog:"
+    "vite-plugin-dts": "catalog:",
+    "vitest": "catalog:"
   },
   "typedoc": {
     "entryPoint": "./index.ts"
@@ -48,6 +48,6 @@
   "dependencies": {
     "core": "workspace:*",
     "lodash-es": "catalog:",
-    "zod": "^4.0.15"
+    "zod": "^4.0.17"
   }
 }
