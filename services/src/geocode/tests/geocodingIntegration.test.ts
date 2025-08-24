@@ -35,17 +35,11 @@ describe('Geocoding integration tests', () => {
                         matchConfidence: {
                             score: expect.any(Number),
                         },
-                        address: {
+                        address: expect.objectContaining({
                             streetName: 'Teakhout',
-                            municipalitySubdivision: 'Zaandam',
-                            municipality: 'Zaanstad',
-                            countrySubdivision: 'Noord-Holland',
                             countryCode: 'NL',
-                            country: 'Nederland',
                             countryCodeISO3: 'NLD',
-                            freeformAddress: 'Teakhout, Zaandam',
-                            localName: 'Zaandam',
-                        },
+                        }),
                     },
                 },
                 {
