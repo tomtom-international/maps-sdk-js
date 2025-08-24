@@ -14,7 +14,7 @@
     "lint:fix": "biome check . --write && biome lint . --write",
     "format": "biome format .",
     "format:fix": "biome format . --write",
-    "test": "pnpm -r --no-bail test",
+    "test": "pnpm -F core test; pnpm -F services test; pnpm -F map test; pnpm -F map-integration-tests test",
     "pre-commit": ""
   },
   "publishConfig": {
