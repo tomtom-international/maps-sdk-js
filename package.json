@@ -15,7 +15,7 @@
     "format": "biome format .",
     "format:fix": "biome format . --write",
     "test": "pnpm -r --no-bail test",
-    "test:coverage": "pnpm -F core test:coverage; pnpm -F services test:coverage; pnpm -F map test:coverage;",
+    "test:coverage": "pnpm -r --no-bail test:coverage",
     "pre-commit": ""
   },
   "publishConfig": {
