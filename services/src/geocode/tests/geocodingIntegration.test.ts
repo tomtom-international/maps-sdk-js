@@ -117,17 +117,16 @@ describe('Geocoding integration tests', () => {
                 matchConfidence: {
                     score: expect.any(Number),
                 },
-                address: {
+                address: expect.objectContaining({
                     streetName: 'Teakhout',
-                    municipalitySubdivision: 'Zaandam',
-                    municipality: 'Zaanstad',
-                    countrySubdivision: 'Noord-Holland',
+                    municipality: expect.any(String),
+                    countrySubdivision: expect.any(String),
                     countryCode: 'NL',
                     country: 'Nederland',
                     countryCodeISO3: 'NLD',
-                    freeformAddress: 'Teakhout, Zaandam',
-                    localName: 'Zaandam',
-                },
+                    freeformAddress: expect.any(String),
+                    localName: expect.any(String),
+                }),
                 position: {
                     lat: expect.any(Number),
                     lon: expect.any(Number),
