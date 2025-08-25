@@ -10,6 +10,14 @@ import { EventsProxy } from './shared';
 import { isLayerLocalizable } from './shared/localization';
 
 /**
+ * @ignore
+ */
+export type StyleChangeHandler = {
+    onStyleAboutToChange: () => void;
+    onStyleChanged: () => void;
+};
+
+/**
  * The TomTom Map object is the entry point to display the TomTom live map on your web application.
  *
  * * It uses [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/) and exposes its
@@ -32,7 +40,7 @@ export class TomTomMap {
      */
     _eventsProxy: EventsProxy;
     private params: TomTomMapParams;
-    private styleChangeHandlers: (() => void)[] = [];
+    private readonly styleChangeHandlers: StyleChangeHandler[] = [];
 
     /**
      * This constructor is the main entry point to create a TomTom Map with the SDK.
@@ -71,6 +79,13 @@ export class TomTomMap {
      */
     setStyle = (style: StyleInput, options: { keepState?: boolean } = { keepState: true }): void => {
         this.mapReady = false;
+        for (const handler of this.styleChangeHandlers) {
+            try {
+                handler.onStyleAboutToChange();
+            } catch (e) {
+                console.error(e);
+            }
+        }
         const effectiveStyle = options.keepState ? withPreviousStyleParts(style, this.params.style) : style;
         this.params = { ...this.params, style: effectiveStyle };
         this.mapLibreMap.once('styledata', () => {
@@ -133,7 +148,7 @@ export class TomTomMap {
         if (keepState) {
             for (const handler of this.styleChangeHandlers) {
                 try {
-                    handler();
+                    handler.onStyleChanged();
                 } catch (e) {
                     console.error(e);
                 }
@@ -146,7 +161,7 @@ export class TomTomMap {
      * Adds a handler function to style changes done to this map via the "setStyle" method.
      * @param handler The handler function, which will be called when "setStyle" was called.
      */
-    addStyleChangeHandler(handler: () => void): void {
+    addStyleChangeHandler(handler: StyleChangeHandler): void {
         this.styleChangeHandlers.push(handler);
     }
 }

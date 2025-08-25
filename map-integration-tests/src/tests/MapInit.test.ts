@@ -54,7 +54,7 @@ test.describe('Map Init tests', () => {
 
     test('Multiple modules auto-added to the style right after map init', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { center: [7.12621, 48.50394], zoom: 10 });
-
+        // Right after triggering the map initialization, we add multiple modules to the map, which should trigger reloading its style multiple times:
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
             await mapsSdkThis.MapsSDK.POIsModule.get(mapsSdkThis.tomtomMap, { ensureAddedToStyle: true });

@@ -55,7 +55,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+                events: { longHoverDelayAfterMapMoveMS: 4500, longHoverDelayOnStillMapMS: 4000 },
             },
         );
     });
@@ -127,7 +127,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await page.mouse.move(placePosition.x, placePosition.y);
         await waitForEventState(page, 'hover', placesLayerIDs);
         // Waiting for a long-hover:
-        await waitForTimeout(3000);
+        await waitForTimeout(4000);
         await waitForEventState(page, 'long-hover', placesLayerIDs);
         expect(await getNumHoversAndLongHovers(page)).toEqual([2, 1]);
 
@@ -139,11 +139,13 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Hover events for a place shown after changing map style', async ({ page }) => {
+    test('Hover events for a place shown right after changing map style', async ({ page }) => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces(page);
         await setupPlacesClickHandler(page);
+        // We load the places layer IDs before changing the style, to ensure they are still relevant after the style change:
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+
         await setStyle(page, 'standardDark');
 
         // We show the places after the map style has changed.
@@ -152,12 +154,12 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await showPlaces(page, places);
         await waitForMapIdle(page);
         const placePosition = await getPixelCoords(page, firstPlacePosition);
-        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 3000);
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
         // Moving cursor over the place (hovering)
         await page.mouse.move(placePosition.x, placePosition.y);
         await waitForEventState(page, 'hover', placesLayerIDs);
         // double-checking we still have the same number of rendered places:
-        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 3000);
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
     });
 
     test('Callback handler arguments', async ({ page }) => {
