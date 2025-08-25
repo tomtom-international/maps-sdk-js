@@ -74,17 +74,17 @@ export const buildPlacesWithEVAvailability = async (
     places: Places,
     options: {
         /**
-         * If true, places with unknown availability will be returned as-is. Otherwise, they will be filtered out.
+         * If true, places with unknown availability will be still included. Otherwise, they will be filtered out.
          * @default true
          */
-        returnIfAvailabilityUnknown: boolean;
-    } = { returnIfAvailabilityUnknown: true },
+        includeIfAvailabilityUnknown: boolean;
+    } = { includeIfAvailabilityUnknown: true },
 ): Promise<Places<EVChargingStationPlaceProps>> => {
     const placesWithAvailability = [];
     for (const place of places.features) {
         // (We fetch the availabilities sequentially on purpose to prevent QPS limit errors)
         const placeWithAvailability = await buildPlaceWithEVAvailability(place);
-        if (placeWithAvailability.properties.chargingPark?.availability || options.returnIfAvailabilityUnknown) {
+        if (placeWithAvailability.properties.chargingPark?.availability || options.includeIfAvailabilityUnknown) {
             placesWithAvailability.push(placeWithAvailability);
         }
     }

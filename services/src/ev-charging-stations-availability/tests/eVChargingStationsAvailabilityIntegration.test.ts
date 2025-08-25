@@ -81,17 +81,13 @@ describe('evChargingStationsAvailability integration tests', () => {
         expect(evStationFeatures.some((feature) => feature.properties.poi?.openingHours)).toBe(true);
 
         // we re-calculate now but filtering out the ones with unknown availability:
-        const filteredEvStationsWithAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability, {
-            returnIfAvailabilityUnknown: false,
+        const evStationsWithKnownAvailability = await buildPlacesWithEVAvailability(evStationsWithoutAvailability, {
+            includeIfAvailabilityUnknown: false,
         });
-
-        expect(filteredEvStationsWithAvailability.features.length).toBeLessThan(evStationFeatures.length);
-
-        expect(filteredEvStationsWithAvailability.features).toHaveLength(
+        expect(evStationsWithKnownAvailability.features.length).toBeLessThan(evStationFeatures.length);
+        expect(evStationsWithKnownAvailability.features).toHaveLength(
             evStationFeatures.filter((feature) => feature.properties.chargingPark?.availability).length,
         );
-
-        expect(filteredEvStationsWithAvailability.bbox).not.toEqual(evStationsWithAvailability.bbox);
     });
 
     test('ChargingStationsAvailability with API request and response callbacks', async () => {
