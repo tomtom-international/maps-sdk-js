@@ -2,7 +2,7 @@
   "name": "map-integration-tests",
   "description": "Runs integration tests by starting a local web server with a page that contains the SDK code.",
   "scripts": {
-    "test": "npx playwright install --with-deps chromium && npx playwright test",
+    "test": "pnpm exec playwright install --with-deps chromium && pnpm exec playwright test",
     "test:coverage": "",
     "start-webpack-dev-server": "webpack serve",
     "type-check": "tsc --noEmit",
