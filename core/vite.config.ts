@@ -54,12 +54,14 @@ export default defineConfig({
             exclude: ['**/*.test.ts'],
             rollupTypes: true,
         }),
-        // For visual bundle analysis:
-        visualizer({
-            filename: 'bundle-stats.html',
-            open: false,
-        }),
-        // For quick textual code size analysis:
+        ...(process.env.CI
+            ? []
+            : [
+                  visualizer({
+                      filename: 'bundle-stats.html',
+                      open: false,
+                  }),
+              ]),
         analyze({
             summaryOnly: true,
             limit: 10,
