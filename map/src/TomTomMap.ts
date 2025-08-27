@@ -1,5 +1,5 @@
-import type { Language } from '@anw/maps-sdk-js/core';
-import { mergeFromGlobal } from '@anw/maps-sdk-js/core';
+import type { Language } from '@cet/maps-sdk-js/core';
+import { mergeFromGlobal } from '@cet/maps-sdk-js/core';
 import type { BBox } from 'geojson';
 import { isEqual } from 'lodash-es';
 import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';

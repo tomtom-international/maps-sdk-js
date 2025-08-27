@@ -11,7 +11,7 @@
     "useDefineForClassFields": false,
     "target": "ESNext",
     "paths": {
-      "@anw/maps-sdk-js/core": ["./core"]
+      "@cet/maps-sdk-js/core": ["./core"]
     }
   },
   "exclude": ["node_modules", ".rollup.cache/", "dist", "__mocks__"]

@@ -13,7 +13,7 @@ module.exports = {
              * Here we create alias to be able to load the SDK to the browser from local builds
              * * For core we still use the original package name since the SDK map will refer to it as well.
              */
-            '@anw/maps-sdk-js/core': path.resolve('../core/dist/core.cjs.js'),
+            '@cet/maps-sdk-js/core': path.resolve('../core/dist/core.cjs.js'),
             localMapsSDKJSMap: path.resolve('../map/dist/map.cjs.js'),
         },
     },

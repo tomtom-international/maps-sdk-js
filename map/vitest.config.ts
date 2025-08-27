@@ -7,7 +7,7 @@ export default defineConfig(() => {
         },
         resolve: {
             alias: {
-                '@anw/maps-sdk-js/core': 'core',
+                '@cet/maps-sdk-js/core': 'core',
             },
         },
     };

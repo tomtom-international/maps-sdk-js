@@ -1,5 +1,5 @@
 {
-  "name": "@anw/maps-sdk-js",
+  "name": "@cet/maps-sdk-js",
   "version": "0.8.24",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
@@ -19,7 +19,7 @@
     "pre-commit": ""
   },
   "publishConfig": {
-    "registry": "https://tomtom.jfrog.io/artifactory/api/npm/maps-sdk-js-npm-local/"
+    "registry": "https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/"
   },
   "repository": {
     "type": "git",

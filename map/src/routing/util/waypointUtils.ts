@@ -5,8 +5,8 @@ import type {
     Waypoint,
     WaypointLike,
     Waypoints,
-} from '@anw/maps-sdk-js/core';
-import { formatDuration, generateId, getPosition } from '@anw/maps-sdk-js/core';
+} from '@cet/maps-sdk-js/core';
+import { formatDuration, generateId, getPosition } from '@cet/maps-sdk-js/core';
 import type { Point, Position } from 'geojson';
 import type { LocationDisplayProps } from '../../places';
 import {

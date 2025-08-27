@@ -1,4 +1,4 @@
-import type { Route, Routes, Waypoint, Waypoints } from '@anw/maps-sdk-js/core';
+import type { Route, Routes, Waypoint, Waypoints } from '@cet/maps-sdk-js/core';
 import { isEqual } from 'lodash-es';
 import type { StyleImageMetadata } from 'maplibre-gl';
 import {

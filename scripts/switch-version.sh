@@ -14,7 +14,7 @@ echo "Current package.json version is $previousVersion";
 
 # Get all versions of given ref_name from the registry.
 all_registry_versions=$(mktemp);
-pnpm show @anw/maps-sdk-js versions --json > ${all_registry_versions};
+pnpm show @cet/maps-sdk-js versions --json > ${all_registry_versions};
 
 # Select the latest version of given ref_name.
 # Note: getting the latest version from all versions instead of the dist-tag prevents issues with

@@ -32,7 +32,7 @@ The places from each module will be layered on top of places from the module add
 * Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
 * Import the Places module class:
 ```javascript
-import { PlacesModule } from "@anw/maps-sdk-js/map";
+import { PlacesModule } from "@cet/maps-sdk-js/map";
 ```
 * Initialize a Places module (default config):
 ```javascript
@@ -47,8 +47,8 @@ which are returned from the services of the Services module.
 For example, showing places from a search result:
 
 ```javascript
-import { search } from "@anw/maps-sdk-js/services";
-import { PlacesModule } from "@anw/maps-sdk-js/map";
+import { search } from "@cet/maps-sdk-js/services";
+import { PlacesModule } from "@cet/maps-sdk-js/map";
 // ensure "map" is initialized as your TomtomMap (see map quickstart guide)
 const places = await search({ query: "pharmacy", limit: 35, boundingBox: map.getBounds()});
 const placesModule = await PlacesModule.init(map);
@@ -70,8 +70,8 @@ The first parameter of event callbacks will be the top Place that got the event.
 
 Registering to user events:
 ```javascript
-import { Place } from "@anw/maps-sdk-js/core";
-import { PlacesModule } from "@anw/maps-sdk-js/map";
+import { Place } from "@cet/maps-sdk-js/core";
+import { PlacesModule } from "@cet/maps-sdk-js/map";
 // ensure "map" is initialized as your TomtomMap (see map quickstart guide)
 const placesModule = await PlacesModule.init(map);
 placesModule.events.on("hover", (place: Place) => console.log(`hover: ${JSON.stringify(place)}`));

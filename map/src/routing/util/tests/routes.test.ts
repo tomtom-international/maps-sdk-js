@@ -1,4 +1,4 @@
-import type { DisplayUnits, Routes } from '@anw/maps-sdk-js/core';
+import type { DisplayUnits, Routes } from '@cet/maps-sdk-js/core';
 import { describe, expect, test } from 'vitest';
 import type { DisplayRouteProps, DisplayRouteSummaries } from '../../types/displayRoutes';
 import { toDisplayRouteSummaries, toDisplayRoutes } from '../routes';

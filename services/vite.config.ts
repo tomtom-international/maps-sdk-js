@@ -22,7 +22,7 @@ export default defineConfig({
         sourcemap: true,
         minify: false,
         rollupOptions: {
-            external: ['@anw/maps-sdk-js/core'], // Added external dependency
+            external: ['@cet/maps-sdk-js/core'], // Added external dependency
             output: [
                 // CommonJS (minified) - matches services.cjs.min.js
                 {

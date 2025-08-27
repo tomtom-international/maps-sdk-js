@@ -1,4 +1,4 @@
-import type { Language } from '@anw/maps-sdk-js/core';
+import type { Language } from '@cet/maps-sdk-js/core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
 import placeByIdReqObjects from '../../place-by-id/tests/requestBuilderPerf.data.json';

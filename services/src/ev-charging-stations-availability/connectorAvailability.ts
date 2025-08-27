@@ -4,7 +4,7 @@ import type {
     ChargingStation,
     Connector,
     ConnectorAvailability,
-} from '@anw/maps-sdk-js/core';
+} from '@cet/maps-sdk-js/core';
 
 /**
  * @ignore

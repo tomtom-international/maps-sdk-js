@@ -1,5 +1,5 @@
-import type { LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@anw/maps-sdk-js/core';
-import { inputSectionTypes } from '@anw/maps-sdk-js/core';
+import type { LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@cet/maps-sdk-js/core';
+import { inputSectionTypes } from '@cet/maps-sdk-js/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { calculateRoute } from '../calculateRoute';

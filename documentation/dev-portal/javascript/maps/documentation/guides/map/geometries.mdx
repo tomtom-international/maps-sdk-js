@@ -26,8 +26,8 @@ Read more about this service [here](/javascript/maps/documentation/guides/search
 Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map/quickstart) guide.
 
 ```javascript
-import { GeometriesModule } from "@anw/maps-sdk-js/map";
-import { geocode, geometryData } from "@anw/maps-sdk-js/services";
+import { GeometriesModule } from "@cet/maps-sdk-js/map";
+import { geocode, geometryData } from "@cet/maps-sdk-js/services";
 
 const areaToSearch = await geocode({ query: "paris", limit: 1 });
 const areaGeometry = await geometryData({ geometries: areaToSearch });

@@ -1,5 +1,5 @@
-import type { SectionType } from '@anw/maps-sdk-js/core';
-import { getGeoInputType, inputSectionTypesWithGuidance } from '@anw/maps-sdk-js/core';
+import type { SectionType } from '@cet/maps-sdk-js/core';
+import { getGeoInputType, inputSectionTypesWithGuidance } from '@cet/maps-sdk-js/core';
 import { z } from 'zod/v4-mini';
 import { commonRoutingRequestSchema } from '../shared/commonRoutingRequestSchema';
 import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from '../shared/geometriesSchema';

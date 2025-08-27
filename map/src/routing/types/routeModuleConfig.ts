@@ -1,4 +1,4 @@
-import type { DisplayUnits, GetPositionEntryPointOption, Routes, Waypoints } from '@anw/maps-sdk-js/core';
+import type { DisplayUnits, GetPositionEntryPointOption, Routes, Waypoints } from '@cet/maps-sdk-js/core';
 import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { GeoJSONSourceWithLayers, LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import type { DisplayRouteProps, DisplayRouteSummaries } from './displayRoutes';

@@ -1,4 +1,4 @@
-import type { Places, SearchPlaceProps } from '@anw/maps-sdk-js/core';
+import type { Places, SearchPlaceProps } from '@cet/maps-sdk-js/core';
 import type { FuzzySearchParams, QueryIntent } from '../fuzzy-search';
 import { fuzzySearch } from '../fuzzy-search/fuzzySearch';
 import type { FuzzySearchTemplate } from '../fuzzy-search/fuzzySearchTemplate';

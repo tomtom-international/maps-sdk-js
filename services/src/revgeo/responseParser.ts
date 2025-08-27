@@ -1,4 +1,4 @@
-import { generateId, getPositionStrict, toPointFeature } from '@anw/maps-sdk-js/core';
+import { generateId, getPositionStrict, toPointFeature } from '@cet/maps-sdk-js/core';
 import { apiToGeoJSONBBox, csvLatLngToPosition } from '../shared/geometry';
 import type { ReverseGeocodingResponse } from './reverseGeocoding';
 import type { ReverseGeocodingResponseAPI } from './types/apiTypes';

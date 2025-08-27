@@ -1,4 +1,4 @@
-import type { ChargingStation, ChargingStationsAccessType, TimeZone } from '@anw/maps-sdk-js/core';
+import type { ChargingStation, ChargingStationsAccessType, TimeZone } from '@cet/maps-sdk-js/core';
 import type { LatLonAPI, OpeningHoursAPI } from '../../shared/types/apiPlacesResponseTypes';
 
 /**

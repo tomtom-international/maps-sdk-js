@@ -1,4 +1,4 @@
-import type { POICategory } from '@anw/maps-sdk-js/core';
+import type { POICategory } from '@cet/maps-sdk-js/core';
 
 /**
  * @ignore

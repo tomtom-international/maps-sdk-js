@@ -27,9 +27,9 @@ After publishing of such package in the NPM repository it could be installed:
 
 ```shell
 # installation using the alias "my-fix"
-npm i --save @anw/maps-sdk-js@my-fix
+npm i --save @cet/maps-sdk-js@my-fix
 # installation using the exact version of alias "my-fix"
-npm i --save @anw/maps-sdk-js@1.2.3-my-fix.1
+npm i --save @cet/maps-sdk-js@1.2.3-my-fix.1
 ```
 
 Basically, all you need to do is just pushing your code to branches. Everything else happens automatically.

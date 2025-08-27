@@ -1,4 +1,4 @@
-import type { Routes } from '@anw/maps-sdk-js/core';
+import type { Routes } from '@cet/maps-sdk-js/core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
 import type { SDKServiceError } from '../../shared';

@@ -1,4 +1,4 @@
-import type { Routes } from '@anw/maps-sdk-js/core';
+import type { Routes } from '@cet/maps-sdk-js/core';
 import type { FeatureCollection } from 'geojson';
 import { describe, expect, test } from 'vitest';
 import type { DisplayRouteProps } from '../../types/displayRoutes';

@@ -1,4 +1,4 @@
-import type { HasLngLat } from '@anw/maps-sdk-js/core';
+import type { HasLngLat } from '@cet/maps-sdk-js/core';
 import type { CommonServiceParams } from '../../shared';
 import type { AutocompleteSearchResponseAPI } from './autocompleteSearchResponseAPI';
 

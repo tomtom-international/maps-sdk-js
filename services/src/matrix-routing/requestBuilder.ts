@@ -1,5 +1,5 @@
-import type { HasLngLat } from '@anw/maps-sdk-js/core';
-import { getPositionStrict } from '@anw/maps-sdk-js/core';
+import type { HasLngLat } from '@cet/maps-sdk-js/core';
+import { getPositionStrict } from '@cet/maps-sdk-js/core';
 import type { FetchInput } from '../shared';
 import { appendCommonParams } from '../shared/requestBuildingUtils';
 import type { CalculateMatrixRoutePOSTDataAPI, LatitudeLongitudePointAPI } from './types/apiRequestTypes';

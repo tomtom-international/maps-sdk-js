@@ -1,4 +1,4 @@
-import type { ConnectorType, Fuel, OpeningHoursMode, POICategory } from '@anw/maps-sdk-js/core';
+import type { ConnectorType, Fuel, OpeningHoursMode, POICategory } from '@cet/maps-sdk-js/core';
 import type { CommonPlacesParams, SearchIndexType } from './commonPlacesParams';
 import type { RelatedPoisRequest, TimeZoneRequest } from './servicesTypes';
 

@@ -8,7 +8,7 @@ import type {
     OpeningHours,
     SearchPlaceProps,
     TimeZone,
-} from '@anw/maps-sdk-js/core';
+} from '@cet/maps-sdk-js/core';
 import type { SearchSummary } from './searchSummary';
 
 /**

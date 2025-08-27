@@ -13,7 +13,7 @@ import type {
     RouteSummary,
     TrafficIncidentTEC,
     TravelMode,
-} from '@anw/maps-sdk-js/core';
+} from '@cet/maps-sdk-js/core';
 
 /**
  * @ignore

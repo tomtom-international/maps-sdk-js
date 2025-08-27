@@ -20,8 +20,8 @@ import type {
     TrafficCategory,
     TrafficIncidentTEC,
     TrafficSectionProps,
-} from '@anw/maps-sdk-js/core';
-import { bboxFromGeoJSON, generateId, indexedMagnitudes } from '@anw/maps-sdk-js/core';
+} from '@cet/maps-sdk-js/core';
+import { bboxFromGeoJSON, generateId, indexedMagnitudes } from '@cet/maps-sdk-js/core';
 import type { LineString, Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
 import type {

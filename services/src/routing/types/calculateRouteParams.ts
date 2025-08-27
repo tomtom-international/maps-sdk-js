@@ -1,4 +1,4 @@
-import type { GeoInput, inputSectionTypes } from '@anw/maps-sdk-js/core';
+import type { GeoInput, inputSectionTypes } from '@cet/maps-sdk-js/core';
 import type { GetPositionEntryPointOption } from 'core/src/types/lngLat';
 import type { CommonRoutingParams, CommonServiceParams } from '../../shared';
 import type { CalculateRouteRequestAPI } from './apiRequestTypes';

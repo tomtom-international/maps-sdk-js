@@ -22,7 +22,7 @@ export default defineConfig({
         sourcemap: true,
         minify: false,
         rollupOptions: {
-            external: ['@anw/maps-sdk-js/core', 'maplibre-gl'],
+            external: ['@cet/maps-sdk-js/core', 'maplibre-gl'],
             output: [
                 // CommonJS (minified) - matches map.cjs.min.js
                 {

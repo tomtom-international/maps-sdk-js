@@ -1,4 +1,4 @@
-import type { Anything, Waypoint, WaypointProps } from '@anw/maps-sdk-js/core';
+import type { Anything, Waypoint, WaypointProps } from '@cet/maps-sdk-js/core';
 import type { Position } from 'geojson';
 import { describe, expect, test, vi } from 'vitest';
 import {

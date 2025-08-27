@@ -1,4 +1,4 @@
-import { bboxFromCoordsArray } from '@anw/maps-sdk-js/core';
+import { bboxFromCoordsArray } from '@cet/maps-sdk-js/core';
 import type { MultiPolygon, Position } from 'geojson';
 import type { PostObject } from '../shared';
 import { sampleWithinMaxLength } from '../shared/arrays';

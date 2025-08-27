@@ -1,4 +1,4 @@
-import type { GeographyType, HasLngLat, MapcodeType, View } from '@anw/maps-sdk-js/core';
+import type { GeographyType, HasLngLat, MapcodeType, View } from '@cet/maps-sdk-js/core';
 
 import type { CommonServiceParams } from '../../shared';
 import type { ReverseGeocodingResponseAPI } from './apiTypes';

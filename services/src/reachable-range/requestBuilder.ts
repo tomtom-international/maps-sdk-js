@@ -1,4 +1,4 @@
-import { getPositionStrict } from '@anw/maps-sdk-js/core';
+import { getPositionStrict } from '@cet/maps-sdk-js/core';
 import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
 import { positionToCSVLatLon } from '../shared/geometry';
 import { appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';

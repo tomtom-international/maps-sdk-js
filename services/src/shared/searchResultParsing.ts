@@ -1,5 +1,5 @@
-import type { Brand, Moment, OpeningHours, Place, SearchPlaceProps, TimeRange } from '@anw/maps-sdk-js/core';
-import { toPointFeature } from '@anw/maps-sdk-js/core';
+import type { Brand, Moment, OpeningHours, Place, SearchPlaceProps, TimeRange } from '@cet/maps-sdk-js/core';
+import { toPointFeature } from '@cet/maps-sdk-js/core';
 import { omit } from 'lodash-es';
 import { toConnectorCounts } from '../ev-charging-stations-availability/connectorAvailability';
 import { apiToGeoJSONBBox, latLonAPIToPosition } from './geometry';

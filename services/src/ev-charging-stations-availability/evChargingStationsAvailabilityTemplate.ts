@@ -1,4 +1,4 @@
-import type { ChargingStationsAvailability } from '@anw/maps-sdk-js/core';
+import type { ChargingStationsAvailability } from '@cet/maps-sdk-js/core';
 import type { ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { evChargingStationsAvailabilityRequestSchema } from './evChargingStationsAvailabilityRequestSchema';

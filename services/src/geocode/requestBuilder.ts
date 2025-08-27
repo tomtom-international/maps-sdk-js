@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
+import { bboxFromGeoJSON } from '@cet/maps-sdk-js/core';
 import { isNil } from 'lodash-es';
 import { arrayToCSV } from '../shared/arrays';
 import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';

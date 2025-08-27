@@ -25,7 +25,7 @@ to seamlessly integrate TomTom maps and services with convenient out-of-the-box 
 
 ## Getting Started using npm
 ```
-npm i @anw/maps-sdk-js
+npm i @cet/maps-sdk-js
 ```
 
 Additionally:
@@ -63,9 +63,9 @@ The SDK Map uses [MapLibre GL JS](https://www.npmjs.com/package/maplibre-gl) as 
 Therefore, you need to also have it installed in your project.\
 The TomTom SDK is tested against the latest stable [release of MapLibre GL](https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md).
 ```
-npm i @anw/maps-sdk-js maplibre-gl
+npm i @cet/maps-sdk-js maplibre-gl
 ```
-Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/map```
+Code imports from the SDK Map Bundle will come from ```@cet/maps-sdk-js/map```
 <br/><br/>
 
 ## Services
@@ -83,9 +83,9 @@ The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/
 ### Getting Started with Services
 #### Using npm
 ```
-npm i @anw/maps-sdk-js
+npm i @cet/maps-sdk-js
 ```
-Code imports from the SDK Map Bundle will come from ```@anw/maps-sdk-js/services```
+Code imports from the SDK Map Bundle will come from ```@cet/maps-sdk-js/services```
 <br/><br/>
 
 ## Core
@@ -99,4 +99,4 @@ is a set of utilities and TypeScript types which are common to both [Map](#map) 
 
 ### Using the Core Bundle
 If you use Map and/or Services, there is no need to install any further packages.\
-Code imports from the SDK Core Bundle will come from ```@anw/maps-sdk-js/core```
+Code imports from the SDK Core Bundle will come from ```@cet/maps-sdk-js/core```

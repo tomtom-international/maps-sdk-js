@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON } from '@anw/maps-sdk-js/core';
+import { bboxFromGeoJSON } from '@cet/maps-sdk-js/core';
 import { arrayToCSV } from '../shared/arrays';
 import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
 import { appendByJoiningParamValue, appendOptionalParam } from '../shared/requestBuildingUtils';

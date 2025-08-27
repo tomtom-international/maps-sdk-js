@@ -1,4 +1,4 @@
-import type { Anything, CommonPlaceProps } from '@anw/maps-sdk-js/core';
+import type { Anything, CommonPlaceProps } from '@cet/maps-sdk-js/core';
 import type { SupportsEvents } from '../../shared';
 
 /**

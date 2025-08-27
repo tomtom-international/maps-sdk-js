@@ -1,4 +1,4 @@
-import type { POICategory } from '@anw/maps-sdk-js/core';
+import type { POICategory } from '@cet/maps-sdk-js/core';
 
 /**
  * POI categories were retrieved from https://developer.tomtom.com/search-api/documentation/poi-categories-service/poi-categories

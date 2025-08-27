@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import type { LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import { defaultRouteLayersConfig } from '../layers/defaultConfig';
 import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from '../types/routeModuleConfig';

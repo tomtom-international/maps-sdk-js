@@ -1,4 +1,4 @@
-import type { DelayMagnitude, RouteProps } from '@anw/maps-sdk-js/core';
+import type { DelayMagnitude, RouteProps } from '@cet/maps-sdk-js/core';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import type { SupportsEvents } from '../../shared';
 

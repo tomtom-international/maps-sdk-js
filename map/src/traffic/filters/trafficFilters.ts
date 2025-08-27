@@ -1,4 +1,4 @@
-import { indexedMagnitudes } from '@anw/maps-sdk-js/core';
+import { indexedMagnitudes } from '@cet/maps-sdk-js/core';
 import { isNil } from 'lodash-es';
 import type {
     ExpressionFilterSpecification,

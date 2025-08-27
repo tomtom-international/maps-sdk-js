@@ -1,4 +1,4 @@
-import type { DelayMagnitude } from '@anw/maps-sdk-js/core';
+import type { DelayMagnitude } from '@cet/maps-sdk-js/core';
 import type { FilterShowMode, StyleModuleConfig, ValuesFilter } from '../../shared';
 
 /**

@@ -6,13 +6,13 @@ import type {
     Waypoint,
     WaypointLike,
     WaypointProps,
-} from '@anw/maps-sdk-js/core';
+} from '@cet/maps-sdk-js/core';
 import {
     getGeoInputType,
     getPositionStrict,
     inputSectionTypes,
     inputSectionTypesWithGuidance,
-} from '@anw/maps-sdk-js/core';
+} from '@cet/maps-sdk-js/core';
 import type { Position } from 'geojson';
 import { isNil } from 'lodash-es';
 import type { FetchInput } from '../shared';

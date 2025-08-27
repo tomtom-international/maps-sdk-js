@@ -1,4 +1,4 @@
-import { currentTypes, plugTypes } from '@anw/maps-sdk-js/core';
+import { currentTypes, plugTypes } from '@cet/maps-sdk-js/core';
 import { z } from 'zod/v4-mini';
 
 const efficiencySchema = z.partial(

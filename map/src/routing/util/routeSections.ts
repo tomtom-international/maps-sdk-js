@@ -1,4 +1,4 @@
-import type { Route, Routes, SectionProps, SectionType } from '@anw/maps-sdk-js/core';
+import type { Route, Routes, SectionProps, SectionType } from '@cet/maps-sdk-js/core';
 import { isNil } from 'lodash-es';
 import type { DisplayRouteProps } from '../types/displayRoutes';
 import type { DisplaySectionProps, RouteSection, RouteSections } from '../types/routeSections';

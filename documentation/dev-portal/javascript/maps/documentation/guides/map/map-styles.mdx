@@ -100,7 +100,7 @@ A map style can be loaded when the map is initialized by specifying the `style` 
 the [`TomTomMapParams`](/javascript/maps/documentation/api-reference/map-init#TomTomMapParams) when initializing
 an instance of [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap).
 ```javascript
-import { TomTomMap } from "@anw/maps-sdk-js/map";
+import { TomTomMap } from "@cet/maps-sdk-js/map";
 const map = new TomTomMap(
     { container: "map" },
     { style: "standardDark" }
@@ -115,7 +115,7 @@ When setting the map style, you can include parts into it with the `include` pro
 For example, including [hillshade](/javascript/maps/documentation/guides/map/hillshade) and [traffic incidents](/javascript/maps/documentation/guides/map/trafficIncidents):
 
 ```javascript
-import { TomTomMap } from "@anw/maps-sdk-js/map";
+import { TomTomMap } from "@cet/maps-sdk-js/map";
 const map = new TomTomMap(
     { container: "map" },
     { style: { type: "published", include: ["hillshade", "trafficIncidents"] }}
@@ -133,8 +133,8 @@ To load a style part later:
 * Do not include it when initializing the map
 * Load it later by initializing its respective module with `ensureAddedToStyle` parameter set to true
 ```javascript
-import { TomTomMap } from "@anw/maps-sdk-js/map";
-import { TrafficIncidentsModule } from "@anw/maps-sdk-js/map";
+import { TomTomMap } from "@cet/maps-sdk-js/map";
+import { TrafficIncidentsModule } from "@cet/maps-sdk-js/map";
 const map = new TomTomMap(
     { container: "map" },
     { style: { type: "published", include: ["trafficIncidents"] }}

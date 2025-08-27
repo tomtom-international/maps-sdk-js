@@ -32,8 +32,8 @@ In [route planning](/javascript/maps/documentation/guides/routing/planning-a-rou
 By default, a [`GeoInputs`](/javascript/maps/documentation/api-reference/core/#waypoint) is considered a single point, unless a [`radius`](/javascript/maps/documentation/api-reference/core/#waypoint) is specified, which then transforms the waypoint into a circle (soft) waypoint.
 
 ```javascript
-import { asSoftWaypoint, GeoInputs } from "@anw/maps-sdk-js/core";
-import { CalculateRouteParams } from "@anw/maps-sdk-js/services";
+import { asSoftWaypoint, GeoInputs } from "@cet/maps-sdk-js/core";
+import { CalculateRouteParams } from "@cet/maps-sdk-js/services";
 
 // Single point waypoints
 const amsterdam = [4.897070, 52.377956];
@@ -50,7 +50,7 @@ const routePlanningParams: CalculateRouteParams = {
 ```
 
 ```javascript
-import { asSoftWaypoint } from "@anw/maps-sdk-js/core";
+import { asSoftWaypoint } from "@cet/maps-sdk-js/core";
 
 // Single point waypoints
 const amsterdam = [4.897070, 52.377956];

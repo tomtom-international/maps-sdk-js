@@ -1,4 +1,4 @@
-import type { Avoidable, ConnectorType, CurrentType, TravelMode } from '@anw/maps-sdk-js/core';
+import type { Avoidable, ConnectorType, CurrentType, TravelMode } from '@cet/maps-sdk-js/core';
 // import { VehicleParameters } from "./vehicleParams";
 
 /**

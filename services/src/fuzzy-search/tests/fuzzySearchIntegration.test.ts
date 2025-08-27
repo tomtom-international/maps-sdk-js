@@ -1,5 +1,5 @@
-import type { Fuel, Place, POICategory, SearchPlaceProps } from '@anw/maps-sdk-js/core';
-import { TomTomConfig } from '@anw/maps-sdk-js/core';
+import type { Fuel, Place, POICategory, SearchPlaceProps } from '@cet/maps-sdk-js/core';
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { search } from '../../search';

@@ -1,5 +1,5 @@
-import type { DelayMagnitude, TrafficSectionProps } from '@anw/maps-sdk-js/core';
-import { formatDuration } from '@anw/maps-sdk-js/core';
+import type { DelayMagnitude, TrafficSectionProps } from '@cet/maps-sdk-js/core';
+import { formatDuration } from '@cet/maps-sdk-js/core';
 import type { DisplayTrafficSectionProps } from '../types/routeSections';
 
 const delayMagnitudeToIconPrefix: Record<DelayMagnitude, string> = {
