@@ -13,8 +13,8 @@ import { isLayerLocalizable } from './shared/localization';
  * @ignore
  */
 export type StyleChangeHandler = {
-    onStyleAboutToChange: () => void;
-    onStyleChanged: () => void;
+    onStyleAboutToChange: () => void | Promise<void>;
+    onStyleChanged: () => void | Promise<void>;
 };
 
 /**
