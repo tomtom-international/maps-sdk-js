@@ -35,7 +35,7 @@
     "routing",
     "traffic"
   ],
-  "author": "GO SDK JS Team",
+  "author": "Maps SDK JS Team",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
