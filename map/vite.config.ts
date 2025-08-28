@@ -53,6 +53,7 @@ export default defineConfig({
             include: ['index.ts', 'src/**/*'],
             exclude: ['**/*.test.ts'],
             rollupTypes: true,
+            aliasesExclude: ['@cet/maps-sdk-js/core'],
         }),
         ...(process.env.CI
             ? []
