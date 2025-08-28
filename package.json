@@ -48,14 +48,14 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
+    "@biomejs/biome": "^2.2.2",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "@types/uuid": "^10.0.0",
     "cspell": "^9.2.0",
     "handlebars": "^4.7.8",
     "size-limit": "^11.2.0",
-    "typedoc": "^0.28.10",
+    "typedoc": "^0.28.11",
     "typedoc-plugin-missing-exports": "^4.1.0",
     "webpack-dev-server": "^5.2.2",
     "yaml": "^2.8.1"
