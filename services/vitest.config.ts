@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
         test: {
             testTimeout: 10000, // We have a generous test timeout mostly for integration tests
             // For integration tests running from localhost:
-            ...(!process.env.CI && { env: loadEnv(mode, '../test-config', '') }),
+            ...(!process.env.CI && { env: loadEnv(mode, '../shared-configs', '') }),
         },
         resolve: {
             alias: {

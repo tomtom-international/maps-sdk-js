@@ -3,6 +3,7 @@
   "description": "",
   "main": "main.js",
   "module": "./dist/services.es.js",
+  "sideEffects": false,
   "scripts": {
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -10,13 +11,9 @@
     "build:full": "pnpm type-check && pnpm build",
     "build:watch": "pnpm build --watch",
     "type-check": "tsc --noEmit",
-    "update-dependencies": "npx npm-check-updates -u --packageFile package.json",
-    "clean:dist": "rimraf ./dist",
-    "clean:cache": "rimraf ./.rollup.cache",
-    "clean": "pnpm clean:dist && pnpm clean:cache"
+    "clean:dist": "rimraf ./dist"
   },
   "types": "./dist/index.d.ts",
-  "author": "GO SDK JS Team",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -30,12 +27,12 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@types/geojson": "^7946.0.16",
     "@types/lodash-es": "catalog:",
-    "@types/node": "^24.3.0",
+    "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "dotenv": "^17.2.1",
-    "rimraf": "^6.0.1",
+    "rimraf": "catalog:",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-visualizer": "^6.0.3",
+    "shared-configs": "workspace:*",
     "ts-node": "^10.9.2",
     "typescript": "catalog:",
     "vite": "catalog:",
@@ -48,6 +45,6 @@
   "dependencies": {
     "core": "workspace:*",
     "lodash-es": "catalog:",
-    "zod": "^4.1.4"
+    "zod": "^4.1.5"
   }
 }

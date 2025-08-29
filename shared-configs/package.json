@@ -1,0 +1,13 @@
+{
+  "name": "shared-configs",
+  "type": "module",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@types/node": "catalog:",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "vite": "catalog:",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "catalog:"
+  }
+}

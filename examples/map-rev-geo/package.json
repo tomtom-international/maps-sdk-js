@@ -1,0 +1,33 @@
+{
+  "name": "map-rev-geo-example",
+  "description": "Map reverse geocoding example",
+  "scripts": {
+    "build": "vite build",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite",
+    "type-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js-examples.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
+  },
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js-examples#readme",
+  "dependencies": {
+    "@cet/maps-sdk-js": "workspace:*",
+    "maplibre-gl": "catalog:"
+  },
+  "devDependencies": {
+    "@types/geojson": "catalog:",
+    "@types/node": "catalog:",
+    "@tsconfig/recommended": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

@@ -6,16 +6,16 @@
     "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
     "release:dry": "npx standard-version --dry-run",
     "release": "./scripts/release.sh && git push --follow-tags origin main",
-    "build-api-reference": "typedoc",
-    "build:full": "pnpm -r --no-bail build:full",
-    "build": "pnpm -r --no-bail build",
+    "build:api-reference": "typedoc",
+    "build": "pnpm -F core build && pnpm -F services build && pnpm -F map build",
+    "build:examples": "pnpm -r --filter='./examples/*' build",
     "type-check": "pnpm -r --no-bail type-check",
     "lint": "biome lint .",
     "lint:fix": "biome check . --write && biome lint . --write",
     "format": "biome format .",
     "format:fix": "biome format . --write",
-    "test": "pnpm -r --no-bail test",
-    "test:coverage": "pnpm -r --no-bail test:coverage",
+    "test": "pnpm -F core test && pnpm -F services test && pnpm -F map test",
+    "test:coverage": "pnpm -F core test:coverage && pnpm -F services test:coverage && pnpm -F map test:coverage",
     "pre-commit": ""
   },
   "publishConfig": {
@@ -35,14 +35,13 @@
     "routing",
     "traffic"
   ],
-  "author": "Maps SDK JS Team",
+  "author": "TomTom International B.V.",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "dependencies": {
-    "@types/geojson": "^7946.0.16",
     "@types/lodash": "^4.17.20",
     "globals": "^16.3.0",
     "uuid": "^11.1.0"
@@ -57,7 +56,6 @@
     "size-limit": "^11.2.0",
     "typedoc": "^0.28.11",
     "typedoc-plugin-missing-exports": "^4.1.0",
-    "webpack-dev-server": "^5.2.2",
     "yaml": "^2.8.1"
   },
   "size-limit": [

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "sourceMap": true,
+    "strict": true,
+    "useDefineForClassFields": false,
+    "target": "ESNext",
+    "paths": {
+      "@cet/maps-sdk-js/core": ["../core"]
+    }
+  },
+  "exclude": ["node_modules", ".rollup.cache/", "dist", "__mocks__"]
+}

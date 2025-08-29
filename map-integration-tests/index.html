@@ -3,6 +3,12 @@
     <head>
         <title>MAPS SDK JS - map integration tests</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <script type="module">
+            import * as MapsSDKCore from '@cet/maps-sdk-js/core';
+            import * as MapsSDK from '../map/dist/map.es.js';
+            globalThis.MapsSDKCore = MapsSDKCore;
+            globalThis.MapsSDK = MapsSDK;
+        </script>
     </head>
     <body>
         <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"></div>

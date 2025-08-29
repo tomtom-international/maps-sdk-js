@@ -17,7 +17,7 @@ describe('Place By Id API', () => {
     });
 
     test('placeById works', async () => {
-        const entityId = '_CJb63RYqN67kn19KP2Awg';
+        const entityId = 'FD3yZ3ADZ4h2w_Fl9Acm0w';
         const place = await placeById({
             entityId,
             language: 'en-GB',
@@ -42,7 +42,7 @@ describe('Place By Id API', () => {
     });
 
     test('placeById with API request and response callbacks', async () => {
-        const entityId = '_CJb63RYqN67kn19KP2Awg';
+        const entityId = 'FD3yZ3ADZ4h2w_Fl9Acm0w';
         const onApiRequest = vi.fn() as (request: URL) => void;
         const onApiResponse = vi.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
         const place = await placeById({ entityId, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });

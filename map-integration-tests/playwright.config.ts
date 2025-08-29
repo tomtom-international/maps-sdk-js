@@ -1,12 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
+import { loadEnv } from 'vite';
 
 /**
  * Read environment variables from file if we're in localhost.
- * https://github.com/motdotla/dotenv
  */
 if (!process.env.CI) {
-    dotenv.config({ path: '../test-config/.env' });
+    const envVars = loadEnv('', '../shared-configs', '');
+    Object.assign(process.env, envVars);
 }
 
 /**
@@ -40,7 +40,7 @@ export default defineConfig({
     /* Run your local dev server before starting the tests */
     webServer: {
         ignoreHTTPSErrors: true,
-        command: 'pnpm start-webpack-dev-server',
+        command: 'pnpm start-dev-server',
         url: 'https://localhost:9001/',
         reuseExistingServer: true,
     },
