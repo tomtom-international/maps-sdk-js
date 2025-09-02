@@ -1,0 +1,62 @@
+hr {
+    background: #dadce0;
+    border: none;
+    height: 1px;
+    margin: 3px 0;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Overwriting Maplibre original CSS class */
+.maplibregl-popup-content {
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    border-radius: 5px;
+}
+
+/* Custom CSS for inner content in the popup */
+.popup {
+    min-width: 200px;
+    color: #000;
+}
+
+.popup-tags {
+    padding-top: 10px;
+}
+
+.popup-tags-item {
+    padding: 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    background-color: #eee;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 8px;
+}
+
+.popup-basemap {
+    display: flex;
+    align-items: center;
+    bottom: 20px;
+    min-width: 180px;
+}
+
+.popup-lnglat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1rem;
+    color: #00aaff;
+    margin-bottom: 6px;
+}
+
+.popup-basemap-address {
+    margin: 0;
+    padding: 3px 3px 1px 3px;
+}

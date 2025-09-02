@@ -1,0 +1,37 @@
+import type { Waypoint } from '@cet/maps-sdk-js/core';
+import { asSoftWaypoint, bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
+import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
+import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
+import type { LngLatBoundsLike } from 'maplibre-gl';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+
+const calculateAndDisplayRoute = async () => {
+    const waypoints: Waypoint[] = (
+        await Promise.all([
+            geocode({ query: 'W Houston St 51, NY', limit: 1 }),
+            geocode({ query: '35th Avenue, NY', limit: 1 }),
+            geocode({ query: 'Terminal C Departures LaGuardia Airport, NY', limit: 1 }),
+        ])
+    ).map((result) => result.features[0]);
+    // inserting a soft waypoint before the destination:
+    waypoints.splice(2, 0, asSoftWaypoint([-73.87631, 40.76309], 20));
+
+    const map = new TomTomMap(
+        {
+            container: 'map',
+            bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+            fitBoundsOptions: { padding: 150 },
+        },
+        { style: { type: 'published', include: ['trafficIncidents'] } },
+    );
+    await TrafficIncidentsModule.get(map, { visible: false });
+    const routingModule = await RoutingModule.init(map);
+    routingModule.showWaypoints(waypoints);
+    routingModule.showRoutes(await calculateRoute({ geoInputs: waypoints }));
+
+    (window as any).map = map; // This has been done for automation test support
+};
+
+window.addEventListener('load', calculateAndDisplayRoute);

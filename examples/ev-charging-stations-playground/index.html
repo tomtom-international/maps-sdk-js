@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>EV Charging Stations Search</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link href="https://unpkg.com/maplibre-gl@5.7.0/dist/maplibre-gl.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="map"></div>
+        <div class="mainPanel">
+            <div class="sectionPanel">
+                <div class="searchPanel">
+                    <input id="evBrandTextBox" type="text" placeholder="EV brand" class="element" />
+                    <label for="areaTextBox" class="element">in</label>
+                    <input id="areaTextBox" type="text" placeholder="Area" class="element" />
+                    <button id="searchButton" class="element button">Search</button>
+                    <button id="clearButton" class="element button">Clear</button>
+                </div>
+            </div>
+            <div class="minKWPanel">
+                <div>
+                    <label class="element minKWLabel">Min KW map</label>
+                    <input id="minPowerKWMapEVStations" type="text" placeholder="Min KW map EV stations" class="element kwInput" />
+                </div>
+                <br/>
+                <div>
+                    <label class="element minKWLabel">Min KW search</label>
+                    <input id="minPowerKWSearchedEVStations" type="text" placeholder="Min KW searched EV stations" class="element kwInput" />
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./src/index.ts"></script>
+    </body>
+</html>

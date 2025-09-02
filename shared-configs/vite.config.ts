@@ -20,9 +20,9 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
                 entry: './index.ts',
                 name: bundleName,
             },
-            outDir: 'dist',
             emptyOutDir: true,
             sourcemap: true,
+            // minification options more in detail in rollup options:
             minify: false,
             rollupOptions: {
                 external: ['@cet/maps-sdk-js/core', 'maplibre-gl'],

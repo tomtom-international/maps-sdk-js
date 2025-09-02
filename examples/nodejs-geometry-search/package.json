@@ -1,0 +1,32 @@
+{
+  "name": "geometry-search-service-nodejs",
+  "description": "NodeJS example for Geometry Search Service",
+  "main": "src/index.js",
+  "scripts": {
+    "develop": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js-examples.git"
+  },
+  "keywords": [
+    "TomTom",
+    "Maps SDK",
+    "Geocoding"
+  ],
+  "author": "TomTom",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
+  },
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js-examples#readme",
+  "dependencies": {
+    "@cet/maps-sdk-js": "workspace:*"
+  },
+  "devDependencies": {
+    "dotenv": "^16.6.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

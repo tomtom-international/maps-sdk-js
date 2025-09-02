@@ -1,0 +1,35 @@
+// TODO: restore SDK reachable range service
+
+// import { PolygonFeatures, TomTomConfig } from "@cet/maps-sdk-js/core";
+// import { GeometriesModule, PlacesModule, TomTomMap } from "@cet/maps-sdk-js/map";
+// import { calculateReachableRanges, ReachableRangeBudget, search } from "@cet/maps-sdk-js/services";
+// import { LngLatBoundsLike } from "maplibre-gl";
+//
+// // (Set your own API key when working in your own environment)
+// TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+//
+// const mapReachableRangesInit = async () => {
+//     const locations = await search({ query: "", poiCategories: ["AIRPORT"], countries: ["NL"], limit: 25 });
+//     const map = new TomTomMap(
+//         { container: "map", bounds: locations.bbox as LngLatBoundsLike, fitBoundsOptions: { padding: 100 } },
+//         { style: { type: "published", id: "monoLight" } }
+//     );
+//
+//     const budget: ReachableRangeBudget = { type: "timeMinutes", value: 15 };
+//     const reachableRanges: PolygonFeatures = await calculateReachableRanges(
+//         locations.features.map((origin) => ({ origin, budget }))
+//     );
+//     const polygonsModule = await GeometriesModule.init(map, {
+//         beforeLayerConfig: "lowestBuilding",
+//         lineConfig: { lineWidth: 1, lineColor: "grey" },
+//         colorConfig: { fillColor: "#87CEEB", fillOpacity: 0.5 }
+//     });
+//     polygonsModule.show(reachableRanges);
+//
+//     const placesModule = await PlacesModule.init(map);
+//     placesModule.show(locations);
+//
+//     (window as any).map = map; // This has been done for automation test support
+// };
+//
+// window.addEventListener("load", mapReachableRangesInit);

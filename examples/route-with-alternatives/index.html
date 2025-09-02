@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Calculating a route with alternatives</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link href="https://unpkg.com/maplibre-gl@5.7.0/dist/maplibre-gl.css" rel="stylesheet" />
+        <style>
+            .toggle {
+                margin-bottom: 5px;
+                color: #fff;
+                background-color: #3f9cd9;
+                box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+                border: 0 solid rgba(0, 0, 0, 0);
+                border-radius: 20px;
+                text-decoration: none;
+                vertical-align: middle;
+                cursor: pointer;
+                user-select: none;
+            }
+            button {
+                margin-bottom: 5px;
+                color: #fff;
+                background-color: #3f9cd9;
+                box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+                border: 0 solid rgba(0, 0, 0, 0);
+                border-radius: 20px;
+                text-decoration: none;
+                vertical-align: middle;
+                cursor: pointer;
+                user-select: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"></div>
+        <div style="position: absolute; right: 20px; display: flex; flex-direction: column">
+            <label for="routeSelection"></label>
+            <select class="toggle" id="routeSelection"></select>
+        </div>
+        <div style="position: absolute; right: 20px; bottom: 20px; display: flex; flex-direction: column">
+            <button id="reCenter">Re-Center</button>
+        </div>
+        <script type="module" src="./src/index.ts"></script>
+    </body>
+</html>

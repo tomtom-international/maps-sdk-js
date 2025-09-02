@@ -1,0 +1,119 @@
+body {
+    text-decoration: none;
+    user-select: none;
+    font-family: Arial, sans-serif;
+}
+
+#map {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%
+}
+
+.mainPanel {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.minKWPanel {
+    margin-top: 60px;
+    float: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.minKWLabel {
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.3);
+    text-shadow: 0 2px 7px rgb(0 0 0 / 30%);
+}
+
+.kwInput {
+    width: 50px;
+    float: right;
+}
+
+.element {
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-radius: 20px;
+    height: 26px;
+    line-height: 26px;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+input {
+    text-indent: 10px;
+    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+}
+
+.button {
+    color: #fff;
+    background-color: #3f9cd9;
+    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    cursor: pointer;
+}
+
+/* Overwriting Maplibre original CSS class */
+.maplibregl-popup-content {
+    box-shadow: rgba(0, 0, 0, 0.25) 0 54px 55px, rgba(0, 0, 0, 0.12) 0 -12px 30px, rgba(0, 0, 0, 0.12) 0 4px 6px, rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;
+    border-radius: 5px;
+    padding-top: 0;
+}
+
+/* Custom CSS for inner content in the popup */
+.popup {
+    min-width: 300px;
+}
+
+.address {
+    color: grey;
+}
+
+label {
+    height: 24px;
+}
+
+ul {
+    padding: 0;
+    font-size: 14px;
+    height: 24px;
+    line-height: 24px;
+    list-style-type: none;
+}
+
+li {
+    height: 36px;
+}
+
+.connectorName {
+    font-weight: bold;
+}
+
+.connectorPower {
+    color: grey;
+}
+
+.connectorIcon {
+    display: inline-block;
+    width: 24px;
+    height: 28px;
+    vertical-align: middle;
+}
+
+.available, .unavailable, .noStatus {
+    font-weight: bolder;
+    float: right;
+}
+
+.available {
+    color: green;
+}
+
+.unavailable {
+    color: red;
+}

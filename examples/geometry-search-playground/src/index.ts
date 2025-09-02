@@ -1,0 +1,69 @@
+import type { PolygonFeatures } from '@cet/maps-sdk-js/core';
+import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
+import { GeometriesModule, PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
+import { geocode, geometryData, search } from '@cet/maps-sdk-js/services';
+import { bboxPolygon, difference } from '@turf/turf';
+import type { LngLatBoundsLike } from 'maplibre-gl';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+
+const fitBoundsOptions = { padding: 50 };
+
+let map: TomTomMap;
+let placesModule: PlacesModule;
+let geometryModule: GeometriesModule;
+let placeToSearchBBox: LngLatBoundsLike;
+
+// inverts the polygon, so it looks like a hole on the map instead
+const invert = (geometry: PolygonFeatures): PolygonFeatures => {
+    const invertedArea = difference({
+        type: 'FeatureCollection',
+        features: [bboxPolygon([-180, 90, 180, -90]), geometry?.features?.[0]],
+    });
+    return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
+};
+
+const searchPlacesInGeometry = async (placesQuery: string, geometryQuery: string) => {
+    const placeToSearchInside = await geocode({ query: geometryQuery, limit: 1 });
+    // (bounding box is also available directly in placeToSearchInside.bbox)
+    placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
+
+    const geometryToSearch = await geometryData({ geometries: placeToSearchInside });
+    geometryModule.show(invert(geometryToSearch));
+
+    // Searching within the obtained geometry:
+    const places = await search({
+        query: placesQuery,
+        geometries: [geometryToSearch],
+        limit: 100,
+    });
+    placesModule.show(places);
+    map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions);
+};
+
+const listenToUserEvents = () => {
+    const searchTextBox = document.querySelector('#searchTextBox') as HTMLInputElement;
+    const inTextBox = document.querySelector('#inTextBox') as HTMLInputElement;
+    const searchButton = document.querySelector('#searchButton') as HTMLButtonElement;
+
+    searchButton.addEventListener('click', () => searchPlacesInGeometry(searchTextBox.value, inTextBox.value));
+    searchTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
+    inTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
+
+    document
+        .querySelector('#reCenter')
+        ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
+};
+
+const mapPlacesInGeometryInit = async () => {
+    // we initialize the map directly in the first search content:
+    map = new TomTomMap({ container: 'map', zoom: 2 }, { language: 'en-GB' });
+    placesModule = await PlacesModule.init(map);
+    geometryModule = await GeometriesModule.init(map);
+    listenToUserEvents();
+
+    (window as any).map = map; // This has been done for automation test support
+};
+
+window.addEventListener('load', mapPlacesInGeometryInit);

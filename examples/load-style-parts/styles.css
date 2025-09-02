@@ -1,0 +1,40 @@
+.panel {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin: 15px 10px;
+    font-family: "Open Sans", Arial, sans-serif;
+    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    border-radius: 10px;
+}
+
+button {
+    height: 26px;
+    margin-bottom: 5px;
+    color: #fff;
+    background-color: #3f9cd9;
+    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-radius: 20px;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle {
+    margin-top: 10px;
+    height: 26px;
+    padding: 5px;
+    color: #fff;
+    background-color: #3f9cd9;
+    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-radius: 20px;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+}

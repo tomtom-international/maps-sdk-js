@@ -7,7 +7,7 @@
   "scripts": {
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "build": "pnpm clean:dist && vite build",
+    "build": "vite build",
     "build:full": "pnpm type-check && pnpm build",
     "type-check": "tsc --noEmit",
     "clean:dist": "rimraf ./dist"
@@ -35,10 +35,10 @@
     "@vitest/coverage-v8": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-analyzer": "^4.0.0",
-    "rollup-plugin-visualizer": "^6.0.3",
+    "rollup-plugin-visualizer": "catalog:",
     "shared-configs": "workspace:*",
     "tslib": "^2.8.1",
-    "ts-node": "^10.9.2",
+    "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",

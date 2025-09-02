@@ -1,0 +1,36 @@
+{
+  "name": "ev-charging-stations-playground-example",
+  "description": "Playground allowing to explore and search EV charging with availability information.",
+  "scripts": {
+    "build": "vite build",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite",
+    "type-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
+  },
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
+  "dependencies": {
+    "@cet/maps-sdk-js": "workspace:*",
+    "@turf/turf": "^7.2.0",
+    "lodash-es": "^4.17.21",
+    "maplibre-gl": "catalog:"
+  },
+  "devDependencies": {
+    "@types/geojson": "catalog:",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "catalog:",
+    "@tsconfig/recommended": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

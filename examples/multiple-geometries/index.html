@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Display multiple geometries in map</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    </head>
+    <body>
+        <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"></div>
+        <div style="position: absolute; right: 20px; bottom: 20px; display: flex; flex-direction: column">
+            <button id="reCenter">Re-Center</button>
+        </div>
+        <div class="panel">
+            <div>
+                <label class="heading-label" for="place-selector">Show: </label>
+                <select id="place-selector">
+                    <option value="france">Regions of France</option>
+                    <option value="italy">Regions of Italy</option>
+                    <option value="netherlands">Regions of The Netherlands</option>
+                    <option value="germany">Regions of Germany (dynamic opacity)</option>
+                    <option value="spain">Regions of Spain</option>
+                    <option value="chicagoDistricts">Districts in Chicago area</option>
+                    <option value="chicagoPostcodes">Postcodes in Chicago area</option>
+                </select>
+            </div>
+            <div class="layers">
+                <label class="heading-label">Layer position: </label>
+                <label><input type="radio" name="layerOption" value="top" checked />Top</label>
+                <label><input type="radio" name="layerOption" value="country" />Below countries</label>
+                <label><input type="radio" name="layerOption" value="lowestPlaceLabel" />Below place labels</label>
+                <label><input type="radio" name="layerOption" value="poi" />Below Map POIs</label>
+                <label><input type="radio" name="layerOption" value="lowestLabel" />Below all labels</label>
+                <label><input type="radio" name="layerOption" value="lowestRoadLine" />Below roads</label>
+                <label><input type="radio" name="layerOption" value="lowestBuilding" />Below buildings</label>
+            </div>
+        </div>
+        <select class="toggle" id="mapStyles"></select>
+        <script type="module" src="./src/index.ts"></script>
+    </body>
+</html>

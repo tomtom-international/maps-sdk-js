@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Searching for places inside a shape</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <style>
+            body {
+                text-decoration: none;
+                user-select: none;
+            }
+            .element {
+                border: 0 solid rgba(0, 0, 0, 0);
+                border-radius: 20px;
+                height: 26px;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+            input {
+                text-indent: 10px;
+            }
+            .button {
+                color: #fff;
+                background-color: #3f9cd9;
+                box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"></div>
+        <div style="position: absolute; right: 20px; display: flex; flex-direction: column">
+            <div style="position: relative; display: flex; flex-direction: row">
+                <input id="searchTextBox" type="text" placeholder="Find" class="element" />
+                <label for="inTextBox" class="element">in</label>
+                <input id="inTextBox" type="text" placeholder="In" class="element" />
+                <button id="searchButton" class="element button">Search</button>
+            </div>
+        </div>
+        <div style="position: absolute; right: 20px; bottom: 20px; display: flex; flex-direction: column">
+            <button id="reCenter" class="element button">Re-fit to searched geometry</button>
+        </div>
+        <script type="module" src="./src/index.ts"></script>
+    </body>
+</html>

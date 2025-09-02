@@ -6,10 +6,7 @@ export default defineConfig(({ mode }) => {
     return {
         root: '.',
         base: './',
-        build: {
-            outDir: 'dist',
-            emptyOutDir: true,
-        },
+        build: { emptyOutDir: true },
         plugins: [
             ...(process.env.CI
                 ? []

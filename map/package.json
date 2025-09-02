@@ -30,7 +30,7 @@
     "@vitest/coverage-v8": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-analyzer": "^4.0.0",
-    "rollup-plugin-visualizer": "^6.0.3",
+    "rollup-plugin-visualizer": "catalog:",
     "shared-configs": "workspace:*",
     "ts-node": "catalog:",
     "typescript": "catalog:",

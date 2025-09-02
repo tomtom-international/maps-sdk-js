@@ -1,0 +1,37 @@
+{
+  "name": "interactive-roads-and-numbers-example",
+  "description": "Interactive roads and numbers example",
+  "scripts": {
+    "build": "vite build",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite",
+    "type-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
+  },
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
+  "dependencies": {
+    "@cet/maps-sdk-js": "workspace:*",
+    "maplibre-gl": "catalog:"
+  },
+  "devDependencies": {
+    "@turf/bbox-polygon": "^7.2.0",
+    "@turf/buffer": "^7.2.0",
+    "@turf/difference": "^7.2.0",
+    "@turf/distance": "^7.2.0",
+    "@types/geojson": "catalog:",
+    "@types/node": "catalog:",
+    "@tsconfig/recommended": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

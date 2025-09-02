@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Base Map Layer Groups</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+        <link href="https://unpkg.com/maplibre-gl@5.7.0/dist/maplibre-gl.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"></div>
+        <div style="position: absolute; right: 20px; display: flex; flex-direction: column">
+            <label for="mapStyles"></label>
+            <select class="selector" id="mapStyles"></select>
+            <label class="toggle">Water<input type="checkbox" id="toggleWater" checked /></label>
+            <label class="toggle">Land<input type="checkbox" id="toggleLand" checked /></label>
+            <label class="toggle">Borders<input type="checkbox" id="toggleBorders" checked /></label>
+            <label class="toggle">Buildings<input type="checkbox" id="toggleBuildings2D" checked /></label>
+            <label class="toggle">3D Buildings<input type="checkbox" id="toggleBuildings3D" /></label>
+            <label class="toggle">House numbers<input type="checkbox" id="toggleHouseNumbers" checked /></label>
+            <label class="toggle">Road lines<input type="checkbox" id="toggleRoadLines" checked /></label>
+            <label class="toggle">Road labels<input type="checkbox" id="toggleRoadLabels" checked /></label>
+            <label class="toggle">Road shields<input type="checkbox" id="toggleRoadShields" checked /></label>
+            <label class="toggle">Place labels<input type="checkbox" id="togglePlaces" checked /></label>
+            <label class="toggle">Smaller towns<input type="checkbox" id="toggleSmallerTowns" checked /></label>
+            <label class="toggle">City labels<input type="checkbox" id="toggleCities" checked /></label>
+            <label class="toggle">Capital labels<input type="checkbox" id="toggleCapitals" checked /></label>
+            <label class="toggle">State labels<input type="checkbox" id="toggleStates" checked /></label>
+            <label class="toggle">Country labels<input type="checkbox" id="toggleCountries" checked /></label>
+            <label class="toggle">POIs<input type="checkbox" id="togglePOIs" checked /></label>
+        </div>
+        <script type="module" src="./src/index.ts"></script>
+    </body>
+</html>

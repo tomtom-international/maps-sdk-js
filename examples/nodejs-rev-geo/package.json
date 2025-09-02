@@ -1,0 +1,26 @@
+{
+  "name": "rev-geo-service-nodejs",
+  "description": "Basic NodeJS example using Reverse Geocoding Service.",
+  "main": "src/main.js",
+  "scripts": {
+    "develop": "node src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js-examples.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
+  },
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js-examples#readme",
+  "dependencies": {
+    "@cet/maps-sdk-js": "workspace:*"
+  },
+  "devDependencies": {
+    "dotenv": "^16.6.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

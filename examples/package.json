@@ -1,0 +1,10 @@
+{
+  "name": "examples",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-visualizer": "catalog:",
+    "vite": "catalog:"
+  }
+}

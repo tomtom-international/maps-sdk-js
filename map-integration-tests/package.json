@@ -27,7 +27,7 @@
     "map": "workspace:*",
     "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
-    "ts-node": "^10.9.2",
+    "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   }
