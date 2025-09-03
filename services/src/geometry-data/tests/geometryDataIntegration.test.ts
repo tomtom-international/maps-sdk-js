@@ -34,7 +34,7 @@ describe('Geometry data errors', () => {
 
 describe('Geometry data integration tests', () => {
     beforeAll(() => {
-        TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+        TomTomConfig.instance.put({ apiKey: process.env.API_KEY_TESTS });
     });
 
     beforeEach(async () => {

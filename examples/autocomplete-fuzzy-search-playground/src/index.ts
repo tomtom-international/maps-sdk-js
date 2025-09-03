@@ -12,8 +12,8 @@ import '../style.css';
 
 TomTomConfig.instance.put({
     // (Set your own API key when working in your own environment)
-    apiKey: process.env.API_KEY,
-    language: process.env.LANGUAGE as Language,
+    apiKey: process.env.API_KEY_EXAMPLES,
+    language: 'en-GB',
 });
 
 const searchBox = document.querySelector('#search-box') as HTMLInputElement;

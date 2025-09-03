@@ -5,7 +5,7 @@ const search = require('@cet/maps-sdk-js/services').search;
 const TomTomConfig = require('@cet/maps-sdk-js/core').TomTomConfig;
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 search({
     query: 'cafe',

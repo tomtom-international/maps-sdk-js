@@ -2,7 +2,7 @@ import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { BaseMapModule, POIsModule, TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'en-GB' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 const baseMapLayerGroups = async () => {
     const map = new TomTomMap(

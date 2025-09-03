@@ -5,7 +5,7 @@ import { reverseGeocode, search } from '@cet/maps-sdk-js/services';
 import { LngLat, MapGeoJSONFeature, Marker, NavigationControl, Popup } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 let map: TomTomMap;
 const popUp = new Popup({

@@ -2,6 +2,7 @@ import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 
+// NOTE: This config is meant to be reused by each example. Thus, any configured paths are likely relatively to each example folder.
 export default defineConfig(({ mode }) => {
     return {
         root: '.',
@@ -26,7 +27,7 @@ export default defineConfig(({ mode }) => {
             },
         },
         define: {
-            'process.env': JSON.stringify(loadEnv(mode, path.resolve('../../shared-configs'), '')),
+            'process.env': JSON.stringify(loadEnv(mode, path.resolve('..'), '')),
         },
     };
 });

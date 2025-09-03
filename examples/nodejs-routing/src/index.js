@@ -5,7 +5,7 @@ const calculateRoute = require('@cet/maps-sdk-js/services').calculateRoute;
 const TomTomConfig = require('@cet/maps-sdk-js/core').TomTomConfig;
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 /**
  * Routing calls with {@link https://www.w3schools.com/js/js_async.asp Async-Await}

@@ -6,7 +6,7 @@ import difference from '@turf/difference';
 import { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 // inverts the polygon, so it looks like a hole on the map instead
 const invert = (geometry: PolygonFeatures): PolygonFeatures => {

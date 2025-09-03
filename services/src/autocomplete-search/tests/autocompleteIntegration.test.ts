@@ -54,7 +54,7 @@ const responseWithStrictBrandType = {
 describe('Autocomplete service', () => {
     beforeAll(() => {
         TomTomConfig.instance.put({
-            apiKey: process.env.API_KEY,
+            apiKey: process.env.API_KEY_TESTS,
         });
     });
 

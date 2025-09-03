@@ -15,7 +15,7 @@ const mapLanguages: { text: string; value: Language }[] = [
 const configLanguage: Language = 'nl-NL';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const mapLanguagePlaygroundInit = async () => {
     const map = new TomTomMap(

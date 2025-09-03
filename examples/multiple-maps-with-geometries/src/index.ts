@@ -9,7 +9,7 @@ import type { LngLatBoundsLike } from 'maplibre-gl';
 const mapsElement = document.querySelector('#maps') as HTMLElement;
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 const invert = (geometry: Feature<Polygon | MultiPolygon>): PolygonFeatures => {
     const invertedArea = difference({

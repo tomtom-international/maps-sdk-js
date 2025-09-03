@@ -5,7 +5,7 @@ import { bboxPolygon, difference } from '@turf/turf';
 import { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const mapPlacesInGeometryInit = async () => {
     const placeToSearchInside = await geocode({ query: 'Amsterdam, NL', limit: 1 });

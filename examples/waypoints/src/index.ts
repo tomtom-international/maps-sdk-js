@@ -4,7 +4,7 @@ import { geocode } from '@cet/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const fetchAndDisplayWaypoints = async () => {
     const waypointA = (await geocode({ query: 'Kensinton Road, London, UK', limit: 1 })).features[0];

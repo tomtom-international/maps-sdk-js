@@ -14,7 +14,7 @@ import { parseFuzzySearchResponse } from '../responseParser';
 import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from '../types';
 
 describe('Fuzzy Search service', () => {
-    beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));
+    beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY_TESTS }));
 
     beforeEach(async () => {
         // We enforce a delay before each test to avoid hitting the API rate limits.

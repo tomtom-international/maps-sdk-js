@@ -6,8 +6,7 @@ import type { Point } from 'geojson';
 import { LngLat, Map, Marker, Popup } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-// @ts-ignore
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 let tomtomMap: TomTomMap;
 let mapLibreMap: Map;

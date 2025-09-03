@@ -10,7 +10,7 @@ import { GeoJSONSource, Map, MapGeoJSONFeature, PointLike } from 'maplibre-gl';
 import '../style.css';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 // Calculates the amount of meters for the given amount of pixels and reference map coordinates.
 // NOTE: the reference coordinates have an impact due to the mercator projection.

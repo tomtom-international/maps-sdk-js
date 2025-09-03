@@ -10,7 +10,7 @@ import {
 } from '@cet/maps-sdk-js/map';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 const initPlayground = async () => {
     const map = new TomTomMap({ container: 'map', zoom: 13, minZoom: 2, center: [2.1493, 41.4001] });

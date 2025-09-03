@@ -9,7 +9,7 @@ import type { PlaceByIdResponseAPI } from '..';
 import { placeById } from '..';
 
 describe('Place By Id API', () => {
-    beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY }));
+    beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY_TESTS }));
 
     test('placeById not found', async () => {
         const place = await placeById({ entityId: 'NOT_HERE' });

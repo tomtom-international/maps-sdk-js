@@ -13,7 +13,7 @@ import { LngLatBoundsLike } from 'maplibre-gl';
 import '../style.css';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'es-ES' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'es-ES' });
 
 const initExample = async () => {
     const geoInputs: Waypoint[] = (

@@ -2,7 +2,7 @@ import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { customizeService, reverseGeocode } from '@cet/maps-sdk-js/services';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const revGeoExample = async () => {
     const reverseGeocodeRequest = customizeService.reverseGeocode.buildRevGeoRequest({

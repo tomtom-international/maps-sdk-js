@@ -5,7 +5,7 @@ const geocode = require('@cet/maps-sdk-js/services').geocode;
 const TomTomConfig = require('@cet/maps-sdk-js/core').TomTomConfig;
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 geocode({ query: 'Reckhammerweg Essen' }).then((response) =>
     console.log('Example for 1 specific result:\n', JSON.stringify(response, null, 4)),

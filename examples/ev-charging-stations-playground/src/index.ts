@@ -30,7 +30,7 @@ import { connectorNames } from './connectorNames';
 import genericIcon from './resources/ic-generic-24.svg';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const evBrandTextBox = document.querySelector('#evBrandTextBox') as HTMLInputElement;
 const areaTextBox = document.querySelector('#areaTextBox') as HTMLInputElement;

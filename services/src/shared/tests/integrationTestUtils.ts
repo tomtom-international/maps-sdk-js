@@ -4,7 +4,7 @@ import { expect } from 'vitest';
 
 export const putIntegrationTestsAPIKey = () => {
     TomTomConfig.instance.put({
-        apiKey: process.env.API_KEY_TESTS
+        apiKey: process.env.API_KEY_TESTS,
     });
 };
 

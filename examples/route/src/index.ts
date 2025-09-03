@@ -5,7 +5,7 @@ import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const calculateAndDisplayRoute = async () => {
     const waypoints: Waypoint[] = (

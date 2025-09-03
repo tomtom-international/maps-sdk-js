@@ -11,7 +11,7 @@ import {
 
 TomTomConfig.instance.put({
     // (Set your own API key when working in your own environment)
-    apiKey: process.env.API_KEY,
+    apiKey: process.env.API_KEY_EXAMPLES,
     language: 'en-GB',
 });
 

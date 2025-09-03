@@ -14,7 +14,7 @@ import type { Config } from './placeConfiguration';
 import { namedConfigs } from './placeConfiguration';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'en-GB' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 const fitBoundsOptions = { padding: 50 };
 

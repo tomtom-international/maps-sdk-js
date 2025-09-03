@@ -6,7 +6,7 @@ import { bboxPolygon, difference } from '@turf/turf';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 const invert = (geometry: PolygonFeatures): PolygonFeatures => {
     const invertedArea = difference({

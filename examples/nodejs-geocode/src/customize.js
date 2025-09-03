@@ -17,7 +17,7 @@ console.log(
     }).toString(),
 );
 TomTomConfig.instance.put({
-    apiKey: process.env.API_KEY,
+    apiKey: process.env.API_KEY_EXAMPLES,
 });
 geocode(
     { query: 'Reckhammerweg Essen' },

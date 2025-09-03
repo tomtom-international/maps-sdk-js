@@ -7,7 +7,7 @@ import type { Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 const initExample = async () => {
     const inputs = ['Barcelona', 'Amsterdam'];

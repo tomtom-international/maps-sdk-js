@@ -72,7 +72,7 @@ export class MapTestEnv {
                 );
                 mapsSdkThis.mapLibreMap = mapsSdkThis.tomtomMap.mapLibreMap;
             },
-            { mapLibreOptions, tomtomMapParams, apiKey: process.env.API_KEY },
+            { mapLibreOptions, tomtomMapParams, apiKey: process.env.API_KEY_TESTS },
         );
     }
 
