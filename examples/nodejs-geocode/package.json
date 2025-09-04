@@ -29,7 +29,7 @@
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "@tsconfig/recommended": "catalog:",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.2",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",
