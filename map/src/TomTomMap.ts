@@ -39,7 +39,10 @@ export class TomTomMap {
      * @ignore
      */
     _eventsProxy: EventsProxy;
-    private params: TomTomMapParams;
+    /**
+     * @ignore
+     */
+    _params: TomTomMapParams;
     private readonly styleChangeHandlers: StyleChangeHandler[] = [];
 
     /**
@@ -54,10 +57,10 @@ export class TomTomMap {
      * Therefore, you must have the mandatory parameters either already set via global config, or directly set here.
      */
     constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
-        this.params = mergeFromGlobal(mapParams) as TomTomMapParams;
-        this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this.params));
+        this._params = mergeFromGlobal(mapParams) as TomTomMapParams;
+        this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this._params));
         this.mapLibreMap.once('styledata', () => this.handleStyleData(false));
-        this._eventsProxy = new EventsProxy(this.mapLibreMap, this.params?.events);
+        this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.events);
         // deferred (just in case), lazy loading of the RTL plugin:
         setTimeout(() => {
             if (!['deferred', 'loaded'].includes(getRTLTextPluginStatus())) {
@@ -86,28 +89,28 @@ export class TomTomMap {
                 console.error(e);
             }
         }
-        const effectiveStyle = options.keepState ? withPreviousStyleParts(style, this.params.style) : style;
-        this.params = { ...this.params, style: effectiveStyle };
+        const effectiveStyle = options.keepState ? withPreviousStyleParts(style, this._params.style) : style;
+        this._params = { ...this._params, style: effectiveStyle };
         this.mapLibreMap.once('styledata', () => {
             // We only handle the style data change if the applied style is still the same as the one we set,
             // to prevent race conditions when handling stale styles applied quickly in succession.
             // (If the current style parameters are different, there's likely a new style being set, which will trigger the handler soon after)
-            if (!this.mapReady && isEqual(effectiveStyle, this.params.style)) {
+            if (!this.mapReady && isEqual(effectiveStyle, this._params.style)) {
                 this.handleStyleData(options.keepState || true);
             }
         });
-        this.mapLibreMap.setStyle(buildStyleInput(this.params));
+        this.mapLibreMap.setStyle(buildStyleInput(this._params));
     };
 
     /**
      * Returns the current style of the map.
      */
     getStyle = (): StyleInput | undefined => {
-        return this.params.style;
+        return this._params.style;
     };
 
     private _setLanguage(language: Language) {
-        this.params = { ...this.params, language };
+        this._params = { ...this._params, language };
         const mapLanguage = language?.includes('-') ? language.split('-')[0] : language;
         this.mapLibreMap.getStyle().layers.forEach((layer) => {
             if (layer.type === 'symbol' && isLayerLocalizable(layer)) {
@@ -154,7 +157,7 @@ export class TomTomMap {
                 }
             }
         }
-        this.params.language && this._setLanguage(this.params.language);
+        this._params.language && this._setLanguage(this._params.language);
     }
 
     /**

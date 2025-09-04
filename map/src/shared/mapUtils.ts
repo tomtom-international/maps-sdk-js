@@ -7,8 +7,9 @@ import type {
     RequestParameters,
     ResourceType,
     StyleImageMetadata,
+    StyleOptions,
 } from 'maplibre-gl';
-import type { StyleInput, StyleModule } from '../init';
+import { PublishedStyle, PublishedStyleID, publishedStyleIDs, StyleInput, StyleModule } from '../init';
 import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 import type { AbstractSourceWithLayers } from './SourceWithLayers';
@@ -272,7 +273,8 @@ export const addLayers = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => 
 };
 
 /**
- * Adding style module to the style, if possible.
+ * Adding a style-based module to the given style input, if possible.
+ * * This results in a style input which will include such style-based module (e.g. include traffic layers).
  * @param style which we want to update.
  * @param styleModule module we want to add.
  * @ignore
@@ -344,4 +346,38 @@ export const addImageIfNotExisting = async (
             setTimeout(() => map.addImage(imageId, imageToLoad, options));
         }
     }
+};
+
+export type LightDark = 'light' | 'dark';
+
+/**
+ * Returns the light/dark theme for a known published style.
+ * @param publishedStyleID
+ */
+const getPublishedStyleTheme = (publishedStyleID: PublishedStyleID): LightDark => {
+    switch (publishedStyleID) {
+        case 'standardDark':
+        case 'drivingDark':
+        case 'monoDark':
+        case 'satellite':
+            return 'dark';
+        default:
+            return 'light';
+    }
+};
+
+/**
+ * Returns the light/dark theme for a given style input.
+ * * Unknown published styles and custom styles are considered as 'light' theme.
+ * @param styleInput The style input to check. If not provided, 'light' is returned.
+ * @ignore
+ */
+export const getStyleInputTheme = (styleInput?: StyleInput): LightDark => {
+    if (typeof styleInput === 'string') {
+        return getPublishedStyleTheme(styleInput);
+    }
+    if (styleInput?.type === 'published' && styleInput?.id) {
+        return getPublishedStyleTheme(styleInput.id);
+    }
+    return 'light';
 };

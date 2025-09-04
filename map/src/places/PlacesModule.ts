@@ -6,7 +6,7 @@ import type {
     SymbolLayerSpecWithoutSource,
 } from '../shared';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from '../shared';
-import { changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
+import { changeLayersProps, getStyleInputTheme, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
 import { preparePlacesForDisplay } from './preparePlacesForDisplay';
@@ -48,6 +48,15 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @ignore
      */
     protected _initSourcesWithLayers(config?: PlacesModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
+        // We ensure to add the pins sprite to the style the very first time or when we are restoring the module:
+        if ((this._initializing && PlacesModule.lastInstanceIndex == -1) || restore) {
+            const mapParams = this.tomtomMap._params;
+            this.mapLibreMap.setSprite(
+                `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleInputTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
+                { validate: false },
+            );
+        }
+
         if (!restore) {
             PlacesModule.lastInstanceIndex++;
             this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${PlacesModule.lastInstanceIndex}`;
@@ -55,6 +64,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         }
         const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
         this.layerSpecs = layerSpecs;
+
         return { places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, layerSpecs) };
     }
 

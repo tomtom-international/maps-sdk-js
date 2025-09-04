@@ -48,14 +48,12 @@ describe('toPlaces tests', () => {
 describe('Get Icon ID for a given Place tests', () => {
     test('Get Icon ID for a given Place', () => {
         expect(getIconIDForPlace({ properties: {} } as Place)).toEqual('default_pin');
-        expect(getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'HOSPITAL' }] } } } as Place)).toBe(
-            'poi-hospital',
-        );
+        expect(getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place)).toBe('35');
         expect(
             getIconIDForPlace({
-                properties: { poi: { classifications: [{ code: 'UNKNOWN' as POICategory }] } },
+                properties: { poi: {} },
             } as Place),
-        ).toBe('poi-unknown');
+        ).toBe('default_pin');
     });
 
     test('Get Icon ID for a given Place with custom config', () => {
@@ -79,25 +77,25 @@ describe('Get Icon ID for a given Place tests', () => {
 
         expect(
             getIconIDForPlace(
-                { properties: { poi: { classifications: [{ code: 'RESTAURANT' }] } } } as Place,
+                { properties: { poi: { categoryIds: [35] } } } as Place,
                 {
                     iconConfig: { customIcons: [{ iconUrl: 'https://test.com', category: 'RESTAURANT' }] },
                 },
                 mapLibreMock,
             ),
-        ).toBe('restaurant');
+        ).toBe('35');
 
         expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'RESTAURANT' }] } } } as Place, {
+            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
                 iconConfig: { customIcons: [{ iconUrl: 'https://test.com', category: 'RESTAURANT' }] },
             }),
-        ).toBe('poi-restaurant');
+        ).toBe('35');
 
         expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'CAFE_PUB' }] } } } as Place, {
+            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
                 iconConfig: { customIcons: [{ iconUrl: 'https://test.com', category: 'RESTAURANT' }] },
             }),
-        ).toBe('poi-cafe');
+        ).toBe('35');
     });
 });
 
