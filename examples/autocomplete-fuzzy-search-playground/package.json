@@ -1,5 +1,5 @@
 {
-  "name": "autocomplete-fuzzy-search-playground-example",
+  "name": "@examples/autocomplete-fuzzy-search-playground",
   "description": "Example for autocomplete & fuzzy search combination",
   "scripts": {
     "build": "vite build",

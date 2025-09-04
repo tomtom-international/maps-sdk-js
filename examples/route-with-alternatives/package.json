@@ -1,5 +1,5 @@
 {
-  "name": "route-with-alternatives-example",
+  "name": "@examples/route-with-alternatives",
   "description": "Route with alternatives example",
   "scripts": {
     "build": "vite build",

@@ -1,5 +1,5 @@
 {
-  "name": "rev-geo-service-nodejs",
+  "name": "@examples/nodejs-rev-geo",
   "description": "Basic NodeJS example using Reverse Geocoding Service.",
   "main": "src/main.js",
   "scripts": {

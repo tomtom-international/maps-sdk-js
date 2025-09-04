@@ -1,5 +1,5 @@
 {
-  "name": "load-style-parts-example",
+  "name": "@examples/load-style-parts",
   "description": "Load style parts example",
   "scripts": {
     "build": "vite build",

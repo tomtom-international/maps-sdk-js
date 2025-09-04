@@ -1,5 +1,5 @@
 {
-  "name": "geometry-search-with-poi-categories-example",
+  "name": "@examples/geometry-search-with-poi-categories",
   "description": "Geometry search with POI categories example",
   "scripts": {
     "build": "vite build",

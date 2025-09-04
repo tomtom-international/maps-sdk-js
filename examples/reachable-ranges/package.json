@@ -1,5 +1,5 @@
 {
-  "name": "reachable-ranges-example",
+  "name": "@examples/reachable-ranges",
   "description": "Reachable ranges example",
   "scripts": {
     "build": "vite build",

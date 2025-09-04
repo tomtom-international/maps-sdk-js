@@ -1,5 +1,5 @@
 {
-  "name": "routing-service-nodejs",
+  "name": "@examples/nodejs-routing",
 
   "description": "NodeJS example for the Calculate Route Service",
   "main": "src/index.js",

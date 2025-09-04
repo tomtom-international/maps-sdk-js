@@ -1,5 +1,5 @@
 {
-  "name": "layer-group-toggling-example",
+  "name": "@examples/layer-group-toggling",
   "description": "Layer group toggling example",
   "scripts": {
     "build": "vite build",

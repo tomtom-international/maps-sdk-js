@@ -1,5 +1,5 @@
 {
-  "name": "fuzzy-search-playground-example",
+  "name": "@examples/fuzzy-search-playground",
   "description": "Example for fuzzy search",
   "scripts": {
     "build": "vite build",

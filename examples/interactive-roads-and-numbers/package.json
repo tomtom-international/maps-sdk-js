@@ -1,5 +1,5 @@
 {
-  "name": "interactive-roads-and-numbers-example",
+  "name": "@examples/interactive-roads-and-numbers",
   "description": "Interactive roads and numbers example",
   "scripts": {
     "build": "vite build",

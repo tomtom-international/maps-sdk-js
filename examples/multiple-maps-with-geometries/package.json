@@ -1,5 +1,5 @@
 {
-  "name": "multiple-maps-with-geometries-example",
+  "name": "@examples/multiple-maps-with-geometries",
   "description": "Multiple maps with geometries example",
   "scripts": {
     "build": "vite build",

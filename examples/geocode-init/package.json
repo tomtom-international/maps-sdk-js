@@ -1,5 +1,5 @@
 {
-  "name": "geocode-init-example",
+  "name": "@examples/geocode-init",
   "description": "NPM + Webpack example integrating Geocoding and Map initialization.",
   "scripts": {
     "develop": "vite",

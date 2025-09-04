@@ -1,5 +1,5 @@
 {
-  "name": "map-events-example",
+  "name": "@examples/map-events",
   "description": "Map events example",
   "scripts": {
     "build": "vite build",

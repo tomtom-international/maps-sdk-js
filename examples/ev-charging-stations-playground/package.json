@@ -1,5 +1,5 @@
 {
-  "name": "ev-charging-stations-playground-example",
+  "name": "@examples/ev-charging-stations-playground",
   "description": "Playground allowing to explore and search EV charging with availability information.",
   "scripts": {
     "build": "vite build",

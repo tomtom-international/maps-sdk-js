@@ -1,5 +1,5 @@
 {
-  "name": "poi-filters-example",
+  "name": "@examples/poi-filters",
   "description": "Playground for customizing the shown POIs on the map.",
   "scripts": {
     "build": "vite build",

@@ -1,5 +1,5 @@
 {
-  "name": "geometry-search-service-nodejs",
+  "name": "@examples/nodejs-geometry-search",
   "description": "NodeJS example for Geometry Search Service",
   "main": "src/index.js",
   "scripts": {

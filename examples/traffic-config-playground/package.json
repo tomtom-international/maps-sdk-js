@@ -1,5 +1,5 @@
 {
-  "name": "traffic-config-playground-example",
+  "name": "@examples/traffic-config-playground",
   "description": "Traffic config playground example",
   "scripts": {
     "build": "vite build",

@@ -1,5 +1,5 @@
 {
-  "name": "places-in-geometry-example",
+  "name": "@examples/places-in-geometry",
   "description": "NPM + Webpack example displaying places in geometry.",
   "scripts": {
     "build": "vite build",

@@ -1,5 +1,5 @@
 {
-  "name": "keep-state-when-changing-style-example",
+  "name": "@examples/keep-state-when-changing-style",
   "description": "NPM + Webpack example showcasing how the map state is restored after changing the style.",
   "scripts": {
     "build": "vite build",

@@ -1,5 +1,5 @@
 {
-  "name": "map-config-playground-example",
+  "name": "@examples/map-config-playground",
   "description": "NPM + Webpack example displaying map config playground.",
   "scripts": {
     "build": "vite build",

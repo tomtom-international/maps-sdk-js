@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-geocode-example",
+  "name": "@examples/nodejs-geocode",
   "description": "Node.js geocode example",
   "main": "src/index.js",
   "scripts": {

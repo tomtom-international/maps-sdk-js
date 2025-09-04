@@ -1,5 +1,5 @@
 {
-  "name": "multiple-geometry-modules-example",
+  "name": "@examples/multiple-geometry-modules",
   "description": "Multiple geometry modules example",
   "scripts": {
     "build": "vite build",

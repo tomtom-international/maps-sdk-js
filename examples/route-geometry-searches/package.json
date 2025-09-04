@@ -1,5 +1,5 @@
 {
-  "name": "route-geometry-searches-example",
+  "name": "@examples/route-geometry-searches",
   "description": "NPM + Webpack example displaying route geometry searches.",
   "scripts": {
     "build": "vite build",

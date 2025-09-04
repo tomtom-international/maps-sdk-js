@@ -1,5 +1,5 @@
 {
-  "name": "layer-groups-visibility-animation-example",
+  "name": "@examples/layer-groups-visibility-animation",
   "description": "Layer groups visibility animation example",
   "scripts": {
     "build": "vite build",

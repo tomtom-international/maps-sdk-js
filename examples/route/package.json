@@ -1,5 +1,5 @@
 {
-  "name": "route-example",
+  "name": "@examples/route",
   "description": "Route example",
   "scripts": {
     "build": "vite build",

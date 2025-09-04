@@ -1,5 +1,5 @@
 {
-  "name": "waypoints-example",
+  "name": "@examples/waypoints",
   "description": "Waypoints example",
   "scripts": {
     "build": "vite build",

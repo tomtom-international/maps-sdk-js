@@ -1,5 +1,5 @@
 {
-  "name": "rev-geo-example",
+  "name": "@examples/rev-geo",
   "description": "Map reverse geocoding example",
   "scripts": {
     "build": "vite build",
