@@ -123,6 +123,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     applyTextConfig(textConfig: GeometryTextConfig) {
         const config = { ...this.config, textConfig };
         this.updateLayerAndData(config);
+        // TODO: is this consistent with _applyConfig?
         this.sourcesWithLayers.geometryLabel.show(
             prepareTitleForDisplay(this.sourcesWithLayers.geometry.shownFeatures),
         );

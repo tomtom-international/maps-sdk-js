@@ -1,6 +1,6 @@
 import type { Place } from '@cet/maps-sdk-js/core';
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import type { IconStyle, MapFont, PlaceIconConfig, PlaceTextConfig } from '@cet/maps-sdk-js/map';
+import type { IconStyle, MapFont, PlaceIconConfig } from '@cet/maps-sdk-js/map';
 import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { search } from '@cet/maps-sdk-js/services';
 import tomtomLogo from '../resources/tomtomLogo.png';
@@ -16,7 +16,7 @@ let places: PlacesModule;
 let colorSelectors: NodeListOf<HTMLDivElement>;
 let fontSelectors: NodeListOf<HTMLInputElement>;
 let contentSelectors: NodeListOf<HTMLInputElement>;
-const iconConfig: PlaceIconConfig = { iconStyle: 'pin' };
+
 const customIconsConfig: PlaceIconConfig = {
     customIcons: [
         {
@@ -29,6 +29,7 @@ const customIconsConfig: PlaceIconConfig = {
         },
     ],
 };
+
 const multiLineLabel: any = [
     'format',
     ['get', 'title'],
@@ -42,11 +43,11 @@ const multiLineLabel: any = [
     ['get', 'staticProp'],
     { 'font-scale': 0.7, 'text-font': ['literal', ['Noto-Bold']], 'text-color': '#ce258d' },
 ];
-let textConfig: PlaceTextConfig = {};
+
 const getPhoneFun = (place: Place) => place.properties.poi?.phone;
 
 const updatePlaces = async () => {
-    places.show(
+    await places.show(
         await search({
             query: '',
             poiCategories: ['ELECTRIC_VEHICLE_STATION', 'CAFE_PUB'],
@@ -62,41 +63,39 @@ const listenToUIEvents = () => {
         element.addEventListener('click', () => {
             colorSelectors.forEach((element) => element.classList.remove('active'));
             element.classList.add('active');
-            textConfig = { ...textConfig, textColor: element.dataset.value };
-            places.applyTextConfig(textConfig);
+            places.applyTextConfig({ ...places.getConfig()?.textConfig, textColor: element.dataset.value });
         }),
     );
 
     fontSelectors.forEach((element) =>
         element.addEventListener('change', () => {
-            textConfig = {
-                ...textConfig,
+            places.applyTextConfig({
+                ...places.getConfig()?.textConfig,
                 textFont: [element.value as MapFont],
-            };
-            places.applyTextConfig(textConfig);
+            });
         }),
     );
+
     contentSelectors.forEach((element) =>
         element.addEventListener('change', () => {
             element.value !== 'default' &&
-                places.setExtraFeatureProps({
+                places.applyExtraFeatureProps({
                     phone: getPhoneFun,
                     staticProp: 'Static text',
                 });
-            textConfig = {
-                ...textConfig,
+            places.applyTextConfig({
+                ...places.getConfig()?.textConfig,
                 textField: element.value !== 'default' ? multiLineLabel : ['get', 'title'],
-            };
-            places.applyTextConfig(textConfig);
+            });
         }),
     );
+
     iconStyleSelector?.addEventListener('change', (e) => {
         const value = (e.target as HTMLSelectElement).value;
-        if (value !== 'custom') {
-            iconConfig.iconStyle = value as IconStyle;
-            places.applyIconConfig(iconConfig);
-        } else {
+        if (value === 'custom') {
             places.applyIconConfig(customIconsConfig);
+        } else {
+            places.applyIconConfig({ iconStyle: value as IconStyle });
         }
     });
 };

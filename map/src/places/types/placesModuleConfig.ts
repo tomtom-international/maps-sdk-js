@@ -15,6 +15,10 @@ export type IconStyle = 'pin' | 'circle' | 'poi-like';
 export type CustomIcon = {
     category: MapStylePOICategory;
     iconUrl: string;
+    /**
+     * The pixel ratio of the icon. If not provided, it will be 2 by default, to support modern high-DPI screens.
+     */
+    pixelRatio?: number;
 };
 
 /**

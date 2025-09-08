@@ -5,7 +5,7 @@ import type {
     SymbolLayerSpecification,
 } from 'maplibre-gl';
 import type { LayerSpecTemplate, SymbolLayerSpecWithoutSource } from '../../shared';
-import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
+import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT, PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
 import { ICON_ID, TITLE } from '../types/placeDisplayProps';
 import type { PlacesModuleConfig } from '../types/placesModuleConfig';
 
@@ -18,11 +18,6 @@ export const hasEventState: ExpressionSpecification = ['has', 'eventState'];
  * @ignore
  */
 export const SELECTED_COLOR = '#3f9cd9';
-
-/**
- * @ignore
- */
-export const PIN_ICON_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 0.8, 16, 1, 22, 1.2];
 
 const isClick: ExpressionSpecification = ['in', ['get', 'eventState'], ['literal', ['click', 'contextmenu']]];
 
@@ -70,7 +65,8 @@ export const selectedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification>
     filter: hasEventState,
     layout: {
         ...placesPinLayerBaseSpec.layout,
-        'icon-size': 1,
+        // Increased sizes from PIN_ICON_SIZE (from shared default pin)
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 22, 1],
         'text-allow-overlap': true,
     },
     paint: {
@@ -151,7 +147,8 @@ export const buildPlacesLayerSpecs = (
     const layerSpecs =
         config?.iconConfig?.iconStyle === 'poi-like'
             ? [buildPoiLikeLayerSpec(map), clickedPlaceLayerSpec]
-            : [placesLayerSpec, selectedPlaceLayerSpec];
+            : // TODO: 'circle' config could take the icon properties from the poi layer as well (size, offsets, etc) and just try to make text bolder
+              [placesLayerSpec, selectedPlaceLayerSpec];
     // (The first layer is the main one, the next one, on top, is used for the "selected" place)
     return layerSpecs.map((spec, index) =>
         withConfig(spec, config, `${idPrefix}-${index === 0 ? 'main' : 'selected'}`),

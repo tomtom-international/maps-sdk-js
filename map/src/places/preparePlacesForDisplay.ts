@@ -2,7 +2,6 @@ import type { Place, Places } from '@cet/maps-sdk-js/core';
 import type { Map } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../pois/poiCategoryMapping';
 import { toMapDisplayPOICategory } from '../pois/poiCategoryMapping';
-import { addImageIfNotExisting } from '../shared/mapUtils';
 import type { DisplayPlaceProps } from './types/placeDisplayProps';
 import type { PlacesModuleConfig } from './types/placesModuleConfig';
 
@@ -20,31 +19,26 @@ export const buildPlaceTitle = (place: Place): string =>
  * @param config
  */
 export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {}, map?: Map): string => {
-    const { iconConfig } = config;
-    const iconStyle = iconConfig?.iconStyle ?? 'pin';
+    const iconStyle = config.iconConfig?.iconStyle ?? 'pin';
+    const customIcons = config.iconConfig?.customIcons;
 
+    // First we try to match any custom icon:
     const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOICategory;
+    const matchingCustomIcon = customIcons?.find((customIcon) => customIcon.category === classificationCode);
+    if (matchingCustomIcon) {
+        return matchingCustomIcon.category;
+    }
+    // Else: if no custom icon matched, we map to the map style icons:
 
     let iconId: string;
     if (iconStyle === 'pin') {
+        // Pin assets are mapped by search category IDs (so far same as for Genesis):
         const categoryID = place.properties.poi?.categoryIds?.[0];
         iconId = categoryID ? String(categoryID) : 'default_pin';
     } else {
+        // POI assets have their own category mapping and we use search classification codes to map them:
         // TODO: consider default_circle asset instead of default_pin
         iconId = (classificationCode && `poi-${toMapDisplayPOICategory(classificationCode)}`) ?? 'default_pin';
-    }
-
-    if (!iconConfig?.customIcons || !map) {
-        return iconId;
-    }
-
-    // If we have custom icons, ensure they're added to the map style:
-    for (const customIcon of iconConfig.customIcons) {
-        if (customIcon.category === classificationCode) {
-            const customIconId = classificationCode.toLowerCase();
-            addImageIfNotExisting(map, customIconId, customIcon.iconUrl);
-            return customIconId;
-        }
     }
 
     return iconId;

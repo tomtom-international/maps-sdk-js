@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import { ICON_ID, TITLE } from '../../places';
 import type { LayerSpecTemplate } from '../../shared';
-import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
+import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT, PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
 import { INDEX_TYPE, MIDDLE_INDEX, STOP_DISPLAY_INDEX } from '../types/waypointDisplayProps';
 
 export const WAYPOINT_START_IMAGE_ID = 'waypointStart';
@@ -35,7 +35,7 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
         'text-font': [MAP_BOLD_FONT],
         'text-size': ['interpolate', ['linear'], ['zoom'], 13, 13, 18, 15],
         'text-anchor': 'bottom',
-        'text-offset': [0, -0.9],
+        'text-offset': [0, -1.1],
         'icon-image': ['get', ICON_ID],
         // pin vs circle:
         'icon-anchor': [
@@ -45,7 +45,7 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
             // else
             'bottom',
         ],
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 13, 0.7, 18, 1],
+        'icon-size': PIN_ICON_SIZE,
         'text-allow-overlap': true,
         'icon-allow-overlap': true,
     },

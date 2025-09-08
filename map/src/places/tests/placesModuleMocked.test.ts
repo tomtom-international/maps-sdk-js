@@ -22,6 +22,7 @@ describe('GeoJSON Places module tests', () => {
                 setFilter: vi.fn(),
                 once: vi.fn().mockReturnValue(Promise.resolve()),
                 setSprite: vi.fn(),
+                hasImage: vi.fn(),
             } as unknown as Map,
             _eventsProxy: {
                 add: vi.fn(),
@@ -56,7 +57,7 @@ describe('GeoJSON Places module tests', () => {
         expect(placesAny.updateData).toHaveBeenCalledTimes(1);
         expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(1);
 
-        places.setExtraFeatureProps({ prop: 'static' });
+        places.applyExtraFeatureProps({ prop: 'static' });
         expect(placesAny.updateData).toHaveBeenCalledTimes(2);
 
         places.applyTextConfig({ textFont: ['Noto-Medium'], textSize: 16 });

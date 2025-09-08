@@ -6,10 +6,11 @@ import type {
     SymbolLayerSpecWithoutSource,
 } from '../shared';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from '../shared';
-import { changeLayersProps, getStyleInputTheme, waitUntilMapIsReady } from '../shared/mapUtils';
+import { addImageIfNotExisting, changeLayersProps, getStyleInputTheme, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
 import { preparePlacesForDisplay } from './preparePlacesForDisplay';
+import { defaultPin } from './resources';
 import type { DisplayPlaceProps } from './types/placeDisplayProps';
 import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from './types/placesModuleConfig';
 
@@ -28,6 +29,12 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     private layerSpecs!: [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource];
     private sourceID!: string;
     private layerIDPrefix!: string;
+    /**
+     * The index of this instance, to generate unique source and layer IDs.
+     * * Starts with 0 and each instance increments it by one.
+     * @private
+     */
+    private instanceIndex = 0;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -48,22 +55,24 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @ignore
      */
     protected _initSourcesWithLayers(config?: PlacesModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
-        // We ensure to add the pins sprite to the style the very first time or when we are restoring the module:
-        if ((this._initializing && PlacesModule.lastInstanceIndex == -1) || restore) {
+        if (!restore) {
+            PlacesModule.lastInstanceIndex++;
+            this.instanceIndex = PlacesModule.lastInstanceIndex;
+            this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${this.instanceIndex}`;
+            this.layerIDPrefix = `placesSymbols-${this.instanceIndex}`;
+        }
+        const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
+        this.layerSpecs = layerSpecs;
+
+        // We ensure to add the pins sprite to the style the very first time or when we are restoring the module, and only once for all instances:
+        if ((this._initializing || restore) && this.instanceIndex == 0) {
             const mapParams = this.tomtomMap._params;
             this.mapLibreMap.setSprite(
                 `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleInputTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
                 { validate: false },
             );
+            addImageIfNotExisting(this.mapLibreMap, 'default_pin', defaultPin(), { pixelRatio: 2 });
         }
-
-        if (!restore) {
-            PlacesModule.lastInstanceIndex++;
-            this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${PlacesModule.lastInstanceIndex}`;
-            this.layerIDPrefix = `placesSymbols-${PlacesModule.lastInstanceIndex}`;
-        }
-        const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
-        this.layerSpecs = layerSpecs;
 
         return { places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, layerSpecs) };
     }
@@ -72,11 +81,13 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @ignore
      */
     protected _applyConfig(config: PlacesModuleConfig | undefined) {
+        // TODO: update layers and data also if the new icon/text config is not there but before it was?
         if (config?.iconConfig || config?.textConfig) {
             this.updateLayersAndData(config);
         } else if (config?.extraFeatureProps) {
             this.updateData(config);
         }
+
         return config;
     }
 
@@ -107,17 +118,24 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         this.config = config;
     }
 
+    applyExtraFeatureProps(extraFeatureProps: { [key: string]: any }): void {
+        const config = { ...this.config, extraFeatureProps };
+        this.updateData(config);
+        this.config = config;
+    }
+
     private updateLayersAndData(config: PlacesModuleConfig): void {
+        // If we have custom icons, ensure they're added to the map style:
+        for (const customIcon of config?.iconConfig?.customIcons ?? []) {
+            addImageIfNotExisting(this.mapLibreMap, customIcon.category, customIcon.iconUrl, {
+                pixelRatio: customIcon.pixelRatio ?? 2,
+            });
+        }
+
         const newLayerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
         changeLayersProps(newLayerSpecs, this.layerSpecs, this.mapLibreMap);
         this.layerSpecs = newLayerSpecs;
         this.updateData(config);
-    }
-
-    setExtraFeatureProps(extraFeatureProps: { [key: string]: any }): void {
-        const config = { ...this.config, extraFeatureProps };
-        this.updateData(config);
-        this.config = config;
     }
 
     private updateData(config: PlacesModuleConfig): void {

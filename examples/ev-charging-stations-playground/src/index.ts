@@ -27,7 +27,7 @@ import { isEmpty, without } from 'lodash-es';
 import { LngLatBoundsLike, LngLatLike, NavigationControl, Popup } from 'maplibre-gl';
 import { connectorIcons } from './connectorIcons';
 import { connectorNames } from './connectorNames';
-import genericIcon from './resources/ic-generic-24.svg';
+import genericIcon from './resources/ic-generic-24.svg?raw';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });

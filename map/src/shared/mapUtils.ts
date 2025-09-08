@@ -7,9 +7,8 @@ import type {
     RequestParameters,
     ResourceType,
     StyleImageMetadata,
-    StyleOptions,
 } from 'maplibre-gl';
-import { PublishedStyle, PublishedStyleID, publishedStyleIDs, StyleInput, StyleModule } from '../init';
+import { PublishedStyleID, StyleInput, StyleModule } from '../init';
 import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 import type { AbstractSourceWithLayers } from './SourceWithLayers';
