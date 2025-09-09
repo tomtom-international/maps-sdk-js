@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.24...v0.9.0) (2025-09-09)
+
+
+### Features
+
+* bring rest of relevant examples into monorepo ([fe24553](https://github.com/tomtom-international/maps-sdk-js/commit/fe2455387c63b84d9198b470f94c99c8459e0101))
+* improve how places are rendered ([6c09bc7](https://github.com/tomtom-international/maps-sdk-js/commit/6c09bc7a16e67846882888a9781e41110cc1c079))
+* restoring pins on the map based on new assets ([74b0e95](https://github.com/tomtom-international/maps-sdk-js/commit/74b0e950a872767f9797dc5b9c0c28f8967698ef))
+* switch to monorepo with examples ([8f67ff3](https://github.com/tomtom-international/maps-sdk-js/commit/8f67ff33569c1ab01f798c96add2878611e75407))
+
+
+### Bug Fixes
+
+* attempt to mitigate style changes vs geojson race conditions ([f277779](https://github.com/tomtom-international/maps-sdk-js/commit/f27777912577a40fd6d350e8c0d551fce283e84e))
+
 ### [0.8.24](https://github.com/tomtom-international/maps-sdk-js/compare/v0.8.23...v0.8.24) (2025-07-24)
 
 
