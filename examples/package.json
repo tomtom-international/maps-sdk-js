@@ -5,6 +5,7 @@
     "@types/node": "catalog:",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-visualizer": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+     "vite-plugin-singlefile": "^2.3.0"
   }
 }
