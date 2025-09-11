@@ -45,7 +45,7 @@ const initUI = () => {
     locationsSelector.selectedIndex = 0;
 };
 
-const initPlayground = async () => {
+(async () => {
     map = new TomTomMap(
         { container: 'map', center: [2.34281, 48.85639], zoom: 12 },
         { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
@@ -56,6 +56,4 @@ const initPlayground = async () => {
     initUI();
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initPlayground);
+})();

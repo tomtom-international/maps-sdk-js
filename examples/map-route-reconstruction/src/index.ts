@@ -93,7 +93,7 @@ const initDrawUserEvents = (mapLibreMap: Map, routingModule: RoutingModule): voi
     });
 };
 
-const initRouteReconstructionPlayground = async () => {
+(async () => {
     const waypoints: Waypoint[] = (
         await Promise.all([
             geocode({ query: 'W Houston St 51, NY', limit: 1 }),
@@ -117,6 +117,4 @@ const initRouteReconstructionPlayground = async () => {
     await resetState(routingModule, waypoints);
     initDrawUserEvents(map.mapLibreMap, routingModule);
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initRouteReconstructionPlayground);
+})();

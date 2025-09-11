@@ -136,7 +136,7 @@ const initBaseMapModule = async () => {
     baseModule.events.on('click', showBasemapPopup);
 };
 
-const mapInit = async () => {
+(async () => {
     map = new TomTomMap(
         { container: 'map', center: [-0.12634, 51.50276], zoom: 14 },
         { language: 'en-GB', style: { type: 'published', include: ['trafficIncidents'] } },
@@ -152,6 +152,4 @@ const mapInit = async () => {
     await initPlacesModule();
     await initTrafficIncidents();
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', mapInit);
+})();

@@ -4,7 +4,7 @@ import { BaseMapModule, POIsModule, TomTomMap, TrafficFlowModule, TrafficInciden
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
-const baseMapLayerGroups = async () => {
+(async () => {
     const map = new TomTomMap(
         { container: 'map', center: [-74.00432, 40.71632], zoom: 3 },
         { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
@@ -43,7 +43,5 @@ const baseMapLayerGroups = async () => {
 
     map.mapLibreMap.zoomTo(18, { duration: 200000 });
 
-    (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', baseMapLayerGroups);
+    (window as any).map = map;
+})();

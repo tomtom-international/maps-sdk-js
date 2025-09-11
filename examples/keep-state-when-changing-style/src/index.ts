@@ -15,7 +15,7 @@ import '../style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'es-ES' });
 
-const initExample = async () => {
+(async () => {
     const geoInputs: Waypoint[] = (
         await Promise.all([search({ query: 'Hyde Park Corner, London' }), search({ query: 'Leman Street, London' })])
     ).map((result) => result.features[0]);
@@ -52,6 +52,4 @@ const initExample = async () => {
     );
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initExample);
+})();

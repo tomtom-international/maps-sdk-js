@@ -56,7 +56,7 @@ const listenToUserEvents = () => {
         ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
 };
 
-const mapPlacesInGeometryInit = async () => {
+(async () => {
     // we initialize the map directly in the first search content:
     map = new TomTomMap({ container: 'map', zoom: 2 }, { language: 'en-GB' });
     placesModule = await PlacesModule.init(map);
@@ -64,6 +64,4 @@ const mapPlacesInGeometryInit = async () => {
     listenToUserEvents();
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', mapPlacesInGeometryInit);
+})();

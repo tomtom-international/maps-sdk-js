@@ -17,7 +17,7 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
     return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
 };
 
-const initMapSearchWithPOICategories = async () => {
+(async () => {
     const areaToSearch = await geocode({ query: 'paris', limit: 1 });
 
     const map = new TomTomMap({
@@ -39,7 +39,5 @@ const initMapSearchWithPOICategories = async () => {
 
     const places = await PlacesModule.init(map);
     places.show(restaurants);
-    (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initMapSearchWithPOICategories);
+    (window as any).map = map;
+})();

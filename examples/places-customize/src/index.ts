@@ -100,7 +100,7 @@ const listenToUIEvents = () => {
     });
 };
 
-const initExample = async () => {
+(async () => {
     map = new TomTomMap({ container: 'map', center: [4.90435, 52.36876], zoom: 10 });
     places = await PlacesModule.init(map);
     await updatePlaces();
@@ -113,6 +113,4 @@ const initExample = async () => {
     });
     listenToUIEvents();
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initExample);
+})();

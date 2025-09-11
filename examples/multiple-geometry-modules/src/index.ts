@@ -16,7 +16,7 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
     return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
 };
 
-const initExample = async () => {
+(async () => {
     const mainPlace = await geocode({ query: 'Germany', geographyTypes: ['Country'] });
     const map = new TomTomMap(
         { container: 'map', minZoom: 2, zoom: 13, bounds: mainPlace.bbox as LngLatBoundsLike },
@@ -57,6 +57,4 @@ const initExample = async () => {
     farAwayGeometriesModule.show(subdivisionGeometries);
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initExample);
+})();

@@ -57,12 +57,10 @@ const listenToUIEvents = async () => {
         );
 };
 
-const mapPlacesInGeometryInit = async () => {
+(async () => {
     map = new TomTomMap({ container: 'map', fitBoundsOptions });
     geometry = await GeometriesModule.init(map);
     await updateMap(namedConfigs.france);
     await listenToUIEvents();
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', mapPlacesInGeometryInit);
+})();

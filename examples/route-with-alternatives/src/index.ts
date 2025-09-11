@@ -6,7 +6,7 @@ import { LngLatBoundsLike } from 'maplibre-gl';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const calculateAndDisplayRoutes = async () => {
+(async () => {
     const waypoints = (
         await Promise.all([geocode({ query: 'London', limit: 1 }), geocode({ query: 'Paris', limit: 1 })])
     ).map((result) => result.features[0]);
@@ -44,6 +44,4 @@ const calculateAndDisplayRoutes = async () => {
         ?.addEventListener('click', () => map.mapLibreMap.fitBounds(bounds, fitBoundsOptions));
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', calculateAndDisplayRoutes);
+})();

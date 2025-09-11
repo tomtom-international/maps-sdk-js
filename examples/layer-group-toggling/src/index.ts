@@ -21,7 +21,7 @@ const initBaseMapModule = async (layerGroups: BaseMapLayerGroupName[], selector:
         ?.addEventListener('click', (ev) => module.setVisible((ev.target as HTMLInputElement).checked));
 };
 
-const baseMapLayerGroups = async () => {
+(async () => {
     map = new TomTomMap({ container: 'map', center: [-74.06332, 40.72732], zoom: 12 });
 
     await initBaseMapModule(['water'], '#toggleWater');
@@ -52,6 +52,4 @@ const baseMapLayerGroups = async () => {
     );
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', baseMapLayerGroups);
+})();

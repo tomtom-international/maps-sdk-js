@@ -12,7 +12,7 @@ import {
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
-const initPlayground = async () => {
+(async () => {
     const map = new TomTomMap({ container: 'map', zoom: 13, minZoom: 2, center: [2.1493, 41.4001] });
 
     document
@@ -32,6 +32,4 @@ const initPlayground = async () => {
     );
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initPlayground);
+})();

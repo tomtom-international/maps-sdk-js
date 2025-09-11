@@ -17,7 +17,7 @@ const configLanguage: Language = 'nl-NL';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const mapLanguagePlaygroundInit = async () => {
+(async () => {
     const map = new TomTomMap(
         { container: 'map', zoom: 3, minZoom: 2, center: [18.33157, 39.78563] },
         { language: configLanguage },
@@ -31,6 +31,4 @@ const mapLanguagePlaygroundInit = async () => {
         map.setLanguage((event.target as HTMLOptionElement).value as Language),
     );
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', mapLanguagePlaygroundInit);
+})();

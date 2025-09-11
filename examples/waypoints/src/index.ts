@@ -6,7 +6,7 @@ import { LngLatBoundsLike } from 'maplibre-gl';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const fetchAndDisplayWaypoints = async () => {
+(async () => {
     const waypointA = (await geocode({ query: 'Kensinton Road, London, UK', limit: 1 })).features[0];
     const waypointB = (await geocode({ query: 'Vincent Square, London, UK', limit: 1 })).features[0];
     const waypointC = (await geocode({ query: 'Bridge Street, London, UK', limit: 1 })).features[0];
@@ -50,6 +50,4 @@ const fetchAndDisplayWaypoints = async () => {
     );
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', fetchAndDisplayWaypoints);
+})();

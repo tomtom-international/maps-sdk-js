@@ -68,9 +68,9 @@ const connectorsHTML = (chargingPark: ChargingParkWithAvailability): string => {
                 <div class="connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
                 <label class="connectorName">${connectorName ?? ''}</label>
                 <label class="connectorPower"> | ${connectorAvailability.connector.ratedPowerKW} KW</label>
-                <label class=${hasStatuses ? (availableCount ? 'available' : 'unavailable') : 'noStatus'}>${
-                    hasStatuses ? `${availableCount} / ` : ''
-                }${connectorAvailability.count}</label>
+                <label class=${
+                    hasStatuses ? (availableCount ? 'available' : 'unavailable') : 'noStatus'
+                }>${hasStatuses ? `${availableCount} / ` : ''}${connectorAvailability.count}</label>
             </li>`;
         })
         .join('')}
@@ -114,7 +114,12 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
         type: 'FeatureCollection',
         features: [bboxPolygon([-180, 90, 180, -90]), geometry?.features?.[0]],
     });
-    return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
+    return invertedArea
+        ? ({
+              type: 'FeatureCollection',
+              features: [invertedArea],
+          } as PolygonFeatures)
+        : geometry;
 };
 
 const searchEVStations = async () => {
@@ -206,7 +211,11 @@ const getChargingPointAvailability = (
     const availability = place.properties.chargingPark?.availability?.chargingPointAvailability;
     if (availability) {
         const available = availability.statusCounts.Available ?? 0;
-        return { availableCount: available, totalCount: availability.count, ratio: available / availability.count };
+        return {
+            availableCount: available,
+            totalCount: availability.count,
+            ratio: available / availability.count,
+        };
     }
     return undefined;
 };
@@ -216,7 +225,7 @@ const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): strin
     return availability ? `${availability.availableCount}/${availability.totalCount}` : '';
 };
 
-const init = async () => {
+(async () => {
     map = new TomTomMap(
         {
             container: 'map',
@@ -232,9 +241,13 @@ const init = async () => {
     map.mapLibreMap.addControl(new NavigationControl(), 'bottom-right');
     mapIncidents = await TrafficIncidentsModule.get(map);
     mapBasePOIs = await POIsModule.get(map, {
-        filters: { categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] } },
+        filters: {
+            categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
+        },
     });
-    mapEVStations = await PlacesModule.init(map, { iconConfig: { iconStyle: 'poi-like' } });
+    mapEVStations = await PlacesModule.init(map, {
+        iconConfig: { iconStyle: 'poi-like' },
+    });
     const evStationPinConfig: PlacesModuleConfig = {
         extraFeatureProps: {
             availabilityText: buildAvailabilityText,
@@ -272,6 +285,4 @@ const init = async () => {
     listenToHTMLUserEvents();
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', init);
+})();

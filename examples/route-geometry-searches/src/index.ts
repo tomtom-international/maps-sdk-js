@@ -9,7 +9,7 @@ import type { LngLatBoundsLike } from 'maplibre-gl';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
-const initExample = async () => {
+(async () => {
     const inputs = ['Barcelona', 'Amsterdam'];
     const waypoints: Waypoints = {
         type: 'FeatureCollection',
@@ -62,6 +62,4 @@ const initExample = async () => {
             query: '',
         }),
     );
-};
-
-window.addEventListener('load', initExample);
+})();

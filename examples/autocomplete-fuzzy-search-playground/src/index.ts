@@ -70,7 +70,9 @@ const fuzzySearch = async () => {
             ...(selectedAutoCompleteSegment.type == 'category' && {
                 poiCategories: [Number(selectedAutoCompleteSegment.id)],
             }),
-            ...(selectedAutoCompleteSegment.type == 'brand' && { poiBrands: [selectedAutoCompleteSegment.value] }),
+            ...(selectedAutoCompleteSegment.type == 'brand' && {
+                poiBrands: [selectedAutoCompleteSegment.value],
+            }),
         };
     } else {
         searchParams = {
@@ -142,7 +144,7 @@ const autoCompleteSearch = async () => {
 const showSearchThisAreaButton = () =>
     (searchThisAreaButton.innerHTML = `<button id="search-this-area" class="search-this-area-btn">Search This Area</button>`);
 
-const initPlayground = async () => {
+(async () => {
     map = new TomTomMap({ container: 'map', center: [4.8156, 52.4414], zoom: 8 });
     placesModule = await PlacesModule.init(map);
     map.mapLibreMap.on('moveend', () => {
@@ -162,6 +164,4 @@ const initPlayground = async () => {
     });
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initPlayground);
+})();

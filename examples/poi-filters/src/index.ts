@@ -102,13 +102,11 @@ const listenToUserEvents = () => {
     resetBtn?.addEventListener('click', resetConfig);
 };
 
-const initializeExample = async () => {
+(async () => {
     const map = new TomTomMap({ container: 'map', center: [4.89437, 52.36859], zoom: 16.5 });
 
     poisModule = await POIsModule.get(map);
     createFilterToggles();
     listenToUserEvents();
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', initializeExample);
+})();

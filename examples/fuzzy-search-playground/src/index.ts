@@ -57,11 +57,9 @@ const listenToUserEvents = () => {
     );
 };
 
-const mapSearchPlacesInit = async () => {
+(async () => {
     map = new TomTomMap({ container: 'map', center: [4.8156, 52.4414], zoom: 8 }, { language: 'en-GB' });
     placesModule = await PlacesModule.init(map);
     listenToUserEvents();
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', mapSearchPlacesInit);
+})();

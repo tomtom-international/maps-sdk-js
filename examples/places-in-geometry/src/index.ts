@@ -7,7 +7,7 @@ import { LngLatBoundsLike } from 'maplibre-gl';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const mapPlacesInGeometryInit = async () => {
+(async () => {
     const placeToSearchInside = await geocode({ query: 'Amsterdam, NL', limit: 1 });
     // (bounding box is also available directly in placeToSearchInside.bbox)
     const placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
@@ -38,6 +38,4 @@ const mapPlacesInGeometryInit = async () => {
     const placesModule = await PlacesModule.init(map);
     placesModule.show(placesInsideGeometry);
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', mapPlacesInGeometryInit);
+})();

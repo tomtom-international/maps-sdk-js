@@ -68,7 +68,7 @@ const onMapClick = async (_: any, lnglat: LngLat) => {
     }
 };
 
-const mapRevGeoInit = async () => {
+(async () => {
     tomtomMap = new TomTomMap({ container: 'map', center: [4.89147, 52.37362], zoom: 17 }, { style: 'monoLight' });
     mapLibreMap = tomtomMap.mapLibreMap;
 
@@ -80,6 +80,4 @@ const mapRevGeoInit = async () => {
     await onMapClick(undefined, { lng: 4.8907, lat: 52.37311 } as LngLat);
 
     (window as any).map = tomtomMap; // This has been done for automation test support
-};
-
-window.addEventListener('load', mapRevGeoInit);
+})();

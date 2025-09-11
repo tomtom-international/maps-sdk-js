@@ -80,7 +80,7 @@ const initSelectedSourceAndLayers = (mapLibreMap: Map): GeoJSONSource => {
     return mapLibreMap.getSource(selectedSourceID) as GeoJSONSource;
 };
 
-const baseMapLayerGroupEvents = async () => {
+(async () => {
     const map = new TomTomMap({ container: 'map', center: [-74.00332, 40.71732], zoom: 18 });
     const mapLibreMap = map.mapLibreMap;
     await POIsModule.get(map, { visible: false });
@@ -183,6 +183,4 @@ const baseMapLayerGroupEvents = async () => {
     });
 
     (window as any).map = map; // This has been done for automation test support
-};
-
-window.addEventListener('load', baseMapLayerGroupEvents);
+})();
