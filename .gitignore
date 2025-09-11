@@ -11,8 +11,8 @@ node_modules/
 .DS_Store
 *.tgz
 **/*.tsbuildinfo
-documentation/dev-portal/javascript/maps/documentation/api-reference/
-documentation/dev-portal/javascript/maps/documentation/navigation.yml
+documentation/api-reference/
+documentation/navigation.yml
 
 **/test-results/
 **/playwright-report/
