@@ -1,4 +1,4 @@
-import pinSvgRaw from '../../shared/resources/pin.svg?raw';
+import pinSvgRaw from './pin.svg?raw';
 
 /**
  * Helper function to parse SVG string (typically imported from ...svg?raw) to SVGElement
