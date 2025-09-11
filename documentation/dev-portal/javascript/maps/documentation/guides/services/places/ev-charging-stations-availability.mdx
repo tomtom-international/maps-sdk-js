@@ -4,12 +4,345 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-<Blockquote>
-    Coming soon
-</Blockquote>
+# EV Charging Stations Availability
+
+The EV Charging Stations Availability service provides real-time information about electric vehicle charging points, including availability status, connector types, power levels, and charging network details.
+
+## Basic Usage
+
+```javascript
+import { buildPlacesWithEVAvailability } from '@cet/maps-sdk-js/services';
+import { search } from '@cet/maps-sdk-js/services';
+
+// First, search for EV charging stations
+const chargingStations = await search({
+    query: 'EV charging',
+    position: [4.9041, 52.3676], // Amsterdam
+    categorySet: ['ELECTRIC_VEHICLE_STATION'],
+    limit: 10
+});
+
+// Enrich with real-time availability data
+const stationsWithAvailability = await buildPlacesWithEVAvailability(chargingStations);
+```
+
+## Individual Station Availability
+
+Get availability for a specific charging station:
+
+```javascript
+import { buildPlaceWithEVAvailability } from '@cet/maps-sdk-js/services';
+
+// Get a specific charging station (from search results)
+const station = chargingStations.features[0];
+
+// Get detailed availability information
+const stationWithAvailability = await buildPlaceWithEVAvailability(station);
+
+// Access availability data
+const availability = stationWithAvailability.properties.evChargingStationAvailability;
+if (availability) {
+    console.log(`Total connectors: ${availability.totalConnectors}`);
+    console.log(`Available connectors: ${availability.availableConnectors}`);
+
+    // Check individual connector types
+    availability.connectorAvailability.forEach(connector => {
+        console.log(`${connector.connectorType}: ${connector.availableConnectors}/${connector.totalConnectors} available`);
+    });
+}
+```
+
+## Understanding Availability Data
+
+The availability response includes comprehensive charging station information:
+
+```javascript
+const stationWithAvailability = await buildPlaceWithEVAvailability(station);
+const evData = stationWithAvailability.properties.evChargingStationAvailability;
+
+if (evData) {
+    // Overall availability
+    console.log(`Station Status: ${evData.availabilityStatus}`); // 'Available', 'Busy', 'OutOfService'
+    console.log(`Total Connectors: ${evData.totalConnectors}`);
+    console.log(`Available Connectors: ${evData.availableConnectors}`);
+
+    // Connector-specific availability
+    evData.connectorAvailability.forEach(connector => {
+        console.log(`Connector Type: ${connector.connectorType}`); // 'Type2', 'CCS', 'CHAdeMO', etc.
+        console.log(`Power Level: ${connector.powerKW} kW`);
+        console.log(`Available: ${connector.availableConnectors}/${connector.totalConnectors}`);
+        console.log(`Status: ${connector.status}`); // 'Available', 'Occupied', 'OutOfOrder'
+    });
+
+    // Charging park information
+    if (evData.chargingPark) {
+        console.log(`Charging Park: ${evData.chargingPark.name}`);
+        console.log(`Operator: ${evData.chargingPark.operator}`);
+    }
+}
+```
+
+## Integration with Map Display
+
+Display charging stations with availability indicators on your map:
+
+```javascript
+import { PlacesModule } from '@cet/maps-sdk-js/map';
+
+// Search and get availability data
+const stations = await search({
+    query: 'EV charging',
+    position: [4.9041, 52.3676],
+    categorySet: ['ELECTRIC_VEHICLE_STATION'],
+    limit: 20
+});
+
+const stationsWithAvailability = await buildPlacesWithEVAvailability(stations);
+
+// Display on map with custom styling based on availability
+const placesModule = await PlacesModule.init(map, {
+    iconConfig: {
+        customIcons: [
+            {
+                category: 'ELECTRIC_VEHICLE_STATION',
+                iconFunction: (place) => {
+                    const availability = place.properties.evChargingStationAvailability;
+
+                    if (!availability) return 'ev-charging-default';
+
+                    switch (availability.availabilityStatus) {
+                        case 'Available':
+                            return 'ev-charging-available'; // Green icon
+                        case 'Busy':
+                            return 'ev-charging-busy';      // Red icon
+                        case 'OutOfService':
+                            return 'ev-charging-offline';   // Gray icon
+                        default:
+                            return 'ev-charging-default';
+                    }
+                }
+            }
+        ]
+    }
+});
+
+placesModule.show(stationsWithAvailability);
+```
+
+## Filtering by Connector Type
+
+Filter stations by specific connector types:
+
+```javascript
+const filterByConnectorType = (stationsWithAvailability, connectorTypes) => {
+    return {
+        ...stationsWithAvailability,
+        features: stationsWithAvailability.features.filter(station => {
+            const availability = station.properties.evChargingStationAvailability;
+
+            if (!availability) return false;
+
+            return availability.connectorAvailability.some(connector =>
+                connectorTypes.includes(connector.connectorType) &&
+                connector.availableConnectors > 0
+            );
+        })
+    };
+};
+
+// Find stations with available Type2 or CCS connectors
+const compatibleStations = filterByConnectorType(stationsWithAvailability, ['Type2', 'CCS']);
+```
+
+## Real-time Updates
+
+Implement periodic updates for live availability:
+
+```javascript
+class EVStationMonitor {
+    constructor(map, placesModule) {
+        this.map = map;
+        this.placesModule = placesModule;
+        this.stations = null;
+        this.updateInterval = null;
+    }
+
+    async startMonitoring(searchArea, intervalMinutes = 5) {
+        // Initial search
+        const stations = await search({
+            query: 'EV charging',
+            position: searchArea.center,
+            radius: searchArea.radius,
+            categorySet: ['ELECTRIC_VEHICLE_STATION']
+        });
+
+        await this.updateAvailability(stations);
+
+        // Set up periodic updates
+        this.updateInterval = setInterval(async () => {
+            await this.updateAvailability(this.stations);
+        }, intervalMinutes * 60 * 1000);
+    }
+
+    async updateAvailability(stations) {
+        try {
+            this.stations = await buildPlacesWithEVAvailability(stations);
+            this.placesModule.show(this.stations);
+
+            console.log(`Updated availability for ${this.stations.features.length} charging stations`);
+        } catch (error) {
+            console.error('Failed to update EV availability:', error);
+        }
+    }
+
+    stopMonitoring() {
+        if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
+        }
+    }
+}
+
+// Usage
+const monitor = new EVStationMonitor(map, placesModule);
+await monitor.startMonitoring({
+    center: [4.9041, 52.3676],
+    radius: 5000
+}, 3); // Update every 3 minutes
+```
+
+## Common Use Cases
+
+### Trip Planning
+Help users plan EV trips with available charging stops:
+
+```javascript
+const planChargingStops = async (route, vehicleRange) => {
+    const chargingStops = [];
+    let currentRange = vehicleRange;
+
+    // Find charging stations along the route
+    for (let i = 0; i < route.length; i += currentRange * 0.8) { // 80% range buffer
+        const searchPosition = route[i];
+
+        const stations = await search({
+            query: 'EV charging',
+            position: searchPosition,
+            radius: 10000,
+            categorySet: ['ELECTRIC_VEHICLE_STATION']
+        });
+
+        const stationsWithAvailability = await buildPlacesWithEVAvailability(stations);
+
+        // Find stations with fast charging available
+        const fastChargers = stationsWithAvailability.features.filter(station => {
+            const availability = station.properties.evChargingStationAvailability;
+            return availability && availability.connectorAvailability.some(connector =>
+                connector.powerKW >= 50 && connector.availableConnectors > 0
+            );
+        });
+
+        if (fastChargers.length > 0) {
+            chargingStops.push(fastChargers[0]); // Take the first available fast charger
+            currentRange = vehicleRange; // Reset range after charging
+        }
+    }
+
+    return chargingStops;
+};
+```
+
+### Fleet Management
+Monitor charging infrastructure for fleet operations:
+
+```javascript
+const monitorFleetChargingNeeds = async (fleetLocations) => {
+    const chargingAnalysis = [];
+
+    for (const location of fleetLocations) {
+        const nearbyStations = await search({
+            query: 'EV charging',
+            position: location.coordinates,
+            radius: 2000, // 2km radius
+            categorySet: ['ELECTRIC_VEHICLE_STATION']
+        });
+
+        const stationsWithAvailability = await buildPlacesWithEVAvailability(nearbyStations);
+
+        const analysis = {
+            location: location.name,
+            totalStations: stationsWithAvailability.features.length,
+            availableConnectors: 0,
+            fastChargingAvailable: false
+        };
+
+        stationsWithAvailability.features.forEach(station => {
+            const availability = station.properties.evChargingStationAvailability;
+            if (availability) {
+                analysis.availableConnectors += availability.availableConnectors;
+
+                if (availability.connectorAvailability.some(c => c.powerKW >= 50)) {
+                    analysis.fastChargingAvailable = true;
+                }
+            }
+        });
+
+        chargingAnalysis.push(analysis);
+    }
+
+    return chargingAnalysis;
+};
+```
+
+## Error Handling
+
+Handle cases where availability data isn't available:
+
+```javascript
+const safeEVAvailabilityCheck = async (stations) => {
+    try {
+        const stationsWithAvailability = await buildPlacesWithEVAvailability(stations);
+
+        // Separate stations with and without availability data
+        const withAvailability = [];
+        const withoutAvailability = [];
+
+        stationsWithAvailability.features.forEach(station => {
+            if (station.properties.evChargingStationAvailability) {
+                withAvailability.push(station);
+            } else {
+                withoutAvailability.push(station);
+            }
+        });
+
+        return {
+            success: true,
+            withAvailability: { ...stationsWithAvailability, features: withAvailability },
+            withoutAvailability: { ...stationsWithAvailability, features: withoutAvailability },
+            availabilityRate: withAvailability.length / stations.features.length
+        };
+
+    } catch (error) {
+        return {
+            success: false,
+            message: `EV availability check failed: ${error.message}`,
+            originalStations: stations
+        };
+    }
+};
+```
+
+## Best Practices
+
+1. **Handle missing data**: Not all charging stations provide real-time availability
+2. **Update frequency**: Balance between data freshness and API usage
+3. **Connector compatibility**: Filter results based on your users' vehicle requirements
+4. **Fallback display**: Show basic station info even without availability data
+5. **Cache strategy**: Consider caching availability data for short periods to reduce API calls
+6. **User feedback**: Allow users to report incorrect availability information

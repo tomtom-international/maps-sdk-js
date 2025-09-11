@@ -1,126 +1,291 @@
 ---
-title: User events
+title: User Events
 hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-TomTom's Maps SDK JS offers to proxy some of MapLibre's user events and adds out-of-the-box convenience to save you time.
+# User Events Overview
 
-# MapLibre user events
+The User Events system in the TomTom Maps SDK provides enhanced event handling capabilities that build upon MapLibre's native events. This system simplifies complex user interactions and provides consistent event handling across different map elements and modules, enabling rich interactive mapping experiences.
 
-MapLibre GL JS supports many kinds of [events](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-events).
-Some of those events are so-called user events, which are triggered by direct user actions (mouse/keyboard/touch inputs).
+## Event System Architecture
 
-While using the TomTom Maps SDK JS, you have full access to MapLibre GL JS, which in turn means you can fully access its events,
-both for TomTom data and your own.
+The TomTom SDK's event system addresses common MapLibre event handling challenges while maintaining full compatibility with the underlying MapLibre event infrastructure. This dual-layer approach provides both familiar MapLibre patterns and enhanced TomTom-specific functionality.
 
-However:
-* **Hover events aren't trivial to implement**, particularly with refined delays in them.
-* When multiple sources are interactive, handling their events **requires boilerplate to prevent conflicts**.
-* You need to usually **transform from the raw event objects to the core ones in your application state**.
-* Allowing for some **padding around the pointing device while still being accurate** isn't trivial to implement.
+### Enhanced Event Capabilities
 
-To help with the above, the TomTom SDK provides out of the box support for key user events
-in relation to the TomTom Map and rendered items via SDK modules.
-<br/>
+**Problems Solved by TomTom Events:**
+- **Complex hover implementation**: MapLibre hover events require manual timing, state management, and precision handling
+- **Event conflicts**: Multiple interactive sources can interfere with each other without proper coordination
+- **Data transformation**: Raw MapLibre events need conversion to application-specific formats with relevant context
+- **Precision issues**: Accurate event detection with appropriate tolerance is difficult to implement consistently
 
-# TomTom Maps SDK JS: user event types
-This section explains the different [user event types](/javascript/maps/documentation/api-reference/map-shared#EventType) supported by the TomTom SDK (on top of all the ones already supported by MapLibre).
+**TomTom SDK Solutions:**
+- **Unified event API**: Consistent event handling patterns across all SDK modules through dedicated `events` objects
+- **Built-in hover support**: Automatic hover detection with configurable delays, thresholds, and state management
+- **Conflict resolution**: Smart event routing between different map modules and layers prevents interference
+- **Rich data integration**: Events include relevant TomTom data and contextual information automatically
 
-## `"hover"`
-Hover is a new synthetic event type which does not exist in MapLibre as such.
-A hover event gets fired when the user's pointer **enters** a registered layer.
+### Module-Specific Event Systems
 
-You can configure the hovering cursor when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap)
-via its [events configuration object](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig)
-(see `cursorOnHover`).
-
-Hover events are very useful to provide quick visual feedback. However, taking too much action on hover can feel like the map overreacts.
-
-This is why the SDK also supports long-hover events.
-
-## `"long-hover"`
-Long Hover is a new synthetic event type which does not exist in MapLibre as such.
-A long hover event gets fired when a pointer device **keeps hovering** a registered layer feature long enough without moving.
-
-Long hover events are very useful to ensure the hovering intention of a user and perform further action than an immediate hover.
-For instance, while a hover might just highlight a pin, a long hover might show a popup on it.
-
-The SDK also applies a longer delay for a long hover right after you have moved the map.
-This helps mitigate unwanted hover effects when the user is moving the map around.
-Once the first long hover has happened, subsequent ones will be triggered with a slightly lower delay, until the map is moved again.
-
-You can configure the length of long hover delays
-when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap)
-via its [events configuration object](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig)
-(see `longHoverDelayAfterMapMoveMS` and `longHoverDelayOnStillMapMS`).
-
-## `"click"`
-Click events are based on MapLibre [click](https://maplibre.org/maplibre-gl-js-docs/api/map/#map.event:click).
-
-They are fired when a pointing device (usually a mouse) is **pressed and released** at the same point on the map.
-
-## `"contextmenu"`
-Contextmenu events are based on MapLibre [contextmenu](https://maplibre.org/maplibre-gl-js-docs/api/map/#map.event:contextmenu).
-
-They are fired when the **right button** of the mouse is clicked or the **context menu key** is pressed within the map.
-<br/>
-
-# Registering and de-registering
-
-You can register your user event handlers for each event type in each map module.
-The guide for each [map module](/javascript/maps/documentation/guides/map/quickstart#map-modules) has a user events section.
-
-Each map module has an `events` object which returns an [`EventsModule`](/javascript/maps/documentation/api-reference/map-shared.EventsModule) instance
-typed for the map module in particular. For instance, if you access the `events` object of a Places module, the events will already be typed for Places.
-
-Via `events` you can then register and de-register your handlers using the
-[`on`](/javascript/maps/documentation/api-reference/map-shared.EventsModule#on)
-and [`off`](/javascript/maps/documentation/api-reference/map-shared.EventsModule#off) methods.
-
-The user events handler is a function of type [`UserEventHandler`](/javascript/maps/documentation/api-reference/map-shared#UserEventHandler).
-
-For example, a hover event handler on traffic incidents ([`TrafficModule`](/javascript/maps/documentation/api-reference/map-traffic.TrafficModule))
-can be registered like this:
+Each TomTom module provides its own dedicated event system through an `events` object, eliminating the need to work directly with MapLibre events for module-specific interactions:
 
 ```javascript
-// ensure "map" is initialized as your TomtomMap (see map quickstart guide)
-const traffic = await TrafficModule.get(map);
-traffic.events.incidents.on("hover", (incident) => console.log(JSON.stringify(incident)));
+import { PlacesModule, TrafficIncidentsModule, RoutesModule } from '@cet/maps-sdk-js/map';
+
+// Each module exposes its own events object
+const placesModule = await PlacesModule.get(map);
+const trafficModule = await TrafficIncidentsModule.get(map);
+const routesModule = await RoutesModule.get(map);
+
+// Access module-specific events through the events object
+placesModule.events.on('click', handlePlaceClick);
+trafficModule.events.on('hover', handleTrafficHover);
+routesModule.events.on('click', handleRouteClick);
 ```
 
-You can de-register all your handlers from a module for an event type by calling the
-[`off`](/javascript/maps/documentation/api-reference/map-shared.EventsModule#off) method
-on the corresponding [`EventsModule`](/javascript/maps/documentation/api-reference/map-shared.EventsModule).
+## Basic Event Handling
+
+### Standard MapLibre Event Integration
+
+The SDK maintains full compatibility with MapLibre events for general map interactions:
 
 ```javascript
-traffic.events.incidents.off("hover");
+import { TomTomMap } from '@cet/maps-sdk-js/map';
+
+const map = new TomTomMap({ container: 'map' });
+
+// Standard MapLibre events for general map interaction
+map.getMaplibreMap().on('click', (event) => {
+    console.log('Map clicked at:', event.lngLat);
+});
+
+map.getMaplibreMap().on('moveend', () => {
+    const bounds = map.getMaplibreMap().getBounds();
+    console.log('New map bounds:', bounds);
+});
 ```
-<br/>
 
-# Default SDK handling: *eventState*
-When you register to events in some SDK module, the SDK will automatically start setting eventState property in the features impacted by the registered events.
-This will give you in some modules hover and click effects out of the box, but also the ability to customize how they look without having to set the props yourself.
+## TomTom Module Event Handling
 
-* If you register for any event types in a map module, then hover and long-hover states will be automatically set, even if you had no handlers for them. *E.g. if you listen to click events for Places, in addition to click effects you also get hover effects for free.*
-* If you register only for hover effects in a map module, you won't get click event states set, since hover events have lower priority. *E.g. if you only listen to hover events for Places, when clicking them nothing will happen.*
-<br/>
+### Places Module Events
 
-# Pointer accuracy and padding
-Very often end users enjoy some slack in the accuracy needed to hit a visual feature with their pointing device.
-This is why the SDK tries first to find features right under the pointed coordinates, but if that doesn't work, it defaults to **padded bounds**.
-Padded bounds are a small box (10px across by default) around the pointing device which increases its target range.
+The Places Module provides rich event handling for place interactions through its dedicated events system:
 
-You can configure the size of the padding box when initializing a [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap)
-via its [events configuration object](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig).
-<br/>
+```javascript
+import { PlacesModule } from '@cet/maps-sdk-js/map';
 
-# Customizing user events
-These events can be customized through the [`MapEventsConfig`](/javascript/maps/documentation/api-reference/map-init#MapEventsConfig)
-when initializing a [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap).
+const placesModule = await PlacesModule.get(map);
+
+// Use the module's events object for TomTom-specific interactions
+placesModule.events.on('click', (feature, lngLat) => {
+    console.log('Place clicked:', feature.properties.name);
+    console.log('Click coordinates:', lngLat);
+    displayPlaceDetails(feature.properties);
+});
+
+placesModule.events.on('hover', (feature, lngLat) => {
+    console.log('Place hovered:', feature.properties.name);
+    showPlacePreview(feature.properties);
+});
+```
+
+### Traffic Module Events
+
+Traffic incidents and flow data provide specialized event handling for traffic-related interactions:
+
+```javascript
+import { TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
+
+const trafficModule = await TrafficIncidentsModule.get(map);
+
+// Traffic-specific events with enriched data
+trafficModule.events.on('click', (feature, lngLat) => {
+    displayTrafficIncident({
+        type: feature.properties.type,
+        severity: feature.properties.severity,
+        description: feature.properties.description,
+        delay: feature.properties.delay,
+        location: lngLat
+    });
+});
+
+trafficModule.events.on('long-hover', (feature, lngLat) => {
+    showTrafficTooltip(feature.properties, lngLat);
+});
+```
+
+### Routes Module Events
+
+Route interactions provide detailed information about route segments and waypoints:
+
+```javascript
+import { RoutesModule } from '@cet/maps-sdk-js/map';
+
+const routesModule = await RoutesModule.get(map);
+
+routesModule.events.on('click', (feature, lngLat) => {
+    console.log('Route clicked:', feature.properties.routeId);
+    console.log('Route segment:', feature.properties.segmentIndex);
+    showRouteDetails(feature.properties);
+});
+```
+
+## Advanced Event Types
+
+### Hover Events
+
+The SDK introduces sophisticated hover detection that addresses the complexity of implementing reliable hover functionality with MapLibre. Traditional hover implementation requires managing mouse enter/leave events, dealing with timing issues, and handling state management across different map features.
+
+**Hover Event Challenges:**
+- **Timing complexity**: Raw mouse events require debouncing and timing management
+- **State management**: Tracking which features are currently hovered requires careful state handling
+- **Performance concerns**: Frequent mouse events can impact application performance
+- **Cross-layer conflicts**: Multiple interactive layers can interfere with hover detection
+
+**TomTom Hover Solutions:**
+The SDK provides automatic hover detection with built-in timing, state management, and performance optimization:
+
+```javascript
+// Standard hover: Immediate response to mouse enter
+placesModule.events.on('hover', (feature, lngLat) => {
+    showQuickPreview(feature.properties);
+});
+
+// Hover end: Automatic cleanup when mouse leaves
+placesModule.events.on('hover-end', (feature, lngLat) => {
+    hideQuickPreview();
+});
+```
+
+### Long-Hover Events
+
+Long-hover events are particularly valuable for displaying detailed information without cluttering the interface with immediate popups. This pattern is ideal for progressive disclosure interfaces where users can get quick information by hovering briefly, or detailed information by maintaining hover focus.
+
+**Long-Hover Implementation Benefits:**
+- **Prevents accidental triggers**: Users must maintain focus for a specified duration
+- **Reduces UI noise**: Detailed information appears only when users demonstrate intent
+- **Improves performance**: Expensive operations (like API calls) are triggered only after sustained interest
+- **Enhanced UX**: Creates a natural progression from quick glance to detailed exploration
+
+**Configurable Long-Hover Timing:**
+The long-hover delay is configurable to match your application's UX requirements:
+
+```javascript
+// Long hover with default timing (typically 800ms)
+trafficModule.events.on('long-hover', (feature, lngLat) => {
+    fetchDetailedTrafficInfo(feature.properties.incidentId)
+        .then(details => showDetailedIncident(details, lngLat));
+});
+
+// Long hover end: Cleanup when user moves away before completion
+trafficModule.events.on('long-hover-end', (feature, lngLat) => {
+    cancelDetailedInfoFetch();
+    hideDetailedIncident();
+});
+```
+
+### Event Timing and Configuration
+
+Different modules may have different timing requirements based on the type of interaction and data complexity:
+
+```javascript
+// Configure hover timing for different interaction types
+const quickResponseModules = [placesModule]; // Fast hover for places
+const detailedInfoModules = [trafficModule]; // Longer hover for complex data
+
+// Example of how timing might vary by module type
+// (Note: Actual configuration methods may vary by implementation)
+trafficModule.events.on('long-hover', (feature, lngLat) => {
+    // Triggered after longer delay for complex traffic data
+    displayComprehensiveTrafficAnalysis(feature.properties);
+});
+
+placesModule.events.on('hover', (feature, lngLat) => {
+    // Triggered quickly for simple place information
+    showPlaceBasicInfo(feature.properties);
+});
+```
+
+## Event Data Structure
+
+### Enhanced Event Payloads
+
+TomTom module events provide enriched data compared to raw MapLibre events:
+
+```javascript
+placesModule.events.on('click', (feature, lngLat, eventContext) => {
+    // feature: GeoJSON feature with TomTom-specific properties
+    console.log('Feature data:', feature.properties);
+
+    // lngLat: Precise click coordinates
+    console.log('Click location:', lngLat);
+
+    // eventContext: Additional context and metadata
+    console.log('Event metadata:', eventContext);
+});
+```
+
+### Working with Event Features
+
+Event features follow the GeoJSON specification but include TomTom-specific property enhancements:
+
+```javascript
+trafficModule.events.on('click', (feature, lngLat) => {
+    const props = feature.properties;
+
+    // Access TomTom-specific traffic properties
+    const incidentInfo = {
+        id: props.incidentId,
+        type: props.type,
+        severity: props.severity,
+        description: props.description,
+        delay: props.delay,
+        startTime: props.startTime,
+        endTime: props.endTime,
+        affectedRoads: props.affectedRoads
+    };
+
+    displayTrafficIncident(incidentInfo, lngLat);
+});
+```
+
+## Event Integration Patterns
+
+### Service Integration with Events
+
+Combine module events with TomTom services for comprehensive location intelligence:
+
+```javascript
+import { search, reverseGeocode } from '@cet/maps-sdk-js/services';
+
+placesModule.events.on('click', async (feature, lngLat) => {
+    try {
+        // Get additional context for the clicked location
+        const [addressInfo, nearbyPlaces] = await Promise.all([
+            reverseGeocode({ position: [lngLat.lng, lngLat.lat] }),
+            search({
+                query: feature.properties.category,
+                position: [lngLat.lng, lngLat.lat],
+                radius: 500
+            })
+        ]);
+
+        displayEnrichedPlaceInfo({
+            place: feature.properties,
+            address: addressInfo.features[0]?.properties.address,
+            nearby: nearbyPlaces.results
+        });
+    } catch (error) {
+        console.error('Failed to enrich place data:', error);
+    }
+});
+```
+
+For complete event handling examples and advanced interaction patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.

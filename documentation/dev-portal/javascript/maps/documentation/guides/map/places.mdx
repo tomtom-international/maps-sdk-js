@@ -1,120 +1,134 @@
----
-title: Places Module
-hideMenu: false
-hideSubmenu: false
-hasTwoColumns: false
-titleTags:
-- label: "VERSION 0.5.6"
-  color: "grey5"
+const placesModule = await PlacesModule.get(map);
 - label: "PRIVATE PREVIEW"
   color: "grey5"
----
+const results = await search({
 
-The Places module allows you to display places modelled as GeoJSON features on the map and interact with them.
-It provides out of the box styling and interaction capabilities for TomTom places on the map.
-However, you still can configure how to display the places, and also display them from your own data.
+    position: [4.9041, 52.3676]
 
-# When all you need is a map with one or few pins
-
-Very often all you need to do is to show a map with a single pin without a label, or perhaps a handful of icons which won't change often. For that you might directly try to add [Markers](https://maplibre.org/maplibre-gl-js-docs/api/markers/) via MapLibre.
-See [default marker example](https://maplibre.org/maplibre-gl-js-docs/example/add-a-marker/) and
-[add popup to marker instance example](https://maplibre.org/maplibre-gl-js-docs/example/set-popup/)
-
-However, if you want to easily show TomTom places, or show your own places with richer display information and solid user events which also work well with other map parts, keep reading.
-
-# Initializing a Places module
-
-You can add one or multiple Places modules to your map, each with its own configuration.
-
-The places from each module will be layered on top of places from the module added before.
-
-* First Set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart)
-* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
-* Import the Places module class:
+## Basic Usage
+// Add places to map
+placesModule.addPlaces({
+    id: 'restaurants',
+    places: results.results
+});
+import { TomTomMap, PlacesModule } from '@cet/maps-sdk-js/map';
+import { search } from '@cet/maps-sdk-js/services';
+## Adding Custom Places
+const map = new TomTomMap({ container: 'map' });
+// Initialize Places module with default configuration
+// Add custom places with GeoJSON format
+const customPlaces = [
+    {
+        type: 'Feature',
+        geometry: {
+            type: 'Point',
+            coordinates: [4.9041, 52.3676]
+        },
+        properties: {
+            name: 'My Custom Place',
+            description: 'A special location'
+        }
+    }
+];
 ```javascript
-import { PlacesModule } from "@cet/maps-sdk-js/map";
+placesModule.addPlaces({
+    id: 'custom-locations',
+    places: customPlaces
+const searchResults = await search({
+    query: 'restaurants',
+    center: [4.9041, 52.3676], // Amsterdam
+## Place Styling
+
+// Display results on map
+placesModule.addPlaces({
+    id: 'restaurants',
+    places: results.results,
+    style: {
+        icon: 'restaurant',
+        iconColor: '#FF0000',
+        iconSize: 1.2
+    }
+    console.log('Place hovered:', feature.properties.name);
+});
 ```
-* Initialize a Places module (default config):
+## Managing Places
+### Custom Styling Configuration
+
+// Remove places
+placesModule.removePlaces('restaurants');
+```
+// Clear all places
+
 ```javascript
-const placesModule = await PlacesModule.init(map);
+// Get place group IDs
+const groupIds = placesModule.getPlaceGroupIds();
+
+// Check if group exists
+if (placesModule.hasPlaceGroup('restaurants')) {
+    console.log('Restaurants are displayed');
+}
+});
+
+## Place Interactions
+restaurantModule.show(restaurantResults);
+hotelModule.show(hotelResults);
+// Listen for place clicks
+map.getMaplibreMap().on('click', (event) => {
+    const features = map.getMaplibreMap().queryRenderedFeatures(event.point, {
+        layers: placesModule.getLayerIds()
+    });
+
+    if (features.length > 0) {
+        const place = features[0];
+        console.log('Place clicked:', place.properties.name);
+
+// Add click handler for reverse geocoding
+map.mapLibreMap.on('click', async (event) => {
+    const result = await reverseGeocode({
+## Places with Popups
+
+### Performance Optimization
+import maplibregl from 'maplibre-gl';
+- **Handle errors gracefully**: Implement error handling for service calls
+map.getMaplibreMap().on('click', (event) => {
+    const features = map.getMaplibreMap().queryRenderedFeatures(event.point, {
+        layers: placesModule.getLayerIds()
+    });
+
+    if (features.length > 0) {
+        const place = features[0];
+
+        new maplibregl.Popup()
+            .setLngLat(place.geometry.coordinates)
+            .setHTML(`
+                <h3>${place.properties.poi?.name || place.properties.name}</h3>
+                <p>${place.properties.address?.freeformAddress}</p>
+            `)
+            .addTo(map.getMaplibreMap());
+    }
+    zoom: 12
+});
+
+For complete examples, check the `/examples` folder in the repository.
+// Initialize Places module
+const placesModule = await PlacesModule.init(map, {
+    markerConfig: { color: '#007cbf', size: 1.1 },
+    popupConfig: { closeButton: true, maxWidth: '250px' }
+});
+
+// Search and display restaurants
+const restaurants = await search({
+    query: 'restaurants',
+    center: [4.9041, 52.3676],
+    radius: 2000,
+    limit: 20
+});
+
+placesModule.show(restaurants);
+
+// Handle interactions
+placesModule.events.on('click', (feature, lngLat) => {
+    console.log(`Clicked on: ${feature.properties.name}`);
+    console.log(`Address: ${feature.properties.address}`);
+});
 ```
-* Optionally, [configure your module](#configuring-a-places-module) in the step above
-
-# Showing Places on the map
-
-The Places Module is used to show [`Places`](/javascript/maps/documentation/api-reference/core#Places) on the map,
-which are returned from the services of the Services module.
-For example, showing places from a search result:
-
-```javascript
-import { search } from "@cet/maps-sdk-js/services";
-import { PlacesModule } from "@cet/maps-sdk-js/map";
-// ensure "map" is initialized as your TomtomMap (see map quickstart guide)
-const places = await search({ query: "pharmacy", limit: 35, boundingBox: map.getBounds()});
-const placesModule = await PlacesModule.init(map);
-placesModule.show(places);
-```
-
-<img src="images/ss_places_on_map.png" alt="Map with shown places" />
-
-<br/>
-
-# Interacting with Places on the map
-
-With the SDK you can easily listen to key user events for Places without worrying if the events overlap with other SDK layers.
-
-To understand how the SDK deals with user events, read the [user events guide](/javascript/maps/documentation/guides/map/user-events) first.
-
-The first parameter of event callbacks will be the top Place that got the event.
-<br/>
-
-Registering to user events:
-```javascript
-import { Place } from "@cet/maps-sdk-js/core";
-import { PlacesModule } from "@cet/maps-sdk-js/map";
-// ensure "map" is initialized as your TomtomMap (see map quickstart guide)
-const placesModule = await PlacesModule.init(map);
-placesModule.events.on("hover", (place: Place) => console.log(`hover: ${JSON.stringify(place)}`));
-placesModule.events.on("long-hover", (place: Place) => console.log(`long-hover: ${JSON.stringify(place)}`));
-placesModule.events.on("click", (place: Place) => console.log(`click: ${JSON.stringify(place)}`));
-placesModule.events.on("contextmenu", (place: Place) => console.log(`contextmenu: ${JSON.stringify(place)}`));
-```
-
-When you listen to Places events, the SDK will automatically apply [`eventState`](/javascript/maps/documentation/api-reference/map-shared#SupportsEvents)
-with the occurred event to the Place feature properties on the map.
-
-The SDK applies then default styling based on such properties.
-<div style={{display: "flex"}}>
-	<div style={{marginRight: 36}}>
-		<img src="images/default-pin.png" alt="Default pin" style={{width: 128}} />
-		*Default pin*
-	</div>
-	<div style={{marginRight: 36}}>
-		<img src="images/hovered-pin.png" alt="Hovered pin" style={{width: 128}} />
-		*Hovered pin*
-	</div>
-	<div>
-		<img src="images/clicked-pin.png" alt="Clicked pin" style={{width: 128}} />
-		*Clicked pin*
-	</div>
-</div>
-You can change such default styling if you want.
-<br/>
-
-# Configuring a Places module
-
-You can customize how you want to display places in different ways.
-
->Coming soon
-<br/>
-
-## Customizing icons
-
-You can customize the Places icons in the `PlacesModule` module
-using the [`applyIconConfig`](/javascript/maps/documentation/api-reference/map-places.PlacesModule#applyConfig) method.
-See the [Places Customization](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-places-customize) example.
-<br/>
-
-## Customizing text
-
->Coming soon

@@ -4,62 +4,87 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-The Services bundle consists of a set of [GeoJSON](#why-geojson) services for TomTom location APIs and can be used from any JS-based application.
+# Services Quickstart
 
-Each service is exposed via typically a stateless function which accepts some parameters.
-You call the function with some parameters and get the GeoJSON response back without further side effects.
+The Services bundle provides a comprehensive set of GeoJSON-based functions for accessing TomTom's location APIs. These services can be used in any JavaScript-based application, from web browsers to Node.js servers.
 
-The SDK services are designed to share as many types between them as possible, both for inputs and outputs.
-<br/>
+## Setup
 
-## Why GeoJSON?
+```javascript
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
 
-* [GeoJSON](https://geojson.org/) is a widely used standard to encode geographic data structures.
-* Having GeoJSON compatibility helps you seamlessly integrate with a large ecosystem of geospatial tools and services.
-* Easily readable by both humans and machines.
-* Extends JSON, which makes it a perfect choice for JS-based applications.
-<br/>
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+```
 
-# Where can I use the Services bundle?
+## Available Services
 
-**web**
-* Search for places, plan routes, fetch geometries and EV charging stations availability.
-* Then use the Map bundle to show them on a map and interact with them.
+### Places Services
+Search, geocoding, and reverse geocoding functionality:
 
-**nodejs**
-* Ideal for tooling and back-end processing.
-* Geocode address inputs to resolve their full address and position before saving or further processing.
-* Reverse geocode coordinates to enrich locations before saving them.
+```javascript
+import { search, geocode, reverseGeocode } from '@cet/maps-sdk-js/services';
 
-**React Native**
-* Access our GeoJSON location services from a single codebase without extra plumbing.
-<br/>
+// Search for places
+const results = await search({
+    query: 'restaurants',
+    position: [4.9041, 52.3676]
+});
 
-# Set up
+// Geocode address
+const location = await geocode({
+    query: 'Dam Square, Amsterdam'
+});
 
-1. Configure the project as described in [Project setup guide](/javascript/maps/documentation/overview/project-set-up).
-2. Discover which [services you want to use](#available-services) and use them.
-<br/>
+// Reverse geocode coordinates
+const address = await reverseGeocode({
+    position: [4.9041, 52.3676]
+});
+```
 
-# Available services
+### Routing Services
+Route calculation and optimization:
 
-Explore the different services available in the TomTom SDK:
+```javascript
+import { calculateRoute } from '@cet/maps-sdk-js/services';
 
-[**Places:**](/javascript/maps/documentation/guides/services/places/quickstart)
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+```
 
-*These are services that enable applications to search for places and their details.*
-* [Search](/javascript/maps/documentation/guides/services/places/search) - search for places, brands or categories.
-* [Geocoding](/javascript/maps/documentation/guides/services/places/geocoding) - resolve places quickly based on address/location inputs.
-* [Reverse geocoding](/javascript/maps/documentation/guides/services/places/reverse-geocoding) - find the nearest address for given coordinates.
+## Node.js Usage
 
-[**Routing:**](/javascript/maps/documentation/guides/services/routing/quickstart)
+The services work identically in Node.js environments:
 
-*These are services that enable applications to plan routes.*
-* [Routing](/javascript/maps/documentation/guides/services/routing/planning-route) - controls added places on the map.
-* [Long distance EV routing](/javascript/maps/documentation/guides/services/routing/long-distance-ev-routing) - controls added geometries on the map.
+```javascript
+const { TomTomConfig } = require('@cet/maps-sdk-js/core');
+const { search, calculateRoute } = require('@cet/maps-sdk-js/services');
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY
+});
+
+const results = await search({
+    query: 'coffee shops',
+    position: [4.9041, 52.3676]
+});
+```
+
+## Next Steps
+
+- [Places Services](/javascript/maps/documentation/guides/services/places/quickstart) - Search, geocoding, reverse geocoding
+- [Routing Services](/javascript/maps/documentation/guides/services/routing/quickstart) - Route calculation and optimization
+- [Customizing Services](/javascript/maps/documentation/guides/services/customizing-services) - Configuration options
+
+For complete examples, check the `/examples` folder in the repository.

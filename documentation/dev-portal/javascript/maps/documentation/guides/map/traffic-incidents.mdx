@@ -4,119 +4,375 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-Traffic incidents provide real time observed speeds and travel times for all key roads in a network.
+# Traffic Incidents Module Overview
+
+Traffic incidents provide real-time information about events affecting road conditions, including accidents, road closures, construction work, and weather-related disruptions. This data helps users understand not just where traffic problems exist, but what's causing them and their expected impact on travel times.
+
 <img src="images/incidents.png" alt="Traffic incidents" style={{width: 500}} />
-<br/>
 
-# Initializing a map with traffic incidents
+## Understanding Traffic Incident Data
 
->Coming soon...
-<br/>
+Traffic incidents represent specific events that disrupt normal traffic flow, providing detailed information about the nature, severity, and expected duration of each incident. The system displays both visual indicators on the map and rich metadata that can be accessed through user interactions.
 
-# Initializing the Traffic Incidents module
-* First set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart).
-* Make sure to have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
-* If you want traffic incidents straight away, include `"trafficIncidents"` in your style:
+**Key Incident Information:**
+- **Incident type and category** (accident, construction, weather conditions, etc.)
+- **Severity levels** indicating the impact on traffic flow
+- **Delay estimates** showing expected time impacts in minutes
+- **Affected road segments** with precise geographic location data
+- **Duration information** including start times and estimated resolution
+
+**Visual Representation:**
+- **Icon indicators** showing incident type and severity at specific locations
+- **Road segment coloring** indicating affected areas and traffic impact
+- **Interactive elements** supporting click and hover events for detailed information
+
+# Initializing the Traffic Incidents Module
+
+## Basic Setup
+
+First set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart) and ensure you have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
+
+### Automatic Traffic Incidents Integration
+
+For immediate traffic incident visualization, include `"trafficIncidents"` in your map style configuration:
+
 ```javascript
 const map = new TomTomMap(
   { container: "map" },
-  { style: { type: "published", include: ["trafficIncidents"]}}
+  { style: { type: "published", include: ["trafficIncidents"] } }
 );
 ```
-* If you want to further control traffic incidents: import the `TrafficIncidentsModule` class:
+
+### Advanced Traffic Incidents Control
+
+For granular control over traffic incident behavior, import and initialize the TrafficIncidentsModule:
+
 ```javascript
 import { TrafficIncidentsModule } from "@cet/maps-sdk-js/map";
-```
-* [Initialize a Traffic module](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#get) for your running map (default config):
-```javascript
+
 const traffic = await TrafficIncidentsModule.get(map);
 ```
-* Optionally, [configure your module](#configuring-the-traffic-incidents-module) in the step below
-<br/>
+
+### Module Initialization with Configuration
+
+Configure the module during initialization to set up specific behaviors:
+
+```javascript
+const traffic = await TrafficIncidentsModule.get(map, {
+    visible: false,
+    icons: { visible: true },
+    filters: {
+        any: [{ incidentCategories: { show: "only", values: ["accident", "road_closed"] } }]
+    }
+});
+```
 
 # Configuring the Traffic Incidents Module
-You can set traffic incidents configuration on startup or at any time during runtime.
-Any configuration changes will be seamlessly applied without reloading the map.
 
-## Ways to configure traffic
+The Traffic Incidents Module provides flexible configuration options that can be applied during initialization or modified at runtime. All configuration changes are applied seamlessly without requiring map reloads, ensuring smooth user experience.
 
-### Configuring on init
-With the `config` parameter you can set all the configuration you want right when the module is [initialized](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#get).
-Any configuration parameters you don't set will resolve to their default values.
-If you initialize the module right after the map itself, then the config takes effect right when traffic appears for the first time.
+## Configuration Methods
 
-```javascript
-const incidents = await TrafficIncidentsModule.get(map, { icons: { visible: false} });
-```
-<br/>
+### Runtime Configuration with applyConfig
 
-### Configuring with applyConfig
-With the `config` parameter in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#applyConfig)
-you can set all the configuration you want right on the spot while the module is already initialized.
+Modify traffic incident settings dynamically while the module is active:
 
-Any configuration parameters you don't set won't have any effect, so the existing values will remain.
 ```javascript
 const incidents = await TrafficIncidentsModule.get(map);
-// ...
-incidents.applyConfig({ icons: { visible: false} });
-```
-<br/>
 
-### Configuring with dedicated methods
-You can change key configuration parts with dedicated methods which act the same as `applyConfig` just for the part they change.
+// Update configuration without affecting other settings
+incidents.applyConfig({
+    visible: true,
+    icons: { visible: false },
+    filters: {
+        any: [{ magnitudes: { show: "only", values: ["major", "moderate"] } }]
+    }
+});
+```
+
+### Dedicated Configuration Methods
+
+Use specific methods for common configuration changes:
+
 ```javascript
 const incidents = await TrafficIncidentsModule.get(map);
+
+// Toggle overall visibility
 incidents.setVisible(false);
-incidents.filter({ any: [{ roadCategories: { show: "only", values: ["primary"] } }] });
+
+// Toggle icon visibility independently
+incidents.setIconsVisible(true);
+
+// Apply filtering
+incidents.filter({
+    any: [{ incidentCategories: { show: "only", values: ["accident"] } }]
+});
 ```
-<br/>
 
-### Reset traffic configuration:
-All map modules offer a [`resetConfig`](/javascript/maps/documentation/api-reference/map-shared.AbstractMapModule#resetConfig) method which will reset the module config to defaults.
+### Configuration Reset
 
-For traffic incidents, resetting configuration means that visibilities will go back to defaults (visible), and any added filters will be removed.
+Reset all module settings to their default values:
+
 ```javascript
-const incidents = await TrafficIncidentsModule.get(map, { visible: false });
-// ...
+// Resets visibility to true and removes all filters
 incidents.resetConfig();
 ```
-<br/>
 
-## Traffic incidents visibility
-You can change traffic incidents visibility via configuration or direct methods at any time.
-It can be practical in your application to let users toggle traffic visibility, or to programmatically adjust it when
-showing other content on the map.
+## Traffic Incidents Visibility Control
 
-You can control overall incidents visibility via:
-* [`setVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#setVisible) method on the `TrafficIncidentsModule` class.
-* `visible` property in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#get)
-* `visible` property in the config object in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#applyConfig)
-* incident icons visibility via [`setIconsVisible`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#setIconsVisible)
+Traffic incidents visibility can be controlled at multiple levels, providing fine-grained control over what information is displayed to users.
+
+### Overall Incident Visibility
+
+Control the visibility of all traffic incident data:
 
 ```javascript
 // applying incidents visibility on init:
 const incidents = await TrafficIncidentsModule.get(map, { visible: false });
-// then changing it via applyConfig:
-incidents.applyConfig({ incidents: { visible: true }});
-// then changing it via dedicated method:
-incidents.setIconsVisible(true);
+
+// changing via applyConfig:
+incidents.applyConfig({ visible: true });
+
+// changing via dedicated method:
+incidents.setVisible(true);
 ```
-<br/>
 
-## Filtering traffic incidents
-If you want more advanced control of what traffic incidents to display, you can use filtering.
-With traffic filtering you can, at any time, change what types of traffic incidents you display in more detail.
+### Icon-Specific Visibility
 
-You can filter traffic incidents via:
-* the `filters` properties in the config object upon module [init](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#get)
-* the `filters` properties in [`applyConfig`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#applyConfig)
-* [`filter`](/javascript/maps/documentation/api-reference/map-traffic.TrafficIncidentsModule#filterFlow) method
+Control incident icons independently from road segment indicators:
 
->Coming soon...
+```javascript
+// Hide icons while keeping road coloring
+incidents.setIconsVisible(false);
 
+// Configure icon visibility during initialization
+const incidents = await TrafficIncidentsModule.get(map, {
+    icons: { visible: false }
+});
+```
+
+**Practical Applications:**
+- **Decluttered view** showing traffic impact without detailed icons
+- **Zoom-based display** hiding icons at low zoom levels for performance
+- **Context-sensitive UI** adjusting detail level based on user preferences
+
+## Advanced Traffic Incident Filtering
+
+Traffic incident filtering provides sophisticated control over which types of incidents are displayed. This feature enables applications to focus on specific incident types, severity levels, or impact criteria based on user needs or application context.
+
+### Incident Category Filtering
+
+Filter incidents by type to focus on specific kinds of disruptions:
+
+```javascript
+// Show only accidents and road closures
+incidents.filter({
+    any: [{
+        incidentCategories: {
+            show: "only",
+            values: ["accident", "road_closed"]
+        }
+    }]
+});
+
+// Hide weather-related incidents
+incidents.filter({
+    any: [{
+        incidentCategories: {
+            show: "except",
+            values: ["rain", "fog", "ice", "wind"]
+        }
+    }]
+});
+```
+
+**Available Incident Categories:**
+- **accident**: Vehicle collisions and crashes
+- **road_closed**: Complete road closures
+- **road_works**: Construction and maintenance activities
+- **lane_closed**: Partial lane closures and restrictions
+- **jam**: Traffic congestion and bottlenecks
+- **broken_down_vehicle**: Disabled vehicles affecting traffic
+- **dangerous_conditions**: Hazardous road conditions
+- **flooding**: Water-related road impacts
+- **fog**: Visibility-reducing weather conditions
+- **rain**: Precipitation affecting driving conditions
+- **ice**: Icy road conditions
+- **wind**: High wind conditions affecting travel
+- **unknown**: Incidents with unspecified categories
+
+### Severity and Impact Filtering
+
+Filter incidents based on their severity and expected impact:
+
+```javascript
+// Show only major incidents
+incidents.filter({
+    any: [{
+        magnitudes: {
+            show: "only",
+            values: ["major"]
+        }
+    }]
+});
+
+// Show major and moderate incidents, hide minor
+incidents.filter({
+    any: [{
+        magnitudes: {
+            show: "only",
+            values: ["major", "moderate"]
+        }
+    }]
+});
+```
+
+**Severity Levels:**
+- **major**: Significant impact on traffic flow with substantial delays
+- **moderate**: Noticeable impact with moderate delays
+- **minor**: Limited impact with minimal delays
+- **unknown**: Incidents with undetermined impact levels
+
+### Delay-Based Filtering
+
+Filter incidents based on their expected delay impact:
+
+```javascript
+// Show only incidents causing delays
+incidents.filter({
+    any: [{
+        delays: {
+            mustHaveDelay: true
+        }
+    }]
+});
+
+// Show incidents with significant delays (10+ minutes)
+incidents.filter({
+    any: [{
+        delays: {
+            minDelayMinutes: 10
+        }
+    }]
+});
+
+// Show incidents with major delays or no delay information
+incidents.filter({
+    any: [{
+        delays: {
+            minDelayMinutes: 15,
+            mustHaveDelay: false
+        }
+    }]
+});
+```
+
+### Road Category Filtering
+
+Apply the same road category filtering available in traffic flow:
+
+```javascript
+// Show incidents only on major highways
+incidents.filter({
+    any: [{
+        roadCategories: {
+            show: "only",
+            values: ["motorway", "trunk"]
+        }
+    }]
+});
+```
+
+### Complex Filter Combinations
+
+Create sophisticated filtering logic by combining multiple criteria:
+
+```javascript
+// Show major accidents OR any road closures
+incidents.filter({
+    any: [
+        {
+            incidentCategories: { show: "only", values: ["accident"] },
+            magnitudes: { show: "only", values: ["major"] }
+        },
+        {
+            incidentCategories: { show: "only", values: ["road_closed"] }
+        }
+    ]
+});
+```
+
+### Separate Icon and Line Filtering
+
+Apply different filters to incident icons and road segment indicators:
+
+```javascript
+// Show all incident road coloring, but only major incident icons
+incidents.filter(
+    undefined, // No filtering on road segments
+    { any: [{ magnitudes: { show: "only", values: ["major"] } }] } // Filter icons
+);
+
+// Filter road segments and icons differently
+incidents.filter(
+    { any: [{ roadCategories: { show: "only", values: ["motorway"] } }] }, // Roads
+    { any: [{ incidentCategories: { show: "only", values: ["accident"] } }] } // Icons
+);
+```
+
+## Event Handling
+
+The Traffic Incidents Module provides comprehensive event handling for interactive applications:
+
+```javascript
+const incidents = await TrafficIncidentsModule.get(map);
+
+// Handle incident clicks
+incidents.events.on('click', (feature, lngLat) => {
+    const props = feature.properties;
+    displayIncidentDetails({
+        type: props.type,
+        category: props.category,
+        severity: props.severity,
+        description: props.description,
+        delay: props.delay,
+        startTime: props.startTime,
+        location: lngLat
+    });
+});
+
+// Handle hover for quick information
+incidents.events.on('hover', (feature, lngLat) => {
+    showIncidentPreview(feature.properties, lngLat);
+});
+
+// Handle long hover for detailed information
+incidents.events.on('long-hover', (feature, lngLat) => {
+    fetchDetailedIncidentInfo(feature.properties.incidentId)
+        .then(details => showDetailedIncident(details, lngLat));
+});
+```
+
+## Checking Module State
+
+Query the current state of the traffic incidents module:
+
+```javascript
+// Check overall visibility
+if (incidents.isVisible()) {
+    console.log('Traffic incidents are visible');
+}
+
+// Check icon visibility specifically
+if (incidents.anyIconLayersVisible()) {
+    console.log('Incident icons are visible');
+}
+```
+
+For complete traffic incident implementation examples and advanced filtering patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.

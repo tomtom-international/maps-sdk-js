@@ -4,72 +4,237 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-The Reverse Geocoding module translates a coordinate (`37.786505, -122.3862`) into human-understandable information
-like a street address or street element ("30 The Embarcadero, San Francisco, CA 94111").
+# Reverse Geocoding Service
 
-The type of response depends on the available data:
+The Reverse Geocoding service converts geographic coordinates into human-readable addresses and location information. This service is essential for applications that need to display location details based on map clicks, GPS coordinates, or other coordinate-based inputs, transforming raw latitude/longitude pairs into meaningful address data.
 
--   `address`: Returns the most detailed information.
--   `street element`: Less detailed; returned when there is no address data.
--   `geography`: Returns the smallest available geographic data.
-  -   This is returned when there is no address or street element data.
-  -   You can specify the level of geography to get a geometry (see the [`PlaceType`](/javascript/maps/documentation/api-reference/core#placetype) parameter).
+## Core Reverse Geocoding Concepts
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_initializing"></a>}
+Reverse geocoding performs the inverse operation of standard geocoding, taking precise coordinate inputs and returning structured address information. This process involves spatial analysis to determine the most appropriate address or place name for a given geographic point.
 
-# Initializing
+**Primary Applications:**
+- **Map interaction feedback** when users click on map locations
+- **GPS coordinate interpretation** in mobile and navigation applications
+- **Location labeling** for photos, check-ins, and social media posts
+- **Address discovery** for delivery and logistics applications
+- **Geographic data enrichment** in analytics and reporting systems
 
-To use the Reverse Geocoding SDK, you need to configure its credentials and add the SDK reverse geocoding module as a dependency:
-1.  Get your TomTom API Key and configure the project as described in the [Project setup guide (TODO)](/javascript/maps/documentation/overview/project-set-up).
-2.  Add the `Reverse Geocoding` module dependency
-    - for NodeJS add dependency in `main.js`
-       ``` javascript
-       const reverseGeocode = require("@cet/maps-sdk-js/services").reverseGeocode;
-       const TomTomConfig = require("@cet/maps-sdk-js/core").TomTomConfig;
-       ```
-    - for Web add dependency in `index.js`
-       ```javascript
-       import { reverseGeocode } from "@cet/maps-sdk-js/services";
-       import { TomTomConfig } from "@cet/maps-sdk-js/core";
-       ```
+## Basic Reverse Geocoding Usage
 
-3. To enable your API key
-    ``` javascript
-    TomTomConfig.instance.put({
-        // (Set your own API key when working in your own environment)
-        apiKey: process.env.API_KEY_TESTS
+### Simple Coordinate to Address Conversion
+
+The fundamental reverse geocoding operation converts coordinates into readable address information:
+
+```javascript
+import { reverseGeocode } from '@cet/maps-sdk-js/services';
+
+const result = await reverseGeocode({
+    position: [4.9041, 52.3676] // Amsterdam Dam Square coordinates
+});
+
+const address = result.features[0]?.properties.address;
+console.log(address.freeformAddress); // "Dam, 1012 Amsterdam, Netherlands"
+```
+
+This basic approach provides the most relevant address information for the specified coordinates, typically returning the nearest addressable location.
+
+### Enhanced Result Processing
+
+Process reverse geocoding results to extract specific address components and handle various response scenarios:
+
+```javascript
+const result = await reverseGeocode({
+    position: [4.9041, 52.3676]
+});
+
+const place = result.features[0];
+
+if (place?.properties.address) {
+    const addr = place.properties.address;
+    console.log(addr.streetName);       // "Dam"
+    console.log(addr.municipality);     // "Amsterdam"
+    console.log(addr.country);          // "Netherlands"
+    console.log(addr.freeformAddress);  // Complete formatted address
+}
+```
+
+**Address Component Availability:**
+Address components vary based on the coordinate location and available geographic data. Urban areas typically provide more detailed information, while rural or remote locations may return broader regional information.
+
+## Advanced Configuration Options
+
+### Search Radius and Precision Control
+
+Configure the search scope and precision requirements for reverse geocoding operations:
+
+```javascript
+const result = await reverseGeocode({
+    position: [4.9041, 52.3676],
+    radius: 100,        // Search radius in meters
+    language: 'en-GB'   // Response language preference
+});
+```
+
+**Parameter Effects:**
+- **radius**: Controls how far from the coordinate to search for addressable features
+- **language**: Determines the language of returned address components and place names
+- Smaller radius values provide more precise results but may return no results in sparse areas
+- Larger radius values increase the likelihood of finding address information
+
+### Result Quality and Relevance
+
+The service prioritizes result relevance based on proximity and address completeness:
+
+**Quality Factors:**
+- **Proximity**: Closer addresses receive higher priority
+- **Completeness**: Full addresses rank higher than partial information
+- **Accuracy**: Verified addresses take precedence over estimated locations
+- **Relevance**: More specific locations (building addresses) rank above general areas
+
+## Integration Patterns
+
+### Map Click Integration
+
+Implement reverse geocoding for interactive map experiences:
+
+```javascript
+import { TomTomMap } from '@cet/maps-sdk-js/map';
+
+const map = new TomTomMap({ container: 'map' });
+
+map.getMaplibreMap().on('click', async (event) => {
+    const { lng, lat } = event.lngLat;
+
+    const result = await reverseGeocode({
+        position: [lng, lat]
     });
-    ```
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_making_a_reverse_geocoding_call"></a>}
-
-# Making a reverse geocoding call
-
-Specify the reverse geocoding request parameters with the [`ReverseGeocodingParams`](/javascript/maps/documentation/api-reference/services#reversegeocodingparams).
-
-``` javascript
-const reverseGeocodeParams = { position: [37.786505, -122.3862] };
+    const address = result.features[0]?.properties.address?.freeformAddress;
+    if (address) {
+        console.log(`Clicked location: ${address}`);
+        // Display address in popup or sidebar
+    }
+});
 ```
 
-Once you have a [`ReverseGeocodingParams`](/javascript/maps/documentation/api-reference/services#reversegeocodingparams).
+This pattern enables users to discover address information by interacting directly with map locations.
 
-``` javascript
-reverseGeocode(reverseGeocodeParams)
-    .then((response) => console.log(response));
+### GPS Location Processing
+
+Process GPS coordinates from mobile devices or location services:
+
+```javascript
+// Get user's current location and convert to address
+navigator.geolocation.getCurrentPosition(async (position) => {
+    const { longitude, latitude } = position.coords;
+
+    const result = await reverseGeocode({
+        position: [longitude, latitude],
+        radius: 50 // Precise local search
+    });
+
+    const currentAddress = result.features[0]?.properties.address;
+    if (currentAddress) {
+        displayCurrentLocation(currentAddress.freeformAddress);
+    }
+});
 ```
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
+### Batch Processing
 
-# Next steps
+For applications requiring multiple coordinate conversions, implement efficient batch processing:
 
-Since you have learned how to reverse geocode, here are recommendations for the next steps:
+```javascript
+async function reverseGeocodeMultiple(coordinates) {
+    const results = await Promise.all(
+        coordinates.map(coord =>
+            reverseGeocode({ position: coord })
+        )
+    );
 
--   [Autocomplete and fuzzy search (TODO)](/javascript/maps/documentation/guides/search/autocomplete-and-fuzzy-search)
--   [Specialized search types (TODO)](/javascript/maps/documentation/guides/search/specialized-search)
--   [Adding markers to the map (TODO)](/javascript/maps/documentation/guides/map/markers)
+    return results.map(result =>
+        result.features[0]?.properties.address?.freeformAddress
+    ).filter(Boolean);
+}
+
+// Usage example
+const waypoints = [
+    [4.9041, 52.3676],
+    [2.3522, 48.8566],
+    [13.4050, 52.5200]
+];
+
+const addresses = await reverseGeocodeMultiple(waypoints);
+```
+
+## Error Handling and Edge Cases
+
+### Robust Error Management
+
+Implement comprehensive error handling for various scenarios:
+
+```javascript
+async function safeReverseGeocode(position, options = {}) {
+    try {
+        const result = await reverseGeocode({
+            position,
+            radius: options.radius || 1000,
+            ...options
+        });
+
+        if (result.features.length === 0) {
+            return {
+                success: false,
+                message: 'No address found for coordinates'
+            };
+        }
+
+        return {
+            success: true,
+            address: result.features[0].properties.address
+        };
+
+    } catch (error) {
+        return {
+            success: false,
+            message: `Reverse geocoding failed: ${error.message}`
+        };
+    }
+}
+```
+
+**Common Edge Cases:**
+- **Ocean coordinates**: Return regional or country-level information
+- **Remote locations**: May return broader geographic areas instead of specific addresses
+- **Invalid coordinates**: Handle coordinate validation and error responses
+- **Service limits**: Implement retry logic and rate limiting
+
+## Performance Optimization
+
+For applications with frequent reverse geocoding needs, consider these optimization strategies:
+
+**Caching Strategy:**
+```javascript
+const reverseGeocodeCache = new Map();
+
+async function cachedReverseGeocode(position, precision = 0.001) {
+    // Round coordinates for cache key
+    const key = `${Math.round(position[0]/precision)*precision},${Math.round(position[1]/precision)*precision}`;
+
+    if (reverseGeocodeCache.has(key)) {
+        return reverseGeocodeCache.get(key);
+    }
+
+    const result = await reverseGeocode({ position });
+    reverseGeocodeCache.set(key, result);
+    return result;
+}
+```
+
+For complete reverse geocoding implementation examples and advanced integration patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.

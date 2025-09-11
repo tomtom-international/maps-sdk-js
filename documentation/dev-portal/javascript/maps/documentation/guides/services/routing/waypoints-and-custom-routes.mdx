@@ -1,69 +1,132 @@
 ---
-title: Waypoints
+title: Waypoints and Custom Routes
 hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-Planning a route may involve locations beyond the origin and destination, where the origin and destination are the first and last waypoints of the [`locations`](/javascript/maps/documentation/api-reference/services/#routemandatoryparams) parameter respectively.
+# Waypoints and Custom Routes
 
-In a more advanced navigation experience, the user may want to provide more waypoints through which the route should be calculated. These can be stops along the way, or places that the user wants to pass by during the journey. These additional waypoints can be added to the [`locations`](/javascript/maps/documentation/api-reference/services/#routemandatoryparams) array and are included in the route in the order they are specified.
+Waypoints in the TomTom Maps SDK enable complex route planning scenarios that go beyond simple origin-to-destination routing, supporting multi-stop routes and flexible routing points.
 
-<Blockquote type="announcement" hasIcon>
-
-The maximum allowed number of additional waypoints is 150.
-
-</Blockquote>
-
-A [`WaypointLike`](/javascript/maps/documentation/api-reference/core/#waypointlike) is either a complex [`GeoInputs`](/javascript/maps/documentation/api-reference/core/#waypoint) object or anything with coordinates.
-
-There are two different types of waypoints:
-- Single point waypoints - considered as a single point and seen as stops along the route.
-- Circle or soft waypoints - a point with a radius. The routing engine calculates, for the given planning criteria, the best path for the route to follow while intersecting with the waypoint circle.
-The origin and destination must be single point waypoints.
-
-In [route planning](/javascript/maps/documentation/guides/routing/planning-a-route), each single point waypoint results in an extra [leg section](/javascript/maps/documentation/guides/routing/route-sections) in the response. A circle (soft) waypoint will not generate any extra leg section or specific guidance.
-
-By default, a [`GeoInputs`](/javascript/maps/documentation/api-reference/core/#waypoint) is considered a single point, unless a [`radius`](/javascript/maps/documentation/api-reference/core/#waypoint) is specified, which then transforms the waypoint into a circle (soft) waypoint.
+## Multi-Stop Routes
 
 ```javascript
-import { asSoftWaypoint, GeoInputs } from "@cet/maps-sdk-js/core";
-import { CalculateRouteParams } from "@cet/maps-sdk-js/services";
+import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 
-// Single point waypoints
-const amsterdam = [4.897070, 52.377956];
-const rotterdam = [4.462456, 51.926517];
-const hague = [4.288788, 52.078663];
-
-// Circle (soft) waypoint
-const utrecht: GeoInputs = asSoftWaypoint([5.11518, 52.091458], 100);
-
-// A route that traverses the waypoints in the same sequence that the array is defined
-const routePlanningParams: CalculateRouteParams = {
-  locations: [amsterdam, hague, utrecht, rotterdam]
-};
+// Route with multiple stops
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam (start)
+        [3.7038, 51.2194], // Brussels (stop 1)
+        [4.3517, 50.8503], // Liège (stop 2)
+        [2.3522, 48.8566]  // Paris (end)
+    ]
+});
 ```
+
+## Using Geocoded Waypoints
 
 ```javascript
-import { asSoftWaypoint } from "@cet/maps-sdk-js/core";
+// Geocode addresses for waypoints
+const origin = await geocode({ query: 'Amsterdam Central Station' });
+const stop1 = await geocode({ query: 'Brussels Grand Place' });
+const stop2 = await geocode({ query: 'Antwerp Cathedral' });
+const destination = await geocode({ query: 'Paris Louvre Museum' });
 
-// Single point waypoints
-const amsterdam = [4.897070, 52.377956];
-const rotterdam = [4.462456, 51.926517];
-const hague = [4.288788, 52.078663];
-
-// Circle (soft) waypoint
-const utrecht: GeoInputs = asSoftWaypoint([5.11518, 52.091458], 100);
-
-// A route that traverses the waypoints in the same sequence that the array is defined
-const routePlanningParams = {
-  locations: [amsterdam, hague, utrecht, rotterdam]
-};
+const route = await calculateRoute({
+    locations: [
+        origin.features[0].geometry.coordinates,
+        stop1.features[0].geometry.coordinates,
+        stop2.features[0].geometry.coordinates,
+        destination.features[0].geometry.coordinates
+    ]
+});
 ```
 
-# Reconstruction routes (TODO)
+## Route with Optimization
+
+```javascript
+// Multi-stop route with optimization
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [3.7038, 51.2194], // Brussels
+        [4.3517, 50.8503], // Liège
+        [2.3522, 48.8566]  // Paris
+    ],
+    routeType: 'fastest',
+    traffic: true,
+    optimizeWaypointOrder: true // Optimize stop order
+});
+```
+
+## Working with Route Legs
+
+```javascript
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [3.7038, 51.2194], // Brussels
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+
+// Each waypoint creates a route leg
+route.routes[0].legs.forEach((leg, index) => {
+    console.log(`Leg ${index + 1}:`);
+    console.log(`Distance: ${leg.summary.lengthInMeters}m`);
+    console.log(`Duration: ${leg.summary.travelTimeInSeconds}s`);
+});
+```
+
+## Custom Route Display
+
+```javascript
+import { TomTomMap, RoutesModule } from '@cet/maps-sdk-js/map';
+
+const map = new TomTomMap({ container: 'map' });
+const routesModule = await RoutesModule.get(map);
+
+// Calculate multi-stop route
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676],
+        [3.7038, 51.2194],
+        [2.3522, 48.8566]
+    ]
+});
+
+// Display route on map
+routesModule.addRoute({
+    id: 'multi-stop-route',
+    route: route.routes[0]
+});
+```
+
+## Route with Time Windows
+
+```javascript
+// Route with specific timing for stops
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [3.7038, 51.2194], // Brussels
+        [2.3522, 48.8566]  // Paris
+    ],
+    departAt: new Date().toISOString(),
+    traffic: true
+});
+
+// Access arrival times at each waypoint
+route.routes[0].legs.forEach((leg, index) => {
+    console.log(`Arrive at waypoint ${index + 1}: ${leg.summary.arrivalTime}`);
+});
+```
+
+For complete examples, check the `/examples` folder in the repository.

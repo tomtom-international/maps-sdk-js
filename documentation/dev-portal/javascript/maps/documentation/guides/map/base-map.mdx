@@ -4,10 +4,357 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-> Coming soon...
+# Base Map Module Overview
+
+The Base Map Module in the TomTom Maps SDK provides comprehensive control over the fundamental map layers that form the visual foundation of your maps. This module encompasses essential cartographic elements including land, water, buildings, roads, borders, and various label types, enabling precise customization of map appearance and functionality.
+
+## Understanding Base Map Components
+
+The Base Map Module manages vector tile layers that represent the core geographic and cartographic features of TomTom maps. Unlike specialized modules that handle specific data types like traffic or POIs, the Base Map Module controls the fundamental visual elements that provide geographic context and navigation reference.
+
+**Core Layer Categories:**
+- **Geographic features** including land cover, water bodies, and political borders
+- **Built environment** with 2D and 3D building representations
+- **Transportation infrastructure** featuring road networks and navigation aids
+- **Labeling system** providing hierarchical place names and identifiers
+- **Address information** including house numbers and location markers
+
+**Key Capabilities:**
+- **Layer group management** for controlling specific map feature categories
+- **Selective visibility** enabling focused map displays for specialized applications
+- **Dynamic configuration** supporting runtime changes without map reloads
+- **Event handling** for interactive map experiences with base map elements
+
+## Base Map Layer Groups
+
+The Base Map Module organizes map content into logical layer groups that can be controlled independently, enabling precise customization of map appearance for different use cases and user preferences.
+
+### Geographic Foundation Layers
+
+**Land Coverage (`land`)**
+- Represents terrain and land use classifications
+- Provides the visual foundation for all other map elements
+- Uses fill styling to show different land cover types
+
+**Water Bodies (`water`)**
+- Includes rivers, lakes, seas, and other water features
+- Rendered with both fill and line representations for complete coverage
+- Essential for geographic orientation and navigation context
+
+**Political Boundaries (`borders`)**
+- Shows country, state, and administrative boundaries
+- Rendered as line features with varying styles based on boundary importance
+- Critical for geographic and political context
+
+### Built Environment Layers
+
+**2D Buildings (`buildings2D`)**
+- Traditional flat building footprints and outlines
+- Uses fill and line styling for building shapes and edges
+- Optimal for general mapping and navigation applications
+
+**3D Buildings (`buildings3D`)**
+- Extruded building representations with height information
+- Creates depth and visual interest for urban environments
+- Ideal for immersive mapping experiences and urban planning
+
+**House Numbers (`houseNumbers`)**
+- Address identifiers displayed as symbol layers
+- Essential for navigation and location-specific applications
+- Provides precise address-level geographic reference
+
+### Transportation Infrastructure
+
+**Road Lines (`roadLines`)**
+- Physical road network representation including tunnels and bridges
+- Uses fill and line styling to show different road types and characteristics
+- Foundation layer for navigation and routing applications
+
+**Road Labels (`roadLabels`)**
+- Street names and road identifiers displayed as symbols
+- Provides navigation context and wayfinding information
+- Essential for user-friendly map interaction
+
+**Road Shields (`roadShields`)**
+- Highway numbers and route markers displayed as symbol elements
+- Critical for navigation and route identification
+- Supports multiple transportation systems and numbering schemes
+
+### Hierarchical Labeling System
+
+**Place Labels (`placeLabels`)**
+- General location identifiers for various geographic features
+- Provides context for landmarks and notable locations
+
+**Settlement Labels (Multiple Tiers)**
+- **Smaller Town Labels (`smallerTownLabels`)**: Towns, villages, and neighborhoods
+- **City Labels (`cityLabels`)**: Major urban centers and metropolitan areas
+- **Capital Labels (`capitalLabels`)**: Capital cities and administrative centers
+
+**Administrative Labels**
+- **State Labels (`stateLabels`)**: State and province identifiers
+- **Country Labels (`countryLabels`)**: National identifiers and country names
+
+# Initializing the Base Map Module
+
+## Basic Setup
+
+First set up your project and map following the [Map quickstart guide](/javascript/maps/documentation/guides/map/quickstart) and ensure you have a running [TomTomMap](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance.
+
+### Standard Base Map Initialization
+
+For comprehensive base map functionality, initialize the module with default settings:
+
+```javascript
+import { BaseMapModule } from '@cet/maps-sdk-js/map';
+
+const baseMap = await BaseMapModule.get(map);
+```
+
+### Layer Group Filtering During Initialization
+
+Configure the module to include only specific layer groups for specialized applications:
+
+```javascript
+// Include only geographic foundation layers
+const geoMap = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'include',
+        names: ['land', 'water', 'borders']
+    }
+});
+
+// Exclude labeling for clean cartographic display
+const cleanMap = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'exclude',
+        names: ['placeLabels', 'roadLabels', 'cityLabels']
+    }
+});
+```
+
+### Combined Initialization with Visibility Control
+
+Set up layer group filtering and initial visibility in a single configuration:
+
+```javascript
+const baseMap = await BaseMapModule.get(map, {
+    visible: false,
+    layerGroupsFilter: {
+        mode: 'include',
+        names: ['roadLines', 'roadLabels', 'buildings2D']
+    }
+});
+```
+
+## Configuration and Control
+
+### Runtime Visibility Management
+
+Control base map visibility dynamically based on application state:
+
+```javascript
+// Toggle overall base map visibility
+baseMap.setVisible(false);
+
+// Check current visibility state
+if (baseMap.isVisible()) {
+    console.log('Base map is currently visible');
+}
+```
+
+### Layer Group Visibility Control
+
+Manage specific layer groups independently for fine-grained control:
+
+```javascript
+// Show only road-related layers
+baseMap.setVisible(true, {
+    layerGroups: {
+        mode: 'include',
+        names: ['roadLines', 'roadLabels', 'roadShields']
+    }
+});
+
+// Hide building layers while keeping everything else
+baseMap.setVisible(true, {
+    layerGroups: {
+        mode: 'exclude',
+        names: ['buildings2D', 'buildings3D']
+    }
+});
+```
+
+### Dynamic Configuration Updates
+
+Apply configuration changes at runtime without map reinitialization:
+
+```javascript
+baseMap.applyConfig({
+    visible: true,
+    layerGroupsVisibility: {
+        visible: true,
+        mode: 'include',
+        names: ['land', 'water', 'cityLabels']
+    }
+});
+```
+
+## Advanced Layer Group Management
+
+### Context-Specific Map Configurations
+
+Create specialized map displays for different application contexts:
+
+```javascript
+// Navigation-focused configuration
+const navigationConfig = {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'water', 'roadLines', 'roadLabels', 'roadShields']
+    }
+};
+
+// Urban planning configuration
+const urbanConfig = {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'buildings2D', 'buildings3D', 'roadLines']
+    }
+};
+
+// Geography education configuration
+const geoConfig = {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'water', 'borders', 'countryLabels', 'capitalLabels']
+    }
+};
+
+// Apply based on application mode
+baseMap.setVisible(true, navigationConfig);
+```
+
+### Progressive Detail Display
+
+Implement detail levels that respond to user interaction or map state:
+
+```javascript
+// Minimal detail for overview
+baseMap.setVisible(true, {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'water', 'borders', 'cityLabels']
+    }
+});
+
+// Medium detail for regional view
+baseMap.setVisible(true, {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'water', 'roadLines', 'cityLabels', 'smallerTownLabels']
+    }
+});
+
+// Full detail for local view
+baseMap.setVisible(true, {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'buildings2D', 'roadLines', 'roadLabels', 'houseNumbers']
+    }
+});
+```
+
+## Event Handling
+
+The Base Map Module provides event handling capabilities for interactive applications:
+
+```javascript
+const baseMap = await BaseMapModule.get(map);
+
+// Handle clicks on base map features
+baseMap.events.on('click', (feature, lngLat) => {
+    console.log('Base map feature clicked:', feature.properties);
+
+    if (feature.properties.building) {
+        showBuildingDetails(feature.properties);
+    } else if (feature.properties.road_name) {
+        showRoadInformation(feature.properties);
+    }
+});
+
+// Handle hover for feature identification
+baseMap.events.on('hover', (feature, lngLat) => {
+    showFeaturePreview(feature.properties, lngLat);
+});
+```
+
+## Integration Patterns
+
+### Multi-Module Coordination
+
+Coordinate the Base Map Module with other specialized modules for comprehensive applications:
+
+```javascript
+import { BaseMapModule, POIsModule, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
+
+// Initialize modules with complementary configurations
+const baseMap = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'exclude',
+        names: ['placeLabels'] // Let POIs handle place labeling
+    }
+});
+
+const pois = await POIsModule.get(map);
+const traffic = await TrafficIncidentsModule.get(map);
+
+// Coordinate visibility for focused displays
+function showNavigationView() {
+    baseMap.setVisible(true, {
+        layerGroups: {
+            mode: 'include',
+            names: ['roadLines', 'roadLabels', 'roadShields']
+        }
+    });
+    traffic.setVisible(true);
+    pois.setVisible(false);
+}
+```
+
+### Responsive Map Configuration
+
+Adapt base map display based on viewport size and device capabilities:
+
+```javascript
+function updateMapConfiguration() {
+    const isMobile = window.innerWidth < 768;
+    const isHighDensity = window.devicePixelRatio > 1.5;
+
+    if (isMobile) {
+        // Simplified display for mobile
+        baseMap.setVisible(true, {
+            layerGroups: {
+                mode: 'include',
+                names: ['land', 'water', 'roadLines', 'cityLabels']
+            }
+        });
+    } else if (isHighDensity) {
+        // Rich detail for high-resolution displays
+        baseMap.setVisible(true, {
+            layerGroups: {
+                mode: 'include',
+                names: ['land', 'water', 'buildings3D', 'roadLines', 'roadLabels', 'houseNumbers']
+            }
+        });
+    }
+}
+```
+
+For complete base map implementation examples and advanced layer group management patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.

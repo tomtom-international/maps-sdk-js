@@ -1,127 +1,188 @@
 ---
-title: Quickstart
+title: Map quickstart
 hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-The Map bundle is a [MapLibre GL JS - based library](/javascript/maps/documentation/guides/map/about-maplibre) and allows you to:
-* visualize and configure a TomTom map in your web application
-* easily display the results coming from TomTom services on the map (places, routes, geometries)
-* easily interact with the key elements on the map
-* display and interact with your own data
+# TomTom Maps SDK for JavaScript - Quickstart Guide
 
-# Set up
+The TomTom Maps SDK for JavaScript is a comprehensive mapping library built on [MapLibre GL JS](/javascript/maps/documentation/guides/map/about-maplibre) that provides seamless integration with TomTom's mapping services and data. This SDK combines the power of TomTom's global mapping data with the performance and flexibility of modern web mapping technologies.
 
-1. Configure the project as described in [Project setup guide](/javascript/maps/documentation/overview/project-setup).
-2. Make sure that after following the guide above you have both the SDK and MapLibre installed as dependencies.
-3. Create an HTML page with a container element for the map (with an id):
- ```html
- <!DOCTYPE html>
- <html lang="en">
-     <body>
-         <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"></div>
-     </body>
- </html>
-    ```
-4. (If you need HTML elements on the map) Import MapLibre's CSS in your page. For instance, add this to your HTML head section:
- ```html
- <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
-    ```
-5. [Initialize a TomTom map](#initializing-a-tomtom-map)
-6. [Discover and use some map modules](#map-modules)
-<br/>
+## What You Can Build
 
-# Initializing a TomTom map
+The Maps SDK enables you to create powerful mapping applications with advanced capabilities:
 
-The [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap) object is the main entry point to add a *TomTom* map to your application.
+- **Interactive TomTom maps** with customizable styles and themes optimized for different use cases
+- **Service integration** for places, routing, geocoding, and real-time traffic data
+- **Advanced visualizations** for routes, geometries, and points of interest with rich styling options
+- **User interactions** with built-in event handling and user interface components
+- **Custom data overlays** that seamlessly integrate with TomTom's global map data
 
-Its main purpose is to initialize a TomTom map using MapLibre and serve as the base for further map modules to operate.
+## Prerequisites and Setup
 
-Importing the TomTomMap:
-```javascript
-import { TomTomMap } from "@cet/maps-sdk-js/map";
+Before getting started, ensure you have the following requirements:
+
+1. **Node.js and npm/yarn** installed for package management (Node.js 16+ recommended)
+2. **TomTom API key** from the [TomTom Developer Portal](https://developer.tomtom.com/)
+3. **Modern browser** with WebGL support for optimal map rendering performance
+
+### Project Setup
+
+Follow the complete [Project setup guide](/javascript/maps/documentation/overview/project-setup) for detailed installation instructions, or use this quick setup for immediate development:
+
+```bash
+npm install @cet/maps-sdk-js maplibre-gl
 ```
 
-Minimal initialization (assuming the ID of your map HTML element is "map"):
-```javascript
-const map = new TomTomMap( { container: "map" } );
+### Required Dependencies
+
+The SDK architecture requires both the TomTom package and MapLibre as peer dependencies to ensure optimal performance and compatibility:
+
+```json
+{
+  "dependencies": {
+    "@cet/maps-sdk-js": "latest",
+    "maplibre-gl": "^5.7.1"
+  }
+}
 ```
 
-The TomTomMap is initialized via its constructor with:
-* [MapLibreOptions](#maplibreoptions) - a required parameter based on a subset of the [options](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters) for a MapLibre Map.
-* [TomTomMapParams](#tomtommapparams) - optional TomTom-specific parameters.
-<br/>
+## Basic HTML Setup
 
-## MapLibreOptions
+Create a foundational HTML page structure with the required MapLibre CSS and a designated map container:
 
-The subset of [options](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters) for a MapLibre map.
-
-For the TomTom SDK, The only required MapLibre parameter is *container*, where you specify the container element for the map canvas:
-```javascript
-const map = new TomTomMap( { container: "map" } );
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TomTom Map Application</title>
+    <link href="https://unpkg.com/maplibre-gl@5.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        #map { width: 100%; height: 400px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
 ```
 
-Other common MapLibre init parameters are regarding start coordinates or bounds:
+## Creating Your First Map
 
-Init map with *center* and *zoom*:
+### Minimal Map Implementation
+
+The most basic map implementation requires only API key configuration and container specification:
+
 ```javascript
-const map = new TomTomMap( { container: "map", center: [-0.12621, 51.50394], zoom: 14, minZoom: 2 } );
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomMap } from '@cet/maps-sdk-js/map';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+
+const map = new TomTomMap({
+    container: 'map'
+});
 ```
 
-Init map with *bounds*:
+### Map with Initial Position
+
+For applications requiring specific geographic focus, configure initial position and zoom level:
+
 ```javascript
-const map = new TomTomMap( { container: "map", bounds: [-0.12621, 51.50394, -0.102, 51.7] } );
+const map = new TomTomMap({
+    container: 'map',
+    center: [4.9041, 52.3676], // Amsterdam coordinates [longitude, latitude]
+    zoom: 12
+});
 ```
 
-The MapLibre *style* parameter is *ignored*. Refer to the TomTomMapParams [style](#map-style) parameter instead.
+### Map with Different Style
 
-For more maplibre parameters, refer to its [documentation](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-parameters)
-<br/>
+Customize the visual appearance using TomTom's built-in map styles:
 
-## TomTomMapParams
-
-The TomTom Map parameters extend the global configuration and are focused on configuring your TomTom map.
-
-Whereas the MapLibre parameters are more generic, these parameters are focused on the TomTom side of things,
-saving you some time and plumbing compared to using MapLibre directly.
-
-### Map style
-
-The map style defines where the map data comes from and how it should look.
-The TomTom SDK offers convenient ways to load TomTom map styles via its style parameter.
-
-Minimal style input:
 ```javascript
-const map = new TomTomMap({ container: "map" }, { style: "monoLight" });
+const map = new TomTomMap(
+    { container: 'map' },
+    { style: 'monoDark' }
+);
 ```
 
-Style input with exclusions:
+## Map Styles and Customization
+
+TomTom provides several pre-configured map styles optimized for different use cases and visual preferences:
+
 ```javascript
-const map = new TomTomMap({ container: "map" }, { style: { id: "monoLight", exclude: ["trafficFlow"]}});
+// Light theme (default) - optimal for general use
+{ style: 'monoLight' }
+
+// Dark theme - ideal for low-light environments
+{ style: 'monoDark' }
+
+// Satellite imagery - perfect for geographic analysis
+{ style: 'hybrid' }
 ```
 
-To learn more about map styles, refer to the [Map Styles Guide](/javascript/maps/documentation/guides/map/map-styles)
-<br/>
+### Advanced Style Configuration with Additional Layers
 
+Enhance your maps with real-time data layers for comprehensive location intelligence:
 
-# Map modules
+```javascript
+const map = new TomTomMap(
+    { container: 'map' },
+    {
+        style: {
+            type: 'published',
+            include: ['trafficIncidents', 'trafficFlow']
+        }
+    }
+);
+```
 
-In addition to the map itself, the Map bundle contains several individual modules that allow you to control and interact with key map parts:
+**Available Layer Modules:**
+- **trafficIncidents**: Real-time traffic incident data
+- **trafficFlow**: Live traffic flow visualization
+- **pois**: Points of interest display
+- **hillshade**: Terrain elevation shading
 
-## Map style - based modules
-*These are modules that control part of the sources and layers coming via the loaded map style.*
-* [Traffic Module](/javascript/maps/documentation/guides/map/traffic) - controls live traffic on the map.
-* [POIs Module](/javascript/maps/documentation/guides/map/pois) - controls POIs on the map.
-* [Hillshade Module](/javascript/maps/documentation/guides/map/hillshade) - controls hillshading on the map.
+## Common Map Configuration Options
 
-## Added data modules
-*These are modules controlling data coming from services or custom sources.*
-* [Places Module](/javascript/maps/documentation/guides/map/places) - controls added places on the map.
-* [Geometry Module](/javascript/maps/documentation/guides/map/geometries) - controls added geometries on the map.
-* [Routing Module](/javascript/maps/documentation/guides/map/routing) - controls added routes on the map.
+The TomTom Maps SDK provides extensive configuration options for fine-tuning map behavior and appearance:
+
+```javascript
+const map = new TomTomMap({
+    container: 'map',
+    center: [longitude, latitude],        // Initial map center
+    zoom: 12,                            // Initial zoom level (2-18)
+    minZoom: 2,                          // Minimum allowed zoom
+    maxZoom: 18,                         // Maximum allowed zoom
+    bounds: [west, south, east, north]   // Alternative to center/zoom
+});
+```
+
+**Configuration Best Practices:**
+- Use `center` and `zoom` for fixed initial views
+- Use `bounds` for dynamic content that needs to fit specific geographic areas
+- Set appropriate `minZoom` and `maxZoom` based on your application's requirements
+
+## Next Steps and Advanced Features
+
+Once you have a basic map running, explore these advanced capabilities to enhance your application:
+
+- **[Map Styles](/javascript/maps/documentation/guides/map/map-styles)**: Comprehensive styling and theming options
+- **[Traffic Information](/javascript/maps/documentation/guides/map/traffic)**: Real-time traffic data integration
+- **[Routes](/javascript/maps/documentation/guides/map/routes)**: Route visualization and navigation
+- **[User Events](/javascript/maps/documentation/guides/map/user-events)**: Interactive user experience handling
+- **[Services Integration](/javascript/maps/documentation/guides/services/quickstart)**: Location-based services and APIs
+
+For complete, production-ready examples and advanced implementation patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.

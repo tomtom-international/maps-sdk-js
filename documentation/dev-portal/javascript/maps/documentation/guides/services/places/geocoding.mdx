@@ -4,12 +4,199 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-<Blockquote>
-    Coming soon
-</Blockquote>
+# Geocoding Service
+
+The Geocoding service converts addresses and place names into precise geographic coordinates, providing detailed location information including formatted addresses, place categories, and geographic boundaries. This service is essential for location-based applications that need to transform human-readable addresses into mappable coordinates.
+
+## Core Geocoding Concepts
+
+Geocoding serves as the bridge between human-readable location descriptions and machine-processable geographic coordinates. The service handles various input formats, from complete street addresses to partial location descriptions, and returns structured geographic data suitable for mapping and analysis.
+
+**Primary Use Cases:**
+- **Address validation** and standardization for data quality
+- **Location search** in booking and reservation systems
+- **Coordinate lookup** for mapping and navigation applications
+- **Bulk address processing** for logistics and delivery optimization
+
+## Basic Geocoding Usage
+
+### Simple Address Geocoding
+
+The most straightforward geocoding operation involves converting a complete address string into coordinates:
+
+```javascript
+import { geocode } from '@cet/maps-sdk-js/services';
+
+const result = await geocode({
+    query: 'Dam Square, Amsterdam, Netherlands'
+});
+
+const coordinates = result.features[0].geometry.coordinates; // [longitude, latitude]
+```
+
+This basic approach works well for complete, well-formatted addresses and returns the most likely coordinate match for the input address.
+
+### Structured Address Input
+
+For enhanced accuracy and reliability, especially in data processing scenarios, use structured address components:
+
+```javascript
+const result = await geocode({
+    query: 'Dam Square',
+    countrySet: ['NL'],
+    locality: 'Amsterdam',
+    postalCode: '1012'
+});
+```
+
+**Benefits of Structured Input:**
+- **Higher accuracy** through component-specific matching
+- **Reduced ambiguity** in location resolution
+- **Better handling** of incomplete or partial addresses
+- **Improved performance** through targeted searching
+
+## Advanced Geocoding Configuration
+
+### Geographic Constraints and Biasing
+
+Control geocoding results by applying geographic constraints that bias results toward specific regions or limit search scope:
+
+```javascript
+// Bias results toward Amsterdam area
+const result = await geocode({
+    query: 'Central Station',
+    position: [4.9041, 52.3676], // Amsterdam center coordinates
+    countrySet: ['NL']
+});
+
+// Search within a specific bounding box
+const result = await geocode({
+    query: 'Main Street',
+    boundingBox: [4.7, 52.2, 5.1, 52.5] // Amsterdam metropolitan area
+});
+```
+
+**Geographic Constraint Benefits:**
+- **Improved relevance** for location-specific applications
+- **Faster processing** through reduced search scope
+- **Better disambiguation** for common place names
+- **Regional accuracy** for multi-national applications
+
+### Multiple Result Handling
+
+When dealing with ambiguous location names or when you need alternative options, request multiple geocoding candidates:
+
+```javascript
+const results = await geocode({
+    query: 'Paris', // Matches multiple cities worldwide
+    limit: 5
+});
+
+results.features.forEach(place => {
+    const address = place.properties.address;
+    console.log(`${address.municipality}, ${address.country}`);
+    console.log(place.geometry.coordinates); // [longitude, latitude]
+});
+```
+
+This approach is particularly valuable for:
+- **Location disambiguation** in user interfaces
+- **Alternative suggestions** for unclear inputs
+- **Comprehensive search results** for travel and booking applications
+
+## Working with Geocoding Results
+
+### Result Data Structure
+
+Geocoding results follow the GeoJSON specification and provide comprehensive location information:
+
+```javascript
+const result = await geocode({
+    query: 'Amsterdam Central Station'
+});
+
+const place = result.features[0];
+
+// Extract coordinate information
+const [longitude, latitude] = place.geometry.coordinates;
+
+// Access detailed address components
+const address = place.properties.address;
+console.log(address.freeformAddress);  // Complete formatted address
+console.log(address.municipality);     // Amsterdam
+console.log(address.country);          // Netherlands
+console.log(address.postalCode);       // Postal code if available
+
+// Retrieve place category information
+console.log(place.properties.poi?.categories); // ['RAILWAY_STATION']
+```
+
+**Address Component Hierarchy:**
+- **streetNumber**: Specific building number
+- **streetName**: Street or road name
+- **municipality**: City or town name
+- **postalCode**: Postal or ZIP code
+- **country**: Country name
+- **freeformAddress**: Complete formatted address string
+
+### Integration with Mapping
+
+Geocoding results integrate seamlessly with the TomTom Maps SDK for immediate visualization:
+
+```javascript
+import { TomTomMap, PlacesModule } from '@cet/maps-sdk-js/map';
+
+const map = new TomTomMap({ container: 'map' });
+const placesModule = await PlacesModule.get(map);
+
+const result = await geocode({
+    query: 'Amsterdam Museum District'
+});
+
+// Display geocoded location on map
+placesModule.addPlaces({
+    id: 'geocoded-location',
+    places: result.features
+});
+```
+
+## Performance and Best Practices
+
+### Optimization Strategies
+
+For production applications processing multiple addresses, implement these optimization techniques:
+
+**Caching Strategy:**
+- Cache frequent address lookups to reduce API calls
+- Store results for commonly searched locations
+- Implement intelligent cache invalidation policies
+
+**Request Optimization:**
+- Use structured queries when possible for better accuracy
+- Apply appropriate geographic constraints to improve performance
+- Batch similar requests when feasible
+
+**Error Handling:**
+```javascript
+try {
+    const result = await geocode({
+        query: 'Nonexistent Address 123'
+    });
+
+    if (result.features.length === 0) {
+        console.log('No results found for the given address');
+        // Handle no results scenario
+    }
+} catch (error) {
+    console.error('Geocoding failed:', error.message);
+    // Implement fallback strategies
+}
+```
+
+For comprehensive geocoding implementation examples and advanced usage patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.

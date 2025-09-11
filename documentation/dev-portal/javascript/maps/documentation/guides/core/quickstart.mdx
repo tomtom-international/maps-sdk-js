@@ -4,21 +4,79 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-# What is the Core bundle?
+# Core Bundle
 
-The Core bundle is a set of types and utilities common to the SDK map and services and which helps to seamlessly integrate them.
+The Core bundle provides essential shared functionality across the entire Maps SDK, including configuration management, common types, and utility functions.
 
-* [Common configuration](/javascript/maps/documentation/api-reference/core.TomTomConfig)
-* Common types (such as outputs from Services which can be used as inputs to the Map)
-* Utilities (such as distance/duration formatting and bounding box calculations)
+## Basic Configuration
 
-# Using the Core Bundle
+```javascript
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
 
-If you use Map and/or Services, there is no need to install any further packages.\
-Code imports from the SDK Core Bundle will come from ```@cet/maps-sdk-js/core```
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+    language: 'en-GB'
+});
+```
+
+## Common Configuration Options
+
+```javascript
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+    language: 'en-GB',           // Map labels language
+    baseUrl: 'https://api.tomtom.com',  // API base URL
+    timeout: 10000,              // Request timeout (ms)
+    validateRequest: true        // Enable request validation
+});
+```
+
+## Using with Map Bundle
+
+```javascript
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomMap } from '@cet/maps-sdk-js/map';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+
+const map = new TomTomMap({ container: 'map' });
+```
+
+## Using with Services Bundle
+
+```javascript
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { search } from '@cet/maps-sdk-js/services';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+
+const results = await search({
+    query: 'restaurants',
+    position: [4.9041, 52.3676]
+});
+```
+
+## Node.js Configuration
+
+```javascript
+const { TomTomConfig } = require('@cet/maps-sdk-js/core');
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    language: 'en-GB'
+});
+```
+
+The Core bundle is automatically included when you install the Map or Services bundles - no separate installation needed.
+
+For complete examples, check the `/examples` folder in the repository.

@@ -4,37 +4,381 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-The Geometry Module allows you to draw various geometries on the map.
+# Geometry Module Overview
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_polygons"></a>}
+The Geometry Module in the TomTom Maps SDK enables displaying and visualizing geographic shapes and polygons on maps. This module provides comprehensive functionality for rendering complex geometries, administrative boundaries, and custom geographic data with customizable styling.
 
-# Polygons
+## Purpose and Functionality
 
-The Map bundle supports drawing polygons on the map through the [`GeometriesModule`](/javascript/maps/documentation/api-reference/map-geometry.GeometriesModule) class.
-This module takes a [`GeometryDataResponse`](/javascript/maps/documentation/api-reference/core#GeometryDataResponse) object and draws the geometry on the map.
+The Geometry Module serves as the primary interface for:
+- **Displaying polygon geometries** from TomTom services and custom data
+- **Visualizing administrative boundaries** such as countries, states, and cities
+- **Rendering custom geographic shapes** with configurable styling options
+- **Managing geometry layers** with visibility controls and interaction handling
+- **Integrating geometry data** from search results and external sources
 
-> A [`GeometryDataResponse`](/javascript/maps/documentation/api-reference/core#GeometryDataResponse) is returned by the Geometry Data service.
-Read more about this service [here](/javascript/maps/documentation/guides/search/specialized-search#_geometry_data_search).
+## Core Concepts
 
-> Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map/quickstart) guide.
+### Geometry Data Types
+The module supports various types of geographic geometries:
+
+**Supported Geometry Types:**
+- **Polygons**: Closed shapes representing areas like administrative boundaries
+- **MultiPolygons**: Complex shapes with multiple disconnected areas
+- **Administrative boundaries**: Country, state, city, and district boundaries
+- **Custom shapes**: User-defined geographic areas and regions
+
+### Data Sources
+Geometries can come from multiple sources:
+- **TomTom Geometry Data Service**: Official administrative boundaries and places
+- **Search results**: Geographic data from place searches
+- **Custom GeoJSON**: User-provided geometric data
+- **External APIs**: Third-party geographic data sources
+
+## Basic Geometry Display
+
+### Initializing Geometry Module
 
 ```javascript
-import { GeometriesModule } from "@cet/maps-sdk-js/map";
-import { geocode, geometryData } from "@cet/maps-sdk-js/services";
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomMap, GeometriesModule } from '@cet/maps-sdk-js/map';
 
-const areaToSearch = await geocode({ query: "paris", limit: 1 });
-const areaGeometry = await geometryData({ geometries: areaToSearch });
+// Configure SDK and create map
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+const map = new TomTomMap({ container: 'map' });
+
+// Initialize geometry module with default styling
 const geometryModule = await GeometriesModule.init(map);
-geometryModule.show(areaGeometry);
 ```
 
-See [Map Geometry Search Playground](http://hosted-examples.maps-sdk-js.tomtom.com/main/map-geometry-search-playground) for a working example.
+### Displaying Administrative Boundaries
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_next_steps"></a>}
+```javascript
+import { geocode, geometryData } from '@cet/maps-sdk-js/services';
+
+// Get geometry for a specific place
+const place = (await geocode({ query: 'Amsterdam, Netherlands' })).features[0];
+const geometryResponse = await geometryData({ geometries: [place] });
+
+// Display the geometry on the map
+geometryModule.show(geometryResponse);
+```
+
+### Custom Styling Configuration
+
+```javascript
+// Initialize with custom styling
+const geometryModule = await GeometriesModule.init(map, {
+    colorConfig: {
+        fillColor: '#007cbf',      // Fill color for polygons
+        fillOpacity: 0.3           // Fill transparency
+    },
+    lineConfig: {
+        lineColor: '#005a8b',      // Border color
+        lineWidth: 2,              // Border width
+        lineOpacity: 0.8           // Border transparency
+    },
+    beforeLayerConfig: 'road-labels' // Layer positioning
+});
+```
+
+## Advanced Geometry Features
+
+### Multiple Geometry Layers
+
+```javascript
+// Create multiple geometry modules for different data sets
+const countryGeometry = await GeometriesModule.init(map, {
+    colorConfig: { fillColor: '#ff6b6b', fillOpacity: 0.2 },
+    lineConfig: { lineColor: '#ff0000', lineWidth: 3 }
+});
+
+const cityGeometry = await GeometriesModule.init(map, {
+    colorConfig: { fillColor: '#4ecdc4', fillOpacity: 0.4 },
+    lineConfig: { lineColor: '#00a896', lineWidth: 2 }
+});
+
+// Display different geometry types
+countryGeometry.show(countryBoundaries);
+cityGeometry.show(cityBoundaries);
+```
+
+### Dynamic Geometry Management
+
+```javascript
+// Add and remove geometries dynamically
+const geometryModule = await GeometriesModule.init(map);
+
+// Show new geometry data
+function displayGeometry(newGeometryData) {
+    geometryModule.clear(); // Clear existing geometries
+    geometryModule.show(newGeometryData);
+}
+
+// Toggle geometry visibility
+let geometryVisible = true;
+function toggleGeometry() {
+    if (geometryVisible) {
+        geometryModule.clear();
+    } else {
+        geometryModule.show(currentGeometryData);
+    }
+    geometryVisible = !geometryVisible;
+}
+```
+
+### Layer Positioning and Styling
+
+```javascript
+// Advanced styling with layer control
+const geometryModule = await GeometriesModule.init(map, {
+    beforeLayerConfig: 'road-labels',  // Position below road labels
+    colorConfig: {
+        fillColor: '#87CEEB',
+        fillOpacity: 0.5
+    },
+    lineConfig: {
+        lineColor: '#4682B4',
+        lineWidth: 1.5,
+        lineOpacity: 1
+    }
+});
+```
+
+## Practical Use Cases
+
+### Administrative Boundary Visualization
+
+```javascript
+import { search, geometryData } from '@cet/maps-sdk-js/services';
+
+// Search for administrative areas
+const administrativeAreas = await search({
+    query: '',
+    countries: ['NLD'],
+    geographyTypes: ['Municipality'],
+    limit: 10
+});
+
+// Get detailed geometry data
+const geometries = await geometryData({
+    geometries: administrativeAreas
+});
+
+// Display with appropriate styling
+const adminGeometry = await GeometriesModule.init(map, {
+    colorConfig: { fillColor: '#FFE4B5', fillOpacity: 0.3 },
+    lineConfig: { lineColor: '#CD853F', lineWidth: 2 }
+});
+
+adminGeometry.show(geometries);
+```
+
+### Service Area Visualization
+
+```javascript
+// Display business service areas or delivery zones
+const serviceAreaGeometry = await GeometriesModule.init(map, {
+    colorConfig: {
+        fillColor: '#98FB98',
+        fillOpacity: 0.25
+    },
+    lineConfig: {
+        lineColor: '#32CD32',
+        lineWidth: 2,
+        lineOpacity: 0.8
+    }
+});
+
+// Custom service area data
+const serviceArea = {
+    type: 'FeatureCollection',
+    features: [{
+        type: 'Feature',
+        geometry: {
+            type: 'Polygon',
+            coordinates: [[
+                [4.8, 52.3], [4.9, 52.3], [4.9, 52.4], [4.8, 52.4], [4.8, 52.3]
+            ]]
+        },
+        properties: {
+            name: 'Delivery Zone A'
+        }
+    }]
+};
+
+serviceAreaGeometry.show(serviceArea);
+```
+
+### Comparative Visualization
+
+```javascript
+// Compare different geographic regions
+const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+
+const regions = await search({
+    query: '',
+    countries: ['ESP'],
+    geographyTypes: ['Municipality'],
+    limit: 4
+});
+
+const regionGeometries = await geometryData({ geometries: regions });
+
+// Create a geometry module for each region
+for (let i = 0; i < regionGeometries.features.length; i++) {
+    const color = colors[i % colors.length];
+
+    const regionModule = await GeometriesModule.init(map, {
+        colorConfig: { fillColor: color, fillOpacity: 0.3 },
+        lineConfig: { lineColor: color, lineWidth: 2 }
+    });
+
+    regionModule.show({
+        type: 'FeatureCollection',
+        features: [regionGeometries.features[i]]
+    });
+}
+```
+
+## Integration with Other Modules
+
+### Combining with Places Module
+
+```javascript
+import { PlacesModule } from '@cet/maps-sdk-js/map';
+import { search } from '@cet/maps-sdk-js/services';
+
+// Display administrative boundary
+const geometryModule = await GeometriesModule.init(map, {
+    colorConfig: { fillColor: '#E6F3FF', fillOpacity: 0.4 }
+});
+
+const placesModule = await PlacesModule.init(map);
+
+// Search within a specific area
+const amsterdamGeometry = await geometryData({
+    geometries: [(await geocode({ query: 'Amsterdam, Netherlands' })).features[0]]
+});
+
+geometryModule.show(amsterdamGeometry);
+
+// Search for restaurants within the displayed area
+const restaurants = await search({
+    query: 'restaurants',
+    center: [4.9041, 52.3676],
+    radius: 5000
+});
+
+placesModule.show(restaurants);
+```
+
+### Route Context Visualization
+
+```javascript
+import { RoutingModule } from '@cet/maps-sdk-js/map';
+
+// Show administrative boundaries along route
+const routingModule = await RoutingModule.init(map);
+const geometryModule = await GeometriesModule.init(map, {
+    colorConfig: { fillColor: '#FFF8DC', fillOpacity: 0.2 }
+});
+
+// Display route
+await routingModule.displayRoute({ waypoints: [origin, destination] });
+
+// Show boundaries of areas the route passes through
+// Implementation would analyze route and fetch relevant geometries
+```
+
+## Best Practices
+
+### Performance Optimization
+- **Simplify complex geometries**: Use appropriate detail levels for zoom ranges
+- **Limit concurrent geometries**: Avoid displaying too many complex shapes simultaneously
+- **Use appropriate styling**: Balance visual appeal with rendering performance
+
+### User Experience
+- **Provide context**: Use colors and styling that clearly communicate the geometry's purpose
+- **Layer ordering**: Position geometries appropriately relative to other map elements
+- **Interactive feedback**: Consider adding hover or click interactions for geometry information
+
+### Memory Management
+- **Clear unused geometries**: Call `clear()` when geometries are no longer needed
+- **Manage multiple modules**: Clean up geometry modules when switching data sets
+- **Monitor performance**: Watch for performance issues with complex or numerous geometries
+
+## Related Guides
+
+- [Places Module](/javascript/maps/documentation/guides/map/places) - Displaying place-related geometries
+- [Search Service](/javascript/maps/documentation/guides/services/places/search) - Finding places with geometries
+- [Geometry Data Service](/javascript/maps/documentation/guides/services/places/geometry-data) - Fetching detailed geometry data
+- [Layer Management](/javascript/maps/documentation/guides/map/layer-management) - Advanced layer control
+
+## Complete Example
+
+```javascript
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomMap, GeometriesModule, PlacesModule } from '@cet/maps-sdk-js/map';
+import { search, geocode, geometryData } from '@cet/maps-sdk-js/services';
+
+// Initialize SDK
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+// Create map
+const map = new TomTomMap({
+    container: 'map',
+    center: [4.9041, 52.3676], // Amsterdam
+    zoom: 10
+});
+
+// Initialize geometry module with custom styling
+const geometryModule = await GeometriesModule.init(map, {
+    colorConfig: {
+        fillColor: '#87CEEB',
+        fillOpacity: 0.3
+    },
+    lineConfig: {
+        lineColor: '#4682B4',
+        lineWidth: 2,
+        lineOpacity: 0.8
+    },
+    beforeLayerConfig: 'road-labels'
+});
+
+// Get and display Amsterdam city boundary
+const amsterdam = (await geocode({
+    query: 'Amsterdam, Netherlands'
+})).features[0];
+
+const amsterdamGeometry = await geometryData({
+    geometries: [amsterdam]
+});
+
+geometryModule.show(amsterdamGeometry);
+
+// Add places within the boundary
+const placesModule = await PlacesModule.init(map);
+const museums = await search({
+    query: 'museums',
+    center: [4.9041, 52.3676],
+    radius: 10000
+});
+
+placesModule.show(museums);
+
+// Interactive controls
+document.querySelector('#toggleBoundary')?.addEventListener('click', () => {
+    // Toggle boundary visibility
+    geometryModule.clear();
+    setTimeout(() => geometryModule.show(amsterdamGeometry), 100);
+});
+
+console.log('Geometry visualization initialized');
+```

@@ -4,104 +4,138 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-# Requesting routes
+# Planning a Route
 
-To calculate a route from A to B, you need to first provide route planning criteria. These are built using a [`CalculateRouteParams`](/javascript/maps/documentation/api-reference/services/#calculaterouteparams) object. There are multiple optional parameters that you can use to shape the route planning criteria to fit your use cases. For a detailed description of available parameters, see the [Routing API, Calculate Route documentation](https://developer.tomtom.com/routing-api/documentation/routing/calculate-route).
+Route planning in the TomTom Maps SDK involves configuring parameters to calculate optimal routes that meet specific requirements, from basic route requests to advanced optimization strategies.
 
-<Code>
+## Basic Route Planning
 
-``` typescript
-import { CalculateRouteParams } from "@cet/maps-sdk-js/services";
+```javascript
+import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 
-const amsterdam = [4.897070, 52.377956];
-const rotterdam = [4.462456, 51.926517];
-const routePlanningParams: CalculateRouteParams = {
-    locations: [amsterdam, rotterdam],
-    routeType: "eco",
-    travelMode: "truck",
-    maxAlternatives: 2
-};
+// Simple route between two cities
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
 ```
 
-``` javascript
-const amsterdam = [4.897070, 52.377956];
-const rotterdam = [4.462456, 51.926517];
-const routePlanningParams = {
-    locations: [amsterdam, rotterdam],
-    routeType: "eco",
-    travelMode: "truck",
-    maxAlternatives: 2
-};
+## Route with Address Geocoding
+
+```javascript
+// Using addresses instead of coordinates
+const origin = await geocode({ query: 'Amsterdam Central Station' });
+const destination = await geocode({ query: 'Paris Gare du Nord' });
+
+const route = await calculateRoute({
+    locations: [
+        origin.features[0].geometry.coordinates,
+        destination.features[0].geometry.coordinates
+    ]
+});
 ```
 
-</Code>
+## Route Types
 
-Once you've instantiated your [`CalculateRouteParams`](/javascript/maps/documentation/api-reference/services/#calculaterouteparams), pass it to the [`calculateRoute`](/javascript/maps/documentation/api-reference/services/#calculateroute) function. The result will be a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`CalculateRouteResponse`](/javascript/maps/documentation/api-reference/services/#calculaterouteresponse)>
+```javascript
+// Fastest route (default)
+const fastestRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'fastest'
+});
 
-``` javascript
-try {
-    const routeResponse = await calculateRoute(routePlanningParams);
-    // handle success
-} catch (e) {
-    // handle error
-}
+// Shortest route
+const shortestRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'shortest'
+});
+
+// Eco-friendly route
+const ecoRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'eco'
+});
 ```
 
-# Adjusting route planning criteria
+## Route with Traffic
 
-## Route types
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    traffic: true,
+    departAt: 'now' // or specific datetime
+});
+```
 
-The [`RouteOptionalParams.routeType`](/javascript/maps/documentation/api-reference/services/#routeoptionalparams) parameter specifies the type of optimization used when calculating routes:
+## Route Avoidances
 
--   [`fastest`] - Route calculation is optimized by travel time, while keeping the routes sensible. For example, the calculation may avoid shortcuts along inconvenient side roads or long detours that only save very little time.
--   [`shortest`] - Route calculation is optimized by travel distance, while keeping the routes sensible. For example, straight routes are preferred over those incurring turns.
--   [`short`] - Route calculation is optimized so that a good compromise between small travel time and short travel distance is achieved.
--   [`eco`] - Route calculation is optimized by fuel/energy consumption.
--   [`thrilling`] - Route calculation is optimized so that routes include interesting or challenging roads and use as few motorways as possible.
-  -   You can choose the level of turns included and also the degree of hilliness. See the [`ThrillingParams`](/javascript/maps/documentation/api-reference/services/#thrillingparams) to set this.
-  -   There is a limit of 900km on routes planned with [`routeType=thrilling`].
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    avoid: ['tollRoads', 'ferries', 'unpavedRoads']
+});
+```
 
-The default value is [`fastest`].
+## Alternative Routes
 
-## Avoids
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    maxAlternatives: 2 // Get up to 3 routes total (main + 2 alternatives)
+});
 
-The [`RouteOptionalParams.avoidable`](/javascript/maps/documentation/api-reference/services/#routeoptionalparams) parameter specifies something that the route calculation should try to avoid when determining the route. The avoid can be specified multiple times. Possible values are:
+routes.routes.forEach((route, index) => {
+    console.log(`Route ${index + 1}:`);
+    console.log(`Distance: ${route.summary.lengthInMeters}m`);
+    console.log(`Duration: ${route.summary.travelTimeInSeconds}s`);
+});
+```
 
--   [`tollRoads`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids toll roads.
--   [`motorways`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids motorways.
--   [`ferries`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids ferries.
--   [`unpavedRoads`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids unpaved roads.
--   [`carpools`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids routes that require the use of carpool (HOV/High Occupancy Vehicle) lanes.
--   [`alreadyUsedRoads`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids using the same road multiple times. This is important for round trips, when users may not want to use the same roads both ways. This is most useful in conjunction with [`routeType=thrilling`](https://developer.tomtom.com/assets/downloads/tomtom-sdks/ios/api-reference/0.2.2811/TomTomSDKRoutePlanner/Enums/RouteType.html).
--   [`borderCrossings`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids crossing country borders.
--   [`tunnels`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids tunnels.
--   [`carTrains`](/javascript/maps/documentation/api-reference/core/#avoidable) - Avoids car trains.
+## Vehicle-Specific Routing
 
-## Vehicle profile
+```javascript
+// Electric vehicle routing
+const evRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicleEngineType: 'electric',
+    vehicleWeight: 1600, // kg
+    vehicleMaxSpeed: 90, // km/h
+    vehicleCommercial: false
+});
 
-Vehicle profile relates to a set of parameters that are used to provide extra information about the vehicle specification. It also provides information about the current state, e.g., the level of fuel.
+// Truck routing
+const truckRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicleEngineType: 'combustion',
+    vehicleWeight: 12000, // kg
+    vehicleAxleWeight: 9000, // kg
+    vehicleLength: 12, // meters
+    vehicleWidth: 2.5, // meters
+    vehicleHeight: 4, // meters
+    vehicleCommercial: true
+});
+```
 
-Some roads in the map have vehicle and time dependent restrictions. For example, roads may restrict traffic to pedestrians, or can only be used by electric vehicles. Various road types may prohibit vehicles carrying hazardous materials. Tunnels may only be passable by vehicles up to a maximum height, and for trucks, with the proper tunnel code. These restrictions may affect the routes that can be planned for the user’s vehicle.
+## Route with Departure Time
 
-Key parameters defining vehicle profiles (see [`VehicleParameters`](/javascript/maps/documentation/api-reference/services/#vehicleparameters)):
+```javascript
+// Route for specific departure time
+const futureDate = new Date();
+futureDate.setHours(futureDate.getHours() + 2);
 
--   Vehicle type, e.g., car or motorcycle (see [`TravelMode`](/javascript/maps/documentation/api-reference/core/#travelmode)).
--   Engine type, e.g., [`combustion`] or [`electric`] (see [`VehicleEngineType`](/javascript/maps/documentation/api-reference/services/#vehicleenginetype)). For pedestrians and bicycles, no engine is allowed.
--   Consumption parameters used to adjust the overall range prediction of the vehicle (see [`VehicleConsumption`](/javascript/maps/documentation/api-reference/services/#vehicleconsumption)).
--   Vehicle dimensions (see [`VehicleDimensions`](/javascript/maps/documentation/api-reference/services/#vehicledimensions)).
--   Hazardous payload describing the classification of carrying hazardous materials carried by the vehicle (see [`LoadType`](/javascript/maps/documentation/api-reference/services/#loadtype)).
--   Tunnel codes describing which tunnels can be used (see [`VehicleParameters.adrCode`](/javascript/maps/documentation/api-reference/services/#vehicleparameters)).
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    departAt: futureDate.toISOString(),
+    traffic: true
+});
+```
 
-<Blockquote>
-
-Vehicle profile properties are valid only at the current point in time and they get updated over time, e.g., the consumption curve. Vehicle profile is also useful during free driving mode without a route, e.g., to steer range features like a 360 range around the current position.
-
-</Blockquote>
-
-# Planning errors (TODO)
+For complete examples, check the `/examples` folder in the repository.

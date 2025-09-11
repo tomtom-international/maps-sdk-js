@@ -4,7 +4,7 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
@@ -17,11 +17,9 @@ titleTags:
 </Blockquote>
 <br/>
 
-
 # TomTom Maps SDK JS
 
 **Maps SDK JS** is a **JavaScript/TypeScript** library for building applications using [**TomTom** location maps and services](https://developer.tomtom.com/).
-
 
 <a href="https://latest.examples.maps-sdk-js.tomtom.com">
     <img src="images/sdk-examples-collage.png" style={{width: "800px"}} alt="Example Thumbnails"/>
@@ -29,18 +27,27 @@ titleTags:
 
 It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
-<br/><br/>
 
-# Where can you run it on?
-- **web**: display and configure a map, search for places, plan routes, and easily display and interact with them, including your own data
-- **nodejs**: (reverse)geocode locations, (re)calculate routes, and more, to enrich data before saving or returning it
-- **React Native**: leverage the power of TomTom location services from a single codebase
-<br/><br/>
+## Key Features
 
-# Bundles
-The Maps SDK is made up of three bundles:
--   [**Map**](/javascript/maps/documentation/guides/map/quickstart): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps.
--   [**Services**](/javascript/maps/documentation/guides/services/quickstart): GeoJSON services for TomTom location APIs: search for places, calculate routes, EV charging availability, and more.
--   [**Core**](/javascript/maps/documentation/guides/core/quickstart): configuration, types and utilities common to Map and Services.
+- **Interactive Maps**: MapLibre-powered library for styled, service-compatible TomTom Maps
+- **Comprehensive Services**: Access to TomTom's location APIs including search, routing, and geocoding
+- **GeoJSON Support**: Built-in compatibility with the widely-used geospatial data format
+- **TypeScript Ready**: Full TypeScript support with comprehensive type definitions
+- **Modular Architecture**: Use only the features you need with tree-shaking support
 
-Each bundle comes with its own modules and functions. Developers can use only the code features they need, with out-of-the-box or configured solutions, or their own implementations.
+## Where can you run it?
+
+- **Web**: Display and configure maps, search for places, plan routes, and interact with location data
+- **Node.js**: Server-side geocoding, route calculation, and data enrichment capabilities
+- **React Native**: Leverage TomTom location services from a single codebase
+
+## Bundles
+
+The Maps SDK is made up of three main bundles:
+
+-   [**Map**](/javascript/maps/documentation/guides/map/quickstart): MapLibre-powered library for interactive TomTom Maps with modules for places, routes, traffic, and more.
+-   [**Services**](/javascript/maps/documentation/guides/services/quickstart): GeoJSON services for TomTom location APIs: search, routing, geocoding, EV charging availability, and geometry data.
+-   [**Core**](/javascript/maps/documentation/guides/core/quickstart): Shared configuration, types, and utilities used across Map and Services bundles.
+
+Each bundle is designed to work independently or together, allowing developers to use only the features they need with optimized bundle sizes.

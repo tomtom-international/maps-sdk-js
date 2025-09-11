@@ -4,67 +4,120 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-The Map bundle allows you to handle route planning and driving actions on the map. This guide covers how to draw [`Routes`](/javascript/maps/documentation/api-reference/core#Routes)
-and [`Waypoints`](/javascript/maps/documentation/api-reference/core#Waypoints) on the map.
+# Routes Module
 
-<Blockquote>
+The Routes Module in the TomTom Maps SDK enables displaying calculated routes and waypoints on maps with comprehensive functionality for visualizing navigation routes and handling route-related interactions.
 
-  This guide does not cover how routes are planned or waypoints are created. See the [Routing guide](/javascript/maps/documentation/guides/routing/planning-a-route)
-  and [Waypoints and reconstruction routes](/javascript/maps/documentation/guides/routing/waypoints-and-reconstruction-routes)
-  for the relevant guides.
-
-</Blockquote>
-
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_adding_a_route"></a>}
-
-# Adding a route
-
-To show [`Routes`](/javascript/maps/documentation/api-reference/core#Routes) on the map, make sure your API key is enabled
-and an instance of [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap) is initialized,
-then the [`RoutingModule`](/javascript/maps/documentation/api-reference/map-routes.RoutingModule) class can be used to show routes and waypoints.
-
-> Make sure you have an initialized [`TomTomMap`](/javascript/maps/documentation/api-reference/map-init.TomTomMap) instance in your project.
-Read more about initializing the map in the [Quickstart](/javascript/maps/documentation/guides/map/quickstart) guide.
+## Basic Usage
 
 ```javascript
-import { RoutingModule } from "@cet/maps-sdk-js/map";
-import { calculateRoute } from "@cet/maps-sdk-js/services";
+import { TomTomMap, RoutesModule } from '@cet/maps-sdk-js/map';
+import { calculateRoute } from '@cet/maps-sdk-js/services';
 
-// Given an array of `Waypoint`
-const waypoints = ...
+const map = new TomTomMap({ container: 'map' });
+const routesModule = await RoutesModule.get(map);
 
-const routingModule = await RoutingModule.init(map);
-routingModule.showWaypoints(waypoints);
-routingModule.showRoutes(await calculateRoute({ geoInputs: waypoints }));
+// Calculate a route
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ]
+});
+
+// Display the route
+routesModule.addRoute({
+    id: 'myRoute',
+    route: route.routes[0]
+});
 ```
 
-<img src="images/ss_adding_a_route.png" alt="Map with a route displayed" />
-
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_removing_routes"></a>}
-
-# Removing routes
-
-All routes and waypoints added to the map can be removed using the `clearRoutes()` and `clearWaypoints()` methods.
+## Adding Multiple Routes
 
 ```javascript
-routingModule.clearRoutes();
-routingModule.clearWaypoints();
+// Add multiple routes (e.g., alternatives)
+route.routes.forEach((routeData, index) => {
+    routesModule.addRoute({
+        id: `route-${index}`,
+        route: routeData
+    });
+});
 ```
 
-{<a style={{display: 'block', margin: '0', padding: '0'}} id="_highlighting_routes"></a>}
-
-# Highlighting routes
-
-Between the shown routes, one of the routes can be selected and highlighted using the `selectRoute()` method.
+## Route Styling
 
 ```javascript
-routingModule.selectRoute(index);
+routesModule.addRoute({
+    id: 'myRoute',
+    route: route.routes[0],
+    style: {
+        lineColor: '#FF0000',
+        lineWidth: 5,
+        lineOpacity: 0.8
+    }
+});
 ```
 
-<img src="images/ss_route_alternatives.png" alt="Map with a route and its alternatives" />
+## Managing Routes
+
+```javascript
+// Remove a route
+routesModule.removeRoute('myRoute');
+
+// Clear all routes
+routesModule.clear();
+
+// Get all route IDs
+const routeIds = routesModule.getRouteIds();
+
+// Check if route exists
+if (routesModule.hasRoute('myRoute')) {
+    console.log('Route exists');
+}
+```
+
+## Route with Waypoints
+
+```javascript
+import { geocode } from '@cet/maps-sdk-js/services';
+
+// Geocode waypoints
+const origin = await geocode({ query: 'Amsterdam Central Station' });
+const destination = await geocode({ query: 'Rotterdam Central Station' });
+
+const route = await calculateRoute({
+    locations: [
+        origin.features[0].geometry.coordinates,
+        destination.features[0].geometry.coordinates
+    ]
+});
+
+routesModule.addRoute({
+    id: 'train-route',
+    route: route.routes[0]
+});
+```
+
+## Route Events
+
+```javascript
+// Listen for route clicks
+map.getMaplibreMap().on('click', (event) => {
+    const features = map.getMaplibreMap().queryRenderedFeatures(event.point, {
+        layers: routesModule.getLayerIds()
+    });
+
+    if (features.length > 0) {
+        const routeId = features[0].properties.routeId;
+        console.log(`Clicked route: ${routeId}`);
+    }
+});
+```
+
+For complete examples, check the `/examples` folder in the repository.

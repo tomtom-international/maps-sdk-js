@@ -4,95 +4,174 @@ hideMenu: false
 hideSubmenu: false
 hasTwoColumns: false
 titleTags:
-- label: "VERSION 0.5.6"
+- label: "VERSION 0.9.3"
   color: "grey5"
 - label: "PRIVATE PREVIEW"
   color: "grey5"
 ---
 
-# Request validation
+# Customizing Services
 
-Each service request is validated by the SDK by default before being sent to its corresponding API.
-The SDK verifies that each request object adheres to the expected JSON input structure, including contextual relationships between some inputs.
+The TomTom Maps SDK provides extensive configuration options to customize service behavior, optimize performance, and handle different application requirements. This guide covers request validation, custom configurations, error handling, and advanced service customization techniques.
 
-This helps with
-* getting contextual errors relevant to the SDK types (easier to read and debug).
-* preventing faulty API calls (less cost involved for all parties).
+## Request Validation
 
-However, if you are confident about your inputs and want to save some CPU,
-you can disable SDK-side request validation from some or all your service calls
-with the [`validateRequest`](/javascript/maps/documentation/api-reference/services-shared#CommonServiceParams) services parameter.
-Such parameter is common to all service call parameter types, but each service receives its own values, so you can control which services have SDK input validation.
+The SDK includes built-in request validation that verifies each service request adheres to the expected structure before sending it to the API. This validation system helps developers catch errors early and prevents faulty API calls that could result in unnecessary costs.
+
+**Benefits of Request Validation:**
+- Contextual error messages relevant to SDK types (easier debugging)
+- Prevention of malformed API calls (cost optimization)
+- Early error detection in development
+
+**Performance Considerations:**
+If you're confident about your inputs and want to optimize CPU usage, you can disable validation on a per-service basis:
 
 ```javascript
-	await search({ query: "Eiffel Tower", validateRequest: false });
+import { search, geocode, calculateRoute } from '@cet/maps-sdk-js/services';
+
+// Disable validation for specific services
+await search({
+    query: "Eiffel Tower",
+    validateRequest: false
+});
+
+await geocode({
+    query: "Amsterdam",
+    validateRequest: false
+});
 ```
 
-We recommend keeping validation enabled as default until you have tested your application enough so you are confident about a lack of malformed inputs.
+**Recommendation:** Keep validation enabled during development and testing phases. Only disable it in production when you're confident about input quality.
 
-Regardless, if SDK validation is disabled and yet some inputs are malformed, what can happen is:
-* The application will get API validation errors instead. Those will often be relatable but not exactly matching with the SDK models.
-* The application will get SDK unhandled errors. Those should be less common, but likely not be easy to understand.
-If the above occurs, we recommend to turn validation again and do some troubleshooting.
-<br/>
+## Global Service Configuration
 
-# Service templates
+The `TomTomConfig` class provides centralized configuration management for all SDK services. This approach ensures consistent behavior across your application and simplifies configuration management.
 
-Each SDK service is an implementation of the same [template](/javascript/maps/documentation/api-reference/services-shared#ServiceTemplate),
-consisting of a set of basic steps:
-
-1. **Validate request:** validates the request before being sent. Described in [Request validation](#request-validation)
-2. **Build API request:** transforms the SDK request into one ready to be sent to the API (URL with parameters)
-3. **Send API request:** sends the request via GET/POST with right payload and headers
-4. **Parse response:** parses the API response (either success or error) into the SDK supported type
-
-## customTemplate
-
-The SDK enables you to tap into any of the service implementation parts and partially or completely change or enhance it.
-
-Each SDK service call has two main arguments:
-* `params`: the call parameters, describing the API call input
-* `customTemplate`: an optional custom template (parts) implementation, which determines the behaviour of the service itself for that call.
-
-In each service call the SDK will take the default service implementation and will append whatever you added in `customTemplate`.
-This allows developers to override a part or the whole service implementation at any time.
-
-The SDK also exposes the default implementation parts for each service so it's easy for developers to only override certain parts.
-All the existing service implementation parts are discoverable via the [`customizeService`](/javascript/maps/documentation/api-reference/services-customization#customizeService) object.
-
-A practical use case for service template customizations are **enhancements** where you add extra functionality to TomTom services.
-
-However, if you start changing the core behaviours of services, you need to ensure it all still works for your application,
-since you can end up with inconsistent or map-incompatible models.
-<br/>
-
-**Enhanced response parsing for reverse geocoding call:**
 ```javascript
-	import { customizeService, reverseGeocode } from "@cet/maps-sdk-js/services";
-	const result = await reverseGeocode(
-            { position: [-0.12681, 51.50054] },
-            {
-                parseResponse: (params, response) => ({
-                    // default:
-                    ...customizeService.reverseGeocode.parseRevGeoResponse(params, response),
-                    // enhancement:
-                    apiPosition: response.addresses[0].position
-                })
-            }
-        );
+import { TomTomConfig } from '@cet/maps-sdk-js/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY',
+    language: 'en-GB',                    // Default language for all responses
+    baseUrl: 'https://api.tomtom.com',    // Custom API base URL for enterprise
+    timeout: 10000,                       // Global request timeout (milliseconds)
+    validateRequest: false                // Global validation setting
+});
 ```
 
-**Custom response parsing for geocoding call:**
+**Configuration Options:**
+- **apiKey**: Your TomTom API key (required)
+- **language**: ISO language code for response localization
+- **baseUrl**: Custom endpoint for enterprise or regional deployments
+- **timeout**: Maximum request duration before timeout
+- **validateRequest**: Global validation toggle
+
+## Service-Specific Headers
+
+For advanced use cases, you can add custom headers to individual service requests. This is useful for tracking, authentication extensions, or custom API routing:
+
 ```javascript
-	const result = await geocode(
-            { query: "teakhout" },
-            {
-                // custom response parsing forwarding the first raw API result:
-                parseResponse: (response: GeocodingResponseAPI) =>
-                    ({
-                        result: response.results[0],
-                        summary: response.summary
-                    })
-            }
-        );
+await search({
+    query: "restaurants",
+    position: [4.9041, 52.3676],
+    headers: {
+        'Custom-Header': 'custom-value',
+        'User-Agent': 'MyApp/1.0',
+        'X-Request-ID': 'unique-request-id'
+    }
+});
 ```
+
+## Comprehensive Error Handling
+
+Robust error handling is crucial for production applications. The SDK provides structured error responses that help you implement appropriate user feedback and fallback strategies:
+
+```javascript
+import { search } from '@cet/maps-sdk-js/services';
+
+try {
+    const results = await search({
+        query: "coffee",
+        position: [4.9041, 52.3676]
+    });
+
+    console.log(results.results);
+} catch (error) {
+    // Handle specific error types
+    if (error.status === 401) {
+        console.error('Authentication failed: Invalid API key');
+        // Redirect to configuration or show API key setup
+    } else if (error.status === 429) {
+        console.error('Rate limit exceeded: Too many requests');
+        // Implement exponential backoff retry logic
+    } else if (error.status === 400) {
+        console.error('Bad request: Invalid parameters');
+        // Show user-friendly validation messages
+    } else {
+        console.error('Service error:', error.message);
+        // Implement fallback or retry logic
+    }
+}
+```
+
+**Common Error Codes:**
+- **400**: Bad Request - Invalid parameters or malformed request
+- **401**: Unauthorized - Invalid or missing API key
+- **403**: Forbidden - API key lacks required permissions
+- **429**: Too Many Requests - Rate limit exceeded
+- **500**: Internal Server Error - Service temporarily unavailable
+
+## Custom Timeouts and Retry Logic
+
+Different services may require different timeout configurations based on complexity and expected response times:
+
+```javascript
+// Short timeout for autocomplete (fast response expected)
+await autocompleteSearch({
+    query: "coffee",
+    position: [4.9041, 52.3676],
+    timeout: 3000 // 3 seconds
+});
+
+// Longer timeout for complex routing calculations
+await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    timeout: 15000 // 15 seconds
+});
+```
+
+## Environment-Specific Configuration
+
+Configure different settings for development, staging, and production environments:
+
+```javascript
+const config = {
+    development: {
+        apiKey: process.env.TOMTOM_DEV_API_KEY,
+        timeout: 30000,
+        validateRequest: true,
+        baseUrl: 'https://api.tomtom.com'
+    },
+    production: {
+        apiKey: process.env.TOMTOM_PROD_API_KEY,
+        timeout: 10000,
+        validateRequest: false,
+        baseUrl: 'https://api.tomtom.com'
+    }
+};
+
+TomTomConfig.instance.put(config[process.env.NODE_ENV] || config.development);
+```
+
+## Service Templates and Customization
+
+The SDK follows a consistent service template pattern that allows for advanced customization. Each service implementation consists of four main steps:
+
+1. **Request Validation**: Validates input parameters against expected schema
+2. **API Request Building**: Transforms SDK parameters to API-compatible format
+3. **Request Execution**: Handles HTTP communication with proper headers and error handling
+4. **Response Parsing**: Converts API responses to SDK-compatible types
+
+This architecture enables you to customize any part of the service flow while maintaining compatibility with the rest of the SDK.
+
+For complete examples and advanced customization patterns, check the `/examples` folder in the repository.
