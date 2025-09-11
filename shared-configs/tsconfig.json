@@ -14,5 +14,5 @@
       "@cet/maps-sdk-js/core": ["../core"]
     }
   },
-  "exclude": ["node_modules", ".rollup.cache/", "dist", "__mocks__"]
+  "exclude": ["node_modules", "dist"]
 }

@@ -15,9 +15,9 @@ import type {
     SourceWithLayerIDs,
     StyleInput,
     StyleModuleInitConfig,
+    WaypointDisplayProps,
 } from 'map';
-import { poiLayerIDs } from 'map/src/pois';
-import type { WaypointDisplayProps } from 'map/src/routing';
+import { poiLayerIDs } from 'map';
 import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
 import type { MapsSDKThis } from '../types/MapsSDKThis';
 
