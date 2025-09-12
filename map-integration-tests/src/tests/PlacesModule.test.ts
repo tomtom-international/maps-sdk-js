@@ -83,6 +83,8 @@ test.describe('PlacesModule tests', () => {
     test('Rendering a place right after changing the style', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [-75.43974, 39.82295], zoom: 10 });
         await initPlaces(page);
+        // realistically one shouldn't change the style right after initializing the map (it's the wrong way), so for this test we wait for the map to stabilize first:
+        await waitForMapIdle(page);
         await setStyle(page, 'standardDark');
         await showPlaces(page, {
             id: 'placeID2',
@@ -172,6 +174,7 @@ test.describe('GeoJSON Places with init config tests', () => {
             await initPlaces(page, { iconConfig: { iconStyle: 'circle' } });
             const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
             await showPlaces(page, testPlaces);
+
             const numTestPlaces = testPlaces.features.length;
             const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCircleProps);
