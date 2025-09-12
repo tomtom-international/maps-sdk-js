@@ -108,7 +108,7 @@ test.describe('Tests with user events', () => {
 
     test('Events with Places and BaseMap modules', async ({ page }) => {
         await initBasemap(page);
-        await initPlaces(page);
+        await initPlaces(page, { iconConfig: { iconStyle: 'circle' } });
         await showPlaces(page, places);
         await waitForMapIdle(page);
 

@@ -106,7 +106,7 @@ test.describe('PlacesModule tests', () => {
 
     for (const testData of placesTestData as [string, Places, LocationDisplayProps[]][]) {
         test(testData[0], async ({ page }) => {
-            const [_name, testPlaces, expectedDisplayProps] = testData;
+            const [_name, testPlaces, expectedDisplayPinProps] = testData;
             const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
             const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
             await initPlaces(page);
@@ -116,14 +116,14 @@ test.describe('PlacesModule tests', () => {
             await showPlaces(page, testPlaces);
             const numTestPlaces = testPlaces.features.length;
             let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
             expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
 
             // once more, this time inputting the array of features, should yield same results:
             await showPlaces(page, testPlaces.features);
             await waitForMapIdle(page);
             renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 5000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
             expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
 
             await clearPlaces(page);
@@ -139,19 +139,19 @@ test.describe('PlacesModule tests', () => {
             const { layerIDs: nextLayerIDs } = await getPlacesSourceAndLayerIDs(page);
             await showPlaces(page, testPlaces);
             renderedPlaces = await waitUntilRenderedFeatures(page, nextLayerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
 
             // adding traffic incidents to the style: verifying the places are still shown (state restoration):
             await initTrafficIncidents(page, { ensureAddedToStyle: true });
             await waitForMapIdle(page);
             renderedPlaces = await waitUntilRenderedFeatures(page, nextLayerIDs, numTestPlaces, 5000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
 
             // changing the map style: verifying the places are still shown (state restoration):
             await setStyle(page, 'standardDark');
             await waitForMapIdle(page);
             renderedPlaces = await waitUntilRenderedFeatures(page, nextLayerIDs, numTestPlaces, 5000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
 
             expect(mapEnv.consoleErrors).toHaveLength(0);
         });
@@ -161,7 +161,7 @@ test.describe('PlacesModule tests', () => {
 test.describe('GeoJSON Places with init config tests', () => {
     for (const testData of placesTestData as [string, Places, LocationDisplayProps[], LocationDisplayProps[]][]) {
         test(testData[0], async ({ page }) => {
-            const [_name, testPlaces, _expectedDisplayProps, expectedDisplayCustomProps] = testData;
+            const [_name, testPlaces, _expectedDisplayProps, expectedDisplayCircleProps] = testData;
 
             const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
             const mapEnv = await MapTestEnv.loadPageAndMap(
@@ -174,7 +174,7 @@ test.describe('GeoJSON Places with init config tests', () => {
             await showPlaces(page, testPlaces);
             const numTestPlaces = testPlaces.features.length;
             const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCustomProps);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCircleProps);
 
             expect(mapEnv.consoleErrors).toHaveLength(0);
         });
@@ -184,7 +184,7 @@ test.describe('GeoJSON Places with init config tests', () => {
 test.describe('GeoJSON Places apply icon config tests', () => {
     for (const testData of placesTestData as [string, Places, LocationDisplayProps[], LocationDisplayProps[]][]) {
         test(testData[0], async ({ page }) => {
-            const [name, testPlaces, _expectedDisplayProps, expectedDisplayCustomProps] = testData;
+            const [name, testPlaces, _expectedDisplayPinProps, expectedDisplayPOIProps] = testData;
 
             const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
             const mapEnv = await MapTestEnv.loadPageAndMap(
@@ -200,7 +200,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             await applyIconConfig(page, { iconStyle: 'circle' });
             await waitForMapIdle(page);
             let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCustomProps);
+            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPOIProps);
 
             await applyIconConfig(page, {
                 customIcons: [{ category: 'PARKING_GARAGE', iconUrl: 'https://dummyimage.com/30x20/4137ce/fff' }],

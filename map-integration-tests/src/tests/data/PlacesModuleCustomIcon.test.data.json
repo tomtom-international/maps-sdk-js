@@ -2,79 +2,79 @@
   "Amsterdam parkings": [
     {
       "title": "Q-Park Amsterdam Nieuwendijk",
-      "iconID": "parking_garage",
+      "iconID": "PARKING_GARAGE",
       "id": "528009001852275"
     },
     {
       "title": "Parkeergarage Ijdock",
-      "iconID": "parking_garage",
+      "iconID": "PARKING_GARAGE",
       "id": "528009005853456"
     },
     {
       "title": "Parkeerplaats",
-      "iconID": "poi-parking_facility",
+      "iconID": "7369",
       "id": "528007000009625"
     },
     {
       "title": "De Boelenlaan",
-      "iconID": "poi-parking_facility",
+      "iconID": "7369",
       "id": "528009001881315"
     },
     {
       "title": "Parkeergarage Ah Stadionplein",
-      "iconID": "parking_garage",
+      "iconID": "PARKING_GARAGE",
       "id": "528009001822598"
     },
     {
       "title": "Stadhouderskade",
-      "iconID": "poi-parking_facility",
+      "iconID": "7369",
       "id": "528009001795372"
     },
     {
       "title": "Stalling Amsterdam",
-      "iconID": "parking_garage",
+      "iconID": "PARKING_GARAGE",
       "id": "528009007891165"
     },
     {
       "title": "H10 Joods Historisch Museum",
-      "iconID": "poi-parking_facility",
+      "iconID": "7369",
       "id": "528009005777796"
     },
     {
       "title": "Parkeergarage Stadhuis-Muziektheater",
-      "iconID": "parking_garage",
+      "iconID": "PARKING_GARAGE",
       "id": "528009005860320"
     },
     {
       "title": "H32 Sportfondsenbad Amsterdam-Oost",
-      "iconID": "poi-parking_facility",
+      "iconID": "7369",
       "id": "528007000009400"
     }
   ],
   "Amsterdam dentists": [
     {
       "title": "Tandarts Buisman",
-      "iconID": "poi-dentist",
+      "iconID": "9374",
       "id": "528009007794854"
     },
     {
       "title": "JorDent",
-      "iconID": "poi-dentist",
+      "iconID": "9374",
       "id": "528009001569756"
     },
     {
       "title": "Tandarts Tideman",
-      "iconID": "poi-dentist",
+      "iconID": "9374",
       "id": "528009008943953"
     },
     {
       "title": "Identified",
-      "iconID": "poi-dentist",
+      "iconID": "9374",
       "id": "528009005724901"
     },
     {
       "title": "TC De With En QJMC Jessen",
-      "iconID": "poi-dentist",
+      "iconID": "9374",
       "id": "528009002710147"
     }
   ]
