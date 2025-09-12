@@ -1,22 +1,17 @@
-hr {
+#maps-sdk-js-examples-map-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.maps-sdk-js-examples-hr {
     background: #dadce0;
     border: none;
     height: 1px;
     width: 90%;
     margin: 3px 0;
-}
-
-button {
-    margin-bottom: 5px;
-    color: #fff;
-    background-color: #3f9cd9;
-    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
-    border: 0 solid rgba(0, 0, 0, 0);
-    border-radius: 20px;
-    text-decoration: none;
-    vertical-align: middle;
-    cursor: pointer;
-    user-select: none;
 }
 
 .maplibregl-popup {
@@ -35,7 +30,7 @@ button {
     border-radius: 5px;
 }
 
-.pin {
+.maps-sdk-js-examples-pin {
     position: absolute;
     border-radius: 50%;
     border: 8px solid #00aaff;
@@ -43,7 +38,7 @@ button {
     height: 8px;
 }
 
-.pin::after {
+.maps-sdk-js-examples-pin::after {
     position: absolute;
     content: "";
     width: 0px;
@@ -54,7 +49,7 @@ button {
     border-top: 17px solid #00aaff;
 }
 
-.dot {
+.maps-sdk-js-examples-dot {
     position: relative;
     height: 8px;
     width: 8px;
@@ -64,7 +59,7 @@ button {
     transform: scale(1);
 }
 
-.popup {
+.maps-sdk-js-examples-popup {
     position: absolute;
     bottom: -100%;
     left: calc(50% - 225px);
@@ -81,7 +76,7 @@ button {
     }
 }
 
-.popup-content {
+.maps-sdk-js-examples-popup-content {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,7 +85,7 @@ button {
     font-weight: bold;
 }
 
-.popup-lnglat {
+.maps-sdk-js-examples-popup-lnglat {
     font-size: 0.75rem;
     font-weight: 400;
     letter-spacing: 0;

@@ -2,6 +2,7 @@ import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
 import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
@@ -15,7 +16,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const fitBoundsOptions = { padding: 150 };
 
     const map = new TomTomMap(
-        { bounds, fitBoundsOptions, container: 'map' },
+        { bounds, fitBoundsOptions, container: 'maps-sdk-js-examples-map-container' },
         { style: { type: 'published', include: ['trafficIncidents'] } },
     );
     await TrafficIncidentsModule.get(map, { visible: false });
@@ -29,7 +30,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     });
     routingModule.showRoutes(routes);
 
-    const routeSelector = document.querySelector('#routeSelection') as HTMLSelectElement;
+    const routeSelector = document.querySelector('#maps-sdk-js-examples-routeSelection') as HTMLSelectElement;
     for (let index = 0; index < routes.features.length; index++) {
         const routeTitle = index == 0 ? 'Recommended' : `Alternative ${index}`;
         routeSelector.add(new Option(routeTitle, index + ''));
@@ -40,7 +41,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     );
 
     document
-        .querySelector('#reCenter')
+        .querySelector('#maps-sdk-js-examples-reCenter')
         ?.addEventListener('click', () => map.mapLibreMap.fitBounds(bounds, fitBoundsOptions));
 
     (window as any).map = map; // This has been done for automation test support

@@ -1,12 +1,12 @@
-import '../styles.css';
 import { PolygonFeatures, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { GeometriesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { geometryData, search } from '@cet/maps-sdk-js/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
+import '../style.css';
 
-const mapsElement = document.querySelector('#maps') as HTMLElement;
+const mapsElement = document.querySelector('#maps-sdk-js-examples-maps-container') as HTMLElement;
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
@@ -22,7 +22,7 @@ const invert = (geometry: Feature<Polygon | MultiPolygon>): PolygonFeatures => {
 const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number) => {
     const div = document.createElement('div');
     div.id = `map${index}`;
-    div.className = 'map';
+    div.className = 'maps-sdk-js-examples-map';
     mapsElement.appendChild(div);
 
     const map = new TomTomMap({ container: div.id, bounds: geometry.bbox as LngLatBoundsLike, interactive: false });

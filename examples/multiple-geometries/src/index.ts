@@ -1,4 +1,3 @@
-import '../styles.css';
 import type { Places } from '@cet/maps-sdk-js/core';
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import {
@@ -12,6 +11,7 @@ import { geocode, geometryData } from '@cet/maps-sdk-js/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import type { Config } from './placeConfiguration';
 import { namedConfigs } from './placeConfiguration';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
@@ -31,7 +31,7 @@ const updateMap = async (config: Config) => {
 };
 
 const listenToUIEvents = async () => {
-    const placeSelector = document.getElementById('place-selector') as HTMLSelectElement;
+    const placeSelector = document.getElementById('maps-sdk-js-examples-place-selector') as HTMLSelectElement;
     placeSelector.addEventListener('change', (event) =>
         updateMap(namedConfigs[(event.target as HTMLInputElement).value]),
     );
@@ -41,14 +41,14 @@ const listenToUIEvents = async () => {
         option.addEventListener('change', () => geometry.moveBeforeLayer(option.value as GeometryBeforeLayerConfig));
     });
 
-    const stylesSelector = document.querySelector('#mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
     publishedStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as PublishedStyleID),
     );
 
     document
-        .querySelector('#reCenter')
+        .querySelector('#maps-sdk-js-examples-reCenter')
         ?.addEventListener(
             'click',
             () =>
@@ -58,7 +58,7 @@ const listenToUIEvents = async () => {
 };
 
 (async () => {
-    map = new TomTomMap({ container: 'map', fitBoundsOptions });
+    map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', fitBoundsOptions });
     geometry = await GeometriesModule.init(map);
     await updateMap(namedConfigs.france);
     await listenToUIEvents();

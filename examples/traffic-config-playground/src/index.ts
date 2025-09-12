@@ -26,7 +26,7 @@ const geocodeWithCache = async (query: string): Promise<Place> => {
 };
 
 const initUI = () => {
-    const presetSelector = document.getElementById('preset-selector') as HTMLSelectElement;
+    const presetSelector = document.getElementById('maps-sdk-js-examples-preset-selector') as HTMLSelectElement;
     configPresets.forEach((preset, index) => presetSelector.add(new Option(preset.title, String(index))));
     presetSelector.addEventListener('change', (event) => {
         const config = configPresets[Number((event.target as HTMLOptionElement).value)].config;
@@ -34,7 +34,9 @@ const initUI = () => {
         flow.applyConfig(config?.flow);
     });
 
-    const locationsSelector = document.getElementById('jump-to-location-selector') as HTMLSelectElement;
+    const locationsSelector = document.getElementById(
+        'maps-sdk-js-examples-jump-to-location-selector',
+    ) as HTMLSelectElement;
     jumpToPlaces.forEach((location, index) => locationsSelector.add(new Option(location, String(index))));
     locationsSelector.addEventListener('change', async (event) => {
         const place = await geocodeWithCache(jumpToPlaces[Number((event.target as HTMLOptionElement).value)]);
@@ -47,7 +49,7 @@ const initUI = () => {
 
 (async () => {
     map = new TomTomMap(
-        { container: 'map', center: [2.34281, 48.85639], zoom: 12 },
+        { container: 'maps-sdk-js-examples-map-container', center: [2.34281, 48.85639], zoom: 12 },
         { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
     );
     mapLibreMap = map.mapLibreMap;

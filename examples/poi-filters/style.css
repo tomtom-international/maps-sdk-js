@@ -1,0 +1,46 @@
+#maps-sdk-js-examples-map-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+#maps-sdk-js-examples-filter-section {
+    position: absolute;
+    right: 0;
+    background: white;
+    padding: 10px;
+    margin: 50px 10px;
+    font-family: "Open Sans", Arial, sans-serif;
+    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    border-radius: 10px;
+}
+#maps-sdk-js-examples-mode-selector {
+    display: block;
+    padding: 7px;
+    margin-bottom: 25px;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+#maps-sdk-js-examples-reset {
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    width: 80px;
+    padding: 10px;
+    margin-top: 10px;
+    color: #fff;
+    background-color: #3f9cd9;
+    cursor: pointer;
+    font-weight: bold;
+}
+.maps-sdk-js-examples-item {
+    margin: 5px 0;
+}
+.maps-sdk-js-examples-item input {
+    margin-right: 10px;
+    cursor: pointer;
+}
+.maps-sdk-js-examples-item label {
+    cursor: pointer;
+}

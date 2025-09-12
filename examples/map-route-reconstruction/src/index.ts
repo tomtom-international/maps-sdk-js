@@ -3,6 +3,7 @@ import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-
 import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 import type { Position } from 'geojson';
 import { GeoJSONSource, LngLatBoundsLike, Map } from 'maplibre-gl';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
@@ -103,7 +104,7 @@ const initDrawUserEvents = (mapLibreMap: Map, routingModule: RoutingModule): voi
 
     const map = new TomTomMap(
         {
-            container: 'map',
+            container: 'maps-sdk-js-examples-map-container',
             bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
             fitBoundsOptions: { padding: 150 },
         },
@@ -113,7 +114,9 @@ const initDrawUserEvents = (mapLibreMap: Map, routingModule: RoutingModule): voi
 
     const routingModule = await RoutingModule.init(map);
     initDrawMapStyle(map.mapLibreMap, routingModule);
-    document.querySelector('#reset')?.addEventListener('click', () => resetState(routingModule, waypoints));
+    document
+        .querySelector('#maps-sdk-js-examples-reset')
+        ?.addEventListener('click', () => resetState(routingModule, waypoints));
     await resetState(routingModule, waypoints);
     initDrawUserEvents(map.mapLibreMap, routingModule);
     (window as any).map = map; // This has been done for automation test support

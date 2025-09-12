@@ -1,12 +1,13 @@
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { BaseMapModule, POIsModule, TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 (async () => {
     const map = new TomTomMap(
-        { container: 'map', center: [-74.00432, 40.71632], zoom: 3 },
+        { container: 'maps-sdk-js-examples-map-container', center: [-74.00432, 40.71632], zoom: 3 },
         { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
     );
 

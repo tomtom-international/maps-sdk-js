@@ -3,36 +3,11 @@
     <head>
         <title>Maps SDK Change Language Playground</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
-        <style>
-            #map {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-            }
-
-            .selector-element {
-                position: absolute;
-                left: 20px;
-                bottom: 20px;
-                padding: 8px;
-                color: #fff;
-                background-color: #3f9cd9;
-                box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
-                border: 0 solid rgba(0, 0, 0, 0);
-                border-radius: 20px;
-                text-decoration: none;
-                vertical-align: middle;
-                cursor: pointer;
-                user-select: none;
-            }
-        </style>
     </head>
     <body>
-        <div id="map"></div>
-        <label for="mapLanguages"></label>
-        <select class="selector-element" id="mapLanguages"></select>
+        <div id="maps-sdk-js-examples-map-container"></div>
+        <label for="maps-sdk-js-examples-mapLanguages"></label>
+        <select id="maps-sdk-js-examples-mapLanguages"></select>
         <script type="module" src="./src/index.ts"></script>
     </body>
 </html>

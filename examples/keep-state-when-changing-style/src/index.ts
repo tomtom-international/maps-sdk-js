@@ -22,7 +22,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'es-
 
     const map = new TomTomMap(
         {
-            container: 'map',
+            container: 'maps-sdk-js-examples-map-container',
             bounds: bboxFromGeoJSON(geoInputs) as LngLatBoundsLike,
             fitBoundsOptions: { padding: 100 },
         },
@@ -45,7 +45,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'es-
         await search({ query: 'City Hall', position, poiCategories: ['GOVERNMENT_OFFICE'] }),
     );
 
-    const stylesSelector = document.querySelector('#mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
     publishedStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as PublishedStyleID),

@@ -4,6 +4,7 @@ import { GeometriesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { geocode, geometryData, search } from '@cet/maps-sdk-js/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import type { LngLatBoundsLike } from 'maplibre-gl';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
@@ -19,7 +20,12 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
 (async () => {
     const mainPlace = await geocode({ query: 'Germany', geographyTypes: ['Country'] });
     const map = new TomTomMap(
-        { container: 'map', minZoom: 2, zoom: 13, bounds: mainPlace.bbox as LngLatBoundsLike },
+        {
+            container: 'maps-sdk-js-examples-map-container',
+            minZoom: 2,
+            zoom: 13,
+            bounds: mainPlace.bbox as LngLatBoundsLike,
+        },
         { style: { type: 'published', include: ['trafficIncidents'] } },
     );
     const mainGeometry = await geometryData({ geometries: mainPlace });

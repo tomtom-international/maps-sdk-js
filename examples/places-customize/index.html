@@ -3,65 +3,19 @@
     <head>
         <title>Customize places layer</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-        <style>
-            #map {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-            }
-            .panel {
-                position: absolute;
-                right: 0;
-                background: white;
-                padding: 10px;
-                margin: 50px 10px;
-                font-family: "Open Sans", Arial, sans-serif;
-                box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-                border-radius: 10px;
-            }
-
-            #icon-style-selector {
-                display: block;
-                padding: 7px;
-                border-radius: 5px;
-            }
-
-            .heading-label {
-                margin: 15px 0 5px 0;
-                display: block;
-                font-weight: bold;
-            }
-
-            .color-selector {
-                width: 30px;
-                height: 30px;
-                margin: 3px;
-                position: relative;
-                display: inline-flex;
-                cursor: pointer;
-            }
-
-            .color-selector:hover, .color-selector.active {
-                border: 2px solid #BBB;
-                transform: scale(1.1);
-                border-radius: 3px;
-            }
-        </style>
     </head>
     <body>
-        <div id="map"></div>
-        <div class="panel">
-            <label class="heading-label" for="icon-style-selector">Change places layer icon style:</label>
-            <select id="icon-style-selector">
+        <div id="maps-sdk-js-examples-map-container"></div>
+        <div class="maps-sdk-js-examples-panel">
+            <label class="maps-sdk-js-examples-heading-label" for="maps-sdk-js-examples-icon-style-selector">Change places layer icon style:</label>
+            <select id="maps-sdk-js-examples-icon-style-selector">
                 <option value="pin">Pin</option>
                 <option value="circle">Circle</option>
                 <option value="poi-like">POI-like</option>
                 <option value="custom">Custom Icons</option>
             </select>
             <div>
-                <label class="heading-label">Change places layer label color:</label>
+                <label class="maps-sdk-js-examples-heading-label">Change places layer label color:</label>
                 <div id="color-selector-grey" class="color-selector active" data-value="#333333"></div>
                 <div id="color-selector-blue" class="color-selector" data-value="#4C4CB2"></div>
                 <div id="color-selector-magenta" class="color-selector" data-value="#B24BB2"></div>
@@ -71,28 +25,28 @@
                 <div id="color-selector-strong-red" class="color-selector" data-value="#BD0026"></div>
             </div>
             <div>
-                <label class="heading-label">Change places layer label font:</label>
+                <label class="maps-sdk-js-examples-heading-label">Change places layer label font:</label>
                 <label>
-                    <input type="radio" class="font-selector" name="font-selector" value="Noto-Regular">
+                    <input type="radio" class="maps-sdk-js-examples-font-selector" name="maps-sdk-js-examples-font-selector" value="Noto-Regular">
                     Noto-Regular
                 </label>
                 <label>
-                    <input type="radio" class="font-selector" name="font-selector" value="Noto-Medium">
+                    <input type="radio" class="maps-sdk-js-examples-font-selector" name="maps-sdk-js-examples-font-selector" value="Noto-Medium">
                     Noto-Medium
                 </label>
                 <label>
-                    <input type="radio" class="font-selector" name="font-selector" value="Noto-Bold" checked>
+                    <input type="radio" class="maps-sdk-js-examples-font-selector" name="maps-sdk-js-examples-font-selector" value="Noto-Bold" checked>
                     Noto-Bold
                 </label>
             </div>
             <div>
-                <label class="heading-label">Change places layer label content:</label>
+                <label class="maps-sdk-js-examples-heading-label">Change places layer label content:</label>
                 <label>
-                    <input type="radio" class="content-selector" name="content-selector" value="default" checked>
+                    <input type="radio" class="maps-sdk-js-examples-content-selector" name="maps-sdk-js-examples-content-selector" value="default" checked>
                     Default
                 </label>
                 <label>
-                    <input type="radio" class="content-selector" name="content-selector" value="multi-line">
+                    <input type="radio" class="maps-sdk-js-examples-content-selector" name="maps-sdk-js-examples-content-selector" value="multi-line">
                     Multi line label
                 </label>
             </div>

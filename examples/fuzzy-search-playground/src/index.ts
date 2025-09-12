@@ -2,6 +2,7 @@ import { Places, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { search } from '@cet/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
@@ -10,7 +11,7 @@ let map: TomTomMap;
 let placesModule: PlacesModule;
 
 const showSearchResultsList = (places: Places) => {
-    const searchResultsList = document.querySelector('#searchResults') as HTMLUListElement;
+    const searchResultsList = document.querySelector('#maps-sdk-js-examples-searchResults') as HTMLUListElement;
     searchResultsList.innerHTML = '';
     for (const place of places.features) {
         const li = document.createElement('li');
@@ -45,9 +46,11 @@ const searchAndDisplayResults = async (query: string, searchLocationModeSelector
 };
 
 const listenToUserEvents = () => {
-    const searchLocationModeSelector = <HTMLInputElement>document.querySelector('#searchLocationModeSelector');
-    const searchBox = document.querySelector('#searchBox') as HTMLInputElement;
-    const searchButton = document.querySelector('#searchButton') as HTMLButtonElement;
+    const searchLocationModeSelector = <HTMLInputElement>(
+        document.querySelector('#maps-sdk-js-examples-searchLocationModeSelector')
+    );
+    const searchBox = document.querySelector('#maps-sdk-js-examples-searchBox') as HTMLInputElement;
+    const searchButton = document.querySelector('#maps-sdk-js-examples-searchButton') as HTMLButtonElement;
     searchButton.addEventListener('click', () =>
         searchAndDisplayResults(searchBox.value, searchLocationModeSelector.value),
     );
@@ -58,7 +61,10 @@ const listenToUserEvents = () => {
 };
 
 (async () => {
-    map = new TomTomMap({ container: 'map', center: [4.8156, 52.4414], zoom: 8 }, { language: 'en-GB' });
+    map = new TomTomMap(
+        { container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 },
+        { language: 'en-GB' },
+    );
     placesModule = await PlacesModule.init(map);
     listenToUserEvents();
     (window as any).map = map; // This has been done for automation test support

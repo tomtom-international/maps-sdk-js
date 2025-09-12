@@ -21,7 +21,7 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
     const areaToSearch = await geocode({ query: 'paris', limit: 1 });
 
     const map = new TomTomMap({
-        container: 'map',
+        container: 'maps-sdk-js-examples-map-container',
         fitBoundsOptions: { padding: 50 },
         bounds: bboxFromGeoJSON(areaToSearch) as LngLatBoundsLike,
     });

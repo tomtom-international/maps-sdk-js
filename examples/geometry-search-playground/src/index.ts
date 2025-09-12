@@ -4,6 +4,7 @@ import { GeometriesModule, PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map'
 import { geocode, geometryData, search } from '@cet/maps-sdk-js/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import type { LngLatBoundsLike } from 'maplibre-gl';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
@@ -43,22 +44,22 @@ const searchPlacesInGeometry = async (placesQuery: string, geometryQuery: string
 };
 
 const listenToUserEvents = () => {
-    const searchTextBox = document.querySelector('#searchTextBox') as HTMLInputElement;
-    const inTextBox = document.querySelector('#inTextBox') as HTMLInputElement;
-    const searchButton = document.querySelector('#searchButton') as HTMLButtonElement;
+    const searchTextBox = document.querySelector('#maps-sdk-js-examples-searchTextBox') as HTMLInputElement;
+    const inTextBox = document.querySelector('#maps-sdk-js-examples-inTextBox') as HTMLInputElement;
+    const searchButton = document.querySelector('#maps-sdk-js-examples-searchButton') as HTMLButtonElement;
 
     searchButton.addEventListener('click', () => searchPlacesInGeometry(searchTextBox.value, inTextBox.value));
     searchTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
     inTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
 
     document
-        .querySelector('#reCenter')
+        .querySelector('#maps-sdk-js-examples-reCenter')
         ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
 };
 
 (async () => {
     // we initialize the map directly in the first search content:
-    map = new TomTomMap({ container: 'map', zoom: 2 }, { language: 'en-GB' });
+    map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', zoom: 2 }, { language: 'en-GB' });
     placesModule = await PlacesModule.init(map);
     geometryModule = await GeometriesModule.init(map);
     listenToUserEvents();

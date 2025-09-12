@@ -4,6 +4,7 @@
 // import { GeometriesModule, PlacesModule, TomTomMap } from "@cet/maps-sdk-js/map";
 // import { calculateReachableRanges, ReachableRangeBudget, search } from "@cet/maps-sdk-js/services";
 // import { LngLatBoundsLike } from "maplibre-gl";
+// import '../style.css';
 //
 // // (Set your own API key when working in your own environment)
 // TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });

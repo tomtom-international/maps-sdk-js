@@ -1,9 +1,9 @@
-body {
+.maps-sdk-js-examples-body {
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 14px;
 }
 
-.map {
+#maps-sdk-js-examples-map-container {
     position: absolute;
     left: 0;
     top: 0;
@@ -11,7 +11,7 @@ body {
     height: 100%;
 }
 
-.info-panel {
+#maps-sdk-js-examples-infoPanel {
     padding: 20px;
     border: none;
     border-radius: 25px;
@@ -26,6 +26,6 @@ body {
     height: 140px;
 }
 
-.info-label {
+.maps-sdk-js-examples-info-label {
     margin: 10px;
 }

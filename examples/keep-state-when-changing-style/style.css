@@ -1,4 +1,4 @@
-#map {
+#maps-sdk-js-examples-map-container {
     position: absolute;
     left: 0;
     top: 0;
@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-.toggle {
+#maps-sdk-js-examples-mapStyles {
     position: absolute;
     right: 20px;
     height: 26px;

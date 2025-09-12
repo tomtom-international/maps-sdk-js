@@ -1,17 +1,27 @@
-.panel {
+#maps-sdk-js-examples-map-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.maps-sdk-js-examples-route-selection-container {
     position: absolute;
     right: 20px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    margin: 15px 10px;
-    font-family: "Open Sans", Arial, sans-serif;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-    border-radius: 10px;
 }
 
-button {
-    height: 26px;
+.maps-sdk-js-examples--reCenter-container {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+#maps-sdk-js-examples-routeSelection {
     margin-bottom: 5px;
     color: #fff;
     background-color: #3f9cd9;
@@ -24,10 +34,8 @@ button {
     user-select: none;
 }
 
-.toggle {
-    margin-top: 10px;
-    height: 26px;
-    padding: 5px;
+#maps-sdk-js-examples-reCenter{
+    margin-bottom: 5px;
     color: #fff;
     background-color: #3f9cd9;
     box-shadow: 0 2px 7px rgb(0 0 0 / 20%);

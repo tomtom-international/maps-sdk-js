@@ -22,30 +22,30 @@ const initBaseMapModule = async (layerGroups: BaseMapLayerGroupName[], selector:
 };
 
 (async () => {
-    map = new TomTomMap({ container: 'map', center: [-74.06332, 40.72732], zoom: 12 });
+    map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [-74.06332, 40.72732], zoom: 12 });
 
-    await initBaseMapModule(['water'], '#toggleWater');
-    await initBaseMapModule(['land'], '#toggleLand');
-    await initBaseMapModule(['borders'], '#toggleBorders');
-    await initBaseMapModule(['buildings2D'], '#toggleBuildings2D');
-    await initBaseMapModule(['buildings3D'], '#toggleBuildings3D');
-    await initBaseMapModule(['houseNumbers'], '#toggleHouseNumbers');
-    await initBaseMapModule(['roadLines'], '#toggleRoadLines');
-    await initBaseMapModule(['roadLabels'], '#toggleRoadLabels');
-    await initBaseMapModule(['roadShields'], '#toggleRoadShields');
-    await initBaseMapModule(['placeLabels'], '#togglePlaces');
-    await initBaseMapModule(['smallerTownLabels'], '#toggleSmallerTowns');
-    await initBaseMapModule(['cityLabels'], '#toggleCities');
-    await initBaseMapModule(['capitalLabels'], '#toggleCapitals');
-    await initBaseMapModule(['stateLabels'], '#toggleStates');
-    await initBaseMapModule(['countryLabels'], '#toggleCountries');
+    await initBaseMapModule(['water'], '#maps-sdk-js-examples-toggleWater');
+    await initBaseMapModule(['land'], '#maps-sdk-js-examples-toggleLand');
+    await initBaseMapModule(['borders'], '#maps-sdk-js-examples-toggleBorders');
+    await initBaseMapModule(['buildings2D'], '#maps-sdk-js-examples-toggleBuildings2D');
+    await initBaseMapModule(['buildings3D'], '#maps-sdk-js-examples-toggleBuildings3D');
+    await initBaseMapModule(['houseNumbers'], '#maps-sdk-js-examples-toggleHouseNumbers');
+    await initBaseMapModule(['roadLines'], '#maps-sdk-js-examples-toggleRoadLines');
+    await initBaseMapModule(['roadLabels'], '#maps-sdk-js-examples-toggleRoadLabels');
+    await initBaseMapModule(['roadShields'], '#maps-sdk-js-examples-toggleRoadShields');
+    await initBaseMapModule(['placeLabels'], '#maps-sdk-js-examples-togglePlaces');
+    await initBaseMapModule(['smallerTownLabels'], '#maps-sdk-js-examples-toggleSmallerTowns');
+    await initBaseMapModule(['cityLabels'], '#maps-sdk-js-examples-toggleCities');
+    await initBaseMapModule(['capitalLabels'], '#maps-sdk-js-examples-toggleCapitals');
+    await initBaseMapModule(['stateLabels'], '#maps-sdk-js-examples-toggleStates');
+    await initBaseMapModule(['countryLabels'], '#maps-sdk-js-examples-toggleCountries');
     const pois = await POIsModule.get(map);
     document
-        .querySelector('#togglePOIs')
+        .querySelector('#maps-sdk-js-examples-togglePOIs')
         ?.addEventListener('click', (ev) => pois.setVisible((ev.target as HTMLInputElement).checked));
 
     // style selector:
-    const stylesSelector = document.querySelector('#mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
     publishedStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as PublishedStyleID),

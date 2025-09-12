@@ -1,4 +1,4 @@
-import '../styles.css';
+import '../style.css';
 import { bboxFromGeoJSON, TomTomConfig, type Waypoints } from '@cet/maps-sdk-js/core';
 import { PlacesModule, RoutingModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { calculateRoute, geocode, search } from '@cet/maps-sdk-js/services';
@@ -18,7 +18,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 
     const map = new TomTomMap(
         {
-            container: 'map',
+            container: 'maps-sdk-js-examples-map-container',
             bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
             fitBoundsOptions: { padding: 100 },
         },

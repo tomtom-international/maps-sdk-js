@@ -13,10 +13,14 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
     const fitBoundsOptions = { padding: 50 };
 
-    const map = new TomTomMap({ container: 'map', fitBoundsOptions, bounds: placeToSearchBBox });
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        fitBoundsOptions,
+        bounds: placeToSearchBBox,
+    });
 
     document
-        .querySelector('#reCenter')
+        .querySelector('#maps-sdk-js-examples-reCenter')
         ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
 
     const geometryToSearch = await geometryData({ geometries: placeToSearchInside });

@@ -81,7 +81,11 @@ const initSelectedSourceAndLayers = (mapLibreMap: Map): GeoJSONSource => {
 };
 
 (async () => {
-    const map = new TomTomMap({ container: 'map', center: [-74.00332, 40.71732], zoom: 18 });
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        center: [-74.00332, 40.71732],
+        zoom: 18,
+    });
     const mapLibreMap = map.mapLibreMap;
     await POIsModule.get(map, { visible: false });
 
@@ -96,9 +100,9 @@ const initSelectedSourceAndLayers = (mapLibreMap: Map): GeoJSONSource => {
     const hoveredSource = initHoveredSourceAndLayers(mapLibreMap);
     const selectedSource = initSelectedSourceAndLayers(mapLibreMap);
 
-    const titleElement = document.querySelector('#title') as Element;
-    const subtitleElement = document.querySelector('#subtitle') as Element;
-    const addressesElement = document.querySelector('#addresses') as Element;
+    const titleElement = document.querySelector('#maps-sdk-js-examples-title') as Element;
+    const subtitleElement = document.querySelector('#maps-sdk-js-examples-subtitle') as Element;
+    const addressesElement = document.querySelector('#maps-sdk-js-examples-addresses') as Element;
 
     const setTitleAndSubtitle = (feature: MapGeoJSONFeature) => {
         titleElement.innerHTML = `${feature.properties.category} ${feature.properties.subcategory ?? ''}`;

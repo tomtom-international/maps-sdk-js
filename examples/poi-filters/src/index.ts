@@ -65,10 +65,10 @@ const resetConfig = () => {
 };
 
 const createFilterToggles = () => {
-    const container = document.getElementById('filters-container');
+    const container = document.getElementById('maps-sdk-js-examples-filters-container');
     for (const [key, value] of Object.entries(categories)) {
         const item = document.createElement('div');
-        item.className = 'item';
+        item.className = 'maps-sdk-js-examples-item';
         const input = document.createElement('input');
         input.type = 'checkbox';
         input.value = key;
@@ -85,7 +85,7 @@ const createFilterToggles = () => {
 };
 
 const listenToUserEvents = () => {
-    const items = document.querySelectorAll('.item input');
+    const items = document.querySelectorAll('.maps-sdk-js-examples-item input');
     items.forEach((item) =>
         item.addEventListener('change', (e) => {
             const target = e.target as HTMLInputElement;
@@ -93,17 +93,21 @@ const listenToUserEvents = () => {
         }),
     );
 
-    modeSelector = document.getElementById('mode-selector') as HTMLSelectElement;
+    modeSelector = document.getElementById('maps-sdk-js-examples-mode-selector') as HTMLSelectElement;
     modeSelector?.addEventListener('change', (e) =>
         changeFilterMode((e.target as HTMLSelectElement).value as FilterShowMode),
     );
 
-    const resetBtn = document.getElementById('reset');
+    const resetBtn = document.getElementById('maps-sdk-js-examples-reset');
     resetBtn?.addEventListener('click', resetConfig);
 };
 
 (async () => {
-    const map = new TomTomMap({ container: 'map', center: [4.89437, 52.36859], zoom: 16.5 });
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        center: [4.89437, 52.36859],
+        zoom: 16.5,
+    });
 
     poisModule = await POIsModule.get(map);
     createFilterToggles();

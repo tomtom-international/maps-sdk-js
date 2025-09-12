@@ -4,6 +4,7 @@ import type { IconStyle, MapFont, PlaceIconConfig } from '@cet/maps-sdk-js/map';
 import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { search } from '@cet/maps-sdk-js/services';
 import tomtomLogo from '../resources/tomtomLogo.png';
+import '../style.css';
 
 TomTomConfig.instance.put({
     // (Set your own API key when working in your own environment)
@@ -101,13 +102,13 @@ const listenToUIEvents = () => {
 };
 
 (async () => {
-    map = new TomTomMap({ container: 'map', center: [4.90435, 52.36876], zoom: 10 });
+    map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.90435, 52.36876], zoom: 10 });
     places = await PlacesModule.init(map);
     await updatePlaces();
     map.mapLibreMap.on('moveend', updatePlaces);
-    colorSelectors = document.querySelectorAll('.color-selector');
-    fontSelectors = document.querySelectorAll('.font-selector');
-    contentSelectors = document.querySelectorAll('.content-selector');
+    colorSelectors = document.querySelectorAll('.maps-sdk-js-examples-color-selector');
+    fontSelectors = document.querySelectorAll('.maps-sdk-js-examples-font-selector');
+    contentSelectors = document.querySelectorAll('.maps-sdk-js-examples-content-selector');
     colorSelectors.forEach((element) => {
         element.style.backgroundColor = element.dataset.value ?? '';
     });

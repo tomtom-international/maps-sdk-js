@@ -4,18 +4,18 @@
         <title>Autocomplete & Fuzzy search</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
     </head>
-    <body>
-        <div id="map" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></div>
-        <div style="position: absolute; left: 20px; display: flex; flex-direction: column;">
-            <div class="search-area">
-                <input id="search-box" type="text" class="element search-box" placeholder="Search for place"/>
+    <body class="maps-sdk-js-examples-body">
+    <div id="maps-sdk-js-examples-map-container"></div>
+        <div class="maps-sdk-js-examples-search-container">
+            <div class="maps-sdk-js-examples-search-area">
+                <input id="maps-sdk-js-examples-search-box" type="text" class="maps-sdk-js-examples-element maps-sdk-js-examples-search-box" placeholder="Search for place"/>
             </div>
             <div>
-                <ul id="autocompleteResults" class="element result-item"></ul>
-                <ul id="fuzzySearchResults" class="element result-item"></ul>
+                <ul id="maps-sdk-js-examples-autocompleteResults" class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"></ul>
+                <ul id="maps-sdk-js-examples-fuzzySearchResults" class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"></ul>
             </div>
         </div>
-        <div class="search-this-area" id="search-this-area"></div>
+    <div id="maps-sdk-js-examples-search-this-area"></div>
         <script type="module" src="./src/index.ts"></script>
     </body>
 </html>

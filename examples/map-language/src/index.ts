@@ -1,6 +1,7 @@
 import type { Language } from '@cet/maps-sdk-js/core';
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { TomTomMap } from '@cet/maps-sdk-js/map';
+import '../style.css';
 
 const mapLanguages: { text: string; value: Language }[] = [
     { text: 'Neutral Ground Truth (Default)', value: 'ngt' },
@@ -19,11 +20,11 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 (async () => {
     const map = new TomTomMap(
-        { container: 'map', zoom: 3, minZoom: 2, center: [18.33157, 39.78563] },
+        { container: 'maps-sdk-js-examples-map-container', zoom: 3, minZoom: 2, center: [18.33157, 39.78563] },
         { language: configLanguage },
     );
 
-    const languageSelector = document.querySelector('#mapLanguages') as HTMLSelectElement;
+    const languageSelector = document.querySelector('#maps-sdk-js-examples-mapLanguages') as HTMLSelectElement;
     for (const language of mapLanguages) {
         languageSelector.add(new Option(language.text, language.value, undefined, configLanguage === language.value));
     }

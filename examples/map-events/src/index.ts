@@ -1,8 +1,8 @@
-import '../styles.css';
 import { Place, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { BaseMapModule, PlacesModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
 import { reverseGeocode, search } from '@cet/maps-sdk-js/services';
 import { LngLat, MapGeoJSONFeature, Marker, NavigationControl, Popup } from 'maplibre-gl';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
@@ -13,7 +13,7 @@ const popUp = new Popup({
     closeOnClick: true,
     closeOnMove: true,
     offset: 15,
-    className: 'popup',
+    className: 'maps-sdk-js-examples-popup',
 });
 let isMarkerVisible = false;
 const revGeocodingMarker = new Marker({ color: '#df1b12' });
@@ -61,7 +61,7 @@ const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
         closeOnClick: true,
         closeOnMove: true,
         offset: 15,
-        className: 'popup',
+        className: 'maps-sdk-js-examples-popup',
     })
         .setHTML(
             `
@@ -70,8 +70,8 @@ const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
             <b id="place-address"> Address: </b> ${address.freeformAddress}
             <br />
             ${poi?.phone ? `<b> Phone: </b> ${poi?.phone}` : ''}
-            <div id="popup-tags" class="popup-tags">
-            ${poi?.categories?.map((category) => `<span class="popup-tags-item">${category}</span>`)}
+            <div id="maps-sdk-js-examples-popup-tags">
+            ${poi?.categories?.map((category) => `<span class="maps-sdk-js-examples-popup-tags-item">${category}</span>`)}
             </div>
             </div> 
             `,
@@ -104,17 +104,17 @@ const showBasemapPopup = async (_: any, lnglat: LngLat) => {
             closeOnClick: true,
             closeOnMove: true,
             offset: 6,
-            className: 'popup-basemap',
+            className: 'maps-sdk-js-examples-popup-basemap',
         })
             .setHTML(
                 `
-                <div id="popup-basemap">
+                <div id="maps-sdk-js-examples-popup-basemap">
                 ${
                     properties.address.freeformAddress
-                        ? ` <h4 id="popup-basemap-address" class="popup-basemap-address">${properties.address.freeformAddress}</h4> <hr />`
+                        ? ` <h4 id="maps-sdk-js-examples-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="maps-sdk-js-examples-hr" />`
                         : ''
                 }
-                    <div id="popup-lnglat" class="popup-lnglat">
+                    <div id="maps-sdk-js-examples-popup-lnglat">
                         <span> ${lnglat.lng.toFixed(5)}, ${lnglat.lat.toFixed(5)}</span>
                     </div>
                 </div> 
@@ -138,7 +138,7 @@ const initBaseMapModule = async () => {
 
 (async () => {
     map = new TomTomMap(
-        { container: 'map', center: [-0.12634, 51.50276], zoom: 14 },
+        { container: 'maps-sdk-js-examples-map-container', center: [-0.12634, 51.50276], zoom: 14 },
         { language: 'en-GB', style: { type: 'published', include: ['trafficIncidents'] } },
     );
 

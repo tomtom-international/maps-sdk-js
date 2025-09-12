@@ -3,6 +3,7 @@ import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
 import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
+import '../style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
@@ -21,7 +22,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
     const map = new TomTomMap(
         {
-            container: 'map',
+            container: 'maps-sdk-js-examples-map-container',
             bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
             fitBoundsOptions: { padding: 150 },
         },

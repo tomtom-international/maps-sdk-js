@@ -1,4 +1,4 @@
-.maps {
+#maps-sdk-js-examples-maps-container {
     left: 0;
     top: 0;
     width: 100%;
@@ -10,12 +10,12 @@
 }
 
 @media screen and (max-width: 768px) {
-    .maps {
+    #maps-sdk-js-examples-maps-container {
         grid-template-columns: repeat(1, 1fr);
     }
 }
 
-.map {
+.maps-sdk-js-examples-map {
     min-width: 200px;
     height: 220px;
     grid-column: span 1;

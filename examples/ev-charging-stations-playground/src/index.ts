@@ -32,13 +32,13 @@ import genericIcon from './resources/ic-generic-24.svg?raw';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const evBrandTextBox = document.querySelector('#evBrandTextBox') as HTMLInputElement;
-const areaTextBox = document.querySelector('#areaTextBox') as HTMLInputElement;
+const evBrandTextBox = document.querySelector('#maps-sdk-js-examples-evBrandTextBox') as HTMLInputElement;
+const areaTextBox = document.querySelector('#maps-sdk-js-examples-areaTextBox') as HTMLInputElement;
 const fitBoundsOptions = { padding: 50 };
 const popUp = new Popup({
     closeButton: false,
     offset: 35,
-    className: 'popup',
+    className: 'maps-sdk-js-popup',
 });
 
 let map: TomTomMap;
@@ -55,7 +55,7 @@ let minPowerKWSearchedEVStations = 0;
 const connectorsHTML = (chargingPark: ChargingParkWithAvailability): string => {
     const availability = chargingPark?.availability;
     const connectorAvailabilities = availability ? availability.connectorAvailabilities : chargingPark.connectorCounts;
-    return `<ul class="connector">
+    return `<ul class="maps-sdk-js-examples-connector-ul">
     ${connectorAvailabilities
         .map((connectorAvailability) => {
             const statusCounts = (connectorAvailability as ConnectorAvailability).statusCounts;
@@ -64,13 +64,17 @@ const connectorsHTML = (chargingPark: ChargingParkWithAvailability): string => {
             const connectorType = connectorAvailability.connector.type;
             const connectorName = connectorNames[connectorType] ?? connectorType;
             return `
-            <li>
-                <div class="connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
-                <label class="connectorName">${connectorName ?? ''}</label>
-                <label class="connectorPower"> | ${connectorAvailability.connector.ratedPowerKW} KW</label>
-                <label class=${
-                    hasStatuses ? (availableCount ? 'available' : 'unavailable') : 'noStatus'
-                }>${hasStatuses ? `${availableCount} / ` : ''}${connectorAvailability.count}</label>
+            <li class="maps-sdk-js-examples-connector-li">
+                <div class="maps-sdk-js-examples-connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
+                <label class="maps-sdk-js-examples-connectorName maps-sdk-js-examples-label">${connectorName ?? ''}</label>
+                <label class="maps-sdk-js-examples-connectorPower maps-sdk-js-examples-label"> | ${connectorAvailability.connector.ratedPowerKW} KW</label>
+                <label class="maps-sdk-js-examples-label ${
+                    hasStatuses
+                        ? availableCount
+                            ? 'maps-sdk-js-examples-available'
+                            : 'maps-sdk-js-examples-unavailable'
+                        : 'maps-sdk-js-examples-noStatus'
+                }">${hasStatuses ? `${availableCount} / ` : ''}${connectorAvailability.count}</label>
             </li>`;
         })
         .join('')}
@@ -83,7 +87,7 @@ const showPopup = (evStation: Place<EVChargingStationPlaceProps>) => {
         .setHTML(
             `
                 <h3>${poi?.name}</h3>
-                <label class="address">${address.freeformAddress}</label>
+                <label class="maps-sdk-js-examples-address maps-sdk-js-examples-label">${address.freeformAddress}</label>
                 <br/><br/>
                 ${connectorsHTML(chargingPark as ChargingParkWithAvailability)}
             `,
@@ -228,7 +232,7 @@ const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): strin
 (async () => {
     map = new TomTomMap(
         {
-            container: 'map',
+            container: 'maps-sdk-js-examples-map-container',
             center: [2.3597, 48.85167],
             zoom: 11,
             fitBoundsOptions,
