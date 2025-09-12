@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Waypoint } from 'core';
 import type { EventType } from 'map';
-import { WAYPOINT_SYMBOLS_LAYER_ID } from 'map/src/shared';
+import { WAYPOINT_SYMBOLS_LAYER_ID } from 'map';
 import rotterdamToAmsterdamRoutesJson from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';

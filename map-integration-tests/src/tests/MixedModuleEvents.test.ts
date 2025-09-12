@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Place, Places, PolygonFeatures } from 'core';
 import type { Position } from 'geojson';
-import { BASE_MAP_SOURCE_ID } from 'map/src/shared';
+import { BASE_MAP_SOURCE_ID } from 'map';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
 import placesJson from './data/PlacesModuleEvents.test.data.json';

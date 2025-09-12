@@ -1,3 +1,6 @@
 {
-  "extends": "../shared-configs/tsconfig.json"
+  "extends": "@tsconfig/recommended",
+  "compilerOptions": {
+    "resolveJsonModule": true
+  }
 }

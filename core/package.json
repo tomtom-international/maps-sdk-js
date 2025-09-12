@@ -1,6 +1,6 @@
 {
   "name": "core",
-  "description": "",
+  "description": "TomTom Maps SDK JS - bundle for shared core functionalities between map and services",
   "main": "main.js",
   "module": "./dist/core.es.js",
   "sideEffects": false,

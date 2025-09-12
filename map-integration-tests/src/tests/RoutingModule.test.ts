@@ -1,9 +1,8 @@
-import type { Page } from '@playwright/test';
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import type { Routes, WaypointLike } from 'core';
 import type { DisplayRouteSummaryProps, RoutingModuleConfig } from 'map';
-import { defaultRouteLayersConfig } from 'map/src/routing/layers/defaultConfig';
 import {
+    defaultRouteLayersConfig,
     HILLSHADE_SOURCE_ID,
     ROUTE_DESELECTED_LINE_LAYER_ID,
     ROUTE_EV_CHARGING_STATIONS_SOURCE_ID,
@@ -29,7 +28,7 @@ import {
     TRAFFIC_INCIDENTS_SOURCE_ID,
     WAYPOINT_SYMBOLS_LAYER_ID,
     WAYPOINTS_SOURCE_ID,
-} from 'map/src/shared';
+} from 'map';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import ldevrTestRoutesJson from './data/RoutingModuleLDEVR.test.data.json';
 import rotterdamToAmsterdamRoutesJson from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';

@@ -25,7 +25,7 @@ catalogs:
       specifier: ^4.17.21
       version: 4.17.21
     maplibre-gl:
-      specifier: '>=5.7.1'
+      specifier: ^5.7.1
       version: 5.7.1
     rimraf:
       specifier: ^6.0.1
@@ -1313,6 +1313,9 @@ importers:
       '@playwright/test':
         specifier: ^1.55.0
         version: 1.55.0
+      '@tsconfig/recommended':
+        specifier: 'catalog:'
+        version: 1.0.10
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1359,8 +1362,8 @@ importers:
         specifier: 'catalog:'
         version: 4.17.21
       zod:
-        specifier: ^4.1.7
-        version: 4.1.7
+        specifier: ^4.1.8
+        version: 4.1.8
     devDependencies:
       '@rollup/plugin-terser':
         specifier: ^0.4.4
@@ -1512,8 +1515,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@bufbuild/protobuf@2.7.0':
-    resolution: {integrity: sha512-qn6tAIZEw5i/wiESBF4nQxZkl86aY4KoO0IkUa2Lh+rya64oTOdJQFlZuMwI1Qz9VBJQrQC4QlSA2DNek5gCOA==}
+  '@bufbuild/protobuf@2.8.0':
+    resolution: {integrity: sha512-r1/0w5C9dkbcdjyxY8ZHsC5AOWg4Pnzhm2zu7LO4UHSounp2tMm6Y+oioV9zlGbLveE7YaWRDUk48WLxRDgoqg==}
 
   '@cspell/cspell-bundled-dicts@9.2.1':
     resolution: {integrity: sha512-85gHoZh3rgZ/EqrHIr1/I4OLO53fWNp6JZCqCdgaT7e3sMDaOOG6HoSxCvOnVspXNIf/1ZbfTCDMx9x79Xq0AQ==}
@@ -2708,8 +2711,8 @@ packages:
   '@turf/voronoi@7.2.0':
     resolution: {integrity: sha512-3K6N0LtJsWTXxPb/5N2qD9e8f4q8+tjTbGV3lE3v8x06iCnNlnuJnqM5NZNPpvgvCatecBkhClO3/3RndE61Fw==}
 
-  '@tybys/wasm-util@0.10.0':
-    resolution: {integrity: sha512-VyyPYFlOMNylG45GoAe0xDoLwWuowvf92F9kySqzYh8vmYm7D2u4iUJKa1tOUpS70Ku13ASrOkS4ScXFsTaCNQ==}
+  '@tybys/wasm-util@0.10.1':
+    resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -2921,8 +2924,8 @@ packages:
   bare-events@2.6.1:
     resolution: {integrity: sha512-AuTJkq9XmE6Vk0FJVNq5QxETrSA/vKHarWVBG5l/JbdCL1prJemiyJqUS0jrlXO0MftuPq4m3YVYhoNc5+aE/g==}
 
-  bare-fs@4.3.3:
-    resolution: {integrity: sha512-W+ZpiQx1i0dm073So22v3jColDtvyqSTyUYEnooYwKcl+SHuqnQGKyuHdwigQffWJV5ghKtskVH7ydAkBVKQZQ==}
+  bare-fs@4.4.1:
+    resolution: {integrity: sha512-B7VdbD19fypJh6jCXgYge06pxj3UvMv+x8IOZjTSqpiy/ib3UHhwe8Zm7wqxHe7QI3CrySjui4YIRBvocuBthg==}
     engines: {bare: '>=1.16.0'}
     peerDependencies:
       bare-buffer: '*'
@@ -4525,8 +4528,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.1.7:
-    resolution: {integrity: sha512-6qi6UYyzAl7W9uV29KvcSFXqK4QCYNYUz2YASPNBWpJE1RY6R1nArmmFPgGY/CBYWzpeMw3EOER+DR9a05O4IA==}
+  zod@4.1.8:
+    resolution: {integrity: sha512-5R1P+WwQqmmMIEACyzSvo4JXHY5WiAFHRMg+zBZKgKS+Q1viRa0C1hmUKtHltoIFKtIdki3pRxkmpP74jnNYHQ==}
 
 snapshots:
 
@@ -4588,7 +4591,7 @@ snapshots:
   '@biomejs/cli-win32-x64@2.2.4':
     optional: true
 
-  '@bufbuild/protobuf@2.7.0':
+  '@bufbuild/protobuf@2.8.0':
     optional: true
 
   '@cspell/cspell-bundled-dicts@9.2.1':
@@ -5029,7 +5032,7 @@ snapshots:
     dependencies:
       '@emnapi/core': 1.5.0
       '@emnapi/runtime': 1.5.0
-      '@tybys/wasm-util': 0.10.0
+      '@tybys/wasm-util': 0.10.1
     optional: true
 
   '@oxc-project/runtime@0.82.3':
@@ -6455,7 +6458,7 @@ snapshots:
       d3-voronoi: 1.1.2
       tslib: 2.8.1
 
-  '@tybys/wasm-util@0.10.0':
+  '@tybys/wasm-util@0.10.1':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -6687,7 +6690,7 @@ snapshots:
   bare-events@2.6.1:
     optional: true
 
-  bare-fs@4.3.3:
+  bare-fs@4.4.1:
     dependencies:
       bare-events: 2.6.1
       bare-path: 3.0.0
@@ -7876,7 +7879,7 @@ snapshots:
 
   sass-embedded@1.92.0:
     dependencies:
-      '@bufbuild/protobuf': 2.7.0
+      '@bufbuild/protobuf': 2.8.0
       buffer-builder: 0.2.0
       colorjs.io: 0.5.2
       immutable: 5.1.3
@@ -8074,7 +8077,7 @@ snapshots:
       pump: 3.0.3
       tar-stream: 3.1.7
     optionalDependencies:
-      bare-fs: 4.3.3
+      bare-fs: 4.4.1
       bare-path: 3.0.0
     transitivePeerDependencies:
       - bare-buffer
@@ -8369,4 +8372,4 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zod@4.1.7: {}
+  zod@4.1.8: {}

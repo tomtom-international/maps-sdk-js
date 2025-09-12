@@ -1,1 +1,4 @@
-export const POI_SOURCE_ID = 'poiTiles';
+/**
+ * Layer IDs for POIs on the map.
+ */
+export const poiLayerIDs = ['POI', 'POI - Micro'];

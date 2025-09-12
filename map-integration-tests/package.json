@@ -18,6 +18,7 @@
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "devDependencies": {
     "@playwright/test": "^1.55.0",
+    "@tsconfig/recommended": "catalog:",
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { HILLSHADE_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from 'map/src/shared';
+import { HILLSHADE_SOURCE_ID, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from 'map';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {

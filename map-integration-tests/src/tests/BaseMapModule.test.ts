@@ -1,9 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { BaseMapLayerGroupName, BaseMapLayerGroups } from 'map/src/base';
-import { baseMapLayerGroupNames } from 'map/src/base';
-import { poiLayerIDs } from 'map/src/pois';
-import { BASE_MAP_SOURCE_ID } from 'map/src/shared';
+import type { BaseMapLayerGroupName, BaseMapLayerGroups } from 'map';
+import { BASE_MAP_SOURCE_ID, baseMapLayerGroupNames, poiLayerIDs } from 'map';
 import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {

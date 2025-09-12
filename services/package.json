@@ -1,6 +1,6 @@
 {
   "name": "services",
-  "description": "",
+  "description": "TomTom Maps SDK JS - bundle for service GeoJSON clients",
   "main": "main.js",
   "module": "./dist/services.es.js",
   "sideEffects": false,
@@ -45,6 +45,6 @@
   "dependencies": {
     "core": "workspace:*",
     "lodash-es": "catalog:",
-    "zod": "^4.1.7"
+    "zod": "^4.1.8"
   }
 }

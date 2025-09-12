@@ -1,6 +1,6 @@
 {
   "name": "map",
-  "description": "",
+  "description": "TomTom Maps SDK JS - bundle for map display and interaction",
   "main": "main.js",
   "module": "./dist/map.es.js",
   "sideEffects": false,

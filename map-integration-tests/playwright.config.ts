@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { loadEnv } from 'vite';
+import './nodejs-test-code-setup';
 
 /**
  * Read environment variables from file if we're in localhost.

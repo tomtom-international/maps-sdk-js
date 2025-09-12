@@ -8,6 +8,7 @@ import { notInTheStyle } from '../shared/errorMessages';
 import { buildMappedValuesFilter, getMergedAllFilter } from '../shared/mapLibreFilterUtils';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
+import { poiLayerIDs } from './layers/poisLayers';
 import { poiCategoryGroups } from './poiCategoryGroups';
 import type { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from './types/poisModuleConfig';
 
@@ -38,11 +39,6 @@ type PoIsSourcesAndLayers = {
      */
     poi: StyleSourceWithLayers;
 };
-
-/**
- * Layer IDs for POIs on the map.
- */
-export const poiLayerIDs = ['POI', 'POI - Micro'];
 
 /**
  * Vector tile POIs map module.
