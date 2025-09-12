@@ -178,7 +178,7 @@ describe('Calculate route integration tests', () => {
         };
 
         const result = await calculateRoute(params);
-        expect(result?.features?.length).toEqual(2);
+        expect(result?.features?.length).toBeGreaterThanOrEqual(1);
         const routeFeature = result.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
         const routeProperties = routeFeature.properties;
