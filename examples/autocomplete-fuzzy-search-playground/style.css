@@ -67,13 +67,14 @@
 }
 
 .maps-sdk-js-examples-result-item {
-    box-sizing: border-box;
     color: #fff;
-    padding: 7px 10px;
+    padding: 6px 12px;
+    width: 250px;
     font-size: 14px;
     cursor: pointer;
-    line-height: 18px;
-    scroll-behavior: smooth;
+    line-height: 20px;
+    border: 0 solid rgba(0, 0, 0, 0);
+    position: relative;
     margin-bottom: 8px
 }
 
@@ -107,22 +108,6 @@
     position: relative;
     border-radius: 15px;
     overflow: auto;
-}
-
-.maps-sdk-js-examples-result-item {
-    color: #fff;
-    padding: 6px 12px;
-    width: 250px;
-    font-size: 14px;
-    cursor: pointer;
-    line-height: 20px;
-    border: 0 solid rgba(0, 0, 0, 0);
-    position: relative;
-    margin-bottom: 8px
-}
-
-.maps-sdk-js-examples-result-item:active {
-    background-color: #3f9cd9;
 }
 
 .highlight {
