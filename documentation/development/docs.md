@@ -64,7 +64,7 @@ Note that this will remove the existing files from the api-reference folder and 
 
 **Before** the documentation is generated we need to manually do one step:
 - Make sure that all main files, which should be visible in the devportal navigation side menu, are in the
-[`base-navigation.yml`](../docs-portal/web/maps/documentation/navigation.yml) file. All the extra files are automatically added when generating the documentation.
+[`top-navigation.yml`](../docs-portal/web/maps/documentation/navigation.yml) file. All the extra files are automatically added when generating the documentation.
 
 The [javascript](../docs-portal/javascript/) subfolder should be tested using [drumkit monorepo project](https://github.com/tomtom-international/drumkit-monorepo)
 and committed to [docs-portal documentation](https://github.com/tomtom-international/devportal-documentation) when ready.
