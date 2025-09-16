@@ -4,7 +4,7 @@
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
     "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
-    "build:api-reference": "typedoc",
+    "build:docs": "documentation/scripts/generate-api-reference.sh",
     "build": "pnpm build:sdk",
     "build:sdk": "pnpm -F core build && pnpm -F services build && pnpm -F map build",
     "build:examples": "pnpm --workspace-concurrency=0 -F './examples/*' build",
@@ -42,17 +42,16 @@
     "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
-  "dependencies": {
-    "@types/lodash": "^4.17.20",
-    "globals": "^16.4.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "cspell": "^9.2.1",
+    "globals": "^16.4.0",
     "handlebars": "^4.7.8",
     "size-limit": "^11.2.0",
+    "tsx": "^4.20.5",
     "typedoc": "^0.28.13",
     "typedoc-plugin-missing-exports": "^4.1.0",
     "yaml": "^2.8.1"
