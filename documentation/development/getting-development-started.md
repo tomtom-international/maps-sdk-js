@@ -6,21 +6,27 @@ title: Getting development started
 
 ## Requirements
 
-Install next tools:
+Install the following tools:
 
 * Git latest
 * NVM latest
-* NodeJS 16.+ (LTS) - via NVM
-* NPM 8.+ (correspondent to the LTS) - via NVM
+* Node.js 22+ (LTS) - via NVM
+* pnpm 10+ (see packageManager field in package.json) - installed globally or via corepack
 
-## Setup NodeJS/NPM
+## Setup Node.js/pnpm
 
 ```shell
-nvm i 16
-nvm use 16
+nvm install 22
+nvm use 22
 
-# making 16th version the default one (optional)
-nvm alias default 16
+# making 22nd version the default one (optional)
+nvm alias default 22
+
+# Enable corepack to use the project's specified pnpm version
+corepack enable
+
+# Or install pnpm globally
+npm install -g pnpm@10.15.1
 ```
 
 ## Check out
@@ -35,22 +41,30 @@ git clone https://github.com/tomtom-international/maps-sdk-js.git
 
 ## Installation
 
-```shell
-# TODO: update documentation
-# all workspaces
-npm i -ws
-npm ci -ws
-# root project (currently only for docs generation)
-npm i
-npm ci
+The project uses pnpm workspaces. Install dependencies for all workspaces:
 
-# specific workspaces
-npm i -w core
-npm i -w map
-npm i -w services
-# or
-npm ci -w core
-# and so on...
+```shell
+# Install dependencies for all workspaces (recommended)
+pnpm install
+
+# Alternative: install for specific workspaces
+pnpm install -F core
+pnpm install -F map
+pnpm install -F services
+pnpm install -F map-integration-tests
+pnpm install -F shared-configs
+pnpm install -F './examples/*'
 ```
 
-```node_modules``` directory appears not in workspaces, but in the root directory. This is how it should be.
+The `node_modules` directory appears in each workspace as well as the root directory. This is the expected behavior with pnpm workspaces.
+
+## Workspace Structure
+
+The project is organized into the following workspaces:
+
+- **core** - Core SDK functionality
+- **services** - API services (geocoding, routing, etc.)
+- **map** - Map rendering and interaction
+- **map-integration-tests** - Integration tests for map functionality
+- **shared-configs** - Shared configuration files (TypeScript, Vite)
+- **examples/** - Example applications demonstrating SDK usage

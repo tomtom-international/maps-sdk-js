@@ -6,82 +6,68 @@ title: CI/CD
 
 ## Approach
 
-CI/CD of this project follows feature branches approach. It builds sdk versions for all branches and release tags. It also releases those to a NPM repository under npm "tags" (aliases). Alias names correspond branch/tag names.
+CI/CD of this project follows feature branches approach. It builds SDK versions for all branches and release tags. It also releases those to a NPM repository under npm "tags" (aliases). Alias names correspond to branch/tag names.
 
 ## Releasing branches
 
-In order to have your branch tested, our ci/cd builds and releases a package with aliases, so it's version looks like this:
+In order to have your branch tested, our CI/CD builds and releases a package with aliases, so its version looks like this:
 
 ```shell
-# Incremental builds based on the same 1.2.2 version. (Yes, 1.2.2, not 1.2.3) Those versions below are basically release candidates for 1.2.3:
-1.2.3-my-fix.0
-1.2.3-my-fix.1
-1.2.3-my-fix.2
-# After the base version update to 1.3.0 the aliased versions will be re-calculated:
-1.3.1-my-fix.0
-1.3.1-my-fix.1
-1.3.1-my-fix.2
+# Incremental builds based on the same 0.9.3 version. Those versions below are basically release candidates for 0.9.4:
+0.9.4-my-fix.0
+0.9.4-my-fix.1
+0.9.4-my-fix.2
+# After the base version update to 0.10.0 the aliased versions will be re-calculated:
+0.10.1-my-fix.0
+0.10.1-my-fix.1
+0.10.1-my-fix.2
 ```
 
-After publishing of such package in the NPM repository it could be installed:
+After publishing such package in the NPM repository it can be installed:
 
 ```shell
-# installation using the alias "my-fix"
-npm i --save @cet/maps-sdk-js@my-fix
-# installation using the exact version of alias "my-fix"
-npm i --save @cet/maps-sdk-js@1.2.3-my-fix.1
+# Installation using the alias "my-fix"
+pnpm add @cet/maps-sdk-js@my-fix
+
+# Installation using the exact version of alias "my-fix"
+pnpm add @cet/maps-sdk-js@0.9.4-my-fix.1
 ```
 
-Basically, all you need to do is just pushing your code to branches. Everything else happens automatically.
+Basically, all you need to do is push your code to branches. Everything else happens automatically.
 
-## Releasing a new "latest" version
+## Package Registry
 
-maps-sdk-js uses the "standard-version" tool for calculation of version increment. Calculation happens according to the "conventional commits". See [conventionalcommits.org](https://www.conventionalcommits.org) website for explanation.
-
-CHANGELOG.md file is generated and updated by the standard-version tool automatically.
-We also have a post-bump script defined in `package.json` that updates the SDK version tags in our documentation, 
-see the [docs](./docs.md) for more information about our documentation.
-
-```shell
-# dry run mode to check the version number and release notes
-pnpm release:dry
-# the actual release
-pnpm release
+The project publishes to TomTom's internal Artifactory registry:
+```
+https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/
 ```
 
-Please note, that releasing script works only in the main git branch. So make sure you've created PR, passed review and build checks before releasing anything. Anyway, it will throw an error, so no worries.
+This is configured in the `publishConfig` section of `package.json`.
 
-Version numbers for the "latest" npm tag look like this - 1.2.3, 2.3.0 etc. Correspondent git tags are - v1.2.3 and v2.3.0.
+## CI/CD Tools and Processes
 
-## Extra features
+### Quality Gates
 
-Along with the main purpose the CI/CD does code quality checks, commit checks and Slack notifications.
+Before any release, the CI/CD pipeline runs:
+- **Biome linting and formatting checks**
+- **TypeScript compilation** for all workspaces
+- **Unit tests** with Vitest
+- **Integration tests** with Playwright
+- **Bundle size checks** with size-limit
+- **SonarQube analysis** for code quality
 
-### Cross-repo workflow for examples
-We have an additional CI/CD step that triggers a build of the SDK examples, given an SDK version. This is useful to
-catch breaking changes in the SDK before they reach the main branch. A push to a development branch will trigger this 
-step. It triggers a build of the SDK examples with the changes in your development branch, giving you extra guarantees about your changes.
+### Build Process
 
-## GitHub Actions
+The CI/CD system:
+1. Installs dependencies using `pnpm install`
+2. Builds all workspaces using `pnpm build`
+3. Runs the complete test suite
+4. Generates API documentation
+5. Creates distribution packages
+6. Publishes to the registry with appropriate tags
 
-GitHub actions are used to organise Continuous Integration and Delivery via workflows. Find those in the ```.github/workflows``` directory. Currently, we have 4 of those:
+### Conventional Commits
 
-- Feature branch build
-- Release tag build
-- Feature branch delete
-- SonarQube scan
+The project follows conventional commits for automated versioning and changelog generation. See [conventionalcommits.org](https://www.conventionalcommits.org) for the specification.
 
-First 2 do next actions:
-- checkout git repository
-- install dependencies
-- test
-- build
-- release
-- notify Slack channel
-
-Deletion workflow does:
-- checkout git repository
-- remove the alias
-- notify Slack channel
-
-SonarQube scan workflow executes the static quality control analysis and publishes results to the SonarCube service of TomTom. See  more details in the "Quality control" section.
+CHANGELOG.md is maintained manually or through automated tools based on conventional commit messages.
