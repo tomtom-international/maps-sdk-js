@@ -23,7 +23,7 @@
     "./services/src/autocomplete-search",
     "./services/src/customize"
   ],
-  "out": "documentation/api-reference",
+  "out": "documentation/docs-portal/api-reference",
   "readme": "none",
   "name": "Maps SDK for JavaScript",
   "internalModule": "internal",

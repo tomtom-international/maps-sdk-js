@@ -11,8 +11,8 @@ node_modules/
 .DS_Store
 *.tgz
 **/*.tsbuildinfo
-documentation/api-reference/
-documentation/navigation.yml
+**/docs-portal/api-reference/
+**/docs-portal/navigation.yml
 
 **/test-results/
 **/playwright-report/
