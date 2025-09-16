@@ -8,12 +8,7 @@ export default defineConfig(({ mode }) => {
     return {
         root: '.',
         base: './',
-        build: {
-            target: 'esnext',
-            minify: 'esbuild',
-            emptyOutDir: true,
-            assetsInlineLimit: Number.POSITIVE_INFINITY, // Inline all assets },
-        },
+        build: { emptyOutDir: true },
         plugins: [
             ...(process.env.CI
                 ? []
@@ -24,7 +19,7 @@ export default defineConfig(({ mode }) => {
                           gzipSize: true,
                       }),
                   ]),
-            viteSingleFile({ removeViteModuleLoader: true }),
+            viteSingleFile(),
         ],
         server: { port: 9022 },
         resolve: {
