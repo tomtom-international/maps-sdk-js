@@ -22,8 +22,8 @@ describe('MapLibreUtils tests', () => {
         test('definitely expressions', () => {
             expect(getSyntaxVersion(['in', ['get', 'color'], 'reddish'])).toBe('expression');
             expect(getSyntaxVersion(['in', ['get', 'color'], ['literal', ['red', 'blue']]])).toBe('expression');
-            expect(getSyntaxVersion(['in', 42, 42])).toBe('expression');
-            expect(getSyntaxVersion(['in', true, true])).toBe('expression');
+            expect(getSyntaxVersion(['in', 42, '42'])).toBe('expression');
+            expect(getSyntaxVersion(['in', true, 'true'])).toBe('expression');
             expect(getSyntaxVersion(['in', 'red', ['get', 'colors']])).toBe('expression');
         });
 
