@@ -12,7 +12,6 @@ node_modules/
 *.tgz
 **/*.tsbuildinfo
 **/docs-portal/api-reference/
-**/docs-portal/navigation.yml
 
 **/test-results/
 **/playwright-report/
