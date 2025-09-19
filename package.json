@@ -8,6 +8,7 @@
     "build": "pnpm build:sdk",
     "build:sdk": "pnpm -F core build  && pnpm -F services build && pnpm -F map build",
     "build:examples": "pnpm --workspace-concurrency=0 -F './examples/*' build",
+    "copy-maps-sdk-js-examples-dist": "sh scripts/copy-maps-sdk-js-examples-dist.sh",
     "type-check:sdk": "pnpm -F core type-check && pnpm -F services type-check && pnpm -F map type-check && pnpm -F map-integration-tests type-check",
     "type-check:examples": "pnpm --workspace-concurrency=0 -F './examples/*' type-check",
     "lint": "biome lint .",

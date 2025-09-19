@@ -16,6 +16,7 @@ node_modules/
 **/playwright-report/
 **/blob-report/
 **/playwright/.cache/
+examples-dist/dist
 
 # Rollup visualizer stats
 **/*stats.html
