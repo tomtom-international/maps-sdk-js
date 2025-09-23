@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.11.0...v0.12.0) (2025-09-23)
+
+
+### Features
+
+* do not link to source files from API reference since we consider them implementation details ([9530052](https://github.com/tomtom-international/maps-sdk-js/commit/9530052103b3bf390ba34340ea6d1234f6a7d414))
+
+
+### Bug Fixes
+
+* api reference workflow ([89c5d32](https://github.com/tomtom-international/maps-sdk-js/commit/89c5d32a8929f65971df25a842aad120c7622820))
+* api reference workflow to react better to triggers ([6948731](https://github.com/tomtom-international/maps-sdk-js/commit/69487316133cd81b26e8067f580da0866e6bac99))
+* api reference workflow to react better to triggers ([fb88afd](https://github.com/tomtom-international/maps-sdk-js/commit/fb88afdcab6ffb7503ef1dd5fecd891523bbb875))
+* missing typedoc ([7dfd9d2](https://github.com/tomtom-international/maps-sdk-js/commit/7dfd9d2abd7c3aeb50807ae69b055bcb933a86df))
+
 ## [0.11.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.10.0...v0.11.0) (2025-09-23)
 
 
