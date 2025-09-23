@@ -41,5 +41,6 @@
     }
   },
   "excludePrivate": true,
-  "githubPages": false
+  "githubPages": false,
+  "disableSources": true
 }
