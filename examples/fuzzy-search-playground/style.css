@@ -1,4 +1,3 @@
-
 #maps-sdk-js-examples-dropdown {
     height: 20px;
     color: #fff;
@@ -19,7 +18,7 @@
     user-select: none;
 }
 
-    #maps-sdk-js-examples-searchBox {
+#maps-sdk-js-examples-searchBox {
     border: none;
     border-radius: 10px;
     height: 20px;
@@ -27,7 +26,7 @@
     margin-right: 10px;
 }
 
-    #maps-sdk-js-examples-searchButton {
+#maps-sdk-js-examples-searchButton {
     border: none;
     border-radius: 10px;
     color: #fff;

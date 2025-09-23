@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>Display multiple geometries in map</title>
-        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     </head>
     <body>
         <div id="maps-sdk-js-examples-map-container"></div>
@@ -11,7 +11,9 @@
         </div>
         <div class="maps-sdk-js-examples-panel">
             <div>
-                <label class="maps-sdk-js-examples-heading-label" for="maps-sdk-js-examples-place-selector">Show: </label>
+                <label class="maps-sdk-js-examples-heading-label" for="maps-sdk-js-examples-place-selector">
+                    Show:
+                </label>
                 <select class="maps-sdk-js-examples-select" id="maps-sdk-js-examples-place-selector">
                     <option value="france">Regions of France</option>
                     <option value="italy">Regions of Italy</option>
@@ -24,13 +26,34 @@
             </div>
             <div class="maps-sdk-js-examples-layers">
                 <label class="maps-sdk-js-examples-heading-label">Layer position: </label>
-                <label><input type="radio" name="layerOption" value="top" checked />Top</label>
-                <label><input type="radio" name="layerOption" value="country" />Below countries</label>
-                <label><input type="radio" name="layerOption" value="lowestPlaceLabel" />Below place labels</label>
-                <label><input type="radio" name="layerOption" value="poi" />Below Map POIs</label>
-                <label><input type="radio" name="layerOption" value="lowestLabel" />Below all labels</label>
-                <label><input type="radio" name="layerOption" value="lowestRoadLine" />Below roads</label>
-                <label><input type="radio" name="layerOption" value="lowestBuilding" />Below buildings</label>
+                <label>
+                    <input type="radio" name="layerOption" value="top" checked>
+                    Top
+                </label>
+                <label>
+                    <input type="radio" name="layerOption" value="country">
+                    Below countries
+                </label>
+                <label>
+                    <input type="radio" name="layerOption" value="lowestPlaceLabel">
+                    Below place labels
+                </label>
+                <label>
+                    <input type="radio" name="layerOption" value="poi">
+                    Below Map POIs
+                </label>
+                <label>
+                    <input type="radio" name="layerOption" value="lowestLabel">
+                    Below all labels
+                </label>
+                <label>
+                    <input type="radio" name="layerOption" value="lowestRoadLine">
+                    Below roads
+                </label>
+                <label>
+                    <input type="radio" name="layerOption" value="lowestBuilding">
+                    Below buildings
+                </label>
             </div>
         </div>
         <select class="maps-sdk-js-examples-select" id="maps-sdk-js-examples-mapStyles"></select>

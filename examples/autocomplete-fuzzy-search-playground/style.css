@@ -5,7 +5,7 @@
     font-size: 15px;
 }
 
-.maps-sdk-js-examples-a  {
+.maps-sdk-js-examples-a {
     text-decoration: none;
 }
 
@@ -75,7 +75,7 @@
     line-height: 20px;
     border: 0 solid rgba(0, 0, 0, 0);
     position: relative;
-    margin-bottom: 8px
+    margin-bottom: 8px;
 }
 
 .maps-sdk-js-examples-result-item:hover {

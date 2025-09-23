@@ -17,7 +17,8 @@
     border-radius: 10px;
 }
 
-#maps-sdk-js-examples-preset-selector, #maps-sdk-js-examples-jump-to-location-selector {
+#maps-sdk-js-examples-preset-selector,
+#maps-sdk-js-examples-jump-to-location-selector {
     display: block;
     padding: 7px;
     margin-bottom: 25px;

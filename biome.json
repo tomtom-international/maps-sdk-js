@@ -51,7 +51,12 @@
   },
   "css": {
     "formatter": {
-      "enabled": false
+      "enabled": true
+    }
+  },
+  "html": {
+    "formatter": {
+      "enabled": true
     }
   },
   "json": {

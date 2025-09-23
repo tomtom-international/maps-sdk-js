@@ -2,20 +2,31 @@
 <html lang="en">
     <head>
         <title>Autocomplete & Fuzzy search</title>
-        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     </head>
     <body class="maps-sdk-js-examples-body">
-    <div id="maps-sdk-js-examples-map-container"></div>
+        <div id="maps-sdk-js-examples-map-container"></div>
         <div class="maps-sdk-js-examples-search-container">
             <div class="maps-sdk-js-examples-search-area">
-                <input id="maps-sdk-js-examples-search-box" type="text" class="maps-sdk-js-examples-element maps-sdk-js-examples-search-box" placeholder="Search for place"/>
+                <input
+                    id="maps-sdk-js-examples-search-box"
+                    type="text"
+                    class="maps-sdk-js-examples-element maps-sdk-js-examples-search-box"
+                    placeholder="Search for place"
+                >
             </div>
             <div>
-                <ul id="maps-sdk-js-examples-autocompleteResults" class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"></ul>
-                <ul id="maps-sdk-js-examples-fuzzySearchResults" class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"></ul>
+                <ul
+                    id="maps-sdk-js-examples-autocompleteResults"
+                    class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"
+                ></ul>
+                <ul
+                    id="maps-sdk-js-examples-fuzzySearchResults"
+                    class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"
+                ></ul>
             </div>
         </div>
-    <div id="maps-sdk-js-examples-search-this-area"></div>
+        <div id="maps-sdk-js-examples-search-this-area"></div>
         <script type="module" src="./src/index.ts"></script>
     </body>
 </html>

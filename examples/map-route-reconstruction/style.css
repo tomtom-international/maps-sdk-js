@@ -7,11 +7,11 @@
 }
 
 .maps-sdk-js-examples-button-container {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  display: flex; 
-  flex-direction: column;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 #maps-sdk-js-examples-reset {
