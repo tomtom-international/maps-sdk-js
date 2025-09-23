@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.12.0...v0.12.1) (2025-09-23)
+
+
+### Bug Fixes
+
+* add missing typedoc ([41140b5](https://github.com/tomtom-international/maps-sdk-js/commit/41140b5939af5595361405a0eacdfd69faed576a))
+* formatting html and css with biome ([e49b4c5](https://github.com/tomtom-international/maps-sdk-js/commit/e49b4c51fa579c153eb84d0aaca24741cd5742b3))
+
 ## [0.12.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.11.0...v0.12.0) (2025-09-23)
 
 
