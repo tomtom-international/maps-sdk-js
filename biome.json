@@ -13,6 +13,7 @@
   },
   "linter": {
     "enabled": true,
+    "includes": ["**/src/**"],
     "rules": {
       "recommended": false,
       "style": {
