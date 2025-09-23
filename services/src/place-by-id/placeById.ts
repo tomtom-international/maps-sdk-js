@@ -4,7 +4,7 @@ import { placeByIdTemplate } from './placeByIdTemplate';
 import type { PlaceByIdParams, PlaceByIdResponse } from './types';
 
 /**
- *
+ * The Place by ID service allows you to retrieve detailed information about a specific place using its unique identifier (ID).
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
  * @see https://developer.tomtom.com/search-api/documentation/place-by-id-service/place-by-id

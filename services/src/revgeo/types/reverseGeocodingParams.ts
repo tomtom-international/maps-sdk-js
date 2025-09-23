@@ -4,6 +4,7 @@ import type { CommonServiceParams } from '../../shared';
 import type { ReverseGeocodingResponseAPI } from './apiTypes';
 
 /**
+ * Road use type.
  * @enum
  */
 export type RoadUse = 'LimitedAccess' | 'Arterial' | 'Terminal' | 'Ramp' | 'Rotary' | 'LocalStreet';
