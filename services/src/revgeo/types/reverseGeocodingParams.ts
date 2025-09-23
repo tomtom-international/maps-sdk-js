@@ -8,6 +8,9 @@ import type { ReverseGeocodingResponseAPI } from './apiTypes';
  */
 export type RoadUse = 'LimitedAccess' | 'Arterial' | 'Terminal' | 'Ramp' | 'Rotary' | 'LocalStreet';
 
+/**
+ * Reverse Geocoding mandatory parameters.
+ */
 export type ReverseGeocodingMandatoryParams = {
     /**
      * Main reverse geocoding parameter (mandatory).
@@ -16,6 +19,9 @@ export type ReverseGeocodingMandatoryParams = {
     position: HasLngLat;
 };
 
+/**
+ * Reverse Geocoding optional parameters.
+ */
 export type ReverseGeocodingOptionalParams = {
     /**
      * Format of newlines in the formatted address.
@@ -139,6 +145,9 @@ export type ReverseGeocodingOptionalParams = {
     view?: View;
 };
 
+/**
+ * Reverse Geocoding parameters.
+ */
 export type ReverseGeocodingParams = CommonServiceParams<URL, ReverseGeocodingResponseAPI> &
     ReverseGeocodingMandatoryParams &
     ReverseGeocodingOptionalParams;
