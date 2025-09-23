@@ -1,20 +1,10 @@
 {
   "name": "@cet/maps-sdk-js-examples",
-  "version": "1.0.2",
+  "version": "0.12.0",
   "description": "JavaScript library for examples of TomTom maps and location services",
-   "publishConfig": {
+  "publishConfig": {
     "registry": "https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/"
   },
-  "keywords": [
-    "tomtom",
-    "sdk",
-    "api",
-    "map",
-    "location",
-    "search",
-    "routing",
-    "traffic"
-  ],
   "author": "TomTom International B.V.",
   "license": "ISC"
 }
