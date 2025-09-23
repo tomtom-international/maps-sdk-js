@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.9.3...v0.10.0) (2025-09-23)
+
+
+### Features
+
+* api reference integration in repo and npm ([45ae8aa](https://github.com/tomtom-international/maps-sdk-js/commit/45ae8aa6b82ad6a41f19d996574022abface78ae))
+* api reference integration in repo and npm ([81b1a79](https://github.com/tomtom-international/maps-sdk-js/commit/81b1a7976efb55e428c0c4d6f87571b316b9d817))
+* api reference integration in repo and npm ([626a03a](https://github.com/tomtom-international/maps-sdk-js/commit/626a03a3c9cd988093e6fef5dbe9aa12cde4305c))
+* api reference integration in repo and npm ([3a98991](https://github.com/tomtom-international/maps-sdk-js/commit/3a98991f14268584321d61cd4c177c48658c255b))
+* api reference integration in repo and npm ([56fbae5](https://github.com/tomtom-international/maps-sdk-js/commit/56fbae5e88fdc91bb7ab89991464b0bcd5b6d200))
+* api reference integration in repo and npm ([c197bfb](https://github.com/tomtom-international/maps-sdk-js/commit/c197bfb37b7f609c6a84686a44f3d2c83b521936))
+* api reference integration in repo and npm ([1393975](https://github.com/tomtom-international/maps-sdk-js/commit/13939752f735b068fad7bbcc86704f36f8756043))
+* api reference landing page with a link to the full api reference pages ([4e2d7e5](https://github.com/tomtom-international/maps-sdk-js/commit/4e2d7e518dc2c42addb9cdf3b6748ae8642c637c))
+* cleanup and improve example mdx content ([7be5c95](https://github.com/tomtom-international/maps-sdk-js/commit/7be5c955ec3069bca6d8815ef52fbcce87cd42f2))
+* documentation directory improvements ([c0bb624](https://github.com/tomtom-international/maps-sdk-js/commit/c0bb62433d9f634f6e847d2d713795c9cebcf56a))
+* documentation improvements first iteration using ai agent ([893bf4e](https://github.com/tomtom-international/maps-sdk-js/commit/893bf4e54735ba76cfe10c89322a262f134b38b6))
+* remove api reference from navigation file ([6d236da](https://github.com/tomtom-international/maps-sdk-js/commit/6d236da355ffd731743ecc3ef08198b0e48b21d9))
+
+
+### Bug Fixes
+
+* api reference and docs navigation generation ([7f0a848](https://github.com/tomtom-international/maps-sdk-js/commit/7f0a848085d54e3090aadaf7892d0d081d01201e))
+* documentation structure ([74fa765](https://github.com/tomtom-international/maps-sdk-js/commit/74fa7652a436d950a6aec2c00d9a18799372a3e9))
+* e2e test setup and misc improvements ([aae4081](https://github.com/tomtom-international/maps-sdk-js/commit/aae408116d98580381fd9e00310397792ee85266))
+* make all functions to be iife ([acd34fa](https://github.com/tomtom-international/maps-sdk-js/commit/acd34fa53fa32a5abc02f2e8b7b53cb61359d4ac))
+* undo unwanted vite config changes ([fe30437](https://github.com/tomtom-international/maps-sdk-js/commit/fe30437d775b5f4949389079b57b143791b086ab))
+* workflow calling wrong tests ([a627b4f](https://github.com/tomtom-international/maps-sdk-js/commit/a627b4f01724c6fb2ee2fe75cfe77bfc4283619d))
+
 ## [0.9.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.9.2...v0.9.3) (2025-09-09)
 
 
