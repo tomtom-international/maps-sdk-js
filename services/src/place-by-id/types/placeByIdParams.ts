@@ -57,6 +57,9 @@ export type PlaceByIdMandatoryParams = {
     entityId: string;
 };
 
+/**
+ * Parameters for the Place by ID service, including mandatory and optional parameters.
+ */
 export type PlaceByIdParams = CommonServiceParams<URL, PlaceByIdResponseAPI> &
     PlaceByIdMandatoryParams &
     PlaceByIdOptionalParams;
