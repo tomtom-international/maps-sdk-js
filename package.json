@@ -3,22 +3,22 @@
   "version": "0.12.1",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
-    "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
-    "build:api-reference": "typedoc && pnpm format:fix",
     "build": "pnpm build:sdk",
-    "build:sdk": "pnpm -F core build  && pnpm -F services build && pnpm -F map build",
+    "build:api-reference": "typedoc && pnpm format:fix",
     "build:examples": "pnpm --workspace-concurrency=0 -F './examples/*' build",
-    "copy-maps-sdk-js-examples-dist": "sh scripts/copy-maps-sdk-js-examples-dist.sh",
-    "type-check:sdk": "pnpm -F core type-check && pnpm -F services type-check && pnpm -F map type-check && pnpm -F map-integration-tests type-check",
-    "type-check:examples": "pnpm --workspace-concurrency=0 -F './examples/*' type-check",
-    "lint": "biome lint .",
-    "lint:fix": "biome check . --write && biome lint . --write",
+    "build:sdk": "pnpm -F core build  && pnpm -F services build && pnpm -F map build",
+    "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
+    "e2e-test:examples": "pnpm -F './examples/*' test",
+    "e2e-test:sdk": "pnpm -F map-integration-tests test",
     "format": "biome format .",
     "format:fix": "biome format . --write",
+    "lint": "biome lint .",
+    "lint:fix": "biome check . --write && biome lint . --write",
+    "sync-examples-package-version": "sh examples/scripts/sync-examples-package-version.sh",
     "test:sdk": "pnpm -F core test && pnpm -F services test && pnpm -F map test",
     "test:sdk:coverage": "pnpm -F core test:coverage && pnpm -F services test:coverage && pnpm -F map test:coverage",
-    "e2e-test:sdk": "pnpm -F map-integration-tests test",
-    "e2e-test:examples": "pnpm -F './examples/*' test"
+    "type-check:examples": "pnpm --workspace-concurrency=0 -F './examples/*' type-check",
+    "type-check:sdk": "pnpm -F core type-check && pnpm -F services type-check && pnpm -F map type-check && pnpm -F map-integration-tests type-check"
   },
   "publishConfig": {
     "registry": "https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/"
