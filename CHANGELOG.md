@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.12.1...v0.13.0) (2025-09-25)
+
+
+### Features
+
+* add script to copy examples dist ([581033c](https://github.com/tomtom-international/maps-sdk-js/commit/581033c0538cf3ffd4f249d0c0861fe5c5f66f8d))
+* use version of the root package.json ([cbc186d](https://github.com/tomtom-international/maps-sdk-js/commit/cbc186d8719eee12e85941e5977d068a4061b9a2))
+
+
+### Bug Fixes
+
+* use existing examples package json ([a28bd86](https://github.com/tomtom-international/maps-sdk-js/commit/a28bd866f03f4474da3f114ea1095b3a17215038))
+
 ## [0.12.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.12.0...v0.12.1) (2025-09-23)
 
 
