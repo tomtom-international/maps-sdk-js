@@ -14,6 +14,7 @@
     "format:fix": "biome format . --write",
     "lint": "biome lint .",
     "lint:fix": "biome check . --write && biome lint . --write",
+    "sync-docs-package-version": "sh documentation/scripts/update-sdk-version-in-docs.sh",
     "sync-examples-package-version": "sh examples/scripts/sync-examples-package-version.sh",
     "test:sdk": "pnpm -F core test && pnpm -F services test && pnpm -F map test",
     "test:sdk:coverage": "pnpm -F core test:coverage && pnpm -F services test:coverage && pnpm -F map test:coverage",
