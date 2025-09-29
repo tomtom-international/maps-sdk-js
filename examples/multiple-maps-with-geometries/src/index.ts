@@ -35,10 +35,8 @@ const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number)
     ).show(invert(geometry));
 };
 
-(async () => {
-    const places = await search({ query: '', countries: ['ESP'], geographyTypes: ['Municipality'], limit: 16 });
-    const geometries = await geometryData({ geometries: places });
-    for (let i = 0; i < geometries.features.length; i++) {
-        await initMap(geometries.features[i], i);
-    }
-})();
+const places = await search({ query: '', countries: ['ESP'], geographyTypes: ['Municipality'], limit: 16 });
+const geometries = await geometryData({ geometries: places });
+for (let i = 0; i < geometries.features.length; i++) {
+    await initMap(geometries.features[i], i);
+}

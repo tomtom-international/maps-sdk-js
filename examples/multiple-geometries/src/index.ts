@@ -57,10 +57,8 @@ const listenToUIEvents = async () => {
         );
 };
 
-(async () => {
-    map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', fitBoundsOptions });
-    geometry = await GeometriesModule.init(map);
-    await updateMap(namedConfigs.france);
-    await listenToUIEvents();
-    (window as any).map = map; // This has been done for automation test support
-})();
+map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', fitBoundsOptions });
+geometry = await GeometriesModule.init(map);
+await updateMap(namedConfigs.france);
+await listenToUIEvents();
+(window as any).map = map; // This has been done for automation test support

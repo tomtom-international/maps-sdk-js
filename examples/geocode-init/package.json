@@ -14,7 +14,6 @@
   "bugs": {
     "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
   },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js-examples#readme",
   "dependencies": {
     "@cet/maps-sdk-js": "workspace:*",
     "maplibre-gl": "catalog:"
@@ -22,7 +21,6 @@
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
-    "@tsconfig/recommended": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",

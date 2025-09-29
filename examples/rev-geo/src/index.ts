@@ -68,19 +68,17 @@ const onMapClick = async (_: any, lnglat: LngLat) => {
     }
 };
 
-(async () => {
-    tomtomMap = new TomTomMap(
-        { container: 'maps-sdk-js-examples-map-container', center: [4.89147, 52.37362], zoom: 17 },
-        { style: 'monoLight' },
-    );
-    mapLibreMap = tomtomMap.mapLibreMap;
+tomtomMap = new TomTomMap(
+    { container: 'maps-sdk-js-examples-map-container', center: [4.89147, 52.37362], zoom: 17 },
+    { style: 'monoLight' },
+);
+mapLibreMap = tomtomMap.mapLibreMap;
 
-    // Initializing BaseMap module
-    const basemap = await BaseMapModule.get(tomtomMap);
-    basemap.events.on('click', onMapClick);
+// Initializing BaseMap module
+const basemap = await BaseMapModule.get(tomtomMap);
+basemap.events.on('click', onMapClick);
 
-    // Starting with a Pin in the map
-    await onMapClick(undefined, { lng: 4.8907, lat: 52.37311 } as LngLat);
+// Starting with a Pin in the map
+await onMapClick(undefined, { lng: 4.8907, lat: 52.37311 } as LngLat);
 
-    (window as any).map = tomtomMap; // This has been done for automation test support
-})();
+(window as any).map = tomtomMap; // This has been done for automation test support

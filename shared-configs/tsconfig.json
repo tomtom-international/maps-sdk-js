@@ -10,6 +10,7 @@
     "strict": true,
     "useDefineForClassFields": false,
     "target": "ESNext",
+    "module": "ESNext",
     "paths": {
       "@cet/maps-sdk-js/core": ["../core"]
     }

@@ -229,64 +229,62 @@ const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): strin
     return availability ? `${availability.availableCount}/${availability.totalCount}` : '';
 };
 
-(async () => {
-    map = new TomTomMap(
-        {
-            container: 'maps-sdk-js-examples-map-container',
-            center: [2.3597, 48.85167],
-            zoom: 11,
-            fitBoundsOptions,
-        },
-        {
-            language: 'en-GB',
-            style: { type: 'published', include: ['trafficIncidents'] },
-        },
-    );
-    map.mapLibreMap.addControl(new NavigationControl(), 'bottom-right');
-    mapIncidents = await TrafficIncidentsModule.get(map);
-    mapBasePOIs = await POIsModule.get(map, {
-        filters: {
-            categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
-        },
-    });
-    mapEVStations = await PlacesModule.init(map, {
-        iconConfig: { iconStyle: 'poi-like' },
-    });
-    const evStationPinConfig: PlacesModuleConfig = {
-        extraFeatureProps: {
-            availabilityText: buildAvailabilityText,
-            availabilityRatio: (place: Place) => getChargingPointAvailability(place)?.ratio ?? 0,
-        },
-        textConfig: {
-            textField: [
-                'format',
-                ['get', 'title'],
-                {},
-                '\n',
-                {},
-                ['get', 'availabilityText'],
-                {
-                    'font-scale': 1.1,
-                    'text-color': [
-                        'case',
-                        ['>=', ['get', 'availabilityRatio'], 0.25],
-                        'green',
-                        ['>', ['get', 'availabilityRatio'], 0],
-                        'orange',
-                        'red',
-                    ],
-                },
-            ],
-        },
-    };
+map = new TomTomMap(
+    {
+        container: 'maps-sdk-js-examples-map-container',
+        center: [2.3597, 48.85167],
+        zoom: 11,
+        fitBoundsOptions,
+    },
+    {
+        language: 'en-GB',
+        style: { type: 'published', include: ['trafficIncidents'] },
+    },
+);
+map.mapLibreMap.addControl(new NavigationControl(), 'bottom-right');
+mapIncidents = await TrafficIncidentsModule.get(map);
+mapBasePOIs = await POIsModule.get(map, {
+    filters: {
+        categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
+    },
+});
+mapEVStations = await PlacesModule.init(map, {
+    iconConfig: { iconStyle: 'poi-like' },
+});
+const evStationPinConfig: PlacesModuleConfig = {
+    extraFeatureProps: {
+        availabilityText: buildAvailabilityText,
+        availabilityRatio: (place: Place) => getChargingPointAvailability(place)?.ratio ?? 0,
+    },
+    textConfig: {
+        textField: [
+            'format',
+            ['get', 'title'],
+            {},
+            '\n',
+            {},
+            ['get', 'availabilityText'],
+            {
+                'font-scale': 1.1,
+                'text-color': [
+                    'case',
+                    ['>=', ['get', 'availabilityRatio'], 0.25],
+                    'green',
+                    ['>', ['get', 'availabilityRatio'], 0],
+                    'orange',
+                    'red',
+                ],
+            },
+        ],
+    },
+};
 
-    mapSearchedEVStations = await PlacesModule.init(map, evStationPinConfig);
-    selectedEVStation = await PlacesModule.init(map, evStationPinConfig);
-    mapGeometry = await GeometriesModule.init(map);
-    await updateMapEVStations();
+mapSearchedEVStations = await PlacesModule.init(map, evStationPinConfig);
+selectedEVStation = await PlacesModule.init(map, evStationPinConfig);
+mapGeometry = await GeometriesModule.init(map);
+await updateMapEVStations();
 
-    await listenToMapUserEvents();
-    listenToHTMLUserEvents();
+await listenToMapUserEvents();
+listenToHTMLUserEvents();
 
-    (window as any).map = map; // This has been done for automation test support
-})();
+(window as any).map = map; // This has been done for automation test support

@@ -60,12 +60,13 @@ const listenToUserEvents = () => {
     );
 };
 
-(async () => {
-    map = new TomTomMap(
-        { container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 },
-        { language: 'en-GB' },
-    );
-    placesModule = await PlacesModule.init(map);
+map = new TomTomMap(
+    { container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 },
+    { language: 'en-GB' },
+);
+
+PlacesModule.init(map).then((module) => {
+    placesModule = module;
     listenToUserEvents();
     (window as any).map = map; // This has been done for automation test support
-})();
+});

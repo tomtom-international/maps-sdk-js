@@ -18,18 +18,16 @@ const configLanguage: Language = 'nl-NL';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-(async () => {
-    const map = new TomTomMap(
-        { container: 'maps-sdk-js-examples-map-container', zoom: 3, minZoom: 2, center: [18.33157, 39.78563] },
-        { language: configLanguage },
-    );
+const map = new TomTomMap(
+    { container: 'maps-sdk-js-examples-map-container', zoom: 3, minZoom: 2, center: [18.33157, 39.78563] },
+    { language: configLanguage },
+);
 
-    const languageSelector = document.querySelector('#maps-sdk-js-examples-mapLanguages') as HTMLSelectElement;
-    for (const language of mapLanguages) {
-        languageSelector.add(new Option(language.text, language.value, undefined, configLanguage === language.value));
-    }
-    languageSelector.addEventListener('change', (event) =>
-        map.setLanguage((event.target as HTMLOptionElement).value as Language),
-    );
-    (window as any).map = map; // This has been done for automation test support
-})();
+const languageSelector = document.querySelector('#maps-sdk-js-examples-mapLanguages') as HTMLSelectElement;
+for (const language of mapLanguages) {
+    languageSelector.add(new Option(language.text, language.value, undefined, configLanguage === language.value));
+}
+languageSelector.addEventListener('change', (event) =>
+    map.setLanguage((event.target as HTMLOptionElement).value as Language),
+);
+(window as any).map = map; // This has been done for automation test support

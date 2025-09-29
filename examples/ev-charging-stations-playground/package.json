@@ -26,7 +26,6 @@
     "@types/geojson": "catalog:",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "catalog:",
-    "@tsconfig/recommended": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",

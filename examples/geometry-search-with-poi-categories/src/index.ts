@@ -17,27 +17,25 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
     return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
 };
 
-(async () => {
-    const areaToSearch = await geocode({ query: 'paris', limit: 1 });
+const areaToSearch = await geocode({ query: 'paris', limit: 1 });
 
-    const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
-        fitBoundsOptions: { padding: 50 },
-        bounds: bboxFromGeoJSON(areaToSearch) as LngLatBoundsLike,
-    });
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    fitBoundsOptions: { padding: 50 },
+    bounds: bboxFromGeoJSON(areaToSearch) as LngLatBoundsLike,
+});
 
-    const areaGeometry = await geometryData({ geometries: areaToSearch });
-    const geometry = await GeometriesModule.init(map);
-    geometry.show(invert(areaGeometry));
+const areaGeometry = await geometryData({ geometries: areaToSearch });
+const geometry = await GeometriesModule.init(map);
+geometry.show(invert(areaGeometry));
 
-    const restaurants = await search({
-        query: '',
-        poiCategories: ['ELECTRIC_VEHICLE_STATION', 'ITALIAN_RESTAURANT', 'SUSHI_RESTAURANT'],
-        geometries: [areaGeometry],
-        limit: 100,
-    });
+const restaurants = await search({
+    query: '',
+    poiCategories: ['ELECTRIC_VEHICLE_STATION', 'ITALIAN_RESTAURANT', 'SUSHI_RESTAURANT'],
+    geometries: [areaGeometry],
+    limit: 100,
+});
 
-    const places = await PlacesModule.init(map);
-    places.show(restaurants);
-    (window as any).map = map;
-})();
+const places = await PlacesModule.init(map);
+places.show(restaurants);
+(window as any).map = map;

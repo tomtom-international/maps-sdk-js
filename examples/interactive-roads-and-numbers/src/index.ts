@@ -80,111 +80,107 @@ const initSelectedSourceAndLayers = (mapLibreMap: Map): GeoJSONSource => {
     return mapLibreMap.getSource(selectedSourceID) as GeoJSONSource;
 };
 
-(async () => {
-    const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
-        center: [-74.00332, 40.71732],
-        zoom: 18,
-    });
-    const mapLibreMap = map.mapLibreMap;
-    await POIsModule.get(map, { visible: false });
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    center: [-74.00332, 40.71732],
+    zoom: 18,
+});
+const mapLibreMap = map.mapLibreMap;
+await POIsModule.get(map, { visible: false });
 
-    const interactiveGroupNames: BaseMapLayerGroupName[] = ['roadLines', 'roadLabels', 'roadShields', 'houseNumbers'];
-    const interactiveGroups = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'include', names: interactiveGroupNames },
-    });
-    const other = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'exclude', names: [...interactiveGroupNames, 'placeLabels'] },
-    });
+const interactiveGroupNames: BaseMapLayerGroupName[] = ['roadLines', 'roadLabels', 'roadShields', 'houseNumbers'];
+const interactiveGroups = await BaseMapModule.get(map, {
+    layerGroupsFilter: { mode: 'include', names: interactiveGroupNames },
+});
+const other = await BaseMapModule.get(map, {
+    layerGroupsFilter: { mode: 'exclude', names: [...interactiveGroupNames, 'placeLabels'] },
+});
 
-    const hoveredSource = initHoveredSourceAndLayers(mapLibreMap);
-    const selectedSource = initSelectedSourceAndLayers(mapLibreMap);
+const hoveredSource = initHoveredSourceAndLayers(mapLibreMap);
+const selectedSource = initSelectedSourceAndLayers(mapLibreMap);
 
-    const titleElement = document.querySelector('#maps-sdk-js-examples-title') as Element;
-    const subtitleElement = document.querySelector('#maps-sdk-js-examples-subtitle') as Element;
-    const addressesElement = document.querySelector('#maps-sdk-js-examples-addresses') as Element;
+const titleElement = document.querySelector('#maps-sdk-js-examples-title') as Element;
+const subtitleElement = document.querySelector('#maps-sdk-js-examples-subtitle') as Element;
+const addressesElement = document.querySelector('#maps-sdk-js-examples-addresses') as Element;
 
-    const setTitleAndSubtitle = (feature: MapGeoJSONFeature) => {
-        titleElement.innerHTML = `${feature.properties.category} ${feature.properties.subcategory ?? ''}`;
-        subtitleElement.innerHTML = feature.properties.name ?? '';
-    };
+const setTitleAndSubtitle = (feature: MapGeoJSONFeature) => {
+    titleElement.innerHTML = `${feature.properties.category} ${feature.properties.subcategory ?? ''}`;
+    subtitleElement.innerHTML = feature.properties.name ?? '';
+};
 
-    const showRevGeoResponses = (responses: ReverseGeocodingResponse[]) => {
-        addressesElement.innerHTML = responses
-            .map((response) => response.properties.address.freeformAddress)
-            .join('<br>');
-    };
+const showRevGeoResponses = (responses: ReverseGeocodingResponse[]) => {
+    addressesElement.innerHTML = responses.map((response) => response.properties.address.freeformAddress).join('<br>');
+};
 
-    let clickedFeature: MapGeoJSONFeature | undefined;
-    interactiveGroups.events.on('hover', (feature) => {
-        if (!clickedFeature) {
-            hoveredSource.setData(feature);
-            setTitleAndSubtitle(feature);
-        }
-    });
-
-    interactiveGroups.events.on('click', async (feature) => {
-        clickedFeature = feature;
+let clickedFeature: MapGeoJSONFeature | undefined;
+interactiveGroups.events.on('hover', (feature) => {
+    if (!clickedFeature) {
         hoveredSource.setData(feature);
-
-        // We only calculate and show the buffer if zoomed close enough for performance:
-        if (mapLibreMap.getZoom() > 9) {
-            selectedSource.setData(
-                difference({
-                    type: 'FeatureCollection',
-                    features: [
-                        bboxPolygon([-180, 90, 180, -90]),
-                        buffer(feature, pxToMeters(15, mapLibreMap), { units: 'meters' })!,
-                    ],
-                }) as Feature,
-            );
-        }
-
         setTitleAndSubtitle(feature);
+    }
+});
 
-        if (feature.geometry.type == 'MultiLineString') {
-            addressesElement.innerHTML = 'Zoom in closer to select a finer segment.';
-        } else if (feature.geometry.type == 'LineString') {
-            const coordinates = (feature.geometry as LineString).coordinates;
-            showRevGeoResponses(
-                await Promise.all([
-                    await reverseGeocode({ position: coordinates[0] }),
-                    await reverseGeocode({ position: coordinates[coordinates.length - 1] }),
-                ]),
-            );
-        } else if (feature.geometry.type == 'Point') {
-            showRevGeoResponses([
-                await reverseGeocode({
-                    position: feature.geometry.coordinates,
-                    number: String(feature.properties.number),
-                }),
-            ]);
-        } else {
-            addressesElement.innerHTML = '';
-        }
-    });
+interactiveGroups.events.on('click', async (feature) => {
+    clickedFeature = feature;
+    hoveredSource.setData(feature);
 
-    const setPlaceholderText = () => {
-        titleElement.innerHTML = 'Explore roads, streets, ferries and house numbers...';
-        subtitleElement.innerHTML = '';
+    // We only calculate and show the buffer if zoomed close enough for performance:
+    if (mapLibreMap.getZoom() > 9) {
+        selectedSource.setData(
+            difference({
+                type: 'FeatureCollection',
+                features: [
+                    bboxPolygon([-180, 90, 180, -90]),
+                    buffer(feature, pxToMeters(15, mapLibreMap), { units: 'meters' })!,
+                ],
+            }) as Feature,
+        );
+    }
+
+    setTitleAndSubtitle(feature);
+
+    if (feature.geometry.type == 'MultiLineString') {
+        addressesElement.innerHTML = 'Zoom in closer to select a finer segment.';
+    } else if (feature.geometry.type == 'LineString') {
+        const coordinates = (feature.geometry as LineString).coordinates;
+        showRevGeoResponses(
+            await Promise.all([
+                await reverseGeocode({ position: coordinates[0] }),
+                await reverseGeocode({ position: coordinates[coordinates.length - 1] }),
+            ]),
+        );
+    } else if (feature.geometry.type == 'Point') {
+        showRevGeoResponses([
+            await reverseGeocode({
+                position: feature.geometry.coordinates,
+                number: String(feature.properties.number),
+            }),
+        ]);
+    } else {
         addressesElement.innerHTML = '';
-    };
+    }
+});
 
-    const emptyFeatureCollection: FeatureCollection = { type: 'FeatureCollection', features: [] };
+const setPlaceholderText = () => {
+    titleElement.innerHTML = 'Explore roads, streets, ferries and house numbers...';
+    subtitleElement.innerHTML = '';
+    addressesElement.innerHTML = '';
+};
 
-    other.events.on('hover', () => {
-        if (!clickedFeature) {
-            hoveredSource.setData(emptyFeatureCollection);
-            setPlaceholderText();
-        }
-    });
+const emptyFeatureCollection: FeatureCollection = { type: 'FeatureCollection', features: [] };
 
-    other.events.on('click', () => {
-        clickedFeature = undefined;
+other.events.on('hover', () => {
+    if (!clickedFeature) {
         hoveredSource.setData(emptyFeatureCollection);
-        selectedSource.setData(emptyFeatureCollection);
         setPlaceholderText();
-    });
+    }
+});
 
-    (window as any).map = map; // This has been done for automation test support
-})();
+other.events.on('click', () => {
+    clickedFeature = undefined;
+    hoveredSource.setData(emptyFeatureCollection);
+    selectedSource.setData(emptyFeatureCollection);
+    setPlaceholderText();
+});
+
+(window as any).map = map; // This has been done for automation test support

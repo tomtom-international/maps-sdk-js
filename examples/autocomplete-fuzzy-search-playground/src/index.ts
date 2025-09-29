@@ -144,24 +144,22 @@ const autoCompleteSearch = async () => {
 const showSearchThisAreaButton = () =>
     (searchThisAreaButton.innerHTML = `<button class="maps-sdk-js-examples-search-this-area-btn">Search This Area</button>`);
 
-(async () => {
-    map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
-    placesModule = await PlacesModule.init(map);
-    map.mapLibreMap.on('moveend', () => {
-        if (searchBox.value == selectedAutoCompleteSegment?.value) {
-            showSearchThisAreaButton();
-        }
-    });
+map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
+placesModule = await PlacesModule.init(map);
+map.mapLibreMap.on('moveend', () => {
+    if (searchBox.value == selectedAutoCompleteSegment?.value) {
+        showSearchThisAreaButton();
+    }
+});
 
-    searchThisAreaButton.addEventListener('click', fuzzySearch);
+searchThisAreaButton.addEventListener('click', fuzzySearch);
 
-    searchBox.addEventListener('keyup', async () => {
-        selectedAutoCompleteSegment = null;
-        if (searchBox.value !== '') {
-            await Promise.all([await autoCompleteSearch(), await fuzzySearch()]);
-        }
-        searchBox.value.trim() === '' && clearSearchResults();
-    });
+searchBox.addEventListener('keyup', async () => {
+    selectedAutoCompleteSegment = null;
+    if (searchBox.value !== '') {
+        await Promise.all([await autoCompleteSearch(), await fuzzySearch()]);
+    }
+    searchBox.value.trim() === '' && clearSearchResults();
+});
 
-    (window as any).map = map; // This has been done for automation test support
-})();
+(window as any).map = map; // This has been done for automation test support

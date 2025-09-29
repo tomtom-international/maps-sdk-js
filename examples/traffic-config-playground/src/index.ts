@@ -47,15 +47,13 @@ const initUI = () => {
     locationsSelector.selectedIndex = 0;
 };
 
-(async () => {
-    map = new TomTomMap(
-        { container: 'maps-sdk-js-examples-map-container', center: [2.34281, 48.85639], zoom: 12 },
-        { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
-    );
-    mapLibreMap = map.mapLibreMap;
-    incidents = await TrafficIncidentsModule.get(map);
-    flow = await TrafficFlowModule.get(map);
-    initUI();
+map = new TomTomMap(
+    { container: 'maps-sdk-js-examples-map-container', center: [2.34281, 48.85639], zoom: 12 },
+    { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
+);
+mapLibreMap = map.mapLibreMap;
+incidents = await TrafficIncidentsModule.get(map);
+flow = await TrafficFlowModule.get(map);
+initUI();
 
-    (window as any).map = map; // This has been done for automation test support
-})();
+(window as any).map = map; // This has been done for automation test support

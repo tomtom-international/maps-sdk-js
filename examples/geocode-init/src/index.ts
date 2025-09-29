@@ -7,14 +7,12 @@ import '../style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-(async () => {
-    const initPlace = await geocode({ query: 'Canary Islands', geographyTypes: ['CountrySubdivision'] });
-    new TomTomMap(
-        {
-            container: 'maps-sdk-js-examples-body',
-            fitBoundsOptions: { padding: 50 },
-            bounds: bboxFromGeoJSON(initPlace) as LngLatBoundsLike,
-        },
-        { style: { type: 'published', id: 'monoLight', include: ['hillshade'] } },
-    );
-})();
+const initPlace = await geocode({ query: 'Canary Islands', geographyTypes: ['CountrySubdivision'] });
+new TomTomMap(
+    {
+        container: 'maps-sdk-js-examples-body',
+        fitBoundsOptions: { padding: 50 },
+        bounds: bboxFromGeoJSON(initPlace) as LngLatBoundsLike,
+    },
+    { style: { type: 'published', id: 'monoLight', include: ['hillshade'] } },
+);

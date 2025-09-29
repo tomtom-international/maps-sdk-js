@@ -23,7 +23,7 @@
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
-    "@tsconfig/recommended": "catalog:",
+
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",
