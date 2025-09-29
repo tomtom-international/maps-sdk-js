@@ -2,6 +2,7 @@ import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
 import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
 
 // (Set your own API key when working in your own environment)

@@ -2,6 +2,7 @@ import { Place, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { BaseMapModule, PlacesModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
 import { reverseGeocode, search } from '@cet/maps-sdk-js/services';
 import { LngLat, MapGeoJSONFeature, Marker, NavigationControl, Popup } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
 
 // (Set your own API key when working in your own environment)

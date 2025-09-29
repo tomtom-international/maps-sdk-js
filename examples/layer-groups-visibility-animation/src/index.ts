@@ -1,5 +1,6 @@
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { BaseMapModule, POIsModule, TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
 
 // (Set your own API key when working in your own environment)
