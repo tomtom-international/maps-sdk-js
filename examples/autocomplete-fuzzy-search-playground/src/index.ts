@@ -9,6 +9,7 @@ import {
     search,
 } from '@cet/maps-sdk-js/services';
 import '../style.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 TomTomConfig.instance.put({
     // (Set your own API key when working in your own environment)
