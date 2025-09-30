@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.13.0...v0.14.0) (2025-09-30)
+
+
+### Features
+
+* add missing maplibre css imports and change colors in tune with tomtom brand ([cf5335d](https://github.com/tomtom-international/maps-sdk-js/commit/cf5335dd105e8ae239a512bd559fb3d5248c75b9))
+* improve css imports ([3c9bac7](https://github.com/tomtom-international/maps-sdk-js/commit/3c9bac70a2acf201d00b90cc24e940beeeeeb95a))
+* include examples page in docs portal page as content ([0d0f2fa](https://github.com/tomtom-international/maps-sdk-js/commit/0d0f2fa21622d03f711f62ac35b7301d88eca8d6))
+* remove async wrappers from examples by using esnext on tsconfig ([d6a2504](https://github.com/tomtom-international/maps-sdk-js/commit/d6a2504708a440c2a788797361008dec17265d24))
+* use release-please to bump examples version ([5ae4569](https://github.com/tomtom-international/maps-sdk-js/commit/5ae4569302a8c8fe2fab78419a2690b6cbfd472e))
+
+
+### Bug Fixes
+
+* commit all possible doc changes in release-please ([fcb7956](https://github.com/tomtom-international/maps-sdk-js/commit/fcb79569fcc8ba945033a01c2c3c9399cf0e9424))
+* keep sdk version in sync with docs ([5a2e5f6](https://github.com/tomtom-international/maps-sdk-js/commit/5a2e5f61922c4fec0d42be1be6f225f3ac7ae5dd))
+* missing maplibre css import ([0e3f025](https://github.com/tomtom-international/maps-sdk-js/commit/0e3f025130f8cf07b7e359672f3a6826c402ae49))
+* update prop in release please config ([1464674](https://github.com/tomtom-international/maps-sdk-js/commit/1464674e5a79959e6341c3cde58319cfa52f09f0))
+* use bash for script executions for compatibility ([817d0c7](https://github.com/tomtom-international/maps-sdk-js/commit/817d0c72f9328bd489ea39ddcc7cb006022fac87))
+
 ## [0.13.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.12.1...v0.13.0) (2025-09-25)
 
 
