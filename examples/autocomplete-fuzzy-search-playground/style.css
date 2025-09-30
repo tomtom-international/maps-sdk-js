@@ -59,7 +59,7 @@
     background: #fff;
     max-height: calc(100vh - 100px);
     overflow: clip;
-    -webkit-tap-highlight-color: #3f9cd9;
+    -webkit-tap-highlight-color: #df1b12;
     width: 300px;
     border: 0 solid rgba(0, 0, 0, 0);
     position: relative;
@@ -84,7 +84,7 @@
 }
 
 .maps-sdk-js-examples-result-item:active {
-    background-color: #3f9cd9;
+    background-color: #df1b12;
 }
 
 .maps-sdk-js-examples-result-value {
@@ -114,7 +114,7 @@
     background-color: #cccccc;
     width: auto;
     padding: 0;
-    -webkit-tap-highlight-color: #3f9cd9;
+    -webkit-tap-highlight-color: #df1b12;
     position: relative;
 }
 
@@ -139,7 +139,7 @@
     width: 150px;
     box-sizing: border-box;
     font-size: 14px;
-    background-color: #3f9cd9;
+    background-color: #df1b12;
     position: relative;
     bottom: 100%;
     border: #727c85;

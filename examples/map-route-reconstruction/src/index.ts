@@ -3,6 +3,7 @@ import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-
 import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 import type { Position } from 'geojson';
 import { GeoJSONSource, LngLatBoundsLike, Map } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
 
 // (Set your own API key when working in your own environment)

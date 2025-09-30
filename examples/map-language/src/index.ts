@@ -1,6 +1,7 @@
 import type { Language } from '@cet/maps-sdk-js/core';
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { TomTomMap } from '@cet/maps-sdk-js/map';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
 
 const mapLanguages: { text: string; value: Language }[] = [

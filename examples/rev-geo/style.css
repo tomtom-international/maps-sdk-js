@@ -37,7 +37,7 @@
 .maps-sdk-js-examples-pin {
     position: absolute;
     border-radius: 50%;
-    border: 8px solid #00aaff;
+    border: 8px solid #df1b12;
     width: 8px;
     height: 8px;
 }
@@ -50,7 +50,7 @@
     bottom: -30px;
     left: -6px;
     border: 10px solid transparent;
-    border-top: 17px solid #00aaff;
+    border-top: 17px solid #df1b12;
 }
 
 .maps-sdk-js-examples-dot {
@@ -58,7 +58,7 @@
     height: 8px;
     width: 8px;
     border-radius: 100%;
-    background-color: #00aaff;
+    background-color: #df1b12;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
     transform: scale(1);
 }
@@ -94,6 +94,6 @@
     font-weight: 400;
     letter-spacing: 0;
     line-height: 1rem;
-    color: #00aaff;
+    color: #df1b12;
     margin-bottom: 6px;
 }

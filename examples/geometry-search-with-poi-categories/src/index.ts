@@ -4,6 +4,7 @@ import { geocode, geometryData, search } from '@cet/maps-sdk-js/services';
 import bboxPolygon from '@turf/bbox-polygon';
 import difference from '@turf/difference';
 import { LngLatBoundsLike } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });

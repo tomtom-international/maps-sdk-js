@@ -2,6 +2,7 @@ import { asSoftWaypoint, bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/
 import { PlanningWaypoint, RoutingModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { geocode } from '@cet/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
 
 // (Set your own API key when working in your own environment)

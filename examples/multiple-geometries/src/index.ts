@@ -9,6 +9,7 @@ import {
 } from '@cet/maps-sdk-js/map';
 import { geocode, geometryData } from '@cet/maps-sdk-js/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Config } from './placeConfiguration';
 import { namedConfigs } from './placeConfiguration';
 import '../style.css';

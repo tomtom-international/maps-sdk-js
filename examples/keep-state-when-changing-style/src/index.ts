@@ -9,6 +9,7 @@ import {
     TrafficIncidentsModule,
 } from '@cet/maps-sdk-js/map';
 import { calculateRoute, search } from '@cet/maps-sdk-js/services';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import '../style.css';
 

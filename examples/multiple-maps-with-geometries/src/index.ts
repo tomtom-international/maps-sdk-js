@@ -4,6 +4,7 @@ import { geometryData, search } from '@cet/maps-sdk-js/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import '../style.css';
 
 const mapsElement = document.querySelector('#maps-sdk-js-examples-maps-container') as HTMLElement;
