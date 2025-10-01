@@ -4,7 +4,7 @@ import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
 import type { Position } from 'geojson';
 import { GeoJSONSource, LngLatBoundsLike, Map } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import '../style.css';
+import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });

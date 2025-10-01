@@ -9,7 +9,7 @@ import {
     TrafficIncidentsModule,
 } from '@cet/maps-sdk-js/map';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import '../style.css';
+import './style.css';
 
 // TomTomConfig initialization
 TomTomConfig.instance.put({

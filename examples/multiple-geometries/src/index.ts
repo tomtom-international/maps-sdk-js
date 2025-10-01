@@ -12,7 +12,7 @@ import type { LngLatBoundsLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Config } from './placeConfiguration';
 import { namedConfigs } from './placeConfiguration';
-import '../style.css';
+import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });

@@ -8,7 +8,7 @@ import {
     autocompleteSearch,
     search,
 } from '@cet/maps-sdk-js/services';
-import '../style.css';
+import './style.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 TomTomConfig.instance.put({

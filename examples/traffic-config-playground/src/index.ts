@@ -2,7 +2,7 @@ import type { Place } from '@cet/maps-sdk-js/core';
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
 import { geocode } from '@cet/maps-sdk-js/services';
-import '../style.css';
+import './style.css';
 import type { LngLatBoundsLike, Map } from 'maplibre-gl';
 import { configPresets } from './configPresets';
 import { jumpToPlaces } from './jumpToPlaces';

@@ -3,7 +3,7 @@ import { PlanningWaypoint, RoutingModule, TomTomMap } from '@cet/maps-sdk-js/map
 import { geocode } from '@cet/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import '../style.css';
+import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });

@@ -6,9 +6,12 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 // NOTE: This config is meant to be reused by each example. Thus, any configured paths are likely relatively to each example folder.
 export default defineConfig(({ mode }) => {
     return {
-        root: '.',
+        root: './src',
         base: './',
-        build: { emptyOutDir: true },
+        build: {
+            emptyOutDir: true,
+            outDir: '../dist',
+        },
         plugins: [
             ...(process.env.CI
                 ? []

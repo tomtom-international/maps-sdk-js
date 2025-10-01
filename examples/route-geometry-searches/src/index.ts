@@ -1,4 +1,4 @@
-import '../style.css';
+import './style.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { bboxFromGeoJSON, TomTomConfig, type Waypoints } from '@cet/maps-sdk-js/core';
 import { PlacesModule, RoutingModule, TomTomMap } from '@cet/maps-sdk-js/map';

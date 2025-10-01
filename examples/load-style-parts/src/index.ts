@@ -1,4 +1,4 @@
-import '../style.css';
+import './style.css';
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import {
     HillshadeModule,

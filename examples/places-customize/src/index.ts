@@ -5,7 +5,7 @@ import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { search } from '@cet/maps-sdk-js/services';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import tomtomLogo from '../resources/tomtomLogo.png';
-import '../style.css';
+import './style.css';
 
 TomTomConfig.instance.put({
     // (Set your own API key when working in your own environment)
