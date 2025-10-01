@@ -28,7 +28,7 @@
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",
