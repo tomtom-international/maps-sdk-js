@@ -1,18 +1,38 @@
-import path from 'node:path';
+import fs from 'node:fs';
+import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv } from 'vite';
-import { viteSingleFile } from 'vite-plugin-singlefile';
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
-// NOTE: This config is meant to be reused by each example. Thus, any configured paths are likely relatively to each example folder.
-export default defineConfig(({ mode }) => {
-    return {
-        root: './src',
-        base: './',
+const getSdkVersion = () => {
+    const fileContent = fs.readFileSync('../package.json', { encoding: 'utf-8', flag: 'r' });
+    const fileContentSerialized = JSON.parse(fileContent);
+    const sdkVersion = JSON.stringify(fileContentSerialized.version);
+    console.info(`SDK version from package.json is ${sdkVersion}`);
+    return sdkVersion;
+};
+
+export default defineConfig({
         build: {
+            lib: {
+                entry: './src/index.ts',
+                name: 'examples',
+            },
             emptyOutDir: true,
-            outDir: '../dist',
+            sourcemap: true,
+            // minification options more in detail in rollup options:
+            minify: false,
+        },
+        define: {
+            __SDK_VERSION__: getSdkVersion(),
         },
         plugins: [
+            dts({
+                outDir: 'dist',
+                include: ['index.ts', 'src/**/*'],
+                exclude: ['**/*.test.ts'],
+                rollupTypes: true,
+            }),
             ...(process.env.CI
                 ? []
                 : [
@@ -22,17 +42,9 @@ export default defineConfig(({ mode }) => {
                           gzipSize: true,
                       }),
                   ]),
-            viteSingleFile(),
+            analyze({
+                summaryOnly: true,
+                limit: 10,
+            }),
         ],
-        server: { port: 9022 },
-        resolve: {
-            alias: {
-                // We ensure to locally alias imports from @cet/maps-sdk-js/core from the SDK code itself to the locally built core package.
-                '@cet/maps-sdk-js/core': path.resolve('../../core/dist/core.es.js'),
-            },
-        },
-        define: {
-            'process.env': JSON.stringify(loadEnv(mode, path.resolve('..'), '')),
-        },
-    };
-});
+    });

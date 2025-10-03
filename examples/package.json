@@ -1,23 +1,35 @@
 {
   "name": "@cet/maps-sdk-js-examples",
   "version": "0.16.0",
-  "description": "JavaScript library for examples of TomTom maps and location services",
   "type": "module",
+  "description": "JavaScript library for examples of TomTom maps and location services",
+  "module": "dist/examples.es.js",
+  "main": "dist/examples.es.js",
+  "types": "dist/examples.d.ts",
+  "scripts": {
+    "build": "vite build"
+  },
   "devDependencies": {
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-visualizer": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-singlefile": "^2.3.0"
+    "vite-plugin-dts": "catalog:"
   },
   "publishConfig": {
     "registry": "https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/"
   },
   "files": [
-    "*/dist",
-    "package.json"
+    "dist",
+    "*/dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/src/examples.d.ts",
+      "import": "./dist/examples.es.js"
+    }
+  },
   "author": "TomTom International B.V.",
   "license": "ISC"
 }
