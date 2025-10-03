@@ -44,9 +44,8 @@
     "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
-  "dependencies": {},
   "devDependencies": {
-    "@biomejs/biome": "^2.2.4",
+    "@biomejs/biome": "^2.2.5",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "cspell": "^9.2.1",
