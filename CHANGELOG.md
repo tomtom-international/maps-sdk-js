@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.15.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.14.0...v0.15.0) (2025-10-03)
+
+
+### Features
+
+* move all html and css files from examples under src ([0abeaf0](https://github.com/tomtom-international/maps-sdk-js/commit/0abeaf01f45c4bea0e6a45f8c66e2268f0c66fc7))
+
+
+### Bug Fixes
+
+* compress thumbnail images in examples ([f356de7](https://github.com/tomtom-international/maps-sdk-js/commit/f356de70afc82127d81de6e2b3ca535f4a6b97cd))
+* only update and commit docs to release branch before a release is created ([ebb1a98](https://github.com/tomtom-international/maps-sdk-js/commit/ebb1a98ca748e5f0dcfae42453aa0d91596dc8f3))
+* update image to thumbnail property ([6fb448c](https://github.com/tomtom-international/maps-sdk-js/commit/6fb448cc8e31310eb747a641be6ce5606e20abd4))
+
 ## [0.14.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.13.0...v0.14.0) (2025-09-30)
 
 
