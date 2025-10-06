@@ -1,6 +1,6 @@
 {
   "name": "@examples/multiple-geometries",
-  "description": "NPM + Webpack example displaying multiple-geometries in the map",
+  "description": "Example displaying multiple-geometries in the map",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",

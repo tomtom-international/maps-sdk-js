@@ -1,6 +1,6 @@
 {
   "name": "@examples/places-in-geometry",
-  "description": "NPM + Webpack example displaying places in geometry.",
+  "description": "Example displaying places in geometry.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",

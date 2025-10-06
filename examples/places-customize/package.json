@@ -1,6 +1,6 @@
 {
   "name": "@examples/places-customize",
-  "description": "NPM + Webpack example displaying places with custom config.",
+  "description": "Example displaying places with custom config.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",

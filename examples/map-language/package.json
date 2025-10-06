@@ -1,6 +1,6 @@
 {
   "name": "@examples/map-language",
-  "description": "NPM + Webpack playground to change map language.",
+  "description": "Playground to change map language.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",

@@ -1,6 +1,6 @@
 {
   "name": "@examples/map-config-playground",
-  "description": "NPM + Webpack example displaying map config playground.",
+  "description": "Example displaying map config playground.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",

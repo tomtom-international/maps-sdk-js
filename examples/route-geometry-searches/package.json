@@ -1,6 +1,6 @@
 {
   "name": "@examples/route-geometry-searches",
-  "description": "NPM + Webpack example displaying route geometry searches.",
+  "description": "Example displaying route geometry searches.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",

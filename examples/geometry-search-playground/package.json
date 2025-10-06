@@ -1,6 +1,6 @@
 {
   "name": "@examples/geometry-search-playground",
-  "description": "NPM + Webpack example displaying places searched within a shape/geometry.",
+  "description": "Example displaying places searched within a shape/geometry.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",
