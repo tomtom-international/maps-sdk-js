@@ -1,18 +1,25 @@
----
-title: Build workspaces
----
+# 🏗️ Building Workspaces
 
-<a style="display: block; margin: 0; padding: 0;" name="_build_workspaces"></a>
-
-## Workspaces
+## 📦 Workspaces
 
 Repository is organised with multiple workspaces that have to be built independently. See the "[Working with workspaces](https://pnpm.io/workspaces)" article.
 
-## Build the workspaces
+The project contains the following workspaces:
+- **core** - Core SDK functionality
+- **services** - API services (geocoding, routing, etc.)
+- **map** - Map rendering and interaction
+- **map-integration-tests** - Integration tests for map functionality
+- **shared-configs** - Shared configuration files (TypeScript, Vite)
+- **examples/** - Example applications demonstrating SDK usage
+
+## 🔨 Build the workspaces
 
 ```shell
-# Build all SDK workspaces
+# Build all SDK workspaces (recommended)
 pnpm build
+
+# Build SDK workspaces explicitly
+pnpm build:sdk
 
 # Build specific workspaces using filters
 pnpm -F core build
@@ -21,11 +28,6 @@ pnpm -F services build
 
 # Build examples
 pnpm build:examples
-
-# Alternative: use the -F shorthand
-pnpm -F core build
-pnpm -F map build
-pnpm -F services build
 ```
 
 After building, the following directories will appear:
@@ -44,10 +46,10 @@ Each `./dist` directory contains:
 - **[workspace].es.min.js** - Minified ES module bundle
 - Source maps for all bundles
 
-## Additional Build Commands
+## ⚙️ Additional Build Commands
 
 ```shell
-# Clean build artifacts
+# Clean build artifacts and cache
 pnpm clean
 
 # Build API reference documentation
@@ -58,10 +60,11 @@ pnpm type-check:sdk
 pnpm type-check:examples
 ```
 
-## Build Tools
+## 🛠️ Build Tools
 
 The project uses:
 - **Vite** - Primary build tool and bundler
 - **TypeScript** - Type checking and compilation
 - **Rollup** - Bundling (via Vite)
 - **Shared configs** - Common build configurations across workspaces
+- **TypeDoc** - API reference documentation generation

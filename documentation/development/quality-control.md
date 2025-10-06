@@ -1,67 +1,149 @@
----
-title: Quality control
----
+# 🔍 Quality Control
 
-<a style="display: block; margin: 0; padding: 0;" name="_quality_control"></a>
+## 🎯 Code Quality Standards
 
-## Approach
+The project maintains high code quality through automated tools and standardized practices.
 
-We use multiple tools to measure and control our code quality and enforce consistent "Pull request" practices. These tools eliminate trivial issues like "unused vars" and infinite discussions like "spaces vs tabs", "formatting", "lines per function", "loop nesting levels" in PRs. Those escalate pretty quickly, so let's just automate that and focus on what matters :)
+## 🎨 Linting and Formatting
 
-## Linting and Formatting
+The project uses **Biome** for both linting and formatting, providing fast and consistent code quality checks.
 
-We use **Biome** for both formatting and linting. Biome is a fast, all-in-one toolchain that replaces ESLint and Prettier:
+### 💅 Formatting Commands
 
 ```shell
-# Lint all files
-pnpm lint
-
-# Lint and auto-fix issues
-pnpm lint:fix
-
-# Format all files (check only)
+# Check formatting
 pnpm format
 
-# Format and auto-fix all files
+# Fix formatting issues
 pnpm format:fix
 ```
 
-## Code Quality Tools
-
-### Biome Configuration
-
-Biome configuration is defined in `biome.json` at the root level. It provides:
-- **Fast linting** - Much faster than ESLint
-- **Formatting** - Compatible with Prettier
-- **Import sorting** - Automatic import organization
-- **TypeScript support** - Native TypeScript support
-
-### CSpell (Spell Checking)
-
-We use CSpell to catch typos in code and documentation:
+### 🔧 Linting Commands
 
 ```shell
-# Run spell checking (part of CI/CD)
-npx cspell "**/*"
+# Check for lint issues
+pnpm lint
+
+# Fix lint issues automatically
+pnpm lint:fix
 ```
 
-Configuration is in `cspell.json` at the root level.
+## ⚙️ Code Style Configuration
 
-## SonarQube
+The project follows these formatting standards (configured in `biome.json`):
 
-SonarQube scan workflow executes static quality control analysis and publishes results to the SonarCube service of TomTom. See [this SonarQube project](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc).
+- **Indentation**: 4 spaces
+- **Line width**: 120 characters
+- **Quote style**: Single quotes
+- **Semicolons**: Always required
+- **Trailing commas**: Always required
 
-SonarQube integration supports PR comments, so when the SonarQube workflow executes it notifies about new issues immediately.
+## 🚦 Linting Rules
 
-Configuration is defined in `sonar-project.properties`.
+Key linting rules enforced:
 
-## Size Limits
+- **No unused variables** - Error level
+- **No parameter reassignment** - Error level
+- **Use const assertions** - Warning level
+- **Use default parameter last** - Error level
+- **Use enum initializers** - Error level
+- **Self-closing elements** - Error level
 
-The project monitors bundle sizes using size-limit:
+## ✅ Type Checking
+
+Ensure type safety across all workspaces:
 
 ```shell
-# Check bundle sizes (part of CI/CD)
-npx size-limit
+# Type check all SDK workspaces
+pnpm type-check:sdk
+
+# Type check examples
+pnpm type-check:examples
+
+# Type check specific workspaces
+pnpm -F core type-check
+pnpm -F services type-check
+pnpm -F map type-check
 ```
 
-Size limits are configured in the root `package.json` under the `size-limit` section.
+## 🏃‍♂️ Pre-commit Quality Checks
+
+Before committing code, run the complete quality check suite:
+
+```shell
+# Full quality check workflow
+pnpm lint:fix && pnpm format:fix && pnpm type-check:sdk && pnpm test:sdk
+```
+
+## 📂 Code Organization
+
+### 📁 File Structure Standards
+
+- Use descriptive file and directory names
+- Group related functionality together
+- Keep files focused on a single responsibility
+- Use consistent naming conventions
+
+### 📦 Import/Export Standards
+
+- Use named exports over default exports when possible
+- Group imports logically (external dependencies, internal modules, types)
+- Use absolute imports from workspace roots when possible
+
+## 📚 Documentation Standards
+
+### 📝 Code Comments
+
+- Use JSDoc for public APIs
+- Explain complex business logic
+- Document non-obvious behavior
+- Keep comments up-to-date with code changes
+
+### 🔤 Type Definitions
+
+- Use descriptive type names
+- Document complex types with comments
+- Prefer interfaces over type aliases for object shapes
+- Use generic types appropriately
+
+## 🚪 Quality Gates
+
+The following quality gates must pass before merging:
+
+1. **Linting** - No lint errors allowed
+2. **Formatting** - Code must be properly formatted
+3. **Type checking** - No type errors allowed
+4. **Tests** - All tests must pass
+5. **Coverage** - Maintain adequate test coverage
+
+## 🛠️ Tools and Configuration
+
+### 🎛️ Biome Configuration
+
+The project uses Biome (configured in `biome.json`) for:
+- Code formatting
+- Linting JavaScript/TypeScript
+- Import organization
+- Code analysis
+
+### 📋 TypeScript Configuration
+
+Each workspace has its own `tsconfig.json` with shared base configurations from the `shared-configs` workspace.
+
+### 🖥️ Editor Integration
+
+For the best development experience:
+- Install Biome extension for your editor
+- Enable format-on-save
+- Enable lint-on-type
+- Configure your editor to show type hints
+
+## 💡 Best Practices
+
+1. **Run quality checks early and often**
+2. **Fix issues as soon as they're detected**
+3. **Use consistent naming conventions**
+4. **Write self-documenting code**
+5. **Keep functions small and focused**
+6. **Use meaningful variable names**
+7. **Follow the established patterns in the codebase**

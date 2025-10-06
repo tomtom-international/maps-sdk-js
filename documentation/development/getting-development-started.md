@@ -1,10 +1,6 @@
----
-title: Getting development started
----
+# 🚀 Getting development started
 
-<a style="display: block; margin: 0; padding: 0;" name="_getting_development_started"></a>
-
-## Requirements
+## 📋 Requirements
 
 Install the following tools:
 
@@ -13,7 +9,7 @@ Install the following tools:
 * Node.js 22+ (LTS) - via NVM
 * pnpm 10+ (see packageManager field in package.json) - installed globally or via corepack
 
-## Setup Node.js/pnpm
+## ⚙️ Setup Node.js/pnpm
 
 ```shell
 nvm install 22
@@ -26,10 +22,10 @@ nvm alias default 22
 corepack enable
 
 # Or install pnpm globally
-npm install -g pnpm@10.15.1
+npm install -g pnpm@10+
 ```
 
-## Check out
+## 📥 Check out
 
 Check out the repository https://github.com/tomtom-international/maps-sdk-js:
 
@@ -39,7 +35,7 @@ git clone git@github.com:tomtom-international/maps-sdk-js.git
 git clone https://github.com/tomtom-international/maps-sdk-js.git
 ```
 
-## Installation
+## 📦 Installation
 
 The project uses pnpm workspaces. Install dependencies for all workspaces:
 
@@ -68,3 +64,39 @@ The project is organized into the following workspaces:
 - **map-integration-tests** - Integration tests for map functionality
 - **shared-configs** - Shared configuration files (TypeScript, Vite)
 - **examples/** - Example applications demonstrating SDK usage
+
+## Quick Start Commands
+
+After installation, you can use these commands to get started:
+
+```shell
+# Build all SDK workspaces
+pnpm build
+
+# Run tests for all SDK workspaces
+pnpm test:sdk
+
+# Run type checking
+pnpm type-check:sdk
+
+# Format code
+pnpm format:fix
+
+# Lint and fix code
+pnpm lint:fix
+```
+
+## Development Workflow
+
+1. Install dependencies: `pnpm install`
+2. Build the project: `pnpm build`
+3. Make your changes in the relevant workspace
+4. Run tests: `pnpm test:sdk`
+5. Format and lint: `pnpm format:fix && pnpm lint:fix`
+6. Type check: `pnpm type-check:sdk`
+
+## Next Steps
+
+- Read the [Build Workspaces](./build-workspaces.md) guide for detailed build instructions
+- Check the [Testing](./testing.md) guide for testing strategies
+- Review the [Quality Control](./quality-control.md) guide for code quality standards

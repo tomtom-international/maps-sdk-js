@@ -1,76 +1,110 @@
----
-title: Testing your changes
----
+# 🧪 Testing your changes
 
-<a style="display: block; margin: 0; padding: 0;" name="_testing"></a>
+## 🎯 Testing Strategy
 
-## Unit Testing
+The project uses a comprehensive testing strategy across all workspaces:
 
-The project uses Vitest for unit testing. Some modules depend on others, so those should be built first with type definitions generation.
+- **Unit Tests** - For individual functions and components
+- **Integration Tests** - For testing interactions between modules
+- **End-to-End Tests** - For testing complete user workflows
+- **Example Tests** - For validating example applications
+
+## 🚀 Test Commands
+
+### 🔬 SDK Testing
 
 ```shell
-# Run tests for all SDK workspaces
+# Run all SDK tests (unit + integration)
 pnpm test:sdk
+
+# Run tests with coverage reports
+pnpm test:sdk:coverage
 
 # Run tests for specific workspaces
 pnpm -F core test
-pnpm -F map test
 pnpm -F services test
-
-# Run integration tests
-pnpm -F map-integration-tests test
-
-# Run tests for examples
-pnpm test:examples
+pnpm -F map test
 ```
 
-## Test Coverage
-
-Generate test coverage reports:
+### 🌐 End-to-End Testing
 
 ```shell
-# Coverage for all SDK workspaces
-pnpm test:sdk:coverage
-
-# Coverage for specific workspaces
-pnpm -F core test:coverage 
-pnpm -F map test:coverage
-pnpm -F services test:coverage
-```
-
-Coverage reports appear in workspace directories:
-
-- ./core/coverage
-- ./map/coverage
-- ./services/coverage
-
-Generated formats:
-
-- **HTML** - Interactive coverage report
-- **LCOV** - For CI/CD integration
-- **JSON** - Machine-readable format
-- **CLOVER** - XML format for some tools
-
-## End-to-End Testing
-
-The project includes integration tests using Playwright:
-
-```shell
-# Run end-to-end tests for SDK
+# Run integration tests for SDK
 pnpm e2e-test:sdk
 
-# Run end-to-end tests for examples
+# Run tests for example applications
 pnpm e2e-test:examples
 ```
 
-## Testing Tools
+### 📋 Individual Workspace Testing
+
+```shell
+# Test core functionality
+pnpm -F core test
+pnpm -F core test:coverage
+
+# Test services (geocoding, routing, etc.)
+pnpm -F services test
+pnpm -F services test:coverage
+
+# Test map functionality
+pnpm -F map test
+pnpm -F map test:coverage
+
+# Test map integration
+pnpm -F map-integration-tests test
+```
+
+## Test Framework
 
 The project uses:
-- **Vitest** - Unit testing framework
-- **Playwright** - End-to-end testing
-- **@vitest/coverage-v8** - Coverage reporting
-- **Testing Library** - DOM testing utilities (where applicable)
+- **Vitest** - Primary testing framework for unit and integration tests
+- **Playwright** - For end-to-end browser testing
+- **Coverage reporting** - Built into Vitest for code coverage analysis
+
+## Writing Tests
+
+### Unit Tests
+
+Place unit tests next to the code they test with `.test.ts` or `.spec.ts` extension:
+
+```
+src/
+  utils/
+    math.ts
+    math.test.ts
+  components/
+    map.ts
+    map.test.ts
+```
+
+### Integration Tests
+
+Integration tests are located in the `map-integration-tests` workspace and test the complete SDK functionality in a browser environment.
+
+### Example Tests
+
+Each example application in the `examples/` directory has its own test suite to ensure examples work correctly.
+
+## Coverage Reports
+
+After running tests with coverage, reports are generated in each workspace's `coverage/` directory:
+
+- `coverage/index.html` - Interactive HTML report
+- `coverage/coverage-final.json` - JSON coverage data
+- `coverage/clover.xml` - XML coverage data for CI/CD
 
 ## Test Configuration
 
-Test configurations are shared across workspaces using the shared-configs package, ensuring consistent testing setup across all workspaces.
+Each workspace has its own test configuration:
+- `vitest.config.ts` - Vitest configuration for unit tests
+- `playwright.config.ts` - Playwright configuration for E2E tests
+
+## Best Practices
+
+1. **Write tests first** - Follow TDD when possible
+2. **Test public APIs** - Focus on testing the public interface
+3. **Mock external dependencies** - Use mocks for external services
+4. **Keep tests isolated** - Each test should be independent
+5. **Use descriptive names** - Test names should explain what they verify
+6. **Maintain coverage** - Aim for high coverage on critical paths

@@ -1,73 +1,199 @@
----
-title: CI/CD
----
+# 🚀 CI/CD
 
-<a style="display: block; margin: 0; padding: 0;" name="_ci_cd"></a>
+## 🔄 Continuous Integration and Deployment
 
-## Approach
+This guide covers the CI/CD pipeline, automated testing, and deployment processes for the Maps SDK JavaScript project.
 
-CI/CD of this project follows feature branches approach. It builds SDK versions for all branches and release tags. It also releases those to a NPM repository under npm "tags" (aliases). Alias names correspond to branch/tag names.
+## 🔨 Build Pipeline
 
-## Releasing branches
+The project uses automated build processes that run on every commit and pull request.
 
-In order to have your branch tested, our CI/CD builds and releases a package with aliases, so its version looks like this:
+### 📋 Build Steps
+
+1. **Environment Setup**
+   - Node.js 22+ installation
+   - pnpm installation and caching
+   - Dependency installation
+
+2. **Quality Checks**
+   - Code formatting verification (`pnpm format`)
+   - Linting checks (`pnpm lint`)
+   - Type checking (`pnpm type-check:sdk`)
+
+3. **Testing**
+   - Unit tests (`pnpm test:sdk`)
+   - Coverage reporting (`pnpm test:sdk:coverage`)
+   - Integration tests (`pnpm e2e-test:sdk`)
+   - Example tests (`pnpm e2e-test:examples`)
+
+4. **Build**
+   - SDK compilation (`pnpm build:sdk`)
+   - Example builds (`pnpm build:examples`)
+   - Documentation generation (`pnpm build:api-reference`)
+
+## 🚪 Quality Gates
+
+All changes must pass these automated quality gates:
+
+### 🎨 Code Quality
+- ✅ Biome linting passes
+- ✅ Code formatting is correct
+- ✅ TypeScript compilation succeeds
+- ✅ No type errors
+
+### 🧪 Testing
+- ✅ All unit tests pass
+- ✅ Integration tests pass
+- ✅ Example applications work correctly
+- ✅ Test coverage meets minimum thresholds
+
+### ✅ Build Verification
+- ✅ All workspaces build successfully
+- ✅ Bundle size limits are respected
+- ✅ Documentation generates without errors
+
+## Branch Protection
+
+### Main Branch
+- Requires pull request reviews
+- Requires status checks to pass
+- No direct pushes allowed
+- Requires up-to-date branches
+
+### Pull Request Workflow
+1. Create feature branch from `main`
+2. Make changes and commit
+3. Push branch and create pull request
+4. Automated checks run
+5. Code review required
+6. Merge after approval and passing checks
+
+## Automated Checks
+
+### Pre-commit Hooks
+```shell
+# Recommended pre-commit workflow
+pnpm lint:fix && pnpm format:fix && pnpm type-check:sdk && pnpm test:sdk
+```
+
+### Status Checks
+- **Build** - All workspaces must build successfully
+- **Lint** - Code must pass linting rules
+- **Format** - Code must be properly formatted
+- **Type Check** - No TypeScript errors allowed
+- **Tests** - All tests must pass
+- **Coverage** - Maintain test coverage thresholds
+
+## Deployment Process
+
+### Package Publishing
+The project publishes to TomTom's internal npm registry:
+- Registry: `https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/`
+- Automated version bumping
+- Changelog generation
+- Release notes creation
+
+### Documentation Deployment
+- API reference documentation is automatically built and deployed
+- Examples are deployed for testing and demonstration
+- Documentation portal is updated with latest changes
+
+## Environment Variables
+
+### Build Environment
+- `NODE_ENV` - Environment setting (development/production)
+- `CI` - Indicates CI environment
+- Custom environment variables for API keys and configuration
+
+### Security
+- API keys and secrets managed through secure environment variables
+- No sensitive information in source code
+- Dependency vulnerability scanning
+
+## Monitoring and Alerts
+
+### Build Monitoring
+- Build status notifications
+- Performance regression detection
+- Bundle size monitoring
+- Dependency vulnerability alerts
+
+### Quality Metrics
+- Test coverage tracking
+- Code quality metrics
+- Performance benchmarks
+- Bundle size trends
+
+## Local CI Simulation
+
+To simulate CI checks locally:
 
 ```shell
-# Incremental builds based on the same 0.9.3 version. Those versions below are basically release candidates for 0.9.4:
-0.9.4-my-fix.0
-0.9.4-my-fix.1
-0.9.4-my-fix.2
-# After the base version update to 0.10.0 the aliased versions will be re-calculated:
-0.10.1-my-fix.0
-0.10.1-my-fix.1
-0.10.1-my-fix.2
+# Full CI-like check sequence
+pnpm clean
+pnpm install
+pnpm lint
+pnpm format
+pnpm type-check:sdk
+pnpm type-check:examples
+pnpm build
+pnpm test:sdk:coverage
+pnpm e2e-test:sdk
+pnpm e2e-test:examples
 ```
 
-After publishing such package in the NPM repository it can be installed:
+## Troubleshooting CI Issues
 
-```shell
-# Installation using the alias "my-fix"
-pnpm add @cet/maps-sdk-js@my-fix
+### Common CI Failures
 
-# Installation using the exact version of alias "my-fix"
-pnpm add @cet/maps-sdk-js@0.9.4-my-fix.1
-```
+1. **Lint Failures**
+   ```shell
+   pnpm lint:fix
+   ```
 
-Basically, all you need to do is push your code to branches. Everything else happens automatically.
+2. **Format Failures**
+   ```shell
+   pnpm format:fix
+   ```
 
-## Package Registry
+3. **Type Errors**
+   ```shell
+   pnpm type-check:sdk
+   # Fix reported type errors
+   ```
 
-The project publishes to TomTom's internal Artifactory registry:
-```
-https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/
-```
+4. **Test Failures**
+   ```shell
+   pnpm test:sdk
+   # Investigate and fix failing tests
+   ```
 
-This is configured in the `publishConfig` section of `package.json`.
+5. **Build Failures**
+   ```shell
+   pnpm build:sdk
+   # Check for compilation errors
+   ```
 
-## CI/CD Tools and Processes
+### Cache Issues
+- Clear pnpm cache: `pnpm store prune`
+- Clear workspace caches: `pnpm clean`
+- Reinstall dependencies: `pnpm install --no-frozen-lockfile`
 
-### Quality Gates
+## Best Practices
 
-Before any release, the CI/CD pipeline runs:
-- **Biome linting and formatting checks**
-- **TypeScript compilation** for all workspaces
-- **Unit tests** with Vitest
-- **Integration tests** with Playwright
-- **Bundle size checks** with size-limit
-- **SonarQube analysis** for code quality
+### Commit Messages
+- Use conventional commit format
+- Include scope when relevant (core, services, map)
+- Clear and descriptive messages
 
-### Build Process
+### Pull Request Guidelines
+- Keep PRs focused and reasonably sized
+- Include tests for new functionality
+- Update documentation when needed
+- Ensure all CI checks pass before requesting review
 
-The CI/CD system:
-1. Installs dependencies using `pnpm install`
-2. Builds all workspaces using `pnpm build`
-3. Runs the complete test suite
-4. Generates API documentation
-5. Creates distribution packages
-6. Publishes to the registry with appropriate tags
-
-### Conventional Commits
-
-The project follows conventional commits for automated versioning and changelog generation. See [conventionalcommits.org](https://www.conventionalcommits.org) for the specification.
-
-CHANGELOG.md is maintained manually or through automated tools based on conventional commit messages.
+### Release Process
+- Follow semantic versioning
+- Update changelog
+- Tag releases appropriately
+- Test releases before publishing
