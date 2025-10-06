@@ -14,5 +14,5 @@ new TomTomMap(
         fitBoundsOptions: { padding: 50 },
         bounds: bboxFromGeoJSON(initPlace) as LngLatBoundsLike,
     },
-    { style: { type: 'published', id: 'monoLight', include: ['hillshade'] } },
+    { style: { type: 'standard', id: 'monoLight', include: ['hillshade'] } },
 );

@@ -22,7 +22,7 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
                 center: [-0.12621, 51.50394],
             },
             {
-                style: { type: 'published', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] },
+                style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] },
             },
         );
         await page.evaluate(async () => {

@@ -22,7 +22,7 @@ const map = new TomTomMap(
         bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
         fitBoundsOptions: { padding: 100 },
     },
-    { style: { type: 'published', include: ['trafficIncidents'] } },
+    { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 
 const routes = await calculateRoute({ geoInputs: waypoints.features });

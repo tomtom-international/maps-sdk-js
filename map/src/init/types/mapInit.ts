@@ -2,7 +2,7 @@ import type { GlobalConfig } from '@cet/maps-sdk-js/core';
 import type { MapOptions, StyleSpecification } from 'maplibre-gl';
 import type { MapEventsConfig } from './mapEventsConfig';
 
-export const publishedStyleIDs = [
+export const standardStyleIDs = [
     'standardLight',
     'standardDark',
     // TODO: driving styles not supported in Orbis for now
@@ -14,18 +14,18 @@ export const publishedStyleIDs = [
 ] as const;
 
 /**
- * ID for a published style.
+ * ID for a standard style.
  */
-export type PublishedStyleID = (typeof publishedStyleIDs)[number];
+export type StandardStyleID = (typeof standardStyleIDs)[number];
 
 /**
- * A published style represents a style which is officially hosted by TomTom and easily accessible by its name/ID.
+ * A standard style represents a style which is officially hosted by TomTom and easily accessible by its name/ID.
  */
-export type PublishedStyle = {
+export type StandardStyle = {
     /**
-     * The unique id of the published style.
+     * The unique id of the style.
      */
-    id?: PublishedStyleID;
+    id?: StandardStyleID;
     /**
      * Include traffic incidents, traffic flow, poi and hillshade modules when loading styles.
      */
@@ -63,14 +63,11 @@ export type StyleModule = 'trafficIncidents' | 'trafficFlow' | 'hillshade';
 /**
  * Style to load on the map.
  * Can be either a:
- * * Published style ID from last supported version.
- * * Published style with optional extra configurations, such as module exclusion and style version.
+ * * Standard style ID from last supported version.
+ * * Standard style with optional extra configurations, such as module exclusion and style version.
  * * Custom style input, in the form of a given URL, or the style JSON itself.
  */
-export type StyleInput =
-    | PublishedStyleID
-    | (PublishedStyle & { type: 'published' })
-    | (CustomStyle & { type: 'custom' });
+export type StyleInput = StandardStyleID | (StandardStyle & { type: 'standard' }) | (CustomStyle & { type: 'custom' });
 
 export type TomTomMapParams = GlobalConfig & {
     /**

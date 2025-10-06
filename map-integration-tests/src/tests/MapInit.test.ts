@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { MapLibreOptions, PublishedStyle, StyleInput, StyleModule, TomTomMapParams } from 'map';
+import type { MapLibreOptions, StandardStyle, StyleInput, StyleModule, TomTomMapParams } from 'map';
 import { HILLSHADE_SOURCE_ID, mapStyleLayerIDs, TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from 'map';
 import mapInitTestData from './data/MapInit.test.data.json';
 import type { MapsSDKThis } from './types/MapsSDKThis';
@@ -13,7 +13,7 @@ import {
 } from './util/TestUtils';
 
 const includes = (style: StyleInput | undefined, module: StyleModule): boolean =>
-    !!(style as PublishedStyle)?.include?.includes(module);
+    !!(style as StandardStyle)?.include?.includes(module);
 
 test.describe('Map Init tests', () => {
     const mapEnv = new MapTestEnv();

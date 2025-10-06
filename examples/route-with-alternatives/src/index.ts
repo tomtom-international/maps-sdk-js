@@ -17,7 +17,7 @@ const fitBoundsOptions = { padding: 150 };
 
 const map = new TomTomMap(
     { bounds, fitBoundsOptions, container: 'maps-sdk-js-examples-map-container' },
-    { style: { type: 'published', include: ['trafficIncidents'] } },
+    { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 await TrafficIncidentsModule.get(map, { visible: false });
 

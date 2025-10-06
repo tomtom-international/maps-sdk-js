@@ -8,7 +8,7 @@ import type {
     ResourceType,
     StyleImageMetadata,
 } from 'maplibre-gl';
-import { PublishedStyleID, StyleInput, StyleModule } from '../init';
+import { CustomStyle, StandardStyle, StandardStyleID, StyleInput, StyleModule } from '../init';
 import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 import type { AbstractSourceWithLayers } from './SourceWithLayers';
@@ -281,12 +281,12 @@ export const addLayers = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => 
 export const updateStyleWithModule = (style: StyleInput | undefined, styleModule: StyleModule): StyleInput => {
     switch (typeof style) {
         case 'undefined':
-            return { type: 'published', include: [styleModule] };
+            return { type: 'standard', include: [styleModule] };
         case 'string':
-            // this is a published style
-            return { type: 'published', id: style, include: [styleModule] };
+            // this is a standard style
+            return { type: 'standard', id: style, include: [styleModule] };
         default:
-            if (style.type === 'published') {
+            if (style.type === 'standard') {
                 if (style.include) {
                     return { ...style, include: [...style.include, styleModule] };
                 }
@@ -350,10 +350,10 @@ export const addImageIfNotExisting = async (
 export type LightDark = 'light' | 'dark';
 
 /**
- * Returns the light/dark theme for a known published style.
+ * Returns the light/dark theme for a known standard style.
  * @param publishedStyleID
  */
-const getPublishedStyleTheme = (publishedStyleID: PublishedStyleID): LightDark => {
+const getPublishedStyleTheme = (publishedStyleID: StandardStyleID): LightDark => {
     switch (publishedStyleID) {
         case 'standardDark':
         case 'drivingDark':
@@ -367,7 +367,7 @@ const getPublishedStyleTheme = (publishedStyleID: PublishedStyleID): LightDark =
 
 /**
  * Returns the light/dark theme for a given style input.
- * * Unknown published styles and custom styles are considered as 'light' theme.
+ * * Unknown standard styles and custom styles are considered as 'light' theme.
  * @param styleInput The style input to check. If not provided, 'light' is returned.
  * @ignore
  */
@@ -375,8 +375,9 @@ export const getStyleInputTheme = (styleInput?: StyleInput): LightDark => {
     if (typeof styleInput === 'string') {
         return getPublishedStyleTheme(styleInput);
     }
-    if (styleInput?.type === 'published' && styleInput?.id) {
-        return getPublishedStyleTheme(styleInput.id);
+    const publishedStyle = styleInput as StandardStyle;
+    if (publishedStyle?.id) {
+        return getPublishedStyleTheme(publishedStyle.id);
     }
     return 'light';
 };

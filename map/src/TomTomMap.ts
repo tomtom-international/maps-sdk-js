@@ -65,7 +65,7 @@ export class TomTomMap {
         setTimeout(() => {
             if (!['deferred', 'loaded'].includes(getRTLTextPluginStatus())) {
                 setRTLTextPlugin(
-                    'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',
+                    'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js',
                     true,
                 ).catch((error) => console.error('Something went wrong when setting RTL plugin', error));
             }

@@ -16,28 +16,28 @@ describe('Map style input builder tests', () => {
     test('With previous style parts test', () => {
         expect(withPreviousStyleParts('standardDark')).toBe('standardDark');
         expect(withPreviousStyleParts('standardDark', 'monoLight')).toBe('standardDark');
-        expect(withPreviousStyleParts('standardDark', { type: 'published', id: 'monoLight' })).toBe('standardDark');
+        expect(withPreviousStyleParts('standardDark', { type: 'standard', id: 'monoLight' })).toBe('standardDark');
         expect(
-            withPreviousStyleParts({ type: 'published', id: 'standardDark' }, { type: 'published', id: 'monoLight' }),
-        ).toEqual({ type: 'published', id: 'standardDark' });
-        expect(
-            withPreviousStyleParts(
-                { type: 'published', id: 'standardDark' },
-                { type: 'published', id: 'monoLight', include: ['hillshade'] },
-            ),
-        ).toEqual({ type: 'published', id: 'standardDark', include: ['hillshade'] });
+            withPreviousStyleParts({ type: 'standard', id: 'standardDark' }, { type: 'standard', id: 'monoLight' }),
+        ).toEqual({ type: 'standard', id: 'standardDark' });
         expect(
             withPreviousStyleParts(
-                { type: 'published', id: 'standardDark', include: ['trafficIncidents'] },
-                { type: 'published', id: 'monoLight', include: ['hillshade'] },
+                { type: 'standard', id: 'standardDark' },
+                { type: 'standard', id: 'monoLight', include: ['hillshade'] },
             ),
-        ).toEqual({ type: 'published', id: 'standardDark', include: ['trafficIncidents'] });
+        ).toEqual({ type: 'standard', id: 'standardDark', include: ['hillshade'] });
+        expect(
+            withPreviousStyleParts(
+                { type: 'standard', id: 'standardDark', include: ['trafficIncidents'] },
+                { type: 'standard', id: 'monoLight', include: ['hillshade'] },
+            ),
+        ).toEqual({ type: 'standard', id: 'standardDark', include: ['trafficIncidents'] });
         // New style has no include section so it's taken from the previous one:
         expect(
             withPreviousStyleParts(
-                { type: 'published', id: 'standardDark' },
-                { type: 'published', id: 'monoLight', include: ['trafficIncidents'] },
+                { type: 'standard', id: 'standardDark' },
+                { type: 'standard', id: 'monoLight', include: ['trafficIncidents'] },
             ),
-        ).toEqual({ type: 'published', id: 'standardDark', include: ['trafficIncidents'] });
+        ).toEqual({ type: 'standard', id: 'standardDark', include: ['trafficIncidents'] });
     });
 });

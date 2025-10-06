@@ -1,12 +1,12 @@
 [
   ["All defaults", {}, {}],
-  ["Defaults with style object input, yet no added parts", {}, { "style": { "type": "published" } }],
+  ["Defaults with style object input, yet no added parts", {}, { "style": { "type": "standard" } }],
   [
     "Defaults with traffic incidents",
     {},
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "include": ["trafficIncidents"]
       }
     }
@@ -16,7 +16,7 @@
     {},
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "include": ["trafficFlow"]
       }
     }
@@ -26,7 +26,7 @@
     {},
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "include": ["hillshade"]
       }
     }
@@ -36,7 +36,7 @@
     {},
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "include": ["trafficIncidents"]
       }
     }
@@ -46,7 +46,7 @@
     {},
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
     }
@@ -57,7 +57,7 @@
     { "zoom": 6, "center": [-0.12621, 51.50394] },
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "standardDark",
         "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
@@ -69,7 +69,7 @@
     { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "monoLight",
         "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
@@ -81,7 +81,7 @@
     { "zoom": 14, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "monoDark",
         "include": ["trafficIncidents", "hillshade"]
       }
@@ -93,7 +93,7 @@
     { "zoom": 10, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "satellite",
         "include": ["hillshade"]
       }
@@ -104,7 +104,7 @@
     { "zoom": 12, "minZoom": 2, "center": [-0.12621, 51.50394] },
     {
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "satellite",
         "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }

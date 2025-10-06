@@ -25,7 +25,7 @@ const map = new TomTomMap(
         zoom: 13,
         bounds: mainPlace.bbox as LngLatBoundsLike,
     },
-    { style: { type: 'published', include: ['trafficIncidents'] } },
+    { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 const mainGeometry = await geometryData({ geometries: mainPlace });
 

@@ -61,7 +61,7 @@ test.describe('Map vector tile traffic module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: 'published', include: ['trafficFlow'] } },
+            { style: { type: 'standard', include: ['trafficFlow'] } },
         );
         expect(await getFlowConfig(page)).toBeUndefined();
 
@@ -110,7 +110,7 @@ test.describe('Map vector tile traffic module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 12, center: [2.37327, 48.85903] },
-            { style: { type: 'published', include: ['trafficFlow'] } },
+            { style: { type: 'standard', include: ['trafficFlow'] } },
         );
 
         const config: FlowConfig = {
@@ -150,7 +150,7 @@ test.describe('Map vector tile traffic module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: 'published', include: ['trafficFlow'] } },
+            { style: { type: 'standard', include: ['trafficFlow'] } },
         );
 
         const config: FlowConfig = {
@@ -198,7 +198,7 @@ test.describe('Map vector tile traffic module tests', () => {
             page,
             // London:
             { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: 'published', include: ['trafficFlow'] } },
+            { style: { type: 'standard', include: ['trafficFlow'] } },
         );
 
         await initTrafficFlow(page);

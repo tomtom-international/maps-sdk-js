@@ -1,6 +1,6 @@
 [
   [
-    "Standard light published style ID",
+    "Standard light standard style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
@@ -9,7 +9,7 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_street-light"
   ],
   [
-    "Standard dark published style ID",
+    "Standard dark standard style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
@@ -18,7 +18,7 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_street-dark"
   ],
   [
-    "Driving light published style ID",
+    "Driving light standard style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
@@ -27,7 +27,7 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_street-light-driving"
   ],
   [
-    "Driving dark published style ID",
+    "Driving dark standard style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
@@ -36,7 +36,7 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_street-dark-driving"
   ],
   [
-    "Mono light published style ID",
+    "Mono light standard style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
@@ -45,7 +45,7 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_mono-light"
   ],
   [
-    "Mono dark published style ID",
+    "Mono dark standard style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
@@ -54,7 +54,7 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_mono-dark"
   ],
   [
-    "Satellite published style ID",
+    "Satellite standard style ID",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
@@ -63,12 +63,12 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_street-satellite"
   ],
   [
-    "Standard light published style ID with version",
+    "Standard light standard style ID with version",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "standardLight",
         "version": "TEST_VERSION"
       }
@@ -76,12 +76,12 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/TEST_VERSION/style.json?&apiVersion=1&key=TEST_API_KEY&map=basic_street-light"
   ],
   [
-    "Mono light published style ID with version",
+    "Mono light standard style ID with version",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "monoLight",
         "version": "TEST_VERSION"
       }
@@ -129,12 +129,12 @@
     }
   ],
   [
-    "Published style with module inclusion dark",
+    "Standard style with module inclusion dark",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "standardDark",
         "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }
@@ -142,12 +142,12 @@
     "https://api.tomtom.com/maps/orbis/assets/styles/0.*/style.json?apiVersion=1&key=TEST_API_KEY&map=basic_street-dark&trafficIncidents=incidents_dark&trafficFlow=flow_relative-dark&hillshade=hillshade_dark"
   ],
   [
-    "Published style with module inclusion light",
+    "Standard style with module inclusion light",
     {
       "commonBaseURL": "https://api.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
-        "type": "published",
+        "type": "standard",
         "id": "standardLight",
         "include": ["trafficIncidents", "trafficFlow", "hillshade"]
       }

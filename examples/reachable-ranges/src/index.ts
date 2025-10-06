@@ -13,7 +13,7 @@
 //     const locations = await search({ query: "", poiCategories: ["AIRPORT"], countries: ["NL"], limit: 25 });
 //     const map = new TomTomMap(
 //         { container: "map", bounds: locations.bbox as LngLatBoundsLike, fitBoundsOptions: { padding: 100 } },
-//         { style: { type: "published", id: "monoLight" } }
+//         { style: { type: "standard", id: "monoLight" } }
 //     );
 //
 //     const budget: ReachableRangeBudget = { type: "timeMinutes", value: 15 };

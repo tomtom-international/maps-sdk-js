@@ -79,7 +79,7 @@
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
-        "type": "published",
+        "type": "standard",
         "include": ["trafficFlow", "trafficIncidents"]
       }
     },
@@ -101,7 +101,7 @@
       "commonBaseURL": "https://api-test.tomtom.com",
       "apiKey": "TEST_API_KEY",
       "style": {
-        "type": "published",
+        "type": "standard",
         "include": ["hillshade"]
       }
     },

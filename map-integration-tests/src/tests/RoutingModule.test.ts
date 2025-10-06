@@ -138,7 +138,7 @@ test.describe('Routing and waypoint display tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(
             page,
             { bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
-            { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
+            { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow'] } },
         );
         await initRouting(page);
 
@@ -208,7 +208,7 @@ test.describe('Routing and waypoint display tests', () => {
 
         // Changing the style (this time passing manually the parts again), asserting that the route stays the same:
         await setStyle(page, {
-            type: 'published',
+            type: 'standard',
             id: 'monoLight',
             include: ['trafficIncidents', 'trafficFlow', 'hillshade'],
         });
@@ -323,7 +323,7 @@ test.describe('Routing and waypoint display tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(
             page,
             { bounds: ldevrTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },
-            { style: { type: 'published', id: 'drivingLight', include: ['trafficIncidents'] } },
+            { style: { type: 'standard', id: 'drivingLight', include: ['trafficIncidents'] } },
         );
         // We start zoomed far, asserting that some features won't be rendered:
         await zoomTo(page, 3);
@@ -442,7 +442,7 @@ test.describe('Routing and waypoint display tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(
             page,
             { fitBoundsOptions: { padding: 150 }, center: [4.8806, 52.40316], zoom: 12 },
-            { style: { type: 'published', include: ['trafficIncidents'] } },
+            { style: { type: 'standard', include: ['trafficIncidents'] } },
         );
         await initRouting(page);
 
@@ -489,7 +489,7 @@ test.describe('Routing and waypoint display tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(
             page,
             { fitBoundsOptions: { padding: 150 }, bounds: rotterdamToAmsterdamRoutes.bbox },
-            { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
+            { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow'] } },
         );
         await initRouting(page);
 

@@ -169,7 +169,7 @@ test.describe('GeoJSON Places with init config tests', () => {
             const mapEnv = await MapTestEnv.loadPageAndMap(
                 page,
                 { bounds },
-                { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] } },
+                { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] } },
             );
             await initPlaces(page, { iconConfig: { iconStyle: 'circle' } });
             const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
@@ -193,7 +193,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             const mapEnv = await MapTestEnv.loadPageAndMap(
                 page,
                 { bounds },
-                { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] } },
+                { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] } },
             );
             await initPlaces(page);
             const { layerIDs } = await getPlacesSourceAndLayerIDs(page);

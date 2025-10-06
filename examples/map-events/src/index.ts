@@ -139,7 +139,7 @@ const initBaseMapModule = async () => {
 
 map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', center: [-0.12634, 51.50276], zoom: 14 },
-    { language: 'en-GB', style: { type: 'published', include: ['trafficIncidents'] } },
+    { language: 'en-GB', style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 
 map.mapLibreMap.addControl(new NavigationControl());

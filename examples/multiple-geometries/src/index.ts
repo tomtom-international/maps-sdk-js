@@ -3,8 +3,8 @@ import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import {
     GeometriesModule,
     type GeometryBeforeLayerConfig,
-    type PublishedStyleID,
-    publishedStyleIDs,
+    type StandardStyleID,
+    standardStyleIDs,
     TomTomMap,
 } from '@cet/maps-sdk-js/map';
 import { geocode, geometryData } from '@cet/maps-sdk-js/services';
@@ -43,9 +43,9 @@ const listenToUIEvents = async () => {
     });
 
     const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
-    publishedStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
+    standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
-        map.setStyle((event.target as HTMLOptionElement).value as PublishedStyleID),
+        map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
     );
 
     document

@@ -1,27 +1,27 @@
 [
-  ["undefined style", null, "trafficIncidents", { "type": "published", "include": ["trafficIncidents"] }],
+  ["undefined style", null, "trafficIncidents", { "type": "standard", "include": ["trafficIncidents"] }],
   [
-    "Just string for published style",
+    "Just string for standard style",
     "monoLight",
     "trafficIncidents",
-    { "type": "published", "id": "monoLight", "include": ["trafficIncidents"] }
+    { "type": "standard", "id": "monoLight", "include": ["trafficIncidents"] }
   ],
   [
     "Style without includes already in it",
-    { "type": "published", "id": "standardLight" },
+    { "type": "standard", "id": "standardLight" },
     "trafficIncidents",
     {
-      "type": "published",
+      "type": "standard",
       "id": "standardLight",
       "include": ["trafficIncidents"]
     }
   ],
   [
     "Style with some includes already in it",
-    { "type": "published", "id": "standardLight", "include": ["hillshade"] },
+    { "type": "standard", "id": "standardLight", "include": ["hillshade"] },
     "trafficIncidents",
     {
-      "type": "published",
+      "type": "standard",
       "id": "standardLight",
       "include": ["hillshade", "trafficIncidents"]
     }

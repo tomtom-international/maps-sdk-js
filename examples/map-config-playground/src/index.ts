@@ -2,8 +2,8 @@ import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import {
     HillshadeModule,
     POIsModule,
-    PublishedStyleID,
-    publishedStyleIDs,
+    StandardStyleID,
+    standardStyleIDs,
     TomTomMap,
     TrafficFlowModule,
     TrafficIncidentsModule,
@@ -22,7 +22,7 @@ const map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', zoom: 14, minZoom: 2, center: [-0.12621, 51.50394] },
     {
         style: {
-            type: 'published',
+            type: 'standard',
             include: ['trafficIncidents', 'trafficFlow', 'hillshade'],
         },
     },
@@ -59,9 +59,9 @@ document
 
 // Styles selector
 const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
-publishedStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
+standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
 stylesSelector.addEventListener('change', (event) =>
-    map.setStyle((event.target as HTMLOptionElement).value as PublishedStyleID),
+    map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
 );
 
 (window as any).map = map; // This has been done for automation test support

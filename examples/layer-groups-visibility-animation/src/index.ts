@@ -8,7 +8,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 
 const map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', center: [-74.00432, 40.71632], zoom: 3 },
-    { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
+    { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow'] } },
 );
 
 const orderedModules = [

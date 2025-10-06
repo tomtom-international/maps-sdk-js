@@ -75,7 +75,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: 'published', include: ['trafficIncidents'] } },
+            { style: { type: 'standard', include: ['trafficIncidents'] } },
         );
         expect(await getConfig(page)).toBeUndefined();
 
@@ -159,7 +159,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 13, center: [-0.12621, 51.50394] }, // London
-            { style: { type: 'published', include: ['trafficIncidents'] } },
+            { style: { type: 'standard', include: ['trafficIncidents'] } },
         );
         await initTrafficIncidents(page);
         expect(await getConfig(page)).toBeUndefined();
@@ -179,7 +179,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
 
         // changing the map style (and manually adding also poi part):
         // verifying the config is still the same (state restoration):
-        await setStyle(page, { type: 'published', id: 'standardDark', include: ['trafficIncidents'] });
+        await setStyle(page, { type: 'standard', id: 'standardDark', include: ['trafficIncidents'] });
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
@@ -232,7 +232,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 13, center: [-0.12621, 51.50394] },
-            { style: { type: 'published', include: ['trafficIncidents'] } },
+            { style: { type: 'standard', include: ['trafficIncidents'] } },
         );
 
         const config: IncidentsConfig = {
@@ -272,7 +272,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         ).toHaveLength(0);
 
         // CHANGING THE MAP STYLE: verifying the config is still the same (state restoration):
-        await setStyle(page, { type: 'published', id: 'standardDark', include: ['trafficIncidents'] });
+        await setStyle(page, { type: 'standard', id: 'standardDark', include: ['trafficIncidents'] });
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
@@ -293,7 +293,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
             page,
             // London:
             { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: 'published', include: ['trafficIncidents'] } },
+            { style: { type: 'standard', include: ['trafficIncidents'] } },
         );
 
         await initTrafficIncidents(page);

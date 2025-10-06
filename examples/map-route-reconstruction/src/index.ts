@@ -108,7 +108,7 @@ const map = new TomTomMap(
         bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
         fitBoundsOptions: { padding: 150 },
     },
-    { style: { type: 'published', include: ['trafficIncidents'] } },
+    { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 await TrafficIncidentsModule.get(map, { visible: false });
 

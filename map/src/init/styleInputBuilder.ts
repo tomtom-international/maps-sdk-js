@@ -1,12 +1,12 @@
 /** biome-ignore-all lint/suspicious/noTemplateCurlyInString: the templates are used to build the style URLs */
 import { isEmpty } from 'lodash-es';
 import type { StyleSpecification } from 'maplibre-gl';
-import type { PublishedStyle, PublishedStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
+import type { StandardStyle, StandardStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
 
 const DEFAULT_PUBLISHED_STYLE = 'standardLight';
 const URL_PREFIX = '${baseURL}/maps/orbis/assets/styles/${version}/style.json?&apiVersion=1&key=${apiKey}';
 
-const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, string>> = {
+const publishedStyleModulesValues: Record<StandardStyleID, Record<StyleModule, string>> = {
     standardLight: {
         trafficIncidents: 'incidents_light',
         trafficFlow: 'flow_relative-light',
@@ -46,7 +46,7 @@ const publishedStyleModulesValues: Record<PublishedStyleID, Record<StyleModule, 
 
 const baseMapStyleUrlTemplate = (suffix: string): string => `${URL_PREFIX}&map=${suffix}`;
 
-const baseMapStyleUrlTemplates: Record<PublishedStyleID, string> = {
+const baseMapStyleUrlTemplates: Record<StandardStyleID, string> = {
     standardLight: baseMapStyleUrlTemplate('basic_street-light'),
     standardDark: baseMapStyleUrlTemplate('basic_street-dark'),
     drivingLight: baseMapStyleUrlTemplate('basic_street-light-driving'),
@@ -56,7 +56,7 @@ const baseMapStyleUrlTemplates: Record<PublishedStyleID, string> = {
     satellite: baseMapStyleUrlTemplate('basic_street-satellite'),
 };
 
-const buildBaseMapStyleUrl = (publishedStyle: PublishedStyle, baseUrl: string, apiKey: string): string =>
+const buildBaseMapStyleUrl = (publishedStyle: StandardStyle, baseUrl: string, apiKey: string): string =>
     baseMapStyleUrlTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
         .replace('${baseURL}', baseUrl)
         .replace('${version}', publishedStyle.version ?? '0.*')
@@ -80,7 +80,7 @@ const withApiKey = (givenUrl: string, apiKey: string): string => {
  * @param publishedStyle style with included style modules to show in the style url.
  * @return The map style to load into the renderer.
  */
-const includeModulesOptions = (url: string, publishedStyle: PublishedStyle): string => {
+const includeModulesOptions = (url: string, publishedStyle: StandardStyle): string => {
     const styleUrl = new URL(url);
 
     if (publishedStyle.include?.length) {
@@ -109,7 +109,7 @@ export const buildStyleInput = (mapParams: TomTomMapParams): StyleSpecification 
 
     if (typeof style === 'string') {
         mapStyleUrl = buildBaseMapStyleUrl({ id: style }, baseUrl, apiKey);
-    } else if (style?.type === 'published') {
+    } else if (style?.type === 'standard') {
         mapStyleUrl = buildBaseMapStyleUrl(style, baseUrl, apiKey);
         isIncludeEmpty = isEmpty(style.include);
     } else if (style?.type === 'custom' && style?.url) {
@@ -120,26 +120,26 @@ export const buildStyleInput = (mapParams: TomTomMapParams): StyleSpecification 
         mapStyleUrl = buildBaseMapStyleUrl({ id: DEFAULT_PUBLISHED_STYLE }, baseUrl, apiKey);
     }
 
-    return isIncludeEmpty ? mapStyleUrl : includeModulesOptions(mapStyleUrl as string, style as PublishedStyle);
+    return isIncludeEmpty ? mapStyleUrl : includeModulesOptions(mapStyleUrl as string, style as StandardStyle);
 };
 
 /**
- * Includes the previous published style parts into the given published style if the new one didn't define any.
- * * Both new and previous styles must be of "published" type.
+ * Includes the previous standard style parts into the given standard style if the new one didn't define any.
+ * * Both new and previous styles must be of "standard" type.
  * @ignore
  */
 export const withPreviousStyleParts = (style: StyleInput, previousStyle?: StyleInput): StyleInput => {
     if (
         previousStyle &&
         typeof previousStyle === 'object' &&
-        previousStyle.type === 'published' &&
+        previousStyle.type === 'standard' &&
         previousStyle.include
     ) {
-        if (typeof style === 'string' || (style.type === 'published' && !style.include)) {
+        if (typeof style === 'string' || (style.type === 'standard' && !style.include)) {
             return {
-                type: 'published',
+                type: 'standard',
                 id: typeof style === 'string' ? style : style.id,
-                include: previousStyle.include,
+                include: (previousStyle as StandardStyle).include,
             };
         }
     }

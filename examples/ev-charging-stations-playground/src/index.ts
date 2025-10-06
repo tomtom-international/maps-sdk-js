@@ -239,7 +239,7 @@ map = new TomTomMap(
     },
     {
         language: 'en-GB',
-        style: { type: 'published', include: ['trafficIncidents'] },
+        style: { type: 'standard', include: ['trafficIncidents'] },
     },
 );
 map.mapLibreMap.addControl(new NavigationControl(), 'bottom-right');

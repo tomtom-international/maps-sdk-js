@@ -32,7 +32,7 @@ test.describe('Map vector tiles hillshade module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { center: [7.12621, 48.50394], zoom: 8 },
-            { style: { type: 'published', include: ['hillshade'] } },
+            { style: { type: 'standard', include: ['hillshade'] } },
         );
         await initHillshade(page, { ensureAddedToStyle: true });
         await waitForMapReady(page);
@@ -50,7 +50,7 @@ test.describe('Map vector tiles hillshade module tests', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: 'published', include: ['hillshade'] } },
+            { style: { type: 'standard', include: ['hillshade'] } },
         );
 
         await initHillshade(page, { visible: false });

@@ -49,7 +49,7 @@ const initUI = () => {
 
 map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', center: [2.34281, 48.85639], zoom: 12 },
-    { style: { type: 'published', include: ['trafficIncidents', 'trafficFlow'] } },
+    { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow'] } },
 );
 mapLibreMap = map.mapLibreMap;
 incidents = await TrafficIncidentsModule.get(map);
