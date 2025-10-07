@@ -54,7 +54,7 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
                       },
                   },
               }
-            : (place as Place<EVChargingStationPlaceProps>);
+            : place;
     } catch (e) {
         // (Likely a QPS limit error)
         console.error(e);

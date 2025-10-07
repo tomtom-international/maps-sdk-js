@@ -117,7 +117,7 @@ export type ChargingPoint = {
     /**
      * Connectors available at the charging point.
      */
-    connectors: Connector[];
+    connectors?: Connector[];
 };
 
 /**

@@ -26,10 +26,14 @@ const areEqual = (connectorA: Connector, connectorB: Connector) =>
     connectorA.type === connectorB.type && connectorA.ratedPowerKW === connectorB.ratedPowerKW;
 
 const addConnectorStatus = (
-    connectors: Connector[],
+    connectors: Connector[] | undefined,
     status: ChargingPointStatus | undefined,
     availabilities: ConnectorAvailability[],
 ): void => {
+    if (!connectors) {
+        // defensive check, sometimes connectors are undefined
+        return;
+    }
     for (const connector of connectors) {
         const existingAvailability = availabilities.find((connectorAvailability) =>
             areEqual(connector, connectorAvailability.connector),
