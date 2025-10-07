@@ -10,6 +10,7 @@
     "build": "vite build"
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
     "rollup-plugin-analyzer": "^4.0.0",
@@ -27,7 +28,7 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/src/examples.d.ts",
+      "types": "./dist/examples.d.ts",
       "import": "./dist/examples.es.js"
     }
   },

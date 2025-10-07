@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import terser from '@rollup/plugin-terser';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
@@ -13,38 +14,60 @@ const getSdkVersion = () => {
 };
 
 export default defineConfig({
-        build: {
-            lib: {
-                entry: './src/index.ts',
-                name: 'examples',
-            },
-            emptyOutDir: true,
-            sourcemap: true,
-            // minification options more in detail in rollup options:
-            minify: false,
+    build: {
+        lib: {
+            entry: './src/index.ts',
+            name: 'examples',
+            fileName: 'examples',
         },
-        define: {
-            __SDK_VERSION__: getSdkVersion(),
+        emptyOutDir: true,
+        sourcemap: true,
+        // minification options more in detail in rollup options:
+        minify: false,
+        rollupOptions: {
+            output: [
+                // CommonJS (minified)
+                {
+                    format: 'cjs',
+                    entryFileNames: `examples.cjs.min.js`,
+                    plugins: [terser()],
+                },
+                // CommonJS (non-minified)
+                {
+                    format: 'cjs',
+                    entryFileNames: `examples.cjs.js`,
+                },
+                // ES module (minified)
+                {
+                    format: 'es',
+                    entryFileNames: `examples.es.js`,
+                    plugins: [terser({ module: true })],
+                },
+            ],
         },
-        plugins: [
-            dts({
-                outDir: 'dist',
-                include: ['index.ts', 'src/**/*'],
-                exclude: ['**/*.test.ts'],
-                rollupTypes: true,
-            }),
-            ...(process.env.CI
-                ? []
-                : [
-                      visualizer({
-                          filename: 'bundle-stats.html',
-                          open: false,
-                          gzipSize: true,
-                      }),
-                  ]),
-            analyze({
-                summaryOnly: true,
-                limit: 10,
-            }),
-        ],
-    });
+    },
+    define: {
+        __SDK_VERSION__: getSdkVersion(),
+    },
+    plugins: [
+        dts({
+            outDir: 'dist',
+            include: ['index.ts', 'src/**/*'],
+            exclude: ['**/*.test.ts'],
+            rollupTypes: true,
+        }),
+        ...(process.env.CI
+            ? []
+            : [
+                  visualizer({
+                      filename: 'bundle-stats.html',
+                      open: false,
+                      gzipSize: true,
+                  }),
+              ]),
+        analyze({
+            summaryOnly: true,
+            limit: 10,
+        }),
+    ],
+});

@@ -138,6 +138,9 @@ importers:
 
   examples:
     devDependencies:
+      '@rollup/plugin-terser':
+        specifier: ^0.4.4
+        version: 0.4.4(rollup@4.52.4)
       '@tsconfig/recommended':
         specifier: 'catalog:'
         version: 1.0.10
