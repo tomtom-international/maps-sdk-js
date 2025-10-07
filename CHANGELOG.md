@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.15.1...v0.16.0) (2025-10-07)
+
+
+### Features
+
+* switch from published to standard styles for clarity ([d996190](https://github.com/tomtom-international/maps-sdk-js/commit/d996190aa6e8ac49c0778812bfad6063b30324f9))
+
+
+### Bug Fixes
+
+* quick reductions of example titles ([01e63e2](https://github.com/tomtom-international/maps-sdk-js/commit/01e63e2924b711f2b719161143bb2ccfc441a9d1))
+* supporting receiving undefined connectors for charging stations ([0a36101](https://github.com/tomtom-international/maps-sdk-js/commit/0a36101fab3f818e92e8aafce241ff66d2f111d8))
+* update blackduck runner ([c7c79a7](https://github.com/tomtom-international/maps-sdk-js/commit/c7c79a7acd5a07528a414ef068331c38e395c529))
+
 ## [0.15.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.15.0...v0.15.1) (2025-10-03)
 
 
