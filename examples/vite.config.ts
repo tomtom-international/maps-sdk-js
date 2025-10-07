@@ -5,14 +5,6 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
-const getSdkVersion = () => {
-    const fileContent = fs.readFileSync('../package.json', { encoding: 'utf-8', flag: 'r' });
-    const fileContentSerialized = JSON.parse(fileContent);
-    const sdkVersion = JSON.stringify(fileContentSerialized.version);
-    console.info(`SDK version from package.json is ${sdkVersion}`);
-    return sdkVersion;
-};
-
 export default defineConfig({
     build: {
         lib: {
@@ -26,17 +18,6 @@ export default defineConfig({
         minify: false,
         rollupOptions: {
             output: [
-                // CommonJS (minified)
-                {
-                    format: 'cjs',
-                    entryFileNames: `examples.cjs.min.js`,
-                    plugins: [terser()],
-                },
-                // CommonJS (non-minified)
-                {
-                    format: 'cjs',
-                    entryFileNames: `examples.cjs.js`,
-                },
                 // ES module (minified)
                 {
                     format: 'es',
@@ -45,9 +26,6 @@ export default defineConfig({
                 },
             ],
         },
-    },
-    define: {
-        __SDK_VERSION__: getSdkVersion(),
     },
     plugins: [
         dts({
