@@ -7,7 +7,7 @@ export type TagGroup = {
     tags: Tag[];
 } & Tag;
 
-export const TAG_GROUP: TagGroup[] = [
+export const TAG_GROUPS: TagGroup[] = [
     {
         id: 'product',
         label: 'Product group',
