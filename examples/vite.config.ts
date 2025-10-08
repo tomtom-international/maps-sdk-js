@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import terser from '@rollup/plugin-terser';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
@@ -14,18 +12,6 @@ export default defineConfig({
         },
         emptyOutDir: true,
         sourcemap: true,
-        // minification options more in detail in rollup options:
-        minify: false,
-        rollupOptions: {
-            output: [
-                // ES module (minified)
-                {
-                    format: 'es',
-                    entryFileNames: `examples.es.js`,
-                    plugins: [terser({ module: true })],
-                },
-            ],
-        },
     },
     plugins: [
         dts({

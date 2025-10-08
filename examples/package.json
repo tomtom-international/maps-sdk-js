@@ -3,14 +3,13 @@
   "version": "0.16.0",
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
-  "module": "dist/examples.es.js",
-  "main": "dist/examples.es.js",
+  "module": "dist/examples.js",
+  "main": "dist/examples.js",
   "types": "dist/examples.d.ts",
   "scripts": {
     "build": "vite build"
   },
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.4",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
     "rollup-plugin-analyzer": "^4.0.0",
@@ -29,7 +28,7 @@
   "exports": {
     ".": {
       "types": "./dist/examples.d.ts",
-      "import": "./dist/examples.es.js"
+      "import": "./dist/examples.js"
     }
   },
   "author": "TomTom International B.V.",
