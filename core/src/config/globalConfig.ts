@@ -97,7 +97,7 @@ export type GlobalConfig = {
      * * An example of the format that matches this regular expression is UUID: (e.g., 9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1 ).
      * * For details check RFC 4122. If specified, it is replicated in the Tracking-ID response header.
      * * It is only meant to be used for support and does not involve tracking of you or your users in any form.
-     * @see Tracking-ID: https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-response
+     * @see Tracking-ID: https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-response
      */
     trackingId?: string;
 
@@ -116,8 +116,8 @@ export type GlobalConfig = {
      * The value should correspond to one of the supported IETF language codes.
      * The code is case-insensitive.
      * @default NGT (Neutral Ground Truth - language local to each location)
-     * @see Search: https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
-     * @see Routing: https://developer.tomtom.com/search-api/documentation/product-information/supported-languages
+     * @see Search: https://docs.tomtom.com/search-api/documentation/product-information/supported-languages
+     * @see Routing: https://docs.tomtom.com/search-api/documentation/product-information/supported-languages
      */
     language?: Language;
 

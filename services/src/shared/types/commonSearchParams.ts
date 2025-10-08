@@ -4,7 +4,7 @@ import type { RelatedPoisRequest, TimeZoneRequest } from './servicesTypes';
 
 /**
  * Common parameters related to search services.
- * @see https://developer.tomtom.com/search-api/documentation/search-service/search-service
+ * @see https://docs.tomtom.com/search-api/documentation/search-service/search-service
  */
 export type CommonSearchParams<ApiRequest, ApiResponse> = CommonPlacesParams<ApiRequest, ApiResponse> & {
     /**

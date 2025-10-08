@@ -45,6 +45,6 @@
   "dependencies": {
     "core": "workspace:*",
     "lodash-es": "catalog:",
-    "zod": "^4.1.11"
+    "zod": "^4.1.12"
   }
 }

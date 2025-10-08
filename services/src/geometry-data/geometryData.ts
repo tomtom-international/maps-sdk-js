@@ -46,7 +46,7 @@ const mergePlacesWithGeometries = (places: Places, geometries: PolygonFeatures):
  * * The service supports batch requests of up to 20 identifiers.
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/search-api/documentation/additional-data-service/additional-data
+ * @see https://docs.tomtom.com/search-api/documentation/additional-data-service/additional-data
  */
 export async function geometryData(
     params: GeometryDataParams,

@@ -12,7 +12,7 @@ export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
  * The reverse geocoding endpoint returns the address information described in the Reverse Geocoding API documentation on the Developer Portal.
  * @param params Mandatory and optional parameters, with the global configuration automatically included.
  * @param customTemplate Advanced optional parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode
+ * @see https://docs.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode
  */
 export const reverseGeocode = async (
     params: ReverseGeocodingParams,

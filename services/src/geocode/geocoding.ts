@@ -16,7 +16,7 @@ import type { GeocodingResponse } from './types/geocodingResponse';
  * as well as higher-level geographies such as city centers, counties, states, etc.
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/search-api/documentation/geocoding-service/geocode
+ * @see https://docs.tomtom.com/search-api/documentation/geocoding-service/geocode
  */
 export const geocode = async (
     params: GeocodingParams,

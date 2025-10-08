@@ -34,7 +34,7 @@ export type Landmark =
 
 /**
  * Description of the maneuver, for example: arrive or turn right.
- * @see https://developer.tomtom.com/routing-api/documentation/routing/calculate-route#maneuver-codes
+ * @see https://docs.tomtom.com/routing-api/documentation/routing/calculate-route#maneuver-codes
  * @group Route
  * @category Types
  */

@@ -31,7 +31,7 @@ export type CalculateMatrixRouteParams = CommonServiceParams<
     /**
      * A non-empty list of origin locations represented by points.
      * Value: An array of locations (latitude, longitude pairs).
-     * @see Post body fields: {@link https://developer.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
+     * @see Post body fields: {@link https://docs.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
      * @default None
      */
     origins: HasLngLat[];
@@ -39,7 +39,7 @@ export type CalculateMatrixRouteParams = CommonServiceParams<
     /**
      * A non-empty list of destination locations represented by points.
      * Value: An array of locations (latitude, longitude pairs).
-     * @see  Post body fields: {@link https://developer.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
+     * @see  Post body fields: {@link https://docs.tomtom.com/routing-api/documentation/matrix-routing-v2/synchronous-matrix#post-body-fields}
      * @default None
      */
     destinations: HasLngLat[];

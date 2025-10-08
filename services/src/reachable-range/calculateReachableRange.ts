@@ -10,7 +10,7 @@ import type { ReachableRangeParams } from './types/reachableRangeParams';
  * * It limits the range for the given budget and consumption parameters.
  * @param params Mandatory and optional parameters, with the global configuration automatically included.
  * @param customTemplate Advanced optional parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/routing-api/documentation/routing/calculate-reachable-range
+ * @see https://docs.tomtom.com/routing-api/documentation/routing/calculate-reachable-range
  */
 export const calculateReachableRange = async (
     params: ReachableRangeParams,
@@ -26,7 +26,7 @@ export const calculateReachableRange = async (
  * * If any of the range calculations fail, the whole request fails and the error is returned.
  * @param paramsArray An array of parameters to calculate ranges from. Each of them consists of Mandatory and optional parameters, with the global configuration automatically included.
  * @param customTemplate Advanced optional parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/routing-api/documentation/routing/calculate-reachable-range
+ * @see https://docs.tomtom.com/routing-api/documentation/routing/calculate-reachable-range
  */
 export const calculateReachableRanges = async (
     paramsArray: ReachableRangeParams[],

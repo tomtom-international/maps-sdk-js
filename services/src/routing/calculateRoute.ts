@@ -15,7 +15,7 @@ import type { CalculateRouteParams } from './types/calculateRouteParams';
  * depending on the options selected.
  * @param params Mandatory and optional parameters, with the global configuration automatically included.
  * @param customTemplate Advanced optional parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/routing-api/documentation/routing/calculate-route
+ * @see https://docs.tomtom.com/routing-api/documentation/routing/calculate-route
  */
 export const calculateRoute = async (
     params: CalculateRouteParams,

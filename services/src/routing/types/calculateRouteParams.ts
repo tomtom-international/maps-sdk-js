@@ -65,7 +65,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * * If only supplying waypoints, at least 2 must be specified, corresponding to the route origin and destination.
          * * If using path points, at least 1 path must be specified with at least 2 points inside for origin and destination.
          * * Waypoints and path points can be combined, except circle (soft) waypoints.
-         * @see For path points in the API: {@link https://developer.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters POST data parameters}
+         * @see For path points in the API: {@link https://docs.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters POST data parameters}
          * @default None
          */
         geoInputs: GeoInput[];

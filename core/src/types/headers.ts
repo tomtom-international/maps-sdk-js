@@ -4,7 +4,7 @@
  * * TomTom-User-Agent - Name and version of this SDK
  * * Authorization - Bearer token for experimental OAuth2 support.
  * Based on the apiAccessToken parameter.
- * Tracking-ID - @see https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
+ * Tracking-ID - @see https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
  * @ignore
  */
 export type TomTomHeaders = {

@@ -179,7 +179,7 @@ export type CommonEVRoutingParams = {
 };
 
 /**
- * @see https://developer.tomtom.com/routing-api/documentation/routing/common-routing-parameters
+ * @see https://docs.tomtom.com/routing-api/documentation/routing/common-routing-parameters
  */
 export type CommonRoutingParams = {
     /**

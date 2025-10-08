@@ -13,7 +13,7 @@ const SDK_VERSION = '__SDK_VERSION__';
 /**
  * Validate if the string to be used in the Tracking-ID header is valid.
  * The value must match the regular expression '^[a-zA-Z0-9-]{1,100}$'.
- * @see Tracking-ID: https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
+ * @see Tracking-ID: https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
  *
  * @param trackingId String to be validated
  */

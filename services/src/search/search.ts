@@ -16,7 +16,7 @@ export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionPro
 /**
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/search-api/documentation/search-service/search-service
+ * @see https://docs.tomtom.com/search-api/documentation/search-service/search-service
  */
 export const search = async (
     params: GeometrySearchParams | FuzzySearchParams,

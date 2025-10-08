@@ -1,5 +1,5 @@
 /**
- * [Supported languages](https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
+ * [Supported languages](https://docs.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
  */
 const Languages = [
     'ngt', // Neutral Ground Truth (custom)
@@ -44,7 +44,7 @@ const Languages = [
 ] as const;
 
 /**
- * [Supported language](https://developer.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
+ * [Supported language](https://docs.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
  * @group Shared
  * @category Types
  */

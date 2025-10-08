@@ -1,7 +1,7 @@
 import type { POICategory } from '@cet/maps-sdk-js/core';
 
 /**
- * POI categories were retrieved from https://developer.tomtom.com/search-api/documentation/poi-categories-service/poi-categories
+ * POI categories were retrieved from https://docs.tomtom.com/search-api/documentation/poi-categories-service/poi-categories
  * so it can be passed to search endpoints in a human-readable format in addition to being able to use POI category ID directly
  * categories were put in this format trying to match them poi classification codes as much as possible.
  */

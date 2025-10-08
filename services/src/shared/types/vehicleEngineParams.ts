@@ -334,7 +334,7 @@ export type ElectricVehicleEngine = VehicleEngineBase<'electric', ElectricEngine
      * Charging preferences for Long Distance EV Routing.
      * * Specifying these preferences will trigger the calculation of charging stops along your route.
      * * Requires the ElectricConsumptionModel to be set.
-     * @see https://developer.tomtom.com/routing-api/documentation/extended-routing/long-distance-ev-routing
+     * @see https://docs.tomtom.com/routing-api/documentation/extended-routing/long-distance-ev-routing
      */
     chargingPreferences?: ChargingPreferences;
 };

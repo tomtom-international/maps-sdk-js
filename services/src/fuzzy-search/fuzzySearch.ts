@@ -7,7 +7,7 @@ import type { FuzzySearchParams, FuzzySearchResponse } from './types';
  *
  * @param params Mandatory and optional parameters.
  * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
- * @see https://developer.tomtom.com/search-api/documentation/search-service/fuzzy-search
+ * @see https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search
  */
 export const fuzzySearch = async (
     params: FuzzySearchParams,
