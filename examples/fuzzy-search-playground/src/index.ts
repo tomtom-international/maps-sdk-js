@@ -26,17 +26,9 @@ const showSearchResultsList = (places: Places) => {
 const searchAndDisplayResults = async (query: string, searchLocationModeSelector: string) => {
     let searchParams;
     if (searchLocationModeSelector == 'center') {
-        searchParams = {
-            query,
-            limit: 35,
-            position: map.mapLibreMap.getCenter().toArray(),
-        };
+        searchParams = { query, limit: 35, position: map.mapLibreMap.getCenter().toArray() };
     } else {
-        searchParams = {
-            query,
-            limit: 35,
-            boundingBox: map.getBBox(),
-        };
+        searchParams = { query, limit: 35, boundingBox: map.getBBox() };
     }
     const searchPlaces = await search(searchParams);
     if (searchLocationModeSelector == 'center') {
@@ -66,8 +58,7 @@ map = new TomTomMap(
     { language: 'en-GB' },
 );
 
-PlacesModule.init(map).then((module) => {
-    placesModule = module;
-    listenToUserEvents();
-    (window as any).map = map; // This has been done for automation test support
-});
+placesModule = await PlacesModule.init(map);
+
+listenToUserEvents();
+(window as any).map = map; // This has been done for automation test support

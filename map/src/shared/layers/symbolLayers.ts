@@ -21,6 +21,7 @@ export const pinIconBaseLayout: SymbolLayerSpecification['layout'] = {
     'icon-anchor': 'bottom',
     'icon-size': PIN_ICON_SIZE,
     'icon-allow-overlap': true,
+    'icon-padding': 0,
 };
 
 /**
