@@ -4,7 +4,7 @@
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
     "build": "pnpm build:sdk",
-    "build:api-reference": "typedoc && pnpm format:fix",
+    "build:api-reference": "typedoc",
     "build:examples": "pnpm --workspace-concurrency=0 -F './examples/*' build && pnpm -F @cet/maps-sdk-js-examples build",
     "build:sdk": "pnpm -F core build  && pnpm -F services build && pnpm -F map build",
     "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",

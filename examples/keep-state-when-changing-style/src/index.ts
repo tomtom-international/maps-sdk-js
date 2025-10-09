@@ -2,9 +2,9 @@ import { bboxFromGeoJSON, TomTomConfig, Waypoint } from '@cet/maps-sdk-js/core';
 import {
     PlacesModule,
     POIsModule,
+    RoutingModule,
     StandardStyleID,
     standardStyleIDs,
-    RoutingModule,
     TomTomMap,
     TrafficIncidentsModule,
 } from '@cet/maps-sdk-js/map';

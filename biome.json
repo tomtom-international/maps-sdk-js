@@ -2,7 +2,18 @@
   "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
   "files": {
     "maxSize": 1572864,
-    "ignoreUnknown": true
+    "ignoreUnknown": true,
+    "includes": [
+      "**/*.json",
+      "**/*.ts",
+      "**/*.sh",
+      "shared-configs/**",
+      "core/**",
+      "map/**",
+      "services/**",
+      "examples/**",
+      "map-integration-tests/**"
+    ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "vcs": {
@@ -13,7 +24,6 @@
   },
   "linter": {
     "enabled": true,
-    "includes": ["**/src/**"],
     "rules": {
       "recommended": false,
       "style": {
