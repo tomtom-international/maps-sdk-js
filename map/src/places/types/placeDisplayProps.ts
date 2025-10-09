@@ -30,13 +30,3 @@ export type LocationDisplayProps = {
  * Place base and display properties.
  */
 export type DisplayPlaceProps = CommonPlaceProps & LocationDisplayProps;
-
-/**
- * @ignore
- */
-export const TITLE = 'title';
-
-/**
- * @ignore
- */
-export const ICON_ID = 'iconID';

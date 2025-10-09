@@ -136,27 +136,35 @@ export const toDisplayWaypoints = (
 };
 
 const formatTitle = (chargingInformation: BatteryCharging): string | undefined => {
-    return `${chargingInformation.chargingParkOperatorName} (${chargingInformation.chargingParkPowerInkW}kW)\n${
+    const chargingParkName =
         chargingInformation.chargingParkName !== chargingInformation.chargingParkOperatorName
             ? chargingInformation.chargingParkName
-            : ''
-    }\n${formatDuration(chargingInformation.chargingTimeInSeconds)}`;
+            : '';
+    let title = `${chargingInformation.chargingParkOperatorName} (${chargingInformation.chargingParkPowerInkW}kW)`;
+    if (chargingParkName) {
+        title += `\n${chargingParkName}`;
+    }
+    return title + `\n${formatDuration(chargingInformation.chargingTimeInSeconds)}`;
 };
+
+type ChargingStationProps = LocationDisplayProps &
+    RouteStyleProps & {
+        powerKW?: string;
+        availablePoints?: string;
+    };
 
 /**
  * Generates display-ready charging stations for the given planning context ones.
  * @param routes The routes return for ldEV.
  */
-export const toDisplayChargingStations = (
-    routes: Routes<DisplayRouteProps>,
-): Waypoints<LocationDisplayProps & RouteStyleProps> => {
-    const chargingStations: Waypoint<LocationDisplayProps & RouteStyleProps>[] = [];
+export const toDisplayChargingStations = (routes: Routes<DisplayRouteProps>): Waypoints<ChargingStationProps> => {
+    const chargingStations: Waypoint<ChargingStationProps>[] = [];
     routes.features.forEach((route) => {
         route.properties.sections.leg.forEach((leg) => {
             const chargingInformationAtEndOfLeg = leg.summary.chargingInformationAtEndOfLeg;
             const chargingStation = chargingInformationAtEndOfLeg?.chargingParkLocation;
             if (!chargingInformationAtEndOfLeg || !chargingStation) {
-                return null as unknown as Waypoint<LocationDisplayProps & RouteStyleProps>;
+                return null as unknown as Waypoint<ChargingStationProps>;
             }
             const waypoint = toWaypointFromPoint({ type: 'Point', coordinates: chargingStation.coordinates });
             const id = waypoint.id ?? generateId();
@@ -167,7 +175,9 @@ export const toDisplayChargingStations = (
                     ...waypoint.properties,
                     id,
                     // TODO consider using pin icon when available for Orbis
-                    iconID: 'poi-charging_location',
+                    iconID: '7309', // (genesis-like) categorySet ID for "EV Charging Station" based on search
+                    // TODO: consider more than 1 display field so we have more control on the layout
+                    // TODO: consider a full title, or in parts
                     title: formatTitle(chargingInformationAtEndOfLeg),
                     routeStyle: route.properties.routeStyle,
                 },

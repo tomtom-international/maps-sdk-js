@@ -8,7 +8,7 @@ import type {
     ResourceType,
     StyleImageMetadata,
 } from 'maplibre-gl';
-import { CustomStyle, StandardStyle, StandardStyleID, StyleInput, StyleModule } from '../init';
+import { CustomStyle, StandardStyle, StandardStyleID, StyleInput, StyleModule, type TomTomMapParams } from '../init';
 import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 import type { AbstractSourceWithLayers } from './SourceWithLayers';
@@ -380,4 +380,17 @@ export const getStyleInputTheme = (styleInput?: StyleInput): LightDark => {
         return getPublishedStyleTheme(publishedStyle.id);
     }
     return 'light';
+};
+
+/**
+ * Adds the large POI sprite to the map style.
+ * @param mapParams
+ * @param mapLibreMap
+ * @ignore
+ */
+export const addPinSpriteToStyle = async (mapParams: TomTomMapParams, mapLibreMap: Map) => {
+    mapLibreMap.setSprite(
+        `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleInputTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
+        { validate: false },
+    );
 };

@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import { ICON_ID, TITLE } from '../../places';
 import type { LayerSpecTemplate } from '../../shared';
-import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT, PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
+import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
+import { ICON_ID, pinLayerBaseSpec, pinTextBaseLayout, pinTextBasePaint } from '../../shared/layers/symbolLayers';
 import { INDEX_TYPE, MIDDLE_INDEX, STOP_DISPLAY_INDEX } from '../types/waypointDisplayProps';
 
 export const WAYPOINT_START_IMAGE_ID = 'waypointStart';
@@ -19,11 +19,14 @@ const isSoftWaypoint: ExpressionSpecification = [
  * @ignore
  */
 export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
+    ...pinLayerBaseSpec,
     type: 'symbol',
     paint: {
+        ...pinLayerBaseSpec.paint,
         'text-color': '#ffffff',
     },
     layout: {
+        ...pinLayerBaseSpec.layout,
         'symbol-sort-key': [
             'case',
             ['==', ['get', ICON_ID], WAYPOINT_SOFT_IMAGE_ID],
@@ -45,7 +48,6 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
             // else
             'bottom',
         ],
-        'icon-size': PIN_ICON_SIZE,
         'text-allow-overlap': true,
         'icon-allow-overlap': true,
     },
@@ -57,15 +59,14 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
 export const waypointLabels: LayerSpecTemplate<SymbolLayerSpecification> = {
     type: 'symbol',
     paint: {
+        ...pinTextBasePaint,
         'text-color': 'black',
         'text-halo-width': 1.5,
         'text-halo-color': '#ffffff',
     },
     layout: {
-        'text-field': ['get', TITLE],
+        ...pinTextBaseLayout,
         'text-anchor': 'top',
-        'text-font': [MAP_BOLD_FONT],
-        'text-size': DEFAULT_TEXT_SIZE,
         'text-offset': [0, 0.4],
     },
 };

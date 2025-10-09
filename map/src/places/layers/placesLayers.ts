@@ -5,8 +5,8 @@ import type {
     SymbolLayerSpecification,
 } from 'maplibre-gl';
 import type { LayerSpecTemplate, SymbolLayerSpecWithoutSource } from '../../shared';
-import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT, PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
-import { ICON_ID, TITLE } from '../types/placeDisplayProps';
+import { isClickEventState } from '../../shared/layers/eventState';
+import { ICON_ID, pinLayerBaseSpec, TITLE } from '../../shared/layers/symbolLayers';
 import type { PlacesModuleConfig } from '../types/placesModuleConfig';
 
 /**
@@ -19,39 +19,11 @@ export const hasEventState: ExpressionSpecification = ['has', 'eventState'];
  */
 export const SELECTED_COLOR = '#3f9cd9';
 
-const isClick: ExpressionSpecification = ['in', ['get', 'eventState'], ['literal', ['click', 'contextmenu']]];
-
-const placesPinLayerBaseSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
-    type: 'symbol',
-    layout: {
-        'icon-image': ['case', isClick, 'default_pin', ['get', ICON_ID]],
-        'icon-anchor': 'bottom',
-        'icon-allow-overlap': true,
-        'icon-padding': 0,
-        'icon-size': PIN_ICON_SIZE,
-        'text-field': ['get', TITLE],
-        'text-anchor': 'top',
-        'text-offset': [0, 0.5],
-        'text-font': [MAP_BOLD_FONT],
-        'text-size': DEFAULT_TEXT_SIZE,
-        'text-padding': 5,
-        'text-optional': true,
-    },
-    paint: {
-        'icon-translate': [0, 5],
-        'icon-translate-anchor': 'viewport',
-        'text-color': '#333333',
-        'text-halo-color': '#FFFFFF',
-        'text-halo-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 10, 1.5],
-        'text-translate-anchor': 'viewport',
-    },
-};
-
 /**
  * @ignore
  */
 export const placesLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
-    ...placesPinLayerBaseSpec,
+    ...pinLayerBaseSpec,
     filter: ['!', hasEventState],
 };
 
@@ -61,16 +33,16 @@ export const placesLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
  * @ignore
  */
 export const selectedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
-    ...placesPinLayerBaseSpec,
+    ...pinLayerBaseSpec,
     filter: hasEventState,
     layout: {
-        ...placesPinLayerBaseSpec.layout,
+        ...pinLayerBaseSpec.layout,
         // Increased sizes from PIN_ICON_SIZE (from shared default pin)
         'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 22, 1],
         'text-allow-overlap': true,
     },
     paint: {
-        ...placesPinLayerBaseSpec.paint,
+        ...pinLayerBaseSpec.paint,
         'text-color': SELECTED_COLOR,
     },
 };
@@ -80,7 +52,7 @@ export const selectedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification>
  */
 export const clickedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
     ...selectedPlaceLayerSpec,
-    filter: isClick,
+    filter: isClickEventState,
 };
 
 const withConfig = (
@@ -124,7 +96,7 @@ const buildPoiLikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecifica
     const poiLayer = (map.getStyle().layers.filter((layer) => layer.id === 'POI')[0] as SymbolLayerSpecification) || {};
     const textSize = poiLayer.layout?.['text-size'];
     return {
-        filter: ['!', isClick],
+        filter: ['!', isClickEventState],
         type: 'symbol',
         paint: poiLayer.paint,
         layout: {

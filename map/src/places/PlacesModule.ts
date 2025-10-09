@@ -6,7 +6,7 @@ import type {
     SymbolLayerSpecWithoutSource,
 } from '../shared';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from '../shared';
-import { addImageIfNotExisting, changeLayersProps, getStyleInputTheme, waitUntilMapIsReady } from '../shared/mapUtils';
+import { addImageIfNotExisting, changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
 import { preparePlacesForDisplay } from './preparePlacesForDisplay';
@@ -66,11 +66,6 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
 
         // We ensure to add the pins sprite to the style the very first time or when we are restoring the module, and only once for all instances:
         if ((this._initializing || restore) && this.instanceIndex == 0) {
-            const mapParams = this.tomtomMap._params;
-            this.mapLibreMap.setSprite(
-                `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleInputTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
-                { validate: false },
-            );
             addImageIfNotExisting(this.mapLibreMap, 'default_pin', defaultPin(), { pixelRatio: 2 });
         }
 

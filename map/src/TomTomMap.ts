@@ -8,6 +8,7 @@ import { buildMapOptions } from './init/buildMapOptions';
 import { buildStyleInput, withPreviousStyleParts } from './init/styleInputBuilder';
 import { EventsProxy } from './shared';
 import { isLayerLocalizable } from './shared/localization';
+import { addPinSpriteToStyle } from './shared/mapUtils';
 
 /**
  * @ignore
@@ -158,6 +159,9 @@ export class TomTomMap {
             }
         }
         this._params.language && this._setLanguage(this._params.language);
+        // For most use cases we'll need to have pins available (places, routing...) so we add them by default:
+        // (subsequent loads for the same sprite should be cached)
+        addPinSpriteToStyle(this._params, this.mapLibreMap);
     }
 
     /**
