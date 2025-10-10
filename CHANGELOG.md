@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.18.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.17.0...v0.18.0) (2025-10-10)
+
+
+### Features
+
+* basic ldevr example ([fb0c48f](https://github.com/tomtom-international/maps-sdk-js/commit/fb0c48f4b89db0811d0aeb3417999fe95dbd2188))
+* pin improvements including ev charging stops ([4faf282](https://github.com/tomtom-international/maps-sdk-js/commit/4faf282e7173a622e4694b1ef07739636c64bbba))
+
+
+### Bug Fixes
+
+* blackduck runner ([fd26738](https://github.com/tomtom-international/maps-sdk-js/commit/fd26738b20eaaffc652c766087d0393c2493d577))
+* update all developer portal links to docs portal ([0412067](https://github.com/tomtom-international/maps-sdk-js/commit/0412067b4d7a8961cc7e66ef8d16a9e7011cf015))
+
 ## [0.17.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.16.0...v0.17.0) (2025-10-08)
 
 

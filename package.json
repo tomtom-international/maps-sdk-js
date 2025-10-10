@@ -1,6 +1,6 @@
 {
   "name": "@cet/maps-sdk-js",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
     "build": "pnpm build:sdk",
