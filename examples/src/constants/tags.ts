@@ -9,102 +9,64 @@ export type TagGroup = {
 
 export const TAG_GROUPS: TagGroup[] = [
     {
-        id: 'product',
-        label: 'Product group',
+        id: 'type',
+        label: 'Type of Example',
         tags: [
             {
-                id: 'map',
-                label: 'Map',
+                id: 'getting-started',
+                label: 'Getting Started',
             },
             {
-                id: 'places',
-                label: 'Places',
+                id: 'customization',
+                label: 'Customization',
             },
             {
-                id: 'traffic',
-                label: 'Traffic',
+                id: 'playground',
+                label: 'Playground',
             },
         ],
     },
     {
         id: 'feature',
-        label: 'Features/Modules',
+        label: 'Feature',
         tags: [
             {
-                id: 'fuzzy-search',
-                label: 'Fuzzy search',
+                id: 'base-map',
+                label: 'Base Map',
             },
             {
-                id: 'map-pois',
-                label: 'Map POIs',
+                id: 'map-style',
+                label: 'Map Style',
             },
             {
-                id: 'poi-search',
-                label: 'POI search',
+                id: 'places',
+                label: 'Places and Search',
             },
             {
-                id: 'geometry-search',
-                label: 'Geometry search',
+                id: 'routing',
+                label: 'Routing',
             },
             {
-                id: 'place-geometry',
-                label: 'Place geometry',
+                id: 'traffic',
+                label: 'Traffic',
             },
             {
-                id: 'reachable-range',
-                label: 'Reachable range',
+                id: 'ev',
+                label: 'Electric Vehicles',
             },
         ],
     },
     {
-        id: 'use-case',
-        label: 'Use case/topic',
+        id: 'platform',
+        label: 'Platform',
         tags: [
-            {
-                id: 'route-planning',
-                label: 'Route planning',
-            },
-            {
-                id: 'localization',
-                label: 'Localization',
-            },
-        ],
-    },
-    {
-        id: 'technology',
-        label: 'Technology',
-        tags: [
-            {
-                id: 'playground',
-                label: 'Playground',
-            },
             {
                 id: 'web',
                 label: 'Web',
             },
             {
-                id: 'base-map',
-                label: 'Base map',
-            },
-            {
-                id: 'geocoding',
-                label: 'Geocoding',
-            },
-            {
-                id: 'map-style',
-                label: 'Map style',
-            },
-            {
                 id: 'nodejs',
                 label: 'Node.js',
-            },
-            {
-                id: 'rev-geocoding',
-                label: 'Reverse geocoding',
-            },
-            {
-                id: 'maplibre-customization',
-                label: 'MapLibre customization',
             },
         ],
     },
