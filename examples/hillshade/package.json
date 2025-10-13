@@ -1,25 +1,26 @@
 {
-  "name": "@examples/geocode-init",
-  "description": "Example integrating Geocoding and Map initialization.",
+  "name": "@examples/hillshade",
+  "description": "Example for hillshade map display",
   "scripts": {
     "build": "vite build",
+    "clean:dist": "rimraf ./dist",
     "develop": "vite",
     "type-check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js-examples.git"
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
+    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "dependencies": {
     "@cet/maps-sdk-js": "workspace:*",
     "maplibre-gl": "catalog:"
   },
   "devDependencies": {
-    "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",

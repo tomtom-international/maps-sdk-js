@@ -132,6 +132,7 @@ interactiveGroups.events.on('click', async (feature) => {
                 type: 'FeatureCollection',
                 features: [
                     bboxPolygon([-180, 90, 180, -90]),
+                    // biome-ignore lint/style/noNonNullAssertion: cannot be null
                     buffer(feature, pxToMeters(15, mapLibreMap), { units: 'meters' })!,
                 ],
             }) as Feature,

@@ -40,7 +40,8 @@
         "noInferrableTypes": "warn"
       },
       "correctness": {
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error"
       }
     }
   },

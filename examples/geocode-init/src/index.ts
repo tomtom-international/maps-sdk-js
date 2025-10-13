@@ -10,7 +10,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 const initPlace = await geocode({ query: 'Canary Islands', geographyTypes: ['CountrySubdivision'] });
 new TomTomMap(
     {
-        container: 'maps-sdk-js-examples-body',
+        container: 'maps-sdk-js-examples-map-container',
         fitBoundsOptions: { padding: 50 },
         bounds: bboxFromGeoJSON(initPlace) as LngLatBoundsLike,
     },

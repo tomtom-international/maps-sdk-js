@@ -191,6 +191,40 @@ importers:
         specifier: 'catalog:'
         version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
+  examples/basic-geometry:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      '@turf/turf':
+        specifier: ^7.2.0
+        version: 7.2.0
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
+      '@types/geojson':
+        specifier: 'catalog:'
+        version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
   examples/ev-charging-stations-playground:
     dependencies:
       '@cet/maps-sdk-js':
@@ -348,6 +382,34 @@ importers:
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
+  examples/hillshade:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 24.7.1
@@ -852,6 +914,34 @@ importers:
         specifier: ^17.2.3
         version: 17.2.3
 
+  examples/pin-interaction:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
   examples/places-customize:
     dependencies:
       '@cet/maps-sdk-js':
@@ -1041,6 +1131,34 @@ importers:
         specifier: 'catalog:'
         version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
+  examples/reverse-geocode:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
   examples/route:
     dependencies:
       '@cet/maps-sdk-js':
@@ -1137,6 +1255,99 @@ importers:
         specifier: 'catalog:'
         version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
+  examples/search-address:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
+  examples/search-parking:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      '@turf/bbox-polygon':
+        specifier: ^7.2.0
+        version: 7.2.0
+      '@turf/difference':
+        specifier: ^7.2.0
+        version: 7.2.0
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
+      '@types/geojson':
+        specifier: 'catalog:'
+        version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
+  examples/simple-map:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
   examples/traffic-config-playground:
     dependencies:
       '@cet/maps-sdk-js':
@@ -1149,6 +1360,62 @@ importers:
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
+  examples/traffic-flow:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.7.1
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.4(rolldown@1.0.0-beta.34)(rollup@4.52.4)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.7.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.9(@types/node@24.7.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+
+  examples/traffic-incidents:
+    dependencies:
+      '@cet/maps-sdk-js':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.9.0
+    devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 24.7.1
