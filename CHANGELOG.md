@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.19.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.18.0...v0.19.0) (2025-10-13)
+
+
+### Features
+
+* simplify example tags and groupings ([591d23e](https://github.com/tomtom-international/maps-sdk-js/commit/591d23e842a2f961c22a9c8e0e6f2fbb9618f137))
+
+
+### Bug Fixes
+
+* remove redundant page title ([525cfbc](https://github.com/tomtom-international/maps-sdk-js/commit/525cfbcd85d3e26915d14c87a2c44e6357e4261d))
+
 ## [0.18.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.17.0...v0.18.0) (2025-10-10)
 
 
