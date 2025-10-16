@@ -1,6 +1,6 @@
 {
   "name": "@examples/basic-geometry",
-  "description": "Example displaying a pin at a location with geometry",
+  "description": "Example to display a location with geometry",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",
