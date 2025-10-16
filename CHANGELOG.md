@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.20.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.19.0...v0.20.0) (2025-10-16)
+
+
+### Features
+
+* add geometry tag ([eb2ba44](https://github.com/tomtom-international/maps-sdk-js/commit/eb2ba446a5b7a736db511f6587997d30a967678a))
+* add new basic examples ([4beb2b4](https://github.com/tomtom-international/maps-sdk-js/commit/4beb2b4a1c2a64d57e5ce3fe7335d5c1982e6e74))
+
+
+### Bug Fixes
+
+* update tags for examples ([6dc5efb](https://github.com/tomtom-international/maps-sdk-js/commit/6dc5efbbbe25cbca2515bc083fae54b37b5cde09))
+
 ## [0.19.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.18.0...v0.19.0) (2025-10-13)
 
 
