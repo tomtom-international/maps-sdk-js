@@ -26,11 +26,13 @@ routingModule.showWaypoints(waypoints);
 
 const route = await calculateRoute({
     geoInputs: waypoints,
-    commonEVRoutingParams: {
-        vehicleModelId: '54B969E8-E28D-11EC-8FEA-0242AC120002',
-        currentChargeInkWh: 20,
-        minChargeAtChargingStopsInkWh: 4,
-        minChargeAtDestinationInkWh: 4,
+    vehicle: {
+        engineType: 'electric',
+        model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+        state: { currentChargeInkWh: 25 },
+        preferences: {
+            chargingPreferences: { minChargeAtDestinationInkWh: 5, minChargeAtChargingStopsInkWh: 5 },
+        },
     },
 });
 routingModule.showRoutes(route);

@@ -24,6 +24,7 @@ import type {
 import { bboxFromGeoJSON, generateId, indexedMagnitudes } from '@cet/maps-sdk-js/core';
 import type { LineString, Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
+import { ExplicitVehicleModel } from '../shared/types/vehicleModel';
 import type {
     CalculateRouteResponseAPI,
     CurrentTypeAPI,
@@ -35,6 +36,7 @@ import type {
     SummaryAPI,
     TrafficCategoryAPI,
 } from './types/apiResponseTypes';
+import { CalculateRouteParams } from './types/calculateRouteParams';
 
 const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined => {
     switch (apiCurrentType) {
@@ -49,13 +51,22 @@ const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined 
     }
 };
 
-const parseSummary = (apiSummary: SummaryAPI): RouteSummary | LegSummary => {
+const parseSummary = (apiSummary: SummaryAPI, params: CalculateRouteParams): RouteSummary | LegSummary => {
     const chargingConnectionInfo = apiSummary.chargingInformationAtEndOfLeg?.chargingConnectionInfo;
     const chargingParkLocation = apiSummary.chargingInformationAtEndOfLeg?.chargingParkLocation;
+    const maxChargeKWH = (params?.vehicle?.model as ExplicitVehicleModel<'electric'>)?.engine?.charging?.maxChargeKWH;
     return {
         ...apiSummary,
         departureTime: new Date(apiSummary.departureTime),
         arrivalTime: new Date(apiSummary.arrivalTime),
+        ...(maxChargeKWH &&
+            apiSummary.batteryConsumptionInkWh && {
+                batteryConsumptionInPCT: (100 * apiSummary.batteryConsumptionInkWh) / maxChargeKWH,
+            }),
+        ...(maxChargeKWH &&
+            apiSummary.remainingChargeAtArrivalInkWh && {
+                remainingChargeAtArrivalInPCT: (100 * apiSummary.remainingChargeAtArrivalInkWh) / maxChargeKWH,
+            }),
         ...(apiSummary.chargingInformationAtEndOfLeg && {
             chargingInformationAtEndOfLeg: {
                 ...omit(apiSummary.chargingInformationAtEndOfLeg, ['chargingConnectionInfo', 'chargingParkLocation']),
@@ -77,6 +88,9 @@ const parseSummary = (apiSummary: SummaryAPI): RouteSummary | LegSummary => {
                         currentType: toCurrentType(chargingConnectionInfo.chargingCurrentType),
                     },
                 }),
+                ...(maxChargeKWH && {
+                    targetChargePCT: (100 * apiSummary.chargingInformationAtEndOfLeg.targetChargeInkWh) / maxChargeKWH,
+                }),
             },
         }),
     };
@@ -89,7 +103,7 @@ const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
     ),
 });
 
-const parseLegSectionProps = (apiLegs: LegAPI[] /*, params: CalculateRouteParams*/): LegSectionProps[] =>
+const parseLegSectionProps = (apiLegs: LegAPI[], params: CalculateRouteParams): LegSectionProps[] =>
     apiLegs.reduce<LegSectionProps[]>((accumulatedParsedLegs, nextApiLeg, currentIndex) => {
         const lastLegEndPointIndex = currentIndex === 0 ? 0 : accumulatedParsedLegs[currentIndex - 1]?.endPointIndex;
         let endPointIndex;
@@ -105,7 +119,7 @@ const parseLegSectionProps = (apiLegs: LegAPI[] /*, params: CalculateRouteParams
         accumulatedParsedLegs.push({
             ...(!isNil(lastLegEndPointIndex) && { startPointIndex: lastLegEndPointIndex }),
             ...(endPointIndex && { endPointIndex }),
-            summary: parseSummary(nextApiLeg.summary /*, params*/),
+            summary: parseSummary(nextApiLeg.summary, params),
             id: generateId(),
         });
         return accumulatedParsedLegs;
@@ -214,9 +228,9 @@ const parseSectionsAndAppendToResult = (apiSections: SectionAPI[], result: Secti
     }
 };
 
-const parseSections = (apiRoute: RouteAPI /*, params: CalculateRouteParams*/): SectionsProps => {
+const parseSections = (apiRoute: RouteAPI, params: CalculateRouteParams): SectionsProps => {
     const result = {
-        leg: parseLegSectionProps(apiRoute.legs /*, params*/),
+        leg: parseLegSectionProps(apiRoute.legs, params),
         // (the rest of sections are parsed below)
     } as SectionsProps;
     parseSectionsAndAppendToResult(apiRoute.sections, result);
@@ -259,11 +273,7 @@ const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => 
     return { instructions };
 };
 
-const parseRoute = (
-    apiRoute: RouteAPI,
-    index: number,
-    /*, params: CalculateRouteParams*/
-): Route => {
+const parseRoute = (apiRoute: RouteAPI, index: number, params: CalculateRouteParams): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
     const bbox = bboxFromGeoJSON(geometry);
     const id = generateId();
@@ -275,8 +285,8 @@ const parseRoute = (
         properties: {
             id,
             index,
-            summary: parseSummary(apiRoute.summary),
-            sections: parseSections(apiRoute),
+            summary: parseSummary(apiRoute.summary, params),
+            sections: parseSections(apiRoute, params),
             ...(apiRoute.guidance && { guidance: parseGuidance(apiRoute.guidance, geometry.coordinates) }),
             ...(apiRoute.progress && { progress: apiRoute.progress }),
         },
@@ -290,10 +300,9 @@ const parseRoute = (
  */
 export const parseCalculateRouteResponse = (
     apiResponse: CalculateRouteResponseAPI,
-    // TODO: cleanup or restore input params to parse routing responses. They were used at least to calculate battery % from KWH values and maxCharge input.
-    /*params: CalculateRouteParams*/
+    params: CalculateRouteParams,
 ): Routes => {
-    const features = apiResponse.routes.map((apiRoute, index) => parseRoute(apiRoute, index /*, params*/));
+    const features = apiResponse.routes.map((apiRoute, index) => parseRoute(apiRoute, index, params));
     const bbox = bboxFromGeoJSON(features);
     return { type: 'FeatureCollection', ...(bbox && { bbox }), features };
 };

@@ -33,9 +33,6 @@ export const routeRequestParams: CalculateRouteParams = {
         traffic: 'live',
         routeType: 'fast',
     },
-    vehicleHeading: 180,
-    // TODO not supported in Orbis, change to correct implementation
-    // instructionsType: "text",
     maxAlternatives: 3,
 
     sectionTypes: [
@@ -53,38 +50,39 @@ export const routeRequestParams: CalculateRouteParams = {
         'carpool',
     ],
     travelMode: 'car',
-    // TODO not supported in Orbis
-    // vehicle: {
-    //     dimensions: {
-    //         weightKG: 3500
-    //     },
-    //     engine: {
-    //         type: "electric",
-    //         currentChargePCT: 80,
-    //         model: {
-    //             charging: {
-    //                 maxChargeKWH: 85
-    //             },
-    //             consumption: {
-    //                 speedsToConsumptionsKWH: [
-    //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-    //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-    //                 ],
-    //                 auxiliaryPowerInkW: 1.7,
-    //                 efficiency: {
-    //                     acceleration: 0.66,
-    //                     deceleration: 0.91,
-    //                     uphill: 0.74,
-    //                     downhill: 0.73
-    //                 }
-    //             }
-    //         }
-    //     }
-    // },
-    // when: {
-    //     option: "arriveBy",
-    //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-    // }
+    vehicle: {
+        engineType: 'electric',
+        model: {
+            dimensions: {
+                weightKG: 3500,
+            },
+            engine: {
+                consumption: {
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+                        { speedKMH: 130, consumptionUnitsPer100KM: 21.3 },
+                    ],
+                    auxiliaryPowerInkW: 1.7,
+                    efficiency: {
+                        acceleration: 0.66,
+                        deceleration: 0.91,
+                        uphill: 0.74,
+                        downhill: 0.73,
+                    },
+                },
+                charging: {
+                    maxChargeKWH: 85,
+                },
+            },
+        },
+        state: {
+            currentChargePCT: 80,
+        },
+    },
+    when: {
+        option: 'arriveBy',
+        date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400)),
+    },
 };
 
 export const shortRouteRequestParams: CalculateRouteParams = {

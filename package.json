@@ -45,15 +45,15 @@
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "devDependencies": {
-    "@biomejs/biome": "^2.2.5",
+    "@biomejs/biome": "^2.2.6",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "cspell": "^9.2.1",
     "globals": "^16.4.0",
     "handlebars": "^4.7.8",
     "size-limit": "^11.2.0",
-    "typedoc": "^0.28.13",
-    "typedoc-plugin-missing-exports": "^4.1.0",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-missing-exports": "^4.1.2",
     "yaml": "^2.8.1"
   },
   "size-limit": [

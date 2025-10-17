@@ -260,57 +260,15 @@ export type ElectricConsumptionModel = ConsumptionModelBase & {
 };
 
 /**
- * Charging preferences for Long Distance EV Routing.
- * * Specifying these preferences will trigger the calculation of charging stops along your route.
- * * Requires the ChargingModel to be set in consumption.charging.
- */
-export type ChargingPreferences = {
-    /**
-     * The minimum battery % you wish to arrive at your destination with.
-     * Minimum: 0, maximum: 100.
-     */
-    minChargeAtDestinationPCT: number;
-    /**
-     * The minimum battery % you wish to arrive at each charging station with.
-     * * However, the remaining charge at the first charging stop may be lower.
-     * * Minimum: 0, maximum: 50.
-     */
-    minChargeAtChargingStopsPCT: number;
-};
-
-/**
  * The available engine types.
  */
-export const engineTypes = ['combustion', 'electric'] as const;
+export const engineTypes = ['combustion', 'electric', undefined] as const;
 
 /**
  * The engine type of the vehicle.
  * * When a detailed Consumption model is specified, it must be consistent with the provided engine type.
  */
 export type VehicleEngineType = (typeof engineTypes)[number];
-
-export type VehicleEngineBase<E extends VehicleEngineType, M extends CombustionEngineModel | ElectricEngineModel> = {
-    /**
-     * The engine type of the vehicle.
-     * * When an engine (consumption/charging) model is specified, it must be consistent with this type.
-     */
-    type: E;
-    /**
-     * The engine model.
-     * * The model describes the vehicle as such and does not change through time.
-     * * Must be consistent with the engine type.
-     */
-    model: M;
-};
-
-export type CombustionVehicleEngine = VehicleEngineBase<'combustion', CombustionEngineModel> & {
-    /**
-     * Specifies the current supply of fuel in liters.
-     *
-     * Minimum value: 0
-     */
-    currentFuelInLiters: number;
-};
 
 export type ElectricEngineModel = {
     /**
@@ -323,25 +281,13 @@ export type ElectricEngineModel = {
     charging?: ChargingModel;
 };
 
-export type ElectricVehicleEngine = VehicleEngineBase<'electric', ElectricEngineModel> & {
-    /**
-     * Specifies the current battery charge in %.
-     * * Note: Requires model.charging.maxChargeKWH to be set.
-     * * Minimum: 0, maximum: 100.
-     */
-    currentChargePCT: number;
-    /**
-     * Charging preferences for Long Distance EV Routing.
-     * * Specifying these preferences will trigger the calculation of charging stops along your route.
-     * * Requires the ElectricConsumptionModel to be set.
-     * @see https://docs.tomtom.com/routing-api/documentation/extended-routing/long-distance-ev-routing
-     */
-    chargingPreferences?: ChargingPreferences;
-};
-
 /**
  * The consumption model describes vehicle energy (fuel/electricity) consumption attributes.
  * * "combustion" vehicles can contain a combustion consumption model
  * * "electric" vehicles (EVs) can contain an EV consumption model
  */
-export type VehicleEngine = CombustionVehicleEngine | ElectricVehicleEngine;
+export type VehicleEngineModel<E extends VehicleEngineType> = E extends 'combustion'
+    ? CombustionEngineModel
+    : E extends 'electric'
+      ? ElectricEngineModel
+      : never;

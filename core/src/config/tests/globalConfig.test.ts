@@ -91,7 +91,8 @@ describe('mergeFromGlobal tests', () => {
             mergeFromGlobal<Partial<GlobalConfig> & { randomProp: string }>({
                 randomProp: 'blah',
                 apiVersion: 3,
-                apiAccessToken: 'OAUTH2_ACCESS_TOKEN',
+                // TODO: restore if we implement oauth2 access:
+                // apiAccessToken: 'OAUTH2_ACCESS_TOKEN',
                 commonBaseURL: 'CUSTOM',
                 language: 'es-ES',
             }),
@@ -99,7 +100,8 @@ describe('mergeFromGlobal tests', () => {
             randomProp: 'blah',
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 3,
-            apiAccessToken: 'OAUTH2_ACCESS_TOKEN',
+            // TODO: restore if we implement oauth2 access:
+            // apiAccessToken: 'OAUTH2_ACCESS_TOKEN',
             commonBaseURL: 'CUSTOM',
             language: 'es-ES',
         });

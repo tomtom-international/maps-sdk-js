@@ -83,7 +83,8 @@ export type GlobalConfig = {
      * * If provided, then the API key parameter will be ignored.
      * @experimental
      */
-    apiAccessToken?: string;
+    // TODO: restore if we implement oauth2 access
+    // apiAccessToken?: string;
 
     /**
      * Determines the version of the API being called.

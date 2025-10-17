@@ -25,7 +25,7 @@ describe('Calculate Route response parsing functional tests', () => {
         ) => {
             // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
             // (We reparse the objects to compare them ignoring the order of properties)
-            expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse)))).toMatchObject(
+            expect(JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse, params)))).toMatchObject(
                 JSON.parse(JSON.stringify(parsedResponse)),
             );
         },
@@ -38,7 +38,11 @@ describe('Calculate Route response parsing performance tests', () => {
         () => {
             expect(
                 bestExecutionTimeMS(
-                    () => parseCalculateRouteResponse(longApiResponse as CalculateRouteResponseAPI /*, {} as never*/),
+                    () =>
+                        parseCalculateRouteResponse(
+                            longApiResponse as CalculateRouteResponseAPI,
+                            {} as CalculateRouteParams,
+                        ),
                     20,
                 ),
             ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.responseParsing);
@@ -72,6 +76,6 @@ describe('Routing - no section from api response', () => {
             }
         }
 
-        expect(() => parseCalculateRouteResponse(apiRoute /*, {} as never*/)).not.toThrow();
+        expect(() => parseCalculateRouteResponse(apiRoute, {} as CalculateRouteParams)).not.toThrow();
     });
 });

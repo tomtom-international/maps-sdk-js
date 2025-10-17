@@ -14,21 +14,24 @@ import {
     inputSectionTypesWithGuidance,
 } from '@cet/maps-sdk-js/core';
 import type { Position } from 'geojson';
-import { isNil } from 'lodash-es';
+import { isNil, omit } from 'lodash-es';
 import type { FetchInput } from '../shared';
+import { VehiclePreferences } from '../shared';
 import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
 import { positionToCSVLatLon } from '../shared/geometry';
 import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
+import { ExplicitVehicleModel } from '../shared/types/vehicleModel';
 import type { CalculateRoutePOSTDataAPI, PointWaypointAPI } from './types/apiRequestTypes';
 import type { LatitudeLongitudePointAPI } from './types/apiResponseTypes';
 import type { CalculateRouteParams, GuidanceParams, InputSectionTypes } from './types/calculateRouteParams';
 
 // Are these params about Long Distance EV Routing:
-const isLdevr = (params: CalculateRouteParams): boolean => !!params.commonEVRoutingParams;
+const getChargingPreferences = (params: CalculateRouteParams) =>
+    (params.vehicle?.preferences as VehiclePreferences<'electric'>)?.chargingPreferences;
 
 const buildUrlBasePath = (params: CalculateRouteParams): string =>
     params.customServiceBaseURL ||
-    `${params.commonBaseURL}/maps/orbis/routing/${isLdevr(params) ? 'calculateLongDistanceEVRoute' : 'calculateRoute'}`;
+    `${params.commonBaseURL}/maps/orbis/routing/${getChargingPreferences(params) ? 'calculateLongDistanceEVRoute' : 'calculateRoute'}`;
 
 const getWaypointProps = (waypointInput: WaypointLike): WaypointProps | null =>
     (waypointInput as Waypoint).properties || null;
@@ -68,8 +71,8 @@ const getFirstAndLastPoints = (
         firstPoint = getPositionStrict(firstGeoInput as WaypointLike, { useEntryPoint });
     }
 
-    let lastPoint;
     const lastGeoInput = geoInputs[geoInputs.length - 1];
+    let lastPoint;
     if (types[types.length - 1] === 'path') {
         const positions = getPositionsFromPath(lastGeoInput as PathLike);
         lastPoint = positions[positions.length - 1];
@@ -211,19 +214,25 @@ const buildPostData = (
     useEntryPoints: GetPositionEntryPointOption,
 ): CalculateRoutePOSTDataAPI | null => {
     const pathsIncluded = types.includes('path');
-    const ldevr = isLdevr(params);
-    if (!pathsIncluded && !ldevr) {
+    const isLdevr = !!getChargingPreferences(params);
+    if (!pathsIncluded && !isLdevr) {
         // (if no paths in the given geoInputs nor LDEVR, there'll be no POST data, which will trigger a GET call)
         return null;
     }
 
+    const vehicleModel = params.vehicle?.model as ExplicitVehicleModel<'electric'>;
+    const chargingModel = vehicleModel?.engine?.charging;
     return {
         ...(pathsIncluded && buildGeoInputsPostData(params.geoInputs, types, useEntryPoints)),
+        ...(isLdevr &&
+            chargingModel && {
+                chargingParameters: omit(chargingModel, 'maxChargeKWH'),
+            }),
     };
 };
 
 /**
- * Default method for building calculate route request from {@link CalculateRouteParams}
+ * Default function for building calculate route request from {@link CalculateRouteParams}
  * @param params The calculate route parameters, with global configuration already merged into them.
  */
 export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchInput<CalculateRoutePOSTDataAPI> => {
@@ -233,10 +242,9 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
         `${buildUrlBasePath(params)}/${buildLocationsString(params.geoInputs, geoInputTypes, useEntryPoints)}/json`,
     );
     const urlParams: URLSearchParams = url.searchParams;
-    appendCommonParams(urlParams, params, true);
+    appendCommonParams(urlParams, params);
     appendCommonRoutingParams(urlParams, params);
     appendOptionalParam(urlParams, 'computeTravelTimeFor', params.computeAdditionalTravelTimeFor);
-    params.vehicleHeading && urlParams.append('vehicleHeading', String(params.vehicleHeading));
     appendGuidanceParams(urlParams, params);
     !isNil(params.maxAlternatives) && urlParams.append('maxAlternatives', String(params.maxAlternatives));
     appendSectionTypes(urlParams, params.sectionTypes, !!params.guidance?.type);

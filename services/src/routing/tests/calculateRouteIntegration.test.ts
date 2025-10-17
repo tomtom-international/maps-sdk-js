@@ -31,6 +31,30 @@ const assertSectionBasics = (section: SectionProps): void => {
 describe('Calculate route integration tests', () => {
     beforeAll(() => putIntegrationTestsAPIKey());
 
+    test('Route from Kandersteg to Dover with minimal vehicle dimensions', async () => {
+        const result = await calculateRoute({
+            geoInputs: [
+                [7.675106, 46.490793], // Kandersteg
+                [1.32248, 51.111645], // Dover
+            ],
+            vehicle: {
+                model: {
+                    dimensions: { weightKG: 1500 },
+                },
+            },
+        });
+
+        expect(result?.features?.length).toEqual(1);
+        const routeFeature = result.features[0];
+        expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
+        const routeProperties = routeFeature.properties;
+        assertSummaryBasics(routeProperties.summary);
+        const sections = routeProperties.sections;
+        expect(sections.leg).toHaveLength(1);
+        assertLegSectionBasics(sections.leg[0]);
+        expect(routeProperties.progress?.length).toBeGreaterThan(0);
+    });
+
     test(
         'Route from Kandersteg to Dover via Lötschen Pass with specified ' +
             'sectionTypes and combustion vehicle parameters',
@@ -45,30 +69,31 @@ describe('Calculate route integration tests', () => {
                 ],
                 costModel: { traffic: 'live', avoid: ['tunnels', 'lowEmissionZones'], routeType: 'efficient' },
                 sectionTypes: testInputSectionTypes,
-                // TODO vehicle measurements are not working with Orbis, so I commented them out
-                // vehicle: {
-                //     dimensions: { weightKG: 1500 },
-                //     engine: {
-                //         type: "combustion",
-                //         currentFuelInLiters: 50,
-                //         model: {
-                //             consumption: {
-                //                 speedsToConsumptionsLiters: [
-                //                     { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
-                //                     { speedKMH: 130, consumptionUnitsPer100KM: 11.5 }
-                //                 ],
-                //                 auxiliaryPowerInLitersPerHour: 0.2,
-                //                 fuelEnergyDensityInMJoulesPerLiter: 34.2,
-                //                 efficiency: {
-                //                     acceleration: 0.33,
-                //                     deceleration: 0.83,
-                //                     uphill: 0.27,
-                //                     downhill: 0.51
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
+                vehicle: {
+                    engineType: 'combustion',
+                    model: {
+                        dimensions: { weightKG: 1500 },
+                        engine: {
+                            consumption: {
+                                speedsToConsumptionsLiters: [
+                                    { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
+                                    { speedKMH: 130, consumptionUnitsPer100KM: 11.5 },
+                                ],
+                                auxiliaryPowerInLitersPerHour: 0.2,
+                                fuelEnergyDensityInMJoulesPerLiter: 34.2,
+                                efficiency: {
+                                    acceleration: 0.33,
+                                    deceleration: 0.83,
+                                    uphill: 0.27,
+                                    downhill: 0.51,
+                                },
+                            },
+                        },
+                    },
+                    state: {
+                        currentFuelInLiters: 50,
+                    },
+                },
             });
 
             expect(result?.features?.length).toEqual(1);
@@ -76,14 +101,13 @@ describe('Calculate route integration tests', () => {
             expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
             const routeProperties = routeFeature.properties;
             assertSummaryBasics(routeProperties.summary);
-            // TODO fuel consumption is not working with Orbis, so I commented it out
-            // expect(routeProperties.summary.fuelConsumptionInLiters).toBeDefined();
+            expect(routeProperties.summary.fuelConsumptionInLiters).toBeDefined();
             const sections = routeProperties.sections;
             expect(sections.leg).toHaveLength(2);
             assertLegSectionBasics(sections.leg[0]);
-            // expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
+            expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
             assertLegSectionBasics(sections.leg[1]);
-            // expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
+            expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
             // Asserting the existence of sections in response:
             for (const inputSectionType of testInputSectionTypes) {
                 expect(routeProperties.sections[inputSectionType]?.length).toBeGreaterThan(0);
@@ -101,8 +125,7 @@ describe('Calculate route integration tests', () => {
         },
     );
 
-    // TODO test doesn't make sense any more because of the new routing engine, so I commented it out
-    test.skip('Amsterdam to Leiden to Rotterdam with electric vehicle parameters (non - LDEVR)', async () => {
+    test('Amsterdam to Leiden to Rotterdam with electric vehicle parameters (non - LDEVR)', async () => {
         const result = await calculateRoute({
             geoInputs: [
                 [4.89066, 52.37317],
@@ -119,60 +142,141 @@ describe('Calculate route integration tests', () => {
                 // },
                 [4.47059, 51.92291],
             ],
-            // TODO vehicle measurements are not working with Orbis, so I commented them out
-            // vehicle: {
-            //     dimensions: {
-            //         weightKG: 3500
-            //     },
-            //     engine: {
-            //         type: "electric",
-            //         model: {
-            //             consumption: {
-            //                 speedsToConsumptionsKWH: [
-            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-            //                 ],
-            //                 auxiliaryPowerInkW: 1.7,
-            //                 efficiency: {
-            //                     acceleration: 0.66,
-            //                     deceleration: 0.91,
-            //                     uphill: 0.74,
-            //                     downhill: 0.73
-            //                 }
-            //             },
-            //             charging: { maxChargeKWH: 85 }
-            //         },
-            //         currentChargePCT: 50
-            //     }
-            // }
+            vehicle: {
+                engineType: 'electric',
+                model: {
+                    dimensions: {
+                        weightKG: 3500,
+                    },
+                    engine: {
+                        consumption: {
+                            speedsToConsumptionsKWH: [
+                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 },
+                            ],
+                            auxiliaryPowerInkW: 1.7,
+                            efficiency: {
+                                acceleration: 0.66,
+                                deceleration: 0.91,
+                                uphill: 0.74,
+                                downhill: 0.73,
+                            },
+                        },
+                        charging: { maxChargeKWH: 85 },
+                    },
+                },
+                state: {
+                    currentChargePCT: 50,
+                },
+            },
         });
         expect(result?.features?.length).toEqual(1);
         const routeFeature = result.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
         const routeProperties = routeFeature.properties;
         assertSummaryBasics(routeProperties.summary);
-        // expect(routeProperties.summary.batteryConsumptionInkWh).toBeDefined();
+        expect(routeProperties.summary.batteryConsumptionInkWh).toBeGreaterThan(0);
         const sections = routeProperties.sections;
         expect(sections.leg).toHaveLength(2);
         assertLegSectionBasics(sections.leg[0]);
-        // expect(sections.leg[0].summary.batteryConsumptionInkWh).toBeDefined();
+        expect(sections.leg[0].summary.batteryConsumptionInkWh).toBeGreaterThan(0);
+        // Expected PCT available because we defined maxChargeKWH in vehicle model:
+        expect(sections.leg[0].summary.batteryConsumptionInPCT).toBeGreaterThan(0);
         assertLegSectionBasics(sections.leg[1]);
-        // expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeDefined();
+        expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeGreaterThan(0);
+        // Expected PCT available because we defined maxChargeKWH in vehicle model:
+        expect(sections.leg[0].summary.batteryConsumptionInPCT).toBeGreaterThan(0);
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
-    test('LDEVR with alternatives and guidance', async () => {
+    test('LDEVR with explicit vehicle params', async () => {
         const params: CalculateRouteParams = {
             geoInputs: [
                 [13.492, 52.507],
                 [9.624, 50.104],
             ],
             maxAlternatives: 1,
-            commonEVRoutingParams: {
-                currentChargeInkWh: 20,
-                minChargeAtDestinationInkWh: 4,
-                minChargeAtChargingStopsInkWh: 4,
-                vehicleModelId: '54B969E8-E28D-11EC-8FEA-0242AC120002',
+            vehicle: {
+                engineType: 'electric',
+                model: {
+                    engine: {
+                        consumption: {
+                            speedsToConsumptionsKWH: [
+                                { speedKMH: 32, consumptionUnitsPer100KM: 10.87 },
+                                { speedKMH: 77, consumptionUnitsPer100KM: 18.01 },
+                            ],
+                        },
+                        charging: {
+                            maxChargeKWH: 40,
+                            batteryCurve: [
+                                {
+                                    stateOfChargeInkWh: 50,
+                                    maxPowerInkW: 200,
+                                },
+                                {
+                                    stateOfChargeInkWh: 70,
+                                    maxPowerInkW: 100,
+                                },
+                                {
+                                    stateOfChargeInkWh: 80,
+                                    maxPowerInkW: 40,
+                                },
+                            ],
+                            chargingConnectors: [
+                                {
+                                    currentType: 'AC3',
+                                    plugTypes: [
+                                        'IEC_62196_Type_2_Outlet',
+                                        'IEC_62196_Type_2_Connector_Cable_Attached',
+                                        'Combo_to_IEC_62196_Type_2_Base',
+                                    ],
+                                    efficiency: 0.9,
+                                    baseLoadInkW: 0.2,
+                                    maxPowerInkW: 11,
+                                },
+                                {
+                                    currentType: 'DC',
+                                    plugTypes: [
+                                        'IEC_62196_Type_2_Outlet',
+                                        'IEC_62196_Type_2_Connector_Cable_Attached',
+                                        'Combo_to_IEC_62196_Type_2_Base',
+                                    ],
+                                    voltageRange: {
+                                        minVoltageInV: 0,
+                                        maxVoltageInV: 500,
+                                    },
+                                    efficiency: 0.9,
+                                    baseLoadInkW: 0.2,
+                                    maxPowerInkW: 150,
+                                },
+                                {
+                                    currentType: 'DC',
+                                    plugTypes: [
+                                        'IEC_62196_Type_2_Outlet',
+                                        'IEC_62196_Type_2_Connector_Cable_Attached',
+                                        'Combo_to_IEC_62196_Type_2_Base',
+                                    ],
+                                    voltageRange: {
+                                        minVoltageInV: 500,
+                                        maxVoltageInV: 2000,
+                                    },
+                                    efficiency: 0.9,
+                                    baseLoadInkW: 0.2,
+                                },
+                            ],
+                            chargingTimeOffsetInSec: 60,
+                        },
+                    },
+                },
+                state: {
+                    currentChargePCT: 80,
+                },
+                preferences: {
+                    chargingPreferences: {
+                        minChargeAtDestinationPCT: 50,
+                        minChargeAtChargingStopsPCT: 10,
+                    },
+                },
             },
             guidance: { type: 'coded' },
         };
@@ -189,6 +293,8 @@ describe('Calculate route integration tests', () => {
         assertSummaryBasics(routeSummary);
         // asserting summary properties relevant to ldevr:
         expect(routeSummary.totalChargingTimeInSeconds).toBeGreaterThan(1000);
+        // Expected PCT available because we defined maxChargeKWH in vehicle model:
+        expect(routeSummary.remainingChargeAtArrivalInPCT).toBeGreaterThan(0);
         expect(routeSummary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
         // param is min 50% at arrival:
         expect(routeSummary.batteryConsumptionInkWh).toBeGreaterThan(100);
@@ -198,18 +304,78 @@ describe('Calculate route integration tests', () => {
             const leg = legs[i];
             assertSummaryBasics(leg.summary);
             expect(leg.summary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
-            // param is min 10% at stops:
+            // Expected PCT available because we defined maxChargeKWH in vehicle model:
+            expect(leg.summary.remainingChargeAtArrivalInPCT).toBeGreaterThan(0);
             expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
+            // Expected PCT available because we defined maxChargeKWH in vehicle model:
+            // param is min 10% at stops:
+            expect(leg.summary.chargingInformationAtEndOfLeg?.targetChargePCT).toBeGreaterThanOrEqual(10);
         }
 
         // the last leg has some particularities
         const lastLeg = legs[legs.length - 1];
         assertSummaryBasics(lastLeg.summary);
         expect(lastLeg.summary.remainingChargeAtArrivalInkWh).toEqual(routeSummary.remainingChargeAtArrivalInkWh);
+        // Expected PCT available because we defined maxChargeKWH in vehicle model:
         expect(lastLeg.summary.remainingChargeAtArrivalInPCT).toEqual(routeSummary.remainingChargeAtArrivalInPCT);
         // arriving at destination, not a charging stop:
         expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
+        expect(routeProperties.progress?.length).toBeGreaterThan(0);
+    });
 
+    test('LDEVR with vehicle model ID', async () => {
+        const result = await calculateRoute({
+            geoInputs: [
+                [4.89066, 52.37317], // Amsterdam
+                [2.3522, 48.8566], // Paris
+            ],
+            vehicle: {
+                engineType: 'electric',
+                model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+                state: { currentChargeInkWh: 45 },
+                preferences: {
+                    chargingPreferences: {
+                        minChargeAtChargingStopsInkWh: 5,
+                        minChargeAtDestinationInkWh: 10,
+                    },
+                },
+            },
+            maxAlternatives: 0,
+            guidance: { type: 'coded' },
+        });
+
+        expect(result?.features?.length).toBeGreaterThanOrEqual(1);
+        const routeFeature = result.features[0];
+        expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
+        const routeProperties = routeFeature.properties;
+        const legs = routeProperties.sections.leg;
+
+        // with charging stops we should have more than 1 leg generated:
+        expect(legs.length).toBeGreaterThan(1);
+
+        const routeSummary = routeProperties.summary;
+        assertSummaryBasics(routeSummary);
+
+        // asserting summary properties relevant to ldevr:
+        expect(routeSummary.totalChargingTimeInSeconds).toBeGreaterThan(0);
+        expect(routeSummary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
+        expect(routeSummary.batteryConsumptionInkWh).toBeGreaterThan(0);
+
+        // we assert the legs excluding the last one (charging stops):
+        for (let i = 0; i < legs.length - 1; i++) {
+            const leg = legs[i];
+            assertLegSectionBasics(leg);
+            expect(leg.summary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
+            expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
+            expect(leg.summary.chargingInformationAtEndOfLeg?.targetChargeInkWh).toBeGreaterThanOrEqual(4);
+        }
+
+        // the last leg has some particularities
+        const lastLeg = legs[legs.length - 1];
+        assertLegSectionBasics(lastLeg);
+        expect(lastLeg.summary.remainingChargeAtArrivalInkWh).toEqual(routeSummary.remainingChargeAtArrivalInkWh);
+        // arriving at destination, not a charging stop:
+        expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
@@ -226,9 +392,9 @@ describe('Calculate route integration tests', () => {
                 routeType: 'thrilling',
                 // TODO no trhilling params with Orbis, so I commented them out
                 // thrillingParams: {
-                //     hilliness: "low",
-                //     windingness: "high"
-                // }
+                //     hilliness: 'low',
+                //     windingness: 'high',
+                // },
             },
             computeAdditionalTravelTimeFor: 'all',
             guidance: {
@@ -240,12 +406,12 @@ describe('Calculate route integration tests', () => {
             maxAlternatives: 2,
             sectionTypes: ['traffic', 'ferry', 'toll', 'lanes', 'speedLimit', 'roadShields'],
             travelMode: 'car',
-            // TODO no travel mode motorcycle with Orbis, or option to se when, so I commented it out
-            // travelMode: "motorcycle",
-            // when: {
-            //     option: "arriveBy",
-            //     date: new Date()
-            // }
+            // TODO no travel mode motorcycle with Orbis, so I commented it out
+            // travelMode: 'motorcycle',
+            when: {
+                option: 'arriveBy',
+                date: new Date(),
+            },
         });
 
         expect(result?.features?.length).toBeGreaterThan(1);

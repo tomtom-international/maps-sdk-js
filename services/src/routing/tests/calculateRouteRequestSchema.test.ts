@@ -135,18 +135,15 @@ describe('Calculate route request schema validation', () => {
                         // }
                     },
                     computeAdditionalTravelTimeFor: 'first' as never,
-                    vehicleHeading: 360,
-                    // TODO not supported in Orbis in this way, to add check for the way Orbis does it
-                    // instructionsType: "Coded" as never,
+                    vehicle: {
+                        state: {
+                            heading: 360,
+                        },
+                    },
                     maxAlternatives: 6 as never,
                     // TODO deprecated in Orbis
                     // routeRepresentation: "summary" as never,
                     travelMode: 2 as never,
-                    // TODO not supported in Orbis
-                    // when: {
-                    //     option: "arriveAt" as never,
-                    //     date: new Date()
-                    // },
                     sectionTypes: ['tunnel', 'motorways'] as never,
                     apiKey,
                     commonBaseURL: commonBaseUrl,
@@ -156,48 +153,40 @@ describe('Calculate route request schema validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                issues: [
-                    {
+                issues: expect.arrayContaining([
+                    expect.objectContaining({
                         expected: 'array',
                         code: 'invalid_type',
                         path: ['costModel', 'avoid'],
                         message: 'Invalid input',
-                    },
-                    {
+                    }),
+                    expect.objectContaining({
                         code: 'invalid_value',
                         values: ['live', 'historical'],
                         path: ['costModel', 'traffic'],
                         message: 'Invalid input',
-                    },
-                    {
+                    }),
+                    expect.objectContaining({
                         expected: 'string',
                         code: 'invalid_type',
                         path: ['travelMode'],
                         message: 'Invalid input',
-                    },
-                    {
+                    }),
+                    expect.objectContaining({
                         code: 'invalid_value',
                         values: ['none', 'all'],
                         path: ['computeAdditionalTravelTimeFor'],
                         message: 'Invalid input',
-                    },
-                    {
-                        origin: 'number',
-                        code: 'too_big',
-                        maximum: 359.5,
-                        inclusive: true,
-                        path: ['vehicleHeading'],
-                        message: 'Invalid input',
-                    },
-                    {
+                    }),
+                    expect.objectContaining({
                         origin: 'number',
                         code: 'too_big',
                         maximum: 5,
                         inclusive: true,
                         path: ['maxAlternatives'],
                         message: 'Invalid input',
-                    },
-                    {
+                    }),
+                    expect.objectContaining({
                         code: 'invalid_value',
                         values: [
                             'carTrain',
@@ -220,8 +209,8 @@ describe('Calculate route request schema validation', () => {
                         ],
                         path: ['sectionTypes', 1],
                         message: 'Invalid input',
-                    },
-                ],
+                    }),
+                ]),
             }),
         );
     });

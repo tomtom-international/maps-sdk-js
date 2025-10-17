@@ -9,20 +9,15 @@ import type { CommonServiceParams } from './serviceTypes';
  * @param urlParams
  * @param params
  */
-export const appendCommonParams = (
-    urlParams: URLSearchParams,
-    params: CommonServiceParams,
-    routing?: boolean,
-): void => {
+export const appendCommonParams = (urlParams: URLSearchParams, params: CommonServiceParams): void => {
     urlParams.append('apiVersion', String(params.apiVersion));
-    if (!params.apiAccessToken) {
-        urlParams.append('key', params.apiKey as string);
-    }
-    // else: access token is injected as a header elsewhere (see injectTomTomHeaders function)
 
-    //TODO not sure if this is the best way to handle this, but for routing, language is only supported in the URL
-    // if you request guidance instructions
-    !routing && params.language && urlParams.append('language', params.language);
+    // TODO: restore apiAccessToken if we implement oauth2 access:
+    // if (!params.apiAccessToken) {
+    urlParams.append('key', params.apiKey as string);
+    // }
+
+    params.language && urlParams.append('language', params.language);
 };
 
 /**

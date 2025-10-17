@@ -40,7 +40,8 @@ export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHead
     ...(params.tomtomUserAgent && {
         'TomTom-User-Agent': `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`,
     }),
+    // TODO: restore if we implement oauth2 access
     // optional oauth2 access token:
-    ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
+    // ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
     ...(params.trackingId && { 'Tracking-ID': validateTrackingId(params.trackingId) }),
 });

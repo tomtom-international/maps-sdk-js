@@ -196,6 +196,31 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
     ],
     [
+        'A-B route with simple vehicle parameters (weight dimensions only, no engineType)',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 2,
+            commonBaseURL: 'https://api.tomtom.com',
+            geoInputs: [
+                [52.52, 13.405],
+                [48.8566, 2.3522],
+            ],
+            vehicle: { model: { dimensions: { weightKG: 2500 } } },
+        },
+        {
+            method: 'GET',
+            url: new URL(
+                'https://api.tomtom.com/maps/orbis/routing/calculateRoute/13.405,52.52:2.3522,48.8566/json?' +
+                    'apiVersion=2&key=GLOBAL_API_KEY&vehicleWeight=2500' +
+                    '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                    '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
+                    '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
+                    '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit&sectionType=roadShields' +
+                    '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
+            ),
+        },
+    ],
+    [
         'A-B route with many optional parameters set to non default values and electric vehicle params',
         {
             apiKey: 'GLOBAL_API_KEY',
@@ -228,52 +253,54 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 // }
             },
             computeAdditionalTravelTimeFor: 'all',
-            vehicleHeading: 45,
             maxAlternatives: 2,
             // TODO not supported in Orbis
             // routeRepresentation: "summaryOnly",
-            // vehicle: {
-            //     commercial: true,
-            //     dimensions: {
-            //         lengthMeters: 20,
-            //         widthMeters: 5,
-            //         heightMeters: 4,
-            //         weightKG: 3500,
-            //         axleWeightKG: 500
-            //     },
-            //     maxSpeedKMH: 60,
-            //     loadTypes: ["otherHazmatExplosive", "otherHazmatHarmfulToWater"],
-            //     adrCode: "B",
-            //     engine: {
-            //         type: "electric",
-            //         currentChargePCT: 50,
-            //         model: {
-            //             charging: { maxChargeKWH: 85 },
-            //             consumption: {
-            //                 speedsToConsumptionsKWH: [
-            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-            //                 ],
-            //                 auxiliaryPowerInkW: 1.7,
-            //                 consumptionInKWHPerKMAltitudeGain: 7,
-            //                 recuperationInKWHPerKMAltitudeLoss: 3.8
-            //             }
-            //         }
-            //     }
-            // },
-            // when: {
-            //     option: "arriveBy",
-            //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-            // }
+            vehicle: {
+                engineType: 'electric',
+                model: {
+                    dimensions: {
+                        lengthMeters: 20,
+                        widthMeters: 5,
+                        heightMeters: 4,
+                        weightKG: 3500,
+                        axleWeightKG: 500,
+                    },
+                    engine: {
+                        consumption: {
+                            speedsToConsumptionsKWH: [
+                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 },
+                            ],
+                            auxiliaryPowerInkW: 1.7,
+                            consumptionInKWHPerKMAltitudeGain: 7,
+                            recuperationInKWHPerKMAltitudeLoss: 3.8,
+                        },
+                        charging: { maxChargeKWH: 85 },
+                    },
+                },
+                state: { heading: 45, currentChargePCT: 50 },
+                restrictions: {
+                    maxSpeedKMH: 60,
+                    loadTypes: ['otherHazmatExplosive', 'otherHazmatHarmfulToWater'],
+                    adrCode: 'B',
+                    commercial: true,
+                },
+            },
+            when: { option: 'arriveBy', date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400)) },
         },
         {
             method: 'GET',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/42.26297,3.1748:42.18211,2.48819/json?' +
-                    'apiVersion=2&key=GLOBAL_API_KEY&avoid=carpools&avoid=ferries&avoid=motorways' +
+                    'apiVersion=2&key=GLOBAL_API_KEY&language=es-ES&avoid=carpools&avoid=ferries&avoid=motorways' +
                     '&avoid=alreadyUsedRoads&avoid=tollRoads&avoid=unpavedRoads&avoid=borderCrossings' +
-                    '&avoid=tunnels&avoid=carTrains&avoid=lowEmissionZones&traffic=historical&routeType=thrilling' +
-                    '&computeTravelTimeFor=all&vehicleHeading=45&maxAlternatives=2&sectionType=carTrain' +
+                    '&avoid=tunnels&avoid=carTrains&avoid=lowEmissionZones&traffic=historical&arriveAt=2022-09-16T15%3A48%3A15.400Z&routeType=thrilling' +
+                    '&vehicleEngineType=electric&vehicleLength=20&vehicleHeight=4&vehicleWidth=5&vehicleWeight=3500&vehicleAxleWeight=500' +
+                    '&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3&auxiliaryPowerInkW=1.7&consumptionInkWhPerkmAltitudeGain=7' +
+                    '&recuperationInkWhPerkmAltitudeLoss=3.8&maxChargeInkWh=85&vehicleHeading=45&currentChargeInkWh=42.5' +
+                    '&vehicleLoadType=otherHazmatExplosive&vehicleLoadType=otherHazmatHarmfulToWater&vehicleAdrTunnelRestrictionCode=B' +
+                    '&vehicleCommercial=true&vehicleMaxSpeed=60&computeTravelTimeFor=all&maxAlternatives=2&sectionType=carTrain' +
                     '&sectionType=ferry&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian' +
                     '&sectionType=toll&sectionType=tollVignette&sectionType=country' +
                     '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
@@ -293,45 +320,43 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
             ],
-            // TODO not supported in Orbis
-            // vehicle: {
-            //     dimensions: { weightKG: 1500 },
-            //     engine: {
-            //         type: "combustion",
-            //         currentFuelInLiters: 55,
-            //         model: {
-            //             consumption: {
-            //                 speedsToConsumptionsLiters: [
-            //                     { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
-            //                     { speedKMH: 130, consumptionUnitsPer100KM: 11.5 }
-            //                 ],
-            //                 auxiliaryPowerInLitersPerHour: 0.2,
-            //                 fuelEnergyDensityInMJoulesPerLiter: 34.2,
-            //                 efficiency: {
-            //                     acceleration: 0.33,
-            //                     deceleration: 0.83,
-            //                     uphill: 0.27,
-            //                     downhill: 0.51
-            //                 }
-            //             }
-            //         }
-            //     }
-            // },
-            // when: {
-            //     option: "departAt",
-            //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-            // }
+            vehicle: {
+                engineType: 'combustion',
+                model: {
+                    dimensions: { weightKG: 1500 },
+                    engine: {
+                        consumption: {
+                            speedsToConsumptionsLiters: [
+                                { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
+                                { speedKMH: 130, consumptionUnitsPer100KM: 11.5 },
+                            ],
+                            auxiliaryPowerInLitersPerHour: 0.2,
+                            fuelEnergyDensityInMJoulesPerLiter: 34.2,
+                            efficiency: {
+                                acceleration: 0.33,
+                                deceleration: 0.83,
+                                uphill: 0.27,
+                                downhill: 0.51,
+                            },
+                        },
+                    },
+                },
+                state: { currentFuelInLiters: 55 },
+            },
+            when: { option: 'departAt', date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400)) },
         },
         {
             method: 'GET',
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?' +
-                    'apiVersion=2&key=GLOBAL_API_KEY&sectionType=carTrain&sectionType=ferry&sectionType=tunnel' +
-                    '&sectionType=motorway&sectionType=pedestrian' +
-                    '&sectionType=toll&sectionType=tollVignette' +
-                    '&sectionType=country&sectionType=travelMode&sectionType=traffic&sectionType=carpool' +
-                    '&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json' +
+                    '?apiVersion=2&key=GLOBAL_API_KEY&departAt=2022-09-16T15%3A48%3A15.400Z&vehicleWeight=1500' +
+                    '&accelerationEfficiency=0.33&decelerationEfficiency=0.83&uphillEfficiency=0.27' +
+                    '&downhillEfficiency=0.51&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5' +
+                    '&auxiliaryPowerInLitersPerHour=0.2&fuelEnergyDensityInMJoulesPerLiter=34.2&currentFuelInLiters=55' +
+                    '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                    '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
+                    '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
+                    '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit&sectionType=roadShields' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -348,74 +373,74 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.49015, 52.16109],
             ],
             costModel: { traffic: 'live' },
-            // TODO not supported in Orbis
-            // vehicle: {
-            //     dimensions: { weightKG: 3500 },
-            //     maxSpeedKMH: 60,
-            //     engine: {
-            //         type: "electric",
-            //         currentChargePCT: 80,
-            //         model: {
-            //             consumption: {
-            //                 speedsToConsumptionsKWH: [
-            //                     { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
-            //                     { speedKMH: 130, consumptionUnitsPer100KM: 21.3 }
-            //                 ],
-            //                 auxiliaryPowerInkW: 1.7,
-            //                 efficiency: {
-            //                     acceleration: 0.66,
-            //                     deceleration: 0.91,
-            //                     uphill: 0.74,
-            //                     downhill: 0.73
-            //                 }
-            //             },
-            //             charging: {
-            //                 maxChargeKWH: 85
-            //             }
-            //         }
-            //     }
-            // }
+            vehicle: {
+                engineType: 'electric',
+                model: {
+                    dimensions: { weightKG: 3500 },
+                    engine: {
+                        consumption: {
+                            speedsToConsumptionsKWH: [
+                                { speedKMH: 50, consumptionUnitsPer100KM: 8.2 },
+                                { speedKMH: 130, consumptionUnitsPer100KM: 21.3 },
+                            ],
+                            auxiliaryPowerInkW: 1.7,
+                            efficiency: {
+                                acceleration: 0.66,
+                                deceleration: 0.91,
+                                uphill: 0.74,
+                                downhill: 0.73,
+                            },
+                        },
+                        charging: { maxChargeKWH: 85 },
+                    },
+                },
+                state: { currentChargePCT: 80 },
+                restrictions: { maxSpeedKMH: 60 },
+            },
         },
         {
             method: 'GET',
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/routing/calculateRoute/' +
-                    '52.37317,4.89066:52.27317,4.90066:52.16109,4.49015/json?apiVersion=2&key=GLOBAL_API_KEY' +
-                    '&traffic=live' +
+                'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.27317,4.90066:52.16109,4.49015/json' +
+                    '?apiVersion=2&key=GLOBAL_API_KEY&traffic=live&vehicleEngineType=electric&vehicleWeight=3500' +
+                    '&accelerationEfficiency=0.66&decelerationEfficiency=0.91&uphillEfficiency=0.74' +
+                    '&downhillEfficiency=0.73&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3' +
+                    '&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68&vehicleMaxSpeed=60' +
                     '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
-                    '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette' +
-                    '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
-                    '&sectionType=carpool&sectionType=urban' +
-                    '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
-                    '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
+                    '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
+                    '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
+                    '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit' +
+                    '&sectionType=roadShields&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
     ],
     [
-        'LDEV A-B Route',
+        'LDEVR A-B Route with vehicle model ID',
         {
             apiKey: 'GLOBAL_API_KEY',
-            apiVersion: 2,
+            apiVersion: 23,
             commonBaseURL: 'https://api.tomtom.com',
             geoInputs: [
                 [13.492, 52.507],
                 [8.624, 50.104],
             ],
-            commonEVRoutingParams: {
-                currentChargeInkWh: 20,
-                minChargeAtDestinationInkWh: 4,
-                minChargeAtChargingStopsInkWh: 4,
-                vehicleModelId: '54B969E8-E28D-11EC-8FEA-0242AC120002',
+            vehicle: {
+                engineType: 'electric',
+                model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+                state: { currentChargeInkWh: 25 },
+                preferences: {
+                    chargingPreferences: { minChargeAtDestinationInkWh: 5, minChargeAtChargingStopsInkWh: 5 },
+                },
             },
         },
         {
             method: 'POST',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/' +
-                    'json?apiVersion=2&key=GLOBAL_API_KEY&vehicleEngineType=electric&currentChargeInkWh=20' +
-                    '&minChargeAtDestinationInkWh=4&minChargeAtChargingStopsInkWh=4' +
-                    '&vehicleModelId=54B969E8-E28D-11EC-8FEA-0242AC120002&sectionType=carTrain&sectionType=ferry' +
+                    'json?apiVersion=23&key=GLOBAL_API_KEY&vehicleEngineType=electric' +
+                    '&vehicleModelId=54B969E8-E28D-11EC-8FEA-0242AC120002' +
+                    '&currentChargeInkWh=25&minChargeAtDestinationInkWh=5&minChargeAtChargingStopsInkWh=5' +
+                    '&sectionType=carTrain&sectionType=ferry' +
                     '&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian' +
                     '&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +

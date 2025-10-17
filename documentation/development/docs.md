@@ -59,7 +59,7 @@ hasTwoColumns: false
 titleTags:
 - label: "VERSION 0.15.1"
   color: "grey5"
-- label: "PRIVATE PREVIEW"
+- label: "PUBLIC PREVIEW"
   color: "grey5"
 ---
 ```

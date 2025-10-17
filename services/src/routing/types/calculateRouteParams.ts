@@ -93,17 +93,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
         computeAdditionalTravelTimeFor?: ComputeTravelTimeFor;
 
         /**
-         * The current heading at the starting point, in degrees starting at true North and continuing in a clockwise direction.
-         * * North is 0 degrees.
-         * * East is 90 degrees.
-         * * South is 180 degrees.
-         * * West is 270 degrees.
-         *
-         * Allowed values: 0-359
-         */
-        vehicleHeading?: number;
-
-        /**
          * Specifies the extended representation of the set of routes provided as a response. Can be specified multiple times.
          */
         extendedRouteRepresentations?: ExtendedRouteRepresentation[];
