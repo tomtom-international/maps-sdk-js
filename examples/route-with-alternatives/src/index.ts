@@ -43,5 +43,3 @@ routeSelector.addEventListener('change', (event) =>
 document
     .querySelector('#maps-sdk-js-examples-reCenter')
     ?.addEventListener('click', () => map.mapLibreMap.fitBounds(bounds, fitBoundsOptions));
-
-(window as any).map = map; // This has been done for automation test support

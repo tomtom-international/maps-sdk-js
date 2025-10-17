@@ -9,5 +9,3 @@ const map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', center: [11.108922, 47.109197], zoom: 7 },
     { style: { type: 'standard', include: ['hillshade'] } },
 );
-
-(window as any).map = map; // This has been done for automation test support

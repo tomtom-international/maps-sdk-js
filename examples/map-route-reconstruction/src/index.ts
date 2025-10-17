@@ -119,4 +119,3 @@ document
     ?.addEventListener('click', () => resetState(routingModule, waypoints));
 await resetState(routingModule, waypoints);
 initDrawUserEvents(map.mapLibreMap, routingModule);
-(window as any).map = map; // This has been done for automation test support

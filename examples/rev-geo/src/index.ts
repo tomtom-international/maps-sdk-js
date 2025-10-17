@@ -77,5 +77,3 @@ basemap.events.on('click', onMapClick);
 
 // Starting with a Pin in the map
 await onMapClick(undefined, { lng: 4.8907, lat: 52.37311 } as LngLat);
-
-(window as any).map = map; // This has been done for automation test support

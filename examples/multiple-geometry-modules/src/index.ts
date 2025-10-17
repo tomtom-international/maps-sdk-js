@@ -60,5 +60,3 @@ const farAwayGeometriesModule = await GeometriesModule.init(map, {
     },
 });
 farAwayGeometriesModule.show(subdivisionGeometries);
-
-(window as any).map = map; // This has been done for automation test support

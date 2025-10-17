@@ -49,5 +49,3 @@ routingModule.showWaypoints(examples['all'].waypoints);
 examplesSelector.addEventListener('change', (event) =>
     routingModule.showWaypoints(examples[(event.target as HTMLOptionElement).value].waypoints),
 );
-
-(window as any).map = map; // This has been done for automation test support

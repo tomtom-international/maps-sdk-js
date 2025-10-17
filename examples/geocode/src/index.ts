@@ -3,25 +3,18 @@ import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { geocode } from '@cet/maps-sdk-js/services';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
+import { LngLatLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const location = await geocode({ query: 'Amsterdam Centraal, Netherlands' });
-const {
-    geometry: {
-        coordinates: [long, lat],
-    },
-} = location.features[0];
+const location = (await geocode({ query: 'Amsterdam Centraal, Netherlands' })).features[0];
 
 const map = new TomTomMap({
     container: 'maps-sdk-js-examples-map-container',
-    center: [long, lat],
+    center: location.geometry.coordinates as LngLatLike,
     zoom: 17,
 });
 
 const placesModule = await PlacesModule.init(map);
-
 placesModule.show(location);
-
-(window as any).map = map; // This has been done for automation test support

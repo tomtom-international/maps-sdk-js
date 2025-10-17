@@ -149,4 +149,3 @@ map.mapLibreMap.on('dragstart', () => {
 await initBaseMapModule();
 await initPlacesModule();
 await initTrafficIncidents();
-(window as any).map = map; // This has been done for automation test support

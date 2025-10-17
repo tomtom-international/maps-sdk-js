@@ -113,4 +113,3 @@ const map = new TomTomMap({
 poisModule = await POIsModule.get(map);
 createFilterToggles();
 listenToUserEvents();
-(window as any).map = map; // This has been done for automation test support

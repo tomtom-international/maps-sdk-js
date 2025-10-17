@@ -42,4 +42,3 @@ const placesInsideGeometry = await search({
 
 const placesModule = await PlacesModule.init(map);
 placesModule.show(placesInsideGeometry);
-(window as any).map = map; // This has been done for automation test support

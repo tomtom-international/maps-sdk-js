@@ -160,5 +160,3 @@ searchBox.addEventListener('keyup', async () => {
     }
     searchBox.value.trim() === '' && clearSearchResults();
 });
-
-(window as any).map = map; // This has been done for automation test support

@@ -281,5 +281,3 @@ map.mapLibreMap.addControl(new NavigationControl(), 'bottom-right');
 await updateMapEVStations();
 await listenToMapUserEvents();
 listenToHTMLUserEvents();
-
-(window as any).map = map; // This has been done for automation test support

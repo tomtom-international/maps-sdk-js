@@ -60,4 +60,3 @@ const listenToUIEvents = async () => {
 
 await updateMap(namedConfigs.france);
 await listenToUIEvents();
-(window as any).map = map; // This has been done for automation test support

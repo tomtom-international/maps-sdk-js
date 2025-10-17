@@ -111,4 +111,3 @@ const listenToUIEvents = () => {
 await updatePlaces();
 map.mapLibreMap.on('moveend', updatePlaces);
 listenToUIEvents();
-(window as any).map = map; // This has been done for automation test support

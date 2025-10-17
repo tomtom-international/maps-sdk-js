@@ -12,7 +12,6 @@ const map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 },
     { language: 'en-GB' },
 );
-
 const placesModule = await PlacesModule.init(map);
 
 const showSearchResultsList = (places: Places) => {
@@ -58,4 +57,3 @@ const listenToUserEvents = () => {
 };
 
 listenToUserEvents();
-(window as any).map = map; // This has been done for automation test support

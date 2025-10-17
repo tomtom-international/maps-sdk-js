@@ -184,5 +184,3 @@ other.events.on('click', () => {
     selectedSource.setData(emptyFeatureCollection);
     setPlaceholderText();
 });
-
-(window as any).map = map; // This has been done for automation test support

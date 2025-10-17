@@ -31,5 +31,3 @@ await TrafficIncidentsModule.get(map, { visible: false });
 const routingModule = await RoutingModule.init(map);
 routingModule.showWaypoints(waypoints);
 routingModule.showRoutes(await calculateRoute({ geoInputs: waypoints }));
-
-(window as any).map = map; // This has been done for automation test support

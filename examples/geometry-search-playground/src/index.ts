@@ -60,5 +60,3 @@ const listenToUserEvents = () => {
 };
 
 listenToUserEvents();
-
-(window as any).map = map; // This has been done for automation test support

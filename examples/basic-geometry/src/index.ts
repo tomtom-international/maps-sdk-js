@@ -20,5 +20,3 @@ const geometryModule = await GeometriesModule.init(map);
 
 const geometryToSearch = await geometryData({ geometries: location });
 geometryModule.show(geometryToSearch);
-
-(window as any).map = map; // This has been done for automation test support

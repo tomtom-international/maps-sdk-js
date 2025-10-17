@@ -30,7 +30,7 @@
 //     const placesModule = await PlacesModule.init(map);
 //     placesModule.show(locations);
 //
-//     (window as any).map = map; // This has been done for automation test support
+//
 // };
 //
 // window.addEventListener("load", mapReachableRangesInit);

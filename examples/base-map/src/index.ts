@@ -14,4 +14,3 @@ const map = new TomTomMap({
     center: [4.8156, 52.4414],
     zoom: 8,
 });
-(window as any).map = map; // This has been done for automation test support

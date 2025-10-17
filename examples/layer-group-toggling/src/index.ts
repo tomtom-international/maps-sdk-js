@@ -53,5 +53,3 @@ standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
 stylesSelector.addEventListener('change', (event) =>
     map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
 );
-
-(window as any).map = map; // This has been done for automation test support

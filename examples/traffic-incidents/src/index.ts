@@ -9,5 +9,3 @@ const map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', center: [2.34281, 48.85639], zoom: 12 },
     { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
-
-(window as any).map = map; // This has been done for automation test support

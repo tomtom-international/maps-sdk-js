@@ -31,4 +31,3 @@ for (const language of mapLanguages) {
 languageSelector.addEventListener('change', (event) =>
     map.setLanguage((event.target as HTMLOptionElement).value as Language),
 );
-(window as any).map = map; // This has been done for automation test support
