@@ -9,7 +9,6 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-
 const map = new TomTomMap(
     { container: 'maps-sdk-js-examples-map-container', center: [4.89147, 52.37362], zoom: 17 },
     { style: 'monoLight' },
@@ -71,7 +70,6 @@ const onMapClick = async (_: any, lnglat: LngLat) => {
         showAddress({ geometry, address, lngLat: lnglat });
     }
 };
-
 
 // Initializing BaseMap module
 const basemap = await BaseMapModule.get(map);

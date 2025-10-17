@@ -2,7 +2,12 @@ import type { SectionType } from '@cet/maps-sdk-js/core';
 import { getGeoInputType, inputSectionTypesWithGuidance } from '@cet/maps-sdk-js/core';
 import { z } from 'zod/v4-mini';
 import { commonRoutingRequestSchema } from '../shared/schema/commonRoutingRequestSchema';
-import { featureSchema, geometrySchema, hasLngLatSchema, lineStringCoordsSchema } from '../shared/schema/geometriesSchema';
+import {
+    featureSchema,
+    geometrySchema,
+    hasLngLatSchema,
+    lineStringCoordsSchema,
+} from '../shared/schema/geometriesSchema';
 import type { SchemaRefinement } from '../shared/types/validation';
 import type { CalculateRouteParams } from './types/calculateRouteParams';
 

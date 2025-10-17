@@ -1,6 +1,10 @@
 import type { CommonServiceParams } from '../shared';
 import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
-import { appendByJoiningParamValue, appendCommonParams, appendOptionalParam } from '../shared/request/requestBuildingUtils';
+import {
+    appendByJoiningParamValue,
+    appendCommonParams,
+    appendOptionalParam,
+} from '../shared/request/requestBuildingUtils';
 import type { PlaceByIdParams } from './types';
 
 const buildUrlBasePath = (params: CommonServiceParams): string =>
