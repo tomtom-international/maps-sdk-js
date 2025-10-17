@@ -1,17 +1,18 @@
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
+import commonVitestConfig from '../shared-configs/vitest.config';
 
-export default defineConfig(({ mode }) => {
-    return {
-        test: {
-            testTimeout: 10000, // We have a generous test timeout mostly for integration tests
-            // For integration tests running from localhost:
-            ...(!process.env.CI && { env: loadEnv(mode, '../shared-configs', '') }),
+/// <reference types="vitest" />
+export default defineConfig(({ mode }) => ({
+    ...commonVitestConfig,
+    test: {
+        ...commonVitestConfig.test,
+        // For integration tests running from localhost:
+        ...(!process.env.CI && { env: loadEnv(mode, '../shared-configs', '') }),
+    },
+    resolve: {
+        alias: {
+            '@cet/maps-sdk-js/core': 'core',
         },
-        resolve: {
-            alias: {
-                '@cet/maps-sdk-js/core': 'core',
-            },
-        },
-    };
-});
+    },
+}));

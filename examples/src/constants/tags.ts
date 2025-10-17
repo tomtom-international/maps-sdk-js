@@ -54,7 +54,7 @@ export const TAG_GROUPS: TagGroup[] = [
                 id: 'ev',
                 label: 'Electric Vehicles',
             },
-             {
+            {
                 id: 'geometry',
                 label: 'Geometry',
             },

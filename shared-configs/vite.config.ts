@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import terser from '@rollup/plugin-terser';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, type UserConfig } from 'vite';
+import type { UserConfig } from 'vite';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
 const getSdkVersion = () => {

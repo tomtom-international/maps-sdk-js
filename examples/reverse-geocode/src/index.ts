@@ -9,7 +9,9 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const location = await reverseGeocode({ position: [5.112969, 52.090521] });
 const {
-    geometry: { coordinates: [longitude, latitude] },
+    geometry: {
+        coordinates: [longitude, latitude],
+    },
 } = location;
 
 const map = new TomTomMap({

@@ -9,7 +9,9 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const location = await geocode({ query: 'Amsterdam Centraal, Netherlands' });
 const {
-    geometry: { coordinates: [long, lat] },
+    geometry: {
+        coordinates: [long, lat],
+    },
 } = location.features[0];
 
 const map = new TomTomMap({
