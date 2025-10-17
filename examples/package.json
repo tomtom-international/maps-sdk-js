@@ -1,6 +1,6 @@
 {
   "name": "@cet/maps-sdk-js-examples",
-  "version": "0.21.2",
+  "version": "0.21.3",
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
   "module": "dist/examples.js",
