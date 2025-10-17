@@ -9,7 +9,7 @@ TomTomConfig.instance.put({
     language: 'en-GB',
 });
 
-const map = new TomTomMap({
+new TomTomMap({
     container: 'maps-sdk-js-examples-map-container',
     center: [4.8156, 52.4414],
     zoom: 8,
