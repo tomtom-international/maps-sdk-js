@@ -8,7 +8,10 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-let map: TomTomMap;
+const map = new TomTomMap(
+    { container: 'maps-sdk-js-examples-map-container', center: [-0.12634, 51.50276], zoom: 14 },
+    { language: 'en-GB', style: { type: 'standard', include: ['trafficIncidents'] } },
+);
 const popUp = new Popup({
     closeButton: true,
     closeOnClick: true,
@@ -136,11 +139,6 @@ const initBaseMapModule = async () => {
     baseModule.events.on('hover', () => popUp.isOpen() && popUp.remove());
     baseModule.events.on('click', showBasemapPopup);
 };
-
-map = new TomTomMap(
-    { container: 'maps-sdk-js-examples-map-container', center: [-0.12634, 51.50276], zoom: 14 },
-    { language: 'en-GB', style: { type: 'standard', include: ['trafficIncidents'] } },
-);
 
 map.mapLibreMap.addControl(new NavigationControl());
 map.mapLibreMap.on('dragstart', () => {

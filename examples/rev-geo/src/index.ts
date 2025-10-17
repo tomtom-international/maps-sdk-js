@@ -2,15 +2,18 @@ import { AddressProperties, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { BaseMapModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { reverseGeocode } from '@cet/maps-sdk-js/services';
 import type { Point } from 'geojson';
-import { LngLat, Map, Marker, Popup } from 'maplibre-gl';
+import { LngLat, Marker, Popup } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-let tomtomMap: TomTomMap;
-let mapLibreMap: Map;
+
+const map = new TomTomMap(
+    { container: 'maps-sdk-js-examples-map-container', center: [4.89147, 52.37362], zoom: 17 },
+    { style: 'monoLight' },
+);
 let isMarkerVisible = false;
 
 // Creating the pin and the dot using CSS
@@ -49,7 +52,7 @@ const showAddress = ({
        `,
         )
         .setLngLat(lngLat)
-        .addTo(mapLibreMap);
+        .addTo(map.mapLibreMap);
 };
 
 const onMapClick = async (_: any, lnglat: LngLat) => {
@@ -57,29 +60,24 @@ const onMapClick = async (_: any, lnglat: LngLat) => {
         removeMarkers();
     } else {
         // Initializing dot marker with the exactly coordinates where it was clicked
-        dotClickedMaker.setLngLat(lnglat).addTo(mapLibreMap);
+        dotClickedMaker.setLngLat(lnglat).addTo(map.mapLibreMap);
 
         const { properties, geometry } = await reverseGeocode({ position: [lnglat.lng, lnglat.lat] });
         const { originalPosition, address } = properties;
         const [lng, lat] = originalPosition;
 
-        revGeoMarker.setLngLat({ lat, lng }).addTo(mapLibreMap);
+        revGeoMarker.setLngLat({ lat, lng }).addTo(map.mapLibreMap);
         isMarkerVisible = true;
         showAddress({ geometry, address, lngLat: lnglat });
     }
 };
 
-tomtomMap = new TomTomMap(
-    { container: 'maps-sdk-js-examples-map-container', center: [4.89147, 52.37362], zoom: 17 },
-    { style: 'monoLight' },
-);
-mapLibreMap = tomtomMap.mapLibreMap;
 
 // Initializing BaseMap module
-const basemap = await BaseMapModule.get(tomtomMap);
+const basemap = await BaseMapModule.get(map);
 basemap.events.on('click', onMapClick);
 
 // Starting with a Pin in the map
 await onMapClick(undefined, { lng: 4.8907, lat: 52.37311 } as LngLat);
 
-(window as any).map = tomtomMap; // This has been done for automation test support
+(window as any).map = map; // This has been done for automation test support

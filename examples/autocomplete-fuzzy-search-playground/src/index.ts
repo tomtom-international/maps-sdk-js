@@ -22,8 +22,8 @@ const autoCompleteResultsList = document.getElementById('maps-sdk-js-examples-au
 const fuzzySearchResultsList = document.getElementById('maps-sdk-js-examples-fuzzySearchResults') as HTMLUListElement;
 const searchThisAreaButton = document.getElementById('maps-sdk-js-examples-search-this-area') as HTMLInputElement;
 
-let map: TomTomMap;
-let placesModule: PlacesModule;
+const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
+const placesModule = await PlacesModule.init(map);
 
 let selectedAutoCompleteSegment: AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment | undefined | null;
 
@@ -145,8 +145,6 @@ const autoCompleteSearch = async () => {
 const showSearchThisAreaButton = () =>
     (searchThisAreaButton.innerHTML = `<button class="maps-sdk-js-examples-search-this-area-btn">Search This Area</button>`);
 
-map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
-placesModule = await PlacesModule.init(map);
 map.mapLibreMap.on('moveend', () => {
     if (searchBox.value == selectedAutoCompleteSegment?.value) {
         showSearchThisAreaButton();

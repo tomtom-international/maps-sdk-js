@@ -13,11 +13,17 @@ TomTomConfig.instance.put({
     language: 'en-US',
 });
 
-let map: TomTomMap;
-let places: PlacesModule;
-let colorSelectors: NodeListOf<HTMLDivElement>;
-let fontSelectors: NodeListOf<HTMLInputElement>;
-let contentSelectors: NodeListOf<HTMLInputElement>;
+const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.90435, 52.36876], zoom: 10 });
+const places = await PlacesModule.init(map);
+
+const fontSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.maps-sdk-js-examples-font-selector');
+const contentSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll(
+    '.maps-sdk-js-examples-content-selector',
+);
+const colorSelectors: NodeListOf<HTMLDivElement> = document.querySelectorAll('.maps-sdk-js-examples-color-selector');
+colorSelectors.forEach((element) => {
+    element.style.backgroundColor = element.dataset.value ?? '';
+});
 
 const customIconsConfig: PlaceIconConfig = {
     customIcons: [
@@ -102,15 +108,7 @@ const listenToUIEvents = () => {
     });
 };
 
-map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.90435, 52.36876], zoom: 10 });
-places = await PlacesModule.init(map);
 await updatePlaces();
 map.mapLibreMap.on('moveend', updatePlaces);
-colorSelectors = document.querySelectorAll('.maps-sdk-js-examples-color-selector');
-fontSelectors = document.querySelectorAll('.maps-sdk-js-examples-font-selector');
-contentSelectors = document.querySelectorAll('.maps-sdk-js-examples-content-selector');
-colorSelectors.forEach((element) => {
-    element.style.backgroundColor = element.dataset.value ?? '';
-});
 listenToUIEvents();
 (window as any).map = map; // This has been done for automation test support

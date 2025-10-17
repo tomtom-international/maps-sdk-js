@@ -12,9 +12,10 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const fitBoundsOptions = { padding: 50 };
 
-let map: TomTomMap;
-let placesModule: PlacesModule;
-let geometryModule: GeometriesModule;
+const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', zoom: 2 }, { language: 'en-GB' });
+const placesModule = await PlacesModule.init(map);
+const geometryModule = await GeometriesModule.init(map);
+
 let placeToSearchBBox: LngLatBoundsLike;
 
 // inverts the polygon, so it looks like a hole on the map instead
@@ -58,10 +59,6 @@ const listenToUserEvents = () => {
         ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
 };
 
-// we initialize the map directly in the first search content:
-map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', zoom: 2 }, { language: 'en-GB' });
-placesModule = await PlacesModule.init(map);
-geometryModule = await GeometriesModule.init(map);
 listenToUserEvents();
 
 (window as any).map = map; // This has been done for automation test support

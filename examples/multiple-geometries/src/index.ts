@@ -19,8 +19,8 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 
 const fitBoundsOptions = { padding: 50 };
 
-let map: TomTomMap;
-let geometry: GeometriesModule;
+const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', fitBoundsOptions });
+const geometry = await GeometriesModule.init(map);
 let placeSubdivisions: Places;
 
 const updateMap = async (config: Config) => {
@@ -58,8 +58,6 @@ const listenToUIEvents = async () => {
         );
 };
 
-map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', fitBoundsOptions });
-geometry = await GeometriesModule.init(map);
 await updateMap(namedConfigs.france);
 await listenToUIEvents();
 (window as any).map = map; // This has been done for automation test support

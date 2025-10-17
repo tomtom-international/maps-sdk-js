@@ -8,8 +8,12 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-let map: TomTomMap;
-let placesModule: PlacesModule;
+const map = new TomTomMap(
+    { container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 },
+    { language: 'en-GB' },
+);
+
+const placesModule = await PlacesModule.init(map);
 
 const showSearchResultsList = (places: Places) => {
     const searchResultsList = document.querySelector('#maps-sdk-js-examples-searchResults') as HTMLUListElement;
@@ -52,13 +56,6 @@ const listenToUserEvents = () => {
         searchAndDisplayResults(searchBox.value, searchLocationModeSelector.value),
     );
 };
-
-map = new TomTomMap(
-    { container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 },
-    { language: 'en-GB' },
-);
-
-placesModule = await PlacesModule.init(map);
 
 listenToUserEvents();
 (window as any).map = map; // This has been done for automation test support

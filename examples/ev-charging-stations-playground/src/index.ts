@@ -42,13 +42,64 @@ const popUp = new Popup({
     className: 'maps-sdk-js-popup',
 });
 
-let map: TomTomMap;
-let mapIncidents: TrafficIncidentsModule;
-let mapBasePOIs: POIsModule;
-let mapEVStations: PlacesModule;
-let mapSearchedEVStations: PlacesModule;
-let selectedEVStation: PlacesModule;
-let mapGeometry: GeometriesModule;
+const map = new TomTomMap(
+    {
+        container: 'maps-sdk-js-examples-map-container',
+        center: [2.3597, 48.85167],
+        zoom: 11,
+        fitBoundsOptions,
+    },
+    {
+        language: 'en-GB',
+        style: { type: 'standard', include: ['trafficIncidents'] },
+    },
+);
+const mapIncidents = await TrafficIncidentsModule.get(map);
+const mapBasePOIs = await POIsModule.get(map, {
+    filters: {
+        categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
+    },
+});
+const mapEVStations = await PlacesModule.init(map, {
+    iconConfig: { iconStyle: 'poi-like' },
+});
+
+const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): string => {
+    const availability = getChargingPointAvailability(place);
+    return availability ? `${availability.availableCount}/${availability.totalCount}` : '';
+};
+
+const evStationPinConfig: PlacesModuleConfig = {
+    extraFeatureProps: {
+        availabilityText: buildAvailabilityText,
+        availabilityRatio: (place: Place) => getChargingPointAvailability(place)?.ratio ?? 0,
+    },
+    textConfig: {
+        textField: [
+            'format',
+            ['get', 'title'],
+            {},
+            '\n',
+            {},
+            ['get', 'availabilityText'],
+            {
+                'font-scale': 1.1,
+                'text-color': [
+                    'case',
+                    ['>=', ['get', 'availabilityRatio'], 0.25],
+                    'green',
+                    ['>', ['get', 'availabilityRatio'], 0],
+                    'orange',
+                    'red',
+                ],
+            },
+        ],
+    },
+};
+
+const mapSearchedEVStations = await PlacesModule.init(map, evStationPinConfig);
+const selectedEVStation = await PlacesModule.init(map, evStationPinConfig);
+const mapGeometry = await GeometriesModule.init(map);
 
 let minPowerKWMapEVStations = 50;
 let minPowerKWSearchedEVStations = 0;
@@ -225,66 +276,9 @@ const getChargingPointAvailability = (
     return undefined;
 };
 
-const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): string => {
-    const availability = getChargingPointAvailability(place);
-    return availability ? `${availability.availableCount}/${availability.totalCount}` : '';
-};
-
-map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        center: [2.3597, 48.85167],
-        zoom: 11,
-        fitBoundsOptions,
-    },
-    {
-        language: 'en-GB',
-        style: { type: 'standard', include: ['trafficIncidents'] },
-    },
-);
 map.mapLibreMap.addControl(new NavigationControl(), 'bottom-right');
-mapIncidents = await TrafficIncidentsModule.get(map);
-mapBasePOIs = await POIsModule.get(map, {
-    filters: {
-        categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
-    },
-});
-mapEVStations = await PlacesModule.init(map, {
-    iconConfig: { iconStyle: 'poi-like' },
-});
-const evStationPinConfig: PlacesModuleConfig = {
-    extraFeatureProps: {
-        availabilityText: buildAvailabilityText,
-        availabilityRatio: (place: Place) => getChargingPointAvailability(place)?.ratio ?? 0,
-    },
-    textConfig: {
-        textField: [
-            'format',
-            ['get', 'title'],
-            {},
-            '\n',
-            {},
-            ['get', 'availabilityText'],
-            {
-                'font-scale': 1.1,
-                'text-color': [
-                    'case',
-                    ['>=', ['get', 'availabilityRatio'], 0.25],
-                    'green',
-                    ['>', ['get', 'availabilityRatio'], 0],
-                    'orange',
-                    'red',
-                ],
-            },
-        ],
-    },
-};
 
-mapSearchedEVStations = await PlacesModule.init(map, evStationPinConfig);
-selectedEVStation = await PlacesModule.init(map, evStationPinConfig);
-mapGeometry = await GeometriesModule.init(map);
 await updateMapEVStations();
-
 await listenToMapUserEvents();
 listenToHTMLUserEvents();
 
