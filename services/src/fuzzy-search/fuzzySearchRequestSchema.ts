@@ -1,6 +1,6 @@
 import { z } from 'zod/v4-mini';
 import { commonSearchParamsSchema } from '../search/commonSearchParamsSchema';
-import { commonGeocodeAndFuzzySearchParamsSchema } from '../shared/commonGeocodeAndFuzzySearchParamsSchema';
+import { commonGeocodeAndFuzzySearchParamsSchema } from '../shared/schema/commonGeocodeAndFuzzySearchParamsSchema';
 
 const fuzzySearchRequestOptional = z.partial(
     z.object({

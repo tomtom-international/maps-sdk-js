@@ -1,6 +1,6 @@
 import { z } from 'zod/v4-mini';
-import { commonGeocodeAndFuzzySearchParamsSchema } from '../shared/commonGeocodeAndFuzzySearchParamsSchema';
-import { commonPlacesParamsSchema } from '../shared/commonPlacesParamsSchema';
+import { commonGeocodeAndFuzzySearchParamsSchema } from '../shared/schema/commonGeocodeAndFuzzySearchParamsSchema';
+import { commonPlacesParamsSchema } from '../shared/schema/commonPlacesParamsSchema';
 
 /**
  * @ignore

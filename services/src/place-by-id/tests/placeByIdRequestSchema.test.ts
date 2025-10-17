@@ -2,8 +2,8 @@ import type { Language } from '@cet/maps-sdk-js/core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
 import placeByIdReqObjects from '../../place-by-id/tests/requestBuilderPerf.data.json';
+import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
-import { validateRequestSchema } from '../../shared/validation';
 import { placeByIdRequestSchema } from '../placeByIdSchema';
 import type { PlaceByIdParams } from '../types';
 

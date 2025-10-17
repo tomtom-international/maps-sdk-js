@@ -1,5 +1,4 @@
 import { isNil } from 'lodash-es';
-import { appendByRepeatingParamName } from './requestBuildingUtils';
 import {
     CombustionEngineModel,
     ConsumptionModelEfficiency,
@@ -8,11 +7,12 @@ import {
     SpeedToConsumptionRate,
     VehicleEngineModel,
     VehicleEngineType,
-} from './types/vehicleEngineParams';
-import { VehicleDimensions } from './types/vehicleModel';
-import { ElectricVehicleParams, VehicleParameters } from './types/vehicleParams';
-import { ChargingPreferencesKWH, ChargingPreferencesPCT } from './types/vehiclePreferences';
-import { ElectricVehicleStateKWH, ElectricVehicleStatePCT, VehicleState } from './types/vehicleState';
+} from '../types/vehicleEngineParams';
+import { VehicleDimensions } from '../types/vehicleModel';
+import { ElectricVehicleParams, VehicleParameters } from '../types/vehicleParams';
+import { ChargingPreferencesKWH, ChargingPreferencesPCT } from '../types/vehiclePreferences';
+import { ElectricVehicleStateKWH, ElectricVehicleStatePCT, VehicleState } from '../types/vehicleState';
+import { appendByRepeatingParamName } from './requestBuildingUtils';
 
 const appendConsumptionEfficiency = (urlParams: URLSearchParams, efficiency?: ConsumptionModelEfficiency): void => {
     if (efficiency) {

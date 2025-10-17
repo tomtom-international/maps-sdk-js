@@ -1,8 +1,8 @@
 import { bboxFromGeoJSON } from '@cet/maps-sdk-js/core';
 import { isNil } from 'lodash-es';
 import { arrayToCSV } from '../shared/arrays';
-import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
-import { appendCommonParams, appendLatLonParamsFromPosition } from '../shared/requestBuildingUtils';
+import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import { appendCommonParams, appendLatLonParamsFromPosition } from '../shared/request/requestBuildingUtils';
 import type { GeocodingParams } from './types/geocodingParams';
 
 const buildUrlBasePath = (params: GeocodingParams): string =>

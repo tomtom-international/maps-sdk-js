@@ -262,13 +262,13 @@ export type ElectricConsumptionModel = ConsumptionModelBase & {
 /**
  * The available engine types.
  */
-export const engineTypes = ['combustion', 'electric', undefined] as const;
+export const engineTypes = ['combustion', 'electric'] as const;
 
 /**
  * The engine type of the vehicle.
  * * When a detailed Consumption model is specified, it must be consistent with the provided engine type.
  */
-export type VehicleEngineType = (typeof engineTypes)[number];
+export type VehicleEngineType = (typeof engineTypes)[number] | undefined;
 
 export type ElectricEngineModel = {
     /**

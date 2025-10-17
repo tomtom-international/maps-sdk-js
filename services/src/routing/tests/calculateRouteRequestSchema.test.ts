@@ -1,7 +1,7 @@
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
+import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
-import { validateRequestSchema } from '../../shared/validation';
 import { routeRequestValidationConfig } from '../calculateRouteRequestSchema';
 import type { CalculateRouteParams } from '../types/calculateRouteParams';
 import { routeRequestParams } from './requestBuilderPerf.data';

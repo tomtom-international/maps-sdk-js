@@ -1,7 +1,7 @@
 import type { Place, Places } from '@cet/maps-sdk-js/core';
 import { arrayToCSV } from '../shared/arrays';
-import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
-import { appendOptionalParam } from '../shared/requestBuildingUtils';
+import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import { appendOptionalParam } from '../shared/request/requestBuildingUtils';
 import type { GeometriesInput, GeometryParams } from './types/geometryDataParams';
 
 const buildUrlBasePath = (params: GeometryParams): string =>

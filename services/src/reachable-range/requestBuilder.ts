@@ -1,7 +1,7 @@
 import { getPositionStrict } from '@cet/maps-sdk-js/core';
-import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
+import { appendCommonRoutingParams } from '../shared/request/commonRoutingRequestBuilder';
 import { positionToCSVLatLon } from '../shared/geometry';
-import { appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
+import { appendCommonParams, appendOptionalParam } from '../shared/request/requestBuildingUtils';
 import type { ReachableRangeParams } from './types/reachableRangeParams';
 
 // import { ElectricVehicleEngine } from "../shared/types/vehicleEngineParams";

@@ -1,6 +1,6 @@
 import { z } from 'zod/v4-mini';
 import { commonSearchParamsSchema } from '../search/commonSearchParamsSchema';
-import { featureCollectionSchema, geometrySchema } from '../shared/geometriesSchema';
+import { featureCollectionSchema, geometrySchema } from '../shared/schema/geometriesSchema';
 
 const geometrySearchRequestMandatory = z.object({
     geometries: z.array(z.union([featureCollectionSchema, geometrySchema])),

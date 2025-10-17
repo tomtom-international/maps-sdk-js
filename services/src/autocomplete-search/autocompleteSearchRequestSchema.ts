@@ -1,5 +1,5 @@
 import { z } from 'zod/v4-mini';
-import { hasLngLatSchema } from '../shared/geometriesSchema';
+import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
 
 const autocompleteSearchRequestMandatory = z.object({
     query: z.string(),

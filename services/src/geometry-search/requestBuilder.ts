@@ -2,7 +2,7 @@ import { bboxFromCoordsArray } from '@cet/maps-sdk-js/core';
 import type { MultiPolygon, Position } from 'geojson';
 import type { PostObject } from '../shared';
 import { sampleWithinMaxLength } from '../shared/arrays';
-import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
 import { positionToCSVLatLon } from '../shared/geometry';
 import type { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from './types';
 

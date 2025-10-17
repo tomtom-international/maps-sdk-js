@@ -17,9 +17,13 @@ import type { Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
 import type { FetchInput } from '../shared';
 import { VehiclePreferences } from '../shared';
-import { appendCommonRoutingParams } from '../shared/commonRoutingRequestBuilder';
 import { positionToCSVLatLon } from '../shared/geometry';
-import { appendByRepeatingParamName, appendCommonParams, appendOptionalParam } from '../shared/requestBuildingUtils';
+import { appendCommonRoutingParams } from '../shared/request/commonRoutingRequestBuilder';
+import {
+    appendByRepeatingParamName,
+    appendCommonParams,
+    appendOptionalParam,
+} from '../shared/request/requestBuildingUtils';
 import { ExplicitVehicleModel } from '../shared/types/vehicleModel';
 import type { CalculateRoutePOSTDataAPI, PointWaypointAPI } from './types/apiRequestTypes';
 import type { LatitudeLongitudePointAPI } from './types/apiResponseTypes';

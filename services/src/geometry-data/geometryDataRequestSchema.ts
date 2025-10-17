@@ -1,5 +1,5 @@
 import { z } from 'zod/v4-mini';
-import { featureCollectionSchema, featureSchema } from '../shared/geometriesSchema';
+import { featureCollectionSchema, featureSchema } from '../shared/schema/geometriesSchema';
 
 const geometryDataRequestMandatory = z.object({
     geometries: z.union([

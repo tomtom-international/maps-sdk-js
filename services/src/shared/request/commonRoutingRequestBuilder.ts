@@ -1,6 +1,6 @@
+import type { CommonRoutingParams, DepartArriveParams } from '../types/commonRoutingParams';
 import { appendByRepeatingParamName, appendOptionalParam } from './requestBuildingUtils';
 import { appendVehicleParams } from './routingVehicleParamsBuilder';
-import type { CommonRoutingParams, DepartArriveParams } from './types/commonRoutingParams';
 
 const appendWhenParams = (urlParams: URLSearchParams, when?: DepartArriveParams): void => {
     if (when?.date) {

@@ -1,6 +1,6 @@
 import { z } from 'zod/v4-mini';
-import { commonRoutingRequestSchema } from '../shared/commonRoutingRequestSchema';
-import { hasLngLatSchema } from '../shared/geometriesSchema';
+import { commonRoutingRequestSchema } from '../shared/schema/commonRoutingRequestSchema';
+import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
 import { budgetTypes } from './types/reachableRangeParams';
 
 // import { SchemaRefinement } from "../shared/types/validation";

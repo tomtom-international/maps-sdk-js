@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { validateRequestSchema } from '../../shared/validation';
+import { validateRequestSchema } from '../../shared/schema/validation';
 import { reachableRangeRequestValidationConfig } from '../reachableRangeRequestSchema';
 import type { ReachableRangeParams } from '../types/reachableRangeParams';
 

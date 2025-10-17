@@ -1,6 +1,6 @@
 import { currentTypes, plugTypes } from '@cet/maps-sdk-js/core';
 import { z } from 'zod/v4-mini';
-import { loadTypes } from './types/vehicleRestrictionParams';
+import { loadTypes } from '../types/vehicleRestrictionParams';
 
 // Common validation schemas
 const positiveNumber = z.number().check(z.positive());

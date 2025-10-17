@@ -1,10 +1,10 @@
-import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
+import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
 import {
     appendByJoiningParamValue,
     appendCommonParams,
     appendLatLonParamsFromPosition,
     appendOptionalParam,
-} from '../shared/requestBuildingUtils';
+} from '../shared/request/requestBuildingUtils';
 import type { AutocompleteSearchParams } from './types';
 
 const buildUrlBasePath = (mergedOptions: AutocompleteSearchParams): string =>

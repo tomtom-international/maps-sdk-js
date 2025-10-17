@@ -1,7 +1,7 @@
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
+import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
-import { validateRequestSchema } from '../../shared/validation';
 import { evChargingStationsAvailabilityRequestSchema } from '../evChargingStationsAvailabilityRequestSchema';
 import type { ChargingStationsAvailabilityParams } from '../types/evChargingStationsAvailabilityParams';
 

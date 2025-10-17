@@ -2,8 +2,8 @@ import { getPositionStrict } from '@cet/maps-sdk-js/core';
 import { isNil } from 'lodash-es';
 import type { CommonServiceParams } from '../shared';
 import { arrayToCSV } from '../shared/arrays';
-import { PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
-import { appendCommonParams } from '../shared/requestBuildingUtils';
+import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import { appendCommonParams } from '../shared/request/requestBuildingUtils';
 import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
 
 const buildUrlBasePath = (params: CommonServiceParams): string =>

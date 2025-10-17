@@ -1,6 +1,6 @@
 import { views } from '@cet/maps-sdk-js/core';
 import { z } from 'zod/v4-mini';
-import { hasLngLatSchema } from '../shared/geometriesSchema';
+import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
 
 const revGeocodeRequestMandatory = z.object({
     position: hasLngLatSchema,

@@ -1,7 +1,7 @@
 import { bboxFromGeoJSON } from '@cet/maps-sdk-js/core';
 import { arrayToCSV } from '../shared/arrays';
-import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/commonSearchRequestBuilder';
-import { appendByJoiningParamValue, appendOptionalParam } from '../shared/requestBuildingUtils';
+import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import { appendByJoiningParamValue, appendOptionalParam } from '../shared/request/requestBuildingUtils';
 import type { FuzzySearchParams } from './types';
 
 const buildUrlBasePath = (mergedOptions: FuzzySearchParams): string =>

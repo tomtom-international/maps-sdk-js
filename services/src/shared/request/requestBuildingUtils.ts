@@ -1,8 +1,8 @@
 import type { HasLngLat, POICategory } from '@cet/maps-sdk-js/core';
 import { getPosition } from '@cet/maps-sdk-js/core';
 import { isNil } from 'lodash-es';
-import { poiCategoriesToID } from '../poi-categories/poiCategoriesToID';
-import type { CommonServiceParams } from './serviceTypes';
+import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
+import type { CommonServiceParams } from '../serviceTypes';
 
 /**
  * @ignore

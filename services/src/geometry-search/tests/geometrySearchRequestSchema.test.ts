@@ -1,8 +1,8 @@
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
 import geometrySearchReqObjects from '../../geometry-search/tests/requestBuilderPerf.data.json';
+import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
-import { validateRequestSchema } from '../../shared/validation';
 import { geometrySearchRequestSchema } from '../geometrySearchRequestSchema';
 import type { GeometrySearchParams, SearchGeometryInput } from '../types';
 

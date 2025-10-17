@@ -1,5 +1,5 @@
-import type { FuzzySearchParams } from '../fuzzy-search';
-import type { GeometrySearchParams } from '../geometry-search';
+import type { FuzzySearchParams } from '../../fuzzy-search';
+import type { GeometrySearchParams } from '../../geometry-search';
 import {
     appendByJoiningParamValue,
     appendCommonParams,
@@ -16,7 +16,7 @@ export const PLACES_URL_PATH = '/maps/orbis/places';
 /**
  * Appends request parameters common to search APIs such as fuzzy + geometry search.
  * * Mutates the given searchURL with the appended parameters.
- * @param searchURL The search URL to append parameters to. Should come without any parameters at this point.
+ * @param searchUrl The search URL to append parameters to. Should come without any parameters at this point.
  * @param params The search parameters, with global configuration already merged into them.
  */
 export const appendCommonSearchParams = (searchUrl: URL, params: FuzzySearchParams | GeometrySearchParams): void => {
