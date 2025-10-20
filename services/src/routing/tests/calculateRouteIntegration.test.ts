@@ -309,7 +309,7 @@ describe('Calculate route integration tests', () => {
             expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
             // Expected PCT available because we defined maxChargeKWH in vehicle model:
             // param is min 10% at stops:
-            expect(leg.summary.chargingInformationAtEndOfLeg?.targetChargePCT).toBeGreaterThanOrEqual(10);
+            expect(leg.summary.chargingInformationAtEndOfLeg?.targetChargeInPCT).toBeGreaterThanOrEqual(10);
         }
 
         // the last leg has some particularities

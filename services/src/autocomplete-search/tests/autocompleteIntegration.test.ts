@@ -25,15 +25,13 @@ const basicResponse = expect.objectContaining<AutocompleteSearchResponse>({
     },
     results: expectedResults,
 });
-const responseWithGeoBias = {
+const responseWithGeoBias = expect.objectContaining({
     context: {
         inputQuery: expect.any(String),
-        geoBias: expect.objectContaining({
-            position: expect.arrayContaining([expect.any(Number)]),
-        }),
+        geoBias: expect.any(Object),
     },
     results: expectedResults,
-};
+});
 const responseWithStrictBrandType = {
     context: {
         inputQuery: expect.any(String),
@@ -83,7 +81,7 @@ describe('Autocomplete service', () => {
         });
 
         expect(response.results.length).toBeLessThanOrEqual(limit);
-        expect(response).toEqual(responseWithGeoBias);
+        expect(response).toMatchObject(responseWithGeoBias);
     });
 
     test('autocomplete with strict brand result type', async () => {

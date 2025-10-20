@@ -3,62 +3,192 @@ import type { SourceWithLayers } from './mapsSDKLayerSpecs';
 
 /**
  * Subtype for click events.
- * * click: regular click or tap
- * * contextmenu: right-click
+ *
+ * @remarks
+ * - `click`: Regular left-click or tap on touch devices
+ * - `contextmenu`: Right-click (or long-press on touch devices)
+ *
+ * @example
+ * ```typescript
+ * const clickType: ClickEventType = 'click';
+ * const rightClick: ClickEventType = 'contextmenu';
+ * ```
+ *
+ * @group Events
+ * @category Types
  */
 export type ClickEventType = 'click' | 'contextmenu';
 
 /**
- * Subtype for hover events.
- * * hover: immediate hover
- * * long-hover: hovering over an item for long enough (depending on config, usually more than half a second)
+ * Subtype for hover events with timing distinction.
+ *
+ * @remarks
+ * - `hover`: Immediate hover when cursor enters a feature
+ * - `long-hover`: Triggered after hovering for a configured duration (typically 300-800ms)
+ *
+ * Long-hover is useful for showing detailed tooltips or previews without
+ * cluttering the UI during quick mouse movements.
+ *
+ * @example
+ * ```typescript
+ * const quickHover: HoverEventType = 'hover';
+ * const sustainedHover: HoverEventType = 'long-hover';
+ * ```
+ *
+ * @group Events
+ * @category Types
  */
 export type HoverEventType = 'hover' | 'long-hover';
 
 /**
  * Type of user event supported by the SDK beyond basic MapLibre support.
+ *
+ * @remarks
+ * The SDK extends MapLibre's basic event handling with additional event types
+ * that are commonly needed for interactive map features.
+ *
+ * @example
+ * ```typescript
+ * const eventType: EventType = 'click';
+ * const hoverEvent: EventType = 'long-hover';
+ * ```
+ *
+ * @group Events
+ * @category Types
  */
 export type EventType = ClickEventType | HoverEventType;
 
 /**
  * Parameters to update the event state of a feature programmatically.
+ *
+ * Allows you to manually set event states on features, useful for:
+ * - Programmatic selection/highlighting
+ * - Keyboard navigation
+ * - External state synchronization
+ * - Testing and automation
+ *
+ * @example
+ * ```typescript
+ * // Select a feature programmatically
+ * const options: PutEventStateOptions = {
+ *   index: 0,
+ *   state: 'click',
+ *   mode: 'put',  // Remove click state from other features
+ *   show: true
+ * };
+ *
+ * // Add hover state without affecting others
+ * const hoverOptions: PutEventStateOptions = {
+ *   index: 2,
+ *   state: 'hover',
+ *   mode: 'add',  // Keep other hover states
+ *   show: true
+ * };
+ * ```
+ *
+ * @group Events
+ * @category Types
  */
 export type PutEventStateOptions = {
     /**
      * The index of the feature in the feature array.
+     *
+     * @remarks
+     * Zero-based index referring to the position in the features array
+     * that was passed to the module's show method.
      */
     index: number;
 
     /**
      * The event state to set.
+     *
+     * @remarks
+     * Can be any supported event type: 'click', 'contextmenu', 'hover', or 'long-hover'.
      */
     state: EventType;
 
     /**
-     * Whether to:
-     * * put: set the event state in this feature and remove it from any feature having the same. Default mode.
-     * * add: set the event state in this feature regardless of what other features already have.
-     * @default put
+     * Whether to replace or add to existing event states.
+     *
+     * @remarks
+     * - `put`: Set the event state on this feature and remove it from all others (default)
+     * - `add`: Set the event state on this feature while preserving states on other features
+     *
+     * @default 'put'
+     *
+     * @example
+     * ```typescript
+     * // Exclusive selection (only one can be clicked at a time)
+     * mode: 'put'
+     *
+     * // Multiple selection (keep existing selections)
+     * mode: 'add'
+     * ```
      */
     mode?: 'put' | 'add';
 
     /**
      * Whether to show the feature after updating the event state.
-     * * Defaults to true. Set to false only if you want to keep manipulating the features before showing them.
+     *
+     * @remarks
+     * Set to false only if you want to make multiple state changes before
+     * rendering, which can improve performance for batch updates.
+     *
      * @default true
+     *
+     * @example
+     * ```typescript
+     * // Update and render immediately
+     * show: true
+     *
+     * // Update without rendering (for batch operations)
+     * show: false
+     * ```
      */
     show?: boolean;
 };
 
+/**
+ * Parameters to clean the event state from a specific feature.
+ *
+ * Removes event states from a feature, returning it to its normal appearance.
+ * Useful for deselecting or unhighlighting features programmatically.
+ *
+ * @example
+ * ```typescript
+ * // Remove all event states from a feature
+ * const options: CleanEventStateOptions = {
+ *   index: 0,
+ *   show: true
+ * };
+ *
+ * // Clean without immediately rendering
+ * const batchOptions: CleanEventStateOptions = {
+ *   index: 5,
+ *   show: false
+ * };
+ * ```
+ *
+ * @group Events
+ * @category Types
+ */
 export type CleanEventStateOptions = {
     /**
      * The index of the feature in the feature array.
+     *
+     * @remarks
+     * Zero-based index referring to the position in the features array
+     * that was passed to the module's show method.
      */
     index: number;
 
     /**
      * Whether to show the feature after cleaning the event state.
-     * * Defaults to true. Set to false only if you want to keep manipulating the features before showing them.
+     *
+     * @remarks
+     * Set to false only if you want to keep manipulating features before
+     * showing them, which can improve performance for batch updates.
+     *
      * @default true
      */
     show?: boolean;
@@ -66,17 +196,58 @@ export type CleanEventStateOptions = {
 
 /**
  * Parameters to clean event states for a collection of shown features.
+ *
+ * Bulk operation for removing event states from multiple features at once.
+ * More efficient than cleaning features individually.
+ *
+ * @example
+ * ```typescript
+ * // Remove all event states from all features
+ * const cleanAll: CleanEventStatesOptions = {};
+ *
+ * // Remove only click states
+ * const cleanClicks: CleanEventStatesOptions = {
+ *   states: ['click']
+ * };
+ *
+ * // Remove hover states without rendering
+ * const cleanHovers: CleanEventStatesOptions = {
+ *   states: ['hover', 'long-hover'],
+ *   show: false
+ * };
+ * ```
+ *
+ * @group Events
+ * @category Types
  */
 export type CleanEventStatesOptions = {
     /**
      * The event states to clean.
-     * * If none are supplied, then any event states will be cleaned.
+     *
+     * @remarks
+     * If not supplied, all event states will be cleaned from all features.
+     *
+     * @example
+     * ```typescript
+     * // Clean only click states
+     * states: ['click']
+     *
+     * // Clean all hover-related states
+     * states: ['hover', 'long-hover']
+     *
+     * // Clean everything (same as omitting)
+     * states: ['click', 'contextmenu', 'hover', 'long-hover']
+     * ```
      */
     states?: EventType[];
 
     /**
      * Whether to show the feature after cleaning the event state.
-     * * Defaults to true. Set to false only if you want to keep manipulating the features before showing them.
+     *
+     * @remarks
+     * Set to false only if you want to keep manipulating features before
+     * showing them, which can improve performance for batch updates.
+     *
      * @default true
      */
     show?: boolean;
@@ -84,13 +255,50 @@ export type CleanEventStatesOptions = {
 
 /**
  * Properties part for an object that can have event state.
+ *
+ * Features with this type can store their current event state (click, hover, etc.),
+ * which is used for styling and interaction handling.
+ *
+ * @remarks
+ * This is typically mixed into feature properties to track interactive states.
+ * The SDK automatically manages these states based on user interactions.
+ *
+ * @example
+ * ```typescript
+ * // Feature with click state
+ * const featureProps: SupportsEvents = {
+ *   eventState: 'click'
+ * };
+ *
+ * // Feature with hover state
+ * const hoveredProps: SupportsEvents = {
+ *   eventState: 'hover'
+ * };
+ *
+ * // Feature with no event state
+ * const normalProps: SupportsEvents = {};
+ * ```
+ *
+ * @group Events
+ * @category Types
  */
 export type SupportsEvents = {
+    /**
+     * Current event state of the feature.
+     *
+     * @remarks
+     * - `undefined`: No active event state (normal appearance)
+     * - Event type: Active state that affects styling and behavior
+     *
+     * This property is automatically managed by the SDK based on user
+     * interactions and programmatic state changes.
+     */
     eventState?: EventType;
 };
 
 /**
  * Handler for a user event (such as click or hover).
+ *
  * @param topFeature The top target feature for the event, which matches the event coordinates and is also on top of any other matching features.
  * For GeoJSON (added data) modules topFeature is mapped to the original feature being sent to "show" method.
  * For vector tile (based on map style) modules, it will be mapped to a type derived from the map feature itself (based on `MapGeoJSONFeature`).

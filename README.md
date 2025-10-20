@@ -13,7 +13,7 @@
 
 <br/>
 
-Maps SDK JS is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://developer.tomtom.com/).
+Maps SDK JS is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
 
 <a href="https://latest.examples.maps-sdk-js.tomtom.com">
     <img src="documentation/images/sdk-examples-collage.png" style="width: 800px" alt="Example Thumbnails">
@@ -38,16 +38,18 @@ Additionally:
 
 Explore comprehensive guides and interactive examples to get the most out of Maps SDK JS:
 
-### 📖 Complete Documentation
-- **[Getting Started Guide](https://docs.tomtom.com/maps-sdk-js/introduction/overview)** - Introduction and key features
-- **[Project Setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup)** - Step-by-step setup instructions
-- **[API Reference](https://docs.tomtom.com/maps-sdk-js/reference/overview)** - Complete API documentation
-
 ### 🚀 Interactive Examples
 - **[Live Examples](https://docs.tomtom.com/maps-sdk-js/examples/)** - Try the SDK in your browser
+
+### 📖 Documentation
+- **[Getting Started Guide](https://docs.tomtom.com/maps-sdk-js/introduction/overview)** - Introduction and key features
+- **[Project Setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup)** - Step-by-step setup instructions
 - **[Map Guides](https://docs.tomtom.com/maps-sdk-js/guides/map/)** - Display and configure interactive maps
 - **[Services Guides](https://docs.tomtom.com/maps-sdk-js/guides/services/)** - Search, routing, and geocoding
 - **[Core Utilities](https://docs.tomtom.com/maps-sdk-js/guides/core/)** - Common configurations and utilities
+
+### 📋 API Reference
+- **[API Reference](https://docs.tomtom.com/maps-sdk-js/reference/overview)** - Complete API documentation
 
 ### 📝 Latest Updates
 - **[Release Notes](https://docs.tomtom.com/maps-sdk-js/overview/release-notes)** - What's new and breaking changes

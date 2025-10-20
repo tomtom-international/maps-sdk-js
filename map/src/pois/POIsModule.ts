@@ -41,18 +41,124 @@ type PoIsSourcesAndLayers = {
 };
 
 /**
- * Vector tile POIs map module.
- * * Refers to the POIs layer from the vector map.
+ * POIs Module for controlling Points of Interest displayed in the map style.
+ *
+ * This module manages the built-in POI layer from the vector map, allowing you to
+ * show/hide POIs and filter them by category. POIs are already part of the map style
+ * and include businesses, landmarks, and other points of interest.
+ *
+ * @remarks
+ * **Features:**
+ * - Toggle POI visibility on/off
+ * - Filter by POI categories or category groups
+ * - Event handling for POI interactions
+ * - Based on vector tile data in the map style
+ *
+ * **POI Categories:**
+ * - Individual categories (e.g., RESTAURANT, HOTEL_MOTEL, PARKING_GARAGE)
+ * - Category groups (e.g., FOOD_DRINKS_GROUP, SHOPPING_GROUP, TRANSPORTATION_GROUP)
+ *
+ * **Difference from PlacesModule:**
+ * - POIsModule: Controls existing POIs in the map style
+ * - PlacesModule: Displays custom place data from Search API or other sources
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * import { POIsModule } from '@tomtom-international/maps-sdk-js/map';
+ *
+ * // Get module
+ * const pois = await POIsModule.get(map);
+ *
+ * // Toggle visibility
+ * pois.setVisible(false);
+ * pois.setVisible(true);
+ * ```
+ *
+ * @example
+ * Filter specific categories:
+ * ```typescript
+ * // Show only restaurants and hotels
+ * pois.filterCategories({
+ *   show: 'only',
+ *   values: ['RESTAURANT', 'HOTEL_MOTEL']
+ * });
+ *
+ * // Hide parking garages
+ * pois.filterCategories({
+ *   show: 'all_except',
+ *   values: ['PARKING_GARAGE', 'OPEN_PARKING_AREA']
+ * });
+ * ```
+ *
+ * @example
+ * Filter using category groups:
+ * ```typescript
+ * // Show only food and shopping POIs
+ * pois.filterCategories({
+ *   show: 'only',
+ *   values: ['FOOD_DRINKS_GROUP', 'SHOPPING_GROUP']
+ * });
+ *
+ * // Hide transportation POIs
+ * pois.filterCategories({
+ *   show: 'all_except',
+ *   values: ['TRANSPORTATION_GROUP']
+ * });
+ * ```
+ *
+ * @example
+ * Event handling:
+ * ```typescript
+ * pois.events.on('click', (feature, lngLat) => {
+ *   console.log('Clicked POI:', feature.properties.name);
+ *   console.log('Category:', feature.properties.category);
+ * });
+ * ```
+ *
+ * @see [POIs Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/pois)
+ *
+ * @group Map Modules
+ * @category POIs
  */
 export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModuleConfig> {
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
     private originalFilter?: FilterSpecification;
 
     /**
-     * Gets the POIs Module for the given TomTomMap and configuration once the map is ready.
-     * @param map The TomTomMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
+     * Retrieves a POIsModule instance for the given map.
+     *
+     * @param map - The TomTomMap instance to attach this module to.
+     * @param config - Optional initial configuration for visibility and filters.
+     *
+     * @returns A promise that resolves to the initialized POIsModule.
+     *
+     * @remarks
+     * **Configuration:**
+     * - `visible`: Initial visibility state
+     * - `filters.categories`: Category filter to apply on initialization
+     *
+     * @throws Error if the POI source is not found in the map style
+     *
+     * @example
+     * Default initialization:
+     * ```typescript
+     * const pois = await POIsModule.get(map);
+     * ```
+     *
+     * @example
+     * With initial filter:
+     * ```typescript
+     * const pois = await POIsModule.get(map, {
+     *   visible: true,
+     *   filters: {
+     *     categories: {
+     *       show: 'only',
+     *       values: ['RESTAURANT', 'CAFE_PUB']
+     *     }
+     *   }
+     * });
+     * ```
      */
     static async get(map: TomTomMap, config?: POIsModuleConfig): Promise<POIsModule> {
         await waitUntilMapIsReady(map);
@@ -97,10 +203,36 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
         return config;
     }
 
+    /**
+     * Checks if POI layers are currently visible.
+     *
+     * @returns `true` if at least one POI layer is visible, `false` if all are hidden.
+     *
+     * @example
+     * ```typescript
+     * if (pois.isVisible()) {
+     *   console.log('POIs are displayed');
+     * }
+     * ```
+     */
     isVisible(): boolean {
         return this.sourcesWithLayers.poi.isAnyLayerVisible();
     }
 
+    /**
+     * Sets the visibility of POI layers.
+     *
+     * @param visible - `true` to show POIs, `false` to hide them.
+     *
+     * @remarks
+     * Changes are applied immediately if the map is ready.
+     *
+     * @example
+     * ```typescript
+     * pois.setVisible(false); // Hide all POIs
+     * pois.setVisible(true);  // Show all POIs
+     * ```
+     */
     setVisible(visible: boolean): void {
         this.config = {
             ...this.config,
@@ -113,9 +245,58 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
     }
 
     /**
-     * Applies the given categories filter to the POI layer (showing/hiding certain categories).
-     * * Other configurations (such as visibility) remain untouched.
-     * @param categoriesFilter The filter to apply. If undefined, the default will be applied.
+     * Filters POIs by category or category group.
+     *
+     * @param categoriesFilter - Filter configuration specifying which categories to show/hide.
+     * Pass `undefined` to reset to default (show all).
+     *
+     * @remarks
+     * **Filter Modes:**
+     * - `only`: Show only the specified categories, hide all others
+     * - `all_except`: Show all categories except the specified ones
+     *
+     * **Category Types:**
+     * - Individual categories (e.g., 'RESTAURANT', 'HOTEL_MOTEL')
+     * - Category groups (e.g., 'FOOD_DRINKS_GROUP', 'SHOPPING_GROUP')
+     *
+     * **Available Category Groups:**
+     * - FOOD_DRINKS_GROUP
+     * - SHOPPING_GROUP
+     * - TRANSPORTATION_GROUP
+     * - HEALTH_GROUP
+     * - PARKING_GROUP
+     * - HOLIDAY_TOURISM_GROUP
+     * - EV_CHARGING_STATIONS_GROUP
+     * - GAS_STATIONS_GROUP
+     * - ACCOMMODATION_GROUP
+     * - ENTERTAINMENT_GROUP
+     * - SPORTS_LEISURE_GROUP
+     * - EDUCATION_GROUP
+     * - GOVERNMENT_GROUP
+     *
+     * @example
+     * Show only restaurants:
+     * ```typescript
+     * pois.filterCategories({
+     *   show: 'only',
+     *   values: ['RESTAURANT']
+     * });
+     * ```
+     *
+     * @example
+     * Hide parking:
+     * ```typescript
+     * pois.filterCategories({
+     *   show: 'all_except',
+     *   values: ['PARKING_GROUP']
+     * });
+     * ```
+     *
+     * @example
+     * Reset filter (show all):
+     * ```typescript
+     * pois.filterCategories(undefined);
+     * ```
      */
     filterCategories(categoriesFilter?: ValuesFilter<FilterablePOICategory> | undefined): void {
         if (categoriesFilter) {
@@ -155,8 +336,37 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
     }
 
     /**
-     * Create the events on/off for this module
-     * @returns An instance of EventsModule
+     * Gets the events interface for handling user interactions with POIs.
+     *
+     * @returns An EventsModule instance for registering event handlers.
+     *
+     * @remarks
+     * **Supported Events:**
+     * - `click`: User clicks on a POI
+     * - `contextmenu`: User right-clicks on a POI
+     * - `hover`: Mouse enters a POI
+     * - `long-hover`: Mouse hovers over POI for extended time
+     *
+     * **Event Feature Properties:**
+     * - `id`: Unique POI identifier
+     * - `name`: POI name in native language
+     * - `category`: POI category
+     * - `iconID`: Icon sprite ID
+     * - `group`: Category group
+     * - `priority`: Importance level (lower = more important)
+     *
+     * @example
+     * ```typescript
+     * pois.events.on('click', (feature, lngLat) => {
+     *   console.log('POI:', feature.properties.name);
+     *   console.log('Category:', feature.properties.category);
+     *   console.log('ID:', feature.properties.id);
+     * });
+     *
+     * pois.events.on('hover', (feature) => {
+     *   showTooltip(feature.properties.name);
+     * });
+     * ```
      */
     get events() {
         return new EventsModule<POIsModuleFeature>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.poi);

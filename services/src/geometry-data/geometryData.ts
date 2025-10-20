@@ -42,11 +42,61 @@ const mergePlacesWithGeometries = (places: Places, geometries: PolygonFeatures):
 };
 
 /**
- * The PolygonFeatures Data service returns sets of coordinates that represent the outline of a city, country, or land area.
- * * The service supports batch requests of up to 20 identifiers.
- * @param params Mandatory and optional parameters.
- * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
- * @see https://docs.tomtom.com/search-api/documentation/additional-data-service/additional-data
+ * Retrieve polygon geometries representing geographic area boundaries.
+ *
+ * The Geometry Data service returns coordinate sets that define the outlines of
+ * geographic areas such as cities, countries, administrative regions, or POI footprints.
+ * These polygons enable visualization of area boundaries, spatial analysis, and
+ * geofencing applications.
+ *
+ * @remarks
+ * Key features:
+ * - **Batch requests**: Fetch up to 20 geometries in a single call
+ * - **Multiple scales**: From countries down to building footprints
+ * - **Place integration**: Can merge with place data for enriched results
+ * - **Standard GeoJSON**: Returns standard Polygon/MultiPolygon features
+ *
+ * Common use cases:
+ * - Display city or country boundaries on maps
+ * - Show POI building footprints
+ * - Create geofences for spatial queries
+ * - Visualize administrative divisions
+ * - Calculate areas and spatial relationships
+ *
+ * @param params - Geometry parameters with IDs or places to fetch boundaries for
+ * @param customTemplate - Advanced customization for request/response handling
+ *
+ * @returns Promise resolving to polygon features representing area boundaries
+ *
+ * @example
+ * ```typescript
+ * // Fetch geometry by ID
+ * const cityBoundary = await geometryData({
+ *   key: 'your-api-key',
+ *   geometries: ['geometry-id-123']
+ * });
+ *
+ * // Fetch multiple geometries at once
+ * const boundaries = await geometryData({
+ *   key: 'your-api-key',
+ *   geometries: ['country-id-1', 'city-id-2', 'poi-id-3']
+ * });
+ *
+ * // Fetch and merge with place data
+ * const searchResults = await search({ query: 'Amsterdam' });
+ * const withBoundaries = await geometryData({
+ *   key: 'your-api-key',
+ *   geometries: searchResults  // Places with geometry IDs
+ * });
+ * // Result includes both place properties and polygon boundaries
+ * ```
+ *
+ * @see [Geometry Data API Documentation](https://docs.tomtom.com/search-api/documentation/additional-data-service/additional-data)
+ * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
+ * @see [Geometry Data Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/geometry-data)
+ *
+ * @group Geometry
+ * @category Functions
  */
 export async function geometryData(
     params: GeometryDataParams,

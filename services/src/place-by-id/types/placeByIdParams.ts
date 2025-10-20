@@ -2,63 +2,168 @@ import type { MapcodeType, OpeningHoursMode, View } from '@cet/maps-sdk-js/core'
 import type { CommonServiceParams, RelatedPoisRequest, TimeZoneRequest } from '../../shared';
 import type { PlaceByIdResponseAPI } from './placeByIdResponseAPI';
 
+/**
+ * Optional parameters for the Place by ID service.
+ *
+ * @group Place
+ * @category Types
+ */
 export type PlaceByIdOptionalParams = {
     /**
-     * Enables the return of a comma-separated mapcodes list.
-     * It can also filter the response to only show selected mapcode types. See Mapcodes in the response.
-     * Values: One or more of:
-     * * `Local`
-     * * `International`
-     * * `Alternative`
+     * Enable comma-separated mapcodes list in the response.
      *
-     * A mapcode represents a specific location, to within a few meters.
-     * Every location on Earth can be represented by a mapcode. Mapcodes are designed to be short,
-     * easy to recognize, remember, and communicate. Visit the Mapcode project website for more information.
+     * @remarks
+     * Mapcodes are short location codes representing a specific location
+     * to within a few meters. Can filter to show only selected mapcode types.
+     *
+     * **Mapcode Types:**
+     * - `Local`: Short local codes for use within a territory
+     * - `International`: Longer codes that work worldwide
+     * - `Alternative`: Alternative codes for the same location
+     *
+     * @see [Mapcode Project](https://www.mapcode.com/)
+     *
+     * @example
+     * ```typescript
+     * mapcodes: ['Local', 'International']
+     * ```
      */
     mapcodes?: MapcodeType[];
+
     /**
-     * Geopolitical View. The context used to resolve the handling of disputed territories.
+     * Geopolitical view context for disputed territories.
      *
-     * Sets or returns the view option value to be used in the calls.
-     * Can be one of "Unified", "AR", "IN", "PK", "IL, "MA", "RU", "TR" and "CN".
-     * Legend:
-     * Unified - International view
-     * AR - Argentina
-     * IN - India
-     * PK - Pakistan
-     * IL - Israel
-     * MA - Morocco
-     * RU - Russia
-     * TR - Turkey
-     * CN - China
-     * @default None
+     * @remarks
+     * Determines how disputed territories are handled in the response.
+     *
+     * **Available Views:**
+     * - `Unified`: International view (default)
+     * - `AR`: Argentina
+     * - `IN`: India
+     * - `PK`: Pakistan
+     * - `IL`: Israel
+     * - `MA`: Morocco
+     * - `RU`: Russia
+     * - `TR`: Turkey
+     * - `CN`: China
+     *
+     * @default 'Unified'
+     *
+     * @example
+     * ```typescript
+     * view: 'IN'  // Indian geopolitical view
+     * ```
      */
     view?: View;
+
     /**
-     * List of opening hours for a POI (Points of Interest).
+     * Include opening hours information in the response.
+     *
+     * @remarks
+     * Provides operating hours for POIs (restaurants, stores, etc.).
+     *
+     * @example
+     * ```typescript
+     * openingHours: 'nextSevenDays'
+     * ```
      */
     openingHours?: OpeningHoursMode;
+
     /**
-     * Used to indicate the mode in which the timeZone object should be returned.
+     * Include timezone information in the response.
+     *
+     * @remarks
+     * Returns the timezone of the place's location (e.g., "America/New_York").
+     *
+     * @example
+     * ```typescript
+     * timeZone: 'iana'
+     * ```
      */
     timeZone?: TimeZoneRequest;
+
     /**
-     * An optional parameter that provides the possibility to return related Points Of Interest.
-     * Default value: off
-     * Points Of Interest can be related to each other when one is physically part of another. For example, an airport terminal can physically belong to an airport. This relationship is expressed as a parent/child relationship: the airport terminal is a child of the airport. If the value child or parent is given, a related Points Of Interest with a specified relation type will be returned in the response. If the value all is given, then both child and parent relations are returned.
+     * Include related Points of Interest in the response.
+     *
+     * @remarks
+     * POIs can have parent/child relationships. For example, an airport terminal
+     * is a child of the airport.
+     *
+     * **Relation Types:**
+     * - `child`: Return POIs that are children of this place
+     * - `parent`: Return POIs that are parents of this place
+     * - `all`: Return both child and parent relations
+     * - `off`: No related POIs (default)
+     *
+     * @default 'off'
+     *
+     * @example
+     * ```typescript
+     * relatedPois: 'child'  // Get terminals inside an airport
+     * relatedPois: 'parent'  // Get the airport containing a terminal
+     * relatedPois: 'all'  // Get all related POIs
+     * ```
      */
     relatedPois?: RelatedPoisRequest;
 };
 
+/**
+ * Mandatory parameters for the Place by ID service.
+ *
+ * @group Place
+ * @category Types
+ */
 export type PlaceByIdMandatoryParams = {
     /**
-     * The unique POI identifier (mandatory).
+     * The unique POI identifier.
+     *
+     * @remarks
+     * This ID can be obtained from:
+     * - Previous search results (place.id)
+     * - POI details data source (place.properties.dataSources.poiDetails.id)
+     * - Related POIs (place.properties.relatedPois[].id)
+     *
+     * @example
+     * ```typescript
+     * entityId: '528009002822995'
+     * ```
      */
     entityId: string;
 };
 
 /**
- * Parameters for the Place by ID service, including mandatory and optional parameters.
+ * Parameters for the Place by ID service.
+ *
+ * Combines mandatory and optional parameters for fetching detailed information
+ * about a specific place using its unique identifier.
+ *
+ * @remarks
+ * Use this service to:
+ * - Get detailed POI information
+ * - Refresh cached place data
+ * - Navigate between related POIs
+ * - Fetch additional place properties not in search results
+ *
+ * @example
+ * ```typescript
+ * // Basic lookup
+ * const params: PlaceByIdParams = {
+ *   key: 'your-api-key',
+ *   entityId: '528009002822995'
+ * };
+ *
+ * // With additional information
+ * const detailedParams: PlaceByIdParams = {
+ *   key: 'your-api-key',
+ *   entityId: '528009002822995',
+ *   openingHours: 'nextSevenDays',
+ *   mapcodes: ['Local'],
+ *   relatedPois: 'child'
+ * };
+ * ```
+ *
+ * @group Place
+ * @category Types
  */
 export type PlaceByIdParams = CommonServiceParams<URL, PlaceByIdResponseAPI> &
     PlaceByIdMandatoryParams &

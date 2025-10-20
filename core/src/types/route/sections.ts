@@ -2,163 +2,285 @@ import type { RoadShieldReference } from './guidance';
 import type { LegSummary } from './summary';
 
 /**
- * Base type for all route section properties.
+ * Base properties for all route sections.
+ *
+ * Sections divide a route into portions with specific characteristics or attributes.
+ * All section types extend this base with additional specialized properties.
+ *
  * @group Route
  * @category Types
  */
 export type SectionProps = {
     /**
-     * Random generated id.
+     * Unique identifier for this section.
+     *
+     * Randomly generated to distinguish between sections.
      */
     id: string;
     /**
-     * The route path point index where this section starts.
+     * Index of the route coordinate where this section begins.
+     *
+     * Zero-based index into the route's LineString coordinates array.
      */
     startPointIndex: number;
     /**
-     * The (inclusive) route path point index where this section ends.
+     * Index of the route coordinate where this section ends (inclusive).
+     *
+     * Zero-based index into the route's LineString coordinates array.
      */
     endPointIndex: number;
     /**
-     * The start time of this section, in seconds since departure.
+     * Elapsed time in seconds from route start to the beginning of this section.
      */
     startTravelTimeInSeconds?: number;
     /**
-     * The end time of this section, in seconds since departure.
+     * Elapsed time in seconds from route start to the end of this section.
      */
     endTravelTimeInSeconds?: number;
     /**
-     * The duration in seconds through this section.
-     * * It is simply the difference between endTravelTimeSeconds and startTravelTimeSeconds.
+     * Duration in seconds to traverse this section.
+     *
+     * Calculated as: endTravelTimeInSeconds - startTravelTimeInSeconds
      */
     durationInSeconds?: number;
     /**
-     * The length or distance in meters since departure at the start of this section.
+     * Cumulative distance in meters from route start to the beginning of this section.
      */
     startLengthInMeters?: number;
     /**
-     * The length or distance in meters since departure at the end of this section.
+     * Cumulative distance in meters from route start to the end of this section.
      */
     endLengthInMeters?: number;
     /**
-     * The length or distance in meters along this section.
-     * * It is simply the difference between endDistanceMeters and startDistanceMeters.
+     * Length in meters of this section.
+     *
+     * Calculated as: endLengthInMeters - startLengthInMeters
      */
     lengthInMeters?: number;
 };
 
 /**
- * Represents a route section passing through a specific country.
+ * Route section representing passage through a country.
+ *
+ * Used to identify which countries the route traverses, useful for:
+ * - Border crossing planning
+ * - International routing costs
+ * - Regulatory requirements
+ *
+ * @example
+ * ```typescript
+ * const countrySection: CountrySectionProps = {
+ *   id: 'country-section-1',
+ *   startPointIndex: 0,
+ *   endPointIndex: 150,
+ *   countryCodeISO3: 'NLD',  // Netherlands
+ *   lengthInMeters: 25000
+ * };
+ * ```
+ *
  * @group Route
  * @category Types
  */
 export type CountrySectionProps = SectionProps & {
     /**
-     * It provides the 3-character {@link https://gist.github.com/tadast/8827699 ISO 3166-1 alpha-3} country code in which the section is located.
+     * Three-letter ISO 3166-1 alpha-3 country code.
+     *
+     * Examples: 'USA', 'GBR', 'NLD', 'DEU', 'FRA'
+     *
+     * @see [ISO 3166-1 alpha-3 codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)
      */
     countryCodeISO3: string;
 };
 
 /**
- * The simple category for the traffic incident
+ * Simple category classification for traffic incidents.
+ *
+ * @remarks
+ * - `jam`: Traffic congestion or slow-moving traffic
+ * - `road_work`: Construction or maintenance work
+ * - `road_closure`: Road is closed or blocked
+ * - `other`: Other types of incidents
+ *
  * @group Route
  * @category Types
  */
 export type TrafficCategory = 'jam' | 'road_work' | 'road_closure' | 'other';
 
 /**
- * The magnitude of the delay for the traffic incident.
+ * Severity of the traffic delay.
+ *
+ * @remarks
+ * - `unknown`: Delay magnitude cannot be determined
+ * - `minor`: Small delay (few minutes)
+ * - `moderate`: Noticeable delay (several minutes to ~15 minutes)
+ * - `major`: Significant delay (15+ minutes)
+ * - `indefinite`: Unknown or extremely long delay (e.g., road closure)
+ *
  * @group Route
  * @category Types
  */
 export type DelayMagnitude = 'unknown' | 'minor' | 'moderate' | 'major' | 'indefinite';
 
 /**
- * Describes what caused a traffic incident, based on TPEG2-TEC standard.
+ * Traffic incident cause based on TPEG2-TEC standard.
+ *
+ * TPEG (Transport Protocol Experts Group) codes provide standardized
+ * classification of traffic incident causes.
+ *
+ * @see [TPEG2-TEC Standard](https://www.iso.org/standard/59231.html)
+ *
  * @group Route
  * @category Types
  */
 export type CauseTEC = {
     /**
-     * Main cause code for traffic incident based on TPEG2-TEC standard.
+     * Main cause code from TPEG2-TEC standard.
+     *
+     * Primary classification of what caused the incident.
      */
     mainCauseCode: number;
     /**
-     * Optional sub cause code for traffic incident based on TPEG2-TEC standard.
+     * Optional sub-cause code from TPEG2-TEC standard.
+     *
+     * More specific classification under the main cause.
      */
     subCauseCode?: number;
 };
 
 /**
- * Describes Tec information about this traffic incident based on TPEG2-TEC standard
+ * Traffic incident information based on TPEG2-TEC standard.
+ *
+ * Provides standardized classification of traffic flow effects and causes.
+ *
  * @group Route
  * @category Types
  */
 export type TrafficIncidentTEC = {
     /**
-     * The effect on the traffic flow. For traffic incident based on TPEG2-TEC standard.
+     * Effect code describing impact on traffic flow.
+     *
+     * TPEG2-TEC standard code indicating how traffic is affected.
      */
     effectCode: number;
     /**
-     *  List of cause elements that caused problems in traffic. For traffic incident based on TPEG2-TEC standard
+     * List of causes for this traffic incident.
+     *
+     * Array of cause elements with at least one entry. Multiple causes
+     * may contribute to a single traffic incident.
      */
     causes?: [CauseTEC, ...CauseTEC[]];
 };
 
 /**
- * Section representing a traffic incident.
+ * Route section affected by a traffic incident.
+ *
+ * Represents a portion of the route experiencing traffic delays due to
+ * congestion, accidents, construction, or other incidents.
+ *
+ * @example
+ * ```typescript
+ * const trafficSection: TrafficSectionProps = {
+ *   id: 'traffic-1',
+ *   startPointIndex: 50,
+ *   endPointIndex: 75,
+ *   simpleCategory: 'jam',
+ *   magnitudeOfDelay: 'moderate',
+ *   delayInSeconds: 420,  // 7 minutes
+ *   effectiveSpeedInKmh: 25,
+ *   tec: { effectCode: 1, causes: [{ mainCauseCode: 101 }] }
+ * };
+ * ```
+ *
  * @group Route
  * @category Types
  */
 export type TrafficSectionProps = SectionProps & {
     /**
-     * The simple category for the traffic incident.
+     * Simple category classification of the incident.
      */
     simpleCategory: TrafficCategory;
     /**
-     * The magnitude of the delay for the traffic incident.
+     * Severity level of the delay caused by this incident.
      */
     magnitudeOfDelay: DelayMagnitude;
     /**
-     * Tec information about this traffic incident based on TPEG2-TEC standard.
+     * TPEG2-TEC standardized incident information.
+     *
+     * Provides internationally standardized codes for traffic incident classification.
      */
     tec: TrafficIncidentTEC;
     /**
-     * The effective speed in KM/H through this traffic incident, if known.
+     * Actual average speed through this incident in km/h.
+     *
+     * Present when speed information is available. Lower speeds indicate worse congestion.
      */
     effectiveSpeedInKmh?: number;
     /**
-     * The delay in seconds for this traffic incident, if known.
+     * Additional delay in seconds caused by this incident.
+     *
+     * Extra time compared to free-flow conditions. Present when delay can be calculated.
      */
     delayInSeconds?: number;
 };
 
 /**
- * Section representing a route leg, which is the portion of the path between two regular (non-circle) waypoints.
- * - An A-B route contains 1 leg (A-B).
- * - An A-B-C route contains 2 legs (A-B, B-C).
- * - An A-B-x-C route, where x is a circle waypoint, also contains 2 legs (A-B, B-C).
+ * Route section representing a leg between waypoints.
+ *
+ * A leg is the portion of route between two consecutive non-circle waypoints.
+ * This is a top-level section that encompasses the entire journey segment.
+ *
+ * @remarks
+ * Leg examples:
+ * - A→B route: 1 leg (A to B)
+ * - A→B→C route: 2 legs (A to B, then B to C)
+ * - A→B→(circle)→C route: 2 legs (A to B, then B to C) - circle waypoint doesn't create a leg
+ *
+ * @example
+ * ```typescript
+ * const leg: LegSectionProps = {
+ *   id: 'leg-1',
+ *   summary: {
+ *     departureTime: new Date(),
+ *     arrivalTime: new Date(),
+ *     lengthInMeters: 50000,
+ *     travelTimeInSeconds: 3600,
+ *     // ... other summary fields
+ *   },
+ *   startPointIndex: 0,
+ *   endPointIndex: 250
+ * };
+ * ```
+ *
  * @group Route
  * @category Types
  */
 export type LegSectionProps = Omit<SectionProps, 'startPointIndex' | 'endPointIndex'> & {
     /**
-     * The route path point index where this section starts. Only available if the route polyline is also available.
+     * Index where this leg starts in the route coordinates.
+     *
+     * Only present if the route polyline geometry is available.
      */
     startPointIndex?: number;
     /**
-     * The route path point index where this section ends. Only available if the route polyline is also available.
+     * Index where this leg ends in the route coordinates.
+     *
+     * Only present if the route polyline geometry is available.
      */
     endPointIndex?: number;
     /**
-     * Summary information for this specific leg.
-     * TODO EDXCE-274: bring this at the base level instead of nested object? And then align on common fields with SectionProps
+     * Summary statistics for this leg.
+     *
+     * Contains departure/arrival times, distances, durations, and consumption
+     * estimates specifically for this leg of the journey.
      */
     summary: LegSummary;
 };
 
 /**
- * All the possible lane directions.
+ * Possible directions a lane can lead to.
+ *
+ * Used in lane guidance to indicate which directions are possible from a lane.
+ *
  * @group Route
  * @category Types
  */
@@ -174,17 +296,34 @@ export type PossibleLaneDirection =
     | 'LEFT_U_TURN';
 
 /**
- * Lane direction object, containing the possible directions for a lane and the follow direction.
+ * Lane guidance information.
+ *
+ * Describes possible directions for a lane and which direction to follow.
+ * Used for lane-level navigation guidance.
+ *
+ * @example
+ * ```typescript
+ * // Left lane allows left turn or straight
+ * const laneDirection: LaneDirection = {
+ *   directions: ['LEFT', 'STRAIGHT'],
+ *   follow: 'LEFT'  // Follow the left turn
+ * };
+ * ```
+ *
  * @group Route
  * @category Types
  */
 export type LaneDirection = {
     /**
-     * The possible directions for this lane.
+     * All possible directions this lane leads to.
+     *
+     * A lane may allow multiple directions (e.g., straight and turn).
      */
     directions: PossibleLaneDirection[];
     /**
-     * The direction to follow for this lane.
+     * The direction to follow in this lane for the route.
+     *
+     * Present when guidance indicates which direction to take.
      */
     follow?: PossibleLaneDirection;
 };

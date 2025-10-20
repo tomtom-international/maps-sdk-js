@@ -6,20 +6,56 @@ const minuteUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.m
 const hourUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.hours ?? 'hr';
 
 /**
- * Returns a display-friendly version, in minutes and hours if needed, of the given duration in seconds.
- * * Examples:
- * ```ts
- * 0 -> null
- * 20 -> null
- * 30 -> 1 min
- * 60 -> 1 min
- * 100 -> 2 min
- * 3599 -> 1 hr
- * 3660 -> 1 hr 01 min
- * 36120 -> 10 hr 02 min
+ * Formats a duration in seconds into a human-readable time string.
+ *
+ * Converts raw seconds into a display-friendly format using hours and minutes,
+ * with intelligent rounding and formatting based on the duration length.
+ *
+ * @param seconds The duration to format, given in seconds. Returns `undefined` for values < 30 seconds.
+ * @param options Optional custom display units for hours and minutes text.
+ *
+ * @returns Formatted time string (e.g., "1 hr 30 min", "45 min"), or `undefined` if duration is too short.
+ *
+ * @remarks
+ * **Rounding Behavior:**
+ * - Durations under 30 seconds return `undefined`
+ * - 30-59 seconds round to "1 min"
+ * - Minutes are rounded to nearest minute
+ * - Hours are displayed when duration ≥ 1 hour
+ *
+ * **Format Patterns:**
+ * - Short duration: "15 min"
+ * - Long duration: "2 hr 30 min"
+ * - Exact hours: "3 hr 00 min"
+ *
+ * **Customization:**
+ * Override default units via `options` or global {@link TomTomConfig}
+ *
+ * @example
+ * ```typescript
+ * // Basic usage
+ * formatDuration(0);       // undefined (too short)
+ * formatDuration(20);      // undefined (too short)
+ * formatDuration(30);      // "1 min"
+ * formatDuration(60);      // "1 min"
+ * formatDuration(100);     // "2 min"
+ * formatDuration(1800);    // "30 min"
+ * formatDuration(3599);    // "1 hr 00 min"
+ * formatDuration(3660);    // "1 hr 01 min"
+ * formatDuration(7200);    // "2 hr 00 min"
+ * formatDuration(36120);   // "10 hr 02 min"
+ *
+ * // Custom units
+ * formatDuration(3660, { hours: 'h', minutes: 'm' });
+ * // Returns: "1 h 01 m"
+ *
+ * // Route travel time
+ * const route = await calculateRoute({ ... });
+ * const travelTime = formatDuration(route.routes[0].summary.travelTimeInSeconds);
+ * console.log(`Estimated time: ${travelTime}`);
+ * // Output: "Estimated time: 2 hr 15 min"
  * ```
- * @param seconds The duration to format, given in seconds.
- * @param options Optional parameters for the time display units.
+ *
  * @group Shared
  * @category Functions
  */
@@ -45,7 +81,43 @@ export const formatDuration = (seconds: number | undefined, options?: TimeDispla
 };
 
 /**
- * Types of distance units SDK formatters work with.
+ * Distance unit system types supported by the SDK formatters.
+ *
+ * Defines which measurement system to use when formatting distances.
+ * Each system uses region-appropriate units and conventions.
+ *
+ * @remarks
+ * **Unit Systems:**
+ *
+ * - `metric`: International System (SI)
+ *   - Units: meters (m), kilometers (km)
+ *   - Used in: Most of the world (Europe, Asia, Africa, South America, Australia)
+ *   - Decimal-based, no fractions
+ *
+ * - `imperial_us`: United States customary units
+ *   - Units: feet (ft), miles (mi)
+ *   - Used in: United States
+ *   - Uses fractions for miles (¼, ½, ¾)
+ *   - Feet for short distances (< 0.125 mi)
+ *
+ * - `imperial_uk`: United Kingdom imperial units
+ *   - Units: yards (yd), miles (mi)
+ *   - Used in: United Kingdom
+ *   - Uses fractions for miles (¼, ½, ¾)
+ *   - Yards for short distances (< 0.125 mi)
+ *
+ * **Differences:**
+ * - US uses feet for short distances
+ * - UK uses yards for short distances
+ * - Both use miles with fractions for medium/long distances
+ *
+ * @example
+ * ```typescript
+ * const system: DistanceUnitsType = 'metric';      // International
+ * const usSystem: DistanceUnitsType = 'imperial_us';  // United States
+ * const ukSystem: DistanceUnitsType = 'imperial_uk';  // United Kingdom
+ * ```
+ *
  * @group Shared
  * @category Types
  */
@@ -163,7 +235,7 @@ const formatUk = (meters: number, displayUnits: DistanceDisplayUnits): string =>
 
 /**
  * Formatting is based on the number of meters passed and unit type. Less meters more precision.
- * * Examples:
+ * @example
  * ```ts
  * (null, METRIC) -> ""
  * (0, METRIC) -> "0 m"

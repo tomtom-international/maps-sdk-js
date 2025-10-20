@@ -22,17 +22,168 @@ type TrafficIncidentsSourcesWithLayers = {
 };
 
 /**
- * Vector tiles traffic incidents module.
- * * Traffic incidents refers to the vector traffic incidents layers.
+ * Traffic Incidents Module for displaying real-time traffic incidents on the map.
+ *
+ * This module controls the vector tile traffic incidents layers that show traffic
+ * events like accidents, road closures, construction, and hazards.
+ *
+ * @remarks
+ * **Features:**
+ * - Toggle incidents visibility on/off
+ * - Separate control for incident icons
+ * - Filter by incident type (accident, construction, etc.)
+ * - Filter by severity/delay magnitude
+ * - Filter by road categories
+ * - Icon and line/polygon visualization
+ *
+ * **Incident Types:**
+ * - Accidents
+ * - Road closures
+ * - Construction/road works
+ * - Weather conditions (fog, ice, rain, etc.)
+ * - Lane closures
+ * - Traffic jams
+ * - Broken down vehicles
+ *
+ * **Use Cases:**
+ * - Real-time incident monitoring
+ * - Route planning around incidents
+ * - Traffic management systems
+ * - Driver alert systems
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * import { TrafficIncidentsModule } from '@tomtom-international/maps-sdk-js/map';
+ *
+ * // Get module (auto-add to style if needed)
+ * const incidents = await TrafficIncidentsModule.get(map, {
+ *   ensureAddedToStyle: true,
+ *   visible: true
+ * });
+ *
+ * // Toggle visibility
+ * incidents.setVisible(false);
+ * incidents.setVisible(true);
+ *
+ * // Control icons separately
+ * incidents.setIconsVisible(false);
+ * ```
+ *
+ * @example
+ * Filter by incident type:
+ * ```typescript
+ * // Show only accidents and road closures
+ * incidents.filter({
+ *   any: [{
+ *     incidentCategories: {
+ *       show: 'only',
+ *       values: ['accident', 'road_closed']
+ *     }
+ *   }]
+ * });
+ *
+ * // Hide construction
+ * incidents.filter({
+ *   any: [{
+ *     incidentCategories: {
+ *       show: 'all_except',
+ *       values: ['road_works']
+ *     }
+ *   }]
+ * });
+ * ```
+ *
+ * @example
+ * Filter by severity:
+ * ```typescript
+ * // Show only major delays
+ * incidents.filter({
+ *   any: [{
+ *     magnitudes: {
+ *       show: 'only',
+ *       values: ['major']
+ *     }
+ *   }]
+ * });
+ *
+ * // Show incidents with at least 10 minutes delay
+ * incidents.filter({
+ *   any: [{
+ *     delays: {
+ *       mustHaveDelay: true,
+ *       minDelayMinutes: 10
+ *     }
+ *   }]
+ * });
+ * ```
+ *
+ * @example
+ * Filter icons separately from incident areas:
+ * ```typescript
+ * // Show all incidents but only major icons
+ * incidents.filter(
+ *   {
+ *     any: [{}] // Show all incidents
+ *   },
+ *   {
+ *     any: [{
+ *       magnitudes: { show: 'only', values: ['major'] }
+ *     }]
+ *   }
+ * );
+ * ```
+ *
+ * @see [Traffic Incidents Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic-incidents)
+ * @see [Traffic Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic)
+ *
+ * @group Map Modules
+ * @category Traffic
  */
 export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSourcesWithLayers, IncidentsConfig> {
     private originalFilters!: Record<string, FilterSpecification | undefined>;
 
     /**
-     * Gets the Traffic incidents Module for the given TomTomMap and configuration once the map is ready.
-     * @param map The TomTomMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
+     * Retrieves a TrafficIncidentsModule instance for the given map.
+     *
+     * @param map - The TomTomMap instance to attach this module to.
+     * @param config - Optional configuration for initialization, visibility, and filters.
+     *
+     * @returns A promise that resolves to the initialized TrafficIncidentsModule.
+     *
+     * @remarks
+     * **Configuration:**
+     * - `visible`: Initial visibility state for all incidents
+     * - `icons.visible`: Initial visibility for incident icons
+     * - `ensureAddedToStyle`: Auto-add traffic incidents to style if missing
+     * - `filters`: Incident type, severity, and delay filters
+     * - `icons.filters`: Separate filters for icons
+     *
+     * @throws Error if traffic incidents source is not in style and `ensureAddedToStyle` is false
+     *
+     * @example
+     * Default initialization:
+     * ```typescript
+     * const incidents = await TrafficIncidentsModule.get(map);
+     * ```
+     *
+     * @example
+     * With configuration:
+     * ```typescript
+     * const incidents = await TrafficIncidentsModule.get(map, {
+     *   ensureAddedToStyle: true,
+     *   visible: true,
+     *   icons: { visible: true },
+     *   filters: {
+     *     any: [{
+     *       incidentCategories: {
+     *         show: 'only',
+     *         values: ['accident', 'road_closed', 'jam']
+     *       }
+     *     }]
+     *   }
+     * });
+     * ```
      */
     static async get(
         map: TomTomMap,
@@ -79,10 +230,80 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     /**
-     * Applies the given filters to traffic incidents.
-     * * Any other configurations remain untouched.
-     * @param incidentFilters The incident filters to apply. If undefined, defaults will be ensured.
-     * @param iconFilters The icon filters to apply. If undefined, defaults will be ensured.
+     * Applies filters to traffic incidents display.
+     *
+     * @param incidentFilters - Filter for incident areas/lines. Pass `undefined` to reset.
+     * @param iconFilters - Optional separate filter for incident icons. Pass `undefined` to reset.
+     *
+     * @remarks
+     * **Filter Options:**
+     * - `incidentCategories`: Filter by incident type
+     * - `magnitudes`: Filter by delay severity (minor/moderate/major/unknown)
+     * - `delays`: Filter by delay duration
+     * - `roadCategories`: Filter by road importance
+     * - `roadSubCategories`: Filter by specific road types
+     *
+     * **Available Incident Categories:**
+     * - `accident`, `road_closed`, `lane_closed`
+     * - `road_works` (construction)
+     * - `jam` (traffic jam)
+     * - `fog`, `rain`, `ice`, `wind`, `flooding`
+     * - `dangerous_conditions`
+     * - `broken_down_vehicle`
+     * - `unknown`
+     *
+     * **Delay Magnitudes:**
+     * - `minor`: Small delays
+     * - `moderate`: Moderate delays
+     * - `major`: Significant delays
+     * - `unknown`: Unknown or no delay info
+     *
+     * @example
+     * Filter by type:
+     * ```typescript
+     * incidents.filter({
+     *   any: [{
+     *     incidentCategories: {
+     *       show: 'only',
+     *       values: ['accident', 'road_closed']
+     *     }
+     *   }]
+     * });
+     * ```
+     *
+     * @example
+     * Filter by severity and delay:
+     * ```typescript
+     * incidents.filter({
+     *   any: [{
+     *     magnitudes: { show: 'only', values: ['major', 'moderate'] },
+     *     delays: {
+     *       mustHaveDelay: true,
+     *       minDelayMinutes: 5
+     *     }
+     *   }]
+     * });
+     * ```
+     *
+     * @example
+     * Different filters for icons and areas:
+     * ```typescript
+     * // Show all incidents on roads
+     * const incidentFilter = {
+     *   any: [{
+     *     roadCategories: { show: 'only', values: ['motorway', 'trunk'] }
+     *   }]
+     * };
+     *
+     * // But only show icons for major incidents
+     * const iconFilter = {
+     *   any: [{
+     *     magnitudes: { show: 'only', values: ['major'] }
+     *   }]
+     * };
+     *
+     * incidents.filter(incidentFilter, iconFilter);
+     * ```
      */
     filter(incidentFilters?: TrafficIncidentsFilters, iconFilters?: TrafficIncidentsFilters) {
         this._filter(incidentFilters, iconFilters);
@@ -137,8 +358,21 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     /**
-     * Sets the icon visibility for incidents.
-     * @param visible
+     * Sets the visibility of incident icon layers.
+     *
+     * @param visible - `true` to show icons, `false` to hide them.
+     *
+     * @remarks
+     * This controls only the icon/symbol layers, not the incident area polygons or lines.
+     *
+     * @example
+     * ```typescript
+     * // Hide icons but keep incident areas visible
+     * incidents.setIconsVisible(false);
+     *
+     * // Show icons
+     * incidents.setIconsVisible(true);
+     * ```
      */
     setIconsVisible(visible: boolean): void {
         if (this.sourcesWithLayers.trafficIncidents) {
@@ -158,8 +392,18 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     /**
-     * Sets visibility for traffic incidents layers.
-     * @param visible
+     * Sets the visibility of all traffic incident layers.
+     *
+     * @param visible - `true` to show incidents, `false` to hide them.
+     *
+     * @remarks
+     * This controls all incident layers including icons, lines, and polygons.
+     *
+     * @example
+     * ```typescript
+     * incidents.setVisible(false); // Hide all incidents
+     * incidents.setVisible(true);  // Show all incidents
+     * ```
      */
     setVisible(visible: boolean): void {
         delete this.config?.icons?.visible;
@@ -170,14 +414,32 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     /**
-     * Returns if any layer for traffic incidents is visible or not.
+     * Checks if any traffic incident layers are currently visible.
+     *
+     * @returns `true` if any incident layer is visible, `false` if all are hidden.
+     *
+     * @example
+     * ```typescript
+     * if (incidents.isVisible()) {
+     *   console.log('Incidents are displayed');
+     * }
+     * ```
      */
     isVisible(): boolean {
         return this.sourcesWithLayers.trafficIncidents.isAnyLayerVisible();
     }
 
     /**
-     * Returns whether any traffic incident symbol layers are visible.
+     * Checks if any incident icon layers are currently visible.
+     *
+     * @returns `true` if any icon layer is visible, `false` if all icons are hidden.
+     *
+     * @example
+     * ```typescript
+     * if (incidents.anyIconLayersVisible()) {
+     *   console.log('Incident icons are shown');
+     * }
+     * ```
      */
     anyIconLayersVisible(): boolean {
         return !!this.sourcesWithLayers.trafficIncidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === 'symbol');

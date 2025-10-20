@@ -89,7 +89,8 @@ const parseSummary = (apiSummary: SummaryAPI, params: CalculateRouteParams): Rou
                     },
                 }),
                 ...(maxChargeKWH && {
-                    targetChargePCT: (100 * apiSummary.chargingInformationAtEndOfLeg.targetChargeInkWh) / maxChargeKWH,
+                    targetChargeInPCT:
+                        (100 * apiSummary.chargingInformationAtEndOfLeg.targetChargeInkWh) / maxChargeKWH,
                 }),
             },
         }),

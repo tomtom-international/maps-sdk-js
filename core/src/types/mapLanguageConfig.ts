@@ -44,7 +44,30 @@ const Languages = [
 ] as const;
 
 /**
- * [Supported language](https://docs.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
+ * Language code for map display and service responses.
+ *
+ * Determines the language used for:
+ * - Map labels and text on vector tiles
+ * - Place names, addresses, and other textual content in service responses
+ *
+ * Supports various locales with region-specific variants (e.g., `en-US`, `en-GB`).
+ * Special codes like `ngt` (Neutral Ground Truth) and `ngt-Latn` provide language-neutral
+ * or Latin script alternatives.
+ *
+ * @see [Supported languages documentation](https://docs.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
+ *
+ * @example
+ * ```typescript
+ * // Use US English
+ * const language: Language = 'en-US';
+ *
+ * // Use simplified Chinese
+ * const language: Language = 'zh-Hans';
+ *
+ * // Use neutral ground truth (no translation)
+ * const language: Language = 'ngt';
+ * ```
+ *
  * @group Shared
  * @category Types
  */

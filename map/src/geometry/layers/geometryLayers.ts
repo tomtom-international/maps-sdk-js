@@ -138,6 +138,9 @@ export type ColorPaletteOptions = keyof typeof colorPalettes;
 
 const defaultColor = '#0A3653';
 
+/**
+ * @ignore
+ */
 export const geometryFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
     type: 'fill',
     paint: {
@@ -147,6 +150,9 @@ export const geometryFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
     },
 };
 
+/**
+ * @ignore
+ */
 export const geometryOutlineSpec: LayerSpecTemplate<LineLayerSpecification> = {
     type: 'line',
     paint: {

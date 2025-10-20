@@ -92,7 +92,7 @@ export type SummaryAPI = Omit<
     departureTime: string;
     chargingInformationAtEndOfLeg?: Omit<
         BatteryCharging,
-        'targetChargePCT' | 'chargingConnectionInfo' | 'chargingParkLocation'
+        'targetChargeInPCT' | 'chargingConnectionInfo' | 'chargingParkLocation'
     > & {
         chargingParkLocation: Omit<ChargingParkLocation, 'coordinates'> & {
             coordinate: LatitudeLongitudePointAPI;

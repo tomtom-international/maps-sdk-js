@@ -62,7 +62,94 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
 import { toDisplayChargingStations, toDisplayWaypoints } from './util/waypointUtils';
 
 /**
- * The routing module is responsible for styling and display of routes and waypoints to the map.
+ * Routing Module for displaying routes and waypoints on the map.
+ *
+ * This module visualizes routing data from TomTom Routing API with full styling control
+ * for route lines, waypoints, traffic sections, and turn-by-turn guidance.
+ *
+ * @remarks
+ * **Features:**
+ * - Display single or multiple routes with selection
+ * - Customizable route styling (colors, widths, patterns)
+ * - Waypoint markers (start, stops, destination)
+ * - Route sections (ferries, tolls, tunnels, traffic)
+ * - Turn-by-turn guidance visualization
+ * - Route summary bubbles with distance/time
+ * - EV charging station markers
+ * - Interactive route selection
+ *
+ * **Data Sources:**
+ * - Compatible with TomTom Routing API responses
+ * - Supports custom route data matching the Routes interface
+ * - Multiple route visualization for alternatives
+ *
+ * @example
+ * Basic route display:
+ * ```typescript
+ * import { RoutingModule } from '@tomtom-international/maps-sdk-js/map';
+ * import { calculateRoute } from '@tomtom-international/maps-sdk-js/services';
+ *
+ * // Calculate route
+ * const result = await calculateRoute({
+ *   key: 'your-api-key',
+ *   geoInputs: [
+ *     [4.9041, 52.3676],  // Amsterdam
+ *     [4.4777, 51.9244]   // Rotterdam
+ *   ]
+ * });
+ *
+ * // Display on map
+ * const routing = await RoutingModule.init(map);
+ * await routing.showRoutes(result);
+ * await routing.showWaypoints(result.routes[0].legs[0].points);
+ * ```
+ *
+ * @example
+ * Multiple routes with interaction:
+ * ```typescript
+ * // Calculate route with alternatives
+ * const result = await calculateRoute({
+ *   key: 'your-api-key',
+ *   geoInputs: [[4.9, 52.3], [4.5, 51.9]],
+ *   maxAlternatives: 2
+ * });
+ *
+ * const routing = await RoutingModule.init(map);
+ * await routing.showRoutes(result);
+ *
+ * // Handle route clicks to switch selection
+ * routing.events.mainLines.on('click', async (feature) => {
+ *   const routeIndex = feature.properties.routeIndex;
+ *   await routing.selectRoute(routeIndex);
+ * });
+ * ```
+ *
+ * @example
+ * Custom styling:
+ * ```typescript
+ * import { defaultRouteLayersConfig } from '@tomtom-international/maps-sdk-js/map';
+ *
+ * const routing = await RoutingModule.init(map, {
+ *   layers: {
+ *     ...defaultRouteLayersConfig,
+ *     mainLines: {
+ *       ...defaultRouteLayersConfig.mainLines,
+ *       selected: {
+ *         ...defaultRouteLayersConfig.mainLines.selected,
+ *         lineColor: '#FF5733',
+ *         lineWidth: 8
+ *       }
+ *     }
+ *   }
+ * });
+ *
+ * await routing.showRoutes(result);
+ * ```
+ *
+ * @see [Routes Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/routes)
+ *
+ * @group Map Modules
+ * @category Routing
  */
 export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, RoutingModuleConfig> {
     private layersSpecs!: RoutingLayersSpecs;
@@ -72,6 +159,32 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
+     *
+     * @remarks
+     * **Configuration Options:**
+     * - `displayUnits`: Distance units (metric/imperial)
+     * - `waypointsSource`: Waypoint entry point options
+     * - `layers`: Complete layer styling configuration
+     *
+     * **Default Styling:**
+     * If no custom layers are provided, uses {@link defaultRouteLayersConfig}
+     *
+     * @example
+     * Default initialization:
+     * ```typescript
+     * const routing = await RoutingModule.init(map);
+     * ```
+     *
+     * @example
+     * With custom configuration:
+     * ```typescript
+     * const routing = await RoutingModule.init(map, {
+     *   displayUnits: 'imperial',
+     *   waypointsSource: {
+     *     entryPoints: 'main-when-available'
+     *   }
+     * });
+     * ```
      */
     static async init(
         tomtomMap: TomTomMap,
@@ -247,9 +360,56 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     /**
-     * Shows the given routes on the map.
-     * @param routes The routes to show.
-     * @param options An optional selected index from the array of routes. Will make that route appear selected. Defaults to 0 (first/recommended route).
+     * Displays the given routes on the map.
+     *
+     * @param routes - Route data from Routing API or custom routes.
+     * @param options - Optional configuration for route selection and display.
+     * @param options.selectedIndex - Index of the route to display as selected (default: 0).
+     *
+     * @remarks
+     * **Behavior:**
+     * - Replaces any previously shown routes
+     * - Shows all route-related features: lines, sections, summaries, guidance
+     * - First route is selected by default (appears more prominent)
+     * - Waypoints are NOT shown automatically (use {@link showWaypoints})
+     *
+     * **Route Features:**
+     * - Main route lines (selected and deselected styles)
+     * - Traffic sections with delays
+     * - Ferry, tunnel, and toll sections
+     * - EV charging stations (for EV routes)
+     * - Turn-by-turn instruction lines and arrows
+     * - Summary bubbles with distance/time/traffic info
+     *
+     * @example
+     * Show single route:
+     * ```typescript
+     * await routing.showRoutes(response.routes);
+     * ```
+     *
+     * @example
+     * Show multiple routes with specific selection:
+     * ```typescript
+     * await routing.showRoutes(response.routes, { selectedIndex: 1 });
+     * ```
+     *
+     * @example
+     * Complete routing workflow:
+     * ```typescript
+     * import { routing as routingAPI } from '@tomtom-international/maps-sdk-js/services';
+     *
+     * // Calculate route
+     * const response = await routingAPI.calculateRoute({
+     *   locations: [[4.9, 52.4], [4.5, 51.9]],
+     *   traffic: true,
+     *   travelMode: 'car'
+     * });
+     *
+     * // Display on map
+     * const routing = await RoutingModule.init(map);
+     * await routing.showRoutes(response.routes);
+     * await routing.showWaypoints(response.routes[0].legs[0].points);
+     * ```
      */
     async showRoutes(routes: Routes, options?: ShowRoutesOptions) {
         const displayRoutes = toDisplayRoutes(routes, options?.selectedIndex);
@@ -270,7 +430,16 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
 
     /**
      * Clears any previously shown routes from the map.
-     * * If nothing was shown before, nothing happens.
+     *
+     * @remarks
+     * - Clears all route-related layers (lines, sections, guidance, summaries)
+     * - Does NOT clear waypoints (use {@link clearWaypoints})
+     * - Module remains initialized and ready for new routes
+     *
+     * @example
+     * ```typescript
+     * await routing.clearRoutes();
+     * ```
      */
     async clearRoutes() {
         await this.waitUntilModuleReady();
@@ -282,9 +451,31 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     /**
-     * Shows the currently rendered route with the given index as selected.
-     * * De-selects the previously selected route, if applicable.
-     * @param index The route index to select. Must be within the existing rendered routes.
+     * Changes which route appears as selected.
+     *
+     * @param index - Zero-based index of the route to select.
+     *
+     * @remarks
+     * **Visual Changes:**
+     * - Selected route appears more prominent (thicker, brighter)
+     * - Previously selected route becomes deselected style
+     * - Updates all route-related features (sections, guidance)
+     *
+     * **Requirements:**
+     * - Route must already be displayed via {@link showRoutes}
+     * - Index must be within range of displayed routes
+     *
+     * @example
+     * ```typescript
+     * // Show multiple routes
+     * await routing.showRoutes(routes);
+     *
+     * // User clicks alternative route
+     * await routing.selectRoute(1);
+     *
+     * // Switch back to first route
+     * await routing.selectRoute(0);
+     * ```
      */
     async selectRoute(index: number) {
         const updatedRoutes = toDisplayRoutes(this.sourcesWithLayers.mainLines.shownFeatures, index);

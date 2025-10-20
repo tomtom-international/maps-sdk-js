@@ -12,9 +12,54 @@ import { evChargingStationsAvailabilityTemplate } from './evChargingStationsAvai
 import type { ChargingStationsAvailabilityParams } from './types/evChargingStationsAvailabilityParams';
 
 /**
- * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.
- * @param params Mandatory and optional parameters.
- * @param customTemplate Advanced parameter to plug in how the service treats requests and responses.
+ * Get real-time availability of electric vehicle charging stations.
+ *
+ * Provides current operational status of charging points and connectors at EV charging parks,
+ * enabling drivers to find available chargers before arriving at a location.
+ *
+ * @remarks
+ * Key information returned:
+ * - **Point-level status**: Available, Occupied, Reserved, Out of Service
+ * - **Connector details**: Power ratings, plug types, current availability
+ * - **Aggregated counts**: Quick overview of available vs occupied chargers
+ * - **Access information**: Public, private, or restricted access
+ * - **Opening hours**: When the charging facility is accessible
+ *
+ * Use cases:
+ * - EV navigation apps: Show available chargers along routes
+ * - Charging station maps: Display real-time availability
+ * - Trip planning: Verify chargers will be available at destination
+ * - Fleet management: Monitor charging infrastructure status
+ *
+ * @param params - Charging availability parameters with station ID
+ * @param customTemplate - Advanced customization for request/response handling
+ *
+ * @returns Promise resolving to charging station availability information
+ *
+ * @example
+ * ```typescript
+ * // Get availability for a specific charging park
+ * const availability = await evChargingStationsAvailability({
+ *   key: 'your-api-key',
+ *   id: 'charging-park-id-123'
+ * });
+ *
+ * // Check how many chargers are available
+ * const availableCount = availability.chargingPointAvailability.statusCounts.Available;
+ * console.log(`${availableCount} chargers available`);
+ *
+ * // Find available CCS connectors
+ * const ccsConnectors = availability.connectorAvailabilities.find(
+ *   ca => ca.connector.type === 'IEC62196Type2CCS'
+ * );
+ * ```
+ *
+ * @see [EV Charging Availability API](https://docs.tomtom.com/search-api/documentation)
+ * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
+ * @see [EV Charging Stations Availability Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/ev-charging-stations-availability)
+ *
+ * @group EV Charging
+ * @category Functions
  */
 export const evChargingStationsAvailability = async (
     params: ChargingStationsAvailabilityParams,
@@ -27,11 +72,31 @@ export const evChargingStationsAvailability = async (
     );
 
 /**
- * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.
+ * Enhance a place with real-time EV charging availability data.
  *
- * This function returns the given place with EV availability aggregated in its properties, if applicable.
- * @param place The place for which to fetch EV charging availability.
- * If it's not an EV station or has no availability info, it will be returned as-is.
+ * Fetches availability information for an EV charging station and merges it into
+ * the place properties. Non-EV places are returned unchanged.
+ *
+ * @param place - The place to enhance with availability data
+ *
+ * @returns Promise resolving to the place with merged availability information
+ *
+ * @example
+ * ```typescript
+ * // After search, enhance place with availability
+ * const searchResult = await search({ query: 'EV charging', ... });
+ * const place = searchResult.features[0];
+ *
+ * const enhancedPlace = await buildPlaceWithEVAvailability(place);
+ * const availability = enhancedPlace.properties.chargingPark?.availability;
+ *
+ * if (availability) {
+ *   console.log('Available chargers:', availability.chargingPointAvailability.count);
+ * }
+ * ```
+ *
+ * @group EV Charging
+ * @category Functions
  */
 export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<EVChargingStationPlaceProps>> => {
     const availabilityId = place.properties.dataSources?.chargingAvailability?.id;
@@ -63,12 +128,43 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
 };
 
 /**
- * The Electric Vehicle (EV) Charging Stations Availability Service provides information about the current availability of charging spots.
+ * Enhance multiple places with real-time EV charging availability data.
  *
- * This function returns the given place with EV availability aggregated in its properties, if applicable.
- * @param places The places for which to fetch EV charging availability.
- * @param options Optional parameters.
- * The ones that aren't EV stations or have no availability info are returned as-is.
+ * Fetches availability information for all EV charging stations in a collection
+ * and merges it into their properties. Non-EV places are returned unchanged.
+ *
+ * @remarks
+ * **Important**: Availability requests are made sequentially to avoid exceeding
+ * API rate limits (QPS - Queries Per Second). For large result sets, this may
+ * take some time.
+ *
+ * @param places - Collection of places to enhance
+ * @param options - Configuration options
+ *
+ * @returns Promise resolving to places collection with merged availability
+ *
+ * @example
+ * ```typescript
+ * // Search for charging stations and add availability
+ * const results = await search({
+ *   query: 'EV charging',
+ *   at: [4.9, 52.3],
+ *   radius: 5000
+ * });
+ *
+ * const withAvailability = await buildPlacesWithEVAvailability(results, {
+ *   includeIfAvailabilityUnknown: false  // Filter out stations with unknown availability
+ * });
+ *
+ * // Display only stations with known availability
+ * withAvailability.features.forEach(place => {
+ *   const available = place.properties.chargingPark?.availability?.chargingPointAvailability.count;
+ *   console.log(`${place.properties.poi?.name}: ${available} chargers`);
+ * });
+ * ```
+ *
+ * @group EV Charging
+ * @category Functions
  */
 export const buildPlacesWithEVAvailability = async (
     places: Places,

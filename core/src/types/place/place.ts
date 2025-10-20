@@ -20,110 +20,177 @@ export const geographyTypes = [
 ] as const;
 
 /**
+ * Type of geographic administrative entity.
+ *
+ * Defines the hierarchical level of an administrative area or postal region.
+ *
+ * @remarks
+ * Geographic hierarchy from largest to smallest:
+ * - `Country`: Sovereign nation
+ * - `CountrySubdivision`: State, province, or first-level admin division
+ * - `CountrySecondarySubdivision`: County or second-level admin division
+ * - `CountryTertiarySubdivision`: Third-level admin division
+ * - `Municipality`: City or town
+ * - `MunicipalitySubdivision`: District within a city
+ * - `Neighbourhood`: Named neighborhood or area within a city
+ * - `PostalCodeArea`: Area defined by postal/ZIP code
+ *
+ * @example
+ * ```typescript
+ * const geographyType: GeographyType = 'Municipality';  // City level
+ * ```
+ *
  * @group Place
  * @category Types
  */
 export type GeographyType = (typeof geographyTypes)[number];
 
 /**
- * Type of mapcode. Possible values:
+ * Type of mapcode.
  *
- * * Local: The shortest possible (and easiest to remember) mapcode.
- * Local mapcodes are especially useful when the user knows what territory the mapcode is in
- * (for example, when an application is designed to be used inside just one European country or US state).
- * Note that the code element of a Local mapcode is ambiguous when used without the territory element
- * e.g.,: the "4J.P2" mapcode can mean the Eiffel Tower location (48.858380, 2.294440)
- * (with the territory set to FRA), but also some place in Amsterdam, Netherlands (52.382184, 4.911021)
- * (with the territory set to NLD).
- * * International:
- * This mapcode is unambiguous. It is also the longest.
- * * Alternative:
- * Alternatives to Local mapcodes. Each Alternative mapcode points to slightly different coordinates
- * due to the way mapcodes are computed (see the mapcode documentation).
- * For example: the position from a response can be encoded as "5DM.WC" (51.759244, 19.448316) and the "VHJ.036"
- * (51.759245, 19.448264), which are close to each other, but not exactly the same place.
+ * Mapcodes are short location codes that can be used as an alternative to coordinates.
+ *
+ * @remarks
+ * - `Local`: Shortest mapcode, requires territory context (e.g., "4J.P2" for Eiffel Tower in FRA)
+ * - `International`: Unambiguous worldwide, no territory needed but longer
+ * - `Alternative`: Alternative local encoding pointing to slightly different coordinates
+ *
+ * @see [Mapcode documentation](https://www.mapcode.com)
+ *
  * @group Place
  * @category Types
  */
 export type MapcodeType = 'Local' | 'International' | 'Alternative';
+
 /**
+ * Mapcode representation of a location.
+ *
+ * A mapcode is a short, memorable code representing a geographic location,
+ * designed as an alternative to coordinates.
+ *
+ * @example
+ * ```typescript
+ * // Local mapcode (requires territory)
+ * const localMapcode: Mapcode = {
+ *   type: 'Local',
+ *   fullMapcode: 'NLD 4J.P2',
+ *   territory: 'NLD',
+ *   code: '4J.P2'
+ * };
+ *
+ * // International mapcode (no territory needed)
+ * const intlMapcode: Mapcode = {
+ *   type: 'International',
+ *   fullMapcode: 'VHXGB.4J9W',
+ *   code: 'VHXGB.4J9W'
+ * };
+ * ```
+ *
  * @group Place
  * @category Types
  */
 export type Mapcode = {
     /**
-     * The type of the Mapcode.
+     * The type of mapcode (Local, International, or Alternative).
      */
     type: MapcodeType;
     /**
-     * The full form of a mapcode (territory + code). It is always unambiguous.
-     * The territory element is always in the Latin alphabet.
-     * In an International mapcode, the territory part is empty.
+     * Complete mapcode including territory if applicable.
+     *
+     * Always unambiguous. Format: "TERRITORY CODE" for local, just "CODE" for international.
      */
     fullMapcode: string;
     /**
-     * The territory element of the mapcode. The territory element is always in the Latin alphabet.
+     * Territory code for local mapcodes.
      *
-     * This field is not returned for an International mapcode.
+     * Present only for Local and Alternative mapcodes. Uses Latin alphabet.
+     * Not present for International mapcodes.
      */
     territory?: string;
     /**
-     * The mapcode without the territory element. It consists of two groups of letters and digits separated by a dot.
-     * The code is using the same language and alphabet as the response.
-     * The language parameter may be used to modify the language and alphabet of both the response and the code
-     * (for example: Cyrillic for the language ru-RU).
+     * The mapcode without territory.
      *
-     * This field is not returned for the International mapcodes. Use fullMapcode instead.
+     * Two groups of letters/digits separated by a dot (e.g., "4J.P2").
+     * Uses the response language/alphabet. Not present for International mapcodes.
      */
     code?: string;
 };
 
 /**
+ * Address range information for a street segment.
+ *
+ * Used for Address Range type results to indicate ranges of addresses
+ * along a street segment.
+ *
  * @group Place
  * @category Types
  */
 export type AddressRanges = {
     /**
-     * An address range on the left side of a street segment (assuming looking from the "from" end toward the "to" end).
+     * Address range on the left side of the street.
+     *
+     * Looking from the 'from' point toward the 'to' point.
      */
     rangeLeft: string;
     /**
-     * An address range on the right side of a street segment (assuming looking from the "from" end toward the "to" end).
+     * Address range on the right side of the street.
+     *
+     * Looking from the 'from' point toward the 'to' point.
      */
     rangeRight: string;
     /**
-     * The beginning lng-lat point of a street segment.
+     * Starting coordinates of the street segment [longitude, latitude].
      */
     from: Position;
     /**
-     * The end lng-lat point of a street segment.
+     * Ending coordinates of the street segment [longitude, latitude].
      */
     to: Position;
 };
 
 /**
- * The type of entry point.
- * * main: the main entry point of a place. There can be at most only one.
- * * minor: a minor or secondary entry point of a place. There can be multiple.
+ * Type of entry point for a place.
+ *
+ * @remarks
+ * - `main`: Primary entrance (at most one per place)
+ * - `minor`: Secondary or alternative entrance (can have multiple)
+ *
+ * @group Place
+ * @category Types
  */
 export type EntryPointType = 'main' | 'minor';
 
 /**
+ * Entry point (entrance) for a place.
+ *
+ * Represents a physical access point to a building or facility,
+ * useful for routing to ensure users are directed to the correct entrance.
+ *
+ * @example
+ * ```typescript
+ * const entryPoint: EntryPoint = {
+ *   type: 'main',
+ *   functions: ['FrontDoor'],
+ *   position: [4.9041, 52.3676]
+ * };
+ * ```
+ *
  * @group Place
  * @category Types
  */
 export type EntryPoint = {
     /**
-     * The type of the entry point.
+     * Type of entry point (main or minor).
      */
     type: EntryPointType;
     /**
-     * If present, represents the type of access for the POI.
-     * Example: FrontDoor
+     * Functional description of the entry point.
+     *
+     * Examples: 'FrontDoor', 'ServiceEntrance', 'ParkingGarage'
      */
     functions?: string[];
     /**
-     * Position of the entry point.
+     * Geographic coordinates of the entry point [longitude, latitude].
      */
     position: Position;
 };
@@ -135,206 +202,343 @@ export type EntryPoint = {
 export const placeTypes = ['POI', 'Street', 'Geography', 'Point Address', 'Address Range', 'Cross Street'] as const;
 
 /**
+ * Type of place result.
+ *
+ * Categorizes the kind of location returned by search or geocoding services.
+ *
+ * @remarks
+ * - `POI`: Point of Interest (business, landmark, facility)
+ * - `Street`: A named street
+ * - `Geography`: Administrative area (city, state, country, etc.)
+ * - `Point Address`: Specific street address with building number
+ * - `Address Range`: Range of addresses along a street segment
+ * - `Cross Street`: Intersection of two streets
+ *
+ * @example
+ * ```typescript
+ * const placeType: PlaceType = 'POI';
+ * ```
+ *
  * @group Place
  * @category Types
  */
 export type PlaceType = (typeof placeTypes)[number];
 
 /**
+ * Structured address components for a place.
+ *
+ * Provides hierarchical address information from building number up to country level.
+ * Not all components are present for every place; availability depends on the location
+ * and data coverage.
+ *
+ * @example
+ * ```typescript
+ * const address: AddressProperties = {
+ *   freeformAddress: '1600 Pennsylvania Avenue NW, Washington, DC 20500, USA',
+ *   streetNumber: '1600',
+ *   streetName: 'Pennsylvania Avenue NW',
+ *   municipality: 'Washington',
+ *   countrySubdivision: 'DC',
+ *   postalCode: '20500',
+ *   countryCode: 'US',
+ *   country: 'United States',
+ *   countryCodeISO3: 'USA'
+ * };
+ * ```
+ *
  * @group Place
  * @category Types
  */
 export type AddressProperties = {
     /**
-     * An address line formatted according to formatting
-     * rules of a result's country of origin, or in case
-     * of countries its full country name.
+     * Complete formatted address string.
+     *
+     * Follows the formatting conventions of the result's country of origin.
+     * For countries, this is the full country name.
      */
     freeformAddress: string;
 
     /**
-     * The building number on the street.
+     * Building or house number on the street.
      */
     streetNumber?: string;
 
     /**
-     * The street name.
+     * Street name without the building number.
      */
     streetName?: string;
 
     /**
-     * Sub / Super City
+     * Subdivision of a municipality (sub-city or super-city area).
      */
     municipalitySubdivision?: string;
 
     /**
-     * City / Town
+     * City or town name.
      */
     municipality?: string;
 
     /**
-     * County
+     * County or second-level administrative subdivision.
      */
     countrySecondarySubdivision?: string;
 
     /**
-     * Named Area
+     * Named area or third-level administrative subdivision.
      */
     countryTertiarySubdivision?: string;
 
     /**
-     * State or Province
+     * State or province (first-level administrative subdivision).
      */
     countrySubdivision?: string;
 
     /**
-     * Postal Code / Zip Code
+     * Postal code or ZIP code.
      */
     postalCode?: string;
 
     /**
-     * Extended postal code (availability dependent on region)
+     * Extended postal code.
+     *
+     * Availability depends on region. More precise than standard postal code.
      */
     extendedPostalCode?: string;
 
     /**
-     * Country (Note: This is a two-letter code, not a country name.)
+     * Two-letter ISO 3166-1 alpha-2 country code.
+     *
+     * Examples: 'US', 'GB', 'NL', 'DE'
      */
     countryCode?: string;
 
     /**
-     * Country name
+     * Full country name.
      */
     country?: string;
 
     /**
-     * {@link https://gist.github.com/tadast/8827699 ISO 3166-1 alpha-3} country code
+     * Three-letter ISO 3166-1 alpha-3 country code.
+     *
+     * Examples: 'USA', 'GBR', 'NLD', 'DEU'
+     *
+     * @see [ISO 3166-1 alpha-3 codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)
      */
     countryCodeISO3?: string;
 
     /**
-     * A full name of a first level of country administrative hierarchy.
-     * This field appears only in case countrySubdivision is presented in an abbreviated form.
-     * Supported only for USA, Canada and Great Britain.
+     * Full name of the first-level administrative subdivision.
+     *
+     * Present when countrySubdivision is abbreviated. Supported for USA, Canada, and Great Britain.
+     * Example: "California" when countrySubdivision is "CA"
      */
     countrySubdivisionName?: string;
 
     /**
-     * An address component which represents the name of a geographic area or locality that groups a number of addressable objects for addressing purposes, without being an administrative unit.
+     * Local area or locality name.
+     *
+     * Represents a named geographic area that groups addressable objects
+     * without being an official administrative unit.
      */
     localName?: string;
 };
 
 /**
+ * Common properties shared by all place types.
+ *
+ * Provides the base structure for place information including address,
+ * entry points, POI details, and data source references.
+ *
  * @group Place
  * @category Types
  */
 export type CommonPlaceProps = {
     /**
-     * Type of this place.
+     * Type classification of this place.
      */
     type: PlaceType;
     /**
-     * The structured address for the result.
+     * Structured address components.
      */
     address: AddressProperties;
     /**
-     * Type of geography entity,
-     * Available values: Country | CountrySubdivision | CountrySecondarySubdivision | CountryTertiarySubdivision | Municipality | MunicipalitySubdivision | Neighbourhood | PostalCodeArea
-     * Only present if type === Geography.
+     * Geographic entity type(s).
+     *
+     * Present only when type === 'Geography'.
+     * Array can contain multiple types for areas with multiple administrative roles.
      */
     geographyType?: GeographyType[];
     /**
-     * List of mapcode objects.
+     * Mapcode representations of this location.
+     *
+     * Alternative location codes that can be used instead of coordinates.
      */
     mapcodes?: Mapcode[];
     /**
-     * A list of entry points of the POI (Points of Interest).
+     * Physical entry points (entrances) to the place.
+     *
+     * Useful for navigation to direct users to the correct entrance.
      */
     entryPoints?: EntryPoint[];
     /**
-     * The address ranges on a street segment. Available only for results where the result type is equal to Address Range.
+     * Address ranges along a street segment.
+     *
+     * Present only when type === 'Address Range'.
      */
     addressRanges?: AddressRanges;
     /**
-     * Information about the Points of Interest in the result. Optional section. Only present if CommonPlaceProps.type === POI
+     * Point of Interest information.
+     *
+     * Present only when type === 'POI'. Contains business details, categories, hours, etc.
      */
     poi?: POI;
     /**
-     * List of related Points Of Interest.
+     * Related Points of Interest.
+     *
+     * Parent or child POIs (e.g., stores within a mall, a mall containing stores).
      */
     relatedPois?: RelatedPOI[];
     /**
-     * Charging park information.
-     * * Present only when the Points of Interest are of the Electric Vehicle Station type.
+     * EV charging infrastructure information.
+     *
+     * Present only for Electric Vehicle charging station POIs.
      */
     chargingPark?: ChargingPark;
     /**
-     * An optional section. These are unique reference ids for use with the Additional Data service.
+     * References to additional data sources.
+     *
+     * IDs for fetching more detailed information from other services
+     * (geometry, availability, POI details).
      */
     dataSources?: PlaceDataSources;
 };
 
 /**
+ * Side of the street indicator.
+ *
+ * @remarks
+ * - `L`: Left side
+ * - `R`: Right side
+ *
  * @group Place
  * @category Types
  */
 export type SideOfStreet = 'L' | 'R';
 
 /**
+ * Properties for reverse geocoded places.
+ *
+ * Extends common place properties with reverse geocoding-specific information
+ * like the original query position and address interpolation details.
+ *
  * @group Place
  * @category Types
  */
 export type RevGeoAddressProps = CommonPlaceProps & {
     /**
-     * Original lng-lat coordinates of the reverse geocoded location.
+     * Original coordinates used in the reverse geocoding query [longitude, latitude].
      */
     originalPosition: Position;
     /**
-     * The offset position coordinates of the location. Might only be returned if number parameter was defined.
-     * TODO: clarify behavior and usage and improve documentation. During tests this doesn't seem an offset but rather absolute coords.
+     * Offset position coordinates for address interpolation.
+     *
+     * Present when a street number was specified in the query.
+     * Represents the interpolated position of the specific address number.
      */
     offsetPosition?: Position;
     /**
-     * The left or right side of the street location. This is returned only when the number parameter was defined.
+     * Which side of the street the address is located on.
+     *
+     * Present only when a street number was specified in the query.
      */
     sideOfStreet?: SideOfStreet;
 };
 
 /**
+ * Properties for search result places.
+ *
+ * Extends common place properties with search-specific information
+ * like relevance scores and distances.
+ *
  * @group Place
  * @category Types
  */
 export type SearchPlaceProps = CommonPlaceProps & {
     /**
-     * Information about the original data source of the result
+     * Information about the original data source.
+     *
+     * Attribution or source identification for the result.
      */
     info?: string;
     /**
-     * The score of the result.
-     * A larger score means there is a probability that a result meeting the query criteria is higher.
+     * Relevance score for this search result.
+     *
+     * Higher scores indicate better match to the query criteria.
+     * Used for ranking search results.
      */
     score?: number;
     /**
-     * Unit: meters. This is the distance to an object if geoBias was provided.
+     * Distance in meters to this result from the bias position.
+     *
+     * Present only when geoBias (position bias) was provided in the search.
      */
     distance?: number;
 };
 
 /**
+ * GeoJSON Feature representing a place.
+ *
+ * A place is a Point feature with comprehensive location information
+ * including address, coordinates, and metadata.
+ *
+ * @typeParam P - Type of the place properties (defaults to CommonPlaceProps)
+ *
+ * @example
+ * ```typescript
+ * const place: Place<SearchPlaceProps> = {
+ *   type: 'Feature',
+ *   id: 'place-123',
+ *   geometry: { type: 'Point', coordinates: [4.9041, 52.3676] },
+ *   properties: {
+ *     type: 'POI',
+ *     address: { freeformAddress: 'Dam, Amsterdam', ... },
+ *     poi: { name: 'Dam Square', ... },
+ *     score: 0.95
+ *   }
+ * };
+ * ```
+ *
  * @group Place
  * @category Types
  */
 export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, 'id'> & {
     /**
-     * Identifier for this place.
-     * * It's the same GeoJSON Feature id, but made a mandatory string.
-     * https://tools.ietf.org/html/rfc7946#section-3.2.
+     * Unique identifier for this place.
+     *
+     * Required string ID (stricter than GeoJSON Feature's optional id).
      */
     id: string;
 };
 
 /**
+ * GeoJSON FeatureCollection containing multiple places.
+ *
+ * Collection of place results from search or geocoding operations.
+ *
+ * @typeParam P - Type of individual place properties (defaults to CommonPlaceProps)
+ * @typeParam FeatureCollectionProps - Type of collection-level properties
+ *
+ * @example
+ * ```typescript
+ * const places: Places<SearchPlaceProps> = {
+ *   type: 'FeatureCollection',
+ *   features: [
+ *     { id: '1', type: 'Feature', geometry: {...}, properties: {...} },
+ *     { id: '2', type: 'Feature', geometry: {...}, properties: {...} }
+ *   ]
+ * };
+ * ```
+ *
  * @group Place
  * @category Types
  */
@@ -342,5 +546,10 @@ export type Places<P extends CommonPlaceProps = CommonPlaceProps, FeatureCollect
     FeatureCollectionWithProperties<Point, P, FeatureCollectionProps>,
     'features'
 > & {
+    /**
+     * Array of place features.
+     *
+     * Each place has a required string ID.
+     */
     features: Place<P>[];
 };

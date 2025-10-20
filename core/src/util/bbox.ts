@@ -106,16 +106,61 @@ export const bboxFromCoordsArray = (coordinates: Position[] | undefined): Option
 };
 
 /**
- * Extracts or calculates a bounding box from a GeoJSON object which:
- * * Is already a bounding box
- * * Contains a bounding box
- * * Can get a bounding box calculated from its geometry or aggregated parts.
+ * Extracts or calculates a bounding box from GeoJSON objects.
  *
- * "bbox" populated fields take priority over geometries.
- * * Point features might have "bbox" enclosing a broader geometry than just the point, in compliance with TT services.
+ * This utility function handles various GeoJSON types and automatically determines
+ * the best approach to obtain a bounding box:
+ * - Uses existing `bbox` properties when available (fastest)
+ * - Calculates from geometry coordinates when needed
+ * - Aggregates bounding boxes from collections
+ * - Optimizes large geometries by sampling points for performance
  *
- * Large geometries approximate their bounding box for speed by preventing to scan each single point.
- * @param hasBBox
+ * The function prioritizes existing bbox fields over geometry calculations, which is
+ * important for Point features from TomTom services that may have bbox representing
+ * a broader area than just the point location.
+ *
+ * @param hasBBox A GeoJSON object (Feature, FeatureCollection, Geometry, etc.) or array of such objects
+ * @returns The bounding box as `[minLng, minLat, maxLng, maxLat]`, or `undefined` if input is invalid
+ *
+ * @example
+ * ```typescript
+ * // From a Feature with existing bbox
+ * const place = await geocode({ key: 'key', query: 'Amsterdam' });
+ * const bbox = bboxFromGeoJSON(place);
+ * // Returns the bbox that came with the place
+ *
+ * // From a Polygon geometry (calculates bbox)
+ * const polygon = {
+ *   type: 'Polygon',
+ *   coordinates: [[
+ *     [4.88, 52.36],
+ *     [4.90, 52.36],
+ *     [4.90, 52.38],
+ *     [4.88, 52.38],
+ *     [4.88, 52.36]
+ *   ]]
+ * };
+ * const polyBbox = bboxFromGeoJSON(polygon);
+ * // Returns: [4.88, 52.36, 4.90, 52.38]
+ *
+ * // From a FeatureCollection (aggregates all features)
+ * const places = await search({ key: 'key', query: 'coffee' });
+ * const collectionBbox = bboxFromGeoJSON(places);
+ * // Returns bbox encompassing all search results
+ *
+ * // From a LineString (calculates from coordinates)
+ * const route = await calculateRoute({
+ *   key: 'key',
+ *   geoInputs: [[4.9, 52.3], [4.5, 51.9]]
+ * });
+ * const routeBbox = bboxFromGeoJSON(route.routes[0].geometry);
+ * // Returns bbox containing the entire route
+ *
+ * // From an array of GeoJSON objects
+ * const multiBbox = bboxFromGeoJSON([place1, place2, place3]);
+ * // Returns bbox encompassing all three places
+ * ```
+ *
  * @group Shared
  * @category Functions
  */

@@ -1,18 +1,51 @@
 /**
- * The way we treat available entry points when referring to the position of a place or waypoint.
- * * main-when-available: if available, the main entry point will be used, otherwise the default position of the place.
- * * ignore: the default position of the place will be used.
+ * Specifies how to handle entry points when extracting a position from a place.
+ *
+ * Entry points represent specific access locations for a place (e.g., building entrances, parking lot entries).
+ *
+ * @remarks
+ * - `main-when-available`: Returns the main entry point position if available, otherwise falls back to the default place position.
+ *   This is useful for routing to ensure vehicles are directed to the correct entrance.
+ * - `ignore`: Always returns the default position of the place (typically the center point).
+ *
+ * @example
+ * ```typescript
+ * // Get position preferring entry point for routing
+ * const position = getPosition(place, { useEntryPoint: 'main-when-available' });
+ *
+ * // Get center position ignoring entry points
+ * const centerPos = getPosition(place, { useEntryPoint: 'ignore' });
+ * ```
+ *
+ * @group Shared
+ * @category Types
  */
 export type GetPositionEntryPointOption = 'main-when-available' | 'ignore';
 
 /**
- * Options for the getPosition call to further control the extraction of the position.
+ * Configuration options for extracting position coordinates from a place.
+ *
+ * @group Shared
+ * @category Types
  */
 export type GetPositionOptions = {
     /**
-     * Returns the position of the main entry point of the given place if available, otherwise returns the default position of the place.
-     * * This can be useful for routing.
-     * @default ignore
+     * Controls whether to use entry point positions when available.
+     *
+     * When set to `'main-when-available'`, the main entry point coordinates will be returned
+     * if they exist, otherwise the default place position is used. This is particularly useful
+     * for routing applications where you want to direct users to the correct entrance.
+     *
+     * @default 'ignore'
+     *
+     * @example
+     * ```typescript
+     * // For routing to a specific entrance
+     * { useEntryPoint: 'main-when-available' }
+     *
+     * // For displaying place center on map
+     * { useEntryPoint: 'ignore' }
+     * ```
      */
     useEntryPoint?: GetPositionEntryPointOption;
 };

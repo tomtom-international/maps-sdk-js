@@ -5,141 +5,371 @@ import type { CalculateRouteRequestAPI } from './apiRequestTypes';
 import type { CalculateRouteResponseAPI } from './apiResponseTypes';
 
 /**
- * Section type which can be requested in the route parameters.
- * * (Other section types such as "leg" might be automatically calculated regardless of these inputs).
+ * Route section type that can be requested in routing parameters.
+ *
+ * @remarks
+ * Note: Some section types (like "leg") are automatically included regardless of this parameter.
+ *
+ * @group Routing
+ * @category Types
  */
 export type InputSectionType = (typeof inputSectionTypes)[number];
 
 /**
- * Possible input section types that can be requested to the routing API.
- * * These exclude sections that will be returned no matter what (e.g. leg).
+ * Array of section types to include in the route response.
  *
- * Possible values:
- * * all: all section types are to be included in the response
- * * carTrain, ferry, tunnel or motorway: get sections if the route includes car trains, ferries, tunnels, or motorways.
- * * pedestrian: sections which are only suited for pedestrians.
- * * tollRoad: sections which require a toll to be paid.
- * * tollVignette: sections which require a toll vignette to be present.
- * * country: countries the route has parts in.
- * * travelMode: sections in relation to the request parameter 'travelMode'.
- * @default All of them (If you want none, pass an empty array).
+ * Sections divide the route into portions with specific characteristics, helping you
+ * display additional context like toll roads, ferry crossings, or traffic incidents.
+ *
+ * @remarks
+ * Available section types:
+ * - `carTrain`: Sections requiring car train transport
+ * - `ferry`: Water crossings requiring ferry
+ * - `tunnel`: Underground tunnel sections
+ * - `motorway`: Highway/freeway sections
+ * - `pedestrian`: Pedestrian-only sections
+ * - `toll`: Sections requiring toll payment
+ * - `tollVignette`: Sections requiring toll vignette
+ * - `country`: Different countries traversed
+ * - `traffic`: Sections with traffic incidents
+ * - `vehicleRestricted`: Sections with vehicle restrictions
+ * - `carpool`: HOV/carpool lane sections
+ * - `urban`: Urban area sections
+ * - `unpaved`: Unpaved road sections
+ * - `lowEmissionZone`: Low emission zones
+ * - `speedLimit`: Speed limit changes
+ * - `roadShields`: Road shield information
+ *
+ * @example
+ * ```typescript
+ * // Request toll, ferry, and traffic sections
+ * const sectionTypes: InputSectionTypes = ['toll', 'ferry', 'traffic'];
+ *
+ * // Request all available sections
+ * const sectionTypes: InputSectionTypes = inputSectionTypes;
+ *
+ * // Request no optional sections (leg sections still included)
+ * const sectionTypes: InputSectionTypes = [];
+ * ```
+ *
+ * @default All available section types
+ *
+ * @group Routing
+ * @category Types
  */
 export type InputSectionTypes = InputSectionType[];
 
 /**
- * The information about the instructions for Orbis guidance request.
+ * Configuration for turn-by-turn guidance instructions.
+ *
+ * Specifies the format and detail level for navigation guidance.
+ *
+ * @example
+ * ```typescript
+ * // Request coded guidance with phonetics
+ * const guidance: GuidanceParams = {
+ *   type: 'coded',
+ *   version: 2,
+ *   phonetics: 'IPA',
+ *   roadShieldReferences: 'all'
+ * };
+ * ```
+ *
+ * @group Routing
+ * @category Types
  */
 export type GuidanceParams = {
+    /**
+     * Guidance instruction format type.
+     *
+     * Currently only 'coded' format is supported.
+     */
     type: 'coded';
+    /**
+     * Guidance instruction version.
+     *
+     * @default 2
+     */
     version?: 2;
+    /**
+     * Phonetic transcription format for street names.
+     *
+     * @remarks
+     * - `LHP`: Language-specific phonetic representation
+     * - `IPA`: International Phonetic Alphabet
+     */
     phonetics?: 'LHP' | 'IPA';
+    /**
+     * Include road shield references for displaying road signs.
+     *
+     * When set to 'all', includes references to road shield images
+     * that can be fetched from the TomTom Road Shield API.
+     */
     roadShieldReferences?: 'all';
 };
 
 /**
- * The extended representation of the set of routes provided as a response. Possible values are:
- * * **distance**: Includes distances to route polyline points in the response.
- * * **travelTime**: Includes travel times to route polyline points in the response.
- * @default ["distance", "travelTime"]
+ * Extended route representation options.
+ *
+ * Controls which additional progress information is included at route polyline points.
+ *
+ * @remarks
+ * - `distance`: Cumulative distance from start to each point
+ * - `travelTime`: Cumulative travel time from start to each point
+ *
+ * @example
+ * ```typescript
+ * // Include both distance and time progress
+ * const extended: ExtendedRouteRepresentation[] = ['distance', 'travelTime'];
+ * ```
+ *
+ * @default ['distance', 'travelTime']
+ *
+ * @group Routing
+ * @category Types
  */
 export type ExtendedRouteRepresentation = 'distance' | 'travelTime';
 
 /**
- * * none - do not compute additional travel times.
- * * all - compute travel times for all types of traffic information. Specifying all results in the fields
+ * Traffic computation mode for alternative travel time estimates.
+ *
+ * Controls whether to calculate additional travel times using different traffic scenarios.
+ *
+ * @remarks
+ * - `none`: Only return default best-estimate travel time
+ * - `all`: Return travel times for multiple traffic scenarios:
+ *   - No traffic (free flow)
+ *   - Historic traffic patterns
+ *   - Live traffic incidents
+ *
+ * @example
+ * ```typescript
+ * // Get all traffic-based time estimates
+ * const computeTravelTimeFor: ComputeTravelTimeFor = 'all';
+ * ```
+ *
+ * @default 'none'
+ *
+ * @group Routing
+ * @category Types
  */
 export type ComputeTravelTimeFor = 'none' | 'all';
 
 /**
- * Allowed max number of route alternatives.
+ * Maximum number of alternative routes to calculate.
+ *
+ * Alternative routes provide different options for traveling between the same origin and destination.
+ *
+ * @remarks
+ * - `0`: Only calculate the best route (default)
+ * - `1-5`: Calculate best route plus up to N alternatives
+ *
+ * More alternatives increase computation time but provide more route options.
+ *
+ * @example
+ * ```typescript
+ * // Request up to 2 alternative routes
+ * const maxAlternatives: MaxNumberOfAlternatives = 2;
+ * ```
+ *
  * @default 0
+ *
+ * @group Routing
+ * @category Types
  */
 export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
 
+/**
+ * Parameters for calculating a route between waypoints.
+ *
+ * Includes origin, destination, optional intermediate waypoints, and various routing options
+ * to customize the calculated route based on vehicle type, traffic, and preferences.
+ *
+ * @example
+ * ```typescript
+ * // Basic route from A to B
+ * const params: CalculateRouteParams = {
+ *   key: 'your-api-key',
+ *   geoInputs: [
+ *     [4.9041, 52.3676],  // Amsterdam
+ *     [4.4777, 51.9244]   // Rotterdam
+ *   ]
+ * };
+ *
+ * // Route with guidance and alternatives
+ * const advancedParams: CalculateRouteParams = {
+ *   key: 'your-api-key',
+ *   geoInputs: [[4.9041, 52.3676], [4.4777, 51.9244]],
+ *   guidance: { type: 'coded', phonetics: 'IPA' },
+ *   maxAlternatives: 2,
+ *   routeType: 'fastest',
+ *   avoid: ['tollRoads', 'motorways'],
+ *   departAt: new Date('2025-10-20T08:00:00Z')
+ * };
+ *
+ * // Electric vehicle route with charging
+ * const evParams: CalculateRouteParams = {
+ *   key: 'your-api-key',
+ *   geoInputs: [[4.9, 52.3], [8.5, 50.1]],
+ *   vehicleEngineType: 'electric',
+ *   currentChargeInkWh: 50,
+ *   maxChargeInkWh: 85,
+ *   constantSpeedConsumptionInkWhPerHundredkm: [[50, 8], [80, 12], [120, 18]]
+ * };
+ * ```
+ *
+ * @group Routing
+ * @category Types
+ */
 export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> &
     CommonRoutingParams & {
         /**
-         * These are the specified locations (waypoints) and/or path points (supporting points) for route calculation.
-         * They are to be supplied in the order the route should go through.
-         * * They are mandatory.
-         * * If only supplying waypoints, at least 2 must be specified, corresponding to the route origin and destination.
-         * * If using path points, at least 1 path must be specified with at least 2 points inside for origin and destination.
-         * * Waypoints and path points can be combined, except circle (soft) waypoints.
-         * @see For path points in the API: {@link https://docs.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters POST data parameters}
-         * @default None
+         * Ordered list of locations (waypoints) and/or path points for route calculation.
+         *
+         * The route will pass through these locations in the specified order.
+         *
+         * @remarks
+         * Requirements:
+         * - Minimum 2 waypoints (origin and destination) OR 1 path with 2+ points
+         * - Waypoints and paths can be mixed (except circle waypoints with paths)
+         * - Circle (soft) waypoints shape the route without creating legs
+         *
+         * Supported formats:
+         * - Coordinate arrays: `[longitude, latitude]`
+         * - Waypoint objects with radius for circle waypoints
+         * - Path arrays for route reconstruction
+         *
+         * @see [POST data parameters](https://docs.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters)
+         *
+         * @example
+         * ```typescript
+         * // Simple waypoints
+         * geoInputs: [[4.9, 52.3], [4.5, 51.9]]
+         *
+         * // With intermediate stop
+         * geoInputs: [[4.9, 52.3], [4.7, 52.1], [4.5, 51.9]]
+         *
+         * // Circle waypoint (shapes route, no stop)
+         * geoInputs: [
+         *   [4.9, 52.3],
+         *   { type: 'Feature', geometry: { type: 'Point', coordinates: [4.7, 52.1] },
+         *     properties: { radiusMeters: 5000 } },
+         *   [4.5, 51.9]
+         * ]
+         * ```
          */
         geoInputs: GeoInput[];
 
         /**
-         * Specifies how available entry points are to be used for routing.
-         * * Using entry points can help improve route accuracy and prevent unwanted routing to inaccessible locations.
-         * * For example, routing to the main entrance of an airport instead of the airport's center location.
-         * * Alternatively, wou can also explicitly set the entry points for each waypoint.
-         * @default "main-when-available"
+         * Controls how entry points are used for routing.
+         *
+         * Entry points represent specific building entrances or facility access points.
+         * Using them improves routing accuracy by directing to the correct entrance.
+         *
+         * @remarks
+         * - `main-when-available`: Use main entry point if available, otherwise use place center (recommended for routing)
+         * - `ignore`: Always use place center position
+         *
+         * @default 'main-when-available'
+         *
+         * @example
+         * ```typescript
+         * // Route to main entrance when available
+         * useEntryPoints: 'main-when-available'
+         * ```
          */
         useEntryPoints?: GetPositionEntryPointOption;
 
         /**
-         * Specifies whether to return additional travel times using different types of traffic information (none,
-         * historic, live) as well as the default best-estimate travel time.
+         * Request additional travel time calculations for different traffic scenarios.
          *
-         * * Possible values:
-         * * none - do not compute additional travel times.
-         * * all - compute travel times for all types of traffic information. Specifying all results in the fields
-         * noTrafficTravelTimeInSeconds, historicTrafficTravelTimeInSeconds and
-         * liveTrafficIncidentsTravelTimeInSeconds being included in the summaries in the route response.
-         * @default None
+         * When set to 'all', the response includes travel times for:
+         * - Free-flow (no traffic)
+         * - Historic traffic patterns
+         * - Current live traffic
+         *
+         * Useful for comparing traffic impact and displaying "X minutes saved by leaving now".
+         *
+         * @default 'none'
+         *
+         * @example
+         * ```typescript
+         * // Get all traffic-based estimates
+         * computeAdditionalTravelTimeFor: 'all'
+         * ```
          */
         computeAdditionalTravelTimeFor?: ComputeTravelTimeFor;
 
         /**
-         * Specifies the extended representation of the set of routes provided as a response. Can be specified multiple times.
+         * Request extended progress information at route polyline points.
+         *
+         * Includes cumulative distance and/or time from start to each coordinate.
+         * Useful for displaying progress during navigation or animating route visualization.
+         *
+         * @default ['distance', 'travelTime']
+         *
+         * @example
+         * ```typescript
+         * extendedRouteRepresentations: ['distance', 'travelTime']
+         * ```
          */
         extendedRouteRepresentations?: ExtendedRouteRepresentation[];
 
         /**
-         * If specified, guidance instructions will be returned (if available).
+         * Request turn-by-turn guidance instructions.
          *
-         * If alternative routes are requested, instructions will be generated for each route returned.
-         * @default None
+         * When specified, the response includes detailed navigation instructions
+         * with maneuvers, road names, and optional phonetics.
+         *
+         * @example
+         * ```typescript
+         * guidance: {
+         *   type: 'coded',
+         *   version: 2,
+         *   phonetics: 'IPA',
+         *   roadShieldReferences: 'all'
+         * }
+         * ```
          */
         guidance?: GuidanceParams;
 
         /**
-         * The number of desired alternative routes to be calculated.
+         * Route section types to include in the response.
          *
-         * Fewer alternative routes may be returned if either fewer alternatives exist or the requested number of
-         * alternatives is larger than the service can calculate.
-         * @default 0
-         */
-        maxAlternatives?: MaxNumberOfAlternatives;
-
-        /**
-         * Specifies which of the section types is reported in the route response.
-         * * sectionType can be specified multiple times (e.g., ...&sectionType=toll&sectionType=tollVignette&...).
-         * * Possible values are:
+         * Sections help you display route characteristics like tolls, ferries, or traffic.
+         * Leg sections are always included regardless of this parameter.
          *
-         * * **carTrain**: sections of the route that are car trains.
-         * * **ferry**: sections of the route that are ferries.
-         * * **tunnel**: sections of the route that are tunnels.
-         * * **motorway**: sections of the route that are motorways.
-         * * **pedestrian**: sections of the route that are only suited for pedestrians.
-         * * **toll**: sections of the route with the usage-based toll collection system (i.e., distance-based tolls, toll bridges and tunnels, weight-based tolls).
-         * * **tollVignette**: sections of the route that require a toll vignette to be present.
-         * * **country**: sections indicating which countries the route is in.
-         * * **travelMode**: sections in relation to the request parameter travelMode.
-         * * **traffic**: sections of the route that contain traffic information.
-         * * **carpool**: sections of the route that require use of carpool (HOV/High Occupancy Vehicle) lanes.
-         * * **urban**: sections of the route that are located within urban areas.
-         * * **unpaved**: sections of the route that are unpaved.
-         * * **lowEmissionZone**: sections of the route that are located within low-emission zones.
-         * * **roadShields**: Sections with road shield information. A road shield section contains:
-         * roadShieldReferences: A list of references for the road shields (roadShieldReference).
-         * Notes: If this section type is requested, calculateRouteResponse contains the additional field roadShieldAtlasReference.
-         * Please refer to the notes about the road shield atlas for further information.
-         * The road shields are only available in these supported countries.
-         * * **speedLimit**: Sections with legal speed limit information. maxSpeedLimitInKmh: The maximum legal speed limit in kilometers/hour. This can be time-dependent and/or vehicle-dependent. In the case of a time-dependent speed limit, the section will contain the speed limit effective at the time the planned route would enter this section.
-         * @default all
+         * @default All available section types
+         *
+         * @example
+         * ```typescript
+         * // Request specific sections
+         * sectionTypes: ['toll', 'ferry', 'traffic', 'country']
+         *
+         * // Request no optional sections
+         * sectionTypes: []
+         * ```
          */
         sectionTypes?: InputSectionTypes;
+
+        /**
+         * Maximum number of alternative routes to calculate.
+         *
+         * Alternative routes provide different travel options between the same origin and destination.
+         * Each alternative is optimized differently (e.g., avoiding highways, minimizing tolls).
+         *
+         * @remarks
+         * - More alternatives increase response time
+         * - Alternatives are returned in order of quality (best first)
+         * - Not all requests will return the maximum number of alternatives
+         *
+         * @default 0
+         *
+         * @example
+         * ```typescript
+         * // Request up to 2 alternatives
+         * maxAlternatives: 2
+         * ```
+         */
+        maxAlternatives?: MaxNumberOfAlternatives;
     };

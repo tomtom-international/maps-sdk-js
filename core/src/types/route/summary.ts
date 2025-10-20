@@ -8,133 +8,233 @@ import type { BatteryCharging } from './batteryCharging';
  */
 export type SummaryBase = {
     /**
-     * The arrival time at the end of the route or leg.
+     * Estimated arrival time at the end of the route or leg.
+     *
+     * Calculated from departure time plus travel time, accounting for traffic conditions.
      */
     arrivalTime: Date;
     /**
-     * The departure time from the beginning of the route or leg.
+     * Departure time from the beginning of the route or leg.
+     *
+     * Based on the departure time specified in the routing request.
      */
     departureTime: Date;
     /**
-     * The length of the route or leg in meters.
+     * Total length of the route or leg in meters.
      */
     lengthInMeters: number;
     /**
-     * The estimated travel time in seconds for the route or leg.
-     * Note that even when considerTraffic=false, travelTimeInSeconds still includes the delay due to traffic.
+     * Estimated travel time in seconds for the route or leg.
+     *
+     * @remarks
+     * This value includes delays due to real-time traffic, even when considerTraffic=false.
+     * Use noTrafficTravelTimeInSeconds for free-flow travel time without traffic delays.
      */
     travelTimeInSeconds: number;
     /**
-     * The delay in seconds compared to free-flow conditions according to real-time traffic information.
+     * Additional delay in seconds caused by current traffic conditions.
+     *
+     * Represents the extra time compared to free-flow conditions.
+     * A value of 0 means no traffic delays.
      */
     trafficDelayInSeconds: number;
     /**
-     * The portion of the route or leg, expressed in meters, that is affected by traffic events which cause the delay.
+     * Length in meters of the route affected by traffic events causing delays.
+     *
+     * Indicates the portion of the route experiencing congestion or incidents.
      */
     trafficLengthInMeters: number;
     /**
-     * The estimated travel time in seconds
-     * calculated as if there are no delays on the route due to traffic conditions (e.g., congestion).
-     * Included if requested using the computeTravelTimeFor parameter.
+     * Estimated travel time in seconds assuming free-flow conditions.
+     *
+     * Calculated as if there were no traffic delays (no congestion).
+     * Only included if requested using the computeTravelTimeFor parameter.
      */
     noTrafficTravelTimeInSeconds?: number;
     /**
-     * The estimated travel time in seconds calculated using time-dependent historic traffic data.
-     * In other words, the expected travel time considering the predicted traffic at the requested time.
-     * Included if requested using the computeTravelTimeFor parameter.
+     * Estimated travel time in seconds using time-dependent historic traffic data.
+     *
+     * Represents the expected travel time based on typical traffic patterns
+     * for the requested departure time (e.g., rush hour vs off-peak).
+     * Only included if requested using the computeTravelTimeFor parameter.
      */
     historicTrafficTravelTimeInSeconds?: number;
     /**
-     * The estimated travel time in seconds calculated using real-time speed data.
-     * Included if requested using the computeTravelTimeFor parameter.
+     * Estimated travel time in seconds using real-time traffic speed data.
+     *
+     * Based on current live traffic conditions and incidents.
+     * Only included if requested using the computeTravelTimeFor parameter.
      */
     liveTrafficIncidentsTravelTimeInSeconds?: number;
 };
 
 /**
+ * Summary information for routes using combustion engine vehicles.
+ *
+ * Extends the base summary with fuel consumption estimates.
+ *
  * @group Route
  * @category Types
  */
 export type CombustionSummary = SummaryBase & {
     /**
-     * The estimated fuel consumption in liters using the Combustion Consumption Model.
+     * Estimated fuel consumption in liters for the route or leg.
      *
-     * Included if:
-     * * The vehicle engine type is set to combustion.
-     * * The speed to consumption rates are specified.
+     * Calculated using the Combustion Consumption Model based on:
+     * - Vehicle speed-to-consumption rates
+     * - Route characteristics (elevation, road types)
+     * - Driving conditions
      *
-     * The value will be positive.
+     * @remarks
+     * Included only if:
+     * - Vehicle engine type is set to combustion
+     * - Speed-to-consumption rates are specified in the request
+     *
+     * The value is always positive (no fuel recuperation).
+     *
+     * @example
+     * ```typescript
+     * // A 100km route might consume
+     * fuelConsumptionInLiters: 7.5  // 7.5 liters
+     * ```
      */
     fuelConsumptionInLiters?: number;
 };
 
 /**
+ * Summary information for routes using electric vehicles.
+ *
+ * Extends the base summary with battery consumption and charge level estimates.
+ *
  * @group Route
  * @category Types
  */
 export type ElectricSummary = SummaryBase & {
     /**
-     * The estimated electric energy consumption in kilowatt-hours (kWh) using the Electric Consumption Model.
+     * Estimated electric energy consumption in kilowatt-hours (kWh).
      *
-     * Included if:
-     * * The vehicle engine type is set to electric.
-     * * The speed to consumption rates are specified.
+     * Calculated using the Electric Consumption Model based on:
+     * - Vehicle speed-to-consumption rates
+     * - Route characteristics (elevation changes)
+     * - Recuperation (regenerative braking)
      *
-     * * The value of batteryConsumptionInkWh includes the recuperated electric energy and can therefore be negative
-     * (which indicates gaining energy).
-     * * If both maxChargeInkWh and currentChargeInkWh are specified, recuperation will be capped to ensure that
-     * the battery charge level never exceeds maxChargeInkWh.
-     * * If neither maxChargeInkWh nor currentChargeInkWh are specified,
-     * unconstrained recuperation is assumed in the consumption calculation.
+     * @remarks
+     * Included only if:
+     * - Vehicle engine type is set to electric
+     * - Speed-to-consumption rates are specified in the request
+     *
+     * This value includes recuperated energy and can be negative (indicating net energy gain),
+     * such as when descending a long hill. If maxChargeInkWh is specified, recuperation is
+     * capped to prevent exceeding maximum battery capacity.
+     *
+     * @example
+     * ```typescript
+     * batteryConsumptionInkWh: 15.5    // Consumed 15.5 kWh
+     * batteryConsumptionInkWh: -2.3    // Gained 2.3 kWh (downhill with recuperation)
+     * ```
      */
     batteryConsumptionInkWh?: number;
 
     /**
-     * The estimated electric energy consumption in battery %.
-     * * Present only if maxChargeInkWh was set in request and batteryConsumptionInkWh is available in summary.
+     * Estimated battery consumption as a percentage of maximum capacity.
+     *
+     * Only present if maxChargeInkWh was specified in the request and
+     * batteryConsumptionInkWh is available.
+     *
+     * @example
+     * ```typescript
+     * // If maxChargeInkWh is 100 and batteryConsumptionInkWh is 15.5
+     * batteryConsumptionInPCT: 15.5  // 15.5% of battery capacity
+     * ```
      */
     batteryConsumptionInPCT?: number;
 
     /**
-     * LDEVR (Long Distance EV Routing) - only
-     * The estimated battery charge in kWh upon arrival at the end of the leg or the route.
+     * Estimated battery charge in kWh upon arrival at the destination.
+     *
+     * Available only for Long Distance EV Routing (LDEVR) with charging stops.
+     * Calculated as: currentChargeInkWh - batteryConsumptionInkWh + chargingEnergy
      */
     remainingChargeAtArrivalInkWh?: number;
     /**
-     * LDEVR (Long Distance EV Routing) - only
-     * The estimated battery charge in % upon arrival at the end of the leg or the route.
+     * Estimated battery charge as percentage of capacity upon arrival.
+     *
+     * Available only for Long Distance EV Routing (LDEVR) with charging stops.
+     * Derived from remainingChargeAtArrivalInkWh and maxChargeInkWh.
      */
     remainingChargeAtArrivalInPCT?: number;
 };
 
 /**
+ * Combined summary supporting both combustion and electric vehicle metrics.
+ *
  * @group Route
  * @category Types
  */
 export type SummaryWithConsumption = CombustionSummary & ElectricSummary;
 
 /**
- * Summary for the whole route.
+ * Complete summary information for an entire route.
+ *
+ * Includes all journey statistics from origin to destination, including
+ * any intermediate charging stops for electric vehicles.
+ *
  * @group Route
  * @category Types
  */
 export type RouteSummary = SummaryWithConsumption & {
     /**
-     * The estimated time spent at all charging stops in the route.
-     * * The travelTimeInSeconds of the route includes the totalChargingTimeInSeconds value.
+     * Total time in seconds spent at all charging stops during the route.
+     *
+     * @remarks
+     * - Only present for electric vehicle routes with charging stops (LDEVR)
+     * - The route's travelTimeInSeconds includes this charging time
+     * - To get driving time only: travelTimeInSeconds - totalChargingTimeInSeconds
+     *
+     * @example
+     * ```typescript
+     * // Route with 2 charging stops of 20 and 25 minutes
+     * totalChargingTimeInSeconds: 2700  // 45 minutes total
+     * ```
      */
     totalChargingTimeInSeconds?: number;
 };
 
 /**
- * Summary for a route leg.
+ * Summary information for a single route leg.
+ *
+ * A leg is the portion of the route between two consecutive waypoints.
+ *
+ * @remarks
+ * - An A→B route has 1 leg
+ * - An A→B→C route has 2 legs (A→B, B→C)
+ * - Circle waypoints don't create new legs
+ *
  * @group Route
  * @category Types
  */
 export type LegSummary = SummaryWithConsumption & {
     /**
-     * Charging information at the end of a leg.
-     * * It is contained in the leg summary if and only if the leg ends at a charging stop.
+     * Charging information at the end of this leg.
+     *
+     * Present only if this leg ends at a charging stop, indicating the vehicle
+     * will charge at this waypoint before continuing to the next leg.
+     *
+     * @remarks
+     * Contains details about:
+     * - Charging park location and facilities
+     * - Required charging time
+     * - Target charge level after charging
+     *
+     * @example
+     * ```typescript
+     * chargingInformationAtEndOfLeg: {
+     *   chargingParkId: 'park-123',
+     *   chargingTimeInSeconds: 1200,  // 20 minutes
+     *   targetChargeInkWh: 80,
+     *   targetChargeInPCT: 80
+     * }
+     * ```
      */
     chargingInformationAtEndOfLeg?: BatteryCharging;
 };

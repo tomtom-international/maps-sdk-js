@@ -22,17 +22,131 @@ type TrafficFlowSourcesWithLayers = {
 };
 
 /**
- * Vector tiles traffic flow module.
- * * Traffic flow refers to the vector traffic flow layers.
+ * Traffic Flow Module for displaying real-time traffic flow information on the map.
+ *
+ * This module controls the vector tile traffic flow layers that visualize current
+ * traffic speed conditions using color-coded road segments.
+ *
+ * @remarks
+ * **Features:**
+ * - Toggle traffic flow visibility on/off
+ * - Filter by road categories and types
+ * - Color-coded speed visualization (green = free flow, red = congestion)
+ * - Real-time traffic data from vector tiles
+ * - Filter road closures
+ *
+ * **Visual Representation:**
+ * - Green: Free-flowing traffic
+ * - Yellow/Orange: Slow traffic
+ * - Red: Heavy congestion
+ * - Dark gray: Road closures
+ *
+ * **Use Cases:**
+ * - Real-time traffic monitoring
+ * - Route planning with current conditions
+ * - Traffic analysis applications
+ * - Navigation systems
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * import { TrafficFlowModule } from '@tomtom-international/maps-sdk-js/map';
+ *
+ * // Get module (auto-add to style if needed)
+ * const trafficFlow = await TrafficFlowModule.get(map, {
+ *   ensureAddedToStyle: true,
+ *   visible: true
+ * });
+ *
+ * // Toggle visibility
+ * trafficFlow.setVisible(false);
+ * trafficFlow.setVisible(true);
+ * ```
+ *
+ * @example
+ * Filter by road type:
+ * ```typescript
+ * // Show only highway traffic
+ * trafficFlow.filter({
+ *   any: [{
+ *     roadCategories: {
+ *       show: 'only',
+ *       values: ['motorway', 'trunk']
+ *     }
+ *   }]
+ * });
+ *
+ * // Hide local streets
+ * trafficFlow.filter({
+ *   any: [{
+ *     roadCategories: {
+ *       show: 'all_except',
+ *       values: ['street']
+ *     }
+ *   }]
+ * });
+ * ```
+ *
+ * @example
+ * Show only road closures:
+ * ```typescript
+ * trafficFlow.filter({
+ *   any: [{
+ *     showRoadClosures: 'only'
+ *   }]
+ * });
+ * ```
+ *
+ * @see [Traffic Flow Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic-flow)
+ * @see [Traffic Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic)
+ *
+ * @group Map Modules
+ * @category Traffic
  */
 export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithLayers, FlowConfig> {
     private originalFilters!: Record<string, FilterSpecification | undefined>;
 
     /**
-     * Gets the Traffic Flow Module for the given TomTomMap and configuration once the map is ready.
-     * @param map The TomTomMap instance.
-     * @param config  The module optional configuration
-     * @returns {Promise} Returns a promise with a new instance of this module
+     * Retrieves a TrafficFlowModule instance for the given map.
+     *
+     * @param map - The TomTomMap instance to attach this module to.
+     * @param config - Optional configuration for initialization, visibility, and filters.
+     *
+     * @returns A promise that resolves to the initialized TrafficFlowModule.
+     *
+     * @remarks
+     * **Configuration:**
+     * - `visible`: Initial visibility state
+     * - `ensureAddedToStyle`: Auto-add traffic flow to style if missing
+     * - `filters`: Road category and type filters
+     *
+     * **Style Requirement:**
+     * Traffic flow must be included in the map style or added via `ensureAddedToStyle`.
+     *
+     * @throws Error if traffic flow source is not in style and `ensureAddedToStyle` is false
+     *
+     * @example
+     * Default initialization:
+     * ```typescript
+     * const trafficFlow = await TrafficFlowModule.get(map);
+     * ```
+     *
+     * @example
+     * Auto-add to style:
+     * ```typescript
+     * const trafficFlow = await TrafficFlowModule.get(map, {
+     *   ensureAddedToStyle: true,
+     *   visible: true,
+     *   filters: {
+     *     any: [{
+     *       roadCategories: {
+     *         show: 'only',
+     *         values: ['motorway', 'trunk', 'primary']
+     *       }
+     *     }]
+     *   }
+     * });
+     * ```
      */
     static async get(map: TomTomMap, config?: StyleModuleInitConfig & FlowConfig): Promise<TrafficFlowModule> {
         await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_FLOW_SOURCE_ID, 'trafficFlow');
@@ -77,9 +191,74 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     }
 
     /**
-     * Applies the given filters to traffic flow.
-     * * Any other configurations remain untouched.
-     * @param filters The filters to apply. If undefined, defaults will be ensured.
+     * Applies filters to traffic flow display.
+     *
+     * @param filters - Filter configuration for road types, categories, and closures.
+     * Pass `undefined` to reset to defaults (show all).
+     *
+     * @remarks
+     * **Filter Options:**
+     * - `roadCategories`: Filter by road importance (motorway, trunk, primary, etc.)
+     * - `roadSubCategories`: Filter by specific street types
+     * - `showRoadClosures`: Show only closures or exclude them
+     *
+     * **Available Road Categories:**
+     * - `motorway`: Major highways
+     * - `trunk`: Major roads
+     * - `primary`: Primary roads
+     * - `secondary`: Secondary roads
+     * - `tertiary`: Tertiary roads
+     * - `street`: Local streets
+     *
+     * **Filter Logic:**
+     * Uses "any" (OR) logic - traffic matching any filter is shown.
+     *
+     * @example
+     * Show only major roads:
+     * ```typescript
+     * trafficFlow.filter({
+     *   any: [{
+     *     roadCategories: {
+     *       show: 'only',
+     *       values: ['motorway', 'trunk', 'primary']
+     *     }
+     *   }]
+     * });
+     * ```
+     *
+     * @example
+     * Hide street-level traffic:
+     * ```typescript
+     * trafficFlow.filter({
+     *   any: [{
+     *     roadCategories: {
+     *       show: 'all_except',
+     *       values: ['street']
+     *     }
+     *   }]
+     * });
+     * ```
+     *
+     * @example
+     * Multiple filter criteria:
+     * ```typescript
+     * trafficFlow.filter({
+     *   any: [
+     *     {
+     *       roadCategories: { show: 'only', values: ['motorway'] }
+     *     },
+     *     {
+     *       showRoadClosures: 'only'
+     *     }
+     *   ]
+     * });
+     * ```
+     *
+     * @example
+     * Reset filters:
+     * ```typescript
+     * trafficFlow.filter(undefined);
+     * ```
      */
     filter(filters?: TrafficFlowFilters) {
         this._filter(filters);
@@ -109,8 +288,15 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     }
 
     /**
-     * Sets visibility for traffic flow layers.
-     * @param visible
+     * Sets the visibility of traffic flow layers.
+     *
+     * @param visible - `true` to show traffic flow, `false` to hide it.
+     *
+     * @example
+     * ```typescript
+     * trafficFlow.setVisible(true);  // Show traffic
+     * trafficFlow.setVisible(false); // Hide traffic
+     * ```
      */
     setVisible(visible: boolean): void {
         this.config = { ...this.config, visible };
