@@ -48,7 +48,23 @@ import { summaryBubbleSymbolPoint } from './summaryBubbleLayers';
 import { waypointLabels, waypointSymbols } from './waypointLayers';
 
 /**
- * Default implementation of the route layers.
+ * Default layer configuration for route visualization on the map.
+ *
+ * @remarks
+ * This configuration defines the complete visual styling for all route-related map layers,
+ * including main route lines, waypoints, special road sections (ferries, tunnels, toll roads, etc.),
+ * turn-by-turn guidance instructions, and route summary information.
+ *
+ * **Usage:**
+ * - Automatically applied when initializing {@link RoutingModule} without custom layer configuration
+ * - Can be used as a reference or starting point for creating custom layer configurations
+ * - Individual properties can be selectively overridden while keeping defaults for others
+ *
+ * @see {@link RouteLayersConfig} for the configuration type definition
+ * @see {@link RoutingModule.init} for initialization options
+ * @see {@link RoutingModule.applyConfig} for runtime configuration updates
+ *
+ * @group Routing
  */
 export const defaultRouteLayersConfig: Required<RouteLayersConfig> = {
     mainLines: [

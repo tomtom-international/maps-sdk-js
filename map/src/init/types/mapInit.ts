@@ -34,7 +34,7 @@ export const standardStyleIDs = [
  * const styleId: StandardStyleID = 'standardLight';
  * ```
  *
- * @group Map
+ * @group Map Style
  */
 export type StandardStyleID = (typeof standardStyleIDs)[number];
 
@@ -63,7 +63,7 @@ export type StandardStyleID = (typeof standardStyleIDs)[number];
  * };
  * ```
  *
- * @group Map
+ * @group Map Style
  */
 export type StandardStyle = {
     /**
@@ -138,7 +138,7 @@ export type StandardStyle = {
  * };
  * ```
  *
- * @group Map
+ * @group Map Style
  */
 export type CustomStyle = {
     /**
@@ -185,7 +185,7 @@ export type CustomStyle = {
  * - `trafficFlow`: Shows real-time traffic flow with color-coded speeds
  * - `hillshade`: Adds terrain elevation shading for topographic context
  *
- * @group Map
+ * @group Map Style
  */
 export type StyleModule = 'trafficIncidents' | 'trafficFlow' | 'hillshade';
 
@@ -226,7 +226,7 @@ export type StyleModule = 'trafficIncidents' | 'trafficFlow' | 'hillshade';
  * }
  * ```
  *
- * @group Map
+ * @group Map Style
  */
 export type StyleInput = StandardStyleID | (StandardStyle & { type: 'standard' }) | (CustomStyle & { type: 'custom' });
 

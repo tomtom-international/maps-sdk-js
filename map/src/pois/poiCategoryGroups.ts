@@ -1,5 +1,54 @@
 import type { MapStylePOICategory } from '../places';
 
+/**
+ * Predefined groups of related POI categories for convenient filtering.
+ *
+ * @remarks
+ * This object maps group names to arrays of {@link MapStylePOICategory} values.
+ * Each group contains POI categories that share a common theme or purpose,
+ * making it easier to filter multiple related POI types with a single identifier.
+ *
+ * **Available Groups:**
+ * - `FOOD_DRINKS_GROUP` - Dining and beverage establishments (restaurants, cafes, pubs, etc.)
+ * - `SHOPPING_GROUP` - Retail stores and shopping centers (shops, markets, supermarkets, etc.)
+ * - `TRANSPORTATION_GROUP` - Transportation hubs and stops (airports, stations, terminals, etc.)
+ * - `HEALTH_GROUP` - Healthcare facilities and services (hospitals, clinics, pharmacies, etc.)
+ * - `PARKING_GROUP` - Parking facilities (garages and open parking areas)
+ * - `HOLIDAY_TOURISM_GROUP` - Tourist attractions and recreational sites (museums, parks, beaches, etc.)
+ * - `EV_CHARGING_STATIONS_GROUP` - Electric vehicle charging locations
+ * - `GAS_STATIONS_GROUP` - Fuel stations for traditional vehicles
+ * - `ACCOMMODATION_GROUP` - Lodging facilities (hotels, motels, camping grounds, etc.)
+ * - `ENTERTAINMENT_GROUP` - Entertainment venues (cinemas, theaters, nightlife, casinos, etc.)
+ * - `SPORTS_LEISURE_GROUP` - Sports and leisure facilities (stadiums, gyms, pools, golf courses, etc.)
+ * - `EDUCATION_GROUP` - Educational institutions (schools, universities, libraries, etc.)
+ * - `GOVERNMENT_GROUP` - Government and public safety facilities (offices, courts, embassies, police, fire stations)
+ *
+ * @example
+ * Filter to show only food-related POIs:
+ * ```ts
+ * import { poiCategoryGroups } from '@tomtom-international/maps-sdk-js/map';
+ *
+ * const foodCategories = poiCategoryGroups.FOOD_DRINKS_GROUP;
+ * console.log(foodCategories);
+ * // ['RESTAURANT', 'FAST_FOOD', 'CAFE_PUB', 'PUB', 'WINERY', ...]
+ * ```
+ *
+ * @example
+ * Use with POI module filtering:
+ * ```ts
+ * poisModule.configure({
+ *   categoryFilter: {
+ *     mode: 'show',
+ *     values: ['FOOD_DRINKS_GROUP', 'ENTERTAINMENT_GROUP']
+ *   }
+ * });
+ * ```
+ *
+ * @see {@link POICategoryGroup} - Type representing all available group names
+ * @see {@link MapStylePOICategory} - Individual POI category identifiers
+ *
+ * @group POIs
+ */
 export const poiCategoryGroups: Record<string, MapStylePOICategory[]> = {
     FOOD_DRINKS_GROUP: [
         'RESTAURANT',
@@ -97,27 +146,60 @@ export const poiCategoryGroups: Record<string, MapStylePOICategory[]> = {
  * Using category groups simplifies filtering by allowing you to show or hide
  * multiple related POI types with a single filter value.
  *
- * Available groups:
- * - `FOOD_GROUP` - Restaurants, cafes, fast food, etc.
- * - `ACCOMMODATION_GROUP` - Hotels, motels, camping, etc.
- * - `SHOPPING_GROUP` - Stores, malls, markets, etc.
- * - `TRANSPORT_GROUP` - Airports, train stations, bus stops, etc.
- * - `HEALTHCARE_GROUP` - Hospitals, clinics, pharmacies, etc.
- * - `ENTERTAINMENT_GROUP` - Theaters, cinemas, museums, etc.
- * - `SPORTS_GROUP` - Stadiums, gyms, sports facilities, etc.
- * - `SERVICES_GROUP` - Banks, ATMs, post offices, etc.
- * - `AUTOMOTIVE_GROUP` - Gas stations, parking, car services, etc.
- * - `EDUCATION_GROUP` - Schools, universities, libraries, etc.
- * - `GOVERNMENT_GROUP` - Government offices, embassies, police stations, etc.
+ * **Available groups:**
+ * - `FOOD_DRINKS_GROUP` - Restaurants, cafes, fast food, wineries, etc.
+ * - `SHOPPING_GROUP` - Stores, malls, markets, supermarkets, etc.
+ * - `TRANSPORTATION_GROUP` - Airports, train stations, bus stops, ferry terminals, etc.
+ * - `HEALTH_GROUP` - Hospitals, clinics, pharmacies, doctors, dentists, etc.
+ * - `PARKING_GROUP` - Parking garages and open parking areas
+ * - `HOLIDAY_TOURISM_GROUP` - Tourist attractions, museums, beaches, scenic views, etc.
+ * - `EV_CHARGING_STATIONS_GROUP` - Electric vehicle charging stations
+ * - `GAS_STATIONS_GROUP` - Gas and petrol stations
+ * - `ACCOMMODATION_GROUP` - Hotels, motels, camping grounds, etc.
+ * - `ENTERTAINMENT_GROUP` - Cinemas, theaters, nightlife, casinos, etc.
+ * - `SPORTS_LEISURE_GROUP` - Stadiums, sports centers, swimming pools, golf courses, etc.
+ * - `EDUCATION_GROUP` - Schools, universities, libraries, cultural centers
+ * - `GOVERNMENT_GROUP` - Government offices, courthouses, embassies, police, fire stations
  *
  * @example
+ * Filter to show only food-related POIs:
  * ```ts
- * // Filter to show only food-related POIs
- * categoryFilter: { mode: 'show', values: ['FOOD_GROUP'] }
+ * poisModule.configure({
+ *   categoryFilter: {
+ *     mode: 'show',
+ *     values: ['FOOD_DRINKS_GROUP']
+ *   }
+ * });
  * ```
  *
+ * @example
+ * Hide parking and gas stations:
+ * ```ts
+ * poisModule.configure({
+ *   categoryFilter: {
+ *     mode: 'hide',
+ *     values: ['PARKING_GROUP', 'GAS_STATIONS_GROUP']
+ *   }
+ * });
+ * ```
+ *
+ * @example
+ * Combine multiple groups for tourism use case:
+ * ```ts
+ * const tourismFilter = {
+ *   mode: 'show',
+ *   values: [
+ *     'HOLIDAY_TOURISM_GROUP',
+ *     'ACCOMMODATION_GROUP',
+ *     'FOOD_DRINKS_GROUP',
+ *     'ENTERTAINMENT_GROUP'
+ *   ]
+ * };
+ * ```
+ *
+ * @see {@link poiCategoryGroups} - The object containing all group definitions
  * @see {@link MapStylePOICategory} - For individual POI categories
  *
- * @group POI
+ * @group POIs
  */
 export type POICategoryGroup = keyof typeof poiCategoryGroups;

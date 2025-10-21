@@ -1,5 +1,16 @@
 import type { StyleModuleConfig } from '../../shared';
 
+/**
+ * Available base map layer group identifiers.
+ *
+ * @remarks
+ * Use these names with {@link BaseMapModule} to control layer visibility.
+ *
+ * @see {@link BaseMapLayerGroupName}
+ * @see {@link BaseMapModuleInitConfig.layerGroupsFilter}
+ *
+ * @group Base Map
+ */
 export const baseMapLayerGroupNames = [
     'land',
     'water',

@@ -46,7 +46,7 @@ import { addPinSpriteToStyle } from './shared/mapUtils';
  * @see {@link TomTomMap.addStyleChangeHandler}
  * @see {@link TomTomMap.setStyle}
  *
- * @group Map
+ * @group Map Style
  */
 export type StyleChangeHandler = {
     /**
