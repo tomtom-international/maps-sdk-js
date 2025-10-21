@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.23.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.22.0...v0.23.0) (2025-10-21)
+
+
+### Features
+
+* tsdoc and typedoc grouping simplification and improvements ([7bcb9c6](https://github.com/tomtom-international/maps-sdk-js/commit/7bcb9c6ef5e770c58792585bae124ee136ceafd4))
+
 ## [0.22.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.21.3...v0.22.0) (2025-10-21)
 
 
