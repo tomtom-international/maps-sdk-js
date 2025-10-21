@@ -1,7 +1,6 @@
 /**
  * List of available views for geopolitical context.
  * @group Shared
- * @category Types
  */
 export const views = ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'] as const;
 
@@ -28,6 +27,5 @@ export const views = ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN']
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type View = (typeof views)[number];

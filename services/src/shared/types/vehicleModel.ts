@@ -32,7 +32,6 @@ import { VehicleEngineModel, VehicleEngineType } from './vehicleEngineParams';
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type PredefinedVehicleModel = {
     /**
@@ -89,7 +88,6 @@ export type PredefinedVehicleModel = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type VehicleDimensions = {
     /**
@@ -257,7 +255,6 @@ export type VehicleDimensions = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ExplicitVehicleModel<E extends VehicleEngineType> = {
     /**
@@ -308,6 +305,5 @@ export type ExplicitVehicleModel<E extends VehicleEngineType> = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type VehicleModel<E extends VehicleEngineType = undefined> = PredefinedVehicleModel | ExplicitVehicleModel<E>;

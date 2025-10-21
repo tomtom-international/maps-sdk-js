@@ -14,51 +14,37 @@ type HillshadeSourcesWithLayers = {
 };
 
 /**
- * Hillshade Module for displaying terrain elevation shading on the map.
+ * Map module for displaying terrain shading (hillshade).
  *
- * This module controls the semi-transparent terrain layer that provides visual
- * depth and elevation context through shading effects.
+ * The HillshadeModule adds realistic terrain depth perception to the map by rendering
+ * shadow and highlight effects based on elevation data. This enhances the 3D appearance
+ * of mountainous and hilly terrain.
  *
  * @remarks
  * **Features:**
- * - Toggle hillshade visibility on/off
- * - Based on vector tile elevation data
- * - Enhances 3D perception of terrain
- * - Lightweight rendering performance
+ * - Realistic terrain shading
+ * - Uses vector tile elevation data
+ * - Lightweight performance impact
+ * - Seamlessly integrates with other map layers
+ * - Toggle visibility on/off
  *
- * **Visual Effect:**
- * - Creates shadow/highlight effects based on terrain elevation
- * - Helps visualize mountains, valleys, and topographic features
- * - Complements flat map data with depth perception
- *
- * **Use Cases:**
- * - Outdoor and hiking applications
- * - Geographic analysis requiring terrain context
- * - Enhanced visual appeal for mountainous regions
- * - Educational and scientific visualizations
+ * **Common Use Cases:**
+ * - Outdoor recreation maps (hiking, skiing)
+ * - Geographic/topographic applications
+ * - Environmental visualization
+ * - Landscape planning tools
  *
  * @example
- * Basic usage:
  * ```typescript
- * import { HillshadeModule } from '@tomtom-international/maps-sdk-js/map';
- *
- * // Get module (will add hillshade to style if not present)
- * const hillshade = await HillshadeModule.get(map, {
- *   ensureAddedToStyle: true,
+ * // Create the module with hillshade visible
+ * const hillshade = await HillshadeModule.getInstance(map, {
  *   visible: true
  * });
  *
  * // Toggle visibility
  * hillshade.setVisible(false);
- * hillshade.setVisible(true);
  *
- * // Check current state
- * console.log('Hillshade visible:', hillshade.isVisible());
- * ```
- *
- * @example
- * Event handling:
- * ```typescript
+ * // Listen to events
  * hillshade.events.on('click', (feature, lngLat) => {
  *   console.log('Clicked hillshade at:', lngLat);
  * });
@@ -66,8 +52,7 @@ type HillshadeSourcesWithLayers = {
  *
  * @see [Hillshade Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/hillshade)
  *
- * @group Map Modules
- * @category Terrain
+ * @group Hillshade
  */
 export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayers, HillshadeModuleConfig> {
     /**

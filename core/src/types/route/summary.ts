@@ -4,7 +4,6 @@ import type { BatteryCharging } from './batteryCharging';
  * Common summary type for a route or route leg.
  * Contains departure/arrival times, lengths and durations.
  * @group Route
- * @category Types
  */
 export type SummaryBase = {
     /**
@@ -74,7 +73,6 @@ export type SummaryBase = {
  * Extends the base summary with fuel consumption estimates.
  *
  * @group Route
- * @category Types
  */
 export type CombustionSummary = SummaryBase & {
     /**
@@ -107,7 +105,6 @@ export type CombustionSummary = SummaryBase & {
  * Extends the base summary with battery consumption and charge level estimates.
  *
  * @group Route
- * @category Types
  */
 export type ElectricSummary = SummaryBase & {
     /**
@@ -169,7 +166,6 @@ export type ElectricSummary = SummaryBase & {
  * Combined summary supporting both combustion and electric vehicle metrics.
  *
  * @group Route
- * @category Types
  */
 export type SummaryWithConsumption = CombustionSummary & ElectricSummary;
 
@@ -180,7 +176,6 @@ export type SummaryWithConsumption = CombustionSummary & ElectricSummary;
  * any intermediate charging stops for electric vehicles.
  *
  * @group Route
- * @category Types
  */
 export type RouteSummary = SummaryWithConsumption & {
     /**
@@ -211,7 +206,6 @@ export type RouteSummary = SummaryWithConsumption & {
  * - Circle waypoints don't create new legs
  *
  * @group Route
- * @category Types
  */
 export type LegSummary = SummaryWithConsumption & {
     /**

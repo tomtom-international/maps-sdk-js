@@ -3,9 +3,9 @@ import { isNil } from 'lodash-es';
 import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
+import { TomTomMap } from '../TomTomMap';
 import { buildBaseMapLayerGroupFilter, buildLayerGroupFilter } from './layerGroups';
 import type { BaseMapLayerGroups, BaseMapModuleConfig, BaseMapModuleInitConfig } from './types/baseMapModuleConfig';
-import { TomTomMap } from "../TomTomMap";
 
 type BaseSourceAndLayers = {
     vectorTiles: StyleSourceWithLayers;
@@ -99,8 +99,7 @@ type BaseSourceAndLayers = {
  * @see [Base Map Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/base-map)
  * @see [Map Styles Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/map-styles)
  *
- * @group Map Modules
- * @category Base
+ * @group Base Map
  */
 export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMapModuleConfig> {
     /**

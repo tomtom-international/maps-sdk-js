@@ -1,6 +1,5 @@
 /**
  * @module map-hillshade
- * @category Map
  */
 
 export * from './HillshadeModule';

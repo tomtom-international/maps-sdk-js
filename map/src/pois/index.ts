@@ -1,6 +1,5 @@
 /**
- * @module map-POIs
- * @category Map
+ * @module map-base
  */
 
 export * from './layers/poisLayers';

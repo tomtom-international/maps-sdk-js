@@ -71,7 +71,6 @@ import type { ReachableRangeParams } from './types/reachableRangeParams';
  * @see [Routing Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/quickstart)
  *
  * @group Routing
- * @category Functions
  */
 export const calculateReachableRange = async (
     params: ReachableRangeParams,
@@ -138,7 +137,6 @@ export const calculateReachableRange = async (
  * @see [Routing Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/quickstart)
  *
  * @group Routing
- * @category Functions
  */
 export const calculateReachableRanges = async (
     paramsArray: ReachableRangeParams[],

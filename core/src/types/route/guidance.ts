@@ -3,7 +3,6 @@ import type { Position } from 'geojson';
 /**
  * Indicates left-hand vs. right-hand side driving at the point of the maneuver.
  * @group Route
- * @category Types
  */
 export type DrivingSide = 'LEFT' | 'RIGHT';
 
@@ -13,14 +12,12 @@ export type DrivingSide = 'LEFT' | 'RIGHT';
  * MOTORWAY -> represents a motorway road type.
  * CONTROLLED_ACCESS -> represents a controlled access road type with regulated traffic flow and regulated entries and exits.
  * @group Route
- * @category Types
  */
 export type RoadInformationProperty = 'URBAN' | 'MOTORWAY' | 'CONTROLLED_ACCESS';
 
 /**
  * Type of landmarks that can be used in instructions.
  * @group Route
- * @category Types
  */
 export type Landmark =
     | 'END_OF_ROAD'
@@ -36,7 +33,6 @@ export type Landmark =
  * Description of the maneuver, for example: arrive or turn right.
  * @see https://docs.tomtom.com/routing-api/documentation/routing/calculate-route#maneuver-codes
  * @group Route
- * @category Types
  */
 export type Maneuver =
     | 'DEPART'
@@ -87,14 +83,12 @@ export type Maneuver =
 /**
  * Side from where the road connects to the route.
  * @group Route
- * @category Types
  */
 export type SideRoadSide = 'LEFT' | 'RIGHT' | 'LEFT_AND_RIGHT';
 
 /**
  * Available toll payment options.
  * @group Route
- * @category Types
  */
 export type TollPaymentType =
     | 'CASH_COINS_AND_BILLS'
@@ -112,7 +106,6 @@ export type TollPaymentType =
 /**
  * Route path point and its metadata.
  * @group Route
- * @category Types
  */
 export type RoutePathPoint = {
     point: Position;
@@ -129,7 +122,6 @@ export type RoutePathPoint = {
 /**
  * Text with phonetic transcription.
  * @group Route
- * @category Types
  */
 export type TextWithPhonetics = {
     /**
@@ -151,7 +143,6 @@ export type TextWithPhonetics = {
 /**
  * Object describes a single road shield reference.
  * @group Route
- * @category Types
  */
 export type RoadShieldReference = {
     /**
@@ -171,7 +162,6 @@ export type RoadShieldReference = {
 /**
  * Road shield object containing extra information.
  * @group Route
- * @category Types
  */
 export type RoadShield = {
     /**
@@ -197,7 +187,6 @@ export type RoadShield = {
 /**
  * Road information, including properties, street name and road shields.
  * @group Route
- * @category Types
  */
 export type RoadInformation = {
     /**
@@ -219,7 +208,6 @@ export type RoadInformation = {
 /**
  * Signpost information.
  * @group Route
- * @category Types
  */
 export type Signpost = {
     /**
@@ -241,7 +229,6 @@ export type Signpost = {
 /**
  * Side road information.
  * @group Route
- * @category Types
  */
 export type SideRoad = {
     /**
@@ -258,7 +245,6 @@ export type SideRoad = {
 /**
  * A set of attributes describing a maneuver, e.g., "Turn right", "Keep left", "Take the ferry", "Take the motorway", "Arrive".
  * @group Route
- * @category Types
  */
 export type Instruction = {
     /**
@@ -456,7 +442,6 @@ export type Instruction = {
 /**
  * Contains guidance related elements. This field is present only when guidance was requested and is available.
  * @group Route
- * @category Types
  */
 export type Guidance = {
     /**

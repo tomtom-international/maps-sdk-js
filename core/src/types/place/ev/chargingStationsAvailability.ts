@@ -20,7 +20,6 @@ import type { Connector } from './connector';
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingPointAvailability = {
     /**
@@ -72,7 +71,6 @@ export type ChargingPointAvailability = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ConnectorAvailability = ChargingPointAvailability & {
     /**
@@ -117,7 +115,6 @@ export type ConnectorAvailability = ChargingPointAvailability & {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingStationsAvailability = {
     /**

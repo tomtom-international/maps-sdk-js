@@ -15,7 +15,6 @@ import { VehicleEngineType } from './vehicleEngineParams';
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ChargingPreferencesPCT = {
     /**
@@ -82,7 +81,6 @@ export type ChargingPreferencesPCT = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ChargingPreferencesKWH = {
     /**
@@ -161,7 +159,6 @@ export type ChargingPreferencesKWH = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ChargingPreferences = ChargingPreferencesPCT | ChargingPreferencesKWH;
 
@@ -183,7 +180,6 @@ export type ChargingPreferences = ChargingPreferencesPCT | ChargingPreferencesKW
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ElectricVehiclePreferences = {
     /**
@@ -236,7 +232,6 @@ export type ElectricVehiclePreferences = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type VehiclePreferences<E extends VehicleEngineType = undefined> = E extends 'electric'
     ? ElectricVehiclePreferences

@@ -128,8 +128,7 @@ type GeometrySourcesWithLayers = {
  *
  * @see [Geometries Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/geometries)
  *
- * @group Map Modules
- * @category Geometry
+ * @group Geometries
  */
 export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometriesModuleConfig> {
     private static lastInstanceIndex = -1;

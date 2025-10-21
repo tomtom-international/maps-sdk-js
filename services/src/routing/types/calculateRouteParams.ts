@@ -11,7 +11,6 @@ import type { CalculateRouteResponseAPI } from './apiResponseTypes';
  * Note: Some section types (like "leg") are automatically included regardless of this parameter.
  *
  * @group Routing
- * @category Types
  */
 export type InputSectionType = (typeof inputSectionTypes)[number];
 
@@ -55,7 +54,6 @@ export type InputSectionType = (typeof inputSectionTypes)[number];
  * @default All available section types
  *
  * @group Routing
- * @category Types
  */
 export type InputSectionTypes = InputSectionType[];
 
@@ -76,7 +74,6 @@ export type InputSectionTypes = InputSectionType[];
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type GuidanceParams = {
     /**
@@ -126,7 +123,6 @@ export type GuidanceParams = {
  * @default ['distance', 'travelTime']
  *
  * @group Routing
- * @category Types
  */
 export type ExtendedRouteRepresentation = 'distance' | 'travelTime';
 
@@ -151,7 +147,6 @@ export type ExtendedRouteRepresentation = 'distance' | 'travelTime';
  * @default 'none'
  *
  * @group Routing
- * @category Types
  */
 export type ComputeTravelTimeFor = 'none' | 'all';
 
@@ -175,7 +170,6 @@ export type ComputeTravelTimeFor = 'none' | 'all';
  * @default 0
  *
  * @group Routing
- * @category Types
  */
 export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -219,7 +213,6 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> &
     CommonRoutingParams & {

@@ -1,6 +1,6 @@
 import type { Places, SearchPlaceProps } from '@cet/maps-sdk-js/core';
 import type { FuzzySearchParams, QueryIntent } from '../fuzzy-search';
-import { fuzzySearch } from '../fuzzy-search/fuzzySearch';
+import { fuzzySearch } from '../fuzzy-search';
 import type { FuzzySearchTemplate } from '../fuzzy-search/fuzzySearchTemplate';
 import type { GeometrySearchParams } from '../geometry-search';
 import { geometrySearch } from '../geometry-search/geometrySearch';
@@ -17,7 +17,6 @@ type SearchFeatureCollectionProps = SearchSummary & {
  * Collection of place features with search-specific properties like relevance scores and distances.
  *
  * @group Search
- * @category Types
  */
 export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionProps>;
 
@@ -76,7 +75,6 @@ export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionPro
  * @see [Search Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/search)
  *
  * @group Search
- * @category Functions
  */
 export const search = async (
     params: GeometrySearchParams | FuzzySearchParams,

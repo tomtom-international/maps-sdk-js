@@ -1,6 +1,5 @@
 /**
  * @module map-base
- * @category Map
  */
 
 export * from './BaseMapModule';

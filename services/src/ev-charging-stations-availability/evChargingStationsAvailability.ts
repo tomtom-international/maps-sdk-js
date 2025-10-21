@@ -59,7 +59,6 @@ import type { ChargingStationsAvailabilityParams } from './types/evChargingStati
  * @see [EV Charging Stations Availability Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/ev-charging-stations-availability)
  *
  * @group EV Charging
- * @category Functions
  */
 export const evChargingStationsAvailability = async (
     params: ChargingStationsAvailabilityParams,
@@ -96,7 +95,6 @@ export const evChargingStationsAvailability = async (
  * ```
  *
  * @group EV Charging
- * @category Functions
  */
 export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<EVChargingStationPlaceProps>> => {
     const availabilityId = place.properties.dataSources?.chargingAvailability?.id;
@@ -164,7 +162,6 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
  * ```
  *
  * @group EV Charging
- * @category Functions
  */
 export const buildPlacesWithEVAvailability = async (
     places: Places,

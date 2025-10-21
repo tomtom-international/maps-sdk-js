@@ -15,7 +15,6 @@ import type { GeometryDataResponseAPI } from './apiTypes';
  * ```
  *
  * @group Geometry
- * @category Types
  */
 export type GeometriesInput = string[];
 
@@ -25,7 +24,6 @@ export type GeometriesInput = string[];
  * Extended by {@link GeometryDataParams} and {@link GeometryPlaceParams}.
  *
  * @group Geometry
- * @category Types
  */
 export type CommonServiceParamsWithZoom = CommonServiceParams<URL, GeometryDataResponseAPI> & {
     /**
@@ -73,7 +71,6 @@ export type CommonServiceParamsWithZoom = CommonServiceParams<URL, GeometryDataR
  * ```
  *
  * @group Geometry
- * @category Types
  */
 export type GeometryDataParams = CommonServiceParamsWithZoom & {
     /**
@@ -126,7 +123,6 @@ export type GeometryDataParams = CommonServiceParamsWithZoom & {
  * ```
  *
  * @group Geometry
- * @category Types
  */
 export type GeometryPlaceParams = CommonServiceParamsWithZoom & {
     /**
@@ -179,6 +175,5 @@ export type GeometryPlaceParams = CommonServiceParamsWithZoom & {
  * ```
  *
  * @group Geometry
- * @category Types
  */
 export type GeometryParams = GeometryDataParams | GeometryPlaceParams;

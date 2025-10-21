@@ -62,94 +62,57 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
 import { toDisplayChargingStations, toDisplayWaypoints } from './util/waypointUtils';
 
 /**
- * Routing Module for displaying routes and waypoints on the map.
+ * Map module for displaying and managing route visualizations.
  *
- * This module visualizes routing data from TomTom Routing API with full styling control
- * for route lines, waypoints, traffic sections, and turn-by-turn guidance.
+ * The RoutingModule provides comprehensive functionality for displaying routes on the map,
+ * including route lines, alternative routes, turn-by-turn guidance, and interactive waypoints.
+ * It integrates seamlessly with the TomTom Routing API.
  *
  * @remarks
  * **Features:**
- * - Display single or multiple routes with selection
- * - Customizable route styling (colors, widths, patterns)
- * - Waypoint markers (start, stops, destination)
- * - Route sections (ferries, tolls, tunnels, traffic)
- * - Turn-by-turn guidance visualization
- * - Route summary bubbles with distance/time
- * - EV charging station markers
- * - Interactive route selection
+ * - Display route lines with customizable styling
+ * - Show alternative routes with different styling
+ * - Interactive waypoint markers (drag, add, remove)
+ * - Turn-by-turn guidance instructions
+ * - Route section highlighting
+ * - Distance and duration information
+ * - Support for multiple routes simultaneously
  *
- * **Data Sources:**
- * - Compatible with TomTom Routing API responses
- * - Supports custom route data matching the Routes interface
- * - Multiple route visualization for alternatives
+ * **Common Use Cases:**
+ * - Turn-by-turn navigation displays
+ * - Route planning and comparison
+ * - Multi-stop route optimization
+ * - Interactive route editing
+ * - Fleet management route visualization
  *
  * @example
- * Basic route display:
  * ```typescript
- * import { RoutingModule } from '@tomtom-international/maps-sdk-js/map';
- * import { calculateRoute } from '@tomtom-international/maps-sdk-js/services';
+ * // Create the module
+ * const routing = await RoutingModule.getInstance(map, {
+ *   displayUnits: {
+ *     distance: { type: 'metric' }
+ *   }
+ * });
  *
- * // Calculate route
+ * // Calculate and display a route
  * const result = await calculateRoute({
  *   key: 'your-api-key',
- *   geoInputs: [
+ *   locations: [
  *     [4.9041, 52.3676],  // Amsterdam
  *     [4.4777, 51.9244]   // Rotterdam
- *   ]
- * });
- *
- * // Display on map
- * const routing = await RoutingModule.init(map);
- * await routing.showRoutes(result);
- * await routing.showWaypoints(result.routes[0].legs[0].points);
- * ```
- *
- * @example
- * Multiple routes with interaction:
- * ```typescript
- * // Calculate route with alternatives
- * const result = await calculateRoute({
- *   key: 'your-api-key',
- *   geoInputs: [[4.9, 52.3], [4.5, 51.9]],
- *   maxAlternatives: 2
- * });
- *
- * const routing = await RoutingModule.init(map);
- * await routing.showRoutes(result);
- *
- * // Handle route clicks to switch selection
- * routing.events.mainLines.on('click', async (feature) => {
- *   const routeIndex = feature.properties.routeIndex;
- *   await routing.selectRoute(routeIndex);
- * });
- * ```
- *
- * @example
- * Custom styling:
- * ```typescript
- * import { defaultRouteLayersConfig } from '@tomtom-international/maps-sdk-js/map';
- *
- * const routing = await RoutingModule.init(map, {
- *   layers: {
- *     ...defaultRouteLayersConfig,
- *     mainLines: {
- *       ...defaultRouteLayersConfig.mainLines,
- *       selected: {
- *         ...defaultRouteLayersConfig.mainLines.selected,
- *         lineColor: '#FF5733',
- *         lineWidth: 8
- *       }
- *     }
+ *   ],
+ *   routeOptions: {
+ *     travelMode: 'car',
+ *     routeType: 'fastest'
  *   }
  * });
  *
  * await routing.showRoutes(result);
  * ```
  *
- * @see [Routes Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/routes)
+ * @see [Routing Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/routing)
  *
- * @group Map Modules
- * @category Routing
+ * @group Routing
  */
 export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, RoutingModuleConfig> {
     private layersSpecs!: RoutingLayersSpecs;

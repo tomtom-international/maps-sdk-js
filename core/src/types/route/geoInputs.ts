@@ -7,7 +7,6 @@ import type { Route } from './route';
  * Properties specific to route waypoints.
  *
  * @group Route
- * @category Types
  */
 export type WaypointProps = {
     /**
@@ -67,7 +66,6 @@ export type WaypointProps = {
  * ```
  *
  * @group Route
- * @category Types
  */
 export type Waypoint<T extends Anything = Anything> = Feature<Point, WaypointProps & T>;
 
@@ -90,7 +88,6 @@ export type Waypoint<T extends Anything = Anything> = Feature<Point, WaypointPro
  * ```
  *
  * @group Route
- * @category Types
  */
 export type Waypoints<T extends Anything = Anything> = FeatureCollection<Point, WaypointProps & T>;
 
@@ -122,7 +119,6 @@ export type Waypoints<T extends Anything = Anything> = FeatureCollection<Point, 
  * ```
  *
  * @group Route
- * @category Types
  */
 export type WaypointLike = Waypoint | HasLngLat;
 
@@ -150,7 +146,6 @@ export type WaypointLike = Waypoint | HasLngLat;
  * ```
  *
  * @group Route
- * @category Types
  */
 export type PathLike = Position[] | Route;
 
@@ -175,7 +170,6 @@ export type PathLike = Position[] | Route;
  * ```
  *
  * @group Route
- * @category Types
  */
 export type GeoInput = WaypointLike | PathLike;
 
@@ -189,6 +183,5 @@ export type GeoInput = WaypointLike | PathLike;
  * - `path`: Represents a path or route to follow (PathLike)
  *
  * @group Route
- * @category Types
  */
 export type GeoInputType = 'waypoint' | 'path';

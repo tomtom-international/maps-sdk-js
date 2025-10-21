@@ -23,7 +23,6 @@ import type { Connector } from './connector';
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingPark = {
     /**
@@ -68,7 +67,6 @@ export type ChargingPark = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingParkWithAvailability = ChargingPark & {
     /**
@@ -111,7 +109,6 @@ export type ChargingParkWithAvailability = ChargingPark & {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type EVChargingStationPlaceProps = Omit<CommonPlaceProps, 'chargingPark'> & {
     /**

@@ -27,7 +27,6 @@ import type { CommonServiceParams } from '../serviceTypes';
  * ```
  *
  * @group Search
- * @category Types
  */
 export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
 
@@ -90,7 +89,6 @@ export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
  * ```
  *
  * @group Search
- * @category Types
  */
 export type CommonPlacesParams<ApiRequest, ApiResponse> = CommonServiceParams<ApiRequest, ApiResponse> & {
     /**

@@ -44,7 +44,6 @@ import type { SearchSummary } from '../../shared';
  * ```
  *
  * @group Geometry Search
- * @category Types
  */
 export type GeometrySearchResponse = Places<SearchPlaceProps, GeometrySearchFeatureCollectionProps>;
 
@@ -71,6 +70,5 @@ export type GeometrySearchResponse = Places<SearchPlaceProps, GeometrySearchFeat
  * ```
  *
  * @group Geometry Search
- * @category Types
  */
 export type GeometrySearchFeatureCollectionProps = SearchSummary;

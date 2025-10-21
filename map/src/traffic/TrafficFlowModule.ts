@@ -100,8 +100,7 @@ type TrafficFlowSourcesWithLayers = {
  * @see [Traffic Flow Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic-flow)
  * @see [Traffic Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic)
  *
- * @group Map Modules
- * @category Traffic
+ * @group Traffic Flow
  */
 export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithLayers, FlowConfig> {
     private originalFilters!: Record<string, FilterSpecification | undefined>;

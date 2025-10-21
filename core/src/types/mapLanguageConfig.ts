@@ -1,7 +1,45 @@
 /**
- * [Supported languages](https://docs.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
+ * Array of all supported language codes for map display and service responses.
+ *
+ * This constant array contains all valid language codes that can be used to configure
+ * the language for map labels, place names, addresses, and other textual content.
+ *
+ * The array includes:
+ * - Region-specific language variants (e.g., `en-US`, `en-GB`, `pt-BR`, `pt-PT`)
+ * - Script-specific variants (e.g., `zh-Hans` for Simplified Chinese, `zh-Hant` for Traditional Chinese)
+ * - Special codes like `ngt` (Neutral Ground Truth) for language-neutral content
+ * - Latin script alternatives (e.g., `ngt-Latn`, `ko-Latn-KR`, `ru-Latn-RU`)
+ * - Cyrillic script variants (e.g., `ru-Cyrl-RU`)
+ *
+ * Use this array to:
+ * - Validate user-provided language codes
+ * - Generate language selection UI components
+ * - Iterate over all available language options
+ * - Check if a language code is supported
+ *
+ * @see {@link Language} - The type derived from this array
+ * @see [Supported languages documentation](https://docs.tomtom.com/map-display-api/documentation/vector/content-v2#list-of-supported-languages)
+ *
+ * @example
+ * ```typescript
+ * // Validate a language code
+ * const userLanguage = 'en-US';
+ * if (languages.includes(userLanguage)) {
+ *   console.log('Language is supported');
+ * }
+ *
+ * // Create a language selector
+ * languages.forEach(lang => {
+ *   console.log(`Available language: ${lang}`);
+ * });
+ *
+ * // Check total number of supported languages
+ * console.log(`Total languages: ${languages.length}`);
+ * ```
+ *
+ * @group Shared
  */
-const Languages = [
+export const languages = [
     'ngt', // Neutral Ground Truth (custom)
     'ngt-Latn', // Latin script will be used if available.
     'ar', // Arabic
@@ -69,6 +107,5 @@ const Languages = [
  * ```
  *
  * @group Shared
- * @category Types
  */
-export type Language = (typeof Languages)[number];
+export type Language = (typeof languages)[number];

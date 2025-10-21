@@ -53,7 +53,6 @@ const getMainEntryPoint = (place: Place): EntryPoint | undefined =>
  * ```
  *
  * @group Shared
- * @category Functions
  */
 export const getPosition = (hasLngLat: HasLngLat | undefined, options?: GetPositionOptions): Position | null => {
     if (hasLngLat) {
@@ -112,7 +111,6 @@ export const getPosition = (hasLngLat: HasLngLat | undefined, options?: GetPosit
  * ```
  *
  * @group Shared
- * @category Functions
  */
 export const getPositionStrict = (hasLngLat: HasLngLat, options?: GetPositionOptions): Position => {
     const position = getPosition(hasLngLat, options);

@@ -134,6 +134,25 @@ const mapDisplayPoiCategoryMappings: Partial<Record<POICategory, string>> = {
     ZOOS_ARBORETA_BOTANICAL_GARDEN: 'zoo_or_aquarium',
 };
 
+/**
+ * Map style POI category type.
+ *
+ * @remarks
+ * Represents all available POI (Point of Interest) categories used in the map style.
+ * These categories correspond to Search API classification codes and are used for
+ * filtering, styling, and displaying POI icons on the map.
+ *
+ * Each category maps to a specific icon sprite and can be used with custom icon configurations.
+ *
+ * @example
+ * ```ts
+ * const category: MapStylePOICategory = 'RESTAURANT';
+ * ```
+ *
+ * @see {@link POICategoryGroup} - For grouped collections of related categories
+ *
+ * @group POIs
+ */
 export type MapStylePOICategory = keyof typeof mapDisplayPoiCategoryMappings;
 
 /**

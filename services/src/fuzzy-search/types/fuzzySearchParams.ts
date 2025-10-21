@@ -41,7 +41,6 @@ import type { FuzzySearchResponseAPI } from './fuzzySearchResponseAPI';
  * ```
  *
  * @group Search
- * @category Types
  */
 export type FuzzySearchParams = CommonSearchParams<URL, FuzzySearchResponseAPI> &
     CommonGeocodeAndFuzzySearchParams & {

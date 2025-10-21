@@ -1,6 +1,6 @@
 /**
  * @module geometry-data
- * @category Service
+ * @group Geometry Data
  */
 export * from './geometryData';
 export type * from './types/apiTypes';

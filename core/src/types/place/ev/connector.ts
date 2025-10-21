@@ -1,6 +1,5 @@
 /**
  * @group Place
- * @category Variables
  */
 export const connectorTypes = [
     'StandardHouseholdCountrySpecific',
@@ -41,13 +40,11 @@ export const connectorTypes = [
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ConnectorType = (typeof connectorTypes)[number];
 
 /**
  * @group Place
- * @category Variables
  */
 export const currentTypes = ['AC1', 'AC3', 'DC'] as const;
 
@@ -67,7 +64,6 @@ export const currentTypes = ['AC1', 'AC3', 'DC'] as const;
  * ```
  *
  * @group Place
- * @category Types
  */
 export type CurrentType = (typeof currentTypes)[number];
 
@@ -90,7 +86,6 @@ export type CurrentType = (typeof currentTypes)[number];
  * ```
  *
  * @group Place
- * @category Types
  */
 export type Connector = {
     /**

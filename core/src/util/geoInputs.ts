@@ -46,7 +46,6 @@ import { getPositionStrict, toPointFeature } from './lngLat';
  * @see [Waypoints Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/waypoints-and-custom-routes)
  *
  * @group Route
- * @category Functions
  */
 export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Waypoint => {
     let inputAsFeature: Feature<Point>;
@@ -92,7 +91,6 @@ export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Wayp
  * ```
  *
  * @group Route
- * @category Functions
  */
 export const getGeoInputType = (geoInput: GeoInput): GeoInputType => {
     if (Array.isArray(geoInput)) {

@@ -18,7 +18,6 @@ import type { CalculateMatrixRouteResponseAPI } from './apiResponseTypes';
  * ```
  *
  * @group Matrix Routing
- * @category Types
  */
 type MatrixRouteAvoidable = 'tollRoads' | 'unpavedRoads';
 
@@ -69,7 +68,6 @@ type MatrixRouteAvoidable = 'tollRoads' | 'unpavedRoads';
  * ```
  *
  * @group Matrix Routing
- * @category Types
  */
 export type MatrixRouteOptions = {
     /**
@@ -351,7 +349,6 @@ export type MatrixRouteOptions = {
  * ```
  *
  * @group Matrix Routing
- * @category Types
  */
 export type CalculateMatrixRouteParams = CommonServiceParams<
     CalculateMatrixRouteRequestAPI,

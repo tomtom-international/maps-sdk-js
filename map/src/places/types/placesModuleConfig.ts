@@ -24,8 +24,7 @@ import type { MapFont } from '../../shared';
  * const iconStyle: IconStyle = 'poi-like';
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Places
  */
 export type IconStyle = 'pin' | 'circle' | 'poi-like';
 
@@ -48,8 +47,7 @@ export type IconStyle = 'pin' | 'circle' | 'poi-like';
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Places
  */
 export type CustomIcon = {
     /**
@@ -114,8 +112,7 @@ export type CustomIcon = {
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Places
  */
 export type PlaceIconConfig = {
     /**
@@ -161,8 +158,7 @@ export type PlaceIconConfig = {
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Places
  */
 export type PlaceTextConfig = {
     /**
@@ -306,8 +302,7 @@ export type PlaceTextConfig = {
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Places
  */
 export type PlacesModuleConfig = {
     /**

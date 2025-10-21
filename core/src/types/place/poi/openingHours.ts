@@ -18,7 +18,6 @@
  * ```
  *
  * @group Place
- * @category Types
  */
 export type Moment = {
     /**
@@ -81,7 +80,6 @@ export type Moment = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type TimeRange = {
     /**
@@ -101,7 +99,6 @@ export type TimeRange = {
  * for the upcoming week.
  *
  * @group Place
- * @category Types
  */
 export type OpeningHoursMode = 'nextSevenDays';
 
@@ -141,7 +138,6 @@ export type OpeningHoursMode = 'nextSevenDays';
  * ```
  *
  * @group Place
- * @category Types
  */
 export type OpeningHours = {
     /**

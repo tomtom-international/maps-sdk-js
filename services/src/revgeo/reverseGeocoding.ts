@@ -10,7 +10,6 @@ import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
  * Contains a place with address information for the given coordinates.
  *
  * @group Reverse Geocoding
- * @category Types
  */
 export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
 
@@ -71,7 +70,6 @@ export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
  * @see [Reverse Geocoding Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/reverse-geocoding)
  *
  * @group Reverse Geocoding
- * @category Functions
  */
 export const reverseGeocode = async (
     params: ReverseGeocodingParams,

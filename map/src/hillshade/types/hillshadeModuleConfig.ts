@@ -32,7 +32,6 @@ import type { StyleModuleConfig } from '../../shared';
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Hillshade
  */
 export type HillshadeModuleConfig = StyleModuleConfig;

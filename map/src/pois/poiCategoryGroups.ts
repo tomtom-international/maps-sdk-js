@@ -87,4 +87,37 @@ export const poiCategoryGroups: Record<string, MapStylePOICategory[]> = {
     GOVERNMENT_GROUP: ['GOVERNMENT_OFFICE', 'COURTHOUSE', 'EMBASSY', 'FIRE_STATION_BRIGADE', 'POLICE_STATION'],
 };
 
+/**
+ * POI category group type.
+ *
+ * @remarks
+ * Represents predefined groups of related POI categories for convenient filtering.
+ * Each group contains multiple {@link MapStylePOICategory} values that share a common theme.
+ *
+ * Using category groups simplifies filtering by allowing you to show or hide
+ * multiple related POI types with a single filter value.
+ *
+ * Available groups:
+ * - `FOOD_GROUP` - Restaurants, cafes, fast food, etc.
+ * - `ACCOMMODATION_GROUP` - Hotels, motels, camping, etc.
+ * - `SHOPPING_GROUP` - Stores, malls, markets, etc.
+ * - `TRANSPORT_GROUP` - Airports, train stations, bus stops, etc.
+ * - `HEALTHCARE_GROUP` - Hospitals, clinics, pharmacies, etc.
+ * - `ENTERTAINMENT_GROUP` - Theaters, cinemas, museums, etc.
+ * - `SPORTS_GROUP` - Stadiums, gyms, sports facilities, etc.
+ * - `SERVICES_GROUP` - Banks, ATMs, post offices, etc.
+ * - `AUTOMOTIVE_GROUP` - Gas stations, parking, car services, etc.
+ * - `EDUCATION_GROUP` - Schools, universities, libraries, etc.
+ * - `GOVERNMENT_GROUP` - Government offices, embassies, police stations, etc.
+ *
+ * @example
+ * ```ts
+ * // Filter to show only food-related POIs
+ * categoryFilter: { mode: 'show', values: ['FOOD_GROUP'] }
+ * ```
+ *
+ * @see {@link MapStylePOICategory} - For individual POI categories
+ *
+ * @group POI
+ */
 export type POICategoryGroup = keyof typeof poiCategoryGroups;

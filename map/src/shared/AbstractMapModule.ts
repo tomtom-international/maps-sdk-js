@@ -29,6 +29,8 @@ import type { MapModuleSource } from './types/mapModule';
  *   // Implement abstract methods...
  * }
  * ```
+ *
+ * @group Shared
  */
 export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithLayers, CFG = undefined> {
     private readonly sourceType: MapModuleSource;

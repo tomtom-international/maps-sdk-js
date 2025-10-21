@@ -18,7 +18,6 @@
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type GetPositionEntryPointOption = 'main-when-available' | 'ignore';
 
@@ -26,7 +25,6 @@ export type GetPositionEntryPointOption = 'main-when-available' | 'ignore';
  * Configuration options for extracting position coordinates from a place.
  *
  * @group Shared
- * @category Types
  */
 export type GetPositionOptions = {
     /**

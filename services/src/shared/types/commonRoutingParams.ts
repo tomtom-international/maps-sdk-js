@@ -12,7 +12,6 @@ import { VehicleParameters } from './vehicleParams';
  * - `high`: Maximum intensity
  *
  * @group Routing
- * @category Types
  */
 export type LNH = 'low' | 'normal' | 'high';
 
@@ -48,7 +47,6 @@ export type LNH = 'low' | 'normal' | 'high';
  * There is a limit of 900km on routes planned with routeType=thrilling.
  *
  * @group Routing
- * @category Variables
  */
 export const routeTypes = ['fast', 'short', 'efficient', 'thrilling'] as const;
 
@@ -96,7 +94,6 @@ export const routeTypes = ['fast', 'short', 'efficient', 'thrilling'] as const;
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type RouteType = (typeof routeTypes)[number];
 
@@ -130,7 +127,6 @@ export type RouteType = (typeof routeTypes)[number];
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type TrafficInput = 'live' | 'historical';
 
@@ -173,7 +169,6 @@ export type TrafficInput = 'live' | 'historical';
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type CostModel = {
     /**
@@ -263,7 +258,6 @@ type DepartArriveOption = 'departAt' | 'arriveBy';
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type DepartArriveParams<Option extends DepartArriveOption = DepartArriveOption> = {
     /**
@@ -383,7 +377,6 @@ export type DepartArriveParams<Option extends DepartArriveOption = DepartArriveO
  * @see [Common Routing Parameters Documentation](https://docs.tomtom.com/routing-api/documentation/routing/common-routing-parameters)
  *
  * @group Routing
- * @category Types
  */
 export type CommonRoutingParams = {
     /**

@@ -96,7 +96,6 @@ const mergePlacesWithGeometries = (places: Places, geometries: PolygonFeatures):
  * @see [Geometry Data Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/geometry-data)
  *
  * @group Geometry
- * @category Functions
  */
 export async function geometryData(
     params: GeometryDataParams,

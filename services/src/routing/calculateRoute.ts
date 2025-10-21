@@ -87,7 +87,6 @@ import type { CalculateRouteParams } from './types/calculateRouteParams';
  * @see [Long Distance EV Routing Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/long-distance-ev-routing)
  *
  * @group Routing
- * @category Functions
  */
 export const calculateRoute = async (
     params: CalculateRouteParams,

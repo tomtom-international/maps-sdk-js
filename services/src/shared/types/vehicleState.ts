@@ -14,7 +14,6 @@ import { VehicleEngineType } from './vehicleEngineParams';
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type CombustionVehicleState = {
     /**
@@ -57,7 +56,6 @@ export type CombustionVehicleState = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ElectricVehicleStatePCT = {
     /**
@@ -95,7 +93,6 @@ export type ElectricVehicleStatePCT = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ElectricVehicleStateKWH = {
     /**
@@ -143,7 +140,6 @@ export type ElectricVehicleStateKWH = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ElectricVehicleState = ElectricVehicleStatePCT | ElectricVehicleStateKWH;
 
@@ -161,7 +157,6 @@ export type ElectricVehicleState = ElectricVehicleStatePCT | ElectricVehicleStat
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type GenericVehicleState = {
     /**
@@ -231,7 +226,6 @@ export type GenericVehicleState = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type VehicleState<E extends VehicleEngineType = undefined> = GenericVehicleState &
     (E extends 'combustion' ? CombustionVehicleState : E extends 'electric' ? ElectricVehicleState : {});

@@ -66,7 +66,6 @@ import type { PlaceByIdParams, PlaceByIdResponse } from './types';
  * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
  *
  * @group Place
- * @category Functions
  */
 export const placeById = async (
     params: PlaceByIdParams,

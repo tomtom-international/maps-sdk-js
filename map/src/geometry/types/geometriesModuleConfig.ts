@@ -28,8 +28,7 @@ import type { ColorPaletteOptions } from '../layers/geometryLayers';
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Geometries
  */
 export type GeometryColorConfig = {
     /**
@@ -97,8 +96,7 @@ export type GeometryColorConfig = {
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Geometries
  */
 export type GeometryTextConfig = {
     /**
@@ -145,8 +143,7 @@ export type GeometryTextConfig = {
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Geometries
  */
 export type GeometryLineConfig = {
     /**
@@ -211,8 +208,7 @@ export type GeometryLineConfig = {
  * const beforeLayer: GeometryBeforeLayerConfig = 'lowestLabel';
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Geometries
  */
 export type GeometryBeforeLayerConfig = 'top' | MapStyleLayerID;
 
@@ -267,8 +263,7 @@ export type GeometryBeforeLayerConfig = 'top' | MapStyleLayerID;
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Geometries
  */
 export type GeometriesModuleConfig = {
     /**

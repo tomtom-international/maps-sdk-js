@@ -1,6 +1,6 @@
 /**
  * @module ev-charging-stations-availability
- * @category Service
+ * @group EV Charging Stations
  */
 
 export * from './evChargingStationsAvailability';

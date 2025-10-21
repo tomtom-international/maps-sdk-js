@@ -1,6 +1,6 @@
 /**
  * @module services-customization
- * @category Service
+ * @group Customization
  */
 
 import autocompleteCustomize from '../autocomplete-search/customize';
@@ -54,7 +54,6 @@ import routingCustomize from '../routing/customize';
  * ```
  *
  * @group Advanced
- * @category Objects
  */
 export const customizeService = {
     reverseGeocode: revgeoCustomize,

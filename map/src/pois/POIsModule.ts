@@ -118,8 +118,7 @@ type PoIsSourcesAndLayers = {
  *
  * @see [POIs Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/pois)
  *
- * @group Map Modules
- * @category POIs
+ * @group POIs
  */
 export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModuleConfig> {
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;

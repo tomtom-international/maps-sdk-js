@@ -4,47 +4,98 @@ import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiR
 import type { ParsedFetchResponse } from './types/fetch';
 import type { RequestValidationConfig } from './types/validation';
 
+/**
+ * Common parameters shared across all service calls.
+ *
+ * @remarks
+ * This type extends the global configuration and provides additional service-specific options
+ * such as custom base URLs, request validation, and lifecycle event listeners.
+ *
+ * @typeParam ApiRequest - The type of the API request object
+ * @typeParam ApiResponse - The type of the API response object
+ *
+ * @group Shared
+ */
 export type CommonServiceParams<ApiRequest = any, ApiResponse = any> = Partial<GlobalConfig> & {
     /**
-     * Optional, custom base URL for the service.
-     ** Should contain the URL until the part that will change per service call.
-     * Example: https://api.tomtom.com/search/10/reverseGeocode/
+     * Custom base URL for the service endpoint.
+     *
+     * @remarks
+     * Should contain the URL up to the part that changes per service call.
+     *
+     * @example
+     * ```ts
+     * customServiceBaseURL: 'https://api.tomtom.com/search/10/reverseGeocode/'
+     * ```
+     *
+     * @defaultValue `undefined` (uses default service URL)
      */
     customServiceBaseURL?: string;
 
     /**
-     * Optional, validation of input request schema.
-     ** Enabled by default.
-     ** Providing false will skip schema validation.
-     * @default=true
+     * Controls whether input request schema validation is performed.
+     *
+     * @remarks
+     * When enabled, the SDK validates request parameters against the expected schema
+     * before sending the request to the API. Set to `false` to skip validation.
+     *
+     * @defaultValue `true`
      */
     validateRequest?: boolean;
 
     /**
-     * Optional listener to the instant right before sending the request to the API (server).
-     ** Useful to track or debug the API request for a service call.
-     * @param request The API request to be sent (usually a URL for GET or URL + data for POST).
+     * Callback invoked immediately before sending the request to the API.
+     *
+     * @remarks
+     * Useful for tracking, logging, or debugging API requests before they are sent to the server.
+     *
+     * @param apiRequest - The API request to be sent (usually a URL for GET requests or URL with body for POST requests)
      */
     onAPIRequest?: (apiRequest: ApiRequest) => void;
 
     /**
-     * Optional listener for the instant when the raw (unparsed) response comes from the API (server).
-     ** It will be called as soon as the API response is received.
-     ** The request object is the same reference as with the previous onAPIRequest event.
-     ** Useful to track or debug the API request and response for a successful service call.
-     * @param apiRequest The sent API request (usually a URL for GET or URL + body for POST).
-     * @param apiResponse The received raw (unparsed) API response.
+     * Callback invoked when the raw response is received from the API.
+     *
+     * @remarks
+     * Called as soon as the API response is received, before parsing.
+     * The request object is the same reference as provided to {@link onAPIRequest}.
+     * Useful for tracking, logging, or debugging successful API request-response pairs.
+     *
+     * @param apiRequest - The sent API request (same reference as in {@link onAPIRequest})
+     * @param apiResponse - The received raw (unparsed) API response
      */
     onAPIResponse?: (apiRequest: ApiRequest, apiResponse: ApiResponse) => void;
 };
 
+/**
+ * Function type for parsing API error responses into SDK service errors.
+ *
+ * @typeParam T - The type of the error response body (defaults to {@link DefaultAPIResponseErrorBody})
+ *
+ * @param apiError - The API error response received from the server
+ * @param serviceName - The name of the service that encountered the error
+ * @returns A structured {@link SDKServiceError} object
+ *
+ * @group Shared
+ */
 export type ParseResponseError<T = DefaultAPIResponseErrorBody> = (
     apiError: APIErrorResponse<T>,
     serviceName: string,
 ) => SDKServiceError;
 
 /**
- * Template functions for any service.
+ * Template interface defining the lifecycle methods for any service implementation.
+ *
+ * @remarks
+ * This type provides a standardized structure for implementing service calls,
+ * including request building, validation, sending, response parsing, and error handling.
+ *
+ * @typeParam Params - Service-specific parameters extending {@link CommonServiceParams}
+ * @typeParam ApiRequest - The type of the API request object
+ * @typeParam ApiResponse - The type of the raw API response object
+ * @typeParam Response - The type of the parsed response returned to the caller
+ *
+ * @group Shared
  */
 export type ServiceTemplate<
     Params extends CommonServiceParams<ApiRequest, ApiResponse>,
@@ -53,39 +104,63 @@ export type ServiceTemplate<
     Response,
 > = {
     /**
-     * Optional configuration for request validation.
+     * Configuration for validating request parameters.
+     *
+     * @remarks
+     * Defines the validation schema and rules applied to request parameters
+     * before the request is built and sent.
      */
     requestValidation?: RequestValidationConfig<Params>;
 
     /**
-     * Builds the request to be sent to the API.
-     * @param params The parameters to build the request from.
+     * Builds the API request from the provided parameters.
+     *
+     * @param params - The service call parameters
+     * @returns The constructed API request object
      */
     buildRequest: (params: Params) => ApiRequest;
 
     /**
-     * Optional getter for the API version to use.
-     * * Useful for services that have an API version differing from the global config one.
-     * * If not provided, the API version from global or provided configuration will be used.
-     * @param params Input parameters to help determine the API version if needed.
+     * Determines the API version to use for the service call.
+     *
+     * @remarks
+     * Useful for services that require a specific API version different from the global configuration.
+     * If not provided, the API version from the global or provided configuration will be used.
+     *
+     * @param params - Input parameters that may influence the API version selection
+     * @returns The API version number
      */
     getAPIVersion?: (params?: Params) => number;
 
     /**
-     * Sends the request to the API (e.g. via GET or POST, with or without custom headers).
-     * @param request The request to send.
+     * Sends the constructed request to the API server.
+     *
+     * @remarks
+     * Handles the actual HTTP communication (e.g., GET or POST) with optional custom headers.
+     *
+     * @param request - The request object to send
+     * @param headers - Custom TomTom headers to include in the request
+     * @returns A promise resolving to the parsed fetch response
      */
     sendRequest: (request: ApiRequest, headers: TomTomHeaders) => ParsedFetchResponse<ApiResponse>;
 
     /**
-     * Parses the API successful response before returning it to the caller.
-     * @param apiResponse The API response to parse.
-     * @param params The call parameters, if applicable for this service.
+     * Parses the successful API response into the expected return type.
+     *
+     * @remarks
+     * Transforms the raw API response into a structured format suitable for the caller.
+     *
+     * @param apiResponse - The raw API response received from the server
+     * @param params - The original service call parameters
+     * @returns The parsed response object
      */
     parseResponse: (apiResponse: ApiResponse, params: Params) => Response;
 
     /**
-     * Parses an API response error before throwing it back to the caller.
+     * Parses an API error response before propagating it to the caller.
+     *
+     * @remarks
+     * Allows custom error handling and transformation of API errors into SDK-specific error types.
      */
     parseResponseError?: ParseResponseError<any>;
 };

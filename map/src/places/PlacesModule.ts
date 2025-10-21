@@ -22,82 +22,51 @@ type PlacesSourcesAndLayers = {
 };
 
 /**
- * Places Module for displaying search results and custom location markers on the map.
+ * Map module for displaying and managing place markers.
  *
- * This module visualizes place/location data from TomTom Search API or custom sources
- * with customizable icons and labels. Perfect for showing search results, POIs, or any
- * point-based geographic data.
+ * The PlacesModule provides functionality to display location markers (pins) on the map
+ * for points of interest, search results, or custom locations. It supports various marker
+ * styles, custom icons, text labels, and interactive events.
  *
  * @remarks
  * **Features:**
- * - Display places from Search API directly
- * - Customizable icons (pin, circle, or POI-style)
- * - Configurable text labels
- * - Custom icons per category
- * - Event handling for interactions
- * - Multiple instances support
+ * - Multiple marker styles (pin, circle, POI-like)
+ * - Custom icons per POI category
+ * - Text labels with styling options
+ * - Data-driven styling via MapLibre expressions
+ * - Interactive events (click, hover, etc.)
+ * - Support for custom feature properties
  *
- * **Icon Styles:**
- * - `pin`: Traditional map pin markers
+ * **Marker Styles:**
+ * - `pin`: Traditional teardrop-shaped map pins
  * - `circle`: Simple circular markers
- * - `poi-like`: Style matching map's POI layer
+ * - `poi-like`: Mimics built-in POI layer styling
  *
- * **Use Cases:**
- * - Display search results on map
- * - Show custom locations/markers
- * - Visualize business locations
- * - Interactive place selection
- *
- * @example
- * Display search results:
- * ```typescript
- * import { PlacesModule } from '@tomtom-international/maps-sdk-js/map';
- * import { search } from '@tomtom-international/maps-sdk-js/services';
- *
- * // Search for places
- * const results = await search.search({ query: 'restaurant', limit: 10 });
- *
- * // Display on map
- * const places = await PlacesModule.init(map);
- * await places.show(results.results);
- * ```
+ * **Common Use Cases:**
+ * - Search result visualization
+ * - Custom location markers
+ * - Store locators
+ * - Delivery/pickup points
+ * - Saved locations display
  *
  * @example
- * Custom styling:
  * ```typescript
+ * // Create places module with pin markers
  * const places = await PlacesModule.init(map, {
  *   iconConfig: {
- *     iconStyle: 'circle'
+ *     iconStyle: 'pin'
  *   },
  *   textConfig: {
- *     textField: (place) => place.properties.poi?.name || place.properties.address.freeformAddress,
- *     textSize: 14,
- *     textColor: '#333'
+ *     textField: (place) => place.properties.poi?.name || 'Unknown'
  *   }
  * });
  *
- * await places.show(searchResults);
- * ```
+ * // Display places from search
+ * await places.add(searchResults);
  *
- * @example
- * Custom icons per category:
- * ```typescript
- * const places = await PlacesModule.init(map, {
- *   iconConfig: {
- *     customIcons: [
- *       { category: 'RESTAURANT', iconUrl: '/icons/restaurant.png', pixelRatio: 2 },
- *       { category: 'HOTEL_MOTEL', iconUrl: '/icons/hotel.png', pixelRatio: 2 }
- *     ]
- *   }
- * });
- * ```
- *
- * @example
- * Event handling:
- * ```typescript
- * places.events.on('click', (feature, lngLat) => {
- *   console.log('Clicked place:', feature.properties);
- *   showInfoWindow(feature.properties);
+ * // Handle clicks
+ * places.events.on('click', (feature) => {
+ *   console.log('Clicked:', feature.properties);
  * });
  *
  * places.events.on('hover', (feature) => {
@@ -107,8 +76,7 @@ type PlacesSourcesAndLayers = {
  *
  * @see [Places Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/places)
  *
- * @group Map Modules
- * @category Places
+ * @group Places
  */
 export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
     private static lastInstanceIndex = -1;

@@ -1,6 +1,7 @@
 /**
  * @module fuzzy-search
- * @category Service
+ * @group Fuzzy Search
  */
 
+export * from './fuzzySearch';
 export type * from './types';

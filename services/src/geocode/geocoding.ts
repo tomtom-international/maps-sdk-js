@@ -59,8 +59,7 @@ import type { GeocodingResponse } from './types/geocodingResponse';
  * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
  * @see [Geocoding Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/geocoding)
  *
- * @group Geocoding
- * @category Functions
+ * @group Geocode
  */
 export const geocode = async (
     params: GeocodingParams,

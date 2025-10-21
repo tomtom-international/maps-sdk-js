@@ -26,7 +26,6 @@
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type ShowRoutesOptions = {
     /**

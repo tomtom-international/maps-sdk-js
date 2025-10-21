@@ -27,7 +27,6 @@ import type { SupportsEvents } from '../../shared';
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type RouteStyleProps = {
     /**
@@ -59,7 +58,6 @@ export type RouteStyleProps = {
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type DisplayRouteRelatedProps = RouteStyleProps & {
     /**
@@ -101,7 +99,6 @@ export type DisplayRouteRelatedProps = RouteStyleProps & {
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type DisplayRouteSummaryProps = DisplayRouteRelatedProps & {
     /**
@@ -195,7 +192,6 @@ export type DisplayRouteSummaryProps = DisplayRouteRelatedProps & {
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type DisplayRouteProps = RouteProps & RouteStyleProps & SupportsEvents;
 
@@ -229,7 +225,6 @@ export type DisplayRouteProps = RouteProps & RouteStyleProps & SupportsEvents;
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type DisplayRouteSummary = Feature<Point, DisplayRouteSummaryProps>;
 
@@ -273,6 +268,5 @@ export type DisplayRouteSummary = Feature<Point, DisplayRouteSummaryProps>;
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type DisplayRouteSummaries = FeatureCollection<Point, DisplayRouteSummaryProps>;

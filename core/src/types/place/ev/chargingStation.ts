@@ -2,7 +2,6 @@ import type { Connector } from './connector';
 
 /**
  * @group Place
- * @category Variables
  */
 export const chargingStationAccessTypes = ['Public', 'Authorized', 'Restricted', 'Private', 'Unknown'] as const;
 
@@ -24,13 +23,11 @@ export const chargingStationAccessTypes = ['Public', 'Authorized', 'Restricted',
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingStationsAccessType = (typeof chargingStationAccessTypes)[number];
 
 /**
  * @group Place
- * @category Variables
  */
 export const chargingPointStatus = ['Available', 'Reserved', 'Occupied', 'OutOfService', 'Unknown'] as const;
 
@@ -50,14 +47,12 @@ export const chargingPointStatus = ['Available', 'Reserved', 'Occupied', 'OutOfS
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingPointStatus = (typeof chargingPointStatus)[number];
 
 /**
  * Possible capabilities for a charging point.
  * @group Place
- * @category Variables
  */
 export const chargingPointCapabilities = [
     'ChargingProfileCapable',
@@ -110,13 +105,11 @@ export const chargingPointCapabilities = [
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingPointCapability = (typeof chargingPointCapabilities)[number];
 
 /**
  * @group Place
- * @category Variables
  */
 export const chargingPointRestrictions = ['EvOnly', 'Plugged', 'Disabled', 'Customers', 'Motorcycles'] as const;
 
@@ -138,7 +131,6 @@ export const chargingPointRestrictions = ['EvOnly', 'Plugged', 'Disabled', 'Cust
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingPointRestriction = (typeof chargingPointRestrictions)[number];
 
@@ -165,7 +157,6 @@ export type ChargingPointRestriction = (typeof chargingPointRestrictions)[number
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingPoint = {
     /**
@@ -222,7 +213,6 @@ export type ChargingPoint = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingStation = {
     /**

@@ -1,6 +1,5 @@
 /**
- * @module map-shared
- * @category Map
+ * @module map-base
  */
 
 export * from './AbstractMapModule';

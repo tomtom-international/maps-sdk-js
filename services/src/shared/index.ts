@@ -1,6 +1,6 @@
 /**
  * @module services-shared
- * @category Service
+ * @group Shared
  */
 
 export * from './errors';

@@ -21,7 +21,6 @@ import type { DisplayRouteRelatedProps } from './displayRoutes';
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type DisplaySectionProps = SectionProps & DisplayRouteRelatedProps;
 
@@ -77,7 +76,6 @@ export type DisplaySectionProps = SectionProps & DisplayRouteRelatedProps;
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type RouteSection<S extends DisplaySectionProps = DisplaySectionProps> = Feature<LineString, S>;
 
@@ -114,7 +112,6 @@ export type RouteSection<S extends DisplaySectionProps = DisplaySectionProps> = 
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type RouteSections<S extends DisplaySectionProps = DisplaySectionProps> = FeatureCollection<LineString, S>;
 
@@ -143,7 +140,6 @@ export type RouteSections<S extends DisplaySectionProps = DisplaySectionProps> =
  * ```
  *
  * @group Routing
- * @category Types
  * @ignore
  */
 export type DisplayTrafficSectionProps = DisplaySectionProps &

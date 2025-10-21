@@ -33,7 +33,6 @@
  * ```
  *
  * @group Map
- * @category Types
  */
 export type MapEventsConfig = {
     /**

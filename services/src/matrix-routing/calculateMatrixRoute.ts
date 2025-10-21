@@ -78,7 +78,6 @@ import type { CalculateMatrixRouteParams } from './types/calculateMatrixRoutePar
  * @see [Routing Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/quickstart)
  *
  * @group Matrix Routing
- * @category Functions
  */
 export const calculateMatrixRoute = async (
     params: CalculateMatrixRouteParams,

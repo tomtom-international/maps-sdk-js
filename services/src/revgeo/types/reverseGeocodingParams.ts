@@ -4,150 +4,205 @@ import type { CommonServiceParams } from '../../shared';
 import type { ReverseGeocodingResponseAPI } from './apiTypes';
 
 /**
- * Road use type.
- * @enum
+ * Road use classification types for filtering reverse geocoding results.
+ *
+ * @remarks
+ * Use these values to restrict reverse geocoding results to specific road types.
  */
 export type RoadUse = 'LimitedAccess' | 'Arterial' | 'Terminal' | 'Ramp' | 'Rotary' | 'LocalStreet';
 
 /**
- * Reverse Geocoding mandatory parameters.
+ * Required parameters for reverse geocoding requests.
+ *
+ * @remarks
+ * These parameters must be provided for any reverse geocoding service call.
  */
 export type ReverseGeocodingMandatoryParams = {
     /**
-     * Main reverse geocoding parameter (mandatory).
-     * Longitude and latitude data in one of the supported formats.
+     * Geographic position to reverse geocode.
+     *
+     * @remarks
+     * The longitude and latitude coordinates for which to retrieve address information.
+     * Accepts any format implementing the {@link HasLngLat} interface.
      */
     position: HasLngLat;
 };
 
 /**
- * Reverse Geocoding optional parameters.
+ * Optional parameters for customizing reverse geocoding requests.
+ *
+ * @remarks
+ * These parameters allow fine-tuning of the reverse geocoding behavior,
+ * including filtering, formatting, and additional data retrieval.
  */
 export type ReverseGeocodingOptionalParams = {
     /**
-     * Format of newlines in the formatted address.
+     * Controls newline formatting in the returned address.
      *
-     * Format of newlines in the formatted address.
-     * If true, the address will contain newlines.
-     * Otherwise, newlines will be converted to spaces.
-     * @default None
+     * @remarks
+     * When `true`, the formatted address will contain newline characters.
+     * When `false` or omitted, newlines are converted to spaces.
+     *
+     * @defaultValue `false`
      */
     allowFreeformNewline?: boolean;
 
     /**
-     * This parameter specifies the level of filtering performed on geographies.
-     * Providing the parameter narrows the search for the specified geography entity types.
-     * The resulting response will contain the geography ID as well as the entity type matched.
-     * This ID is a token that can be used to get the geometry of that geography.
-     * The following parameters are ignored when geographyType is set:
-     * heading, number, returnRoadUse, returnSpeedLimit, roadUse, and returnMatchType.
-     * @default None
+     * Filters results to specific geography entity types.
+     *
+     * @remarks
+     * Narrows the search to specified geography types (e.g., country, state, city).
+     * The response includes the geography ID, which can be used to retrieve the geometry.
+     *
+     * **Note:** When set, the following parameters are ignored:
+     * - `heading`
+     * - `number`
+     * - `returnRoadUse`
+     * - `returnSpeedLimit`
+     * - `roadUse`
+     * - `returnMatchType`
      */
     geographyType?: GeographyType[];
 
     /**
-     * The directional heading of the vehicle in degrees for travel along a
-     * segment of roadway.
-     * 0 is North, 90 is East and so on. Values range from -360 to 360. The precision can include
-     * up to one decimal place.
+     * Directional heading of the vehicle in degrees.
      *
-     * Makes it possible to get the address information of the road, keeping in mind the direction.
-     * @default None
+     * @remarks
+     * Specifies the travel direction along a road segment to provide
+     * direction-aware address information.
+     *
+     * - `0` = North
+     * - `90` = East
+     * - `180` = South
+     * - `270` = West
+     *
+     * @example
+     * ```ts
+     * heading: 90.5  // Traveling east-northeast
+     * ```
+     *
+     * @minimum -360
+     * @maximum 360
      */
     heading?: number;
 
     /**
-     * Enables the return of a comma-separated mapcodes list.
-     * It can also filter the response to only show selected mapcode types. See Mapcodes in the response.
-     * Values: One or more of:
-     * * `Local`
-     * * `International`
-     * * `Alternative`
+     * Enables mapcode inclusion in the response.
      *
-     * A mapcode represents a specific location, to within a few meters.
-     * Every location on Earth can be represented by a mapcode. Mapcodes are designed to be short,
-     * easy to recognize, remember, and communicate. Visit the Mapcode project website for more information.
+     * @remarks
+     * Returns a comma-separated list of mapcodes for the location.
+     * Mapcodes are short codes representing specific locations within a few meters.
+     * Can filter to show only selected mapcode types.
+     *
+     * Available types:
+     * - `Local` - Territory-specific mapcode
+     * - `International` - Globally valid mapcode
+     * - `Alternative` - Alternative mapcode representations
+     *
+     * @see {@link https://www.mapcode.com | Mapcode Project}
      */
     mapcodes?: MapcodeType[];
 
     /**
-     * Street number as a string.
+     * Street number for enhanced address matching.
      *
-     * If a street number is sent in along with the request, the response may
-     * include the side of the street (Left/Right), and also an offset position for that street number.
-     * @default None
+     * @remarks
+     * When provided, the response may include:
+     * - Side of the street (Left/Right)
+     * - Offset position for the street number
+     *
+     * @example
+     * ```ts
+     * number: "123"
+     * ```
      */
     number?: string;
 
     /**
-     * A positive integer value in meters.
+     * Search radius in meters from the specified position.
      *
-     * This option specifies the search radius in meters using the coordinates given to the center
-     * option as origin.
-     * @default None
+     * @remarks
+     * Limits the search area using the provided coordinates as the center point.
+     * Must be a positive integer value.
+     *
+     * @minimum 1
      */
     radiusMeters?: number;
 
     /**
-     * Type of match.
+     * Includes match type information in the response.
      *
-     * Includes information on the type of match the geocoder achieved in the response.
-     * @default None
+     * @remarks
+     * When `true`, the response includes details about how well the
+     * geocoder matched the provided coordinates to an address.
+     *
+     * @defaultValue `false`
      */
     returnMatchType?: boolean;
 
     /**
-     * Enable or disable the feature.
+     * Includes road use classification in the response.
      *
-     * Requires including a road use array for reverse geocode at street level.
-     * @default None
+     * @remarks
+     * When `true` and reverse geocoding at street level, returns an array
+     * of applicable road use types for the location.
+     *
+     * @defaultValue `false`
      */
     returnRoadUse?: boolean;
 
     /**
-     * Enable or disable the feature.
+     * Includes speed limit information in the response.
      *
-     * Allows, if possible, the receiving of speed limit information at the given location.
-     * @default None
+     * @remarks
+     * When `true`, returns the speed limit at the given location if available.
+     *
+     * @defaultValue `false`
      */
     returnSpeedLimit?: boolean;
 
     /**
-     * An array of strings, or just one string with comma-separated values.
+     * Restricts results to specific road use types.
      *
-     * Use this option if you want to restrict the result to one, or a group of the defined road uses:
-     * "LimitedAccess"
-     * "Arterial"
-     * "Terminal"
-     * "Ramp"
-     * "Rotary"
-     * "LocalStreet"
-     * @default None
+     * @remarks
+     * Filters reverse geocoding results to only include addresses
+     * on roads matching the specified use classifications.
+     *
+     * @example
+     * ```ts
+     * roadUses: ['LimitedAccess', 'Arterial']  // Only highways and major roads
+     * ```
      */
     roadUses?: RoadUse[];
 
     /**
-     * The new value to be set.
+     * Specifies the geopolitical view for the results.
      *
-     * Sets or returns the view option value to be used in the calls.
-     * Can be one of "Unified", "AR", "IN", "PK", "IL, "MA", "RU", "TR" and "CN".
-     * Legend:
-     * Unified - International view
-     * AR - Argentina
-     * IN - India
-     * PK - Pakistan
-     * IL - Israel
-     * MA - Morocco
-     * RU - Russia
-     * TR - Turkey
-     * CN - China
-     * @default None
+     * @remarks
+     * Determines how disputed territories and borders are represented in the response.
+     *
+     * Available views:
+     * - `Unified` - International view (default)
+     * - `AR` - Argentina
+     * - `IN` - India
+     * - `PK` - Pakistan
+     * - `IL` - Israel
+     * - `MA` - Morocco
+     * - `RU` - Russia
+     * - `TR` - Turkey
+     * - `CN` - China
+     *
+     * @defaultValue `"Unified"`
      */
     view?: View;
 };
 
 /**
- * Reverse Geocoding parameters.
+ * Complete parameter set for reverse geocoding service calls.
+ *
+ * @remarks
+ * Combines common service parameters with reverse geocoding-specific
+ * mandatory and optional parameters.
  */
 export type ReverseGeocodingParams = CommonServiceParams<URL, ReverseGeocodingResponseAPI> &
     ReverseGeocodingMandatoryParams &

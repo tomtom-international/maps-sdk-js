@@ -1,6 +1,6 @@
 /**
  * @module geometry-search
- * @category Service
+ * @group Geometry Search
  */
 
 export type * from './types';

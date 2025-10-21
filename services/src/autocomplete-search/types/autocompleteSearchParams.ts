@@ -22,8 +22,7 @@ import type { AutocompleteSearchResponseAPI } from './autocompleteSearchResponse
  * const resultType: AutocompleteSearchSegmentType[] = ['category', 'brand'];
  * ```
  *
- * @group Autocomplete
- * @category Types
+ * @group Autocomplete Search
  */
 export type AutocompleteSearchSegmentType = 'brand' | 'category' | 'plaintext';
 
@@ -74,8 +73,7 @@ export type AutocompleteSearchSegmentType = 'brand' | 'category' | 'plaintext';
  * };
  * ```
  *
- * @group Autocomplete
- * @category Types
+ * @group Autocomplete Search
  */
 export type AutocompleteSearchParams = CommonServiceParams<URL, AutocompleteSearchResponseAPI> & {
     /**

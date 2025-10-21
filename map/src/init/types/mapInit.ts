@@ -35,7 +35,6 @@ export const standardStyleIDs = [
  * ```
  *
  * @group Map
- * @category Types
  */
 export type StandardStyleID = (typeof standardStyleIDs)[number];
 
@@ -65,7 +64,6 @@ export type StandardStyleID = (typeof standardStyleIDs)[number];
  * ```
  *
  * @group Map
- * @category Types
  */
 export type StandardStyle = {
     /**
@@ -141,7 +139,6 @@ export type StandardStyle = {
  * ```
  *
  * @group Map
- * @category Types
  */
 export type CustomStyle = {
     /**
@@ -189,7 +186,6 @@ export type CustomStyle = {
  * - `hillshade`: Adds terrain elevation shading for topographic context
  *
  * @group Map
- * @category Types
  */
 export type StyleModule = 'trafficIncidents' | 'trafficFlow' | 'hillshade';
 
@@ -231,7 +227,6 @@ export type StyleModule = 'trafficIncidents' | 'trafficFlow' | 'hillshade';
  * ```
  *
  * @group Map
- * @category Types
  */
 export type StyleInput = StandardStyleID | (StandardStyle & { type: 'standard' }) | (CustomStyle & { type: 'custom' });
 
@@ -255,7 +250,6 @@ export type StyleInput = StandardStyleID | (StandardStyle & { type: 'standard' }
  * ```
  *
  * @group Map
- * @category Types
  */
 export type TomTomMapParams = GlobalConfig & {
     /**
@@ -316,6 +310,5 @@ export type TomTomMapParams = GlobalConfig & {
  * @see [MapLibre MapOptions](https://maplibre.org/maplibre-gl-js-docs/api/map/)
  *
  * @group Map
- * @category Types
  */
 export type MapLibreOptions = Omit<MapOptions, 'style' | 'attributionControl'>;

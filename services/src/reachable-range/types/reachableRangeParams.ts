@@ -35,7 +35,6 @@ export const budgetTypes = [
  * ```
  *
  * @group Reachable Range
- * @category Types
  */
 export type BudgetType = (typeof budgetTypes)[number];
 
@@ -81,7 +80,6 @@ export type BudgetType = (typeof budgetTypes)[number];
  * ```
  *
  * @group Reachable Range
- * @category Types
  */
 export type ReachableRangeBudget = {
     /**
@@ -123,7 +121,6 @@ export type ReachableRangeBudget = {
  * the reachable area from a starting point.
  *
  * @group Reachable Range
- * @category Types
  */
 export type ReachableRangeOwnParams = {
     /**
@@ -278,7 +275,6 @@ export type ReachableRangeOwnParams = {
  * ```
  *
  * @group Reachable Range
- * @category Types
  */
 export type ReachableRangeParams = CommonServiceParams<URL, ReachableRangeResponseAPI> &
     CommonRoutingParams &

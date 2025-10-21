@@ -60,8 +60,7 @@ import type { AutocompleteSearchParams, AutocompleteSearchResponse } from './typ
  * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
  * @see [Search Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/search)
  *
- * @group Autocomplete
- * @category Functions
+ * @group Autocomplete Search
  */
 export const autocompleteSearch = async (
     params: AutocompleteSearchParams,

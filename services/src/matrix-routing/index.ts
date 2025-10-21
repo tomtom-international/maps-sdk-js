@@ -1,6 +1,6 @@
 /**
  * @module matrix-routing
- * @category Service
+ * @group Matrix Routing
  */
 
 export * from './calculateMatrixRoute';

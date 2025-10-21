@@ -53,7 +53,6 @@ export type IndexType = typeof START_INDEX | typeof MIDDLE_INDEX | typeof FINISH
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type WaypointDisplayProps = LocationDisplayProps & {
     /**

@@ -33,8 +33,7 @@ import type { SupportsEvents } from '../../shared';
  * };
  * ```
  *
- * @group Geometry
- * @category Types
+ * @group Geometries
  */
 export type ExtraGeometryDisplayProps = {
     /**
@@ -113,8 +112,7 @@ export type ExtraGeometryDisplayProps = {
  * };
  * ```
  *
- * @group Geometry
- * @category Types
+ * @group Geometries
  */
 export type DisplayGeometryProps = CommonPlaceProps & ExtraGeometryDisplayProps;
 

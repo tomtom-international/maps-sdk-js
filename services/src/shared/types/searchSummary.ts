@@ -10,7 +10,6 @@ import type { Position } from 'geojson';
  * - `NON_NEAR`: General search without location bias, or results span a wide area
  *
  * @group Search
- * @category Types
  */
 type SummaryQueryType = 'NEARBY' | 'NON_NEAR';
 
@@ -44,7 +43,6 @@ type SummaryQueryType = 'NEARBY' | 'NON_NEAR';
  * ```
  *
  * @group Search
- * @category Types
  */
 export type SearchSummary = {
     /**

@@ -1,6 +1,5 @@
 /**
  * @group Place
- * @category Types
  */
 export type POICategory =
     | 'ACCESS_GATEWAY'

@@ -58,7 +58,6 @@ import type { GeometrySearchResponseAPI } from './geometrySearchResponseAPI';
  * ```
  *
  * @group Search
- * @category Types
  */
 export type GeometrySearchParams = CommonSearchParams<GeometrySearchRequestAPI, GeometrySearchResponseAPI> & {
     /**
@@ -111,7 +110,6 @@ export type GeometrySearchParams = CommonSearchParams<GeometrySearchRequestAPI, 
  * ```
  *
  * @group Search
- * @category Types
  */
 export interface Circle {
     /**
@@ -174,6 +172,5 @@ export interface Circle {
  * ```
  *
  * @group Search
- * @category Types
  */
 export type SearchGeometryInput = Polygon | MultiPolygon | Circle | PolygonFeatures;

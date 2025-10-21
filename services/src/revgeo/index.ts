@@ -1,6 +1,6 @@
 /**
  * @module reverse-geocoding
- * @category Service
+ * @group Reverse Geocode
  */
 
 export * from './reverseGeocoding';

@@ -46,7 +46,6 @@ export const avoidableTypes = [
  * ```
  *
  * @group Route
- * @category Types
  */
 export type Avoidable = (typeof avoidableTypes)[number];
 
@@ -65,7 +64,6 @@ export type Avoidable = (typeof avoidableTypes)[number];
  * ```
  *
  * @group Route
- * @category Types
  */
 export type TravelMode = 'car'; // TODO no longer supported | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
 
@@ -75,7 +73,6 @@ export type TravelMode = 'car'; // TODO no longer supported | "truck" | "taxi" |
  * Contains cumulative distance and time measurements from the route start to this point.
  *
  * @group Route
- * @category Types
  */
 export type RouteProgressPoint = {
     /**
@@ -113,7 +110,6 @@ export type RouteProgressPoint = {
  * ```
  *
  * @group Route
- * @category Types
  */
 export type RouteProgress = RouteProgressPoint[];
 
@@ -124,7 +120,6 @@ export type RouteProgress = RouteProgressPoint[];
  * guidance instructions, and progress data.
  *
  * @group Route
- * @category Types
  */
 export type RouteProps = {
     /**
@@ -198,7 +193,6 @@ export type RouteProps = {
  * ```
  *
  * @group Route
- * @category Types
  */
 export type Route<P extends RouteProps = RouteProps> = Feature<LineString, P>;
 
@@ -227,7 +221,6 @@ export type Route<P extends RouteProps = RouteProps> = Feature<LineString, P>;
  * ```
  *
  * @group Route
- * @category Types
  */
 export type Routes<
     P extends RouteProps = RouteProps,

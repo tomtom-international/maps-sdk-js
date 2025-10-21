@@ -1,6 +1,6 @@
 /**
  * @module place-by-id
- * @category Service
+ * @group Place By ID
  */
 
 export * from './placeById';

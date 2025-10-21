@@ -25,7 +25,6 @@
  * ```
  *
  * @group Place
- * @category Types
  */
 export type Fuel =
     | 'Petrol'

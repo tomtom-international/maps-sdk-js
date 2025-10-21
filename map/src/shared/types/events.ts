@@ -14,8 +14,7 @@ import type { SourceWithLayers } from './mapsSDKLayerSpecs';
  * const rightClick: ClickEventType = 'contextmenu';
  * ```
  *
- * @group Events
- * @category Types
+ * @group User Events
  */
 export type ClickEventType = 'click' | 'contextmenu';
 
@@ -35,8 +34,7 @@ export type ClickEventType = 'click' | 'contextmenu';
  * const sustainedHover: HoverEventType = 'long-hover';
  * ```
  *
- * @group Events
- * @category Types
+ * @group User Events
  */
 export type HoverEventType = 'hover' | 'long-hover';
 
@@ -53,8 +51,7 @@ export type HoverEventType = 'hover' | 'long-hover';
  * const hoverEvent: EventType = 'long-hover';
  * ```
  *
- * @group Events
- * @category Types
+ * @group User Events
  */
 export type EventType = ClickEventType | HoverEventType;
 
@@ -86,8 +83,7 @@ export type EventType = ClickEventType | HoverEventType;
  * };
  * ```
  *
- * @group Events
- * @category Types
+ * @group User Events
  */
 export type PutEventStateOptions = {
     /**
@@ -169,8 +165,7 @@ export type PutEventStateOptions = {
  * };
  * ```
  *
- * @group Events
- * @category Types
+ * @group User Events
  */
 export type CleanEventStateOptions = {
     /**
@@ -217,8 +212,7 @@ export type CleanEventStateOptions = {
  * };
  * ```
  *
- * @group Events
- * @category Types
+ * @group User Events
  */
 export type CleanEventStatesOptions = {
     /**
@@ -279,8 +273,7 @@ export type CleanEventStatesOptions = {
  * const normalProps: SupportsEvents = {};
  * ```
  *
- * @group Events
- * @category Types
+ * @group User Events
  */
 export type SupportsEvents = {
     /**
@@ -297,15 +290,59 @@ export type SupportsEvents = {
 };
 
 /**
- * Handler for a user event (such as click or hover).
+ * Handler function for user interaction events on map features.
  *
- * @param topFeature The top target feature for the event, which matches the event coordinates and is also on top of any other matching features.
- * For GeoJSON (added data) modules topFeature is mapped to the original feature being sent to "show" method.
- * For vector tile (based on map style) modules, it will be mapped to a type derived from the map feature itself (based on `MapGeoJSONFeature`).
- * @param lngLat The event target coordinates. Will be nearby `topFeature` but might not literally be on it (taking padding into account).
- * @param allEventFeatures All the features which match with the event coordinates, possibly across different map modules, as MapLibre GeoJSON "raw" feature objects.
- * The first one is the MapGeoJSONFeature equivalent of `topFeature`.
- * @param sourceWithLayers The source with layers to which `topFeature` belongs to.
+ * @remarks
+ * Called when a user interacts with features on the map (e.g., click, hover).
+ * Provides detailed information about the interacted feature, its location,
+ * and all features at the event coordinates.
+ *
+ * **Feature Type Mapping:**
+ * - **GeoJSON modules** (places, routes, geometries): `topFeature` is the original feature passed to the `show()` method
+ * - **Vector tile modules** (POIs, traffic): `topFeature` is derived from MapLibre's internal feature representation
+ *
+ * **Event Precision:**
+ * - The `lngLat` coordinates may be near but not exactly on the feature, depending on the precision mode
+ * - The precision behavior is controlled by `MapEventsConfig.precisionMode`
+ *
+ * @typeParam T - The type of the top feature being interacted with
+ *
+ * @param topFeature - The primary target feature for the event, positioned on top of any overlapping features
+ * @param lngLat - The geographic coordinates where the event occurred
+ * @param allEventFeatures - All features matching the event coordinates across all map modules, as raw MapLibre GeoJSON features. The first feature corresponds to `topFeature`
+ * @param sourceWithLayers - The source and layer configuration to which the `topFeature` belongs
+ *
+ * @example
+ * Click handler for route features:
+ * ```ts
+ * routingModule.on('click', (route, lngLat, allFeatures, source) => {
+ *   console.log('Clicked route:', route.properties.id);
+ *   console.log('At coordinates:', lngLat);
+ *   console.log('Total features at location:', allFeatures.length);
+ * });
+ * ```
+ *
+ * @example
+ * Hover handler for places with feature inspection:
+ * ```ts
+ * placesModule.on('mousemove', (place, lngLat, allFeatures, source) => {
+ *   // Show tooltip with place information
+ *   showTooltip({
+ *     title: place.properties.poi?.name,
+ *     address: place.properties.address.freeformAddress,
+ *     coordinates: lngLat
+ *   });
+ *
+ *   // Check for overlapping features
+ *   if (allFeatures.length > 1) {
+ *     console.log(`${allFeatures.length} features at this location`);
+ *   }
+ * });
+ * ```
+ *
+ * @see {@link EventsModule.on} - For registering event handlers
+ *
+ * @group User Events
  */
 export type UserEventHandler<T> = (
     topFeature: T,

@@ -14,7 +14,6 @@ import type { POICategory } from './category';
  * ```
  *
  * @group Place
- * @category Types
  */
 export type LocalizedName = {
     /**
@@ -50,7 +49,6 @@ export type LocalizedName = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type Classification = {
     /**

@@ -4,7 +4,6 @@ import type { CurrentType } from '..';
 /**
  * Available plug types for EV charging.
  * @group Route
- * @category Variables
  */
 export const plugTypes = [
     'Small_Paddle_Inductive',
@@ -66,7 +65,6 @@ export const plugTypes = [
  * ```
  *
  * @group Route
- * @category Types
  */
 export type PlugType = (typeof plugTypes)[number];
 
@@ -77,7 +75,6 @@ export type PlugType = (typeof plugTypes)[number];
  * plug type, voltage, current, and power ratings.
  *
  * @group Route
- * @category Types
  */
 export type ChargingConnectionInfo = {
     /**
@@ -120,7 +117,6 @@ export type ChargingConnectionInfo = {
  * Geographic location information for a charging park.
  *
  * @group Route
- * @category Types
  */
 export type ChargingParkLocation = {
     /**
@@ -166,7 +162,6 @@ export type ChargingParkLocation = {
  * - `Direct`: Pay-per-use, direct payment (credit card, app, etc.)
  *
  * @group Route
- * @category Variables
  */
 export const paymentMethods = ['No_Payment', 'Subscription', 'Direct'] as const;
 
@@ -181,7 +176,6 @@ export const paymentMethods = ['No_Payment', 'Subscription', 'Direct'] as const;
  * ```
  *
  * @group Route
- * @category Types
  */
 export type PaymentMethod = (typeof paymentMethods)[number];
 
@@ -211,7 +205,6 @@ export type PaymentMethod = (typeof paymentMethods)[number];
  * ```
  *
  * @group Route
- * @category Types
  */
 export type ChargingPaymentOption = {
     /**
@@ -270,7 +263,6 @@ export type ChargingPaymentOption = {
  * ```
  *
  * @group Route
- * @category Types
  */
 export type BatteryCharging = {
     /**

@@ -1,8 +1,7 @@
 /**
- * @module map-geometry
- * @category Map
+ * @module map-base
  */
 
 export * from './GeometriesModule';
-export type * from './types/geometriesModuleConfig';
+export * from './types/geometriesModuleConfig';
 export * from './types/geometryDisplayProps';

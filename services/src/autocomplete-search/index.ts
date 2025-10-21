@@ -1,6 +1,6 @@
 /**
  * @module autocomplete
- * @category Service
+ * @group Autocomplete Search
  */
 
 export * from './autocompleteSearch';

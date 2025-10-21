@@ -6,7 +6,6 @@ import type { POI, RelatedPOI } from './poi/poi';
 
 /**
  * @group Place
- * @category Variables
  */
 export const geographyTypes = [
     'Country',
@@ -41,7 +40,6 @@ export const geographyTypes = [
  * ```
  *
  * @group Place
- * @category Types
  */
 export type GeographyType = (typeof geographyTypes)[number];
 
@@ -58,7 +56,6 @@ export type GeographyType = (typeof geographyTypes)[number];
  * @see [Mapcode documentation](https://www.mapcode.com)
  *
  * @group Place
- * @category Types
  */
 export type MapcodeType = 'Local' | 'International' | 'Alternative';
 
@@ -87,7 +84,6 @@ export type MapcodeType = 'Local' | 'International' | 'Alternative';
  * ```
  *
  * @group Place
- * @category Types
  */
 export type Mapcode = {
     /**
@@ -123,7 +119,6 @@ export type Mapcode = {
  * along a street segment.
  *
  * @group Place
- * @category Types
  */
 export type AddressRanges = {
     /**
@@ -156,7 +151,6 @@ export type AddressRanges = {
  * - `minor`: Secondary or alternative entrance (can have multiple)
  *
  * @group Place
- * @category Types
  */
 export type EntryPointType = 'main' | 'minor';
 
@@ -176,7 +170,6 @@ export type EntryPointType = 'main' | 'minor';
  * ```
  *
  * @group Place
- * @category Types
  */
 export type EntryPoint = {
     /**
@@ -197,7 +190,6 @@ export type EntryPoint = {
 
 /**
  * @group Place
- * @category Variables
  */
 export const placeTypes = ['POI', 'Street', 'Geography', 'Point Address', 'Address Range', 'Cross Street'] as const;
 
@@ -220,7 +212,6 @@ export const placeTypes = ['POI', 'Street', 'Geography', 'Point Address', 'Addre
  * ```
  *
  * @group Place
- * @category Types
  */
 export type PlaceType = (typeof placeTypes)[number];
 
@@ -247,7 +238,6 @@ export type PlaceType = (typeof placeTypes)[number];
  * ```
  *
  * @group Place
- * @category Types
  */
 export type AddressProperties = {
     /**
@@ -350,7 +340,6 @@ export type AddressProperties = {
  * entry points, POI details, and data source references.
  *
  * @group Place
- * @category Types
  */
 export type CommonPlaceProps = {
     /**
@@ -421,7 +410,6 @@ export type CommonPlaceProps = {
  * - `R`: Right side
  *
  * @group Place
- * @category Types
  */
 export type SideOfStreet = 'L' | 'R';
 
@@ -432,7 +420,6 @@ export type SideOfStreet = 'L' | 'R';
  * like the original query position and address interpolation details.
  *
  * @group Place
- * @category Types
  */
 export type RevGeoAddressProps = CommonPlaceProps & {
     /**
@@ -461,7 +448,6 @@ export type RevGeoAddressProps = CommonPlaceProps & {
  * like relevance scores and distances.
  *
  * @group Place
- * @category Types
  */
 export type SearchPlaceProps = CommonPlaceProps & {
     /**
@@ -509,7 +495,6 @@ export type SearchPlaceProps = CommonPlaceProps & {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, 'id'> & {
     /**
@@ -540,7 +525,6 @@ export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<
  * ```
  *
  * @group Place
- * @category Types
  */
 export type Places<P extends CommonPlaceProps = CommonPlaceProps, FeatureCollectionProps = unknown> = Omit<
     FeatureCollectionWithProperties<Point, P, FeatureCollectionProps>,

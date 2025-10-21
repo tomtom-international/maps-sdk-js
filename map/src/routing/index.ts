@@ -1,6 +1,5 @@
 /**
  * @module map-routes
- * @category Map
  */
 
 export * from './layers/defaultConfig';

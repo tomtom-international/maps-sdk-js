@@ -47,8 +47,7 @@ export const baseMapLayerGroupNames = [
  * const labels: BaseMapLayerGroupName[] = ['cityLabels', 'countryLabels'];
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Base Map
  */
 export type BaseMapLayerGroupName = (typeof baseMapLayerGroupNames)[number];
 
@@ -75,8 +74,7 @@ export type BaseMapLayerGroupName = (typeof baseMapLayerGroupNames)[number];
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Base Map
  */
 export type BaseMapLayerGroupsVisibility = BaseMapLayerGroups & { visible: boolean };
 
@@ -119,8 +117,7 @@ export type BaseMapLayerGroupsVisibility = BaseMapLayerGroups & { visible: boole
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Base Map
  */
 export type BaseMapLayerGroups = {
     /**
@@ -191,8 +188,7 @@ export type BaseMapLayerGroups = {
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Base Map
  */
 export type BaseMapModuleConfig = StyleModuleConfig & {
     /**
@@ -270,8 +266,7 @@ export type BaseMapModuleConfig = StyleModuleConfig & {
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group Base Map
  */
 export type BaseMapModuleInitConfig = BaseMapModuleConfig & {
     /**

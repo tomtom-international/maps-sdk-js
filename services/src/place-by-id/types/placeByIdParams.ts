@@ -6,7 +6,6 @@ import type { PlaceByIdResponseAPI } from './placeByIdResponseAPI';
  * Optional parameters for the Place by ID service.
  *
  * @group Place
- * @category Types
  */
 export type PlaceByIdOptionalParams = {
     /**
@@ -111,7 +110,6 @@ export type PlaceByIdOptionalParams = {
  * Mandatory parameters for the Place by ID service.
  *
  * @group Place
- * @category Types
  */
 export type PlaceByIdMandatoryParams = {
     /**
@@ -163,7 +161,6 @@ export type PlaceByIdMandatoryParams = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type PlaceByIdParams = CommonServiceParams<URL, PlaceByIdResponseAPI> &
     PlaceByIdMandatoryParams &

@@ -2,79 +2,133 @@ import type { Language } from '../types';
 import type { DistanceUnitsType } from '../util';
 
 /**
- * Configuration to display distance-based units, such as meters, kilometers, miles, feet, and yards.
+ * Configuration for displaying distance-based units.
+ *
+ * Allows customization of distance unit labels and the unit system
+ * (metric or imperial) used throughout the SDK.
+ *
+ * @group Configuration
  */
 export type DistanceDisplayUnits = {
     /**
-     * Type of distance units.
+     * Type of distance unit system.
+     *
+     * Determines whether to use metric (meters, kilometers) or
+     * imperial (feet, miles, yards) units.
      */
     type?: DistanceUnitsType;
     /**
-     * Text to display kilometer units.
+     * Custom label for kilometer units.
+     *
      * @default "km"
      */
     kilometers?: string;
     /**
-     * Text to display kilometer units.
+     * Custom label for meter units.
+     *
      * @default "m"
      */
     meters?: string;
     /**
-     * Text to display mile units.
+     * Custom label for mile units.
+     *
      * @default "mi"
      */
     miles?: string;
     /**
-     * Text to display feet units.
+     * Custom label for feet units.
+     *
      * @default "ft"
      */
     feet?: string;
     /**
-     * Text to display yard units.
+     * Custom label for yard units.
+     *
      * @default "yd"
      */
     yards?: string;
 };
 
+/**
+ * Configuration for displaying time-based units.
+ *
+ * Allows customization of time unit labels used for durations
+ * throughout the SDK.
+ *
+ * @group Configuration
+ */
 export type TimeDisplayUnits = {
     /**
-     * Text to display hour units.
+     * Custom label for hour units.
+     *
      * @default "h"
      */
     hours?: string;
     /**
-     * Text to display minute units.
+     * Custom label for minute units.
+     *
      * @default "min"
      */
     minutes?: string;
 };
 
 /**
- * Optional display units for time and distance.
+ * Display unit configuration for time and distance.
+ *
+ * Used by formatting utilities and map information displays to present
+ * durations and distances with custom labels.
+ *
+ * @group Configuration
  */
 export type DisplayUnits = {
     /**
-     * Optional display units for distance.
+     * Distance unit configuration.
+     *
+     * Controls how distances are displayed throughout the SDK.
      */
     distance?: DistanceDisplayUnits;
     /**
-     * Optional display units for time.
+     * Time unit configuration.
+     *
+     * Controls how durations are displayed throughout the SDK.
      */
     time?: TimeDisplayUnits;
 };
 
 /**
- * Global configuration containing basic parameters.
+ * Global configuration for the TomTom Maps SDK.
+ *
+ * Contains essential parameters like API keys, language settings, and display preferences
+ * that apply across all SDK services and map functionality.
+ *
+ * @remarks
+ * This configuration can be set globally using {@link TomTomConfig} and will be merged
+ * with service-specific configurations, with service configs taking precedence.
+ *
+ * @example
+ * ```typescript
+ * const config: GlobalConfig = {
+ *   apiKey: 'your-api-key',
+ *   apiVersion: 1,
+ *   commonBaseURL: 'https://api.tomtom.com',
+ *   language: 'en-US',
+ *   displayUnits: {
+ *     distance: { type: 'metric' },
+ *     time: { hours: 'hrs', minutes: 'mins' }
+ *   }
+ * };
+ * ```
+ *
  * @group Configuration
- * @category Types
  */
 export type GlobalConfig = {
     /**
-     * A valid API Key for the requested functionality.
+     * TomTom API key for authentication.
      *
-     * A valid API Key is required to make use of the given feature.
-     * It can be issued in the Developer Portal.
-     * @default None
+     * Required for all SDK features. Obtain an API key from the
+     * [TomTom Developer Portal](https://developer.tomtom.com/).
+     *
+     * @default None (required)
      */
     apiKey: string;
 
@@ -87,59 +141,78 @@ export type GlobalConfig = {
     // apiAccessToken?: string;
 
     /**
-     * Determines the version of the API being called.
-     * @default 1 but each service and/or map can determine their own default.
+     * API version number for service endpoints.
+     *
+     * Each service may have its own default version. Consult the specific
+     * service documentation for available versions.
+     *
+     * @default 1 (but each service can override)
      */
     apiVersion: number;
 
     /**
-     * Specifies an identifier for the request. It can be used to trace a call.
-     * * The value must match the regular expression '^[a-zA-Z0-9-]{1,100}$'.
-     * * An example of the format that matches this regular expression is UUID: (e.g., 9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1 ).
-     * * For details check RFC 4122. If specified, it is replicated in the Tracking-ID response header.
-     * * It is only meant to be used for support and does not involve tracking of you or your users in any form.
-     * @see Tracking-ID: https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-response
+     * Request identifier for tracing and support.
+     *
+     * Must match the pattern: `^[a-zA-Z0-9-]{1,100}$`
+     *
+     * Recommended format is UUID (e.g., `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1`).
+     * When specified, it's included in the `Tracking-ID` response header.
+     * This is solely for support purposes and does not involve user tracking.
+     *
+     * @see {@link https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-response | Tracking-ID documentation}
      */
     trackingId?: string;
 
     /**
-     * Determines whether to include a "TomTom-User-Agent" header in the requests.
-     * * The header will contain the SDK name and version.
-     * * Disabled by default.
-     * * Enabling it might cause CORS frequent preflight requests.
+     * Include TomTom-User-Agent header in requests.
+     *
+     * When enabled, adds a header containing the SDK name and version.
+     * Note that enabling this may trigger CORS preflight requests.
+     *
      * @default false
      */
     tomtomUserAgent?: boolean;
 
     /**
-     * Overall language code for the SDK services and map.
+     * Language code for SDK services and map content.
      *
-     * The value should correspond to one of the supported IETF language codes.
-     * The code is case-insensitive.
-     * @default NGT (Neutral Ground Truth - language local to each location)
-     * @see Search: https://docs.tomtom.com/search-api/documentation/product-information/supported-languages
-     * @see Routing: https://docs.tomtom.com/search-api/documentation/product-information/supported-languages
+     * Accepts IETF language codes (case-insensitive). Affects search results,
+     * routing instructions, and map labels.
+     *
+     * @default "NGT" (Neutral Ground Truth - uses local language for each location)
+     *
+     * @see {@link https://docs.tomtom.com/search-api/documentation/product-information/supported-languages | Search supported languages}
+     * @see {@link https://docs.tomtom.com/routing-api/documentation/product-information/supported-languages | Routing supported languages}
      */
     language?: Language;
 
     /**
-     * Common base domain URL for all services, unless overwritten by any of them.
-     * @default https://api.tomtom.com
+     * Base URL for all TomTom API services.
+     *
+     * Individual services can override this with their own base URLs.
+     * Typically only changed for testing or enterprise deployments.
+     *
+     * @default "https://api.tomtom.com"
      */
     commonBaseURL: string;
 
     /**
-     * Optional display units for time and distance.
-     * * These are applied to the formatDistance and formatDuration utils, which are callable directly and also used to display map information.
-     * * If not provided, the default values will be used.
+     * Custom display units for time and distance.
+     *
+     * Applied to {@link formatDistance} and {@link formatDuration} utilities,
+     * which are used throughout the SDK for displaying map information.
+     * If not provided, default unit labels are used.
      */
     displayUnits?: DisplayUnits;
 };
 
 /**
- * Default global configuration contents.
+ * Default global configuration values.
+ *
+ * Provides sensible defaults for the global configuration.
+ * The API key must be set before using SDK features.
+ *
  * @group Configuration
- * @category Variables
  */
 export const defaultConfig: GlobalConfig = {
     commonBaseURL: 'https://api.tomtom.com',
@@ -148,33 +221,86 @@ export const defaultConfig: GlobalConfig = {
 };
 
 /**
- * TomTom Maps SDK Global configuration singleton class.
- * It initializes to a default basic configuration.
- * @category Classes
+ * Global configuration singleton for the TomTom Maps SDK.
+ *
+ * Manages SDK-wide configuration settings that apply to all services and maps.
+ * Uses the singleton pattern to ensure consistent configuration across the application.
+ *
+ * @remarks
+ * Configuration set via this class is merged with service-specific parameters,
+ * with service parameters taking precedence over global settings.
+ *
+ * @example
+ * ```typescript
+ * // Set global configuration
+ * TomTomConfig.instance.put({
+ *   apiKey: 'your-api-key',
+ *   language: 'en-US'
+ * });
+ *
+ * // Get current configuration
+ * const config = TomTomConfig.instance.get();
+ *
+ * // Reset to defaults
+ * TomTomConfig.instance.reset();
+ * ```
+ *
+ * @group Configuration
  */
 export class TomTomConfig {
+    /**
+     * Singleton instance of the configuration.
+     */
     static readonly instance = new TomTomConfig();
     private config: GlobalConfig = { ...defaultConfig };
 
     private constructor() {}
 
     /**
-     * Puts the content of the given config into this one, merging the two. The given config properties have priority.
-     * @param config The config to merge into this one.
+     * Merge configuration values into the global configuration.
+     *
+     * New values override existing ones. This performs a shallow merge,
+     * so nested objects are replaced entirely rather than merged.
+     *
+     * @param config - Partial configuration to merge
+     *
+     * @example
+     * ```typescript
+     * TomTomConfig.instance.put({
+     *   apiKey: 'your-api-key',
+     *   language: 'de-DE'
+     * });
+     * ```
      */
     put(config: Partial<GlobalConfig>) {
         this.config = { ...this.config, ...config };
     }
 
     /**
-     * Reset configuration to the default values
+     * Reset configuration to default values.
+     *
+     * Clears all custom configuration and restores the initial defaults.
+     * Note that the default API key is an empty string.
+     *
+     * @example
+     * ```typescript
+     * TomTomConfig.instance.reset();
+     * ```
      */
     reset() {
         this.config = { ...defaultConfig };
     }
 
     /**
-     * Get configuration object
+     * Get the current global configuration.
+     *
+     * @returns Current configuration object
+     *
+     * @example
+     * ```typescript
+     * const config = TomTomConfig.instance.get();
+     * console.log(config.apiKey);
+     * ```
      */
     get() {
         return this.config;

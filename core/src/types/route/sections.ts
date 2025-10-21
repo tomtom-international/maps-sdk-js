@@ -8,7 +8,6 @@ import type { LegSummary } from './summary';
  * All section types extend this base with additional specialized properties.
  *
  * @group Route
- * @category Types
  */
 export type SectionProps = {
     /**
@@ -79,7 +78,6 @@ export type SectionProps = {
  * ```
  *
  * @group Route
- * @category Types
  */
 export type CountrySectionProps = SectionProps & {
     /**
@@ -102,7 +100,6 @@ export type CountrySectionProps = SectionProps & {
  * - `other`: Other types of incidents
  *
  * @group Route
- * @category Types
  */
 export type TrafficCategory = 'jam' | 'road_work' | 'road_closure' | 'other';
 
@@ -117,7 +114,6 @@ export type TrafficCategory = 'jam' | 'road_work' | 'road_closure' | 'other';
  * - `indefinite`: Unknown or extremely long delay (e.g., road closure)
  *
  * @group Route
- * @category Types
  */
 export type DelayMagnitude = 'unknown' | 'minor' | 'moderate' | 'major' | 'indefinite';
 
@@ -130,7 +126,6 @@ export type DelayMagnitude = 'unknown' | 'minor' | 'moderate' | 'major' | 'indef
  * @see [TPEG2-TEC Standard](https://www.iso.org/standard/59231.html)
  *
  * @group Route
- * @category Types
  */
 export type CauseTEC = {
     /**
@@ -153,7 +148,6 @@ export type CauseTEC = {
  * Provides standardized classification of traffic flow effects and causes.
  *
  * @group Route
- * @category Types
  */
 export type TrafficIncidentTEC = {
     /**
@@ -192,7 +186,6 @@ export type TrafficIncidentTEC = {
  * ```
  *
  * @group Route
- * @category Types
  */
 export type TrafficSectionProps = SectionProps & {
     /**
@@ -252,7 +245,6 @@ export type TrafficSectionProps = SectionProps & {
  * ```
  *
  * @group Route
- * @category Types
  */
 export type LegSectionProps = Omit<SectionProps, 'startPointIndex' | 'endPointIndex'> & {
     /**
@@ -282,7 +274,6 @@ export type LegSectionProps = Omit<SectionProps, 'startPointIndex' | 'endPointIn
  * Used in lane guidance to indicate which directions are possible from a lane.
  *
  * @group Route
- * @category Types
  */
 export type PossibleLaneDirection =
     | 'STRAIGHT'
@@ -311,7 +302,6 @@ export type PossibleLaneDirection =
  * ```
  *
  * @group Route
- * @category Types
  */
 export type LaneDirection = {
     /**
@@ -331,7 +321,6 @@ export type LaneDirection = {
 /**
  * All the possible lane separators.
  * @group Route
- * @category Types
  */
 export type PossibleLaneSeparator =
     | 'UNKNOWN'
@@ -353,7 +342,6 @@ export type PossibleLaneSeparator =
 /**
  * Section representing a lane configuration.
  * @group Route
- * @category Types
  */
 export type LaneSectionProps = SectionProps & {
     /**
@@ -378,7 +366,6 @@ export type LaneSectionProps = SectionProps & {
 /**
  * Section representing a speed limit.
  * @group Route
- * @category Types
  */
 export type SpeedLimitSectionProps = SectionProps & {
     /**
@@ -390,7 +377,6 @@ export type SpeedLimitSectionProps = SectionProps & {
 /**
  * Section representing a road shield.
  * @group Route
- * @category Types
  */
 export type RoadShieldSectionProps = SectionProps & {
     /**
@@ -404,7 +390,6 @@ export type RoadShieldSectionProps = SectionProps & {
  * such as ones on a ferry or motorway, or sections with traffic incidents in them.
  * Using sections, you can show users where these things lie on a planned route.
  * @group Route
- * @category Types
  */
 export type SectionsProps = {
     leg: LegSectionProps[];
@@ -429,14 +414,12 @@ export type SectionsProps = {
 
 /**
  * @group Route
- * @category Types
  */
 export type SectionType = keyof SectionsProps;
 
 /**
  * Route calculation request section types so they can be included in response.
  * @group Route
- * @category Variables
  */
 export const inputSectionTypes: SectionType[] = [
     'carTrain',
@@ -460,12 +443,10 @@ export const inputSectionTypes: SectionType[] = [
 /**
  * Route calculation request section types, including guidance-related ones, so they can be included in response.
  * @group Route
- * @category Variables
  */
 export const inputSectionTypesWithGuidance: SectionType[] = [...inputSectionTypes, 'lanes'] as const;
 
 /**
  * @group Route
- * @category Variables
  */
 export const sectionTypes: SectionType[] = [...inputSectionTypesWithGuidance, 'leg'] as const;

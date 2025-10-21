@@ -1,6 +1,6 @@
 /**
  * @module calculate-route
- * @category Service
+ * @group Routing
  */
 
 export * from './calculateRoute';

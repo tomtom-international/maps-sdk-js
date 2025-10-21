@@ -21,7 +21,6 @@ import type { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
  * ```
  *
  * @group Shared
- * @category Types
  */
 export interface FeatureCollectionWithProperties<
     G extends Geometry | null = Geometry,

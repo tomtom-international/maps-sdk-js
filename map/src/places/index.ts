@@ -1,6 +1,5 @@
 /**
  * @module map-places
- * @category Map
  */
 
 export * from '../pois/poiCategoryMapping';

@@ -16,7 +16,6 @@
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type FilterShowMode = 'all_except' | 'only';
 
@@ -62,7 +61,6 @@ export type FilterShowMode = 'all_except' | 'only';
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type ValuesFilter<T> = {
     /**

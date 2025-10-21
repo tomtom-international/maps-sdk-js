@@ -1,6 +1,6 @@
 /**
  * @module search
- * @category Service
+ * @group Search
  */
 
 export type * from '../shared/types/commonGeocodeAndFuzzySearchParams';

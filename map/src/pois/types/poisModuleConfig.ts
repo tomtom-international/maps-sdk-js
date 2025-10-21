@@ -29,8 +29,7 @@ import type { POICategoryGroup } from '../poiCategoryGroups';
  * const categories: FilterablePOICategory[] = ['RESTAURANT', 'SHOPPING_GROUP'];
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group POIs
  */
 export type FilterablePOICategory = MapStylePOICategory | POICategoryGroup;
 
@@ -78,8 +77,7 @@ export type FilterablePOICategory = MapStylePOICategory | POICategoryGroup;
  * };
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group POIs
  */
 export type POIsModuleConfig = StyleModuleConfig & {
     /**
@@ -141,8 +139,7 @@ export type POIsModuleConfig = StyleModuleConfig & {
  * });
  * ```
  *
- * @group Map Modules
- * @category Types
+ * @group POIs
  */
 export type POIsModuleFeature = Omit<MapGeoJSONFeature, 'properties'> & {
     /**

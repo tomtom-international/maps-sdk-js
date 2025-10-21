@@ -38,7 +38,6 @@ import type {
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type HasLngLat = Position | Point | Feature<Point>;
 
@@ -71,7 +70,6 @@ export type HasLngLat = Position | Point | Feature<Point>;
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type HasBBox = BBox | GeoJsonObject | GeoJsonObject[];
 
@@ -79,7 +77,6 @@ export type HasBBox = BBox | GeoJsonObject | GeoJsonObject[];
  * Optional bounding box value.
  *
  * @group Shared
- * @category Types
  */
 export type OptionalBBox = BBox | undefined;
 
@@ -116,7 +113,6 @@ export type OptionalBBox = BBox | undefined;
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type PolygonFeature<P = GeoJsonProperties> = Feature<Polygon | MultiPolygon, P>;
 
@@ -150,6 +146,5 @@ export type PolygonFeature<P = GeoJsonProperties> = Feature<Polygon | MultiPolyg
  * ```
  *
  * @group Shared
- * @category Types
  */
 export type PolygonFeatures<P = GeoJsonProperties> = FeatureCollection<Polygon | MultiPolygon, P>;

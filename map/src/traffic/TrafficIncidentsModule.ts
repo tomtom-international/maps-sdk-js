@@ -137,8 +137,7 @@ type TrafficIncidentsSourcesWithLayers = {
  * @see [Traffic Incidents Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic-incidents)
  * @see [Traffic Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic)
  *
- * @group Map Modules
- * @category Traffic
+ * @group Traffic Incidents
  */
 export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSourcesWithLayers, IncidentsConfig> {
     private originalFilters!: Record<string, FilterSpecification | undefined>;

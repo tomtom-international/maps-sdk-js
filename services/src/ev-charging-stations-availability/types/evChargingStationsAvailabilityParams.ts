@@ -39,7 +39,6 @@ import type { ChargingStationsAvailabilityResponseAPI } from './apiTypes';
  * ```
  *
  * @group EV Charging
- * @category Types
  */
 export type ChargingStationsAvailabilityParams = CommonServiceParams<URL, ChargingStationsAvailabilityResponseAPI> & {
     /**

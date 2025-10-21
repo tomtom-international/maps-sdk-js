@@ -12,7 +12,6 @@ import type { HasBBox } from '@cet/maps-sdk-js/core';
  * - {@link geocode}
  *
  * @group Search
- * @category Types
  */
 export type CommonGeocodeAndFuzzySearchParams = {
     /**

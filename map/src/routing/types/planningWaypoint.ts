@@ -32,6 +32,5 @@ import type { WaypointLike } from '@cet/maps-sdk-js/core';
  * ```
  *
  * @group Routing
- * @category Types
  */
 export type PlanningWaypoint = WaypointLike | null;

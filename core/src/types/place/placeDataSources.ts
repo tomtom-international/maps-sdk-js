@@ -18,7 +18,6 @@
  * ```
  *
  * @group Place
- * @category Types
  */
 export type PlaceDataSources = {
     /**
@@ -65,7 +64,6 @@ export type PlaceDataSources = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type ChargingAvailabilityDataSource = {
     /**
@@ -89,7 +87,6 @@ export type ChargingAvailabilityDataSource = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type GeometryDataSource = {
     /**
@@ -113,7 +110,6 @@ export type GeometryDataSource = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type PoiDetailsDataSource = {
     /**

@@ -23,7 +23,6 @@ import { VehicleState } from './vehicleState';
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type GenericVehicleParams = {
     /**
@@ -84,7 +83,6 @@ export type GenericVehicleParams = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type CombustionVehicleParams = {
     /**
@@ -173,7 +171,6 @@ export type CombustionVehicleParams = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type ElectricVehicleParams = {
     /**
@@ -298,7 +295,6 @@ export type ElectricVehicleParams = {
  * ```
  *
  * @group Vehicle
- * @category Types
  */
 export type VehicleParameters = (GenericVehicleParams | CombustionVehicleParams | ElectricVehicleParams) &
     VehicleRestrictions;

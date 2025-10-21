@@ -22,7 +22,6 @@ import type { OpeningHours } from './openingHours';
  * ```
  *
  * @group Place
- * @category Types
  */
 export type POI = {
     /**
@@ -100,7 +99,6 @@ export type POI = {
  * ```
  *
  * @group Place
- * @category Types
  */
 export type RelatedPOI = {
     /**

@@ -29,7 +29,6 @@ import type { SupportsEvents } from '../../shared';
  * ```
  *
  * @group Places
- * @category Types
  */
 export type LocationDisplayProps = {
     /**
@@ -162,6 +161,5 @@ export type LocationDisplayProps = {
  * ```
  *
  * @group Places
- * @category Types
  */
 export type DisplayPlaceProps = CommonPlaceProps & LocationDisplayProps;

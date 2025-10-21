@@ -26,7 +26,6 @@ import type { CommonPlacesParams, SearchIndexType } from './commonPlacesParams';
  * ```
  *
  * @group Search
- * @category Types
  */
 export type RelatedPoisRequest = 'child' | 'parent' | 'all' | 'off';
 
@@ -54,7 +53,6 @@ export type RelatedPoisRequest = 'child' | 'parent' | 'all' | 'off';
  * ```
  *
  * @group Search
- * @category Types
  */
 export type TimeZoneRequest = 'iana';
 
@@ -83,7 +81,6 @@ export type TimeZoneRequest = 'iana';
  * @see [Search Service Documentation](https://docs.tomtom.com/search-api/documentation/search-service/search-service)
  *
  * @group Search
- * @category Types
  */
 export type CommonSearchParams<ApiRequest, ApiResponse> = CommonPlacesParams<ApiRequest, ApiResponse> & {
     /**
