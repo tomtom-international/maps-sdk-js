@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.23.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.23.0...v0.23.1) (2025-10-21)
+
+
+### Bug Fixes
+
+* maplibre version in guides ([16a3a66](https://github.com/tomtom-international/maps-sdk-js/commit/16a3a66be355866201e6ba8e714b606d8bba1866))
+
 ## [0.23.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.22.0...v0.23.0) (2025-10-21)
 
 
