@@ -4,6 +4,33 @@ import type { Guidance } from './guidance';
 import type { SectionsProps } from './sections';
 import type { RouteSummary } from './summary';
 
+/**
+ * Array of all available route avoidance options.
+ *
+ * This constant defines the complete set of road/route features that can be avoided
+ * during route calculation. Use this to derive the {@link Avoidable} type or to validate
+ * user input against supported avoidance options.
+ *
+ * @remarks
+ * This is a readonly tuple used as the source of truth for valid avoidance types.
+ * The {@link Avoidable} type is derived from this array to ensure type safety.
+ *
+ * @example
+ * ```typescript
+ * // Check if a string is a valid avoidance type
+ * const userInput = 'tollRoads';
+ * if (avoidableTypes.includes(userInput as Avoidable)) {
+ *   // userInput is valid
+ * }
+ *
+ * // Iterate over all available options
+ * avoidableTypes.forEach(type => {
+ *   console.log(`Available option: ${type}`);
+ * });
+ * ```
+ *
+ * @group Route
+ */
 export const avoidableTypes = [
     'tollRoads',
     'motorways',

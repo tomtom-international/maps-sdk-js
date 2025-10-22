@@ -94,6 +94,7 @@ export const filterLayersBySources = (loadedMap: Map, sourceIDs: string[]): Laye
 /**
  * Source with layers which are coming from the downloaded TT map style.
  * * Examples are parts of the base map, traffic, pois, and hillshade.
+ * @ignore
  */
 export class StyleSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
@@ -118,6 +119,7 @@ export class StyleSourceWithLayers<
 
 /**
  * Source with layers which originally is not in the map style, but it's to be added after the map is initialized.
+ * @ignore
  */
 export class AddedSourceWithLayers<
     SOURCE_SPEC extends SourceSpecification = SourceSpecification,
