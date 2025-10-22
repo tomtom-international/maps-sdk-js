@@ -39,7 +39,3 @@ for (let index = 0; index < routes.features.length; index++) {
 routeSelector.addEventListener('change', (event) =>
     routingModule.selectRoute(Number((event.target as HTMLOptionElement).value)),
 );
-
-document
-    .querySelector('#maps-sdk-js-examples-reCenter')
-    ?.addEventListener('click', () => map.mapLibreMap.fitBounds(bounds, fitBoundsOptions));

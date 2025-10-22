@@ -1,6 +1,6 @@
 {
-  "name": "@examples/ldevr",
-  "description": "LDEVR example",
+  "name": "@examples/ldevr-detailed-vehicle",
+  "description": "LDEVR with detailed vehicle params example",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",
