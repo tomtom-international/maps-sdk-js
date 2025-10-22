@@ -16,5 +16,5 @@ const map = new TomTomMap({
     zoom: 17,
 });
 
-const placesModule = await PlacesModule.init(map);
+const placesModule = await PlacesModule.get(map);
 placesModule.show(location);

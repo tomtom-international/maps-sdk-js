@@ -30,7 +30,7 @@ const invertedGeometry = difference({
     type: 'FeatureCollection',
     features: [bboxPolygon([-180, 90, 180, -90]), geometryToSearch?.features?.[0]],
 });
-const geometriesModule = await GeometriesModule.init(map);
+const geometriesModule = await GeometriesModule.get(map);
 geometriesModule.show(
     invertedGeometry ? { type: 'FeatureCollection', features: [invertedGeometry] } : geometryToSearch,
 );
@@ -40,5 +40,5 @@ const placesInsideGeometry = await search({
     limit: 100,
 });
 
-const placesModule = await PlacesModule.init(map);
+const placesModule = await PlacesModule.get(map);
 placesModule.show(placesInsideGeometry);

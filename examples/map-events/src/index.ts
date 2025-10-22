@@ -86,7 +86,7 @@ const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
 };
 
 const initPlacesModule = async () => {
-    const placesModule = await PlacesModule.init(map);
+    const placesModule = await PlacesModule.get(map);
 
     const places = await search({
         query: 'pharmacy',

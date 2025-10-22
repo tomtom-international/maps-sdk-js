@@ -60,7 +60,7 @@ const mapBasePOIs = await POIsModule.get(map, {
         categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
     },
 });
-const mapEVStations = await PlacesModule.init(map, {
+const mapEVStations = await PlacesModule.get(map, {
     iconConfig: { iconStyle: 'poi-like' },
 });
 
@@ -97,9 +97,9 @@ const evStationPinConfig: PlacesModuleConfig = {
     },
 };
 
-const mapSearchedEVStations = await PlacesModule.init(map, evStationPinConfig);
-const selectedEVStation = await PlacesModule.init(map, evStationPinConfig);
-const mapGeometry = await GeometriesModule.init(map);
+const mapSearchedEVStations = await PlacesModule.get(map, evStationPinConfig);
+const selectedEVStation = await PlacesModule.get(map, evStationPinConfig);
+const mapGeometry = await GeometriesModule.get(map);
 
 let minPowerKWMapEVStations = 50;
 let minPowerKWSearchedEVStations = 0;

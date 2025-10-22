@@ -28,7 +28,7 @@ const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number)
 
     const map = new TomTomMap({ container: div.id, bounds: geometry.bbox as LngLatBoundsLike, interactive: false });
     (
-        await GeometriesModule.init(map, {
+        await GeometriesModule.get(map, {
             beforeLayerConfig: 'lowestPlaceLabel',
             colorConfig: { fillColor: 'white', fillOpacity: 0.75 },
             lineConfig: { lineOpacity: 0 },

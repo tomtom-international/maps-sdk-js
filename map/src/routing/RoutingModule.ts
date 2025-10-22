@@ -149,7 +149,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * });
      * ```
      */
-    static async init(
+    static async get(
         tomtomMap: TomTomMap,
         config: RoutingModuleConfig = { layers: defaultRouteLayersConfig },
     ): Promise<RoutingModule> {

@@ -206,7 +206,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * });
      * ```
      */
-    static async init(tomtomMap: TomTomMap, config?: GeometriesModuleConfig): Promise<GeometriesModule> {
+    static async get(tomtomMap: TomTomMap, config?: GeometriesModuleConfig): Promise<GeometriesModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new GeometriesModule(tomtomMap, config);
     }

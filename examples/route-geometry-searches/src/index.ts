@@ -27,10 +27,10 @@ const map = new TomTomMap(
 
 const routes = await calculateRoute({ geoInputs: waypoints.features });
 
-const extraWidePlacesModule = await PlacesModule.init(map, { iconConfig: { iconStyle: 'poi-like' } });
-const widePlacesModule = await PlacesModule.init(map, { iconConfig: { iconStyle: 'poi-like' } });
-const onRoadPlacesModule = await PlacesModule.init(map, { iconConfig: { iconStyle: 'circle' } });
-const routingModule = await RoutingModule.init(map);
+const extraWidePlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'poi-like' } });
+const widePlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'poi-like' } });
+const onRoadPlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'circle' } });
+const routingModule = await RoutingModule.get(map);
 routingModule.showRoutes(routes);
 routingModule.showWaypoints(waypoints);
 

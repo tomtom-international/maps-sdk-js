@@ -20,7 +20,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 const fitBoundsOptions = { padding: 50 };
 
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', fitBoundsOptions });
-const geometry = await GeometriesModule.init(map);
+const geometry = await GeometriesModule.get(map);
 let placeSubdivisions: Places;
 
 const updateMap = async (config: Config) => {

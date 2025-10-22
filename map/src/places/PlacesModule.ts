@@ -96,7 +96,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async init(tomtomMap: TomTomMap, config?: PlacesModuleConfig): Promise<PlacesModule> {
+    static async get(tomtomMap: TomTomMap, config?: PlacesModuleConfig): Promise<PlacesModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new PlacesModule(tomtomMap, config);
     }

@@ -112,7 +112,7 @@ const map = new TomTomMap(
 );
 await TrafficIncidentsModule.get(map, { visible: false });
 
-const routingModule = await RoutingModule.init(map);
+const routingModule = await RoutingModule.get(map);
 initDrawMapStyle(map.mapLibreMap, routingModule);
 document
     .querySelector('#maps-sdk-js-examples-reset')

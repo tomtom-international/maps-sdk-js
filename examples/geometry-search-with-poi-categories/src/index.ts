@@ -28,7 +28,7 @@ const map = new TomTomMap({
 });
 
 const areaGeometry = await geometryData({ geometries: areaToSearch });
-const geometry = await GeometriesModule.init(map);
+const geometry = await GeometriesModule.get(map);
 geometry.show(invert(areaGeometry));
 
 const restaurants = await search({
@@ -38,6 +38,6 @@ const restaurants = await search({
     limit: 100,
 });
 
-const places = await PlacesModule.init(map);
+const places = await PlacesModule.get(map);
 places.show(restaurants);
 (window as any).map = map;

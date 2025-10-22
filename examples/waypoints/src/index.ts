@@ -44,7 +44,7 @@ for (const exampleKey in examples) {
     examplesSelector.add(new Option(examples[exampleKey].title, exampleKey));
 }
 
-const routingModule = await RoutingModule.init(map);
+const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(examples['all'].waypoints);
 examplesSelector.addEventListener('change', (event) =>
     routingModule.showWaypoints(examples[(event.target as HTMLOptionElement).value].waypoints),

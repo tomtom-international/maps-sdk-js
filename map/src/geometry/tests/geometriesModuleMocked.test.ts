@@ -38,7 +38,7 @@ describe('Geometry module tests', () => {
         const textField: DataDrivenPropertyValueSpecification<string> = ['get', 'country'];
 
         const testGeometryData = amsterdamGeometryData as PolygonFeatures;
-        let geometry = await GeometriesModule.init(tomtomMapMock, geometryConfig);
+        let geometry = await GeometriesModule.get(tomtomMapMock, geometryConfig);
         // to be able to spy on private methods
         const geometryAny: any = geometry;
         vi.spyOn(geometryAny, 'applyConfig');
@@ -68,7 +68,7 @@ describe('Geometry module tests', () => {
 
         geometry.show(testGeometryData);
         geometry.clear();
-        geometry = await GeometriesModule.init(tomtomMapMock);
+        geometry = await GeometriesModule.get(tomtomMapMock);
         geometry.show(testGeometryData);
         geometry.clear();
         expect(geometry.events).toBeDefined();

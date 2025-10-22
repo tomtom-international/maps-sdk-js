@@ -14,7 +14,7 @@ TomTomConfig.instance.put({
 });
 
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.90435, 52.36876], zoom: 10 });
-const places = await PlacesModule.init(map);
+const places = await PlacesModule.get(map);
 
 const fontSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.maps-sdk-js-examples-font-selector');
 const contentSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll(

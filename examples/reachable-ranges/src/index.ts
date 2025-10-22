@@ -20,14 +20,14 @@
 //     const reachableRanges: PolygonFeatures = await calculateReachableRanges(
 //         locations.features.map((origin) => ({ origin, budget }))
 //     );
-//     const polygonsModule = await GeometriesModule.init(map, {
+//     const polygonsModule = await GeometriesModule.get(map, {
 //         beforeLayerConfig: "lowestBuilding",
 //         lineConfig: { lineWidth: 1, lineColor: "grey" },
 //         colorConfig: { fillColor: "#87CEEB", fillOpacity: 0.5 }
 //     });
 //     polygonsModule.show(reachableRanges);
 //
-//     const placesModule = await PlacesModule.init(map);
+//     const placesModule = await PlacesModule.get(map);
 //     placesModule.show(locations);
 //
 //

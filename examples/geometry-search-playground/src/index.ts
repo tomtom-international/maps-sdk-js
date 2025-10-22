@@ -13,8 +13,8 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 const fitBoundsOptions = { padding: 50 };
 
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', zoom: 2 }, { language: 'en-GB' });
-const placesModule = await PlacesModule.init(map);
-const geometryModule = await GeometriesModule.init(map);
+const placesModule = await PlacesModule.get(map);
+const geometryModule = await GeometriesModule.get(map);
 
 let placeToSearchBBox: LngLatBoundsLike;
 

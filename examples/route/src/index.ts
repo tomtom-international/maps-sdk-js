@@ -28,6 +28,6 @@ const map = new TomTomMap(
     { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 await TrafficIncidentsModule.get(map, { visible: false });
-const routingModule = await RoutingModule.init(map);
+const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(waypoints);
 routingModule.showRoutes(await calculateRoute({ geoInputs: waypoints }));

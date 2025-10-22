@@ -17,7 +17,7 @@ const map = new TomTomMap({
 });
 
 const areaGeometry = await geometryData({ geometries: areaToSearch });
-const geometry = await GeometriesModule.init(map);
+const geometry = await GeometriesModule.get(map);
 geometry.show(areaGeometry);
 
 const parkingSpots = await search({
@@ -27,6 +27,6 @@ const parkingSpots = await search({
     limit: 100,
 });
 
-const places = await PlacesModule.init(map);
+const places = await PlacesModule.get(map);
 places.show(parkingSpots);
 (window as any).map = map;

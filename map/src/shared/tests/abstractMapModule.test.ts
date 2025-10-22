@@ -11,7 +11,7 @@ describe('AbstractMapModule tests', () => {
         configApplied?: StyleModuleConfig | null;
         restored?: boolean;
 
-        static async init(tomtomMap: TomTomMap, config?: StyleModuleConfig): Promise<TestModule> {
+        static async get(tomtomMap: TomTomMap, config?: StyleModuleConfig): Promise<TestModule> {
             await waitUntilMapIsReady(tomtomMap);
             return new TestModule('style', tomtomMap, config);
         }
@@ -51,7 +51,7 @@ describe('AbstractMapModule tests', () => {
             mapReady: vi.fn().mockReturnValue(true),
         } as unknown as TomTomMap;
 
-        let testModule = await TestModule.init(tomtomMapMock);
+        let testModule = await TestModule.get(tomtomMapMock);
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
         expect(testModule.getConfig()).toBeUndefined();
@@ -59,7 +59,7 @@ describe('AbstractMapModule tests', () => {
 
         // Repeating test with config ----------------------:
         const testConfig = { visible: false };
-        testModule = await TestModule.init(tomtomMapMock, testConfig);
+        testModule = await TestModule.get(tomtomMapMock, testConfig);
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toStrictEqual(testConfig);
         expect(testModule.getConfig()).toStrictEqual(testConfig);
@@ -74,7 +74,7 @@ describe('AbstractMapModule tests', () => {
             mapReady: vi.fn().mockReturnValue(false),
         } as unknown as TomTomMap;
 
-        let testModule = await TestModule.init(tomtomMapMock);
+        let testModule = await TestModule.get(tomtomMapMock);
 
         expect(testModule.initCalled).toBe(true);
         expect(testModule.configApplied).toBeUndefined();
@@ -84,7 +84,7 @@ describe('AbstractMapModule tests', () => {
         (tomtomMapMock.mapLibreMap.once as Mock).mockClear();
 
         const testConfig = { visible: false };
-        testModule = await TestModule.init(tomtomMapMock, testConfig);
+        testModule = await TestModule.get(tomtomMapMock, testConfig);
 
         // TODO: in theory this should be called
         //expect(tomtomMapMock.mapLibreMap.once).toHaveBeenCalledWith("styledata");
@@ -104,7 +104,7 @@ describe('AbstractMapModule tests', () => {
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
-        const testModule = await TestModule.init(tomtomMapMock);
+        const testModule = await TestModule.get(tomtomMapMock);
         await testModule.waitUntilModuleReady();
         expect(testModule.initCalled).toBe(true);
     });

@@ -35,13 +35,13 @@ await TrafficIncidentsModule.get(map, {
     icons: { visible: false },
     filters: { any: [{ magnitudes: { show: 'all_except', values: ['minor'] } }] },
 });
-const routingModule = await RoutingModule.init(map);
+const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(geoInputs);
 routingModule.showRoutes(await calculateRoute({ geoInputs }));
 
 const position = map.mapLibreMap.getCenter().toArray();
-(await PlacesModule.init(map)).show(await search({ query: 'London Eye', position, limit: 1 }));
-(await PlacesModule.init(map)).show(
+(await PlacesModule.get(map)).show(await search({ query: 'London Eye', position, limit: 1 }));
+(await PlacesModule.get(map)).show(
     await search({ query: 'City Hall', position, poiCategories: ['GOVERNMENT_OFFICE'] }),
 );
 

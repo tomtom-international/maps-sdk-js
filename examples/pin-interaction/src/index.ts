@@ -13,7 +13,7 @@ const lnglat = new LngLat(4.8907, 52.37311);
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: lnglat, zoom: 17 });
 
 const location = await reverseGeocode({ position: [lnglat.lng, lnglat.lat] });
-const placesModule = await PlacesModule.init(map);
+const placesModule = await PlacesModule.get(map);
 placesModule.show(location);
 
 placesModule.events.on('click', () => alert('pin clicked'));

@@ -37,7 +37,7 @@ describe('GeoJSON Places module tests', () => {
             type: 'FeatureCollection',
             features: [{ properties: { address: { freeformAddress: 'TEST_ADDRESS' } } }],
         } as Places;
-        const places = await PlacesModule.init(tomtomMapMock, {
+        const places = await PlacesModule.get(tomtomMapMock, {
             iconConfig: {
                 iconStyle: 'circle',
             },

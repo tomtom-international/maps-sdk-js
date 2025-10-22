@@ -29,7 +29,7 @@ const map = new TomTomMap(
 );
 const mainGeometry = await geometryData({ geometries: mainPlace });
 
-const restOfTheMapGeometryModule = await GeometriesModule.init(map, {
+const restOfTheMapGeometryModule = await GeometriesModule.get(map, {
     colorConfig: { fillColor: 'black', fillOpacity: ['interpolate', ['linear'], ['zoom'], 6, 0.6, 14, 0.4] },
     lineConfig: { lineOpacity: 0 },
 });
@@ -42,7 +42,7 @@ const subdivisions = await search({
     limit: 20,
 });
 const subdivisionGeometries = await geometryData({ geometries: subdivisions });
-const closeupGeometriesModule = await GeometriesModule.init(map, {
+const closeupGeometriesModule = await GeometriesModule.get(map, {
     beforeLayerConfig: 'lowestRoadLine',
     colorConfig: {
         fillColor: 'fadedRainbow',
@@ -51,7 +51,7 @@ const closeupGeometriesModule = await GeometriesModule.init(map, {
 });
 closeupGeometriesModule.show(subdivisionGeometries);
 
-const farAwayGeometriesModule = await GeometriesModule.init(map, {
+const farAwayGeometriesModule = await GeometriesModule.get(map, {
     beforeLayerConfig: 'country',
     lineConfig: { lineWidth: 0.7, lineOpacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 8, 0] },
     colorConfig: {

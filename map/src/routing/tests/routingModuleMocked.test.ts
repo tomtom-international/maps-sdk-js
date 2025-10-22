@@ -96,7 +96,7 @@ describe('Routing module tests', () => {
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
-        const routing = await RoutingModule.init(tomtomMapMock);
+        const routing = await RoutingModule.get(tomtomMapMock);
         routing.showRoutes({ type: 'FeatureCollection', features: [] });
         routing.selectRoute(0);
         routing.clearRoutes();

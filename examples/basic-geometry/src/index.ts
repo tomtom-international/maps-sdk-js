@@ -16,7 +16,7 @@ const map = new TomTomMap(
     },
     { language: 'en-GB' },
 );
-const geometryModule = await GeometriesModule.init(map);
+const geometryModule = await GeometriesModule.get(map);
 
 const geometryToSearch = await geometryData({ geometries: location });
 geometryModule.show(geometryToSearch);
