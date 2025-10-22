@@ -21,7 +21,6 @@
     "maplibre-gl": "catalog:"
   },
   "devDependencies": {
-    "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",

@@ -228,9 +228,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -302,9 +299,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -395,9 +389,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -432,9 +423,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -534,9 +522,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -565,9 +550,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -627,9 +609,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -658,9 +637,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -720,9 +696,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -751,9 +724,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -782,9 +752,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -844,9 +811,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -1035,9 +999,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -1069,9 +1030,6 @@ importers:
       '@turf/turf':
         specifier: ^7.2.0
         version: 7.2.0
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -1100,9 +1058,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -1131,9 +1086,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -1354,9 +1306,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.0
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1

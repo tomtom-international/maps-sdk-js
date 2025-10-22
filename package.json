@@ -14,6 +14,7 @@
     "format:fix": "biome format . --write",
     "lint": "biome lint .",
     "lint:fix": "biome check . --write && biome lint . --write",
+    "spell-check": "cspell \"**/*\" --no-progress",
     "sync-docs-package-version": "bash documentation/scripts/update-sdk-version-in-docs.sh",
     "sync-examples-package-version": "bash examples/scripts/sync-examples-package-version.sh",
     "test:sdk": "pnpm -F core test && pnpm -F services test && pnpm -F map test",

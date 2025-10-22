@@ -3,8 +3,10 @@
   "language": "en",
   "words": [
     "GOSDK",
+    "basemap",
     "hillshade",
     "maplibre",
+    "maplibregl",
     "bbox",
     "bboxes",
     "Biodiesel",
@@ -71,7 +73,23 @@
     "Orbis",
     "Rfid",
     "RFID",
-    "EDXCE"
+    "EDXCE",
+    "prefs",
+    "frontmatter",
+    "yasaki",
+    "mennekes"
   ],
-  "ignorePaths": ["**/dist/**", "package.json", "package-lock.json", "**/coverage/**", "**/tests/**"]
+  "ignorePaths": [
+    "**/dist/**",
+    "*.css",
+    "*.js",
+    "*.json",
+    "*.yaml",
+    "*.svg",
+    "**/coverage/**",
+    "**/tests/**",
+    "**/node_modules/**",
+    "*.html",
+    "*.properties"
+  ]
 }

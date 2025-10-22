@@ -87,13 +87,13 @@ const appendVehicleState = (urlParams: URLSearchParams, vehicleParams: VehiclePa
             urlParams.append('currentFuelInLiters', String(combustionState.currentFuelInLiters));
     } else if (vehicleParams.engineType === 'electric') {
         const electricState: VehicleState<'electric'> = vehicleParams.state;
-        const kwhElecticState = electricState as ElectricVehicleStateKWH;
-        const pctElecticState = electricState as ElectricVehicleStatePCT;
+        const kwhElectricState = electricState as ElectricVehicleStateKWH;
+        const pctElectricState = electricState as ElectricVehicleStatePCT;
 
-        if (kwhElecticState.currentChargeInkWh) {
-            urlParams.append('currentChargeInkWh', String(kwhElecticState.currentChargeInkWh));
+        if (kwhElectricState.currentChargeInkWh) {
+            urlParams.append('currentChargeInkWh', String(kwhElectricState.currentChargeInkWh));
         } else if (
-            pctElecticState.currentChargePCT &&
+            pctElectricState.currentChargePCT &&
             vehicleParams.model &&
             'engine' in vehicleParams.model &&
             vehicleParams.model.engine
@@ -102,7 +102,10 @@ const appendVehicleState = (urlParams: URLSearchParams, vehicleParams: VehiclePa
             const maxChargeKWH = engine.charging?.maxChargeKWH;
             if (maxChargeKWH) {
                 // currentChargePCT needs maxChargeKWH to be converted to kWh
-                urlParams.append('currentChargeInkWh', String((maxChargeKWH * pctElecticState.currentChargePCT) / 100));
+                urlParams.append(
+                    'currentChargeInkWh',
+                    String((maxChargeKWH * pctElectricState.currentChargePCT) / 100),
+                );
             }
         }
     }
