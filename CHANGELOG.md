@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.24.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.23.2...v0.24.0) (2025-10-22)
+
+
+### Features
+
+* adding ldevr example passing detailed vehicle params ([2eed241](https://github.com/tomtom-international/maps-sdk-js/commit/2eed241ab09372f6d91cc06232beb6505211773d))
+
+
+### Bug Fixes
+
+* improving tsdocs and internalizing some classes ([38db0ad](https://github.com/tomtom-international/maps-sdk-js/commit/38db0adba6f8480361b9f5f0344063837419250d))
+* remove unnused deps, fix spelling ([0568ea5](https://github.com/tomtom-international/maps-sdk-js/commit/0568ea561ad486d62936142d6ff2885aa8783c87))
+
 ## [0.23.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.23.1...v0.23.2) (2025-10-21)
 
 
