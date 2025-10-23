@@ -291,7 +291,7 @@ export type TomTomMapParams = GlobalConfig & {
      * }
      * ```
      */
-    events?: MapEventsConfig;
+    eventsConfig?: MapEventsConfig;
 };
 
 /**

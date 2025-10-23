@@ -279,7 +279,7 @@ export class TomTomMap {
         this._params = mergeFromGlobal(mapParams) as TomTomMapParams;
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this._params));
         this.mapLibreMap.once('styledata', () => this.handleStyleData(false));
-        this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.events);
+        this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.eventsConfig);
         // deferred (just in case), lazy loading of the RTL plugin:
         setTimeout(() => {
             if (!['deferred', 'loaded'].includes(getRTLTextPluginStatus())) {
