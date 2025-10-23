@@ -52,7 +52,7 @@ type PlacesSourcesAndLayers = {
  * @example
  * ```typescript
  * // Create places module with pin markers
- * const places = await PlacesModule.init(map, {
+ * const places = await PlacesModule.get(map, {
  *   iconConfig: {
  *     iconStyle: 'pin'
  *   },

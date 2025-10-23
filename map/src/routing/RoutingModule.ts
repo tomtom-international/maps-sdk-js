@@ -135,13 +135,13 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @example
      * Default initialization:
      * ```typescript
-     * const routing = await RoutingModule.init(map);
+     * const routing = await RoutingModule.get(map);
      * ```
      *
      * @example
      * With custom configuration:
      * ```typescript
-     * const routing = await RoutingModule.init(map, {
+     * const routing = await RoutingModule.get(map, {
      *   displayUnits: 'imperial',
      *   waypointsSource: {
      *     entryPoints: 'main-when-available'
@@ -369,7 +369,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * });
      *
      * // Display on map
-     * const routing = await RoutingModule.init(map);
+     * const routing = await RoutingModule.get(map);
      * await routing.showRoutes(response.routes);
      * await routing.showWaypoints(response.routes[0].legs[0].points);
      * ```

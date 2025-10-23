@@ -188,7 +188,7 @@ export const initPlaces = async (page: Page, config?: PlacesModuleConfig) =>
     // @ts-ignore
     page.evaluate(async (inputConfig) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.places = await mapsSdkThis.MapsSDK.PlacesModule.init(mapsSdkThis.tomtomMap, inputConfig);
+        mapsSdkThis.places = await mapsSdkThis.MapsSDK.PlacesModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
 export const showPlaces = async (page: Page, places: Place | Place[] | Places) =>
@@ -201,7 +201,7 @@ export const clearPlaces = async (page: Page) => page.evaluate(() => (globalThis
 export const initGeometries = async (page: Page, config?: GeometriesModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.geometries = await mapsSdkThis.MapsSDK.GeometriesModule.init(mapsSdkThis.tomtomMap, inputConfig);
+        mapsSdkThis.geometries = await mapsSdkThis.MapsSDK.GeometriesModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
 export const showGeometry = async (page: Page, geometry: PolygonFeatures) =>
@@ -262,7 +262,7 @@ export const putGlobalConfig = async (page: Page, config: Partial<GlobalConfig>)
 export const initRouting = async (page: Page, config?: RoutingModuleConfig) =>
     page.evaluate(async (inputConfig?: RoutingModuleConfig) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing = await mapsSdkThis.MapsSDK.RoutingModule.init(mapsSdkThis.tomtomMap, inputConfig);
+        mapsSdkThis.routing = await mapsSdkThis.MapsSDK.RoutingModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
 export const showWaypoints = async (page: Page, waypoints: WaypointLike[]) =>

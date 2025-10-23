@@ -21,7 +21,7 @@ const map = new TomTomMap(
     { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 
-const routingModule = await RoutingModule.init(map);
+const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(waypoints);
 
 const route = await calculateRoute({ geoInputs: waypoints, vehicle });

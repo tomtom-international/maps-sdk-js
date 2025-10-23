@@ -58,7 +58,7 @@ type GeometrySourcesWithLayers = {
  * import { GeometriesModule } from '@tomtom-international/maps-sdk-js/map';
  *
  * // Initialize module
- * const geometries = await GeometriesModule.init(map);
+ * const geometries = await GeometriesModule.get(map);
  *
  * // Display a polygon
  * await geometries.show({
@@ -76,7 +76,7 @@ type GeometrySourcesWithLayers = {
  * @example
  * Custom styling:
  * ```typescript
- * const geometries = await GeometriesModule.init(map, {
+ * const geometries = await GeometriesModule.get(map, {
  *   colorConfig: {
  *     fillColor: '#FF5733',
  *     fillOpacity: 0.3
@@ -164,13 +164,13 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @example
      * Default initialization:
      * ```typescript
-     * const geometries = await GeometriesModule.init(map);
+     * const geometries = await GeometriesModule.get(map);
      * ```
      *
      * @example
      * With custom styling:
      * ```typescript
-     * const geometries = await GeometriesModule.init(map, {
+     * const geometries = await GeometriesModule.get(map, {
      *   colorConfig: {
      *     fillColor: 'blue',
      *     fillOpacity: 0.25
@@ -190,7 +190,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @example
      * Data-driven styling:
      * ```typescript
-     * const geometries = await GeometriesModule.init(map, {
+     * const geometries = await GeometriesModule.get(map, {
      *   colorConfig: {
      *     // Color based on feature properties
      *     fillColor: [
