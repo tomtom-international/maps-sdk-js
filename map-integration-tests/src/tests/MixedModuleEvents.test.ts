@@ -70,7 +70,7 @@ test.describe('Tests with user events', () => {
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+                eventsConfig: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
             },
         );
     });

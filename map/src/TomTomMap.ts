@@ -121,7 +121,7 @@ export type StyleChangeHandler = {
  *       include: ['trafficFlow', 'trafficIncidents']
  *     },
  *     language: 'en-US',
- *     events: {
+ *     eventsConfig: {
  *       precisionMode: 'point-then-box',
  *       cursorOnHover: 'pointer'
  *     }
@@ -258,7 +258,7 @@ export class TomTomMap {
      *       include: ['trafficFlow', 'hillshade']
      *     },
      *     language: 'en-US',
-     *     events: {
+     *     eventsConfig: {
      *       precisionMode: 'point-then-box',
      *       paddingBoxPx: 10
      *     }

@@ -55,7 +55,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                events: { longHoverDelayAfterMapMoveMS: 4500, longHoverDelayOnStillMapMS: 4000 },
+                eventsConfig: { longHoverDelayAfterMapMoveMS: 4500, longHoverDelayOnStillMapMS: 4000 },
             },
         );
     });
@@ -200,7 +200,7 @@ test.describe('Events custom configuration', () => {
             page,
             { zoom: 10, center: [4.89067, 52.37313] },
             {
-                events: {
+                eventsConfig: {
                     cursorOnMap: 'help',
                     cursorOnMouseDown: 'crosshair',
                     cursorOnHover: 'wait',
@@ -233,7 +233,7 @@ test.describe('Events custom configuration', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.35313] },
-            { events: { precisionMode: 'point' } },
+            { eventsConfig: { precisionMode: 'point' } },
         );
 
         await initPlaces(page);
@@ -255,7 +255,7 @@ test.describe('Events custom configuration', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.37313] },
-            { events: { precisionMode: 'point-then-box' } },
+            { eventsConfig: { precisionMode: 'point-then-box' } },
         );
 
         await initPlaces(page);
