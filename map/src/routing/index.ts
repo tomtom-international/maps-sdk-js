@@ -2,7 +2,8 @@
  * @module map-routes
  */
 
-export * from './layers/defaultConfig';
+export * from './layers/routingLayers';
+export * from './layers/shared';
 export * from './RoutingModule';
 export type * from './types/displayRoutes';
 export type * from './types/planningWaypoint';

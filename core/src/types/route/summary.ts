@@ -1,4 +1,4 @@
-import type { BatteryCharging } from './batteryCharging';
+import type { ChargingStop } from './chargingStop';
 
 /**
  * Common summary type for a route or route leg.
@@ -230,5 +230,5 @@ export type LegSummary = SummaryWithConsumption & {
      * }
      * ```
      */
-    chargingInformationAtEndOfLeg?: BatteryCharging;
+    chargingInformationAtEndOfLeg?: ChargingStop;
 };

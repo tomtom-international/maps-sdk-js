@@ -12,6 +12,9 @@ import type {
 } from 'map';
 import type { LngLatLike, Map, MapGeoJSONFeature } from 'maplibre-gl';
 
+/**
+ * Extension of globalThis with convenient SDK properties for testing.
+ */
 export type MapsSDKThis = typeof globalThis & {
     // @ts-ignore
     MapsSDK: typeof globalThis.MapsSDK;

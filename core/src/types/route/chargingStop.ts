@@ -1,5 +1,4 @@
-import type { Position } from 'geojson';
-import type { CurrentType } from '..';
+import type { CommonPlaceProps, CurrentType, Place } from '..';
 
 /**
  * Available plug types for EV charging.
@@ -111,44 +110,17 @@ export type ChargingConnectionInfo = {
      * - 50-350 kW: DC fast charging
      */
     chargingPowerInkW?: number;
-};
 
-/**
- * Geographic location information for a charging park.
- *
- * @group Route
- */
-export type ChargingParkLocation = {
     /**
-     * Geographic coordinates of the charging park [longitude, latitude].
+     * The charging speed classification of this charging connection.
+     *
+     * @remarks
+     * - `slow`: Typically up to 12 kW (Level 1 AC charging)
+     * - `regular`: Typically between 12 kW and 50 kW (Level 2 AC charging)
+     * - `fast`: Typically between 50 kW and 150 kW (DC fast charging)
+     * - `ultra-fast`: Typically above 150 kW (High-power DC fast charging)
      */
-    coordinates: Position;
-
-    // TODO: to be moved into common Place props
-    /**
-     * Street name where the charging park is located.
-     */
-    street?: string;
-    /**
-     * House/building number of the charging park.
-     */
-    houseNumber?: string;
-    /**
-     * City name where the charging park is located.
-     */
-    city?: string;
-    /**
-     * Region, state, or province where the charging park is located.
-     */
-    region?: string;
-    /**
-     * Postal/ZIP code of the charging park location.
-     */
-    postalCode?: string;
-    /**
-     * Country where the charging park is located.
-     */
-    country?: string;
+    chargingSpeed?: ChargingSpeed;
 };
 
 /**
@@ -221,58 +193,23 @@ export type ChargingPaymentOption = {
 };
 
 /**
- * Information about a battery charging stop along an electric vehicle route.
+ * @group Route
+ */
+export type ChargingSpeed = 'slow' | 'regular' | 'fast' | 'ultra-fast';
+
+/**
+ * Properties specific to charging stops in electric vehicle routes.
  *
- * Provided for routes with electric vehicle parameters when charging stops are
- * necessary to complete the journey (Long Distance EV Routing / LDEVR).
- *
- * @remarks
- * **When Provided:**
- * - For EV routes where charging is needed to reach the destination
- * - At the end of route legs where battery charge is insufficient for the next leg
- * - Contains both required and optional charging stop details
- *
- * **Key Information:**
- * - Location and identification of the charging park
- * - Available charging connections and their specifications
- * - Estimated charging time needed
- * - Target charge levels for continuing the journey
- * - Payment options and operator information
- *
- * @example
- * ```typescript
- * const chargingStop: BatteryCharging = {
- *   chargingParkId: 'park123',
- *   chargingParkUuid: 'uuid-123-456',
- *   location: {
- *     coordinates: [4.8945, 52.3667],
- *     city: 'Amsterdam',
- *     country: 'Netherlands'
- *   },
- *   chargingConnections: [{
- *     plugType: 'IEC_62196_Type_2_Connector_Cable_Attached',
- *     chargingPowerInkW: 150,
- *     currentType: 'DC'
- *   }],
- *   chargingTimeInSeconds: 1200,
- *   chargingParkPowerInkW: 150,
- *   chargingStopType: 'Auto_Generated',
- *   targetChargeInkWh: 75,
- *   targetChargeInPCT: 75
- * };
- * ```
+ * These properties are combined with {@link CommonPlaceProps} to form
+ * a complete {@link ChargingStop} object.
  *
  * @group Route
  */
-export type BatteryCharging = {
+export type ChargingStopProps = CommonPlaceProps & {
     /**
      * Unique identifier for the charging park.
      */
     chargingParkId: string;
-    /**
-     * Geographic location and address of the charging park.
-     */
-    location: ChargingParkLocation;
     /**
      * Array of available charging connections at this park.
      *
@@ -328,17 +265,6 @@ export type BatteryCharging = {
     chargingConnectionInfo?: ChargingConnectionInfo;
 
     /**
-     * Detailed geographic location information for this charging park.
-     *
-     * Provides coordinates and address details to help locate the charging station.
-     *
-     * @remarks
-     * This may provide more detailed location information than the base `location` property,
-     * including street address, postal code, and regional details.
-     */
-    chargingParkLocation?: ChargingParkLocation;
-
-    /**
      * The common name of this charging park.
      *
      * A human-readable name for the charging location, often including nearby
@@ -391,6 +317,17 @@ export type BatteryCharging = {
     chargingParkPowerInkW?: number;
 
     /**
+     * The best charging speed classification of this charging park amongst its connectors.
+     *
+     * @remarks
+     * - `slow`: Typically up to 12 kW (Level 1 AC charging)
+     * - `regular`: Typically between 12 kW and 50 kW (Level 2 AC charging)
+     * - `fast`: Typically between 50 kW and 150 kW (DC fast charging)
+     * - `ultra-fast`: Typically above 150 kW (High-power DC fast charging)
+     */
+    chargingParkSpeed?: ChargingSpeed;
+
+    /**
      * The source of the charging stop at the end of this leg.
      *
      * Indicates whether the charging stop was automatically calculated by the
@@ -428,5 +365,72 @@ export type BatteryCharging = {
      * targetChargeInPCT // 80
      * ```
      */
-    targetChargeInPCT: number;
+    targetChargeInPCT?: number;
 };
+
+/**
+ * Information about a battery charging stop along an electric vehicle route.
+ *
+ * A GeoJSON Feature representing a charging location where an EV needs to stop
+ * and recharge during a long-distance journey (LDEVR - Long Distance EV Routing).
+ *
+ * @remarks
+ * **Structure:**
+ * - Extends {@link Place} (GeoJSON Feature with Point geometry)
+ * - Includes all {@link CommonPlaceProps} (type, address, poi, chargingPark, etc.)
+ * - Adds charging-specific properties from {@link ChargingStopProps}
+ *
+ * **When Provided:**
+ * - For EV routes where charging is needed to reach the destination
+ * - At the end of route legs where battery charge is insufficient for the next leg
+ * - Contains both required and optional charging stop details
+ *
+ * **Key Properties:**
+ * - `id`: Unique string identifier for this feature, corresponds to charging park ID.
+ * - `type`: Always 'Feature' (GeoJSON)
+ * - `geometry`: Point geometry with charging park coordinates [longitude, latitude]
+ * - `properties`: Combined common place properties and charging-specific details
+ *   - Standard place info: `type`, `address`, `poi`, `chargingPark`
+ *   - Charging details: `chargingParkId`, `chargingParkUuid`, `chargingConnections`
+ *   - Route planning: `chargingTimeInSeconds`, `targetChargeInkWh`, `targetChargeInPCT`
+ *   - Metadata: `chargingParkName`, `chargingParkOperatorName`, `chargingParkPowerInkW`
+ *
+ * @example
+ * ```typescript
+ * const chargingStop: ChargingStop = {
+ *   id: 'charging-stop-1',
+ *   type: 'Feature',
+ *   geometry: {
+ *     type: 'Point',
+ *     coordinates: [4.8945, 52.3667]
+ *   },
+ *   properties: {
+ *     // CommonPlaceProps
+ *     type: 'POI',
+ *     address: {
+ *       freeformAddress: 'Amsterdam Central Station',
+ *       municipality: 'Amsterdam',
+ *       country: 'Netherlands'
+ *     },
+ *     // ChargingStopProps
+ *     chargingParkId: 'park123',
+ *     chargingParkUuid: 'uuid-123-456',
+ *     chargingParkName: 'Amsterdam Central Station - North Side',
+ *     chargingParkOperatorName: 'Ionity',
+ *     chargingConnections: [{
+ *       plugType: 'IEC_62196_Type_2_Connector_Cable_Attached',
+ *       chargingPowerInkW: 150,
+ *       currentType: 'DC'
+ *     }],
+ *     chargingTimeInSeconds: 1200,
+ *     chargingParkPowerInkW: 150,
+ *     chargingStopType: 'Auto_Generated',
+ *     targetChargeInkWh: 75,
+ *     targetChargeInPCT: 75
+ *   }
+ * };
+ * ```
+ *
+ * @group Route
+ */
+export type ChargingStop = Place<ChargingStopProps>;

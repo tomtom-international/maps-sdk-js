@@ -1,3 +1,4 @@
+import { SVGIconStyleOptions } from '../types';
 import pinSvgRaw from './pin.svg?raw';
 
 /**
@@ -10,4 +11,17 @@ export const parseSvg = (svgString: string): SVGElement =>
 /**
  * @ignore
  */
-export const pinSvg = () => parseSvg(pinSvgRaw);
+export const pinSvg = (options: SVGIconStyleOptions | undefined): SVGElement => {
+    const element = parseSvg(pinSvgRaw);
+    // see pin.svg structure
+    if (options?.fillColor) {
+        element.querySelector('#background')?.setAttribute('fill', options.fillColor);
+    }
+    if (options?.outlineColor) {
+        element.querySelector('#outline')?.setAttribute('fill', options.outlineColor);
+    }
+    if (options?.outlineOpacity !== undefined) {
+        element.querySelector('#outline')?.setAttribute('fill-opacity', options.outlineOpacity.toString());
+    }
+    return element;
+};

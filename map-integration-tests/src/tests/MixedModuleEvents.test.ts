@@ -6,7 +6,7 @@ import { BASE_MAP_SOURCE_ID } from 'map';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
 import placesJson from './data/PlacesModuleEvents.test.data.json';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getClickedTopFeature,

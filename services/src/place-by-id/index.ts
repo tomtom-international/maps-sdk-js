@@ -4,5 +4,4 @@
  */
 
 export * from './placeById';
-export * from './placeByIdTemplate';
 export type * from './types';

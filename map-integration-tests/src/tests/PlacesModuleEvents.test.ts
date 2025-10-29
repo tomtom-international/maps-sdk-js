@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Places } from 'core';
 import placesJson from './data/PlacesModuleEvents.test.data.json';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getCursor,

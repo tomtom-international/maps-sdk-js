@@ -9,6 +9,9 @@ import type { CalculateRoutePOSTDataAPI } from './types/apiRequestTypes';
 import type { CalculateRouteResponseAPI } from './types/apiResponseTypes';
 import type { CalculateRouteParams } from './types/calculateRouteParams';
 
+/**
+ * @ignore
+ */
 export type CalculateRouteTemplate = ServiceTemplate<
     CalculateRouteParams,
     FetchInput<CalculateRoutePOSTDataAPI>,
@@ -16,6 +19,9 @@ export type CalculateRouteTemplate = ServiceTemplate<
     Routes
 >;
 
+/**
+ * @ignore
+ */
 export const calculateRouteTemplate: CalculateRouteTemplate = {
     requestValidation: routeRequestValidationConfig,
     buildRequest: buildCalculateRouteRequest,

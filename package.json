@@ -71,7 +71,7 @@
     "node": ">=22",
     "pnpm": ">=10"
   },
-  "packageManager": "pnpm@10.18.3",
+  "packageManager": "pnpm@10.20.0",
   "files": [
     "core/dist",
     "core/main.js",

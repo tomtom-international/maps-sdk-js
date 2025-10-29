@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { BaseMapLayerGroupName, BaseMapLayerGroups } from 'map';
 import { BASE_MAP_SOURCE_ID, baseMapLayerGroupNames, poiLayerIDs } from 'map';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getNumLayersBySource,

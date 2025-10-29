@@ -7,8 +7,14 @@ import { parseGeometryDataResponse } from './responseParser';
 import type { GeometryDataResponseAPI } from './types/apiTypes';
 import type { GeometryParams } from './types/geometryDataParams';
 
+/**
+ * @ignore
+ */
 export type GeometryDataTemplate = ServiceTemplate<GeometryParams, URL, GeometryDataResponseAPI, PolygonFeatures>;
 
+/**
+ * @ignore
+ */
 export const geometryDataTemplate: GeometryDataTemplate = {
     requestValidation: { schema: geometryDataRequestSchema },
     buildRequest: buildGeometryDataRequest,

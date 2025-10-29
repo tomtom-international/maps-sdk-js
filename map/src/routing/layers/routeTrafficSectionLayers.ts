@@ -86,13 +86,13 @@ export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification
             'match',
             ['get', 'magnitudeOfDelay'],
             'minor',
-            'traffic-incidents-slow',
+            'traffic-incidents-minor-pattern',
             'moderate',
-            'traffic-incidents-queueing',
+            'traffic-incidents-moderate-pattern',
             'major',
-            'traffic-incidents-stationary',
+            'traffic-incidents-major-pattern',
             // other
-            'traffic-diagonal-unknown',
+            'traffic-incidents-no_delay-pattern',
         ],
     },
 };

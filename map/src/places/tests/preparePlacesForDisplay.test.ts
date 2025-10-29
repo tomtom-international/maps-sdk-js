@@ -79,7 +79,7 @@ describe('Get Icon ID for a given Place tests', () => {
             getIconIDForPlace(
                 { properties: { poi: { categoryIds: [35] } } } as Place,
                 {
-                    iconConfig: { customIcons: [{ iconUrl: 'https://test.com', category: 'RESTAURANT' }] },
+                    iconConfig: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
                 },
                 mapLibreMock,
             ),
@@ -87,13 +87,13 @@ describe('Get Icon ID for a given Place tests', () => {
 
         expect(
             getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
-                iconConfig: { customIcons: [{ iconUrl: 'https://test.com', category: 'RESTAURANT' }] },
+                iconConfig: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
             }),
         ).toBe('35');
 
         expect(
             getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
-                iconConfig: { customIcons: [{ iconUrl: 'https://test.com', category: 'RESTAURANT' }] },
+                iconConfig: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
             }),
         ).toBe('35');
     });

@@ -11,5 +11,5 @@ export * from './src/places';
 export * from './src/pois';
 export * from './src/routing';
 export * from './src/shared';
-export * from './src/traffic';
 export * from './src/TomTomMap';
+export * from './src/traffic';

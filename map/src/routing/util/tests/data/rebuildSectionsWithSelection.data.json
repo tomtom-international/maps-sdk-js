@@ -14,7 +14,7 @@
             "startPointIndex": 0,
             "endPointIndex": 2,
             "routeIndex": 0,
-            "routeStyle": "deselected"
+            "routeState": "deselected"
           }
         }
       ]
@@ -32,7 +32,7 @@
             "startPointIndex": 0,
             "endPointIndex": 2,
             "routeIndex": 0,
-            "routeStyle": "selected"
+            "routeState": "selected"
           }
         }
       ]
@@ -53,7 +53,7 @@
             "startPointIndex": 0,
             "endPointIndex": 2,
             "routeIndex": 0,
-            "routeStyle": "deselected"
+            "routeState": "deselected"
           }
         },
         {
@@ -66,7 +66,7 @@
             "startPointIndex": 2,
             "endPointIndex": 4,
             "routeIndex": 1,
-            "routeStyle": "selected"
+            "routeState": "selected"
           }
         }
       ]
@@ -84,7 +84,7 @@
             "startPointIndex": 0,
             "endPointIndex": 2,
             "routeIndex": 0,
-            "routeStyle": "selected"
+            "routeState": "selected"
           }
         },
         {
@@ -97,7 +97,7 @@
             "startPointIndex": 2,
             "endPointIndex": 4,
             "routeIndex": 1,
-            "routeStyle": "deselected"
+            "routeState": "deselected"
           }
         }
       ]

@@ -83,5 +83,3 @@ export const search = async (
     'geometries' in params
         ? geometrySearch(params, customTemplate as GeometrySearchTemplate)
         : fuzzySearch(params, customTemplate as FuzzySearchTemplate);
-
-export default search;

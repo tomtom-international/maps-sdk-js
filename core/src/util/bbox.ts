@@ -151,7 +151,7 @@ export const bboxFromCoordsArray = (coordinates: Position[] | undefined): Option
  * // From a LineString (calculates from coordinates)
  * const route = await calculateRoute({
  *   key: 'key',
- *   geoInputs: [[4.9, 52.3], [4.5, 51.9]]
+ *   locations: [[4.9, 52.3], [4.5, 51.9]]
  * });
  * const routeBbox = bboxFromGeoJSON(route.routes[0].geometry);
  * // Returns bbox containing the entire route

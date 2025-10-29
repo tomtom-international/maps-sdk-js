@@ -288,9 +288,6 @@ export type BaseMapModuleInitConfig = BaseMapModuleConfig & {
      * Once the module is created, you cannot change which groups are loaded,
      * only their visibility via `layerGroupsVisibility`.
      *
-     * **Performance:** Excluding groups you don't need can improve initial
-     * load time and reduce memory usage.
-     *
      * @example
      * ```typescript
      * // Load only essential layers

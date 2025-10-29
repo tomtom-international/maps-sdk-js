@@ -16,28 +16,28 @@ import type { SupportsEvents } from '../../shared';
  * @example
  * ```typescript
  * // Main selected route
- * const selectedStyle: RouteStyleProps = {
- *   routeStyle: 'selected'
+ * const selectedStyle: RouteStateProps = {
+ *   routeState: 'selected'
  * };
  *
  * // Alternative route
- * const alternativeStyle: RouteStyleProps = {
- *   routeStyle: 'deselected'
+ * const alternativeStyle: RouteStateProps = {
+ *   routeState: 'deselected'
  * };
  * ```
  *
  * @group Routing
  */
-export type RouteStyleProps = {
+export type RouteStateProps = {
     /**
-     * Visual style of the route.
+     * Visual state-related style of the route.
      *
      * @remarks
-     * Determines how the route is rendered on the map:
+     * Determines the state in which the route is rendered on the map:
      * - `selected`: Full color, more prominent (typically the chosen route)
      * - `deselected`: Reduced opacity, less prominent (alternative routes)
      */
-    routeStyle: 'selected' | 'deselected';
+    routeState: 'selected' | 'deselected';
 };
 
 /**
@@ -52,14 +52,14 @@ export type RouteStyleProps = {
  * @example
  * ```typescript
  * const routeProps: DisplayRouteRelatedProps = {
- *   routeStyle: 'selected',
+ *   routeState: 'selected',
  *   routeIndex: 0  // First route in the array
  * };
  * ```
  *
  * @group Routing
  */
-export type DisplayRouteRelatedProps = RouteStyleProps & {
+export type DisplayRouteRelatedProps = RouteStateProps & {
     /**
      * Zero-based index of this route in the routes array.
      *
@@ -90,7 +90,7 @@ export type DisplayRouteRelatedProps = RouteStyleProps & {
  * ```typescript
  * const summary: DisplayRouteSummaryProps = {
  *   routeIndex: 0,
- *   routeStyle: 'selected',
+ *   routeState: 'selected',
  *   formattedDistance: '15.3 km',
  *   formattedDuration: '22 min',
  *   formattedTraffic: '5 min delay',
@@ -186,14 +186,14 @@ export type DisplayRouteSummaryProps = DisplayRouteRelatedProps & {
  * ```typescript
  * const displayRoute: DisplayRouteProps = {
  *   ...routeData,
- *   routeStyle: 'selected',
+ *   routeState: 'selected',
  *   eventState: 'hover'
  * };
  * ```
  *
  * @group Routing
  */
-export type DisplayRouteProps = RouteProps & RouteStyleProps & SupportsEvents;
+export type DisplayRouteProps = RouteProps & RouteStateProps & SupportsEvents;
 
 /**
  * GeoJSON feature of a point with display-ready route summary props.
@@ -217,7 +217,7 @@ export type DisplayRouteProps = RouteProps & RouteStyleProps & SupportsEvents;
  *   },
  *   properties: {
  *     routeIndex: 0,
- *     routeStyle: 'selected',
+ *     routeState: 'selected',
  *     formattedDistance: '15.3 km',
  *     formattedDuration: '22 min'
  *   }
@@ -248,7 +248,7 @@ export type DisplayRouteSummary = Feature<Point, DisplayRouteSummaryProps>;
  *       geometry: { type: 'Point', coordinates: [4.9, 52.3] },
  *       properties: {
  *         routeIndex: 0,
- *         routeStyle: 'selected',
+ *         routeState: 'selected',
  *         formattedDistance: '15.3 km',
  *         formattedDuration: '22 min'
  *       }
@@ -258,7 +258,7 @@ export type DisplayRouteSummary = Feature<Point, DisplayRouteSummaryProps>;
  *       geometry: { type: 'Point', coordinates: [4.85, 52.35] },
  *       properties: {
  *         routeIndex: 1,
- *         routeStyle: 'deselected',
+ *         routeState: 'deselected',
  *         formattedDistance: '18.7 km',
  *         formattedDuration: '25 min'
  *       }

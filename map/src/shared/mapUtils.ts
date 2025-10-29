@@ -9,13 +9,16 @@ import type {
     StyleImageMetadata,
 } from 'maplibre-gl';
 import { StandardStyle, StandardStyleID, StyleInput, StyleModule, type TomTomMapParams } from '../init';
+import { defaultPin } from '../places/resources';
 import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
+import { svgToImg } from './imageUtils';
+import { parseSvg } from './resources';
 import type { AbstractSourceWithLayers } from './SourceWithLayers';
 import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
 
 /**
- * Wait until the map is ready
+ * Wait until the map is ready.
  * @param tomtomMap The TomTomMap instance.
  * @returns {Promise<boolean>} Returns a Promise<boolean>
  */
@@ -44,8 +47,9 @@ export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: st
  * * Maplibre has a bug where all properties from a feature are stringified.
  * See: {@link} https://github.com/maplibre/maplibre-gl-js/issues/1325
  *
- * @ignore
  * @param features An Array with MapGeoJSONFeatures objects
+ *
+ * @ignore
  */
 export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
     for (const feature of features) {
@@ -333,11 +337,18 @@ export const addImageIfNotExisting = async (
 ) => {
     if (!map.hasImage(imageId) && imageToLoad) {
         if (typeof imageToLoad === 'string') {
-            // Expecting image URL, so the image needs to be downloaded first:
-            const loadedImage = await map.loadImage(imageToLoad);
-            // double-checking just in case of a race condition with overlapping call:
-            if (!map.hasImage(imageId)) {
-                map.addImage(imageId, loadedImage.data, options);
+            if (imageToLoad.includes('<svg')) {
+                // Supporting raw SVGs:
+                const imgElement = svgToImg(parseSvg(imageToLoad));
+                // (Defensive setTimeout to ensure the image is loaded)
+                setTimeout(() => map.addImage(imageId, imgElement, options));
+            } else {
+                // Expecting image URL, so the image needs to be downloaded first:
+                const loadedImage = (await map.loadImage(imageToLoad)).data;
+                // double-checking just in case of a race condition with overlapping call:
+                if (!map.hasImage(imageId)) {
+                    map.addImage(imageId, loadedImage, options);
+                }
             }
         } else {
             // Expecting HTMLImageElement, ready to be added:
@@ -383,7 +394,7 @@ export const getStyleInputTheme = (styleInput?: StyleInput): LightDark => {
 };
 
 /**
- * Adds the large POI sprite to the map style.
+ * Adds the large POI sprite to the map style, and the default pin as well.
  * @param mapParams
  * @param mapLibreMap
  * @ignore
@@ -393,4 +404,5 @@ export const addPinSpriteToStyle = async (mapParams: TomTomMapParams, mapLibreMa
         `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleInputTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
         { validate: false },
     );
+    addImageIfNotExisting(mapLibreMap, 'default_pin', defaultPin(), { pixelRatio: 2 });
 };

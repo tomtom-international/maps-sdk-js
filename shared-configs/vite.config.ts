@@ -53,10 +53,10 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
         },
         plugins: [
             dts({
-                outDir: 'dist',
+                outDirs: 'dist',
                 include: ['index.ts', 'src/**/*'],
                 exclude: ['**/*.test.ts'],
-                rollupTypes: true,
+                bundleTypes: true,
                 aliasesExclude: ['@cet/maps-sdk-js/core'], // We don't want to locally resolve @cet/maps-sdk-js/core to the local core paths
             }),
             ...(process.env.CI

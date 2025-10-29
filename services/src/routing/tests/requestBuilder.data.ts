@@ -10,7 +10,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
             ],
@@ -19,12 +19,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'GET',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?' +
-                    'apiVersion=2&key=GLOBAL_API_KEY&sectionType=carTrain&sectionType=ferry&sectionType=tunnel' +
+                    'apiVersion=2&key=GLOBAL_API_KEY&language=en-GB&sectionType=carTrain&sectionType=ferry&sectionType=tunnel' +
                     '&sectionType=motorway&sectionType=pedestrian' +
                     '&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic&sectionType=carpool' +
                     '&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -35,7 +35,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
             ],
@@ -46,7 +46,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'GET',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?' +
-                    'apiVersion=2&key=GLOBAL_API_KEY',
+                    'apiVersion=2&key=GLOBAL_API_KEY&language=en-GB',
             ),
         },
     ],
@@ -56,7 +56,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
             ],
@@ -67,7 +67,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'GET',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?' +
-                    'apiVersion=2&key=GLOBAL_API_KEY&sectionType=travelMode&sectionType=traffic&sectionType=ferry' +
+                    'apiVersion=2&key=GLOBAL_API_KEY&language=en-GB&sectionType=travelMode&sectionType=traffic&sectionType=ferry' +
                     '&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -78,7 +78,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 3,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 {
                     type: 'Feature',
@@ -93,12 +93,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/' +
                     '52.37317,4.89066:52.16109,4.49015:51.92291,4.47059/json?apiVersion=3&key=GLOBAL_API_KEY' +
-                    '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                    '&language=en-GB&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
                     '&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -109,7 +109,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 3,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 {
                     type: 'Feature',
@@ -123,12 +123,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/' +
                     '52.37317,4.89066:53,5/json?apiVersion=3&key=GLOBAL_API_KEY' +
-                    '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                    '&language=en-GB&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
                     '&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -139,7 +139,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 3,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 {
                     type: 'Feature',
@@ -154,12 +154,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/' +
                     '52.37317,4.89066:52.16109,4.49015/json?apiVersion=3&key=GLOBAL_API_KEY' +
-                    '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                    '&language=en-GB&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
                     '&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -170,7 +170,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'API_KEY_X',
             apiVersion: 2,
             commonBaseURL: 'https://api-test.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 {
                     type: 'Feature',
@@ -185,12 +185,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             url: new URL(
                 'https://api-test.tomtom.com/maps/orbis/routing/calculateRoute/' +
                     '52.37317,4.89066:circle(52.16109,4.49015,20):51.92291,4.47059/json?apiVersion=2&key=API_KEY_X' +
-                    '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                    '&language=en-GB&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
                     '&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -201,7 +201,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [52.52, 13.405],
                 [48.8566, 2.3522],
             ],
@@ -211,11 +211,11 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'GET',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/13.405,52.52:2.3522,48.8566/json?' +
-                    'apiVersion=2&key=GLOBAL_API_KEY&vehicleWeight=2500' +
+                    'apiVersion=2&key=GLOBAL_API_KEY&language=en-GB&vehicleWeight=2500' +
                     '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
                     '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
-                    '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -227,7 +227,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
             language: 'es-ES',
-            geoInputs: [
+            locations: [
                 [3.1748, 42.26297],
                 [2.48819, 42.18211],
             ],
@@ -305,7 +305,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     '&sectionType=toll&sectionType=tollVignette&sectionType=country' +
                     '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -316,7 +316,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
             ],
@@ -349,14 +349,14 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'GET',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json' +
-                    '?apiVersion=2&key=GLOBAL_API_KEY&departAt=2022-09-16T15%3A48%3A15.400Z&vehicleWeight=1500' +
+                    '?apiVersion=2&key=GLOBAL_API_KEY&language=en-GB&departAt=2022-09-16T15%3A48%3A15.400Z&vehicleWeight=1500' +
                     '&accelerationEfficiency=0.33&decelerationEfficiency=0.83&uphillEfficiency=0.27' +
                     '&downhillEfficiency=0.51&constantSpeedConsumptionInLitersPerHundredkm=50%2C6.3%3A130%2C11.5' +
                     '&auxiliaryPowerInLitersPerHour=0.2&fuelEnergyDensityInMJoulesPerLiter=34.2&currentFuelInLiters=55' +
                     '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
                     '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
-                    '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
@@ -367,7 +367,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 [4.90066, 52.27317],
                 [4.49015, 52.16109],
@@ -402,7 +402,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'GET',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.27317,4.90066:52.16109,4.49015/json' +
-                    '?apiVersion=2&key=GLOBAL_API_KEY&traffic=live&vehicleEngineType=electric&vehicleWeight=3500' +
+                    '?apiVersion=2&key=GLOBAL_API_KEY&language=en-GB&traffic=live&vehicleEngineType=electric&vehicleWeight=3500' +
                     '&accelerationEfficiency=0.66&decelerationEfficiency=0.91&uphillEfficiency=0.74' +
                     '&downhillEfficiency=0.73&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3' +
                     '&auxiliaryPowerInkW=1.7&maxChargeInkWh=85&currentChargeInkWh=68&vehicleMaxSpeed=60' +
@@ -410,7 +410,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
                     '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone&sectionType=speedLimit' +
-                    '&sectionType=roadShields&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
+                    '&sectionType=roadShields&sectionType=importantRoadStretch&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
         },
     ],
@@ -420,7 +420,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 23,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [13.492, 52.507],
                 [8.624, 50.104],
             ],
@@ -437,7 +437,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'POST',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/' +
-                    'json?apiVersion=23&key=GLOBAL_API_KEY&vehicleEngineType=electric' +
+                    'json?apiVersion=23&key=GLOBAL_API_KEY&language=en-GB&vehicleEngineType=electric' +
                     '&vehicleModelId=54B969E8-E28D-11EC-8FEA-0242AC120002' +
                     '&currentChargeInkWh=25&minChargeAtDestinationInkWh=5&minChargeAtChargingStopsInkWh=5' +
                     '&sectionType=carTrain&sectionType=ferry' +
@@ -445,7 +445,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                     '&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
                     '&sectionType=carpool&sectionType=urban&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
             data: {},
@@ -457,7 +457,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [
                     [4.89066, 52.37317],
                     [4.88, 52.27317],
@@ -471,12 +471,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'POST',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?' +
-                    'apiVersion=2&key=GLOBAL_API_KEY&sectionType=carTrain&sectionType=ferry&sectionType=tunnel' +
+                    'apiVersion=2&key=GLOBAL_API_KEY&language=en-GB&sectionType=carTrain&sectionType=ferry&sectionType=tunnel' +
                     '&sectionType=motorway&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
                     '&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
             data: {
@@ -496,7 +496,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [0, 0],
                 {
                     type: 'Feature',
@@ -528,13 +528,13 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'POST',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/0,0:0,2/json?apiVersion=2&key=GLOBAL_API_KEY' +
-                    '&sectionType=carTrain&sectionType=ferry' +
+                    '&language=en-GB&sectionType=carTrain&sectionType=ferry' +
                     '&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian' +
                     '&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country' +
                     '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
             data: {
@@ -563,7 +563,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 [
                     [0, 0],
                     [0, 1],
@@ -598,12 +598,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'POST',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/0,0:5,1/json?apiVersion=2&key=GLOBAL_API_KEY' +
-                    '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
+                    '&language=en-GB&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
                     '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette' +
                     '&sectionType=country&sectionType=travelMode&sectionType=traffic' +
                     '&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
             data: {
@@ -632,7 +632,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
-            geoInputs: [
+            locations: [
                 {
                     type: 'Feature',
                     geometry: {
@@ -664,12 +664,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             method: 'POST',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateRoute/0,1:0,3/json?apiVersion=2&key=GLOBAL_API_KEY' +
-                    '&sectionType=carTrain&sectionType=ferry' +
+                    '&language=en-GB&sectionType=carTrain&sectionType=ferry' +
                     '&sectionType=tunnel&sectionType=motorway&sectionType=pedestrian' +
                     '&sectionType=toll&sectionType=tollVignette&sectionType=country' +
                     '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
                     '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                    '&sectionType=speedLimit&sectionType=roadShields' +
+                    '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
                     '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
             ),
             data: {

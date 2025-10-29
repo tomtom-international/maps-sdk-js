@@ -1,8 +1,14 @@
-import type {
+import {
+    bboxFromGeoJSON,
+    ChargingSpeed,
+    ChargingStop,
     CountrySectionProps,
     CurrentType,
     Guidance,
+    generateId,
+    ImportantRoadStretchProps,
     Instruction,
+    indexedMagnitudes,
     LaneDirection,
     LaneSectionProps,
     LegSectionProps,
@@ -21,12 +27,12 @@ import type {
     TrafficIncidentTEC,
     TrafficSectionProps,
 } from '@cet/maps-sdk-js/core';
-import { bboxFromGeoJSON, generateId, indexedMagnitudes } from '@cet/maps-sdk-js/core';
 import type { LineString, Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
 import { ExplicitVehicleModel } from '../shared/types/vehicleModel';
 import type {
     CalculateRouteResponseAPI,
+    ChargingStopAPI,
     CurrentTypeAPI,
     GuidanceAPI,
     LegAPI,
@@ -51,14 +57,72 @@ const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined 
     }
 };
 
+const toChargingSpeed = (powerInKW: number): ChargingSpeed => {
+    if (powerInKW < 12) {
+        return 'slow';
+    } else if (powerInKW < 50) {
+        return 'regular';
+    } else if (powerInKW < 150) {
+        return 'fast';
+    }
+    return 'ultra-fast';
+};
+
+const toChargingStop = (
+    chargingInformationAtEndOfLeg: ChargingStopAPI,
+    maxChargeKWH: number | undefined,
+): ChargingStop => {
+    const chargingConnectionInfo = chargingInformationAtEndOfLeg.chargingConnectionInfo;
+    const chargingParkLocation = chargingInformationAtEndOfLeg.chargingParkLocation;
+    const coordinates = [chargingParkLocation.coordinate.longitude, chargingParkLocation.coordinate.latitude];
+
+    // Build freeformAddress from available components
+    const addressParts = [chargingParkLocation.street, chargingParkLocation.houseNumber].filter(Boolean);
+    const freeformAddress = addressParts.length > 0 ? addressParts.join(', ') : '';
+
+    return {
+        type: 'Feature',
+        id: chargingInformationAtEndOfLeg.chargingParkId,
+        geometry: { type: 'Point', coordinates },
+        properties: {
+            ...omit(chargingInformationAtEndOfLeg, ['chargingConnectionInfo', 'chargingParkLocation']),
+            type: 'POI',
+            address: {
+                freeformAddress,
+                ...(chargingParkLocation.street && { streetName: chargingParkLocation.street }),
+                ...(chargingParkLocation.houseNumber && { streetNumber: chargingParkLocation.houseNumber }),
+                ...(chargingParkLocation.city && { municipality: chargingParkLocation.city }),
+                ...(chargingParkLocation.region && { countrySubdivision: chargingParkLocation.region }),
+                ...(chargingParkLocation.postalCode && { postalCode: chargingParkLocation.postalCode }),
+                ...(chargingParkLocation.country && { country: chargingParkLocation.country }),
+            },
+            ...(chargingConnectionInfo && {
+                chargingConnectionInfo: {
+                    plugType: chargingConnectionInfo.chargingPlugType,
+                    currentInA: chargingConnectionInfo.chargingCurrentInA,
+                    voltageInV: chargingConnectionInfo.chargingVoltageInV,
+                    chargingPowerInkW: chargingConnectionInfo.chargingPowerInkW,
+                    currentType: toCurrentType(chargingConnectionInfo.chargingCurrentType),
+                    chargingSpeed: toChargingSpeed(chargingConnectionInfo.chargingPowerInkW),
+                },
+            }),
+            ...(maxChargeKWH && {
+                targetChargeInPCT: (100 * chargingInformationAtEndOfLeg.targetChargeInkWh) / maxChargeKWH,
+            }),
+            ...(chargingInformationAtEndOfLeg.chargingParkPowerInkW && {
+                chargingParkSpeed: toChargingSpeed(chargingInformationAtEndOfLeg.chargingParkPowerInkW),
+            }),
+        },
+    };
+};
+
 const parseSummary = (apiSummary: SummaryAPI, params: CalculateRouteParams): RouteSummary | LegSummary => {
-    const chargingConnectionInfo = apiSummary.chargingInformationAtEndOfLeg?.chargingConnectionInfo;
-    const chargingParkLocation = apiSummary.chargingInformationAtEndOfLeg?.chargingParkLocation;
     const maxChargeKWH = (params?.vehicle?.model as ExplicitVehicleModel<'electric'>)?.engine?.charging?.maxChargeKWH;
     return {
         ...apiSummary,
         departureTime: new Date(apiSummary.departureTime),
         arrivalTime: new Date(apiSummary.arrivalTime),
+        // EV-specific fields:
         ...(maxChargeKWH &&
             apiSummary.batteryConsumptionInkWh && {
                 batteryConsumptionInPCT: (100 * apiSummary.batteryConsumptionInkWh) / maxChargeKWH,
@@ -68,31 +132,7 @@ const parseSummary = (apiSummary: SummaryAPI, params: CalculateRouteParams): Rou
                 remainingChargeAtArrivalInPCT: (100 * apiSummary.remainingChargeAtArrivalInkWh) / maxChargeKWH,
             }),
         ...(apiSummary.chargingInformationAtEndOfLeg && {
-            chargingInformationAtEndOfLeg: {
-                ...omit(apiSummary.chargingInformationAtEndOfLeg, ['chargingConnectionInfo', 'chargingParkLocation']),
-                ...(chargingParkLocation && {
-                    chargingParkLocation: {
-                        ...omit(chargingParkLocation, 'coordinate'),
-                        coordinates: [
-                            chargingParkLocation.coordinate.longitude,
-                            chargingParkLocation.coordinate.latitude,
-                        ],
-                    },
-                }),
-                ...(chargingConnectionInfo && {
-                    chargingConnectionInfo: {
-                        plugType: chargingConnectionInfo.chargingPlugType,
-                        currentInA: chargingConnectionInfo.chargingCurrentInA,
-                        voltageInV: chargingConnectionInfo.chargingVoltageInV,
-                        chargingPowerInkW: chargingConnectionInfo.chargingPowerInkW,
-                        currentType: toCurrentType(chargingConnectionInfo.chargingCurrentType),
-                    },
-                }),
-                ...(maxChargeKWH && {
-                    targetChargeInPCT:
-                        (100 * apiSummary.chargingInformationAtEndOfLeg.targetChargeInkWh) / maxChargeKWH,
-                }),
-            },
+            chargingInformationAtEndOfLeg: toChargingStop(apiSummary.chargingInformationAtEndOfLeg, maxChargeKWH),
         }),
     };
 };
@@ -130,6 +170,13 @@ const toSectionProps = (apiSection: SectionAPI): SectionProps => ({
     id: generateId(),
     startPointIndex: apiSection.startPointIndex,
     endPointIndex: apiSection.endPointIndex,
+});
+
+const toRoadStretchSectionProps = (apiSection: SectionAPI): ImportantRoadStretchProps => ({
+    ...toSectionProps(apiSection),
+    index: apiSection.importantRoadStretchIndex as number,
+    streetName: apiSection.streetName?.text,
+    roadNumbers: apiSection.roadNumbers,
 });
 
 const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => ({
@@ -212,6 +259,8 @@ const getSectionMapping = (
             return { sectionType: 'speedLimit', mappingFunction: toSpeedLimitSectionProps };
         case 'ROAD_SHIELDS':
             return { sectionType: 'roadShields', mappingFunction: toRoadShieldsSectionProps };
+        case 'IMPORTANT_ROAD_STRETCH':
+            return { sectionType: 'importantRoadStretch', mappingFunction: toRoadStretchSectionProps };
     }
 };
 

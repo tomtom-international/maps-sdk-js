@@ -39,8 +39,9 @@ export const pinTextBaseLayout: SymbolLayerSpecification['layout'] = {
     'text-optional': true,
     'text-font': [MAP_BOLD_FONT],
     'text-field': ['get', TITLE],
+    'text-justify': 'auto',
     'text-variable-anchor': ['top', 'left', 'right'],
-    'text-variable-anchor-offset': ['top', [0, 0.5], 'left', [1.5, -1.4], 'right', [-1.5, -1.4]],
+    'text-variable-anchor-offset': ['top', [0, 0.5], 'left', [1.3, -1.4], 'right', [-1.3, -1.4]],
     'text-size': DEFAULT_TEXT_SIZE,
     'text-padding': 5,
 };

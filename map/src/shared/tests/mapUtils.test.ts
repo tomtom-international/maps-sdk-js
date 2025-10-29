@@ -156,14 +156,14 @@ describe('Map utils - changeLayerProps', () => {
 
         mapLibreMock = newMapMock();
         changeLayerProps(
-            { id: 'layerY', filter: ['==', ['get', 'routeStyle'], 'selected'] },
+            { id: 'layerY', filter: ['==', ['get', 'routeState'], 'selected'] },
             { id: 'layerY' },
             mapLibreMock,
         );
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(0);
         expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
         expect(mapLibreMock.setFilter).toHaveBeenCalledTimes(1);
-        expect(mapLibreMock.setFilter).toHaveBeenCalledWith('layerY', ['==', ['get', 'routeStyle'], 'selected'], {
+        expect(mapLibreMock.setFilter).toHaveBeenCalledWith('layerY', ['==', ['get', 'routeState'], 'selected'], {
             validate: false,
         });
 

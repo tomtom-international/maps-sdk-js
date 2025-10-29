@@ -10,5 +10,5 @@ export const defaultPin = (): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    return svgToImg(pinSvg());
+    return svgToImg(pinSvg(undefined));
 };

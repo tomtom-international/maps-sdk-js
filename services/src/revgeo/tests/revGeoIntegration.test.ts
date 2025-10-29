@@ -18,7 +18,7 @@ describe('Reverse Geocoding integration test without API key', () => {
 });
 
 describe('Reverse Geocoding integration tests', () => {
-    beforeAll(() => putIntegrationTestsAPIKey());
+    beforeAll(putIntegrationTestsAPIKey);
 
     beforeEach(async () => {
         // We enforce a delay before each test to avoid hitting the API rate limits.

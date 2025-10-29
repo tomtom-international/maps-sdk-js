@@ -8,7 +8,7 @@ import {
     WAYPOINT_STOP_IMAGE_ID,
 } from '../../layers/waypointLayers';
 import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../../types/waypointDisplayProps';
-import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from '../waypointUtils';
+import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from '../displayWaypoints';
 
 const buildTestWaypoint = (properties: WaypointProps & Anything, coordinates: Position): Waypoint => ({
     type: 'Feature',
@@ -19,7 +19,7 @@ const buildTestWaypoint = (properties: WaypointProps & Anything, coordinates: Po
     properties,
 });
 
-describe('GeoInputs util tests', () => {
+describe('locations util tests', () => {
     test('Build waypoint title', () => {
         expect(buildWaypointTitle(null as never)).toBeUndefined();
         expect(buildWaypointTitle(buildTestWaypoint({}, [1, 2]))).toBeUndefined();
@@ -55,10 +55,13 @@ describe('GeoInputs util tests', () => {
     });
 
     test('To display waypoints', () => {
-        expect(toDisplayWaypoints([])).toEqual({ type: 'FeatureCollection', features: [] });
-        expect(toDisplayWaypoints([null])).toEqual({ type: 'FeatureCollection', features: [] });
+        expect(toDisplayWaypoints([], undefined)).toEqual({ type: 'FeatureCollection', features: [] });
+        expect(toDisplayWaypoints([null], undefined)).toEqual({ type: 'FeatureCollection', features: [] });
         expect(
-            toDisplayWaypoints([buildTestWaypoint({ entryPoints: [{ type: 'main', position: [44, 55] }] }, [1, 2])]),
+            toDisplayWaypoints(
+                [buildTestWaypoint({ entryPoints: [{ type: 'main', position: [44, 55] }] }, [1, 2])],
+                undefined,
+            ),
         ).toEqual({
             type: 'FeatureCollection',
             features: [
@@ -97,7 +100,7 @@ describe('GeoInputs util tests', () => {
                 },
             ],
         });
-        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2])])).toEqual({
+        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2])], undefined)).toEqual({
             type: 'FeatureCollection',
             features: [
                 {
@@ -113,7 +116,7 @@ describe('GeoInputs util tests', () => {
                 },
             ],
         });
-        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2]), null])).toEqual({
+        expect(toDisplayWaypoints([null, buildTestWaypoint({}, [1, 2]), null], undefined)).toEqual({
             type: 'FeatureCollection',
             features: [
                 {
@@ -131,18 +134,21 @@ describe('GeoInputs util tests', () => {
             ],
         });
         expect(
-            toDisplayWaypoints([
-                buildTestWaypoint({ poi: { name: 'POI' } }, [1, 2]),
-                buildTestWaypoint({ radiusMeters: 25 }, [3, 4]),
-                buildTestWaypoint({ address: { freeformAddress: 'ADDRESS' } }, [5, 6]),
-                [9, 10],
-                { type: 'Point', coordinates: [11, 12] },
-                {
-                    ...buildTestWaypoint({ address: { freeformAddress: 'ADDRESS2' } }, [13, 14]),
-                    bbox: [1, 2, 3, 4],
-                    id: 'ALREADY_DEFINED',
-                },
-            ]),
+            toDisplayWaypoints(
+                [
+                    buildTestWaypoint({ poi: { name: 'POI' } }, [1, 2]),
+                    buildTestWaypoint({ radiusMeters: 25 }, [3, 4]),
+                    buildTestWaypoint({ address: { freeformAddress: 'ADDRESS' } }, [5, 6]),
+                    [9, 10],
+                    { type: 'Point', coordinates: [11, 12] },
+                    {
+                        ...buildTestWaypoint({ address: { freeformAddress: 'ADDRESS2' } }, [13, 14]),
+                        bbox: [1, 2, 3, 4],
+                        id: 'ALREADY_DEFINED',
+                    },
+                ],
+                undefined,
+            ),
         ).toEqual({
             type: 'FeatureCollection',
             features: [

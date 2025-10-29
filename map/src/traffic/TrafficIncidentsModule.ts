@@ -22,7 +22,7 @@ type TrafficIncidentsSourcesWithLayers = {
 };
 
 /**
- * Traffic Incidents Module for displaying real-time traffic incidents on the map.
+ * Traffic Incidents Module for displaying and configuring real-time traffic incidents on the map.
  *
  * This module controls the vector tile traffic incidents layers that show traffic
  * events like accidents, road closures, construction, and hazards.

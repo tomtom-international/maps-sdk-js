@@ -16,7 +16,7 @@ export const rebuildFeaturesWithRouteSelection = <T extends FeatureCollection<Ge
         ...features,
         properties: {
             ...features.properties,
-            routeStyle: routes.features[features.properties.routeIndex || 0].properties.routeStyle,
+            routeState: routes.features[features.properties.routeIndex || 0].properties.routeState,
         },
     })),
 });

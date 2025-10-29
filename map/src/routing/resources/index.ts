@@ -1,4 +1,5 @@
 import type { StyleImageMetadata } from 'maplibre-gl';
+import { SVGIconStyleOptions } from '../../shared';
 import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
 import { parseSvg, pinSvg } from '../../shared/resources';
 import circleSvgRaw from './circle.svg?raw';
@@ -68,12 +69,15 @@ export const trafficImg = (color: string): HTMLImageElement => {
 /**
  * @ignore
  */
-export const waypointIcon = (foregroundSvg?: SVGElement): HTMLImageElement => {
+export const waypointIcon = (
+    foregroundSvg: SVGElement | undefined,
+    svgOptions: SVGIconStyleOptions | undefined,
+): HTMLImageElement => {
     // defensive check for SSR and node-test environments:
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    const svg = pinSvg();
+    const svg = pinSvg(svgOptions);
     if (foregroundSvg) {
         svg.appendChild(foregroundSvg);
     }
@@ -83,23 +87,23 @@ export const waypointIcon = (foregroundSvg?: SVGElement): HTMLImageElement => {
 /**
  * @ignore
  */
-export const waypointStartIcon = (): HTMLImageElement => {
+export const waypointStartIcon = (svgOptions: SVGIconStyleOptions | undefined): HTMLImageElement => {
     // defensive check for SSR and node-test environments:
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    return waypointIcon(parseSvg(startSvgRaw));
+    return waypointIcon(parseSvg(startSvgRaw), svgOptions);
 };
 
 /**
  * @ignore
  */
-export const waypointFinishIcon = (): HTMLImageElement => {
+export const waypointFinishIcon = (svgOptions: SVGIconStyleOptions | undefined): HTMLImageElement => {
     // defensive check for SSR and node-test environments:
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    return waypointIcon(parseSvg(finishSvgRaw));
+    return waypointIcon(parseSvg(finishSvgRaw), svgOptions);
 };
 
 /**

@@ -7,11 +7,13 @@ import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } f
 
 /**
  * Fuzzy search service template type.
+ * @ignore
  */
 export type FuzzySearchTemplate = ServiceTemplate<FuzzySearchParams, URL, FuzzySearchResponseAPI, FuzzySearchResponse>;
 
 /**
  * Fuzzy search service template main implementation.
+ * @ignore
  */
 export const fuzzySearchTemplate: FuzzySearchTemplate = {
     requestValidation: { schema: fuzzySearchRequestSchema },

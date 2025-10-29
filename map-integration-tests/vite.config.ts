@@ -1,5 +1,5 @@
-import basicSsl from '@vitejs/plugin-basic-ssl';
 import path from 'node:path';
+import basicSsl from '@vitejs/plugin-basic-ssl';
 import { defineConfig } from 'vite';
 
 /**

@@ -7,10 +7,10 @@ import displayRouteSummariesData from './data/displayRouteSummaries.data.json';
 describe('Tests to test building display routes', () => {
     test('Build display routes', () => {
         expect(toDisplayRoutes({ features: [{ properties: {} }] } as Routes)).toEqual({
-            features: [{ properties: { routeStyle: 'selected' } }],
+            features: [{ properties: { routeState: 'selected' } }],
         });
         expect(toDisplayRoutes({ features: [{ properties: {} }, { properties: {} }] } as Routes)).toEqual({
-            features: [{ properties: { routeStyle: 'selected' } }, { properties: { routeStyle: 'deselected' } }],
+            features: [{ properties: { routeState: 'selected' } }, { properties: { routeState: 'deselected' } }],
         });
     });
 

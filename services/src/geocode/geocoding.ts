@@ -1,8 +1,9 @@
+import type { Place } from 'core';
 import { callService } from '../shared/serviceTemplate';
 import type { GeocodingTemplate } from './geocodingTemplate';
 import { geocodingTemplate } from './geocodingTemplate';
 import type { GeocodingParams } from './types/geocodingParams';
-import type { GeocodingResponse } from './types/geocodingResponse';
+import type { GeocodingProps, GeocodingResponse } from './types/geocodingResponse';
 
 /**
  * Convert addresses into geographic coordinates (geocoding).
@@ -66,4 +67,10 @@ export const geocode = async (
     customTemplate?: Partial<GeocodingTemplate>,
 ): Promise<GeocodingResponse> => callService(params, { ...geocodingTemplate, ...customTemplate }, 'Geocode');
 
-export default geocode;
+/**
+ *
+ * @param query
+ * @group Geocode
+ */
+export const geocodeOne = async (query: string): Promise<Place<GeocodingProps>> =>
+    (await geocode({ query, limit: 1 })).features[0];

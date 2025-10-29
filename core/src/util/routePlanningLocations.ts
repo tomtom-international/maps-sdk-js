@@ -1,5 +1,5 @@
 import type { Feature, GeoJsonObject, Point } from 'geojson';
-import type { GeoInput, GeoInputType, HasLngLat, Waypoint } from '../types';
+import type { HasLngLat, RoutePlanningLocation, RoutePlanningLocationType, Waypoint } from '../types';
 import { getPositionStrict, toPointFeature } from './lngLat';
 
 /**
@@ -30,7 +30,7 @@ import { getPositionStrict, toPointFeature } from './lngLat';
  * // Use in route calculation
  * const route = await calculateRoute({
  *   key: 'your-api-key',
- *   geoInputs: [
+ *   locations: [
  *     [4.9, 52.3],              // Hard waypoint (exact location)
  *     asSoftWaypoint([5.1, 52.5], 1000),  // Soft waypoint (within 1km)
  *     [5.3, 52.7]               // Hard waypoint (exact location)
@@ -60,30 +60,30 @@ export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Wayp
 /**
  * Determines the type of geographic input (waypoint or path).
  *
- * This function inspects the structure of a GeoInput to classify it as either:
+ * This function inspects the structure of a RoutePlanningLocation to classify it as either:
  * - **waypoint**: A single point location (coordinate pair, Point geometry, or Point Feature)
  * - **path**: A line or route (array of coordinates, LineString geometry, or LineString Feature)
  *
- * @param geoInput The geographic input to classify. Can be coordinates, GeoJSON geometry, or GeoJSON Feature.
+ * @param routePlanningLocation The geographic input to classify. Can be coordinates, GeoJSON geometry, or GeoJSON Feature.
  * @returns The type of the input: 'waypoint' for point locations or 'path' for line geometries.
  *
  * @example
  * ```typescript
  * // Waypoint as coordinate array
- * getGeoInputType([4.9, 52.3]); // Returns: 'waypoint'
+ * getRoutePlanningLocationType([4.9, 52.3]); // Returns: 'waypoint'
  *
  * // Path as array of coordinates
- * getGeoInputType([[4.9, 52.3], [4.5, 51.9]]); // Returns: 'path'
+ * getRoutePlanningLocationType([[4.9, 52.3], [4.5, 51.9]]); // Returns: 'path'
  *
  * // Waypoint as Point Feature
- * getGeoInputType({
+ * getRoutePlanningLocationType({
  *   type: 'Feature',
  *   geometry: { type: 'Point', coordinates: [4.9, 52.3] },
  *   properties: {}
  * }); // Returns: 'waypoint'
  *
  * // Path as LineString Feature
- * getGeoInputType({
+ * getRoutePlanningLocationType({
  *   type: 'Feature',
  *   geometry: { type: 'LineString', coordinates: [[4.9, 52.3], [4.5, 51.9]] },
  *   properties: {}
@@ -92,15 +92,17 @@ export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Wayp
  *
  * @group Route
  */
-export const getGeoInputType = (geoInput: GeoInput): GeoInputType => {
-    if (Array.isArray(geoInput)) {
-        if (Array.isArray(geoInput[0])) {
+export const getRoutePlanningLocationType = (
+    routePlanningLocation: RoutePlanningLocation,
+): RoutePlanningLocationType => {
+    if (Array.isArray(routePlanningLocation)) {
+        if (Array.isArray(routePlanningLocation[0])) {
             return 'path';
         }
         return 'waypoint';
     }
-    if (geoInput.type === 'Feature') {
-        if (geoInput.geometry.type === 'LineString') {
+    if (routePlanningLocation.type === 'Feature') {
+        if (routePlanningLocation.geometry.type === 'LineString') {
             return 'path';
         }
         return 'waypoint';

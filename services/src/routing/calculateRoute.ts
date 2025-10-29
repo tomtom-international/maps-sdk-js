@@ -37,7 +37,7 @@ import type { CalculateRouteParams } from './types/calculateRouteParams';
  * // Basic route calculation
  * const route = await calculateRoute({
  *   key: 'your-api-key',
- *   geoInputs: [
+ *   locations: [
  *     [4.9041, 52.3676],  // Amsterdam
  *     [4.4777, 51.9244]   // Rotterdam
  *   ]
@@ -46,7 +46,7 @@ import type { CalculateRouteParams } from './types/calculateRouteParams';
  * // Route with guidance and alternatives
  * const guidedRoute = await calculateRoute({
  *   key: 'your-api-key',
- *   geoInputs: [[4.9, 52.3], [4.5, 51.9]],
+ *   locations: [[4.9, 52.3], [4.5, 51.9]],
  *   guidance: { type: 'coded', phonetics: 'IPA' },
  *   maxAlternatives: 2,
  *   routeType: 'fastest',
@@ -57,7 +57,7 @@ import type { CalculateRouteParams } from './types/calculateRouteParams';
  * // Electric vehicle route with charging
  * const evRoute = await calculateRoute({
  *   key: 'your-api-key',
- *   geoInputs: [[4.9, 52.3], [8.5, 50.1]],  // Long distance
+ *   locations: [[4.9, 52.3], [8.5, 50.1]],  // Long distance
  *   vehicleEngineType: 'electric',
  *   currentChargeInkWh: 50,
  *   maxChargeInkWh: 85,
@@ -67,7 +67,7 @@ import type { CalculateRouteParams } from './types/calculateRouteParams';
  * // Multi-stop delivery route
  * const deliveryRoute = await calculateRoute({
  *   key: 'your-api-key',
- *   geoInputs: [
+ *   locations: [
  *     [4.9, 52.3],   // Warehouse
  *     [4.85, 52.32], // Stop 1
  *     [4.88, 52.35], // Stop 2

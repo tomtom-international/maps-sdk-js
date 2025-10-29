@@ -1,27 +1,18 @@
-import type {
-    BatteryCharging,
-    CommonPlaceProps,
-    Routes,
-    Waypoint,
-    WaypointLike,
-    Waypoints,
-} from '@cet/maps-sdk-js/core';
-import { formatDuration, generateId, getPosition } from '@cet/maps-sdk-js/core';
+import type { CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from '@cet/maps-sdk-js/core';
+import { generateId, getPosition } from '@cet/maps-sdk-js/core';
 import type { Point, Position } from 'geojson';
-import type { LocationDisplayProps } from '../../places';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
     WAYPOINT_START_IMAGE_ID,
     WAYPOINT_STOP_IMAGE_ID,
 } from '../layers/waypointLayers';
-import type { DisplayRouteProps, RouteStyleProps } from '../types/displayRoutes';
 import type { PlanningWaypoint } from '../types/planningWaypoint';
-import type { WaypointsSourceConfig } from '../types/routeModuleConfig';
-import type { IndexType, WaypointDisplayProps } from '../types/waypointDisplayProps';
+import type { WaypointsConfig } from '../types/routeModuleConfig';
+import type { WaypointDisplayProps, WaypointIndexType } from '../types/waypointDisplayProps';
 import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../types/waypointDisplayProps';
 
-const indexTypeFor = (index: number, arrayLength: number): IndexType =>
+const indexTypeFor = (index: number, arrayLength: number): WaypointIndexType =>
     index === 0 ? START_INDEX : index < arrayLength - 1 ? MIDDLE_INDEX : FINISH_INDEX;
 
 /**
@@ -30,10 +21,10 @@ const indexTypeFor = (index: number, arrayLength: number): IndexType =>
  */
 export const buildWaypointTitle = (waypoint: Waypoint): string | undefined => {
     const placeProperties = waypoint?.properties as CommonPlaceProps;
-    return placeProperties?.poi?.name || placeProperties?.address?.freeformAddress || undefined;
+    return placeProperties?.poi?.name ?? placeProperties?.address?.freeformAddress ?? undefined;
 };
 
-export const getImageIDForWaypoint = (waypoint: Waypoint, indexType: IndexType): string => {
+export const getImageIDForWaypoint = (waypoint: Waypoint, indexType: WaypointIndexType): string => {
     if (waypoint.properties.radiusMeters) {
         return WAYPOINT_SOFT_IMAGE_ID;
     }
@@ -87,7 +78,7 @@ export const isHardWaypoint = (waypoint: Waypoint): boolean => !waypoint.propert
  */
 export const toDisplayWaypoints = (
     waypoints: PlanningWaypoint[],
-    options?: WaypointsSourceConfig,
+    options: WaypointsConfig | undefined,
 ): Waypoints<WaypointDisplayProps> => {
     // Since waypoints are of mixed types (hard and soft), we need to calculate the hard-only indexes
     // in case we have stops with numbered icons:
@@ -132,60 +123,5 @@ export const toDisplayWaypoints = (
                 };
             })
             .filter((feature) => feature),
-    };
-};
-
-const formatTitle = (chargingInformation: BatteryCharging): string | undefined => {
-    const chargingParkName =
-        chargingInformation.chargingParkName !== chargingInformation.chargingParkOperatorName
-            ? chargingInformation.chargingParkName
-            : '';
-    let title = `${chargingInformation.chargingParkOperatorName} (${chargingInformation.chargingParkPowerInkW}kW)`;
-    if (chargingParkName) {
-        title += `\n${chargingParkName}`;
-    }
-    return title + `\n${formatDuration(chargingInformation.chargingTimeInSeconds)}`;
-};
-
-type ChargingStationProps = LocationDisplayProps &
-    RouteStyleProps & {
-        powerKW?: string;
-        availablePoints?: string;
-    };
-
-/**
- * Generates display-ready charging stations for the given planning context ones.
- * @param routes The routes return for ldEV.
- */
-export const toDisplayChargingStations = (routes: Routes<DisplayRouteProps>): Waypoints<ChargingStationProps> => {
-    const chargingStations: Waypoint<ChargingStationProps>[] = [];
-    routes.features.forEach((route) => {
-        route.properties.sections.leg.forEach((leg) => {
-            const chargingInformationAtEndOfLeg = leg.summary.chargingInformationAtEndOfLeg;
-            const chargingStation = chargingInformationAtEndOfLeg?.chargingParkLocation;
-            if (!chargingInformationAtEndOfLeg || !chargingStation) {
-                return null as unknown as Waypoint<ChargingStationProps>;
-            }
-            const waypoint = toWaypointFromPoint({ type: 'Point', coordinates: chargingStation.coordinates });
-            const id = waypoint.id ?? generateId();
-            chargingStations.push({
-                ...waypoint,
-                id,
-                properties: {
-                    ...waypoint.properties,
-                    id,
-                    // TODO consider using pin icon when available for Orbis
-                    iconID: '7309', // (genesis-like) categorySet ID for "EV Charging Station" based on search
-                    // TODO: consider more than 1 display field so we have more control on the layout
-                    // TODO: consider a full title, or in parts
-                    title: formatTitle(chargingInformationAtEndOfLeg),
-                    routeStyle: route.properties.routeStyle,
-                },
-            });
-        });
-    });
-    return {
-        type: 'FeatureCollection',
-        features: chargingStations.filter((feature) => feature),
     };
 };

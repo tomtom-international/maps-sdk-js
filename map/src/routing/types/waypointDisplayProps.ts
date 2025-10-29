@@ -1,13 +1,21 @@
-import type { LocationDisplayProps } from '../../places';
-
-export const START_INDEX = 'start';
-export const MIDDLE_INDEX = 'middle';
-export const FINISH_INDEX = 'finish';
+import type { PlaceDisplayProps } from '../../places';
 
 /**
- * @ignore
+ * @group Routing
  */
-export type IndexType = typeof START_INDEX | typeof MIDDLE_INDEX | typeof FINISH_INDEX;
+export const START_INDEX = 'start';
+/**
+ * @group Routing
+ */
+export const MIDDLE_INDEX = 'middle';
+/**
+ * @group Routing
+ */
+export const FINISH_INDEX = 'finish';
+/**
+ * @group Routing
+ */
+export type WaypointIndexType = typeof START_INDEX | typeof MIDDLE_INDEX | typeof FINISH_INDEX;
 
 /**
  * Display properties for a waypoint marker on the map.
@@ -54,7 +62,7 @@ export type IndexType = typeof START_INDEX | typeof MIDDLE_INDEX | typeof FINISH
  *
  * @group Routing
  */
-export type WaypointDisplayProps = LocationDisplayProps & {
+export type WaypointDisplayProps = PlaceDisplayProps & {
     /**
      * The index of the waypoint in relation to the other waypoints.
      *
@@ -82,7 +90,7 @@ export type WaypointDisplayProps = LocationDisplayProps & {
      *
      * This affects icon selection and labeling behavior.
      */
-    indexType: IndexType;
+    indexType: WaypointIndexType;
 
     /**
      * The stop index to be displayed.

@@ -2,9 +2,8 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { Waypoint } from 'core';
 import type { EventType } from 'map';
-import { WAYPOINT_SYMBOLS_LAYER_ID } from 'map';
 import rotterdamToAmsterdamRoutesJson from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getClickedTopFeature,
@@ -63,7 +62,7 @@ const clearWaypointsClickHandlers = async (page: Page) =>
     });
 
 const waitForWaypointsEventState = async (page: Page, eventState: EventType | undefined, id?: string) =>
-    waitForEventState(page, eventState, [WAYPOINT_SYMBOLS_LAYER_ID], id);
+    waitForEventState(page, eventState, ['routeWaypointSymbol'], id);
 
 test.describe('Routing and waypoint events tests', () => {
     const mapEnv = new MapTestEnv();

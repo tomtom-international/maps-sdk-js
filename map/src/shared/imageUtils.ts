@@ -7,7 +7,7 @@ export const isDOMImageSupported = (): boolean =>
 /**
  * @ignore
  */
-export const svgToImg = (svgDomElement: Node): HTMLImageElement => {
+export const svgToImg = (svgDomElement: SVGElement): HTMLImageElement => {
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }

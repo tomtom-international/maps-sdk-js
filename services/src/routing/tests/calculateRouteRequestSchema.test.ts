@@ -1,3 +1,4 @@
+import { inputSectionTypes } from 'core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
 import { validateRequestSchema } from '../../shared/schema/validation';
@@ -14,7 +15,7 @@ describe('Calculate route request schema validation', () => {
         const validationCall = () =>
             validateRequestSchema<CalculateRouteParams>(
                 {
-                    geoInputs: [
+                    locations: [
                         [200, 180],
                         [-200, -180],
                     ],
@@ -32,25 +33,25 @@ describe('Calculate route request schema validation', () => {
                         origin: 'number',
                         code: 'too_big',
                         maximum: 180,
-                        path: ['geoInputs', 0, 0],
+                        path: ['locations', 0, 0],
                     }),
                     expect.objectContaining({
                         origin: 'number',
                         code: 'too_big',
                         maximum: 90,
-                        path: ['geoInputs', 0, 1],
+                        path: ['locations', 0, 1],
                     }),
                     expect.objectContaining({
                         origin: 'number',
                         code: 'too_small',
                         minimum: -180,
-                        path: ['geoInputs', 1, 0],
+                        path: ['locations', 1, 0],
                     }),
                     expect.objectContaining({
                         origin: 'number',
                         code: 'too_small',
                         minimum: -90,
-                        path: ['geoInputs', 1, 1],
+                        path: ['locations', 1, 1],
                     }),
                 ]),
             }),
@@ -60,7 +61,7 @@ describe('Calculate route request schema validation', () => {
     test('it should fail when format of location is incorrect - example 1', () => {
         const validationCall = () =>
             validateRequestSchema<CalculateRouteParams>(
-                { geoInputs: '4.89066,52.37317:4.49015,52.16109' as never, apiKey, commonBaseURL: commonBaseUrl },
+                { locations: '4.89066,52.37317:4.49015,52.16109' as never, apiKey, commonBaseURL: commonBaseUrl },
                 routeRequestValidationConfig,
             );
         expect(validationCall).toThrow(
@@ -69,7 +70,7 @@ describe('Calculate route request schema validation', () => {
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        path: ['geoInputs'],
+                        path: ['locations'],
                         message: 'Invalid input',
                     },
                 ],
@@ -80,7 +81,7 @@ describe('Calculate route request schema validation', () => {
     test('it should fail when there are not enough waypoints - none sent', () => {
         expect(() =>
             validateRequestSchema(
-                { geoInputs: [], apiKey, commonBaseURL: commonBaseUrl },
+                { locations: [], apiKey, commonBaseURL: commonBaseUrl },
                 routeRequestValidationConfig,
             ),
         ).toThrow('Invalid input');
@@ -89,7 +90,7 @@ describe('Calculate route request schema validation', () => {
     test('it should fail when there are not enough waypoints - one sent', () => {
         expect(() =>
             validateRequestSchema(
-                { geoInputs: [[4.89066, 52.37317]], apiKey, commonBaseURL: commonBaseUrl },
+                { locations: [[4.89066, 52.37317]], apiKey, commonBaseURL: commonBaseUrl },
                 routeRequestValidationConfig,
             ),
         ).toThrow(
@@ -97,7 +98,7 @@ describe('Calculate route request schema validation', () => {
         );
     });
 
-    test('it should fail when geoInputs param is missing', () => {
+    test('it should fail when locations param is missing', () => {
         expect(() =>
             validateRequestSchema<CalculateRouteParams>(
                 { apiKey, commonBaseURL: commonBaseUrl } as never,
@@ -109,7 +110,7 @@ describe('Calculate route request schema validation', () => {
                     {
                         code: 'invalid_type',
                         expected: 'array',
-                        path: ['geoInputs'],
+                        path: ['locations'],
                         message: 'Invalid input',
                     },
                 ],
@@ -121,7 +122,7 @@ describe('Calculate route request schema validation', () => {
         const validationCall = () =>
             validateRequestSchema<CalculateRouteParams>(
                 {
-                    geoInputs: [
+                    locations: [
                         [4.89066, 52.37317],
                         [4.4906, 51.37317],
                     ],
@@ -188,25 +189,7 @@ describe('Calculate route request schema validation', () => {
                     }),
                     expect.objectContaining({
                         code: 'invalid_value',
-                        values: [
-                            'carTrain',
-                            'ferry',
-                            'tunnel',
-                            'motorway',
-                            'pedestrian',
-                            'toll',
-                            'tollVignette',
-                            'country',
-                            'vehicleRestricted',
-                            'traffic',
-                            'carpool',
-                            'urban',
-                            'unpaved',
-                            'lowEmissionZone',
-                            'speedLimit',
-                            'roadShields',
-                            'lanes',
-                        ],
+                        values: expect.arrayContaining(inputSectionTypes),
                         path: ['sectionTypes', 1],
                         message: 'Invalid input',
                     }),

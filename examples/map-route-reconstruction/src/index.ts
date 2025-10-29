@@ -1,6 +1,6 @@
-import { bboxFromGeoJSON, GeoInput, TomTomConfig, Waypoint } from '@cet/maps-sdk-js/core';
+import { bboxFromGeoJSON, RoutePlanningLocation, TomTomConfig, Waypoint } from '@cet/maps-sdk-js/core';
 import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
-import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
+import { calculateRoute, geocodeOne } from '@cet/maps-sdk-js/services';
 import type { Position } from 'geojson';
 import { GeoJSONSource, LngLatBoundsLike, Map } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -10,7 +10,7 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const state = {
-    geoInputs: [] as GeoInput[],
+    locations: [] as RoutePlanningLocation[],
     allDrawnCoords: [] as Position[],
     lastDrawnCoords: [] as Position[],
     drawnLineSource: undefined as GeoJSONSource | undefined,
@@ -45,9 +45,9 @@ const initDrawMapStyle = (mapLibreMap: Map, routingModule: RoutingModule) => {
 const resetState = async (routingModule: RoutingModule, waypoints: Waypoint[]) => {
     state.allDrawnCoords = [];
     state.lastDrawnCoords = [];
-    state.geoInputs = [...waypoints];
+    state.locations = [...waypoints];
     routingModule.showWaypoints(waypoints);
-    routingModule.showRoutes(await calculateRoute({ geoInputs: state.geoInputs }));
+    routingModule.showRoutes(await calculateRoute({ locations: state.locations }));
     state.drawnLineSource?.setData({ type: 'LineString', coordinates: [] });
 };
 
@@ -68,9 +68,9 @@ const initDrawUserEvents = (mapLibreMap: Map, routingModule: RoutingModule): voi
             mapLibreMap.getCanvas().style.cursor = 'default';
             mapLibreMap.dragPan.enable();
             if (state.lastDrawnCoords.length) {
-                state.geoInputs.splice(state.geoInputs.length - 1, 0, state.lastDrawnCoords);
+                state.locations.splice(state.locations.length - 1, 0, state.lastDrawnCoords);
                 state.lastDrawnCoords = [];
-                routingModule.showRoutes(await calculateRoute({ geoInputs: state.geoInputs }));
+                routingModule.showRoutes(await calculateRoute({ locations: state.locations }));
             }
         }
     });
@@ -95,12 +95,10 @@ const initDrawUserEvents = (mapLibreMap: Map, routingModule: RoutingModule): voi
     });
 };
 
-const waypoints: Waypoint[] = (
-    await Promise.all([
-        geocode({ query: 'W Houston St 51, NY', limit: 1 }),
-        geocode({ query: 'Terminal C Departures LaGuardia Airport, NY', limit: 1 }),
-    ])
-).map((result) => result.features[0]);
+const waypoints: Waypoint[] = await Promise.all([
+    geocodeOne('W Houston St 51, NY'),
+    geocodeOne('Terminal C Departures LaGuardia Airport, NY'),
+]);
 
 const map = new TomTomMap(
     {

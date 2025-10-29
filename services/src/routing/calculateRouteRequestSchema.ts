@@ -1,5 +1,5 @@
 import type { SectionType } from '@cet/maps-sdk-js/core';
-import { getGeoInputType, inputSectionTypesWithGuidance } from '@cet/maps-sdk-js/core';
+import { getRoutePlanningLocationType, inputSectionTypesWithGuidance } from '@cet/maps-sdk-js/core';
 import { z } from 'zod/v4-mini';
 import { commonRoutingRequestSchema } from '../shared/schema/commonRoutingRequestSchema';
 import {
@@ -15,7 +15,7 @@ const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);
 const pathLikeSchema = z.union([lineStringCoordsSchema, featureSchema]);
 
 const calculateRouteRequestSchemaMandatory = z.object({
-    geoInputs: z.array(z.union([waypointLikeSchema, pathLikeSchema])).check(z.minLength(1)),
+    locations: z.array(z.union([waypointLikeSchema, pathLikeSchema])).check(z.minLength(1)),
 });
 
 const calculateRouteRequestSchemaOptional = z.partial(
@@ -34,11 +34,11 @@ const calculateRouteRequestSchema = z.extend(
     z.extend(calculateRouteRequestSchemaMandatory, calculateRouteRequestSchemaOptional.shape).shape,
 );
 
-const calculateRouteGeoInputsRefinement: SchemaRefinement<CalculateRouteParams> = {
+const calculateRoutelocationsRefinement: SchemaRefinement<CalculateRouteParams> = {
     check: (data: CalculateRouteParams): boolean => {
-        const geoInputTypes = data.geoInputs.map(getGeoInputType);
-        if (!geoInputTypes.includes('path')) {
-            return data.geoInputs.length >= 2;
+        const routePlanningLocationTypes = data.locations.map(getRoutePlanningLocationType);
+        if (!routePlanningLocationTypes.includes('path')) {
+            return data.locations.length >= 2;
         }
         return true;
     },
@@ -52,5 +52,5 @@ const calculateRouteGeoInputsRefinement: SchemaRefinement<CalculateRouteParams> 
  */
 export const routeRequestValidationConfig = {
     schema: calculateRouteRequestSchema,
-    refinements: [calculateRouteGeoInputsRefinement],
+    refinements: [calculateRoutelocationsRefinement],
 };

@@ -1,8 +1,8 @@
 import './style.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { bboxFromGeoJSON, TomTomConfig, type Waypoints } from '@cet/maps-sdk-js/core';
+import { bboxFromGeoJSON, TomTomConfig, type Waypoint } from '@cet/maps-sdk-js/core';
 import { PlacesModule, RoutingModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { calculateRoute, geocode, search } from '@cet/maps-sdk-js/services';
+import { calculateRoute, geocodeOne, search } from '@cet/maps-sdk-js/services';
 import buffer from '@turf/buffer';
 import type { Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
@@ -11,10 +11,7 @@ import type { LngLatBoundsLike } from 'maplibre-gl';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 const inputs = ['Barcelona', 'Amsterdam'];
-const waypoints: Waypoints = {
-    type: 'FeatureCollection',
-    features: await Promise.all(inputs.map(async (query) => (await geocode({ query, limit: 1 })).features[0])),
-};
+const waypoints: Waypoint[] = await Promise.all(inputs.map(geocodeOne));
 
 const map = new TomTomMap(
     {
@@ -25,14 +22,14 @@ const map = new TomTomMap(
     { style: { type: 'standard', include: ['trafficIncidents'] } },
 );
 
-const routes = await calculateRoute({ geoInputs: waypoints.features });
+const routingModule = await RoutingModule.get(map);
+routingModule.showWaypoints(waypoints);
+const routes = await calculateRoute({ locations: waypoints });
+routingModule.showRoutes(routes);
 
 const extraWidePlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'poi-like' } });
 const widePlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'poi-like' } });
 const onRoadPlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'circle' } });
-const routingModule = await RoutingModule.get(map);
-routingModule.showRoutes(routes);
-routingModule.showWaypoints(waypoints);
 
 const route = routes.features[0];
 extraWidePlacesModule.show(

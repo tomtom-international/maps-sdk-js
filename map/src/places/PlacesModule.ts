@@ -10,7 +10,6 @@ import { addImageIfNotExisting, changeLayersProps, waitUntilMapIsReady } from '.
 import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
 import { preparePlacesForDisplay } from './preparePlacesForDisplay';
-import { defaultPin } from './resources';
 import type { DisplayPlaceProps } from './types/placeDisplayProps';
 import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from './types/placesModuleConfig';
 
@@ -117,12 +116,6 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         }
         const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
         this.layerSpecs = layerSpecs;
-
-        // We ensure to add the pins sprite to the style the very first time or when we are restoring the module, and only once for all instances:
-        if ((this._initializing || restore) && this.instanceIndex == 0) {
-            addImageIfNotExisting(this.mapLibreMap, 'default_pin', defaultPin(), { pixelRatio: 2 });
-        }
-
         return { places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, layerSpecs) };
     }
 
@@ -169,7 +162,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * // Add custom icons
      * places.applyIconConfig({
      *   customIcons: [
-     *     { category: 'RESTAURANT', iconUrl: '/icons/food.png' }
+     *     { category: 'RESTAURANT', image: '/icons/food.png' }
      *   ]
      * });
      * ```
@@ -235,7 +228,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     private updateLayersAndData(config: PlacesModuleConfig): void {
         // If we have custom icons, ensure they're added to the map style:
         for (const customIcon of config?.iconConfig?.customIcons ?? []) {
-            addImageIfNotExisting(this.mapLibreMap, customIcon.category, customIcon.iconUrl, {
+            addImageIfNotExisting(this.mapLibreMap, customIcon.id, customIcon.image as string, {
                 pixelRatio: customIcon.pixelRatio ?? 2,
             });
         }

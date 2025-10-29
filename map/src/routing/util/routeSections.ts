@@ -12,7 +12,7 @@ const buildRouteSectionsFromRoute = <
     displaySectionPropsBuilder?: (
         sectionProps: S,
         routeProps?: DisplayRouteProps,
-    ) => Omit<D, 'routeStyle' | 'routeIndex'>,
+    ) => Omit<D, 'routeState' | 'routeIndex'>,
 ): RouteSection<D>[] =>
     (route.properties.sections[sectionType] as S[])?.map((sectionProps) => ({
         type: 'Feature',
@@ -23,7 +23,7 @@ const buildRouteSectionsFromRoute = <
         },
         properties: {
             ...(displaySectionPropsBuilder ? displaySectionPropsBuilder(sectionProps, route.properties) : sectionProps),
-            routeStyle: route.properties.routeStyle,
+            routeState: route.properties.routeState,
             ...(!isNil(route.properties.index) && { routeIndex: route.properties.index }),
         } as D,
     })) || [];
@@ -44,7 +44,7 @@ export const toDisplayRouteSections = <
     displaySectionPropsBuilder?: (
         sectionProps: S,
         routeProps?: DisplayRouteProps,
-    ) => Omit<D, 'routeStyle' | 'routeIndex'>,
+    ) => Omit<D, 'routeState' | 'routeIndex'>,
 ): RouteSections<D> => ({
     type: 'FeatureCollection',
     features: routes.features.flatMap((route) =>

@@ -4,12 +4,12 @@ import type { ExpressionSpecification } from 'maplibre-gl';
  * Main route line foreground color.
  * @ignore
  */
-export const FOREGROUND_COLOR = '#36A8F0';
+export const ROUTE_LINE_FOREGROUND_COLOR = '#36A8F0';
 
 /**
  * Main route outline color.
  */
-export const OUTLINE_COLOR = '#105287';
+export const ROUTE_LINE_OUTLINE_COLOR = '#105287';
 
 /**
  * Deselected route line foreground color.
@@ -32,7 +32,7 @@ export const DESELECTED_SECONDARY_COLOR = '#727C85';
  * Main route line width based on zoom level.
  * @ignore
  */
-export const FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
+export const ROUTE_LINE_FOREGROUND_WIDTH: ExpressionSpecification = [
     'interpolate',
     ['linear'],
     ['zoom'],
@@ -48,15 +48,29 @@ export const FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
 
 /**
  * Used for showing/hiding layer depending on layer being part of selected route or not.
- * @ignore
+ *
+ * @remarks
+ * Add this to layers that depend on whether they are part of the selected route or not.
+ *
+ * @example:
+ * filter: SELECTED_ROUTE_FILTER
+
+ * @group Routing
  */
-export const SELECTED_ROUTE_FILTER: ExpressionSpecification = ['==', ['get', 'routeStyle'], 'selected'];
+export const SELECTED_ROUTE_FILTER: ExpressionSpecification = ['==', ['get', 'routeState'], 'selected'];
 
 /**
- * Used for hiding/showing layer depending on layer being part of selected route or not.
- * @ignore
+ * Used for showing/hiding layer depending on layer being part of deselected route or not.
+ *
+ * @remarks
+ * Add this to layers that depend on whether they are part of the deselected route or not.
+ *
+ * @example:
+ * filter: DESELECTED_ROUTE_FILTER
+
+ * @group Routing
  */
-export const DESELECTED_ROUTE_FILTER: ExpressionSpecification = ['==', ['get', 'routeStyle'], 'deselected'];
+export const DESELECTED_ROUTE_FILTER: ExpressionSpecification = ['==', ['get', 'routeState'], 'deselected'];
 
 /**
  * @ignore

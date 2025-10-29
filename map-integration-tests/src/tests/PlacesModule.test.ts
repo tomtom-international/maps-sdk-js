@@ -2,12 +2,12 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { bboxFromGeoJSON, type Place, type Places } from 'core';
 import { sortBy } from 'lodash-es';
-import type { LocationDisplayProps, PlaceIconConfig } from 'map';
+import type { PlaceDisplayProps, PlaceIconConfig } from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
 import placesTestData from './data/PlacesModule.test.data.json';
 import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';
 import expectedPoiLikeFeatureProps from './data/PlacesModulePOILikeProps.test.data.json';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getNumVisibleLayersBySource,
@@ -22,17 +22,15 @@ import {
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
-const applyIconConfig = async (page: Page, iconConfig?: PlaceIconConfig) =>
-    page.evaluate(
-        async (inputConfig) => (globalThis as MapsSDKThis).places?.applyIconConfig(inputConfig),
-        iconConfig as PlaceIconConfig,
-    );
+const applyIconConfig = async (page: Page, iconConfig: PlaceIconConfig) =>
+    // @ts-ignore
+    page.evaluate(async (inputConfig) => (globalThis as MapsSDKThis).places?.applyIconConfig(inputConfig), iconConfig);
 
 const clearPlaces = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
 
 const getNumVisibleLayers = async (page: Page, sourceId: string) => getNumVisibleLayersBySource(page, sourceId);
 
-const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: LocationDisplayProps[]) =>
+const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: PlaceDisplayProps[]) =>
     expect(
         sortBy(
             places.map((place) => ({
@@ -46,7 +44,7 @@ const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisp
 
 const compareToExpectedPoiLikeDisplayProps = (
     places: MapGeoJSONFeature[],
-    expectedDisplayProps: LocationDisplayProps[],
+    expectedDisplayProps: PlaceDisplayProps[],
 ) => {
     for (const place of places) {
         const expectedDisplayProp = expectedDisplayProps.find((props) => props.title === place.properties.title);
@@ -106,7 +104,7 @@ test.describe('PlacesModule tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    for (const testData of placesTestData as [string, Places, LocationDisplayProps[]][]) {
+    for (const testData of placesTestData as [string, Places, PlaceDisplayProps[]][]) {
         test(testData[0], async ({ page }) => {
             const [_name, testPlaces, expectedDisplayPinProps] = testData;
             const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
@@ -161,7 +159,7 @@ test.describe('PlacesModule tests', () => {
 });
 
 test.describe('GeoJSON Places with init config tests', () => {
-    for (const testData of placesTestData as [string, Places, LocationDisplayProps[], LocationDisplayProps[]][]) {
+    for (const testData of placesTestData as [string, Places, PlaceDisplayProps[], PlaceDisplayProps[]][]) {
         test(testData[0], async ({ page }) => {
             const [_name, testPlaces, _expectedDisplayProps, expectedDisplayCircleProps] = testData;
 
@@ -185,7 +183,7 @@ test.describe('GeoJSON Places with init config tests', () => {
 });
 
 test.describe('GeoJSON Places apply icon config tests', () => {
-    for (const testData of placesTestData as [string, Places, LocationDisplayProps[], LocationDisplayProps[]][]) {
+    for (const testData of placesTestData as [string, Places, PlaceDisplayProps[], PlaceDisplayProps[]][]) {
         test(testData[0], async ({ page }) => {
             const [name, testPlaces, _expectedDisplayPinProps, expectedDisplayPOIProps] = testData;
 
@@ -206,7 +204,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPOIProps);
 
             await applyIconConfig(page, {
-                customIcons: [{ category: 'PARKING_GARAGE', iconUrl: 'https://dummyimage.com/30x20/4137ce/fff' }],
+                customIcons: [{ id: 'PARKING_GARAGE', image: 'https://dummyimage.com/30x20/4137ce/fff' }],
             });
             await waitForMapIdle(page);
             renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);

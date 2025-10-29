@@ -1,15 +1,13 @@
 import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { RoutingModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
+import { calculateRoute, geocodeOne } from '@cet/maps-sdk-js/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const waypoints = (
-    await Promise.all([geocode({ query: 'Paris, FR', limit: 1 }), geocode({ query: 'Amsterdam, NL', limit: 1 })])
-).map((result) => result.features[0]);
+const waypoints = await Promise.all([geocodeOne('Paris, FR'), geocodeOne('Amsterdam, NL')]);
 
 const map = new TomTomMap(
     {
@@ -24,7 +22,7 @@ const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(waypoints);
 
 const route = await calculateRoute({
-    geoInputs: waypoints,
+    locations: waypoints,
     vehicle: {
         engineType: 'electric',
         model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },

@@ -1,6 +1,5 @@
 import type {
-    BatteryCharging,
-    ChargingParkLocation,
+    ChargingStopProps,
     Guidance,
     Instruction,
     LaneDirection,
@@ -42,7 +41,8 @@ export type SectionTypeAPI =
     | 'LOW_EMISSION_ZONE'
     | 'LANES'
     | 'SPEED_LIMIT'
-    | 'ROAD_SHIELDS';
+    | 'ROAD_SHIELDS'
+    | 'IMPORTANT_ROAD_STRETCH';
 
 /**
  * @ignore
@@ -68,12 +68,42 @@ export type SectionAPI = {
     properties?: string[];
     maxSpeedLimitInKmh?: number;
     roadShieldReferences?: RoadShieldReference[];
+    importantRoadStretchIndex?: number;
+    streetName?: { text: string };
+    roadNumbers?: string[];
 };
 
 /**
  * @ignore
  */
 export type CurrentTypeAPI = 'Direct_Current' | 'Alternating_Current_1_Phase' | 'Alternating_Current_3_Phase';
+
+/**
+ * @ignore
+ */
+export type ChargingParkLocationAPI = {
+    coordinate: LatitudeLongitudePointAPI;
+    street?: string;
+    houseNumber?: string;
+    city?: string;
+    region?: string;
+    postalCode?: string;
+    country?: string;
+};
+
+/**
+ * @ignore
+ */
+export type ChargingStopAPI = Omit<ChargingStopProps, 'targetChargeInPCT' | 'chargingConnectionInfo'> & {
+    chargingParkLocation: ChargingParkLocationAPI;
+    chargingConnectionInfo: {
+        chargingVoltageInV: number;
+        chargingCurrentInA: number;
+        chargingCurrentType: CurrentTypeAPI;
+        chargingPlugType: PlugType;
+        chargingPowerInkW: number;
+    };
+};
 
 // We focus on defining the (internal) API type reusing as much as possible from the SDK one.
 // This helps to track how the parsing logic "forwards" all the API parts which are the same in SDK.
@@ -90,21 +120,7 @@ export type SummaryAPI = Omit<
 > & {
     arrivalTime: string;
     departureTime: string;
-    chargingInformationAtEndOfLeg?: Omit<
-        BatteryCharging,
-        'targetChargeInPCT' | 'chargingConnectionInfo' | 'chargingParkLocation'
-    > & {
-        chargingParkLocation: Omit<ChargingParkLocation, 'coordinates'> & {
-            coordinate: LatitudeLongitudePointAPI;
-        };
-        chargingConnectionInfo: {
-            chargingVoltageInV: number;
-            chargingCurrentInA: number;
-            chargingCurrentType: CurrentTypeAPI;
-            chargingPlugType: PlugType;
-            chargingPowerInkW: number;
-        };
-    };
+    chargingInformationAtEndOfLeg?: ChargingStopAPI;
 };
 
 /**

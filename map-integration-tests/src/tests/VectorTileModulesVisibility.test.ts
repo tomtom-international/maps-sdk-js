@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { HILLSHADE_SOURCE_ID } from 'map';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import { assertNumber, getNumVisibleLayersBySource, getNumVisiblePOILayers } from './util/TestUtils';
 

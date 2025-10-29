@@ -1,58 +1,45 @@
 import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import type { LayerSpecsWithOrder, ToBeAddedLayerSpecWithoutSource } from '../../shared';
-import { defaultRouteLayersConfig } from '../layers/defaultConfig';
-import type { RouteLayersConfig, RoutingLayersSpecs, RoutingModuleConfig } from '../types/routeModuleConfig';
+import type { ToBeAddedLayerSpecTemplate, ToBeAddedLayerSpecWithoutSource } from '../../shared';
+import { buildRoutingLayers } from '../layers/routingLayers';
+import type { RouteLayersConfig, RoutingModuleConfig } from '../types/routeModuleConfig';
+import type { RoutingLayersSpecs } from '../types/routingSourcesAndLayers';
 
 /**
  * @ignore
  */
-const mapLayerSpecs = (layerSpecs: LayerSpecsWithOrder = []): ToBeAddedLayerSpecWithoutSource[] =>
-    layerSpecs.map(({ layerSpec, id, beforeID }) => ({ ...layerSpec, id, beforeID }));
+const mapLayerSpecs = (
+    layerSpecs: Record<string, Partial<ToBeAddedLayerSpecTemplate>> = {},
+): ToBeAddedLayerSpecWithoutSource[] =>
+    // The key of the entry is the layer ID:
+    Object.entries(layerSpecs).map(([id, spec]) => ({ ...spec, id }) as ToBeAddedLayerSpecWithoutSource);
 
 /**
  * @ignore
  */
-export const createLayersSpecs = (config: RouteLayersConfig = {}): RoutingLayersSpecs => ({
-    mainLines: mapLayerSpecs(config.mainLines),
-    waypoints: mapLayerSpecs(config.waypoints),
-    ferries: mapLayerSpecs(config.sections?.ferry),
-    evChargingStations: mapLayerSpecs(config.sections?.evChargingStations),
-    incidents: mapLayerSpecs(config.sections?.incident),
-    tollRoads: mapLayerSpecs(config.sections?.tollRoad),
-    tunnels: mapLayerSpecs(config.sections?.tunnel),
-    vehicleRestricted: mapLayerSpecs(config.sections?.vehicleRestricted),
-    instructionLines: mapLayerSpecs(config.instructionLines),
-    instructionArrows: mapLayerSpecs(config.instructionArrows),
-    summaryBubbles: mapLayerSpecs(config.summaryBubbles),
+export const createLayersSpecs = (layerConfigs: RouteLayersConfig = {}): RoutingLayersSpecs => ({
+    mainLines: mapLayerSpecs(layerConfigs.mainLines),
+    waypoints: mapLayerSpecs(layerConfigs.waypoints),
+    chargingStops: mapLayerSpecs(layerConfigs?.chargingStops),
+    ferries: mapLayerSpecs(layerConfigs.sections?.ferry),
+    incidents: mapLayerSpecs(layerConfigs.sections?.incident),
+    tollRoads: mapLayerSpecs(layerConfigs.sections?.tollRoad),
+    tunnels: mapLayerSpecs(layerConfigs.sections?.tunnel),
+    vehicleRestricted: mapLayerSpecs(layerConfigs.sections?.vehicleRestricted),
+    instructionLines: mapLayerSpecs(layerConfigs.instructionLines),
+    instructionArrows: mapLayerSpecs(layerConfigs.instructionArrows),
+    summaryBubbles: mapLayerSpecs(layerConfigs.summaryBubbles),
 });
 
 /**
  * @ignore
  */
-export const withDefaults = (config: RoutingModuleConfig | undefined): RoutingModuleConfig => {
-    const layers = config?.layers;
-    const sections = layers?.sections;
-    const defaultSections = defaultRouteLayersConfig.sections;
+export const routeModuleConfigWithDefaults = (config: RoutingModuleConfig | undefined): RoutingModuleConfig => {
     const globalDisplayUnits = TomTomConfig.instance.get().displayUnits;
     const displayUnits = config?.displayUnits;
     return {
-        ...(config ? config : {}),
-        // Global display units are first applied, and can then be overridden by the local configuration:
-        ...((globalDisplayUnits || displayUnits) && { ...globalDisplayUnits, ...displayUnits }),
-        layers: {
-            mainLines: layers?.mainLines ?? defaultRouteLayersConfig.mainLines,
-            waypoints: layers?.waypoints ?? defaultRouteLayersConfig.waypoints,
-            sections: {
-                ferry: sections?.ferry ?? defaultSections?.ferry,
-                evChargingStations: sections?.evChargingStations ?? defaultSections?.evChargingStations,
-                incident: sections?.incident ?? defaultSections?.incident,
-                tollRoad: sections?.tollRoad ?? defaultSections?.tollRoad,
-                tunnel: sections?.tunnel ?? defaultSections?.tunnel,
-                vehicleRestricted: sections?.vehicleRestricted ?? defaultSections?.vehicleRestricted,
-            },
-            instructionLines: layers?.instructionLines ?? defaultRouteLayersConfig.instructionLines,
-            instructionArrows: layers?.instructionArrows ?? defaultRouteLayersConfig.instructionArrows,
-            summaryBubbles: layers?.summaryBubbles ?? defaultRouteLayersConfig.summaryBubbles,
-        },
+        // First apply the provided configuration not to lose any properties:
+        ...config,
+        ...(displayUnits ? {} : { displayUnits: globalDisplayUnits }),
+        layers: buildRoutingLayers(config),
     };
 };

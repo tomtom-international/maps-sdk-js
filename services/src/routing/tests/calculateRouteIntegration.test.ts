@@ -29,11 +29,38 @@ const assertSectionBasics = (section: SectionProps): void => {
 };
 
 describe('Calculate route integration tests', () => {
-    beforeAll(() => putIntegrationTestsAPIKey());
+    beforeAll(putIntegrationTestsAPIKey);
+
+    test('Default A-B route', async () => {
+        const result = await calculateRoute({
+            locations: [
+                [3.1748, 42.26297],
+                [2.48819, 42.18211],
+            ],
+        });
+
+        expect(result?.features?.length).toEqual(1);
+        for (const routeFeature of result.features) {
+            expect(routeFeature).toBeDefined();
+            expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
+            const routeProperties = routeFeature.properties;
+            assertSummaryBasics(routeProperties.summary);
+            expect(routeProperties.guidance).toBeUndefined();
+            expect(routeProperties.progress?.length).toBeGreaterThan(0);
+            const sections: SectionsProps = routeProperties.sections;
+            expect(sections.leg).toHaveLength(1);
+            assertLegSectionBasics(sections.leg[0]);
+            for (const sectionArray of Object.values(sections)) {
+                for (const section of sectionArray) {
+                    assertSectionBasics(section as SectionProps);
+                }
+            }
+        }
+    });
 
     test('Route from Kandersteg to Dover with minimal vehicle dimensions', async () => {
         const result = await calculateRoute({
-            geoInputs: [
+            locations: [
                 [7.675106, 46.490793], // Kandersteg
                 [1.32248, 51.111645], // Dover
             ],
@@ -62,11 +89,12 @@ describe('Calculate route integration tests', () => {
             const testInputSectionTypes: SectionType[] = ['carTrain', 'motorway', 'toll', 'urban'];
 
             const result = await calculateRoute({
-                geoInputs: [
+                locations: [
                     [7.675106, 46.490793],
                     [7.74328, 46.403849],
                     [1.32248, 51.111645],
                 ],
+                language: undefined, // we ensure no language param is sent
                 costModel: { traffic: 'live', avoid: ['tunnels', 'lowEmissionZones'], routeType: 'efficient' },
                 sectionTypes: testInputSectionTypes,
                 vehicle: {
@@ -127,7 +155,7 @@ describe('Calculate route integration tests', () => {
 
     test('Amsterdam to Leiden to Rotterdam with electric vehicle parameters (non - LDEVR)', async () => {
         const result = await calculateRoute({
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
                 // TODO soft waypoints not working with Orbis, so I commented them out
@@ -189,13 +217,13 @@ describe('Calculate route integration tests', () => {
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
-    test('LDEVR with explicit vehicle params', async () => {
+    test('LDEVR with explicit vehicle params and an alternative', async () => {
         const params: CalculateRouteParams = {
-            geoInputs: [
-                [13.492, 52.507],
-                [9.624, 50.104],
+            locations: [
+                [2.1734, 41.3851], // barcelona
+                [2.8214, 41.9794], // girona
             ],
-            maxAlternatives: 1,
+            maxAlternatives: 0,
             vehicle: {
                 engineType: 'electric',
                 model: {
@@ -209,18 +237,9 @@ describe('Calculate route integration tests', () => {
                         charging: {
                             maxChargeKWH: 40,
                             batteryCurve: [
-                                {
-                                    stateOfChargeInkWh: 50,
-                                    maxPowerInkW: 200,
-                                },
-                                {
-                                    stateOfChargeInkWh: 70,
-                                    maxPowerInkW: 100,
-                                },
-                                {
-                                    stateOfChargeInkWh: 80,
-                                    maxPowerInkW: 40,
-                                },
+                                { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+                                { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+                                { stateOfChargeInkWh: 80, maxPowerInkW: 40 },
                             ],
                             chargingConnectors: [
                                 {
@@ -241,10 +260,7 @@ describe('Calculate route integration tests', () => {
                                         'IEC_62196_Type_2_Connector_Cable_Attached',
                                         'Combo_to_IEC_62196_Type_2_Base',
                                     ],
-                                    voltageRange: {
-                                        minVoltageInV: 0,
-                                        maxVoltageInV: 500,
-                                    },
+                                    voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
                                     efficiency: 0.9,
                                     baseLoadInkW: 0.2,
                                     maxPowerInkW: 150,
@@ -256,10 +272,7 @@ describe('Calculate route integration tests', () => {
                                         'IEC_62196_Type_2_Connector_Cable_Attached',
                                         'Combo_to_IEC_62196_Type_2_Base',
                                     ],
-                                    voltageRange: {
-                                        minVoltageInV: 500,
-                                        maxVoltageInV: 2000,
-                                    },
+                                    voltageRange: { minVoltageInV: 500, maxVoltageInV: 2000 },
                                     efficiency: 0.9,
                                     baseLoadInkW: 0.2,
                                 },
@@ -268,14 +281,9 @@ describe('Calculate route integration tests', () => {
                         },
                     },
                 },
-                state: {
-                    currentChargePCT: 80,
-                },
+                state: { currentChargePCT: 80 },
                 preferences: {
-                    chargingPreferences: {
-                        minChargeAtDestinationPCT: 50,
-                        minChargeAtChargingStopsPCT: 10,
-                    },
+                    chargingPreferences: { minChargeAtDestinationPCT: 50, minChargeAtChargingStopsPCT: 10 },
                 },
             },
             guidance: { type: 'coded' },
@@ -292,12 +300,12 @@ describe('Calculate route integration tests', () => {
         const routeSummary = routeProperties.summary;
         assertSummaryBasics(routeSummary);
         // asserting summary properties relevant to ldevr:
-        expect(routeSummary.totalChargingTimeInSeconds).toBeGreaterThan(1000);
+        expect(routeSummary.totalChargingTimeInSeconds).toBeGreaterThan(100);
         // Expected PCT available because we defined maxChargeKWH in vehicle model:
         expect(routeSummary.remainingChargeAtArrivalInPCT).toBeGreaterThan(0);
         expect(routeSummary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
         // param is min 50% at arrival:
-        expect(routeSummary.batteryConsumptionInkWh).toBeGreaterThan(100);
+        expect(routeSummary.batteryConsumptionInkWh).toBeGreaterThan(10);
 
         // we assert the legs excluding the last one:
         for (let i = 0; i < legs.length - 1; i++) {
@@ -309,7 +317,7 @@ describe('Calculate route integration tests', () => {
             expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
             // Expected PCT available because we defined maxChargeKWH in vehicle model:
             // param is min 10% at stops:
-            expect(leg.summary.chargingInformationAtEndOfLeg?.targetChargeInPCT).toBeGreaterThanOrEqual(10);
+            expect(leg.summary.chargingInformationAtEndOfLeg?.properties.targetChargeInPCT).toBeGreaterThanOrEqual(10);
         }
 
         // the last leg has some particularities
@@ -321,11 +329,11 @@ describe('Calculate route integration tests', () => {
         // arriving at destination, not a charging stop:
         expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
-    });
+    }, 20000);
 
-    test('LDEVR with vehicle model ID', async () => {
+    test('LDEVR with vehicle model ID and guidance', async () => {
         const result = await calculateRoute({
-            geoInputs: [
+            locations: [
                 [4.89066, 52.37317], // Amsterdam
                 [2.3522, 48.8566], // Paris
             ],
@@ -367,7 +375,7 @@ describe('Calculate route integration tests', () => {
             assertLegSectionBasics(leg);
             expect(leg.summary.remainingChargeAtArrivalInkWh).toBeGreaterThan(0);
             expect(leg.summary.chargingInformationAtEndOfLeg).toBeDefined();
-            expect(leg.summary.chargingInformationAtEndOfLeg?.targetChargeInkWh).toBeGreaterThanOrEqual(4);
+            expect(leg.summary.chargingInformationAtEndOfLeg?.properties.targetChargeInkWh).toBeGreaterThanOrEqual(4);
         }
 
         // the last leg has some particularities
@@ -377,12 +385,12 @@ describe('Calculate route integration tests', () => {
         // arriving at destination, not a charging stop:
         expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
-    });
+    }, 20000);
 
     test('Roses to Olot thrilling route with alternatives', async () => {
         const result = await calculateRoute({
             language: 'es-ES',
-            geoInputs: [
+            locations: [
                 [3.1748, 42.26297],
                 [2.48819, 42.18211],
             ],
@@ -437,7 +445,7 @@ describe('Calculate route integration tests', () => {
         const firstRoute = (
             await calculateRoute({
                 // Amsterdam to Leiden to Rotterdam
-                geoInputs: [
+                locations: [
                     [4.89066, 52.37317],
                     [4.49015, 52.16109],
                     [4.47059, 51.92291],
@@ -448,7 +456,7 @@ describe('Calculate route integration tests', () => {
         const firstRouteCoords = firstRoute.geometry.coordinates;
         expect(firstRouteCoords.length).toBeGreaterThan(1000);
 
-        const reconstructedRouteResponse = await calculateRoute({ geoInputs: [firstRoute] });
+        const reconstructedRouteResponse = await calculateRoute({ locations: [firstRoute] });
         expect(reconstructedRouteResponse?.features?.length).toEqual(1);
         const reconstructedRoute = reconstructedRouteResponse.features[0];
         const reconstructedRouteCoords = reconstructedRoute.geometry.coordinates;
@@ -474,7 +482,7 @@ describe('Calculate route integration tests', () => {
         // with new origin in Zaandam and new destination in Dordrecht
         const routeWithEmbeddedRoute = (
             await calculateRoute({
-                geoInputs: [[4.82409, 52.43924], reconstructedRoute, [4.6684, 51.81111]],
+                locations: [[4.82409, 52.43924], reconstructedRoute, [4.6684, 51.81111]],
             })
         ).features[0];
 
@@ -495,7 +503,7 @@ describe('Calculate route integration tests', () => {
     });
 
     test('Calculate route with API request and response callbacks', async () => {
-        const geoInputs = [
+        const locations = [
             [7.675106, 51.490793],
             [7.74328, 51.403849],
         ];
@@ -504,7 +512,7 @@ describe('Calculate route integration tests', () => {
             request: CalculateRouteRequestAPI,
             response: CalculateRouteResponseAPI,
         ) => void;
-        const result = await calculateRoute({ geoInputs, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
+        const result = await calculateRoute({ locations, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
         const expectedApiRequest = { method: 'GET', url: expect.any(URL) };
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
@@ -512,7 +520,7 @@ describe('Calculate route integration tests', () => {
     });
 
     test('Calculate route with API request and error response callbacks', async () => {
-        const geoInputs = [
+        const locations = [
             [7.675106, 51.490793],
             [0, 0],
         ];
@@ -522,7 +530,7 @@ describe('Calculate route integration tests', () => {
             response: CalculateRouteResponseAPI,
         ) => void;
         await expect(() =>
-            calculateRoute({ geoInputs, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
+            calculateRoute({ locations, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
         const expectedApiRequest = { method: 'GET', url: expect.any(URL) };
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);

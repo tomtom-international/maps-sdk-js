@@ -7,6 +7,9 @@ import type { CalculateMatrixRoutePOSTDataAPI } from './types/apiRequestTypes';
 import type { CalculateMatrixRouteResponseAPI } from './types/apiResponseTypes';
 import type { CalculateMatrixRouteParams } from './types/calculateMatrixRouteParams';
 
+/**
+ * @ignore
+ */
 export type CalculateMatrixRouteTemplate = ServiceTemplate<
     CalculateMatrixRouteParams,
     FetchInput<CalculateMatrixRoutePOSTDataAPI>,
@@ -14,6 +17,9 @@ export type CalculateMatrixRouteTemplate = ServiceTemplate<
     CalculateMatrixRouteResponseAPI
 >;
 
+/**
+ * @ignore
+ */
 export const calculateMatrixRouteTemplate: CalculateMatrixRouteTemplate = {
     requestValidation: matrixRouteValidationConfig,
     buildRequest: buildCalculateMatrixRouteRequest,

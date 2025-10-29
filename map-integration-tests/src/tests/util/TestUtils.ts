@@ -18,8 +18,8 @@ import type {
     WaypointDisplayProps,
 } from 'map';
 import { poiLayerIDs } from 'map';
-import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
-import type { MapsSDKThis } from '../types/MapsSDKThis';
+import { LayerSpecification, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import { MapsSDKThis } from '../types/MapsSDKThis';
 
 export const tryBeforeTimeout = async <T>(func: () => Promise<T>, errorMsg: string, timeoutMs: number): Promise<T> =>
     Promise.race<T>([func(), new Promise((_, reject) => setTimeout(() => reject(new Error(errorMsg)), timeoutMs))]);
@@ -88,7 +88,10 @@ export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<La
 export const getPaintProperty = async (page: Page, layerId: string, propertyName: string) =>
     page.evaluate(
         ({ layerID, propertyName }) => (globalThis as MapsSDKThis).mapLibreMap.getPaintProperty(layerID, propertyName),
-        { layerID: layerId, propertyName },
+        {
+            layerID: layerId,
+            propertyName,
+        },
     );
 
 export const getNumVisibleLayersBySource = async (page: Page, sourceId: string): Promise<number> =>
@@ -163,7 +166,7 @@ export const getLayerByID = async (page: Page, layerId: string): Promise<LayerSp
     page.evaluate((symbolLayerId) => {
         return (globalThis as MapsSDKThis).mapLibreMap
             .getStyle()
-            .layers.filter((layer) => layer.id === symbolLayerId)[0];
+            .layers.find((layer) => layer.id === symbolLayerId) as LayerSpecification;
     }, layerId);
 
 export const isLayerVisible = async (page: Page, layerId: string): Promise<boolean> =>
@@ -199,10 +202,15 @@ export const showPlaces = async (page: Page, places: Place | Place[] | Places) =
 export const clearPlaces = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
 
 export const initGeometries = async (page: Page, config?: GeometriesModuleConfig) =>
-    page.evaluate(async (inputConfig) => {
-        const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.geometries = await mapsSdkThis.MapsSDK.GeometriesModule.get(mapsSdkThis.tomtomMap, inputConfig);
-    }, config);
+    page.evaluate(
+        // @ts-ignore
+        async (inputConfig) =>
+            ((globalThis as MapsSDKThis).geometries = await (globalThis as MapsSDKThis).MapsSDK.GeometriesModule.get(
+                (globalThis as MapsSDKThis).tomtomMap,
+                inputConfig,
+            )),
+        config,
+    );
 
 export const showGeometry = async (page: Page, geometry: PolygonFeatures) =>
     page.evaluate(
@@ -260,7 +268,7 @@ export const putGlobalConfig = async (page: Page, config: Partial<GlobalConfig>)
     }, config);
 
 export const initRouting = async (page: Page, config?: RoutingModuleConfig) =>
-    page.evaluate(async (inputConfig?: RoutingModuleConfig) => {
+    page.evaluate(async (inputConfig) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
         mapsSdkThis.routing = await mapsSdkThis.MapsSDK.RoutingModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
@@ -340,6 +348,12 @@ export const getHoveredTopFeature = async <T>(page: Page): Promise<T> =>
 
 export const getClickedTopFeature = async <T = MapGeoJSONFeature>(page: Page): Promise<T> =>
     page.evaluate(() => (globalThis as MapsSDKThis)._clickedTopFeature as T);
+
+export const moveAndZoomTo = async (page: Page, viewport: { center: LngLatLike; zoom: number }) =>
+    page.evaluateHandle(
+        ({ center, zoom }) => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.jumpTo({ center, zoom }),
+        viewport,
+    );
 
 export const zoomTo = async (page: Page, zoom: number) =>
     page.evaluateHandle((zoom) => (globalThis as MapsSDKThis).tomtomMap.mapLibreMap.zoomTo(zoom), zoom);

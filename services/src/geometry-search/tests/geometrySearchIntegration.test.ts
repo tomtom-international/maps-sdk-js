@@ -84,7 +84,7 @@ describe('Geometry Search service', () => {
         const res = await search({
             query,
             geometries,
-            poiCategories: ['ITALIAN_RESTAURANT'],
+            poiCategories: ['RESTAURANT'],
             language,
         });
 
@@ -93,7 +93,7 @@ describe('Geometry Search service', () => {
                 expect.objectContaining({
                     properties: expect.objectContaining({
                         poi: expect.objectContaining({
-                            categoryIds: expect.arrayContaining([poiCategoriesToID['ITALIAN_RESTAURANT']]),
+                            categoryIds: expect.arrayContaining([poiCategoriesToID['RESTAURANT']]),
                             classifications: expect.arrayContaining([expect.objectContaining({ code: 'RESTAURANT' })]),
                         }),
                     }),

@@ -7,6 +7,7 @@ import type { AutocompleteSearchParams, AutocompleteSearchResponse, Autocomplete
 
 /**
  * Autocomplete service template type.
+ * @ignore
  */
 export type AutocompleteSearchTemplate = ServiceTemplate<
     AutocompleteSearchParams,
@@ -17,6 +18,7 @@ export type AutocompleteSearchTemplate = ServiceTemplate<
 
 /**
  * Autocomplete service template main implementation.
+ * @ignore
  */
 export const autocompleteSearchTemplate: AutocompleteSearchTemplate = {
     requestValidation: { schema: autocompleteSearchRequestSchema },

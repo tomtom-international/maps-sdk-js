@@ -7,7 +7,7 @@ import { mapStyleLayerIDs } from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
 import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
 import netherlandsGeometryData from './data/GeometriesModule-Netherlands.test.data.json';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getGeometriesSourceAndLayerIDs,

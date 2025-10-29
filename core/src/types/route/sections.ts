@@ -91,6 +91,33 @@ export type CountrySectionProps = SectionProps & {
 };
 
 /**
+ * Sections with important stretches of road information.
+ *
+ * * It provides a set of street names and/or a set of road numbers that allow the driver to identify and distinguish the course of the route (from other potential routes).
+ *
+ * @group Route
+ */
+export type ImportantRoadStretchProps = SectionProps & {
+    /**
+     * The integer value of importance. The index starts from 0, and a lower value means higher importance. The index is needed for two reasons:
+     * * To understand which stretch is the most important (for example, if it is necessary to display a smaller number of stretches).
+     * * To group different sections that belong to the same stretch (since there may be gaps in one stretch for various reasons).
+     */
+    index: number;
+    /**
+     * The street name of the important road stretch.
+     */
+    streetName?: string;
+    /**
+     * A set of road numbers that identify the important road stretch.
+     *
+     * @remarks
+     * The road numbers are sorted in descending order of display priority.
+     */
+    roadNumbers?: string[];
+};
+
+/**
  * Simple category classification for traffic incidents.
  *
  * @remarks
@@ -410,6 +437,7 @@ export type SectionsProps = {
     lanes?: LaneSectionProps[];
     roadShields?: RoadShieldSectionProps[];
     speedLimit?: SpeedLimitSectionProps[];
+    importantRoadStretch?: ImportantRoadStretchProps[];
 };
 
 /**
@@ -438,6 +466,7 @@ export const inputSectionTypes: SectionType[] = [
     'lowEmissionZone',
     'speedLimit',
     'roadShields',
+    'importantRoadStretch',
 ] as const;
 
 /**

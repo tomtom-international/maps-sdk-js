@@ -1,7 +1,7 @@
 import type { Place } from '@cet/maps-sdk-js/core';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../../pois/poiCategoryMapping';
-import type { MapFont } from '../../shared';
+import type { CustomImage, MapFont } from '../../shared';
 
 /**
  * Icon style options for displaying places on the map.
@@ -29,68 +29,6 @@ import type { MapFont } from '../../shared';
 export type IconStyle = 'pin' | 'circle' | 'poi-like';
 
 /**
- * Custom icon configuration for a specific place category.
- *
- * Allows you to provide custom marker images for different POI categories,
- * replacing the default icons with your own branding or design.
- *
- * @remarks
- * Icon images can be URLs or data URIs. They will be loaded and added to the
- * map style sprite for rendering.
- *
- * @example
- * ```typescript
- * const customIcon: CustomIcon = {
- *   category: 'RESTAURANT',
- *   iconUrl: '/icons/restaurant-marker.png',
- *   pixelRatio: 2  // For high-DPI screens
- * };
- * ```
- *
- * @group Places
- */
-export type CustomIcon = {
-    /**
-     * POI category this icon applies to.
-     *
-     * Must match a valid MapStylePOICategory value (e.g., 'RESTAURANT', 'HOTEL_MOTEL').
-     */
-    category: MapStylePOICategory;
-
-    /**
-     * URL or data URI of the icon image.
-     *
-     * @example
-     * ```typescript
-     * // URL
-     * iconUrl: 'https://example.com/marker.png'
-     *
-     * // Data URI
-     * iconUrl: 'data:image/png;base64,iVBORw0KG...'
-     *
-     * // Relative path
-     * iconUrl: '/assets/icons/marker.png'
-     * ```
-     */
-    iconUrl: string;
-
-    /**
-     * The pixel ratio of the icon image.
-     *
-     * Use `2` for high-DPI (Retina) displays, `1` for standard displays.
-     * Higher values result in sharper icons on high-resolution screens.
-     *
-     * @default 2
-     *
-     * @example
-     * ```typescript
-     * pixelRatio: 2  // For @2x resolution images
-     * ```
-     */
-    pixelRatio?: number;
-};
-
-/**
  * Configuration for place marker icons.
  *
  * Controls the visual appearance of place markers including style and custom icons.
@@ -106,8 +44,8 @@ export type CustomIcon = {
  * const iconConfig: PlaceIconConfig = {
  *   iconStyle: 'poi-like',
  *   customIcons: [
- *     { category: 'RESTAURANT', iconUrl: '/icons/food.png', pixelRatio: 2 },
- *     { category: 'HOTEL_MOTEL', iconUrl: '/icons/hotel.png', pixelRatio: 2 }
+ *     { category: 'RESTAURANT', image: '/icons/food.png', pixelRatio: 2 },
+ *     { category: 'HOTEL_MOTEL', image: '/icons/hotel.png', pixelRatio: 2 }
  *   ]
  * };
  * ```
@@ -128,7 +66,7 @@ export type PlaceIconConfig = {
      * When provided, places matching these categories will use the custom icons
      * instead of the default style.
      */
-    customIcons?: CustomIcon[];
+    customIcons?: CustomImage<MapStylePOICategory>[];
 };
 
 /**
@@ -178,6 +116,8 @@ export type PlaceTextConfig = {
      * // Conditional expression
      * textField: ['case', ['has', 'name'], ['get', 'name'], ['get', 'address']]
      * ```
+     *
+     * @see https://maplibre.org/maplibre-style-spec/types/#formatted
      */
     textField?: ((place: Place) => string) | DataDrivenPropertyValueSpecification<string>;
 
@@ -285,7 +225,7 @@ export type PlaceTextConfig = {
  *   iconConfig: {
  *     iconStyle: 'poi-like',
  *     customIcons: [
- *       { category: 'RESTAURANT', iconUrl: '/icons/restaurant.png' }
+ *       { category: 'RESTAURANT', image: '/icons/restaurant.png' }
  *     ]
  *   },
  *   textConfig: {

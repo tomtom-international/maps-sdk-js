@@ -19,12 +19,12 @@
   "dependencies": {
     "@cet/maps-sdk-js": "workspace:*",
     "@turf/turf": "^7.2.0",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "catalog:",
     "maplibre-gl": "catalog:"
   },
   "devDependencies": {
     "@types/geojson": "catalog:",
-    "@types/lodash-es": "^4.17.12",
+    "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",

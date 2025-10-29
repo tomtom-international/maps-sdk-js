@@ -8,6 +8,8 @@ import type { ReverseGeocodingResponseAPI } from './apiTypes';
  *
  * @remarks
  * Use these values to restrict reverse geocoding results to specific road types.
+ *
+ * @group Reverse Geocoding
  */
 export type RoadUse = 'LimitedAccess' | 'Arterial' | 'Terminal' | 'Ramp' | 'Rotary' | 'LocalStreet';
 
@@ -16,6 +18,8 @@ export type RoadUse = 'LimitedAccess' | 'Arterial' | 'Terminal' | 'Ramp' | 'Rota
  *
  * @remarks
  * These parameters must be provided for any reverse geocoding service call.
+ *
+ * @group Reverse Geocoding
  */
 export type ReverseGeocodingMandatoryParams = {
     /**
@@ -34,6 +38,8 @@ export type ReverseGeocodingMandatoryParams = {
  * @remarks
  * These parameters allow fine-tuning of the reverse geocoding behavior,
  * including filtering, formatting, and additional data retrieval.
+ *
+ * @group Reverse Geocoding
  */
 export type ReverseGeocodingOptionalParams = {
     /**
@@ -203,6 +209,8 @@ export type ReverseGeocodingOptionalParams = {
  * @remarks
  * Combines common service parameters with reverse geocoding-specific
  * mandatory and optional parameters.
+ *
+ * @group Reverse Geocoding
  */
 export type ReverseGeocodingParams = CommonServiceParams<URL, ReverseGeocodingResponseAPI> &
     ReverseGeocodingMandatoryParams &

@@ -6,7 +6,7 @@ import { calculateReachableRange, calculateReachableRanges } from '../calculateR
 import type { ReachableRangeParams } from '../types/reachableRangeParams';
 
 describe.skip('Reachable Range integration tests', () => {
-    beforeAll(() => putIntegrationTestsAPIKey());
+    beforeAll(putIntegrationTestsAPIKey);
 
     const origin = [4.87554, 52.38121];
 

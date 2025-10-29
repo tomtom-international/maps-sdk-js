@@ -10,6 +10,7 @@ import type { ChargingStationsAvailabilityParams } from './types/evChargingStati
 
 /**
  * EV Charging Stations Availability service template type.
+ * @ignore
  */
 export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
     ChargingStationsAvailabilityParams,
@@ -20,6 +21,7 @@ export type EVChargingStationsAvailabilityTemplate = ServiceTemplate<
 
 /**
  * EV Charging Stations Availability service template main implementation.
+ * @ignore
  */
 export const evChargingStationsAvailabilityTemplate: EVChargingStationsAvailabilityTemplate = {
     requestValidation: { schema: evChargingStationsAvailabilityRequestSchema },

@@ -20,7 +20,6 @@ export default defineConfig({
             ],
             include: ['src/**/*'],
             provider: 'v8',
-            enabled: true,
             reportOnFailure: true,
             reporter: ['text', 'lcov', 'html'],
             reportsDirectory: './coverage',

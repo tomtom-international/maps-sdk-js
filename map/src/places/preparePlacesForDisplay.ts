@@ -59,9 +59,9 @@ export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {},
 
     // First we try to match any custom icon:
     const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOICategory;
-    const matchingCustomIcon = customIcons?.find((customIcon) => customIcon.category === classificationCode);
+    const matchingCustomIcon = customIcons?.find((customIcon) => customIcon.id === classificationCode);
     if (matchingCustomIcon) {
-        return matchingCustomIcon.category;
+        return matchingCustomIcon.id;
     }
     // Else: if no custom icon matched, we map to the map style icons:
 

@@ -9,11 +9,13 @@ import type { GeocodingResponse } from './types/geocodingResponse';
 
 /**
  * Geocoding service template type.
+ * @ignore
  */
 export type GeocodingTemplate = ServiceTemplate<GeocodingParams, URL, GeocodingResponseAPI, GeocodingResponse>;
 
 /**
  * Geocoding service template main implementation.
+ * @ignore
  */
 export const geocodingTemplate: GeocodingTemplate = {
     requestValidation: { schema: geocodingRequestSchema },

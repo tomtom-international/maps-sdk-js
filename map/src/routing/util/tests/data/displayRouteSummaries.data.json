@@ -12,7 +12,7 @@
           },
           "properties": {
             "index": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "summary": {
               "travelTimeInSeconds": 300,
               "lengthInMeters": 1000
@@ -34,7 +34,7 @@
           },
           "properties": {
             "routeIndex": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "formattedDistance": "1 km",
             "formattedDuration": "5 min"
           }
@@ -55,7 +55,7 @@
           },
           "properties": {
             "index": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "summary": {
               "travelTimeInSeconds": 300,
               "lengthInMeters": 1000,
@@ -85,7 +85,7 @@
           },
           "properties": {
             "routeIndex": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "formattedDistance": "½ mi",
             "formattedDuration": "5 min",
             "magnitudeOfDelay": "moderate",
@@ -108,7 +108,7 @@
           },
           "properties": {
             "index": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "summary": {
               "travelTimeInSeconds": 300,
               "lengthInMeters": 1000,
@@ -142,7 +142,7 @@
           },
           "properties": {
             "routeIndex": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "formattedDistance": "½ mi",
             "formattedDuration": "5 MINUTES",
             "magnitudeOfDelay": "major",
@@ -165,7 +165,7 @@
           },
           "properties": {
             "index": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "summary": {
               "travelTimeInSeconds": 400,
               "lengthInMeters": 2500
@@ -181,7 +181,7 @@
           },
           "properties": {
             "index": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "summary": {
               "travelTimeInSeconds": 300,
               "lengthInMeters": 1000,
@@ -218,7 +218,7 @@
           },
           "properties": {
             "routeIndex": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "formattedDistance": "2.5 kilometros",
             "formattedDuration": "7 MIN"
           }
@@ -231,7 +231,7 @@
           },
           "properties": {
             "routeIndex": 0,
-            "routeStyle": "selected",
+            "routeState": "selected",
             "formattedDistance": "1 kilometros",
             "formattedDuration": "5 MIN",
             "magnitudeOfDelay": "minor",

@@ -4,9 +4,9 @@ import {
     DESELECTED_FOREGROUND_COLOR,
     DESELECTED_OUTLINE_COLOR,
     DESELECTED_ROUTE_FILTER,
-    FOREGROUND_COLOR,
-    FOREGROUND_LINE_WIDTH,
-    OUTLINE_COLOR,
+    ROUTE_LINE_FOREGROUND_COLOR,
+    ROUTE_LINE_FOREGROUND_WIDTH,
+    ROUTE_LINE_OUTLINE_COLOR,
     SELECTED_ROUTE_FILTER,
 } from './shared';
 
@@ -44,7 +44,7 @@ export const routeDeselectedLine: LayerSpecTemplate<LineLayerSpecification> = {
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
         'line-color': DESELECTED_FOREGROUND_COLOR,
-        'line-width': FOREGROUND_LINE_WIDTH,
+        'line-width': ROUTE_LINE_FOREGROUND_WIDTH,
     },
 };
 
@@ -55,7 +55,7 @@ export const routeOutline: LayerSpecTemplate<LineLayerSpecification> = {
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
-        'line-color': OUTLINE_COLOR,
+        'line-color': ROUTE_LINE_OUTLINE_COLOR,
         'line-width': outlineLineWidth,
     },
 };
@@ -63,14 +63,14 @@ export const routeOutline: LayerSpecTemplate<LineLayerSpecification> = {
 /**
  * @ignore
  */
-export const routeMainLine: LayerSpecTemplate<LineLayerSpecification> = {
+export const routeMainLine = (props?: { color?: string }): LayerSpecTemplate<LineLayerSpecification> => ({
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
-        'line-color': FOREGROUND_COLOR,
-        'line-width': FOREGROUND_LINE_WIDTH,
+        'line-color': props?.color ?? ROUTE_LINE_FOREGROUND_COLOR,
+        'line-width': ROUTE_LINE_FOREGROUND_WIDTH,
     },
-};
+});
 
 /**
  * @ignore
@@ -79,7 +79,7 @@ export const routeLineArrows: LayerSpecTemplate<SymbolLayerSpecification> = {
     type: 'symbol',
     layout: {
         'symbol-placement': 'line',
-        'icon-image': 'arrow',
+        'icon-image': 'roads-arrow-white',
         // The current arrow icon seems to point backwards otherwise. Check with caution!
         'icon-rotate': 180,
     },

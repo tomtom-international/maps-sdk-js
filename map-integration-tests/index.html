@@ -4,11 +4,12 @@
         <title>MAPS SDK JS - map integration tests</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <script type="module">
-            // This loads the SDK in the actual browser:
-            import * as MapsSDKCore from '@cet/maps-sdk-js/core';
-            import * as MapsSDK from '../map/dist/map.es.js';
-            globalThis.MapsSDKCore = MapsSDKCore;
-            globalThis.MapsSDK = MapsSDK;
+        // This loads the SDK in the actual browser:
+        import * as MapsSDKCore from '@cet/maps-sdk-js/core';
+        import * as MapsSDK from '../map/dist/map.es.js';
+
+        globalThis.MapsSDKCore = MapsSDKCore;
+        globalThis.MapsSDK = MapsSDK;
         </script>
     </head>
     <body>

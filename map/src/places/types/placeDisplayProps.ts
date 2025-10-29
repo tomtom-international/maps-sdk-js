@@ -30,7 +30,7 @@ import type { SupportsEvents } from '../../shared';
  *
  * @group Places
  */
-export type LocationDisplayProps = {
+export type PlaceDisplayProps = {
     /**
      * Unique identifier for the place feature.
      *
@@ -162,4 +162,4 @@ export type LocationDisplayProps = {
  *
  * @group Places
  */
-export type DisplayPlaceProps = CommonPlaceProps & LocationDisplayProps;
+export type DisplayPlaceProps = CommonPlaceProps & PlaceDisplayProps;

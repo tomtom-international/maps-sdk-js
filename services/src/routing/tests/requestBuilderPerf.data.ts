@@ -3,7 +3,7 @@ import type { CalculateRouteParams } from '../types/calculateRouteParams';
 export const routeRequestParams: CalculateRouteParams = {
     apiKey: 'APIKEY',
     commonBaseURL: 'https://api.tomtom.com',
-    geoInputs: [
+    locations: [
         [13.41144, 52.52343],
         [12.261188845147501, 52.30496106764048],
         [11.339420206492264, 52.314014331366934],
@@ -88,7 +88,7 @@ export const routeRequestParams: CalculateRouteParams = {
 export const shortRouteRequestParams: CalculateRouteParams = {
     apiKey: 'APIKEY',
     commonBaseURL: 'https://api.tomtom.com',
-    geoInputs: [
+    locations: [
         [4.76364, 52.31064],
         [4.31276, 52.00427],
         {
@@ -126,9 +126,8 @@ export const shortRouteRequestParams: CalculateRouteParams = {
         'carpool',
     ],
     travelMode: 'car',
-    // TODO not supported in Orbis
-    // when: {
-    //     option: "arriveBy",
-    //     date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400))
-    // }
+    when: {
+        option: 'arriveBy',
+        date: new Date(Date.UTC(2022, 8, 16, 15, 48, 15, 400)),
+    },
 };

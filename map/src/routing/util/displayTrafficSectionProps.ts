@@ -44,7 +44,7 @@ export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): strin
  */
 export const toDisplayTrafficSectionProps = (
     sectionProps: TrafficSectionProps,
-): Omit<DisplayTrafficSectionProps, 'routeStyle' | 'routeIndex'> => {
+): Omit<DisplayTrafficSectionProps, 'routeState' | 'routeIndex'> => {
     const title = formatDuration(sectionProps.delayInSeconds);
     const iconId = trafficSectionToIconID(sectionProps);
     return {

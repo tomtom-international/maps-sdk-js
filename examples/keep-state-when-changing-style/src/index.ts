@@ -8,7 +8,7 @@ import {
     TomTomMap,
     TrafficIncidentsModule,
 } from '@cet/maps-sdk-js/map';
-import { calculateRoute, search } from '@cet/maps-sdk-js/services';
+import { calculateRoute, SearchResponse, search } from '@cet/maps-sdk-js/services';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
@@ -16,14 +16,14 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'es-ES' });
 
-const geoInputs: Waypoint[] = (
+const locations: Waypoint[] = (
     await Promise.all([search({ query: 'Hyde Park Corner, London' }), search({ query: 'Leman Street, London' })])
-).map((result) => result.features[0]);
+).map((result: SearchResponse) => result.features[0]);
 
 const map = new TomTomMap(
     {
         container: 'maps-sdk-js-examples-map-container',
-        bounds: bboxFromGeoJSON(geoInputs) as LngLatBoundsLike,
+        bounds: bboxFromGeoJSON(locations) as LngLatBoundsLike,
         fitBoundsOptions: { padding: 100 },
     },
     { style: { type: 'standard', include: ['trafficIncidents'] } },
@@ -36,8 +36,8 @@ await TrafficIncidentsModule.get(map, {
     filters: { any: [{ magnitudes: { show: 'all_except', values: ['minor'] } }] },
 });
 const routingModule = await RoutingModule.get(map);
-routingModule.showWaypoints(geoInputs);
-routingModule.showRoutes(await calculateRoute({ geoInputs }));
+routingModule.showWaypoints(locations);
+routingModule.showRoutes(await calculateRoute({ locations }));
 
 const position = map.mapLibreMap.getCenter().toArray();
 (await PlacesModule.get(map)).show(await search({ query: 'London Eye', position, limit: 1 }));
@@ -46,7 +46,9 @@ const position = map.mapLibreMap.getCenter().toArray();
 );
 
 const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
-standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
+for (const id of standardStyleIDs) {
+    stylesSelector.add(new Option(id));
+}
 stylesSelector.addEventListener('change', (event) =>
     map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
 );

@@ -1,6 +1,6 @@
 import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
 import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
-import { calculateRoute, geocode } from '@cet/maps-sdk-js/services';
+import { calculateRoute, geocodeOne } from '@cet/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
@@ -8,10 +8,7 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const waypoints = (
-    await Promise.all([geocode({ query: 'London', limit: 1 }), geocode({ query: 'Paris', limit: 1 })])
-).map((result) => result.features[0]);
-
+const waypoints = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
 const bounds = bboxFromGeoJSON(waypoints) as LngLatBoundsLike;
 const fitBoundsOptions = { padding: 150 };
 
@@ -24,7 +21,7 @@ await TrafficIncidentsModule.get(map, { visible: false });
 const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(waypoints);
 const routes = await calculateRoute({
-    geoInputs: waypoints,
+    locations: waypoints,
     maxAlternatives: 2,
     guidance: { type: 'coded' },
 });

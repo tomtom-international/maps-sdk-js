@@ -21,7 +21,7 @@ describe('evChargingStationsAvailability integration tests', () => {
     const statusRegex = new RegExp(chargingPointStatus.join('|'));
     const accessibilityRegex = new RegExp(chargingStationAccessTypes.join('|'));
     const connectorTypeRegex = new RegExp(connectorTypes.join('|'));
-    beforeAll(() => putIntegrationTestsAPIKey());
+    beforeAll(putIntegrationTestsAPIKey);
 
     test('evChargingStationsAvailability', async () => {
         const chargingPointObj: ChargingPoint = expect.objectContaining({

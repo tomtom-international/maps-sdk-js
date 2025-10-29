@@ -14,7 +14,7 @@ const sanFranciscoRestaurant = [
 ];
 
 describe('Matrix Routing tests', () => {
-    beforeAll(() => putIntegrationTestsAPIKey());
+    beforeAll(putIntegrationTestsAPIKey);
 
     test('Calculate Matrix route should work', async () => {
         const response = await calculateMatrixRoute({

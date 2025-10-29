@@ -1,5 +1,4 @@
-import type { GeoInput, inputSectionTypes } from '@cet/maps-sdk-js/core';
-import type { GetPositionEntryPointOption } from 'core/src/types/lngLat';
+import type { GetPositionEntryPointOption, inputSectionTypes, RoutePlanningLocation } from '@cet/maps-sdk-js/core';
 import type { CommonRoutingParams, CommonServiceParams } from '../../shared';
 import type { CalculateRouteRequestAPI } from './apiRequestTypes';
 import type { CalculateRouteResponseAPI } from './apiResponseTypes';
@@ -184,7 +183,7 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  * // Basic route from A to B
  * const params: CalculateRouteParams = {
  *   key: 'your-api-key',
- *   geoInputs: [
+ *   locations: [
  *     [4.9041, 52.3676],  // Amsterdam
  *     [4.4777, 51.9244]   // Rotterdam
  *   ]
@@ -193,7 +192,7 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  * // Route with guidance and alternatives
  * const advancedParams: CalculateRouteParams = {
  *   key: 'your-api-key',
- *   geoInputs: [[4.9041, 52.3676], [4.4777, 51.9244]],
+ *   locations: [[4.9041, 52.3676], [4.4777, 51.9244]],
  *   guidance: { type: 'coded', phonetics: 'IPA' },
  *   maxAlternatives: 2,
  *   routeType: 'fastest',
@@ -204,7 +203,7 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  * // Electric vehicle route with charging
  * const evParams: CalculateRouteParams = {
  *   key: 'your-api-key',
- *   geoInputs: [[4.9, 52.3], [8.5, 50.1]],
+ *   locations: [[4.9, 52.3], [8.5, 50.1]],
  *   vehicleEngineType: 'electric',
  *   currentChargeInkWh: 50,
  *   maxChargeInkWh: 85,
@@ -237,13 +236,13 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * @example
          * ```typescript
          * // Simple waypoints
-         * geoInputs: [[4.9, 52.3], [4.5, 51.9]]
+         * locations: [[4.9, 52.3], [4.5, 51.9]]
          *
          * // With intermediate stop
-         * geoInputs: [[4.9, 52.3], [4.7, 52.1], [4.5, 51.9]]
+         * locations: [[4.9, 52.3], [4.7, 52.1], [4.5, 51.9]]
          *
          * // Circle waypoint (shapes route, no stop)
-         * geoInputs: [
+         * locations: [
          *   [4.9, 52.3],
          *   { type: 'Feature', geometry: { type: 'Point', coordinates: [4.7, 52.1] },
          *     properties: { radiusMeters: 5000 } },
@@ -251,7 +250,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * ]
          * ```
          */
-        geoInputs: GeoInput[];
+        locations: RoutePlanningLocation[];
 
         /**
          * Controls how entry points are used for routing.

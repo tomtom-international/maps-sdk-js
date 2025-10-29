@@ -22,7 +22,7 @@ type TrafficFlowSourcesWithLayers = {
 };
 
 /**
- * Traffic Flow Module for displaying real-time traffic flow information on the map.
+ * Traffic Flow Module for displaying and configuring real-time traffic flow information on the map.
  *
  * This module controls the vector tile traffic flow layers that visualize current
  * traffic speed conditions using color-coded road segments.

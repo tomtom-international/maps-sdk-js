@@ -7,11 +7,13 @@ import type { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from '.
 
 /**
  * Place By Is template type.
+ * @ignore
  */
 export type PlaceByIdTemplate = ServiceTemplate<PlaceByIdParams, URL, PlaceByIdResponseAPI, PlaceByIdResponse>;
 
 /**
  * Place By Id template main implementation.
+ * @ignore
  */
 export const placeByIdTemplate: PlaceByIdTemplate = {
     requestValidation: { schema: placeByIdRequestSchema },

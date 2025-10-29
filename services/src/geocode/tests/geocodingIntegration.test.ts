@@ -2,7 +2,7 @@ import type { Polygon } from 'geojson';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
-import geocode from '../geocoding';
+import { geocode } from '../geocoding';
 import type { GeocodingResponseAPI } from '../types/apiTypes';
 
 describe('Geocoding errors', () => {
@@ -16,7 +16,7 @@ describe('Geocoding errors', () => {
 });
 
 describe('Geocoding integration tests', () => {
-    beforeAll(() => putIntegrationTestsAPIKey());
+    beforeAll(putIntegrationTestsAPIKey);
 
     test('Geocoding with default params, expecting multiple results', async () => {
         const expectedResult = {

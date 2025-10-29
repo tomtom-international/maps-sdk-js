@@ -15,10 +15,10 @@ export default defineConfig({
     },
     plugins: [
         dts({
-            outDir: 'dist',
+            outDirs: 'dist',
             include: ['index.ts', 'src/**/*'],
             exclude: ['**/*.test.ts'],
-            rollupTypes: true,
+            bundleTypes: true,
         }),
         ...(process.env.CI
             ? []

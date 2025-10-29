@@ -9,11 +9,9 @@ import type { GeoJSONSourceWithLayers, StyleSourceWithLayers } from '../SourceWi
 export type LayerSpecWithSource = Exclude<LayerSpecification, BackgroundLayerSpecification>;
 
 /**
- * Layer to be added to the existing style, and may include extra config such as the ID of the layer to add it under.
- * * e.g. GeoJSON layers.
  * @ignore
  */
-export type ToBeAddedLayerSpec<L extends LayerSpecification = LayerSpecification> = L & {
+export type HasBeforeID = {
     /**
      * The ID of an existing layer to insert the new layer before,
      * resulting in the new layer appearing visually beneath the existing layer.
@@ -23,6 +21,33 @@ export type ToBeAddedLayerSpec<L extends LayerSpecification = LayerSpecification
      */
     beforeID?: string;
 };
+
+/**
+ * Layer to be added to the existing style, and may include extra config such as the ID of the layer to add it under.
+ * * e.g. GeoJSON layers.
+ * @ignore
+ */
+export type ToBeAddedLayerSpec<L extends LayerSpecification = LayerSpecification> = L & HasBeforeID;
+
+/**
+ * Layer specification with optional positioning for custom layer ordering.
+ *
+ * @typeParam L - The MapLibre layer specification type (defaults to any LayerSpecification)
+ *
+ * @remarks
+ * This type allows you to define layers with precise control over their
+ * rendering order in the map's layer stack. Each layer can optionally specify
+ * another layer to be positioned before/under from.
+ *
+ * **Layer Ordering:**
+ * - Layers are rendered in order from bottom to top
+ * - Use `beforeID` to insert a layer before (below) an existing layer. The provided ID will be above (so the current layer will be under 'beforeID').
+ * - Omit `beforeID` to place the layer on top of all existing layers
+ *
+ * @group Shared
+ */
+export type ToBeAddedLayerSpecTemplate<L extends LayerSpecification = LayerSpecification> = LayerSpecTemplate<L> &
+    HasBeforeID;
 
 /**
  * TomTom Maps SDK layer specifications do not come with the source ID initialized yet.
@@ -159,120 +184,3 @@ export type SourceWithLayerIDs = {
  * @group Shared
  */
 export type MapStyleLayerID = keyof typeof mapStyleLayerIDs;
-
-/**
- * Layer specifications with optional positioning for custom layer ordering.
- *
- * @typeParam L - The MapLibre layer specification type (defaults to any LayerSpecification)
- *
- * @remarks
- * This type allows you to define custom layers with precise control over their
- * rendering order in the map's layer stack. Each layer can optionally specify
- * another layer to be positioned above.
- *
- * **Layer Ordering:**
- * - Layers are rendered in order from bottom to top
- * - Use `beforeID` to insert a layer before (below) an existing layer
- * - Omit `beforeID` to place the layer on top of all existing layers
- *
- * **Use Cases:**
- * - Customizing route visualization layers
- * - Creating themed map overlays
- * - Building custom traffic or POI visualizations
- * - Layering multiple data visualizations with precise z-order control
- *
- * @example
- * ```typescript
- * // Define custom route layers with specific ordering
- * const customLayers: LayerSpecsWithOrder<LineLayerSpecification> = [
- *   {
- *     id: 'route-casing',
- *     layerSpec: {
- *       type: 'line',
- *       paint: {
- *         'line-color': '#000',
- *         'line-width': 10
- *       }
- *     },
- *     beforeID: 'lowestLabel' // Place below labels
- *   },
- *   {
- *     id: 'route-line',
- *     layerSpec: {
- *       type: 'line',
- *       paint: {
- *         'line-color': '#0080FF',
- *         'line-width': 6
- *       }
- *     },
- *     beforeID: 'lowestLabel' // Also below labels, but above casing
- *   }
- * ];
- *
- * // Custom symbol layers for waypoints
- * const waypointLayers: LayerSpecsWithOrder<SymbolLayerSpecification> = [
- *   {
- *     id: 'waypoint-icons',
- *     layerSpec: {
- *       type: 'symbol',
- *       layout: {
- *         'icon-image': 'waypoint-marker',
- *         'icon-size': 1.5
- *       }
- *     }
- *     // No beforeID - will be on top
- *   }
- * ];
- * ```
- *
- * @group Shared
- */
-export type LayerSpecsWithOrder<L extends LayerSpecification = LayerSpecification> = Array<{
-    /**
-     * Unique identifier for the layer.
-     *
-     * @remarks
-     * Must be unique across all layers in the map style. Used to reference
-     * the layer in MapLibre API calls.
-     */
-    id: string;
-
-    /**
-     * MapLibre layer specification template.
-     *
-     * @remarks
-     * Defines the visual properties and behavior of the layer. The `id` and `source`
-     * properties are omitted from the template as they are provided separately by
-     * the SDK.
-     *
-     * @see {@link LayerSpecTemplate}
-     */
-    layerSpec: LayerSpecTemplate<L>;
-
-    /**
-     * ID of an existing layer to position this layer before (below).
-     *
-     * @remarks
-     * **Positioning behavior:**
-     * - If specified: Layer is inserted before the referenced layer (appears below it)
-     * - If omitted: Layer is added on top of all existing layers
-     *
-     * **Tips:**
-     * - Use {@link MapStyleLayerID} constants for TomTom style layers
-     * - Use `'lowestLabel'` to place below all text labels
-     * - Use `'POI'` to place below POI icons
-     *
-     * @example
-     * ```typescript
-     * // Place below all labels
-     * beforeID: 'lowestLabel'
-     *
-     * // Place below POI layer
-     * beforeID: 'POI'
-     *
-     * // Place on top (omit beforeID)
-     * // beforeID: undefined
-     * ```
-     */
-    beforeID?: string;
-}>;

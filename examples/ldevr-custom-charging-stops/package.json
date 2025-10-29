@@ -1,0 +1,31 @@
+{
+  "name": "@examples/ldevr-custom-charging-stops",
+  "description": "LDEVR with custom charging stop icons and text",
+  "scripts": {
+    "build": "vite build",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite",
+    "type-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
+  },
+  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
+  "dependencies": {
+    "@cet/maps-sdk-js": "workspace:*",
+    "maplibre-gl": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

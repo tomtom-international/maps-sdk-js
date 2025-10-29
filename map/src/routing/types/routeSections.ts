@@ -16,7 +16,7 @@ import type { DisplayRouteRelatedProps } from './displayRoutes';
  * const sectionProps: DisplaySectionProps = {
  *   ...sectionData,
  *   routeIndex: 0,
- *   routeStyle: 'selected'
+ *   routeState: 'selected'
  * };
  * ```
  *
@@ -56,7 +56,7 @@ export type DisplaySectionProps = SectionProps & DisplayRouteRelatedProps;
  *   properties: {
  *     sectionType: 'ferry',
  *     routeIndex: 0,
- *     routeStyle: 'selected'
+ *     routeState: 'selected'
  *   }
  * };
  *
@@ -70,7 +70,7 @@ export type DisplaySectionProps = SectionProps & DisplayRouteRelatedProps;
  *   properties: {
  *     sectionType: 'tollRoad',
  *     routeIndex: 0,
- *     routeStyle: 'selected'
+ *     routeState: 'selected'
  *   }
  * };
  * ```
@@ -100,12 +100,12 @@ export type RouteSection<S extends DisplaySectionProps = DisplaySectionProps> = 
  *     {
  *       type: 'Feature',
  *       geometry: { type: 'LineString', coordinates: [[4.9, 52.3], [4.95, 52.35]] },
- *       properties: { sectionType: 'ferry', routeIndex: 0, routeStyle: 'selected' }
+ *       properties: { sectionType: 'ferry', routeIndex: 0, routeState: 'selected' }
  *     },
  *     {
  *       type: 'Feature',
  *       geometry: { type: 'LineString', coordinates: [[5.0, 52.4], [5.05, 52.45]] },
- *       properties: { sectionType: 'ferry', routeIndex: 1, routeStyle: 'deselected' }
+ *       properties: { sectionType: 'ferry', routeIndex: 1, routeState: 'deselected' }
  *     }
  *   ]
  * };
@@ -131,7 +131,7 @@ export type RouteSections<S extends DisplaySectionProps = DisplaySectionProps> =
  * const trafficSection: DisplayTrafficSectionProps = {
  *   sectionType: 'traffic',
  *   routeIndex: 0,
- *   routeStyle: 'selected',
+ *   routeState: 'selected',
  *   simpleCategory: 'jam',
  *   magnitudeOfDelay: 'moderate',
  *   iconID: 'traffic-jam-icon',

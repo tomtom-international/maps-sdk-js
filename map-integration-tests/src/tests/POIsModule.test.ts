@@ -4,7 +4,7 @@ import type { Point, Position } from 'geojson';
 import type { FilterablePOICategory, POIsModuleFeature } from 'map';
 import { getStyleCategories, poiLayerIDs } from 'map';
 import type { FilterSpecification, MapGeoJSONFeature } from 'maplibre-gl';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getNumVisiblePOILayers,

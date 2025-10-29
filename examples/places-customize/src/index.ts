@@ -3,6 +3,7 @@ import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import type { IconStyle, MapFont, PlaceIconConfig } from '@cet/maps-sdk-js/map';
 import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
 import { search } from '@cet/maps-sdk-js/services';
+import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import tomtomLogo from '../resources/tomtomLogo.png';
 import './style.css';
@@ -27,18 +28,12 @@ colorSelectors.forEach((element) => {
 
 const customIconsConfig: PlaceIconConfig = {
     customIcons: [
-        {
-            category: 'ELECTRIC_VEHICLE_STATION',
-            iconUrl: tomtomLogo,
-        },
-        {
-            category: 'CAFE_PUB',
-            iconUrl: 'https://dummyimage.com/30x20/4137ce/fff',
-        },
+        { id: 'ELECTRIC_VEHICLE_STATION', image: tomtomLogo },
+        { id: 'CAFE_PUB', image: 'https://dummyimage.com/30x20/4137ce/fff' },
     ],
 };
 
-const multiLineLabel: any = [
+const multiLineLabel: DataDrivenPropertyValueSpecification<string> = [
     'format',
     ['get', 'title'],
     { 'font-scale': 0.9 },
@@ -84,7 +79,7 @@ const listenToUIEvents = () => {
         }),
     );
 
-    contentSelectors.forEach((element) =>
+    for (const element of contentSelectors) {
         element.addEventListener('change', () => {
             element.value !== 'default' &&
                 places.applyExtraFeatureProps({
@@ -95,8 +90,8 @@ const listenToUIEvents = () => {
                 ...places.getConfig()?.textConfig,
                 textField: element.value !== 'default' ? multiLineLabel : ['get', 'title'],
             });
-        }),
-    );
+        });
+    }
 
     iconStyleSelector?.addEventListener('change', (e) => {
         const value = (e.target as HTMLSelectElement).value;

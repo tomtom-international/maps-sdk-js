@@ -12,7 +12,7 @@ export const toDisplayRoutes = (routes: Routes, selectedIndex = 0): Routes<Displ
         ...route,
         properties: {
             ...route.properties,
-            routeStyle: index === selectedIndex ? 'selected' : 'deselected',
+            routeState: index === selectedIndex ? 'selected' : 'deselected',
         },
     })),
 });
@@ -59,7 +59,7 @@ export const toDisplayRouteSummaries = (
             },
             properties: {
                 routeIndex: route.properties.index,
-                routeStyle: route.properties.routeStyle,
+                routeState: route.properties.routeState,
                 formattedDistance: formatDistance(summary.lengthInMeters, displayUnits?.distance),
                 formattedDuration: formatDuration(summary.travelTimeInSeconds, displayUnits?.time),
                 ...(magnitudeOfDelay && { magnitudeOfDelay }),

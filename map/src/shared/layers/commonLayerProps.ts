@@ -118,7 +118,7 @@ export const MAP_ITALIC_FONT = 'NotoSans-MediumItalic';
  *
  * @group Map Style
  */
-export const DEFAULT_TEXT_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 12, 16, 14];
+export const DEFAULT_TEXT_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 10, 14, 18, 16];
 
 /**
  * Array of all available font faces in the TomTom map style.

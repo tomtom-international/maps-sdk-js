@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Point } from 'geojson';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
-import type { MapsSDKThis } from './types/MapsSDKThis';
+import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import { getClickedTopFeature, getPixelCoords, initBasemap, initBasemap2, waitForMapIdle } from './util/TestUtils';
 

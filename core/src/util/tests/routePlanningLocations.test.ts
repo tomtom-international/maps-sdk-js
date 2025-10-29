@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import type { Route } from '../../types';
-import { asSoftWaypoint, getGeoInputType } from '../geoInputs';
+import { asSoftWaypoint, getRoutePlanningLocationType } from '../routePlanningLocations';
 
-describe('GeoInputs utility tests', () => {
+describe('locations utility tests', () => {
     test('As soft waypoint tests', () => {
         expect(asSoftWaypoint([10, 20], 30)).toStrictEqual({
             type: 'Feature',
@@ -69,21 +69,25 @@ describe('GeoInputs utility tests', () => {
         });
     });
 
-    test('getGeoInputType tests', () => {
-        expect(getGeoInputType([3, 4])).toStrictEqual('waypoint');
-        expect(getGeoInputType([[3, 4]])).toStrictEqual('path');
+    test('getRoutePlanningLocationType tests', () => {
+        expect(getRoutePlanningLocationType([3, 4])).toStrictEqual('waypoint');
+        expect(getRoutePlanningLocationType([[3, 4]])).toStrictEqual('path');
         expect(
-            getGeoInputType([
+            getRoutePlanningLocationType([
                 [0, 1],
                 [3, 4],
             ]),
         ).toStrictEqual('path');
-        expect(getGeoInputType({ type: 'Point', coordinates: [0, 1] })).toStrictEqual('waypoint');
+        expect(getRoutePlanningLocationType({ type: 'Point', coordinates: [0, 1] })).toStrictEqual('waypoint');
         expect(
-            getGeoInputType({ type: 'Feature', geometry: { type: 'Point', coordinates: [0, 1] }, properties: {} }),
+            getRoutePlanningLocationType({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [0, 1] },
+                properties: {},
+            }),
         ).toStrictEqual('waypoint');
         expect(
-            getGeoInputType({
+            getRoutePlanningLocationType({
                 type: 'Feature',
                 geometry: { type: 'LineString', coordinates: [[0, 1]] },
                 properties: {},

@@ -2,6 +2,43 @@ import type { GlobalConfig } from '@cet/maps-sdk-js/core';
 import type { MapOptions, StyleSpecification } from 'maplibre-gl';
 import type { MapEventsConfig } from './mapEventsConfig';
 
+/**
+ * Array of all available standard style identifiers.
+ *
+ * This constant provides the complete list of TomTom-hosted standard map styles
+ * that can be used when initializing a map. It serves as the source of truth for
+ * valid style IDs and is used to derive the {@link StandardStyleID} type.
+ *
+ * @remarks
+ * Use this array when you need to:
+ * - Iterate over all available styles (e.g., building a style picker UI)
+ * - Validate if a style ID is a standard style
+ * - Display available options to users
+ *
+ * The array is defined as `const` with `as const` assertion to ensure type safety
+ * and prevent modifications at runtime.
+ *
+ * @example
+ * ```typescript
+ * import { standardStyleIDs } from '@cet/maps-sdk-js/map';
+ *
+ * // Build a dropdown menu with all standard styles
+ * const styleSelector = document.getElementById('style-selector');
+ * standardStyleIDs.forEach((styleId) => {
+ *   const option = new Option(styleId);
+ *   styleSelector.add(option);
+ * });
+ *
+ * // Check if a style ID is valid
+ * const isValidStyle = (id: string): boolean => {
+ *   return standardStyleIDs.includes(id as any);
+ * };
+ * ```
+ *
+ * @see {@link StandardStyleID} - The type derived from this array
+ *
+ * @group Map Style
+ */
 export const standardStyleIDs = [
     'standardLight',
     'standardDark',

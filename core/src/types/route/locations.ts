@@ -161,7 +161,7 @@ export type PathLike = Position[] | Route;
  *
  * @example
  * ```typescript
- * const geoInputs: GeoInput[] = [
+ * const locations: RoutePlanningLocation[] = [
  *   [4.9, 52.3],                    // Start waypoint
  *   { radiusMeters: 1000, ... },    // Circle waypoint
  *   existingPathCoordinates,        // Path to follow
@@ -171,10 +171,10 @@ export type PathLike = Position[] | Route;
  *
  * @group Route
  */
-export type GeoInput = WaypointLike | PathLike;
+export type RoutePlanningLocation = WaypointLike | PathLike;
 
 /**
- * Classification of a GeoInput by its type.
+ * Classification of a RoutePlanningLocation by its type.
  *
  * Used internally to distinguish between waypoint and path inputs.
  *
@@ -184,4 +184,4 @@ export type GeoInput = WaypointLike | PathLike;
  *
  * @group Route
  */
-export type GeoInputType = 'waypoint' | 'path';
+export type RoutePlanningLocationType = 'waypoint' | 'path';

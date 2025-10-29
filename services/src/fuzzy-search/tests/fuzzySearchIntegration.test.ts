@@ -1,5 +1,4 @@
 import type { Fuel, Place, POICategory, SearchPlaceProps } from '@cet/maps-sdk-js/core';
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { search } from '../../search';
@@ -8,13 +7,14 @@ import {
     baseSearchPlaceMandatoryProps,
     evStationBaseTestProps,
     expectPlaceTestFeature,
+    putIntegrationTestsAPIKey,
 } from '../../shared/tests/integrationTestUtils';
 import { buildFuzzySearchRequest } from '../requestBuilder';
 import { parseFuzzySearchResponse } from '../responseParser';
 import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from '../types';
 
 describe('Fuzzy Search service', () => {
-    beforeAll(() => TomTomConfig.instance.put({ apiKey: process.env.API_KEY_TESTS }));
+    beforeAll(putIntegrationTestsAPIKey);
 
     beforeEach(async () => {
         // We enforce a delay before each test to avoid hitting the API rate limits.

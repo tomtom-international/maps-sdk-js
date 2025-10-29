@@ -1,19 +1,6 @@
 import type { Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
-import {
-    EventsModule,
-    mapStyleLayerIDs,
-    ROUTE_FERRIES_SOURCE_ID,
-    ROUTE_INCIDENTS_SOURCE_ID,
-    ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID,
-    ROUTE_INSTRUCTIONS_SOURCE_ID,
-    ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID,
-    ROUTE_TOLL_ROADS_SOURCE_ID,
-    ROUTE_TUNNELS_SOURCE_ID,
-    ROUTE_VEHICLE_RESTRICTED_SOURCE_ID,
-    ROUTES_SOURCE_ID,
-    WAYPOINTS_SOURCE_ID,
-} from '../../shared';
+import { EventsModule, mapStyleLayerIDs } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { routeDeselectedOutline } from '../layers/routeMainLineLayers';
 import { RoutingModule } from '../RoutingModule';
@@ -23,16 +10,16 @@ import { RoutingModule } from '../RoutingModule';
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('Routing module tests', () => {
     test('Basic flows', async () => {
-        const waypointsSource = { id: WAYPOINTS_SOURCE_ID, setData: vi.fn() };
-        const routesSource = { id: ROUTES_SOURCE_ID, setData: vi.fn() };
-        const vehicleRestrictedSource = { id: ROUTE_VEHICLE_RESTRICTED_SOURCE_ID, setData: vi.fn() };
-        const incidentsSource = { id: ROUTE_INCIDENTS_SOURCE_ID, setData: vi.fn() };
-        const ferriesSource = { id: ROUTE_FERRIES_SOURCE_ID, setData: vi.fn() };
-        const tollRoadsSource = { id: ROUTE_TOLL_ROADS_SOURCE_ID, setData: vi.fn() };
-        const tunnelsSource = { id: ROUTE_TUNNELS_SOURCE_ID, setData: vi.fn() };
-        const instructionLinesSource = { id: ROUTE_INSTRUCTIONS_SOURCE_ID, setData: vi.fn() };
-        const instructionArrowsSource = { id: ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID, setData: vi.fn() };
-        const summaryBubblesSource = { id: ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID, setData: vi.fn() };
+        const waypointsSource = { id: 'routeWaypoints', setData: vi.fn() };
+        const routesSource = { id: 'routeMainLines', setData: vi.fn() };
+        const vehicleRestrictedSource = { id: 'routeVehicleRestricted', setData: vi.fn() };
+        const incidentsSource = { id: 'routeIncidents', setData: vi.fn() };
+        const ferriesSource = { id: 'routeFerries', setData: vi.fn() };
+        const tollRoadsSource = { id: 'routeTollRoads', setData: vi.fn() };
+        const tunnelsSource = { id: 'routeTunnels', setData: vi.fn() };
+        const instructionLinesSource = { id: 'routeInstructionLines', setData: vi.fn() };
+        const instructionArrowsSource = { id: 'routeInstructionArrows', setData: vi.fn() };
+        const summaryBubblesSource = { id: 'routeSummaryBubbles', setData: vi.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: vi
@@ -106,13 +93,14 @@ describe('Routing module tests', () => {
         expect(routing.getLayerToRenderLinesUnder()).toEqual(mapStyleLayerIDs.lowestLabel);
         routing.applyConfig({
             layers: {
-                mainLines: [
-                    {
-                        id: 'a different id',
-                        layerSpec: routeDeselectedOutline,
-                        beforeID: mapStyleLayerIDs.lowestLabel,
+                mainLines: {
+                    additional: {
+                        'a-different-id': {
+                            ...routeDeselectedOutline,
+                            beforeID: mapStyleLayerIDs.lowestLabel,
+                        },
                     },
-                ],
+                },
             },
         });
 
