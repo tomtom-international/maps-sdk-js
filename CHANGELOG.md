@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.25.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.24.0...v0.25.0) (2025-10-30)
+
+
+### Features
+
+* add pages for tomtom maps ([bdc9784](https://github.com/tomtom-international/maps-sdk-js/commit/bdc9784bb04824896bbf5e5c23e801ae36622d19))
+* add request access button for ldevr and remove header from all pages ([c90118c](https://github.com/tomtom-international/maps-sdk-js/commit/c90118c656228320eb6a93dda99b6cff45092f57))
+* rename init to get in all modules ([a0947c9](https://github.com/tomtom-international/maps-sdk-js/commit/a0947c9696c5bef099541260c3b3251f11e29f7d))
+* update map modules docs ([bd4f27a](https://github.com/tomtom-international/maps-sdk-js/commit/bd4f27a598a47e3d58f8d2b532d2899afb1d5965))
+
+
+### Bug Fixes
+
+* minor enhacements in docs ([8453015](https://github.com/tomtom-international/maps-sdk-js/commit/8453015d0c38585afc8b4b12154e294b13f55cac))
+* re-add mapStyles page ([5b185f0](https://github.com/tomtom-international/maps-sdk-js/commit/5b185f057da294c1f73fc71d746c17f603ed63b4))
+* update docs for intro, quickstart, and mapstyles ([ff82fa6](https://github.com/tomtom-international/maps-sdk-js/commit/ff82fa6c51c81a7eba79b46a908163b4c1d2b49d))
+
 ## [0.24.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.23.2...v0.24.0) (2025-10-22)
 
 
