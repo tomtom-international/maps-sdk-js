@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import autocompleteSearch from '../autocompleteSearch';
 import type {

@@ -1,4 +1,4 @@
-import type { PolygonFeatures } from '@cet/maps-sdk-js/core';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
 import type { FeatureCollection, Point } from 'geojson';
 import type { SymbolLayerSpecification } from 'maplibre-gl';
 import type { SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from '../shared';

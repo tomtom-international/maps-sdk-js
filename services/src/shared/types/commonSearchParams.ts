@@ -1,4 +1,4 @@
-import type { ConnectorType, Fuel, OpeningHoursMode, POICategory } from '@cet/maps-sdk-js/core';
+import type { ConnectorType, Fuel, OpeningHoursMode, POICategory } from '@tomtom-org/maps-sdk-js/core';
 import type { CommonPlacesParams, SearchIndexType } from './commonPlacesParams';
 
 /**

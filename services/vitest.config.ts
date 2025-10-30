@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
     },
     resolve: {
         alias: {
-            '@cet/maps-sdk-js/core': 'core',
+            '@tomtom-org/maps-sdk-js/core': 'core',
         },
     },
 }));

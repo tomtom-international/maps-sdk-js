@@ -1,8 +1,8 @@
 'use strict';
 require('dotenv').config({ path: '../.env' });
 
-const search = require('@cet/maps-sdk-js/services').search;
-const TomTomConfig = require('@cet/maps-sdk-js/core').TomTomConfig;
+const search = require('@tomtom-org/maps-sdk-js/services').search;
+const TomTomConfig = require('@tomtom-org/maps-sdk-js/core').TomTomConfig;
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });

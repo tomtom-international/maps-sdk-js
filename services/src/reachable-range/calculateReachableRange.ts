@@ -1,4 +1,4 @@
-import type { PolygonFeature, PolygonFeatures } from '@cet/maps-sdk-js/core';
+import type { PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
 import { callService } from '../shared/serviceTemplate';
 import type { ReachableRangeTemplate } from './reachableRangeTemplate';
 import { reachableRangeTemplate } from './reachableRangeTemplate';

@@ -1,4 +1,4 @@
-import { getPositionStrict } from '@cet/maps-sdk-js/core';
+import { getPositionStrict } from '@tomtom-org/maps-sdk-js/core';
 import { isNil } from 'lodash-es';
 import type { CommonServiceParams } from '../shared';
 import { arrayToCSV } from '../shared/arrays';

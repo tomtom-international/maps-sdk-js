@@ -1,6 +1,6 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { reverseGeocode } from '@cet/maps-sdk-js/services';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { reverseGeocode } from '@tomtom-org/maps-sdk-js/services';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 

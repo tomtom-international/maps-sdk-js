@@ -1,8 +1,8 @@
-import type { Place } from '@cet/maps-sdk-js/core';
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import type { IconStyle, MapFont, PlaceIconConfig } from '@cet/maps-sdk-js/map';
-import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { search } from '@cet/maps-sdk-js/services';
+import type { Place } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import type { IconStyle, MapFont, PlaceIconConfig } from '@tomtom-org/maps-sdk-js/map';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { search } from '@tomtom-org/maps-sdk-js/services';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import tomtomLogo from '../resources/tomtomLogo.png';

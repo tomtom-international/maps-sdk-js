@@ -1,7 +1,7 @@
-import type { PolygonFeatures } from '@cet/maps-sdk-js/core';
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import { GeometriesModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { geocode, geometryData, search } from '@cet/maps-sdk-js/services';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { GeometriesModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { geocode, geometryData, search } from '@tomtom-org/maps-sdk-js/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';

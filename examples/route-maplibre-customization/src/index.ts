@@ -1,13 +1,13 @@
-import type { Waypoint } from '@cet/maps-sdk-js/core';
-import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
+import type { Waypoint } from '@tomtom-org/maps-sdk-js/core';
+import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
 import {
     defaultRoutingLayers,
     RoutingModule,
     SELECTED_ROUTE_FILTER,
     TomTomMap,
     TrafficIncidentsModule,
-} from '@cet/maps-sdk-js/map';
-import { calculateRoute, geocodeOne } from '@cet/maps-sdk-js/services';
+} from '@tomtom-org/maps-sdk-js/map';
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk-js/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';

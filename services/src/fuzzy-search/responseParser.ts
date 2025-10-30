@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, bboxOnlyIfWithArea } from '@cet/maps-sdk-js/core';
+import { bboxFromGeoJSON, bboxOnlyIfWithArea } from '@tomtom-org/maps-sdk-js/core';
 import { latLonAPIToPosition } from '../shared/geometry';
 import { parseSearchAPIResult, parseSummaryAPI } from '../shared/searchResultParsing';
 import type { FuzzySearchResponse, FuzzySearchResponseAPI, QueryIntent, QueryIntentAPI } from './types';

@@ -1,4 +1,4 @@
-import type { Places, PlaceType, SearchPlaceProps } from '@cet/maps-sdk-js/core';
+import type { Places, PlaceType, SearchPlaceProps } from '@tomtom-org/maps-sdk-js/core';
 
 /**
  * Place type for geocoding results.

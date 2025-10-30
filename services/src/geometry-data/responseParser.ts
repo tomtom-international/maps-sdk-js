@@ -1,5 +1,5 @@
-import type { PolygonFeatures } from '@cet/maps-sdk-js/core';
-import { bboxFromGeoJSON } from '@cet/maps-sdk-js/core';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk-js/core';
 import type { GeometryDataResponseAPI } from './types/apiTypes';
 
 /**

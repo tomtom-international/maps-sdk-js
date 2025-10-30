@@ -26,7 +26,7 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
             // minification options more in detail in rollup options:
             minify: false,
             rollupOptions: {
-                external: ['@cet/maps-sdk-js/core', 'maplibre-gl'],
+                external: ['@tomtom-org/maps-sdk-js/core', 'maplibre-gl'],
                 output: [
                     // CommonJS (minified)
                     {
@@ -57,7 +57,7 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
                 include: ['index.ts', 'src/**/*'],
                 exclude: ['**/*.test.ts'],
                 bundleTypes: true,
-                aliasesExclude: ['@cet/maps-sdk-js/core'], // We don't want to locally resolve @cet/maps-sdk-js/core to the local core paths
+                aliasesExclude: ['@tomtom-org/maps-sdk-js/core'], // We don't want to locally resolve @tomtom-org/maps-sdk-js/core to the local core paths
             }),
             ...(process.env.CI
                 ? []

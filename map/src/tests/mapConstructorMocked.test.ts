@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
 import { Map } from 'maplibre-gl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { TomTomMap } from '../TomTomMap';

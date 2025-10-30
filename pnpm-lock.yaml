@@ -171,7 +171,7 @@ importers:
 
   examples/autocomplete-fuzzy-search-playground:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -202,7 +202,7 @@ importers:
 
   examples/base-map:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -230,7 +230,7 @@ importers:
 
   examples/basic-geometry:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/turf':
@@ -261,7 +261,7 @@ importers:
 
   examples/ev-charging-stations-playground:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/turf':
@@ -301,7 +301,7 @@ importers:
 
   examples/fuzzy-search-playground:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/turf':
@@ -332,7 +332,7 @@ importers:
 
   examples/geocode:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -360,7 +360,7 @@ importers:
 
   examples/geocode-init:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -391,7 +391,7 @@ importers:
 
   examples/geometry-search-playground:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/turf':
@@ -422,7 +422,7 @@ importers:
 
   examples/geometry-search-with-poi-categories:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/bbox-polygon':
@@ -456,7 +456,7 @@ importers:
 
   examples/hillshade:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -484,7 +484,7 @@ importers:
 
   examples/interactive-roads-and-numbers:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -527,7 +527,7 @@ importers:
 
   examples/keep-state-when-changing-style:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -555,7 +555,7 @@ importers:
 
   examples/layer-group-toggling:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -583,7 +583,7 @@ importers:
 
   examples/layer-groups-visibility-animation:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -614,7 +614,7 @@ importers:
 
   examples/ldevr-custom-charging-stops:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -642,7 +642,7 @@ importers:
 
   examples/ldevr-detailed-vehicle:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -670,7 +670,7 @@ importers:
 
   examples/ldevr-model-id:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -698,7 +698,7 @@ importers:
 
   examples/load-style-parts:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -729,7 +729,7 @@ importers:
 
   examples/map-config-playground:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -757,7 +757,7 @@ importers:
 
   examples/map-events:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -785,7 +785,7 @@ importers:
 
   examples/map-language:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -813,7 +813,7 @@ importers:
 
   examples/map-route-reconstruction:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -844,7 +844,7 @@ importers:
 
   examples/multiple-geometries:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -872,7 +872,7 @@ importers:
 
   examples/multiple-geometry-modules:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/turf':
@@ -906,7 +906,7 @@ importers:
 
   examples/multiple-maps-with-geometries:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/turf':
@@ -940,7 +940,7 @@ importers:
 
   examples/nodejs-geocode:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -974,7 +974,7 @@ importers:
 
   examples/nodejs-geometry-search:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
     devDependencies:
@@ -984,7 +984,7 @@ importers:
 
   examples/nodejs-rev-geo:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
     devDependencies:
@@ -994,7 +994,7 @@ importers:
 
   examples/nodejs-routing:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
     devDependencies:
@@ -1004,7 +1004,7 @@ importers:
 
   examples/pin-interaction:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1032,7 +1032,7 @@ importers:
 
   examples/places-customize:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1060,7 +1060,7 @@ importers:
 
   examples/places-in-geometry:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1091,7 +1091,7 @@ importers:
 
   examples/poi-filters:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1119,7 +1119,7 @@ importers:
 
   examples/reachable-ranges:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1147,7 +1147,7 @@ importers:
 
   examples/rev-geo:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1178,7 +1178,7 @@ importers:
 
   examples/rev-geo-json:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1209,7 +1209,7 @@ importers:
 
   examples/reverse-geocode:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1237,7 +1237,7 @@ importers:
 
   examples/route:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1268,7 +1268,7 @@ importers:
 
   examples/route-custom-main-color:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1299,7 +1299,7 @@ importers:
 
   examples/route-geometry-searches:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/buffer':
@@ -1333,7 +1333,7 @@ importers:
 
   examples/route-maplibre-customization:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1364,7 +1364,7 @@ importers:
 
   examples/route-waypoint-icon-style:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1395,7 +1395,7 @@ importers:
 
   examples/route-with-alternatives:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1426,7 +1426,7 @@ importers:
 
   examples/search-parking:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       '@turf/bbox-polygon':
@@ -1460,7 +1460,7 @@ importers:
 
   examples/traffic-config-playground:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1491,7 +1491,7 @@ importers:
 
   examples/traffic-flow:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1519,7 +1519,7 @@ importers:
 
   examples/traffic-incidents:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1547,7 +1547,7 @@ importers:
 
   examples/waypoints:
     dependencies:
-      '@cet/maps-sdk-js':
+      '@tomtom-org/maps-sdk-js':
         specifier: workspace:*
         version: link:../..
       maplibre-gl:
@@ -1774,17 +1774,17 @@ packages:
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-validator-identifier@7.28.5':
-    resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
+  '@babel/helper-validator-identifier@7.27.1':
+    resolution: {integrity: sha512-D2hP9eA+Sqx1kBZgzxZh0y1trbuU+JoDkiEwqhQ36nodYqJwyEIhPSdMNd7lOm/4io72luTPWH20Yda0xOuUow==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/parser@7.28.5':
-    resolution: {integrity: sha512-KKBU1VGYR7ORr3At5HAtUQ+TV3SzRCXmA/8OdDZiLDBIZxVyzXuztPjfLd3BV1PRAQGCMWWSHYhL0F8d5uHBDQ==}
+  '@babel/parser@7.28.4':
+    resolution: {integrity: sha512-yZbBqeM6TkpP9du/I2pUZnJsRMGGvOuIrhjzC1AwHwW+6he4mni6Bp/m8ijn0iOuZuPI2BfkCoSRunpyjnrQKg==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  '@babel/types@7.28.5':
-    resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
+  '@babel/types@7.28.4':
+    resolution: {integrity: sha512-bkFqkLhh3pMBUQQkpVgWDWq/lqzc2678eUyDlTBhRqhCHFguYYGM0Efga7tYk4TogG/3x0EEl66/OQ+WGbWB/Q==}
     engines: {node: '>=6.9.0'}
 
   '@bcoe/v8-coverage@1.0.2':
@@ -1880,14 +1880,14 @@ packages:
   '@cspell/dict-aws@4.0.15':
     resolution: {integrity: sha512-aPY7VVR5Os4rz36EaqXBAEy14wR4Rqv+leCJ2Ug/Gd0IglJpM30LalF3e2eJChnjje3vWoEC0Rz3+e5gpZG+Kg==}
 
-  '@cspell/dict-bash@4.2.2':
-    resolution: {integrity: sha512-kyWbwtX3TsCf5l49gGQIZkRLaB/P8g73GDRm41Zu8Mv51kjl2H7Au0TsEvHv7jzcsRLS6aUYaZv6Zsvk1fOz+Q==}
+  '@cspell/dict-bash@4.2.1':
+    resolution: {integrity: sha512-SBnzfAyEAZLI9KFS7DUG6Xc1vDFuLllY3jz0WHvmxe8/4xV3ufFE3fGxalTikc1VVeZgZmxYiABw4iGxVldYEg==}
 
-  '@cspell/dict-companies@3.2.7':
-    resolution: {integrity: sha512-fEyr3LmpFKTaD0LcRhB4lfW1AmULYBqzg4gWAV0dQCv06l+TsA+JQ+3pZJbUcoaZirtgsgT3dL3RUjmGPhUH0A==}
+  '@cspell/dict-companies@3.2.6':
+    resolution: {integrity: sha512-cVWBk4DSUOthCsgOsoB+5L5F1Wk8lWGHnw5de75YCKSjOEV8/6kskwwDrPTIHkoGVzpIzIIQ/OdXhYwa2G+16A==}
 
-  '@cspell/dict-cpp@6.0.13':
-    resolution: {integrity: sha512-EFrhN/91tPwadI9m8Rxe65//9gqv+lpZoKtrngzF4DTnw4YAfMLTpykendHps0bz46NZW84/zoY1cxeW2TEPQQ==}
+  '@cspell/dict-cpp@6.0.12':
+    resolution: {integrity: sha512-N4NsCTttVpMqQEYbf0VQwCj6np+pJESov0WieCN7R/0aByz4+MXEiDieWWisaiVi8LbKzs1mEj4ZTw5K/6O2UQ==}
 
   '@cspell/dict-cryptocurrencies@5.0.5':
     resolution: {integrity: sha512-R68hYYF/rtlE6T/dsObStzN5QZw+0aQBinAXuWCVqwdS7YZo0X33vGMfChkHaiCo3Z2+bkegqHlqxZF4TD3rUA==}
@@ -1901,8 +1901,8 @@ packages:
   '@cspell/dict-dart@2.3.1':
     resolution: {integrity: sha512-xoiGnULEcWdodXI6EwVyqpZmpOoh8RA2Xk9BNdR7DLamV/QMvEYn8KJ7NlRiTSauJKPNkHHQ5EVHRM6sTS7jdg==}
 
-  '@cspell/dict-data-science@2.0.11':
-    resolution: {integrity: sha512-Dt+83nVCcF+dQyvFSaZjCKt1H5KbsVJFtH2X7VUfmIzQu8xCnV1fUmkhBzGJ+NiFs99Oy9JA6I9EjeqExzXk7g==}
+  '@cspell/dict-data-science@2.0.10':
+    resolution: {integrity: sha512-vZSsz7845ugW6mY65966Ki2bMS/ZnAZoTVvpuXQ07a2rYxJhUC+6WuBMD80hFLlKwjC5T/5Llv4F/VlB00swpw==}
 
   '@cspell/dict-django@4.1.5':
     resolution: {integrity: sha512-AvTWu99doU3T8ifoMYOMLW2CXKvyKLukPh1auOPwFGHzueWYvBBN+OxF8wF7XwjTBMMeRleVdLh3aWCDEX/ZWg==}
@@ -1916,14 +1916,14 @@ packages:
   '@cspell/dict-elixir@4.0.8':
     resolution: {integrity: sha512-CyfphrbMyl4Ms55Vzuj+mNmd693HjBFr9hvU+B2YbFEZprE5AG+EXLYTMRWrXbpds4AuZcvN3deM2XVB80BN/Q==}
 
-  '@cspell/dict-en-common-misspellings@2.1.7':
-    resolution: {integrity: sha512-HAWSOoQ+lxdzLaTALhPofKNJdxZ7HAcTZWQNwb7cvGBiKEy182cb96U35602yBPrBsKY/vLxVs6f0E1JTeQjRQ==}
+  '@cspell/dict-en-common-misspellings@2.1.6':
+    resolution: {integrity: sha512-xV9yryOqZizbSqxRS7kSVRrxVEyWHUqwdY56IuT7eAWGyTCJNmitXzXa4p+AnEbhL+AB2WLynGVSbNoUC3ceFA==}
 
-  '@cspell/dict-en-gb-mit@3.1.12':
-    resolution: {integrity: sha512-KJaJPsTRMXN4sgKHQRMNqqxc7WWZaR5h7+WarIoLUfbEWIQM1FCJiGn2pZX9OLQVBtSnLYo1JVXK1K/Tz3HWEQ==}
+  '@cspell/dict-en-gb-mit@3.1.10':
+    resolution: {integrity: sha512-oFandL5N4B55wmOd0hOAoyaiUZBkClQ1FPCkcAY/HMuq6zeCQE/oEK9lLGDmnzLGgWnTT7wd0KOSYUPTxWQaNQ==}
 
-  '@cspell/dict-en_us@4.4.22':
-    resolution: {integrity: sha512-i9AJ6z5kyZU5L/b+UOOp/7dfa7RxhibLXWaexSJclf7V7R+TzwCTLoOZd1wf/5PBnNGkP8xOSaflkpUbtVijFA==}
+  '@cspell/dict-en_us@4.4.20':
+    resolution: {integrity: sha512-acAlX967bkrLwRhSJ8KGBCBUITMOe8+smwsShjei431vTB6tU5ZID6XDxR9hH/kDxfdiRTXAE8vkT3WJAHnc1Q==}
 
   '@cspell/dict-filetypes@3.0.14':
     resolution: {integrity: sha512-KSXaSMYYNMLLdHEnju1DyRRH3eQWPRYRnOXpuHUdOh2jC44VgQoxyMU7oB3NAhDhZKBPCihabzECsAGFbdKfEA==}
@@ -1946,8 +1946,8 @@ packages:
   '@cspell/dict-git@3.0.7':
     resolution: {integrity: sha512-odOwVKgfxCQfiSb+nblQZc4ErXmnWEnv8XwkaI4sNJ7cNmojnvogYVeMqkXPjvfrgEcizEEA4URRD2Ms5PDk1w==}
 
-  '@cspell/dict-golang@6.0.24':
-    resolution: {integrity: sha512-rY7PlC3MsHozmjrZWi0HQPUl0BVCV0+mwK0rnMT7pOIXqOe4tWCYMULDIsEk4F0gbIxb5badd2dkCPDYjLnDgA==}
+  '@cspell/dict-golang@6.0.23':
+    resolution: {integrity: sha512-oXqUh/9dDwcmVlfUF5bn3fYFqbUzC46lXFQmi5emB0vYsyQXdNWsqi6/yH3uE7bdRE21nP7Yo0mR1jjFNyLamg==}
 
   '@cspell/dict-google@1.0.9':
     resolution: {integrity: sha512-biL65POqialY0i4g6crj7pR6JnBkbsPovB2WDYkj3H4TuC/QXv7Pu5pdPxeUJA6TSCHI7T5twsO4VSVyRxD9CA==}
@@ -1999,11 +1999,11 @@ packages:
   '@cspell/dict-node@5.0.8':
     resolution: {integrity: sha512-AirZcN2i84ynev3p2/1NCPEhnNsHKMz9zciTngGoqpdItUb2bDt1nJBjwlsrFI78GZRph/VaqTVFwYikmncpXg==}
 
-  '@cspell/dict-npm@5.2.19':
-    resolution: {integrity: sha512-fg23oFvKTsGjGB6DkwCUzZrLZPwp+ItSV0UXS+n6JbcH5dj3CP6MDmdwNX6s6oaAovIFKmwFBP73GUqnjMmnpQ==}
+  '@cspell/dict-npm@5.2.18':
+    resolution: {integrity: sha512-uJV1T7y9ifFysO22XmxjU7y95c+02lfCZHNsTYHw2KOL6tLjc3XK/i0xt9iGLkPpcxwNJSCdu13UpjXZGqce/Q==}
 
-  '@cspell/dict-php@4.1.0':
-    resolution: {integrity: sha512-dTDeabyOj7eFvn2Q4Za3uVXM2+SzeFMqX8ly2P0XTo4AzbCmI2hulFD/QIADwWmwiRrInbbf8cxwFHNIYrXl4w==}
+  '@cspell/dict-php@4.0.15':
+    resolution: {integrity: sha512-iepGB2gtToMWSTvybesn4/lUp4LwXcEm0s8vasJLP76WWVkq1zYjmeS+WAIzNgsuURyZ/9mGqhS0CWMuo74ODw==}
 
   '@cspell/dict-powershell@5.0.15':
     resolution: {integrity: sha512-l4S5PAcvCFcVDMJShrYD0X6Huv9dcsQPlsVsBGbH38wvuN7gS7+GxZFAjTNxDmTY1wrNi1cCatSg6Pu2BW4rgg==}
@@ -2011,8 +2011,8 @@ packages:
   '@cspell/dict-public-licenses@2.0.15':
     resolution: {integrity: sha512-cJEOs901H13Pfy0fl4dCD1U+xpWIMaEPq8MeYU83FfDZvellAuSo4GqWCripfIqlhns/L6+UZEIJSOZnjgy7Wg==}
 
-  '@cspell/dict-python@4.2.21':
-    resolution: {integrity: sha512-M9OgwXWhpZqEZqKU2psB2DFsT8q5SwEahkQeIpNIRWIErjwG7I9yYhhfvPz6s5gMCMhhb3hqcPJTnmdgqGrQyg==}
+  '@cspell/dict-python@4.2.20':
+    resolution: {integrity: sha512-c1wbfb3MDMSY4UTNdGnA18NkrcX6cMlYER0HSpGYh2jLK43gS1QL3j2B49qgnRYfcLUp4xgeA05vzCQsjGbwuQ==}
 
   '@cspell/dict-r@2.1.1':
     resolution: {integrity: sha512-71Ka+yKfG4ZHEMEmDxc6+blFkeTTvgKbKAbwiwQAuKl3zpqs1Y0vUtwW2N4b3LgmSPhV3ODVY0y4m5ofqDuKMw==}
@@ -2026,11 +2026,11 @@ packages:
   '@cspell/dict-scala@5.0.8':
     resolution: {integrity: sha512-YdftVmumv8IZq9zu1gn2U7A4bfM2yj9Vaupydotyjuc+EEZZSqAafTpvW/jKLWji2TgybM1L2IhmV0s/Iv9BTw==}
 
-  '@cspell/dict-shell@1.1.2':
-    resolution: {integrity: sha512-WqOUvnwcHK1X61wAfwyXq04cn7KYyskg90j4lLg3sGGKMW9Sq13hs91pqrjC44Q+lQLgCobrTkMDw9Wyl9nRFA==}
+  '@cspell/dict-shell@1.1.1':
+    resolution: {integrity: sha512-T37oYxE7OV1x/1D4/13Y8JZGa1QgDCXV7AVt3HLXjn0Fe3TaNDvf5sU0fGnXKmBPqFFrHdpD3uutAQb1dlp15g==}
 
-  '@cspell/dict-software-terms@5.1.10':
-    resolution: {integrity: sha512-ffnsKiDL5acUerJ/lDiIT0y/tfO9Jk1yp8RpAl0diOUj5iQuT4hXVfgQSx7ppseXWAGN+UgTRYWiKDb1zM3lqg==}
+  '@cspell/dict-software-terms@5.1.9':
+    resolution: {integrity: sha512-lpiSpS1iTF2n8barqVkPmhe5qXs5291IqcDUPr5ttFRxPMZ7pgrMUdvcdNUdkajymjDOyWfUNhdYXW7JndThZw==}
 
   '@cspell/dict-sql@2.2.1':
     resolution: {integrity: sha512-qDHF8MpAYCf4pWU8NKbnVGzkoxMNrFqBHyG/dgrlic5EQiKANCLELYtGlX5auIMDLmTf1inA0eNtv74tyRJ/vg==}
@@ -2235,8 +2235,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@gerrit0/mini-shiki@3.14.0':
-    resolution: {integrity: sha512-c5X8fwPLOtUS8TVdqhynz9iV0GlOtFUT1ppXYzUUlEXe4kbZ/mvMT8wXoT8kCwUka+zsiloq7sD3pZ3+QVTuNQ==}
+  '@gerrit0/mini-shiki@3.13.1':
+    resolution: {integrity: sha512-fDWM5QQc70jwBIt/WYMybdyXdyBmoJe7r1hpM+V/bHnyla79sygVDK2/LlVxIPc4n5FA3B5Wzt7AQH2+psNphg==}
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -2300,8 +2300,8 @@ packages:
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
 
-  '@maplibre/maplibre-gl-style-spec@24.3.1':
-    resolution: {integrity: sha512-TUM5JD40H2mgtVXl5IwWz03BuQabw8oZQLJTmPpJA0YTYF+B+oZppy5lNMO6bMvHzB+/5mxqW9VLG3wFdeqtOw==}
+  '@maplibre/maplibre-gl-style-spec@24.3.0':
+    resolution: {integrity: sha512-CTJc/Nvldv+GNQuis29VnyV0TYsFTgQBY3SNagTzZ28oHDsDYJ7LwEmfick4Z30wPwI/4gXe3se8PH2IIfLx2g==}
     hasBin: true
 
   '@maplibre/vt-pbf@4.0.3':
@@ -2657,17 +2657,17 @@ packages:
   '@rushstack/ts-command-line@5.1.3':
     resolution: {integrity: sha512-Kdv0k/BnnxIYFlMVC1IxrIS0oGQd4T4b7vKfx52Y2+wk2WZSDFIvedr7JrhenzSlm3ou5KwtoTGTGd5nbODRug==}
 
-  '@shikijs/engine-oniguruma@3.14.0':
-    resolution: {integrity: sha512-TNcYTYMbJyy+ZjzWtt0bG5y4YyMIWC2nyePz+CFMWqm+HnZZyy9SWMgo8Z6KBJVIZnx8XUXS8U2afO6Y0g1Oug==}
+  '@shikijs/engine-oniguruma@3.13.0':
+    resolution: {integrity: sha512-O42rBGr4UDSlhT2ZFMxqM7QzIU+IcpoTMzb3W7AlziI1ZF7R8eS2M0yt5Ry35nnnTX/LTLXFPUjRFCIW+Operg==}
 
-  '@shikijs/langs@3.14.0':
-    resolution: {integrity: sha512-DIB2EQY7yPX1/ZH7lMcwrK5pl+ZkP/xoSpUzg9YC8R+evRCCiSQ7yyrvEyBsMnfZq4eBzLzBlugMyTAf13+pzg==}
+  '@shikijs/langs@3.13.0':
+    resolution: {integrity: sha512-672c3WAETDYHwrRP0yLy3W1QYB89Hbpj+pO4KhxK6FzIrDI2FoEXNiNCut6BQmEApYLfuYfpgOZaqbY+E9b8wQ==}
 
-  '@shikijs/themes@3.14.0':
-    resolution: {integrity: sha512-fAo/OnfWckNmv4uBoUu6dSlkcBc+SA1xzj5oUSaz5z3KqHtEbUypg/9xxgJARtM6+7RVm0Q6Xnty41xA1ma1IA==}
+  '@shikijs/themes@3.13.0':
+    resolution: {integrity: sha512-Vxw1Nm1/Od8jyA7QuAenaV78BG2nSr3/gCGdBkLpfLscddCkzkL36Q5b67SrLLfvAJTOUzW39x4FHVCFriPVgg==}
 
-  '@shikijs/types@3.14.0':
-    resolution: {integrity: sha512-bQGgC6vrY8U/9ObG1Z/vTro+uclbjjD/uG58RvfxKZVD5p9Yc1ka3tVyEFy7BNJLzxuWyHH5NWynP9zZZS59eQ==}
+  '@shikijs/types@3.13.0':
+    resolution: {integrity: sha512-oM9P+NCFri/mmQ8LoFGVfVyemm5Hi27330zuOBp0annwJdKH1kOLndw3zCtAVDehPLg9fKqoEx3Ht/wNZxolfw==}
 
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
@@ -3089,6 +3089,9 @@ packages:
   '@types/lodash@4.17.20':
     resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
 
+  '@types/node@24.9.1':
+    resolution: {integrity: sha512-QoiaXANRkSXK6p0Duvt56W208du4P9Uye9hWLWgGMDTEoKPhuenzNcC4vGUmrNkiOKTlIrBoyNQYNpSwfEZXSg==}
+
   '@types/node@24.9.2':
     resolution: {integrity: sha512-uWN8YqxXxqFMX2RqGOrumsKeti4LlmIMIyV0lgut4jx7KQBcBiW6vkDtIBvHnHIquwNfJhk8v2OtmO8zXWHfPA==}
 
@@ -3229,8 +3232,8 @@ packages:
     resolution: {integrity: sha512-x1FCFnFifvYDDzTaLII71vG5uvDwgtmDTEVWAxrgeiR8VjMONcCXJx7E+USjDtHlwFmt9MysbqgF9b9Vjr6w+w==}
     engines: {node: '>=4'}
 
-  ast-v8-to-istanbul@0.3.8:
-    resolution: {integrity: sha512-szgSZqUxI5T8mLKvS7WTjF9is+MVbOeLADU73IseOcrqhxr/VAvy6wfoVE39KnKzA7JRhjF5eUagNlHwvZPlKQ==}
+  ast-v8-to-istanbul@0.3.7:
+    resolution: {integrity: sha512-kr1Hy6YRZBkGQSb6puP+D6FQ59Cx4m0siYhAxygMCAgadiWQ6oxAxQXHOMvJx67SJ63jRoVIIg5eXzUbbct1ww==}
 
   b4a@1.7.3:
     resolution: {integrity: sha512-5Q2mfq2WfGuFp3uS//0s6baOJLMoVduPYVeNmDYxu5OUA1/cBfvr2RIS7vi62LdNj/urk1hfmj867I3qt6uZ7Q==}
@@ -3243,16 +3246,16 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  bare-events@2.8.1:
-    resolution: {integrity: sha512-oxSAxTS1hRfnyit2CL5QpAOS5ixfBjj6ex3yTNvXyY/kE719jQ/IjuESJBK2w5v4wwQRAHGseVJXx9QBYOtFGQ==}
+  bare-events@2.8.0:
+    resolution: {integrity: sha512-AOhh6Bg5QmFIXdViHbMc2tLDsBIRxdkIaIddPslJF9Z5De3APBScuqGP2uThXnIpqFrgoxMNC6km7uXNIMLHXA==}
     peerDependencies:
       bare-abort-controller: '*'
     peerDependenciesMeta:
       bare-abort-controller:
         optional: true
 
-  bare-fs@4.5.0:
-    resolution: {integrity: sha512-GljgCjeupKZJNetTqxKaQArLK10vpmK28or0+RwWjEl5Rk+/xG3wkpmkv+WrcBm3q1BwHKlnhXzR8O37kcvkXQ==}
+  bare-fs@4.4.11:
+    resolution: {integrity: sha512-Bejmm9zRMvMTRoHS+2adgmXw1ANZnCNx+B5dgZpGwlP1E3x6Yuxea8RToddHUbWtVV0iUMWqsgZr8+jcgUI2SA==}
     engines: {bare: '>=1.16.0'}
     peerDependencies:
       bare-buffer: '*'
@@ -3363,8 +3366,8 @@ packages:
     resolution: {integrity: sha512-MwVNWlYjDTtOjX5PiD7o5pK0UrFU/OYgcJfjjK4RaHZETNtjJqrZa9Y9ds88+A+f+d5lv+561eZ+yCKoS3gbAA==}
     engines: {node: '>=18'}
 
-  commander@14.0.2:
-    resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
+  commander@14.0.1:
+    resolution: {integrity: sha512-2JkV3gUZUVrbNA+1sjBOYLsMZ5cEEl8GTFP2a4AVz5hvasAMCQ1D2l2le/cX+pV4N6ZU17zjUahLpIXRrnWL8A==}
     engines: {node: '>=20'}
 
   commander@2.20.3:
@@ -3664,8 +3667,8 @@ packages:
     resolution: {integrity: sha512-ts6Wi+2j3jQjqi70w5AlN8DFnkSwC+MqmxEzdEALB2qXZYV3X/b1CTfgPLGJNMeAWxdPfU8FO1ms3NUfaHCPYg==}
     engines: {node: '>=10'}
 
-  get-tsconfig@4.13.0:
-    resolution: {integrity: sha512-1VKTZJCwBrvbd+Wn3AOgQP/2Av+TfTCOlE4AcRJE72W1ksZXbAx8PPBR9RzgTeSPzlPMHrbANMH3LbltH73wxQ==}
+  get-tsconfig@4.12.0:
+    resolution: {integrity: sha512-LScr2aNr2FbjAjZh2C6X6BxRx1/x+aTDExct/xyq2XKbYOiG5c0aK7pMsSuyc0brz3ibr/lbQiHD9jzt4lccJw==}
 
   get-uri@6.0.5:
     resolution: {integrity: sha512-b1O07XYq8eRuVzBNgJLstU6FYc1tS6wnMtF1I1D9lE8LxZSOGZ7LhxN54yPP6mGw5f2CkXY2BQUL9Fx41qvcIg==}
@@ -3943,8 +3946,8 @@ packages:
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
 
-  magic-string@0.30.21:
-    resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+  magic-string@0.30.19:
+    resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
 
   magicast@0.3.5:
     resolution: {integrity: sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ==}
@@ -3985,10 +3988,6 @@ packages:
 
   minimatch@10.0.3:
     resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
-    engines: {node: 20 || >=22}
-
-  minimatch@10.1.1:
-    resolution: {integrity: sha512-enIvLvRAFZYXJzkCYG5RKmPfrFArdLv+R+lbQ53BmIMLIry74bjKzX6iHAm8WYamJkhSSEabrWN5D97XnKObjQ==}
     engines: {node: 20 || >=22}
 
   minimatch@9.0.5:
@@ -4906,16 +4905,16 @@ snapshots:
 
   '@babel/helper-string-parser@7.27.1': {}
 
-  '@babel/helper-validator-identifier@7.28.5': {}
+  '@babel/helper-validator-identifier@7.27.1': {}
 
-  '@babel/parser@7.28.5':
+  '@babel/parser@7.28.4':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.4
 
-  '@babel/types@7.28.5':
+  '@babel/types@7.28.4':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.28.5
+      '@babel/helper-validator-identifier': 7.27.1
 
   '@bcoe/v8-coverage@1.0.2': {}
 
@@ -4962,21 +4961,21 @@ snapshots:
       '@cspell/dict-ada': 4.1.1
       '@cspell/dict-al': 1.1.1
       '@cspell/dict-aws': 4.0.15
-      '@cspell/dict-bash': 4.2.2
-      '@cspell/dict-companies': 3.2.7
-      '@cspell/dict-cpp': 6.0.13
+      '@cspell/dict-bash': 4.2.1
+      '@cspell/dict-companies': 3.2.6
+      '@cspell/dict-cpp': 6.0.12
       '@cspell/dict-cryptocurrencies': 5.0.5
       '@cspell/dict-csharp': 4.0.7
       '@cspell/dict-css': 4.0.18
       '@cspell/dict-dart': 2.3.1
-      '@cspell/dict-data-science': 2.0.11
+      '@cspell/dict-data-science': 2.0.10
       '@cspell/dict-django': 4.1.5
       '@cspell/dict-docker': 1.1.16
       '@cspell/dict-dotnet': 5.0.10
       '@cspell/dict-elixir': 4.0.8
-      '@cspell/dict-en-common-misspellings': 2.1.7
-      '@cspell/dict-en-gb-mit': 3.1.12
-      '@cspell/dict-en_us': 4.4.22
+      '@cspell/dict-en-common-misspellings': 2.1.6
+      '@cspell/dict-en-gb-mit': 3.1.10
+      '@cspell/dict-en_us': 4.4.20
       '@cspell/dict-filetypes': 3.0.14
       '@cspell/dict-flutter': 1.1.1
       '@cspell/dict-fonts': 4.0.5
@@ -4984,7 +4983,7 @@ snapshots:
       '@cspell/dict-fullstack': 3.2.7
       '@cspell/dict-gaming-terms': 1.1.2
       '@cspell/dict-git': 3.0.7
-      '@cspell/dict-golang': 6.0.24
+      '@cspell/dict-golang': 6.0.23
       '@cspell/dict-google': 1.0.9
       '@cspell/dict-haskell': 4.0.6
       '@cspell/dict-html': 4.0.12
@@ -5000,17 +4999,17 @@ snapshots:
       '@cspell/dict-markdown': 2.0.12(@cspell/dict-css@4.0.18)(@cspell/dict-html-symbol-entities@4.0.4)(@cspell/dict-html@4.0.12)(@cspell/dict-typescript@3.2.3)
       '@cspell/dict-monkeyc': 1.0.11
       '@cspell/dict-node': 5.0.8
-      '@cspell/dict-npm': 5.2.19
-      '@cspell/dict-php': 4.1.0
+      '@cspell/dict-npm': 5.2.18
+      '@cspell/dict-php': 4.0.15
       '@cspell/dict-powershell': 5.0.15
       '@cspell/dict-public-licenses': 2.0.15
-      '@cspell/dict-python': 4.2.21
+      '@cspell/dict-python': 4.2.20
       '@cspell/dict-r': 2.1.1
       '@cspell/dict-ruby': 5.0.9
       '@cspell/dict-rust': 4.0.12
       '@cspell/dict-scala': 5.0.8
-      '@cspell/dict-shell': 1.1.2
-      '@cspell/dict-software-terms': 5.1.10
+      '@cspell/dict-shell': 1.1.1
+      '@cspell/dict-software-terms': 5.1.9
       '@cspell/dict-sql': 2.2.1
       '@cspell/dict-svelte': 1.0.7
       '@cspell/dict-swift': 2.0.6
@@ -5038,13 +5037,13 @@ snapshots:
 
   '@cspell/dict-aws@4.0.15': {}
 
-  '@cspell/dict-bash@4.2.2':
+  '@cspell/dict-bash@4.2.1':
     dependencies:
-      '@cspell/dict-shell': 1.1.2
+      '@cspell/dict-shell': 1.1.1
 
-  '@cspell/dict-companies@3.2.7': {}
+  '@cspell/dict-companies@3.2.6': {}
 
-  '@cspell/dict-cpp@6.0.13': {}
+  '@cspell/dict-cpp@6.0.12': {}
 
   '@cspell/dict-cryptocurrencies@5.0.5': {}
 
@@ -5054,7 +5053,7 @@ snapshots:
 
   '@cspell/dict-dart@2.3.1': {}
 
-  '@cspell/dict-data-science@2.0.11': {}
+  '@cspell/dict-data-science@2.0.10': {}
 
   '@cspell/dict-django@4.1.5': {}
 
@@ -5064,11 +5063,11 @@ snapshots:
 
   '@cspell/dict-elixir@4.0.8': {}
 
-  '@cspell/dict-en-common-misspellings@2.1.7': {}
+  '@cspell/dict-en-common-misspellings@2.1.6': {}
 
-  '@cspell/dict-en-gb-mit@3.1.12': {}
+  '@cspell/dict-en-gb-mit@3.1.10': {}
 
-  '@cspell/dict-en_us@4.4.22': {}
+  '@cspell/dict-en_us@4.4.20': {}
 
   '@cspell/dict-filetypes@3.0.14': {}
 
@@ -5084,7 +5083,7 @@ snapshots:
 
   '@cspell/dict-git@3.0.7': {}
 
-  '@cspell/dict-golang@6.0.24': {}
+  '@cspell/dict-golang@6.0.23': {}
 
   '@cspell/dict-google@1.0.9': {}
 
@@ -5121,17 +5120,17 @@ snapshots:
 
   '@cspell/dict-node@5.0.8': {}
 
-  '@cspell/dict-npm@5.2.19': {}
+  '@cspell/dict-npm@5.2.18': {}
 
-  '@cspell/dict-php@4.1.0': {}
+  '@cspell/dict-php@4.0.15': {}
 
   '@cspell/dict-powershell@5.0.15': {}
 
   '@cspell/dict-public-licenses@2.0.15': {}
 
-  '@cspell/dict-python@4.2.21':
+  '@cspell/dict-python@4.2.20':
     dependencies:
-      '@cspell/dict-data-science': 2.0.11
+      '@cspell/dict-data-science': 2.0.10
 
   '@cspell/dict-r@2.1.1': {}
 
@@ -5141,9 +5140,9 @@ snapshots:
 
   '@cspell/dict-scala@5.0.8': {}
 
-  '@cspell/dict-shell@1.1.2': {}
+  '@cspell/dict-shell@1.1.1': {}
 
-  '@cspell/dict-software-terms@5.1.10': {}
+  '@cspell/dict-software-terms@5.1.9': {}
 
   '@cspell/dict-sql@2.2.1': {}
 
@@ -5266,12 +5265,12 @@ snapshots:
   '@esbuild/win32-x64@0.25.11':
     optional: true
 
-  '@gerrit0/mini-shiki@3.14.0':
+  '@gerrit0/mini-shiki@3.13.1':
     dependencies:
-      '@shikijs/engine-oniguruma': 3.14.0
-      '@shikijs/langs': 3.14.0
-      '@shikijs/themes': 3.14.0
-      '@shikijs/types': 3.14.0
+      '@shikijs/engine-oniguruma': 3.13.0
+      '@shikijs/langs': 3.13.0
+      '@shikijs/themes': 3.13.0
+      '@shikijs/types': 3.13.0
       '@shikijs/vscode-textmate': 10.0.2
 
   '@isaacs/balanced-match@4.0.1': {}
@@ -5341,7 +5340,7 @@ snapshots:
 
   '@mapbox/whoots-js@3.1.0': {}
 
-  '@maplibre/maplibre-gl-style-spec@24.3.1':
+  '@maplibre/maplibre-gl-style-spec@24.3.0':
     dependencies:
       '@mapbox/jsonlint-lines-primitives': 2.0.2
       '@mapbox/unitbezier': 0.0.1
@@ -5660,20 +5659,20 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@shikijs/engine-oniguruma@3.14.0':
+  '@shikijs/engine-oniguruma@3.13.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.13.0
       '@shikijs/vscode-textmate': 10.0.2
 
-  '@shikijs/langs@3.14.0':
+  '@shikijs/langs@3.13.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.13.0
 
-  '@shikijs/themes@3.14.0':
+  '@shikijs/themes@3.13.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.13.0
 
-  '@shikijs/types@3.14.0':
+  '@shikijs/types@3.13.0':
     dependencies:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
@@ -6871,6 +6870,11 @@ snapshots:
 
   '@types/lodash@4.17.20': {}
 
+  '@types/node@24.9.1':
+    dependencies:
+      undici-types: 7.16.0
+    optional: true
+
   '@types/node@24.9.2':
     dependencies:
       undici-types: 7.16.0
@@ -6883,7 +6887,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 24.9.2
+      '@types/node': 24.9.1
     optional: true
 
   '@vitejs/plugin-basic-ssl@2.1.0(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))':
@@ -6894,13 +6898,13 @@ snapshots:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
-      ast-v8-to-istanbul: 0.3.8
+      ast-v8-to-istanbul: 0.3.7
       debug: 4.4.3
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-report: 3.0.1
       istanbul-lib-source-maps: 5.0.6
       istanbul-reports: 3.2.0
-      magic-string: 0.30.21
+      magic-string: 0.30.19
       magicast: 0.3.5
       std-env: 3.10.0
       test-exclude: 7.0.1
@@ -6921,7 +6925,7 @@ snapshots:
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
-      magic-string: 0.30.21
+      magic-string: 0.30.19
     optionalDependencies:
       vite: 7.1.12(@types/node@24.9.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
@@ -6938,7 +6942,7 @@ snapshots:
   '@vitest/snapshot@3.2.4':
     dependencies:
       '@vitest/pretty-format': 3.2.4
-      magic-string: 0.30.21
+      magic-string: 0.30.19
       pathe: 2.0.3
 
   '@vitest/spy@3.2.4':
@@ -7022,7 +7026,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  ast-v8-to-istanbul@0.3.8:
+  ast-v8-to-istanbul@0.3.7:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       estree-walker: 3.0.3
@@ -7032,13 +7036,13 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  bare-events@2.8.1: {}
+  bare-events@2.8.0: {}
 
-  bare-fs@4.5.0:
+  bare-fs@4.4.11:
     dependencies:
-      bare-events: 2.8.1
+      bare-events: 2.8.0
       bare-path: 3.0.0
-      bare-stream: 2.7.0(bare-events@2.8.1)
+      bare-stream: 2.7.0(bare-events@2.8.0)
       bare-url: 2.3.1
       fast-fifo: 1.3.2
     transitivePeerDependencies:
@@ -7054,11 +7058,11 @@ snapshots:
       bare-os: 3.6.2
     optional: true
 
-  bare-stream@2.7.0(bare-events@2.8.1):
+  bare-stream@2.7.0(bare-events@2.8.0):
     dependencies:
       streamx: 2.23.0
     optionalDependencies:
-      bare-events: 2.8.1
+      bare-events: 2.8.0
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
@@ -7142,7 +7146,7 @@ snapshots:
 
   commander@12.0.0: {}
 
-  commander@14.0.2: {}
+  commander@14.0.1: {}
 
   commander@2.20.3: {}
 
@@ -7255,7 +7259,7 @@ snapshots:
       '@cspell/url': 9.2.2
       chalk: 5.6.2
       chalk-template: 1.1.2
-      commander: 14.0.2
+      commander: 14.0.1
       cspell-config-lib: 9.2.2
       cspell-dictionary: 9.2.2
       cspell-gitignore: 9.2.2
@@ -7396,7 +7400,7 @@ snapshots:
 
   events-universal@1.0.1:
     dependencies:
-      bare-events: 2.8.1
+      bare-events: 2.8.0
     transitivePeerDependencies:
       - bare-abort-controller
 
@@ -7486,7 +7490,7 @@ snapshots:
 
   get-stream@6.0.1: {}
 
-  get-tsconfig@4.13.0:
+  get-tsconfig@4.12.0:
     dependencies:
       resolve-pkg-maps: 1.0.0
     optional: true
@@ -7514,7 +7518,7 @@ snapshots:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 4.1.1
-      minimatch: 10.1.1
+      minimatch: 10.0.3
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 2.0.0
@@ -7753,14 +7757,14 @@ snapshots:
 
   lunr@2.3.9: {}
 
-  magic-string@0.30.21:
+  magic-string@0.30.19:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   magicast@0.3.5:
     dependencies:
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.28.4
+      '@babel/types': 7.28.4
       source-map-js: 1.2.1
 
   make-dir@2.1.0:
@@ -7784,7 +7788,7 @@ snapshots:
       '@mapbox/unitbezier': 0.0.1
       '@mapbox/vector-tile': 2.0.4
       '@mapbox/whoots-js': 3.1.0
-      '@maplibre/maplibre-gl-style-spec': 24.3.1
+      '@maplibre/maplibre-gl-style-spec': 24.3.0
       '@maplibre/vt-pbf': 4.0.3
       '@types/geojson': 7946.0.16
       '@types/geojson-vt': 3.2.5
@@ -7822,10 +7826,6 @@ snapshots:
     optional: true
 
   minimatch@10.0.3:
-    dependencies:
-      '@isaacs/brace-expansion': 5.0.0
-
-  minimatch@10.1.1:
     dependencies:
       '@isaacs/brace-expansion': 5.0.0
 
@@ -8419,7 +8419,7 @@ snapshots:
       pump: 3.0.3
       tar-stream: 3.1.7
     optionalDependencies:
-      bare-fs: 4.5.0
+      bare-fs: 4.4.11
       bare-path: 3.0.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -8508,7 +8508,7 @@ snapshots:
   tsx@4.20.6:
     dependencies:
       esbuild: 0.25.11
-      get-tsconfig: 4.13.0
+      get-tsconfig: 4.12.0
     optionalDependencies:
       fsevents: 2.3.3
     optional: true
@@ -8517,7 +8517,7 @@ snapshots:
 
   typedoc@0.28.14(typescript@5.9.3):
     dependencies:
-      '@gerrit0/mini-shiki': 3.14.0
+      '@gerrit0/mini-shiki': 3.13.1
       lunr: 2.3.9
       markdown-it: 14.1.0
       minimatch: 9.0.5
@@ -8547,7 +8547,7 @@ snapshots:
       debug: 4.4.3
       kolorist: 1.8.0
       local-pkg: 1.1.2
-      magic-string: 0.30.21
+      magic-string: 0.30.19
       typescript: 5.9.3
       unplugin: 2.3.10
     optionalDependencies:
@@ -8652,7 +8652,7 @@ snapshots:
       chai: 5.3.3
       debug: 4.4.3
       expect-type: 1.2.2
-      magic-string: 0.30.21
+      magic-string: 0.30.19
       pathe: 2.0.3
       picomatch: 4.0.3
       std-env: 3.10.0

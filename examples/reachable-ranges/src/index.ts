@@ -1,8 +1,8 @@
 // TODO: restore SDK reachable range service
 
-// import { PolygonFeatures, TomTomConfig } from "@cet/maps-sdk-js/core";
-// import { GeometriesModule, PlacesModule, TomTomMap } from "@cet/maps-sdk-js/map";
-// import { calculateReachableRanges, ReachableRangeBudget, search } from "@cet/maps-sdk-js/services";
+// import { PolygonFeatures, TomTomConfig } from "@tomtom-org/maps-sdk-js/core";
+// import { GeometriesModule, PlacesModule, TomTomMap } from "@tomtom-org/maps-sdk-js/map";
+// import { calculateReachableRanges, ReachableRangeBudget, search } from "@tomtom-org/maps-sdk-js/services";
 // import { LngLatBoundsLike } from "maplibre-gl";
 // import './style.css';
 //

@@ -1,4 +1,4 @@
-import type { PolygonFeatures } from '@cet/maps-sdk-js/core';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import { mapStyleLayerIDs } from '../../shared';

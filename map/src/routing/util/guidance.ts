@@ -1,4 +1,4 @@
-import type { Routes } from '@cet/maps-sdk-js/core';
+import type { Routes } from '@tomtom-org/maps-sdk-js/core';
 import calcBearing from '@turf/bearing';
 import type { DisplayRouteProps } from '../types/displayRoutes';
 import type {

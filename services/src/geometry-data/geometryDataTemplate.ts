@@ -1,4 +1,4 @@
-import type { PolygonFeatures } from '@cet/maps-sdk-js/core';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
 import type { ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { geometryDataRequestSchema } from './geometryDataRequestSchema';

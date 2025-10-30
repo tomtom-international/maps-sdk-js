@@ -1,4 +1,4 @@
-import type { Place, SearchPlaceProps } from '@cet/maps-sdk-js/core';
+import type { Place, SearchPlaceProps } from '@tomtom-org/maps-sdk-js/core';
 
 /**
  * Response from the place by ID service.

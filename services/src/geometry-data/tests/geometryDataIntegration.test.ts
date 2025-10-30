@@ -1,5 +1,5 @@
-import type { Places } from '@cet/maps-sdk-js/core';
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import type { Places } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { geometryData } from '../geometryData';
 import type { GeometryDataResponseAPI } from '../types/apiTypes';

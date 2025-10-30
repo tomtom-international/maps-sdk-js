@@ -1,6 +1,6 @@
-import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
-import { TomTomMap } from '@cet/maps-sdk-js/map';
-import { geocode } from '@cet/maps-sdk-js/services';
+import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { geocode } from '@tomtom-org/maps-sdk-js/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 

@@ -1,4 +1,4 @@
-import type { HasLngLat } from '@cet/maps-sdk-js/core';
+import type { HasLngLat } from '@tomtom-org/maps-sdk-js/core';
 import type { CommonRoutingParams, CommonServiceParams, DepartArriveParams } from '../../shared';
 import type { ReachableRangeResponseAPI } from './apiResponseTypes';
 

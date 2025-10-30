@@ -1,5 +1,5 @@
-import type { DelayMagnitude, DisplayUnits, Route, Routes, TrafficSectionProps } from '@cet/maps-sdk-js/core';
-import { formatDistance, formatDuration } from '@cet/maps-sdk-js/core';
+import type { DelayMagnitude, DisplayUnits, Route, Routes, TrafficSectionProps } from '@tomtom-org/maps-sdk-js/core';
+import { formatDistance, formatDuration } from '@tomtom-org/maps-sdk-js/core';
 import type { DisplayRouteProps, DisplayRouteSummaries } from '../types/displayRoutes';
 
 /**

@@ -1,5 +1,5 @@
-import { Places, TomTomConfig } from '@cet/maps-sdk-js/core';
-import { PlacesModule, TomTomMap } from '@cet/maps-sdk-js/map';
+import { Places, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
 import {
     AutocompleteSearchBrandSegment,
     AutocompleteSearchCategorySegment,
@@ -7,7 +7,7 @@ import {
     AutocompleteSearchResult,
     autocompleteSearch,
     search,
-} from '@cet/maps-sdk-js/services';
+} from '@tomtom-org/maps-sdk-js/services';
 import './style.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 

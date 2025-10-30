@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
 import {
     FilterablePOICategory,
     FilterShowMode,
@@ -7,7 +7,7 @@ import {
     POIsModule,
     TomTomMap,
     ValuesFilter,
-} from '@cet/maps-sdk-js/map';
+} from '@tomtom-org/maps-sdk-js/map';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 

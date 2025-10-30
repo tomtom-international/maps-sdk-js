@@ -1,4 +1,4 @@
-import type { GetPositionEntryPointOption, inputSectionTypes, RoutePlanningLocation } from '@cet/maps-sdk-js/core';
+import type { GetPositionEntryPointOption, inputSectionTypes, RoutePlanningLocation } from '@tomtom-org/maps-sdk-js/core';
 import type { CommonRoutingParams, CommonServiceParams } from '../../shared';
 import type { CalculateRouteRequestAPI } from './apiRequestTypes';
 import type { CalculateRouteResponseAPI } from './apiResponseTypes';

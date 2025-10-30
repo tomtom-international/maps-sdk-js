@@ -15,9 +15,9 @@ export default defineConfig({
     plugins: [basicSsl()],
     resolve: {
         alias: {
-            // We ensure to locally alias imports from @cet/maps-sdk-js/core from the SDK code itself to the locally built core package.
+            // We ensure to locally alias imports from @tomtom-org/maps-sdk-js/core from the SDK code itself to the locally built core package.
             // (This is for target code running on the test browser)
-            '@cet/maps-sdk-js/core': path.resolve('../core/dist/core.es.js'),
+            '@tomtom-org/maps-sdk-js/core': path.resolve('../core/dist/core.es.js'),
         },
     },
 });

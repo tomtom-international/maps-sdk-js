@@ -1,4 +1,4 @@
-import { generateTomTomHeaders, mergeFromGlobal } from '@cet/maps-sdk-js/core';
+import { generateTomTomHeaders, mergeFromGlobal } from '@tomtom-org/maps-sdk-js/core';
 import { buildResponseError, buildValidationError } from './errors';
 import type { ValidationError } from './schema/validation';
 import { validateRequestSchema } from './schema/validation';

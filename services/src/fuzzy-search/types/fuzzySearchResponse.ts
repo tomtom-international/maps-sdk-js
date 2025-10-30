@@ -1,4 +1,4 @@
-import type { Places, SearchPlaceProps } from '@cet/maps-sdk-js/core';
+import type { Places, SearchPlaceProps } from '@tomtom-org/maps-sdk-js/core';
 import type { Position } from 'geojson';
 import type { SearchSummary } from '../../shared';
 

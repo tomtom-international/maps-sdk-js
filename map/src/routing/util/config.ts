@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
 import type { ToBeAddedLayerSpecTemplate, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import { buildRoutingLayers } from '../layers/routingLayers';
 import type { RouteLayersConfig, RoutingModuleConfig } from '../types/routeModuleConfig';

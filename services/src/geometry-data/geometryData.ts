@@ -1,4 +1,4 @@
-import type { CommonPlaceProps, Places, PolygonFeatures } from '@cet/maps-sdk-js/core';
+import type { CommonPlaceProps, Places, PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
 import { callService } from '../shared/serviceTemplate';
 import type { GeometryDataTemplate } from './geometryDataTemplate';
 import { geometryDataTemplate } from './geometryDataTemplate';

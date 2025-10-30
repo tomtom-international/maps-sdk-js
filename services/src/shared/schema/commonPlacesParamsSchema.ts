@@ -1,4 +1,4 @@
-import { views } from '@cet/maps-sdk-js/core';
+import { views } from '@tomtom-org/maps-sdk-js/core';
 import { z } from 'zod/v4-mini';
 import { hasLngLatSchema } from './geometriesSchema';
 

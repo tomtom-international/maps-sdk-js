@@ -1,11 +1,11 @@
 {
-  "name": "@cet/maps-sdk-js",
+  "name": "@tomtom-org/maps-sdk-js",
   "version": "0.26.0",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
     "build": "pnpm build:sdk",
     "build:api-reference": "typedoc",
-    "build:examples": "pnpm --workspace-concurrency=0 -F './examples/*' build && pnpm -F @cet/maps-sdk-js-examples build",
+    "build:examples": "pnpm --workspace-concurrency=0 -F './examples/*' build && pnpm -F @tomtom-org/maps-sdk-js-examples build",
     "build:sdk": "pnpm -F core build  && pnpm -F services build && pnpm -F map build",
     "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
     "e2e-test:examples": "pnpm -F './examples/*' test",
@@ -21,9 +21,6 @@
     "test:sdk:coverage": "pnpm -F core test:coverage && pnpm -F services test:coverage && pnpm -F map test:coverage",
     "type-check:examples": "pnpm --workspace-concurrency=0 -F './examples/*' type-check",
     "type-check:sdk": "pnpm -F core type-check && pnpm -F services type-check && pnpm -F map type-check && pnpm -F map-integration-tests type-check"
-  },
-  "publishConfig": {
-    "registry": "https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/"
   },
   "repository": {
     "type": "git",

@@ -6,13 +6,13 @@ import type {
     Waypoint,
     WaypointLike,
     WaypointProps,
-} from '@cet/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk-js/core';
 import {
     getPositionStrict,
     getRoutePlanningLocationType,
     inputSectionTypes,
     inputSectionTypesWithGuidance,
-} from '@cet/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk-js/core';
 import type { Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
 import type { FetchInput } from '../shared';

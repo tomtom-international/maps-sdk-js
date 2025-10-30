@@ -1,5 +1,5 @@
-import type { GlobalConfig } from '@cet/maps-sdk-js/core';
-import { generateTomTomHeaders } from '@cet/maps-sdk-js/core';
+import type { GlobalConfig } from '@tomtom-org/maps-sdk-js/core';
+import { generateTomTomHeaders } from '@tomtom-org/maps-sdk-js/core';
 import type {
     FilterSpecification,
     Map,

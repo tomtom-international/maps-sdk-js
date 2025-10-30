@@ -1,5 +1,5 @@
-import type { GeometriesModuleConfig } from '@cet/maps-sdk-js/map';
-import type { GeocodingParams } from '@cet/maps-sdk-js/services';
+import type { GeometriesModuleConfig } from '@tomtom-org/maps-sdk-js/map';
+import type { GeocodingParams } from '@tomtom-org/maps-sdk-js/services';
 
 export type Config = {
     searchConfig: Partial<GeocodingParams>;

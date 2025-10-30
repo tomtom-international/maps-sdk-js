@@ -1,4 +1,4 @@
-import { Place, Places } from '@cet/maps-sdk-js/core';
+import { Place, Places } from '@tomtom-org/maps-sdk-js/core';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import { EventsModule, PLACES_SOURCE_PREFIX_ID } from '../../shared';

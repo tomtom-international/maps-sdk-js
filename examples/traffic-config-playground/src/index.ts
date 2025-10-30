@@ -1,7 +1,7 @@
-import type { Place } from '@cet/maps-sdk-js/core';
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import { TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@cet/maps-sdk-js/map';
-import { geocode } from '@cet/maps-sdk-js/services';
+import type { Place } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk-js/map';
+import { geocode } from '@tomtom-org/maps-sdk-js/services';
 import './style.css';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { configPresets } from './configPresets';

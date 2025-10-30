@@ -27,8 +27,8 @@ export default defineConfig(({ mode }) => {
         server: { port: 9022 },
         resolve: {
             alias: {
-                // We ensure to locally alias imports from @cet/maps-sdk-js/core from the SDK code itself to the locally built core package.
-                '@cet/maps-sdk-js/core': path.resolve('../../core/dist/core.es.js'),
+                // We ensure to locally alias imports from @tomtom-org/maps-sdk-js/core from the SDK code itself to the locally built core package.
+                '@tomtom-org/maps-sdk-js/core': path.resolve('../../core/dist/core.es.js'),
             },
         },
         define: {

@@ -1,4 +1,4 @@
-import { ConnectorType } from '@cet/maps-sdk-js/core';
+import { ConnectorType } from '@tomtom-org/maps-sdk-js/core';
 
 export const connectorNames: Record<ConnectorType, string> = {
     StandardHouseholdCountrySpecific: 'Domestic plug',

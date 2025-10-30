@@ -8,7 +8,7 @@ import {
     Place,
     PolygonFeatures,
     TomTomConfig,
-} from '@cet/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk-js/core';
 import {
     GeometriesModule,
     PlacesModule,
@@ -16,13 +16,13 @@ import {
     POIsModule,
     TomTomMap,
     TrafficIncidentsModule,
-} from '@cet/maps-sdk-js/map';
+} from '@tomtom-org/maps-sdk-js/map';
 import {
     buildPlacesWithEVAvailability,
     buildPlaceWithEVAvailability,
     geometryData,
     search,
-} from '@cet/maps-sdk-js/services';
+} from '@tomtom-org/maps-sdk-js/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import { isEmpty, without } from 'lodash-es';
 import { LngLatBoundsLike, LngLatLike, NavigationControl, Popup } from 'maplibre-gl';

@@ -1,4 +1,4 @@
-import type { Place, Places } from '@cet/maps-sdk-js/core';
+import type { Place, Places } from '@tomtom-org/maps-sdk-js/core';
 import { describe, expect, test } from 'vitest';
 import { buildGeometryDataRequest } from '../requestBuilder';
 

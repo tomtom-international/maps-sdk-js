@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "dependencies": {
-    "@cet/maps-sdk-js": "workspace:*",
+    "@tomtom-org/maps-sdk-js": "workspace:*",
     "maplibre-gl": "catalog:"
   },
   "devDependencies": {

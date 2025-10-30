@@ -1,6 +1,6 @@
-import { bboxFromGeoJSON, TomTomConfig } from '@cet/maps-sdk-js/core';
-import { RoutingModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { calculateRoute, geocodeOne } from '@cet/maps-sdk-js/services';
+import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk-js/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 

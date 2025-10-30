@@ -1,6 +1,6 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import { GeometriesModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { geocode, geometryData } from '@cet/maps-sdk-js/services';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { GeometriesModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { geocode, geometryData } from '@tomtom-org/maps-sdk-js/services';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 

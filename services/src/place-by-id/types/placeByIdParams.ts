@@ -1,4 +1,4 @@
-import type { MapcodeType, OpeningHoursMode, View } from '@cet/maps-sdk-js/core';
+import type { MapcodeType, OpeningHoursMode, View } from '@tomtom-org/maps-sdk-js/core';
 import type { CommonServiceParams, RelatedPoisRequest, TimeZoneRequest } from '../../shared';
 import type { PlaceByIdResponseAPI } from './placeByIdResponseAPI';
 

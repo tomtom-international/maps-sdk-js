@@ -1,4 +1,4 @@
-import { ConnectorType } from '@cet/maps-sdk-js/core';
+import { ConnectorType } from '@tomtom-org/maps-sdk-js/core';
 import chademoIcon from './resources/ic-chademo-24.svg?raw';
 import domesticIcon from './resources/ic-domestic-euro-24.svg?raw';
 import industrialBlue from './resources/ic-industrial-blue-24.svg?raw';

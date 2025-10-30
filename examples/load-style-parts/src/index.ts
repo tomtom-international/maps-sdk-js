@@ -1,5 +1,5 @@
 import './style.css';
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
 import {
     HillshadeModule,
     StandardStyleID,
@@ -7,7 +7,7 @@ import {
     TomTomMap,
     TrafficFlowModule,
     TrafficIncidentsModule,
-} from '@cet/maps-sdk-js/map';
+} from '@tomtom-org/maps-sdk-js/map';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });

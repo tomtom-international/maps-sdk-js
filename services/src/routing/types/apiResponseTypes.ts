@@ -12,7 +12,7 @@ import type {
     RouteSummary,
     TrafficIncidentTEC,
     TravelMode,
-} from '@cet/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk-js/core';
 
 /**
  * @ignore

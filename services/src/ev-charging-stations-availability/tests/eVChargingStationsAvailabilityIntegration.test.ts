@@ -1,5 +1,5 @@
-import type { ChargingPoint, ChargingStationsAvailability } from '@cet/maps-sdk-js/core';
-import { chargingPointStatus, chargingStationAccessTypes, connectorTypes } from '@cet/maps-sdk-js/core';
+import type { ChargingPoint, ChargingStationsAvailability } from '@tomtom-org/maps-sdk-js/core';
+import { chargingPointStatus, chargingStationAccessTypes, connectorTypes } from '@tomtom-org/maps-sdk-js/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { search } from '../../search';
 import { SDKServiceError } from '../../shared';

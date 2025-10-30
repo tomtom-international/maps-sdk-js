@@ -1,5 +1,5 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import { TomTomMap } from '@cet/maps-sdk-js/map';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk-js/map';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

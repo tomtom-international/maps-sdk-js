@@ -1,4 +1,4 @@
-import type { CurrentType, PlugType } from '@cet/maps-sdk-js/core';
+import type { CurrentType, PlugType } from '@tomtom-org/maps-sdk-js/core';
 
 /**
  * Specifies the speed-dependent component of consumption.

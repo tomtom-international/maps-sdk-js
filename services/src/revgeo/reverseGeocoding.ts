@@ -1,4 +1,4 @@
-import type { Place, RevGeoAddressProps } from '@cet/maps-sdk-js/core';
+import type { Place, RevGeoAddressProps } from '@tomtom-org/maps-sdk-js/core';
 import { callService } from '../shared/serviceTemplate';
 import type { ReverseGeocodingTemplate } from './reverseGeocodingTemplate';
 import { reverseGeocodingTemplate } from './reverseGeocodingTemplate';

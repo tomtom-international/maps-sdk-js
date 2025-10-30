@@ -1,4 +1,4 @@
-import type { PolygonFeatures } from '@cet/maps-sdk-js/core';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
 import { describe, expect, test } from 'vitest';
 import { parseGeometryDataResponse } from '../responseParser';
 import type { GeometryDataResponseAPI } from '../types/apiTypes';

@@ -1,4 +1,4 @@
-import type { Avoidable, TravelMode } from '@cet/maps-sdk-js/core';
+import type { Avoidable, TravelMode } from '@tomtom-org/maps-sdk-js/core';
 import { VehicleParameters } from './vehicleParams';
 
 /**

@@ -103,8 +103,8 @@ When workspaces depend on each other, use workspace protocol:
 ```json
 {
   "dependencies": {
-    "@cet/maps-core": "workspace:*",
-    "@cet/maps-services": "workspace:*"
+    "@tomtom-org/maps-core": "workspace:*",
+    "@tomtom-org/maps-services": "workspace:*"
   }
 }
 ```

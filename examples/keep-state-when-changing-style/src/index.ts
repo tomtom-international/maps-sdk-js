@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, TomTomConfig, Waypoint } from '@cet/maps-sdk-js/core';
+import { bboxFromGeoJSON, TomTomConfig, Waypoint } from '@tomtom-org/maps-sdk-js/core';
 import {
     PlacesModule,
     POIsModule,
@@ -7,8 +7,8 @@ import {
     standardStyleIDs,
     TomTomMap,
     TrafficIncidentsModule,
-} from '@cet/maps-sdk-js/map';
-import { calculateRoute, SearchResponse, search } from '@cet/maps-sdk-js/services';
+} from '@tomtom-org/maps-sdk-js/map';
+import { calculateRoute, SearchResponse, search } from '@tomtom-org/maps-sdk-js/services';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';

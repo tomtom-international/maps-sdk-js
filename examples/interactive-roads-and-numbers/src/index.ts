@@ -1,6 +1,6 @@
-import { TomTomConfig } from '@cet/maps-sdk-js/core';
-import { BaseMapLayerGroupName, BaseMapModule, mapStyleLayerIDs, POIsModule, TomTomMap } from '@cet/maps-sdk-js/map';
-import { ReverseGeocodingResponse, reverseGeocode } from '@cet/maps-sdk-js/services';
+import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { BaseMapLayerGroupName, BaseMapModule, mapStyleLayerIDs, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { ReverseGeocodingResponse, reverseGeocode } from '@tomtom-org/maps-sdk-js/services';
 import bboxPolygon from '@turf/bbox-polygon';
 import { buffer } from '@turf/buffer';
 import difference from '@turf/difference';

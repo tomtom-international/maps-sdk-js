@@ -1,4 +1,4 @@
-import type { TrafficSectionProps } from '@cet/maps-sdk-js/core';
+import type { TrafficSectionProps } from '@tomtom-org/maps-sdk-js/core';
 import { describe, expect, test } from 'vitest';
 import type { DisplayTrafficSectionProps } from '../../types/routeSections';
 import { toDisplayTrafficSectionProps, trafficSectionToIconID } from '../displayTrafficSectionProps';

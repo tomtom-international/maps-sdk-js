@@ -1,4 +1,4 @@
-import type { Route } from '@cet/maps-sdk-js/core';
+import type { Route } from '@tomtom-org/maps-sdk-js/core';
 import type { FetchInput } from '../../shared';
 import type { CalculateRoutePOSTDataAPI } from '../types/apiRequestTypes';
 import type { CalculateRouteParams } from '../types/calculateRouteParams';

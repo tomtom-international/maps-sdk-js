@@ -1,4 +1,4 @@
-import type { HasBBox } from '@cet/maps-sdk-js/core';
+import type { HasBBox } from '@tomtom-org/maps-sdk-js/core';
 
 /**
  * Common parameters shared between fuzzy search and geocoding services.
