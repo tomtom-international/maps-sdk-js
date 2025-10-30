@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.26.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.25.0...v0.26.0) (2025-10-30)
+
+
+### Features
+
+* clean-up places guide ([359ffc5](https://github.com/tomtom-international/maps-sdk-js/commit/359ffc5ace3deded6fb1ad65b89a904d722b7fdd))
+* improving routing module parameters ([0e3a85e](https://github.com/tomtom-international/maps-sdk-js/commit/0e3a85e564ff5b8f3fec985ab4fd0a8cf9ed27bc))
+
+
+### Bug Fixes
+
+* add icon styling and programmatic event states ([2b5787a](https://github.com/tomtom-international/maps-sdk-js/commit/2b5787a7f29a2351428fc9f5244f1b10c14ccdb4))
+* clean-up routing module docs ([244ae82](https://github.com/tomtom-international/maps-sdk-js/commit/244ae82bff9ce04c62c2e3429a7421b729afcbcf))
+* indents and addressing PR comments ([a6880b0](https://github.com/tomtom-international/maps-sdk-js/commit/a6880b0e7f1eea142170d27a9db09c41220b9193))
+* remove custom places, add API reference ([68866ec](https://github.com/tomtom-international/maps-sdk-js/commit/68866ec96c32004c5ed04d87569bee6cdfb063ad))
+
 ## [0.25.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.24.0...v0.25.0) (2025-10-30)
 
 
