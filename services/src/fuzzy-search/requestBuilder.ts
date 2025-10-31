@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk-js/core';
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { arrayToCSV } from '../shared/arrays';
 import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
 import { appendByJoiningParamValue, appendOptionalParam } from '../shared/request/requestBuildingUtils';

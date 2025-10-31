@@ -1,4 +1,4 @@
-import type { Place, Places } from '@tomtom-org/maps-sdk-js/core';
+import type { Place, Places } from '@tomtom-org/maps-sdk/core';
 import type { Map } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../pois/poiCategoryMapping';
 import { toMapDisplayPOICategory } from '../pois/poiCategoryMapping';

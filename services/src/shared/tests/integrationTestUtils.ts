@@ -1,5 +1,5 @@
-import type { Moment, OpeningHours, Place, SearchPlaceProps } from '@tomtom-org/maps-sdk-js/core';
-import { placeTypes, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import type { Moment, OpeningHours, Place, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
+import { placeTypes, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { expect } from 'vitest';
 
 export const putIntegrationTestsAPIKey = () => {

@@ -1,4 +1,4 @@
-import type { GlobalConfig } from '@tomtom-org/maps-sdk-js/core';
+import type { GlobalConfig } from '@tomtom-org/maps-sdk/core';
 import type { MapOptions, StyleSpecification } from 'maplibre-gl';
 import type { MapEventsConfig } from './mapEventsConfig';
 
@@ -20,7 +20,7 @@ import type { MapEventsConfig } from './mapEventsConfig';
  *
  * @example
  * ```typescript
- * import { standardStyleIDs } from '@tomtom-org/maps-sdk-js/map';
+ * import { standardStyleIDs } from '@tomtom-org/maps-sdk/map';
  *
  * // Build a dropdown menu with all standard styles
  * const styleSelector = document.getElementById('style-selector');

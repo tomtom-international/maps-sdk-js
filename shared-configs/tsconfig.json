@@ -11,7 +11,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "paths": {
-      "@tomtom-org/maps-sdk-js/core": ["../core"]
+      "@tomtom-org/maps-sdk/core": ["../core"]
     }
   },
   "exclude": ["node_modules", "dist"]

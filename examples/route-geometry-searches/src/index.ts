@@ -1,8 +1,8 @@
 import './style.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { bboxFromGeoJSON, TomTomConfig, type Waypoint } from '@tomtom-org/maps-sdk-js/core';
-import { PlacesModule, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
-import { calculateRoute, geocodeOne, search } from '@tomtom-org/maps-sdk-js/services';
+import { bboxFromGeoJSON, TomTomConfig, type Waypoint } from '@tomtom-org/maps-sdk/core';
+import { PlacesModule, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculateRoute, geocodeOne, search } from '@tomtom-org/maps-sdk/services';
 import buffer from '@turf/buffer';
 import type { Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';

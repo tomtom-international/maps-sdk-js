@@ -1,4 +1,4 @@
-import { indexedMagnitudes } from '@tomtom-org/maps-sdk-js/core';
+import { indexedMagnitudes } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
 import type {
     ExpressionFilterSpecification,

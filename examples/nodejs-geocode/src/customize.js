@@ -1,9 +1,9 @@
 'use strict';
 require('dotenv').config({ path: '../.env' });
 
-const { TomTomConfig } = require('@tomtom-org/maps-sdk-js/core');
-const { geocode } = require('@tomtom-org/maps-sdk-js/services');
-const customizeService = require('@tomtom-org/maps-sdk-js/services').customizeService;
+const { TomTomConfig } = require('@tomtom-org/maps-sdk/core');
+const { geocode } = require('@tomtom-org/maps-sdk/services');
+const customizeService = require('@tomtom-org/maps-sdk/services').customizeService;
 const parseGeocodingResponse = customizeService.geocode.parseGeocodingResponse;
 const buildGeocodingRequest = customizeService.geocode.buildGeocodingRequest;
 

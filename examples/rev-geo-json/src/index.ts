@@ -1,5 +1,5 @@
-import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
-import { reverseGeocode } from '@tomtom-org/maps-sdk-js/services';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

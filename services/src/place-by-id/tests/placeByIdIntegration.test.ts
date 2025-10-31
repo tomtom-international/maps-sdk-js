@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import {
     basePOITestProps,

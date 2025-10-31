@@ -1,4 +1,4 @@
-import type { HasLngLat } from '@tomtom-org/maps-sdk-js/core';
+import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
 import type { CommonServiceParams, TrafficInput } from '../../shared';
 import type { CalculateMatrixRouteRequestAPI } from './apiRequestTypes';
 import type { CalculateMatrixRouteResponseAPI } from './apiResponseTypes';

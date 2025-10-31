@@ -1,4 +1,4 @@
-import type { POICategory } from '@tomtom-org/maps-sdk-js/core';
+import type { POICategory } from '@tomtom-org/maps-sdk/core';
 
 /**
  * @ignore

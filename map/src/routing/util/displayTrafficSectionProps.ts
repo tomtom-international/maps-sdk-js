@@ -1,5 +1,5 @@
-import type { DelayMagnitude, TrafficSectionProps } from '@tomtom-org/maps-sdk-js/core';
-import { formatDuration } from '@tomtom-org/maps-sdk-js/core';
+import type { DelayMagnitude, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
+import { formatDuration } from '@tomtom-org/maps-sdk/core';
 import type { DisplayTrafficSectionProps } from '../types/routeSections';
 
 const delayMagnitudeToIconPrefix: Record<DelayMagnitude, string> = {

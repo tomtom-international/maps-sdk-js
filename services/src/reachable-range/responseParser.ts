@@ -1,5 +1,5 @@
-import type { PolygonFeature } from '@tomtom-org/maps-sdk-js/core';
-import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk-js/core';
+import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import type { Polygon } from 'geojson';
 import type { ReachableRangeResponseAPI } from './types/apiResponseTypes';
 import type { ReachableRangeParams } from './types/reachableRangeParams';

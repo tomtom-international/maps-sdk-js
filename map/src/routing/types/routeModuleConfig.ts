@@ -1,4 +1,4 @@
-import type { ChargingSpeed, ChargingStop, DisplayUnits, GetPositionEntryPointOption } from '@tomtom-org/maps-sdk-js/core';
+import type { ChargingSpeed, ChargingStop, DisplayUnits, GetPositionEntryPointOption } from '@tomtom-org/maps-sdk/core';
 import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import { CustomImage, SVGIconStyleOptions, ToBeAddedLayerSpecTemplate } from '../../shared';
 

@@ -6,7 +6,7 @@ export default defineConfig({
     ...commonVitestConfig,
     resolve: {
         alias: {
-            '@tomtom-org/maps-sdk-js/core': 'core',
+            '@tomtom-org/maps-sdk/core': 'core',
         },
     },
 });

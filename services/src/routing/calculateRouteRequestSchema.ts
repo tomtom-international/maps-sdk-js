@@ -1,5 +1,5 @@
-import type { SectionType } from '@tomtom-org/maps-sdk-js/core';
-import { getRoutePlanningLocationType, inputSectionTypesWithGuidance } from '@tomtom-org/maps-sdk-js/core';
+import type { SectionType } from '@tomtom-org/maps-sdk/core';
+import { getRoutePlanningLocationType, inputSectionTypesWithGuidance } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod/v4-mini';
 import { commonRoutingRequestSchema } from '../shared/schema/commonRoutingRequestSchema';
 import {

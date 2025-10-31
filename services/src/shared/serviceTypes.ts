@@ -1,4 +1,4 @@
-import type { GlobalConfig, TomTomHeaders } from '@tomtom-org/maps-sdk-js/core';
+import type { GlobalConfig, TomTomHeaders } from '@tomtom-org/maps-sdk/core';
 import type { SDKServiceError } from './errors';
 import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiResponseErrorTypes';
 import type { ParsedFetchResponse } from './types/fetch';

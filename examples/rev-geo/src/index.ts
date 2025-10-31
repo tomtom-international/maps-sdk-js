@@ -1,6 +1,6 @@
-import { AddressProperties, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
-import { BaseMapModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
-import { reverseGeocode } from '@tomtom-org/maps-sdk-js/services';
+import { AddressProperties, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { BaseMapModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import type { Point } from 'geojson';
 import { LngLat, Marker, Popup } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';

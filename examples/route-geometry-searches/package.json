@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "dependencies": {
-    "@tomtom-org/maps-sdk-js": "workspace:*",
+    "@tomtom-org/maps-sdk": "workspace:*",
     "@turf/buffer": "^7.2.0",
     "maplibre-gl": "catalog:"
   },

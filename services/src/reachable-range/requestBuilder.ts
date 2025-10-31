@@ -1,4 +1,4 @@
-import { getPositionStrict } from '@tomtom-org/maps-sdk-js/core';
+import { getPositionStrict } from '@tomtom-org/maps-sdk/core';
 import { positionToCSVLatLon } from '../shared/geometry';
 import { appendCommonRoutingParams } from '../shared/request/commonRoutingRequestBuilder';
 import { appendCommonParams, appendOptionalParam } from '../shared/request/requestBuildingUtils';

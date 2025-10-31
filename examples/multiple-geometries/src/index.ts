@@ -1,13 +1,13 @@
-import type { Places } from '@tomtom-org/maps-sdk-js/core';
-import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import type { Places } from '@tomtom-org/maps-sdk/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     GeometriesModule,
     type GeometryBeforeLayerConfig,
     type StandardStyleID,
     standardStyleIDs,
     TomTomMap,
-} from '@tomtom-org/maps-sdk-js/map';
-import { geocode, geometryData } from '@tomtom-org/maps-sdk-js/services';
+} from '@tomtom-org/maps-sdk/map';
+import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Config } from './placeConfiguration';

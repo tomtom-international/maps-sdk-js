@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { afterAll, describe, expect, test } from 'vitest';
 import { geocode } from '../../geocode';
 import { fetchWith, get, post } from '../fetch';

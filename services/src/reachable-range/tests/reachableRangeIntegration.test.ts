@@ -1,5 +1,5 @@
-import type { PolygonFeature } from '@tomtom-org/maps-sdk-js/core';
-import { isBBoxWithArea } from '@tomtom-org/maps-sdk-js/core';
+import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import { isBBoxWithArea } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { calculateReachableRange, calculateReachableRanges } from '../calculateReachableRange';

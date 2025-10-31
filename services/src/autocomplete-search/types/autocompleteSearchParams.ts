@@ -1,4 +1,4 @@
-import type { HasLngLat } from '@tomtom-org/maps-sdk-js/core';
+import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
 import type { CommonServiceParams } from '../../shared';
 import type { AutocompleteSearchResponseAPI } from './autocompleteSearchResponseAPI';
 

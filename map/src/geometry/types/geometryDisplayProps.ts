@@ -1,4 +1,4 @@
-import type { Anything, CommonPlaceProps } from '@tomtom-org/maps-sdk-js/core';
+import type { Anything, CommonPlaceProps } from '@tomtom-org/maps-sdk/core';
 import type { SupportsEvents } from '../../shared';
 
 /**

@@ -8,7 +8,7 @@ import type {
     OpeningHours,
     SearchPlaceProps,
     TimeZone,
-} from '@tomtom-org/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk/core';
 import type { SearchSummary } from './searchSummary';
 
 /**

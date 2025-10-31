@@ -1,5 +1,5 @@
-import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
-import { TomTomMap } from '@tomtom-org/maps-sdk-js/map';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 

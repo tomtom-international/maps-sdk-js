@@ -1,4 +1,4 @@
-import type { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from '@tomtom-org/maps-sdk-js/core';
+import type { AddressProperties, Mapcode, PlaceDataSources, PlaceType, SideOfStreet } from '@tomtom-org/maps-sdk/core';
 
 /**
  * @ignore

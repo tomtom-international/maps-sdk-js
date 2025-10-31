@@ -1,4 +1,4 @@
-import type { CommonPlaceProps, Place, Places } from '@tomtom-org/maps-sdk-js/core';
+import type { CommonPlaceProps, Place, Places } from '@tomtom-org/maps-sdk/core';
 import type { Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import { MAP_MEDIUM_FONT } from '../../shared/layers/commonLayerProps';

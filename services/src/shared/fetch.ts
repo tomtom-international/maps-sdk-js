@@ -1,4 +1,4 @@
-import type { TomTomHeaders } from '@tomtom-org/maps-sdk-js/core';
+import type { TomTomHeaders } from '@tomtom-org/maps-sdk/core';
 import type { FetchInput, ParsedFetchResponse, PostObject } from './types/fetch';
 
 // Returns the response as a JSON object or throws an error if the response isn't successful.

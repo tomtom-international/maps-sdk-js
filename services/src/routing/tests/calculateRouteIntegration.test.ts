@@ -1,5 +1,5 @@
-import type { LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@tomtom-org/maps-sdk-js/core';
-import { inputSectionTypes } from '@tomtom-org/maps-sdk-js/core';
+import type { LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@tomtom-org/maps-sdk/core';
+import { inputSectionTypes } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { calculateRoute } from '../calculateRoute';

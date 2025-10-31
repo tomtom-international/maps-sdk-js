@@ -1,4 +1,4 @@
-import { generateId, getPositionStrict, toPointFeature } from '@tomtom-org/maps-sdk-js/core';
+import { generateId, getPositionStrict, toPointFeature } from '@tomtom-org/maps-sdk/core';
 import { apiToGeoJSONBBox, csvLatLngToPosition } from '../shared/geometry';
 import type { ReverseGeocodingResponse } from './reverseGeocoding';
 import type { ReverseGeocodingResponseAPI } from './types/apiTypes';

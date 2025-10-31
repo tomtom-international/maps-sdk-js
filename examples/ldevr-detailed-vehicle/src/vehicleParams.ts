@@ -1,4 +1,4 @@
-import type { VehicleParameters } from '@tomtom-org/maps-sdk-js/services';
+import type { VehicleParameters } from '@tomtom-org/maps-sdk/services';
 
 export const vehicle: VehicleParameters = {
     engineType: 'electric',

@@ -1,5 +1,5 @@
-import type { PolygonFeatures } from '@tomtom-org/maps-sdk-js/core';
-import { bboxCenter, bboxFromCoordsArray } from '@tomtom-org/maps-sdk-js/core';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+import { bboxCenter, bboxFromCoordsArray } from '@tomtom-org/maps-sdk/core';
 import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
 import { isNil } from 'lodash-es';
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';

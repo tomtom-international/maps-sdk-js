@@ -26,7 +26,7 @@ import {
     TrafficCategory,
     TrafficIncidentTEC,
     TrafficSectionProps,
-} from '@tomtom-org/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk/core';
 import type { LineString, Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
 import { ExplicitVehicleModel } from '../shared/types/vehicleModel';

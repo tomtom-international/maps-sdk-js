@@ -1,4 +1,4 @@
-import type { DelayMagnitude, RouteProps } from '@tomtom-org/maps-sdk-js/core';
+import type { DelayMagnitude, RouteProps } from '@tomtom-org/maps-sdk/core';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import type { SupportsEvents } from '../../shared';
 

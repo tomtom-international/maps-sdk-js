@@ -1,4 +1,4 @@
-import type { WaypointLike } from '@tomtom-org/maps-sdk-js/core';
+import type { WaypointLike } from '@tomtom-org/maps-sdk/core';
 
 /**
  * Waypoint or placeholder for route planning.

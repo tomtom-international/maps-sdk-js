@@ -1,4 +1,4 @@
-import type { PolygonFeature } from '@tomtom-org/maps-sdk-js/core';
+import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import type { ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { reachableRangeRequestValidationConfig } from './reachableRangeRequestSchema';

@@ -1,6 +1,6 @@
-import { TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
-import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
-import { geocode } from '@tomtom-org/maps-sdk-js/services';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { geocode } from '@tomtom-org/maps-sdk/services';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 import { LngLatLike } from 'maplibre-gl';

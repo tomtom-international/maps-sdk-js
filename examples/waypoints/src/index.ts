@@ -1,6 +1,6 @@
-import { asSoftWaypoint, bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
-import { PlanningWaypoint, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk-js/map';
-import { geocode } from '@tomtom-org/maps-sdk-js/services';
+import { asSoftWaypoint, bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { PlanningWaypoint, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { geocode } from '@tomtom-org/maps-sdk/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';

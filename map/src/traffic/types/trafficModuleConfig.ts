@@ -1,4 +1,4 @@
-import type { DelayMagnitude } from '@tomtom-org/maps-sdk-js/core';
+import type { DelayMagnitude } from '@tomtom-org/maps-sdk/core';
 import type { FilterShowMode, StyleModuleConfig, ValuesFilter } from '../../shared';
 
 /**

@@ -1,4 +1,4 @@
-import type { Routes } from '@tomtom-org/maps-sdk-js/core';
+import type { Routes } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Geometry } from 'geojson';
 import type { GeoJSONSourceWithLayers } from '../../shared';
 import type { DisplayRouteProps, DisplayRouteRelatedProps } from '../types/displayRoutes';

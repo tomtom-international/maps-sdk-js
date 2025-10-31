@@ -1,4 +1,4 @@
-import type { Routes } from '@tomtom-org/maps-sdk-js/core';
+import type { Routes } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection } from 'geojson';
 import { describe, expect, test } from 'vitest';
 import type { DisplayRouteProps } from '../../types/displayRoutes';

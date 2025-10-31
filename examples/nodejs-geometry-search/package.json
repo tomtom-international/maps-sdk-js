@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/tomtom-international/maps-sdk-js-examples#readme",
   "dependencies": {
-    "@tomtom-org/maps-sdk-js": "workspace:*"
+    "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
     "dotenv": "^17.2.3"

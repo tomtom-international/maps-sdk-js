@@ -1,4 +1,4 @@
-import type { FlowConfig, IncidentsConfig } from '@tomtom-org/maps-sdk-js/map';
+import type { FlowConfig, IncidentsConfig } from '@tomtom-org/maps-sdk/map';
 
 /**
  * Traffic configurations for the playground.

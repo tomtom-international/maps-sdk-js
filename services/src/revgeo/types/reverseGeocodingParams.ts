@@ -1,4 +1,4 @@
-import type { GeographyType, HasLngLat, MapcodeType, View } from '@tomtom-org/maps-sdk-js/core';
+import type { GeographyType, HasLngLat, MapcodeType, View } from '@tomtom-org/maps-sdk/core';
 
 import type { CommonServiceParams } from '../../shared';
 import type { ReverseGeocodingResponseAPI } from './apiTypes';

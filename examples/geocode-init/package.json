@@ -15,7 +15,7 @@
     "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk-js": "workspace:*",
+    "@tomtom-org/maps-sdk": "workspace:*",
     "maplibre-gl": "catalog:"
   },
   "devDependencies": {

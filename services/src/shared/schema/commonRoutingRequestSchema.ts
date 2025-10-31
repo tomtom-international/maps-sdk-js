@@ -1,4 +1,4 @@
-import { avoidableTypes } from '@tomtom-org/maps-sdk-js/core';
+import { avoidableTypes } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod/v4-mini';
 import { routeTypes } from '../types/commonRoutingParams';
 import { vehicleParametersSchema } from './vehicleParamsSchema';

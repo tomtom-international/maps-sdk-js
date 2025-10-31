@@ -1,4 +1,4 @@
-import { bboxFromCoordsArray } from '@tomtom-org/maps-sdk-js/core';
+import { bboxFromCoordsArray } from '@tomtom-org/maps-sdk/core';
 import type { MultiPolygon, Position } from 'geojson';
 import type { PostObject } from '../shared';
 import { sampleWithinMaxLength } from '../shared/arrays';

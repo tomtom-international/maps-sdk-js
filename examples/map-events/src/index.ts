@@ -1,6 +1,6 @@
-import { Place, TomTomConfig } from '@tomtom-org/maps-sdk-js/core';
-import { BaseMapModule, PlacesModule, TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk-js/map';
-import { reverseGeocode, search } from '@tomtom-org/maps-sdk-js/services';
+import { Place, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { BaseMapModule, PlacesModule, TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import { reverseGeocode, search } from '@tomtom-org/maps-sdk/services';
 import { LngLat, MapGeoJSONFeature, Marker, NavigationControl, Popup } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';

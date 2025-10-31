@@ -1,4 +1,4 @@
-import type { Language } from '@tomtom-org/maps-sdk-js/core';
+import type { Language } from '@tomtom-org/maps-sdk/core';
 import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
 import placeByIdReqObjects from '../../place-by-id/tests/requestBuilderPerf.data.json';

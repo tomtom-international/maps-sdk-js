@@ -1,4 +1,4 @@
-import type { Place, Places } from '@tomtom-org/maps-sdk-js/core';
+import type { Place, Places } from '@tomtom-org/maps-sdk/core';
 import { arrayToCSV } from '../shared/arrays';
 import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
 import { appendOptionalParam } from '../shared/request/requestBuildingUtils';

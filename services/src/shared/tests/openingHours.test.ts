@@ -1,4 +1,4 @@
-import type { OpeningHours } from '@tomtom-org/maps-sdk-js/core';
+import type { OpeningHours } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { parseOpeningHours } from '../searchResultParsing';
 

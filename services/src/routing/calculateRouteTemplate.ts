@@ -1,4 +1,4 @@
-import type { Routes } from '@tomtom-org/maps-sdk-js/core';
+import type { Routes } from '@tomtom-org/maps-sdk/core';
 import type { FetchInput, ServiceTemplate } from '../shared';
 import { fetchWith } from '../shared/fetch';
 import { routeRequestValidationConfig } from './calculateRouteRequestSchema';

@@ -1,4 +1,4 @@
-import type { PolygonFeature } from '@tomtom-org/maps-sdk-js/core';
+import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { parseReachableRangeResponse } from '../responseParser';
 import type { ReachableRangeResponseAPI } from '../types/apiResponseTypes';

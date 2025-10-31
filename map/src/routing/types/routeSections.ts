@@ -1,4 +1,4 @@
-import type { SectionProps, TrafficSectionProps } from '@tomtom-org/maps-sdk-js/core';
+import type { SectionProps, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
 import type { Feature, FeatureCollection, LineString } from 'geojson';
 import type { DisplayRouteRelatedProps } from './displayRoutes';
 

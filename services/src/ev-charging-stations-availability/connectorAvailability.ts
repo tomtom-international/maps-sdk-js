@@ -4,7 +4,7 @@ import type {
     ChargingStation,
     Connector,
     ConnectorAvailability,
-} from '@tomtom-org/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk/core';
 
 /**
  * @ignore

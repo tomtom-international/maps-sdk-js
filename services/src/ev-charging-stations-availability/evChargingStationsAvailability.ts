@@ -4,8 +4,8 @@ import type {
     EVChargingStationPlaceProps,
     Place,
     Places,
-} from '@tomtom-org/maps-sdk-js/core';
-import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk-js/core';
+} from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { callService } from '../shared/serviceTemplate';
 import type { EVChargingStationsAvailabilityTemplate } from './evChargingStationsAvailabilityTemplate';
 import { evChargingStationsAvailabilityTemplate } from './evChargingStationsAvailabilityTemplate';

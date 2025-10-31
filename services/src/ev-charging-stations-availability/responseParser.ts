@@ -1,4 +1,4 @@
-import type { ChargingStationsAvailability } from '@tomtom-org/maps-sdk-js/core';
+import type { ChargingStationsAvailability } from '@tomtom-org/maps-sdk/core';
 import { parseOpeningHours } from '../shared/searchResultParsing';
 import { toChargingPointAvailability, toConnectorBasedAvailabilities } from './connectorAvailability';
 import type { ChargingStationsAvailabilityResponseAPI } from './types/apiTypes';

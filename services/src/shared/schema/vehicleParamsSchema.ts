@@ -1,4 +1,4 @@
-import { currentTypes, plugTypes } from '@tomtom-org/maps-sdk-js/core';
+import { currentTypes, plugTypes } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod/v4-mini';
 import { loadTypes } from '../types/vehicleRestrictionParams';
 

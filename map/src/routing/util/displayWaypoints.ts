@@ -1,5 +1,5 @@
-import type { CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from '@tomtom-org/maps-sdk-js/core';
-import { generateId, getPosition } from '@tomtom-org/maps-sdk-js/core';
+import type { CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from '@tomtom-org/maps-sdk/core';
+import { generateId, getPosition } from '@tomtom-org/maps-sdk/core';
 import type { Point, Position } from 'geojson';
 import {
     WAYPOINT_FINISH_IMAGE_ID,

@@ -1,4 +1,4 @@
-import type { Routes } from '@tomtom-org/maps-sdk-js/core';
+import type { Routes } from '@tomtom-org/maps-sdk/core';
 import { callService } from '../shared/serviceTemplate';
 import type { CalculateRouteTemplate } from './calculateRouteTemplate';
 import { calculateRouteTemplate } from './calculateRouteTemplate';
