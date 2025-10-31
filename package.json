@@ -1,5 +1,7 @@
 {
   "name": "@tomtom-org/maps-sdk",
+  "author": "TomTom International B.V.",
+  "license": "Apache-2.0",
   "version": "0.28.0",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
@@ -32,11 +34,12 @@
     "map",
     "location",
     "search",
+    "geocoding",
     "routing",
-    "traffic"
+    "traffic",
+    "web",
+    "nodejs"
   ],
-  "author": "TomTom International B.V.",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
   },
@@ -80,6 +83,6 @@
     "package.json",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE.md"
   ]
 }

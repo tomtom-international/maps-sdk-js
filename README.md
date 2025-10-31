@@ -1,17 +1,17 @@
+[![TomTom Logo](documentation/images/tomtom-logo-big.svg)](https://www.tomtom.com/)
+# Maps SDK for JavaScript
+[**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
+[**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
+
+[![NPM Version](https://img.shields.io/npm/v/@tomtom-org/maps-sdk.svg)](https://www.npmjs.com/package/@tomtom-org/maps-sdk)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 [![Quality Gate Status](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=alert_status&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Reliability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=reliability_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Maintainability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=sqale_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
 [![Security Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=security_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
 
-[![TomTom Logo](documentation/images/tomtom-logo-big.svg)](https://www.tomtom.com/)
-
-# Maps SDK JS
-[**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
-[**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
-
-<br/>
-
-Maps SDK JS is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
+TomTom Maps SDK for JavaScript is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
 
 [![SDK Example Thumbnails](documentation/images/sdk-examples-collage.png)](https://docs.tomtom.com/maps-sdk-js/examples/)
 
@@ -23,12 +23,8 @@ to seamlessly integrate TomTom maps and services with convenient out-of-the-box 
 ```
 npm i @tomtom-org/maps-sdk
 ```
-
 Additionally:
 * If you use the map: ```npm i maplibre-gl```
-
-(Learn more below)
-<br/><br/>
 
 ## 📚 Documentation & Examples
 
