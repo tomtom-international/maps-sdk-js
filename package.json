@@ -1,6 +1,6 @@
 {
-  "name": "@tomtom-org/maps-sdk-js",
-  "version": "1.0.0",
+  "name": "@tomtom-org/maps-sdk",
+  "version": "0.28.0",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
     "build": "pnpm build:sdk",
