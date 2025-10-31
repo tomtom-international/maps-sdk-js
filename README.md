@@ -6,18 +6,14 @@
 [![TomTom Logo](documentation/images/tomtom-logo-big.svg)](https://www.tomtom.com/)
 
 # Maps SDK JS
-[**Examples**](https://latest.examples.maps-sdk-js.tomtom.com) |
-[**Documentation**](https://developer-staging.tomtom.com/maps-sdk-js/overview/introduction) |
-[Request feature](https://github.com/tomtom-international/maps-sdk-js/discussions) |
-[Report bug](https://github.com/tomtom-international/maps-sdk-js/issues)
+[**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
+[**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
 
 <br/>
 
 Maps SDK JS is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
 
-<a href="https://latest.examples.maps-sdk-js.tomtom.com">
-    <img src="documentation/images/sdk-examples-collage.png" style="width: 800px" alt="Example Thumbnails">
-</a>
+[![SDK Example Thumbnails](documentation/images/sdk-examples-collage.png)](https://docs.tomtom.com/maps-sdk-js/examples/)
 
 It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
@@ -62,13 +58,52 @@ Explore comprehensive guides and interactive examples to get the most out of Map
 <br/><br/>
 
 ## 📦 Bundles
+```mermaid
+flowchart TD
+    App["Your application"]
+    MapLibre["MapLibre GL JS"]
+    subgraph SDK["SDK"]
+        direction TB
+        Map["Map"]
+        Services["Services"]
+        Core["Core"]
+    end
+
+    App --> Map
+    App --> MapLibre
+    App --> Services
+    App --> Core
+    
+    Map -.-> Core
+    Map -.-> MapLibre
+
+    Services -.-> Core
+
+    classDef mapClass fill:#fffde7,stroke:#ff6f00,color:#ff6f00;
+    classDef servicesClass fill:#f3e5f5,stroke:#4a148c,color:#4a148c;
+    classDef coreClass fill:#e8f5e9,stroke:#1b5e20,color:#1b5e20;
+    classDef maplibreClass fill:#295DAA,stroke:#295DAA,color:white;
+
+    class Map mapClass;
+    class Services servicesClass;
+    class Core coreClass;
+    class MapLibre maplibreClass;
+
+    click Map "##_Map" "Go to Map section"
+    click Services "#services" "Go to Services section"
+    click Core "#core" "Go to Core section"
+    click MapLibre "https://maplibre.org/maplibre-gl-js/docs/" "Go to MapLibre GL JS documentation"
+```
+
 * [Map](#map): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps
-* [Services](#services): GeoJSON services for TomTom location APIs
-* [Core](#core): configuration, types and utilities common to Map and Services
-<br/><br/>
+* * [MapLibre](https://maplibre.org/maplibre-gl-js/docs/) is an open source peer dependency so your application can also use it directly
+* [Services](#services): Functions with GeoJSON services for TomTom location APIs
+* * Compatible with web, nodejs and React Native applications
+* [Core](#core): shared configuration, types and utilities
+* * Facilitates seamless integration between map and services
 
 ## 🗺️ Map
-The SDK [Map bundle](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/home#map-modules) is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js-docs/api/), and shares it as a dependency with your app.\
+The SDK [Map bundle](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/home#map-modules) is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/), and shares it as a dependency with your app.\
 You can both use the TomTom and MapLibre SDKs together at any time.
 
 ### ✨ Feature highlights
