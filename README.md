@@ -1,4 +1,4 @@
-[![TomTom Logo](documentation/images/tomtom-logo-big.svg)](https://www.tomtom.com/)
+[![TomTom Logo](tomtom-logo-big.svg)](https://www.tomtom.com/)
 # Maps SDK for JavaScript
 [**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
 [**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
@@ -13,7 +13,7 @@
 
 TomTom Maps SDK for JavaScript is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
 
-[![SDK Example Thumbnails](documentation/images/sdk-examples-collage.png)](https://docs.tomtom.com/maps-sdk-js/examples/)
+[![SDK Example Thumbnails](sdk-examples-collage.png)](https://docs.tomtom.com/maps-sdk-js/examples/)
 
 It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
