@@ -5,6 +5,7 @@
     "@rollup/plugin-terser": "catalog:",
     "@types/node": "catalog:",
     "rollup-plugin-analyzer": "catalog:",
+    "rollup-plugin-license": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",

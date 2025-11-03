@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import terser from '@rollup/plugin-terser';
 import analyze from 'rollup-plugin-analyzer';
+import license from 'rollup-plugin-license';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
@@ -71,6 +72,12 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
             analyze({
                 summaryOnly: true,
                 limit: 10,
+            }),
+            license({
+                thirdParty: {
+                    output: { file: './dist/THIRD_PARTY.txt' },
+                    allow: (dependency) => dependency.name !== 'core',
+                },
             }),
         ],
     });

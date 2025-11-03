@@ -14,7 +14,6 @@
     "clean:dist": "rimraf ./dist"
   },
   "types": "./dist/index.d.ts",
-  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
@@ -32,6 +31,7 @@
     "@vitest/coverage-v8": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-analyzer": "catalog:",
+    "rollup-plugin-license": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "shared-configs": "workspace:*",
     "ts-node": "catalog:",
