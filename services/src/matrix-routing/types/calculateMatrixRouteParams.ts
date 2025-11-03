@@ -15,6 +15,9 @@ import type { CalculateMatrixRouteResponseAPI } from './apiResponseTypes';
  * ```typescript
  * const avoidTolls: MatrixRouteAvoidable = 'tollRoads';
  * const avoidUnpaved: MatrixRouteAvoidable = 'unpavedRoads';
+ * // Use with the avoid parameter:
+ * // avoid: ['tollRoads']
+ * // avoid: ['tollRoads', 'unpavedRoads']
  * ```
  *
  * @group Matrix Routing
@@ -70,6 +73,7 @@ type MatrixRouteAvoidable = 'tollRoads' | 'unpavedRoads';
  * @group Matrix Routing
  */
 export type MatrixRouteOptions = {
+    // TODO: make it more in tune with calculate-route parameters ('when', 'vehicle'...)
     /**
      * Departure time for the journey.
      *
