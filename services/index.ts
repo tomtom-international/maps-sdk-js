@@ -12,7 +12,8 @@ export * from './src/geocode';
 export * from './src/geometry-data';
 export * from './src/geometry-data';
 export type * from './src/geometry-search';
-export * from './src/matrix-routing';
+// TODO: deprecated and not supported in Orbis
+// export * from './src/matrix-routing';
 export * from './src/place-by-id';
 export * from './src/revgeo';
 export * from './src/routing';
