@@ -7,7 +7,7 @@ packages:
   - examples/**
 
 catalog:
-  '@microsoft/api-extractor': ^7.53.3
+  '@microsoft/api-extractor': ^7.54.0
   '@rollup/plugin-terser': ^0.4.4
   '@tsconfig/recommended': ^1.0.11
   '@types/geojson': ^7946.0.16
@@ -15,10 +15,10 @@ catalog:
   '@types/node': ^24.10.0
   '@vitest/coverage-v8': ^3.2.4
   lodash-es: ^4.17.21
-  maplibre-gl: ^5.10.0
+  maplibre-gl: ^5.11.0
   rimraf: ^6.1.0
-  rollup-plugin-license: ^3.6.0
   rollup-plugin-analyzer: ^4.0.0
+  rollup-plugin-license: ^3.6.0
   rollup-plugin-visualizer: ^6.0.5
   ts-node: ^10.9.2
   typescript: ^5.9.3
