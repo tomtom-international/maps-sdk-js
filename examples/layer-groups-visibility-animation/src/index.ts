@@ -1,5 +1,11 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { BaseMapModule, POIsModule, TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import {
+    BaseMapModule,
+    POIsModule,
+    TomTomMap,
+    TrafficFlowModule,
+    TrafficIncidentsModule,
+} from '@tomtom-org/maps-sdk/map';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 

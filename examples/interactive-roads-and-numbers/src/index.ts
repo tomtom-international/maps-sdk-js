@@ -1,5 +1,11 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { BaseMapLayerGroupName, BaseMapModule, mapStyleLayerIDs, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import {
+    BaseMapLayerGroupName,
+    BaseMapModule,
+    mapStyleLayerIDs,
+    POIsModule,
+    TomTomMap,
+} from '@tomtom-org/maps-sdk/map';
 import { ReverseGeocodingResponse, reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import bboxPolygon from '@turf/bbox-polygon';
 import { buffer } from '@turf/buffer';
