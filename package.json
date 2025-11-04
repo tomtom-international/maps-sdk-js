@@ -1,7 +1,7 @@
 {
   "name": "@tomtom-org/maps-sdk",
   "author": "TomTom International B.V.",
-  "license": "Apache-2.0",
+  "license": "See in LICENSE.txt",
   "version": "0.28.0",
   "description": "JavaScript library for TomTom maps and location services",
   "scripts": {
@@ -79,10 +79,10 @@
     "services/main.js",
     "services/package.json",
     "package.json",
-    "README.txt",
+    "README.md",
     "sdk-examples-collage.png",
     "tomtom-logo-big.svg",
     "CHANGELOG.md",
-    "LICENSE.md"
+    "LICENSE.txt"
   ]
 }

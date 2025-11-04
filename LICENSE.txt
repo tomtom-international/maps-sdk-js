@@ -98,6 +98,67 @@ You may not use the TomTom Maps SDK for JavaScript and may not accept the Agreem
 
 7.3. THE ABOVE LIMITATIONS OF LIABILITY UNDER THIS CLAUSE 7 DO NOT: (I) AFFECT YOUR RIGHTS UNDER ANY APPLICABLE MANDATORY NATIONAL LEGISLATION; (II) EXCLUDE OR LIMIT ANY LIABILITY THAT CANNOT BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW.
 
-### 🔧 Using the Core Bundle
-If you use Map and/or Services, there is no need to install any further packages.\
-Code imports from the SDK Core Bundle will come from ```@tomtom-org/maps-sdk/core```
+
+
+
+
+8. IPR INDMENITY: To the maximum extent permitted by law, you agree to defend, indemnify and hold TomTom and its respective directors, officers, employees, affiliates, agents and suppliers harmless from and against any and all claims, actions, suits or proceedings, as well as any and all losses, liabilities, damages, costs and expenses (including reasonable attorney’s fees) arising out of or accruing from (a) your use of the TomTom Maps SDK for JavaScript, (b) any application you develop on the TomTom Maps SDK for JavaScript that infringes any copyright, trademark, trade secret, trade dress, patent or other intellectual property right of any person or defames any person or violates their rights of publicity or privacy, and (c) any non-compliance by you with this Agreement.
+
+
+
+9. TERM AND TERMINATION AND DIRECT ENFORCEMENT:
+
+
+
+9.1. This Agreement begins on either (a) the date you demonstrate your acceptance of the terms and conditions of this Agreement or (b) when you first use the TomTom Maps SDK for JavaScript and shall continue until terminated (jointly the “Term”) by either TomTom or you subject to and in accordance with this Agreement. The provisions of this Agreement, which by their nature are intended to survive termination, will remain in effect after termination of this Agreement. Furthermore, you agree that TomTom may directly enforce these provisions against you.
+
+
+
+9.2. Without prejudice to any other rights, TomTom may immediately terminate this Agreement if (i) you fail to comply with any of its terms and conditions, or (ii) the agreement governing the use of TomTom Maps APIs between you and TomTom you has terminated, or (iii) TomTom decides to no longer provide the TomTom Maps SDK for JavaScript or certain parts of the TomTom Maps SDK for JavaScript either entirely or in certain territories related to your use.
+
+
+
+9.3. You may terminate this Agreement by ceasing your use of the TomTom Maps SDK for JavaScript at any time.
+
+
+
+
+
+10. GOVERNING LAW AND DISPUTE RESOLUTION:
+
+
+
+10.1. If you, your employer or the entity on whose behalf you act is incorporated in the European Union then this Agreement and any dispute arising under or in connection with it, including any non-contractual claims and disputes, shall be governed by and construed in accordance with the laws of the Netherlands. The applicability of the United Nations Convention on Contracts for the International Sale of Goods is explicitly excluded. You and TomTom hereby irrevocably submit to the exclusive jurisdiction of the courts of Amsterdam, the Netherlands in respect of any dispute arising under or in connection with this Agreement, including any non-contractual claims or disputes.
+
+
+
+10.2. If you, your employer or the entity on whose behalf you act is incorporated outside of European Union, then this Agreement and any dispute arising under or in connection with it, including any non-contractual claims and disputes, shall be governed by and construed in accordance with the laws of the Netherlands. All disputes arising in connection with the Agreement, including any non-contractual claims or disputes, shall be settled in accordance with the Arbitration Rules of the Netherlands Arbitration Institute. The arbitral tribunal shall be composed of three (3) arbitrators. The place or arbitration shall be Amsterdam and the language of the arbitration shall be English. Consolidation of the arbitral proceedings with other arbitral proceedings, as provided for in Article 1046 of the Dutch Code of Civil Procedure and Article 39 of the Arbitration Rules of the Netherlands Arbitration Institute, is excluded.
+
+
+
+10.3. Notwithstanding this, TomTom shall still be allowed to apply for injunctive remedies (or an equivalent type of urgent legal relief) in any jurisdiction.
+
+--
+
+
+
+11. OTHER LEGAL TERMS:
+
+
+
+11.1. No failure or delay by TomTom to exercise any right or remedy provided under this Agreement or by law shall constitute a waiver of that or any other right or remedy, nor shall it preclude or restrict the further exercise of that or any other right or remedy. No single or partial exercise of such right or remedy shall preclude or restrict the further exercise of that or any other right or remedy.
+
+
+
+11.2. Should for any reason, or to any extent, any provision of this Agreement be held invalid or unenforceable, such invalidity or enforceability shall not affect or render invalid or unenforceable the remaining provisions of this Agreement and the application of that provision shall be enforced to the extent permitted by law.
+
+
+
+11.3. The rights granted to you in this Agreement may not be assigned or transferred by you without TomTom’s prior written approval.
+
+
+
+11.4. The TomTom Maps APIs and TomTom Maps SDK for JavaScript are provided as “Commercial Computer Software” or “restricted computer software”. Use, duplication, or disclosure by the U.S. Government or U.S. Government subcontractor is subject to the restrictions set forth in 48.C.F.R. Section 12.212 or 48 C.F.R.227.2702, as applicable or successor provisions. In respect of the Map API and Search API, the manufacturer is  TomTom Global Content B.V.
+
+
+
