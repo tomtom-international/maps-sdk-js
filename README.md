@@ -1,102 +1,153 @@
-TOMTOM MAPS SDK FOR JAVASCRIPT LICENSE AGREEMENT (“AGREEMENT”)
-
-
-
-By downloading, accessing this the “TomTom Maps SDK for JavaScript, you are entering into a binding agreement with TomTom Global Content B.V. (“TomTom”). Your agreement with TomTom includes the following terms and conditions and the Privacy Policy (https://www.tomtom.com/privacy/ ). You should not use the TomTom Maps SDK for JavaScript if you cannot agree to this Agreement and the Privacy Policy.
-
-
-
-You may not use the TomTom Maps SDK for JavaScript and may not accept the Agreement if you are a person barred from receiving the TomTom Maps SDK for JavaScript under the laws of the European Union or other countries, including the country in which you are resident or from which you use the TomTom Maps SDK for JavaScript. If you agree to be bound by the Agreement on behalf of your employer or other entity, you represent and warrant that you have full legal authority to bind your employer or such entity to the Agreement. If you do not have the requisite authority, you may not accept the Agreement or use the TomTom Maps SDK for JavaScript on behalf of your employer or other entity.
-
-
-
-1. GRANT OF LICENSE: Subject to and conditional upon your compliance at all times with this Agreement, TomTom grants to you a limited, non-exclusive, non-transferable and non-sublicensable, revocable, royalty-free license during the Term (as defined in Clause 9) to use the TomTom Maps SDK for JavaScript in connection with the development of web based applications to be used in connection with the TomTom Maps APIs and, in addition, third party online APIs (“Permitted Applications”). For the avoidance of doubt, you must use the TomTom Maps APIs in connection with the TomTom Maps SDK for JavaScript. Any such Permitted Application and use of the TomTom Maps APIs shall be subject to TomTom’s standard terms of use applicable to the TomTom Maps APIs as made available on the TomTom developer portal or any other specific written agreement that you and TomTom have executed regarding the use of the TomTom Maps APIs.
-
-
-
-2. UPDATES AND CHANGES TO THE TOMTOM MAPS SDK FOR JAVASCRIPT AND THIS AGREEMENT: TomTom reserves the right, with or without notice and at its sole discretion, to discontinue, update, modify, upgrade and supplement any of the TomTom Maps SDK for JavaScript or any features within the TomTom Maps SDK for JavaScript and to modify this Agreement. You agree that future versions of the TomTom Maps SDK for JavaScript may be incompatible with applications that were developed on previous versions of the TomTom Maps SDK for JavaScript.
-
-
-
-3. YOUR FURTHER OBLIGATIONS:
-
-
-
-3.1. You agree to use the TomTom Maps SDK for JavaScript only for purposes that are permitted by (a) this Agreement and (b) any applicable law, regulation or generally accepted practices or guidelines in the relevant jurisdictions (including any laws regarding the export of data or software to and from the United States or other relevant countries).
-
-
-
-3.2. Other than as permitted by applicable legislation, you are prohibited from copying (except for backup purposes), modifying, adapting, (re)distributing, renting, lending, publicly presenting, decompiling, reverse engineering, disassembling, or creating derivative works of the TomTom Maps SDK for JavaScript or any part of the TomTom Maps SDK for JavaScript.
-
-
-
-3.3. You may not use the TomTom Maps SDK for JavaScript in connection with any illegal, fraudulent, dishonest or unethical activity or behaviour.
-
-
-
-3.4. You shall be permitted to display TomTom Maps APIs results (“Results”) on third party content or map data provided that nothing shall entitle you to add or incorporate Results into the OSM or any other open source database. You shall also be permitted to display Results from third party content or map data on a TomTom map as a separate layer.
-
-
-
-3.5. The TomTom Maps SDK for JavaScript may include data which TomTom licenses from third parties or open source software. You shall comply with all requirements and restrictions which such third parties may require TomTom to impose on you (and as may be updated and amended by TomTom from time to time). All applicable ODbL Licenses are included within the TomTom Maps SDK for JavaScript download package. It shall be your responsibility to check, review and comply with any updated or amended terms that would apply to the TomTom Maps SDK for JavaScript licensed to you under this Agreement. For the avoidance of doubt, any such software is made available to you under the terms and conditions of the applicable licenses.
-
-
-
-
-
-4. PRIVACY: In order to improve the TomTom Developer Portal and TomTom Maps SDK for JavaScript, TomTom may collect certain usage related information from the software including but not limited to the general SDK and product identifiers, version numbers, and information on which tools and/or services in the TomTom Maps SDK for JavaScript are being used and how they are being used by you. In addition, TomTom may collect your unique identifier and associated IP address for legitimate business reasons (such as without limitation the processing of invoices). This data will be retained for a maximum period of 120 days. The information collected is maintained in accordance with our Privacy Policy.
-
-
-
-5. INTELLECTUAL PROPERTY RIGHTS AND COPYRIGHT NOTICES:
-
-
-
-5.1. All intellectual property rights related to the TomTom Maps SDK for JavaScript and to the TomTom Maps APIs are owned by TomTom and/or its licensors and suppliers. However, TomTom agrees that it obtains no intellectual property rights under this Agreement in or to any Permitted Application that you develop using the TomTom Maps SDK for JavaScript and the TomTom Maps APIs.
-
-
-
-5.2. Your use of any trade names, logos, trademarks, service marks and other marks of TomTom is subject to TomTom’s prior written approval. Any goodwill arising out of the use thereof shall inure to the benefit of TomTom. In addition, you agree not to remove, obscure, mask or change any logo and/or copyright notice placed on or automatically generated by the TomTom Maps SDK for JavaScript or the TomTom Maps APIs.
-
-
-
-
-
-6. WARRANTIES:
-
-
-
-6.1. YOU ACKNOWLEDGE THAT THE TOMTOM MAPS SDK FOR JAVASCRIPT HAS NOT BEEN DEVELOPED TO MEET YOUR INDIVIDUAL REQUIREMENTS AND THAT IT IS THEREFORE YOUR RESPONSIBILITY TO ENSURE THAT THE FACILITIES AND FUNCTIONS OF THE TOMTOM MAPS SDK FOR JAVASCRIPT MEET YOUR REQUIREMENTS. TOMTOM DOES NOT AND CANNOT WARRANT THAT THE TOMTOM MAPS SDK FOR JAVASCRIPT OPERATES UNINTERRUPTED OR ERROR-FREE. TOMTOM DOES NOT WARRANT THAT THE TOMTOM MAPS SDK FOR JAVASCRIPT IS CAPABLE OF INTEROPERATING WITH ANY OTHER SYSTEM, DEVICE OR PRODUCT (EITHER SOFTWARE OR HARDWARE).
-
-
-
-6.2. YOUR USE OF THE TOMTOM MAPS SDK FOR JAVASCRIPT AND ANY MATERIAL DOWNLOADED OR OTHERWISE OBTAINED THROUGH THE USE OF THE TOMTOM MAPS SDK FOR JAVASCRIPT IS AT YOUR OWN DISCRETION AND RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR COMPUTER SYSTEM OR OTHER DEVICES OR ANY LOSS OF DATA THAT RESULTS FROM SUCH USE.
-
-
-
-6.3. WITHOUT LIMITING CLAUSES 6.1 AND 6.2 ABOVE, THE TOMTOM MAPS SDK FOR JAVASCRIPT IS PROVIDED ON AN “AS IS” AND WITH “ALL FAULTS BASIS” AND TOMTOM EXPRESSLY DISCLAIMS ALL OTHER WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, SATISFACTORY QUALITY, ACCURACY, TITLE AND FITNESS FOR A PARTICULAR PURPOSE.
-
-
-
-6.4. THE PROVISIONS OF THIS CLAUSE DO NOT AFFECT ANY OF YOUR LEGAL RIGHTS UNDER APPLICABLE MANDATORY NATIONAL LEGISLATION, INCLUDING BUT NOT LIMITED TO ANY MANDATORY STATUTORY WARRANTIES. IF ANY PART OF THIS LIMITED WARRANTY IS HELD TO BE INVALID OR UNENFORCEABLE, THE REMAINDER OF THE LIMITED WARRANTY SHALL NONETHELESS REMAIN IN FULL FORCE AND EFFECT.
-
-
-
-
-
-7. LIMITATION OF LIABILITY:
-
-
-
-7.1. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NEITHER TOMTOM NOR ITS LICENSORS, SUPPLIERS, OFFICERS, DIRECTORS OR EMPLOYEES SHALL BE LIABLE TO YOU OR TO ANY THIRD PARTY FOR ANY DAMAGES, WHETHER DIRECT, SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL (INCLUDING BUT NOT LIMITED TO DAMAGES FOR THE INABILITY TO USE OR ACCESS THE TOMTOM MAPS SDK FOR JAVASCRIPT OR TOMTOM MAPS APIS, LOSS OF DATA, LOSS OF BUSINESS, LOSS OF PROFITS, BUSINESS INTERRUPTION OR THE LIKE) ARISING OUT OF OR RELATED TO THE USE OF, THE INABILITY TO USE OR ACCESS, OR OTHERWISE THE PERFORMANCE OF THE TOMTOM MAPS SDK FOR JAVASCRIPT, EVEN IF TOMTOM HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-
-
-
-7.2. TO THE EXTENT TOMTOM IS NOT PERMITTED UNDER APPLICABLE LAW TO EXCLUDE ITS LIABILITY PURSUANT TO CLAUSE 7.1 ABOVE, TOMTOM’S TOTAL AGGREGATE LIABILITY TO YOU SHALL BE LIMITED TO THE AMOUNT OF US $100.00.
-
-
-
-7.3. THE ABOVE LIMITATIONS OF LIABILITY UNDER THIS CLAUSE 7 DO NOT: (I) AFFECT YOUR RIGHTS UNDER ANY APPLICABLE MANDATORY NATIONAL LEGISLATION; (II) EXCLUDE OR LIMIT ANY LIABILITY THAT CANNOT BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW.
+[![TomTom Logo](tomtom-logo-big.svg)](https://www.tomtom.com/)
+# Maps SDK for JavaScript
+[**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
+[**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
+
+[![NPM Version](https://img.shields.io/npm/v/@tomtom-org/maps-sdk.svg)](https://www.npmjs.com/package/@tomtom-org/maps-sdk)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+[![Quality Gate Status](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=alert_status&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
+[![Reliability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=reliability_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
+[![Maintainability Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=sqale_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
+[![Security Rating](https://sonar.tomtomgroup.com/api/project_badges/measure?project=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc&metric=security_rating&token=squ_0df68ac0b54248e036ef46514c17158ed9e8d642)](https://sonar.tomtomgroup.com/dashboard?id=tomtom-international_maps-sdk-js_AYHTCTXCqdbqIGrKswTc)
+
+TomTom Maps SDK for JavaScript is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
+
+[![SDK Example Thumbnails](sdk-examples-collage.png)](https://docs.tomtom.com/maps-sdk-js/examples/)
+
+It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
+to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
+<br/><br/>
+
+## 🚀 Getting Started using npm
+```
+npm i @tomtom-org/maps-sdk
+```
+Additionally:
+* If you use the map: ```npm i maplibre-gl```
+
+## 📚 Documentation & Examples
+
+Explore comprehensive guides and interactive examples to get the most out of Maps SDK JS:
+
+### 🚀 Interactive Examples
+- **[Live Examples](https://docs.tomtom.com/maps-sdk-js/examples/)** - Try the SDK in your browser
+
+### 📖 Documentation
+- **[Getting Started Guide](https://docs.tomtom.com/maps-sdk-js/introduction/overview)** - Introduction and key features
+- **[Project Setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup)** - Step-by-step setup instructions
+- **[Map Guides](https://docs.tomtom.com/maps-sdk-js/guides/map/)** - Display and configure interactive maps
+- **[Services Guides](https://docs.tomtom.com/maps-sdk-js/guides/services/)** - Search, routing, and geocoding
+- **[Core Utilities](https://docs.tomtom.com/maps-sdk-js/guides/core/)** - Common configurations and utilities
+
+### 📋 API Reference
+- **[API Reference](https://docs.tomtom.com/maps-sdk-js/reference/overview)** - Complete API documentation
+
+### 📝 Latest Updates
+- **[Release Notes](https://docs.tomtom.com/maps-sdk-js/overview/release-notes)** - What's new and breaking changes
+<br/><br/><br/>
+
+## 🌍 Where can you run it on?
+* **web**: display and configure a map, search for places, plan routes, and easily display and interact with them, including your own data
+* **nodejs**: (reverse)geocode locations, (re)calculate routes, and more, to enrich data before saving or returning it
+* **React Native**: leverage the power of TomTom location services from a single codebase
+<br/><br/>
+
+## 📦 Bundles
+```mermaid
+flowchart TD
+    App["Your application"]
+    MapLibre["MapLibre GL JS"]
+    subgraph SDK["SDK"]
+        direction TB
+        Map["Map"]
+        Services["Services"]
+        Core["Core"]
+    end
+
+    App --> Map
+    App --> MapLibre
+    App --> Services
+    App --> Core
+    
+    Map -.-> Core
+    Map -.-> MapLibre
+
+    Services -.-> Core
+
+    classDef mapClass fill:#fffde7,stroke:#ff6f00,color:#ff6f00;
+    classDef servicesClass fill:#f3e5f5,stroke:#4a148c,color:#4a148c;
+    classDef coreClass fill:#e8f5e9,stroke:#1b5e20,color:#1b5e20;
+    classDef maplibreClass fill:#295DAA,stroke:#295DAA,color:white;
+
+    class Map mapClass;
+    class Services servicesClass;
+    class Core coreClass;
+    class MapLibre maplibreClass;
+
+    click Map "##_Map" "Go to Map section"
+    click Services "#services" "Go to Services section"
+    click Core "#core" "Go to Core section"
+    click MapLibre "https://maplibre.org/maplibre-gl-js/docs/" "Go to MapLibre GL JS documentation"
+```
+
+* [Map](#map): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps
+* * [MapLibre](https://maplibre.org/maplibre-gl-js/docs/) is an open source peer dependency so your application can also use it directly
+* [Services](#services): Functions with GeoJSON services for TomTom location APIs
+* * Compatible with web, nodejs and React Native applications
+* [Core](#core): shared configuration, types and utilities
+* * Facilitates seamless integration between map and services
+
+## 🗺️ Map
+The SDK [Map bundle](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/home#map-modules) is built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/), and shares it as a dependency with your app.\
+You can both use the TomTom and MapLibre SDKs together at any time.
+
+### ✨ Feature highlights
+Readily available, yet highly customizable interactive TomTom Maps:
+* in different styles: light, dark, b&w, satellite
+* with configurable POIs and Live Traffic
+* seamlessly integrable with TomTom [Services](#services)
+* with places, routes and geometries from TomTom services or your own data
+
+### 🚀 Getting Started with Map
+#### Using npm
+The SDK Map uses [MapLibre GL JS](https://www.npmjs.com/package/maplibre-gl) as peer dependency.
+Therefore, you need to also have it installed in your project.\
+The TomTom SDK is tested against the latest stable [release of MapLibre GL](https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md).
+```
+npm i @tomtom-org/maps-sdk maplibre-gl
+```
+Code imports from the SDK Map Bundle will come from ```@tomtom-org/maps-sdk/map```
+<br/><br/>
+
+## 🔧 Services
+The SDK [Services bundle](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/home#service-modules) integrates the TomTom location APIs into comprehensive [GeoJSON](https://geojson.org/) services.\
+The services can be integrated in **web**, [nodejs](https://nodejs.org/) and [React Native](https://reactnative.dev/) apps.\
+The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/) helps with further integration with geospatial tools.
+
+### ✨ Feature highlights
+* [Search](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/search) (fuzzy search, geometry search)
+* [Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/geocoding) and [Reverse Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/reverse-geocoding)
+* [Geometry Data](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/geometry-data)
+* [Routing](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/calculate-route) with EV support
+* EV Charging Stations Availability
+
+### 🚀 Getting Started with Services
+#### Using npm
+```
+npm i @tomtom-org/maps-sdk
+```
+Code imports from the SDK Map Bundle will come from ```@tomtom-org/maps-sdk/services```
+<br/><br/>
+
+## ⚙️ Core
+The SDK [Core](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/core)
+is a set of utilities and TypeScript types which are common to both [Map](#map) and [Services](#services).`
+
+### ✨ Feature highlights
+* [Common configuration](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/core.TomTomConfig)
+* Common types (such as outputs from Services which can be used as inputs to the Map)
+* Utilities (such as distance/duration formatting and bounding box calculations)
 
 ### 🔧 Using the Core Bundle
 If you use Map and/or Services, there is no need to install any further packages.\
