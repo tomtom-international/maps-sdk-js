@@ -1,0 +1,184 @@
+---
+title: Traffic
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.29.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides comprehensive real-time traffic visualization capabilities that help users understand current road conditions and make informed routing decisions. The SDK integrates seamlessly with TomTom's global traffic data infrastructure to deliver accurate, up-to-date traffic information through three distinct display methods.
+
+## Understanding Traffic Display Methods
+
+The TomTom Maps SDK offers three ways to display traffic information, each optimized for different use cases:
+
+### 1. Traffic Incidents on the Map (TrafficIncidentsModule)
+
+The **[TrafficIncidentsModule](/maps-sdk-js/guides/map/traffic-incidents)** displays specific traffic events across the entire map area, such as accidents, construction, and weather-related disruptions. This provides a comprehensive view of all incidents affecting road conditions in the visible region.
+
+**Key Capabilities:**
+- **Event-specific information** including accidents, road closures, and construction
+- **Severity classification** with impact assessment and delay estimates
+- **Interactive incident details** through click and hover events
+- **Advanced filtering** by incident type, severity, and delay impact
+
+### 2. Traffic Flow on the Map (TrafficFlowModule)
+
+The **[TrafficFlowModule](/maps-sdk-js/guides/map/traffic-flow)** displays real-time observed speeds and travel times across the entire road network using intuitive color coding. This helps users quickly assess overall traffic conditions across large geographic areas.
+
+**Key Capabilities:**
+- **Speed visualization** with color-coded indicators (red = slow, green = free flow)
+- **Real-time speed data** based on actual observed traffic conditions
+- **Comprehensive road coverage** including highways, arterials, and urban streets
+- **Advanced filtering** by road type and closure status
+
+### 3. Traffic Incidents Along Routes (RoutingModule)
+
+The **[RoutingModule](/maps-sdk-js/guides/map/routes)** displays traffic incidents specifically along calculated routes, showing only incidents that directly affect the planned path. This focused view helps users understand delays and hazards on their specific route.
+
+**Key Capabilities:**
+- **Route-specific incidents** filtered to the calculated path
+- **Contextual traffic information** relevant to the journey
+- **Delay impact** showing how incidents affect travel time
+- **Interactive incident events** for detailed information along the route
+
+## Getting Started with Traffic on the Map
+
+### Basic usage
+
+The fastest way to add traffic information to your map is through the style configuration:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+// Enable both traffic incidents and flow on the map
+const map = new TomTomMap(
+    { container: 'map' },
+    {
+        style: {
+            type: 'standard',
+            include: ['trafficIncidents', 'trafficFlow']
+        }
+    }
+);
+```
+
+### Selective Traffic Data Integration
+
+Choose specific traffic information based on your application needs:
+
+```javascript
+// Show only traffic incidents
+const incidentMap = new TomTomMap(
+    { container: 'incident-map' },
+    {
+        style: {
+            type: 'standard',
+            include: ['trafficIncidents']
+        }
+    }
+);
+
+// Show only traffic flow
+const flowMap = new TomTomMap(
+    { container: 'flow-map' },
+    {
+        style: {
+            type: 'standard',
+            include: ['trafficFlow']
+        }
+    }
+);
+```
+
+## Advanced Traffic Control
+
+Create unified controls for managing both traffic components on the map:
+
+```javascript
+import { TrafficIncidentsModule, TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize traffic modules
+const incidents = await TrafficIncidentsModule.get(map);
+const flow = await TrafficFlowModule.get(map);
+
+const showTraffic = !incidents.isVisible() && !flow.isVisible();
+```
+
+## Basic Event Handling
+
+Handle user interactions with traffic incidents and flow on the map:
+
+```javascript
+incidents.events.on('click', (feature, lngLat) => {
+    console.log('Incident type:', feature.properties.type);
+    console.log('Severity:', feature.properties.severity);
+    showIncidentDetails(feature.properties);
+});
+
+flow.events.on('click', (feature, lngLat) => {
+    console.log('Road category:', feature.properties.road_category);
+    console.log('Current speed:', feature.properties.current_speed);
+    showTrafficFlowInfo(feature.properties);
+});
+```
+
+## Integration with Routing
+
+Display traffic incidents along calculated routes to understand delays affecting your specific path:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Calculate traffic-aware route
+const route = await calculateRoute({ geoInputs: waypoints });
+
+// Display route with traffic incidents along the route
+const routingModule = await RoutingModule.get(map);
+routingModule.showRoutes(route);
+
+// Handle interactions with traffic incidents on the route
+routingModule.events.incidents.on('click', (feature, lngLat) => {
+    console.log('Incident along route:', feature.properties);
+    console.log('Delay:', feature.properties.delayInSeconds);
+});
+```
+
+For more details on displaying routes and handling route-specific traffic, see the **[Routes Module Guide](/maps-sdk-js/guides/map/routes)**.
+
+## Next Steps and Advanced Features
+
+Now that you understand the basic traffic concepts, explore the detailed capabilities of each module:
+
+### Detailed Traffic Incidents on the Map
+Visit the **[Traffic Incidents Module Guide](/maps-sdk-js/guides/map/traffic-incidents)** to learn about:
+- **Advanced filtering** by incident category, severity, and delay impact
+- **Icon and road segment** independent control and styling
+- **Event handling** for click, hover, and long-hover interactions
+- **Complex filtering scenarios** for specialized applications
+
+### Detailed Traffic Flow on the Map
+Visit the **[Traffic Flow Module Guide](/maps-sdk-js/guides/map/traffic-flow)** to learn about:
+- **Road category filtering** from highways to local streets
+- **Road closure visualization** and filtering options
+- **Performance optimization** for dynamic filtering scenarios
+- **Context-aware display** based on zoom levels and user preferences
+
+### Traffic Incidents Along Routes
+Visit the **[Routes Module Guide](/maps-sdk-js/guides/map/routes)** to learn about:
+- **Displaying calculated routes** with traffic incidents along the path
+- **Route-specific incident handling** with interactive events
+- **Alternative route comparison** considering traffic conditions
+- **Turn-by-turn guidance** with traffic-aware navigation
+
+### Additional Resources
+- **[User Events Guide](/maps-sdk-js/guides/map/user-events)** for advanced interaction patterns
+- **[Map Styles Guide](/maps-sdk-js/guides/map/map-styles)** for traffic layer styling
+- **[Routing Services](/maps-sdk-js/guides/services/routing/quickstart)** for traffic-aware route planning
+
+For complete traffic implementation examples and production-ready patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.

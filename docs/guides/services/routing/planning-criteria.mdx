@@ -1,0 +1,687 @@
+---
+title: Route planning criteria
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.29.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Route planning criteria in the TomTom Maps SDK define how routes are optimized and calculated. This guide covers the comprehensive set of parameters and options available to customize route planning for different use cases, vehicle types, and optimization goals.
+
+## Purpose and Functionality
+
+Planning criteria enable you to:
+- **Optimize routes** based on different objectives (time, distance, fuel efficiency)
+- **Configure vehicle-specific constraints** for cars, trucks, motorcycles, and electric vehicles
+- **Apply routing preferences** such as avoiding tolls, highways, or specific areas
+- **Control route characteristics** including scenic routes, terrain preferences, and road types
+- **Integrate real-time factors** like traffic conditions and departure times
+
+## Core Planning Criteria Categories
+
+### Route Optimization Types
+
+#### Route Type Options
+Different optimization strategies for different use cases:
+
+```typescript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Fastest route - minimize travel time
+const fastestRoute = await calculateRoute({
+    locations: [origin, destination],
+    routeType: 'fastest',
+    traffic: true
+});
+
+// Shortest route - minimize distance
+const shortestRoute = await calculateRoute({
+    locations: [origin, destination],
+    routeType: 'shortest'
+});
+
+// Eco-friendly route - minimize fuel consumption
+const ecoRoute = await calculateRoute({
+    locations: [origin, destination],
+    routeType: 'eco',
+    vehicle: {
+        engineType: 'combustion',
+        model: {
+            engine: {
+                consumption: {
+                    speedsToConsumptionsLiters: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 6.5 },
+                        { speedKMH: 90, consumptionUnitsPer100KM: 7.2 },
+                        { speedKMH: 120, consumptionUnitsPer100KM: 8.5 }
+                    ]
+                }
+            }
+        }
+    }
+});
+
+// Thrilling route - scenic/winding roads (motorcycles)
+const thrillingRoute = await calculateRoute({
+    locations: [origin, destination],
+    routeType: 'thrilling',
+    hilliness: 'high',
+    windingness: 'high'
+});
+```
+
+#### Route Type Characteristics
+
+**Fastest Route:**
+- Optimizes for minimum travel time
+- Considers traffic conditions when enabled
+- Prefers highways and major roads
+- Best for time-sensitive journeys
+
+**Shortest Route:**
+- Optimizes for minimum distance
+- May use smaller roads and avoid highways
+- Useful for fuel cost optimization
+- Good for local deliveries
+
+**Eco Route:**
+- Optimizes for fuel efficiency
+- Considers vehicle consumption patterns
+- Balances distance and speed for efficiency
+- Requires vehicle fuel consumption data
+
+**Thrilling Route:**
+- Optimizes for scenic and enjoyable driving
+- Prefers winding and hilly roads
+- Ideal for motorcycles and leisure driving
+- May increase travel time and distance
+
+### Traffic Integration
+
+#### Traffic-Aware Routing
+
+```typescript
+// Current traffic conditions
+const currentTrafficRoute = await calculateRoute({
+    locations: [origin, destination],
+    traffic: true,
+    departureTime: new Date() // Use current time
+});
+
+// Future traffic prediction
+const futureTrafficRoute = await calculateRoute({
+    locations: [origin, destination],
+    traffic: true,
+    departureTime: new Date(Date.now() + 2 * 60 * 60 * 1000) // 2 hours from now
+});
+
+// Historical traffic patterns
+const historicalRoute = await calculateRoute({
+    locations: [origin, destination],
+    traffic: false, // Use historical patterns instead
+    routeType: 'fastest'
+});
+```
+
+#### Departure Time Considerations
+
+```typescript
+// Rush hour routing
+const rushHourDeparture = new Date();
+rushHourDeparture.setHours(8, 0, 0); // 8 AM
+
+// Off-peak routing
+const offPeakDeparture = new Date();
+offPeakDeparture.setHours(14, 0, 0); // 2 PM
+
+const rushHourRoute = await calculateRoute({
+    locations: [origin, destination],
+    traffic: true,
+    departureTime: rushHourDeparture,
+    routeType: 'fastest'
+});
+```
+
+## Vehicle-Specific Criteria
+
+### Engine Type Configuration
+
+#### Combustion Engine Vehicles
+
+```typescript
+const combustionRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    // Vehicle configuration with new structure
+    vehicle: {
+        engineType: 'combustion',
+
+        // Vehicle model (static properties)
+        model: {
+            dimensions: {
+                lengthMeters: 4.5,
+                widthMeters: 1.8,
+                heightMeters: 1.6,
+                weightKG: 1500,
+                axleWeightKG: 750
+            },
+            engine: {
+                consumption: {
+                    // Speed-dependent fuel consumption
+                    speedsToConsumptionsLiters: [
+                        { speedKMH: 10, consumptionUnitsPer100KM: 10.0 },   // City driving
+                        { speedKMH: 50, consumptionUnitsPer100KM: 6.5 },    // Urban roads
+                        { speedKMH: 90, consumptionUnitsPer100KM: 7.2 },    // Highway speeds
+                        { speedKMH: 120, consumptionUnitsPer100KM: 8.5 },   // High-speed highway
+                        { speedKMH: 140, consumptionUnitsPer100KM: 10.5 }   // Maximum speeds
+                    ],
+                    auxiliaryPowerInLitersPerHour: 0.2, // AC, electronics
+                    fuelEnergyDensityInMJoulesPerLiter: 34.2 // Gasoline energy density
+                }
+            }
+        },
+
+        // Vehicle state (current conditions)
+        state: {
+            currentFuelInLiters: 45,
+            heading: 90 // Optional: current heading in degrees
+        }
+    },
+
+    routeType: 'eco'
+});
+```
+
+#### Electric Vehicles
+
+```typescript
+const electricRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    // Electric vehicle configuration
+    vehicle: {
+        engineType: 'electric',
+
+        // Vehicle model
+        model: {
+            dimensions: {
+                lengthMeters: 4.2,
+                widthMeters: 1.9,
+                heightMeters: 1.5,
+                weightKG: 1800
+            },
+            engine: {
+                consumption: {
+                    // Speed-dependent energy consumption
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 30, consumptionUnitsPer100KM: 14.5 },   // City speeds
+                        { speedKMH: 50, consumptionUnitsPer100KM: 15.8 },   // Urban roads
+                        { speedKMH: 80, consumptionUnitsPer100KM: 18.5 },   // Highway speeds
+                        { speedKMH: 120, consumptionUnitsPer100KM: 25.2 }   // High speeds
+                    ],
+                    auxiliaryPowerInkW: 2.5, // Heating, AC, electronics
+
+                    // Optional: elevation-based consumption
+                    consumptionInKWHPerKMAltitudeGain: 15.5,
+                    recuperationInKWHPerKMAltitudeLoss: 12.3
+                },
+                charging: {
+                    maxChargeKWH: 85,
+                    chargingTimeOffsetInSec: 120,
+                    chargingConnectors: [{
+                        currentType: 'DC',
+                        plugTypes: ['CCS2'],
+                        maxPowerInkW: 150,
+                        efficiency: 0.92
+                    }]
+                }
+            }
+        },
+
+        // Battery state
+        state: {
+            currentChargeInkWh: 70,
+            // Alternative: currentChargePCT: 82 (requires maxChargeKWH)
+        },
+
+        // EV-specific preferences
+        preferences: {
+            chargingPreferences: {
+                minChargeAtDestinationInkWh: 15,
+                minChargeAtChargingStopsInkWh: 8
+                // Alternative: use PCT values with maxChargeKWH
+                // minChargeAtDestinationPCT: 18,
+                // minChargeAtChargingStopsPCT: 10
+            }
+        }
+    },
+
+    routeType: 'eco'
+});
+```
+
+### Commercial Vehicle Criteria
+
+#### Truck Routing Parameters
+
+```typescript
+const truckRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    vehicle: {
+        engineType: 'combustion',
+
+        // Truck model specifications
+        model: {
+            dimensions: {
+                lengthMeters: 16.5,        // meters
+                widthMeters: 2.5,          // meters
+                heightMeters: 4.0,         // meters
+                weightKG: 18000,           // kg total weight
+                axleWeightKG: 9000         // kg per axle
+            },
+            engine: {
+                consumption: {
+                    speedsToConsumptionsLiters: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 28.0 },
+                        { speedKMH: 80, consumptionUnitsPer100KM: 32.0 },
+                        { speedKMH: 90, consumptionUnitsPer100KM: 35.0 }
+                    ],
+                    auxiliaryPowerInLitersPerHour: 0.5
+                }
+            }
+        },
+
+        // Truck state
+        state: {
+            currentFuelInLiters: 400
+        },
+
+        // Commercial vehicle restrictions
+        restrictions: {
+            maxSpeedKMH: 90,                    // Legal speed limit
+            loadTypes: ['USHazmatClass2'],      // Hazardous materials
+            adrCode: 'B',                       // Tunnel restrictions
+            commercial: true                    // Commercial vehicle flag
+        }
+    },
+
+    // Commercial routing preferences
+    avoid: ['carpools', 'unpavedRoads'],  // Avoid HOV lanes and unpaved roads
+    routeType: 'fastest'
+});
+```
+
+#### Van and Light Commercial
+
+```typescript
+const vanRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    vehicle: {
+        // Light commercial vehicle
+        model: {
+            dimensions: {
+                lengthMeters: 6.0,         // meters
+                widthMeters: 2.0,          // meters
+                heightMeters: 2.8,         // meters
+                weightKG: 3500             // kg (under commercial license threshold)
+            }
+        },
+
+        restrictions: {
+            commercial: true,              // Commercial usage
+            maxSpeedKMH: 100              // Speed restriction
+        }
+    },
+
+    // Urban delivery preferences (allow highways for efficiency)
+    routeType: 'fastest'
+});
+```
+
+## Specialized Routing Criteria
+
+### Motorcycle-Specific Criteria
+
+```typescript
+const motorcycleRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    // Motorcycle vehicle configuration
+    vehicle: {
+        engineType: 'combustion',
+
+        model: {
+            dimensions: {
+                lengthMeters: 2.2,
+                widthMeters: 0.8,
+                heightMeters: 1.4,
+                weightKG: 250
+            },
+            engine: {
+                consumption: {
+                    speedsToConsumptionsLiters: [
+                        { speedKMH: 30, consumptionUnitsPer100KM: 3.2 },
+                        { speedKMH: 60, consumptionUnitsPer100KM: 3.8 },
+                        { speedKMH: 100, consumptionUnitsPer100KM: 4.5 },
+                        { speedKMH: 130, consumptionUnitsPer100KM: 5.8 }
+                    ],
+                    auxiliaryPowerInLitersPerHour: 0.1
+                }
+            }
+        },
+
+        state: {
+            currentFuelInLiters: 18
+        }
+    },
+
+    // Motorcycle preferences
+    routeType: 'thrilling',               // Scenic routes
+    hilliness: 'high',                    // Include elevation changes
+    windingness: 'high',                  // Winding roads
+
+    // Motorcycle avoidances (avoid dirt roads, allow highways)
+    avoid: ['unpavedRoads'],
+
+    // Weather consideration (if available)
+    traffic: true
+});
+```
+
+### Electric Vehicle Specific Criteria
+
+```typescript
+const evSpecificRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    vehicle: {
+        engineType: 'electric',
+
+        model: {
+            dimensions: {
+                lengthMeters: 4.6,
+                widthMeters: 1.9,
+                heightMeters: 1.6,
+                weightKG: 2100
+            },
+            engine: {
+                consumption: {
+                    // Winter consumption adjustment (+15-20%)
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 30, consumptionUnitsPer100KM: 16.0 },    // Winter city consumption
+                        { speedKMH: 50, consumptionUnitsPer100KM: 18.0 },    // Cold weather impact
+                        { speedKMH: 80, consumptionUnitsPer100KM: 21.0 },    // Highway in winter
+                        { speedKMH: 120, consumptionUnitsPer100KM: 28.0 }    // High speed in cold
+                    ],
+                    auxiliaryPowerInkW: 5.0,              // Heating in winter
+
+                    // Energy recuperation from elevation changes
+                    consumptionInKWHPerKMAltitudeGain: 18.0,
+                    recuperationInKWHPerKMAltitudeLoss: 14.5
+                },
+                charging: {
+                    maxChargeKWH: 75,
+                    chargingConnectors: [{
+                        currentType: 'DC',
+                        plugTypes: ['CCS2'],
+                        maxPowerInkW: 125,
+                        efficiency: 0.90
+                    }]
+                }
+            }
+        },
+
+        state: {
+            currentChargeInkWh: 60
+        },
+
+        preferences: {
+            chargingPreferences: {
+                minChargeAtDestinationInkWh: 15,
+                minChargeAtChargingStopsInkWh: 8
+            }
+        }
+    },
+
+    // EV optimization preferences
+    routeType: 'eco',                     // Minimize energy consumption
+    hilliness: 'low',                     // Avoid steep grades when possible
+    traffic: true
+});
+```
+
+## Advanced Vehicle Configuration
+
+### Predefined Vehicle Models
+
+The SDK supports using predefined vehicle models from TomTom's curated Vehicle Database, which automatically provides accurate specifications:
+
+```typescript
+const predefinedVehicleRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    vehicle: {
+        engineType: 'electric',
+
+        // Use predefined vehicle model
+        model: {
+            variantId: 'tesla-model-3-long-range-2023'  // Specific vehicle variant
+        },
+
+        // Current vehicle state
+        state: {
+            currentChargeInkWh: 50,
+            heading: 180
+        },
+
+        // EV preferences
+        preferences: {
+            chargingPreferences: {
+                minChargeAtDestinationInkWh: 10,
+                minChargeAtChargingStopsInkWh: 5
+            }
+        }
+    },
+
+    routeType: 'eco'
+});
+```
+
+### Consumption Efficiency Parameters
+
+For advanced fuel/energy modeling, you can specify efficiency parameters for acceleration, deceleration, and elevation changes:
+
+```typescript
+const efficientCombustionRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    vehicle: {
+        engineType: 'combustion',
+
+        model: {
+            dimensions: {
+                lengthMeters: 4.8,
+                widthMeters: 1.9,
+                heightMeters: 1.5,
+                weightKG: 1650
+            },
+            engine: {
+                consumption: {
+                    speedsToConsumptionsLiters: [
+                        { speedKMH: 30, consumptionUnitsPer100KM: 7.5 },
+                        { speedKMH: 80, consumptionUnitsPer100KM: 6.8 },
+                        { speedKMH: 120, consumptionUnitsPer100KM: 8.2 }
+                    ],
+                    auxiliaryPowerInLitersPerHour: 0.25,
+                    fuelEnergyDensityInMJoulesPerLiter: 35.8, // Diesel
+
+                    // Efficiency parameters for advanced modeling
+                    efficiency: {
+                        acceleration: 0.33,    // 33% efficiency when accelerating
+                        deceleration: 0.83,    // 83% efficiency when decelerating
+                        uphill: 0.27,          // 27% efficiency climbing hills
+                        downhill: 0.74         // 74% efficiency going downhill
+                    }
+                }
+            }
+        },
+
+        state: {
+            currentFuelInLiters: 55
+        }
+    },
+
+    routeType: 'eco'
+});
+```
+
+### Advanced Electric Vehicle Configuration
+
+Electric vehicles can be configured with detailed battery curves and multiple charging connectors:
+
+```typescript
+const advancedEVRoute = await calculateRoute({
+    locations: [origin, destination],
+
+    vehicle: {
+        engineType: 'electric',
+
+        model: {
+            dimensions: {
+                lengthMeters: 4.7,
+                widthMeters: 1.9,
+                heightMeters: 1.6,
+                weightKG: 2200
+            },
+            engine: {
+                consumption: {
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 30, consumptionUnitsPer100KM: 15.2 },
+                        { speedKMH: 50, consumptionUnitsPer100KM: 16.8 },
+                        { speedKMH: 80, consumptionUnitsPer100KM: 19.5 },
+                        { speedKMH: 110, consumptionUnitsPer100KM: 24.1 },
+                        { speedKMH: 130, consumptionUnitsPer100KM: 28.7 }
+                    ],
+                    auxiliaryPowerInkW: 3.2,
+
+                    // Elevation-based consumption
+                    consumptionInKWHPerKMAltitudeGain: 16.5,
+                    recuperationInKWHPerKMAltitudeLoss: 13.2
+                },
+                charging: {
+                    maxChargeKWH: 100,
+                    chargingTimeOffsetInSec: 180,
+
+                    // Battery charging curve (power vs state of charge)
+                    batteryCurve: [
+                        { stateOfChargeInkWh: 10, maxPowerInkW: 150 },
+                        { stateOfChargeInkWh: 50, maxPowerInkW: 150 },
+                        { stateOfChargeInkWh: 80, maxPowerInkW: 75 },
+                        { stateOfChargeInkWh: 95, maxPowerInkW: 25 }
+                    ],
+
+                    // Multiple charging connector types
+                    chargingConnectors: [
+                        {
+                            currentType: 'DC',
+                            plugTypes: ['CCS2'],
+                            maxPowerInkW: 150,
+                            efficiency: 0.93,
+                            maxVoltageInV: 800,
+                            maxCurrentInA: 300
+                        },
+                        {
+                            currentType: 'AC3',
+                            plugTypes: ['Type2'],
+                            maxPowerInkW: 22,
+                            efficiency: 0.95,
+                            maxVoltageInV: 400,
+                            maxCurrentInA: 32
+                        }
+                    ]
+                }
+            }
+        },
+
+        state: {
+            currentChargeInkWh: 75
+        },
+
+        preferences: {
+            chargingPreferences: {
+                minChargeAtDestinationInkWh: 20,
+                minChargeAtChargingStopsInkWh: 10
+            }
+        }
+    },
+
+    routeType: 'eco'
+});
+```
+
+### Vehicle Parameter Structure Overview
+
+The vehicle parameter structure is organized into four main categories:
+
+#### 1. Engine Type (Required for typed vehicles)
+- `combustion`: For internal combustion engine vehicles
+- `electric`: For battery electric vehicles
+- `undefined`: For generic vehicles without engine-specific features
+
+#### 2. Model (Static Properties)
+- **Dimensions**: Length, width, height, weight, axle weight
+- **Engine**: Consumption model and charging specifications (for EVs)
+- **Predefined**: Alternative to explicit configuration using `variantId`
+
+#### 3. State (Current Conditions)
+- **Combustion vehicles**: Current fuel level, optional heading
+- **Electric vehicles**: Current battery charge (kWh or percentage), optional heading
+
+#### 4. Preferences (Routing Preferences)
+- **Electric vehicles**: Charging preferences for long-distance routing
+
+#### 5. Restrictions (Vehicle Limitations)
+- **Load types**: Hazardous material classifications
+- **Speed limits**: Maximum vehicle speed
+- **ADR codes**: Tunnel restriction codes
+- **Commercial usage**: Commercial vehicle flag
+
+This structure provides maximum flexibility while maintaining type safety and enabling advanced routing optimizations based on detailed vehicle characteristics.
+
+## Related Guides and Examples
+
+### Related Guides
+- **[Planning a Route](./planning-a-route.mdx)** - Comprehensive route planning fundamentals and basic configuration
+- **[Long Distance EV Routing](./long-distance-ev-routing.mdx)** - Electric vehicle routing with automatic charging stop calculation
+- **[Waypoints and Custom Routes](./waypoints-and-custom-routes.mdx)** - Multi-stop routing and custom route optimization
+- **[Route Sections](./route-sections.mdx)** - Understanding route structure, segments, and detailed route data
+- **[Routing Quickstart](./quickstart.mdx)** - Get started with basic route calculation
+
+### Related Examples
+- **[Route](../../../examples/route/)** - Basic route calculation with different optimization criteria
+- **[Route with Alternatives](../../../examples/route-with-alternatives/)** - Compare multiple route options with different criteria
+- **[EV Charging Stations Playground](../../../examples/ev-charging-stations-playground/)** - Interactive EV routing with charging preferences
+- **[Traffic Flow](../../../examples/traffic-flow/)** - Traffic-aware routing implementation
+- **[Waypoints](../../../examples/waypoints/)** - Multi-stop routing with various vehicle configurations
+- **[Node.js Routing](../../../examples/nodejs-routing/)** - Server-side routing with advanced vehicle parameters
+
+### Map Integration
+- **[Routes Module](../../map/routes.mdx)** - Display optimized routes on interactive maps with styling options
+- **[Traffic Flow Module](../../map/traffic-flow.mdx)** - Visualize real-time traffic conditions for route planning
+- **[Places Module](../../map/places.mdx)** - Show route origins, destinations, and waypoints as interactive markers
+
+### Advanced Features
+- **[EV Charging Stations Availability](../places/ev-charging-stations-availability.mdx)** - Find and filter charging stations for electric vehicle routing
+- **[Geocoding](../places/geocoding.mdx)** - Convert addresses to precise coordinates for route planning
+- **[Reverse Geocoding](../places/reverse-geocoding.mdx)** - Get location details for route points and waypoints
+- **[Customizing Services](../customizing-services.mdx)** - Advanced service configuration and custom headers
+
+### Vehicle-Specific Resources
+- **[Vehicle Database Documentation](https://docs.tomtom.com/routing-api/documentation/extended-routing/vehicle-database)** - Complete list of predefined vehicle models and specifications
+- **[Consumption Model Guidelines](https://docs.tomtom.com/routing-api/documentation/extended-routing/consumption-model)** - Best practices for fuel and energy consumption modeling
+- **[Commercial Vehicle Routing](https://docs.tomtom.com/routing-api/documentation/extended-routing/truck-routing)** - Specialized routing for trucks and commercial vehicles
