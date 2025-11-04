@@ -1,0 +1,99 @@
+---
+title: Introduction to the Map bundle
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.29.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Map Architecture
+
+The map bundle of TomTom Maps SDK for JavaScript leverages [MapLibre GL JS](/maps-sdk-js/guides/map/about-maplibre) as a peer dependency and provides seamless integration with TomTom's mapping services and data.
+
+The architecture is built on two complementary components:
+
+### TomTomMap: The Foundation
+
+**[TomTomMap](/maps-sdk-js/guides/map/tomtom-map)** is your entry point—a lightweight wrapper around MapLibre's `Map` class that handles initialization, configuration, and lifecycle management. It provides:
+
+- Pre-configured access to TomTom map styles and services
+- Unified event handling system for user interactions
+- Style management with automatic state preservation
+- Direct access to the underlying MapLibre instance when needed
+
+**[Learn more about TomTomMap →](/maps-sdk-js/guides/map/tomtom-map)**
+
+### Modules: Extensible Functionality
+
+**[Modules](/maps-sdk-js/guides/map/modules)** are objects that add specialized capabilities to your map. Each module is self-contained and focused on a specific domain:
+
+- **[BaseMapModule](/maps-sdk-js/guides/map/base-map)**: Control layer groups and base map visibility
+- **[TrafficFlowModule](/maps-sdk-js/guides/map/traffic-flow)** / **[TrafficIncidentsModule](/maps-sdk-js/guides/map/traffic-incidents)**: Real-time traffic visualization
+- **[RoutingModule](/maps-sdk-js/guides/map/routing)**: Display routes and waypoints
+- **[PlacesModule](/maps-sdk-js/guides/map/places)**: Search results and POI visualization
+- **[GeometriesModule](/maps-sdk-js/guides/map/geometries)**: Custom shapes and polygons
+- **[POIsModule](/maps-sdk-js/guides/map/pois)**: Points of interest filtering and events
+- **[HillshadeModule](/maps-sdk-js/guides/map/hillshade)**: Terrain elevation shading
+
+**[Learn more about Modules →](/maps-sdk-js/guides/map/modules)**
+
+## Why This Architecture?
+
+This separation of concerns provides several benefits:
+
+**Tree-shaking**: Only bundle the modules you use. A basic map with traffic is significantly smaller than one with full routing and places capabilities.
+
+**Composition**: Modules work together seamlessly. Multiple instances of the same module type can coexist when needed (e.g., multiple route visualizations).
+
+**Flexibility**: Start simple with just TomTomMap, then add modules as your requirements grow. Upgrade MapLibre versions independently. Use MapLibre as-is when needed.
+
+## Getting Started
+
+### Basic Map Setup
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({
+    container: 'map-container',
+    center: [4.9041, 52.3676],
+    zoom: 12
+});
+```
+
+### Adding Modules
+
+```javascript
+import { TrafficFlowModule, RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Add traffic visualization
+const trafficModule = await TrafficFlowModule.get(map);
+
+// Add routing capabilities
+const routingModule = await RoutingModule.get(map);
+```
+
+Each module follows a consistent `.get()` pattern for initialization, ensuring they're properly attached to the map and ready to use.
+
+## Data Sources
+
+Modules fall into two categories based on their data source:
+
+**Built-in Data Modules**: Work with existing map data without additional API calls. Typically based on existing vector tiles.
+- For example: BaseMapModule, POIsModule, TrafficIncidentsModule, TrafficFlowModule, HillshadeModule.
+
+**Service-Driven Modules**: Display data from TomTom services or custom GeoJSON. Typically used in combination with TomTom services or your custom data.
+- For example: PlacesModule, RoutingModule, GeometriesModule.
+
+This distinction helps you understand what data you'll need and when additional API calls are required.
+
+## Next Steps
+
+- **[TomTomMap Guide](/maps-sdk-js/guides/map/tomtom-map)**: Learn how to initialize and use a TomTom map
+- **[Modules Guide](/maps-sdk-js/guides/map/modules)**: Learn how the Map Modules work
+- **[Map Styles](/maps-sdk-js/guides/map/map-styles)**: Customize the overall map appearance
+- **[User Events](/maps-sdk-js/guides/map/user-events)**: Handle user interactions
