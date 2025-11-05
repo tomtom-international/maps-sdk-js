@@ -15,7 +15,7 @@ const map = new TomTomMap(
     {
         container: 'maps-sdk-js-examples-map-container',
         bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 200 },
+        fitBoundsOptions: { padding: 100 },
     },
     { style: { type: 'standard', include: ['trafficIncidents'] } },
 );

@@ -28,8 +28,8 @@ colorSelectors.forEach((element) => {
 
 const customIconsConfig: PlaceIconConfig = {
     customIcons: [
-        { id: 'ELECTRIC_VEHICLE_STATION', image: tomtomLogo },
-        { id: 'CAFE_PUB', image: 'https://dummyimage.com/30x20/4137ce/fff' },
+        { id: 'ELECTRIC_VEHICLE_STATION', image: tomtomLogo, pixelRatio: 1 },
+        { id: 'CAFE_PUB', image: 'https://dummyimage.com/30x20/4137ce/fff', pixelRatio: 1 },
     ],
 };
 
@@ -61,7 +61,7 @@ const updatePlaces = async () => {
 };
 
 const listenToUIEvents = () => {
-    const iconStyleSelector = document.getElementById('icon-style-selector') as HTMLSelectElement;
+    const iconStyleSelector = document.getElementById('maps-sdk-js-examples-icon-style-selector') as HTMLSelectElement;
     colorSelectors.forEach((element) =>
         element.addEventListener('click', () => {
             colorSelectors.forEach((element) => element.classList.remove('active'));
@@ -88,7 +88,7 @@ const listenToUIEvents = () => {
                 });
             places.applyTextConfig({
                 ...places.getConfig()?.textConfig,
-                textField: element.value !== 'default' ? multiLineLabel : ['get', 'title'],
+                textField: element.value === 'default' ? undefined : multiLineLabel,
             });
         });
     }
