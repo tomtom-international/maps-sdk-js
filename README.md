@@ -15,6 +15,12 @@ It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
 <br/><br/>
 
+## ⚠️ Public Preview Notice
+We have released some capabilities in the Maps SDK under [Public Preview](https://docs.tomtom.com/legal/public-preview) to collect feedback from the community.
+While our goal is to keep the design of the interface stable, breaking changes may occur.
+We will do our utmost to communicate these breaking changes in advance, whenever possible.
+<br/><br/>
+
 ## 🚀 Getting Started using npm
 ```
 npm i @tomtom-org/maps-sdk
@@ -40,7 +46,7 @@ Explore comprehensive guides and interactive examples to get the most out of Map
 
 ### 📝 Latest Updates
 - **[Release Notes](https://docs.tomtom.com/maps-sdk-js/overview/release-notes)** - What's new and breaking changes
-<br/><br/><br/>
+<br/><br/>
 
 ## 🌍 Where can you run it on?
 * **web**: display and configure a map, search for places, plan routes, and easily display and interact with them, including your own data
