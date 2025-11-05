@@ -1,0 +1,80 @@
+group: maps-sdk-js
+isPrivate: false
+noIndex: true
+productName: TomTom Maps SDK for JavaScript
+isMenuOpened: false
+menu:
+  - title: How the SDK works
+    fileId: how-the-sdk-works
+  - title: Map
+    items:
+      - fileId: map/quickstart
+        title: Quickstart
+      - fileId: map/introduction
+        title: Introduction
+      - fileId: map/tomtom-map
+        title: TomTom Map object
+      - fileId: map/modules
+        title: Map Modules
+      - fileId: map/styles
+        title: Map styles
+      - fileId: map/traffic
+        title: Traffic
+      - fileId: map/user-events
+        title: User Events
+      - fileId: map/about-maplibre
+        title: About MapLibre
+      - title: Modules
+        items:
+        - fileId: map/base-map
+          title: Base Map
+        - fileId: map/pois
+          title: POIs
+        - fileId: map/places
+          title: Places
+        - fileId: map/routes
+          title: Routes
+        - fileId: map/traffic-incidents
+          title: Traffic Incidents
+        - fileId: map/traffic-flow
+          title: Traffic Flow
+        - fileId: map/hillshade
+          title: Hillshade
+  - title: Services
+    items:
+      - fileId: services/quickstart
+        title: Quickstart
+      - title: Places
+        items:
+          - fileId: services/places/quickstart
+            title: Overview
+          - fileId: services/places/search
+            title: Search (autocomplete/fuzzy/geometry search)
+          - fileId: services/places/geocoding
+            title: Geocoding
+          - fileId: services/places/reverse-geocoding
+            title: Reverse geocoding
+          - fileId: services/places/geometry-data
+            title: Geometry data
+          - fileId: services/places/ev-charging-stations-availability
+            title: EV Charging Stations Availability
+      - title: Routing
+        items:
+          - fileId: services/routing/quickstart
+            title: Quickstart
+          - fileId: services/routing/planning-a-route
+            title: Planning a route
+          - fileId: services/routing/waypoints-and-custom-routes
+            title: Waypoints and custom routes
+          - fileId: services/routing/planning-criteria
+            title: Planning criteria
+          - fileId: services/routing/route-sections
+            title: Route sections
+          - fileId: services/routing/long-distance-ev-routing
+            title: Long Distance EV Routing
+      - fileId: services/customizing-services
+        title: Customizing services
+  - title: Core
+    items:
+      - fileId: core/quickstart
+        title: Quickstart
