@@ -1,4 +1,4 @@
-[![TomTom Logo](./tomtom-logo-big.svg)](https://www.tomtom.com/)
+[//]: # ([![TomTom Logo]&#40;./tomtom-logo-big.svg&#41;]&#40;https://www.tomtom.com/&#41;)
 
 # TomTom Maps SDK for JavaScript
 
@@ -9,7 +9,7 @@
 
 TomTom Maps SDK for JavaScript is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
 
-[![SDK Example Thumbnails](./sdk-examples-collage.png)](https://docs.tomtom.com/maps-sdk-js/examples/)
+[//]: # ([![SDK Example Thumbnails]&#40;./sdk-examples-collage.png&#41;]&#40;https://docs.tomtom.com/maps-sdk-js/examples/&#41;)
 
 It leverages the power of [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/)
 to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
@@ -50,43 +50,6 @@ Explore comprehensive guides and interactive examples to get the most out of Map
 <br/><br/>
 
 ## 📦 Bundles
-```mermaid
-flowchart TD
-    App["Your application"]
-    MapLibre["MapLibre GL JS"]
-    subgraph SDK["SDK"]
-        direction TB
-        Map["Map"]
-        Services["Services"]
-        Core["Core"]
-    end
-
-    App --> Map
-    App --> MapLibre
-    App --> Services
-    App --> Core
-    
-    Map -.-> Core
-    Map -.-> MapLibre
-
-    Services -.-> Core
-
-    classDef mapClass fill:#fffde7,stroke:#ff6f00,color:#ff6f00;
-    classDef servicesClass fill:#f3e5f5,stroke:#4a148c,color:#4a148c;
-    classDef coreClass fill:#e8f5e9,stroke:#1b5e20,color:#1b5e20;
-    classDef maplibreClass fill:#295DAA,stroke:#295DAA,color:white;
-
-    class Map mapClass;
-    class Services servicesClass;
-    class Core coreClass;
-    class MapLibre maplibreClass;
-
-    click Map "##_Map" "Go to Map section"
-    click Services "#services" "Go to Services section"
-    click Core "#core" "Go to Core section"
-    click MapLibre "https://maplibre.org/maplibre-gl-js/docs/" "Go to MapLibre GL JS documentation"
-```
-
 * [Map](#map): MapLibre-powered library for readily styled, service-compatible and interactive TomTom Maps
 * * [MapLibre](https://maplibre.org/maplibre-gl-js/docs/) is an open source peer dependency so your application can also use it directly
 * [Services](#services): Functions with GeoJSON services for TomTom location APIs
