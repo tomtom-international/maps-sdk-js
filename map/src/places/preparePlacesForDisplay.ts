@@ -2,56 +2,22 @@ import type { Place, Places } from '@tomtom-org/maps-sdk/core';
 import type { Map } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../pois/poiCategoryMapping';
 import { toMapDisplayPOICategory } from '../pois/poiCategoryMapping';
+import { toMapDisplayPin } from './pinCategoryMapping';
 import type { DisplayPlaceProps } from './types/placeDisplayProps';
 import type { PlacesModuleConfig } from './types/placesModuleConfig';
 
 /**
- * Builds the display title for a place feature.
- *
- * @remarks
- * Determines the appropriate title to display on the map by prioritizing
- * POI name over the freeform address. This ensures that named locations
- * (e.g., "Starbucks", "Central Park") are shown with their recognizable names
- * while regular addresses use their street address.
- *
- * @param place - The place feature to extract the title from
- * @returns The display title, either the POI name or freeform address
- *
- * @example
- * ```ts
- * const place = { properties: { poi: { name: "Eiffel Tower" }, address: { freeformAddress: "..." } } };
- * const title = buildPlaceTitle(place); // Returns "Eiffel Tower"
- * ```
- *
- * @group Places
+ * Builds the title of the place to display it on the map.
+ * @param place The place to display.
  */
 export const buildPlaceTitle = (place: Place): string =>
     place.properties.poi?.name ?? place.properties.address.freeformAddress;
 
 /**
- * Determines the appropriate sprite image ID for displaying a place icon on the map.
- *
- * @remarks
- * Resolves icon IDs using the following priority:
- * 1. Custom icons matching the place's classification code
- * 2. Pin-style icons based on category IDs
- * 3. POI-style icons based on classification codes
- * 4. Default fallback pin icon
- *
- * The icon style is determined by the configuration, supporting both 'pin' and 'poi-like' styles.
- *
- * @param place - The place feature to determine the icon for
- * @param config - Optional configuration for icon style and custom icons
- * @param map - Optional map instance (reserved for future use)
- * @returns The sprite image ID to use for rendering the place icon
- *
- * @example
- * ```ts
- * const iconId = getIconIDForPlace(place, {
- *   iconConfig: { iconStyle: 'pin', customIcons: [...] }
- * }, map);
- * ```
- * @group Places
+ * Gets the map style sprite image ID to display on the map for the give place.
+ * @param place The place to display.
+ * @param map
+ * @param config
  */
 export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {}, map?: Map): string => {
     const iconStyle = config.iconConfig?.iconStyle ?? 'pin';
@@ -67,9 +33,7 @@ export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {},
 
     let iconId: string;
     if (iconStyle === 'pin') {
-        // Pin assets are mapped by search category IDs (so far same as for Genesis):
-        const categoryID = place.properties.poi?.categoryIds?.[0];
-        iconId = categoryID ? String(categoryID) : 'default_pin';
+        iconId = toMapDisplayPin(place);
     } else {
         // POI assets have their own category mapping and we use search classification codes to map them:
         // TODO: consider default_circle asset instead of default_pin
