@@ -1,6 +1,6 @@
 [![TomTom Logo](./tomtom-logo-big.svg)](https://www.tomtom.com/)
 
-# Maps SDK for JavaScript
+# TomTom Maps SDK for JavaScript
 
 [**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
 [**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview) |
