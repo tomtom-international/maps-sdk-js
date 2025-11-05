@@ -1,0 +1,78 @@
+---
+title: Core quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.29.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Core bundle provides essential shared functionality across the entire Maps SDK, including configuration management, common types, and utility functions.
+
+## Common Configuration
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+    language: 'en-GB'
+});
+```
+
+```javascript
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+    language: 'en-GB',           // Map labels language
+    baseUrl: 'https://api.tomtom.com',  // API base URL
+    timeout: 10000,              // Request timeout (ms)
+    validateRequest: true        // Enable request validation
+});
+```
+
+## Using with Map Bundle
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+
+const map = new TomTomMap({ container: 'map' });
+```
+
+## Using with Services Bundle
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { search } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+
+const results = await search({
+    query: 'restaurants',
+    position: [4.9041, 52.3676]
+});
+```
+
+## Node.js Configuration
+
+```javascript
+const { TomTomConfig } = require('@tomtom-org/maps-sdk/core');
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    language: 'en-GB'
+});
+```
+
+The Core bundle is automatically included when you install the Map or Services bundles - no separate installation needed.
+
+

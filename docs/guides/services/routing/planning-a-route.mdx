@@ -1,0 +1,295 @@
+---
+title: Planning a route
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.29.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides powerful routing capabilities to calculate optimal routes between locations. This guide covers the fundamentals of route planning, from simple point-to-point routes to more sophisticated routing scenarios with traffic, alternatives, and basic vehicle configurations.
+
+## Getting Started with Route Planning
+
+The routing service is built around the `calculateRoute` function, which takes geographic inputs and routing preferences to return optimized routes.
+
+### Basic Route Planning
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Simple route between two cities
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+
+console.log(`Distance: ${route.routes[0].summary.lengthInMeters / 1000} km`);
+console.log(`Duration: ${Math.round(route.routes[0].summary.travelTimeInSeconds / 60)} minutes`);
+```
+
+### Route with Address Geocoding
+
+Instead of coordinates, you can use the geocoding service to convert addresses into geographic inputs:
+
+```javascript
+import { calculateRoute, geocode } from '@tomtom-org/maps-sdk/services';
+
+// Convert addresses to coordinates
+const origin = await geocode({ query: 'Amsterdam Central Station, Netherlands' });
+const destination = await geocode({ query: 'Paris Gare du Nord, France' });
+
+const route = await calculateRoute({
+    locations: [
+        origin.features[0].geometry.coordinates,
+        destination.features[0].geometry.coordinates
+    ]
+});
+```
+
+## Route Optimization Types
+
+You can request different types of routes based on your optimization preferences:
+
+```javascript
+// Fastest route (default) - optimizes for time
+const fastestRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'fastest'
+});
+
+// Shortest route - optimizes for distance
+const shortestRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'shortest'
+});
+
+// Eco-friendly route - optimizes for fuel efficiency
+const ecoRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'eco'
+});
+
+// Thrilling route - scenic roads (for motorcycles)
+const scenicRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'thrilling'
+});
+```
+
+## Traffic-Aware Routing
+
+Include real-time or predicted traffic conditions in your route calculations:
+
+```javascript
+// Route with current traffic conditions
+const trafficRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    traffic: true,
+    departureTime: new Date() // Current time
+});
+
+// Route for future departure time
+const futureRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    traffic: true,
+    departureTime: new Date(Date.now() + 2 * 60 * 60 * 1000) // 2 hours from now
+});
+```
+
+## Route Preferences and Avoidances
+
+Customize routes by avoiding certain road types or features:
+
+```javascript
+const customRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+
+    // Avoid specific road types
+    avoid: ['tollRoads', 'ferries', 'unpavedRoads']
+});
+```
+
+## Alternative Routes
+
+Get multiple route options to compare different paths:
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    maxAlternatives: 2 // Get up to 3 routes total (main + 2 alternatives)
+});
+
+// Compare route options
+routes.routes.forEach((route, index) => {
+    console.log(`Route ${index + 1}:`);
+    console.log(`  Distance: ${(route.summary.lengthInMeters / 1000).toFixed(1)} km`);
+    console.log(`  Duration: ${Math.round(route.summary.travelTimeInSeconds / 60)} minutes`);
+});
+```
+
+## Basic Vehicle Configuration
+
+The routing service can optimize routes for different vehicle types. Here are simple configurations for common scenarios:
+
+### Standard Car Routing
+
+```javascript
+// Standard passenger car (no special configuration needed)
+const carRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'fastest'
+});
+```
+
+### Electric Vehicle Routing
+
+```javascript
+// Basic electric vehicle configuration
+const evRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicle: {
+        engineType: 'electric',
+        model: {
+            dimensions: {
+                weightKG: 1800
+            }
+        },
+        state: {
+            currentChargeInkWh: 50 // Current battery level
+        }
+    },
+    routeType: 'eco'
+});
+```
+
+### Commercial Vehicle Routing
+
+```javascript
+// Basic truck configuration
+const truckRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicle: {
+        engineType: 'combustion',
+        model: {
+            dimensions: {
+                lengthMeters: 12,
+                widthMeters: 2.5,
+                heightMeters: 4,
+                weightKG: 18000
+            }
+        },
+        restrictions: {
+            commercial: true,
+            maxSpeedKMH: 90
+        }
+    },
+    avoid: ['unpavedRoads']
+});
+```
+
+## Understanding Route Responses
+
+The `calculateRoute` function returns detailed information about the calculated routes:
+
+```javascript
+const result = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]]
+});
+
+// Access the main route
+const mainRoute = result.routes[0];
+
+// Route summary information
+console.log('Route Summary:');
+console.log(`Distance: ${(mainRoute.summary.lengthInMeters / 1000).toFixed(1)} km`);
+console.log(`Duration: ${Math.round(mainRoute.summary.travelTimeInSeconds / 60)} minutes`);
+console.log(`Departure: ${mainRoute.summary.departureTime}`);
+console.log(`Arrival: ${mainRoute.summary.arrivalTime}`);
+
+// Route geometry (for map display)
+const routeCoordinates = mainRoute.legs[0].points;
+console.log(`Route has ${routeCoordinates.length} coordinate points`);
+```
+
+## Working with Route Instructions
+
+Routes include turn-by-turn navigation instructions:
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    instructionsType: 'text' // Get text instructions
+});
+
+// Access driving instructions
+const instructions = route.routes[0].guidance.instructions;
+instructions.forEach((instruction, index) => {
+    console.log(`${index + 1}. ${instruction.message}`);
+    console.log(`   Distance: ${instruction.routeOffsetInMeters}m`);
+});
+```
+
+## Error Handling
+
+Always handle potential errors when calculating routes:
+
+```javascript
+try {
+    const route = await calculateRoute({
+        locations: [[4.9041, 52.3676], [2.3522, 48.8566]]
+    });
+
+    if (route.routes.length === 0) {
+        console.log('No routes found');
+        return;
+    }
+
+    // Process the route
+    console.log('Route calculated successfully');
+
+} catch (error) {
+    console.error('Route calculation failed:', error.message);
+    // Handle the error appropriately
+}
+```
+
+## Next Steps
+
+This guide covers the fundamentals of route planning. For more advanced scenarios:
+
+- **Advanced vehicle configurations** - See the [Planning Criteria Guide](./planning-criteria.mdx) for detailed vehicle parameters and optimization strategies
+- **Multi-stop routes** - Check out [Waypoints and Custom Routes](./waypoints-and-custom-routes.mdx) for complex routing scenarios
+- **Electric vehicle charging** - Learn about [Long Distance EV Routing](./long-distance-ev-routing.mdx) with automatic charging stops
+- **Route visualization** - Display routes using the [Routes Module](../../map/routes.mdx) for interactive maps
+
+## Related Guides and Examples
+
+### Related Guides
+- **[Planning Criteria](./planning-criteria.mdx)** - Comprehensive route optimization and vehicle configuration options
+- **[Waypoints and Custom Routes](./waypoints-and-custom-routes.mdx)** - Multi-stop routing and advanced route customization
+- **[Long Distance EV Routing](./long-distance-ev-routing.mdx)** - Electric vehicle routing with charging station integration
+- **[Route Sections](./route-sections.mdx)** - Understanding detailed route structure and segments
+- **[Routing Quickstart](./quickstart.mdx)** - Quick introduction to routing basics
+
+### Related Examples
+- **[Route](../../../examples/route/)** - Basic route calculation and map display
+- **[Route with Alternatives](../../../examples/route-with-alternatives/)** - Compare multiple route options
+- **[Waypoints](../../../examples/waypoints/)** - Multi-stop routes with intermediate waypoints
+- **[Traffic Flow](../../../examples/traffic-flow/)** - Traffic-aware routing implementation
+- **[Map Route Reconstruction](../../../examples/map-route-reconstruction/)** - Interactive route creation and planning
+
+### Map Integration
+- **[Routes Module](../../map/routes.mdx)** - Display calculated routes on interactive maps with styling options
+- **[Places Module](../../map/places.mdx)** - Show route waypoints and destinations as interactive markers
+- **[Traffic Flow Module](../../map/traffic-flow.mdx)** - Visualize real-time traffic conditions
+
+### Related Services
+- **[Geocoding](../places/geocoding.mdx)** - Convert addresses to coordinates for route planning
+- **[Search](../places/search.mdx)** - Find destinations and points of interest along routes
+- **[EV Charging Stations](../places/ev-charging-stations-availability.mdx)** - Find charging stations for electric vehicle routes

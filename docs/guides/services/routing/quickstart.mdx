@@ -1,0 +1,331 @@
+---
+title: Routing quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.29.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Routing Services in the Maps SDK provide powerful route calculation capabilities that integrate seamlessly with the [TomTom Routing API](https://docs.tomtom.com/routing-api/documentation/product-information/introduction). This comprehensive routing system calculates optimal routes between locations, supports various vehicle types, and incorporates real-time traffic data for accurate travel time estimates.
+
+## Purpose and Capabilities
+
+The Routing Services enable sophisticated navigation and logistics applications with these core capabilities:
+
+- **Calculate optimal routes** between multiple waypoints with various optimization criteria (fastest, shortest, eco-friendly)
+- **Support different vehicle types** including cars, trucks, motorcycles, and electric vehicles with specific routing constraints
+- **Integrate real-time traffic** for accurate travel time estimates and dynamic route optimization
+- **Handle complex routing scenarios** with intermediate stops, custom constraints, and delivery requirements
+- **Provide turn-by-turn instructions** for navigation applications with detailed guidance information
+
+## Core Routing Concepts
+
+### Route Planning Process
+
+The routing system follows a structured approach to route calculation:
+
+1. **Define waypoints**: Specify origin, destination, and optional intermediate stops using coordinates
+2. **Set optimization criteria**: Choose route type and travel preferences based on application needs
+3. **Configure vehicle parameters**: Specify vehicle type and characteristics for accurate routing
+4. **Apply constraints**: Set preferences for tolls, highways, ferries, and other road features
+5. **Execute calculation**: Process the request and receive detailed route information with traffic data
+
+### Route Data Structure
+
+The routing service returns comprehensive route information including geometric path data, navigation instructions, route metrics, and alternative options when requested. This structured data enables both visualization and turn-by-turn navigation functionality.
+
+## Prerequisites and Setup
+
+### Basic Configuration
+
+Configure your routing environment with the essential SDK setup:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+```
+
+### Node.js Environment Configuration
+
+For server-side applications and backend services, configure routing with environment variables:
+
+```javascript
+const { calculateRoute } = require("@tomtom-org/maps-sdk/services");
+const { TomTomConfig } = require("@tomtom-org/maps-sdk/core");
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY
+});
+```
+
+## Basic Route Calculation
+
+### Simple Point-to-Point Route
+
+The most straightforward routing scenario involves calculating a route between two geographic points:
+
+```javascript
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam coordinates
+        [2.3522, 48.8566]  // Paris coordinates
+    ]
+});
+```
+
+### Route with Multiple Stops
+
+For complex journeys involving multiple destinations, specify waypoints in the order they should be visited:
+
+```javascript
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam (start)
+        [3.7038, 51.2194], // Brussels (stop 1)
+        [4.3517, 50.8503], // Liège (stop 2)
+        [2.3522, 48.8566]  // Paris (end)
+    ]
+});
+```
+
+### Vehicle-Specific Route Optimization
+
+Configure routing for different vehicle types to ensure appropriate route selection:
+
+```javascript
+// Car routing (default)
+const carRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'fastest',
+    traffic: true
+});
+
+// Truck routing with restrictions
+const truckRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicleParameters: {
+        model: {
+            dimensions: {
+                heightMeters: 4.2,
+                lengthMeters: 16.5,
+                widthMeters: 2.5,
+                weightKG: 40000
+            }
+        },
+        restrictions: {
+            commercial: true,
+            loadTypes: ['USHazmatClass2', 'USHazmatClass9']
+        }
+    }
+});
+```
+
+### Electric Vehicle Routing
+
+Plan routes with charging stops for electric vehicles:
+
+```javascript
+const evRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicleParameters: {
+        engineType: 'electric',
+        model: {
+            engine: {
+                consumption: {
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 15 },
+                        { speedKMH: 90, consumptionUnitsPer100KM: 18 },
+                        { speedKMH: 130, consumptionUnitsPer100KM: 25 }
+                    ]
+                },
+                charging: {
+                    maxChargeKWH: 85
+                }
+            }
+        },
+        state: {
+            currentChargeInkWh: 42.5 // 50% charge
+        }
+    }
+});
+```
+
+## Route Configuration Options
+
+### Route Type Optimization
+
+Choose the optimization strategy that best fits your application's requirements:
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    routeType: 'fastest',    // Options: 'fastest', 'shortest', 'eco'
+    traffic: true,           // Include real-time traffic data
+    avoid: ['tollRoads'],    // Avoid specific road types
+    departAt: 'now'          // Departure time for traffic optimization
+});
+```
+
+**Route Type Options:**
+- **fastest**: Minimizes travel time (default)
+- **shortest**: Minimizes distance traveled
+- **eco**: Optimizes for fuel efficiency and environmental impact
+
+## Working with Route Results
+
+### Accessing Route Information
+
+Route responses contain detailed information for navigation and analysis:
+
+```javascript
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676],
+        [2.3522, 48.8566]
+    ]
+});
+
+// Access route summary information
+console.log(`Distance: ${route.routes[0].summary.lengthInMeters}m`);
+console.log(`Duration: ${route.routes[0].summary.travelTimeInSeconds}s`);
+
+// Extract coordinates for map visualization
+const coordinates = route.routes[0].legs[0].points.map(point =>
+    [point.longitude, point.latitude]
+);
+```
+
+## Integration with Map Visualization
+
+### Displaying Routes on Maps
+
+Integrate calculated routes with the TomTom Maps SDK for immediate visual representation:
+
+```javascript
+import { TomTomMap, RoutesModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ container: 'map' });
+const routesModule = await RoutesModule.get(map);
+
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676],
+        [2.3522, 48.8566]
+    ]
+});
+
+routesModule.addRoute({
+    id: 'calculated-route',
+    route: route.routes[0]
+});
+```
+
+### Basic Route Visualization
+
+Display calculated routes on a map using the Maps SDK:
+
+```javascript
+import { RoutesModule } from '@tomtom-org/maps-sdk/map';
+
+// Calculate route
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]]
+});
+
+// Display on map
+const routesModule = await RoutesModule.get(map);
+routesModule.show(route);
+
+// Fit map to route bounds
+if (route.routes[0]?.boundingBox) {
+    map.mapLibreMap.fitBounds(route.routes[0].boundingBox);
+}
+```
+
+## Advanced Routing Features
+
+### Alternative Routes
+
+Request multiple route options to provide users with choice and flexibility:
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    maxAlternatives: 2 // Returns up to 3 total routes
+});
+
+routes.routes.forEach((route, index) => {
+    console.log(`Route ${index + 1}: ${route.summary.lengthInMeters}m`);
+});
+```
+
+### Time-Based Routing
+
+Calculate routes for specific departure times to account for traffic patterns:
+
+```javascript
+const futureDate = new Date();
+futureDate.setHours(futureDate.getHours() + 2);
+
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    departAt: futureDate.toISOString(),
+    traffic: true
+});
+```
+
+### Traffic-Aware Routing
+
+Incorporate real-time traffic for accurate travel times:
+
+```javascript
+const trafficRoute = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    traffic: true,
+    departAt: new Date(Date.now() + 60 * 60 * 1000) // Departure in 1 hour
+});
+```
+
+## Next Steps and Advanced Topics
+
+Explore these advanced routing capabilities to enhance your application:
+
+- **[Planning a Route](/maps-sdk-js/guides/services/routing/planning-a-route)**: Detailed route configuration and optimization
+- **[Waypoints and Custom Routes](/maps-sdk-js/guides/services/routing/waypoints-and-custom-routes)**: Complex multi-stop routing scenarios
+- **[Planning Criteria](/maps-sdk-js/guides/services/routing/planning-criteria)**: Advanced optimization strategies
+- **[Route Sections](/maps-sdk-js/guides/services/routing/route-sections)**: Working with detailed route segment data
+
+For complete routing implementation examples and production-ready patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.
+
+## Related Guides and Examples
+
+### Related Guides
+- **[Planning a Route](./planning-a-route.mdx)** - Comprehensive route planning with all options
+- **[Long Distance EV Routing](./long-distance-ev-routing.mdx)** - Electric vehicle routing with charging stops
+- **[Waypoints and Custom Routes](./waypoints-and-custom-routes.mdx)** - Multi-stop and custom routing scenarios
+- **[Planning Criteria](./planning-criteria.mdx)** - Route optimization and constraint options
+- **[Route Sections](./route-sections.mdx)** - Understanding route structure and data
+
+### Related Examples
+- **[Route](../../../examples/route/)** - Basic route calculation and display
+- **[Route with Alternatives](../../../examples/route-with-alternatives/)** - Multiple route options
+- **[Waypoints](../../../examples/waypoints/)** - Multi-stop routing implementation
+- **[Map Route Reconstruction](../../../examples/map-route-reconstruction/)** - Advanced route visualization
+- **[Node.js Routing](../../../examples/nodejs-routing/)** - Server-side routing implementation
+
+### Map Integration
+- **[Map Routes](../../map/routes.mdx)** - Display and style routes on interactive maps
+- **[Map Quickstart](../../map/quickstart.mdx)** - Foundation for route-powered applications
+- **[Traffic Flow](../../map/traffic-flow.mdx)** - Visualize traffic conditions along routes
+
+### Advanced Features
+- **[EV Charging Stations](../places/ev-charging-stations-availability.mdx)** - Find charging points for EV routes
+- **[Customizing Services](../customizing-services.mdx)** - Advanced routing configuration
