@@ -7,7 +7,7 @@ import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
-const getSdkVersion = () => {
+export const getSdkVersion = () => {
     const fileContent = fs.readFileSync('../package.json', { encoding: 'utf-8', flag: 'r' });
     const fileContentSerialized = JSON.parse(fileContent);
     const sdkVersion = JSON.stringify(fileContentSerialized.version);

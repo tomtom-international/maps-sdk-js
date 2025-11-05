@@ -164,16 +164,6 @@ export type GlobalConfig = {
     trackingId?: string;
 
     /**
-     * Include TomTom-User-Agent header in requests.
-     *
-     * When enabled, adds a header containing the SDK name and version.
-     * Note that enabling this may trigger CORS preflight requests.
-     *
-     * @default false
-     */
-    tomtomUserAgent?: boolean;
-
-    /**
      * Language code for SDK services and map content.
      *
      * Accepts IETF language codes (case-insensitive). Affects search results,

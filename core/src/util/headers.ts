@@ -5,10 +5,7 @@ import type { TomTomHeaders } from '../types';
  * SDK name used TomTom custom header TomTom-User-Agent
  * @ignore
  */
-export const TOMTOM_USER_AGENT_SDK_NAME = 'TomTomSDKsMapsJS';
-// Rollup replace plugin will literally replace __SDK_VERSION__ to the actual root package
-// version in build time
-const SDK_VERSION = '__SDK_VERSION__';
+export const TOMTOM_USER_AGENT_SDK_NAME = 'MapsSDKJS';
 
 /**
  * Validate if the string to be used in the Tracking-ID header is valid.
@@ -37,9 +34,7 @@ const validateTrackingId = (trackingId: string): string => {
  * @param params Global SDK configuration
  */
 export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHeaders => ({
-    ...(params.tomtomUserAgent && {
-        'TomTom-User-Agent': `${TOMTOM_USER_AGENT_SDK_NAME}/${SDK_VERSION}`,
-    }),
+    'TomTom-User-Agent': `${TOMTOM_USER_AGENT_SDK_NAME}/${__SDK_VERSION__}`,
     // TODO: restore if we implement oauth2 access
     // optional oauth2 access token:
     // ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),

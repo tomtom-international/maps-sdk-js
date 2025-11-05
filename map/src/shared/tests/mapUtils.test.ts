@@ -71,18 +71,7 @@ describe('Map utils - injectCustomHeaders', () => {
         const url = 'https://tomtom.com';
         const transformRequestFn = injectTomTomHeaders({});
         const headers = transformRequestFn(url);
-        expect(headers).toEqual({ url, headers: {} });
-    });
-
-    test('Return custom headers if url if it is TomTom domain with TomTom User Agent header', () => {
-        const url = 'https://tomtom.com';
-        const transformRequestFn = injectTomTomHeaders({ tomtomUserAgent: true });
-        const headers = transformRequestFn(url);
-
-        expect(headers).toEqual({
-            url,
-            headers: { 'TomTom-User-Agent': expect.stringContaining('TomTomSDKsMapsJS') },
-        });
+        expect(headers).toEqual({ url, headers: { 'TomTom-User-Agent': expect.any(String) } });
     });
 
     test('Return only url if it is TomTom domain but an image resource', () => {

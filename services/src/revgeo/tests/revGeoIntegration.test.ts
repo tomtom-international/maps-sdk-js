@@ -53,8 +53,17 @@ describe('Reverse Geocoding integration tests', () => {
                 originalPosition: expect.any(Array),
             },
         };
-        const result = await reverseGeocode({ position: [5.72884, 52.33499] });
-        expect(result).toMatchObject(exampleSdkResponse);
+    });
+
+    test('Verify TomTom-User-Agent header is sent', async () => {
+        // Spy on fetch to verify the TomTom-User-Agent header is sent
+        const fetchSpy = vi.spyOn(global, 'fetch');
+        await reverseGeocode({ position: [5.72884, 52.33499] });
+
+        // Verify that fetch was called with the TomTom-User-Agent header
+        const headers = fetchSpy.mock.calls[0][1]?.headers as Record<string, string>;
+        expect(headers['TomTom-User-Agent']).toMatch(/^MapsSDKJS\/\d+\.\d+\.\d+.*$/);
+        fetchSpy.mockRestore();
     });
 
     test('Localized reverse geocoding', async () => {

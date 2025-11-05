@@ -1,7 +1,11 @@
 import { coverageConfigDefaults, defaultExclude, defineConfig } from 'vitest/config';
+import { getSdkVersion } from './vite.config';
 
 /// <reference types="vitest" />
 export default defineConfig({
+    define: {
+        __SDK_VERSION__: getSdkVersion(),
+    },
     test: {
         globals: true,
         environment: 'node',
