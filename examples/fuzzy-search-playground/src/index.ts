@@ -1,7 +1,7 @@
 import { Places, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { FuzzySearchParams, search } from '@tomtom-org/maps-sdk/services';
-import { LngLatBoundsLike } from 'maplibre-gl';
+import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

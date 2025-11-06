@@ -9,7 +9,7 @@ import {
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, SearchResponse, search } from '@tomtom-org/maps-sdk/services';
-import { LngLatBoundsLike } from 'maplibre-gl';
+import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 
 // (Set your own API key when working in your own environment)
