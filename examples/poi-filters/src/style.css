@@ -16,6 +16,7 @@
     box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
     border-radius: 10px;
 }
+
 #maps-sdk-js-examples-mode-selector {
     display: block;
     padding: 7px;
@@ -23,6 +24,7 @@
     margin-top: 5px;
     border-radius: 5px;
 }
+
 #maps-sdk-js-examples-reset {
     border: none;
     border-radius: 5px;
@@ -35,13 +37,16 @@
     cursor: pointer;
     font-weight: bold;
 }
+
 .maps-sdk-js-examples-item {
     margin: 5px 0;
 }
+
 .maps-sdk-js-examples-item input {
     margin-right: 10px;
     cursor: pointer;
 }
+
 .maps-sdk-js-examples-item label {
     cursor: pointer;
 }

@@ -54,6 +54,7 @@
     font-family: Arial, sans-serif;
     font-size: 15px;
 }
+
 #maps-sdk-js-examples-map-container {
     position: absolute;
     left: 0;
@@ -68,11 +69,13 @@
     display: flex;
     flex-direction: column;
 }
+
 .maps-sdk-js-examples-searchbox-container {
     position: relative;
     display: flex;
     flex-direction: row;
 }
+
 .maps-sdk-js-examples-searchLocationModeSelectorContainer {
     position: absolute;
     right: 20px;
