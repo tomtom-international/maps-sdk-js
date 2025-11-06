@@ -26,12 +26,11 @@ describe('Reverse Geocoding integration tests', () => {
     });
 
     test('Default reverse geocoding', async () => {
+        const coordinates = [5.72884, 52.33499];
+
         const exampleSdkResponse = {
             type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [5.72884, 52.33499],
-            },
+            geometry: { type: 'Point', coordinates },
             bbox: expect.any(Array),
             id: expect.any(String),
             properties: {
@@ -53,6 +52,9 @@ describe('Reverse Geocoding integration tests', () => {
                 originalPosition: expect.any(Array),
             },
         };
+
+        const result = await reverseGeocode({ position: coordinates });
+        expect(result).toMatchObject(exampleSdkResponse);
     });
 
     test('Verify TomTom-User-Agent header is sent', async () => {
