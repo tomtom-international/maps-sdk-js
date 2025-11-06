@@ -34,7 +34,7 @@ const layerGroups: BaseMapLayerGroupName[] = [
 ];
 
 for (const layerGroup of layerGroups) {
-    const module = await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: layerGroups } });
+    const module = await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: [layerGroup] } });
     document
         .querySelector(`#maps-sdk-js-examples-toggle-${layerGroup}`)
         ?.addEventListener('click', (ev) => module.setVisible((ev.target as HTMLInputElement).checked));
