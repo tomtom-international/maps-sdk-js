@@ -1,3 +1,1 @@
-import examplesViteConfig from '../example-vite.config';
-
-export default examplesViteConfig;
+export { default } from '../example-vite.config';
