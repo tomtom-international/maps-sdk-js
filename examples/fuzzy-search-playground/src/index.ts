@@ -1,6 +1,6 @@
 import { Places, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { search } from '@tomtom-org/maps-sdk/services';
+import { FuzzySearchParams, search } from '@tomtom-org/maps-sdk/services';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
@@ -27,11 +27,12 @@ const showSearchResultsList = (places: Places) => {
 };
 
 const searchAndDisplayResults = async (query: string, searchLocationModeSelector: string) => {
-    let searchParams;
+    let searchParams: FuzzySearchParams = { query, typeahead: true, limit: 35 };
     if (searchLocationModeSelector == 'center') {
-        searchParams = { query, limit: 35, position: map.mapLibreMap.getCenter().toArray() };
+        searchParams = { ...searchParams, position: map.mapLibreMap.getCenter().toArray() };
     } else {
-        searchParams = { query, limit: 35, boundingBox: map.getBBox() };
+        // viewport mode
+        searchParams = { ...searchParams, boundingBox: map.getBBox() };
     }
     const searchPlaces = await search(searchParams);
     if (searchLocationModeSelector == 'center') {

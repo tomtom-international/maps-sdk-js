@@ -1,11 +1,13 @@
 import { Places, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import {
-    AutocompleteSearchBrandSegment,
-    AutocompleteSearchCategorySegment,
-    AutocompleteSearchResponse,
-    AutocompleteSearchResult,
+    type AutocompleteSearchBrandSegment,
+    type AutocompleteSearchCategorySegment,
+    AutocompleteSearchParams,
+    type AutocompleteSearchResponse,
+    type AutocompleteSearchResult,
     autocompleteSearch,
+    type FuzzySearchParams,
     search,
 } from '@tomtom-org/maps-sdk/services';
 import './style.css';
@@ -62,7 +64,7 @@ const showFuzzySearchResults = (places: Places) => {
 };
 
 const fuzzySearch = async () => {
-    let searchParams;
+    let searchParams: FuzzySearchParams | AutocompleteSearchParams;
     if (selectedAutoCompleteSegment) {
         searchParams = {
             query: '',
@@ -74,13 +76,14 @@ const fuzzySearch = async () => {
             ...(selectedAutoCompleteSegment.type == 'brand' && {
                 poiBrands: [selectedAutoCompleteSegment.value],
             }),
-        };
+        } as AutocompleteSearchParams;
     } else {
         searchParams = {
             query: searchBox.value,
+            typeahead: true,
             limit: 10,
             position: map.mapLibreMap.getCenter().toArray(),
-        };
+        } as FuzzySearchParams;
     }
 
     const fuzzySearchResponse = await search(searchParams);
