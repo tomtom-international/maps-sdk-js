@@ -45,7 +45,7 @@ Explore comprehensive guides and interactive examples to get the most out of Map
 - **[API Reference](https://docs.tomtom.com/maps-sdk-js/reference/overview)** - Complete API documentation
 
 ### 📝 Latest Updates
-- **[Release Notes](https://docs.tomtom.com/maps-sdk-js/overview/release-notes)** - What's new and breaking changes
+- **[Release Notes](https://docs.tomtom.com/maps-sdk-js/introduction/release-notes)** - What's new and breaking changes
 <br/><br/>
 
 ## 🌍 Where can you run it on?
