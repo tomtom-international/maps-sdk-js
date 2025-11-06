@@ -8,18 +8,12 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const location = await reverseGeocode({ position: [5.112969, 52.090521] });
-const {
-    geometry: {
-        coordinates: [longitude, latitude],
-    },
-} = location;
 
 const map = new TomTomMap({
     container: 'maps-sdk-js-examples-map-container',
-    center: [longitude, latitude],
+    center: location.geometry.coordinates,
     zoom: 17,
 });
 
 const placesModule = await PlacesModule.get(map);
-
 placesModule.show(location);
