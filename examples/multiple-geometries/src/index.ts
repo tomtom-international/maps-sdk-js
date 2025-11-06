@@ -9,7 +9,6 @@ import {
 } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Config } from './placeConfiguration';
 import { namedConfigs } from './placeConfiguration';
 import './style.css';

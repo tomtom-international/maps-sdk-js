@@ -7,7 +7,6 @@ import {
     standardStyleIDs,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

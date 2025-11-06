@@ -9,7 +9,6 @@ import {
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, SearchResponse, search } from '@tomtom-org/maps-sdk/services';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 

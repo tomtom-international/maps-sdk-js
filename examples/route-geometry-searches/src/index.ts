@@ -1,5 +1,4 @@
 import './style.css';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import { bboxFromGeoJSON, TomTomConfig, type Waypoint } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne, search } from '@tomtom-org/maps-sdk/services';
@@ -27,9 +26,9 @@ routingModule.showWaypoints(waypoints);
 const routes = await calculateRoute({ locations: waypoints });
 routingModule.showRoutes(routes);
 
-const extraWidePlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'poi-like' } });
-const widePlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'poi-like' } });
-const onRoadPlacesModule = await PlacesModule.get(map, { iconConfig: { iconStyle: 'circle' } });
+const extraWidePlacesModule = await PlacesModule.get(map, { icon: { style: 'poi-like' } });
+const widePlacesModule = await PlacesModule.get(map, { icon: { style: 'poi-like' } });
+const onRoadPlacesModule = await PlacesModule.get(map, { icon: { style: 'circle' } });
 
 const route = routes.features[0];
 extraWidePlacesModule.show(

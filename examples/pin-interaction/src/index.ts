@@ -1,7 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 import type { LngLatLike } from 'maplibre-gl';
 
@@ -15,8 +14,7 @@ const map = new TomTomMap({
     zoom: 17,
 });
 
-const location = await reverseGeocode({ position });
-const placesModule = await PlacesModule.get(map);
-placesModule.events.on('click', () => alert('pin clicked'));
+const places = await PlacesModule.get(map);
+places.events.on('click', () => alert('pin clicked'));
 
-placesModule.show(location);
+places.show(await reverseGeocode({ position }));

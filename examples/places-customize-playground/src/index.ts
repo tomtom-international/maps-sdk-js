@@ -4,7 +4,6 @@ import type { IconStyle, MapFont, PlaceIconConfig } from '@tomtom-org/maps-sdk/m
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { search } from '@tomtom-org/maps-sdk/services';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import tomtomLogo from '../resources/tomtomLogo.png';
 import './style.css';
 
@@ -66,15 +65,15 @@ const listenToUIEvents = () => {
         element.addEventListener('click', () => {
             colorSelectors.forEach((element) => element.classList.remove('active'));
             element.classList.add('active');
-            places.applyTextConfig({ ...places.getConfig()?.textConfig, textColor: element.dataset.value });
+            places.applyTextConfig({ ...places.getConfig()?.text, color: element.dataset.value });
         }),
     );
 
     fontSelectors.forEach((element) =>
         element.addEventListener('change', () => {
             places.applyTextConfig({
-                ...places.getConfig()?.textConfig,
-                textFont: [element.value as MapFont],
+                ...places.getConfig()?.text,
+                font: [element.value as MapFont],
             });
         }),
     );
@@ -87,8 +86,8 @@ const listenToUIEvents = () => {
                     staticProp: 'Static text',
                 });
             places.applyTextConfig({
-                ...places.getConfig()?.textConfig,
-                textField: element.value === 'default' ? undefined : multiLineLabel,
+                ...places.getConfig()?.text,
+                field: element.value === 'default' ? undefined : multiLineLabel,
             });
         });
     }
@@ -98,7 +97,7 @@ const listenToUIEvents = () => {
         if (value === 'custom') {
             places.applyIconConfig(customIconsConfig);
         } else {
-            places.applyIconConfig({ iconStyle: value as IconStyle });
+            places.applyIconConfig({ style: value as IconStyle });
         }
     });
 };

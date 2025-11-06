@@ -4,7 +4,6 @@ import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import bboxPolygon from '@turf/bbox-polygon';
 import difference from '@turf/difference';
 import { LngLatBoundsLike } from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

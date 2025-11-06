@@ -1,4 +1,3 @@
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 import {
     ChargingParkWithAvailability,
@@ -9,14 +8,7 @@ import {
     PolygonFeatures,
     TomTomConfig,
 } from '@tomtom-org/maps-sdk/core';
-import {
-    GeometriesModule,
-    PlacesModule,
-    PlacesModuleConfig,
-    POIsModule,
-    TomTomMap,
-    TrafficIncidentsModule,
-} from '@tomtom-org/maps-sdk/map';
+import { GeometriesModule, PlacesModule, PlacesModuleConfig, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import {
     buildPlacesWithEVAvailability,
     buildPlaceWithEVAvailability,
@@ -31,7 +23,7 @@ import { connectorNames } from './connectorNames';
 import genericIcon from './resources/ic-generic-24.svg?raw';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 const evBrandTextBox = document.querySelector('#maps-sdk-js-examples-evBrandTextBox') as HTMLInputElement;
 const areaTextBox = document.querySelector('#maps-sdk-js-examples-areaTextBox') as HTMLInputElement;
@@ -42,26 +34,20 @@ const popUp = new Popup({
     className: 'maps-sdk-js-popup',
 });
 
-const map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        center: [2.3597, 48.85167],
-        zoom: 11,
-        fitBoundsOptions,
-    },
-    {
-        language: 'en-GB',
-        style: { type: 'standard', include: ['trafficIncidents'] },
-    },
-);
-const mapIncidents = await TrafficIncidentsModule.get(map);
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    center: [2.3597, 48.85167],
+    zoom: 11,
+    fitBoundsOptions,
+});
+
 const mapBasePOIs = await POIsModule.get(map, {
     filters: {
         categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
     },
 });
 const mapEVStations = await PlacesModule.get(map, {
-    iconConfig: { iconStyle: 'poi-like' },
+    icon: { style: 'poi-like' },
 });
 
 const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): string => {
@@ -74,8 +60,8 @@ const evStationPinConfig: PlacesModuleConfig = {
         availabilityText: buildAvailabilityText,
         availabilityRatio: (place: Place) => getChargingPointAvailability(place)?.ratio ?? 0,
     },
-    textConfig: {
-        textField: [
+    text: {
+        field: [
             'format',
             ['get', 'title'],
             {},
@@ -180,8 +166,6 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
 
 const searchEVStations = async () => {
     popUp.remove();
-    // We simplify the map to focus on the searched pins better:
-    mapIncidents.setIconsVisible(false);
     mapBasePOIs.setVisible(false);
 
     const areaToSearch =
@@ -220,7 +204,6 @@ const clear = () => {
     mapSearchedEVStations.clear();
     selectedEVStation.clear();
     mapGeometry.clear();
-    mapIncidents.setIconsVisible(true);
     mapBasePOIs.setVisible(true);
 };
 

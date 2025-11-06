@@ -1,7 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

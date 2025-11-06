@@ -3,7 +3,6 @@ import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@tomtom-org/ma
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
 import { GeoJSONSource, LngLatBoundsLike, Map } from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

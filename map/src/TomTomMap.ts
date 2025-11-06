@@ -2,6 +2,7 @@ import { type Language, mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
 import type { BBox } from 'geojson';
 import { isEqual } from 'lodash-es';
 import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';
+import { version as maplibreVersion } from 'maplibre-gl/package.json';
 import type { MapLibreOptions, StyleInput, TomTomMapParams } from './init';
 import { buildMapOptions } from './init/buildMapOptions';
 import { buildStyleInput, withPreviousStyleParts } from './init/styleInputBuilder';
@@ -277,9 +278,16 @@ export class TomTomMap {
      */
     constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
         this._params = mergeFromGlobal(mapParams) as TomTomMapParams;
+        this.ensureMapLibreCSSLoaded();
+
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this._params));
         this.mapLibreMap.once('styledata', () => this.handleStyleData(false));
         this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.eventsConfig);
+
+        this.loadRTLTextPlugin();
+    }
+
+    private loadRTLTextPlugin(): void {
         // deferred (just in case), lazy loading of the RTL plugin:
         setTimeout(() => {
             if (!['deferred', 'loaded'].includes(getRTLTextPluginStatus())) {
@@ -289,6 +297,25 @@ export class TomTomMap {
                 ).catch((error) => console.error('Something went wrong when setting RTL plugin', error));
             }
         });
+    }
+
+    /**
+     * Dynamically loads the MapLibre CSS stylesheet from CDN.
+     */
+    private ensureMapLibreCSSLoaded(): void {
+        // Check if the CSS is already loaded to avoid duplicates:
+        const existingLink = Array.from(document.querySelectorAll('link[rel="stylesheet"], style')).some((element) =>
+            element.textContent?.includes('maplibre'),
+        );
+        if (existingLink) {
+            return;
+        }
+
+        // Create and inject a link tag to load CSS from unpkg CDN
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `https://unpkg.com/maplibre-gl@${maplibreVersion}/dist/maplibre-gl.css`;
+        document.head.appendChild(link);
     }
 
     /**

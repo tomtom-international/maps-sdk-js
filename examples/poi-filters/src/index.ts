@@ -8,7 +8,6 @@ import {
     TomTomMap,
     ValuesFilter,
 } from '@tomtom-org/maps-sdk/map';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 
 TomTomConfig.instance.put({
