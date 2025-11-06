@@ -10,13 +10,13 @@
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
     "@turf/turf": "^7.2.0",
-    "lodash-es": "catalog:",
-    "maplibre-gl": "catalog:"
+    "lodash-es": "catalog:"
   },
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
+    "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",

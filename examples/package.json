@@ -17,7 +17,7 @@
     "rollup-plugin-visualizer": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
-    "vite-plugin-singlefile": "^2.3.0"
+    "vite-plugin-singlefile": "catalog:"
   },
   "publishConfig": {
     "registry": "https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/"

@@ -13,20 +13,17 @@
   ],
   "author": "TomTom",
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*",
-    "maplibre-gl": "catalog:"
+    "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^17.2.3",
+    "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
-  },
-  "engines": {
-    "node": ">=22"
   }
 }

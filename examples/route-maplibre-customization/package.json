@@ -8,12 +8,12 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*",
-    "maplibre-gl": "catalog:"
+    "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
+    "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",

@@ -9,12 +9,12 @@
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
-    "@turf/turf": "^7.2.0",
-    "maplibre-gl": "catalog:"
+    "@turf/turf": "^7.2.0"
   },
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
+    "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",

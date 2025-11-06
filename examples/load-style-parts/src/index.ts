@@ -1,4 +1,3 @@
-import './style.css';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     HillshadeModule,
@@ -8,6 +7,7 @@ import {
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
+import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });

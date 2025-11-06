@@ -2,10 +2,10 @@ import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
 import { geocode } from '@tomtom-org/maps-sdk/services';
-import './style.css';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { configPresets } from './configPresets';
 import { jumpToPlaces } from './jumpToPlaces';
+import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
