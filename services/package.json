@@ -14,14 +14,6 @@
     "clean:dist": "rimraf ./dist"
   },
   "types": "./dist/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
-  },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "devDependencies": {
     "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-terser": "catalog:",

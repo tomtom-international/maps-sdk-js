@@ -1,5 +1,5 @@
 {
-  "name": "@examples/base-map",
+  "name": "@examples/default-map",
   "description": "Example for default map display",
   "scripts": {
     "build": "vite build",
@@ -7,15 +7,6 @@
     "develop": "vite",
     "type-check": "tsc --noEmit"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
-  },
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
-  },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
     "maplibre-gl": "catalog:"

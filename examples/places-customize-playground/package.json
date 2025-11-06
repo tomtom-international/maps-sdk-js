@@ -1,6 +1,6 @@
 {
-  "name": "@examples/pin-interaction",
-  "description": "Example for pin interaction on the map",
+  "name": "@examples/places-customize-playground",
+  "description": "Playground to customize the display of places.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",

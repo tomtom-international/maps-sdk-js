@@ -1,21 +1,12 @@
 {
-  "name": "@examples/places-customize",
-  "description": "Example displaying places with custom config.",
+  "name": "@examples/places-maplibre-customization",
+  "description": "Places displayed with MapLibre layer customizations.",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",
     "develop": "vite",
     "type-check": "tsc --noEmit"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
-  },
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
-  },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
     "maplibre-gl": "catalog:"

@@ -3,7 +3,7 @@
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
   "version": "0.30.2",
-  "description": "JavaScript library for TomTom maps and location services",
+  "description": "TomTom Maps for JavaScript",
   "scripts": {
     "build": "pnpm build:sdk",
     "build:api-reference": "typedoc",
@@ -23,10 +23,6 @@
     "type-check:examples": "pnpm --workspace-concurrency=0 -F './examples/*' type-check",
     "type-check:sdk": "pnpm -F core type-check && pnpm -F services type-check && pnpm -F map type-check && pnpm -F map-integration-tests type-check"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
-  },
   "keywords": [
     "tomtom",
     "sdk",
@@ -40,10 +36,6 @@
     "web",
     "nodejs"
   ],
-  "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
-  },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "devDependencies": {
     "@biomejs/biome": "^2.3.3",
     "@size-limit/file": "^11.2.0",

@@ -9,7 +9,6 @@
     "type": "git",
     "url": "git+https://github.com/tomtom-international/maps-sdk-js-examples.git"
   },
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
   },

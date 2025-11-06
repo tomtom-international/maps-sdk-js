@@ -6,21 +6,12 @@
     "develop": "node src/index.js",
     "type-check": "tsc --noEmit"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
-  },
   "keywords": [
     "TomTom",
     "Maps SDK",
     "Geocoding"
   ],
   "author": "TomTom",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
-  },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
     "maplibre-gl": "catalog:"

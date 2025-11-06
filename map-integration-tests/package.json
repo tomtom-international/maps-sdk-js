@@ -7,15 +7,7 @@
     "start-dev-server": "vite",
     "type-check": "tsc --noEmit"
   },
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
-  },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js#readme",
+
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "@tsconfig/recommended": "catalog:",
