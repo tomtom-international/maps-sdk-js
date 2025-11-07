@@ -11,7 +11,13 @@ import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
 import { preparePlacesForDisplay } from './preparePlacesForDisplay';
 import type { DisplayPlaceProps } from './types/placeDisplayProps';
-import type { PlaceIconConfig, PlacesModuleConfig, PlaceTextConfig } from './types/placesModuleConfig';
+import {
+    PlaceIconConfig,
+    PlaceLayerName,
+    PlacesModuleConfig,
+    PlacesTheme,
+    PlaceTextConfig,
+} from './types/placesModuleConfig';
 
 type PlacesSourcesAndLayers = {
     /**
@@ -39,7 +45,7 @@ type PlacesSourcesAndLayers = {
  * **Marker Styles:**
  * - `pin`: Traditional teardrop-shaped map pins
  * - `circle`: Simple circular markers
- * - `poi-like`: Mimics built-in POI layer styling
+ * - `base-map`: Mimics built-in POI layer styling
  *
  * **Common Use Cases:**
  * - Search result visualization
@@ -52,16 +58,17 @@ type PlacesSourcesAndLayers = {
  * ```typescript
  * // Create places module with pin markers
  * const places = await PlacesModule.get(map, {
- *   iconConfig: {
- *     iconStyle: 'pin'
+ *   icon: {
+ *     customIcons: []
  *   },
- *   textConfig: {
- *     textField: (place) => place.properties.poi?.name || 'Unknown'
- *   }
+ *   text: {
+ *     field: (place) => place.properties.poi?.name || 'Unknown'
+ *   },
+ *   theme: 'pin'
  * });
  *
  * // Display places from search
- * await places.add(searchResults);
+ * await places.show(searchResults);
  *
  * // Handle clicks
  * places.events.on('click', (feature) => {
@@ -79,7 +86,7 @@ type PlacesSourcesAndLayers = {
  */
 export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
     private static lastInstanceIndex = -1;
-    private layerSpecs!: [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource];
+    private layerSpecs!: Record<PlaceLayerName, SymbolLayerSpecWithoutSource>;
     private sourceID!: string;
     private layerIDPrefix!: string;
     /**
@@ -114,9 +121,28 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
             this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${this.instanceIndex}`;
             this.layerIDPrefix = `placesSymbols-${this.instanceIndex}`;
         }
-        const layerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
-        this.layerSpecs = layerSpecs;
-        return { places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, layerSpecs) };
+
+        // Update each layer id with the instance-specific prefix
+        this.layerSpecs = this.buildLayerSpecs(config);
+
+        return {
+            places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, [
+                this.layerSpecs.main,
+                this.layerSpecs.selected,
+            ]),
+        };
+    }
+
+    private buildLayerSpecs(config?: PlacesModuleConfig) {
+        const layerSpecTemplates = buildPlacesLayerSpecs(config, this.mapLibreMap);
+
+        // Update each layer id with the instance-specific prefix
+        return Object.fromEntries(
+            Object.entries(layerSpecTemplates).map(([key, spec]) => [
+                key,
+                { ...spec, id: `${this.layerIDPrefix}-${key}` },
+            ]),
+        ) as Record<PlaceLayerName, SymbolLayerSpecWithoutSource>;
     }
 
     /**
@@ -124,7 +150,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      */
     protected _applyConfig(config: PlacesModuleConfig | undefined) {
         // TODO: update layers and data also if the new icon/text config is not there but before it was?
-        if (config?.iconConfig || config?.textConfig) {
+        if (config?.theme || config?.icon || config?.text) {
             this.updateLayersAndData(config);
         } else if (config?.extraFeatureProps) {
             this.updateData(config);
@@ -144,6 +170,36 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     }
 
     /**
+     * Updates the visual theme for displayed places.
+     *
+     * @param theme - The theme style to apply to place markers.
+     *
+     * @remarks
+     * **Available Themes:**
+     * - `pin`: Traditional teardrop-shaped map pins
+     * - `circle`: Simple circular markers
+     * - `base-map`: Mimics the map's built-in POI layer style with category icons
+     *
+     * Changes apply immediately to all currently shown places. Other configuration
+     * properties (icon config, text config) remain unchanged.
+     *
+     * @example
+     * ```typescript
+     * // Switch to pin markers
+     * places.applyTheme('pin');
+     *
+     * // Use simple circles
+     * places.applyTheme('circle');
+     *
+     * // Match map's POI style (ideal to blend in)
+     * places.applyTheme('base-map');
+     * ```
+     */
+    applyTheme(theme: PlacesTheme): void {
+        this.applyConfigPart({ theme });
+    }
+
+    /**
      * Updates the icon configuration for displayed places.
      *
      * @param iconConfig - New icon configuration settings.
@@ -156,21 +212,14 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * ```typescript
      * places.applyIconConfig({
-     *   iconStyle: 'circle'
-     * });
-     *
-     * // Add custom icons
-     * places.applyIconConfig({
      *   customIcons: [
-     *     { category: 'RESTAURANT', image: '/icons/food.png' }
+     *     { category: 'RESTAURANT', id: 'restaurant-icon', image: '/icons/food.png' }
      *   ]
      * });
      * ```
      */
     applyIconConfig(iconConfig: PlaceIconConfig): void {
-        const config = { ...this.config, iconConfig };
-        this.updateLayersAndData(config);
-        this.config = config;
+        this.applyConfigPart({ icon: iconConfig });
     }
 
     /**
@@ -185,19 +234,23 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * ```typescript
      * // Use function
      * places.applyTextConfig({
-     *   textField: (place) => place.properties.poi?.name || 'Unknown'
+     *   field: (place) => place.properties.poi?.name || 'Unknown'
      * });
      *
      * // Use MapLibre expression
      * places.applyTextConfig({
-     *   textField: ['get', 'title'],
-     *   textSize: 14,
-     *   textColor: '#333'
+     *   field: ['get', 'title'],
+     *   size: 14,
+     *   color: '#333'
      * });
      * ```
      */
     applyTextConfig(textConfig: PlaceTextConfig): void {
-        const config = { ...this.config, textConfig };
+        this.applyConfigPart({ text: textConfig });
+    }
+
+    private applyConfigPart(partialConfig: Partial<PlacesModuleConfig>): void {
+        const config = { ...this.config, ...partialConfig };
         this.updateLayersAndData(config);
         this.config = config;
     }
@@ -227,14 +280,17 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
 
     private updateLayersAndData(config: PlacesModuleConfig): void {
         // If we have custom icons, ensure they're added to the map style:
-        for (const customIcon of config?.iconConfig?.customIcons ?? []) {
+        for (const customIcon of config?.icon?.customIcons ?? []) {
             addImageIfNotExisting(this.mapLibreMap, customIcon.id, customIcon.image as string, {
                 pixelRatio: customIcon.pixelRatio ?? 2,
             });
         }
 
-        const newLayerSpecs = buildPlacesLayerSpecs(config, this.layerIDPrefix, this.mapLibreMap);
-        changeLayersProps(newLayerSpecs, this.layerSpecs, this.mapLibreMap);
+        const newLayerSpecs = this.buildLayerSpecs(config);
+        // Convert layerSpecs objects to arrays for changeLayersProps
+        const newLayerSpecsArray = [newLayerSpecs.main, newLayerSpecs.selected];
+        const oldLayerSpecsArray = [this.layerSpecs.main, this.layerSpecs.selected];
+        changeLayersProps(newLayerSpecsArray, oldLayerSpecsArray, this.mapLibreMap);
         this.layerSpecs = newLayerSpecs;
         this.updateData(config);
     }

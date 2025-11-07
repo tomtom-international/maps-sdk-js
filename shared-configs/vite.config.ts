@@ -76,7 +76,6 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
             license({
                 thirdParty: {
                     output: { file: './dist/THIRD_PARTY.txt' },
-                    allow: (dependency) => dependency.name !== 'core',
                 },
             }),
         ],

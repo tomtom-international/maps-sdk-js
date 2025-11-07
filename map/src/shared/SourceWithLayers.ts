@@ -189,7 +189,13 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
             }
         }
 
-        const feature = this.shownFeatures.features[options.index];
+        let feature;
+        if (options.index !== undefined) {
+            feature = this.shownFeatures.features[options.index];
+        } else if (options.id !== undefined) {
+            feature = this.shownFeatures.features.find((f) => f.id === options.id);
+        }
+
         if (feature) {
             feature.properties = { ...feature.properties, eventState: options.state };
         }

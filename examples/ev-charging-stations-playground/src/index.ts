@@ -47,7 +47,7 @@ const mapBasePOIs = await POIsModule.get(map, {
     },
 });
 const mapEVStations = await PlacesModule.get(map, {
-    icon: { style: 'poi-like' },
+    theme: 'base-map',
 });
 
 const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): string => {
@@ -61,7 +61,7 @@ const evStationPinConfig: PlacesModuleConfig = {
         availabilityRatio: (place: Place) => getChargingPointAvailability(place)?.ratio ?? 0,
     },
     text: {
-        field: [
+        title: [
             'format',
             ['get', 'title'],
             {},

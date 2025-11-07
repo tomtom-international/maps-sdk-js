@@ -1,7 +1,7 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
-import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
+import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../../pois/poiCategoryMapping';
-import type { CustomImage, MapFont } from '../../shared';
+import type { CustomImage, HasAdditionalLayersConfig, MapFont, ToBeAddedLayerSpecTemplate } from '../../shared';
 
 /**
  * Icon style options for displaying places on the map.
@@ -10,39 +10,21 @@ import type { CustomImage, MapFont } from '../../shared';
  * **Available Styles:**
  * - `pin`: Traditional map pin markers (teardrop shape)
  * - `circle`: Simple circular markers
- * - `poi-like`: Mimics the map's built-in POI layer style with category icons
- *
- * @example
- * ```typescript
- * // Use pin markers
- * const iconStyle: IconStyle = 'pin';
- *
- * // Use circles for minimal design
- * const iconStyle: IconStyle = 'circle';
- *
- * // Match map POI style
- * const iconStyle: IconStyle = 'poi-like';
- * ```
+ * - `base-map`: Mimics the map's built-in POI layer style with category icons
  *
  * @group Places
  */
-export type IconStyle = 'pin' | 'circle' | 'poi-like';
+export type PlacesTheme = 'pin' | 'circle' | 'base-map';
 
 /**
  * Configuration for place marker icons.
  *
- * Controls the visual appearance of place markers including style and custom icons.
+ * Controls the visual appearance of place markers including custom icons.
  *
  * @example
  * ```typescript
- * // Use pin style
- * const iconConfig: PlaceIconConfig = {
- *   iconStyle: 'pin'
- * };
- *
  * // Custom icons for specific categories
  * const iconConfig: PlaceIconConfig = {
- *   iconStyle: 'poi-like',
  *   customIcons: [
  *     { category: 'RESTAURANT', image: '/icons/food.png', pixelRatio: 2 },
  *     { category: 'HOTEL_MOTEL', image: '/icons/hotel.png', pixelRatio: 2 }
@@ -53,13 +35,6 @@ export type IconStyle = 'pin' | 'circle' | 'poi-like';
  * @group Places
  */
 export type PlaceIconConfig = {
-    /**
-     * Base icon style for all places.
-     *
-     * @default 'pin'
-     */
-    iconStyle?: IconStyle;
-
     /**
      * Array of custom icons for specific place categories.
      *
@@ -83,16 +58,16 @@ export type PlaceIconConfig = {
  * ```typescript
  * // Simple text from place name
  * const textConfig: PlaceTextConfig = {
- *   textField: (place) => place.properties.poi?.name || place.properties.address.freeformAddress
+ *   field: (place) => place.properties.poi?.name || place.properties.address.freeformAddress
  * };
  *
  * // Using MapLibre expression with styling
  * const textConfig: PlaceTextConfig = {
- *   textField: ['get', 'title'],
- *   textSize: 14,
- *   textColor: '#333',
- *   textHaloColor: '#fff',
- *   textHaloWidth: 2
+ *   field: ['get', 'title'],
+ *   size: 14,
+ *   color: '#333',
+ *   haloColor: '#fff',
+ *   haloWidth: 2
  * };
  * ```
  *
@@ -102,24 +77,24 @@ export type PlaceTextConfig = {
     /**
      * Text content for the label.
      *
-     * Can be a function that extracts text from the place properties,
-     * or a MapLibre expression for data-driven content.
+     * Can be a function that extracts text from the place properties (data-based),
+     * or a MapLibre expression for data-driven content (data-driven layer-based).
      *
      * @example
      * ```typescript
      * // Function
-     * textField: (place) => place.properties.poi?.name || 'Unknown'
+     * title: (place) => place.properties.poi?.name || 'Unknown'
      *
      * // MapLibre expression
-     * textField: ['get', 'title']
+     * title: ['get', 'title']
      *
      * // Conditional expression
-     * textField: ['case', ['has', 'name'], ['get', 'name'], ['get', 'address']]
+     * title: ['case', ['has', 'name'], ['get', 'name'], ['get', 'address']]
      * ```
      *
      * @see https://maplibre.org/maplibre-style-spec/types/#formatted
      */
-    textField?: ((place: Place) => string) | DataDrivenPropertyValueSpecification<string>;
+    title?: ((place: Place) => string) | DataDrivenPropertyValueSpecification<string>;
 
     /**
      * Font size in pixels.
@@ -128,13 +103,13 @@ export type PlaceTextConfig = {
      *
      * @example
      * ```typescript
-     * textSize: 14
+     * size: 14
      *
      * // Data-driven size based on importance
-     * textSize: ['interpolate', ['linear'], ['get', 'priority'], 1, 16, 10, 10]
+     * size: ['interpolate', ['linear'], ['get', 'priority'], 1, 16, 10, 10]
      * ```
      */
-    textSize?: DataDrivenPropertyValueSpecification<number>;
+    size?: DataDrivenPropertyValueSpecification<number>;
 
     /**
      * Text color.
@@ -143,23 +118,23 @@ export type PlaceTextConfig = {
      *
      * @example
      * ```typescript
-     * textColor: '#333333'
+     * color: '#333333'
      *
      * // Category-based colors
-     * textColor: ['match', ['get', 'category'], 'RESTAURANT', '#D32F2F', '#1976D2']
+     * color: ['match', ['get', 'category'], 'RESTAURANT', '#D32F2F', '#1976D2']
      * ```
      */
-    textColor?: DataDrivenPropertyValueSpecification<string>;
+    color?: DataDrivenPropertyValueSpecification<string>;
 
     /**
      * Font face(s) to use for the text.
      *
      * @example
      * ```typescript
-     * textFont: ['Open Sans Bold', 'Arial Unicode MS Bold']
+     * font: ['Open Sans Bold', 'Arial Unicode MS Bold']
      * ```
      */
-    textFont?: DataDrivenPropertyValueSpecification<Array<MapFont>>;
+    font?: DataDrivenPropertyValueSpecification<Array<MapFont>>;
 
     /**
      * Text halo (outline) color for better readability.
@@ -168,10 +143,10 @@ export type PlaceTextConfig = {
      *
      * @example
      * ```typescript
-     * textHaloColor: '#fff'
+     * haloColor: '#fff'
      * ```
      */
-    textHaloColor?: DataDrivenPropertyValueSpecification<string>;
+    haloColor?: DataDrivenPropertyValueSpecification<string>;
 
     /**
      * Text halo (outline) width in pixels.
@@ -180,10 +155,10 @@ export type PlaceTextConfig = {
      *
      * @example
      * ```typescript
-     * textHaloWidth: 2  // Thicker outline for better contrast
+     * haloWidth: 2  // Thicker outline for better contrast
      * ```
      */
-    textHaloWidth?: DataDrivenPropertyValueSpecification<number>;
+    haloWidth?: DataDrivenPropertyValueSpecification<number>;
 
     /**
      * Text offset from the icon in ems [x, y].
@@ -194,13 +169,80 @@ export type PlaceTextConfig = {
      *
      * @example
      * ```typescript
-     * textOffset: [0, 1.5]  // Position text below icon
+     * offset: [0, 1.5]  // Position text below icon
      *
-     * textOffset: [1, 0]  // Position text to the right
+     * offset: [1, 0]  // Position text to the right
      * ```
      */
-    textOffset?: DataDrivenPropertyValueSpecification<[number, number]>;
+    offset?: DataDrivenPropertyValueSpecification<[number, number]>;
 };
+
+/**
+ * Configuration for custom place layer styling with MapLibre specifications.
+ *
+ * @remarks
+ * Provides fine-grained control over place marker layers, allowing customization
+ * of both the main place markers and highlighted/selected place markers.
+ *
+ * The layer IDs are derived from the PlacesModule instance prefix plus the key suffix:
+ * - `main`: The primary layer for displaying all places
+ * - `selected`: The layer for displaying highlighted/clicked places (rendered on top)
+ *
+ * All fields are optional. When a field is not provided, the default styling will be used.
+ *
+ * @example
+ * ```typescript
+ * const config: PlacesModuleConfig = {
+ *   layers: {
+ *     main: {
+ *       layout: {
+ *         'icon-size': 1.2,
+ *         'text-size': 14
+ *       },
+ *       paint: {
+ *         'text-color': '#333'
+ *       }
+ *     },
+ *     selected: {
+ *       layout: {
+ *         'icon-size': 1.5,
+ *         'text-allow-overlap': true
+ *       },
+ *       paint: {
+ *         'text-color': '#3f9cd9'
+ *       }
+ *     }
+ *   }
+ * };
+ * ```
+ *
+ * @group Places
+ */
+export type PlaceLayersConfig = {
+    /**
+     * Main place marker layer specification.
+     *
+     * @remarks
+     * Controls the visual appearance of all place markers on the map.
+     * This layer renders places that are not in a highlighted/selected state.
+     */
+    main?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+
+    /**
+     * Selected/highlighted place marker layer specification.
+     *
+     * @remarks
+     * Controls the visual appearance of places when they are highlighted or selected
+     * (e.g., on hover or click events). This layer is rendered on top of the main layer
+     * to ensure selected places are always visible.
+     */
+    selected?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+} & HasAdditionalLayersConfig;
+
+/**
+ * @group Places
+ */
+export type PlaceLayerName = keyof PlaceLayersConfig;
 
 /**
  * Configuration options for the PlacesModule.
@@ -211,29 +253,29 @@ export type PlaceTextConfig = {
  * ```typescript
  * // Basic configuration
  * const config: PlacesModuleConfig = {
- *   iconConfig: {
- *     iconStyle: 'pin'
+ *   icon: {
+ *     style: 'pin'
  *   },
- *   textConfig: {
- *     textField: (place) => place.properties.poi?.name || 'Unknown',
- *     textSize: 12
+ *   text: {
+ *     field: (place) => place.properties.poi?.name || 'Unknown',
+ *     size: 12
  *   }
  * };
  *
  * // Advanced configuration with custom properties
  * const config: PlacesModuleConfig = {
- *   iconConfig: {
- *     iconStyle: 'poi-like',
+ *   icon: {
+ *     style: 'base-map',
  *     customIcons: [
  *       { category: 'RESTAURANT', image: '/icons/restaurant.png' }
  *     ]
  *   },
- *   textConfig: {
- *     textField: ['get', 'title'],
- *     textSize: 14,
- *     textColor: '#333',
- *     textHaloColor: '#fff',
- *     textHaloWidth: 2
+ *   text: {
+ *     field: ['get', 'title'],
+ *     size: 14,
+ *     color: '#333',
+ *     haloColor: '#fff',
+ *     haloWidth: 2
  *   },
  *   extraFeatureProps: {
  *     category: (place) => place.properties.poi?.categories?.[0],
@@ -246,18 +288,40 @@ export type PlaceTextConfig = {
  */
 export type PlacesModuleConfig = {
     /**
+     * Base style for all places.
+     *
+     * @remarks
+     * Can be overwritten by more advanced icon configurations.
+     *
+     * @default 'pin'
+     */
+    theme?: PlacesTheme;
+
+    /**
      * Icon appearance configuration.
      *
      * Controls marker style and custom icons for different place categories.
      */
-    iconConfig?: PlaceIconConfig;
+    icon?: PlaceIconConfig;
 
     /**
      * Text label configuration.
      *
      * Controls label content, styling, and positioning.
      */
-    textConfig?: PlaceTextConfig;
+    text?: PlaceTextConfig;
+
+    /**
+     * Custom layer styling configuration.
+     *
+     * @remarks
+     * * Overrides the default layer styling with custom specifications.
+     * * You must provide complete layer specifications for any layers you wish to customize.
+     * * You can still reuse the default configurations if you want incremental changes. See: buildPlacesLayerSpecs.
+     * * Any layer not specified will continue to use its default styling.
+     * * Use this only if you need fine MapLibre control on how places are displayed.
+     */
+    layers?: PlaceLayersConfig;
 
     /**
      * Additional properties to compute for each place feature.

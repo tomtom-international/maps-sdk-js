@@ -1,13 +1,9 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
-import 'maplibre-gl/dist/maplibre-gl.css';
 
-TomTomConfig.instance.put({
-    // (Set your own API key when working in your own environment)
-    apiKey: process.env.API_KEY_EXAMPLES,
-    language: 'en-GB',
-});
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 new TomTomMap({
     container: 'maps-sdk-js-examples-map-container',

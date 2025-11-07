@@ -98,7 +98,7 @@ export type PlaceDisplayProps = {
     iconID: string;
 
     /**
-     * Map-style-compatible display category, mostly applicable for poi-like places.
+     * Map-style-compatible display category, mostly applicable for base-map places.
      *
      * @remarks
      * Used to match the place with a POI category in the map style, enabling
@@ -111,7 +111,7 @@ export type PlaceDisplayProps = {
      * - PARKING_GARAGE
      * - SHOPPING
      *
-     * Optional - only needed when using poi-like styling or category-based filtering.
+     * Optional - only needed when using base-map styling or category-based filtering.
      *
      * @example
      * ```typescript

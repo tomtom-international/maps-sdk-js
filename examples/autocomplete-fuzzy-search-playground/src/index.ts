@@ -1,23 +1,17 @@
 import { Places, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { BaseMapModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import {
     type AutocompleteSearchBrandSegment,
     type AutocompleteSearchCategorySegment,
-    AutocompleteSearchParams,
     type AutocompleteSearchResponse,
     type AutocompleteSearchResult,
     autocompleteSearch,
-    type FuzzySearchParams,
     search,
 } from '@tomtom-org/maps-sdk/services';
 import './style.css';
-import 'maplibre-gl/dist/maplibre-gl.css';
 
-TomTomConfig.instance.put({
-    // (Set your own API key when working in your own environment)
-    apiKey: process.env.API_KEY_EXAMPLES,
-    language: 'en-GB',
-});
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 const searchBox = document.getElementById('maps-sdk-js-examples-search-box') as HTMLInputElement;
 const autoCompleteResultsList = document.getElementById('maps-sdk-js-examples-autocompleteResults') as HTMLUListElement;
@@ -26,6 +20,11 @@ const searchThisAreaButton = document.getElementById('maps-sdk-js-examples-searc
 
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
 const placesModule = await PlacesModule.get(map);
+const baseMapModule = await BaseMapModule.get(map);
+
+fuzzySearchResultsList.addEventListener('mouseleave', () => {
+    placesModule.cleanEventStates();
+});
 
 let selectedAutoCompleteSegment: AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment | undefined | null;
 
@@ -38,9 +37,14 @@ const clearFuzzySearchResults = () => {
 
 const showFuzzySearchResults = (places: Places) => {
     clearFuzzySearchResults();
+    if (selectedAutoCompleteSegment || !autoCompleteResultsList.childElementCount) {
+        placesModule.show(places);
+    }
     for (const place of places.features) {
         const resultItem = document.createElement('li');
         resultItem.classList.add('maps-sdk-js-examples-result-item');
+        resultItem.dataset.placeId = place.id;
+
         if (place.properties.poi?.name) {
             resultItem.innerHTML = `
                 <a class="maps-sdk-js-examples-a">                
@@ -53,6 +57,16 @@ const showFuzzySearchResults = (places: Places) => {
                     <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.address.freeformAddress}</div>
                 </a>`;
         }
+
+        // Add hover event listeners for list item
+        resultItem.addEventListener('mouseenter', () => {
+            placesModule.putEventState({
+                id: place.id,
+                state: 'hover',
+                mode: 'put',
+            });
+        });
+
         fuzzySearchResultsList.appendChild(resultItem);
     }
     if (places.features.length == 0) {
@@ -64,33 +78,26 @@ const showFuzzySearchResults = (places: Places) => {
 };
 
 const fuzzySearch = async () => {
-    let searchParams: FuzzySearchParams | AutocompleteSearchParams;
-    if (selectedAutoCompleteSegment) {
-        searchParams = {
-            query: '',
-            limit: 24,
-            boundingBox: map.getBBox(),
-            ...(selectedAutoCompleteSegment.type == 'category' && {
-                poiCategories: [Number(selectedAutoCompleteSegment.id)],
-            }),
-            ...(selectedAutoCompleteSegment.type == 'brand' && {
-                poiBrands: [selectedAutoCompleteSegment.value],
-            }),
-        } as AutocompleteSearchParams;
-    } else {
-        searchParams = {
-            query: searchBox.value,
-            typeahead: true,
-            limit: 10,
-            position: map.mapLibreMap.getCenter().toArray(),
-        } as FuzzySearchParams;
-    }
+    const searchParams = selectedAutoCompleteSegment
+        ? {
+              query: '',
+              limit: 20,
+              boundingBox: map.getBBox(),
+              ...(selectedAutoCompleteSegment.type == 'category' && {
+                  poiCategories: [Number(selectedAutoCompleteSegment.id)],
+              }),
+              ...(selectedAutoCompleteSegment.type == 'brand' && {
+                  poiBrands: [selectedAutoCompleteSegment.value],
+              }),
+          }
+        : {
+              query: searchBox.value,
+              typeahead: true,
+              limit: 10,
+              position: map.mapLibreMap.getCenter().toArray(),
+          };
 
-    const fuzzySearchResponse = await search(searchParams);
-    showFuzzySearchResults(fuzzySearchResponse);
-    if (selectedAutoCompleteSegment) {
-        placesModule.show(fuzzySearchResponse);
-    }
+    showFuzzySearchResults(await search(searchParams));
 };
 
 const createListElement = (result: AutocompleteSearchResult | null): HTMLElement => {
@@ -138,10 +145,7 @@ const clearSearchResults = () => {
 };
 
 const autoCompleteSearch = async () => {
-    const autocompleteResponse = await autocompleteSearch({
-        query: searchBox.value,
-        limit: 2,
-    });
+    const autocompleteResponse = await autocompleteSearch({ query: searchBox.value, limit: 2 });
     showAutocompleteResults(autocompleteResponse);
 };
 
@@ -149,12 +153,27 @@ const showSearchThisAreaButton = () =>
     (searchThisAreaButton.innerHTML = `<button class="maps-sdk-js-examples-search-this-area-btn">Search This Area</button>`);
 
 map.mapLibreMap.on('moveend', () => {
-    if (searchBox.value == selectedAutoCompleteSegment?.value) {
+    if (searchBox.value === selectedAutoCompleteSegment?.value) {
         showSearchThisAreaButton();
     }
 });
 
 searchThisAreaButton.addEventListener('click', fuzzySearch);
+
+const unhoverListItem = () => fuzzySearchResultsList.querySelector('.hovered')?.classList.remove('hovered');
+
+placesModule.events.on('hover', (place) => {
+    unhoverListItem();
+
+    const listItem = fuzzySearchResultsList.querySelector(`li[data-place-id="${place.id}"]`);
+    listItem?.classList.add('hovered');
+});
+
+// Clean up list item hover when hovering outside pins
+baseMapModule.events.on('hover', () => {
+    unhoverListItem();
+    placesModule.cleanEventStates();
+});
 
 searchBox.addEventListener('keyup', async () => {
     selectedAutoCompleteSegment = null;

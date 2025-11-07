@@ -1,21 +1,15 @@
 import type { ChargingSpeed, ChargingStop, DisplayUnits, GetPositionEntryPointOption } from '@tomtom-org/maps-sdk/core';
-import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import { CustomImage, SVGIconStyleOptions, ToBeAddedLayerSpecTemplate } from '../../shared';
-
-export type HasAdditionalLayersConfig = {
-    /**
-     * Additional custom layers to be added alongside the predefined ones.
-     *
-     * @remarks
-     * Allows for further customization by specifying extra layers that
-     * complement the standard route visualization layers.
-     *
-     * Use these if you want to add extra visuals to a specific route part, be it lines, or symbols.
-     *
-     * You can define 'beforeID' in the additional layers to place them under predefined ones (or other of your additional layers).
-     */
-    additional?: Record<string, ToBeAddedLayerSpecTemplate<LineLayerSpecification | SymbolLayerSpecification>>;
-};
+import type {
+    DataDrivenPropertyValueSpecification,
+    LineLayerSpecification,
+    SymbolLayerSpecification,
+} from 'maplibre-gl';
+import type {
+    CustomImage,
+    HasAdditionalLayersConfig,
+    SVGIconStyleOptions,
+    ToBeAddedLayerSpecTemplate,
+} from '../../shared';
 
 /**
  * Detailed configuration for the visual appearance of route layers on the map with the MapLibre specification.
@@ -399,7 +393,7 @@ export type ChargingStopTextConfig = {
      *
      * @see https://maplibre.org/maplibre-style-spec/types/#formatted
      */
-    title?: ExpressionSpecification;
+    title?: DataDrivenPropertyValueSpecification<string>;
 };
 
 /**

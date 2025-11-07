@@ -14,66 +14,63 @@ describe('Get places layer spec with circle or pin icon style config', () => {
     const mapLibreMock = vi.fn() as unknown as Map;
 
     test('Get places layer spec no config', () => {
-        expect(buildPlacesLayerSpecs(undefined, 'placesSymbols-2', mapLibreMock)).toEqual([
-            {
+        expect(buildPlacesLayerSpecs(undefined, mapLibreMock)).toEqual({
+            main: {
                 ...placesLayerSpec,
                 id: 'placesSymbols-2-main',
             },
-            {
+            selected: {
                 ...selectedPlaceLayerSpec,
                 id: 'placesSymbols-2-selected',
             },
-        ]);
+        });
     });
 
     test('Get places layer spec with circle icon style config', () => {
-        expect(
-            buildPlacesLayerSpecs({ iconConfig: { iconStyle: 'circle' } }, 'placesSymbols-foo', mapLibreMock),
-        ).toEqual([
-            {
+        expect(buildPlacesLayerSpecs({ theme: 'circle' }, mapLibreMock)).toEqual({
+            main: {
                 ...placesLayerSpec,
                 id: 'placesSymbols-foo-main',
             },
-            {
+            selected: {
                 ...selectedPlaceLayerSpec,
                 id: 'placesSymbols-foo-selected',
             },
-        ]);
+        });
     });
 
     test('Get places layer spec with pin icon style config', () => {
-        expect(buildPlacesLayerSpecs({ iconConfig: { iconStyle: 'pin' } }, 'placesSymbols-0', mapLibreMock)).toEqual([
-            {
+        expect(buildPlacesLayerSpecs({ theme: 'pin' }, mapLibreMock)).toEqual({
+            main: {
                 ...placesLayerSpec,
                 id: 'placesSymbols-0-main',
             },
-            {
+            selected: {
                 ...selectedPlaceLayerSpec,
                 id: 'placesSymbols-0-selected',
             },
-        ]);
+        });
     });
 
     test('Get places layer spec with text config', () => {
         expect(
             buildPlacesLayerSpecs(
                 {
-                    iconConfig: { iconStyle: 'pin' },
-                    textConfig: {
-                        textSize: 5,
-                        textField: ['get', 'name'],
-                        textFont: [MAP_MEDIUM_FONT],
-                        textOffset: [0, 1],
-                        textColor: 'red',
-                        textHaloColor: 'white',
-                        textHaloWidth: 1,
+                    theme: 'pin',
+                    text: {
+                        size: 5,
+                        title: ['get', 'name'],
+                        font: [MAP_MEDIUM_FONT],
+                        offset: [0, 1],
+                        color: 'red',
+                        haloColor: 'white',
+                        haloWidth: 1,
                     },
                 },
-                'placesSymbols-0',
                 mapLibreMock,
             ),
-        ).toEqual([
-            {
+        ).toEqual({
+            main: {
                 ...placesLayerSpec,
                 id: 'placesSymbols-0-main',
                 layout: {
@@ -90,7 +87,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     'text-halo-width': 1,
                 },
             },
-            {
+            selected: {
                 ...selectedPlaceLayerSpec,
                 id: 'placesSymbols-0-selected',
                 layout: {
@@ -107,23 +104,22 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     'text-halo-width': 1,
                 },
             },
-        ]);
+        });
     });
 
     test('Get places layer spec with function text field config', () => {
         expect(
             buildPlacesLayerSpecs(
                 {
-                    textConfig: {
-                        textField: (place) => place.properties.poi?.name ?? 'No name found',
-                        textColor: 'green',
+                    text: {
+                        title: (place) => place.properties.poi?.name ?? 'No name found',
+                        color: 'green',
                     },
                 },
-                'placesSymbols-12',
                 mapLibreMock,
             ),
-        ).toEqual([
-            {
+        ).toEqual({
+            main: {
                 ...placesLayerSpec,
                 id: 'placesSymbols-12-main',
                 paint: {
@@ -131,7 +127,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     'text-color': 'green',
                 },
             },
-            {
+            selected: {
                 ...selectedPlaceLayerSpec,
                 id: 'placesSymbols-12-selected',
                 paint: {
@@ -139,11 +135,11 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     'text-color': 'green',
                 },
             },
-        ]);
+        });
     });
 });
 
-describe('Get places layer spec with poi-like icon style config', () => {
+describe('Get places layer spec with base-map icon style config', () => {
     const placesTextSizeSpec = [
         'step',
         ['zoom'],
@@ -162,11 +158,9 @@ describe('Get places layer spec with poi-like icon style config', () => {
         getStyle: vi.fn().mockReturnValue({ layers: [poiLayerSpec] }),
     } as unknown as Map;
 
-    test('Get places layer spec with poi-like icon style config', () => {
-        expect(
-            buildPlacesLayerSpecs({ iconConfig: { iconStyle: 'poi-like' } }, 'placesSymbols-blah', mapLibreMock),
-        ).toEqual([
-            {
+    test('Get places layer spec with base-map icon style config', () => {
+        expect(buildPlacesLayerSpecs({ theme: 'base-map' }, mapLibreMock)).toEqual({
+            main: {
                 filter: ['!', ['in', ['get', 'eventState'], ['literal', ['click', 'contextmenu']]]],
                 id: 'placesSymbols-blah-main',
                 type: 'symbol',
@@ -178,10 +172,10 @@ describe('Get places layer spec with poi-like icon style config', () => {
                     'text-size': placesTextSizeSpec,
                 },
             },
-            {
+            selected: {
                 ...clickedPlaceLayerSpec,
                 id: 'placesSymbols-blah-selected',
             },
-        ]);
+        });
     });
 });

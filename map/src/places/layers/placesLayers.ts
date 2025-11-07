@@ -4,10 +4,11 @@ import type {
     Map,
     SymbolLayerSpecification,
 } from 'maplibre-gl';
-import type { LayerSpecTemplate, SymbolLayerSpecWithoutSource } from '../../shared';
+import type { LayerSpecTemplate } from '../../shared';
+import { SELECTED_PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
 import { isClickEventState } from '../../shared/layers/eventState';
 import { ICON_ID, pinLayerBaseSpec, TITLE } from '../../shared/layers/symbolLayers';
-import type { PlacesModuleConfig } from '../types/placesModuleConfig';
+import type { PlaceLayerName, PlaceLayersConfig, PlacesModuleConfig } from '../types/placesModuleConfig';
 
 /**
  * @ignore
@@ -37,8 +38,7 @@ export const selectedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification>
     filter: hasEventState,
     layout: {
         ...pinLayerBaseSpec.layout,
-        // Increased sizes from PIN_ICON_SIZE (from shared default pin)
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 22, 1],
+        'icon-size': SELECTED_PIN_ICON_SIZE,
         'text-allow-overlap': true,
     },
     paint: {
@@ -58,28 +58,29 @@ export const clickedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> 
 const withConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
     config: PlacesModuleConfig | undefined,
-    id: string,
-): SymbolLayerSpecWithoutSource => {
-    const textConfig = config?.textConfig;
+    layerName: PlaceLayerName,
+): LayerSpecTemplate<SymbolLayerSpecification> => {
+    const textConfig = config?.text;
+    const customLayer = config?.layers?.[layerName];
     return {
         ...layerSpec,
-        id,
         layout: {
             ...layerSpec.layout,
-            ...(textConfig?.textSize && { 'text-size': textConfig.textSize }),
-            ...(textConfig?.textFont && { 'text-font': textConfig.textFont }),
-            ...(textConfig?.textOffset && { 'text-offset': textConfig.textOffset }),
-            ...(textConfig?.textField &&
-                typeof textConfig?.textField !== 'function' && {
-                    'text-field': textConfig?.textField,
+            ...(textConfig?.size && { 'text-size': textConfig.size }),
+            ...(textConfig?.font && { 'text-font': textConfig.font }),
+            ...(textConfig?.offset && { 'text-offset': textConfig.offset }),
+            ...(textConfig?.title &&
+                typeof textConfig?.title !== 'function' && {
+                    'text-field': textConfig?.title,
                 }),
         },
         paint: {
             ...layerSpec.paint,
-            ...(textConfig?.textColor && { 'text-color': textConfig.textColor }),
-            ...(textConfig?.textHaloColor && { 'text-halo-color': textConfig.textHaloColor }),
-            ...(textConfig?.textHaloWidth && { 'text-halo-width': textConfig.textHaloWidth }),
+            ...(textConfig?.color && { 'text-color': textConfig.color }),
+            ...(textConfig?.haloColor && { 'text-halo-color': textConfig.haloColor }),
+            ...(textConfig?.haloWidth && { 'text-halo-width': textConfig.haloWidth }),
         },
+        ...customLayer,
     };
 };
 
@@ -111,18 +112,37 @@ const buildPoiLikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecifica
 /**
  * @ignore
  */
-export const buildPlacesLayerSpecs = (
-    config: PlacesModuleConfig | undefined,
-    idPrefix: string,
-    map: Map,
-): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
-    const layerSpecs =
-        config?.iconConfig?.iconStyle === 'poi-like'
-            ? [buildPoiLikeLayerSpec(map), clickedPlaceLayerSpec]
-            : // TODO: 'circle' config could take the icon properties from the poi layer as well (size, offsets, etc) and just try to make text bolder
-              [placesLayerSpec, selectedPlaceLayerSpec];
-    // (The first layer is the main one, the next one, on top, is used for the "selected" place)
-    return layerSpecs.map((spec, index) =>
-        withConfig(spec, config, `${idPrefix}-${index === 0 ? 'main' : 'selected'}`),
-    ) as [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource];
+export const buildPlacesLayerSpecs = (config: PlacesModuleConfig | undefined, map: Map): PlaceLayersConfig => {
+    // Build the layer spec templates based on the theme:
+    let layerSpecTemplates;
+    if (config?.theme === 'base-map') {
+        const poiLikeLayerSpec = buildPoiLikeLayerSpec(map);
+        layerSpecTemplates = {
+            main: poiLikeLayerSpec,
+            selected: {
+                ...poiLikeLayerSpec,
+                filter: hasEventState,
+                layout: {
+                    ...poiLikeLayerSpec.layout,
+                    'text-allow-overlap': true,
+                },
+                paint: {
+                    ...poiLikeLayerSpec.paint,
+                    'text-color': SELECTED_COLOR,
+                },
+            },
+        };
+    } else {
+        // TODO: 'circle' config could take the icon properties from the poi layer as well (size, offsets, etc) and just try to make text bolder
+        layerSpecTemplates = {
+            main: placesLayerSpec,
+            selected: selectedPlaceLayerSpec,
+        };
+    }
+
+    return {
+        main: withConfig(layerSpecTemplates.main, config, 'main'),
+        selected: withConfig(layerSpecTemplates.selected, config, 'selected'),
+        ...config?.layers?.additional,
+    };
 };

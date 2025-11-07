@@ -57,43 +57,33 @@ describe('Get Icon ID for a given Place tests', () => {
     });
 
     test('Get Icon ID for a given Place with custom config', () => {
-        const mapLibreMock = {
-            loadImage: vi.fn().mockResolvedValue(vi.fn()),
-            addImage: vi.fn(),
-            hasImage: vi.fn().mockReturnValue(false),
-        } as unknown as Map;
-
         expect(
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'RESTAURANT' }] } } } as Place, {
-                iconConfig: { iconStyle: 'circle' },
+                theme: 'circle',
             }),
         ).toBe('poi-restaurant');
 
         expect(
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'BEACH' }] } } } as Place, {
-                iconConfig: { iconStyle: 'poi-like' },
+                theme: 'base-map',
             }),
         ).toBe('poi-beach');
 
         expect(
-            getIconIDForPlace(
-                { properties: { poi: { categoryIds: [35] } } } as Place,
-                {
-                    iconConfig: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
-                },
-                mapLibreMock,
-            ),
-        ).toBe('35');
-
-        expect(
             getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
-                iconConfig: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
+                icon: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
             }),
         ).toBe('35');
 
         expect(
             getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
-                iconConfig: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
+                icon: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
+            }),
+        ).toBe('35');
+
+        expect(
+            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
+                icon: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
             }),
         ).toBe('35');
     });
@@ -177,11 +167,11 @@ describe('test prepare places for display', () => {
     test('prepare places for display with config', () => {
         expect(
             preparePlacesForDisplay(places, mapLibreMock, {
-                iconConfig: { iconStyle: 'pin' },
-                textConfig: {
-                    textSize: 5,
-                    textField: ['get', 'name'],
-                    textFont: [MAP_MEDIUM_FONT],
+                theme: 'pin',
+                text: {
+                    size: 5,
+                    title: ['get', 'name'],
+                    font: [MAP_MEDIUM_FONT],
                 },
                 extraFeatureProps: {
                     phone: getPhoneFun,
@@ -213,11 +203,11 @@ describe('test prepare places for display', () => {
     test('prepare places for display with function text field config', () => {
         expect(
             preparePlacesForDisplay(places, mapLibreMock, {
-                iconConfig: { iconStyle: 'poi-like' },
-                textConfig: {
-                    textSize: 5,
-                    textField: (place) => place.properties.poi?.url ?? 'No url found',
-                    textFont: [MAP_MEDIUM_FONT],
+                theme: 'base-map',
+                text: {
+                    size: 5,
+                    title: (place) => place.properties.poi?.url ?? 'No url found',
+                    font: [MAP_MEDIUM_FONT],
                 },
             }),
         ).toEqual({

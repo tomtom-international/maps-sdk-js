@@ -1,8 +1,8 @@
 export type * from './extendedGeoJSON';
 export type * from './generic';
 export type * from './headers';
+export type * from './languages';
 export type * from './lngLat';
-export type * from './mapLanguageConfig';
 export * from './place/ev/chargingStation';
 export type * from './place/ev/chargingStationsAvailability';
 export * from './place/ev/connector';

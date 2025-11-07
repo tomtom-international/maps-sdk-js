@@ -38,11 +38,9 @@ describe('GeoJSON Places module tests', () => {
             features: [{ properties: { address: { freeformAddress: 'TEST_ADDRESS' } } }],
         } as Places;
         const places = await PlacesModule.get(tomtomMapMock, {
-            iconConfig: {
-                iconStyle: 'circle',
-            },
-            textConfig: {
-                textColor: 'green',
+            theme: 'circle',
+            text: {
+                color: 'green',
             },
             extraFeatureProps: { prop1: (place: Place) => `Address: ${place.properties.address}` },
         });
@@ -52,7 +50,7 @@ describe('GeoJSON Places module tests', () => {
         vi.spyOn(placesAny, 'updateLayersAndData');
         vi.spyOn(placesAny, 'updateData');
         vi.spyOn(tomtomMapMock.mapLibreMap, 'getStyle');
-        places.applyConfig({ iconConfig: { iconStyle: 'poi-like' } });
+        places.applyConfig({ theme: 'base-map' });
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
         expect(placesAny.updateData).toHaveBeenCalledTimes(1);
         expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(1);
@@ -60,11 +58,11 @@ describe('GeoJSON Places module tests', () => {
         places.applyExtraFeatureProps({ prop: 'static' });
         expect(placesAny.updateData).toHaveBeenCalledTimes(2);
 
-        places.applyTextConfig({ textFont: ['Noto-Medium'], textSize: 16 });
+        places.applyTextConfig({ font: ['Noto-Medium'], size: 16 });
         expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(2);
         expect(placesAny.updateData).toHaveBeenCalledTimes(3);
 
-        places.applyIconConfig({ iconStyle: 'poi-like' });
+        places.applyTheme('base-map');
         expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(3);
         expect(placesAny.updateData).toHaveBeenCalledTimes(4);
 

@@ -1,4 +1,10 @@
-import type { BackgroundLayerSpecification, LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type {
+    BackgroundLayerSpecification,
+    CircleLayerSpecification,
+    LayerSpecification,
+    LineLayerSpecification,
+    SymbolLayerSpecification,
+} from 'maplibre-gl';
 import type { mapStyleLayerIDs } from '../layers/layerIDs';
 import type { GeoJSONSourceWithLayers, StyleSourceWithLayers } from '../SourceWithLayers';
 
@@ -184,3 +190,26 @@ export type SourceWithLayerIDs = {
  * @group Shared
  */
 export type MapStyleLayerID = keyof typeof mapStyleLayerIDs;
+
+/**
+ * Configuration for adding custom layers to a map module based on its controlled source data.
+ *
+ * @group Shared
+ */
+export type HasAdditionalLayersConfig = {
+    /**
+     * Additional custom layers to be added alongside the predefined ones.
+     *
+     * @remarks
+     * Allows for further customization by specifying extra layers that
+     * complement the standard route visualization layers.
+     *
+     * Use these if you want to add extra visuals to a specific module part, be it lines, symbols, or any MapLibre supported layer.
+     *
+     * You can define 'beforeID' in the additional layers to place them under predefined ones (or other of your additional layers).
+     */
+    additional?: Record<
+        string,
+        ToBeAddedLayerSpecTemplate<SymbolLayerSpecification | LineLayerSpecification | CircleLayerSpecification>
+    >;
+};

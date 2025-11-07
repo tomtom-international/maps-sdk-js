@@ -16,12 +16,11 @@ export const buildPlaceTitle = (place: Place): string =>
 /**
  * Gets the map style sprite image ID to display on the map for the give place.
  * @param place The place to display.
- * @param map
  * @param config
  */
-export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {}, map?: Map): string => {
-    const iconStyle = config.iconConfig?.iconStyle ?? 'pin';
-    const customIcons = config.iconConfig?.customIcons;
+export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {}): string => {
+    const iconStyle = config.theme ?? 'pin';
+    const customIcons = config.icon?.customIcons;
 
     // First we try to match any custom icon:
     const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOICategory;
@@ -78,9 +77,7 @@ export const preparePlacesForDisplay = (
         ...places,
         features: places.features.map((place) => {
             const title =
-                typeof config?.textConfig?.textField === 'function'
-                    ? config?.textConfig?.textField(place)
-                    : buildPlaceTitle(place);
+                typeof config?.text?.title === 'function' ? config?.text?.title(place) : buildPlaceTitle(place);
 
             const extraFeatureProps = config.extraFeatureProps
                 ? Object.fromEntries(
@@ -101,10 +98,8 @@ export const preparePlacesForDisplay = (
                     ...place.properties,
                     id: place.id,
                     title,
-                    iconID: getIconIDForPlace(place, config, map),
-                    ...(config?.iconConfig?.iconStyle === 'poi-like' && {
-                        category: getPOILayerCategoryForPlace(place),
-                    }),
+                    iconID: getIconIDForPlace(place, config),
+                    ...(config?.theme === 'base-map' && { category: getPOILayerCategoryForPlace(place) }),
                     ...extraFeatureProps,
                 },
             };

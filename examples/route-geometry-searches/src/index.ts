@@ -26,9 +26,9 @@ routingModule.showWaypoints(waypoints);
 const routes = await calculateRoute({ locations: waypoints });
 routingModule.showRoutes(routes);
 
-const extraWidePlacesModule = await PlacesModule.get(map, { icon: { style: 'poi-like' } });
-const widePlacesModule = await PlacesModule.get(map, { icon: { style: 'poi-like' } });
-const onRoadPlacesModule = await PlacesModule.get(map, { icon: { style: 'circle' } });
+const extraWidePlacesModule = await PlacesModule.get(map, { theme: 'base-map' });
+const widePlacesModule = await PlacesModule.get(map, { theme: 'base-map' });
+const onRoadPlacesModule = await PlacesModule.get(map, { theme: 'circle' });
 
 const route = routes.features[0];
 extraWidePlacesModule.show(

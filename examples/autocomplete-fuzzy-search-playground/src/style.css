@@ -83,8 +83,14 @@
     width: 300px;
 }
 
+.maps-sdk-js-examples-result-item.hovered {
+    background-color: #f3f3f3;
+    width: 300px;
+}
+
 .maps-sdk-js-examples-result-item:active {
     background-color: #df1b12;
+    color: white;
 }
 
 .maps-sdk-js-examples-result-value {

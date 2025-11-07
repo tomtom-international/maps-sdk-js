@@ -182,3 +182,8 @@ export type MapFont = (typeof mapFonts)[number];
  * @ignore
  */
 export const PIN_ICON_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 8, 0.6, 22, 0.8];
+
+/**
+ * @ignore
+ */
+export const SELECTED_PIN_ICON_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 8, 0.8, 22, 1];

@@ -55,7 +55,7 @@ catalogs:
       specifier: ^7.2.0
       version: 7.2.0
     vite-plugin-dts:
-      specifier: 5.0.0-beta.6
+      specifier: ^5.0.0-beta.6
       version: 5.0.0-beta.6
     vitest:
       specifier: ^3.2.4
@@ -197,11 +197,14 @@ importers:
         specifier: 'catalog:'
         version: 7.2.0(@types/node@24.10.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.1)
 
-  examples/base-map:
+  examples/basic-geometry:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
+      '@turf/turf':
+        specifier: ^7.2.0
+        version: 7.2.0
       maplibre-gl:
         specifier: 'catalog:'
         version: 5.11.0
@@ -225,14 +228,11 @@ importers:
         specifier: 'catalog:'
         version: 7.2.0(@types/node@24.10.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.1)
 
-  examples/basic-geometry:
+  examples/default-map:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      '@turf/turf':
-        specifier: ^7.2.0
-        version: 7.2.0
       maplibre-gl:
         specifier: 'catalog:'
         version: 5.11.0
@@ -1027,7 +1027,7 @@ importers:
         specifier: 'catalog:'
         version: 7.2.0(@types/node@24.10.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.1)
 
-  examples/places-customize:
+  examples/places-customize-playground:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
@@ -1067,6 +1067,34 @@ importers:
       '@turf/turf':
         specifier: ^7.2.0
         version: 7.2.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.0
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.52.5)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.10.0)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.2.0(@types/node@24.10.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.1)
+
+  examples/places-maplibre-customization:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.11.0
+    devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.0

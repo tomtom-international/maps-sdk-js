@@ -1,17 +1,14 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { IconStyle, MapFont, PlaceIconConfig } from '@tomtom-org/maps-sdk/map';
+import type { MapFont, PlaceIconConfig, PlacesTheme } from '@tomtom-org/maps-sdk/map';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { search } from '@tomtom-org/maps-sdk/services';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import tomtomLogo from '../resources/tomtomLogo.png';
 import './style.css';
 
-TomTomConfig.instance.put({
-    // (Set your own API key when working in your own environment)
-    apiKey: process.env.API_KEY_EXAMPLES,
-    language: 'en-US',
-});
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.90435, 52.36876], zoom: 10 });
 const places = await PlacesModule.get(map);
@@ -87,7 +84,7 @@ const listenToUIEvents = () => {
                 });
             places.applyTextConfig({
                 ...places.getConfig()?.text,
-                field: element.value === 'default' ? undefined : multiLineLabel,
+                title: element.value === 'default' ? undefined : multiLineLabel,
             });
         });
     }
@@ -97,7 +94,7 @@ const listenToUIEvents = () => {
         if (value === 'custom') {
             places.applyIconConfig(customIconsConfig);
         } else {
-            places.applyIconConfig({ style: value as IconStyle });
+            places.applyIconConfig({ style: value as PlacesTheme });
         }
     });
 };

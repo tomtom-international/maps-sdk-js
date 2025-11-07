@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { bboxFromGeoJSON, type Place, type Places } from 'core';
 import { sortBy } from 'lodash-es';
-import type { PlaceDisplayProps, PlaceIconConfig } from 'map';
+import type { PlaceDisplayProps, PlaceIconConfig, PlacesTheme } from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
 import placesTestData from './data/PlacesModule.test.data.json';
 import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';
@@ -169,7 +169,7 @@ test.describe('GeoJSON Places with init config tests', () => {
                 { bounds },
                 { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] } },
             );
-            await initPlaces(page, { iconConfig: { iconStyle: 'circle' } });
+            await initPlaces(page, { theme: 'circle' });
             const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
             await showPlaces(page, testPlaces);
 
@@ -198,7 +198,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             await showPlaces(page, testPlaces);
 
             const numTestPlaces = testPlaces.features.length;
-            await applyIconConfig(page, { iconStyle: 'circle' });
+            await applyIconConfig(page, { style: 'circle' });
             await waitForMapIdle(page);
             let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPOIProps);
@@ -210,9 +210,9 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedCustomIcon[name as never]);
 
-            await applyIconConfig(page, { iconStyle: 'poi-like' });
+            await applyIconConfig(page, { style: 'base-map' });
             await waitForMapIdle(page);
-            // poi-like places avoid collisions, thus likely resulting in less num of rendered features:
+            // base-map places avoid collisions, thus likely resulting in less num of rendered features:
             renderedPlaces = await queryRenderedFeatures(page, layerIDs);
             compareToExpectedPoiLikeDisplayProps(renderedPlaces, expectedPoiLikeFeatureProps[name as never]);
             expect(mapEnv.consoleErrors).toHaveLength(0);

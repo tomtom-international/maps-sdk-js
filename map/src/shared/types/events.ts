@@ -56,6 +56,33 @@ export type HoverEventType = 'hover' | 'long-hover';
 export type EventType = ClickEventType | HoverEventType;
 
 /**
+ * Parameters to identify a feature by its ID or index in a given features array.
+ * @group User Events
+ */
+export type ByIdOrIndex =
+    | {
+          /**
+           * The unique identifier of the feature.
+           *
+           * @remarks
+           * This ID corresponds to the `id` property of the feature being targeted.
+           * Cannot be used together with `index`.
+           */
+          id: string;
+      }
+    | {
+          /**
+           * The index of the feature in the feature array.
+           *
+           * @remarks
+           * Zero-based index referring to the position in the features array
+           * that was passed to the module's show method.
+           * Cannot be used together with `id`.
+           */
+          index: number;
+      };
+
+/**
  * Parameters to update the event state of a feature programmatically.
  *
  * Allows you to manually set event states on features, useful for:
@@ -85,16 +112,7 @@ export type EventType = ClickEventType | HoverEventType;
  *
  * @group User Events
  */
-export type PutEventStateOptions = {
-    /**
-     * The index of the feature in the feature array.
-     *
-     * @remarks
-     * Zero-based index referring to the position in the features array
-     * that was passed to the module's show method.
-     */
-    index: number;
-
+export type PutEventStateOptions = ByIdOrIndex & {
     /**
      * The event state to set.
      *
@@ -167,16 +185,7 @@ export type PutEventStateOptions = {
  *
  * @group User Events
  */
-export type CleanEventStateOptions = {
-    /**
-     * The index of the feature in the feature array.
-     *
-     * @remarks
-     * Zero-based index referring to the position in the features array
-     * that was passed to the module's show method.
-     */
-    index: number;
-
+export type CleanEventStateOptions = ByIdOrIndex & {
     /**
      * Whether to show the feature after cleaning the event state.
      *
