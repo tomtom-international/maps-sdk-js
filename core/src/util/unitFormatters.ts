@@ -75,6 +75,7 @@ export const formatDuration = (seconds: number | undefined, options?: TimeDispla
         if (minutes) {
             return `${minutes.toString()} ${minuteUnits(mergedOptions)}`;
         }
+        // else returns undefined
     }
     return undefined;
 };
