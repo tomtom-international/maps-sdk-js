@@ -335,7 +335,7 @@ describe('Calculate route integration tests', () => {
         const result = await calculateRoute({
             locations: [
                 [4.89066, 52.37317], // Amsterdam
-                [2.3522, 48.8566], // Paris
+                [4.3517, 50.8503], // Brussels:
             ],
             vehicle: {
                 engineType: 'electric',
