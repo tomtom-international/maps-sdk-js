@@ -139,32 +139,25 @@ export type RouteSections<S extends DisplaySectionProps = DisplaySectionProps> =
  * };
  * ```
  *
- * @group Routing
  * @ignore
  */
 export type DisplayTrafficSectionProps = DisplaySectionProps &
     TrafficSectionProps & {
         /**
-         * Icon ID for the section leading icon.
-         *
-         * @remarks
-         * References an icon in the map style sprite, used to visually
-         * represent the type of traffic incident or delay.
-         *
-         * @example
-         * ```typescript
-         * iconID: 'traffic-jam'
-         * iconID: 'accident'
-         * iconID: 'road-closure'
-         * ```
+         * Icon ID for jam category, if any.
          */
-        iconID?: string;
+        jamIconID?: string;
+
+        /**
+         * Icon ID for the main cause of the incident, if any (roadworks, weather-related, accident...).
+         */
+        causeIconID?: string;
 
         /**
          * Title for the traffic section.
          *
          * @remarks
-         * By default consists of the incident delay if any, but can be
+         * By default, consists of the incident delay if any, but can be
          * customized to provide more detailed information.
          *
          * @example

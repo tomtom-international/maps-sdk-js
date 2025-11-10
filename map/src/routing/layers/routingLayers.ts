@@ -13,9 +13,9 @@ import {
 import { routeTollRoadsOutline, routeTollRoadsSymbol } from './routeTollRoadLayers';
 import {
     routeIncidentsBGLine,
+    routeIncidentsCauseSymbol,
     routeIncidentsDashedLine,
-    routeIncidentsPatternLine,
-    routeIncidentsSymbol,
+    routeIncidentsJamSymbol,
 } from './routeTrafficSectionLayers';
 import { routeTunnelsLine } from './routeTunnelSectionLayers';
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from './routeVehicleRestrictedLayers';
@@ -84,14 +84,19 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
         },
         sections: {
             incident: {
-                routeIncidentSymbol: {
-                    ...routeIncidentsSymbol,
+                routeIncidentJamSymbol: {
+                    ...routeIncidentsJamSymbol,
                     beforeID: 'routeChargingStopSymbol',
-                    ...configSectionLayers?.incident?.routeIncidentSymbol,
+                    ...configSectionLayers?.incident?.routeIncidentJamSymbol,
+                },
+                routeIncidentCauseSymbol: {
+                    ...routeIncidentsCauseSymbol,
+                    beforeID: 'routeChargingStopSymbol',
+                    ...configSectionLayers?.incident?.routeIncidentCauseSymbol,
                 },
                 routeIncidentBackgroundLine: {
                     ...routeIncidentsBGLine,
-                    beforeID: mapStyleLayerIDs.lowestLabel,
+                    beforeID: 'routeIncidentDashedLine',
                     ...configSectionLayers?.incident?.routeIncidentBackgroundLine,
                 },
                 routeIncidentDashedLine: {
@@ -99,12 +104,6 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
                     beforeID: mapStyleLayerIDs.lowestLabel,
                     ...configSectionLayers?.incident?.routeIncidentDashedLine,
                 },
-                routeIncidentPatternLine: {
-                    ...routeIncidentsPatternLine,
-                    beforeID: mapStyleLayerIDs.lowestLabel,
-                    ...configSectionLayers?.incident?.routeIncidentPatternLine,
-                },
-                ...configLayers?.sections?.incident?.additional,
             },
             ferry: {
                 routeFerryLine: {
@@ -114,7 +113,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
                 },
                 routeFerrySymbol: {
                     ...routeFerriesSymbol,
-                    beforeID: 'routeIncidentSymbol',
+                    beforeID: 'routeIncidentJamSymbol',
                     ...configSectionLayers?.ferry?.routeFerrySymbol,
                 },
                 ...configSectionLayers?.ferry?.additional,

@@ -41,7 +41,8 @@ export const pinTextBaseLayout: SymbolLayerSpecification['layout'] = {
     'text-field': ['get', TITLE],
     'text-justify': 'auto',
     'text-variable-anchor': ['top', 'left', 'right'],
-    'text-variable-anchor-offset': ['top', [0, 0.5], 'left', [1.3, -1.4], 'right', [-1.3, -1.4]],
+    // NOTE: make sure to text against pins and waypoints, in a way that there's enough distance from the pin so the text doesn't disappear
+    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
     'text-size': DEFAULT_TEXT_SIZE,
     'text-padding': 5,
 };

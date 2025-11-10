@@ -710,16 +710,11 @@
               "startPointIndex": 80,
               "endPointIndex": 94,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "JAM",
               "effectiveSpeedInKmh": 3,
               "delayInSeconds": 210,
               "magnitudeOfDelay": 3,
               "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 1
-                  }
-                ],
+                "causes": [{ "mainCauseCode": 1 }, { "mainCauseCode": 3 }, { "mainCauseCode": 9 }],
                 "effectCode": 6
               }
             },
@@ -727,18 +722,10 @@
               "startPointIndex": 119,
               "endPointIndex": 131,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "JAM",
               "effectiveSpeedInKmh": 11,
               "delayInSeconds": 59,
               "magnitudeOfDelay": 1,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 1
-                  }
-                ],
-                "effectCode": 6
-              }
+              "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
             }
           ],
           "guidance": {
@@ -754,7 +741,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -762,7 +749,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -795,7 +782,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                    "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Gosschalklaan"
                   }
@@ -803,7 +790,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -851,7 +838,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                    "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Gosschalklaan"
                   }
@@ -947,7 +934,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -1003,7 +990,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -1011,7 +998,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -1052,7 +1039,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerplein"
                   }
@@ -1060,7 +1047,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerplein"
                   }
@@ -1122,7 +1109,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈdroɣ.ˌbɑk",
+                    "phonetic": "\u02c8dro\u0263.\u02ccb\u0251k",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Droogbak"
                   }
@@ -1130,7 +1117,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈni.wə ˈʋɛs.tər.dɔk.strat",
+                    "phonetic": "\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Nieuwe Westerdokstraat"
                   }
@@ -1245,7 +1232,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1253,7 +1240,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈdroɣ.ˌbɑk",
+                    "phonetic": "\u02c8dro\u0263.\u02ccb\u0251k",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Droogbak"
                   }
@@ -1335,7 +1322,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1352,7 +1339,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1422,7 +1409,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1439,7 +1426,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1480,7 +1467,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1488,7 +1475,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1535,7 +1522,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -1579,7 +1566,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                    "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Michiel de Ruijtertunnel"
                   }
@@ -1587,7 +1574,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                    "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Michiel de Ruijtertunnel"
                   }
@@ -2372,35 +2359,19 @@
               "startPointIndex": 90,
               "endPointIndex": 103,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "JAM",
               "effectiveSpeedInKmh": 5,
               "delayInSeconds": 138,
               "magnitudeOfDelay": 3,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 1
-                  }
-                ],
-                "effectCode": 6
-              }
+              "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
             },
             {
               "startPointIndex": 129,
               "endPointIndex": 141,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "JAM",
               "effectiveSpeedInKmh": 11,
               "delayInSeconds": 59,
               "magnitudeOfDelay": 1,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 1
-                  }
-                ],
-                "effectCode": 6
-              }
+              "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
             }
           ],
           "guidance": {
@@ -2415,7 +2386,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -2423,7 +2394,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -2456,7 +2427,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                    "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Gosschalklaan"
                   }
@@ -2464,7 +2435,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -2511,7 +2482,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                    "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Gosschalklaan"
                   }
@@ -2606,7 +2577,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -2662,7 +2633,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -2670,7 +2641,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -2711,7 +2682,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerplein"
                   }
@@ -2719,7 +2690,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerplein"
                   }
@@ -2781,7 +2752,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈbœ⁀y.tən ˈbrɑ⁀u.wərs.strat",
+                    "phonetic": "\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Buiten Brouwersstraat"
                   }
@@ -2789,7 +2760,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈni.wə ˈʋɛs.tər.dɔk.strat",
+                    "phonetic": "\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Nieuwe Westerdokstraat"
                   }
@@ -2839,7 +2810,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər ˈhɑ⁀ut.tœ⁀y.nən",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmer Houttuinen"
                   }
@@ -2847,7 +2818,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈbœ⁀y.tən ˈbrɑ⁀u.wərs.strat",
+                    "phonetic": "\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Buiten Brouwersstraat"
                   }
@@ -2888,7 +2859,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈʋɛs.tər.dɔks.ˌka.də",
+                    "phonetic": "\u02c8\u028b\u025bs.t\u0259r.d\u0254ks.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Westerdokskade"
                   }
@@ -2896,7 +2867,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər ˈhɑ⁀ut.tœ⁀y.nən",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmer Houttuinen"
                   }
@@ -2946,7 +2917,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3007,7 +2978,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3024,7 +2995,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3106,7 +3077,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3123,7 +3094,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3164,7 +3135,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3172,7 +3143,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3219,7 +3190,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -3263,7 +3234,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                    "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Michiel de Ruijtertunnel"
                   }
@@ -3271,7 +3242,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                    "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Michiel de Ruijtertunnel"
                   }
@@ -5187,35 +5158,19 @@
               "startPointIndex": 15,
               "endPointIndex": 18,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "ROAD_WORK",
               "effectiveSpeedInKmh": 36,
               "delayInSeconds": 0,
               "magnitudeOfDelay": 4,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 3
-                  }
-                ],
-                "effectCode": 1
-              }
+              "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
             },
             {
               "startPointIndex": 74,
               "endPointIndex": 77,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "JAM",
               "effectiveSpeedInKmh": 4,
               "delayInSeconds": 8,
               "magnitudeOfDelay": 3,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 1
-                  }
-                ],
-                "effectCode": 6
-              }
+              "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
             }
           ],
           "guidance": {
@@ -5230,7 +5185,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -5238,7 +5193,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -5271,7 +5226,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                    "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Gosschalklaan"
                   }
@@ -5279,7 +5234,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -5326,7 +5281,7 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                    "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Gosschalklaan"
                   }
@@ -5421,7 +5376,7 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -5477,7 +5432,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -5485,7 +5440,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -5526,7 +5481,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "vɑn ˈhɑl.strat",
+                    "phonetic": "v\u0251n \u02c8h\u0251l.strat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Van Hallstraat"
                   }
@@ -5543,7 +5498,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                    "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Haarlemmerweg"
                   }
@@ -5584,7 +5539,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.plɑnt.sun",
+                    "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Frederik Hendrikplantsoen"
                   }
@@ -5592,7 +5547,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkɔst.fər.lo.rən.ˌstrat",
+                    "phonetic": "\u02c8k\u0254st.f\u0259r.lo.r\u0259n.\u02ccstrat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Kostverlorenstraat"
                   }
@@ -5670,7 +5625,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.plɑnt.sun",
+                    "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Frederik Hendrikplantsoen"
                   }
@@ -5678,7 +5633,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.plɑnt.sun",
+                    "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Frederik Hendrikplantsoen"
                   }
@@ -5715,7 +5670,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.strat",
+                    "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Frederik Hendrikstraat"
                   }
@@ -5723,7 +5678,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.strat",
+                    "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Frederik Hendrikstraat"
                   }
@@ -5838,7 +5793,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkɪŋ.kər.ˌstrat",
+                    "phonetic": "\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Kinkerstraat"
                   }
@@ -5846,7 +5801,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈbɪl.dər.dɛ⁀ik.ˌstrat",
+                    "phonetic": "\u02c8b\u026al.d\u0259r.d\u025b\u2040ik.\u02ccstrat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Bilderdijkstraat"
                   }
@@ -5933,7 +5888,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈnɑ.sɑ⁀u.ˌka.də",
+                    "phonetic": "\u02c8n\u0251.s\u0251\u2040u.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Nassaukade"
                   }
@@ -5941,7 +5896,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkɪŋ.kər.ˌstrat",
+                    "phonetic": "\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Kinkerstraat"
                   }
@@ -6008,7 +5963,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                    "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Mauritskade"
                   }
@@ -6025,7 +5980,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                    "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Mauritskade"
                   }
@@ -6148,7 +6103,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                    "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Mauritskade"
                   }
@@ -6166,7 +6121,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                    "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Mauritskade"
                   }
@@ -6199,7 +6154,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -6216,7 +6171,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -6266,7 +6221,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -6274,7 +6229,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -6321,7 +6276,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                    "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "De Ruijterkade"
                   }
@@ -6365,7 +6320,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                    "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Michiel de Ruijtertunnel"
                   }
@@ -6373,7 +6328,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                    "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Michiel de Ruijtertunnel"
                   }
@@ -6647,14 +6602,10 @@
                   "endPointIndex": 94,
                   "delayInSeconds": 210,
                   "effectiveSpeedInKmh": 3,
-                  "simpleCategory": "jam",
                   "magnitudeOfDelay": "major",
+                  "categories": ["jam", "roadworks", "danger"],
                   "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 1
-                      }
-                    ],
+                    "causes": [{ "mainCauseCode": 1 }, { "mainCauseCode": 3 }, { "mainCauseCode": 9 }],
                     "effectCode": 6
                   }
                 },
@@ -6663,16 +6614,8 @@
                   "endPointIndex": 131,
                   "delayInSeconds": 59,
                   "effectiveSpeedInKmh": 11,
-                  "simpleCategory": "jam",
                   "magnitudeOfDelay": "minor",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 1
-                      }
-                    ],
-                    "effectCode": 6
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
                 }
               ]
             },
@@ -6685,7 +6628,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -6693,7 +6636,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -6720,7 +6663,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                      "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Gosschalklaan"
                     }
@@ -6728,7 +6671,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -6766,7 +6709,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                      "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Gosschalklaan"
                     }
@@ -6843,7 +6786,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -6890,7 +6833,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -6898,7 +6841,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -6930,7 +6873,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerplein"
                     }
@@ -6938,7 +6881,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerplein"
                     }
@@ -6988,7 +6931,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈdroɣ.ˌbɑk",
+                      "phonetic": "\u02c8dro\u0263.\u02ccb\u0251k",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Droogbak"
                     }
@@ -6996,7 +6939,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈni.wə ˈʋɛs.tər.dɔk.strat",
+                      "phonetic": "\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Nieuwe Westerdokstraat"
                     }
@@ -7084,7 +7027,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7092,7 +7035,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈdroɣ.ˌbɑk",
+                      "phonetic": "\u02c8dro\u0263.\u02ccb\u0251k",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Droogbak"
                     }
@@ -7153,7 +7096,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7170,7 +7113,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7225,7 +7168,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7242,7 +7185,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7274,7 +7217,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7282,7 +7225,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7320,7 +7263,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -7352,7 +7295,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                      "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Michiel de Ruijtertunnel"
                     }
@@ -7360,7 +7303,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                      "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Michiel de Ruijtertunnel"
                     }
@@ -7653,32 +7596,16 @@
                   "endPointIndex": 103,
                   "delayInSeconds": 138,
                   "effectiveSpeedInKmh": 5,
-                  "simpleCategory": "jam",
                   "magnitudeOfDelay": "major",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 1
-                      }
-                    ],
-                    "effectCode": 6
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
                 },
                 {
                   "startPointIndex": 129,
                   "endPointIndex": 141,
                   "delayInSeconds": 59,
                   "effectiveSpeedInKmh": 11,
-                  "simpleCategory": "jam",
                   "magnitudeOfDelay": "minor",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 1
-                      }
-                    ],
-                    "effectCode": 6
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
                 }
               ]
             },
@@ -7691,7 +7618,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -7699,7 +7626,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -7726,7 +7653,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                      "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Gosschalklaan"
                     }
@@ -7734,7 +7661,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -7772,7 +7699,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                      "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Gosschalklaan"
                     }
@@ -7849,7 +7776,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -7896,7 +7823,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -7904,7 +7831,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -7936,7 +7863,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerplein"
                     }
@@ -7944,7 +7871,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌplɛ⁀in",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerplein"
                     }
@@ -7994,7 +7921,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈbœ⁀y.tən ˈbrɑ⁀u.wərs.strat",
+                      "phonetic": "\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Buiten Brouwersstraat"
                     }
@@ -8002,7 +7929,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈni.wə ˈʋɛs.tər.dɔk.strat",
+                      "phonetic": "\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Nieuwe Westerdokstraat"
                     }
@@ -8043,7 +7970,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər ˈhɑ⁀ut.tœ⁀y.nən",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmer Houttuinen"
                     }
@@ -8051,7 +7978,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈbœ⁀y.tən ˈbrɑ⁀u.wərs.strat",
+                      "phonetic": "\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Buiten Brouwersstraat"
                     }
@@ -8083,7 +8010,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈʋɛs.tər.dɔks.ˌka.də",
+                      "phonetic": "\u02c8\u028b\u025bs.t\u0259r.d\u0254ks.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Westerdokskade"
                     }
@@ -8091,7 +8018,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər ˈhɑ⁀ut.tœ⁀y.nən",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmer Houttuinen"
                     }
@@ -8132,7 +8059,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8184,7 +8111,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8201,7 +8128,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8268,7 +8195,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8285,7 +8212,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8317,7 +8244,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8325,7 +8252,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8363,7 +8290,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -8395,7 +8322,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                      "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Michiel de Ruijtertunnel"
                     }
@@ -8403,7 +8330,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                      "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Michiel de Ruijtertunnel"
                     }
@@ -8963,34 +8890,17 @@
                 {
                   "startPointIndex": 15,
                   "endPointIndex": 18,
-                  "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 36,
-                  "simpleCategory": "road_work",
                   "magnitudeOfDelay": "indefinite",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 3
-                      }
-                    ],
-                    "effectCode": 1
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
                 },
                 {
                   "startPointIndex": 74,
                   "endPointIndex": 77,
                   "delayInSeconds": 8,
                   "effectiveSpeedInKmh": 4,
-                  "simpleCategory": "jam",
                   "magnitudeOfDelay": "major",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 1
-                      }
-                    ],
-                    "effectCode": 6
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
                 }
               ]
             },
@@ -9003,7 +8913,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -9011,7 +8921,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -9038,7 +8948,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                      "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Gosschalklaan"
                     }
@@ -9046,7 +8956,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -9084,7 +8994,7 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈɣɔs.xɑlk.ˌlan",
+                      "phonetic": "\u02c8\u0263\u0254s.x\u0251lk.\u02cclan",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Gosschalklaan"
                     }
@@ -9161,7 +9071,7 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -9208,7 +9118,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -9216,7 +9126,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -9248,7 +9158,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "vɑn ˈhɑl.strat",
+                      "phonetic": "v\u0251n \u02c8h\u0251l.strat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Van Hallstraat"
                     }
@@ -9265,7 +9175,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈhar.lɛ.mər.ˌʋɛx",
+                      "phonetic": "\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Haarlemmerweg"
                     }
@@ -9297,7 +9207,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.plɑnt.sun",
+                      "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Frederik Hendrikplantsoen"
                     }
@@ -9305,7 +9215,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkɔst.fər.lo.rən.ˌstrat",
+                      "phonetic": "\u02c8k\u0254st.f\u0259r.lo.r\u0259n.\u02ccstrat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Kostverlorenstraat"
                     }
@@ -9374,7 +9284,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.plɑnt.sun",
+                      "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Frederik Hendrikplantsoen"
                     }
@@ -9382,7 +9292,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.plɑnt.sun",
+                      "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Frederik Hendrikplantsoen"
                     }
@@ -9410,7 +9320,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.strat",
+                      "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Frederik Hendrikstraat"
                     }
@@ -9418,7 +9328,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈfre.də.rɪk ˈhɛn.drɪk.strat",
+                      "phonetic": "\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Frederik Hendrikstraat"
                     }
@@ -9500,7 +9410,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkɪŋ.kər.ˌstrat",
+                      "phonetic": "\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Kinkerstraat"
                     }
@@ -9508,7 +9418,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈbɪl.dər.dɛ⁀ik.ˌstrat",
+                      "phonetic": "\u02c8b\u026al.d\u0259r.d\u025b\u2040ik.\u02ccstrat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Bilderdijkstraat"
                     }
@@ -9580,7 +9490,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈnɑ.sɑ⁀u.ˌka.də",
+                      "phonetic": "\u02c8n\u0251.s\u0251\u2040u.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Nassaukade"
                     }
@@ -9588,7 +9498,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkɪŋ.kər.ˌstrat",
+                      "phonetic": "\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Kinkerstraat"
                     }
@@ -9643,7 +9553,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                      "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Mauritskade"
                     }
@@ -9660,7 +9570,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                      "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Mauritskade"
                     }
@@ -9753,7 +9663,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                      "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Mauritskade"
                     }
@@ -9771,7 +9681,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈmɑ⁀u.rɪts.ˌka.də",
+                      "phonetic": "\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Mauritskade"
                     }
@@ -9798,7 +9708,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -9815,7 +9725,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -9856,7 +9766,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -9864,7 +9774,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -9902,7 +9812,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "də ˈrœ⁀y.tər.ˌka.də",
+                      "phonetic": "d\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "De Ruijterkade"
                     }
@@ -9934,7 +9844,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                      "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Michiel de Ruijtertunnel"
                     }
@@ -9942,7 +9852,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "mi.ˈxil də ˈrœ⁀y.tər.tʌ.nəl",
+                      "phonetic": "mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Michiel de Ruijtertunnel"
                     }
@@ -10403,7 +10313,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈɣœ⁀ys.ˌʋɛx",
+                    "phonetic": "\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Guisweg"
                   }
@@ -10420,7 +10330,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈɣœ⁀ys.ˌʋɛx",
+                    "phonetic": "\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Guisweg"
                   }
@@ -10464,7 +10374,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈlex.ʋa.tər.ˌʋɛx",
+                    "phonetic": "\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Leeghwaterweg"
                   }
@@ -10488,7 +10398,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈlex.ʋa.tər.ˌʋɛx",
+                    "phonetic": "\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Leeghwaterweg"
                   }
@@ -10544,7 +10454,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈlex.ʋa.tər.ˌʋɛx",
+                    "phonetic": "\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Leeghwaterweg"
                   }
@@ -10674,7 +10584,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -10726,7 +10636,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -10734,7 +10644,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -10783,7 +10693,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -10791,7 +10701,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -10853,7 +10763,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -10861,7 +10771,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -10913,7 +10823,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                    "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                     "phoneticLanguageCode": "nl-NL",
                     "text": "Zeilenmakerspad"
                   }
@@ -11218,7 +11128,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈɣœ⁀ys.ˌʋɛx",
+                      "phonetic": "\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Guisweg"
                     }
@@ -11235,7 +11145,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈɣœ⁀ys.ˌʋɛx",
+                      "phonetic": "\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Guisweg"
                     }
@@ -11274,7 +11184,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈlex.ʋa.tər.ˌʋɛx",
+                      "phonetic": "\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Leeghwaterweg"
                     }
@@ -11298,7 +11208,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈlex.ʋa.tər.ˌʋɛx",
+                      "phonetic": "\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Leeghwaterweg"
                     }
@@ -11349,7 +11259,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈlex.ʋa.tər.ˌʋɛx",
+                      "phonetic": "\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Leeghwaterweg"
                     }
@@ -11438,7 +11348,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11481,7 +11391,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11489,7 +11399,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11526,7 +11436,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11534,7 +11444,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11584,7 +11494,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11592,7 +11502,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11635,7 +11545,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈzɛ⁀i.lən.ma.kərs.ˌpɑt",
+                      "phonetic": "\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t",
                       "phoneticLanguageCode": "nl-NL",
                       "text": "Zeilenmakerspad"
                     }
@@ -11773,7 +11683,7 @@
                       "longitude": 2.7705115
                     },
                     "street": "N-156",
-                    "city": "Vilobí d'Onyar",
+                    "city": "Vilob\u00ed d'Onyar",
                     "postalCode": "17185",
                     "countryCode": "ES"
                   },
@@ -12484,73 +12394,41 @@
               "startPointIndex": 83,
               "endPointIndex": 98,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "ROAD_WORK",
               "effectiveSpeedInKmh": 15,
               "delayInSeconds": 0,
               "magnitudeOfDelay": 4,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 3
-                  }
-                ],
-                "effectCode": 1
-              },
+              "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 },
               "eventId": "TTR43907448004019001"
             },
             {
               "startPointIndex": 99,
               "endPointIndex": 127,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "JAM",
               "effectiveSpeedInKmh": 5,
               "delayInSeconds": 204,
               "magnitudeOfDelay": 1,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 1
-                  }
-                ],
-                "effectCode": 6
-              },
+              "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 },
               "eventId": "TTL43907447976011001"
             },
             {
               "startPointIndex": 344,
               "endPointIndex": 387,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "JAM",
               "effectiveSpeedInKmh": 39,
               "delayInSeconds": 75,
               "magnitudeOfDelay": 1,
-              "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 1
-                  }
-                ],
-                "effectCode": 4
-              },
+              "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 4 },
               "eventId": "TTL43884365172033000"
             },
             {
               "startPointIndex": 1488,
               "endPointIndex": 1519,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "OTHER",
               "effectiveSpeedInKmh": 52,
               "delayInSeconds": 0,
               "magnitudeOfDelay": 4,
               "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 4
-                  },
-                  {
-                    "mainCauseCode": 3
-                  }
-                ],
+                "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                 "effectCode": 1
               },
               "eventId": "TTR43702587748090000"
@@ -12559,19 +12437,11 @@
               "startPointIndex": 1528,
               "endPointIndex": 1531,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "OTHER",
               "effectiveSpeedInKmh": 52,
               "delayInSeconds": 0,
               "magnitudeOfDelay": 4,
               "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 4
-                  },
-                  {
-                    "mainCauseCode": 3
-                  }
-                ],
+                "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                 "effectCode": 1
               },
               "eventId": "TTR43702587748090000"
@@ -12580,19 +12450,11 @@
               "startPointIndex": 1540,
               "endPointIndex": 1568,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "OTHER",
               "effectiveSpeedInKmh": 56,
               "delayInSeconds": 0,
               "magnitudeOfDelay": 4,
               "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 4
-                  },
-                  {
-                    "mainCauseCode": 3
-                  }
-                ],
+                "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                 "effectCode": 1
               },
               "eventId": "TTR43702587700082000"
@@ -12601,19 +12463,11 @@
               "startPointIndex": 1575,
               "endPointIndex": 1582,
               "sectionType": "TRAFFIC",
-              "simpleCategory": "OTHER",
               "effectiveSpeedInKmh": 52,
               "delayInSeconds": 0,
               "magnitudeOfDelay": 4,
               "tec": {
-                "causes": [
-                  {
-                    "mainCauseCode": 4
-                  },
-                  {
-                    "mainCauseCode": 3
-                  }
-                ],
+                "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                 "effectCode": 1
               },
               "eventId": "TTR43702587748090000"
@@ -12624,7 +12478,7 @@
               "sectionType": "IMPORTANT_ROAD_STRETCH",
               "importantRoadStretchIndex": 0,
               "streetName": {
-                "text": "Autopista del Mediterráneo"
+                "text": "Autopista del Mediterr\u00e1neo"
               },
               "roadNumbers": [
                 {
@@ -12641,7 +12495,7 @@
               "sectionType": "IMPORTANT_ROAD_STRETCH",
               "importantRoadStretchIndex": 0,
               "streetName": {
-                "text": "Autopista del Mediterráneo"
+                "text": "Autopista del Mediterr\u00e1neo"
               },
               "roadNumbers": [
                 {
@@ -13124,7 +12978,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlæ kæ.ˈnuː.ðə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de la Canuda"
                   }
@@ -13132,7 +12986,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlæ kæ.ˈnuː.ðə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de la Canuda"
                   }
@@ -13170,15 +13024,15 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "æ.və.ˈniː.də ˈdɛl ˈpɔːɻ.təl ˈdɛl ˈe⁀ɪn.d⁀ʒəl",
+                    "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Avenida del Portal del Ángel"
+                    "text": "Avenida del Portal del \u00c1ngel"
                   }
                 },
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlæ kæ.ˈnuː.ðə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de la Canuda"
                   }
@@ -13232,7 +13086,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlə⁀ʊs ˈɑːɻ.kə⁀ʊs",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u0259\u2040\u028as \u02c8\u0251\u02d0\u027b.k\u0259\u2040\u028as",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de los Arcos"
                   }
@@ -13240,9 +13094,9 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "æ.və.ˈniː.də ˈdɛl ˈpɔːɻ.təl ˈdɛl ˈe⁀ɪn.d⁀ʒəl",
+                    "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Avenida del Portal del Ángel"
+                    "text": "Avenida del Portal del \u00c1ngel"
                   }
                 },
                 "routeOffsetInMeters": 86,
@@ -13286,7 +13140,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "æ.və.ˈniː.də ˈdə ˈlæ kæ.tɛ.ˈðɻæl",
+                    "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Avenida de la Catedral"
                   }
@@ -13336,7 +13190,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "æ.və.ˈniː.də ˈdə ˈlæ kæ.tɛ.ˈðɻæl",
+                    "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Avenida de la Catedral"
                   }
@@ -13382,9 +13236,9 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈbiː.ə lə.jə.ˈtæ.nə",
+                    "phonetic": "\u02c8bi\u02d0.\u0259 l\u0259.j\u0259.\u02c8t\u00e6.n\u0259",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Vía Laietana"
+                    "text": "V\u00eda Laietana"
                   }
                 },
                 "previousRoadInfo": {
@@ -13438,7 +13292,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdɛl ˈdɒk.təɻ əj.gwə.ˈðɛ",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle del Doctor Aiguader"
                   }
@@ -13446,7 +13300,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdɛl ˈdɒk.təɻ əj.gwə.ˈðɛ",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle del Doctor Aiguader"
                   }
@@ -13568,7 +13422,7 @@
                         "shieldContent": "B-10"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈbiː ˈtɛn",
+                        "phonetic": "\u02c8bi\u02d0 \u02c8t\u025bn",
                         "phoneticLanguageCode": "en-GB",
                         "text": "B-10"
                       },
@@ -13576,7 +13430,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈɻɒn.də ˈdɛl liː.tɔː.ˈɻæl",
+                    "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Ronda del Litoral"
                   }
@@ -13625,7 +13479,7 @@
                         "shieldContent": "C-58"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈsiː fɪf.tiː.ˈe⁀ɪt",
+                        "phonetic": "\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at",
                         "phoneticLanguageCode": "en-GB",
                         "text": "C-58"
                       },
@@ -13646,7 +13500,7 @@
                         "shieldContent": "B-10"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈbiː ˈtɛn",
+                        "phonetic": "\u02c8bi\u02d0 \u02c8t\u025bn",
                         "phoneticLanguageCode": "en-GB",
                         "text": "B-10"
                       },
@@ -13654,7 +13508,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈɻɒn.də ˈdɛl liː.tɔː.ˈɻæl",
+                    "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Ronda del Litoral"
                   }
@@ -13690,7 +13544,7 @@
                     "text": ""
                   },
                   "towardName": {
-                    "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                    "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Girona"
                   }
@@ -13727,7 +13581,7 @@
                         "shieldContent": "C-58"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈsiː fɪf.tiː.ˈe⁀ɪt",
+                        "phonetic": "\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at",
                         "phoneticLanguageCode": "en-GB",
                         "text": "C-58"
                       },
@@ -13735,9 +13589,9 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl bæ.ˈjɛs",
+                    "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl b\u00e6.\u02c8j\u025bs",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Autopista del Vallés"
+                    "text": "Autopista del Vall\u00e9s"
                   }
                 },
                 "routeOffsetInMeters": 12661,
@@ -13771,7 +13625,7 @@
                     "text": ""
                   },
                   "towardName": {
-                    "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                    "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Girona"
                   }
@@ -13808,7 +13662,7 @@
                         "shieldContent": "C-33"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈsiː θɜː.tiː.ˈθɻiː",
+                        "phonetic": "\u02c8si\u02d0 \u03b8\u025c\u02d0.ti\u02d0.\u02c8\u03b8\u027bi\u02d0",
                         "phoneticLanguageCode": "en-GB",
                         "text": "C-33"
                       },
@@ -13839,7 +13693,7 @@
                     "text": ""
                   },
                   "towardName": {
-                    "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                    "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Girona"
                   }
@@ -13870,7 +13724,7 @@
                         "shieldContent": "C-25"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈsiː twɛn.tiː.ˈfa⁀ɪv",
+                        "phonetic": "\u02c8si\u02d0 tw\u025bn.ti\u02d0.\u02c8fa\u2040\u026av",
                         "phoneticLanguageCode": "en-GB",
                         "text": "C-25"
                       },
@@ -13891,7 +13745,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -13904,7 +13758,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -13912,9 +13766,9 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                    "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Autopista del Mediterráneo"
+                    "text": "Autopista del Mediterr\u00e1neo"
                   }
                 },
                 "routeOffsetInMeters": 90058,
@@ -13941,7 +13795,7 @@
                     "text": "8"
                   },
                   "towardName": {
-                    "phonetic": "ɻiː.uː.ˈðɛ.jɔːts ˈdə ˈlæ ˈsɛl.və",
+                    "phonetic": "\u027bi\u02d0.u\u02d0.\u02c8\u00f0\u025b.j\u0254\u02d0ts \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u025bl.v\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "RIUDELLOTS DE LA SELVA"
                   }
@@ -13970,7 +13824,7 @@
                         "shieldContent": "N-156"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                        "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-156"
                       },
@@ -14023,7 +13877,7 @@
                     "text": ""
                   },
                   "towardName": {
-                    "phonetic": "ə.ˈe⁀ɪ.ɻə.pɔːɻt",
+                    "phonetic": "\u0259.\u02c8e\u2040\u026a.\u027b\u0259.p\u0254\u02d0\u027bt",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Aeroport"
                   }
@@ -14045,9 +13899,9 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                    "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Parque Aeroportuario y Logístico"
+                    "text": "Parque Aeroportuario y Log\u00edstico"
                   }
                 },
                 "previousRoadInfo": {
@@ -14060,7 +13914,7 @@
                         "shieldContent": "N-156"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                        "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-156"
                       },
@@ -14192,9 +14046,9 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                    "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Parque Aeroportuario y Logístico"
+                    "text": "Parque Aeroportuario y Log\u00edstico"
                   }
                 },
                 "routeOffsetInMeters": 91750,
@@ -14321,9 +14175,9 @@
                 "nextRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                    "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Parque Aeroportuario y Logístico"
+                    "text": "Parque Aeroportuario y Log\u00edstico"
                   }
                 },
                 "previousRoadInfo": {
@@ -14392,7 +14246,7 @@
                         "shieldContent": "N-156"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                        "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-156"
                       },
@@ -14406,9 +14260,9 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                    "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Parque Aeroportuario y Logístico"
+                    "text": "Parque Aeroportuario y Log\u00edstico"
                   }
                 },
                 "roundaboutExitNumber": 3,
@@ -14569,7 +14423,7 @@
                         "shieldContent": "N-156"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                        "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-156"
                       },
@@ -14584,9 +14438,9 @@
                 "previousRoadInfo": {
                   "properties": [],
                   "streetName": {
-                    "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                    "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Parque Aeroportuario y Logístico"
+                    "text": "Parque Aeroportuario y Log\u00edstico"
                   }
                 },
                 "roundaboutExitNumber": 3,
@@ -14627,7 +14481,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -14640,7 +14494,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -14661,7 +14515,7 @@
                         "shieldContent": "N-156"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                        "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-156"
                       },
@@ -14862,7 +14716,7 @@
                     "text": ""
                   },
                   "towardName": {
-                    "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                    "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Girona"
                   }
@@ -14891,7 +14745,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -14904,7 +14758,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -14926,7 +14780,7 @@
                         "shieldContent": "N-156"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                        "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-156"
                       },
@@ -14977,7 +14831,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -14990,7 +14844,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -15027,7 +14881,7 @@
                     "text": ""
                   },
                   "towardName": {
-                    "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                    "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Girona"
                   }
@@ -15051,7 +14905,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -15064,7 +14918,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -15072,9 +14926,9 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                    "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Autopista del Mediterráneo"
+                    "text": "Autopista del Mediterr\u00e1neo"
                   }
                 },
                 "previousRoadInfo": {
@@ -15121,7 +14975,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -15134,7 +14988,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -15142,9 +14996,9 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                    "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Autopista del Mediterráneo"
+                    "text": "Autopista del Mediterr\u00e1neo"
                   }
                 },
                 "previousRoadInfo": {
@@ -15157,7 +15011,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -15170,7 +15024,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -15178,9 +15032,9 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                    "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Autopista del Mediterráneo"
+                    "text": "Autopista del Mediterr\u00e1neo"
                   }
                 },
                 "routeOffsetInMeters": 94365,
@@ -15227,7 +15081,7 @@
                         "shieldContent": "AP-7"
                       },
                       "roadNumber": {
-                        "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                        "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                         "phoneticLanguageCode": "en-GB",
                         "text": "AP-7"
                       },
@@ -15240,7 +15094,7 @@
                         "shieldContent": "E-15"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈiː fɪf.ˈtiːn",
+                        "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                         "phoneticLanguageCode": "en-GB",
                         "text": "E-15"
                       },
@@ -15248,9 +15102,9 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                    "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                     "phoneticLanguageCode": "en-GB",
-                    "text": "Autopista del Mediterráneo"
+                    "text": "Autopista del Mediterr\u00e1neo"
                   }
                 },
                 "routeOffsetInMeters": 100513,
@@ -15277,7 +15131,7 @@
                     "text": "7"
                   },
                   "towardName": {
-                    "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə ˈsʊ⁀əɻ",
+                    "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u028a\u2040\u0259\u027b",
                     "phoneticLanguageCode": "en-GB",
                     "text": "GIRONA S"
                   }
@@ -15378,7 +15232,7 @@
                     "text": ""
                   },
                   "towardName": {
-                    "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə ˈsɛn.təɻ",
+                    "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u025bn.t\u0259\u027b",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Girona Centre"
                   }
@@ -15409,7 +15263,7 @@
                         "shieldContent": "C-65"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈsiː sɪk.stiː.ˈfa⁀ɪv",
+                        "phonetic": "\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av",
                         "phoneticLanguageCode": "en-GB",
                         "text": "C-65"
                       },
@@ -15430,7 +15284,7 @@
                         "shieldContent": "C-65"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈsiː sɪk.stiː.ˈfa⁀ɪv",
+                        "phonetic": "\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av",
                         "phoneticLanguageCode": "en-GB",
                         "text": "C-65"
                       },
@@ -15485,7 +15339,7 @@
                         "shieldContent": "C-65"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈsiː sɪk.stiː.ˈfa⁀ɪv",
+                        "phonetic": "\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av",
                         "phoneticLanguageCode": "en-GB",
                         "text": "C-65"
                       },
@@ -15578,7 +15432,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -15586,7 +15440,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -15835,7 +15689,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -15843,7 +15697,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -15893,7 +15747,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -15901,7 +15755,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -15916,7 +15770,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -15924,7 +15778,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -16037,7 +15891,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -16045,7 +15899,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -16061,7 +15915,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -16069,7 +15923,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -16115,7 +15969,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -16123,7 +15977,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -16138,7 +15992,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -16146,7 +16000,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -16301,7 +16155,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈsænt ˈd⁀ʒə⁀ʊn bæp.ˈtiː.stə ˈdə ˈlæ ˈsɔːl",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Sant Joan Baptista de la Salle"
                   }
@@ -16317,7 +16171,7 @@
                         "shieldContent": "N-IIa"
                       },
                       "roadNumber": {
-                        "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                        "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                         "phoneticLanguageCode": "en-GB",
                         "text": "N-IIa"
                       },
@@ -16325,7 +16179,7 @@
                     }
                   ],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Barcelona"
                   }
@@ -16382,7 +16236,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈd⁀ʒə⁀ʊn mə.ɻə.ˈgæj",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle Joan Maragall"
                   }
@@ -16391,7 +16245,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈsænt ˈd⁀ʒə⁀ʊn bæp.ˈtiː.stə ˈdə ˈlæ ˈsɔːl",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle de Sant Joan Baptista de la Salle"
                   }
@@ -16448,7 +16302,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈɻɒn.də ˈdə ˈsænt æn.ˈtə⁀ʊ.nɪ mə.ˈɻiː.ə ˈklæ.ɻət",
+                    "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Ronda de Sant Antoni Maria Claret"
                   }
@@ -16457,7 +16311,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈkæ.je⁀ɪ ˈd⁀ʒə⁀ʊn mə.ɻə.ˈgæj",
+                    "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Calle Joan Maragall"
                   }
@@ -16497,7 +16351,7 @@
                 "nextRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈɻɒn.də ˈdə ˈsænt æn.ˈtə⁀ʊ.nɪ mə.ˈɻiː.ə ˈklæ.ɻət",
+                    "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Ronda de Sant Antoni Maria Claret"
                   }
@@ -16505,7 +16359,7 @@
                 "previousRoadInfo": {
                   "properties": ["URBAN"],
                   "streetName": {
-                    "phonetic": "ˈɻɒn.də ˈdə ˈsænt æn.ˈtə⁀ʊ.nɪ mə.ˈɻiː.ə ˈklæ.ɻət",
+                    "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t",
                     "phoneticLanguageCode": "en-GB",
                     "text": "Ronda de Sant Antoni Maria Claret"
                   }
@@ -16981,7 +16835,7 @@
                         "address": {
                           "freeformAddress": "N-156",
                           "streetName": "N-156",
-                          "municipality": "Vilobí d'Onyar",
+                          "municipality": "Vilob\u00ed d'Onyar",
                           "postalCode": "17185"
                         },
                         "chargingConnectionInfo": {
@@ -17384,62 +17238,30 @@
                   "startPointIndex": 83,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 15,
-                  "simpleCategory": "road_work",
                   "magnitudeOfDelay": "indefinite",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 3
-                      }
-                    ],
-                    "effectCode": 1
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 3 }], "effectCode": 1 }
                 },
                 {
                   "startPointIndex": 99,
                   "delayInSeconds": 204,
                   "effectiveSpeedInKmh": 5,
-                  "simpleCategory": "jam",
                   "magnitudeOfDelay": "minor",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 1
-                      }
-                    ],
-                    "effectCode": 6
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 6 }
                 },
                 {
                   "startPointIndex": 344,
                   "delayInSeconds": 75,
                   "effectiveSpeedInKmh": 39,
-                  "simpleCategory": "jam",
                   "magnitudeOfDelay": "minor",
-                  "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 1
-                      }
-                    ],
-                    "effectCode": 4
-                  }
+                  "tec": { "causes": [{ "mainCauseCode": 1 }], "effectCode": 4 }
                 },
                 {
                   "startPointIndex": 1488,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 52,
-                  "simpleCategory": "other",
                   "magnitudeOfDelay": "indefinite",
                   "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 4
-                      },
-                      {
-                        "mainCauseCode": 3
-                      }
-                    ],
+                    "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                     "effectCode": 1
                   }
                 },
@@ -17447,17 +17269,9 @@
                   "startPointIndex": 1528,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 52,
-                  "simpleCategory": "other",
                   "magnitudeOfDelay": "indefinite",
                   "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 4
-                      },
-                      {
-                        "mainCauseCode": 3
-                      }
-                    ],
+                    "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                     "effectCode": 1
                   }
                 },
@@ -17465,17 +17279,9 @@
                   "startPointIndex": 1540,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 56,
-                  "simpleCategory": "other",
                   "magnitudeOfDelay": "indefinite",
                   "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 4
-                      },
-                      {
-                        "mainCauseCode": 3
-                      }
-                    ],
+                    "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                     "effectCode": 1
                   }
                 },
@@ -17483,17 +17289,9 @@
                   "startPointIndex": 1575,
                   "delayInSeconds": 0,
                   "effectiveSpeedInKmh": 52,
-                  "simpleCategory": "other",
                   "magnitudeOfDelay": "indefinite",
                   "tec": {
-                    "causes": [
-                      {
-                        "mainCauseCode": 4
-                      },
-                      {
-                        "mainCauseCode": 3
-                      }
-                    ],
+                    "causes": [{ "mainCauseCode": 4 }, { "mainCauseCode": 3 }],
                     "effectCode": 1
                   }
                 }
@@ -17502,7 +17300,7 @@
                 {
                   "startPointIndex": 698,
                   "index": 0,
-                  "streetName": "Autopista del Mediterráneo",
+                  "streetName": "Autopista del Mediterr\u00e1neo",
                   "roadNumbers": [
                     {
                       "text": "AP-7"
@@ -17515,7 +17313,7 @@
                 {
                   "startPointIndex": 1607,
                   "index": 0,
-                  "streetName": "Autopista del Mediterráneo",
+                  "streetName": "Autopista del Mediterr\u00e1neo",
                   "roadNumbers": [
                     {
                       "text": "AP-7"
@@ -17945,7 +17743,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlæ kæ.ˈnuː.ðə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de la Canuda"
                     }
@@ -17953,7 +17751,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlæ kæ.ˈnuː.ðə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de la Canuda"
                     }
@@ -17986,15 +17784,15 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "æ.və.ˈniː.də ˈdɛl ˈpɔːɻ.təl ˈdɛl ˈe⁀ɪn.d⁀ʒəl",
+                      "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Avenida del Portal del Ángel"
+                      "text": "Avenida del Portal del \u00c1ngel"
                     }
                   },
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlæ kæ.ˈnuː.ðə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de la Canuda"
                     }
@@ -18037,7 +17835,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈlə⁀ʊs ˈɑːɻ.kə⁀ʊs",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u0259\u2040\u028as \u02c8\u0251\u02d0\u027b.k\u0259\u2040\u028as",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de los Arcos"
                     }
@@ -18045,9 +17843,9 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "æ.və.ˈniː.də ˈdɛl ˈpɔːɻ.təl ˈdɛl ˈe⁀ɪn.d⁀ʒəl",
+                      "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Avenida del Portal del Ángel"
+                      "text": "Avenida del Portal del \u00c1ngel"
                     }
                   },
                   "routeOffsetInMeters": 86,
@@ -18083,7 +17881,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "æ.və.ˈniː.də ˈdə ˈlæ kæ.tɛ.ˈðɻæl",
+                      "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Avenida de la Catedral"
                     }
@@ -18128,7 +17926,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "æ.və.ˈniː.də ˈdə ˈlæ kæ.tɛ.ˈðɻæl",
+                      "phonetic": "\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Avenida de la Catedral"
                     }
@@ -18165,9 +17963,9 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈbiː.ə lə.jə.ˈtæ.nə",
+                      "phonetic": "\u02c8bi\u02d0.\u0259 l\u0259.j\u0259.\u02c8t\u00e6.n\u0259",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Vía Laietana"
+                      "text": "V\u00eda Laietana"
                     }
                   },
                   "previousRoadInfo": {
@@ -18212,7 +18010,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdɛl ˈdɒk.təɻ əj.gwə.ˈðɛ",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle del Doctor Aiguader"
                     }
@@ -18220,7 +18018,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdɛl ˈdɒk.təɻ əj.gwə.ˈðɛ",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle del Doctor Aiguader"
                     }
@@ -18336,7 +18134,7 @@
                           "shieldContent": "B-10"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈbiː ˈtɛn",
+                          "phonetic": "\u02c8bi\u02d0 \u02c8t\u025bn",
                           "phoneticLanguageCode": "en-GB",
                           "text": "B-10"
                         },
@@ -18344,7 +18142,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈɻɒn.də ˈdɛl liː.tɔː.ˈɻæl",
+                      "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Ronda del Litoral"
                     }
@@ -18387,7 +18185,7 @@
                           "shieldContent": "C-58"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈsiː fɪf.tiː.ˈe⁀ɪt",
+                          "phonetic": "\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at",
                           "phoneticLanguageCode": "en-GB",
                           "text": "C-58"
                         },
@@ -18408,7 +18206,7 @@
                           "shieldContent": "B-10"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈbiː ˈtɛn",
+                          "phonetic": "\u02c8bi\u02d0 \u02c8t\u025bn",
                           "phoneticLanguageCode": "en-GB",
                           "text": "B-10"
                         },
@@ -18416,7 +18214,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈɻɒn.də ˈdɛl liː.tɔː.ˈɻæl",
+                      "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Ronda del Litoral"
                     }
@@ -18449,7 +18247,7 @@
                       "text": ""
                     },
                     "towardName": {
-                      "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                      "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Girona"
                     }
@@ -18484,7 +18282,7 @@
                           "shieldContent": "C-58"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈsiː fɪf.tiː.ˈe⁀ɪt",
+                          "phonetic": "\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at",
                           "phoneticLanguageCode": "en-GB",
                           "text": "C-58"
                         },
@@ -18492,9 +18290,9 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl bæ.ˈjɛs",
+                      "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl b\u00e6.\u02c8j\u025bs",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Autopista del Vallés"
+                      "text": "Autopista del Vall\u00e9s"
                     }
                   },
                   "routeOffsetInMeters": 12661,
@@ -18525,7 +18323,7 @@
                       "text": ""
                     },
                     "towardName": {
-                      "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                      "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Girona"
                     }
@@ -18559,7 +18357,7 @@
                           "shieldContent": "C-33"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈsiː θɜː.tiː.ˈθɻiː",
+                          "phonetic": "\u02c8si\u02d0 \u03b8\u025c\u02d0.ti\u02d0.\u02c8\u03b8\u027bi\u02d0",
                           "phoneticLanguageCode": "en-GB",
                           "text": "C-33"
                         },
@@ -18587,7 +18385,7 @@
                       "text": ""
                     },
                     "towardName": {
-                      "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                      "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Girona"
                     }
@@ -18616,7 +18414,7 @@
                           "shieldContent": "C-25"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈsiː twɛn.tiː.ˈfa⁀ɪv",
+                          "phonetic": "\u02c8si\u02d0 tw\u025bn.ti\u02d0.\u02c8fa\u2040\u026av",
                           "phoneticLanguageCode": "en-GB",
                           "text": "C-25"
                         },
@@ -18637,7 +18435,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -18650,7 +18448,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -18658,9 +18456,9 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                      "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Autopista del Mediterráneo"
+                      "text": "Autopista del Mediterr\u00e1neo"
                     }
                   },
                   "routeOffsetInMeters": 90058,
@@ -18684,7 +18482,7 @@
                       "text": "8"
                     },
                     "towardName": {
-                      "phonetic": "ɻiː.uː.ˈðɛ.jɔːts ˈdə ˈlæ ˈsɛl.və",
+                      "phonetic": "\u027bi\u02d0.u\u02d0.\u02c8\u00f0\u025b.j\u0254\u02d0ts \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u025bl.v\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "RIUDELLOTS DE LA SELVA"
                     }
@@ -18711,7 +18509,7 @@
                           "shieldContent": "N-156"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                          "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-156"
                         },
@@ -18758,7 +18556,7 @@
                       "text": ""
                     },
                     "towardName": {
-                      "phonetic": "ə.ˈe⁀ɪ.ɻə.pɔːɻt",
+                      "phonetic": "\u0259.\u02c8e\u2040\u026a.\u027b\u0259.p\u0254\u02d0\u027bt",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Aeroport"
                     }
@@ -18777,9 +18575,9 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                      "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Parque Aeroportuario y Logístico"
+                      "text": "Parque Aeroportuario y Log\u00edstico"
                     }
                   },
                   "previousRoadInfo": {
@@ -18792,7 +18590,7 @@
                           "shieldContent": "N-156"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                          "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-156"
                         },
@@ -18894,9 +18692,9 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                      "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Parque Aeroportuario y Logístico"
+                      "text": "Parque Aeroportuario y Log\u00edstico"
                     }
                   },
                   "routeOffsetInMeters": 91750,
@@ -18999,9 +18797,9 @@
                   "nextRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                      "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Parque Aeroportuario y Logístico"
+                      "text": "Parque Aeroportuario y Log\u00edstico"
                     }
                   },
                   "previousRoadInfo": {
@@ -19055,7 +18853,7 @@
                           "shieldContent": "N-156"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                          "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-156"
                         },
@@ -19069,9 +18867,9 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                      "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Parque Aeroportuario y Logístico"
+                      "text": "Parque Aeroportuario y Log\u00edstico"
                     }
                   },
                   "roundaboutExitNumber": 3,
@@ -19181,7 +18979,7 @@
                           "shieldContent": "N-156"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                          "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-156"
                         },
@@ -19196,9 +18994,9 @@
                   "previousRoadInfo": {
                     "properties": [],
                     "streetName": {
-                      "phonetic": "ˈpɑːɻk a⁀ɪ.ɻɔː.pɔːɻ.ˈtwæ.ɻjə⁀ʊ ˈiː lə.ˈd⁀ʒɪ.stɪ.kə⁀ʊ",
+                      "phonetic": "\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Parque Aeroportuario y Logístico"
+                      "text": "Parque Aeroportuario y Log\u00edstico"
                     }
                   },
                   "roundaboutExitNumber": 3,
@@ -19233,7 +19031,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -19246,7 +19044,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -19267,7 +19065,7 @@
                           "shieldContent": "N-156"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                          "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-156"
                         },
@@ -19408,7 +19206,7 @@
                       "text": ""
                     },
                     "towardName": {
-                      "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                      "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Girona"
                     }
@@ -19434,7 +19232,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -19447,7 +19245,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -19469,7 +19267,7 @@
                           "shieldContent": "N-156"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn wʌn.fɪf.tiː.ˈsɪks",
+                          "phonetic": "\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-156"
                         },
@@ -19514,7 +19312,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -19527,7 +19325,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -19561,7 +19359,7 @@
                       "text": ""
                     },
                     "towardName": {
-                      "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə",
+                      "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Girona"
                     }
@@ -19582,7 +19380,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -19595,7 +19393,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -19603,9 +19401,9 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                      "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Autopista del Mediterráneo"
+                      "text": "Autopista del Mediterr\u00e1neo"
                     }
                   },
                   "previousRoadInfo": {
@@ -19646,7 +19444,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -19659,7 +19457,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -19667,9 +19465,9 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                      "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Autopista del Mediterráneo"
+                      "text": "Autopista del Mediterr\u00e1neo"
                     }
                   },
                   "previousRoadInfo": {
@@ -19682,7 +19480,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -19695,7 +19493,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -19703,9 +19501,9 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                      "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Autopista del Mediterráneo"
+                      "text": "Autopista del Mediterr\u00e1neo"
                     }
                   },
                   "routeOffsetInMeters": 94365,
@@ -19746,7 +19544,7 @@
                           "shieldContent": "AP-7"
                         },
                         "roadNumber": {
-                          "phonetic": "e⁀ɪ.ˈpiː ˈsɛ.vn̩",
+                          "phonetic": "e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329",
                           "phoneticLanguageCode": "en-GB",
                           "text": "AP-7"
                         },
@@ -19759,7 +19557,7 @@
                           "shieldContent": "E-15"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈiː fɪf.ˈtiːn",
+                          "phonetic": "\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n",
                           "phoneticLanguageCode": "en-GB",
                           "text": "E-15"
                         },
@@ -19767,9 +19565,9 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ɔː.tɔː.ˈpiː.stə ˈdɛl mɛ.dɪ.tə.ˈɻe⁀ɪ.niː.ə⁀ʊ",
+                      "phonetic": "\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a",
                       "phoneticLanguageCode": "en-GB",
-                      "text": "Autopista del Mediterráneo"
+                      "text": "Autopista del Mediterr\u00e1neo"
                     }
                   },
                   "routeOffsetInMeters": 100513,
@@ -19793,7 +19591,7 @@
                       "text": "7"
                     },
                     "towardName": {
-                      "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə ˈsʊ⁀əɻ",
+                      "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u028a\u2040\u0259\u027b",
                       "phoneticLanguageCode": "en-GB",
                       "text": "GIRONA S"
                     }
@@ -19879,7 +19677,7 @@
                       "text": ""
                     },
                     "towardName": {
-                      "phonetic": "d⁀ʒɪ.ˈɻə⁀ʊ.nə ˈsɛn.təɻ",
+                      "phonetic": "d\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u025bn.t\u0259\u027b",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Girona Centre"
                     }
@@ -19907,7 +19705,7 @@
                           "shieldContent": "C-65"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈsiː sɪk.stiː.ˈfa⁀ɪv",
+                          "phonetic": "\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av",
                           "phoneticLanguageCode": "en-GB",
                           "text": "C-65"
                         },
@@ -19928,7 +19726,7 @@
                           "shieldContent": "C-65"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈsiː sɪk.stiː.ˈfa⁀ɪv",
+                          "phonetic": "\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av",
                           "phoneticLanguageCode": "en-GB",
                           "text": "C-65"
                         },
@@ -19977,7 +19775,7 @@
                           "shieldContent": "C-65"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈsiː sɪk.stiː.ˈfa⁀ɪv",
+                          "phonetic": "\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av",
                           "phoneticLanguageCode": "en-GB",
                           "text": "C-65"
                         },
@@ -20058,7 +19856,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20066,7 +19864,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20234,7 +20032,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20242,7 +20040,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20286,7 +20084,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20294,7 +20092,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20309,7 +20107,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20317,7 +20115,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20400,7 +20198,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20408,7 +20206,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20424,7 +20222,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20432,7 +20230,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20472,7 +20270,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20480,7 +20278,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20495,7 +20293,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20503,7 +20301,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20646,7 +20444,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈsænt ˈd⁀ʒə⁀ʊn bæp.ˈtiː.stə ˈdə ˈlæ ˈsɔːl",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Sant Joan Baptista de la Salle"
                     }
@@ -20662,7 +20460,7 @@
                           "shieldContent": "N-IIa"
                         },
                         "roadNumber": {
-                          "phonetic": "ˈɛn ˈtuː ˈe⁀ɪ",
+                          "phonetic": "\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a",
                           "phoneticLanguageCode": "en-GB",
                           "text": "N-IIa"
                         },
@@ -20670,7 +20468,7 @@
                       }
                     ],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə bɑːɻ.sə.ˈlə⁀ʊ.nə",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Barcelona"
                     }
@@ -20718,7 +20516,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈd⁀ʒə⁀ʊn mə.ɻə.ˈgæj",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle Joan Maragall"
                     }
@@ -20727,7 +20525,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈdə ˈsænt ˈd⁀ʒə⁀ʊn bæp.ˈtiː.stə ˈdə ˈlæ ˈsɔːl",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle de Sant Joan Baptista de la Salle"
                     }
@@ -20775,7 +20573,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈɻɒn.də ˈdə ˈsænt æn.ˈtə⁀ʊ.nɪ mə.ˈɻiː.ə ˈklæ.ɻət",
+                      "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Ronda de Sant Antoni Maria Claret"
                     }
@@ -20784,7 +20582,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈkæ.je⁀ɪ ˈd⁀ʒə⁀ʊn mə.ɻə.ˈgæj",
+                      "phonetic": "\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Calle Joan Maragall"
                     }
@@ -20818,7 +20616,7 @@
                   "nextRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈɻɒn.də ˈdə ˈsænt æn.ˈtə⁀ʊ.nɪ mə.ˈɻiː.ə ˈklæ.ɻət",
+                      "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Ronda de Sant Antoni Maria Claret"
                     }
@@ -20826,7 +20624,7 @@
                   "previousRoadInfo": {
                     "properties": ["URBAN"],
                     "streetName": {
-                      "phonetic": "ˈɻɒn.də ˈdə ˈsænt æn.ˈtə⁀ʊ.nɪ mə.ˈɻiː.ə ˈklæ.ɻət",
+                      "phonetic": "\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t",
                       "phoneticLanguageCode": "en-GB",
                       "text": "Ronda de Sant Antoni Maria Claret"
                     }

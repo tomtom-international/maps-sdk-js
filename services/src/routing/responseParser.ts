@@ -30,7 +30,7 @@ import {
 import type { LineString, Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
 import { ExplicitVehicleModel } from '../shared/types/vehicleModel';
-import type {
+import {
     CalculateRouteResponseAPI,
     ChargingStopAPI,
     CurrentTypeAPI,
@@ -40,7 +40,6 @@ import type {
     RoutePathPointAPI,
     SectionAPI,
     SummaryAPI,
-    TrafficCategoryAPI,
 } from './types/apiResponseTypes';
 import { CalculateRouteParams } from './types/calculateRouteParams';
 
@@ -187,11 +186,66 @@ const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => (
 const toVehicleRestrictedSectionProps = (apiSection: SectionAPI): SectionProps | null =>
     apiSection.travelMode === 'other' ? toSectionProps(apiSection) : null;
 
+const calculateTrafficCategory = (tecMainCauseCode: number | undefined): TrafficCategory => {
+    switch (tecMainCauseCode) {
+        case 1:
+            return 'jam';
+        case 2:
+            return 'accident';
+        case 3:
+            return 'roadworks';
+        case 4:
+            return 'narrow-lanes';
+        case 5:
+            return 'road-closed';
+        case 9:
+            return 'danger';
+        case 11:
+            return 'animals-on-road';
+        case 13:
+            return 'broken-down-vehicle';
+        case 16:
+            return 'lane-closed';
+        case 17:
+            return 'wind';
+        case 18:
+            return 'fog';
+        case 19:
+            return 'rain';
+        case 22:
+            return 'frost';
+        case 23:
+            return 'flooding';
+        default:
+            return 'other';
+    }
+};
+
+/**
+ * @ignore
+ */
+export const toTrafficCategories = (apiSection: SectionAPI): TrafficCategory[] => {
+    if (apiSection.tec?.causes?.length) {
+        return apiSection.tec.causes.map((cause) => calculateTrafficCategory(cause.mainCauseCode));
+    }
+    // else
+    switch (apiSection.simpleCategory) {
+        case 'JAM':
+            return ['jam'];
+        case 'ROAD_WORK':
+            return ['roadworks'];
+        case 'ROAD_CLOSURE':
+            return ['road-closed'];
+        default:
+            return ['other'];
+    }
+};
+
 const toTrafficSectionProps = (apiSection: SectionAPI): TrafficSectionProps => ({
     ...toSectionProps(apiSection),
     delayInSeconds: apiSection.delayInSeconds,
     effectiveSpeedInKmh: apiSection.effectiveSpeedInKmh,
-    simpleCategory: (apiSection.simpleCategory as TrafficCategoryAPI).toLowerCase() as TrafficCategory,
+    categories: toTrafficCategories(apiSection),
     magnitudeOfDelay: indexedMagnitudes[apiSection.magnitudeOfDelay as number],
     tec: apiSection.tec as TrafficIncidentTEC,
 });

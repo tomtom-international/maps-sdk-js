@@ -18,9 +18,9 @@ const contentSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll
     '.maps-sdk-js-examples-content-selector',
 );
 const colorSelectors: NodeListOf<HTMLDivElement> = document.querySelectorAll('.maps-sdk-js-examples-color-selector');
-colorSelectors.forEach((element) => {
+for (const element of colorSelectors) {
     element.style.backgroundColor = element.dataset.value ?? '';
-});
+}
 
 const customIconsConfig: PlaceIconConfig = {
     customIcons: [
@@ -94,7 +94,7 @@ const listenToUIEvents = () => {
         if (value === 'custom') {
             places.applyIconConfig(customIconsConfig);
         } else {
-            places.applyIconConfig({ style: value as PlacesTheme });
+            places.applyTheme(value as PlacesTheme);
         }
     });
 };

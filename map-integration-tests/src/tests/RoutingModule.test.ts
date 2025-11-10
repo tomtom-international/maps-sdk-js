@@ -36,7 +36,8 @@ const ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID = 'routeWaypointSymbol';
 const ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID = 'routeVehicleRestrictedForegroundLine';
 const ROUTE_FERRIES_LINE_LAYER_ID = 'routeFerryLine';
 const ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID = 'routeTollRoadOutline';
-const ROUTE_INCIDENTS_SYMBOL_LAYER_ID = 'routeIncidentSymbol';
+const ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID = 'routeIncidentJamSymbol';
+const ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID = 'routeIncidentCauseSymbol';
 const ROUTE_CHARGING_STOPS_SYMBOL_LAYER_ID = 'routeChargingStopSymbol';
 const ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID = 'routeSummaryBubbleSymbol';
 const ROUTE_INSTRUCTIONS_LINE_LAYER_ID = 'routeInstructionLine';
@@ -172,11 +173,12 @@ test.describe('Routing and waypoint display tests', () => {
         await waitUntilRenderedFeatures(page, [ROUTE_FERRIES_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures(page, [ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
         expect((await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
-        expect(await getSelectedSummaryBubbleProps(page)).toEqual({
+        expect(await getSelectedSummaryBubbleProps(page)).toMatchObject({
             routeState: 'selected',
             formattedDistance: '77 km',
             formattedDuration: '1 hr 04 min',
             formattedTraffic: '3 min',
+            magnitudeOfDelay: 'minor',
         });
 
         // Changing the style, asserting that the route stays the same:
@@ -383,7 +385,7 @@ test.describe('Routing and waypoint display tests', () => {
         // we should see some incident icons here:
         const renderedIncidents = await waitUntilRenderedFeaturesChange(
             page,
-            [ROUTE_INCIDENTS_SYMBOL_LAYER_ID],
+            [ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID, ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID],
             0,
             2000,
         );
@@ -500,19 +502,17 @@ test.describe('Routing and waypoint display tests', () => {
         await waitForMapIdle(page);
         expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, 'line-color')).toBe('#36A8F0');
 
-        const newConfig = {
+        await applyConfig(page, {
+            theme: { mainColor: 'red' },
             layers: {
                 mainLines: {
                     routeLine: {
-                        paint: {
-                            ...defaultRoutingLayers.mainLines?.routeLine?.paint,
-                            'line-color': '#ff0000',
-                        },
+                        ...defaultRoutingLayers.mainLines?.routeLine,
+                        paint: { ...defaultRoutingLayers.mainLines?.routeLine?.paint, 'line-color': '#ff0000' },
                     },
                 },
             },
-        };
-        await applyConfig(page, newConfig);
+        });
         await waitForMapIdle(page);
         expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, 'line-color')).toBe('#ff0000');
 

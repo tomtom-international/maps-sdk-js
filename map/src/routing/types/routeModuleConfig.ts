@@ -152,12 +152,19 @@ export type RouteLayersConfig = {
          */
         incident?: {
             /**
-             * Symbol layer used to mark the location of an incident on the route.
+             * Symbol layer used to mark the start of a jam on the route.
              *
              * @remarks
-             * Can display icons for accidents, roadworks, or other incidents.
+             * Focuses on displaying jams with delays.
              */
-            routeIncidentSymbol?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+            routeIncidentJamSymbol?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+            /**
+             * Symbol layer used to mark the cause of the start of an incident on the route.
+             *
+             * @remarks
+             * Can display icons for accidents, roadworks, weather, or other incidents.
+             */
+            routeIncidentCauseSymbol?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
             /**
              * Line layer used to draw the incident's background/highlight.
              *
@@ -172,13 +179,6 @@ export type RouteLayersConfig = {
              * Useful for indicating partial closures or advisory segments.
              */
             routeIncidentDashedLine?: Partial<ToBeAddedLayerSpecTemplate<LineLayerSpecification>>;
-            /**
-             * Line layer used to apply pattern-based styling for incident segments.
-             *
-             * @remarks
-             * Allows use of image patterns or custom line patterns for emphasis.
-             */
-            routeIncidentPatternLine?: Partial<ToBeAddedLayerSpecTemplate<LineLayerSpecification>>;
         } & HasAdditionalLayersConfig;
 
         /**

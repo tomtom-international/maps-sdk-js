@@ -255,11 +255,12 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             const newLayersSpecs = createLayersSpecs(mergedConfig.layers);
 
             // here we assume that keys for layer specs and sources are the same, please keep it that way to simplify the logic
-            Object.keys(newLayersSpecs).forEach((layersSpecs) => {
+            Object.keys(newLayersSpecs).forEach((layersSpecID) => {
+                const id = layersSpecID as keyof RoutingSourcesWithLayers;
                 updateLayersAndSource(
-                    newLayersSpecs[layersSpecs as keyof RoutingLayersSpecs],
-                    this.layersSpecs[layersSpecs as keyof RoutingLayersSpecs],
-                    this.sourcesWithLayers[layersSpecs as keyof RoutingSourcesWithLayers],
+                    newLayersSpecs[id],
+                    this.layersSpecs[id],
+                    this.sourcesWithLayers[id],
                     this.mapLibreMap,
                 );
             });

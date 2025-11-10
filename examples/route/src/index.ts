@@ -26,4 +26,4 @@ const map = new TomTomMap(
 await TrafficIncidentsModule.get(map, { visible: false });
 const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(waypoints);
-routingModule.showRoutes(await calculateRoute({ locations: waypoints }));
+routingModule.showRoutes(await calculateRoute({ locations: waypoints, costModel: { traffic: 'historical' } }));

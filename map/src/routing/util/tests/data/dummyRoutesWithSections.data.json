@@ -49,6 +49,7 @@
               "id": "123",
               "startPointIndex": 3,
               "endPointIndex": 5,
+              "categories": ["rain"],
               "magnitudeOfDelay": "moderate",
               "delayInSeconds": 350,
               "tec": {

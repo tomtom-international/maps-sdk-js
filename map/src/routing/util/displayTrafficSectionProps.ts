@@ -1,42 +1,70 @@
-import type { DelayMagnitude, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
+import type { TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
 import { formatDuration } from '@tomtom-org/maps-sdk/core';
 import type { DisplayTrafficSectionProps } from '../types/routeSections';
 
-const delayMagnitudeToIconPrefix: Record<DelayMagnitude, string> = {
-    unknown: 'traffic-incidents-no_delay',
-    minor: 'traffic-incidents-minor',
-    moderate: 'traffic-incidents-moderate',
-    major: 'traffic-incidents-major',
-    indefinite: 'traffic-incidents-no_delay',
+const hasJam = (sectionProps: TrafficSectionProps): boolean => sectionProps.categories.includes('jam');
+
+const buildTitle = (sectionProps: TrafficSectionProps): string | undefined => {
+    if (hasJam(sectionProps)) {
+        return formatDuration(sectionProps.delayInSeconds);
+    }
+    return undefined;
 };
 
-const tecCauseToIconSuffix: Record<number, string> = {
-    1: 'jam',
-    2: 'accident',
-    3: 'roadworks',
-    5: 'road_closed',
-    9: 'danger',
-    16: 'lane_closed',
-    17: 'weather_wind',
-    18: 'weather_fog',
-    19: 'weather_rain',
+const toTrafficJamIconSuffix = (title: string | undefined): 'collapsed' | 'small' | 'medium' | 'large' => {
+    if (!title?.length) {
+        return 'collapsed';
+    }
+    if (title.length < 6) {
+        // 1 digit minutes
+        return 'small';
+    }
+    if (title.length < 8) {
+        // 2 digit minutes
+        return 'medium';
+    }
+    // hours + minutes
+    return 'large';
 };
 
-/**
- * @ignore
- */
-export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): string | null => {
-    const tecCauseCode = sectionProps.tec.causes?.[0].mainCauseCode;
-    const tecIconSuffix = tecCauseCode && tecCauseToIconSuffix[tecCauseCode];
-    if (!tecIconSuffix) {
+const toJamIconID = (sectionProps: TrafficSectionProps, title: string | undefined): string | null => {
+    if (!hasJam(sectionProps)) {
         return null;
     }
-    const magnitudePrefix =
-        // ("traffic-incidents-road_closed" is an exception)
-        tecIconSuffix === 'road_closed'
-            ? 'traffic-incidents'
-            : delayMagnitudeToIconPrefix[sectionProps.magnitudeOfDelay ?? 'unknown'];
-    return `${magnitudePrefix}-${tecIconSuffix}`;
+    const magnitude = sectionProps.magnitudeOfDelay ?? 'unknown';
+    return `traffic-jam-${magnitude}-${toTrafficJamIconSuffix(title)}`;
+};
+
+const toCauseIconID = (sectionProps: TrafficSectionProps): string | null => {
+    const firstNonJamCategory = sectionProps.categories.find((category) => category !== 'jam');
+    switch (firstNonJamCategory) {
+        case 'accident':
+            return 'traffic-incidents-accident';
+        case 'roadworks':
+            return 'traffic-incidents-roadworks';
+        case 'road-closed':
+            return 'traffic-incidents-road_closed';
+        case 'danger':
+        case 'animals-on-road':
+            return 'traffic-incidents-danger';
+        case 'broken-down-vehicle':
+            return 'traffic-incidents-broken_down_vehicle';
+        case 'lane-closed':
+        case 'narrow-lanes':
+            return 'traffic-incidents-lane_closed';
+        case 'wind':
+            return 'traffic-incidents-wind';
+        case 'fog':
+            return 'traffic-incidents-fog';
+        case 'rain':
+            return 'traffic-incidents-rain';
+        case 'frost':
+            return 'traffic-incidents-frost';
+        case 'flooding':
+            return 'traffic-incidents-flooding';
+        default:
+            return null;
+    }
 };
 
 /**
@@ -45,11 +73,13 @@ export const trafficSectionToIconID = (sectionProps: TrafficSectionProps): strin
 export const toDisplayTrafficSectionProps = (
     sectionProps: TrafficSectionProps,
 ): Omit<DisplayTrafficSectionProps, 'routeState' | 'routeIndex'> => {
-    const title = formatDuration(sectionProps.delayInSeconds);
-    const iconId = trafficSectionToIconID(sectionProps);
+    const title = buildTitle(sectionProps);
+    const jamIconID = toJamIconID(sectionProps, title);
+    const causeIconID = toCauseIconID(sectionProps);
     return {
         ...sectionProps,
-        ...(iconId && { iconID: iconId }),
+        ...(jamIconID && { jamIconID }),
+        ...(causeIconID && { causeIconID }),
         ...(title && { title }),
     };
 };

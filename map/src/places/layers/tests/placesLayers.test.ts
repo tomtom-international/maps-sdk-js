@@ -4,9 +4,10 @@ import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
 import poiLayerSpec from '../../tests/poiLayerSpec.data.json';
 import {
     buildPlacesLayerSpecs,
-    clickedPlaceLayerSpec,
     getTextSizeSpec,
+    hasEventState,
     placesLayerSpec,
+    SELECTED_COLOR,
     selectedPlaceLayerSpec,
 } from '../placesLayers';
 
@@ -17,11 +18,9 @@ describe('Get places layer spec with circle or pin icon style config', () => {
         expect(buildPlacesLayerSpecs(undefined, mapLibreMock)).toEqual({
             main: {
                 ...placesLayerSpec,
-                id: 'placesSymbols-2-main',
             },
             selected: {
                 ...selectedPlaceLayerSpec,
-                id: 'placesSymbols-2-selected',
             },
         });
     });
@@ -30,11 +29,9 @@ describe('Get places layer spec with circle or pin icon style config', () => {
         expect(buildPlacesLayerSpecs({ theme: 'circle' }, mapLibreMock)).toEqual({
             main: {
                 ...placesLayerSpec,
-                id: 'placesSymbols-foo-main',
             },
             selected: {
                 ...selectedPlaceLayerSpec,
-                id: 'placesSymbols-foo-selected',
             },
         });
     });
@@ -43,11 +40,9 @@ describe('Get places layer spec with circle or pin icon style config', () => {
         expect(buildPlacesLayerSpecs({ theme: 'pin' }, mapLibreMock)).toEqual({
             main: {
                 ...placesLayerSpec,
-                id: 'placesSymbols-0-main',
             },
             selected: {
                 ...selectedPlaceLayerSpec,
-                id: 'placesSymbols-0-selected',
             },
         });
     });
@@ -72,7 +67,6 @@ describe('Get places layer spec with circle or pin icon style config', () => {
         ).toEqual({
             main: {
                 ...placesLayerSpec,
-                id: 'placesSymbols-0-main',
                 layout: {
                     ...placesLayerSpec.layout,
                     'text-size': 5,
@@ -89,7 +83,6 @@ describe('Get places layer spec with circle or pin icon style config', () => {
             },
             selected: {
                 ...selectedPlaceLayerSpec,
-                id: 'placesSymbols-0-selected',
                 layout: {
                     ...selectedPlaceLayerSpec.layout,
                     'text-size': 5,
@@ -121,7 +114,6 @@ describe('Get places layer spec with circle or pin icon style config', () => {
         ).toEqual({
             main: {
                 ...placesLayerSpec,
-                id: 'placesSymbols-12-main',
                 paint: {
                     ...placesLayerSpec.paint,
                     'text-color': 'green',
@@ -129,7 +121,6 @@ describe('Get places layer spec with circle or pin icon style config', () => {
             },
             selected: {
                 ...selectedPlaceLayerSpec,
-                id: 'placesSymbols-12-selected',
                 paint: {
                     ...selectedPlaceLayerSpec.paint,
                     'text-color': 'green',
@@ -162,7 +153,6 @@ describe('Get places layer spec with base-map icon style config', () => {
         expect(buildPlacesLayerSpecs({ theme: 'base-map' }, mapLibreMock)).toEqual({
             main: {
                 filter: ['!', ['in', ['get', 'eventState'], ['literal', ['click', 'contextmenu']]]],
-                id: 'placesSymbols-blah-main',
                 type: 'symbol',
                 paint: { ...poiLayerSpec.paint },
                 layout: {
@@ -173,8 +163,19 @@ describe('Get places layer spec with base-map icon style config', () => {
                 },
             },
             selected: {
-                ...clickedPlaceLayerSpec,
-                id: 'placesSymbols-blah-selected',
+                filter: hasEventState,
+                type: 'symbol',
+                paint: {
+                    ...poiLayerSpec.paint,
+                    'text-color': SELECTED_COLOR,
+                },
+                layout: {
+                    ...poiLayerSpec.layout,
+                    'text-field': ['get', 'title'],
+                    'icon-image': ['get', 'iconID'],
+                    'text-size': placesTextSizeSpec,
+                    'text-allow-overlap': true,
+                },
             },
         });
     });

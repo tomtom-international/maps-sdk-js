@@ -7314,7 +7314,7 @@
               "endPointIndex": 1959,
               "delayInSeconds": 0,
               "effectiveSpeedInKmh": 101,
-              "simpleCategory": "road_work",
+              "categories": ["roadworks"],
               "magnitudeOfDelay": "indefinite",
               "tec": {
                 "causes": [
@@ -7331,7 +7331,7 @@
               "endPointIndex": 2053,
               "delayInSeconds": 327,
               "effectiveSpeedInKmh": 38,
-              "simpleCategory": "jam",
+              "categories": ["jam"],
               "magnitudeOfDelay": "minor",
               "tec": {
                 "causes": [
@@ -7348,7 +7348,7 @@
               "endPointIndex": 2057,
               "delayInSeconds": 0,
               "effectiveSpeedInKmh": 99,
-              "simpleCategory": "road_work",
+              "categories": ["roadworks"],
               "magnitudeOfDelay": "indefinite",
               "tec": {
                 "causes": [
@@ -7368,7 +7368,7 @@
               "endPointIndex": 5091,
               "delayInSeconds": 112,
               "effectiveSpeedInKmh": 26,
-              "simpleCategory": "jam",
+              "categories": ["jam"],
               "magnitudeOfDelay": "minor",
               "tec": {
                 "causes": [

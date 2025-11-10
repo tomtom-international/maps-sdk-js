@@ -10,6 +10,7 @@ import type {
 import { asDefined } from './assertionUtils';
 import { TomTomMapSource } from './TomTomMapSource';
 import type {
+    ByIdOrIndex,
     CleanEventStateOptions,
     CleanEventStatesOptions,
     LayerSpecFilter,
@@ -179,6 +180,15 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
         this.show(emptyFeatureCollection as T);
     }
 
+    private findFeature(options: ByIdOrIndex) {
+        if ('index' in options) {
+            return this.shownFeatures.features[options.index];
+        } else if ('id' in options) {
+            return this.shownFeatures.features.find((f) => f.id === options.id);
+        }
+        return undefined;
+    }
+
     putEventState(options: PutEventStateOptions) {
         const mode = options.mode ?? 'put';
         if (mode === 'put') {
@@ -189,13 +199,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
             }
         }
 
-        let feature;
-        if (options.index !== undefined) {
-            feature = this.shownFeatures.features[options.index];
-        } else if (options.id !== undefined) {
-            feature = this.shownFeatures.features.find((f) => f.id === options.id);
-        }
-
+        const feature = this.findFeature(options);
         if (feature) {
             feature.properties = { ...feature.properties, eventState: options.state };
         }
@@ -206,7 +210,8 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
     }
 
     cleanEventState(options: CleanEventStateOptions) {
-        const feature = this.shownFeatures.features[options.index];
+        const feature = this.findFeature(options);
+
         if (feature?.properties?.eventState) {
             delete feature?.properties?.eventState;
             if (options?.show !== false) {

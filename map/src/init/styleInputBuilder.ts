@@ -59,7 +59,7 @@ const baseMapStyleUrlTemplates: Record<StandardStyleID, string> = {
 const buildBaseMapStyleUrl = (publishedStyle: StandardStyle, baseUrl: string, apiKey: string): string =>
     baseMapStyleUrlTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
         .replace('${baseURL}', baseUrl)
-        .replace('${version}', publishedStyle.version ?? '0.*')
+        .replace('${version}', publishedStyle.version ?? '0.6.0-0')
         .replace('${apiKey}', apiKey);
 
 const withApiKey = (givenUrl: string, apiKey: string): string => {

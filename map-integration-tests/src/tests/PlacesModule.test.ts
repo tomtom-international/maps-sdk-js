@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { bboxFromGeoJSON, type Place, type Places } from 'core';
 import { sortBy } from 'lodash-es';
-import type { PlaceDisplayProps, PlaceIconConfig, PlacesTheme } from 'map';
+import type {PlaceDisplayProps, PlaceIconConfig, PlacesTheme} from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
 import placesTestData from './data/PlacesModule.test.data.json';
 import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';
@@ -21,6 +21,9 @@ import {
     waitForTimeout,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
+
+const applyTheme = async (page: Page, theme: PlacesTheme) =>
+    page.evaluate(async (inputTheme) => (globalThis as MapsSDKThis).places?.applyTheme(inputTheme), theme);
 
 const applyIconConfig = async (page: Page, iconConfig: PlaceIconConfig) =>
     // @ts-ignore
@@ -198,7 +201,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             await showPlaces(page, testPlaces);
 
             const numTestPlaces = testPlaces.features.length;
-            await applyIconConfig(page, { style: 'circle' });
+            await applyTheme(page, 'circle');
             await waitForMapIdle(page);
             let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPOIProps);
@@ -210,7 +213,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
             compareToExpectedDisplayProps(renderedPlaces, expectedCustomIcon[name as never]);
 
-            await applyIconConfig(page, { style: 'base-map' });
+            await applyTheme(page, 'base-map');
             await waitForMapIdle(page);
             // base-map places avoid collisions, thus likely resulting in less num of rendered features:
             renderedPlaces = await queryRenderedFeatures(page, layerIDs);

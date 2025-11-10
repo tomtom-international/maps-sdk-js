@@ -58,6 +58,7 @@ export type SectionAPI = {
     endPointIndex: number;
     travelMode?: TravelMode | 'other';
     countryCode?: string;
+    // NOTE: we ignore this API response and rely on TEC codes to calculate semantic SDK categories
     simpleCategory?: TrafficCategoryAPI;
     magnitudeOfDelay?: number;
     effectiveSpeedInKmh?: number;

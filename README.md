@@ -17,8 +17,9 @@ to seamlessly integrate TomTom maps and services with convenient out-of-the-box 
 
 ## ⚠️ Public Preview Notice
 We have released some capabilities in the Maps SDK under [Public Preview](https://docs.tomtom.com/legal/public-preview) to collect feedback from the community.
-While our goal is to keep the design of the interface stable, breaking changes will occur, particularly in the earlier versions.
-Stay tuned with our release `CHANGELOG.md` files. 
+- While our goal is to keep the design of the interface stable, breaking changes will occur, particularly in the earlier versions.
+- The versions will follow a 0.MAJOR.MINOR pattern for the time being.
+- Stay tuned with our release `CHANGELOG.md` files.
 <br/><br/>
 
 ## 🚀 Getting Started using npm

@@ -28,9 +28,7 @@ const EXTRA_FOREGROUND_LINE_WIDTH: ExpressionSpecification = [
  */
 export const routeIncidentsBGLine: LayerSpecTemplate<LineLayerSpecification> = {
     type: 'line',
-    layout: {
-        'line-join': 'round',
-    },
+    layout: { 'line-cap': 'round' },
     paint: {
         'line-width': EXTRA_FOREGROUND_LINE_WIDTH,
         'line-color': [
@@ -54,9 +52,7 @@ export const routeIncidentsBGLine: LayerSpecTemplate<LineLayerSpecification> = {
 export const routeIncidentsDashedLine: LayerSpecTemplate<LineLayerSpecification> = {
     type: 'line',
     filter: ['in', ['get', 'magnitudeOfDelay'], ['literal', ['unknown', 'indefinite']]],
-    layout: {
-        'line-join': 'round',
-    },
+    layout: { 'line-join': 'round' },
     paint: {
         'line-width': EXTRA_FOREGROUND_LINE_WIDTH,
         'line-color': [
@@ -68,32 +64,6 @@ export const routeIncidentsDashedLine: LayerSpecTemplate<LineLayerSpecification>
             'rgba(137, 150, 168, 1)',
         ],
         'line-dasharray': [1.5, 1],
-    },
-};
-
-/**
- * @ignore
- */
-export const routeIncidentsPatternLine: LayerSpecTemplate<LineLayerSpecification> = {
-    type: 'line',
-    filter: ['in', ['get', 'magnitudeOfDelay'], ['literal', ['minor', 'moderate', 'major']]],
-    layout: {
-        'line-join': 'round',
-    },
-    paint: {
-        'line-width': EXTRA_FOREGROUND_LINE_WIDTH,
-        'line-pattern': [
-            'match',
-            ['get', 'magnitudeOfDelay'],
-            'minor',
-            'traffic-incidents-minor-pattern',
-            'moderate',
-            'traffic-incidents-moderate-pattern',
-            'major',
-            'traffic-incidents-major-pattern',
-            // other
-            'traffic-incidents-no_delay-pattern',
-        ],
     },
 };
 
@@ -115,29 +85,53 @@ export const magnitudeOfDelayTextColor: ExpressionSpecification = [
     UNKNOWN_DELAY_COLOR,
 ];
 
-/**
- * @ignore
- */
-export const routeIncidentsSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
+const routeIncidentsSymbolBase: LayerSpecTemplate<SymbolLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,
     type: 'symbol',
     minzoom: 6,
     layout: {
         'symbol-placement': 'point',
         'symbol-avoid-edges': true,
-        'icon-anchor': 'bottom',
         'icon-ignore-placement': true,
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 6, 0.8, 12, 1],
-        'icon-image': ['get', 'iconID'],
+    },
+};
+
+/**
+ * @ignore
+ */
+export const routeIncidentsJamSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
+    ...routeIncidentsSymbolBase,
+    filter: ['all', ['has', 'jamIconID'], routeIncidentsSymbolBase.filter as ExpressionSpecification],
+    layout: {
+        ...routeIncidentsSymbolBase.layout,
+        'icon-image': ['get', 'jamIconID'],
+        'icon-anchor': 'bottom-left',
+        'text-anchor': 'bottom-left',
+        // Jam symbols have delay labels in them:
         'text-field': ['get', 'title'],
         'text-font': [MAP_BOLD_FONT],
-        'text-optional': true,
-        'text-anchor': 'top',
-        'text-size': ['interpolate', ['linear'], ['zoom'], 6, 11, 10, 13],
+        'text-offset': [3.9, -1.4],
+        'text-size': 13,
     },
     paint: {
+        ...routeIncidentsSymbolBase.paint,
         'text-color': magnitudeOfDelayTextColor,
         'text-halo-color': '#FFFFFF',
         'text-halo-width': 1,
     },
+};
+
+/**
+ * @ignore
+ */
+export const routeIncidentsCauseSymbol: LayerSpecTemplate<SymbolLayerSpecification> = {
+    ...routeIncidentsSymbolBase,
+    filter: ['all', ['has', 'causeIconID'], routeIncidentsSymbolBase.filter as ExpressionSpecification],
+    layout: {
+        ...routeIncidentsSymbolBase.layout,
+        'icon-image': ['get', 'causeIconID'],
+        'icon-anchor': 'bottom-right',
+        // Cause symbols have no label in them.
+    },
+    paint: { ...routeIncidentsSymbolBase.paint },
 };
