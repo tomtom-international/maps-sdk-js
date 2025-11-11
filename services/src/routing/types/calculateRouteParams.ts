@@ -182,7 +182,7 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  * ```typescript
  * // Basic route from A to B
  * const params: CalculateRouteParams = {
- *   key: 'your-api-key',
+ *   apiKey: 'your-api-key',
  *   locations: [
  *     [4.9041, 52.3676],  // Amsterdam
  *     [4.4777, 51.9244]   // Rotterdam
@@ -191,23 +191,40 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  *
  * // Route with guidance and alternatives
  * const advancedParams: CalculateRouteParams = {
- *   key: 'your-api-key',
+ *   apiKey: 'your-api-key',
  *   locations: [[4.9041, 52.3676], [4.4777, 51.9244]],
  *   guidance: { type: 'coded', phonetics: 'IPA' },
  *   maxAlternatives: 2,
- *   routeType: 'fastest',
- *   avoid: ['tollRoads', 'motorways'],
- *   departAt: new Date('2025-10-20T08:00:00Z')
+ *   costModel: {
+ *     routeType: 'fast',
+ *     avoid: ['tollRoads', 'motorways']
+ *   },
+ *   when: {
+ *     option: 'departAt',
+ *     date: new Date('2025-10-20T08:00:00Z')
+ *   }
  * };
  *
  * // Electric vehicle route with charging
  * const evParams: CalculateRouteParams = {
- *   key: 'your-api-key',
+ *   apiKey: 'your-api-key',
  *   locations: [[4.9, 52.3], [8.5, 50.1]],
- *   vehicleEngineType: 'electric',
- *   currentChargeInkWh: 50,
- *   maxChargeInkWh: 85,
- *   constantSpeedConsumptionInkWhPerHundredkm: [[50, 8], [80, 12], [120, 18]]
+ *   vehicle: {
+ *     engineType: 'electric',
+ *     model: {
+ *       engine: {
+ *         consumption: {
+ *           charging: { maxChargeKWH: 85 },
+ *           speedToConsumption: [
+ *             { speedKMH: 50, consumptionUnitsPer100KM: 8 },
+ *             { speedKMH: 80, consumptionUnitsPer100KM: 12 },
+ *             { speedKMH: 120, consumptionUnitsPer100KM: 18 }
+ *           ]
+ *         }
+ *       }
+ *     },
+ *     state: { currentChargeInkWh: 50 }
+ *   }
  * };
  * ```
  *
