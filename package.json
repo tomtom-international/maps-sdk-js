@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.30.2",
+  "version": "0.31.0",
   "description": "TomTom Maps for JavaScript",
   "scripts": {
     "build": "pnpm build:sdk",
