@@ -38,8 +38,8 @@ export default defineConfig(({ mode }) => {
                       }),
                   ]),
             /*
-              Inject import map to load MapLibre GL from esm.sh CDN only in the built dist/index.html.
-              Local development still uses node_modules
+              For docs portal: load MapLibre GL from CDN for caching in browser as all examples can resuse the cached maplibre.
+              This only affects the built dist/index.html - local development uses node_modules as usual.
             */
 
             {
