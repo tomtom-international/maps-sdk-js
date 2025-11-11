@@ -96,6 +96,8 @@ export type PlaceTextConfig = {
      */
     title?: ((place: Place) => string) | DataDrivenPropertyValueSpecification<string>;
 
+    // TODO: these configs seem to overlap quite a bit with just overriding via maplibre, maybe not worth it?
+
     /**
      * Font size in pixels.
      *

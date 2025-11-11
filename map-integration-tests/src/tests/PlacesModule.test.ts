@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { bboxFromGeoJSON, type Place, type Places } from 'core';
 import { sortBy } from 'lodash-es';
-import type {PlaceDisplayProps, PlaceIconConfig, PlacesTheme} from 'map';
+import type { PlaceDisplayProps, PlaceIconConfig, PlacesTheme } from 'map';
 import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
 import placesTestData from './data/PlacesModule.test.data.json';
 import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';

@@ -69,7 +69,7 @@ const showFuzzySearchResults = (places: Places) => {
 
         fuzzySearchResultsList.appendChild(resultItem);
     }
-    if (places.features.length == 0) {
+    if (!places.features.length) {
         const noResults = document.createElement('li');
         noResults.classList.add('maps-sdk-js-examples-result-item');
         noResults.innerHTML = `<div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">No results found</div>`;
@@ -83,10 +83,10 @@ const fuzzySearch = async () => {
               query: '',
               limit: 20,
               boundingBox: map.getBBox(),
-              ...(selectedAutoCompleteSegment.type == 'category' && {
+              ...(selectedAutoCompleteSegment.type === 'category' && {
                   poiCategories: [Number(selectedAutoCompleteSegment.id)],
               }),
-              ...(selectedAutoCompleteSegment.type == 'brand' && {
+              ...(selectedAutoCompleteSegment.type === 'brand' && {
                   poiBrands: [selectedAutoCompleteSegment.value],
               }),
           }

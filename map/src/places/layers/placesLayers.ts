@@ -47,14 +47,6 @@ export const selectedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification>
     },
 };
 
-/**
- * @ignore
- */
-export const clickedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
-    ...selectedPlaceLayerSpec,
-    filter: isClickEventState,
-};
-
 const withConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
     config: PlacesModuleConfig | undefined,

@@ -97,6 +97,8 @@ const NUM_INSTRUCTION_ARROW_LAYERS = 1;
 const NUM_SUMMARY_BUBBLE_LAYERS = 1;
 
 test.describe('Routing and waypoint display tests', () => {
+    // TODO: assert traffic incident visuals where more than one incident cause is to be shown (jam + accident, etc.)
+
     test('Basic routes and waypoints show and clear flows', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             bounds: rotterdamToAmsterdamRoutes.bbox,

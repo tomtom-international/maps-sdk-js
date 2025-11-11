@@ -5,20 +5,6 @@
   "scripts": {
     "main": "node src/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomtom-international/maps-sdk-js-examples.git"
-  },
-  "keywords": [
-    "TomTom",
-    "Maps SDK",
-    "Routing"
-  ],
-  "author": "TomTom",
-  "bugs": {
-    "url": "https://github.com/tomtom-international/maps-sdk-js-examples/issues"
-  },
-  "homepage": "https://github.com/tomtom-international/maps-sdk-js-examples#readme",
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*"
   },
