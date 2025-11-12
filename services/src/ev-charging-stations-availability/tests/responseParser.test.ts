@@ -1,6 +1,6 @@
 import type { ChargingStationsAvailability } from '@tomtom-org/maps-sdk/core';
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
+import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import type { ServiceName } from '../../shared';
 import { SDKServiceError } from '../../shared';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';

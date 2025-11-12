@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import terser from '@rollup/plugin-terser';
 import analyze from 'rollup-plugin-analyzer';
 import license from 'rollup-plugin-license';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -21,32 +20,14 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
             lib: {
                 entry: './index.ts',
                 name: bundleName,
+                formats: ['es'],
+                fileName: () => `${bundleName}.es.js`,
             },
+            minify: 'terser',
             emptyOutDir: true,
             sourcemap: true,
-            // minification options more in detail in rollup options:
-            minify: false,
             rollupOptions: {
                 external: ['@tomtom-org/maps-sdk/core', 'maplibre-gl'],
-                output: [
-                    // CommonJS (minified)
-                    {
-                        format: 'cjs',
-                        entryFileNames: `${bundleName}.cjs.min.js`,
-                        plugins: [terser()],
-                    },
-                    // CommonJS (non-minified)
-                    {
-                        format: 'cjs',
-                        entryFileNames: `${bundleName}.cjs.js`,
-                    },
-                    // ES module (minified)
-                    {
-                        format: 'es',
-                        entryFileNames: `${bundleName}.es.js`,
-                        plugins: [terser({ module: true })],
-                    },
-                ],
             },
         },
         define: {

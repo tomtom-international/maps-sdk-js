@@ -1,8 +1,13 @@
 {
   "name": "services",
   "description": "TomTom Maps SDK JS - bundle for service GeoJSON clients",
-  "main": "main.js",
-  "module": "./dist/services.es.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/services.es.js"
+    }
+  },
   "sideEffects": false,
   "scripts": {
     "test": "vitest run",
@@ -13,10 +18,8 @@
     "type-check": "tsc --noEmit",
     "clean:dist": "rimraf ./dist"
   },
-  "types": "./dist/index.d.ts",
   "devDependencies": {
     "@microsoft/api-extractor": "catalog:",
-    "@rollup/plugin-terser": "catalog:",
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",

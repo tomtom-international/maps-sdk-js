@@ -1,8 +1,13 @@
 {
   "name": "map",
   "description": "TomTom Maps SDK JS - bundle for map display and interaction",
-  "main": "main.js",
-  "module": "./dist/map.es.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/map.es.js"
+    }
+  },
   "sideEffects": false,
   "scripts": {
     "test": "vitest run",
@@ -13,10 +18,8 @@
     "type-check": "tsc --noEmit",
     "clean:dist": "rimraf ./dist"
   },
-  "types": "./dist/index.d.ts",
   "devDependencies": {
     "@microsoft/api-extractor": "catalog:",
-    "@rollup/plugin-terser": "catalog:",
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@vitest/coverage-v8": "catalog:",

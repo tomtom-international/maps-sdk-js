@@ -10,11 +10,8 @@ import {
 } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 
-TomTomConfig.instance.put({
-    // (Set your own API key when working in your own environment)
-    apiKey: process.env.API_KEY_EXAMPLES,
-    language: 'en-GB',
-});
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 let poisModule: POIsModule;
 let modeSelector: HTMLSelectElement;
@@ -58,10 +55,7 @@ const resetConfig = () => {
         values: [],
     };
     poisModule.filterCategories(categoryFilter);
-    filterInputs.forEach(
-        (input) =>
-            (input.checked = categoryFilter.values.includes(input.value as MapStylePOICategory | POICategoryGroup)),
-    );
+    filterInputs.forEach((input) => (input.checked = categoryFilter.values.includes(input.value)));
     modeSelector.selectedIndex = 0;
 };
 
@@ -73,7 +67,7 @@ const createFilterToggles = () => {
         const input = document.createElement('input');
         input.type = 'checkbox';
         input.value = key;
-        input.checked = categoryFilter.values.includes(input.value as MapStylePOICategory | POICategoryGroup);
+        input.checked = categoryFilter.values.includes(input.value);
         input.id = key;
         const label = document.createElement('label');
         label.htmlFor = key;
@@ -90,7 +84,7 @@ const listenToUserEvents = () => {
     items.forEach((item) =>
         item.addEventListener('change', (e) => {
             const target = e.target as HTMLInputElement;
-            toggleCategoryFilter(target.value as MapStylePOICategory | POICategoryGroup, target.checked);
+            toggleCategoryFilter(target.value, target.checked);
         }),
     );
 
@@ -103,12 +97,8 @@ const listenToUserEvents = () => {
     resetBtn?.addEventListener('click', resetConfig);
 };
 
-const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
-    center: [4.89437, 52.36859],
-    zoom: 16.5,
-});
-
+const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.89437, 52.36859], zoom: 16.5 });
 poisModule = await POIsModule.get(map);
+
 createFilterToggles();
 listenToUserEvents();

@@ -40,11 +40,9 @@ Each `./dist` directory contains:
 
 - **src/** - Type definition files for modules
 - **index.d.ts** - Main type definitions
-- **[workspace].cjs.js** - CommonJS bundle
-- **[workspace].cjs.min.js** - Minified CommonJS bundle
-- **[workspace].es.js** - ES module bundle
-- **[workspace].es.min.js** - Minified ES module bundle
-- Source maps for all bundles
+- **[workspace].js** - ES module bundle (minified)
+- **[workspace].js.map** - Source map
+- **THIRD_PARTY.txt** - Third-party licenses
 
 ## ⚙️ Additional Build Commands
 

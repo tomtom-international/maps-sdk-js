@@ -9,17 +9,17 @@ export type ExpectLayers = {
 type MapInitProps = [
     description: string,
     mapLibreOptions: Partial<MapLibreOptions>,
-    tomtomParams: TomTomMapParams,
+    tomtomParams: Partial<TomTomMapParams>,
     expectLayers: ExpectLayers,
 ];
 
 export const mapInitTestData: MapInitProps[] = [
     ['All defaults', {}, {}, { incidents: true, flow: true, hillshade: true }],
-    ['Standard dark', {}, 'standardDark', { incidents: true, flow: true, hillshade: true }],
-    ['Standard driving', {}, 'standardDriving', { incidents: true, flow: true, hillshade: true }],
-    ['Mono light', {}, 'monoLight', { incidents: true, flow: true, hillshade: true }],
-    ['Mono dark', {}, 'monoDark', { incidents: true, flow: true, hillshade: true }],
-    ['Satellite', {}, 'satellite', { incidents: true, flow: true, hillshade: true }],
+    ['Standard dark', {}, { style: 'standardDark' }, { incidents: true, flow: true, hillshade: true }],
+    ['Driving light', {}, { style: 'drivingLight' }, { incidents: true, flow: true, hillshade: true }],
+    ['Mono light', {}, { style: 'monoLight' }, { incidents: true, flow: true, hillshade: true }],
+    ['Mono dark', {}, { style: 'monoDark' }, { incidents: true, flow: true, hillshade: true }],
+    ['Satellite', {}, { style: 'satellite' }, { incidents: true, flow: true, hillshade: true }],
     [
         'Defaults with style object input, yet no added parts',
         {},
@@ -70,7 +70,12 @@ export const mapInitTestData: MapInitProps[] = [
         },
         { incidents: true, flow: true, hillshade: true },
     ],
-    ['Dark map, basic, zoomed', { zoom: 6 }, 'standardDark', { incidents: true, flow: true, hillshade: true }],
+    [
+        'Dark map, basic, zoomed',
+        { zoom: 6 },
+        { style: 'standardDark' },
+        { incidents: true, flow: true, hillshade: true },
+    ],
     [
         'Dark map, with included parts',
         { zoom: 6, center: [-0.12621, 51.50394] },

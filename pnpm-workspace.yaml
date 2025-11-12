@@ -8,7 +8,6 @@ packages:
 
 catalog:
   '@microsoft/api-extractor': ^7.54.0
-  '@rollup/plugin-terser': ^0.4.4
   '@tsconfig/recommended': ^1.0.12
   '@types/geojson': ^7946.0.16
   '@types/lodash-es': ^4.17.12

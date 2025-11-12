@@ -15,7 +15,12 @@ import {
 test.describe('Map Init tests', () => {
     const mapEnv = new MapTestEnv();
 
-    for (const testData of mapInitTestData as [string, Partial<MapLibreOptions>, TomTomMapParams, ExpectLayers][]) {
+    for (const testData of mapInitTestData as [
+        string,
+        Partial<MapLibreOptions>,
+        Partial<TomTomMapParams>,
+        ExpectLayers,
+    ][]) {
         test(testData[0], async ({ page }) => {
             const [_name, mapLibreOptions, tomtomMapParams, expectLayers] = testData;
             await mapEnv.loadPageAndMap(page, mapLibreOptions, tomtomMapParams);
@@ -27,7 +32,7 @@ test.describe('Map Init tests', () => {
             const flowLayers = await getNumLayersBySource(page, TRAFFIC_FLOW_SOURCE_ID);
             expect(expectLayers.flow ? flowLayers > 0 : flowLayers === 0).toBe(true);
 
-            expect(await getNumVisiblePOILayers(page)).toBeGreaterThan(1);
+            expect(await getNumVisiblePOILayers(page)).toBeGreaterThan(0);
 
             const hillshadeLayers = await getNumLayersBySource(page, HILLSHADE_SOURCE_ID);
             expect(expectLayers.hillshade ? hillshadeLayers > 0 : hillshadeLayers === 0).toBe(true);

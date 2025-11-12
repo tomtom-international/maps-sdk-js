@@ -1,5 +1,5 @@
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
+import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import revGeoReqObjects from '../../revgeo/tests/requestBuilderPerf.data.json';
 import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';

@@ -62,13 +62,10 @@
   "packageManager": "pnpm@10.20.0",
   "files": [
     "core/dist",
-    "core/main.js",
     "core/package.json",
     "map/dist",
-    "map/main.js",
     "map/package.json",
     "services/dist",
-    "services/main.js",
     "services/package.json",
     "package.json",
     "README.md",

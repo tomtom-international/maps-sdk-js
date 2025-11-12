@@ -5,11 +5,3 @@
  * @see shared-configs/vite.config.ts
  */
 declare const __SDK_VERSION__: string;
-
-/**
- * Used to import raw SVG files as strings.
- */
-declare module '*.svg?raw' {
-    const content: string;
-    export default content;
-}

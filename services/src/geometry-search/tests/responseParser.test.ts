@@ -1,5 +1,5 @@
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
+import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import apiAndParsedResponses from '../../geometry-search/tests/responseParser.data.json';
 import apiResponses from '../../geometry-search/tests/responseParserPerf.data.json';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';

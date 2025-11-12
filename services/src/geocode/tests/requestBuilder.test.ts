@@ -1,5 +1,5 @@
-import { bestExecutionTimeMS } from 'core/src/util/tests/performanceTestUtils';
 import { describe, expect, test } from 'vitest';
+import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { buildGeocodingRequest } from '../requestBuilder';
 import type { GeocodingParams } from '../types/geocodingParams';
