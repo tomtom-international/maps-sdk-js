@@ -13,8 +13,8 @@ catalogs:
       specifier: ^0.4.4
       version: 0.4.4
     '@tsconfig/recommended':
-      specifier: ^1.0.11
-      version: 1.0.11
+      specifier: ^1.0.12
+      version: 1.0.12
     '@types/geojson':
       specifier: ^7946.0.16
       version: 7946.0.16
@@ -149,7 +149,7 @@ importers:
         version: 7.54.0(@types/node@24.10.1)
       '@tsconfig/recommended':
         specifier: 'catalog:'
-        version: 1.0.11
+        version: 1.0.12
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.1
@@ -1638,7 +1638,7 @@ importers:
         version: 1.56.1
       '@tsconfig/recommended':
         specifier: 'catalog:'
-        version: 1.0.11
+        version: 1.0.12
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -2495,8 +2495,8 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
-  '@tsconfig/recommended@1.0.11':
-    resolution: {integrity: sha512-irACIVvr9SnQK+zsrO7TkBVTq9LAafdyrjUxv6qgNh2wPi3/hFHcKEWMMlOd4HnRIDMdtI7ciVoPcZ9EuB7xMg==}
+  '@tsconfig/recommended@1.0.12':
+    resolution: {integrity: sha512-S4HA/QRT24s5O42t/G+nYI2V88K6RGPKCodImparTnlBGb3MPfq8D7gkM7lL7yNQ1zbTAdBNfcwqsCbTjceNpA==}
 
   '@turf/along@7.2.0':
     resolution: {integrity: sha512-Cf+d2LozABdb0TJoIcJwFKB+qisJY4nMUW9z6PAuZ9UCH7AR//hy2Z06vwYCKFZKP4a7DRPkOMBadQABCyoYuw==}
@@ -5205,7 +5205,7 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@tsconfig/recommended@1.0.11': {}
+  '@tsconfig/recommended@1.0.12': {}
 
   '@turf/along@7.2.0':
     dependencies:
