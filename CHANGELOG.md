@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.31.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.31.0...v0.31.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* add polyfill for importmap to support firefox browser ([4355211](https://github.com/tomtom-international/maps-sdk-js/commit/43552118286cca49d74b9711ada1fd3d94bb3f30))
+
 ## [0.31.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.30.2...v0.31.0) (2025-11-11)
 
 
