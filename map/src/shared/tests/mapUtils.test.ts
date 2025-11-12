@@ -9,8 +9,8 @@ import {
     addLayers,
     changeLayerProps,
     deserializeFeatures,
+    ensureAddedToStyle,
     injectTomTomHeaders,
-    prepareForModuleInit,
     updateLayersAndSource,
     updateStyleWithModule,
     waitUntilMapIsReady,
@@ -325,7 +325,7 @@ describe('Map utils - tryToAddSourceToMapIfMissing', () => {
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
-        await prepareForModuleInit(mapMock, true, HILLSHADE_SOURCE_ID, 'hillshade');
+        await ensureAddedToStyle(mapMock, HILLSHADE_SOURCE_ID, 'hillshade');
         expect(mapMock.mapLibreMap.getSource).toHaveBeenCalled();
     });
 
@@ -347,7 +347,7 @@ describe('Map utils - tryToAddSourceToMapIfMissing', () => {
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
 
-        await prepareForModuleInit(tomtomMapMock, true, HILLSHADE_SOURCE_ID, 'hillshade');
+        await ensureAddedToStyle(tomtomMapMock, HILLSHADE_SOURCE_ID, 'hillshade');
         expect(tomtomMapMock.getStyle).toHaveBeenCalled();
         expect(tomtomMapMock.setStyle).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.isStyleLoaded).toHaveBeenCalledTimes(1);

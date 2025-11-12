@@ -1,6 +1,6 @@
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../../places';
-import type { StyleModuleConfig, ValuesFilter } from '../../shared';
+import type { ValuesFilter } from '../../shared';
 import type { POICategoryGroup } from '../poiCategoryGroups';
 
 /**
@@ -79,7 +79,14 @@ export type FilterablePOICategory = MapStylePOICategory | POICategoryGroup;
  *
  * @group POIs
  */
-export type POIsModuleConfig = StyleModuleConfig & {
+export type POIsModuleConfig = {
+    /**
+     * Controls the visibility of the POI layers.
+     *
+     * @default true
+     */
+    visible?: boolean;
+
     /**
      * Optional filters for controlling which POI categories are displayed.
      *

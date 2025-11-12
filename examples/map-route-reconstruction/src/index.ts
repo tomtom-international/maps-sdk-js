@@ -1,5 +1,5 @@
 import { bboxFromGeoJSON, RoutePlanningLocation, TomTomConfig, Waypoint } from '@tomtom-org/maps-sdk/core';
-import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
 import { GeoJSONSource, LngLatBoundsLike, Map } from 'maplibre-gl';
@@ -99,15 +99,11 @@ const waypoints: Waypoint[] = await Promise.all([
     geocodeOne('Terminal C Departures LaGuardia Airport, NY'),
 ]);
 
-const map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 150 },
-    },
-    { style: { type: 'standard', include: ['trafficIncidents'] } },
-);
-await TrafficIncidentsModule.get(map, { visible: false });
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+    fitBoundsOptions: { padding: 150 },
+});
 
 const routingModule = await RoutingModule.get(map);
 initDrawMapStyle(map.mapLibreMap, routingModule);

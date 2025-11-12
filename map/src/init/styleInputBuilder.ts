@@ -1,12 +1,17 @@
-/** biome-ignore-all lint/suspicious/noTemplateCurlyInString: the templates are used to build the style URLs */
-import { isEmpty } from 'lodash-es';
 import type { StyleSpecification } from 'maplibre-gl';
-import type { StandardStyle, StandardStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
+import {
+    StandardStyle,
+    StandardStyleID,
+    StyleInput,
+    StyleModule,
+    styleModules,
+    TomTomMapParams,
+} from './types/mapInit';
 
-const DEFAULT_PUBLISHED_STYLE = 'standardLight';
+const DEFAULT_STANDARD_STYLE_ID: StandardStyleID = 'standardLight';
 const URL_PREFIX = '${baseURL}/maps/orbis/assets/styles/${version}/style.json?&apiVersion=1&key=${apiKey}';
 
-const publishedStyleModulesValues: Record<StandardStyleID, Record<StyleModule, string>> = {
+const standardStyleModulesValues: Record<StandardStyleID, Record<StyleModule, string>> = {
     standardLight: {
         trafficIncidents: 'incidents_light',
         trafficFlow: 'flow_relative-light',
@@ -56,11 +61,22 @@ const baseMapStyleUrlTemplates: Record<StandardStyleID, string> = {
     satellite: baseMapStyleUrlTemplate('basic_street-satellite'),
 };
 
-const buildBaseMapStyleUrl = (publishedStyle: StandardStyle, baseUrl: string, apiKey: string): string =>
-    baseMapStyleUrlTemplates[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE]
-        .replace('${baseURL}', baseUrl)
-        .replace('${version}', publishedStyle.version ?? '0.6.0-0')
-        .replace('${apiKey}', apiKey);
+const buildStandardStyleUrl = (standardStyle: StandardStyle, baseUrl: string, apiKey: string): string => {
+    const standardStyleID = standardStyle.id ?? DEFAULT_STANDARD_STYLE_ID;
+
+    const styleURL = new URL(
+        baseMapStyleUrlTemplates[standardStyleID]
+            .replace('${baseURL}', baseUrl)
+            .replace('${version}', standardStyle.version ?? '0.6.0-0')
+            .replace('${apiKey}', apiKey),
+    );
+
+    for (const module of standardStyle.include ?? styleModules) {
+        styleURL.searchParams.append(module, standardStyleModulesValues[standardStyleID][module]);
+    }
+
+    return styleURL.toString();
+};
 
 const withApiKey = (givenUrl: string, apiKey: string): string => {
     const url = new URL(givenUrl);
@@ -76,51 +92,27 @@ const withApiKey = (givenUrl: string, apiKey: string): string => {
 };
 
 /**
- * @param url The SDK parameters to convert to input renderer style.
- * @param publishedStyle style with included style modules to show in the style url.
- * @return The map style to load into the renderer.
- */
-const includeModulesOptions = (url: string, publishedStyle: StandardStyle): string => {
-    const styleUrl = new URL(url);
-
-    if (publishedStyle.include?.length) {
-        publishedStyle.include.forEach((module) =>
-            styleUrl.searchParams.append(
-                module,
-                publishedStyleModulesValues[publishedStyle?.id ?? DEFAULT_PUBLISHED_STYLE][module],
-            ),
-        );
-    }
-
-    return decodeURIComponent(styleUrl.toString());
-};
-
-/**
  * @ignore
  * @param mapParams The SDK parameters to convert to input renderer style.
  * @return The map style to load into the renderer.
  */
 export const buildStyleInput = (mapParams: TomTomMapParams): StyleSpecification | string => {
-    let mapStyleUrl: StyleSpecification | string;
-    let isIncludeEmpty = true;
     const style = mapParams.style;
     const baseUrl = mapParams.commonBaseURL;
     const apiKey = mapParams.apiKey;
 
     if (typeof style === 'string') {
-        mapStyleUrl = buildBaseMapStyleUrl({ id: style }, baseUrl, apiKey);
+        return buildStandardStyleUrl({ id: style }, baseUrl, apiKey);
     } else if (style?.type === 'standard') {
-        mapStyleUrl = buildBaseMapStyleUrl(style, baseUrl, apiKey);
-        isIncludeEmpty = isEmpty(style.include);
+        return buildStandardStyleUrl(style, baseUrl, apiKey);
     } else if (style?.type === 'custom' && style?.url) {
-        mapStyleUrl = withApiKey(style.url, apiKey);
+        return withApiKey(style.url, apiKey);
     } else if (style?.type === 'custom' && style?.json) {
-        mapStyleUrl = style.json;
-    } else {
-        mapStyleUrl = buildBaseMapStyleUrl({ id: DEFAULT_PUBLISHED_STYLE }, baseUrl, apiKey);
+        return style.json;
     }
 
-    return isIncludeEmpty ? mapStyleUrl : includeModulesOptions(mapStyleUrl as string, style as StandardStyle);
+    // no style defined, use default
+    return buildStandardStyleUrl({ id: DEFAULT_STANDARD_STYLE_ID }, baseUrl, apiKey);
 };
 
 /**

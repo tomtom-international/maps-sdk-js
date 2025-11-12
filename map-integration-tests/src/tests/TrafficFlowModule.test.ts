@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { FlowConfig, RoadCategory, StyleModuleInitConfig, TrafficFlowFilters } from 'map';
+import type { FlowConfig, RoadCategory, TrafficFlowFilters } from 'map';
 import { TRAFFIC_FLOW_SOURCE_ID } from 'map';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import { MapsSDKThis } from './types/MapsSDKThis';
@@ -18,7 +18,7 @@ const waitForRenderedFlowChange = async (page: Page, previousFeaturesCount: numb
 const getByRoadCategories = (renderedItems: MapGeoJSONFeature[], roadCategories: RoadCategory[]): MapGeoJSONFeature[] =>
     renderedItems.filter((incident) => roadCategories.includes(incident.properties['road_category']));
 
-const initTrafficFlow = async (page: Page, config?: StyleModuleInitConfig & FlowConfig) =>
+const initTrafficFlow = async (page: Page, config?: FlowConfig) =>
     page.evaluate(async (inputConfig?) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
         mapsSdkThis.trafficFlow = await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap, inputConfig);
@@ -46,23 +46,19 @@ test.describe('Map vector tile traffic module tests', () => {
 
     test.afterEach(async ({ page }) => unsetTrafficFlow(page));
 
-    test('Failing to initialize if fully excluded from the style', async ({ page }) => {
-        await mapEnv.loadPageAndMap(page, {});
-        await expect(initTrafficFlow(page)).rejects.toBeDefined();
-    });
-
     test('Auto initialize if fully excluded from the style', async ({ page }) => {
-        await mapEnv.loadPageAndMap(page, {});
-        await initTrafficFlow(page, { ensureAddedToStyle: true });
+        await mapEnv.loadPageAndMap(page, {}, { style: { type: 'standard', include: [] } });
+        await initTrafficFlow(page);
         expect(await page.evaluate(() => !!(globalThis as MapsSDKThis).trafficFlow)).toBe(true);
+        expect(await isFlowVisible(page)).toBe(false);
+
+        await setFlowVisible(page, true);
+        expect(await getFlowConfig(page)).toEqual({ visible: true });
+        expect(await isFlowVisible(page)).toBe(true);
     });
 
     test('Vector tiles traffic visibility changes in different ways', async ({ page }) => {
-        await mapEnv.loadPageAndMap(
-            page,
-            { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: 'standard', include: ['trafficFlow'] } },
-        );
+        await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
         expect(await getFlowConfig(page)).toBeUndefined();
 
         await initTrafficFlow(page, { visible: false });
@@ -83,9 +79,7 @@ test.describe('Map vector tile traffic module tests', () => {
 
         await setFlowVisible(page, true);
         expect(await isFlowVisible(page)).toBe(true);
-        expect(await getFlowConfig(page)).toEqual({
-            visible: true,
-        });
+        expect(await getFlowConfig(page)).toEqual({ visible: true });
 
         await applyConfig(page, { visible: undefined });
         expect(await isFlowVisible(page)).toBe(true);
@@ -107,11 +101,7 @@ test.describe('Map vector tile traffic module tests', () => {
     });
 
     test('Traffic flow filtering with initial config', async ({ page }) => {
-        await mapEnv.loadPageAndMap(
-            page,
-            { zoom: 12, center: [2.37327, 48.85903] },
-            { style: { type: 'standard', include: ['trafficFlow'] } },
-        );
+        await mapEnv.loadPageAndMap(page, { zoom: 12, center: [2.37327, 48.85903] });
 
         const config: FlowConfig = {
             filters: {
@@ -121,7 +111,12 @@ test.describe('Map vector tile traffic module tests', () => {
 
         await initTrafficFlow(page, config);
         expect(await getFlowConfig(page)).toEqual(config);
+        expect(await isFlowVisible(page)).toBe(false);
+
+        await setFlowVisible(page, true);
         expect(await isFlowVisible(page)).toBe(true);
+        expect(await getFlowConfig(page)).toEqual({ ...config, visible: true });
+
         await waitForMapIdle(page);
         const renderedFlowSegments = await waitForRenderedFlowChange(page, 0);
 
@@ -135,7 +130,7 @@ test.describe('Map vector tile traffic module tests', () => {
             async (inputFlowFilters) => (globalThis as MapsSDKThis).trafficFlow?.filter(inputFlowFilters),
             flowFilters,
         );
-        expect(await getFlowConfig(page)).toEqual({ filters: flowFilters });
+        expect(await getFlowConfig(page)).toMatchObject({ filters: flowFilters });
         await waitForMapIdle(page);
 
         const renderedRoadClosures = await waitForRenderedFlowChange(page, renderedFlowSegments.length);
@@ -147,13 +142,10 @@ test.describe('Map vector tile traffic module tests', () => {
     });
 
     test('Traffic flow filtering with complex initial config', async ({ page }) => {
-        await mapEnv.loadPageAndMap(
-            page,
-            { zoom: 14, center: [-0.12621, 51.50394] },
-            { style: { type: 'standard', include: ['trafficFlow'] } },
-        );
+        await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 
         const config: FlowConfig = {
+            visible: true,
             filters: {
                 any: [
                     {
@@ -194,12 +186,7 @@ test.describe('Map vector tile traffic module tests', () => {
 
     // (We'll verify that using dedicated methods for filtering and visibility do not affect each other)
     test('Traffic visibility and filtering with dedicated methods', async ({ page }) => {
-        await mapEnv.loadPageAndMap(
-            page,
-            // London:
-            { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: 'standard', include: ['trafficFlow'] } },
-        );
+        await mapEnv.loadPageAndMap(page, { zoom: 12, center: [-0.12621, 51.50394] }); // London
 
         await initTrafficFlow(page);
         await setFlowVisible(page, false);

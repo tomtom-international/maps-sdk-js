@@ -11,10 +11,7 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
-const map = new TomTomMap(
-    { container: 'maps-sdk-js-examples-map-container', center: [-74.00432, 40.71632], zoom: 3 },
-    { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow'] } },
-);
+const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [-74.00432, 40.71632], zoom: 3 });
 
 const orderedModules = [
     await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['borders'] } }),

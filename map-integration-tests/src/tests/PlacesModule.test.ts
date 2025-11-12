@@ -145,7 +145,7 @@ test.describe('PlacesModule tests', () => {
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
 
             // adding traffic incidents to the style: verifying the places are still shown (state restoration):
-            await initTrafficIncidents(page, { ensureAddedToStyle: true });
+            await initTrafficIncidents(page);
             await waitForMapIdle(page);
             renderedPlaces = await waitUntilRenderedFeatures(page, nextLayerIDs, numTestPlaces, 5000);
             compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
@@ -167,11 +167,7 @@ test.describe('GeoJSON Places with init config tests', () => {
             const [_name, testPlaces, _expectedDisplayProps, expectedDisplayCircleProps] = testData;
 
             const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
-            const mapEnv = await MapTestEnv.loadPageAndMap(
-                page,
-                { bounds },
-                { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] } },
-            );
+            const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
             await initPlaces(page, { theme: 'circle' });
             const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
             await showPlaces(page, testPlaces);
@@ -191,11 +187,7 @@ test.describe('GeoJSON Places apply icon config tests', () => {
             const [name, testPlaces, _expectedDisplayPinProps, expectedDisplayPOIProps] = testData;
 
             const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
-            const mapEnv = await MapTestEnv.loadPageAndMap(
-                page,
-                { bounds },
-                { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow', 'hillshade'] } },
-            );
+            const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
             await initPlaces(page);
             const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
             await showPlaces(page, testPlaces);

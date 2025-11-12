@@ -41,7 +41,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
             },
             routeLine: {
                 ...routeMainLine({ color: mainColor }),
-                beforeID: 'routeLineArrows',
+                beforeID: 'routeIncidentBackgroundLine',
                 ...configLayers?.mainLines?.routeLine,
             },
             routeOutline: {
@@ -101,7 +101,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
                 },
                 routeIncidentDashedLine: {
                     ...routeIncidentsDashedLine,
-                    beforeID: mapStyleLayerIDs.lowestLabel,
+                    beforeID: 'routeTunnelLine',
                     ...configSectionLayers?.incident?.routeIncidentDashedLine,
                 },
             },

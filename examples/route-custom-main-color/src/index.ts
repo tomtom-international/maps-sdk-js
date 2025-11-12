@@ -1,6 +1,6 @@
 import type { Waypoint } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
@@ -10,15 +10,11 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const waypoints: Waypoint[] = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
 
-const map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 100 },
-    },
-    { style: { type: 'standard', include: ['trafficIncidents'] } },
-);
-await TrafficIncidentsModule.get(map, { visible: false });
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+    fitBoundsOptions: { padding: 100 },
+});
 
 const routingModule = await RoutingModule.get(map, { theme: { mainColor: '#DF1B12' } });
 routingModule.showWaypoints(waypoints);

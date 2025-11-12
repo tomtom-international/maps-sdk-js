@@ -11,21 +11,15 @@ import {
 import './style.css';
 
 // TomTomConfig initialization
-TomTomConfig.instance.put({
-    apiKey: process.env.API_KEY_EXAMPLES,
-    language: 'en-GB',
-});
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 // Main map and modules initialization
-const map = new TomTomMap(
-    { container: 'maps-sdk-js-examples-map-container', zoom: 14, minZoom: 2, center: [-0.12621, 51.50394] },
-    {
-        style: {
-            type: 'standard',
-            include: ['trafficIncidents', 'trafficFlow', 'hillshade'],
-        },
-    },
-);
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    zoom: 14,
+    minZoom: 2,
+    center: [-0.12621, 51.50394],
+});
 
 // Traffic Incidents and Flow
 const incidents = await TrafficIncidentsModule.get(map);

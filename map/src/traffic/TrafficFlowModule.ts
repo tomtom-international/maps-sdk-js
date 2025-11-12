@@ -1,6 +1,6 @@
 import { isNil, omitBy } from 'lodash-es';
 import type { FilterSpecification } from 'maplibre-gl';
-import type { LayerSpecWithSource, StyleModuleInitConfig } from '../shared';
+import type { LayerSpecWithSource } from '../shared';
 import {
     AbstractMapModule,
     EventsModule,
@@ -9,7 +9,7 @@ import {
     TRAFFIC_FLOW_SOURCE_ID,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
-import { prepareForModuleInit } from '../shared/mapUtils';
+import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { applyFilter, buildMapLibreFlowFilters } from './filters/trafficFilters';
 import type { FlowConfig, TrafficFlowFilters } from './types/trafficModuleConfig';
@@ -54,7 +54,6 @@ type TrafficFlowSourcesWithLayers = {
  *
  * // Get module (auto-add to style if needed)
  * const trafficFlow = await TrafficFlowModule.get(map, {
- *   ensureAddedToStyle: true,
  *   visible: true
  * });
  *
@@ -134,7 +133,6 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * Auto-add to style:
      * ```typescript
      * const trafficFlow = await TrafficFlowModule.get(map, {
-     *   ensureAddedToStyle: true,
      *   visible: true,
      *   filters: {
      *     any: [{
@@ -147,8 +145,9 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * });
      * ```
      */
-    static async get(map: TomTomMap, config?: StyleModuleInitConfig & FlowConfig): Promise<TrafficFlowModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_FLOW_SOURCE_ID, 'trafficFlow');
+    static async get(map: TomTomMap, config?: FlowConfig): Promise<TrafficFlowModule> {
+        await waitUntilMapIsReady(map);
+        await ensureAddedToStyle(map, TRAFFIC_FLOW_SOURCE_ID, 'trafficFlow');
         return new TrafficFlowModule(map, config);
     }
 

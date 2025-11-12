@@ -7,10 +7,7 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const map = new TomTomMap(
-    { container: 'maps-sdk-js-examples-map-container', center: [-0.12634, 51.50276], zoom: 14 },
-    { language: 'en-GB', style: { type: 'standard', include: ['trafficIncidents'] } },
-);
+const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [-0.12634, 51.50276], zoom: 14 });
 const popUp = new Popup({
     closeButton: true,
     closeOnClick: true,

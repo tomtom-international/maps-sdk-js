@@ -3,15 +3,18 @@ import { describe, expect, Mock, test, vi } from 'vitest';
 import type { TomTomMap } from '../../TomTomMap';
 import { AbstractMapModule } from '../AbstractMapModule';
 import { waitUntilMapIsReady } from '../mapUtils';
-import type { StyleModuleConfig } from '../types';
 
 describe('AbstractMapModule tests', () => {
-    class TestModule extends AbstractMapModule<Record<string, never>, StyleModuleConfig> {
+    type TestModuleConfig = {
+        visible?: boolean;
+    };
+
+    class TestModule extends AbstractMapModule<Record<string, never>, TestModuleConfig> {
         initCalled?: boolean;
-        configApplied?: StyleModuleConfig | null;
+        configApplied?: TestModuleConfig | null;
         restored?: boolean;
 
-        static async get(tomtomMap: TomTomMap, config?: StyleModuleConfig): Promise<TestModule> {
+        static async get(tomtomMap: TomTomMap, config?: TestModuleConfig): Promise<TestModule> {
             await waitUntilMapIsReady(tomtomMap);
             return new TestModule('style', tomtomMap, config);
         }
@@ -21,7 +24,7 @@ describe('AbstractMapModule tests', () => {
             return {};
         }
 
-        protected _applyConfig(config: StyleModuleConfig | undefined) {
+        protected _applyConfig(config: TestModuleConfig | undefined) {
             this.configApplied = config;
             return config;
         }

@@ -1,6 +1,6 @@
 import { isEmpty, isNil, omitBy } from 'lodash-es';
 import type { FilterSpecification } from 'maplibre-gl';
-import type { LayerSpecWithSource, StyleModuleInitConfig } from '../shared';
+import type { LayerSpecWithSource } from '../shared';
 import {
     AbstractMapModule,
     EventsModule,
@@ -9,7 +9,7 @@ import {
     TRAFFIC_INCIDENTS_SOURCE_ID,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
-import { prepareForModuleInit } from '../shared/mapUtils';
+import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { applyFilter, buildMapLibreIncidentFilters } from './filters/trafficFilters';
 import type { IncidentsConfig, TrafficIncidentsFilters } from './types/trafficModuleConfig';
@@ -58,7 +58,6 @@ type TrafficIncidentsSourcesWithLayers = {
  *
  * // Get module (auto-add to style if needed)
  * const incidents = await TrafficIncidentsModule.get(map, {
- *   ensureAddedToStyle: true,
  *   visible: true
  * });
  *
@@ -170,7 +169,6 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * With configuration:
      * ```typescript
      * const incidents = await TrafficIncidentsModule.get(map, {
-     *   ensureAddedToStyle: true,
      *   visible: true,
      *   icons: { visible: true },
      *   filters: {
@@ -184,11 +182,9 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * });
      * ```
      */
-    static async get(
-        map: TomTomMap,
-        config?: StyleModuleInitConfig & IncidentsConfig,
-    ): Promise<TrafficIncidentsModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, TRAFFIC_INCIDENTS_SOURCE_ID, 'trafficIncidents');
+    static async get(map: TomTomMap, config?: IncidentsConfig): Promise<TrafficIncidentsModule> {
+        await waitUntilMapIsReady(map);
+        await ensureAddedToStyle(map, TRAFFIC_INCIDENTS_SOURCE_ID, 'trafficIncidents');
         return new TrafficIncidentsModule(map, config);
     }
 

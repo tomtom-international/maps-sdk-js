@@ -45,8 +45,7 @@ export default defineConfig(({ mode }) => {
             {
                 name: 'inject-importmap-to-dist',
                 transformIndexHtml(html: string) {
-                    const importMap = 
-                      `<script
+                    const importMap = `<script
                         src="https://unpkg.com/es-module-shims@2.6.2/dist/es-module-shims.js"
                         integrity="sha384-o7USlJU8I1JyeAvMeiZf+GiqEE21Wqjtr+aHZ6kGgFxtp/ZhbGQvrhwSa9bQAJWf"
                         crossorigin="anonymous">

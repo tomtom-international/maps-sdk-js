@@ -1,5 +1,3 @@
-import type { StyleModuleConfig } from '../../shared';
-
 /**
  * Available base map layer group identifiers.
  *
@@ -201,7 +199,14 @@ export type BaseMapLayerGroups = {
  *
  * @group Base Map
  */
-export type BaseMapModuleConfig = StyleModuleConfig & {
+export type BaseMapModuleConfig = {
+    /**
+     * Controls the visibility of all layers associated with this module.
+     *
+     * @default true
+     */
+    visible?: boolean;
+
     /**
      * Optional visibility configuration for specific layer groups.
      *

@@ -18,15 +18,12 @@ const invert = (geometry: PolygonFeatures): PolygonFeatures => {
 };
 
 const mainPlace = await geocode({ query: 'Germany', geographyTypes: ['Country'] });
-const map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        minZoom: 2,
-        zoom: 13,
-        bounds: mainPlace.bbox as LngLatBoundsLike,
-    },
-    { style: { type: 'standard', include: ['trafficIncidents'] } },
-);
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    minZoom: 2,
+    zoom: 13,
+    bounds: mainPlace.bbox as LngLatBoundsLike,
+});
 const mainGeometry = await geometryData({ geometries: mainPlace });
 
 const restOfTheMapGeometryModule = await GeometriesModule.get(map, {

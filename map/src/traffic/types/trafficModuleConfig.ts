@@ -1,5 +1,5 @@
 import type { DelayMagnitude } from '@tomtom-org/maps-sdk/core';
-import type { FilterShowMode, StyleModuleConfig, ValuesFilter } from '../../shared';
+import type { FilterShowMode, ValuesFilter } from '../../shared';
 
 /**
  * Available traffic incident category identifiers.
@@ -382,7 +382,14 @@ export type TrafficFlowFilters = {
  *
  * @group Traffic Incidents
  */
-export type IncidentsCommonConfig = StyleModuleConfig & {
+export type IncidentsCommonConfig = {
+    /**
+     * Controls the visibility of the traffic incident layers.
+     *
+     * @default false
+     */
+    visible?: boolean;
+
     /**
      * Filter configuration for traffic incidents.
      *
@@ -421,7 +428,14 @@ export type IncidentsConfig = IncidentsCommonConfig & {
  *
  * @group Traffic Flow
  */
-export type FlowConfig = StyleModuleConfig & {
+export type FlowConfig = {
+    /**
+     * Controls the visibility of the traffic flow layers.
+     *
+     * @default false
+     */
+    visible?: boolean;
+
     /**
      * Filter configuration for traffic flow data.
      *

@@ -27,12 +27,10 @@ test.describe("Vector tile modules combined visibility tests, to ensure one modu
         );
         await page.evaluate(async () => {
             const sdkThis = globalThis as MapsSDKThis;
-            sdkThis.trafficIncidents = await sdkThis.MapsSDK.TrafficIncidentsModule.get(sdkThis.tomtomMap, {
-                visible: false,
-            });
-            sdkThis.trafficFlow = await sdkThis.MapsSDK.TrafficFlowModule.get(sdkThis.tomtomMap, { visible: false });
-            sdkThis.pois = await sdkThis.MapsSDK.POIsModule.get(sdkThis.tomtomMap, { visible: false });
-            sdkThis.hillshade = await sdkThis.MapsSDK.HillshadeModule.get(sdkThis.tomtomMap, { visible: false });
+            sdkThis.trafficIncidents = await sdkThis.MapsSDK.TrafficIncidentsModule.get(sdkThis.tomtomMap);
+            sdkThis.trafficFlow = await sdkThis.MapsSDK.TrafficFlowModule.get(sdkThis.tomtomMap);
+            sdkThis.pois = await sdkThis.MapsSDK.POIsModule.get(sdkThis.tomtomMap);
+            sdkThis.hillshade = await sdkThis.MapsSDK.HillshadeModule.get(sdkThis.tomtomMap);
         });
 
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBeFalsy();

@@ -1,8 +1,7 @@
 import { isNil } from 'lodash-es';
-import type { StyleModuleInitConfig } from '../shared';
 import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
-import { prepareForModuleInit } from '../shared/mapUtils';
+import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import type { HillshadeModuleConfig } from '.';
 
@@ -84,7 +83,6 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * Auto-add to style if missing:
      * ```typescript
      * const hillshade = await HillshadeModule.get(map, {
-     *   ensureAddedToStyle: true,
      *   visible: true
      * });
      * ```
@@ -97,8 +95,9 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * });
      * ```
      */
-    static async get(map: TomTomMap, config?: StyleModuleInitConfig & HillshadeModuleConfig): Promise<HillshadeModule> {
-        await prepareForModuleInit(map, config?.ensureAddedToStyle, HILLSHADE_SOURCE_ID, 'hillshade');
+    static async get(map: TomTomMap, config?: HillshadeModuleConfig): Promise<HillshadeModule> {
+        await waitUntilMapIsReady(map);
+        await ensureAddedToStyle(map, HILLSHADE_SOURCE_ID, 'hillshade');
         return new HillshadeModule(map, config);
     }
 

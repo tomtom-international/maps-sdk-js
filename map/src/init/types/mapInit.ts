@@ -111,9 +111,12 @@ export type StandardStyle = {
     id?: StandardStyleID;
     /**
      * Modules to include when loading the style.
+     * * Use this to selectively enable only needed modules for better performance.
      *
      * If not specified, all available modules are included by default.
-     * Use this to selectively enable only needed modules for better performance.
+     * If an empty array is provided, no optional modules will be included.
+     *
+     * @default All available modules
      *
      * @remarks
      * Available modules:
@@ -128,6 +131,9 @@ export type StandardStyle = {
      *
      * // Include only hillshade
      * include: ['hillshade']
+     *
+     * // Include no optional modules
+     * include: []
      * ```
      */
     include?: StyleModule[];
@@ -215,6 +221,13 @@ export type CustomStyle = {
 };
 
 /**
+ * Array of all available style modules.
+ *
+ * @group Map Style
+ */
+export const styleModules = ['trafficIncidents', 'trafficFlow', 'hillshade'] as const;
+
+/**
  * Optional map modules that can be included with a style.
  *
  * @remarks
@@ -224,7 +237,7 @@ export type CustomStyle = {
  *
  * @group Map Style
  */
-export type StyleModule = 'trafficIncidents' | 'trafficFlow' | 'hillshade';
+export type StyleModule = (typeof styleModules)[number];
 
 /**
  * Map style specification for initialization.

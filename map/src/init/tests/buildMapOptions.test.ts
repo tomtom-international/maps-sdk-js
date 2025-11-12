@@ -2,12 +2,11 @@ import type { MapOptions } from 'maplibre-gl';
 import { describe, expect, test } from 'vitest';
 import { buildMapOptions } from '../buildMapOptions';
 import type { MapLibreOptions, TomTomMapParams } from '../types/mapInit';
-import sdkAndRendererInitParams from './buildMapOptions.data.json';
+import sdkAndRendererInitParams from './buildMapOptions.data';
 
 describe('Renderer init params tests', () => {
     test.each(sdkAndRendererInitParams)(
         `'%s`,
-        // @ts-ignore
         (
             _name: string,
             mapLibreOptions: MapLibreOptions,

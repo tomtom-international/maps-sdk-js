@@ -14,7 +14,7 @@ import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 import { svgToImg } from './imageUtils';
 import { parseSvg } from './resources';
-import type { AbstractSourceWithLayers } from './SourceWithLayers';
+import { AbstractSourceWithLayers, filterLayersBySources } from './SourceWithLayers';
 import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
 
 /**
@@ -301,27 +301,28 @@ export const updateStyleWithModule = (style: StyleInput | undefined, styleModule
 };
 
 /**
- * Check if the source is missing and try to add it to the map by reloading its style.
+ * Checks if the source is missing and try to add it to the map by reloading its style.
  * @param map the TomTom map instance.
- * @param ensureAddedToStyle
  * @param sourceId id of the source.
  * @param styleModule style module of the source.
  * @ignore
  */
-export const prepareForModuleInit = async (
-    map: TomTomMap,
-    ensureAddedToStyle: boolean | undefined,
-    sourceId: string,
-    styleModule: StyleModule,
-): Promise<void> => {
-    await waitUntilMapIsReady(map);
-    if (ensureAddedToStyle && !map.mapLibreMap.getSource(sourceId)) {
+export const ensureAddedToStyle = async (map: TomTomMap, sourceId: string, styleModule: StyleModule): Promise<void> => {
+    if (!map.mapLibreMap.getSource(sourceId)) {
         if (!map.mapLibreMap.isStyleLoaded()) {
             // we let the map settle before changing its style again, so the previous style/data load goes smoother:
             await map.mapLibreMap.once('idle');
         }
         map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
         await waitUntilSourceIsLoaded(map, sourceId);
+
+        map.mapLibreMap.once('styledata', () => {
+            // we're loading a bunch of style layers to the map, and we hide them all by default:
+            // see TomTomMap.handleStyleData for similar logic
+            for (const layer of filterLayersBySources(map.mapLibreMap, [sourceId])) {
+                map.mapLibreMap.setLayoutProperty(layer.id, 'visibility', 'none', { validate: false });
+            }
+        });
     }
 };
 

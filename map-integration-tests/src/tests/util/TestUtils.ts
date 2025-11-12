@@ -14,7 +14,6 @@ import type {
     RoutingModuleConfig,
     SourceWithLayerIDs,
     StyleInput,
-    StyleModuleInitConfig,
     WaypointDisplayProps,
 } from 'map';
 import { poiLayerIDs } from 'map';
@@ -230,7 +229,7 @@ export const initBasemap2 = async (page: Page, config?: BaseMapModuleInitConfig)
         mapsSdkThis.baseMap2 = await mapsSdkThis.MapsSDK.BaseMapModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
-export const initTrafficIncidents = async (page: Page, config?: StyleModuleInitConfig & IncidentsConfig) =>
+export const initTrafficIncidents = async (page: Page, config?: IncidentsConfig) =>
     page.evaluate(async (inputConfig?) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
         mapsSdkThis.trafficIncidents = await mapsSdkThis.MapsSDK.TrafficIncidentsModule.get(
@@ -245,7 +244,7 @@ export const initPOIs = async (page: Page, config?: POIsModuleConfig) =>
         mapsSdkThis.pois = await mapsSdkThis.MapsSDK.POIsModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
-export const initHillshade = async (page: Page, config?: StyleModuleInitConfig & HillshadeModuleConfig) =>
+export const initHillshade = async (page: Page, config?: HillshadeModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
         mapsSdkThis.hillshade = await mapsSdkThis.MapsSDK.HillshadeModule.get(mapsSdkThis.tomtomMap, inputConfig);

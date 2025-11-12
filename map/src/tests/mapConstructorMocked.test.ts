@@ -31,7 +31,7 @@ describe('Map initialization mocked tests', () => {
         expect(tomtomMap).toBeDefined();
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
-            style: 'https://api.tomtom.com/maps/orbis/assets/styles/0.6.0-0/style.json?&apiVersion=1&key=TEST_KEY&map=basic_street-light',
+            style: 'https://api.tomtom.com/maps/orbis/assets/styles/0.6.0-0/style.json?apiVersion=1&key=TEST_KEY&map=basic_street-light&trafficIncidents=incidents_light&trafficFlow=flow_relative-light&hillshade=hillshade_light',
             attributionControl: { compact: false },
             validateStyle: false,
             maxTileCacheZoomLevels: 22,

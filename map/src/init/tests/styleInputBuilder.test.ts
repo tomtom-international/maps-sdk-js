@@ -2,12 +2,11 @@ import type { StyleSpecification } from 'maplibre-gl';
 import { describe, expect, test } from 'vitest';
 import { buildStyleInput, withPreviousStyleParts } from '../styleInputBuilder';
 import type { TomTomMapParams } from '../types/mapInit';
-import mapsSdkInitParamsAndMapStyles from './styleInputBuilder.data.json';
+import mapsSdkInitParamsAndMapStyles from './styleInputBuilder.data';
 
 describe('Map style input builder tests', () => {
     test.each(mapsSdkInitParamsAndMapStyles)(
         `'%s`,
-        // @ts-ignore
         (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle: StyleSpecification | string) => {
             expect(buildStyleInput(tomtomMapParams)).toEqual(rendererStyle);
         },

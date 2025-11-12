@@ -60,14 +60,9 @@ test.describe('Map vector tile traffic incidents module tests', () => {
 
     test.afterEach(async ({ page }) => unsetIncidents(page));
 
-    test('Failing to initialize if fully excluded from the style', async ({ page }) => {
-        await mapEnv.loadPageAndMap(page, {});
-        await expect(initTrafficIncidents(page)).rejects.toBeDefined();
-    });
-
     test('Auto initialize if fully excluded from the style', async ({ page }) => {
-        await mapEnv.loadPageAndMap(page, {});
-        await initTrafficIncidents(page, { ensureAddedToStyle: true });
+        await mapEnv.loadPageAndMap(page, {}, { style: { type: 'standard', include: [] } });
+        await initTrafficIncidents(page);
         expect(await page.evaluate(() => !!(globalThis as MapsSDKThis).trafficIncidents)).toBe(true);
     });
 
@@ -156,13 +151,9 @@ test.describe('Map vector tile traffic incidents module tests', () => {
     });
 
     test('Traffic incidents filtering with config changes', async ({ page }) => {
-        await mapEnv.loadPageAndMap(
-            page,
-            { zoom: 13, center: [-0.12621, 51.50394] }, // London
-            { style: { type: 'standard', include: ['trafficIncidents'] } },
-        );
-        await initTrafficIncidents(page);
-        expect(await getConfig(page)).toBeUndefined();
+        await mapEnv.loadPageAndMap(page, { zoom: 13, center: [-0.12621, 51.50394] }); // London
+        await initTrafficIncidents(page, { visible: true });
+        expect(await getConfig(page)).toEqual({ visible: true });
         await waitForMapIdle(page);
 
         const defaultIncidents = await waitForRenderedIncidentsChange(page, 0);
@@ -170,6 +161,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         expect(getByIncidentCategories(defaultIncidents, ['road_closed']).length).toBeGreaterThan(0);
 
         let config: IncidentsConfig = {
+            visible: true,
             filters: { any: [{ incidentCategories: { show: 'only', values: ['road_closed'] } }] },
         };
 
@@ -179,7 +171,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
 
         // changing the map style (and manually adding also poi part):
         // verifying the config is still the same (state restoration):
-        await setStyle(page, { type: 'standard', id: 'standardDark', include: ['trafficIncidents'] });
+        await setStyle(page, 'standardDark');
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
@@ -194,6 +186,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         ).toHaveLength(0);
 
         config = {
+            visible: true,
             filters: {
                 any: [
                     { incidentCategories: { show: 'only', values: ['road_closed'] } },
@@ -236,6 +229,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         );
 
         const config: IncidentsConfig = {
+            visible: true,
             filters: {
                 any: [
                     {
@@ -289,12 +283,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
 
     // (We'll verify that using dedicated methods for filtering and visibility do not affect each other)
     test('Traffic visibility and filtering with dedicated methods', async ({ page }) => {
-        await mapEnv.loadPageAndMap(
-            page,
-            // London:
-            { zoom: 12, center: [-0.12621, 51.50394] },
-            { style: { type: 'standard', include: ['trafficIncidents'] } },
-        );
+        await mapEnv.loadPageAndMap(page, { zoom: 12, center: [-0.12621, 51.50394] }); // London
 
         await initTrafficIncidents(page);
 
@@ -310,6 +299,9 @@ test.describe('Map vector tile traffic incidents module tests', () => {
             filters: incidentFilters,
             icons: {},
         });
+
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
+
         // (changing incidents filter directly shouldn't affect flow visibility):
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(

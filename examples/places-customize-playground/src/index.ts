@@ -58,22 +58,24 @@ const updatePlaces = async () => {
 
 const listenToUIEvents = () => {
     const iconStyleSelector = document.getElementById('maps-sdk-js-examples-icon-style-selector') as HTMLSelectElement;
-    colorSelectors.forEach((element) =>
+    for (const element of colorSelectors) {
         element.addEventListener('click', () => {
-            colorSelectors.forEach((element) => element.classList.remove('active'));
+            for (const element1 of colorSelectors) {
+                element1.classList.remove('active');
+            }
             element.classList.add('active');
             places.applyTextConfig({ ...places.getConfig()?.text, color: element.dataset.value });
-        }),
-    );
+        });
+    }
 
-    fontSelectors.forEach((element) =>
+    for (const element of fontSelectors) {
         element.addEventListener('change', () => {
             places.applyTextConfig({
                 ...places.getConfig()?.text,
                 font: [element.value as MapFont],
             });
-        }),
-    );
+        });
+    }
 
     for (const element of contentSelectors) {
         element.addEventListener('change', () => {

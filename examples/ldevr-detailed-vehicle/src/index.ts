@@ -10,14 +10,11 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 const waypoints = await Promise.all([geocodeOne('Paris, FR'), geocodeOne('Amsterdam, NL')]);
 
-const map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 150 },
-    },
-    { style: { type: 'standard', include: ['trafficIncidents'] } },
-);
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+    fitBoundsOptions: { padding: 150 },
+});
 
 const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(waypoints);

@@ -6,7 +6,13 @@ import { version as maplibreVersion } from 'maplibre-gl/package.json';
 import type { MapLibreOptions, StyleInput, TomTomMapParams } from './init';
 import { buildMapOptions } from './init/buildMapOptions';
 import { buildStyleInput, withPreviousStyleParts } from './init/styleInputBuilder';
-import { EventsProxy } from './shared';
+import {
+    EventsProxy,
+    filterLayersBySources,
+    HILLSHADE_SOURCE_ID,
+    TRAFFIC_FLOW_SOURCE_ID,
+    TRAFFIC_INCIDENTS_SOURCE_ID,
+} from './shared';
 import { isLayerLocalizable } from './shared/localization';
 import { addPinSpriteToStyle } from './shared/mapUtils';
 
@@ -281,7 +287,9 @@ export class TomTomMap {
         this.ensureMapLibreCSSLoaded();
 
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this._params));
-        this.mapLibreMap.once('styledata', () => this.handleStyleData(false));
+        this.mapLibreMap.once('styledata', () => {
+            this.handleStyleData(false);
+        });
         this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.eventsConfig);
 
         this.loadRTLTextPlugin();
@@ -587,6 +595,21 @@ export class TomTomMap {
     }
 
     private handleStyleData(keepState: boolean) {
+        // we ensure to make traffic and hillshade hidden by default (even if right after the modules bring it back to visible state):
+        for (const layer of filterLayersBySources(this.mapLibreMap, [
+            TRAFFIC_INCIDENTS_SOURCE_ID,
+            TRAFFIC_FLOW_SOURCE_ID,
+            HILLSHADE_SOURCE_ID,
+        ])) {
+            this.mapLibreMap.setLayoutProperty(layer.id, 'visibility', 'none', { validate: false });
+        }
+
+        // For most use cases we'll need to have pins available (places, routing...) so we add them by default:
+        // (subsequent loads for the same sprite should be cached)
+        addPinSpriteToStyle(this._params, this.mapLibreMap);
+        // We restore the language if it was set before:
+        this._params.language && this._setLanguage(this._params.language);
+
         this.mapReady = true;
         if (keepState) {
             for (const handler of this.styleChangeHandlers) {
@@ -597,10 +620,6 @@ export class TomTomMap {
                 }
             }
         }
-        this._params.language && this._setLanguage(this._params.language);
-        // For most use cases we'll need to have pins available (places, routing...) so we add them by default:
-        // (subsequent loads for the same sprite should be cached)
-        addPinSpriteToStyle(this._params, this.mapLibreMap);
     }
 
     /**

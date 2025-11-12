@@ -19,14 +19,11 @@ const locations: Waypoint[] = (
     await Promise.all([search({ query: 'Hyde Park Corner, London' }), search({ query: 'Leman Street, London' })])
 ).map((result: SearchResponse) => result.features[0]);
 
-const map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        bounds: bboxFromGeoJSON(locations) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 100 },
-    },
-    { style: { type: 'standard', include: ['trafficIncidents'] } },
-);
+const map = new TomTomMap({
+    container: 'maps-sdk-js-examples-map-container',
+    bounds: bboxFromGeoJSON(locations) as LngLatBoundsLike,
+    fitBoundsOptions: { padding: 100 },
+});
 await POIsModule.get(map, {
     filters: { categories: { show: 'only', values: ['IMPORTANT_TOURIST_ATTRACTION'] } },
 });

@@ -60,11 +60,7 @@ const showFuzzySearchResults = (places: Places) => {
 
         // Add hover event listeners for list item
         resultItem.addEventListener('mouseenter', () => {
-            placesModule.putEventState({
-                id: place.id,
-                state: 'hover',
-                mode: 'put',
-            });
+            placesModule.putEventState({ id: place.id, state: 'hover', mode: 'put' });
         });
 
         fuzzySearchResultsList.appendChild(resultItem);

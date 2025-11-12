@@ -12,7 +12,7 @@ describe('Vector tiles traffic module tests', () => {
         const incidentsSource = { id: TRAFFIC_INCIDENTS_SOURCE_ID };
         const tomtomMapMock = {
             mapLibreMap: {
-                getSource: vi.fn().mockReturnValueOnce(incidentsSource),
+                getSource: vi.fn().mockReturnValue(incidentsSource),
                 getStyle: vi
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
@@ -53,29 +53,5 @@ describe('Vector tiles traffic module tests', () => {
         trafficIncidentsModule.applyConfig({ visible: true });
         trafficIncidentsModule.applyConfig({ visible: false });
         trafficIncidentsModule.applyConfig({ visible: false, icons: { visible: true } });
-    });
-
-    test('Initializing module with no config and no flow in style', async () => {
-        const incidentsSource = { id: TRAFFIC_INCIDENTS_SOURCE_ID };
-        const tomtomMapMock = {
-            mapLibreMap: {
-                getSource: vi.fn().mockReturnValueOnce(incidentsSource).mockReturnValueOnce(undefined),
-                getStyle: vi
-                    .fn()
-                    .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
-                once: vi.fn().mockReturnValue(Promise.resolve()),
-            } as unknown as Map,
-            _eventsProxy: {
-                add: vi.fn(),
-                ensureAdded: vi.fn(),
-            },
-            addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
-        } as unknown as TomTomMap;
-
-        const trafficIncidentsModule = await TrafficIncidentsModule.get(tomtomMapMock);
-        expect(trafficIncidentsModule).toBeDefined();
-        expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
-        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
     });
 });

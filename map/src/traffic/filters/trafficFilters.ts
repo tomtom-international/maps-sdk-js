@@ -131,7 +131,7 @@ export const buildMapLibreIncidentFilters = (incidentFilters: TrafficIncidentsFi
     }
     const mapLibreFilters = incidentFilters.any
         .map(buildMapLibreIncidentsFilter)
-        .filter((mapLibreFilter) => !isNil(mapLibreFilter)) as MultiSyntaxFilter[];
+        .filter((mapLibreFilter) => !isNil(mapLibreFilter));
     return getMergedAnyFilter(mapLibreFilters);
 };
 
@@ -158,7 +158,7 @@ export const buildMapLibreFlowFilters = (flowFilters: TrafficFlowFilters): Multi
     }
     const mapLibreFilters = flowFilters.any
         .map(buildMapLibreFlowFilter)
-        .filter((mapLibreFilter) => !isNil(mapLibreFilter)) as MultiSyntaxFilter[];
+        .filter((mapLibreFilter) => !isNil(mapLibreFilter));
     return getMergedAnyFilter(mapLibreFilters);
 };
 

@@ -11,7 +11,7 @@ describe('Vector tiles traffic flow module tests', () => {
     function createMockMap(flowSource: { id: string }): TomTomMap {
         return {
             mapLibreMap: {
-                getSource: vi.fn().mockReturnValueOnce(flowSource),
+                getSource: vi.fn().mockReturnValue(flowSource),
                 getStyle: vi
                     .fn()
                     .mockReturnValue({ layers: [{}], sources: { incidentsSourceID: {}, flowSourceID: {} } }),
@@ -25,6 +25,7 @@ describe('Vector tiles traffic flow module tests', () => {
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
         } as unknown as TomTomMap;
     }
+
     test('Initializing module with config', async () => {
         const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
         const tomtomMapMock = createMockMap(flowSource);

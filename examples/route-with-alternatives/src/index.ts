@@ -1,5 +1,5 @@
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { RoutingModule, TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
@@ -11,11 +11,7 @@ const waypoints = await Promise.all([geocodeOne('London'), geocodeOne('Paris')])
 const bounds = bboxFromGeoJSON(waypoints) as LngLatBoundsLike;
 const fitBoundsOptions = { padding: 150 };
 
-const map = new TomTomMap(
-    { bounds, fitBoundsOptions, container: 'maps-sdk-js-examples-map-container' },
-    { style: { type: 'standard', include: ['trafficIncidents'] } },
-);
-await TrafficIncidentsModule.get(map, { visible: false });
+const map = new TomTomMap({ bounds, fitBoundsOptions, container: 'maps-sdk-js-examples-map-container' });
 
 const routingModule = await RoutingModule.get(map);
 routingModule.showWaypoints(waypoints);

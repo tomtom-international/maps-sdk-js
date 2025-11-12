@@ -138,11 +138,10 @@ test.describe('Routing and waypoint display tests', () => {
     });
 
     test('Multiple show and clear flows', async ({ page }) => {
-        const mapEnv = await MapTestEnv.loadPageAndMap(
-            page,
-            { bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
-            { style: { type: 'standard', include: ['trafficIncidents', 'trafficFlow'] } },
-        );
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: rotterdamToAmsterdamRoutes.bbox,
+            fitBoundsOptions: { padding: 150 },
+        });
         await initRouting(page);
 
         await showWaypoints(page, [
@@ -195,7 +194,7 @@ test.describe('Routing and waypoint display tests', () => {
         await waitUntilRenderedFeatures(page, [ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
         // Adding hillshade to style, asserting that the route stays the same:
-        await initHillshade(page, { ensureAddedToStyle: true });
+        await initHillshade(page);
         await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitForRenderedWaypoints(page, 2);
@@ -211,11 +210,7 @@ test.describe('Routing and waypoint display tests', () => {
         await waitUntilRenderedFeatures(page, [ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 2, 2000);
 
         // Changing the style (this time passing manually the parts again), asserting that the route stays the same:
-        await setStyle(page, {
-            type: 'standard',
-            id: 'monoLight',
-            include: ['trafficIncidents', 'trafficFlow', 'hillshade'],
-        });
+        await setStyle(page, { type: 'standard', id: 'monoLight' });
         await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
         await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 2000);
@@ -324,11 +319,10 @@ test.describe('Routing and waypoint display tests', () => {
     });
 
     test('Show and clear flows using LDEVR route with guidance', async ({ page }) => {
-        const mapEnv = await MapTestEnv.loadPageAndMap(
-            page,
-            { bounds: ldevrTestRoutes.bbox, fitBoundsOptions: { padding: 150 } },
-            { style: { type: 'standard', id: 'drivingLight', include: ['trafficIncidents'] } },
-        );
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: ldevrTestRoutes.bbox,
+            fitBoundsOptions: { padding: 150 },
+        });
         // We start zoomed far, asserting that some features won't be rendered:
         await zoomTo(page, 3);
 
