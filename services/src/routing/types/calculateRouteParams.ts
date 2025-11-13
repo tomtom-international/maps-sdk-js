@@ -93,6 +93,8 @@ export type GuidanceParams = {
      * @remarks
      * - `LHP`: Language-specific phonetic representation
      * - `IPA`: International Phonetic Alphabet
+     *
+     * @default 'IPA'
      */
     phonetics?: 'LHP' | 'IPA';
     /**
