@@ -1,12 +1,6 @@
 import type { StyleSpecification } from 'maplibre-gl';
-import {
-    StandardStyle,
-    StandardStyleID,
-    StyleInput,
-    StyleModule,
-    styleModules,
-    TomTomMapParams,
-} from './types/mapInit';
+import type { StandardStyle, StandardStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
+import { styleModules } from './types/mapInit';
 
 const DEFAULT_STANDARD_STYLE_ID: StandardStyleID = 'standardLight';
 const URL_PREFIX = '${baseURL}/maps/orbis/assets/styles/${version}/style.json?&apiVersion=1&key=${apiKey}';
