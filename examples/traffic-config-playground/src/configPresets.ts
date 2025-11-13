@@ -10,8 +10,11 @@ export const configPresets: {
     config: { incidents?: IncidentsConfig; flow?: FlowConfig } | undefined;
 }[] = [
     {
-        title: 'Default',
-        config: undefined,
+        title: 'Everything',
+        config: {
+            incidents: { visible: true },
+            flow: { visible: true },
+        },
     },
     {
         title: 'Incidents',

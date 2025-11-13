@@ -11,8 +11,8 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [2.34281, 48.85639], zoom: 12 });
-const incidents = await TrafficIncidentsModule.get(map);
-const flow = await TrafficFlowModule.get(map);
+const incidents = await TrafficIncidentsModule.get(map, { visible: true });
+const flow = await TrafficFlowModule.get(map, { visible: true });
 
 const cachedPlacesByQuery: Record<string, Place> = {};
 const geocodeWithCache = async (query: string): Promise<Place> => {
