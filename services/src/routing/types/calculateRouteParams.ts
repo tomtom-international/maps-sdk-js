@@ -254,18 +254,30 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *
          * @example
          * ```typescript
-         * // Simple waypoints
+         * // Coordinate arrays
          * locations: [[4.9, 52.3], [4.5, 51.9]]
          *
          * // With intermediate stop
          * locations: [[4.9, 52.3], [4.7, 52.1], [4.5, 51.9]]
          *
-         * // Circle waypoint (shapes route, no stop)
+         * // Waypoint objects with radius for circle waypoints
          * locations: [
          *   [4.9, 52.3],
-         *   { type: 'Feature', geometry: { type: 'Point', coordinates: [4.7, 52.1] },
-         *     properties: { radiusMeters: 5000 } },
+         *   {
+         *     type: 'Feature',
+         *     geometry: { type: 'Point', coordinates: [4.7, 52.1] },
+         *     properties: { radiusMeters: 5000 }
+         *   },
          *   [4.5, 51.9]
+         * ]
+         *
+         * // Path array for route reconstruction
+         * locations: [
+         *   [4.9, 52.3],  // Origin waypoint
+         *   [
+         *     [4.85, 52.25], [4.80, 52.20], [4.75, 52.15]  // Path points between waypoints
+         *   ],
+         *   [4.5, 51.9]   // Destination waypoint
          * ]
          * ```
          */
