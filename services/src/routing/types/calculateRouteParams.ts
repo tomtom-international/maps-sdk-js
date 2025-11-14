@@ -242,13 +242,11 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * @remarks
          * Requirements:
          * - Minimum 2 waypoints (origin and destination) OR 1 path with 2+ points
-         * - Waypoints and paths can be mixed (except circle waypoints with paths)
-         * - Circle (soft) waypoints shape the route without creating legs
          *
          * Supported formats:
          * - Coordinate arrays: `[longitude, latitude]`
-         * - Waypoint objects with radius for circle waypoints
          * - Path arrays for route reconstruction
+         * - (not supported) Waypoint objects with radius for circle waypoints
          *
          * @see [POST data parameters](https://docs.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters)
          *
@@ -260,7 +258,16 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * // With intermediate stop
          * locations: [[4.9, 52.3], [4.7, 52.1], [4.5, 51.9]]
          *
-         * // Waypoint objects with radius for circle waypoints
+         * // Path array for route reconstruction
+         * locations: [
+         *   [4.9, 52.3],  // Origin waypoint
+         *   [
+         *     [4.85, 52.25], [4.80, 52.20], [4.75, 52.15]  // Path points between waypoints
+         *   ],
+         *   [4.5, 51.9]   // Destination waypoint
+         * ]
+         *
+         * // (not supported) Waypoint objects with radius for circle waypoints
          * locations: [
          *   [4.9, 52.3],
          *   {
@@ -269,15 +276,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *     properties: { radiusMeters: 5000 }
          *   },
          *   [4.5, 51.9]
-         * ]
-         *
-         * // Path array for route reconstruction
-         * locations: [
-         *   [4.9, 52.3],  // Origin waypoint
-         *   [
-         *     [4.85, 52.25], [4.80, 52.20], [4.75, 52.15]  // Path points between waypoints
-         *   ],
-         *   [4.5, 51.9]   // Destination waypoint
          * ]
          * ```
          */
