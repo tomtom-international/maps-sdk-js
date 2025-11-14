@@ -1,0 +1,145 @@
+---
+title: Waypoints and Custom Routes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.32.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Waypoints in the TomTom Maps SDK enable complex route planning scenarios that go beyond simple origin-to-destination routing, supporting multi-stop routes and flexible routing points.
+
+## Multi-Stop Routes
+
+```javascript
+import { calculateRoute, geocode } from '@tomtom-org/maps-sdk/services';
+
+// Route with multiple stops
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam (start)
+        [3.7038, 51.2194], // Brussels (stop 1)
+        [4.3517, 50.8503], // Liège (stop 2)
+        [2.3522, 48.8566]  // Paris (end)
+    ]
+});
+```
+
+## Using Geocoded Waypoints
+
+```javascript
+// Geocode addresses for waypoints
+const origin = await geocode({ query: 'Amsterdam Central Station' });
+const stop1 = await geocode({ query: 'Brussels Grand Place' });
+const stop2 = await geocode({ query: 'Antwerp Cathedral' });
+const destination = await geocode({ query: 'Paris Louvre Museum' });
+
+const route = await calculateRoute({
+    locations: [
+        origin.features[0].geometry.coordinates,
+        stop1.features[0].geometry.coordinates,
+        stop2.features[0].geometry.coordinates,
+        destination.features[0].geometry.coordinates
+    ]
+});
+```
+
+## Route with Optimization
+
+```javascript
+// Multi-stop route with optimization
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [3.7038, 51.2194], // Brussels
+        [4.3517, 50.8503], // Liège
+        [2.3522, 48.8566]  // Paris
+    ],
+    routeType: 'fastest',
+    traffic: true,
+    optimizeWaypointOrder: true // Optimize stop order
+});
+```
+
+## Working with Route Legs
+
+```javascript
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [3.7038, 51.2194], // Brussels
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+
+// Each waypoint creates a route leg
+route.routes[0].legs.forEach((leg, index) => {
+    console.log(`Leg ${index + 1}:`);
+    console.log(`Distance: ${leg.summary.lengthInMeters}m`);
+    console.log(`Duration: ${leg.summary.travelTimeInSeconds}s`);
+});
+```
+
+## Custom Route Display
+
+```javascript
+import { TomTomMap, RoutesModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ container: 'map' });
+const routesModule = await RoutesModule.get(map);
+
+// Calculate multi-stop route
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676],
+        [3.7038, 51.2194],
+        [2.3522, 48.8566]
+    ]
+});
+
+// Display route on map
+routesModule.addRoute({
+    id: 'multi-stop-route',
+    route: route.routes[0]
+});
+```
+
+## Route with Time Windows
+
+```javascript
+// Route with specific timing for stops
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [3.7038, 51.2194], // Brussels
+        [2.3522, 48.8566]  // Paris
+    ],
+    departAt: new Date().toISOString(),
+    traffic: true
+});
+
+// Access arrival times at each waypoint
+route.routes[0].legs.forEach((leg, index) => {
+    console.log(`Arrive at waypoint ${index + 1}: ${leg.summary.arrivalTime}`);
+});
+```
+
+
+## Related Guides and Examples
+
+### Map Integration
+- **[Routes Module](../../map/routes.mdx)** - Display multi-stop routes and waypoints on the map with visual markers and route styling
+- **[Places Module](../../map/places.mdx)** - Show waypoints as interactive markers with popups and custom styling
+
+### Related Examples
+- **[Waypoints](../../../examples/waypoints/)** - Complete multi-stop route example with waypoint visualization and management
+- **[Map Route Reconstruction](../../../examples/map-route-reconstruction/)** - Interactive route building with custom waypoint placement
+- **[Route with Alternatives](../../../examples/route-with-alternatives/)** - Compare different route options for multi-stop journeys
+
+### Related Services
+- **[Planning a Route](./planning-a-route.mdx)** - Basic route calculation concepts and configuration
+- **[Geocoding](../places/geocoding.mdx)** - Convert waypoint addresses to coordinates for precise route planning
+- **[Search](../places/search.mdx)** - Find potential waypoints and destinations along your route

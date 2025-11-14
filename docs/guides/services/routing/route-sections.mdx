@@ -1,0 +1,215 @@
+---
+title: Route sections
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.32.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Route sections in the TomTom Maps SDK provide detailed information about specific segments of a calculated route.
+These sections identify different characteristics along the route path, such as traffic incidents, toll roads, ferries, tunnels, and country boundaries, enabling applications to provide detailed route analysis and user guidance.
+
+## Purpose and Functionality
+
+Route sections enable you to:
+- **Identify route characteristics** such as toll roads, ferries, and traffic incidents
+- **Analyze route segments** with specific properties like travel modes and road types
+- **Provide detailed user information** about what to expect along the route
+- **Calculate costs and times** for specific route segments
+- **Implement route-specific logic** based on section properties
+
+## Core Section Concepts
+
+### Section Structure
+All route sections share common properties that define their position within the route:
+
+```typescript
+interface RouteSection {
+    startPointIndex: number;  // Route point where section starts
+    endPointIndex: number;    // Route point where section ends
+    // Additional properties vary by section type
+}
+```
+
+### Section Types Overview
+Sections are categorized by their characteristics and the information they provide:
+
+**Navigation Sections:**
+- `leg` - Route segments between waypoints
+- `traffic` - Areas with traffic incidents or congestion
+- `travelMode` - Sections with specific travel modes
+
+**Infrastructure Sections:**
+- `tollRoad` - Toll road segments
+- `ferry` - Ferry crossings
+- `motorway` - Highway/freeway sections
+- `tunnel` - Tunnel segments
+- `carTrain` - Car transport train sections
+
+**Geographic Sections:**
+- `country` - Country boundary crossings
+- `tollVignette` - Toll vignette required areas
+- `urban` - Urban area sections
+
+**Road Characteristic Sections:**
+- `pedestrian` - Pedestrian-only areas
+- `carpool` - HOV/carpool lane sections
+- `unpaved` - Unpaved road sections
+
+## Requesting Route Sections
+
+### Basic Section Request
+
+```typescript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+import { geocode } from '@tomtom-org/maps-sdk/services';
+
+async function getRouteWithSpecificSections() {
+    const origin = (await geocode({ query: 'Amsterdam, Netherlands' })).features[0];
+    const destination = (await geocode({ query: 'Paris, France' })).features[0];
+
+    const routeResult = await calculateRoute({
+        locations: [origin, destination],
+        routeType: 'fastest',
+        traffic: true,
+
+        // Request specific section types
+        sectionTypes: ['traffic', 'tollRoads'],        // Include traffic and toll road sections only
+
+        // Additional route configuration
+        instructionsType: 'text',
+        computeTravelTimeFor: 'all'
+    });
+
+    const route = routeResult.routes[0];
+    console.log('Route calculated with sections:');
+    console.log(`Total sections: ${route.sections?.length || 0}`);
+
+    return routeResult;
+}
+```
+
+## Integration with Map Display
+
+### Highlighting Route Sections
+
+```typescript
+import { TomTomMap, RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+async function displayRouteWithSectionHighlights() {
+    const map = new TomTomMap({
+        container: 'map',
+        center: [4.9041, 52.3676],
+        zoom: 8
+    });
+
+    const routingModule = await RoutingModule.get(map);
+
+    // Calculate route with sections
+    const routeResult = await getRouteWithSections();
+
+    // Display main route
+    await routingModule.showRoutes(routeResult);
+
+    // Highlight specific sections (conceptual - actual implementation may vary)
+    highlightRouteSections(map, routeResult);
+
+    return { map, routingModule, routeResult };
+}
+
+function highlightRouteSections(map: TomTomMap, routeResult: any) {
+    const route = routeResult.routes[0];
+
+    if (route.sections) {
+        route.sections.forEach(section => {
+            if (section.sectionType === 'tollRoad') {
+                // Highlight toll sections in orange
+                console.log(`Highlighting toll section: ${section.startPointIndex}-${section.endPointIndex}`);
+            } else if (section.sectionType === 'ferry') {
+                // Highlight ferry sections in blue
+                console.log(`Highlighting ferry section: ${section.startPointIndex}-${section.endPointIndex}`);
+            } else if (section.sectionType === 'traffic' && section.magnitude >= 2) {
+                // Highlight traffic sections in red
+                console.log(`Highlighting traffic section: ${section.startPointIndex}-${section.endPointIndex}`);
+            }
+        });
+    }
+}
+```
+
+## Related Guides
+
+- [Planning a Route](/maps-sdk-js/guides/services/routing/planning-a-route) - Basic route calculation
+- [Waypoints and Custom Routes](/maps-sdk-js/guides/services/routing/waypoints-and-custom-routes) - Multi-waypoint routing
+- [Planning Criteria](/maps-sdk-js/guides/services/routing/planning-criteria) - Route optimization options
+- [Routes Module](/maps-sdk-js/guides/map/routes) - Displaying routes on maps
+
+## Complete Section Analysis Example
+
+```typescript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { calculateRoute, geocode } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+async function comprehensiveRouteWithSections() {
+    try {
+        // Calculate long-distance route likely to have multiple section types
+        const origin = (await geocode({ query: 'London, UK' })).features[0];
+        const destination = (await geocode({ query: 'Rome, Italy' })).features[0];
+
+        const routeResult = await calculateRoute({
+            locations: [origin, destination],
+            routeType: 'fastest',
+            traffic: true,
+
+            // Enable sections
+            sectionTypes: ['traffic', 'tollRoads', 'ferries'],
+
+            // Allow various route types
+            avoid: [],  // Allow toll roads and ferries
+
+            // Get detailed information
+            instructionsType: 'text',
+            computeTravelTimeFor: 'all'
+        });
+
+        // Analyze sections
+        const analysis = comprehensiveSectionAnalysis(routeResult);
+
+        // Generate warnings
+        const warnings = generateRouteWarnings(routeResult);
+
+        // Calculate costs (example rates)
+        const costRates = {
+            tollPerKm: 0.15,        // €0.15 per km for tolls
+            ferryFlat: 25.00,       // €25 flat rate for ferries
+            vignettes: {            // Vignette costs per country
+                'AUT': 9.60,        // Austria
+                'CHE': 40.00,       // Switzerland
+                'SVN': 15.00        // Slovenia
+            }
+        };
+        const costs = calculateRouteCosts(routeResult, costRates);
+
+        console.log('Complete Route Analysis:');
+        console.log('Sections:', analysis);
+        console.log('Warnings:', warnings);
+        console.log('Costs:', costs);
+
+        return { routeResult, analysis, warnings, costs };
+
+    } catch (error) {
+        console.error('Route section analysis failed:', error);
+        throw error;
+    }
+}
+
+// Execute comprehensive analysis
+comprehensiveRouteWithSections();
+```
+
