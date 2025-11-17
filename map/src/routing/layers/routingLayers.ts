@@ -156,7 +156,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
         instructionLines: {
             routeInstructionLine: {
                 ...instructionLine,
-                beforeID: mapStyleLayerIDs.lowestLabel,
+                beforeID: 'routeIncidentBackgroundLine',
                 ...configLayers?.instructionLines?.routeInstructionLine,
             },
             routeInstructionOutline: {
