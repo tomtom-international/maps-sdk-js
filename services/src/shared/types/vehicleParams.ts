@@ -68,7 +68,7 @@ export type GenericVehicleParams = {
  *     engine: {
  *       consumption: {
  *         fuelEnergyDensityInMJoulesPerLiter: 34.2,
- *         speedToConsumption: [
+ *         speedsToConsumptionsLiters: [
  *           { speedKMH: 50, consumptionUnitsPer100KM: 6.5 },
  *           { speedKMH: 90, consumptionUnitsPer100KM: 7.2 },
  *           { speedKMH: 120, consumptionUnitsPer100KM: 9.0 }
@@ -140,17 +140,41 @@ export type CombustionVehicleParams = {
  *       weightKG: 2000
  *     },
  *     engine: {
+ *       charging: {
+ *         maxChargeKWH: 75,
+ *         batteryCurve: [
+ *           { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+ *           { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+ *           { stateOfChargeInkWh: 80, maxPowerInkW: 40 },
+ *         ],
+ *         chargingConnectors: [
+ *           {
+ *             currentType: 'AC3',
+ *             plugTypes: [
+ *               'IEC_62196_Type_2_Outlet',
+ *               'IEC_62196_Type_2_Connector_Cable_Attached',
+ *               'Combo_to_IEC_62196_Type_2_Base',
+ *             ],
+ *             efficiency: 0.9,
+ *             baseLoadInkW: 0.2,
+ *             maxPowerInkW: 11,
+ *           },
+ *           {
+ *             currentType: 'DC',
+ *             plugTypes: [
+ *               'IEC_62196_Type_2_Outlet',
+ *               'IEC_62196_Type_2_Connector_Cable_Attached',
+ *               'Combo_to_IEC_62196_Type_2_Base',
+ *             ],
+ *             voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
+ *             efficiency: 0.9,
+ *             baseLoadInkW: 0.2,
+ *             maxPowerInkW: 150,
+ *           },
+ *         ]
+ *       },
  *       consumption: {
- *         charging: {
- *           maxChargeKWH: 75,
- *           chargingCurve: [
- *             { chargeKWH: 0, timeToChargeMinutes: 0 },
- *             { chargeKWH: 37.5, timeToChargeMinutes: 30 },
- *             { chargeKWH: 75, timeToChargeMinutes: 75 }
- *           ],
- *           connectorTypes: ['IEC_62196_TYPE_2']
- *         },
- *         speedToConsumption: [
+ *         speedsToConsumptionsKWH: [
  *           { speedKMH: 50, consumptionUnitsPer100KM: 15 },
  *           { speedKMH: 90, consumptionUnitsPer100KM: 18 },
  *           { speedKMH: 120, consumptionUnitsPer100KM: 23 }

@@ -215,9 +215,9 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  *     engineType: 'electric',
  *     model: {
  *       engine: {
+ *         charging: { maxChargeKWH: 85 },
  *         consumption: {
- *           charging: { maxChargeKWH: 85 },
- *           speedToConsumption: [
+ *           speedsToConsumptionsKWH: [
  *             { speedKMH: 50, consumptionUnitsPer100KM: 8 },
  *             { speedKMH: 80, consumptionUnitsPer100KM: 12 },
  *             { speedKMH: 120, consumptionUnitsPer100KM: 18 }
@@ -248,7 +248,8 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * - Path arrays for route reconstruction
          * - (not supported) Waypoint objects with radius for circle waypoints
          *
-         * @see [POST data parameters](https://docs.tomtom.com/routing-api/documentation/routing/calculate-route#post-data-parameters)
+         * @see [POST data parameters](https://docs.tomtom.com/routing-api/documentation/tomtom-maps/calculate-route#post-data-parameters)
+         * @see [Response structure](https://docs.tomtom.com/routing-api/documentation/tomtom-maps/calculate-route#structure-of-a-successful-response)
          *
          * @example
          * ```typescript
@@ -304,10 +305,10 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
         /**
          * Request additional travel time calculations for different traffic scenarios.
          *
-         * When set to 'all', the response includes travel times for:
-         * - Free-flow (no traffic)
-         * - Historic traffic patterns
-         * - Current live traffic
+         * When set to 'all', the returned route summary will contain extra fields:
+         * - `noTrafficTravelTimeInSeconds` – Free-flow (no traffic)
+         * - `historicTrafficTravelTimeInSeconds` – Historic traffic patterns
+         * - `liveTrafficIncidentsTravelTimeInSeconds` – Current live traffic
          *
          * Useful for comparing traffic impact and displaying "X minutes saved by leaving now".
          *
@@ -315,7 +316,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *
          * @example
          * ```typescript
-         * // Get all traffic-based estimates
          * computeAdditionalTravelTimeFor: 'all'
          * ```
          */
@@ -325,6 +325,11 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * Request extended progress information at route polyline points.
          *
          * Includes cumulative distance and/or time from start to each coordinate.
+         * When non-empty, the route features will contain additional property "progress" with an array of objects containing:
+         * - `pointIndex` – Index of the coordinate in the route geometry
+         * - `travelTimeInSeconds` - Cumulative travel time from start to this point (if "travelTime" is requested)
+         * - `distanceInMeters` - Cumulative distance from start to this point (if "distance" is requested)
+         *
          * Useful for displaying progress during navigation or animating route visualization.
          *
          * @default ['distance', 'travelTime']
