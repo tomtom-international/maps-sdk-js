@@ -37,7 +37,7 @@ type GeocodingIndexTypesAbbreviation = Exclude<SearchIndexType, 'POI'>;
  * };
  * ```
  *
- * @group Geocode
+ * @group Geocoding
  */
 export type GeocodingParams = Omit<
     CommonPlacesParams<URL, GeocodingResponseAPI> & CommonGeocodeAndFuzzySearchParams,

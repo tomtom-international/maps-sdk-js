@@ -60,7 +60,7 @@ import type { GeocodingProps, GeocodingResponse } from './types/geocodingRespons
  * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
  * @see [Geocoding Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/geocoding)
  *
- * @group Geocode
+ * @group Geocoding
  */
 export const geocode = async (
     params: GeocodingParams,
@@ -70,7 +70,7 @@ export const geocode = async (
 /**
  *
  * @param query
- * @group Geocode
+ * @group Geocoding
  */
 export const geocodeOne = async (query: string): Promise<Place<GeocodingProps>> =>
     (await geocode({ query, limit: 1 })).features[0];

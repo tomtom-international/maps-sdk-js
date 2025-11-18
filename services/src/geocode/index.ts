@@ -1,6 +1,6 @@
 /**
  * @module geocoding
- * @group Geocode
+ * @group Geocoding
  */
 
 export * from './geocoding';
