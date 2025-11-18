@@ -13,7 +13,7 @@ const waypoints = await Promise.all([
 
 const map = new TomTomMap({
   container: 'maps-sdk-js-examples-map-container',
-  center: [4.8808162, 52.3665909],
+  center: [4.8888162, 52.3728909],
   zoom: 16.6
 });
 
@@ -21,9 +21,13 @@ const routingModule = await RoutingModule.get(map);
 
 const routes = await calculateRoute({
     locations: waypoints,
+    costModel: {
+        traffic: 'historical',
+    },
     guidance: { // request guidance instructions
       type: 'coded'
     },
 });
 
 routingModule.showRoutes(routes);
+routingModule.showWaypoints(waypoints);
