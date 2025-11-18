@@ -37,7 +37,7 @@
     "nodejs"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^2.3.5",
+    "@biomejs/biome": "^2.3.6",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "size-limit": "^11.2.0",

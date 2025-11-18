@@ -31,8 +31,8 @@
     "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "vite-plugin-dts": "catalog:"
+    "vite-plugin-dts": "catalog:",
+    "vitest": "catalog:"
   },
   "typedoc": {
     "entryPoint": "./index.ts"
@@ -41,7 +41,7 @@
     "maplibre-gl": "catalog:"
   },
   "dependencies": {
-    "@turf/bearing": "^7.2.0",
+    "@turf/bearing": "^7.3.0",
     "core": "workspace:*",
     "lodash-es": "catalog:"
   }
