@@ -71,5 +71,19 @@
     "README.md",
     "CHANGELOG.md",
     "LICENSE.txt"
-  ]
+  ],
+  "exports": {
+    "./core": {
+      "types": "./core/dist/index.d.ts",
+      "default": "./core/dist/core.es.js"
+    },
+    "./services": {
+      "types": "./services/dist/index.d.ts",
+      "default": "./services/dist/services.es.js"
+    },
+    "./map": {
+      "types": "./map/dist/index.d.ts",
+      "default": "./map/dist/map.es.js"
+    }
+  }
 }

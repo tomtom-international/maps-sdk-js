@@ -28,8 +28,8 @@ catalogs:
       specifier: ^4.17.21
       version: 4.17.21
     maplibre-gl:
-      specifier: ^5.13.0
-      version: 5.13.0
+      specifier: ^5.12.0
+      version: 5.12.0
     rimraf:
       specifier: ^6.1.0
       version: 6.1.0
@@ -177,7 +177,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -205,7 +205,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -233,7 +233,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -273,7 +273,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -301,7 +301,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -332,7 +332,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -363,7 +363,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -397,7 +397,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -425,7 +425,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -468,7 +468,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -496,7 +496,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -524,7 +524,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -555,7 +555,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -583,7 +583,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -611,7 +611,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -639,7 +639,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -670,7 +670,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -698,7 +698,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -726,7 +726,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -754,7 +754,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -785,7 +785,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -813,7 +813,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -847,7 +847,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -881,7 +881,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -915,7 +915,7 @@ importers:
         version: 17.2.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -973,7 +973,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -997,7 +997,7 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1032,7 +1032,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1060,7 +1060,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1088,7 +1088,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1116,7 +1116,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1147,7 +1147,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1178,7 +1178,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1206,7 +1206,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1237,7 +1237,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1268,7 +1268,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1302,7 +1302,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1333,7 +1333,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1364,7 +1364,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1395,7 +1395,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1432,7 +1432,7 @@ importers:
         version: 6.1.0
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.52.5)
+        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.2)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
@@ -1460,7 +1460,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1491,7 +1491,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1519,7 +1519,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1547,7 +1547,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1578,7 +1578,7 @@ importers:
         version: 24.10.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -1608,7 +1608,7 @@ importers:
         version: 4.17.21
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
     devDependencies:
       '@microsoft/api-extractor':
         specifier: 'catalog:'
@@ -1684,7 +1684,7 @@ importers:
         version: link:../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.13.0
+        version: 5.12.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.0
@@ -3654,8 +3654,8 @@ packages:
   make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
 
-  maplibre-gl@5.13.0:
-    resolution: {integrity: sha512-UsIVP34rZdM4TjrjhwBAhbC3HT7AzFx9p/draiAPlLr8/THozZF6WmJnZ9ck4q94uO55z7P7zoGCh+AZVoagsQ==}
+  maplibre-gl@5.12.0:
+    resolution: {integrity: sha512-2B/H+DpjDO2NzsvNQYVIuKPyijhYJW/Hk3W+6BloAzXhm6nqXC3gVrntPPgP6hRH8f8j23nbNLOtM6OKplHwRQ==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-it@14.1.0:
@@ -7097,7 +7097,7 @@ snapshots:
 
   make-error@1.3.6: {}
 
-  maplibre-gl@5.13.0:
+  maplibre-gl@5.12.0:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
