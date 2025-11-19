@@ -43,7 +43,7 @@ import { getPositionStrict, toPointFeature } from './lngLat';
  * // Route will pass within 2km of Amsterdam center
  * ```
  *
- * @see [Waypoints Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/waypoints)
+ * @see [Locations Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/locations)
  *
  * @group Route
  */
