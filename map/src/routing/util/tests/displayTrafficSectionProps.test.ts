@@ -5,11 +5,10 @@ import { toDisplayTrafficSectionProps } from '../displayTrafficSectionProps';
 import toDisplayTrafficSectionPropsData from './data/toDisplayTrafficSectionProps.data.json';
 
 describe('Traffic section builder tests', () => {
-    test.each(toDisplayTrafficSectionPropsData)(
-        "'%s'",
+    test.each(
+        toDisplayTrafficSectionPropsData,
+    )("'%s'", (_name: string, sectionProps: TrafficSectionProps, expectedDisplaySectionProps: DisplayTrafficSectionProps) => {
         // @ts-ignore
-        (_name: string, sectionProps: TrafficSectionProps, expectedDisplaySectionProps: DisplayTrafficSectionProps) => {
-            expect(toDisplayTrafficSectionProps(sectionProps)).toStrictEqual(expectedDisplaySectionProps);
-        },
-    );
+        expect(toDisplayTrafficSectionProps(sectionProps)).toStrictEqual(expectedDisplaySectionProps);
+    });
 });

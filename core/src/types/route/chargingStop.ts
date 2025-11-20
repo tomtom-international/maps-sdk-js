@@ -1,4 +1,4 @@
-import type { CommonPlaceProps, CurrentType, Place } from '..';
+import type { ChargingSpeed, CommonPlaceProps, CurrentType, Place } from '..';
 
 /**
  * Available plug types for EV charging.
@@ -191,11 +191,6 @@ export type ChargingPaymentOption = {
      */
     brands?: string[];
 };
-
-/**
- * @group Route
- */
-export type ChargingSpeed = 'slow' | 'regular' | 'fast' | 'ultra-fast';
 
 /**
  * Properties specific to charging stops in electric vehicle routes.

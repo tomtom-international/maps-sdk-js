@@ -115,17 +115,14 @@ describe('Autocomplete Schema Validation', () => {
     });
 
     describe('Autocomplete request schema performance tests', () => {
-        test.each(autocompleteSearchReqObjects)(
-            "'%s'",
+        test.each(autocompleteSearchReqObjects)("'%s'", (_title: string, params: AutocompleteSearchParams) => {
             // @ts-ignore
-            (_title: string, params: AutocompleteSearchParams) => {
-                expect(
-                    bestExecutionTimeMS(
-                        () => validateRequestSchema(params, { schema: autocompleteSearchRequestSchema }),
-                        10,
-                    ),
-                ).toBeLessThan(MAX_EXEC_TIMES_MS.autocomplete.schemaValidation);
-            },
-        );
+            expect(
+                bestExecutionTimeMS(
+                    () => validateRequestSchema(params, { schema: autocompleteSearchRequestSchema }),
+                    10,
+                ),
+            ).toBeLessThan(MAX_EXEC_TIMES_MS.autocomplete.schemaValidation);
+        });
     });
 });

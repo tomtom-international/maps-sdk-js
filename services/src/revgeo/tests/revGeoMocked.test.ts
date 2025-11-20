@@ -9,17 +9,16 @@ describe('Reverse Geocoding mock tests', () => {
     const unMockedFetch = global.fetch;
     afterAll(() => (global.fetch = unMockedFetch));
 
-    test.each(apiAndParsedResponses)(
-        `'%s`,
+    test.each(
+        apiAndParsedResponses,
+    )(`'%s`, async (_name: string, params: ReverseGeocodingParams, apiResponse: never, expectedParsedResponse: never) => {
         // @ts-ignore
-        async (_name: string, params: ReverseGeocodingParams, apiResponse: never, expectedParsedResponse: never) => {
-            mockFetchResponse(200, apiResponse);
-            const response = await reverseGeocode(params);
-            expect(omit(response, 'id')).toEqual(expectedParsedResponse);
-            // (IDs are to be generated at random)
-            expect(response.id).toEqual(expect.any(String));
-        },
-    );
+        mockFetchResponse(200, apiResponse);
+        const response = await reverseGeocode(params);
+        expect(omit(response, 'id')).toEqual(expectedParsedResponse);
+        // (IDs are to be generated at random)
+        expect(response.id).toEqual(expect.any(String));
+    });
 
     test('Server response with 429.', async () => {
         mockFetchResponse(429);

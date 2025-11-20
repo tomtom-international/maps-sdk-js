@@ -7,17 +7,16 @@ import geometrySearchReqObjectsAndUrLs from './requestBuilder.data.json';
 import geometrySearchReqObjects from './requestBuilderPerf.data.json';
 
 describe('Calculate Geometry Search request URL building tests', () => {
-    test.each(geometrySearchReqObjectsAndUrLs)(
-        "'%s'",
+    test.each(
+        geometrySearchReqObjectsAndUrLs,
+    )("'%s'", (_name: string, params: GeometrySearchParams, requestData: GeometrySearchPayloadAPI) => {
         // @ts-ignore
-        (_name: string, params: GeometrySearchParams, requestData: GeometrySearchPayloadAPI) => {
-            // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
-            // (We reparse the objects to compare them ignoring the order of properties)
-            expect(JSON.parse(JSON.stringify(buildGeometrySearchRequest(params)))).toStrictEqual(
-                JSON.parse(JSON.stringify(requestData)),
-            );
-        },
-    );
+        // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
+        // (We reparse the objects to compare them ignoring the order of properties)
+        expect(JSON.parse(JSON.stringify(buildGeometrySearchRequest(params)))).toStrictEqual(
+            JSON.parse(JSON.stringify(requestData)),
+        );
+    });
 
     const expectToThrow = (type: string): void => {
         expect(() =>

@@ -5,12 +5,11 @@ import type { TomTomMapParams } from '../types/mapInit';
 import mapsSdkInitParamsAndMapStyles from './styleInputBuilder.data';
 
 describe('Map style input builder tests', () => {
-    test.each(mapsSdkInitParamsAndMapStyles)(
-        `'%s`,
-        (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle: StyleSpecification | string) => {
-            expect(buildStyleInput(tomtomMapParams)).toEqual(rendererStyle);
-        },
-    );
+    test.each(mapsSdkInitParamsAndMapStyles)(`'%s`, (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle:
+        | StyleSpecification
+        | string) => {
+        expect(buildStyleInput(tomtomMapParams)).toEqual(rendererStyle);
+    });
 
     test('With previous style parts test', () => {
         expect(withPreviousStyleParts('standardDark')).toBe('standardDark');

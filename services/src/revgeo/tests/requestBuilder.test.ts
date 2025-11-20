@@ -7,23 +7,19 @@ import reverseGeocodeReqObjectsAndUrls from './requestBuilder.data.json';
 import reverseGeocodeReqObjects from './requestBuilderPerf.data.json';
 
 describe('Reverse Geocoding request URL building functional tests', () => {
-    test.each(reverseGeocodeReqObjectsAndUrls)(
-        "'%s'",
+    test.each(
+        reverseGeocodeReqObjectsAndUrls,
+    )("'%s'", (_title: string, params: ReverseGeocodingParams, url: string) => {
         // @ts-ignore
-        (_title: string, params: ReverseGeocodingParams, url: string) => {
-            expect(buildRevGeoRequest(params).toString()).toStrictEqual(url);
-        },
-    );
+        expect(buildRevGeoRequest(params).toString()).toStrictEqual(url);
+    });
 });
 
 describe('Reverse Geocoding request URL building performance test', () => {
-    test.each(reverseGeocodeReqObjects)(
-        "'%s'",
+    test.each(reverseGeocodeReqObjects)("'%s'", (_title: string, params: ReverseGeocodingParams) => {
         // @ts-ignore
-        (_title: string, params: ReverseGeocodingParams) => {
-            expect(bestExecutionTimeMS(() => buildRevGeoRequest(params), 10)).toBeLessThan(
-                MAX_EXEC_TIMES_MS.revGeo.requestBuilding,
-            );
-        },
-    );
+        expect(bestExecutionTimeMS(() => buildRevGeoRequest(params), 10)).toBeLessThan(
+            MAX_EXEC_TIMES_MS.revGeo.requestBuilding,
+        );
+    });
 });

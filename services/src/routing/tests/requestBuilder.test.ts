@@ -9,15 +9,14 @@ import { sdkAndAPIRequests } from './requestBuilder.data';
 import { routeRequestParams, shortRouteRequestParams } from './requestBuilderPerf.data';
 
 describe('Calculate Route request building functional tests', () => {
-    test.each(sdkAndAPIRequests)(
-        "'%s'",
-        (_name: string, params: CalculateRouteParams, apiRequest: FetchInput<CalculateRoutePOSTDataAPI>) => {
-            // we reparse the objects to compare URL objects properly:
-            expect(JSON.parse(JSON.stringify(buildCalculateRouteRequest(params)))).toEqual(
-                JSON.parse(JSON.stringify(apiRequest)),
-            );
-        },
-    );
+    test.each(
+        sdkAndAPIRequests,
+    )("'%s'", (_name: string, params: CalculateRouteParams, apiRequest: FetchInput<CalculateRoutePOSTDataAPI>) => {
+        // we reparse the objects to compare URL objects properly:
+        expect(JSON.parse(JSON.stringify(buildCalculateRouteRequest(params)))).toEqual(
+            JSON.parse(JSON.stringify(apiRequest)),
+        );
+    });
 });
 
 describe('Calculate Route request building performance tests', () => {

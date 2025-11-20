@@ -7,14 +7,8 @@ import apiAndParsedResponses from './responseParser.data.json';
 
 describe.skip('Calculate Route response parsing functional tests', () => {
     // Functional tests:
-    test.each(apiAndParsedResponses)(
-        "'%s'",
-        // @ts-ignore
-        (
-            _name: string,
-            apiResponse: ReachableRangeResponseAPI,
-            params: ReachableRangeParams,
-            parsedResponse: PolygonFeature<ReachableRangeParams>,
-        ) => expect(parseReachableRangeResponse(apiResponse, params)).toEqual(parsedResponse),
-    );
+    test.each(
+        apiAndParsedResponses,
+    )("'%s'", (_name: string, apiResponse: ReachableRangeResponseAPI, params: ReachableRangeParams, parsedResponse: PolygonFeature<ReachableRangeParams>) => // @ts-ignore
+        expect(parseReachableRangeResponse(apiResponse, params)).toEqual(parsedResponse));
 });

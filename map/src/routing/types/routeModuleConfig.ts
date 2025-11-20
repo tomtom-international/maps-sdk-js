@@ -307,16 +307,6 @@ export type RouteLayersConfig = {
 export type ChargingSpeedIconMapping = Record<ChargingSpeed, string>;
 
 /**
- * Function type for mapping a value to a string, typically used for icon sprite IDs.
- *
- * @typeParam T - The type of the input value to be mapped to a string.
- * @param key - The input value to map.
- * @returns The string representation or sprite image ID for the given value.
- * @group Routing
- */
-export type ToStringFn<T> = (key: T) => string;
-
-/**
  * Mapping between charging stop properties and the corresponding icon sprite IDs.
  * @group Routing
  */
@@ -339,7 +329,7 @@ export type ChargingStopIconMapping =
           /**
            * The function which maps a ChargingStop to a sprite image ID.
            */
-          fn: ToStringFn<ChargingStop>;
+          fn: (stop: ChargingStop) => string;
       };
 
 /**

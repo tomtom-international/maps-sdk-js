@@ -1,7 +1,6 @@
 import type { CommonPlaceProps, Place, Places } from '@tomtom-org/maps-sdk/core';
-import type { Map } from 'maplibre-gl';
-import { describe, expect, test, vi } from 'vitest';
-import { MAP_MEDIUM_FONT } from '../../shared/layers/commonLayerProps';
+import { describe, expect, test } from 'vitest';
+import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
 import {
     getIconIDForPlace,
     getPOILayerCategoryForPlace,
@@ -47,45 +46,46 @@ describe('toPlaces tests', () => {
 
 describe('Get Icon ID for a given Place tests', () => {
     test('Get Icon ID for a given Place', () => {
-        expect(getIconIDForPlace({ properties: {} } as Place)).toEqual('default_pin');
-        expect(getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place)).toBe('35');
+        expect(getIconIDForPlace({ properties: {} } as Place, 0)).toEqual('default_place-0');
+        expect(getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, 0)).toBe('35');
         expect(
-            getIconIDForPlace({
-                properties: { poi: {} },
-            } as Place),
-        ).toBe('default_pin');
+            getIconIDForPlace(
+                {
+                    properties: { poi: {} },
+                } as Place,
+                0,
+            ),
+        ).toBe('default_place-0');
     });
 
     test('Get Icon ID for a given Place with custom config', () => {
         expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'RESTAURANT' }] } } } as Place, {
+            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'RESTAURANT' }] } } } as Place, 0, {
                 theme: 'circle',
             }),
         ).toBe('poi-restaurant');
 
         expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'BEACH' }] } } } as Place, {
+            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'BEACH' }] } } } as Place, 0, {
                 theme: 'base-map',
             }),
         ).toBe('poi-beach');
 
         expect(
-            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
-                icon: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
+            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, 0, {
+                icon: { categoryIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
             }),
         ).toBe('35');
 
         expect(
-            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
-                icon: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
-            }),
-        ).toBe('35');
-
-        expect(
-            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, {
-                icon: { customIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
-            }),
-        ).toBe('35');
+            getIconIDForPlace(
+                { properties: { poi: { categoryIds: [35], classifications: [{ code: 'RESTAURANT' }] } } } as Place,
+                0,
+                {
+                    icon: { categoryIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
+                },
+            ),
+        ).toBe('RESTAURANT-0');
     });
 });
 
@@ -116,7 +116,6 @@ describe('Get mapped poi layer category for a place', () => {
 });
 
 describe('test prepare places for display', () => {
-    const mapLibreMock = vi.fn() as unknown as Map;
     const places: Places = {
         type: 'FeatureCollection',
         features: [
@@ -142,7 +141,7 @@ describe('test prepare places for display', () => {
     };
 
     test('prepare places for display for single place', () => {
-        expect(preparePlacesForDisplay(places.features[0], mapLibreMock)).toEqual({
+        expect(preparePlacesForDisplay(places.features[0], 0)).toEqual({
             type: 'FeatureCollection',
             features: [
                 {
@@ -151,7 +150,7 @@ describe('test prepare places for display', () => {
                     geometry: { type: 'Point', coordinates: [0, 0], bbox: undefined },
                     properties: {
                         id: '123',
-                        iconID: 'default_pin',
+                        iconID: 'default_place-0',
                         title: 'test',
                         type: 'POI',
                         poi: { name: 'test', phone: '+31000099999' },
@@ -166,7 +165,7 @@ describe('test prepare places for display', () => {
 
     test('prepare places for display with config', () => {
         expect(
-            preparePlacesForDisplay(places, mapLibreMock, {
+            preparePlacesForDisplay(places, 0, {
                 theme: 'pin',
                 text: {
                     size: 5,
@@ -187,7 +186,7 @@ describe('test prepare places for display', () => {
                     geometry: { type: 'Point', coordinates: [0, 0], bbox: undefined },
                     properties: {
                         id: '123',
-                        iconID: 'default_pin',
+                        iconID: 'default_place-0',
                         title: 'test',
                         phone: '+31000099999',
                         staticProp: 'Static text',
@@ -202,11 +201,11 @@ describe('test prepare places for display', () => {
 
     test('prepare places for display with function text field config', () => {
         expect(
-            preparePlacesForDisplay(places, mapLibreMock, {
+            preparePlacesForDisplay(places, 0, {
                 theme: 'base-map',
                 text: {
                     size: 5,
-                    title: (place) => place.properties.poi?.url ?? 'No url found',
+                    title: (place: Place) => place.properties.poi?.url ?? 'No url found',
                     font: [MAP_MEDIUM_FONT],
                 },
             }),
@@ -223,7 +222,7 @@ describe('test prepare places for display', () => {
                     },
                     properties: {
                         id: '123',
-                        iconID: 'default_pin',
+                        iconID: 'default_place-0',
                         title: 'No url found',
                         category: undefined,
                         type: 'POI',

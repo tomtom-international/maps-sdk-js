@@ -9,13 +9,12 @@ import type {
     StyleImageMetadata,
 } from 'maplibre-gl';
 import { StandardStyle, StandardStyleID, StyleInput, StyleModule, type TomTomMapParams } from '../init';
-import { defaultPin } from '../places/resources';
 import type { TomTomMap } from '../TomTomMap';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 import { svgToImg } from './imageUtils';
 import { parseSvg } from './resources';
 import { AbstractSourceWithLayers, filterLayersBySources } from './SourceWithLayers';
-import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
+import type { LightDark, ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
 
 /**
  * Wait until the map is ready.
@@ -327,46 +326,55 @@ export const ensureAddedToStyle = async (map: TomTomMap, sourceId: string, style
 };
 
 /**
- * Adds the given image to the map (loading it if necessary) only if it's not already there.
+ * Sets the given image on the map (loading it if necessary), either adding or updating it.
  * @ignore
  */
-export const addImageIfNotExisting = async (
-    map: Map,
+export const addOrUpdateImage = async (
+    mode: 'if-not-in-sprite' | 'add-or-update',
     imageId: string,
     imageToLoad: string | HTMLImageElement,
+    map: Map,
     options?: Partial<StyleImageMetadata>,
 ) => {
-    if (!map.hasImage(imageId) && imageToLoad) {
-        if (typeof imageToLoad === 'string') {
-            if (imageToLoad.includes('<svg')) {
-                // Supporting raw SVGs:
-                const imgElement = svgToImg(parseSvg(imageToLoad));
-                // (Defensive setTimeout to ensure the image is loaded)
-                setTimeout(() => map.addImage(imageId, imgElement, options));
-            } else {
-                // Expecting image URL, so the image needs to be downloaded first:
-                const loadedImage = (await map.loadImage(imageToLoad)).data;
-                // double-checking just in case of a race condition with overlapping call:
-                if (!map.hasImage(imageId)) {
-                    map.addImage(imageId, loadedImage, options);
-                }
-            }
-        } else {
-            // Expecting HTMLImageElement, ready to be added:
-            // (Defensive setTimeout to ensure the image is loaded)
-            setTimeout(() => map.addImage(imageId, imageToLoad, options));
+    // defensive check (should not happen but we cannot let it crash):
+    if (!imageToLoad) {
+        console.warn(`addOrUpdateImage called with empty image for ID ${imageId}`);
+        return;
+    }
+
+    // Helper function to add or update the image
+    const addOrUpdateImage = (imgElement: HTMLImageElement | ImageData | ImageBitmap) => {
+        const imageExists = map.hasImage(imageId);
+        if (imageExists && mode == 'add-or-update') {
+            map.updateImage(imageId, imgElement);
+        } else if (!imageExists) {
+            map.addImage(imageId, imgElement, options);
         }
+    };
+
+    if (typeof imageToLoad === 'string') {
+        if (imageToLoad.includes('<svg')) {
+            // Supporting raw SVGs:
+            const imgElement = svgToImg(parseSvg(imageToLoad));
+            // (Defensive setTimeout to ensure the image is loaded)
+            setTimeout(() => addOrUpdateImage(imgElement));
+        } else {
+            // Expecting image URL, so the image needs to be downloaded first:
+            addOrUpdateImage((await map.loadImage(imageToLoad)).data);
+        }
+    } else {
+        // Expecting HTMLImageElement, ready to be added:
+        // (Defensive setTimeout to ensure the image is loaded)
+        setTimeout(() => addOrUpdateImage(imageToLoad));
     }
 };
 
-export type LightDark = 'light' | 'dark';
-
 /**
  * Returns the light/dark theme for a known standard style.
- * @param publishedStyleID
+ * @param standardStyleID
  */
-const getPublishedStyleTheme = (publishedStyleID: StandardStyleID): LightDark => {
-    switch (publishedStyleID) {
+const getStandardStyleTheme = (standardStyleID: StandardStyleID): LightDark => {
+    switch (standardStyleID) {
         case 'standardDark':
         case 'drivingDark':
         case 'monoDark':
@@ -383,27 +391,24 @@ const getPublishedStyleTheme = (publishedStyleID: StandardStyleID): LightDark =>
  * @param styleInput The style input to check. If not provided, 'light' is returned.
  * @ignore
  */
-export const getStyleInputTheme = (styleInput?: StyleInput): LightDark => {
+export const getStyleLightDarkTheme = (styleInput?: StyleInput): LightDark => {
     if (typeof styleInput === 'string') {
-        return getPublishedStyleTheme(styleInput);
+        return getStandardStyleTheme(styleInput);
     }
-    const publishedStyle = styleInput as StandardStyle;
-    if (publishedStyle?.id) {
-        return getPublishedStyleTheme(publishedStyle.id);
+    const standardStyle = styleInput as StandardStyle;
+    if (standardStyle?.id) {
+        return getStandardStyleTheme(standardStyle.id);
     }
     return 'light';
 };
 
 /**
- * Adds the large POI sprite to the map style, and the default pin as well.
- * @param mapParams
- * @param mapLibreMap
+ * Adds the large POI sprite to the map style.
  * @ignore
  */
-export const addPinSpriteToStyle = async (mapParams: TomTomMapParams, mapLibreMap: Map) => {
+export const addPinCategoriesSpriteToStyle = async (mapParams: TomTomMapParams, mapLibreMap: Map) => {
     mapLibreMap.setSprite(
-        `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleInputTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
+        `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleLightDarkTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
         { validate: false },
     );
-    addImageIfNotExisting(mapLibreMap, 'default_pin', defaultPin(), { pixelRatio: 2 });
 };

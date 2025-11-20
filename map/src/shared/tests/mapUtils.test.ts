@@ -1,12 +1,12 @@
 import type { Map, MapGeoJSONFeature, ResourceType } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import type { StyleInput, StyleModule } from '../../init';
-import poiLayerSpec from '../../places/tests/poiLayerSpec.data.json';
+import poiLayerSpec from '../../places/layers/tests/poiLayerSpec.data.json';
 import type { TomTomMap } from '../../TomTomMap';
 import { HILLSHADE_SOURCE_ID } from '../layers/sourcesIDs';
 import {
-    addImageIfNotExisting,
     addLayers,
+    addOrUpdateImage,
     changeLayerProps,
     deserializeFeatures,
     ensureAddedToStyle,
@@ -299,13 +299,12 @@ describe('Map utils - updateStyleWithStyleModule', () => {
         expect(() => updateStyleWithModule({ type: 'custom' }, 'trafficIncidents')).toThrow();
     });
 
-    test.each(updateStyleData)(
-        `'%s`,
+    test.each(
+        updateStyleData,
+    )(`'%s`, (_name: string, styleInput: StyleInput, styleModule: StyleModule, styleOutput: StyleInput) => {
         // @ts-ignore
-        (_name: string, styleInput: StyleInput, styleModule: StyleModule, styleOutput: StyleInput) => {
-            expect(updateStyleWithModule(styleInput ? styleInput : undefined, styleModule)).toEqual(styleOutput);
-        },
-    );
+        expect(updateStyleWithModule(styleInput ? styleInput : undefined, styleModule)).toEqual(styleOutput);
+    });
 });
 
 describe('Map utils - tryToAddSourceToMapIfMissing', () => {
@@ -355,7 +354,7 @@ describe('Map utils - tryToAddSourceToMapIfMissing', () => {
     });
 });
 
-describe('addImageIfNotExisting tests', () => {
+describe('addOrUpdateImage tests', () => {
     test('Add image while map already has it', () => {
         const mapLibreMock = {
             loadImage: vi.fn().mockResolvedValue(vi.fn()),
@@ -364,7 +363,9 @@ describe('addImageIfNotExisting tests', () => {
         } as unknown as Map;
 
         vi.spyOn(mapLibreMock, 'addImage');
-        expect(async () => addImageIfNotExisting(mapLibreMock, 'restaurant', 'https://test.com')).not.toThrow();
+        expect(async () =>
+            addOrUpdateImage('if-not-in-sprite', 'restaurant', 'https: //test.com', mapLibreMock),
+        ).not.toThrow();
     });
 
     test('Add image with race condition, when map already has it right after loading it', () => {
@@ -374,7 +375,9 @@ describe('addImageIfNotExisting tests', () => {
             hasImage: vi.fn().mockReturnValueOnce(false).mockReturnValueOnce(true),
         } as unknown as Map;
 
-        expect(async () => addImageIfNotExisting(mapLibreMock, 'restaurant', 'https://test.com')).not.toThrow();
+        expect(async () =>
+            addOrUpdateImage('add-or-update', 'restaurant', 'https://test.com', mapLibreMock),
+        ).not.toThrow();
         expect(mapLibreMock.loadImage).toHaveBeenCalledTimes(1);
     });
 
@@ -384,7 +387,9 @@ describe('addImageIfNotExisting tests', () => {
             addImage: vi.fn(),
             hasImage: vi.fn().mockReturnValue(false),
         } as unknown as Map;
-        expect(async () => addImageIfNotExisting(mapLibreMock, 'restaurant', 'https://test.com')).not.toThrow();
+        expect(async () =>
+            addOrUpdateImage('if-not-in-sprite', 'restaurant', 'https://test.com', mapLibreMock, { pixelRatio: 1 }),
+        ).not.toThrow();
         expect(mapLibreMock.loadImage).toHaveBeenCalledTimes(1);
     });
 
@@ -397,7 +402,7 @@ describe('addImageIfNotExisting tests', () => {
         } as unknown as Map;
 
         await expect(async () =>
-            addImageIfNotExisting(mapLibreMock, 'restaurant', 'https://test.com'),
+            addOrUpdateImage('if-not-in-sprite', 'restaurant', 'https://test.com', mapLibreMock),
         ).rejects.toMatchObject(error);
     });
 });

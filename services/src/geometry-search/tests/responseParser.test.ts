@@ -7,23 +7,19 @@ import { parseGeometrySearchResponse } from '../responseParser';
 import type { GeometrySearchResponse, GeometrySearchResponseAPI } from '../types';
 
 describe('Geometry Search response parser tests', () => {
-    test.each(apiAndParsedResponses)(
-        "'%s'",
+    test.each(
+        apiAndParsedResponses,
+    )("'%s'", (_name: string, apiResponse: GeometrySearchResponseAPI, parsedResponse: GeometrySearchResponse) => {
         // @ts-ignore
-        (_name: string, apiResponse: GeometrySearchResponseAPI, parsedResponse: GeometrySearchResponse) => {
-            expect(parseGeometrySearchResponse(apiResponse)).toStrictEqual(parsedResponse);
-        },
-    );
+        expect(parseGeometrySearchResponse(apiResponse)).toStrictEqual(parsedResponse);
+    });
 });
 
 describe('Geometry Search response parser performance tests', () => {
-    test.each(apiResponses)(
-        "'%s'",
+    test.each(apiResponses)("'%s'", (_title: string, apiResponse: GeometrySearchResponseAPI) => {
         // @ts-ignore
-        (_title: string, apiResponse: GeometrySearchResponseAPI) => {
-            expect(bestExecutionTimeMS(() => parseGeometrySearchResponse(apiResponse), 10)).toBeLessThan(
-                MAX_EXEC_TIMES_MS.search.geometrySearch.responseParsing,
-            );
-        },
-    );
+        expect(bestExecutionTimeMS(() => parseGeometrySearchResponse(apiResponse), 10)).toBeLessThan(
+            MAX_EXEC_TIMES_MS.search.geometrySearch.responseParsing,
+        );
+    });
 });

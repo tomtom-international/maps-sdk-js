@@ -342,13 +342,10 @@ describe('ReverseGeocoding schema validation', () => {
 });
 
 describe('Rev-Geo request schema performance tests', () => {
-    test.each(revGeoReqObjects)(
-        "'%s'",
+    test.each(revGeoReqObjects)("'%s'", (_title: string, params: ReverseGeocodingParams) => {
         // @ts-ignore
-        (_title: string, params: ReverseGeocodingParams) => {
-            expect(
-                bestExecutionTimeMS(() => validateRequestSchema(params, { schema: revGeocodeRequestSchema }), 10),
-            ).toBeLessThan(MAX_EXEC_TIMES_MS.revGeo.schemaValidation);
-        },
-    );
+        expect(
+            bestExecutionTimeMS(() => validateRequestSchema(params, { schema: revGeocodeRequestSchema }), 10),
+        ).toBeLessThan(MAX_EXEC_TIMES_MS.revGeo.schemaValidation);
+    });
 });

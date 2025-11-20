@@ -1,6 +1,26 @@
 import type { TomTomHeaders } from '@tomtom-org/maps-sdk/core';
 import type { FetchInput, ParsedFetchResponse, PostObject } from './types/fetch';
 
+/**
+ * Custom error class for HTTP fetch errors.
+ */
+class FetchError extends Error {
+    public readonly status: number;
+    public readonly data?: unknown;
+
+    constructor(status: number, message?: string, data?: unknown) {
+        super(message || `HTTP Error ${status}`);
+        this.name = 'FetchError';
+        this.status = status;
+        this.data = data;
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, FetchError);
+        }
+    }
+}
+
 // Returns the response as a JSON object or throws an error if the response isn't successful.
 const returnOrThrow = async <T>(response: Response): ParsedFetchResponse<T> => {
     if (response.ok) {
@@ -9,18 +29,17 @@ const returnOrThrow = async <T>(response: Response): ParsedFetchResponse<T> => {
     let message: string | undefined;
     let errorBody;
     const contentType = response.headers.get('content-type');
-    if (!response.bodyUsed) {
-        if (contentType?.includes('application/json')) {
-            errorBody = await response.json();
-            message = errorBody?.errorText ?? errorBody?.message ?? errorBody?.detailedError?.message;
-        } else if (contentType?.includes('text/xml')) {
-            errorBody = await response.text();
-            message = response.statusText;
-        }
-    } else {
+    if (response.bodyUsed) {
+        message = response.statusText;
+    } else if (contentType?.includes('application/json')) {
+        errorBody = await response.json();
+        message = errorBody?.errorText ?? errorBody?.message ?? errorBody?.detailedError?.message;
+    } else if (contentType?.includes('text/xml')) {
+        errorBody = await response.text();
         message = response.statusText;
     }
-    throw { status: response.status, message, data: errorBody };
+
+    throw new FetchError(response.status, message, errorBody);
 };
 
 /**
@@ -64,5 +83,5 @@ export const fetchWith = async <T, D = void>(input: FetchInput<D>, headers: TomT
     if (method === 'POST') {
         return post<T, D>(input, headers);
     }
-    throw Error(`Unsupported HTTP method received: ${method}`);
+    throw new Error(`Unsupported HTTP method received: ${method}`);
 };

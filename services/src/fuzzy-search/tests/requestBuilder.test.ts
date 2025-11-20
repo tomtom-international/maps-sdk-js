@@ -7,13 +7,10 @@ import fuzzySearchReqObjectsAndUrLs from './requestBuilder.data.json';
 import fuzzySearchReqObjects from './requestBuilderPerf.data.json';
 
 describe('Calculate Fuzzy Search request URL building tests', () => {
-    test.each(fuzzySearchReqObjectsAndUrLs)(
-        "'%s'",
+    test.each(fuzzySearchReqObjectsAndUrLs)("'%s'", (_name: string, params: FuzzySearchParams, requestUrl: string) => {
         // @ts-ignore
-        (_name: string, params: FuzzySearchParams, requestUrl: string) => {
-            expect(buildFuzzySearchRequest(params).toString()).toStrictEqual(requestUrl);
-        },
-    );
+        expect(buildFuzzySearchRequest(params).toString()).toStrictEqual(requestUrl);
+    });
 });
 
 describe('Fuzzy Search request URL builder performance tests', () => {

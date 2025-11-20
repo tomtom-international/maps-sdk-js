@@ -10,11 +10,12 @@ import {
     EventsProxy,
     filterLayersBySources,
     HILLSHADE_SOURCE_ID,
+    LightDark,
     TRAFFIC_FLOW_SOURCE_ID,
     TRAFFIC_INCIDENTS_SOURCE_ID,
 } from './shared';
 import { isLayerLocalizable } from './shared/localization';
-import { addPinSpriteToStyle } from './shared/mapUtils';
+import { addPinCategoriesSpriteToStyle, getStyleLightDarkTheme } from './shared/mapUtils';
 
 /**
  * Handler interface for responding to map style changes.
@@ -205,11 +206,14 @@ export class TomTomMap {
     /**
      * @ignore
      */
-    _eventsProxy: EventsProxy;
+    readonly _eventsProxy: EventsProxy;
     /**
      * @ignore
      */
     _params: TomTomMapParams;
+
+    styleLightDarkTheme: LightDark;
+
     private readonly styleChangeHandlers: StyleChangeHandler[] = [];
 
     /**
@@ -284,6 +288,7 @@ export class TomTomMap {
      */
     constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
         this._params = mergeFromGlobal(mapParams) as TomTomMapParams;
+        this.styleLightDarkTheme = getStyleLightDarkTheme(this._params.style);
         this.ensureMapLibreCSSLoaded();
 
         this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this._params));
@@ -409,6 +414,7 @@ export class TomTomMap {
         }
         const effectiveStyle = options.keepState ? withPreviousStyleParts(style, this._params.style) : style;
         this._params = { ...this._params, style: effectiveStyle };
+        this.styleLightDarkTheme = getStyleLightDarkTheme(effectiveStyle);
         this.mapLibreMap.once('styledata', () => {
             // We only handle the style data change if the applied style is still the same as the one we set,
             // to prevent race conditions when handling stale styles applied quickly in succession.
@@ -606,7 +612,7 @@ export class TomTomMap {
 
         // For most use cases we'll need to have pins available (places, routing...) so we add them by default:
         // (subsequent loads for the same sprite should be cached)
-        addPinSpriteToStyle(this._params, this.mapLibreMap);
+        addPinCategoriesSpriteToStyle(this._params, this.mapLibreMap);
         // We restore the language if it was set before:
         this._params.language && this._setLanguage(this._params.language);
 

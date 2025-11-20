@@ -7,23 +7,19 @@ import apiAndParsedResponses from './responseParser.data.json';
 import apiResponses from './responseParserPerf.data.json';
 
 describe('Autocomplete response parser tests', () => {
-    test.each(apiAndParsedResponses)(
-        "'%s'",
+    test.each(
+        apiAndParsedResponses,
+    )("'%s'", (_name: string, apiResponse: AutocompleteSearchResponseAPI, parsedResponse: AutocompleteSearchResponse) => {
         // @ts-ignore
-        (_name: string, apiResponse: AutocompleteSearchResponseAPI, parsedResponse: AutocompleteSearchResponse) => {
-            expect(parseAutocompleteSearchResponse(apiResponse)).toStrictEqual(parsedResponse);
-        },
-    );
+        expect(parseAutocompleteSearchResponse(apiResponse)).toStrictEqual(parsedResponse);
+    });
 });
 
 describe('Autocomplete response parser performance tests', () => {
-    test.each(apiResponses)(
-        "'%s'",
+    test.each(apiResponses)("'%s'", (_title: string, apiResponse: AutocompleteSearchResponseAPI) => {
         // @ts-ignore
-        (_title: string, apiResponse: AutocompleteSearchResponseAPI) => {
-            expect(bestExecutionTimeMS(() => parseAutocompleteSearchResponse(apiResponse), 10)).toBeLessThan(
-                MAX_EXEC_TIMES_MS.autocomplete.responseParsing,
-            );
-        },
-    );
+        expect(bestExecutionTimeMS(() => parseAutocompleteSearchResponse(apiResponse), 10)).toBeLessThan(
+            MAX_EXEC_TIMES_MS.autocomplete.responseParsing,
+        );
+    });
 });

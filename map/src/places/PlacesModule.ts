@@ -6,10 +6,11 @@ import type {
     SymbolLayerSpecWithoutSource,
 } from '../shared';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from '../shared';
-import { addImageIfNotExisting, changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
+import { DEFAULT_PLACE_ICON_ID } from '../shared/layers/symbolLayers';
+import { addOrUpdateImage, changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
-import { preparePlacesForDisplay } from './preparePlacesForDisplay';
+import { defaultPin } from './resources';
 import type { DisplayPlaceProps } from './types/placeDisplayProps';
 import {
     PlaceIconConfig,
@@ -18,6 +19,7 @@ import {
     PlacesTheme,
     PlaceTextConfig,
 } from './types/placesModuleConfig';
+import { imageIDWithInstanceSuffix, preparePlacesForDisplay } from './utils/preparePlacesForDisplay';
 
 type PlacesSourcesAndLayers = {
     /**
@@ -59,7 +61,7 @@ type PlacesSourcesAndLayers = {
  * // Create places module with pin markers
  * const places = await PlacesModule.get(map, {
  *   icon: {
- *     customIcons: []
+ *     categoryIcons: []
  *   },
  *   text: {
  *     field: (place) => place.properties.poi?.name || 'Unknown'
@@ -94,7 +96,8 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * * Starts with 0 and each instance increments it by one.
      * @private
      */
-    private instanceIndex = 0;
+    private instanceIndex!: number;
+    private defaultPlaceIconID!: string;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -115,11 +118,13 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @ignore
      */
     protected _initSourcesWithLayers(config?: PlacesModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
+        // Only increment the instance index for new instances, not for restore operations
         if (!restore) {
             PlacesModule.lastInstanceIndex++;
             this.instanceIndex = PlacesModule.lastInstanceIndex;
             this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${this.instanceIndex}`;
-            this.layerIDPrefix = `placesSymbols-${this.instanceIndex}`;
+            this.layerIDPrefix = `places-${this.instanceIndex}`;
+            this.defaultPlaceIconID = imageIDWithInstanceSuffix(DEFAULT_PLACE_ICON_ID, this.instanceIndex);
         }
 
         // Update each layer id with the instance-specific prefix
@@ -149,13 +154,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @ignore
      */
     protected _applyConfig(config: PlacesModuleConfig | undefined) {
-        // TODO: update layers and data also if the new icon/text config is not there but before it was?
-        if (config?.theme || config?.icon || config?.text) {
-            this.updateLayersAndData(config);
-        } else if (config?.extraFeatureProps) {
-            this.updateData(config);
-        }
-
+        this.updateLayersAndData(config);
         return config;
     }
 
@@ -212,7 +211,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * ```typescript
      * places.applyIconConfig({
-     *   customIcons: [
+     *   categoryIcons: [
      *     { category: 'RESTAURANT', id: 'restaurant-icon', image: '/icons/food.png' }
      *   ]
      * });
@@ -278,14 +277,8 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         this.config = config;
     }
 
-    private updateLayersAndData(config: PlacesModuleConfig): void {
-        // If we have custom icons, ensure they're added to the map style:
-        for (const customIcon of config?.icon?.customIcons ?? []) {
-            addImageIfNotExisting(this.mapLibreMap, customIcon.id, customIcon.image as string, {
-                pixelRatio: customIcon.pixelRatio ?? 2,
-            });
-        }
-
+    private updateLayersAndData(config: PlacesModuleConfig | undefined): void {
+        this.setupImages(config);
         const newLayerSpecs = this.buildLayerSpecs(config);
         // Convert layerSpecs objects to arrays for changeLayersProps
         const newLayerSpecsArray = [newLayerSpecs.main, newLayerSpecs.selected];
@@ -295,9 +288,53 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         this.updateData(config);
     }
 
-    private updateData(config: PlacesModuleConfig): void {
+    private setupImages(config: PlacesModuleConfig | undefined): void {
+        if (config?.icon) {
+            // If we have custom icons, ensure they're added to the map style:
+            for (const customIcon of config.icon.categoryIcons ?? []) {
+                addOrUpdateImage(
+                    'if-not-in-sprite',
+                    imageIDWithInstanceSuffix(customIcon.id, this.instanceIndex),
+                    customIcon.image as string | HTMLImageElement,
+                    this.mapLibreMap,
+                    {
+                        pixelRatio: customIcon.pixelRatio ?? 2,
+                    },
+                );
+            }
+
+            if (config.icon.default) {
+                if (config.icon.default.image) {
+                    addOrUpdateImage(
+                        'if-not-in-sprite',
+                        this.defaultPlaceIconID,
+                        config.icon.default.image.image as string | HTMLImageElement,
+                        this.mapLibreMap,
+                        {
+                            pixelRatio: config.icon.default.image.pixelRatio ?? 2,
+                        },
+                    );
+                }
+                if (config.icon.default.style) {
+                    addOrUpdateImage(
+                        'if-not-in-sprite',
+                        this.defaultPlaceIconID,
+                        defaultPin(config.icon.default.style),
+                        this.mapLibreMap,
+                        { pixelRatio: 2 },
+                    );
+                }
+            }
+        } else {
+            addOrUpdateImage('if-not-in-sprite', this.defaultPlaceIconID, defaultPin(), this.mapLibreMap, {
+                pixelRatio: 2,
+            });
+        }
+    }
+
+    private updateData(config: PlacesModuleConfig | undefined): void {
         this.sourcesWithLayers.places.source.runtimeSource?.setData(
-            preparePlacesForDisplay(this.sourcesWithLayers.places.shownFeatures, this.mapLibreMap, config),
+            preparePlacesForDisplay(this.sourcesWithLayers.places.shownFeatures, this.instanceIndex, config),
         );
     }
 
@@ -349,7 +386,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      */
     async show(places: Place | Place[] | Places) {
         await this.waitUntilModuleReady();
-        this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.mapLibreMap, this.config));
+        this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.instanceIndex, this.config));
     }
 
     /**

@@ -1,15 +1,15 @@
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
-import poiLayerSpec from '../../tests/poiLayerSpec.data.json';
 import {
     buildPlacesLayerSpecs,
     getTextSizeSpec,
     hasEventState,
-    placesLayerSpec,
+    pinLayerSpec,
     SELECTED_COLOR,
-    selectedPlaceLayerSpec,
+    selectedPinLayerSpec,
 } from '../placesLayers';
+import poiLayerSpec from './poiLayerSpec.data.json';
 
 describe('Get places layer spec with circle or pin icon style config', () => {
     const mapLibreMock = vi.fn() as unknown as Map;
@@ -17,10 +17,10 @@ describe('Get places layer spec with circle or pin icon style config', () => {
     test('Get places layer spec no config', () => {
         expect(buildPlacesLayerSpecs(undefined, mapLibreMock)).toEqual({
             main: {
-                ...placesLayerSpec,
+                ...pinLayerSpec,
             },
             selected: {
-                ...selectedPlaceLayerSpec,
+                ...selectedPinLayerSpec,
             },
         });
     });
@@ -28,10 +28,10 @@ describe('Get places layer spec with circle or pin icon style config', () => {
     test('Get places layer spec with circle icon style config', () => {
         expect(buildPlacesLayerSpecs({ theme: 'circle' }, mapLibreMock)).toEqual({
             main: {
-                ...placesLayerSpec,
+                ...pinLayerSpec,
             },
             selected: {
-                ...selectedPlaceLayerSpec,
+                ...selectedPinLayerSpec,
             },
         });
     });
@@ -39,10 +39,10 @@ describe('Get places layer spec with circle or pin icon style config', () => {
     test('Get places layer spec with pin icon style config', () => {
         expect(buildPlacesLayerSpecs({ theme: 'pin' }, mapLibreMock)).toEqual({
             main: {
-                ...placesLayerSpec,
+                ...pinLayerSpec,
             },
             selected: {
-                ...selectedPlaceLayerSpec,
+                ...selectedPinLayerSpec,
             },
         });
     });
@@ -66,32 +66,32 @@ describe('Get places layer spec with circle or pin icon style config', () => {
             ),
         ).toEqual({
             main: {
-                ...placesLayerSpec,
+                ...pinLayerSpec,
                 layout: {
-                    ...placesLayerSpec.layout,
+                    ...pinLayerSpec.layout,
                     'text-size': 5,
                     'text-font': [MAP_MEDIUM_FONT],
                     'text-offset': [0, 1],
                     'text-field': ['get', 'name'],
                 },
                 paint: {
-                    ...placesLayerSpec.paint,
+                    ...pinLayerSpec.paint,
                     'text-color': 'red',
                     'text-halo-color': 'white',
                     'text-halo-width': 1,
                 },
             },
             selected: {
-                ...selectedPlaceLayerSpec,
+                ...selectedPinLayerSpec,
                 layout: {
-                    ...selectedPlaceLayerSpec.layout,
+                    ...selectedPinLayerSpec.layout,
                     'text-size': 5,
                     'text-font': [MAP_MEDIUM_FONT],
                     'text-offset': [0, 1],
                     'text-field': ['get', 'name'],
                 },
                 paint: {
-                    ...selectedPlaceLayerSpec.paint,
+                    ...selectedPinLayerSpec.paint,
                     'text-color': 'red',
                     'text-halo-color': 'white',
                     'text-halo-width': 1,
@@ -113,16 +113,16 @@ describe('Get places layer spec with circle or pin icon style config', () => {
             ),
         ).toEqual({
             main: {
-                ...placesLayerSpec,
+                ...pinLayerSpec,
                 paint: {
-                    ...placesLayerSpec.paint,
+                    ...pinLayerSpec.paint,
                     'text-color': 'green',
                 },
             },
             selected: {
-                ...selectedPlaceLayerSpec,
+                ...selectedPinLayerSpec,
                 paint: {
-                    ...selectedPlaceLayerSpec.paint,
+                    ...selectedPinLayerSpec.paint,
                     'text-color': 'green',
                 },
             },

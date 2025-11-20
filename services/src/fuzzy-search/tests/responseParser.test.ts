@@ -7,23 +7,19 @@ import apiAndParsedResponses from './responseParser.data.json';
 import apiResponses from './responseParserPerf.data.json';
 
 describe('Fuzzy Search response parser tests', () => {
-    test.each(apiAndParsedResponses)(
-        "'%s'",
+    test.each(
+        apiAndParsedResponses,
+    )("'%s'", (_name: string, apiResponse: FuzzySearchResponseAPI, parsedResponse: FuzzySearchResponse) => {
         // @ts-ignore
-        (_name: string, apiResponse: FuzzySearchResponseAPI, parsedResponse: FuzzySearchResponse) => {
-            expect(parseFuzzySearchResponse(apiResponse)).toStrictEqual(parsedResponse);
-        },
-    );
+        expect(parseFuzzySearchResponse(apiResponse)).toStrictEqual(parsedResponse);
+    });
 });
 
 describe('Fuzzy Search response parser performance tests', () => {
-    test.each(apiResponses)(
-        "'%s'",
+    test.each(apiResponses)("'%s'", (_title: string, apiResponse: FuzzySearchResponseAPI) => {
         // @ts-ignore
-        (_title: string, apiResponse: FuzzySearchResponseAPI) => {
-            expect(bestExecutionTimeMS(() => parseFuzzySearchResponse(apiResponse), 10)).toBeLessThan(
-                MAX_EXEC_TIMES_MS.search.fuzzySearch.responseParsing,
-            );
-        },
-    );
+        expect(bestExecutionTimeMS(() => parseFuzzySearchResponse(apiResponse), 10)).toBeLessThan(
+            MAX_EXEC_TIMES_MS.search.fuzzySearch.responseParsing,
+        );
+    });
 });

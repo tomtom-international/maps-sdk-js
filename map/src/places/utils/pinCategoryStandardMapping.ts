@@ -16,10 +16,10 @@ const supportedPinSubcategories: Set<number> = new Set([
  * @see https://github.com/tomtom-international/mdt-backend-mapbox-gl-js-styles/blob/orbis-preview/src/orbis/sprites/poi_light/config.json
  * @ignore
  */
-export const toMapDisplayPin = (place: Place): string => {
+export const toMapDisplayPin = (place: Place, defaultPlaceIconID: string): string => {
     const categoryID = place.properties.poi?.categoryIds?.[0];
     if (!categoryID) {
-        return 'default_pin';
+        return defaultPlaceIconID;
     }
 
     // Check if the category ID is in our supported subcategories:

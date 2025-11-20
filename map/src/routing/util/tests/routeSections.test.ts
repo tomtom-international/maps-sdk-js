@@ -123,11 +123,10 @@ describe('Tests about building route sections', () => {
         });
     });
 
-    test.each(SECTIONS_WITH_SELECTION)(
-        `'%s`,
+    test.each(
+        SECTIONS_WITH_SELECTION,
+    )(`'%s`, (_name: string, inputSections: RouteSections, expectedSections: RouteSections) => {
         // @ts-ignore
-        (_name: string, inputSections: RouteSections, expectedSections: RouteSections) => {
-            expect(rebuildFeaturesWithRouteSelection(TEST_ROUTES, inputSections)).toEqual(expectedSections);
-        },
-    );
+        expect(rebuildFeaturesWithRouteSelection(TEST_ROUTES, inputSections)).toEqual(expectedSections);
+    });
 });

@@ -23,7 +23,7 @@ for (const element of colorSelectors) {
 }
 
 const customIconsConfig: PlaceIconConfig = {
-    customIcons: [
+    categoryIcons: [
         { id: 'ELECTRIC_VEHICLE_STATION', image: tomtomLogo, pixelRatio: 1 },
         { id: 'CAFE_PUB', image: 'https://dummyimage.com/30x20/4137ce/fff', pixelRatio: 1 },
     ],
@@ -35,15 +35,13 @@ const multiLineLabel: DataDrivenPropertyValueSpecification<string> = [
     { 'font-scale': 0.9 },
     '\n',
     {},
-    ['get', 'phone'],
+    ['get', 'phone'], // comes as extra feature property, see applyExtraFeatureProps call below
     { 'font-scale': 0.8, 'text-font': ['literal', ['Noto-Regular']], 'text-color': '#3125d1' },
     '\n',
     {},
-    ['get', 'staticProp'],
+    ['get', 'staticProp'], // comes as extra feature property, see applyExtraFeatureProps call below
     { 'font-scale': 0.7, 'text-font': ['literal', ['Noto-Bold']], 'text-color': '#ce258d' },
 ];
-
-const getPhoneFun = (place: Place) => place.properties.poi?.phone;
 
 const updatePlaces = async () => {
     await places.show(
@@ -81,7 +79,7 @@ const listenToUIEvents = () => {
         element.addEventListener('change', () => {
             element.value !== 'default' &&
                 places.applyExtraFeatureProps({
-                    phone: getPhoneFun,
+                    phone: (place: Place) => `Phone: ${place.properties.poi?.phone}`,
                     staticProp: 'Static text',
                 });
             places.applyTextConfig({

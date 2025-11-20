@@ -2,6 +2,7 @@ import type { Brand, Moment, OpeningHours, Place, SearchPlaceProps, TimeRange } 
 import { toPointFeature } from '@tomtom-org/maps-sdk/core';
 import { omit } from 'lodash-es';
 import { toConnectorCounts } from '../ev-charging-stations-availability/connectorAvailability';
+import { toChargingSpeed } from './ev';
 import { apiToGeoJSONBBox, latLonAPIToPosition } from './geometry';
 import type {
     CommonSearchPlaceResultAPI,
@@ -62,6 +63,7 @@ export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<
     const connectors = chargingPark?.connectors?.map((connector) => ({
         ...omit(connector, 'connectorType'),
         type: connector.connectorType,
+        chargingSpeed: toChargingSpeed(connector.ratedPowerKW),
     }));
     return {
         ...toPointFeature(latLonAPIToPosition(position)),

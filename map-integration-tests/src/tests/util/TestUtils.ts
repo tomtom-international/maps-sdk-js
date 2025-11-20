@@ -9,7 +9,9 @@ import type {
     HillshadeModuleConfig,
     IncidentsConfig,
     LayerSpecWithSource,
+    PlaceIconConfig,
     PlacesModuleConfig,
+    PlacesTheme,
     POIsModuleConfig,
     RoutingModuleConfig,
     SourceWithLayerIDs,
@@ -134,6 +136,11 @@ export const waitUntilRenderedFeatures = async (
             do {
                 await waitForTimeout(500);
                 currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
+                if (currentFeatures.length !== expectNumFeatures) {
+                    console.log(
+                        `For layer IDs: ${layerIDs}: Current features count: ${currentFeatures.length}, waiting for: ${expectNumFeatures}`,
+                    );
+                }
             } while (currentFeatures.length != expectNumFeatures);
             return currentFeatures;
         },
@@ -199,6 +206,16 @@ export const showPlaces = async (page: Page, places: Place | Place[] | Places) =
     }, places);
 
 export const clearPlaces = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
+
+export const applyPlacesTheme = async (page: Page, theme: PlacesTheme) =>
+    page.evaluate(async (inputTheme) => (globalThis as MapsSDKThis).places?.applyTheme(inputTheme), theme);
+
+export const applyPlacesIconConfig = async (page: Page, iconConfig: PlaceIconConfig) =>
+    // @ts-ignore
+    page.evaluate(async (inputConfig) => (globalThis as MapsSDKThis).places?.applyIconConfig(inputConfig), iconConfig);
+
+export const getNumVisiblePlacesLayers = async (page: Page, sourceId: string) =>
+    getNumVisibleLayersBySource(page, sourceId);
 
 export const initGeometries = async (page: Page, config?: GeometriesModuleConfig) =>
     page.evaluate(

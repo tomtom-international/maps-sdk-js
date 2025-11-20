@@ -7,13 +7,12 @@ import { parsePlaceByIdResponse } from '../responseParser';
 import type { PlaceByIdResponse, PlaceByIdResponseAPI } from '../types';
 
 describe('Place By Id response parser tests', () => {
-    test.each(apiAndParsedResponses)(
-        "'%s'",
+    test.each(
+        apiAndParsedResponses,
+    )("'%s'", (_name: string, apiResponse: PlaceByIdResponseAPI, parsedResponse: PlaceByIdResponse) => {
         // @ts-ignore
-        (_name: string, apiResponse: PlaceByIdResponseAPI, parsedResponse: PlaceByIdResponse) => {
-            expect(parsePlaceByIdResponse(apiResponse)).toStrictEqual(parsedResponse);
-        },
-    );
+        expect(parsePlaceByIdResponse(apiResponse)).toStrictEqual(parsedResponse);
+    });
 });
 
 describe('Place By Id response parser performance tests', () => {

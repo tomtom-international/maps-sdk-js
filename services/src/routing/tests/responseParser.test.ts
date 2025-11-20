@@ -14,22 +14,16 @@ import longApiResponse from './responseParserPerf.data.json';
 
 describe('Calculate Route response parsing functional tests', () => {
     // Functional tests:
-    test.each(apiAndParsedResponses)(
-        "'%s'",
+    test.each(
+        apiAndParsedResponses,
+    )("'%s'", (_name: string, apiResponse: CalculateRouteResponseAPI, params: CalculateRouteParams, parsedResponse: Routes) => {
         // @ts-ignore
-        (
-            _name: string,
-            apiResponse: CalculateRouteResponseAPI,
-            params: CalculateRouteParams,
-            parsedResponse: Routes,
-        ) => {
-            // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
-            // (We reparse the objects to compare them ignoring the order of properties)
-            const actual = JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse, params)));
-            const expected = JSON.parse(JSON.stringify(parsedResponse));
-            expect(actual).toMatchObject(expected);
-        },
-    );
+        // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
+        // (We reparse the objects to compare them ignoring the order of properties)
+        const actual = JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse, params)));
+        const expected = JSON.parse(JSON.stringify(parsedResponse));
+        expect(actual).toMatchObject(expected);
+    });
 });
 
 describe('Calculate Route response parsing performance tests', () => {
@@ -51,18 +45,13 @@ describe('Calculate Route response parsing performance tests', () => {
 });
 
 describe('Routing - error response parsing tests', () => {
-    test.each(errorResponses)(
-        "'%s'",
+    test.each(
+        errorResponses,
+    )("'%s'", async (_name: string, apiResponseError: APIErrorResponse<RoutingAPIResponseError>, expectedSdkError: SDKServiceError) => {
         // @ts-ignore
-        async (
-            _name: string,
-            apiResponseError: APIErrorResponse<RoutingAPIResponseError>,
-            expectedSdkError: SDKServiceError,
-        ) => {
-            const sdkRoutingResponseError = parseRoutingResponseError(apiResponseError, 'Routing');
-            expect(sdkRoutingResponseError).toMatchObject(expectedSdkError);
-        },
-    );
+        const sdkRoutingResponseError = parseRoutingResponseError(apiResponseError, 'Routing');
+        expect(sdkRoutingResponseError).toMatchObject(expectedSdkError);
+    });
 });
 
 describe('Routing - no section from api response', () => {

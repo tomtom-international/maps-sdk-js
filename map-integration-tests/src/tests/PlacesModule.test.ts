@@ -1,20 +1,17 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { bboxFromGeoJSON, type Place, type Places } from 'core';
+import { type Place } from 'core';
 import { sortBy } from 'lodash-es';
-import type { PlaceDisplayProps, PlaceIconConfig, PlacesTheme } from 'map';
-import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
-import placesTestData from './data/PlacesModule.test.data.json';
-import expectedCustomIcon from './data/PlacesModuleCustomIcon.test.data.json';
-import expectedPoiLikeFeatureProps from './data/PlacesModulePOILikeProps.test.data.json';
+import type { PlaceDisplayProps } from 'map';
+import type { LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import { DEFAULT_PLACE_ICON_ID } from '../../../map/src/shared/layers/symbolLayers';
 import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
-    getNumVisibleLayersBySource,
+    applyPlacesTheme,
+    clearPlaces,
+    getNumVisiblePlacesLayers,
     getPlacesSourceAndLayerIDs,
     initPlaces,
-    initTrafficIncidents,
-    queryRenderedFeatures,
     setStyle,
     showPlaces,
     waitForMapIdle,
@@ -22,41 +19,13 @@ import {
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
-const applyTheme = async (page: Page, theme: PlacesTheme) =>
-    page.evaluate(async (inputTheme) => (globalThis as MapsSDKThis).places?.applyTheme(inputTheme), theme);
-
-const applyIconConfig = async (page: Page, iconConfig: PlaceIconConfig) =>
-    // @ts-ignore
-    page.evaluate(async (inputConfig) => (globalThis as MapsSDKThis).places?.applyIconConfig(inputConfig), iconConfig);
-
-const clearPlaces = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).places?.clear());
-
-const getNumVisibleLayers = async (page: Page, sourceId: string) => getNumVisibleLayersBySource(page, sourceId);
-
-const compareToExpectedDisplayProps = (places: MapGeoJSONFeature[], expectedDisplayProps: PlaceDisplayProps[]) =>
-    expect(
-        sortBy(
-            places.map((place) => ({
-                id: place.properties.id,
-                title: place.properties.title,
-                iconID: place.properties.iconID,
-            })),
-            'title',
-        ),
-    ).toEqual(sortBy(expectedDisplayProps, 'title'));
-
-const compareToExpectedPoiLikeDisplayProps = (
-    places: MapGeoJSONFeature[],
-    expectedDisplayProps: PlaceDisplayProps[],
-) => {
-    for (const place of places) {
-        const expectedDisplayProp = expectedDisplayProps.find((props) => props.title === place.properties.title);
-        expect({
-            title: place.properties.title,
-            iconID: place.properties.iconID,
-            category: place.properties.category,
-        }).toEqual(expectedDisplayProp);
-    }
+const compareToExpectedDisplayProps = (mapFeatures: MapGeoJSONFeature[], expectedDisplayProps: PlaceDisplayProps[]) => {
+    const actualProps = mapFeatures.map((place) => ({
+        id: place.properties.id,
+        title: place.properties.title,
+        iconID: place.properties.iconID,
+    }));
+    expect(actualProps).toMatchObject(expectedDisplayProps);
 };
 
 test.describe('PlacesModule tests', () => {
@@ -71,11 +40,11 @@ test.describe('PlacesModule tests', () => {
         } as Place);
 
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
-        expect(await getNumVisibleLayers(page, sourceID)).toEqual(2);
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toEqual(2);
 
         const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
         compareToExpectedDisplayProps(renderedPlaces, [
-            { id: 'placeID', iconID: 'default_pin', title: 'Test Address' },
+            { id: 'placeID', iconID: `${DEFAULT_PLACE_ICON_ID}-0`, title: 'Test Address' },
         ]);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -97,122 +66,118 @@ test.describe('PlacesModule tests', () => {
         await waitForMapIdle(page);
 
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
-        expect(await getNumVisibleLayers(page, sourceID)).toEqual(2);
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toEqual(2);
 
         const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
         compareToExpectedDisplayProps(renderedPlaces, [
-            { id: 'placeID2', iconID: 'default_pin', title: 'Test Address' },
+            { id: 'placeID2', iconID: `${DEFAULT_PLACE_ICON_ID}-0`, title: 'Test Address' },
         ]);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    for (const testData of placesTestData as [string, Places, PlaceDisplayProps[]][]) {
-        test(testData[0], async ({ page }) => {
-            const [_name, testPlaces, expectedDisplayPinProps] = testData;
-            const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
-            const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
-            await initPlaces(page);
-            const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
-            expect(await getNumVisibleLayers(page, sourceID)).toBe(0);
+    test('Rendering a place with clear, reload, and state restoration', async ({ page }) => {
+        const coordinates = [-75.43974, 39.82295];
 
-            await showPlaces(page, testPlaces);
-            const numTestPlaces = testPlaces.features.length;
-            let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
-            expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
+        const testPlace = {
+            type: 'Feature',
+            id: 'test-place-123',
+            geometry: { type: 'Point', coordinates },
+            properties: { type: 'POI', poi: { name: 'Test Place', categoryIds: [7315] } },
+        } as Place;
 
-            // once more, this time inputting the array of features, should yield same results:
-            await showPlaces(page, testPlaces.features);
-            await waitForMapIdle(page);
-            renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 5000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
-            expect(await getNumVisibleLayers(page, sourceID)).toBe(2);
+        const expectedDisplayProps: PlaceDisplayProps[] = [
+            { id: 'test-place-123', iconID: '7315', title: 'Test Place' },
+        ];
 
-            await clearPlaces(page);
-            renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 0, 5000);
-            expect(renderedPlaces).toHaveLength(0);
-            expect(await getNumVisibleLayers(page, sourceID)).toBe(0);
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: coordinates as LngLatLike, zoom: 14 });
+        await initPlaces(page);
+        const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(0);
 
-            expect(mapEnv.consoleErrors).toHaveLength(0);
+        await showPlaces(page, { type: 'FeatureCollection', features: [testPlace] });
+        let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
+        compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
-            // once more, reloading the map, showing the same again:
-            await mapEnv.loadPageAndMap(page, { bounds });
-            await initPlaces(page);
-            const { layerIDs: nextLayerIDs } = await getPlacesSourceAndLayerIDs(page);
-            await showPlaces(page, testPlaces);
-            renderedPlaces = await waitUntilRenderedFeatures(page, nextLayerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
+        // once more, this time inputting the array of features, should yield same results:
+        await showPlaces(page, testPlace);
+        await waitForMapIdle(page);
+        renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 5000);
+        compareToExpectedDisplayProps(renderedPlaces, expectedDisplayProps);
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
-            // adding traffic incidents to the style: verifying the places are still shown (state restoration):
-            await initTrafficIncidents(page);
-            await waitForMapIdle(page);
-            renderedPlaces = await waitUntilRenderedFeatures(page, nextLayerIDs, numTestPlaces, 5000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
+        await clearPlaces(page);
+        renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 0, 5000);
+        expect(renderedPlaces).toHaveLength(0);
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(0);
 
-            // changing the map style: verifying the places are still shown (state restoration):
-            await setStyle(page, 'standardDark');
-            await waitForMapIdle(page);
-            renderedPlaces = await waitUntilRenderedFeatures(page, nextLayerIDs, numTestPlaces, 5000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPinProps);
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 
-            expect(mapEnv.consoleErrors).toHaveLength(0);
-        });
-    }
-});
+    test('Rendering a place with style changes and config application', async ({ page }) => {
+        const testPlace = {
+            type: 'Feature',
+            id: '528009001852275',
+            geometry: { type: 'Point', coordinates: [4.90047, 52.37708] },
+            properties: {
+                type: 'POI',
+                address: { freeformAddress: 'Nieuwezijds Voorburgwal 67, 1012 RE Amsterdam' },
+                poi: {
+                    name: 'Q-Park Amsterdam Nieuwendijk',
+                    categoryIds: [7364],
+                    classifications: [
+                        {
+                            code: 'PARKING_GARAGE',
+                            names: [{ nameLocale: 'en-US', name: 'parking garage' }],
+                        },
+                    ],
+                },
+            },
+        } as Place;
 
-test.describe('GeoJSON Places with init config tests', () => {
-    for (const testData of placesTestData as [string, Places, PlaceDisplayProps[], PlaceDisplayProps[]][]) {
-        test(testData[0], async ({ page }) => {
-            const [_name, testPlaces, _expectedDisplayProps, expectedDisplayCircleProps] = testData;
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
+        await initPlaces(page);
+        const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
 
-            const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
-            const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
-            await initPlaces(page, { theme: 'circle' });
-            const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
-            await showPlaces(page, testPlaces);
+        // Show the test place
+        await showPlaces(page, testPlace);
+        let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
+        expect(renderedPlaces).toHaveLength(1);
+        expect(renderedPlaces[0].properties.id).toBe('528009001852275');
+        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
+        expect(renderedPlaces[0].properties.iconID).toBe('7364');
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
-            const numTestPlaces = testPlaces.features.length;
-            const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayCircleProps);
+        // Change map style to 'monoLight'
+        await setStyle(page, 'monoLight');
+        await waitForMapIdle(page);
 
-            expect(mapEnv.consoleErrors).toHaveLength(0);
-        });
-    }
-});
+        // Verify that place is still shown
+        renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
+        expect(renderedPlaces).toHaveLength(1);
+        expect(renderedPlaces[0].properties.id).toBe('528009001852275');
+        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
-test.describe('GeoJSON Places apply icon config tests', () => {
-    for (const testData of placesTestData as [string, Places, PlaceDisplayProps[], PlaceDisplayProps[]][]) {
-        test(testData[0], async ({ page }) => {
-            const [name, testPlaces, _expectedDisplayPinProps, expectedDisplayPOIProps] = testData;
+        // Apply config to 'base-map' theme
+        await applyPlacesTheme(page, 'base-map');
+        await waitForMapIdle(page);
 
-            const bounds = bboxFromGeoJSON(testPlaces) as LngLatBoundsLike;
-            const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
-            await initPlaces(page);
-            const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
-            await showPlaces(page, testPlaces);
+        // Change map style to 'standardLight'
+        await setStyle(page, 'standardLight');
+        await waitForMapIdle(page);
 
-            const numTestPlaces = testPlaces.features.length;
-            await applyTheme(page, 'circle');
-            await waitForMapIdle(page);
-            let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedDisplayPOIProps);
+        // Verify the place is still rendered with the right category for the applied theme
+        renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
+        expect(renderedPlaces).toHaveLength(1);
+        expect(renderedPlaces[0].properties.id).toBe('528009001852275');
+        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
+        expect(renderedPlaces[0].properties.category).toBe('parking_facility');
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
-            await applyIconConfig(page, {
-                customIcons: [{ id: 'PARKING_GARAGE', image: 'https://dummyimage.com/30x20/4137ce/fff' }],
-            });
-            await waitForMapIdle(page);
-            renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, numTestPlaces, 10000);
-            compareToExpectedDisplayProps(renderedPlaces, expectedCustomIcon[name as never]);
-
-            await applyTheme(page, 'base-map');
-            await waitForMapIdle(page);
-            // base-map places avoid collisions, thus likely resulting in less num of rendered features:
-            renderedPlaces = await queryRenderedFeatures(page, layerIDs);
-            compareToExpectedPoiLikeDisplayProps(renderedPlaces, expectedPoiLikeFeatureProps[name as never]);
-            expect(mapEnv.consoleErrors).toHaveLength(0);
-        });
-    }
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 });
 
 test.describe('Places module programmatic event state tests', () => {

@@ -6,17 +6,12 @@ import type { CalculateMatrixRouteParams } from '../types/calculateMatrixRoutePa
 import { sdkAndAPIRequests } from './requestBuilder.data';
 
 describe('Matrix Routing - Request builder', () => {
-    test.each(sdkAndAPIRequests)(
-        "'%s'",
-        (
-            _name: string,
-            params: CalculateMatrixRouteParams,
-            apiRequest: FetchInput<CalculateMatrixRoutePOSTDataAPI>,
-        ) => {
-            // we reparse the objects to compare URL objects properly:
-            expect(JSON.parse(JSON.stringify(buildCalculateMatrixRouteRequest(params)))).toEqual(
-                JSON.parse(JSON.stringify(apiRequest)),
-            );
-        },
-    );
+    test.each(
+        sdkAndAPIRequests,
+    )("'%s'", (_name: string, params: CalculateMatrixRouteParams, apiRequest: FetchInput<CalculateMatrixRoutePOSTDataAPI>) => {
+        // we reparse the objects to compare URL objects properly:
+        expect(JSON.parse(JSON.stringify(buildCalculateMatrixRouteRequest(params)))).toEqual(
+            JSON.parse(JSON.stringify(apiRequest)),
+        );
+    });
 });

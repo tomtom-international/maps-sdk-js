@@ -8,7 +8,7 @@ import {
     mapStyleLayerIDs,
     SVGIconStyleOptions,
 } from '../shared';
-import { addImageIfNotExisting, addLayers, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
+import { addLayers, addOrUpdateImage, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { INSTRUCTION_ARROW_IMAGE_ID } from './layers/guidanceLayers';
 import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './layers/routeMainLineLayers';
@@ -312,7 +312,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         image: string | HTMLImageElement,
         options: Partial<StyleImageMetadata> | undefined,
     ) {
-        addImageIfNotExisting(this.mapLibreMap, imageId, image, options);
+        addOrUpdateImage('if-not-in-sprite', imageId, image, this.mapLibreMap, options);
     }
 
     /**

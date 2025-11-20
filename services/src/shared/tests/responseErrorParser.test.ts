@@ -6,17 +6,11 @@ import type { ServiceName } from '../types/servicesTypes';
 import errorResponses from './responseError.data.json';
 
 describe('Default error response parsing tests', () => {
-    test.each(errorResponses)(
-        "'%s'",
+    test.each(
+        errorResponses,
+    )("'%s'", (_name: string, apiResponseError: APIErrorResponse, serviceName: ServiceName, expectedSdkError: SDKServiceError) => {
         // @ts-ignore
-        (
-            _name: string,
-            apiResponseError: APIErrorResponse,
-            serviceName: ServiceName,
-            expectedSdkError: SDKServiceError,
-        ) => {
-            const sdkResponseError = parseDefaultResponseError(apiResponseError, serviceName);
-            expect(sdkResponseError).toMatchObject(expectedSdkError);
-        },
-    );
+        const sdkResponseError = parseDefaultResponseError(apiResponseError, serviceName);
+        expect(sdkResponseError).toMatchObject(expectedSdkError);
+    });
 });

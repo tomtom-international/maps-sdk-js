@@ -1,42 +1,49 @@
-import type { Place, Places } from '@tomtom-org/maps-sdk/core';
-import type { Map } from 'maplibre-gl';
-import type { MapStylePOICategory } from '../pois/poiCategoryMapping';
-import { toMapDisplayPOICategory } from '../pois/poiCategoryMapping';
-import { toMapDisplayPin } from './pinCategoryMapping';
-import type { DisplayPlaceProps } from './types/placeDisplayProps';
-import type { PlacesModuleConfig } from './types/placesModuleConfig';
+import type { Place, Places, POICategory } from '@tomtom-org/maps-sdk/core';
+import { toMapDisplayPOICategory } from '../../pois/poiCategoryMapping';
+import { DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
+import type { DisplayPlaceProps } from '../types/placeDisplayProps';
+import type { PlacesModuleConfig } from '../types/placesModuleConfig';
+import { toMapDisplayPin } from './pinCategoryStandardMapping';
 
 /**
  * Builds the title of the place to display it on the map.
  * @param place The place to display.
+ * @ignore
  */
 export const buildPlaceTitle = (place: Place): string =>
     place.properties.poi?.name ?? place.properties.address.freeformAddress;
 
 /**
- * Gets the map style sprite image ID to display on the map for the give place.
- * @param place The place to display.
- * @param config
+ * @ignore
  */
-export const getIconIDForPlace = (place: Place, config: PlacesModuleConfig = {}): string => {
-    const iconStyle = config.theme ?? 'pin';
-    const customIcons = config.icon?.customIcons;
+export const imageIDWithInstanceSuffix = (baseID: string, instanceIndex: number): string =>
+    `${baseID}-${instanceIndex}`;
+
+/**
+ * Gets the map style sprite image ID to display on the map for the give place.
+ * @ignore
+ */
+export const getIconIDForPlace = (place: Place, instanceIndex: number, config: PlacesModuleConfig = {}): string => {
+    const iconTheme = config.theme ?? 'pin';
+    // TODO: perhaps all the available icon mappings should come resolved from PlacesModule instance
+    const categoryIcons = config.icon?.categoryIcons;
 
     // First we try to match any custom icon:
-    const classificationCode = place.properties.poi?.classifications?.[0]?.code as MapStylePOICategory;
-    const matchingCustomIcon = customIcons?.find((customIcon) => customIcon.id === classificationCode);
+    const classificationCode = place.properties.poi?.classifications?.[0]?.code as POICategory;
+    const matchingCustomIcon = categoryIcons?.find((customIcon) => customIcon.id === classificationCode);
     if (matchingCustomIcon) {
-        return matchingCustomIcon.id;
+        return imageIDWithInstanceSuffix(matchingCustomIcon.id, instanceIndex);
     }
     // Else: if no custom icon matched, we map to the map style icons:
 
+    const defaultPlaceIconID = imageIDWithInstanceSuffix(DEFAULT_PLACE_ICON_ID, instanceIndex);
     let iconId: string;
-    if (iconStyle === 'pin') {
-        iconId = toMapDisplayPin(place);
+    if (iconTheme === 'pin') {
+        iconId = toMapDisplayPin(place, defaultPlaceIconID);
     } else {
         // POI assets have their own category mapping and we use search classification codes to map them:
         // TODO: consider default_circle asset instead of default_pin
-        iconId = (classificationCode && `poi-${toMapDisplayPOICategory(classificationCode)}`) ?? 'default_pin';
+        iconId = (classificationCode && `poi-${toMapDisplayPOICategory(classificationCode)}`) ?? defaultPlaceIconID;
     }
 
     return iconId;
@@ -69,7 +76,7 @@ export const toPlaces = (places: Place | Place[] | Places): Places => {
  */
 export const preparePlacesForDisplay = (
     placesInput: Place | Place[] | Places,
-    map: Map,
+    instanceIndex: number,
     config: PlacesModuleConfig = {},
 ): Places<DisplayPlaceProps> => {
     const places = toPlaces(placesInput);
@@ -90,15 +97,12 @@ export const preparePlacesForDisplay = (
 
             return {
                 ...place,
-                geometry: {
-                    ...place.geometry,
-                    bbox: place.bbox,
-                },
+                geometry: { ...place.geometry, bbox: place.bbox },
                 properties: {
                     ...place.properties,
                     id: place.id,
                     title,
-                    iconID: getIconIDForPlace(place, config),
+                    iconID: getIconIDForPlace(place, instanceIndex, config),
                     ...(config?.theme === 'base-map' && { category: getPOILayerCategoryForPlace(place) }),
                     ...extraFeatureProps,
                 },

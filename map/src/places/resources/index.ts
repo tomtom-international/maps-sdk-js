@@ -1,3 +1,4 @@
+import { SVGIconStyleOptions } from '../../shared';
 import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
 import { pinSvg } from '../../shared/resources';
 
@@ -5,10 +6,10 @@ import { pinSvg } from '../../shared/resources';
  * Default pin for selected images without a specific category on it.
  * @ignore
  */
-export const defaultPin = (): HTMLImageElement => {
+export const defaultPin = (options?: SVGIconStyleOptions): HTMLImageElement => {
     // defensive check for SSR and node-test environments:
     if (!isDOMImageSupported()) {
         return undefined as never as HTMLImageElement;
     }
-    return svgToImg(pinSvg(undefined));
+    return svgToImg(pinSvg(options));
 };

@@ -1,7 +1,6 @@
 import { SymbolLayerSpecification } from 'maplibre-gl';
 import { LayerSpecTemplate } from '../types';
 import { DEFAULT_TEXT_SIZE, MAP_BOLD_FONT, PIN_ICON_SIZE } from './commonLayerProps';
-import { isClickEventState } from './eventState';
 
 /**
  * @ignore
@@ -16,8 +15,13 @@ export const ICON_ID = 'iconID';
 /**
  * @ignore
  */
+export const DEFAULT_PLACE_ICON_ID = 'default_place';
+
+/**
+ * @ignore
+ */
 export const pinIconBaseLayout: SymbolLayerSpecification['layout'] = {
-    'icon-image': ['case', isClickEventState, 'default_pin', ['get', ICON_ID]],
+    'icon-image': ['get', ICON_ID],
     'icon-anchor': 'bottom',
     'icon-size': PIN_ICON_SIZE,
     'icon-allow-overlap': true,
@@ -63,12 +67,6 @@ export const pinTextBasePaint: SymbolLayerSpecification['paint'] = {
  */
 export const pinLayerBaseSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
     type: 'symbol',
-    layout: {
-        ...pinIconBaseLayout,
-        ...pinTextBaseLayout,
-    },
-    paint: {
-        ...pinIconBasePaint,
-        ...pinTextBasePaint,
-    },
+    layout: { ...pinIconBaseLayout, ...pinTextBaseLayout },
+    paint: { ...pinIconBasePaint, ...pinTextBasePaint },
 };

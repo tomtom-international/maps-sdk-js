@@ -1,7 +1,13 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { MapStylePOICategory } from '../../pois/poiCategoryMapping';
-import type { CustomImage, HasAdditionalLayersConfig, MapFont, ToBeAddedLayerSpecTemplate } from '../../shared';
+import type {
+    CustomImage,
+    HasAdditionalLayersConfig,
+    MapFont,
+    SVGIconStyleOptions,
+    ToBeAddedLayerSpecTemplate,
+} from '../../shared';
 
 /**
  * Icon style options for displaying places on the map.
@@ -17,6 +23,41 @@ import type { CustomImage, HasAdditionalLayersConfig, MapFont, ToBeAddedLayerSpe
 export type PlacesTheme = 'pin' | 'circle' | 'base-map';
 
 /**
+ * Configuration for the default place icon.
+ * * This is the icon that is used for clicked locations and addresses without a specific category.
+ *
+ * @group Places
+ */
+export type DefaultPlaceIconConfig = {
+    /**
+     * Base style options for the SVG default icon.
+     *
+     * @remarks
+     * Use this to set the fill color, outline color, and outline opacity for the default waypoint icon.
+     *
+     * Example:
+     * ```typescript
+     * baseStyle: {
+     *   fillColor: '#007AFF',
+     *   outlineColor: '#FFFFFF',
+     *   outlineOpacity: 0.8
+     * }
+     * ```
+     */
+    style?: SVGIconStyleOptions;
+
+    /**
+     * Custom image for the default icon.
+     *
+     * @remarks
+     * If provided, this image will be used instead of the default icon.
+     *
+     * If an SVG image is provided, the 'style' options can still apply. Otherwise, 'style' is ignored.
+     */
+    image?: Omit<CustomImage, 'id'>;
+};
+
+/**
  * Configuration for place marker icons.
  *
  * Controls the visual appearance of place markers including custom icons.
@@ -25,7 +66,7 @@ export type PlacesTheme = 'pin' | 'circle' | 'base-map';
  * ```typescript
  * // Custom icons for specific categories
  * const iconConfig: PlaceIconConfig = {
- *   customIcons: [
+ *   categoryIcons: [
  *     { category: 'RESTAURANT', image: '/icons/food.png', pixelRatio: 2 },
  *     { category: 'HOTEL_MOTEL', image: '/icons/hotel.png', pixelRatio: 2 }
  *   ]
@@ -36,12 +77,29 @@ export type PlacesTheme = 'pin' | 'circle' | 'base-map';
  */
 export type PlaceIconConfig = {
     /**
+     * Configuration for the default place icon.
+     * * The default icon is the one used for clicked locations and addresses without a specific category, or via custom mapping.
+     */
+    default?: DefaultPlaceIconConfig;
+
+    /**
      * Array of custom icons for specific place categories.
      *
      * When provided, places matching these categories will use the custom icons
      * instead of the default style.
      */
-    customIcons?: CustomImage<MapStylePOICategory>[];
+    categoryIcons?: CustomImage<MapStylePOICategory>[];
+
+    /**
+     * Custom mapping function to generate the icon ID for a given place.
+     *
+     * @remarks
+     * If provided, this function sets the iconID property on the place.
+     * This allows for full control on how to determine which icon to use for each place based on its properties.
+     *
+     * @param place The place to generate the icon ID for.
+     */
+    mapping?: (place: Place) => string;
 };
 
 /**
@@ -231,12 +289,14 @@ export type PlaceLayersConfig = {
     main?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
 
     /**
-     * Selected/highlighted place marker layer specification.
+     * Selected place marker layer specification.
      *
      * @remarks
      * Controls the visual appearance of places when they are highlighted or selected
      * (e.g., on hover or click events). This layer is rendered on top of the main layer
      * to ensure selected places are always visible.
+     *
+     * This layer reacts to 'hover' and 'click' event states.
      */
     selected?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
 } & HasAdditionalLayersConfig;
@@ -268,7 +328,7 @@ export type PlaceLayerName = keyof PlaceLayersConfig;
  * const config: PlacesModuleConfig = {
  *   icon: {
  *     style: 'base-map',
- *     customIcons: [
+ *     categoryIcons: [
  *       { category: 'RESTAURANT', image: '/icons/restaurant.png' }
  *     ]
  *   },
@@ -333,7 +393,7 @@ export type PlacesModuleConfig = {
      *
      * @remarks
      * Useful for:
-     * - Adding computed flags for conditional styling
+     * - Adding computed flags for conditional styling via 'layers' config.
      * - Extracting nested properties for easier access
      * - Adding business logic properties
      *

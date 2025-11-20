@@ -23,7 +23,7 @@ export const SELECTED_COLOR = '#3f9cd9';
 /**
  * @ignore
  */
-export const placesLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
+export const pinLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
     ...pinLayerBaseSpec,
     filter: ['!', hasEventState],
 };
@@ -33,7 +33,7 @@ export const placesLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
  * while text has different collision rules.
  * @ignore
  */
-export const selectedPlaceLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
+export const selectedPinLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> = {
     ...pinLayerBaseSpec,
     filter: hasEventState,
     layout: {
@@ -125,10 +125,10 @@ export const buildPlacesLayerSpecs = (config: PlacesModuleConfig | undefined, ma
             },
         };
     } else {
-        // TODO: 'circle' config could take the icon properties from the poi layer as well (size, offsets, etc) and just try to make text bolder
+        // pin / circle
         layerSpecTemplates = {
-            main: placesLayerSpec,
-            selected: selectedPlaceLayerSpec,
+            main: pinLayerSpec,
+            selected: selectedPinLayerSpec,
         };
     }
 

@@ -5,15 +5,10 @@ import apiAndParsedResponses from './responseParser.data.json';
 
 describe('Matrix Route response parsing tests', () => {
     // Functional tests:
-    test.each(apiAndParsedResponses)(
-        "'%s'",
+    test.each(
+        apiAndParsedResponses,
+    )("'%s'", (_name: string, apiResponse: CalculateMatrixRouteResponseAPI, parsedResponse: CalculateMatrixRouteResponseAPI) => {
         // @ts-ignore
-        (
-            _name: string,
-            apiResponse: CalculateMatrixRouteResponseAPI,
-            parsedResponse: CalculateMatrixRouteResponseAPI,
-        ) => {
-            expect(parseCalculateMatrixRouteResponse(apiResponse)).toEqual(parsedResponse);
-        },
-    );
+        expect(parseCalculateMatrixRouteResponse(apiResponse)).toEqual(parsedResponse);
+    });
 });

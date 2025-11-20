@@ -13,19 +13,14 @@ import apiAndParsedResponses from './responseParser.data.json';
 import apiResponses from './responseParserPerf.data.json';
 
 describe('Charging availability response parsing tests', () => {
-    test.each(apiAndParsedResponses)(
-        `'%s`,
+    test.each(
+        apiAndParsedResponses,
+    )(`'%s`, (_name: string, apiResponse: ChargingStationsAvailabilityResponseAPI, sdkResponse: ChargingStationsAvailability) => {
         // @ts-ignore
-        (
-            _name: string,
-            apiResponse: ChargingStationsAvailabilityResponseAPI,
-            sdkResponse: ChargingStationsAvailability,
-        ) => {
-            // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
-            // (We reparse the objects to compare them ignoring the order of properties)
-            expect(parseEVChargingStationsAvailabilityResponse(apiResponse)).toMatchObject(sdkResponse);
-        },
-    );
+        // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
+        // (We reparse the objects to compare them ignoring the order of properties)
+        expect(parseEVChargingStationsAvailabilityResponse(apiResponse)).toMatchObject(sdkResponse);
+    });
 
     test('Should return undefined when the API response is empty', () => {
         expect(
@@ -41,30 +36,21 @@ describe('Charging availability response parsing tests', () => {
 });
 
 describe('Charging availability error response parsing tests', () => {
-    test.each(errorResponses)(
-        "'%s'",
+    test.each(
+        errorResponses,
+    )("'%s'", (_name: string, apiResponseError: APIErrorResponse, serviceName: ServiceName, expectedSdkError: SDKServiceError) => {
         // @ts-ignore
-        (
-            _name: string,
-            apiResponseError: APIErrorResponse,
-            serviceName: ServiceName,
-            expectedSdkError: SDKServiceError,
-        ) => {
-            const sdkResponseError = parseEVChargingStationsAvailabilityResponseError(apiResponseError, serviceName);
-            expect(sdkResponseError).toBeInstanceOf(SDKServiceError);
-            expect(sdkResponseError).toMatchObject(expectedSdkError);
-        },
-    );
+        const sdkResponseError = parseEVChargingStationsAvailabilityResponseError(apiResponseError, serviceName);
+        expect(sdkResponseError).toBeInstanceOf(SDKServiceError);
+        expect(sdkResponseError).toMatchObject(expectedSdkError);
+    });
 });
 
 describe('Charging availability response parsing performance tests', () => {
-    test.each(apiResponses)(
-        `'%s`,
+    test.each(apiResponses)(`'%s`, (_name: string, apiResponse: ChargingStationsAvailabilityResponseAPI) => {
         // @ts-ignore
-        (_name: string, apiResponse: ChargingStationsAvailabilityResponseAPI) => {
-            expect(
-                bestExecutionTimeMS(() => parseEVChargingStationsAvailabilityResponse(apiResponse), 10),
-            ).toBeLessThan(MAX_EXEC_TIMES_MS.ev.responseParsing);
-        },
-    );
+        expect(bestExecutionTimeMS(() => parseEVChargingStationsAvailabilityResponse(apiResponse), 10)).toBeLessThan(
+            MAX_EXEC_TIMES_MS.ev.responseParsing,
+        );
+    });
 });

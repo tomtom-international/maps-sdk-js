@@ -8,23 +8,19 @@ import apiAndParsedResponses from './responseParser.data.json';
 import geocodingApiResponses from './responseParserPerf.data.json';
 
 describe('Geocode response parsing tests', () => {
-    test.each(apiAndParsedResponses)(
-        `'%s`,
+    test.each(
+        apiAndParsedResponses,
+    )(`'%s`, (_name: string, apiResponse: GeocodingResponseAPI, sdkResponse: GeocodingResponse) => {
         // @ts-ignore
-        (_name: string, apiResponse: GeocodingResponseAPI, sdkResponse: GeocodingResponse) => {
-            expect(parseGeocodingResponse(apiResponse)).toStrictEqual(sdkResponse);
-        },
-    );
+        expect(parseGeocodingResponse(apiResponse)).toStrictEqual(sdkResponse);
+    });
 });
 
 describe('Geocoding service response parser performance tests', () => {
-    test.each(geocodingApiResponses)(
-        "'%s'",
+    test.each(geocodingApiResponses)("'%s'", (apiResponse: GeocodingResponseAPI) => {
         // @ts-ignore
-        (apiResponse: GeocodingResponseAPI) => {
-            expect(bestExecutionTimeMS(() => parseGeocodingResponse(apiResponse), 10)).toBeLessThan(
-                MAX_EXEC_TIMES_MS.geocoding.responseParsing,
-            );
-        },
-    );
+        expect(bestExecutionTimeMS(() => parseGeocodingResponse(apiResponse), 10)).toBeLessThan(
+            MAX_EXEC_TIMES_MS.geocoding.responseParsing,
+        );
+    });
 });

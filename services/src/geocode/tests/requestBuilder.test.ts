@@ -7,13 +7,10 @@ import geocodingReqObjectsAndUrLs from './requestBuilder.data.json';
 import geocodingReqObjects from './requestBuilderPerf.data.json';
 
 describe('Geocoding service URL building functional tests', () => {
-    test.each(geocodingReqObjectsAndUrLs)(
-        `'%s`,
+    test.each(geocodingReqObjectsAndUrLs)(`'%s`, (_name: string, params: GeocodingParams, url: string) => {
         //@ts-ignore
-        (_name: string, params: GeocodingParams, url: string) => {
-            expect(buildGeocodingRequest(params).toString()).toStrictEqual(url);
-        },
-    );
+        expect(buildGeocodingRequest(params).toString()).toStrictEqual(url);
+    });
 });
 
 describe('Geocoding service request builder performance tests', () => {

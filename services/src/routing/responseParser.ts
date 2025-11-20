@@ -1,6 +1,5 @@
 import {
     bboxFromGeoJSON,
-    ChargingSpeed,
     ChargingStop,
     CountrySectionProps,
     CurrentType,
@@ -29,6 +28,7 @@ import {
 } from '@tomtom-org/maps-sdk/core';
 import type { LineString, Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
+import { toChargingSpeed } from '../shared/ev';
 import { ExplicitVehicleModel } from '../shared/types/vehicleModel';
 import {
     CalculateRouteResponseAPI,
@@ -54,17 +54,6 @@ const toCurrentType = (apiCurrentType: CurrentTypeAPI): CurrentType | undefined 
         default:
             return undefined;
     }
-};
-
-const toChargingSpeed = (powerInKW: number): ChargingSpeed => {
-    if (powerInKW < 12) {
-        return 'slow';
-    } else if (powerInKW < 50) {
-        return 'regular';
-    } else if (powerInKW < 150) {
-        return 'fast';
-    }
-    return 'ultra-fast';
 };
 
 const toChargingStop = (

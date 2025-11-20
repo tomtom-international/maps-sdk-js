@@ -68,6 +68,17 @@ export const currentTypes = ['AC1', 'AC3', 'DC'] as const;
 export type CurrentType = (typeof currentTypes)[number];
 
 /**
+ * The charging speed classification of this charging connection.
+ *
+ * @remarks
+ * - `slow`: Typically up to 12 kW (Level 1 AC charging)
+ * - `regular`: Typically between 12 kW and 50 kW (Level 2 AC charging)
+ * - `fast`: Typically between 50 kW and 150 kW (DC fast charging)
+ * - `ultra-fast`: Typically above 150 kW (High-power DC fast charging)
+ */
+export type ChargingSpeed = 'slow' | 'regular' | 'fast' | 'ultra-fast';
+
+/**
  * Electric vehicle charging connector with specifications.
  *
  * Describes a specific charging connector available at a charging point,
@@ -108,6 +119,16 @@ export type Connector = {
      * - 150-350 kW: DC ultra-fast charging
      */
     ratedPowerKW: number;
+    /**
+     * The charging speed classification of this charging connection.
+     *
+     * @remarks
+     * - `slow`: Typically up to 12 kW (Level 1 AC charging)
+     * - `regular`: Typically between 12 kW and 50 kW (Level 2 AC charging)
+     * - `fast`: Typically between 50 kW and 150 kW (DC fast charging)
+     * - `ultra-fast`: Typically above 150 kW (High-power DC fast charging)
+     */
+    chargingSpeed: ChargingSpeed;
     /**
      * Voltage in volts (V).
      *
