@@ -1,0 +1,212 @@
+---
+title: Traffic Flow Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.32.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Traffic Flow Module displays real-time traffic speed conditions across the entire road network using color-coded road segments. Green indicates free-flowing traffic, yellow/orange represents moderate speeds, and red shows congestion. Dark gray indicates road closures.
+
+**Looking for something else?**
+- For traffic **events** (accidents, closures, construction) across the map, see [Traffic Incidents Module](./traffic-incidents.mdx)
+- For traffic **incidents along a specific route**, see [Routing Module](./routes.mdx)
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map with Traffic Flow layer included
+const map = new TomTomMap(
+  { container: 'map' },
+  { style: { type: 'standard', include: ['trafficFlow'] } }
+);
+
+// Get access to Traffic Flow module by initializing it
+const trafficFlow = await TrafficFlowModule.get(map);
+
+// OR
+
+// Initialize map without Traffic Flow layer
+const map = new TomTomMap({ container: 'map' });
+
+// Enable Traffic Flow layer when initializing the module
+const trafficFlow = await TrafficFlowModule.get(map, {
+    ensureAddedToStyle: true,
+});
+```
+
+## Visibility
+
+Show or hide traffic flow on the map:
+
+```javascript
+// Initialize with visibility set in the configuration
+const trafficFlow = await TrafficFlowModule.get(map, {
+    visible: false,
+});
+
+// Show/hide traffic flow
+trafficFlow.setVisible(true);
+trafficFlow.setVisible(false);
+
+// Check visibility
+if (trafficFlow.isVisible()) {
+    console.log('Traffic flow is displayed');
+}
+```
+
+## Filtering
+
+A filter can be applied either during module initialization or later using the `filter` method.
+
+```javascript
+// Initialize with filter
+const trafficFlow = await TrafficFlowModule.get(map, {
+    filters: ...,
+});
+
+// Apply or update filter later
+trafficFlow.filter(...);
+```
+
+### Road Category
+
+Display traffic flow only for specific road types:
+
+```javascript
+// Show only major highways
+trafficFlow.filter({
+    any: [{
+        roadCategories: {
+            show: 'only',
+            values: ['motorway', 'trunk']
+        }
+    }]
+});
+
+// Hide local streets
+trafficFlow.filter({
+    any: [{
+        roadCategories: {
+            show: 'all_except',
+            values: ['street']
+        }
+    }]
+});
+
+// Show only major local roads within tertiary category
+trafficFlow.filter({
+    any: [{
+        roadCategories: {
+            show: 'only',
+            values: ['tertiary']
+        },
+        roadSubCategories: {
+            show: 'only',
+            values: ['major_local']
+        }
+    }]
+});
+```
+
+**Available Road Categories:**
+- `motorway` - Major highways
+- `trunk` - Major roads
+- `primary` - Primary roads
+- `secondary` - Secondary roads
+- `tertiary` - Tertiary roads
+- `street` - Local streets
+
+**Available Road Subcategories:**
+- `tertiary`
+  - `connecting` - Roads connecting different areas
+  - `major_local` - Major roads within local areas
+- `street`
+  - `local` - Standard local streets
+  - `minor_local` - Minor residential streets
+
+### Road Closures
+
+Display or exclude road closures:
+
+```javascript
+// Show only road closures
+trafficFlow.filter({
+    any: [{ showRoadClosures: 'only' }]
+});
+
+// Exclude road closures
+trafficFlow.filter({
+    any: [{ showRoadClosures: 'all_except' }]
+});
+```
+
+### Multiple Filters
+
+Combine multiple filter criteria using "any" logic:
+
+```javascript
+// Show motorways OR road closures
+trafficFlow.filter({
+    any: [
+        { roadCategories: { show: 'only', values: ['motorway'] } },
+        { showRoadClosures: 'only' }
+    ]
+});
+```
+
+### Reset Filters
+
+Remove all filters and show all traffic flow:
+
+```javascript
+trafficFlow.filter(undefined);
+```
+
+## Events
+
+Handle user interactions with traffic flow segments:
+
+```javascript
+// Click events
+trafficFlow.events.on('click', (feature) => {
+    ...
+});
+
+// Hover events
+trafficFlow.events.on('hover', (feature) => {
+    ...
+});
+
+// Long hover events
+trafficFlow.events.on('long-hover', (feature) => {
+    ...
+});
+
+// Remove event listeners
+trafficFlow.events.off('click', handler);
+```
+
+## API Reference
+
+For complete documentation of all Traffic Flow Module properties, methods, and types, see the **[TrafficFlowModule API Reference](/maps-sdk-js/api-reference/classes/map.TrafficFlowModule.html)**.
+
+## Related Guides and Examples
+
+### Traffic Overview
+- **[Traffic Overview](./traffic)** - Overview of all traffic visualization options including flow, incidents, and route-specific traffic
+
+### Related Traffic Modules
+- **[Traffic Incidents Module](./traffic-incidents)** - Display real-time traffic events and incidents
+- **[Routing Module](./routes)** - Display routes with traffic incidents along the path
+
+### Related Examples
+- **[Traffic Flow](../../examples/traffic-flow)** - Interactive traffic flow visualization with filtering
+- **[Traffic Config Playground](../../examples/traffic-config-playground)** - Explore traffic configuration options
+
