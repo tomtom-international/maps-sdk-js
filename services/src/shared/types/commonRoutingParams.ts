@@ -232,8 +232,6 @@ type DepartArriveOption = 'departAt' | 'arriveBy';
  * - Account for time-dependent road restrictions
  *
  * **Important Notes:**
- * - Past dates will default to departing immediately
- * - Impossible dates (e.g., imminent arrival for long routes) default to departing now
  * - Times are processed in the timezone of the origin/destination
  *
  * @example
