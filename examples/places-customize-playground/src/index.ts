@@ -10,6 +10,7 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
+(async () => {
 const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.90435, 52.36876], zoom: 10 });
 const places = await PlacesModule.get(map);
 
@@ -102,3 +103,4 @@ const listenToUIEvents = () => {
 await updatePlaces();
 map.mapLibreMap.on('moveend', updatePlaces);
 listenToUIEvents();
+})();

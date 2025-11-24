@@ -7,11 +7,13 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        fitBoundsOptions: { padding: 50 },
-        bounds: (await geocodeOne('Canary Islands')).bbox as LngLatBoundsLike,
-    },
-    { style: 'satellite' },
-);
+(async () => {
+    new TomTomMap(
+        {
+            container: 'maps-sdk-js-examples-map-container',
+            fitBoundsOptions: { padding: 50 },
+            bounds: (await geocodeOne('Canary Islands')).bbox as LngLatBoundsLike,
+        },
+        { style: 'satellite' },
+    );
+})();

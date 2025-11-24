@@ -7,30 +7,35 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [-0.12634, 51.50276], zoom: 14 });
-const popUp = new Popup({
-    closeButton: true,
-    closeOnClick: true,
-    closeOnMove: true,
-    offset: 15,
-    className: 'maps-sdk-js-examples-popup',
-});
-let isMarkerVisible = false;
-const revGeocodingMarker = new Marker({ color: '#df1b12' });
+(async () => {
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        center: [-0.12634, 51.50276],
+        zoom: 14,
+    });
+    const popUp = new Popup({
+        closeButton: true,
+        closeOnClick: true,
+        closeOnMove: true,
+        offset: 15,
+        className: 'maps-sdk-js-examples-popup',
+    });
+    let isMarkerVisible = false;
+    const revGeocodingMarker = new Marker({ color: '#df1b12' });
 
-const showTrafficPopup = (topFeature: MapGeoJSONFeature, lngLat: LngLat) => {
-    const { properties } = topFeature;
+    const showTrafficPopup = (topFeature: MapGeoJSONFeature, lngLat: LngLat) => {
+        const { properties } = topFeature;
 
-    const incidentSeverity: Record<number, string> = {
-        3: 'major',
-        2: 'moderate',
-        1: 'minor',
-    };
+        const incidentSeverity: Record<number, string> = {
+            3: 'major',
+            2: 'moderate',
+            1: 'minor',
+        };
 
-    popUp
-        .setOffset(5)
-        .setHTML(
-            `
+        popUp
+            .setOffset(5)
+            .setHTML(
+                `
         <div id="traffic-incident-popup">
         <h3>Traffic incident</h3>
         <b id="traffic-incident-road-type">Road type</b> ${topFeature.properties.road_category}<br />
@@ -40,31 +45,31 @@ const showTrafficPopup = (topFeature: MapGeoJSONFeature, lngLat: LngLat) => {
         } s</b> <br />
         </div>
         `,
-        )
-        .setLngLat(lngLat)
-        .addTo(map.mapLibreMap);
-};
+            )
+            .setLngLat(lngLat)
+            .addTo(map.mapLibreMap);
+    };
 
-const initTrafficIncidents = async () => {
-    (await TrafficIncidentsModule.get(map)).events.on('long-hover', showTrafficPopup);
-};
+    const initTrafficIncidents = async () => {
+        (await TrafficIncidentsModule.get(map)).events.on('long-hover', showTrafficPopup);
+    };
 
-const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
-    const { address, poi } = topFeature.properties;
+    const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
+        const { address, poi } = topFeature.properties;
 
-    if (isMarkerVisible) {
-        revGeocodingMarker.remove();
-    }
+        if (isMarkerVisible) {
+            revGeocodingMarker.remove();
+        }
 
-    new Popup({
-        closeButton: true,
-        closeOnClick: true,
-        closeOnMove: true,
-        offset: 15,
-        className: 'maps-sdk-js-examples-popup',
-    })
-        .setHTML(
-            `
+        new Popup({
+            closeButton: true,
+            closeOnClick: true,
+            closeOnMove: true,
+            offset: 15,
+            className: 'maps-sdk-js-examples-popup',
+        })
+            .setHTML(
+                `
             <div id="place-popup">
             <h3 id="place-name">${poi?.name}</h3>
             <b id="place-address"> Address: </b> ${address.freeformAddress}
@@ -75,39 +80,39 @@ const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
             </div>
             </div> 
             `,
-        )
-        .setLngLat(lngLat)
-        .addTo(map.mapLibreMap)
-        .once('close', () => (isMarkerVisible = true));
-};
+            )
+            .setLngLat(lngLat)
+            .addTo(map.mapLibreMap)
+            .once('close', () => (isMarkerVisible = true));
+    };
 
-const initPlacesModule = async () => {
-    const placesModule = await PlacesModule.get(map);
+    const initPlacesModule = async () => {
+        const placesModule = await PlacesModule.get(map);
 
-    const places = await search({
-        query: 'pharmacy',
-        limit: 35,
-        boundingBox: map.getBBox(),
-    });
+        const places = await search({
+            query: 'pharmacy',
+            limit: 35,
+            boundingBox: map.getBBox(),
+        });
 
-    placesModule.show(places);
-    placesModule.events.on('click', showPlacesPopUp);
-};
+        placesModule.show(places);
+        placesModule.events.on('click', showPlacesPopUp);
+    };
 
-const showBasemapPopup = async (_: any, lnglat: LngLat) => {
-    const { properties } = await reverseGeocode({ position: [lnglat.lng, lnglat.lat] });
-    revGeocodingMarker.setLngLat(lnglat).addTo(map.mapLibreMap);
+    const showBasemapPopup = async (_: any, lnglat: LngLat) => {
+        const { properties } = await reverseGeocode({ position: [lnglat.lng, lnglat.lat] });
+        revGeocodingMarker.setLngLat(lnglat).addTo(map.mapLibreMap);
 
-    if (!isMarkerVisible) {
-        new Popup({
-            closeButton: true,
-            closeOnClick: true,
-            closeOnMove: true,
-            offset: 6,
-            className: 'maps-sdk-js-examples-popup-basemap',
-        })
-            .setHTML(
-                `
+        if (!isMarkerVisible) {
+            new Popup({
+                closeButton: true,
+                closeOnClick: true,
+                closeOnMove: true,
+                offset: 6,
+                className: 'maps-sdk-js-examples-popup-basemap',
+            })
+                .setHTML(
+                    `
                 <div id="maps-sdk-js-examples-popup-basemap">
                 ${
                     properties.address.freeformAddress
@@ -119,29 +124,30 @@ const showBasemapPopup = async (_: any, lnglat: LngLat) => {
                     </div>
                 </div> 
                 `,
-            )
-            .setLngLat(lnglat)
-            .addTo(map.mapLibreMap);
-        isMarkerVisible = true;
-    } else {
+                )
+                .setLngLat(lnglat)
+                .addTo(map.mapLibreMap);
+            isMarkerVisible = true;
+        } else {
+            revGeocodingMarker.remove();
+            isMarkerVisible = false;
+        }
+    };
+
+    const initBaseMapModule = async () => {
+        const baseModule = await BaseMapModule.get(map);
+        // Listening hover events on Basemap module to remove traffic popups.
+        baseModule.events.on('hover', () => popUp.isOpen() && popUp.remove());
+        baseModule.events.on('click', showBasemapPopup);
+    };
+
+    map.mapLibreMap.addControl(new NavigationControl());
+    map.mapLibreMap.on('dragstart', () => {
         revGeocodingMarker.remove();
         isMarkerVisible = false;
-    }
-};
+    });
 
-const initBaseMapModule = async () => {
-    const baseModule = await BaseMapModule.get(map);
-    // Listening hover events on Basemap module to remove traffic popups.
-    baseModule.events.on('hover', () => popUp.isOpen() && popUp.remove());
-    baseModule.events.on('click', showBasemapPopup);
-};
-
-map.mapLibreMap.addControl(new NavigationControl());
-map.mapLibreMap.on('dragstart', () => {
-    revGeocodingMarker.remove();
-    isMarkerVisible = false;
-});
-
-await initBaseMapModule();
-await initPlacesModule();
-await initTrafficIncidents();
+    await initBaseMapModule();
+    await initPlacesModule();
+    await initTrafficIncidents();
+})();

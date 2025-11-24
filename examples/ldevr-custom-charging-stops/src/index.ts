@@ -10,48 +10,50 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
-const waypoints = await Promise.all([geocodeOne('Munich'), geocodeOne('Paris')]);
+(async () => {
+    const waypoints = await Promise.all([geocodeOne('Munich'), geocodeOne('Paris')]);
 
-const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
-    bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-    fitBoundsOptions: { padding: 150 },
-});
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+        fitBoundsOptions: { padding: 150 },
+    });
 
-const routingModule = await RoutingModule.get(map, {
-    chargingStops: {
-        text: {
-            title: ['format', ['get', 'chargingDuration'], { 'text-color': '#243882' }],
-        },
-        icon: {
-            customIcons: [
-                { id: 'slow-speed-charger', image: chargerSlowSVG },
-                { id: 'regular-speed-charger', image: chargerRegularSVG },
-                { id: 'fast-speed-charger', image: chargerFastSVG },
-            ],
-            mapping: {
-                basedOn: 'chargingSpeed',
-                value: {
-                    slow: 'slow-speed-charger',
-                    regular: 'regular-speed-charger',
-                    fast: 'fast-speed-charger',
-                    'ultra-fast': 'fast-speed-charger',
+    const routingModule = await RoutingModule.get(map, {
+        chargingStops: {
+            text: {
+                title: ['format', ['get', 'chargingDuration'], { 'text-color': '#243882' }],
+            },
+            icon: {
+                customIcons: [
+                    { id: 'slow-speed-charger', image: chargerSlowSVG },
+                    { id: 'regular-speed-charger', image: chargerRegularSVG },
+                    { id: 'fast-speed-charger', image: chargerFastSVG },
+                ],
+                mapping: {
+                    basedOn: 'chargingSpeed',
+                    value: {
+                        slow: 'slow-speed-charger',
+                        regular: 'regular-speed-charger',
+                        fast: 'fast-speed-charger',
+                        'ultra-fast': 'fast-speed-charger',
+                    },
                 },
             },
         },
-    },
-});
-routingModule.showWaypoints(waypoints);
+    });
+    routingModule.showWaypoints(waypoints);
 
-const route = await calculateRoute({
-    locations: waypoints,
-    vehicle: {
-        engineType: 'electric',
-        model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
-        state: { currentChargeInkWh: 5 },
-        preferences: {
-            chargingPreferences: { minChargeAtDestinationInkWh: 5, minChargeAtChargingStopsInkWh: 5 },
+    const route = await calculateRoute({
+        locations: waypoints,
+        vehicle: {
+            engineType: 'electric',
+            model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+            state: { currentChargeInkWh: 5 },
+            preferences: {
+                chargingPreferences: { minChargeAtDestinationInkWh: 5, minChargeAtChargingStopsInkWh: 5 },
+            },
         },
-    },
-});
-routingModule.showRoutes(route);
+    });
+    routingModule.showRoutes(route);
+})();

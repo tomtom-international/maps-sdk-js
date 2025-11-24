@@ -11,32 +11,34 @@ const mapsElement = document.querySelector('#maps-sdk-js-examples-maps-container
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
-const invert = (geometry: Feature<Polygon | MultiPolygon>): PolygonFeatures => {
-    const invertedArea = difference({
-        type: 'FeatureCollection',
-        features: [bboxPolygon([-180, 90, 180, -90]), geometry],
-    });
-    return { type: 'FeatureCollection', features: [invertedArea ?? geometry] } as PolygonFeatures;
-};
+(async () => {
+    const invert = (geometry: Feature<Polygon | MultiPolygon>): PolygonFeatures => {
+        const invertedArea = difference({
+            type: 'FeatureCollection',
+            features: [bboxPolygon([-180, 90, 180, -90]), geometry],
+        });
+        return { type: 'FeatureCollection', features: [invertedArea ?? geometry] } as PolygonFeatures;
+    };
 
-const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number) => {
-    const div = document.createElement('div');
-    div.id = `map${index}`;
-    div.className = 'maps-sdk-js-examples-map';
-    mapsElement.appendChild(div);
+    const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number) => {
+        const div = document.createElement('div');
+        div.id = `map${index}`;
+        div.className = 'maps-sdk-js-examples-map';
+        mapsElement.appendChild(div);
 
-    const map = new TomTomMap({ container: div.id, bounds: geometry.bbox as LngLatBoundsLike, interactive: false });
-    (
-        await GeometriesModule.get(map, {
-            beforeLayerConfig: 'lowestPlaceLabel',
-            colorConfig: { fillColor: 'white', fillOpacity: 0.75 },
-            lineConfig: { lineOpacity: 0 },
-        })
-    ).show(invert(geometry));
-};
+        const map = new TomTomMap({ container: div.id, bounds: geometry.bbox as LngLatBoundsLike, interactive: false });
+        (
+            await GeometriesModule.get(map, {
+                beforeLayerConfig: 'lowestPlaceLabel',
+                colorConfig: { fillColor: 'white', fillOpacity: 0.75 },
+                lineConfig: { lineOpacity: 0 },
+            })
+        ).show(invert(geometry));
+    };
 
-const places = await search({ query: '', countries: ['ESP'], geographyTypes: ['Municipality'], limit: 16 });
-const geometries = await geometryData({ geometries: places });
-for (let i = 0; i < geometries.features.length; i++) {
-    await initMap(geometries.features[i], i);
-}
+    const places = await search({ query: '', countries: ['ESP'], geographyTypes: ['Municipality'], limit: 16 });
+    const geometries = await geometryData({ geometries: places });
+    for (let i = 0; i < geometries.features.length; i++) {
+        await initMap(geometries.features[i], i);
+    }
+})();

@@ -7,14 +7,16 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const position = [4.8907, 52.37311];
-const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
-    center: position as LngLatLike,
-    zoom: 17,
-});
+(async () => {
+    const position = [4.8907, 52.37311];
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        center: position as LngLatLike,
+        zoom: 17,
+    });
 
-const places = await PlacesModule.get(map);
-places.events.on('click', () => alert('pin clicked'));
+    const places = await PlacesModule.get(map);
+    places.events.on('click', () => alert('pin clicked'));
 
-places.show(await reverseGeocode({ position }));
+    places.show(await reverseGeocode({ position }));
+})();

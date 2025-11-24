@@ -13,168 +13,180 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
-const searchBox = document.getElementById('maps-sdk-js-examples-search-box') as HTMLInputElement;
-const autoCompleteResultsList = document.getElementById('maps-sdk-js-examples-autocompleteResults') as HTMLUListElement;
-const fuzzySearchResultsList = document.getElementById('maps-sdk-js-examples-fuzzySearchResults') as HTMLUListElement;
-const searchThisAreaButton = document.getElementById('maps-sdk-js-examples-search-this-area') as HTMLInputElement;
+(async () => {
+    const searchBox = document.getElementById('maps-sdk-js-examples-search-box') as HTMLInputElement;
+    const autoCompleteResultsList = document.getElementById(
+        'maps-sdk-js-examples-autocompleteResults',
+    ) as HTMLUListElement;
+    const fuzzySearchResultsList = document.getElementById(
+        'maps-sdk-js-examples-fuzzySearchResults',
+    ) as HTMLUListElement;
+    const searchThisAreaButton = document.getElementById('maps-sdk-js-examples-search-this-area') as HTMLInputElement;
 
-const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
-const placesModule = await PlacesModule.get(map);
-const baseMapModule = await BaseMapModule.get(map);
+    const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
+    const placesModule = await PlacesModule.get(map);
+    const baseMapModule = await BaseMapModule.get(map);
 
-fuzzySearchResultsList.addEventListener('mouseleave', () => {
-    placesModule.cleanEventStates();
-});
+    fuzzySearchResultsList.addEventListener('mouseleave', () => {
+        placesModule.cleanEventStates();
+    });
 
-let selectedAutoCompleteSegment: AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment | undefined | null;
+    let selectedAutoCompleteSegment:
+        | AutocompleteSearchBrandSegment
+        | AutocompleteSearchCategorySegment
+        | undefined
+        | null;
 
-const clearFuzzySearchResults = () => {
-    const searchResultsList = document.querySelector('#maps-sdk-js-examples-fuzzySearchResults') as HTMLUListElement;
-    searchResultsList.innerHTML = '';
-    placesModule.clear();
-    searchThisAreaButton.innerHTML = '';
-};
+    const clearFuzzySearchResults = () => {
+        const searchResultsList = document.querySelector(
+            '#maps-sdk-js-examples-fuzzySearchResults',
+        ) as HTMLUListElement;
+        searchResultsList.innerHTML = '';
+        placesModule.clear();
+        searchThisAreaButton.innerHTML = '';
+    };
 
-const showFuzzySearchResults = (places: Places) => {
-    clearFuzzySearchResults();
-    if (selectedAutoCompleteSegment || !autoCompleteResultsList.childElementCount) {
-        placesModule.show(places);
-    }
-    for (const place of places.features) {
+    const showFuzzySearchResults = (places: Places) => {
+        clearFuzzySearchResults();
+        if (selectedAutoCompleteSegment || !autoCompleteResultsList.childElementCount) {
+            placesModule.show(places);
+        }
+        for (const place of places.features) {
+            const resultItem = document.createElement('li');
+            resultItem.classList.add('maps-sdk-js-examples-result-item');
+            resultItem.dataset.placeId = place.id;
+
+            if (place.properties.poi?.name) {
+                resultItem.innerHTML = `
+                    <a class="maps-sdk-js-examples-a">                
+                        <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.poi?.name}</div>
+                        <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.address.freeformAddress}</div>
+                    </a>`;
+            } else {
+                resultItem.innerHTML = `
+                    <a class="maps-sdk-js-examples-a">
+                        <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.address.freeformAddress}</div>
+                    </a>`;
+            }
+
+            // Add hover event listeners for list item
+            resultItem.addEventListener('mouseenter', () => {
+                placesModule.putEventState({ id: place.id, state: 'hover', mode: 'put' });
+            });
+
+            fuzzySearchResultsList.appendChild(resultItem);
+        }
+        if (!places.features.length) {
+            const noResults = document.createElement('li');
+            noResults.classList.add('maps-sdk-js-examples-result-item');
+            noResults.innerHTML = `<div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">No results found</div>`;
+            fuzzySearchResultsList.appendChild(noResults);
+        }
+    };
+
+    const fuzzySearch = async () => {
+        const searchParams = selectedAutoCompleteSegment
+            ? {
+                  query: '',
+                  limit: 20,
+                  boundingBox: map.getBBox(),
+                  ...(selectedAutoCompleteSegment.type === 'category' && {
+                      poiCategories: [Number(selectedAutoCompleteSegment.id)],
+                  }),
+                  ...(selectedAutoCompleteSegment.type === 'brand' && {
+                      poiBrands: [selectedAutoCompleteSegment.value],
+                  }),
+              }
+            : {
+                  query: searchBox.value,
+                  typeahead: true,
+                  limit: 10,
+                  position: map.mapLibreMap.getCenter().toArray(),
+              };
+
+        showFuzzySearchResults(await search(searchParams));
+    };
+
+    const createListElement = (result: AutocompleteSearchResult | null): HTMLElement => {
         const resultItem = document.createElement('li');
         resultItem.classList.add('maps-sdk-js-examples-result-item');
-        resultItem.dataset.placeId = place.id;
-
-        if (place.properties.poi?.name) {
-            resultItem.innerHTML = `
-                <a class="maps-sdk-js-examples-a">                
-                    <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.poi?.name}</div>
-                    <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.address.freeformAddress}</div>
-                </a>`;
-        } else {
-            resultItem.innerHTML = `
-                <a class="maps-sdk-js-examples-a">
-                    <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.address.freeformAddress}</div>
-                </a>`;
+        if (!result) {
+            resultItem.innerHTML = `<div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">No results found</div>`;
+            return resultItem;
         }
+        const segment = result.segments[0] as AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment;
 
-        // Add hover event listeners for list item
-        resultItem.addEventListener('mouseenter', () => {
-            placesModule.putEventState({ id: place.id, state: 'hover', mode: 'put' });
+        resultItem.innerHTML = `
+            <a class="maps-sdk-js-examples-a">
+                <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${segment.value}</div>
+                <div class="maps-sdk-js-examples-result-type maps-sdk-js-examples-ellipsis">${segment.type}</div>
+            </a>
+        `;
+
+        resultItem.addEventListener('click', async () => {
+            selectedAutoCompleteSegment = segment;
+            searchBox.value = segment.value;
+            await fuzzySearch();
         });
-
-        fuzzySearchResultsList.appendChild(resultItem);
-    }
-    if (!places.features.length) {
-        const noResults = document.createElement('li');
-        noResults.classList.add('maps-sdk-js-examples-result-item');
-        noResults.innerHTML = `<div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">No results found</div>`;
-        fuzzySearchResultsList.appendChild(noResults);
-    }
-};
-
-const fuzzySearch = async () => {
-    const searchParams = selectedAutoCompleteSegment
-        ? {
-              query: '',
-              limit: 20,
-              boundingBox: map.getBBox(),
-              ...(selectedAutoCompleteSegment.type === 'category' && {
-                  poiCategories: [Number(selectedAutoCompleteSegment.id)],
-              }),
-              ...(selectedAutoCompleteSegment.type === 'brand' && {
-                  poiBrands: [selectedAutoCompleteSegment.value],
-              }),
-          }
-        : {
-              query: searchBox.value,
-              typeahead: true,
-              limit: 10,
-              position: map.mapLibreMap.getCenter().toArray(),
-          };
-
-    showFuzzySearchResults(await search(searchParams));
-};
-
-const createListElement = (result: AutocompleteSearchResult | null): HTMLElement => {
-    const resultItem = document.createElement('li');
-    resultItem.classList.add('maps-sdk-js-examples-result-item');
-    if (!result) {
-        resultItem.innerHTML = `<div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">No results found</div>`;
         return resultItem;
-    }
-    const segment = result.segments[0] as AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment;
+    };
 
-    resultItem.innerHTML = `
-        <a class="maps-sdk-js-examples-a">
-            <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${segment.value}</div>
-            <div class="maps-sdk-js-examples-result-type maps-sdk-js-examples-ellipsis">${segment.type}</div>
-        </a>
-    `;
+    const clearAutoCompleteResults = () => (autoCompleteResultsList.innerHTML = '');
 
-    resultItem.addEventListener('click', async () => {
-        selectedAutoCompleteSegment = segment;
-        searchBox.value = segment.value;
-        await fuzzySearch();
+    const showAutocompleteResults = (response: AutocompleteSearchResponse) => {
+        clearAutoCompleteResults();
+        const brandsCategoryResults = response.results.filter((result) => result.segments[0].type !== 'plaintext');
+        if (brandsCategoryResults.length) {
+            brandsCategoryResults.forEach((result) => {
+                autoCompleteResultsList.appendChild(createListElement(result));
+            });
+        } else {
+            // No results found:
+            autoCompleteResultsList.appendChild(createListElement(null));
+        }
+    };
+
+    const clearSearchResults = () => {
+        clearAutoCompleteResults();
+        clearFuzzySearchResults();
+    };
+
+    const autoCompleteSearch = async () => {
+        const autocompleteResponse = await autocompleteSearch({ query: searchBox.value, limit: 2 });
+        showAutocompleteResults(autocompleteResponse);
+    };
+
+    const showSearchThisAreaButton = () =>
+        (searchThisAreaButton.innerHTML = `<button class="maps-sdk-js-examples-search-this-area-btn">Search This Area</button>`);
+
+    map.mapLibreMap.on('moveend', () => {
+        if (searchBox.value === selectedAutoCompleteSegment?.value) {
+            showSearchThisAreaButton();
+        }
     });
-    return resultItem;
-};
 
-const clearAutoCompleteResults = () => (autoCompleteResultsList.innerHTML = '');
+    searchThisAreaButton.addEventListener('click', fuzzySearch);
 
-const showAutocompleteResults = (response: AutocompleteSearchResponse) => {
-    clearAutoCompleteResults();
-    const brandsCategoryResults = response.results.filter((result) => result.segments[0].type !== 'plaintext');
-    if (brandsCategoryResults.length) {
-        brandsCategoryResults.forEach((result) => {
-            autoCompleteResultsList.appendChild(createListElement(result));
-        });
-    } else {
-        // No results found:
-        autoCompleteResultsList.appendChild(createListElement(null));
-    }
-};
+    const unhoverListItem = () => fuzzySearchResultsList.querySelector('.hovered')?.classList.remove('hovered');
 
-const clearSearchResults = () => {
-    clearAutoCompleteResults();
-    clearFuzzySearchResults();
-};
+    placesModule.events.on('hover', (place) => {
+        unhoverListItem();
 
-const autoCompleteSearch = async () => {
-    const autocompleteResponse = await autocompleteSearch({ query: searchBox.value, limit: 2 });
-    showAutocompleteResults(autocompleteResponse);
-};
+        const listItem = fuzzySearchResultsList.querySelector(`li[data-place-id="${place.id}"]`);
+        listItem?.classList.add('hovered');
+    });
 
-const showSearchThisAreaButton = () =>
-    (searchThisAreaButton.innerHTML = `<button class="maps-sdk-js-examples-search-this-area-btn">Search This Area</button>`);
+    // Clean up list item hover when hovering outside pins
+    baseMapModule.events.on('hover', () => {
+        unhoverListItem();
+        placesModule.cleanEventStates();
+    });
 
-map.mapLibreMap.on('moveend', () => {
-    if (searchBox.value === selectedAutoCompleteSegment?.value) {
-        showSearchThisAreaButton();
-    }
-});
-
-searchThisAreaButton.addEventListener('click', fuzzySearch);
-
-const unhoverListItem = () => fuzzySearchResultsList.querySelector('.hovered')?.classList.remove('hovered');
-
-placesModule.events.on('hover', (place) => {
-    unhoverListItem();
-
-    const listItem = fuzzySearchResultsList.querySelector(`li[data-place-id="${place.id}"]`);
-    listItem?.classList.add('hovered');
-});
-
-// Clean up list item hover when hovering outside pins
-baseMapModule.events.on('hover', () => {
-    unhoverListItem();
-    placesModule.cleanEventStates();
-});
-
-searchBox.addEventListener('keyup', async () => {
-    selectedAutoCompleteSegment = null;
-    if (searchBox.value !== '') {
-        await Promise.all([await autoCompleteSearch(), await fuzzySearch()]);
-    }
-    searchBox.value.trim() === '' && clearSearchResults();
-});
+    searchBox.addEventListener('keyup', async () => {
+        selectedAutoCompleteSegment = null;
+        if (searchBox.value !== '') {
+            await Promise.all([await autoCompleteSearch(), await fuzzySearch()]);
+        }
+        searchBox.value.trim() === '' && clearSearchResults();
+    });
+})();

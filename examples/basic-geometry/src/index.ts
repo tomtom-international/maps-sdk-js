@@ -7,16 +7,18 @@ import type { LngLatLike } from 'maplibre-gl';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const location = await geocodeOne('Schiphol Airport, NL');
-const map = new TomTomMap(
-    {
-        container: 'maps-sdk-js-examples-map-container',
-        zoom: 11,
-        center: location.geometry.coordinates as LngLatLike,
-    },
-    { language: 'en-GB' },
-);
-const geometryModule = await GeometriesModule.get(map);
+(async () => {
+    const location = await geocodeOne('Schiphol Airport, NL');
+    const map = new TomTomMap(
+        {
+            container: 'maps-sdk-js-examples-map-container',
+            zoom: 11,
+            center: location.geometry.coordinates as LngLatLike,
+        },
+        { language: 'en-GB' },
+    );
+    const geometryModule = await GeometriesModule.get(map);
 
-const geometryToSearch = await geometryData({ geometries: location });
-geometryModule.show(geometryToSearch);
+        const geometryToSearch = await geometryData({ geometries: location });
+        geometryModule.show(geometryToSearch);
+})();

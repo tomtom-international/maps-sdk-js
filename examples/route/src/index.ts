@@ -8,19 +8,21 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const waypoints: Waypoint[] = await Promise.all([
-    geocodeOne('W Houston St 51, NY'),
-    geocodeOne('Lincoln Square, NY'),
-    geocodeOne('Carnegie Hill, NY'),
-    geocodeOne('Terminal C Departures LaGuardia Airport, NY'),
-]);
+(async () => {
+    const waypoints: Waypoint[] = await Promise.all([
+        geocodeOne('W Houston St 51, NY'),
+        geocodeOne('Lincoln Square, NY'),
+        geocodeOne('Carnegie Hill, NY'),
+        geocodeOne('Terminal C Departures LaGuardia Airport, NY'),
+    ]);
 
-const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
-    bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-    fitBoundsOptions: { padding: 150 },
-});
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+        fitBoundsOptions: { padding: 150 },
+    });
 
-const routingModule = await RoutingModule.get(map);
-routingModule.showWaypoints(waypoints);
-routingModule.showRoutes(await calculateRoute({ locations: waypoints, costModel: { traffic: 'historical' } }));
+    const routingModule = await RoutingModule.get(map);
+    routingModule.showWaypoints(waypoints);
+    routingModule.showRoutes(await calculateRoute({ locations: waypoints, costModel: { traffic: 'historical' } }));
+})();

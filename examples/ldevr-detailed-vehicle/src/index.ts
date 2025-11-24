@@ -8,16 +8,18 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const waypoints = await Promise.all([geocodeOne('Paris, FR'), geocodeOne('Amsterdam, NL')]);
+(async () => {
+    const waypoints = await Promise.all([geocodeOne('Paris, FR'), geocodeOne('Amsterdam, NL')]);
 
-const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
-    bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-    fitBoundsOptions: { padding: 150 },
-});
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+        fitBoundsOptions: { padding: 150 },
+    });
 
-const routingModule = await RoutingModule.get(map);
-routingModule.showWaypoints(waypoints);
+    const routingModule = await RoutingModule.get(map);
+    routingModule.showWaypoints(waypoints);
 
-const route = await calculateRoute({ locations: waypoints, vehicle });
-routingModule.showRoutes(route);
+    const route = await calculateRoute({ locations: waypoints, vehicle });
+    routingModule.showRoutes(route);
+})();

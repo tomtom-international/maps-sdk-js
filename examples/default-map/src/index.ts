@@ -5,8 +5,10 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
-new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
-    center: [4.8156, 52.4414],
-    zoom: 8,
-});
+(async () => {
+    new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        center: [4.8156, 52.4414],
+        zoom: 8,
+    });
+})();

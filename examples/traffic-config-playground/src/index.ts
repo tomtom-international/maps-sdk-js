@@ -10,21 +10,25 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
 
-const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [2.34281, 48.85639], zoom: 12 });
-const incidents = await TrafficIncidentsModule.get(map, { visible: true });
-const flow = await TrafficFlowModule.get(map, { visible: true });
+(async () => {
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        center: [2.34281, 48.85639],
+        zoom: 12,
+    });
+    const incidents = await TrafficIncidentsModule.get(map, { visible: true });
+    const flow = await TrafficFlowModule.get(map, { visible: true });
 
-const cachedPlacesByQuery: Record<string, Place> = {};
-const geocodeWithCache = async (query: string): Promise<Place> => {
-    let fetchedPlace = cachedPlacesByQuery[query];
-    if (!fetchedPlace) {
-        fetchedPlace = (await geocode({ query, limit: 1 })).features[0];
-        cachedPlacesByQuery[query] = fetchedPlace;
-    }
-    return fetchedPlace;
-};
+    const cachedPlacesByQuery: Record<string, Place> = {};
+    const geocodeWithCache = async (query: string): Promise<Place> => {
+        let fetchedPlace = cachedPlacesByQuery[query];
+        if (!fetchedPlace) {
+            fetchedPlace = (await geocode({ query, limit: 1 })).features[0];
+            cachedPlacesByQuery[query] = fetchedPlace;
+        }
+        return fetchedPlace;
+    };
 
-const initUI = () => {
     const presetSelector = document.getElementById('maps-sdk-js-examples-preset-selector') as HTMLSelectElement;
     configPresets.forEach((preset, index) => presetSelector.add(new Option(preset.title, String(index))));
     presetSelector.addEventListener('change', (event) => {
@@ -46,6 +50,4 @@ const initUI = () => {
         map.mapLibreMap.fitBounds(place.bbox as LngLatBoundsLike, { duration: 0 });
     });
     locationsSelector.selectedIndex = 0;
-};
-
-initUI();
+})();

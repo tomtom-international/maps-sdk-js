@@ -7,13 +7,15 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const location = await geocodeOne('Amsterdam Centraal, Netherlands');
+(async () => {
+    const location = await geocodeOne('Amsterdam Centraal, Netherlands');
 
-const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
-    center: location.geometry.coordinates as LngLatLike,
-    zoom: 17,
-});
+    const map = new TomTomMap({
+        container: 'maps-sdk-js-examples-map-container',
+        center: location.geometry.coordinates as LngLatLike,
+        zoom: 17,
+    });
 
-const placesModule = await PlacesModule.get(map);
-await placesModule.show(location);
+    const placesModule = await PlacesModule.get(map);
+    await placesModule.show(location);
+})();
