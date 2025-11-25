@@ -1,28 +1,24 @@
-import type { Routes } from '@tomtom-org/maps-sdk/core';
+import { Routes } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
-import type { SDKServiceError } from '../../shared';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
-import type { APIErrorResponse, RoutingAPIResponseError } from '../../shared/types/apiResponseErrorTypes';
 import type { CalculateRouteParams } from '..';
 import { parseCalculateRouteResponse } from '../responseParser';
 import { parseRoutingResponseError } from '../routingResponseErrorParser';
 import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
-import apiAndParsedResponses from './responseParser.data.json';
-import errorResponses from './responseParserError.data.json';
-import longApiResponse from './responseParserPerf.data.json';
+import { apiAndParsedResponses } from './responseParser.data';
+import { errorResponses } from './responseParserError.data';
+import { longApiResponse } from './responseParserPerf.data';
 
 describe('Calculate Route response parsing functional tests', () => {
     // Functional tests:
     test.each(
         apiAndParsedResponses,
-    )("'%s'", (_name: string, apiResponse: CalculateRouteResponseAPI, params: CalculateRouteParams, parsedResponse: Routes) => {
-        // @ts-ignore
+    )("'%s'", (_name: string, apiResponse: CalculateRouteResponseAPI, params: CalculateRouteParams, expectedResponse: Routes) => {
         // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
         // (We reparse the objects to compare them ignoring the order of properties)
-        const actual = JSON.parse(JSON.stringify(parseCalculateRouteResponse(apiResponse, params)));
-        const expected = JSON.parse(JSON.stringify(parsedResponse));
-        expect(actual).toMatchObject(expected);
+        const actual = parseCalculateRouteResponse(apiResponse, params);
+        expect(actual).toMatchObject(expectedResponse);
     });
 });
 
@@ -30,25 +26,16 @@ describe('Calculate Route response parsing performance tests', () => {
     test(
         'Parsing a very long API response ' + '(e.g. Lisbon - Moscow with sections, instructions and alternatives)',
         () => {
-            expect(
-                bestExecutionTimeMS(
-                    () =>
-                        parseCalculateRouteResponse(
-                            longApiResponse as CalculateRouteResponseAPI,
-                            {} as CalculateRouteParams,
-                        ),
-                    20,
-                ),
-            ).toBeLessThan(MAX_EXEC_TIMES_MS.routing.responseParsing);
+            const [apiResponse, params] = longApiResponse;
+            expect(bestExecutionTimeMS(() => parseCalculateRouteResponse(apiResponse, params), 20)).toBeLessThan(
+                MAX_EXEC_TIMES_MS.routing.responseParsing,
+            );
         },
     );
 });
 
 describe('Routing - error response parsing tests', () => {
-    test.each(
-        errorResponses,
-    )("'%s'", async (_name: string, apiResponseError: APIErrorResponse<RoutingAPIResponseError>, expectedSdkError: SDKServiceError) => {
-        // @ts-ignore
+    test.each(errorResponses)("'%s'", async (_name, apiResponseError, expectedSdkError) => {
         const sdkRoutingResponseError = parseRoutingResponseError(apiResponseError, 'Routing');
         expect(sdkRoutingResponseError).toMatchObject(expectedSdkError);
     });

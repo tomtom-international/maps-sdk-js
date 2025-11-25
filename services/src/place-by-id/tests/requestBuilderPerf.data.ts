@@ -1,0 +1,12 @@
+import type { PlaceByIdParams } from '../types';
+
+export const placeByIdReqObjects: PlaceByIdParams = {
+    commonBaseURL: 'https://api.tomtom.com',
+    apiKey: 'APIKEY',
+    language: 'es-ES',
+    entityId: '528009004250472',
+    mapcodes: ['Local', 'International', 'Alternative'],
+    openingHours: 'nextSevenDays',
+    timeZone: 'iana',
+    relatedPois: 'off',
+};

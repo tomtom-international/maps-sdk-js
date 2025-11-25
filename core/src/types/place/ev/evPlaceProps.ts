@@ -1,5 +1,5 @@
 import type { CommonPlaceProps } from '../place';
-import type { ChargingStationsAvailability, ConnectorAvailability } from './chargingStationsAvailability';
+import type { ChargingStationsAvailability, ConnectorCount } from './chargingStationsAvailability';
 import type { Connector } from './connector';
 
 /**
@@ -43,7 +43,7 @@ export type ChargingPark = {
      * For real-time availability, use the availability property instead.
      * This field shows total counts regardless of current operational status.
      */
-    connectorCounts: Omit<ConnectorAvailability, 'statusCounts'>[];
+    connectorCounts: ConnectorCount[];
 };
 
 /**

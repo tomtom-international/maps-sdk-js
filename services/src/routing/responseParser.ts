@@ -1,30 +1,30 @@
 import {
     bboxFromGeoJSON,
-    ChargingStop,
-    CountrySectionProps,
-    CurrentType,
-    Guidance,
+    type ChargingStop,
+    type CountrySectionProps,
+    type CurrentType,
+    type Guidance,
     generateId,
-    ImportantRoadStretchProps,
-    Instruction,
+    type ImportantRoadStretchProps,
+    type Instruction,
     indexedMagnitudes,
-    LaneDirection,
-    LaneSectionProps,
-    LegSectionProps,
-    LegSummary,
-    PossibleLaneSeparator,
-    RoadShieldReference,
-    RoadShieldSectionProps,
-    Route,
-    RouteSummary,
-    Routes,
-    SectionProps,
-    SectionsProps,
-    SectionType,
-    SpeedLimitSectionProps,
-    TrafficCategory,
-    TrafficIncidentTEC,
-    TrafficSectionProps,
+    type LaneDirection,
+    type LaneSectionProps,
+    type LegSectionProps,
+    type LegSummary,
+    type PossibleLaneSeparator,
+    type RoadShieldReference,
+    type RoadShieldSectionProps,
+    type Route,
+    type RouteSummary,
+    type Routes,
+    type SectionProps,
+    type SectionsProps,
+    type SectionType,
+    type SpeedLimitSectionProps,
+    type TrafficCategory,
+    type TrafficIncidentTEC,
+    type TrafficSectionProps,
 } from '@tomtom-org/maps-sdk/core';
 import type { LineString, Position } from 'geojson';
 import { isNil, omit } from 'lodash-es';
@@ -107,14 +107,28 @@ const toChargingStop = (
 const parseSummary = (apiSummary: SummaryAPI, params: CalculateRouteParams): RouteSummary | LegSummary => {
     const maxChargeKWH = (params?.vehicle?.model as ExplicitVehicleModel<'electric'>)?.engine?.charging?.maxChargeKWH;
     return {
-        ...apiSummary,
+        lengthInMeters: apiSummary.lengthInMeters,
+        historicTrafficTravelTimeInSeconds: apiSummary.historicTrafficTravelTimeInSeconds,
+        liveTrafficIncidentsTravelTimeInSeconds: apiSummary.liveTrafficIncidentsTravelTimeInSeconds,
+        noTrafficTravelTimeInSeconds: apiSummary.noTrafficTravelTimeInSeconds,
+        trafficDelayInSeconds: apiSummary.trafficDelayInSeconds,
+        trafficLengthInMeters: apiSummary.trafficLengthInMeters,
+        travelTimeInSeconds: apiSummary.travelTimeInSeconds,
         departureTime: new Date(apiSummary.departureTime),
         arrivalTime: new Date(apiSummary.arrivalTime),
+        deviationDistanceInMeters: apiSummary.deviationDistance,
+        fuelConsumptionInLiters: apiSummary.fuelConsumptionInLiters,
+        ...(apiSummary.deviationPoint && {
+            deviationPoint: [apiSummary.deviationPoint.longitude, apiSummary.deviationPoint.latitude],
+        }),
         // EV-specific fields:
+        totalChargingTimeInSeconds: apiSummary.totalChargingTimeInSeconds,
+        batteryConsumptionInkWh: apiSummary.batteryConsumptionInkWh,
         ...(maxChargeKWH &&
             apiSummary.batteryConsumptionInkWh && {
                 batteryConsumptionInPCT: (100 * apiSummary.batteryConsumptionInkWh) / maxChargeKWH,
             }),
+        remainingChargeAtArrivalInkWh: apiSummary.remainingChargeAtArrivalInkWh,
         ...(maxChargeKWH &&
             apiSummary.remainingChargeAtArrivalInkWh && {
                 remainingChargeAtArrivalInPCT: (100 * apiSummary.remainingChargeAtArrivalInkWh) / maxChargeKWH,
@@ -164,7 +178,7 @@ const toRoadStretchSectionProps = (apiSection: SectionAPI): ImportantRoadStretch
     ...toSectionProps(apiSection),
     index: apiSection.importantRoadStretchIndex as number,
     streetName: apiSection.streetName?.text,
-    roadNumbers: apiSection.roadNumbers,
+    roadNumbers: apiSection.roadNumbers?.map((roadNumber) => roadNumber.text),
 });
 
 const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => ({

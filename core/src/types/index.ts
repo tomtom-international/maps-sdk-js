@@ -9,7 +9,6 @@ export * from './place/ev/connector';
 export type * from './place/ev/evPlaceProps';
 export * from './place/place';
 export type * from './place/placeDataSources';
-export type * from './place/poi/brand';
 export type * from './place/poi/category';
 export type * from './place/poi/classification';
 export type * from './place/poi/fuel';

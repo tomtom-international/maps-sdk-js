@@ -213,7 +213,7 @@ export type TrafficIncidentTEC = {
      *
      * TPEG2-TEC standard code indicating how traffic is affected.
      */
-    effectCode: number;
+    effectCode?: number;
     /**
      * List of causes for this traffic incident.
      *

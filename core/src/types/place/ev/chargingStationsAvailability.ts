@@ -3,6 +3,22 @@ import type { ChargingPointStatus, ChargingStation, ChargingStationsAccessType }
 import type { Connector } from './connector';
 
 /**
+ * Aggregated count for charging points or connectors.
+ *
+ * @group Place
+ */
+export type ChargingPointCount = {
+    /**
+     * Total number of charging points or connectors.
+     *
+     * Depends on context:
+     * - For ChargingPointAvailability: total number of charging points
+     * - For ConnectorAvailability: total number of connectors of this type
+     */
+    count: number;
+};
+
+/**
  * Aggregated availability count for charging points or connectors.
  *
  * Provides a summary of how many units are in each operational status.
@@ -21,15 +37,7 @@ import type { Connector } from './connector';
  *
  * @group Place
  */
-export type ChargingPointAvailability = {
-    /**
-     * Total number of charging points or connectors.
-     *
-     * Depends on context:
-     * - For ChargingPointAvailability: total number of charging points
-     * - For ConnectorAvailability: total number of connectors of this type
-     */
-    count: number;
+export type ChargingPointAvailability = ChargingPointCount & {
     /**
      * Breakdown of units by operational status.
      *
@@ -46,6 +54,13 @@ export type ChargingPointAvailability = {
      * ```
      */
     statusCounts: Partial<Record<ChargingPointStatus, number>>;
+};
+
+export type HasConnector = {
+    /**
+     * Connector specifications.
+     */
+    connector: Connector;
 };
 
 /**
@@ -72,15 +87,14 @@ export type ChargingPointAvailability = {
  *
  * @group Place
  */
-export type ConnectorAvailability = ChargingPointAvailability & {
-    /**
-     * Connector specifications for this availability group.
-     *
-     * All connectors in this availability group share these specifications
-     * (same type, power rating, voltage, etc.).
-     */
-    connector: Connector;
-};
+export type ConnectorAvailability = HasConnector & ChargingPointAvailability;
+
+/**
+ * Count information for a specific connector type.
+ *
+ * @group Place
+ */
+export type ConnectorCount = HasConnector & ChargingPointCount;
 
 /**
  * Real-time availability information for EV charging stations.

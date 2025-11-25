@@ -3,8 +3,7 @@ import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performance
 import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { autocompleteSearchRequestSchema } from '../autocompleteSearchRequestSchema';
-import type { AutocompleteSearchParams } from '../types';
-import autocompleteSearchReqObjects from './requestBuilderPerf.data.json';
+import autocompleteSearchReqObjects from './requestBuilderPerf.data';
 
 describe('Autocomplete Schema Validation', () => {
     const commonBaseUrl = 'https://tomtom.com';
@@ -115,7 +114,8 @@ describe('Autocomplete Schema Validation', () => {
     });
 
     describe('Autocomplete request schema performance tests', () => {
-        test.each(autocompleteSearchReqObjects)("'%s'", (_title: string, params: AutocompleteSearchParams) => {
+        // @ts-ignore - test.each has tuple type inference limitations
+        test.each(autocompleteSearchReqObjects)("'%s'", (_title, params) => {
             // @ts-ignore
             expect(
                 bestExecutionTimeMS(

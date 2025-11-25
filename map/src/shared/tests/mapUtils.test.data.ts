@@ -1,0 +1,33 @@
+import { StyleInput, StyleModule } from '../../init';
+
+type TestCases = [string, StyleInput | null, StyleModule, StyleInput][];
+
+export default [
+    ['undefined style', null, 'trafficIncidents', { type: 'standard', include: ['trafficIncidents'] }],
+    [
+        'Just string for standard style',
+        'monoLight',
+        'trafficIncidents',
+        { type: 'standard', id: 'monoLight', include: ['trafficIncidents'] },
+    ],
+    [
+        'Style without includes already in it',
+        { type: 'standard', id: 'standardLight' },
+        'trafficIncidents',
+        {
+            type: 'standard',
+            id: 'standardLight',
+            include: ['trafficIncidents'],
+        },
+    ],
+    [
+        'Style with some includes already in it',
+        { type: 'standard', id: 'standardLight', include: ['hillshade'] },
+        'trafficIncidents',
+        {
+            type: 'standard',
+            id: 'standardLight',
+            include: ['hillshade', 'trafficIncidents'],
+        },
+    ],
+] as TestCases;

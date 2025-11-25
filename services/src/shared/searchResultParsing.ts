@@ -1,10 +1,11 @@
-import type { Brand, Moment, OpeningHours, Place, SearchPlaceProps, TimeRange } from '@tomtom-org/maps-sdk/core';
+import type { Moment, OpeningHours, Place, SearchPlaceProps, TimeRange } from '@tomtom-org/maps-sdk/core';
 import { toPointFeature } from '@tomtom-org/maps-sdk/core';
 import { omit } from 'lodash-es';
 import { toConnectorCounts } from '../ev-charging-stations-availability/connectorAvailability';
 import { toChargingSpeed } from './ev';
 import { apiToGeoJSONBBox, latLonAPIToPosition } from './geometry';
 import type {
+    BrandAPI,
     CommonSearchPlaceResultAPI,
     MomentAPI,
     OpeningHoursAPI,
@@ -72,25 +73,30 @@ export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<
         properties: {
             ...omit(rest, 'viewport'),
             ...(dist && { distance: dist }),
-            ...(entryPoints && {
+            ...(entryPoints?.length && {
                 entryPoints: entryPoints.map((entrypoint) => ({
                     ...entrypoint,
                     position: latLonAPIToPosition(entrypoint.position),
                 })),
             }),
-            ...(connectors && {
+            ...(connectors?.length && {
                 chargingPark: {
                     ...chargingPark,
-                    connectors,
+                    connectors: connectors.map((connector) => ({
+                        ...connector,
+                        chargingSpeed: toChargingSpeed(connector.ratedPowerKW),
+                    })),
                     connectorCounts: toConnectorCounts(connectors),
                 },
             }),
-            poi: {
-                ...omit(poi, 'categorySet', 'openingHours'),
-                brands: poi?.brands?.map((brand: Brand) => brand.name) ?? [],
-                categoryIds: poi?.categorySet?.map((category) => category.id) ?? [],
-                ...(poi?.openingHours && { openingHours: parseOpeningHours(poi?.openingHours) }),
-            },
+            ...(poi && {
+                poi: {
+                    ...omit(poi, 'categorySet', 'openingHours'),
+                    brands: poi?.brands?.map((brand: BrandAPI) => brand.name) ?? [],
+                    categoryIds: poi?.categorySet?.map((category) => category.id) ?? [],
+                    ...(poi?.openingHours && { openingHours: parseOpeningHours(poi?.openingHours) }),
+                },
+            }),
         },
     };
 };

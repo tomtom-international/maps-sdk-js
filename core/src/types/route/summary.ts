@@ -1,3 +1,4 @@
+import { Position } from 'geojson';
 import type { ChargingStop } from './chargingStop';
 
 /**
@@ -65,6 +66,30 @@ export type SummaryBase = {
      * Only included if requested using the computeTravelTimeFor parameter.
      */
     liveTrafficIncidentsTravelTimeInSeconds?: number;
+    /**
+     * The distance (in meters) from the origin point to the first point where this route forks off from the reference route.
+     *
+     * @remarks
+     * * If the route is identical to the reference route, then this field is set to the length of the route.
+     * * Included in all alternative (but not reference) route summary fields.
+     */
+    deviationDistanceInMeters?: number;
+    /**
+     * The travel time (in seconds) from the origin point to the first point where this route forks off from the reference route.
+     *
+     * @remarks
+     * * If the route is identical to the reference route, then this field is set to the estimated travel time of the route.
+     * * Included in all alternative (but not reference) route summary fields.
+     */
+    deviationTimeInSeconds?: number;
+    /**
+     * The coordinates of the first point where this route forks off from the reference route.
+     *
+     * @remarks
+     * * If the route is identical to the reference route, then this field is set to the coordinates of the last point on the route.
+     * * Included in all alternative (but not reference) route summary fields.
+     */
+    deviationPoint?: Position;
 };
 
 /**

@@ -1,0 +1,412 @@
+import type { PlaceByIdResponse, PlaceByIdResponseAPI } from '../types';
+
+const data: [string, PlaceByIdResponseAPI, PlaceByIdResponse][] = [
+    [
+        'Place By Is with required parameters',
+        {
+            summary: {
+                query: 'n/a',
+                queryType: 'NON_NEAR',
+                queryTime: 19,
+                numResults: 1,
+                offset: 0,
+                totalResults: 1,
+                fuzzyLevel: 1,
+            },
+            results: [
+                {
+                    type: 'POI',
+                    id: '250009044730934',
+                    score: 0,
+                    info: 'search:ev:250009044730934',
+                    poi: {
+                        name: 'Saemes 14ème Arrondissement Rue Saillard',
+                        categorySet: [
+                            {
+                                id: 7309,
+                            },
+                        ],
+                        categories: ['electric vehicle station'],
+                        classifications: [
+                            {
+                                code: 'ELECTRIC_VEHICLE_STATION',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'electric vehicle station',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetName: 'Rue Saillard',
+                        municipalitySubdivision: 'Mouton-Duvernet',
+                        municipality: 'Paris',
+                        countrySecondarySubdivision: 'Paris',
+                        countrySubdivision: 'Île-de-France',
+                        postalCode: '75014',
+                        countryCode: 'FR',
+                        country: 'France',
+                        countryCodeISO3: 'FRA',
+                        freeformAddress: 'Rue Saillard, 75014 14ème Arrondissement',
+                        localName: '14ème Arrondissement',
+                    },
+                    position: {
+                        lat: 48.83353,
+                        lon: 2.32707,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 48.83443,
+                            lon: 2.3257,
+                        },
+                        btmRightPoint: {
+                            lat: 48.83263,
+                            lon: 2.32844,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 48.83308,
+                                lon: 2.32755,
+                            },
+                        },
+                    ],
+                    chargingPark: {
+                        connectors: [
+                            {
+                                id: '1',
+                                connectorType: 'IEC62196Type2Outlet',
+                                ratedPowerKW: 7.4,
+                                voltageV: 230,
+                                currentA: 32,
+                                currentType: 'AC1',
+                            },
+                            {
+                                id: '2',
+                                connectorType: 'StandardHouseholdCountrySpecific',
+                                ratedPowerKW: 7.4,
+                                voltageV: 230,
+                                currentA: 32,
+                                currentType: 'AC1',
+                            },
+                        ],
+                    },
+                    dataSources: {
+                        chargingAvailability: {
+                            id: '250009044730934',
+                        },
+                    },
+                },
+            ],
+        },
+        {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [2.32707, 48.83353],
+            },
+            id: '250009044730934',
+            properties: {
+                type: 'POI',
+                score: 0,
+                info: 'search:ev:250009044730934',
+                address: {
+                    streetName: 'Rue Saillard',
+                    municipalitySubdivision: 'Mouton-Duvernet',
+                    municipality: 'Paris',
+                    countrySecondarySubdivision: 'Paris',
+                    countrySubdivision: 'Île-de-France',
+                    postalCode: '75014',
+                    countryCode: 'FR',
+                    country: 'France',
+                    countryCodeISO3: 'FRA',
+                    freeformAddress: 'Rue Saillard, 75014 14ème Arrondissement',
+                    localName: '14ème Arrondissement',
+                },
+                chargingPark: {
+                    connectors: [
+                        {
+                            id: '1',
+                            type: 'IEC62196Type2Outlet',
+                            ratedPowerKW: 7.4,
+                            chargingSpeed: 'slow',
+                            voltageV: 230,
+                            currentA: 32,
+                            currentType: 'AC1',
+                        },
+                        {
+                            id: '2',
+                            type: 'StandardHouseholdCountrySpecific',
+                            ratedPowerKW: 7.4,
+                            chargingSpeed: 'slow',
+                            voltageV: 230,
+                            currentA: 32,
+                            currentType: 'AC1',
+                        },
+                    ],
+                    connectorCounts: [
+                        {
+                            connector: {
+                                id: '1',
+                                currentA: 32,
+                                currentType: 'AC1',
+                                ratedPowerKW: 7.4,
+                                chargingSpeed: 'slow',
+                                type: 'IEC62196Type2Outlet',
+                                voltageV: 230,
+                            },
+                            count: 1,
+                        },
+                        {
+                            connector: {
+                                id: '2',
+                                currentA: 32,
+                                currentType: 'AC1',
+                                ratedPowerKW: 7.4,
+                                chargingSpeed: 'slow',
+                                type: 'StandardHouseholdCountrySpecific',
+                                voltageV: 230,
+                            },
+                            count: 1,
+                        },
+                    ],
+                },
+                dataSources: {
+                    chargingAvailability: {
+                        id: '250009044730934',
+                    },
+                },
+                entryPoints: [
+                    {
+                        type: 'main',
+                        position: [2.32755, 48.83308],
+                    },
+                ],
+                poi: {
+                    name: 'Saemes 14ème Arrondissement Rue Saillard',
+                    categories: ['electric vehicle station'],
+                    classifications: [
+                        {
+                            code: 'ELECTRIC_VEHICLE_STATION',
+                            names: [
+                                {
+                                    nameLocale: 'en-US',
+                                    name: 'electric vehicle station',
+                                },
+                            ],
+                        },
+                    ],
+                    brands: [],
+                    categoryIds: [7309],
+                },
+            },
+        },
+    ],
+    [
+        'Place By Is with optional parameters',
+        {
+            summary: {
+                query: 'n/a',
+                queryType: 'NON_NEAR',
+                queryTime: 21,
+                numResults: 1,
+                offset: 0,
+                totalResults: 1,
+                fuzzyLevel: 1,
+            },
+            results: [
+                {
+                    type: 'POI',
+                    id: '250007000178386',
+                    score: 0,
+                    info: 'search:ta:250007000178386-FR',
+                    poi: {
+                        name: 'Guy Martin Italia',
+                        phone: '+33 1 43 27 08 80',
+                        categorySet: [
+                            {
+                                id: 7315025,
+                            },
+                        ],
+                        url: 'guymartinitalia.com',
+                        categories: ['italian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'italian',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '19',
+                        streetName: 'Rue Bréa',
+                        municipalitySubdivision: '6ème Arrondissement',
+                        municipality: 'Paris',
+                        countrySecondarySubdivision: 'Paris',
+                        countrySubdivision: 'Île-de-France',
+                        postalCode: '75006',
+                        countryCode: 'FR',
+                        country: 'France',
+                        countryCodeISO3: 'FRA',
+                        freeformAddress: '19 Rue Bréa, 75006 Paris',
+                        localName: 'Paris',
+                    },
+                    position: {
+                        lat: 48.84287,
+                        lon: 2.33007,
+                    },
+                    mapcodes: [
+                        {
+                            type: 'Local',
+                            fullMapcode: 'FRA FP.4M',
+                            territory: 'FRA',
+                            code: 'FP.4M',
+                        },
+                        {
+                            type: 'International',
+                            fullMapcode: 'VHPMH.BBNX',
+                        },
+                        {
+                            type: 'Alternative',
+                            fullMapcode: 'FRA GJ.RNV',
+                            territory: 'FRA',
+                            code: 'GJ.RNV',
+                        },
+                        {
+                            type: 'Alternative',
+                            fullMapcode: 'FRA H67.YRV',
+                            territory: 'FRA',
+                            code: 'H67.YRV',
+                        },
+                        {
+                            type: 'Alternative',
+                            fullMapcode: 'FRA HCRX.ZJJ',
+                            territory: 'FRA',
+                            code: 'HCRX.ZJJ',
+                        },
+                    ],
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 48.84377,
+                            lon: 2.3287,
+                        },
+                        btmRightPoint: {
+                            lat: 48.84197,
+                            lon: 2.33144,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 48.84291,
+                                lon: 2.32994,
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [2.33007, 48.84287],
+            },
+            id: '250007000178386',
+            properties: {
+                type: 'POI',
+                score: 0,
+                info: 'search:ta:250007000178386-FR',
+                address: {
+                    streetNumber: '19',
+                    streetName: 'Rue Bréa',
+                    municipalitySubdivision: '6ème Arrondissement',
+                    municipality: 'Paris',
+                    countrySecondarySubdivision: 'Paris',
+                    countrySubdivision: 'Île-de-France',
+                    postalCode: '75006',
+                    countryCode: 'FR',
+                    country: 'France',
+                    countryCodeISO3: 'FRA',
+                    freeformAddress: '19 Rue Bréa, 75006 Paris',
+                    localName: 'Paris',
+                },
+                mapcodes: [
+                    {
+                        type: 'Local',
+                        fullMapcode: 'FRA FP.4M',
+                        territory: 'FRA',
+                        code: 'FP.4M',
+                    },
+                    {
+                        type: 'International',
+                        fullMapcode: 'VHPMH.BBNX',
+                    },
+                    {
+                        type: 'Alternative',
+                        fullMapcode: 'FRA GJ.RNV',
+                        territory: 'FRA',
+                        code: 'GJ.RNV',
+                    },
+                    {
+                        type: 'Alternative',
+                        fullMapcode: 'FRA H67.YRV',
+                        territory: 'FRA',
+                        code: 'H67.YRV',
+                    },
+                    {
+                        type: 'Alternative',
+                        fullMapcode: 'FRA HCRX.ZJJ',
+                        territory: 'FRA',
+                        code: 'HCRX.ZJJ',
+                    },
+                ],
+                entryPoints: [
+                    {
+                        type: 'main',
+                        position: [2.32994, 48.84291],
+                    },
+                ],
+                poi: {
+                    name: 'Guy Martin Italia',
+                    phone: '+33 1 43 27 08 80',
+                    url: 'guymartinitalia.com',
+                    categories: ['italian', 'restaurant'],
+                    classifications: [
+                        {
+                            code: 'RESTAURANT',
+                            names: [
+                                {
+                                    nameLocale: 'en-US',
+                                    name: 'restaurant',
+                                },
+                                {
+                                    nameLocale: 'en-US',
+                                    name: 'italian',
+                                },
+                            ],
+                        },
+                    ],
+                    brands: [],
+                    categoryIds: [7315025],
+                },
+            },
+        },
+    ],
+];
+
+export default data;

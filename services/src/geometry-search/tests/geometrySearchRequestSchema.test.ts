@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
-import geometrySearchReqObjects from '../../geometry-search/tests/requestBuilderPerf.data.json';
+import { geometrySearchReqObjects } from '../../geometry-search/tests/requestBuilderPerf.data';
 import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { geometrySearchRequestSchema } from '../geometrySearchRequestSchema';

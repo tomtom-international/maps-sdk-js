@@ -1,0 +1,3520 @@
+import type { GeometrySearchResponseAPI } from '../types';
+
+export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
+    [
+        'Performance Test',
+        {
+            summary: {
+                query: 'restaurant',
+                queryType: 'NON_NEAR',
+                queryTime: 152,
+                numResults: 50,
+                offset: 0,
+                totalResults: 461,
+                fuzzyLevel: 1,
+            },
+            results: [
+                {
+                    type: 'POI',
+                    id: '840069021001284',
+                    score: 2.1455879211,
+                    info: 'search:ta:840069021001284-US',
+                    poi: {
+                        name: 'Tops Cafe BBQ House',
+                        phone: '+1 415-715-6868',
+                        categorySet: [
+                            {
+                                id: 7315012,
+                            },
+                        ],
+                        url: 'www.topcafeinc.com/',
+                        categories: ['chinese', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'chinese',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2460',
+                        streetName: 'San Bruno Avenue',
+                        municipalitySubdivision: 'Portola',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94134',
+                        extendedPostalCode: '94134-1526',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2460 San Bruno Avenue, San Francisco, CA 94134',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73087,
+                        lon: -122.40518,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73177,
+                            lon: -122.40632,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72997,
+                            lon: -122.40404,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.73096,
+                                lon: -122.40498,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019112532',
+                    score: 2.1455879211,
+                    info: 'search:ta:840069019112532-US',
+                    poi: {
+                        name: 'The Little Chihuahua',
+                        phone: '+1 415-648-4157',
+                        categorySet: [
+                            {
+                                id: 7315033,
+                            },
+                        ],
+                        url: 'thelittlechihuahua.com',
+                        categories: ['mexican', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'mexican',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '4123',
+                        streetName: '24th Street',
+                        municipalitySubdivision: 'Noe Valley',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94114',
+                        extendedPostalCode: '94114-3614',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '4123 24th Street, San Francisco, CA 94114',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75117,
+                        lon: -122.43464,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75207,
+                            lon: -122.43578,
+                        },
+                        btmRightPoint: {
+                            lat: 37.75027,
+                            lon: -122.4335,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75126,
+                                lon: -122.43465,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069002602194',
+                    score: 2.145563364,
+                    info: 'search:ta:840069002602194-US',
+                    poi: {
+                        name: 'Round Table Pizza',
+                        phone: '+1 415-586-1200',
+                        brands: [
+                            {
+                                name: 'Round Table Pizza',
+                            },
+                        ],
+                        categorySet: [
+                            {
+                                id: 7315036,
+                            },
+                        ],
+                        url: 'https://ordering.roundtablepizza.com/Site/rtsf',
+                        categories: ['pizza', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'pizza',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '4523',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Mission Terrace',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94112',
+                        extendedPostalCode: '94112-2600',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '4523 Mission Street, San Francisco, CA 94112',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72572,
+                        lon: -122.43368,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.72662,
+                            lon: -122.43482,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72482,
+                            lon: -122.43254,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72585,
+                                lon: -122.43393,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069004840118',
+                    score: 2.1455588341,
+                    info: 'search:ta:840069004840118-US',
+                    poi: {
+                        name: 'Rincon Peruano Restaurant',
+                        phone: '+1 415-824-2673',
+                        categorySet: [
+                            {
+                                id: 7315061,
+                            },
+                        ],
+                        url: 'www.rinconperuanosf.com/',
+                        categories: ['peruvian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'peruvian',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3364',
+                        streetName: '26th Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-4633',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3364 26th Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74926,
+                        lon: -122.41741,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75016,
+                            lon: -122.41855,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74836,
+                            lon: -122.41627,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74909,
+                                lon: -122.4174,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069005190435',
+                    score: 2.1455454826,
+                    info: 'search:ta:840069005190435-US',
+                    poi: {
+                        name: 'Cuisine Of Nepal',
+                        phone: '+1 415-647-2222',
+                        categorySet: [
+                            {
+                                id: 7315023,
+                            },
+                        ],
+                        url: 'cuisineofnepal.com',
+                        categories: ['indian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'indian',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3486',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5437',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3486 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.741,
+                        lon: -122.42305,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.7419,
+                            lon: -122.42419,
+                        },
+                        btmRightPoint: {
+                            lat: 37.7401,
+                            lon: -122.42191,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74093,
+                                lon: -122.42289,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069000941861',
+                    score: 2.1455404758,
+                    info: 'search:ta:840069000941861-US',
+                    poi: {
+                        name: 'Forerunners Restaurant Equipment Company',
+                        phone: '+1 415-970-0428',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '1619',
+                        streetName: 'Jerrold Avenue',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-2134',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '1619 Jerrold Avenue, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73884,
+                        lon: -122.39002,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73974,
+                            lon: -122.39116,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73794,
+                            lon: -122.38888,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.73905,
+                                lon: -122.38984,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069008499204',
+                    score: 2.1455395222,
+                    info: 'search:ta:840069008499204-US',
+                    poi: {
+                        name: 'Hunters Point East West',
+                        phone: '+1 415-655-3422',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '1000',
+                        streetName: 'Griffith Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-2818',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '1000 Griffith Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72891,
+                        lon: -122.37878,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.72981,
+                            lon: -122.37992,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72801,
+                            lon: -122.37764,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72894,
+                                lon: -122.37857,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069021060726',
+                    score: 2.1455316544,
+                    info: 'search:ta:840069021060726-US',
+                    poi: {
+                        name: 'PizzaHacker',
+                        phone: '+1 415-874-5585',
+                        categorySet: [
+                            {
+                                id: 7315036,
+                            },
+                        ],
+                        url: 'www.thepizzahacker.com',
+                        categories: ['pizza', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'pizza',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3299',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5006',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3299 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74403,
+                        lon: -122.42047,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74493,
+                            lon: -122.42161,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74313,
+                            lon: -122.41933,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74417,
+                                lon: -122.42081,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840061001992991',
+                    score: 2.1455314159,
+                    info: 'search:ta:840061001992991-US',
+                    poi: {
+                        name: 'SUBWAY',
+                        phone: '+1 415-824-4721',
+                        brands: [
+                            {
+                                name: 'SUBWAY',
+                            },
+                        ],
+                        categorySet: [
+                            {
+                                id: 7315015,
+                            },
+                        ],
+                        categories: ['fast food', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'fast food',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3801',
+                        streetName: '3rd Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1408',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3801 3rd Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74195,
+                        lon: -122.38739,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74285,
+                            lon: -122.38853,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74105,
+                            lon: -122.38625,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74216,
+                                lon: -122.388,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019817576',
+                    score: 2.1455280781,
+                    info: 'search:ta:840069019817576-US',
+                    poi: {
+                        name: 'La Ciccia',
+                        phone: '+1 415-550-8114',
+                        categorySet: [
+                            {
+                                id: 7315025,
+                            },
+                        ],
+                        url: 'www.laciccia.com/',
+                        categories: ['italian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'italian',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '291',
+                        streetName: '30th Street',
+                        municipalitySubdivision: 'Glen Park',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94131',
+                        extendedPostalCode: '94131-2454',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '291 30th Street, San Francisco, CA 94131',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74191,
+                        lon: -122.42658,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74281,
+                            lon: -122.42772,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74101,
+                            lon: -122.42544,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.7421,
+                                lon: -122.4266,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069005980376',
+                    score: 2.1455273628,
+                    info: 'search:ta:840069005980376-US',
+                    poi: {
+                        name: 'YH Enterprises',
+                        phone: '+1 415-822-1016',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '1115',
+                        streetName: 'Revere Avenue',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-3422',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '1115 Revere Avenue, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72645,
+                        lon: -122.38126,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.72735,
+                            lon: -122.3824,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72555,
+                            lon: -122.38012,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72658,
+                                lon: -122.38119,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069009238564',
+                    score: 2.1455261707,
+                    info: 'search:ta:840069009238564-US',
+                    poi: {
+                        name: 'El Pipila',
+                        phone: '+1 510-684-9456',
+                        categorySet: [
+                            {
+                                id: 7315033,
+                            },
+                        ],
+                        url: 'www.elpipila.com',
+                        categories: ['mexican', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'mexican',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2948',
+                        streetName: 'Folsom Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-4028',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2948 Folsom Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75009,
+                        lon: -122.41418,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75099,
+                            lon: -122.41532,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74919,
+                            lon: -122.41304,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75011,
+                                lon: -122.41385,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019743561',
+                    score: 2.1455254555,
+                    info: 'search:ta:840069019743561-US',
+                    poi: {
+                        name: 'Soo Fong',
+                        phone: '+1 415-285-2828',
+                        categorySet: [
+                            {
+                                id: 7315012,
+                            },
+                        ],
+                        categories: ['chinese', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'chinese',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3801',
+                        streetName: '3rd Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1408',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3801 3rd Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74195,
+                        lon: -122.38739,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74285,
+                            lon: -122.38853,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74105,
+                            lon: -122.38625,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74216,
+                                lon: -122.388,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069005617788',
+                    score: 2.145524025,
+                    info: 'search:ta:840069005617788-US',
+                    poi: {
+                        name: 'San Francisco Mead Company',
+                        phone: '+1 415-819-4941',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        url: 'www.sfmead.com',
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '1180',
+                        streetName: 'Shafter Avenue',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-3425',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '1180 Shafter Avenue, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72677,
+                        lon: -122.38268,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.72767,
+                            lon: -122.38382,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72587,
+                            lon: -122.38154,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72659,
+                                lon: -122.38285,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069021212696',
+                    score: 2.1455235481,
+                    info: 'search:ta:840069021212696-US',
+                    poi: {
+                        name: 'Bayshore Taqueria',
+                        phone: '+1 415-285-1102',
+                        categorySet: [
+                            {
+                                id: 7315033,
+                            },
+                        ],
+                        url: 'https://www.squareup.com/market/bayshore-taqueria',
+                        categories: ['mexican', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'mexican',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '300A',
+                        streetName: 'Bayshore Boulevard',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1507',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '300A Bayshore Boulevard, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74311,
+                        lon: -122.40552,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74401,
+                            lon: -122.40666,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74221,
+                            lon: -122.40438,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74304,
+                                lon: -122.40536,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069021074871',
+                    score: 2.1455233097,
+                    info: 'search:ta:840069021074871-US',
+                    poi: {
+                        name: "Reem's California",
+                        categorySet: [
+                            {
+                                id: 7315034,
+                            },
+                        ],
+                        categories: ['middle eastern', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'middle eastern',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2901',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-3939',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2901 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75054,
+                        lon: -122.41793,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75144,
+                            lon: -122.41907,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74964,
+                            lon: -122.41679,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75051,
+                                lon: -122.41828,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019379542',
+                    score: 2.1455156803,
+                    info: 'search:ta:840069019379542-US',
+                    poi: {
+                        name: "Ann's Doughnut Coffee Shop",
+                        phone: '+1 415-334-1761',
+                        categorySet: [
+                            {
+                                id: 7315073,
+                            },
+                        ],
+                        categories: ['international', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'international',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '4488',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Mission Terrace',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94112',
+                        extendedPostalCode: '94112-1950',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '4488 Mission Street, San Francisco, CA 94112',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.7261,
+                        lon: -122.43409,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.727,
+                            lon: -122.43523,
+                        },
+                        btmRightPoint: {
+                            lat: 37.7252,
+                            lon: -122.43295,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72597,
+                                lon: -122.43383,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019410116',
+                    score: 2.145513773,
+                    info: 'search:ta:840069019410116-US',
+                    poi: {
+                        name: 'Gold Corner Cafe',
+                        phone: '+1 415-824-8028',
+                        categorySet: [
+                            {
+                                id: 7315012,
+                            },
+                        ],
+                        url: 'www.thegoldcorner.com',
+                        categories: ['chinese', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'chinese',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2723',
+                        streetName: 'Oakdale Avenue',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1521',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2723 Oakdale Avenue, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.7423,
+                        lon: -122.4041,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.7432,
+                            lon: -122.40524,
+                        },
+                        btmRightPoint: {
+                            lat: 37.7414,
+                            lon: -122.40296,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74238,
+                                lon: -122.40404,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069000077402',
+                    score: 2.1455135345,
+                    info: 'search:ta:840069000077402-US',
+                    poi: {
+                        name: 'A Tarantino & Sons Poultry & Seafood',
+                        phone: '+1 415-822-3366',
+                        categorySet: [
+                            {
+                                id: 7315043,
+                            },
+                        ],
+                        url: 'www.atarantinoandsons.com',
+                        categories: ['restaurant', 'seafood'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'seafood',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2275',
+                        streetName: 'Jennings Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-3266',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2275 Jennings Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72585,
+                        lon: -122.38937,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.72675,
+                            lon: -122.39051,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72495,
+                            lon: -122.38823,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.726,
+                                lon: -122.38962,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840067000013676',
+                    score: 2.1455135345,
+                    info: 'search:ta:840067000013676-US',
+                    poi: {
+                        name: 'Vega',
+                        phone: '+1 415-285-6000',
+                        categorySet: [
+                            {
+                                id: 7315025,
+                            },
+                        ],
+                        url: 'www.vegapizzasf.com',
+                        categories: ['italian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'italian',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '419',
+                        streetName: 'Cortland Avenue',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5537',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '419 Cortland Avenue, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73925,
+                        lon: -122.41742,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74015,
+                            lon: -122.41856,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73835,
+                            lon: -122.41628,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.73916,
+                                lon: -122.41744,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019448948',
+                    score: 2.1455116272,
+                    info: 'search:ta:840069019448948-US',
+                    poi: {
+                        name: "Emmy's Spaghetti Shack",
+                        phone: '+1 415-206-2086',
+                        categorySet: [
+                            {
+                                id: 7315025,
+                            },
+                        ],
+                        url: 'www.emmysspaghettishack.com/',
+                        categories: ['italian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'italian',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3230',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5001',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3230 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74515,
+                        lon: -122.42051,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74605,
+                            lon: -122.42165,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74425,
+                            lon: -122.41937,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74504,
+                                lon: -122.42025,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069020210933',
+                    score: 2.1455106735,
+                    info: 'search:ta:840069020210933-US',
+                    poi: {
+                        name: 'Shish Ke Baba',
+                        phone: '+1 415-926-8955',
+                        categorySet: [
+                            {
+                                id: 7315049,
+                            },
+                        ],
+                        categories: ['restaurant', 'turkish'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'turkish',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '59',
+                        streetName: '30th Street',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5401',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '59 30th Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74212,
+                        lon: -122.42311,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74302,
+                            lon: -122.42425,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74122,
+                            lon: -122.42197,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74234,
+                                lon: -122.42268,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069002799348',
+                    score: 2.1455099583,
+                    info: 'search:ta:840069002799348-US',
+                    poi: {
+                        name: 'Saigon Bbq',
+                        phone: '+1 415-468-1076',
+                        categorySet: [
+                            {
+                                id: 7315051,
+                            },
+                        ],
+                        categories: ['restaurant', 'vietnamese'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'vietnamese',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2623',
+                        streetName: 'San Bruno Avenue',
+                        municipalitySubdivision: 'Portola',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94134',
+                        extendedPostalCode: '94134-1506',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2623 San Bruno Avenue, San Francisco, CA 94134',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.7285,
+                        lon: -122.40383,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.7294,
+                            lon: -122.40497,
+                        },
+                        btmRightPoint: {
+                            lat: 37.7276,
+                            lon: -122.40269,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72845,
+                                lon: -122.40394,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840061002104219',
+                    score: 2.1455075741,
+                    info: 'search:ta:840061002104219-US',
+                    poi: {
+                        name: 'Nulite Kitchen',
+                        phone: '+1 415-648-7722',
+                        categorySet: [
+                            {
+                                id: 7315062,
+                            },
+                        ],
+                        url: 'www.nulitekitchen.com/',
+                        categories: ['asian (other)', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'asian (other)',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3319',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5008',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3319 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74369,
+                        lon: -122.42069,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74459,
+                            lon: -122.42183,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74279,
+                            lon: -122.41955,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74382,
+                                lon: -122.42103,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019569040',
+                    score: 2.145506382,
+                    info: 'search:ta:840069019569040-US',
+                    poi: {
+                        name: 'El Azteca Taqueria',
+                        phone: '+1 415-822-1460',
+                        categorySet: [
+                            {
+                                id: 7315033,
+                            },
+                        ],
+                        url: 'www.elaztecataqueria.com',
+                        categories: ['mexican', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'mexican',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '5298',
+                        streetName: '3rd Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-2602',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '5298 3rd Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72941,
+                        lon: -122.39281,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73031,
+                            lon: -122.39395,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72851,
+                            lon: -122.39167,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72939,
+                                lon: -122.3927,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069004783306',
+                    score: 2.1455054283,
+                    info: 'search:ta:840069004783306-US',
+                    poi: {
+                        name: 'Soup Galaxy',
+                        phone: '+1 415-320-7687',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '141',
+                        streetName: 'Chicago Way',
+                        municipalitySubdivision: 'Crocker Amazon',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94112',
+                        extendedPostalCode: '94112-4534',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '141 Chicago Way, San Francisco, CA 94112',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.71082,
+                        lon: -122.43085,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.71172,
+                            lon: -122.43199,
+                        },
+                        btmRightPoint: {
+                            lat: 37.70992,
+                            lon: -122.42971,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.711,
+                                lon: -122.43082,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019209432',
+                    score: 2.145503521,
+                    info: 'search:ta:840069019209432-US',
+                    poi: {
+                        name: 'Basa Seafood Express',
+                        phone: '+1 415-550-2388',
+                        categorySet: [
+                            {
+                                id: 7315043,
+                            },
+                        ],
+                        url: 'basaseafood.com',
+                        categories: ['restaurant', 'seafood'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'seafood',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3064',
+                        streetName: '24th Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-4130',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3064 24th Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75266,
+                        lon: -122.41339,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75356,
+                            lon: -122.41453,
+                        },
+                        btmRightPoint: {
+                            lat: 37.75176,
+                            lon: -122.41225,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75254,
+                                lon: -122.41337,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069000659606',
+                    score: 2.1455030441,
+                    info: 'search:ta:840069000659606-US',
+                    poi: {
+                        name: 'Antique Restoration',
+                        phone: '+1 415-550-6402',
+                        categorySet: [
+                            {
+                                id: 7315025,
+                            },
+                        ],
+                        categories: ['italian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'italian',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2025',
+                        streetName: 'Newcomb Avenue',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1614',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2025 Newcomb Avenue, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73983,
+                        lon: -122.39844,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74073,
+                            lon: -122.39958,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73893,
+                            lon: -122.3973,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74007,
+                                lon: -122.39831,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069005254602',
+                    score: 2.1455025673,
+                    info: 'search:ta:840069005254602-US',
+                    poi: {
+                        name: 'Coco Frio',
+                        phone: '+1 415-341-0134',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2937',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-3917',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2937 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75004,
+                        lon: -122.41789,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75094,
+                            lon: -122.41903,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74914,
+                            lon: -122.41675,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75002,
+                                lon: -122.41823,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069020907048',
+                    score: 2.1455020905,
+                    info: 'search:ta:840069020907048-US',
+                    poi: {
+                        name: 'G&L Bakery & Restaurant',
+                        phone: '+1 415-239-6283',
+                        categorySet: [
+                            {
+                                id: 7315012,
+                            },
+                        ],
+                        categories: ['chinese', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'chinese',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '198',
+                        streetName: 'Leland Avenue',
+                        municipalitySubdivision: 'Visitacion Valley',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94134',
+                        extendedPostalCode: '94134-2806',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '198 Leland Avenue, San Francisco, CA 94134',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.71259,
+                        lon: -122.4072,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.71349,
+                            lon: -122.40834,
+                        },
+                        btmRightPoint: {
+                            lat: 37.71169,
+                            lon: -122.40606,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.71251,
+                                lon: -122.40725,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069021297252',
+                    score: 2.1455016136,
+                    info: 'search:ta:840069021297252-US',
+                    poi: {
+                        name: 'Big Save',
+                        phone: '+1 415-822-8030',
+                        categorySet: [
+                            {
+                                id: 7315073,
+                            },
+                        ],
+                        categories: ['international', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'international',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '5001',
+                        streetName: '3rd Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-2311',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '5001 3rd Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73291,
+                        lon: -122.391,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73381,
+                            lon: -122.39214,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73201,
+                            lon: -122.38986,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.73297,
+                                lon: -122.39126,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069021346566',
+                    score: 2.1455001831,
+                    info: 'search:ta:840069021346566-US',
+                    poi: {
+                        name: 'Round Pizza',
+                        categorySet: [
+                            {
+                                id: 7315036,
+                            },
+                        ],
+                        categories: ['pizza', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'pizza',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '4517',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Mission Terrace',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94112',
+                        extendedPostalCode: '94112-2600',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '4517 Mission Street, San Francisco, CA 94112',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.7258,
+                        lon: -122.43383,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.7267,
+                            lon: -122.43497,
+                        },
+                        btmRightPoint: {
+                            lat: 37.7249,
+                            lon: -122.43269,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72597,
+                                lon: -122.43384,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069000626175',
+                    score: 2.1454997063,
+                    info: 'search:ta:840069000626175-US',
+                    poi: {
+                        name: 'Puerto Alegre 2',
+                        phone: '+1 415-285-1783',
+                        categorySet: [
+                            {
+                                id: 7315073,
+                            },
+                        ],
+                        url: 'www.manatt.com',
+                        categories: ['international', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'international',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2950',
+                        streetName: '25th Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-4204',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2950 25th Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75138,
+                        lon: -122.40918,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75228,
+                            lon: -122.41032,
+                        },
+                        btmRightPoint: {
+                            lat: 37.75048,
+                            lon: -122.40804,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75119,
+                                lon: -122.40917,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069020932277',
+                    score: 2.1454982758,
+                    info: 'search:ta:840069020932277-US',
+                    poi: {
+                        name: 'Cinco De Mayo Taqueria',
+                        phone: '+1 415-468-9272',
+                        categorySet: [
+                            {
+                                id: 7315033,
+                            },
+                        ],
+                        categories: ['mexican', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'mexican',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2426',
+                        streetName: 'San Bruno Avenue',
+                        municipalitySubdivision: 'Portola',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94134',
+                        extendedPostalCode: '94134-1537',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2426 San Bruno Avenue, San Francisco, CA 94134',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73175,
+                        lon: -122.40551,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73265,
+                            lon: -122.40665,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73085,
+                            lon: -122.40437,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.7318,
+                                lon: -122.40533,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069001552556',
+                    score: 2.1454970837,
+                    info: 'search:ta:840069001552556-US',
+                    poi: {
+                        name: 'Rice Valley',
+                        phone: '+1 415-970-8988',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '1950',
+                        streetName: 'Innes Avenue',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1623',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '1950 Innes Avenue, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74284,
+                        lon: -122.39569,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74374,
+                            lon: -122.39683,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74194,
+                            lon: -122.39455,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74316,
+                                lon: -122.39539,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069021156457',
+                    score: 2.1454970837,
+                    info: 'search:ta:840069021156457-US',
+                    poi: {
+                        name: 'K & B Market',
+                        phone: '+1 415-285-0711',
+                        categorySet: [
+                            {
+                                id: 7315042,
+                            },
+                        ],
+                        categories: ['restaurant', 'sandwich'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'sandwich',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2887',
+                        streetName: 'Bryant Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-4809',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2887 Bryant Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74866,
+                        lon: -122.40856,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74956,
+                            lon: -122.4097,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74776,
+                            lon: -122.40742,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74855,
+                                lon: -122.40873,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069015538907',
+                    score: 2.1454968452,
+                    info: 'search:ta:840069015538907-US',
+                    poi: {
+                        name: 'Three Babes Bakeshop',
+                        phone: '+1 415-617-9774',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        url: 'www.threebabesbakeshop.com',
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2501',
+                        streetName: 'Phelps Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-2576',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2501 Phelps Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72972,
+                        lon: -122.40023,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73062,
+                            lon: -122.40137,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72882,
+                            lon: -122.39909,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72978,
+                                lon: -122.40032,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069005191042',
+                    score: 2.1454954147,
+                    info: 'search:ta:840069005191042-US',
+                    poi: {
+                        name: 'Aguila de Oro Taqueria',
+                        phone: '+1 415-814-2203',
+                        categorySet: [
+                            {
+                                id: 7315033,
+                            },
+                        ],
+                        categories: ['mexican', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'mexican',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '5201',
+                        streetName: '3rd Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-2601',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '5201 3rd Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73049,
+                        lon: -122.39184,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73139,
+                            lon: -122.39298,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72959,
+                            lon: -122.3907,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.73034,
+                                lon: -122.39217,
+                            },
+                        },
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.73057,
+                                lon: -122.39209,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069020928730',
+                    score: 2.1454946995,
+                    info: 'search:ta:840069020928730-US',
+                    poi: {
+                        name: 'Beer Nerds',
+                        phone: '+1 415-723-1751',
+                        categorySet: [
+                            {
+                                id: 7315036,
+                            },
+                        ],
+                        categories: ['pizza', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'pizza',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3331',
+                        streetName: '24th Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-3827',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3331 24th Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75197,
+                        lon: -122.41912,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75287,
+                            lon: -122.42026,
+                        },
+                        btmRightPoint: {
+                            lat: 37.75107,
+                            lon: -122.41798,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75221,
+                                lon: -122.41914,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840061002484596',
+                    score: 2.1454930305,
+                    info: 'search:ta:840061002484596-US',
+                    poi: {
+                        name: 'China Express Deli',
+                        phone: '+1 415-821-3375',
+                        categorySet: [
+                            {
+                                id: 7315012,
+                            },
+                        ],
+                        url: 'chinaexpresstysons.com/',
+                        categories: ['chinese', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'chinese',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2732',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-3104',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2732 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75239,
+                        lon: -122.41865,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75329,
+                            lon: -122.41979,
+                        },
+                        btmRightPoint: {
+                            lat: 37.75149,
+                            lon: -122.41751,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.7524,
+                                lon: -122.41846,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019295596',
+                    score: 2.1454925537,
+                    info: 'search:ta:840069019295596-US',
+                    poi: {
+                        name: 'Amoura',
+                        categorySet: [
+                            {
+                                id: 7315032,
+                            },
+                        ],
+                        categories: ['mediterranean', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'mediterranean',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetName: '3rd Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3rd Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74535,
+                        lon: -122.38702,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74625,
+                            lon: -122.38816,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74445,
+                            lon: -122.38588,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74535,
+                                lon: -122.38702,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019745885',
+                    score: 2.1454916,
+                    info: 'search:ta:840069019745885-US',
+                    poi: {
+                        name: 'Phat Philly',
+                        phone: '+1 415-550-7428',
+                        categorySet: [
+                            {
+                                id: 7315015,
+                            },
+                        ],
+                        url: 'www.phat-philly.com',
+                        categories: ['fast food', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'fast food',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3388',
+                        streetName: '24th Street',
+                        municipalitySubdivision: 'Mission',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-3823',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3388 24th Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75222,
+                        lon: -122.42041,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75312,
+                            lon: -122.42155,
+                        },
+                        btmRightPoint: {
+                            lat: 37.75132,
+                            lon: -122.41927,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75213,
+                                lon: -122.4204,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019590919',
+                    score: 2.1454916,
+                    info: 'search:ta:840069019590919-US',
+                    poi: {
+                        name: 'Junior BBQ',
+                        phone: '+1 650-271-2479',
+                        categorySet: [
+                            {
+                                id: 7315005,
+                            },
+                        ],
+                        categories: ['barbecue', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'barbecue',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2-98',
+                        streetName: 'Napoleon Street',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1110',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2-98 Napoleon Street, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74732,
+                        lon: -122.39573,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74881,
+                            lon: -122.39762,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74583,
+                            lon: -122.39384,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74732,
+                                lon: -122.39384,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069009231559',
+                    score: 2.1454913616,
+                    info: 'search:ta:840069009231559-US',
+                    poi: {
+                        name: "Sultan's Kebab",
+                        phone: '+1 415-923-8545',
+                        categorySet: [
+                            {
+                                id: 7315049,
+                            },
+                        ],
+                        categories: ['restaurant', 'turkish'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'turkish',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3915',
+                        streetName: '24th Street',
+                        municipalitySubdivision: 'Noe Valley',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94114',
+                        extendedPostalCode: '94114-3701',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3915 24th Street, San Francisco, CA 94114',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.75129,
+                        lon: -122.43004,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.75219,
+                            lon: -122.43118,
+                        },
+                        btmRightPoint: {
+                            lat: 37.75039,
+                            lon: -122.4289,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.75154,
+                                lon: -122.43006,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840061002554113',
+                    score: 2.1454906464,
+                    info: 'search:ta:840061002554113-US',
+                    poi: {
+                        name: 'Best Beverage Catering',
+                        phone: '+1 415-642-2410',
+                        categorySet: [
+                            {
+                                id: 7315073,
+                            },
+                        ],
+                        url: 'www.bestbeverage.com/',
+                        categories: ['international', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'international',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '540',
+                        streetName: 'Barneveld Avenue',
+                        municipalitySubdivision: 'Bayview',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94124',
+                        extendedPostalCode: '94124-1800',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '540 Barneveld Avenue, San Francisco, CA 94124',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74063,
+                        lon: -122.4046,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74153,
+                            lon: -122.40574,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73973,
+                            lon: -122.40346,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74048,
+                                lon: -122.40423,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069019133898',
+                    score: 2.1454896927,
+                    info: 'search:ta:840069019133898-US',
+                    poi: {
+                        name: 'Manzoni',
+                        phone: '+1 415-334-2251',
+                        categorySet: [
+                            {
+                                id: 7315025,
+                            },
+                        ],
+                        url: 'manzonirestaurant.com',
+                        categories: ['italian', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'italian',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2788',
+                        streetName: 'Diamond Street',
+                        municipalitySubdivision: 'Glen Park',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94131',
+                        extendedPostalCode: '94131-3057',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2788 Diamond Street, San Francisco, CA 94131',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.73478,
+                        lon: -122.43401,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.73568,
+                            lon: -122.43515,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73388,
+                            lon: -122.43287,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.73473,
+                                lon: -122.4338,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069020185065',
+                    score: 2.1454894543,
+                    info: 'search:ta:840069020185065-US',
+                    poi: {
+                        name: 'Oki Sushi',
+                        phone: '+1 415-817-1094',
+                        categorySet: [
+                            {
+                                id: 7315148,
+                            },
+                        ],
+                        categories: ['restaurant', 'sushi'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'sushi',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '1740',
+                        streetName: 'Church Street',
+                        municipalitySubdivision: 'Noe Valley',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94131',
+                        extendedPostalCode: '94131-2413',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '1740 Church Street, San Francisco, CA 94131',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74307,
+                        lon: -122.42689,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74397,
+                            lon: -122.42803,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74217,
+                            lon: -122.42575,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.7431,
+                                lon: -122.4266,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069021364086',
+                    score: 2.1454892159,
+                    info: 'search:ta:840069021364086-US',
+                    poi: {
+                        name: 'Baiano Pizzeria',
+                        categorySet: [
+                            {
+                                id: 7315036,
+                            },
+                        ],
+                        url: 'www.baianopizzeria.com',
+                        categories: ['pizza', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'pizza',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '59',
+                        streetName: '30th Street',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5401',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '59 30th Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74225,
+                        lon: -122.42267,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74315,
+                            lon: -122.42381,
+                        },
+                        btmRightPoint: {
+                            lat: 37.74135,
+                            lon: -122.42153,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.74234,
+                                lon: -122.42268,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069005152443',
+                    score: 2.1454892159,
+                    info: 'search:ta:840069005152443-US',
+                    poi: {
+                        name: 'Panda Boba',
+                        phone: '+1 415-468-7788',
+                        categorySet: [
+                            {
+                                id: 7315,
+                            },
+                        ],
+                        url: 'www.pandaboba.com',
+                        categories: ['restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '2763',
+                        streetName: 'San Bruno Avenue',
+                        municipalitySubdivision: 'Portola',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94134',
+                        extendedPostalCode: '94134-1508',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2763 San Bruno Avenue, San Francisco, CA 94134',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.72687,
+                        lon: -122.40312,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.72777,
+                            lon: -122.40426,
+                        },
+                        btmRightPoint: {
+                            lat: 37.72597,
+                            lon: -122.40198,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.72681,
+                                lon: -122.40327,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'POI',
+                    id: '840069006941877',
+                    score: 2.1454889774,
+                    info: 'search:ta:840069006941877-US',
+                    poi: {
+                        name: "Cecilia's Pizza Restaurant",
+                        phone: '+1 415-821-5852',
+                        categorySet: [
+                            {
+                                id: 7315036,
+                            },
+                        ],
+                        categories: ['pizza', 'restaurant'],
+                        classifications: [
+                            {
+                                code: 'RESTAURANT',
+                                names: [
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'restaurant',
+                                    },
+                                    {
+                                        nameLocale: 'en-US',
+                                        name: 'pizza',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    address: {
+                        streetNumber: '3515',
+                        streetName: 'Mission Street',
+                        municipalitySubdivision: 'Bernal Heights',
+                        municipality: 'San Francisco',
+                        countrySecondarySubdivision: 'San Francisco',
+                        countrySubdivision: 'CA',
+                        countrySubdivisionName: 'California',
+                        postalCode: '94110',
+                        extendedPostalCode: '94110-5429',
+                        countryCode: 'US',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '3515 Mission Street, San Francisco, CA 94110',
+                        localName: 'San Francisco',
+                    },
+                    position: {
+                        lat: 37.74069,
+                        lon: -122.42269,
+                    },
+                    viewport: {
+                        topLeftPoint: {
+                            lat: 37.74159,
+                            lon: -122.42383,
+                        },
+                        btmRightPoint: {
+                            lat: 37.73979,
+                            lon: -122.42155,
+                        },
+                    },
+                    entryPoints: [
+                        {
+                            type: 'main',
+                            position: {
+                                lat: 37.7408,
+                                lon: -122.42298,
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+];

@@ -1,7 +1,7 @@
 import type { Language } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
-import placeByIdReqObjects from '../../place-by-id/tests/requestBuilderPerf.data.json';
+import { placeByIdReqObjects } from '../../place-by-id/tests/requestBuilderPerf.data';
 import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { placeByIdRequestSchema } from '../placeByIdSchema';

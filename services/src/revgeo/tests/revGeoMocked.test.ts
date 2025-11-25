@@ -2,17 +2,13 @@ import { omit } from 'lodash-es';
 import { afterAll, describe, expect, test } from 'vitest';
 import { mockFetchResponse } from '../../shared/tests/fetchMockUtils';
 import reverseGeocode from '../reverseGeocoding';
-import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
-import apiAndParsedResponses from './revGeoMocked.data.json';
+import apiAndParsedResponses from './revGeoMocked.data';
 
 describe('Reverse Geocoding mock tests', () => {
     const unMockedFetch = global.fetch;
     afterAll(() => (global.fetch = unMockedFetch));
 
-    test.each(
-        apiAndParsedResponses,
-    )(`'%s`, async (_name: string, params: ReverseGeocodingParams, apiResponse: never, expectedParsedResponse: never) => {
-        // @ts-ignore
+    test.each(apiAndParsedResponses)(`'%s`, async (_name, params, apiResponse, expectedParsedResponse) => {
         mockFetchResponse(200, apiResponse);
         const response = await reverseGeocode(params);
         expect(omit(response, 'id')).toEqual(expectedParsedResponse);

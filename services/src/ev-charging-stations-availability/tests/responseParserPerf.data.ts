@@ -1,0 +1,353 @@
+import type { ChargingStationsAvailabilityResponseAPI } from '../types/apiTypes';
+
+export const apiResponses: Array<[string, ChargingStationsAvailabilityResponseAPI]> = [
+    [
+        'EV charging stations availability api response',
+        {
+            summary: { numResults: 1, offset: 0, totalResults: 1 },
+            results: [
+                {
+                    id: '528009002413828',
+                    name: 'Test Charging Station',
+                    position: { lat: 52.379945, lon: 4.8768469 },
+                    openingHours: {
+                        mode: 'nextSevenDays',
+                        timeRanges: [],
+                    },
+                    timeZone: { ianaId: 'Europe/Amsterdam' },
+                    accessType: 'Restricted',
+                    chargingStations: [
+                        {
+                            id: 'ffffffff-9c7d-d6bc-0000-000000153b86',
+                            chargingPoints: [
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702192*1',
+                                    status: 'Unknown',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 7.4,
+                                            chargingSpeed: 'slow',
+                                            voltageV: 230,
+                                            currentA: 32,
+                                            currentType: 'AC1',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702188*1',
+                                    status: 'Unknown',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702713*1',
+                                    status: 'Unknown',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702714*1',
+                                    status: 'Unknown',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702718*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702720*1',
+                                    status: 'Unknown',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 7.4,
+                                            chargingSpeed: 'slow',
+                                            voltageV: 230,
+                                            currentA: 32,
+                                            currentType: 'AC1',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702183*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702186*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1706207*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 3.7,
+                                            chargingSpeed: 'slow',
+                                            voltageV: 230,
+                                            currentA: 16,
+                                            currentType: 'AC1',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702710*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702719*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702717*1',
+                                    status: 'Unknown',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 7.4,
+                                            chargingSpeed: 'slow',
+                                            voltageV: 230,
+                                            currentA: 32,
+                                            currentType: 'AC1',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702715*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 11,
+                                            chargingSpeed: 'slow',
+                                            voltageV: 400,
+                                            currentA: 16,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702712*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702190*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702193*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702711*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702185*1',
+                                    status: 'Occupied',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2Outlet',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                                {
+                                    capabilities: [],
+                                    restrictions: [],
+                                    evseId: 'NL*LMS*E1702716*1',
+                                    status: 'Unknown',
+                                    connectors: [
+                                        {
+                                            id: '1',
+                                            type: 'IEC62196Type2CableAttached',
+                                            ratedPowerKW: 22,
+                                            chargingSpeed: 'regular',
+                                            voltageV: 400,
+                                            currentA: 32,
+                                            currentType: 'AC3',
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+];

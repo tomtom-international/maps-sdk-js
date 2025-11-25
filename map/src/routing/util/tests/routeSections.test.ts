@@ -1,15 +1,13 @@
-import type { Routes } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection } from 'geojson';
 import { describe, expect, test } from 'vitest';
-import type { DisplayRouteProps } from '../../types/displayRoutes';
 import type { RouteSections } from '../../types/routeSections';
 import { toDisplayTrafficSectionProps } from '../displayTrafficSectionProps';
 import { toDisplayRouteSections } from '../routeSections';
 import { rebuildFeaturesWithRouteSelection } from '../routeSelection';
-import TEST_ROUTES_DATA from './data/dummyRoutesWithSections.data.json';
-import SECTIONS_WITH_SELECTION from './data/rebuildSectionsWithSelection.data.json';
+import { dummyRoutesWithSectionsData } from './data/dummyRoutesWithSections.data';
+import { rebuildSectionsWithSelectionData } from './data/rebuildSectionsWithSelection.data';
 
-const TEST_ROUTES = TEST_ROUTES_DATA as Routes<DisplayRouteProps>;
+const TEST_ROUTES = dummyRoutesWithSectionsData;
 
 const EMPTY_FEATURE_COLLECTION: FeatureCollection = { type: 'FeatureCollection', features: [] };
 
@@ -37,6 +35,7 @@ describe('Tests about building route sections', () => {
                         id: TEST_ID,
                         startPointIndex: 1,
                         endPointIndex: 3,
+                        routeIndex: 0,
                         routeState: 'selected',
                     },
                 },
@@ -124,9 +123,8 @@ describe('Tests about building route sections', () => {
     });
 
     test.each(
-        SECTIONS_WITH_SELECTION,
-    )(`'%s`, (_name: string, inputSections: RouteSections, expectedSections: RouteSections) => {
-        // @ts-ignore
+        rebuildSectionsWithSelectionData,
+    )('%s', (_name: string, inputSections: RouteSections, expectedSections: RouteSections) => {
         expect(rebuildFeaturesWithRouteSelection(TEST_ROUTES, inputSections)).toEqual(expectedSections);
     });
 });

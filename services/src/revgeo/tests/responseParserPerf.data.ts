@@ -1,0 +1,90 @@
+import type { ReverseGeocodingResponseAPI } from '../types/apiTypes';
+import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
+
+const data: [string, ReverseGeocodingParams, ReverseGeocodingResponseAPI][] = [
+    [
+        'Performance Test',
+        {
+            position: [-121.974762, 36.988159],
+            language: 'fr-FR',
+            returnSpeedLimit: true,
+            returnMatchType: true,
+            number: '2525',
+            roadUses: ['Arterial'],
+            allowFreeformNewline: true,
+            mapcodes: ['Local', 'International', 'Alternative'],
+        },
+        {
+            summary: {
+                queryTime: 17,
+                numResults: 1,
+            },
+            addresses: [
+                {
+                    address: {
+                        buildingNumber: '2501',
+                        streetNumber: '2501',
+                        routeNumbers: [],
+                        street: 'Soquel Drive',
+                        streetName: 'Soquel Drive',
+                        streetNameAndNumber: '2501 Soquel Drive',
+                        speedLimit: '35.00MPH',
+                        countryCode: 'US',
+                        countrySubdivision: 'CA',
+                        countrySecondarySubdivision: 'Santa Cruz',
+                        municipality: 'Santa Cruz',
+                        postalCode: '95065',
+                        municipalitySubdivision: 'Santa Cruz, Live Oak',
+                        sideOfStreet: 'L',
+                        offsetPosition: '36.988430,-121.974731',
+                        country: 'United States',
+                        countryCodeISO3: 'USA',
+                        freeformAddress: '2501 Soquel Drive, Santa Cruz, CA 95065',
+                        boundingBox: {
+                            northEast: '36.988197,-121.974752',
+                            southWest: '36.988156,-121.975108',
+                            entity: 'position',
+                        },
+                        extendedPostalCode: '950651900',
+                        countrySubdivisionName: 'California',
+                        localName: 'Santa Cruz',
+                    },
+                    position: '36.988159,-121.974762',
+                    roadUse: ['Arterial'],
+                    mapcodes: [
+                        {
+                            type: 'Local',
+                            fullMapcode: 'US-CA FS.WRH3',
+                            territory: 'US-CA',
+                            code: 'FS.WRH3',
+                        },
+                        {
+                            type: 'International',
+                            fullMapcode: 'S4ZW4.990V',
+                        },
+                        {
+                            type: 'Alternative',
+                            fullMapcode: 'US-CA 4349.S8W',
+                            territory: 'US-CA',
+                            code: '4349.S8W',
+                        },
+                        {
+                            type: 'Alternative',
+                            fullMapcode: 'US-CA JJCH.H9DF',
+                            territory: 'US-CA',
+                            code: 'JJCH.H9DF',
+                        },
+                        {
+                            type: 'Alternative',
+                            fullMapcode: 'USA JJCH.H9DF',
+                            territory: 'USA',
+                            code: 'JJCH.H9DF',
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+];
+
+export default data;

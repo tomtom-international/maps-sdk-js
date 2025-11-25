@@ -133,11 +133,11 @@ export type TextWithPhonetics = {
      * Included if phonetic transcription is available for the specific name, and phonetic transcriptions have been requested by the client.
      * Note: The phonetic transcription can contain double quote characters ("). In this case those characters are escaped with a backslash (\).
      */
-    phonetic: string;
+    phonetic?: string;
     /**
      * Encodes the language using an IETF language tag, e.g., en-GB, en-US.
      */
-    phoneticLanguageCode: string;
+    phoneticLanguageCode?: string;
 };
 
 /**
@@ -156,7 +156,7 @@ export type RoadShieldReference = {
     /**
      * An optional list of possible affixes that can be shown in addition to the shieldContent.
      */
-    affixes: string[];
+    affixes?: string[];
 };
 
 /**
@@ -172,7 +172,7 @@ export type RoadShield = {
      * Information allowing the client to build an image of the road shield using the TomTom RoadShield API.
      * Included if instructionRoadShieldReferences was requested.
      */
-    roadShieldReference: RoadShieldReference;
+    roadShieldReference?: RoadShieldReference;
     /**
      * The state code of the state the shield is in (second part of an ISO 3166-2 identifier).
      * Included if state codes are available for the country the road shield is located in.
@@ -202,7 +202,7 @@ export type RoadInformation = {
      * Lists the road shields for this road.
      * The list can be empty if no road shields are available.
      */
-    roadShields: RoadShield[];
+    roadShields?: RoadShield[];
 };
 
 /**

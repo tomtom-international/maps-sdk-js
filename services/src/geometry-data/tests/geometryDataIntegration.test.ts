@@ -3,7 +3,7 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { geometryData } from '../geometryData';
 import type { GeometryDataResponseAPI } from '../types/apiTypes';
-import places from './geometryDataIntegration.data.json';
+import places from './geometryDataIntegration.data';
 
 describe('Geometry data errors', () => {
     test('Geometry data test without API key', async () => {

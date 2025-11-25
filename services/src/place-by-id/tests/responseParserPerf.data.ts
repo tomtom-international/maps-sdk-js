@@ -1,0 +1,112 @@
+export default {
+    summary: {
+        query: 'n/a',
+        queryType: 'NON_NEAR',
+        queryTime: 19,
+        numResults: 1,
+        offset: 0,
+        totalResults: 1,
+        fuzzyLevel: 1,
+    },
+    results: [
+        {
+            type: 'POI',
+            id: '250007000178386',
+            score: 0,
+            info: 'search:ta:250007000178386-FR',
+            poi: {
+                name: 'Guy Martin Italia',
+                phone: '+33 1 43 27 08 80',
+                categorySet: [
+                    {
+                        id: 7315025,
+                    },
+                ],
+                url: 'guymartinitalia.com',
+                categories: ['italian', 'restaurant'],
+                classifications: [
+                    {
+                        code: 'RESTAURANT',
+                        names: [
+                            {
+                                nameLocale: 'en-US',
+                                name: 'restaurant',
+                            },
+                            {
+                                nameLocale: 'en-US',
+                                name: 'italian',
+                            },
+                        ],
+                    },
+                ],
+            },
+            address: {
+                streetNumber: '19',
+                streetName: 'Rue Bréa',
+                municipalitySubdivision: '6ème Arrondissement',
+                municipality: 'París',
+                countrySecondarySubdivision: 'París',
+                countrySubdivision: 'Isla de Francia',
+                postalCode: '75006',
+                countryCode: 'FR',
+                country: 'Francia',
+                countryCodeISO3: 'FRA',
+                freeformAddress: '19 Rue Bréa, 75006 París',
+                localName: 'París',
+            },
+            position: {
+                lat: 48.84287,
+                lon: 2.33007,
+            },
+            mapcodes: [
+                {
+                    type: 'Local',
+                    fullMapcode: 'FRA FP.4M',
+                    territory: 'FRA',
+                    code: 'FP.4M',
+                },
+                {
+                    type: 'International',
+                    fullMapcode: 'VHPMH.BBNX',
+                },
+                {
+                    type: 'Alternative',
+                    fullMapcode: 'FRA GJ.RNV',
+                    territory: 'FRA',
+                    code: 'GJ.RNV',
+                },
+                {
+                    type: 'Alternative',
+                    fullMapcode: 'FRA H67.YRV',
+                    territory: 'FRA',
+                    code: 'H67.YRV',
+                },
+                {
+                    type: 'Alternative',
+                    fullMapcode: 'FRA HCRX.ZJJ',
+                    territory: 'FRA',
+                    code: 'HCRX.ZJJ',
+                },
+            ],
+            viewport: {
+                topLeftPoint: {
+                    lat: 48.84377,
+                    lon: 2.3287,
+                },
+                btmRightPoint: {
+                    lat: 48.84197,
+                    lon: 2.33144,
+                },
+            },
+            entryPoints: [
+                {
+                    type: 'main',
+                    position: {
+                        lat: 48.84291,
+                        lon: 2.32994,
+                    },
+                },
+            ],
+        },
+    ],
+};

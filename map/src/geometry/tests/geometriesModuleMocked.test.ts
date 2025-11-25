@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { mapStyleLayerIDs } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { GeometriesModule } from '../GeometriesModule';
-import amsterdamGeometryData from './geometriesModuleMocked.test.data.json';
+import amsterdamGeometryData from './geometriesModuleMocked.test.data';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.

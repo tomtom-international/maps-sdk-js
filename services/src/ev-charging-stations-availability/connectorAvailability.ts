@@ -4,6 +4,7 @@ import type {
     ChargingStation,
     Connector,
     ConnectorAvailability,
+    ConnectorCount,
 } from '@tomtom-org/maps-sdk/core';
 
 /**
@@ -25,10 +26,29 @@ export const toChargingPointAvailability = (chargingStations: ChargingStation[])
 const areEqual = (connectorA: Connector, connectorB: Connector) =>
     connectorA.type === connectorB.type && connectorA.ratedPowerKW === connectorB.ratedPowerKW;
 
-const addConnectorStatus = (
+const addConnectorCount = (
+    connectors: Connector[] | undefined,
+    counts: ConnectorCount[], // we are mutating this input
+): void => {
+    if (!connectors) {
+        // defensive check, sometimes connectors are undefined
+        return;
+    }
+    for (const connector of connectors) {
+        const existingCount = counts.find((connectorCount) => areEqual(connector, connectorCount.connector));
+        if (existingCount) {
+            existingCount.count++;
+        } else {
+            // new count entry:
+            counts.push({ connector, count: 1 });
+        }
+    }
+};
+
+const addConnectorCountAndStatus = (
     connectors: Connector[] | undefined,
     status: ChargingPointStatus | undefined,
-    availabilities: ConnectorAvailability[],
+    availabilities: ConnectorAvailability[], // we are mutating this input
 ): void => {
     if (!connectors) {
         // defensive check, sometimes connectors are undefined
@@ -41,19 +61,13 @@ const addConnectorStatus = (
         if (existingAvailability) {
             existingAvailability.count++;
             if (status) {
+                // we're mutating the input object here:
                 const statusCounts = existingAvailability.statusCounts;
-                statusCounts[status] = (statusCounts[status] || 0) + 1;
+                existingAvailability.statusCounts[status] = (statusCounts[status] || 0) + 1;
             }
         } else {
-            availabilities.push({
-                connector,
-                count: 1,
-                statusCounts: status
-                    ? {
-                          [status]: 1,
-                      }
-                    : {},
-            });
+            // new availability entry:
+            availabilities.push({ connector, count: 1, statusCounts: status ? { [status]: 1 } : {} });
         }
     }
 };
@@ -61,9 +75,9 @@ const addConnectorStatus = (
 /**
  * @ignore
  */
-export const toConnectorCounts = (connectors: Connector[]): ConnectorAvailability[] => {
+export const toConnectorCounts = (connectors: Connector[]): ConnectorCount[] => {
     const availabilities: ConnectorAvailability[] = [];
-    addConnectorStatus(connectors, undefined, availabilities);
+    addConnectorCount(connectors, availabilities);
     return availabilities;
 };
 
@@ -74,7 +88,7 @@ export const toConnectorBasedAvailabilities = (chargingStations: ChargingStation
     const availabilities: ConnectorAvailability[] = [];
     for (const station of chargingStations) {
         for (const chargingPoint of station.chargingPoints) {
-            addConnectorStatus(chargingPoint.connectors, chargingPoint.status, availabilities);
+            addConnectorCountAndStatus(chargingPoint.connectors, chargingPoint.status, availabilities);
         }
     }
     return availabilities;

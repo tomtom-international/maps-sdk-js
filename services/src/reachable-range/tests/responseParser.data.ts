@@ -1,0 +1,70 @@
+export default [
+    [
+        'Simple reachable range',
+        {
+            formatVersion: '0.0.1',
+            reachableRange: {
+                center: {
+                    latitude: 52.38119,
+                    longitude: 4.87555,
+                },
+                boundary: [
+                    {
+                        latitude: 52.43296,
+                        longitude: 4.86926,
+                    },
+                    {
+                        latitude: 52.47541,
+                        longitude: 4.85408,
+                    },
+                    {
+                        latitude: 52.42501,
+                        longitude: 4.89336,
+                    },
+                    {
+                        latitude: 52.42492,
+                        longitude: 4.88662,
+                    },
+                    {
+                        latitude: 52.42684,
+                        longitude: 4.87562,
+                    },
+                ],
+            },
+        },
+        {
+            commonBaseURL: 'https://api.tomtom.com',
+            apiKey: 'API_KEY',
+            origin: [4.87554, 52.38121],
+            budget: {
+                type: 'timeMinutes',
+                value: 15,
+            },
+        },
+        {
+            type: 'Feature',
+            geometry: {
+                type: 'Polygon',
+                coordinates: [
+                    [
+                        [4.86926, 52.43296],
+                        [4.85408, 52.47541],
+                        [4.89336, 52.42501],
+                        [4.88662, 52.42492],
+                        [4.87562, 52.42684],
+                    ],
+                ],
+            },
+            bbox: [4.85408, 52.42492, 4.89336, 52.47541],
+            properties: {
+                commonBaseURL: 'https://api.tomtom.com',
+                apiKey: 'API_KEY',
+                origin: [4.87554, 52.38121],
+                budget: {
+                    type: 'timeMinutes',
+                    value: 15,
+                },
+            },
+        },
+    ],
+];

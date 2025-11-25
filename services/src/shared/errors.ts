@@ -37,8 +37,8 @@ export class SDKError extends Error {
      */
     constructor(
         message: string,
-        private readonly service: string,
-        private readonly issues?: $ZodIssue[],
+        readonly service: string,
+        readonly issues?: $ZodIssue[],
     ) {
         super(message);
 

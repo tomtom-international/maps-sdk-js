@@ -5,7 +5,7 @@ import type { GeoJsonObject } from 'geojson';
  */
 export type AdditionalDataAPI = {
     providerID: string;
-    error: string;
+    error?: string;
     geometryData: GeoJsonObject;
 };
 

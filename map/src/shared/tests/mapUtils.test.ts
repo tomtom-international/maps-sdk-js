@@ -1,7 +1,7 @@
 import type { Map, MapGeoJSONFeature, ResourceType } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import type { StyleInput, StyleModule } from '../../init';
-import poiLayerSpec from '../../places/layers/tests/poiLayerSpec.data.json';
+import poiLayerSpec from '../../places/layers/tests/poiLayerSpec.data';
 import type { TomTomMap } from '../../TomTomMap';
 import { HILLSHADE_SOURCE_ID } from '../layers/sourcesIDs';
 import {
@@ -18,7 +18,7 @@ import {
 import type { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from '../SourceWithLayers';
 import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from '../types';
 import { deserializedFeatureData, serializedFeatureData } from './featureDeserialization.test.data';
-import updateStyleData from './mapUtils.test.data.json';
+import updateStyleData from './mapUtils.test.data';
 
 const getTomTomMapMock = async (mapReady: boolean[]) =>
     ({
@@ -301,7 +301,7 @@ describe('Map utils - updateStyleWithStyleModule', () => {
 
     test.each(
         updateStyleData,
-    )(`'%s`, (_name: string, styleInput: StyleInput, styleModule: StyleModule, styleOutput: StyleInput) => {
+    )(`'%s`, (_name: string, styleInput: StyleInput | null, styleModule: StyleModule, styleOutput: StyleInput) => {
         // @ts-ignore
         expect(updateStyleWithModule(styleInput ? styleInput : undefined, styleModule)).toEqual(styleOutput);
     });

@@ -71,7 +71,7 @@ export type SectionAPI = {
     roadShieldReferences?: RoadShieldReference[];
     importantRoadStretchIndex?: number;
     streetName?: { text: string };
-    roadNumbers?: string[];
+    roadNumbers?: { text: string }[];
 };
 
 /**
@@ -118,10 +118,14 @@ export type SummaryAPI = Omit<
     | 'batteryConsumptionInPCT'
     | 'remainingChargeAtArrivalInPCT'
     | 'chargingInformationAtEndOfLeg'
+    | 'deviationPoint'
 > & {
     arrivalTime: string;
     departureTime: string;
     chargingInformationAtEndOfLeg?: ChargingStopAPI;
+    deviationDistance?: number;
+    deviationTime?: number;
+    deviationPoint?: LatitudeLongitudePointAPI;
 };
 
 /**

@@ -4,7 +4,7 @@ import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { fuzzySearchRequestSchema } from '../fuzzySearchRequestSchema';
 import type { FuzzySearchParams } from '../types';
-import fuzzySearchReqObjects from './requestBuilderPerf.data.json';
+import { fuzzySearchReqObjects } from './requestBuilderPerf.data';
 
 describe('FuzzySearch Schema Validation', () => {
     const apiKey = 'API_KEY';

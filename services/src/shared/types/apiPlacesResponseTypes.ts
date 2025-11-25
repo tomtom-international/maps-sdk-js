@@ -1,6 +1,5 @@
 import type {
     AddressProperties,
-    Brand,
     Classification,
     Connector,
     ConnectorType,
@@ -124,12 +123,24 @@ export type OpeningHoursAPI = Omit<OpeningHours, 'alwaysOpenThisPeriod' | 'timeR
 
 /**
  * @ignore
+ */
+export type BrandAPI = {
+    /**
+     * Brand name.
+     *
+     * The commercial or franchise name (e.g., 'McDonald\'s', 'Shell', 'Hilton').
+     */
+    name: string;
+};
+
+/**
+ * @ignore
  * place of interest api type.
  */
 export type POIAPI = {
     name: string;
     phone?: string;
-    brands?: Brand[];
+    brands?: BrandAPI[];
     url?: string;
     // category ids
     categorySet?: CategoryAPI[];
@@ -143,7 +154,7 @@ export type POIAPI = {
 /**
  * @ignore
  */
-export type ConnectorAPI = Omit<Connector, 'type'> & {
+export type ConnectorAPI = Omit<Connector, 'type' | 'chargingSpeed'> & {
     connectorType: ConnectorType;
 };
 
@@ -159,7 +170,7 @@ export type ChargingParkAPI = {
  */
 export type CommonSearchPlaceResultAPI = Omit<
     SearchPlaceProps,
-    'distance' | 'position' | 'addressRanges' | 'geographyType' | 'entryPoints' | 'chargingPark'
+    'distance' | 'position' | 'addressRanges' | 'geographyType' | 'entryPoints' | 'chargingPark' | 'poi'
 > & {
     id: string;
     position: LatLonAPI;

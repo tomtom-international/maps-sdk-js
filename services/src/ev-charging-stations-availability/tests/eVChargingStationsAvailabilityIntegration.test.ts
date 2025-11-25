@@ -32,6 +32,7 @@ describe('evChargingStationsAvailability integration tests', () => {
                     id: expect.any(String),
                     type: expect.stringMatching(connectorTypeRegex),
                     ratedPowerKW: expect.any(Number),
+                    chargingSpeed: expect.any(String),
                     voltageV: expect.any(Number),
                     currentA: expect.any(Number),
                     currentType: expect.any(String),

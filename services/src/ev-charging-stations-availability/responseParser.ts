@@ -1,7 +1,20 @@
-import type { ChargingStationsAvailability } from '@tomtom-org/maps-sdk/core';
+import type { ChargingStation, ChargingStationsAvailability } from '@tomtom-org/maps-sdk/core';
+import { toChargingSpeed } from '../shared/ev';
 import { parseOpeningHours } from '../shared/searchResultParsing';
 import { toChargingPointAvailability, toConnectorBasedAvailabilities } from './connectorAvailability';
 import type { ChargingStationsAvailabilityResponseAPI } from './types/apiTypes';
+
+const toChargingPointStations = (stations: ChargingStation[]) =>
+    stations.map((station) => ({
+        ...station,
+        chargingPoints: station.chargingPoints.map((chargingPoint) => ({
+            ...chargingPoint,
+            connectors: chargingPoint.connectors?.map((connector) => ({
+                ...connector,
+                chargingSpeed: toChargingSpeed(connector.ratedPowerKW),
+            })),
+        })),
+    }));
 
 /**
  * Default method for parsing ev charging stations availability from {@link ChargingStationsAvailability}
@@ -15,7 +28,7 @@ export const parseEVChargingStationsAvailabilityResponse = (
         ? {
               id: result.id,
               accessType: result.accessType,
-              chargingStations: result.chargingStations,
+              chargingStations: toChargingPointStations(result.chargingStations),
               chargingPointAvailability: toChargingPointAvailability(result.chargingStations),
               connectorAvailabilities: toConnectorBasedAvailabilities(result.chargingStations),
               ...(result.openingHours && { openingHours: parseOpeningHours(result.openingHours) }),

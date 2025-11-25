@@ -9,7 +9,7 @@ import {
     SELECTED_COLOR,
     selectedPinLayerSpec,
 } from '../placesLayers';
-import poiLayerSpec from './poiLayerSpec.data.json';
+import poiLayerSpec from './poiLayerSpec.data';
 
 describe('Get places layer spec with circle or pin icon style config', () => {
     const mapLibreMock = vi.fn() as unknown as Map;
