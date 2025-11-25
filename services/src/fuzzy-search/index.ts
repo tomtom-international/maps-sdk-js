@@ -3,5 +3,4 @@
  * @group Fuzzy Search
  */
 
-export * from './fuzzySearch';
 export type * from './types';

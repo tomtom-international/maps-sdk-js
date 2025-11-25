@@ -79,7 +79,7 @@ import type { GeometrySearchParams, GeometrySearchResponse } from './types';
  * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
  * @see [Search Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/search)
  *
- * @group Search
+ * @ignore (exposed via 'search')
  */
 export const geometrySearch = async (
     params: GeometrySearchParams,

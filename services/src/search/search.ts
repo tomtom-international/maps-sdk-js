@@ -1,6 +1,6 @@
 import type { Places, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
 import type { FuzzySearchParams, QueryIntent } from '../fuzzy-search';
-import { fuzzySearch } from '../fuzzy-search';
+import { fuzzySearch } from '../fuzzy-search/fuzzySearch';
 import type { FuzzySearchTemplate } from '../fuzzy-search/fuzzySearchTemplate';
 import type { GeometrySearchParams } from '../geometry-search';
 import { geometrySearch } from '../geometry-search/geometrySearch';

@@ -68,7 +68,7 @@ import type { FuzzySearchParams, FuzzySearchResponse } from './types';
  * @see [Places Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart)
  * @see [Search Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/places/search)
  *
- * @group Search
+ * @ignore (exposed via 'search')
  */
 export const fuzzySearch = async (
     params: FuzzySearchParams,
