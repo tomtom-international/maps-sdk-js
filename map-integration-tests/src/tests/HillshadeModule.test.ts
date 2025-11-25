@@ -87,13 +87,19 @@ test.describe('Map vector tiles hillshade module tests', () => {
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.applyConfig({}));
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
 
-        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
-        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
-
         // changing style at runtime, verifying hillshade is still there:
         await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
+
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
+
+        // changing style at runtime, verifying hillshade is still there:
+        await setStyle(page, 'monoDark');
+        await waitForMapIdle(page);
+        // The config was reset above, so hillshade will be restored as invisible:
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
