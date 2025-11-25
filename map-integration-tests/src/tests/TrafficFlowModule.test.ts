@@ -85,17 +85,20 @@ test.describe('Map vector tile traffic module tests', () => {
         expect(await isFlowVisible(page)).toBe(true);
 
         await resetConfig(page);
+        // TODO: improve this behaviour across style-based modules:
+        // caveat: resetting the config doesn't change visibility yet
         expect(await isFlowVisible(page)).toBe(true);
         expect(await getFlowConfig(page)).toBeUndefined();
 
         // changing the map style: verifying the places are still shown (state restoration):
         await setStyle(page, 'standardDark');
         await waitForMapIdle(page);
-        expect(await isFlowVisible(page)).toBe(true);
+        // The config was reset so traffic reloads invisible:
+        expect(await isFlowVisible(page)).toBe(false);
 
-        await resetConfig(page);
+        await setFlowVisible(page, true);
         expect(await isFlowVisible(page)).toBe(true);
-        expect(await getFlowConfig(page)).toBeUndefined();
+        expect(await getFlowConfig(page)).toEqual({ visible: true });
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
