@@ -1,4 +1,3 @@
-import { isNil } from 'lodash-es';
 import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -120,12 +119,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * @ignore
      */
     protected _applyConfig(config: HillshadeModuleConfig | undefined) {
-        if (config && !isNil(config.visible)) {
-            this.setVisible(config.visible);
-        } else if (!this._initializing && !this.isVisible()) {
-            // applying default:
-            this.setVisible(true);
-        }
+        this.setVisible(config?.visible ?? false);
         return config;
     }
 

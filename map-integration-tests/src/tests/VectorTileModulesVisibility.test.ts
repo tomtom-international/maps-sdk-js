@@ -74,10 +74,10 @@ test.describe("Vector tile (style-based) modules combined visibility tests, to e
         await page.evaluate(() => (globalThis as MapsSDKThis).pois?.resetConfig());
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
 
-        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
-        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBe(true);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(false);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.isVisible())).toBe(false);
         await assertPOIsVisibility(page, true);
-        await assertHillshadeVisibility(page, true);
+        await assertHillshadeVisibility(page, false);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

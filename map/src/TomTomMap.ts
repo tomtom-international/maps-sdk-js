@@ -601,7 +601,8 @@ export class TomTomMap {
     }
 
     private handleStyleData(keepState: boolean) {
-        // we ensure to make traffic and hillshade hidden by default (even if right after the modules bring it back to visible state):
+        // We ensure to make traffic and hillshade hidden by default (even if right after the modules bring it back to visible state)
+        // This way we ensure such layers are invisible even of their related SDK modules are not used.
         for (const layer of filterLayersBySources(this.mapLibreMap, [
             TRAFFIC_INCIDENTS_SOURCE_ID,
             TRAFFIC_FLOW_SOURCE_ID,

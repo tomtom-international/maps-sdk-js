@@ -115,7 +115,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         });
 
         await applyConfig(page, { visible: undefined });
-        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(false);
 
         await applyConfig(page, { visible: true });
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
@@ -135,7 +135,8 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         expect(await getConfig(page)).toEqual({ visible: true });
 
         await resetConfig(page);
-        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
+        await waitForMapIdle(page);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(false);
         expect(await getConfig(page)).toBeUndefined();
 
         // changing the map style: verifying the places are still shown (state restoration):
@@ -143,6 +144,29 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await waitForMapIdle(page);
         // The config was reset so the style reloads with traffic invisible for now:
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(false);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Traffic incidents icon visibility after style change', async ({ page }) => {
+        await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
+        await initTrafficIncidents(page);
+        await waitForMapIdle(page);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(
+            false,
+        );
+
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setIconsVisible(true));
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(
+            true,
+        );
+
+        await setStyle(page, 'standardDark');
+        await waitForMapIdle(page);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.anyIconLayersVisible())).toBe(
+            true,
+        );
+        expect((await getVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).length).toBeGreaterThan(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -213,7 +237,14 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         // We reset the config and assert that we have the same amount of incidents as the beginning:
         await resetConfig(page);
         const resetIncidents = await waitForRenderedIncidentsChange(page, roadClosedAndMajorRoadIncidents.length);
-        expect(resetIncidents).toHaveLength(defaultIncidents.length);
+        expect(resetIncidents).toHaveLength(0);
+
+        await applyConfig(page, { visible: true });
+        const defaultResetIncidents = await waitForRenderedIncidentsChange(
+            page,
+            roadClosedAndMajorRoadIncidents.length,
+        );
+        expect(defaultResetIncidents).toHaveLength(defaultResetIncidents.length);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

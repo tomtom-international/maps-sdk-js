@@ -83,9 +83,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
         this.eventsProxy = tomtomMap._eventsProxy;
         this.mapLibreMap = tomtomMap.mapLibreMap;
         this.initSourcesWithLayers(config);
-        if (config) {
-            this.applyConfig(config);
-        }
+        this.applyConfig(config);
         this.tomtomMap.addStyleChangeHandler({
             onStyleAboutToChange: () => {
                 this.moduleReady = false;
@@ -229,7 +227,7 @@ export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithL
      */
     protected restoreDataAndConfigImpl(): void {
         this.initSourcesWithLayers(this.config, true);
-        this.config && this._applyConfig(this.config);
+        this._applyConfig(this.config);
     }
 
     /**

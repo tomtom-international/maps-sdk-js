@@ -71,8 +71,8 @@ test.describe('Map vector tiles hillshade module tests', () => {
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
-        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(true);
-        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(false);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.applyConfig({ visible: false }));
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(false);
@@ -85,15 +85,16 @@ test.describe('Map vector tiles hillshade module tests', () => {
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.applyConfig({}));
-        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
+        await waitForMapIdle(page);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 
         // changing style at runtime, verifying hillshade is still there:
         await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
-        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
-        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 
         // changing style at runtime, verifying hillshade is still there:
         await setStyle(page, 'monoDark');

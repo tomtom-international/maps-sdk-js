@@ -211,16 +211,13 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * @ignore
      */
     protected _applyConfig(config: IncidentsConfig | undefined) {
-        if (config && !isNil(config.visible)) {
-            this.setVisible(config.visible);
-        } else if (!this._initializing && !this.isVisible()) {
-            // applying default:
-            this.setVisible(true);
-        }
-        if (config?.icons && !isNil(config.icons.visible)) {
+        // We do not update config in setVisible since it could override icons visibility setting:
+        this._setVisible(config?.visible ?? false, { updateConfig: false });
+        if (!isNil(config?.icons?.visible)) {
             this.setIconsVisible(config.icons.visible);
         }
         this._filter(config?.filters, config?.icons?.filters, false);
+        console.log(config);
         return config;
     }
 
@@ -370,19 +367,14 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * ```
      */
     setIconsVisible(visible: boolean): void {
-        if (this.sourcesWithLayers.trafficIncidents) {
-            // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
-            this.config = {
-                ...this.config,
-                icons: { ...this.config?.icons, visible },
-            };
+        // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
+        this.config = { ...this.config, icons: { ...this.config?.icons, visible } };
 
-            if (this.tomtomMap.mapReady) {
-                this.sourcesWithLayers.trafficIncidents.setLayersVisible(
-                    visible,
-                    (layerSpec) => layerSpec.type === 'symbol',
-                );
-            }
+        if (this.tomtomMap.mapReady) {
+            this.sourcesWithLayers.trafficIncidents.setLayersVisible(
+                visible,
+                (layerSpec) => layerSpec.type === 'symbol',
+            );
         }
     }
 
@@ -401,8 +393,17 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * ```
      */
     setVisible(visible: boolean): void {
-        delete this.config?.icons?.visible;
-        this.config = { ...omitBy({ ...this.config }, isEmpty), visible };
+        this._setVisible(visible);
+    }
+
+    private _setVisible(visible: boolean, options?: { updateConfig: boolean }): void {
+        const updateConfig = options?.updateConfig ?? true;
+        if (updateConfig) {
+            // setting all traffic visible also nullifies the icons visible setting
+            delete this.config?.icons?.visible;
+            // we remove empty values from config to avoid confusion (in case icons part is just empty after deleting visible)
+            this.config = { ...omitBy({ ...this.config }, isEmpty), visible };
+        }
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.trafficIncidents.setLayersVisible(visible);
         }

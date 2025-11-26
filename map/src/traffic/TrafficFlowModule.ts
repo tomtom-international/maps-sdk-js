@@ -174,12 +174,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @ignore
      */
     protected _applyConfig(config: FlowConfig | undefined) {
-        if (config && !isNil(config.visible)) {
-            this.setVisible(config.visible);
-        } else if (!this._initializing && !this.isVisible()) {
-            // applying default:
-            this.setVisible(true);
-        }
+        this.setVisible(config?.visible ?? false);
         this._filter(config?.filters, false);
         return config;
     }
@@ -275,13 +270,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         }
 
         if (updateConfig) {
-            this.config = omitBy(
-                {
-                    ...this.config,
-                    filters: filters,
-                },
-                isNil,
-            );
+            this.config = omitBy({ ...this.config, filters }, isNil);
         }
     }
 

@@ -194,9 +194,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
-        // TODO: displaying traffic properly requires traffic in the style. Should we at least verify their existence and log a warning if not present?
-        // TODO: consider also trying to pull the traffic sprite separately if not present?
-
         this.layersSpecs = createLayersSpecs(routeModuleConfigWithDefaults(config).layers);
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
         addLayers(
