@@ -1,0 +1,92 @@
+---
+title: Map quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.33.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+This guide will help you set up your project and visualize your first TomTom map in just a few minutes. You'll learn the minimal steps needed to install the SDK, configure your API key, and display an interactive map on your webpage.
+
+## Prerequisites and Setup
+
+Before getting started, ensure you have the following requirements:
+
+1. **Node.js and npm/pnpm** installed for package management (Node.js 22+ recommended)
+2. **TomTom API key** from the [TomTom Developer Portal](https://docs.tomtom.com/)
+3. **Modern browser** with WebGL support for optimal map rendering performance
+
+## Installing Dependencies
+
+Follow the complete [Project setup guide](../../introduction/project-setup.mdx) for detailed installation instructions, or use this quick setup for immediate development:
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl
+```
+
+## MapLibre CSS
+
+**The SDK will automatically download the CSS for the MapLibre version you installed.**
+
+Otherwise, you can specify the MapLibre CSS in your project if you need to ensure a different version is used.
+
+If you want to include a specific MapLibre CSS you can do it in two ways:
+
+Import in your JavaScript/TypeScript files (preferred):
+
+```javascript
+import 'maplibre-gl/dist/maplibre-gl.css';
+```
+
+Or directly in your HTML file (replace `@VERSION` with the desired version or omit for latest):
+
+```html
+<!-- Include in your HTML head -->
+<link href="https://unpkg.com/maplibre-gl@VERSION/dist/maplibre-gl.css" rel="stylesheet" />
+```
+
+## Basic HTML Setup
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TomTom Map Application</title>
+    <style>
+        #map { width: 100%; height: 400px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
+```
+
+## Creating Your First Map
+
+Here's a complete example that demonstrates all the essential concepts for creating a TomTom map with various configuration options:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+// Configure global SDK settings
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+});
+
+const map = new TomTomMap({
+    container: 'map'
+});
+```
+
+## Next Step
+
+Now that you have a basic map running, learn about TomTom Maps configuration and usage patterns in our comprehensive **[TomTom Maps Introduction](/maps-sdk-js/guides/map/introduction)** guide.
