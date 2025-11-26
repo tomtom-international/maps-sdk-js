@@ -29,7 +29,7 @@ export type ReverseGeocodingResponseAPI = {
                 [key: string]: any;
             };
             dataSources?: PlaceDataSources;
-            entityType?: PlaceType | string;
+            entityType?: PlaceType;
             mapcodes?: Mapcode[];
             position: string;
             roadUse?: string[];

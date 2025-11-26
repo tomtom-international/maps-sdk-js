@@ -329,7 +329,7 @@ const revGeoMockedData: RevGeoMockedTestCase[] = [
                             id: '00004732-3100-3c00-0000-0000240fa19a',
                         },
                     },
-                    entityType: 'Municipality',
+                    entityType: 'Geography',
                     mapcodes: [
                         {
                             type: 'International',

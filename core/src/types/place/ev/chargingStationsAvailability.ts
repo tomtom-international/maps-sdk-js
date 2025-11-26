@@ -3,17 +3,13 @@ import type { ChargingPointStatus, ChargingStation, ChargingStationsAccessType }
 import type { Connector } from './connector';
 
 /**
- * Aggregated count for charging points or connectors.
+ * Has a number representing a count.
  *
  * @group Place
  */
-export type ChargingPointCount = {
+export type HasCount = {
     /**
-     * Total number of charging points or connectors.
-     *
-     * Depends on context:
-     * - For ChargingPointAvailability: total number of charging points
-     * - For ConnectorAvailability: total number of connectors of this type
+     * Number representing the count of items.
      */
     count: number;
 };
@@ -37,7 +33,7 @@ export type ChargingPointCount = {
  *
  * @group Place
  */
-export type ChargingPointAvailability = ChargingPointCount & {
+export type ChargingPointAvailability = HasCount & {
     /**
      * Breakdown of units by operational status.
      *
@@ -56,9 +52,14 @@ export type ChargingPointAvailability = ChargingPointCount & {
     statusCounts: Partial<Record<ChargingPointStatus, number>>;
 };
 
+/**
+ * Has an Electric vehicle charging connector.
+ *
+ * @group Place
+ */
 export type HasConnector = {
     /**
-     * Connector specifications.
+     * Electric vehicle charging connector.
      */
     connector: Connector;
 };
@@ -94,7 +95,7 @@ export type ConnectorAvailability = HasConnector & ChargingPointAvailability;
  *
  * @group Place
  */
-export type ConnectorCount = HasConnector & ChargingPointCount;
+export type ConnectorCount = HasConnector & HasCount;
 
 /**
  * Real-time availability information for EV charging stations.

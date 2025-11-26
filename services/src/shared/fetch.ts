@@ -9,7 +9,7 @@ class FetchError extends Error {
     public readonly data?: unknown;
 
     constructor(status: number, message?: string, data?: unknown) {
-        super(message || `HTTP Error ${status}`);
+        super(message ?? `HTTP Error ${status}`);
         this.name = 'FetchError';
         this.status = status;
         this.data = data;

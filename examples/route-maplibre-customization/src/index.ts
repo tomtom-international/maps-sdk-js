@@ -32,7 +32,6 @@ const routingModule = await RoutingModule.get(map, {
                     type: 'line',
                     filter: SELECTED_ROUTE_FILTER,
                     paint: { 'line-color': 'lightgrey', 'line-dasharray': [3, 2] },
-                    beforeID: 'routeTunnelLine',
                 },
             },
         },
