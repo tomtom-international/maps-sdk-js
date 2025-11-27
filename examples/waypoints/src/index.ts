@@ -1,17 +1,17 @@
 import { asSoftWaypoint, bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlanningWaypoint, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { geocode } from '@tomtom-org/maps-sdk/services';
+import { geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
-const waypointA = (await geocode({ query: 'Kensinton Road, London, UK', limit: 1 })).features[0];
-const waypointB = (await geocode({ query: 'Vincent Square, London, UK', limit: 1 })).features[0];
-const waypointC = (await geocode({ query: 'Bridge Street, London, UK', limit: 1 })).features[0];
+const waypointA = await geocodeOne('Kensinton Road, London, UK');
+const waypointB = await geocodeOne('Vincent Square, London, UK');
+const waypointC = await geocodeOne('Bridge Street, London, UK');
 const softWaypoint = asSoftWaypoint([-0.10507, 51.4879], 20);
-const waypointD = (await geocode({ query: 'Roan Street, Greenwich, UK', limit: 1 })).features[0];
+const waypointD = await geocodeOne('Roan Street, Greenwich, UK');
 const allWaypoints = [waypointA, waypointB, softWaypoint, waypointC, waypointD];
 
 const examples: Record<string, { title: string; waypoints: PlanningWaypoint[] }> = {
