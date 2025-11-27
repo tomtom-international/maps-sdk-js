@@ -45,12 +45,6 @@ type TrafficIncidentsSourcesWithLayers = {
  * - Traffic jams
  * - Broken down vehicles
  *
- * **Use Cases:**
- * - Real-time incident monitoring
- * - Route planning around incidents
- * - Traffic management systems
- * - Driver alert systems
- *
  * @example
  * Basic usage:
  * ```typescript

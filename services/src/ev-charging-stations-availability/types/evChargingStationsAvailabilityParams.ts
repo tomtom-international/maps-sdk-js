@@ -14,12 +14,6 @@ import type { ChargingStationsAvailabilityResponseAPI } from './apiTypes';
  * - Access restrictions
  * - Opening hours
  *
- * **Use Cases:**
- * - Show available chargers in navigation apps
- * - Display real-time status on charging station maps
- * - Help EV drivers plan charging stops
- * - Monitor charging infrastructure for fleet management
- *
  * @example
  * ```typescript
  * // Basic usage

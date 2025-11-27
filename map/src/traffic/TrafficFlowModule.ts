@@ -41,12 +41,6 @@ type TrafficFlowSourcesWithLayers = {
  * - Red: Heavy congestion
  * - Dark gray: Road closures
  *
- * **Use Cases:**
- * - Real-time traffic monitoring
- * - Route planning with current conditions
- * - Traffic analysis applications
- * - Navigation systems
- *
  * @example
  * Basic usage:
  * ```typescript

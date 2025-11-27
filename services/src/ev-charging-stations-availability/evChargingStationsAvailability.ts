@@ -25,12 +25,6 @@ import type { ChargingStationsAvailabilityParams } from './types/evChargingStati
  * - **Access information**: Public, private, or restricted access
  * - **Opening hours**: When the charging facility is accessible
  *
- * Use cases:
- * - EV navigation apps: Show available chargers along routes
- * - Charging station maps: Display real-time availability
- * - Trip planning: Verify chargers will be available at destination
- * - Fleet management: Monitor charging infrastructure status
- *
  * @param params - Charging availability parameters with station ID
  * @param customTemplate - Advanced customization for request/response handling
  *

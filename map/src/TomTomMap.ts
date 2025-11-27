@@ -556,12 +556,6 @@ export class TomTomMap {
      * - West/East values range from -180 to 180
      * - South/North values range from -90 to 90
      *
-     * **Use Cases:**
-     * - Performing spatial queries within the visible area
-     * - Saving and restoring map view state
-     * - Filtering data to display only what's visible
-     * - Analytics and tracking of viewed regions
-     *
      * @example
      * Get current bounds:
      * ```typescript
