@@ -1,29 +1,13 @@
 {
   "name": "@examples/nodejs-geocode",
   "description": "Node.js geocode example",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "develop": "node src/index.js",
-    "type-check": "tsc --noEmit"
+    "develop": "node src/index.js"
   },
-  "keywords": [
-    "TomTom",
-    "Maps SDK",
-    "Geocoding"
-  ],
-  "author": "TomTom",
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/geojson": "catalog:",
-    "@types/node": "catalog:",
-    "dotenv": "^17.2.3",
-    "maplibre-gl": "catalog:",
-    "rimraf": "catalog:",
-    "rollup-plugin-visualizer": "catalog:",
-    "ts-node": "catalog:",
-    "typescript": "catalog:",
-    "vite": "catalog:"
+    "@tomtom-org/maps-sdk": "workspace:*",
+    "dotenv": "^17.2.3"
   }
 }

@@ -1,14 +1,13 @@
 {
   "name": "@examples/nodejs-rev-geo",
-  "description": "Basic NodeJS example using Reverse Geocoding Service.",
-  "main": "src/main.js",
+  "description": "NodeJS example using Reverse Geocoding Service.",
+  "type": "module",
+  "main": "src/index.js",
   "scripts": {
-    "develop": "node src/main.js"
+    "develop": "node src/index.js"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*"
-  },
-  "devDependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*",
     "dotenv": "^17.2.3"
   }
 }

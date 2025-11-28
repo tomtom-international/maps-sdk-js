@@ -1,14 +1,13 @@
 {
   "name": "@examples/nodejs-routing",
   "description": "NodeJS example for the Calculate Route Service",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "main": "node src/index.js"
+    "develop": "node src/index.js"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*"
-  },
-  "devDependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*",
     "dotenv": "^17.2.3"
   }
 }
