@@ -1,4 +1,4 @@
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-pin {
+.sdk-example-pin {
     position: absolute;
     border-radius: 50%;
     border: 8px solid #df1b12;
@@ -14,7 +14,7 @@
     height: 8px;
 }
 
-.maps-sdk-js-examples-pin::after {
+.sdk-example-pin::after {
     position: absolute;
     content: "";
     width: 0px;

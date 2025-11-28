@@ -10,7 +10,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 (async () => {
     const position = [4.8907, 52.37311];
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: position as LngLatLike,
         zoom: 17,
     });

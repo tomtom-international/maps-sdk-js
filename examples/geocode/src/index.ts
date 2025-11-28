@@ -8,10 +8,10 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 (async () => {
-    const location = await geocodeOne('Amsterdam Centraal, Netherlands');
+    const location = await geocodeOne('Amsterdam Centraal, NL');
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: location.geometry.coordinates as LngLatLike,
         zoom: 17,
     });

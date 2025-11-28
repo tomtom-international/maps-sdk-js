@@ -14,16 +14,12 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 (async () => {
-    const searchBox = document.getElementById('maps-sdk-js-examples-search-box') as HTMLInputElement;
-    const autoCompleteResultsList = document.getElementById(
-        'maps-sdk-js-examples-autocompleteResults',
-    ) as HTMLUListElement;
-    const fuzzySearchResultsList = document.getElementById(
-        'maps-sdk-js-examples-fuzzySearchResults',
-    ) as HTMLUListElement;
-    const searchThisAreaButton = document.getElementById('maps-sdk-js-examples-search-this-area') as HTMLInputElement;
+    const searchBox = document.getElementById('sdk-example-search-box') as HTMLInputElement;
+    const autoCompleteResultsList = document.getElementById('sdk-example-autocompleteResults') as HTMLUListElement;
+    const fuzzySearchResultsList = document.getElementById('sdk-example-fuzzySearchResults') as HTMLUListElement;
+    const searchThisAreaButton = document.getElementById('sdk-example-search-this-area') as HTMLInputElement;
 
-    const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', center: [4.8156, 52.4414], zoom: 8 });
+    const map = new TomTomMap({ container: 'sdk-map', center: [4.8156, 52.4414], zoom: 8 });
     const placesModule = await PlacesModule.get(map);
     const baseMapModule = await BaseMapModule.get(map);
 
@@ -38,9 +34,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
         | null;
 
     const clearFuzzySearchResults = () => {
-        const searchResultsList = document.querySelector(
-            '#maps-sdk-js-examples-fuzzySearchResults',
-        ) as HTMLUListElement;
+        const searchResultsList = document.querySelector('#sdk-example-fuzzySearchResults') as HTMLUListElement;
         searchResultsList.innerHTML = '';
         placesModule.clear();
         searchThisAreaButton.innerHTML = '';
@@ -53,19 +47,19 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
         }
         for (const place of places.features) {
             const resultItem = document.createElement('li');
-            resultItem.classList.add('maps-sdk-js-examples-result-item');
+            resultItem.classList.add('sdk-example-result-item');
             resultItem.dataset.placeId = place.id;
 
             if (place.properties.poi?.name) {
                 resultItem.innerHTML = `
-                    <a class="maps-sdk-js-examples-a">                
-                        <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.poi?.name}</div>
-                        <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.address.freeformAddress}</div>
+                    <a class="sdk-example-a">                
+                        <div class="sdk-example-result-value sdk-example-ellipsis">${place.properties.poi?.name}</div>
+                        <div class="sdk-example-result-value sdk-example-ellipsis">${place.properties.address.freeformAddress}</div>
                     </a>`;
             } else {
                 resultItem.innerHTML = `
-                    <a class="maps-sdk-js-examples-a">
-                        <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${place.properties.address.freeformAddress}</div>
+                    <a class="sdk-example-a">
+                        <div class="sdk-example-result-value sdk-example-ellipsis">${place.properties.address.freeformAddress}</div>
                     </a>`;
             }
 
@@ -78,8 +72,8 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
         }
         if (!places.features.length) {
             const noResults = document.createElement('li');
-            noResults.classList.add('maps-sdk-js-examples-result-item');
-            noResults.innerHTML = `<div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">No results found</div>`;
+            noResults.classList.add('sdk-example-result-item');
+            noResults.innerHTML = `<div class="sdk-example-result-value sdk-example-ellipsis">No results found</div>`;
             fuzzySearchResultsList.appendChild(noResults);
         }
     };
@@ -109,17 +103,17 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 
     const createListElement = (result: AutocompleteSearchResult | null): HTMLElement => {
         const resultItem = document.createElement('li');
-        resultItem.classList.add('maps-sdk-js-examples-result-item');
+        resultItem.classList.add('sdk-example-result-item');
         if (!result) {
-            resultItem.innerHTML = `<div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">No results found</div>`;
+            resultItem.innerHTML = `<div class="sdk-example-result-value sdk-example-ellipsis">No results found</div>`;
             return resultItem;
         }
         const segment = result.segments[0] as AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment;
 
         resultItem.innerHTML = `
-            <a class="maps-sdk-js-examples-a">
-                <div class="maps-sdk-js-examples-result-value maps-sdk-js-examples-ellipsis">${segment.value}</div>
-                <div class="maps-sdk-js-examples-result-type maps-sdk-js-examples-ellipsis">${segment.type}</div>
+            <a class="sdk-example-a">
+                <div class="sdk-example-result-value sdk-example-ellipsis">${segment.value}</div>
+                <div class="sdk-example-result-type sdk-example-ellipsis">${segment.type}</div>
             </a>
         `;
 
@@ -157,7 +151,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     };
 
     const showSearchThisAreaButton = () =>
-        (searchThisAreaButton.innerHTML = `<button class="maps-sdk-js-examples-search-this-area-btn">Search This Area</button>`);
+        (searchThisAreaButton.innerHTML = `<button class="sdk-example-search-this-area-btn">Search This Area</button>`);
 
     map.mapLibreMap.on('moveend', () => {
         if (searchBox.value === selectedAutoCompleteSegment?.value) {

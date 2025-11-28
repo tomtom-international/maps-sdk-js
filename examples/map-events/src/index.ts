@@ -9,7 +9,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 (async () => {
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: [-0.12634, 51.50276],
         zoom: 14,
     });
@@ -18,7 +18,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
         closeOnClick: true,
         closeOnMove: true,
         offset: 15,
-        className: 'maps-sdk-js-examples-popup',
+        className: 'sdk-example-popup',
     });
     let isMarkerVisible = false;
     const revGeocodingMarker = new Marker({ color: '#df1b12' });
@@ -66,7 +66,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
             closeOnClick: true,
             closeOnMove: true,
             offset: 15,
-            className: 'maps-sdk-js-examples-popup',
+            className: 'sdk-example-popup',
         })
             .setHTML(
                 `
@@ -75,8 +75,8 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
             <b id="place-address"> Address: </b> ${address.freeformAddress}
             <br />
             ${poi?.phone ? `<b> Phone: </b> ${poi?.phone}` : ''}
-            <div id="maps-sdk-js-examples-popup-tags">
-            ${poi?.categories?.map((category) => `<span class="maps-sdk-js-examples-popup-tags-item">${category}</span>`)}
+            <div id="sdk-example-popup-tags">
+            ${poi?.categories?.map((category) => `<span class="sdk-example-popup-tags-item">${category}</span>`)}
             </div>
             </div> 
             `,
@@ -109,17 +109,17 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
                 closeOnClick: true,
                 closeOnMove: true,
                 offset: 6,
-                className: 'maps-sdk-js-examples-popup-basemap',
+                className: 'sdk-example-popup-basemap',
             })
                 .setHTML(
                     `
-                <div id="maps-sdk-js-examples-popup-basemap">
+                <div id="sdk-example-popup-basemap">
                 ${
                     properties.address.freeformAddress
-                        ? ` <h4 id="maps-sdk-js-examples-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="maps-sdk-js-examples-hr" />`
+                        ? ` <h4 id="sdk-example-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="sdk-example-hr" />`
                         : ''
                 }
-                    <div id="maps-sdk-js-examples-popup-lnglat">
+                    <div id="sdk-example-popup-lnglat">
                         <span> ${lnglat.lng.toFixed(5)}, ${lnglat.lat.toFixed(5)}</span>
                     </div>
                 </div> 

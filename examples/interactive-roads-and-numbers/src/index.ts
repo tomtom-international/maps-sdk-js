@@ -88,7 +88,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     };
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: [-74.00332, 40.71732],
         zoom: 18,
     });
@@ -106,9 +106,9 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     const hoveredSource = initHoveredSourceAndLayers(mapLibreMap);
     const selectedSource = initSelectedSourceAndLayers(mapLibreMap);
 
-    const titleElement = document.querySelector('#maps-sdk-js-examples-title') as Element;
-    const subtitleElement = document.querySelector('#maps-sdk-js-examples-subtitle') as Element;
-    const addressesElement = document.querySelector('#maps-sdk-js-examples-addresses') as Element;
+    const titleElement = document.querySelector('#sdk-example-title') as Element;
+    const subtitleElement = document.querySelector('#sdk-example-subtitle') as Element;
+    const addressesElement = document.querySelector('#sdk-example-addresses') as Element;
 
     const setTitleAndSubtitle = (feature: MapGeoJSONFeature) => {
         titleElement.innerHTML = `${feature.properties.category} ${feature.properties.subcategory ?? ''}`;

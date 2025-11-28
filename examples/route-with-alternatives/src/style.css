@@ -1,4 +1,4 @@
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -6,14 +6,14 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-route-selection-container {
+.sdk-example-route-selection-container {
     position: absolute;
     right: 20px;
     display: flex;
     flex-direction: column;
 }
 
-.maps-sdk-js-examples--reCenter-container {
+.sdk-example--reCenter-container {
     position: absolute;
     right: 20px;
     bottom: 20px;
@@ -21,7 +21,7 @@
     flex-direction: column;
 }
 
-#maps-sdk-js-examples-routeSelection {
+#sdk-example-routeSelection {
     margin-bottom: 5px;
     color: #fff;
     background-color: #df1b12;
@@ -34,7 +34,7 @@
     user-select: none;
 }
 
-#maps-sdk-js-examples-reCenter {
+#sdk-example-reCenter {
     margin-bottom: 5px;
     color: #fff;
     background-color: #df1b12;

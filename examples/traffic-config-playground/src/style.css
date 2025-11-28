@@ -1,4 +1,4 @@
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-#maps-sdk-js-examples-traffic-config-panel {
+#sdk-example-traffic-config-panel {
     position: absolute;
     right: 0;
     background: white;
@@ -17,8 +17,8 @@
     border-radius: 10px;
 }
 
-#maps-sdk-js-examples-preset-selector,
-#maps-sdk-js-examples-jump-to-location-selector {
+#sdk-example-preset-selector,
+#sdk-example-jump-to-location-selector {
     display: block;
     padding: 7px;
     margin-bottom: 25px;

@@ -1,4 +1,4 @@
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-button-container {
+.sdk-example-button-container {
     position: absolute;
     right: 20px;
     top: 20px;
@@ -14,7 +14,7 @@
     flex-direction: column;
 }
 
-#maps-sdk-js-examples-reset {
+#sdk-example-reset {
     margin-bottom: 5px;
     color: #fff;
     background-color: #df1b12;

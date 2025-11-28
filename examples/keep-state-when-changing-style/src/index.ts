@@ -21,7 +21,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'es-
     ).map((result: SearchResponse) => result.features[0]);
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         bounds: bboxFromGeoJSON(locations) as LngLatBoundsLike,
         fitBoundsOptions: { padding: 100 },
     });
@@ -42,7 +42,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'es-
         await search({ query: 'City Hall', position, poiCategories: ['GOVERNMENT_OFFICE'] }),
     );
 
-    const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
     for (const id of standardStyleIDs) {
         stylesSelector.add(new Option(id));
     }

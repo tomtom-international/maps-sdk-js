@@ -6,7 +6,7 @@ import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 
-const mapsElement = document.querySelector('#maps-sdk-js-examples-maps-container') as HTMLElement;
+const mapsElement = document.querySelector('#sdk-example-maps-container') as HTMLElement;
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
@@ -23,7 +23,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number) => {
         const div = document.createElement('div');
         div.id = `map${index}`;
-        div.className = 'maps-sdk-js-examples-map';
+        div.className = 'sdk-example-map';
         mapsElement.appendChild(div);
 
         const map = new TomTomMap({ container: div.id, bounds: geometry.bbox as LngLatBoundsLike, interactive: false });

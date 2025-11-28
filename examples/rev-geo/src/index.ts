@@ -9,17 +9,14 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 (async () => {
-    const map = new TomTomMap(
-        { container: 'maps-sdk-js-examples-map-container', center: [4.89147, 52.37362], zoom: 17 },
-        { style: 'monoLight' },
-    );
+    const map = new TomTomMap({ container: 'sdk-map', center: [4.89147, 52.37362], zoom: 17 }, { style: 'monoLight' });
     let isMarkerVisible = false;
 
     // Creating the pin and the dot using CSS
     const pinIcon = document.createElement('div');
-    pinIcon.classList.add('maps-sdk-js-examples-pin');
+    pinIcon.classList.add('sdk-example-pin');
     const dotIcon = document.createElement('div');
-    dotIcon.classList.add('maps-sdk-js-examples-dot');
+    dotIcon.classList.add('sdk-example-dot');
 
     const revGeoMarker = new Marker({ element: pinIcon, offset: [0, -25] });
     const dotClickedMaker = new Marker({ element: dotIcon });
@@ -39,12 +36,12 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
         address: AddressProperties;
         lngLat: LngLat;
     }) => {
-        new Popup({ anchor: 'bottom', className: 'maps-sdk-js-examples-popup', closeButton: false })
+        new Popup({ anchor: 'bottom', className: 'sdk-example-popup', closeButton: false })
             .setHTML(
                 `
-        <div class="maps-sdk-js-examples-popup-content">
-            ${address.freeformAddress ? `${address.freeformAddress} <hr class="maps-sdk-js-examples-hr" />` : ''}
-               <span class="maps-sdk-js-examples-popup-lnglat">
+        <div class="sdk-example-popup-content">
+            ${address.freeformAddress ? `${address.freeformAddress} <hr class="sdk-example-hr" />` : ''}
+               <span class="sdk-example-popup-lnglat">
                 ${geometry.coordinates[0].toFixed(5)}, ${geometry.coordinates[1].toFixed(5)}
                </span>
         </div>

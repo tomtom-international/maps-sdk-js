@@ -1,10 +1,10 @@
-.maps-sdk-js-examples-body {
+.sdk-example-body {
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 14px;
     user-select: none;
 }
 
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -12,14 +12,14 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-checkbox-container {
+.sdk-example-checkbox-container {
     position: absolute;
     right: 20px;
     display: flex;
     flex-direction: column;
 }
 
-.maps-sdk-js-examples-selector {
+.sdk-example-selector {
     height: 26px;
     padding: 5px;
     margin-bottom: 5px;
@@ -31,7 +31,7 @@
     cursor: pointer;
 }
 
-.maps-sdk-js-examples-toggle {
+.sdk-example-toggle {
     padding: 5px;
     margin-bottom: 5px;
     color: grey;
@@ -42,7 +42,7 @@
     cursor: pointer;
 }
 
-.maps-sdk-js-examples-input {
+.sdk-example-input {
     float: right;
     margin-right: 10px;
     height: 14px;

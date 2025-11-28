@@ -10,12 +10,12 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const waypoints = await Promise.all([geocodeOne('Leidsplein, Amsterdam'), geocodeOne('Damplein, Amsterdam')]);
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: [4.8888162, 52.3728909],
         zoom: 16.6,
     });
 
-        const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.get(map);
 
     const routes = await calculateRoute({
         locations: waypoints,

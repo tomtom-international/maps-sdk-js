@@ -6,50 +6,34 @@
         <link rel="icon" href="data:,">
     </head>
     <body>
-        <div id="maps-sdk-js-examples-map-container"></div>
-        <div class="maps-sdk-js-examples-panel">
-            <label class="maps-sdk-js-examples-heading-label" for="maps-sdk-js-examples-icon-style-selector">
+        <div id="sdk-map"></div>
+        <div class="sdk-example-panel">
+            <label class="sdk-example-heading-label" for="sdk-example-icon-style-selector">
                 Change places layer icon style:
             </label>
-            <select id="maps-sdk-js-examples-icon-style-selector">
+            <select id="sdk-example-icon-style-selector">
                 <option value="pin">Pin</option>
                 <option value="circle">Circle</option>
                 <option value="base-map">Base Map</option>
                 <option value="custom">Custom Icons</option>
             </select>
             <div>
-                <label class="maps-sdk-js-examples-heading-label">Change places layer label color:</label>
-                <div
-                    id="color-selector-grey"
-                    class="maps-sdk-js-examples-color-selector active"
-                    data-value="#333333"
-                ></div>
-                <div id="color-selector-blue" class="maps-sdk-js-examples-color-selector" data-value="#4C4CB2"></div>
-                <div id="color-selector-magenta" class="maps-sdk-js-examples-color-selector" data-value="#B24BB2"></div>
-                <div
-                    id="color-selector-moderate-red"
-                    class="maps-sdk-js-examples-color-selector"
-                    data-value="#B34C4B"
-                ></div>
-                <div id="color-selector-cyan" class="maps-sdk-js-examples-color-selector" data-value="#4BB2B2"></div>
-                <div
-                    id="color-selector-bright-orange"
-                    class="maps-sdk-js-examples-color-selector"
-                    data-value="#FEB24B"
-                ></div>
-                <div
-                    id="color-selector-strong-red"
-                    class="maps-sdk-js-examples-color-selector"
-                    data-value="#BD0026"
-                ></div>
+                <label class="sdk-example-heading-label">Change places layer label color:</label>
+                <div id="color-selector-grey" class="sdk-example-color-selector active" data-value="#333333"></div>
+                <div id="color-selector-blue" class="sdk-example-color-selector" data-value="#4C4CB2"></div>
+                <div id="color-selector-magenta" class="sdk-example-color-selector" data-value="#B24BB2"></div>
+                <div id="color-selector-moderate-red" class="sdk-example-color-selector" data-value="#B34C4B"></div>
+                <div id="color-selector-cyan" class="sdk-example-color-selector" data-value="#4BB2B2"></div>
+                <div id="color-selector-bright-orange" class="sdk-example-color-selector" data-value="#FEB24B"></div>
+                <div id="color-selector-strong-red" class="sdk-example-color-selector" data-value="#BD0026"></div>
             </div>
             <div>
-                <label class="maps-sdk-js-examples-heading-label">Change places layer label font:</label>
+                <label class="sdk-example-heading-label">Change places layer label font:</label>
                 <label>
                     <input
                         type="radio"
-                        class="maps-sdk-js-examples-font-selector"
-                        name="maps-sdk-js-examples-font-selector"
+                        class="sdk-example-font-selector"
+                        name="sdk-example-font-selector"
                         value="Noto-Regular"
                     >
                     Regular
@@ -57,8 +41,8 @@
                 <label>
                     <input
                         type="radio"
-                        class="maps-sdk-js-examples-font-selector"
-                        name="maps-sdk-js-examples-font-selector"
+                        class="sdk-example-font-selector"
+                        name="sdk-example-font-selector"
                         value="Noto-Medium"
                     >
                     Medium
@@ -66,8 +50,8 @@
                 <label>
                     <input
                         type="radio"
-                        class="maps-sdk-js-examples-font-selector"
-                        name="maps-sdk-js-examples-font-selector"
+                        class="sdk-example-font-selector"
+                        name="sdk-example-font-selector"
                         value="Noto-Bold"
                         checked
                     >
@@ -75,12 +59,12 @@
                 </label>
             </div>
             <div>
-                <label class="maps-sdk-js-examples-heading-label">Change places layer label content:</label>
+                <label class="sdk-example-heading-label">Change places layer label content:</label>
                 <label>
                     <input
                         type="radio"
-                        class="maps-sdk-js-examples-content-selector"
-                        name="maps-sdk-js-examples-content-selector"
+                        class="sdk-example-content-selector"
+                        name="sdk-example-content-selector"
                         value="default"
                         checked
                     >
@@ -89,8 +73,8 @@
                 <label>
                     <input
                         type="radio"
-                        class="maps-sdk-js-examples-content-selector"
-                        name="maps-sdk-js-examples-content-selector"
+                        class="sdk-example-content-selector"
+                        name="sdk-example-content-selector"
                         value="multi-line"
                     >
                     Multi line label

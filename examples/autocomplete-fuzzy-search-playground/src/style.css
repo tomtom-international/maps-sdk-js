@@ -1,32 +1,32 @@
-.maps-sdk-js-examples-body {
+.sdk-example-body {
     user-select: none;
     background-color: #f3f3f3;
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 15px;
 }
 
-.maps-sdk-js-examples-a {
+.sdk-example-a {
     text-decoration: none;
 }
 
-.maps-sdk-js-examples-element {
+.sdk-example-element {
     border: none;
     border-radius: 5px;
     box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
 }
 
-.maps-sdk-js-examples-ellipsis {
+.sdk-example-ellipsis {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
 
-.maps-sdk-js-examples-search-area {
+.sdk-example-search-area {
     position: relative;
     bottom: 100%;
 }
 
-.maps-sdk-js-examples-search-box {
+.sdk-example-search-box {
     height: 55px;
     padding: 7px 10px;
     box-sizing: border-box;
@@ -47,12 +47,12 @@
     text-align: start;
 }
 
-.maps-sdk-js-examples-search-box:focus {
+.sdk-example-search-box:focus {
     border: none;
     outline: none;
 }
 
-#maps-sdk-js-examples-autocompleteResults {
+#sdk-example-autocompleteResults {
     box-sizing: content-box;
     padding: 0;
     margin-bottom: 0;
@@ -66,7 +66,7 @@
     border-radius: 15px;
 }
 
-.maps-sdk-js-examples-result-item {
+.sdk-example-result-item {
     color: #fff;
     padding: 6px 12px;
     width: 250px;
@@ -78,33 +78,33 @@
     margin-bottom: 8px;
 }
 
-.maps-sdk-js-examples-result-item:hover {
+.sdk-example-result-item:hover {
     background-color: #f3f3f3;
     width: 300px;
 }
 
-.maps-sdk-js-examples-result-item.hovered {
+.sdk-example-result-item.hovered {
     background-color: #f3f3f3;
     width: 300px;
 }
 
-.maps-sdk-js-examples-result-item:active {
+.sdk-example-result-item:active {
     background-color: #df1b12;
     color: white;
 }
 
-.maps-sdk-js-examples-result-value {
+.sdk-example-result-value {
     font-weight: normal;
     color: #263543;
     width: 100%;
 }
 
-.maps-sdk-js-examples-result-type {
+.sdk-example-result-type {
     font-weight: normal;
     color: #727c85;
 }
 
-#maps-sdk-js-examples-fuzzySearchResults {
+#sdk-example-fuzzySearchResults {
     list-style-type: none;
     margin: 10px 0 0;
     padding: 0;
@@ -124,11 +124,11 @@
     position: relative;
 }
 
-#maps-sdk-js-examples-search-this-area {
+#sdk-example-search-this-area {
     text-align: center;
 }
 
-.maps-sdk-js-examples-search-this-area-btn {
+.sdk-example-search-this-area-btn {
     display: inline-block;
     font-family: Arial, Helvetica, Verdana, sans-serif;
     font-weight: bold;
@@ -151,7 +151,7 @@
     border: #727c85;
 }
 
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -159,7 +159,7 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-search-container {
+.sdk-example-search-container {
     position: absolute;
     left: 20px;
     display: flex;

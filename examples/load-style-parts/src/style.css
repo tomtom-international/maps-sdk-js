@@ -1,4 +1,4 @@
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-panel {
+.sdk-example-panel {
     position: absolute;
     right: 20px;
     display: flex;
@@ -18,7 +18,7 @@
     border-radius: 10px;
 }
 
-.maps-sdk-js-examples-button {
+.sdk-example-button {
     height: 26px;
     margin-bottom: 5px;
     color: #fff;
@@ -32,7 +32,7 @@
     user-select: none;
 }
 
-#maps-sdk-js-examples-mapStyles {
+#sdk-example-mapStyles {
     margin-top: 10px;
     height: 26px;
     padding: 5px;

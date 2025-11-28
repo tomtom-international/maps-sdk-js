@@ -12,7 +12,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 (async () => {
     const fitBoundsOptions = { padding: 50 };
 
-    const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', zoom: 2 }, { language: 'en-GB' });
+    const map = new TomTomMap({ container: 'sdk-map', zoom: 2 }, { language: 'en-GB' });
     const placesModule = await PlacesModule.get(map);
     const geometryModule = await GeometriesModule.get(map);
 
@@ -46,16 +46,16 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     };
 
     const listenToUserEvents = () => {
-        const searchTextBox = document.querySelector('#maps-sdk-js-examples-searchTextBox') as HTMLInputElement;
-        const inTextBox = document.querySelector('#maps-sdk-js-examples-inTextBox') as HTMLInputElement;
-        const searchButton = document.querySelector('#maps-sdk-js-examples-searchButton') as HTMLButtonElement;
+        const searchTextBox = document.querySelector('#sdk-example-searchTextBox') as HTMLInputElement;
+        const inTextBox = document.querySelector('#sdk-example-inTextBox') as HTMLInputElement;
+        const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
 
         searchButton.addEventListener('click', () => searchPlacesInGeometry(searchTextBox.value, inTextBox.value));
         searchTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
         inTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
 
         document
-            .querySelector('#maps-sdk-js-examples-reCenter')
+            .querySelector('#sdk-example-reCenter')
             ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
     };
 

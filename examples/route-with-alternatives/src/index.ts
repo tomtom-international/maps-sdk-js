@@ -12,7 +12,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const bounds = bboxFromGeoJSON(waypoints) as LngLatBoundsLike;
     const fitBoundsOptions = { padding: 150 };
 
-    const map = new TomTomMap({ bounds, fitBoundsOptions, container: 'maps-sdk-js-examples-map-container' });
+    const map = new TomTomMap({ bounds, fitBoundsOptions, container: 'sdk-map' });
 
     const routingModule = await RoutingModule.get(map);
     routingModule.showWaypoints(waypoints);
@@ -23,7 +23,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     });
     routingModule.showRoutes(routes);
 
-    const routeSelector = document.querySelector('#maps-sdk-js-examples-routeSelection') as HTMLSelectElement;
+    const routeSelector = document.querySelector('#sdk-example-routeSelection') as HTMLSelectElement;
     for (let index = 0; index < routes.features.length; index++) {
         const routeTitle = index == 0 ? 'Recommended' : `Alternative ${index}`;
         routeSelector.add(new Option(routeTitle, index + ''));

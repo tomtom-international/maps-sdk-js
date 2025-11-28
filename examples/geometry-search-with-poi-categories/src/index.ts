@@ -22,7 +22,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const areaToSearch = await geocode({ query: 'paris', limit: 1 });
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         fitBoundsOptions: { padding: 50 },
         bounds: bboxFromGeoJSON(areaToSearch) as LngLatBoundsLike,
     });

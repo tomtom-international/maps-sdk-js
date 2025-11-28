@@ -12,7 +12,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 
 (async () => {
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: [2.34281, 48.85639],
         zoom: 12,
     });
@@ -29,7 +29,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
         return fetchedPlace;
     };
 
-    const presetSelector = document.getElementById('maps-sdk-js-examples-preset-selector') as HTMLSelectElement;
+    const presetSelector = document.getElementById('sdk-example-preset-selector') as HTMLSelectElement;
     configPresets.forEach((preset, index) => presetSelector.add(new Option(preset.title, String(index))));
     presetSelector.addEventListener('change', (event) => {
         const config = configPresets[Number((event.target as HTMLOptionElement).value)].config;
@@ -37,9 +37,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
         flow.applyConfig(config?.flow);
     });
 
-    const locationsSelector = document.getElementById(
-        'maps-sdk-js-examples-jump-to-location-selector',
-    ) as HTMLSelectElement;
+    const locationsSelector = document.getElementById('sdk-example-jump-to-location-selector') as HTMLSelectElement;
     jumpToPlaces.forEach((location, index) => locationsSelector.add(new Option(location, String(index))));
     locationsSelector.addEventListener('change', async (event) => {
         const place = await geocodeWithCache(jumpToPlaces[Number((event.target as HTMLOptionElement).value)]);

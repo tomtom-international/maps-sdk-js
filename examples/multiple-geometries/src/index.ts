@@ -19,7 +19,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 (async () => {
     const fitBoundsOptions = { padding: 50 };
 
-    const map = new TomTomMap({ container: 'maps-sdk-js-examples-map-container', fitBoundsOptions });
+    const map = new TomTomMap({ container: 'sdk-map', fitBoundsOptions });
     const geometry = await GeometriesModule.get(map);
     let placeSubdivisions: Places;
 
@@ -32,7 +32,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     };
 
     const listenToUIEvents = async () => {
-        const placeSelector = document.getElementById('maps-sdk-js-examples-place-selector') as HTMLSelectElement;
+        const placeSelector = document.getElementById('sdk-example-place-selector') as HTMLSelectElement;
         placeSelector.addEventListener('change', (event) =>
             updateMap(namedConfigs[(event.target as HTMLInputElement).value]),
         );
@@ -44,14 +44,14 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
             );
         });
 
-        const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
+        const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
         standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
         stylesSelector.addEventListener('change', (event) =>
             map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
         );
 
         document
-            .querySelector('#maps-sdk-js-examples-reCenter')
+            .querySelector('#sdk-example-reCenter')
             ?.addEventListener(
                 'click',
                 () =>

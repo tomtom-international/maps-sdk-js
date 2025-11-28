@@ -20,7 +20,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 
     const mainPlace = await geocode({ query: 'Germany', geographyTypes: ['Country'] });
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         minZoom: 2,
         zoom: 13,
         bounds: mainPlace.bbox as LngLatBoundsLike,

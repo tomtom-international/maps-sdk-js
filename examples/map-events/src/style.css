@@ -1,11 +1,11 @@
-.maps-sdk-js-examples-hr {
+.sdk-example-hr {
     background: #dadce0;
     border: none;
     height: 1px;
     margin: 3px 0;
 }
 
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -24,16 +24,16 @@
 }
 
 /* Custom CSS for inner content in the popup */
-.maps-sdk-js-examples-popup {
+.sdk-example-popup {
     min-width: 200px;
     color: #000;
 }
 
-#maps-sdk-js-examples-popup-tags {
+#sdk-example-popup-tags {
     padding-top: 10px;
 }
 
-.maps-sdk-js-examples-popup-tags-item {
+.sdk-example-popup-tags-item {
     padding: 5px;
     border-radius: 10px;
     font-weight: bold;
@@ -41,14 +41,14 @@
     box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 8px;
 }
 
-.maps-sdk-js-examples-popup-basemap {
+.sdk-example-popup-basemap {
     display: flex;
     align-items: center;
     bottom: 20px;
     min-width: 180px;
 }
 
-#maps-sdk-js-examples-popup-lnglat {
+#sdk-example-popup-lnglat {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -60,7 +60,7 @@
     margin-bottom: 6px;
 }
 
-#maps-sdk-js-examples-popup-basemap-address {
+#sdk-example-popup-basemap-address {
     margin: 0;
     padding: 3px 3px 1px 3px;
 }

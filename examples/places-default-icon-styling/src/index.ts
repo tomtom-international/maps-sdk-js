@@ -14,7 +14,7 @@ const [firstGroup, secondGroup, thirdGroup] = await Promise.all([
 ]);
 
 const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
+    container: 'sdk-map',
     bounds: bboxFromGeoJSON([firstGroup, secondGroup]) as LngLatBoundsLike,
     fitBoundsOptions: { padding: 50 },
 });

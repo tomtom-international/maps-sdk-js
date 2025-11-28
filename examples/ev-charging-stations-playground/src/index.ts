@@ -26,8 +26,8 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
 
 (async () => {
-    const evBrandTextBox = document.querySelector('#maps-sdk-js-examples-evBrandTextBox') as HTMLInputElement;
-    const areaTextBox = document.querySelector('#maps-sdk-js-examples-areaTextBox') as HTMLInputElement;
+    const evBrandTextBox = document.querySelector('#sdk-example-evBrandTextBox') as HTMLInputElement;
+    const areaTextBox = document.querySelector('#sdk-example-areaTextBox') as HTMLInputElement;
     const fitBoundsOptions = { padding: 50 };
     const popUp = new Popup({
         closeButton: false,
@@ -36,7 +36,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     });
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: [2.3597, 48.85167],
         zoom: 11,
         fitBoundsOptions,
@@ -96,7 +96,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
         const connectorAvailabilities = availability
             ? availability.connectorAvailabilities
             : chargingPark.connectorCounts;
-        return `<ul class="maps-sdk-js-examples-connector-ul">
+        return `<ul class="sdk-example-connector-ul">
         ${connectorAvailabilities
             .map((connectorAvailability) => {
                 const statusCounts = (connectorAvailability as ConnectorAvailability).statusCounts;
@@ -105,16 +105,16 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
                 const connectorType = connectorAvailability.connector.type;
                 const connectorName = connectorNames[connectorType] ?? connectorType;
                 return `
-                <li class="maps-sdk-js-examples-connector-li">
-                    <div class="maps-sdk-js-examples-connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
-                    <label class="maps-sdk-js-examples-connectorName maps-sdk-js-examples-label">${connectorName ?? ''}</label>
-                    <label class="maps-sdk-js-examples-connectorPower maps-sdk-js-examples-label"> | ${connectorAvailability.connector.ratedPowerKW} KW</label>
-                    <label class="maps-sdk-js-examples-label ${
+                <li class="sdk-example-connector-li">
+                    <div class="sdk-example-connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
+                    <label class="sdk-example-connectorName sdk-example-label">${connectorName ?? ''}</label>
+                    <label class="sdk-example-connectorPower sdk-example-label"> | ${connectorAvailability.connector.ratedPowerKW} KW</label>
+                    <label class="sdk-example-label ${
                         hasStatuses
                             ? availableCount
-                                ? 'maps-sdk-js-examples-available'
-                                : 'maps-sdk-js-examples-unavailable'
-                            : 'maps-sdk-js-examples-noStatus'
+                                ? 'sdk-example-available'
+                                : 'sdk-example-unavailable'
+                            : 'sdk-example-noStatus'
                     }">${hasStatuses ? `${availableCount} / ` : ''}${connectorAvailability.count}</label>
                 </li>`;
             })
@@ -128,7 +128,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
             .setHTML(
                 `
                     <h3>${poi?.name}</h3>
-                    <label class="maps-sdk-js-examples-address maps-sdk-js-examples-label">${address.freeformAddress}</label>
+                    <label class="sdk-example-address sdk-example-label">${address.freeformAddress}</label>
                     <br/><br/>
                     ${connectorsHTML(chargingPark as ChargingParkWithAvailability)}
                 `,

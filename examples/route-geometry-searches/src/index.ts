@@ -14,7 +14,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     const waypoints: Waypoint[] = await Promise.all(inputs.map(geocodeOne));
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
         fitBoundsOptions: { padding: 100 },
     });

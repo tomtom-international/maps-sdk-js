@@ -1,4 +1,4 @@
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-panel {
+.sdk-example-panel {
     position: absolute;
     right: 0;
     background: white;
@@ -17,19 +17,19 @@
     border-radius: 10px;
 }
 
-#maps-sdk-js-examples-icon-style-selector {
+#sdk-example-icon-style-selector {
     display: block;
     padding: 7px;
     border-radius: 5px;
 }
 
-.maps-sdk-js-examples-heading-label {
+.sdk-example-heading-label {
     margin: 15px 0 5px 0;
     display: block;
     font-weight: bold;
 }
 
-.maps-sdk-js-examples-color-selector {
+.sdk-example-color-selector {
     width: 30px;
     height: 30px;
     margin: 3px;
@@ -38,8 +38,8 @@
     cursor: pointer;
 }
 
-.maps-sdk-js-examples-color-selector:hover,
-.maps-sdk-js-examples-color-selector.active {
+.sdk-example-color-selector:hover,
+.sdk-example-color-selector.active {
     border: 2px solid #bbb;
     transform: scale(1.1);
     border-radius: 3px;

@@ -12,7 +12,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const location = await reverseGeocode({ position });
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: position as LngLatLike,
         zoom: 17,
     });

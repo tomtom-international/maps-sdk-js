@@ -17,7 +17,7 @@ const [spainAirports, italyAirports, franceAirports] = await Promise.all([
 ]);
 
 const map = new TomTomMap({
-    container: 'maps-sdk-js-examples-map-container',
+    container: 'sdk-map',
     bounds: bboxFromGeoJSON([spainAirports, italyAirports, franceAirports]) as LngLatBoundsLike,
     fitBoundsOptions: { padding: 50 },
 });

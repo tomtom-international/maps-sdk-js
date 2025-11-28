@@ -5,139 +5,74 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body class="maps-sdk-js-examples-body">
-        <div id="maps-sdk-js-examples-map-container"></div>
-        <div class="maps-sdk-js-examples-checkbox-container">
-            <label for="maps-sdk-js-examples-mapStyles"></label>
-            <select class="maps-sdk-js-examples-selector" id="maps-sdk-js-examples-mapStyles"></select>
-            <label class="maps-sdk-js-examples-toggle">
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+        <div class="sdk-example-checkbox-container">
+            <label for="sdk-example-mapStyles"></label>
+            <select class="sdk-example-selector" id="sdk-example-mapStyles"></select>
+            <label class="sdk-example-toggle">
                 Water
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-water"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-water" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Land
-                <input class="maps-sdk-js-examples-input" type="checkbox" id="maps-sdk-js-examples-toggle-land" checked>
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-land" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Borders
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-borders"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-borders" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Buildings
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-buildings2D"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-buildings2D" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 3D Buildings
-                <input class="maps-sdk-js-examples-input" type="checkbox" id="maps-sdk-js-examples-toggle-buildings3D">
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-buildings3D">
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 House numbers
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-houseNumbers"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-houseNumbers" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Road lines
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-roadLines"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-roadLines" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Road labels
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-roadLabels"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-roadLabels" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Road shields
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-roadShields"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-roadShields" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Place labels
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-placeLabels"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-placeLabels" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Smaller towns
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-smallerTownLabels"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-smallerTownLabels" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 City labels
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-cityLabels"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-cityLabels" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Capital labels
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-capitalLabels"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-capitalLabels" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 State labels
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-stateLabels"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-stateLabels" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 Country labels
-                <input
-                    class="maps-sdk-js-examples-input"
-                    type="checkbox"
-                    id="maps-sdk-js-examples-toggle-countryLabels"
-                    checked
-                >
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-countryLabels" checked>
             </label>
-            <label class="maps-sdk-js-examples-toggle">
+            <label class="sdk-example-toggle">
                 POIs
-                <input class="maps-sdk-js-examples-input" type="checkbox" id="maps-sdk-js-examples-togglePOIs" checked>
+                <input class="sdk-example-input" type="checkbox" id="sdk-example-togglePOIs" checked>
             </label>
         </div>
         <script type="module" src="./index.ts"></script>

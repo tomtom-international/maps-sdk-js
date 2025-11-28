@@ -15,7 +15,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 (async () => {
     const map = new TomTomMap(
         {
-            container: 'maps-sdk-js-examples-map-container',
+            container: 'sdk-map',
             zoom: 13,
             minZoom: 2,
             center: [2.1493, 41.4001],
@@ -24,16 +24,12 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     );
 
     document
-        .querySelector('#maps-sdk-js-examples-addIncidents')
+        .querySelector('#sdk-example-addIncidents')
         ?.addEventListener('click', () => TrafficIncidentsModule.get(map));
-    document
-        .querySelector('#maps-sdk-js-examples-addFlow')
-        ?.addEventListener('click', () => TrafficFlowModule.get(map));
-    document
-        .querySelector('#maps-sdk-js-examples-addHillshade')
-        ?.addEventListener('click', () => HillshadeModule.get(map));
+    document.querySelector('#sdk-example-addFlow')?.addEventListener('click', () => TrafficFlowModule.get(map));
+    document.querySelector('#sdk-example-addHillshade')?.addEventListener('click', () => HillshadeModule.get(map));
 
-    const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),

@@ -61,10 +61,10 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     };
 
     const createFilterToggles = () => {
-        const container = document.getElementById('maps-sdk-js-examples-filters-container');
+        const container = document.getElementById('sdk-example-filters-container');
         for (const [key, value] of Object.entries(categories)) {
             const item = document.createElement('div');
-            item.className = 'maps-sdk-js-examples-item';
+            item.className = 'sdk-example-item';
             const input = document.createElement('input');
             input.type = 'checkbox';
             input.value = key;
@@ -81,7 +81,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     };
 
     const listenToUserEvents = () => {
-        const items = document.querySelectorAll('.maps-sdk-js-examples-item input');
+        const items = document.querySelectorAll('.sdk-example-item input');
         items.forEach((item) =>
             item.addEventListener('change', (e) => {
                 const target = e.target as HTMLInputElement;
@@ -89,17 +89,17 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
             }),
         );
 
-        modeSelector = document.getElementById('maps-sdk-js-examples-mode-selector') as HTMLSelectElement;
+        modeSelector = document.getElementById('sdk-example-mode-selector') as HTMLSelectElement;
         modeSelector?.addEventListener('change', (e) =>
             changeFilterMode((e.target as HTMLSelectElement).value as FilterShowMode),
         );
 
-        const resetBtn = document.getElementById('maps-sdk-js-examples-reset');
+        const resetBtn = document.getElementById('sdk-example-reset');
         resetBtn?.addEventListener('click', resetConfig);
     };
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: [4.89437, 52.36859],
         zoom: 16.5,
     });

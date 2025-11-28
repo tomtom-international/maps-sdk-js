@@ -1,10 +1,10 @@
-.maps-sdk-js-examples-body {
+.sdk-example-body {
     text-decoration: none;
     user-select: none;
     font-family: Arial, sans-serif;
 }
 
-#maps-sdk-js-examples-map-container {
+#sdk-map {
     position: absolute;
     left: 0;
     top: 0;
@@ -12,31 +12,31 @@
     height: 100%;
 }
 
-.maps-sdk-js-examples-mainPanel {
+.sdk-example-mainPanel {
     position: absolute;
     top: 10px;
     right: 20px;
 }
 
-.maps-sdk-js-examples-minKWPanel-container {
+.sdk-example-minKWPanel-container {
     margin-top: 60px;
     float: right;
     display: flex;
     flex-direction: column;
 }
 
-.maps-sdk-js-examples-minKWLabel {
+.sdk-example-minKWLabel {
     font-weight: bold;
     background: rgba(255, 255, 255, 0.3);
     text-shadow: 0 2px 7px rgb(0 0 0 / 30%);
 }
 
-.maps-sdk-js-examples-kwInput {
+.sdk-example-kwInput {
     width: 50px;
     float: right;
 }
 
-.maps-sdk-js-examples-element {
+.sdk-example-element {
     border: 0 solid rgba(0, 0, 0, 0);
     border-radius: 20px;
     height: 26px;
@@ -46,12 +46,12 @@
     font-size: 14px;
 }
 
-.maps-sdk-js-examples-input {
+.sdk-example-input {
     text-indent: 10px;
     box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
 }
 
-.maps-sdk-js-examples-button {
+.sdk-example-button {
     color: #fff;
     background-color: #df1b12;
     box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
@@ -75,15 +75,15 @@
     min-width: 300px;
 }
 
-.maps-sdk-js-examples-address {
+.sdk-example-address {
     color: grey;
 }
 
-.maps-sdk-js-examples-label {
+.sdk-example-label {
     height: 24px;
 }
 
-.maps-sdk-js-examples-connector-ul {
+.sdk-example-connector-ul {
     padding: 0;
     font-size: 14px;
     height: 24px;
@@ -91,36 +91,36 @@
     list-style-type: none;
 }
 
-.maps-sdk-js-examples-connector-li {
+.sdk-example-connector-li {
     height: 36px;
 }
 
-.maps-sdk-js-examples-connectorName {
+.sdk-example-connectorName {
     font-weight: bold;
 }
 
-.maps-sdk-js-examples-connectorPower {
+.sdk-example-connectorPower {
     color: grey;
 }
 
-.maps-sdk-js-examples-connectorIcon {
+.sdk-example-connectorIcon {
     display: inline-block;
     width: 24px;
     height: 28px;
     vertical-align: middle;
 }
 
-.maps-sdk-js-examples-available,
-.maps-sdk-js-examples-unavailable,
-.maps-sdk-js-examples-noStatus {
+.sdk-example-available,
+.sdk-example-unavailable,
+.sdk-example-noStatus {
     font-weight: bolder;
     float: right;
 }
 
-.maps-sdk-js-examples-available {
+.sdk-example-available {
     color: green;
 }
 
-.maps-sdk-js-examples-unavailable {
+.sdk-example-unavailable {
     color: red;
 }

@@ -14,7 +14,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
 
 (async () => {
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         center: [-74.06332, 40.72732],
         zoom: 12,
     });
@@ -40,15 +40,15 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-
     for (const layerGroup of layerGroups) {
         const module = await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: [layerGroup] } });
         document
-            .querySelector(`#maps-sdk-js-examples-toggle-${layerGroup}`)
+            .querySelector(`#sdk-example-toggle-${layerGroup}`)
             ?.addEventListener('click', (ev) => module.setVisible((ev.target as HTMLInputElement).checked));
     }
     const pois = await POIsModule.get(map);
     document
-        .querySelector('#maps-sdk-js-examples-togglePOIs')
+        .querySelector('#sdk-example-togglePOIs')
         ?.addEventListener('click', (ev) => pois.setVisible((ev.target as HTMLInputElement).checked));
 
-    const stylesSelector = document.querySelector('#maps-sdk-js-examples-mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
     for (const id of standardStyleIDs) {
         stylesSelector.add(new Option(id));
     }

@@ -12,7 +12,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const waypoints: Waypoint[] = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
 
     const map = new TomTomMap({
-        container: 'maps-sdk-js-examples-map-container',
+        container: 'sdk-map',
         bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
         fitBoundsOptions: { padding: 100 },
     });

@@ -6,16 +6,14 @@
         <link rel="icon" href="data:,">
     </head>
     <body>
-        <div id="maps-sdk-js-examples-map-container"></div>
-        <div class="maps-sdk-js-examples-button-container">
-            <button id="maps-sdk-js-examples-reCenter">Re-Center</button>
+        <div id="sdk-map"></div>
+        <div class="sdk-example-button-container">
+            <button id="sdk-example-reCenter">Re-Center</button>
         </div>
-        <div class="maps-sdk-js-examples-panel">
+        <div class="sdk-example-panel">
             <div>
-                <label class="maps-sdk-js-examples-heading-label" for="maps-sdk-js-examples-place-selector">
-                    Show:
-                </label>
-                <select class="maps-sdk-js-examples-select" id="maps-sdk-js-examples-place-selector">
+                <label class="sdk-example-heading-label" for="sdk-example-place-selector">Show:</label>
+                <select class="sdk-example-select" id="sdk-example-place-selector">
                     <option value="france">Regions of France</option>
                     <option value="italy">Regions of Italy</option>
                     <option value="netherlands">Regions of The Netherlands</option>
@@ -25,8 +23,8 @@
                     <option value="chicagoPostcodes">Postcodes in Chicago area</option>
                 </select>
             </div>
-            <div class="maps-sdk-js-examples-layers">
-                <label class="maps-sdk-js-examples-heading-label">Layer position: </label>
+            <div class="sdk-example-layers">
+                <label class="sdk-example-heading-label">Layer position: </label>
                 <label>
                     <input type="radio" name="layerOption" value="top" checked>
                     Top
@@ -57,7 +55,7 @@
                 </label>
             </div>
         </div>
-        <select class="maps-sdk-js-examples-select" id="maps-sdk-js-examples-mapStyles"></select>
+        <select class="sdk-example-select" id="sdk-example-mapStyles"></select>
         <script type="module" src="./index.ts"></script>
     </body>
 </html>

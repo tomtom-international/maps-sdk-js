@@ -8,11 +8,13 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 (async () => {
+    const location = await geocodeOne('Mount Teide, Canary Islands');
+
     new TomTomMap(
         {
-            container: 'maps-sdk-js-examples-map-container',
+            container: 'sdk-map',
             fitBoundsOptions: { padding: 50 },
-            bounds: (await geocodeOne('Canary Islands')).bbox as LngLatBoundsLike,
+            bounds: location.bbox as LngLatBoundsLike,
         },
         { style: 'satellite' },
     );

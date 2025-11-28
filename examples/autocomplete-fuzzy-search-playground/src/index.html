@@ -5,29 +5,23 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body class="maps-sdk-js-examples-body">
-        <div id="maps-sdk-js-examples-map-container"></div>
-        <div class="maps-sdk-js-examples-search-container">
-            <div class="maps-sdk-js-examples-search-area">
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+        <div class="sdk-example-search-container">
+            <div class="sdk-example-search-area">
                 <input
-                    id="maps-sdk-js-examples-search-box"
+                    id="sdk-example-search-box"
                     type="text"
-                    class="maps-sdk-js-examples-element maps-sdk-js-examples-search-box"
+                    class="sdk-example-element sdk-example-search-box"
                     placeholder="Search for place"
                 >
             </div>
             <div>
-                <ul
-                    id="maps-sdk-js-examples-autocompleteResults"
-                    class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"
-                ></ul>
-                <ul
-                    id="maps-sdk-js-examples-fuzzySearchResults"
-                    class="maps-sdk-js-examples-element maps-sdk-js-examples-result-item"
-                ></ul>
+                <ul id="sdk-example-autocompleteResults" class="sdk-example-element sdk-example-result-item"></ul>
+                <ul id="sdk-example-fuzzySearchResults" class="sdk-example-element sdk-example-result-item"></ul>
             </div>
         </div>
-        <div id="maps-sdk-js-examples-search-this-area"></div>
+        <div id="sdk-example-search-this-area"></div>
         <script type="module" src="./index.ts"></script>
     </body>
 </html>
