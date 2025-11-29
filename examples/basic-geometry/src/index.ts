@@ -11,7 +11,7 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     const location = await geocodeOne('Schiphol Airport, NL');
     const map = new TomTomMap(
         {
-            container: 'maps-sdk-js-examples-map-container',
+            container: 'sdk-map',
             zoom: 11,
             center: location.geometry.coordinates as LngLatLike,
         },
@@ -19,6 +19,6 @@ TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
     );
     const geometryModule = await GeometriesModule.get(map);
 
-        const geometryToSearch = await geometryData({ geometries: location });
-        geometryModule.show(geometryToSearch);
+    const geometryToSearch = await geometryData({ geometries: [location] });
+    geometryModule.show(geometryToSearch);
 })();
