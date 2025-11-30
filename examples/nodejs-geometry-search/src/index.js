@@ -5,7 +5,7 @@ dotenv.config({ path: '../.env' });
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { search } from '@tomtom-org/maps-sdk/services';
 
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES ?? '' });
+TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
 (async () => {
     const cafeResponse = await search({
