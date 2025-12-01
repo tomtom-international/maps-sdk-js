@@ -7,7 +7,7 @@
 // import './style.css';
 //
 // // (Set your own API key when working in your own environment)
-// TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
+// TomTomConfig.instance.put({ apiKey: API_KEY });
 //
 // const mapReachableRangesInit = async () => {
 //     const locations = await search({ query: "", poiCategories: ["AIRPORT"], countries: ["NL"], limit: 25 });

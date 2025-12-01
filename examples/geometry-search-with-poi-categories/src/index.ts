@@ -5,9 +5,10 @@ import bboxPolygon from '@turf/bbox-polygon';
 import difference from '@turf/difference';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
+import { API_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
+TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     // inverts the polygon, so it looks like a hole on the map instead

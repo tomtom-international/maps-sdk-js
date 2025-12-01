@@ -3,9 +3,10 @@ import { PlanningWaypoint, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk
 import { geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
+import { API_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
+TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const waypointA = await geocodeOne('Kensinton Road, London, UK');

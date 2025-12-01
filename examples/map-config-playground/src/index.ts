@@ -9,9 +9,10 @@ import {
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
 import './style.css';
+import { API_KEY } from './config';
 
 // TomTomConfig initialization
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-GB' });
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
     // Main map and modules initialization

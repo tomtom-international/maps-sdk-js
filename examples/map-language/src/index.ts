@@ -2,6 +2,7 @@ import type { Language } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
+import { API_KEY } from './config';
 
 const mapLanguages: { text: string; value: Language }[] = [
     { text: 'Neutral Ground Truth (Default)', value: 'ngt' },
@@ -16,7 +17,7 @@ const mapLanguages: { text: string; value: Language }[] = [
 const configLanguage: Language = 'nl-NL';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
+TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const map = new TomTomMap(

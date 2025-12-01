@@ -2,10 +2,11 @@ import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode } from '@tomtom-org/maps-sdk/services';
 import './style.css';
+import { API_KEY } from './config';
 import { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 const [firstGroup, secondGroup, thirdGroup] = await Promise.all([
     geocode({ query: '1051', countries: ['NL'] }), // searching for locations by postcode

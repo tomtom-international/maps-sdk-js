@@ -5,10 +5,11 @@ import airportEsSVG from './airport-pin-es.svg?raw';
 import airportFrSVG from './airport-pin-fr.svg?raw';
 import airportItSVG from './airport-pin-it.svg?raw';
 import './style.css';
+import { API_KEY } from './config';
 import { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 const [spainAirports, italyAirports, franceAirports] = await Promise.all([
     search({ query: '', countries: ['ES'], poiCategories: ['AIRPORT'], limit: 100 }), // searching for locations by postcode

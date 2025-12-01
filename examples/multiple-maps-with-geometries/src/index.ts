@@ -5,11 +5,12 @@ import { bboxPolygon, difference } from '@turf/turf';
 import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
+import { API_KEY } from './config';
 
 const mapsElement = document.querySelector('#sdk-example-maps-container') as HTMLElement;
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
     const invert = (geometry: Feature<Polygon | MultiPolygon>): PolygonFeatures => {

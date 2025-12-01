@@ -3,9 +3,10 @@ import { BaseMapModule, PlacesModule, TomTomMap, TrafficIncidentsModule } from '
 import { reverseGeocode, search } from '@tomtom-org/maps-sdk/services';
 import { LngLat, MapGeoJSONFeature, Marker, NavigationControl, Popup } from 'maplibre-gl';
 import './style.css';
+import { API_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
+TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const map = new TomTomMap({

@@ -2,9 +2,10 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { search } from '@tomtom-org/maps-sdk/services';
 import './style.css';
+import { API_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
     // Create a map centered on Amsterdam
