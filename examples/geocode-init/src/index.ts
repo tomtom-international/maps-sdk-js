@@ -9,7 +9,7 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const location = await geocodeOne('Mount Teide, Canary Islands');
+    const location = await geocodeOne('Canary Islands');
 
     new TomTomMap(
         {
