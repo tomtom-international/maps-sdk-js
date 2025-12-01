@@ -4,7 +4,7 @@ import type { MapFont, PlaceIconConfig, PlacesTheme } from '@tomtom-org/maps-sdk
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { search } from '@tomtom-org/maps-sdk/services';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
-import tomtomLogo from '../resources/tomtomLogo.png';
+import tomtomLogo from './tomtomLogo.png';
 import './style.css';
 
 // (Set your own API key when working in your own environment)

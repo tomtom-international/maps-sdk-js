@@ -19,7 +19,7 @@ import { isEmpty, without } from 'lodash-es';
 import { LngLatBoundsLike, LngLatLike, NavigationControl, Popup } from 'maplibre-gl';
 import { connectorIcons } from './connectorIcons';
 import { connectorNames } from './connectorNames';
-import genericIcon from './resources/ic-generic-24.svg?raw';
+import genericIcon from './ic-generic-24.svg?raw';
 import './style.css';
 
 // (Set your own API key when working in your own environment)
