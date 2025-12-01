@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
-    "@turf/turf": "^7.3.0",
+    "@turf/turf": "^7.3.1",
     "lodash-es": "catalog:"
   },
   "devDependencies": {

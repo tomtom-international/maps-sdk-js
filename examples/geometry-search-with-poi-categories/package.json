@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
-    "@turf/bbox-polygon": "^7.3.0",
-    "@turf/difference": "^7.3.0"
+    "@turf/bbox-polygon": "^7.3.1",
+    "@turf/difference": "^7.3.1"
   },
   "devDependencies": {
     "@types/node": "catalog:",

@@ -7,9 +7,8 @@
     "start-dev-server": "vite",
     "type-check": "tsc --noEmit"
   },
-
   "devDependencies": {
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.57.0",
     "@tsconfig/recommended": "catalog:",
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",

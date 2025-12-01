@@ -1,8 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
-import dotenv from 'dotenv';
-
-dotenv.config({ path: '../.env' });
 
 TomTomConfig.instance.put({ apiKey: process.env.API_KEY_EXAMPLES });
 
