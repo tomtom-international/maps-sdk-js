@@ -200,7 +200,7 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
 
         // We merge the given config with the previous one to ensure init config parameters are kept:
         // (the init config can have more parameters than the runtime one)
-        return { ...this.config, ...config };
+        return this.config || config ? { ...this.config, ...config } : undefined;
     }
 
     /**
