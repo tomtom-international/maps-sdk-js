@@ -1,4 +1,4 @@
-import type { Places, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
+import type { Place, Places, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
 import type { FuzzySearchParams, QueryIntent } from '../fuzzy-search';
 import { fuzzySearch } from '../fuzzy-search/fuzzySearch';
 import type { FuzzySearchTemplate } from '../fuzzy-search/fuzzySearchTemplate';
@@ -83,3 +83,28 @@ export const search = async (
     'geometries' in params
         ? geometrySearch(params, customTemplate as GeometrySearchTemplate)
         : fuzzySearch(params, customTemplate as FuzzySearchTemplate);
+
+/**
+ * Search for a single place by text query.
+ *
+ * Convenience function that calls {@link search} and returns the first result.
+ *
+ * @param query - Search query string
+ * @returns Promise resolving to the first matching place, or undefined if no results
+ *
+ * @example
+ * ```typescript
+ * const place = await searchOne('Vondelpark Amsterdam');
+ * if (place) {
+ *   console.log(place.properties.name);
+ * }
+ * ```
+ *
+ * @remarks
+ * * Useful to quickly find a single place, particularly a POI.
+ * * If you want to find a single address, consider 'geocodeOne'.
+ *
+ * @group Search
+ */
+export const searchOne = async (query: string): Promise<Place<SearchPlaceProps> | undefined> =>
+    (await search({ query, limit: 1 })).features[0];
