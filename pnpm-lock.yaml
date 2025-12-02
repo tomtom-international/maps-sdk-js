@@ -222,34 +222,6 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/basic-geometry/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/default-map:
     dependencies:
       '@tomtom-org/maps-sdk':
@@ -277,61 +249,6 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/default-map/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/dist:
-    devDependencies:
-      '@microsoft/api-extractor':
-        specifier: 'catalog:'
-        version: 7.55.1(@types/node@24.10.1)
-      '@tsconfig/recommended':
-        specifier: 'catalog:'
-        version: 1.0.13
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      rollup-plugin-analyzer:
-        specifier: 'catalog:'
-        version: 4.0.0
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-      vite-plugin-dts:
-        specifier: 'catalog:'
-        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.1(@types/node@24.10.1))(esbuild@0.25.12)(rollup@4.53.3)(typescript@5.9.3)(vite@7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
-      vite-plugin-singlefile:
-        specifier: 'catalog:'
-        version: 2.3.0(rollup@4.53.3)(vite@7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
 
   examples/ev-charging-stations-playground:
     dependencies:
@@ -432,34 +349,6 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/geocode/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/geometry-search-playground:
     dependencies:
       '@tomtom-org/maps-sdk':
@@ -530,34 +419,6 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/hillshade/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -826,37 +687,6 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/load-style-parts/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/map-config-playground:
     dependencies:
       '@tomtom-org/maps-sdk':
@@ -913,71 +743,12 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/map-events/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/map-language:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/map-route-reconstruction:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../..
-    devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.1
@@ -1251,37 +1022,6 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/places-in-geometry/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@turf/turf':
-        specifier: ^7.3.1
-        version: 7.3.1
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/places-maplibre-customization:
     dependencies:
       '@tomtom-org/maps-sdk':
@@ -1366,67 +1106,11 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/poi-filters/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/reachable-ranges:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/reachable-ranges/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1517,34 +1201,6 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/reverse-geocode/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1695,6 +1351,68 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
+  examples/route-monitor-traffic:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@types/geojson':
+        specifier: 'catalog:'
+        version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.1
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.12.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.2
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+
+  examples/route-reconstruction:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@types/geojson':
+        specifier: 'catalog:'
+        version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.1
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.12.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.2
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+
   examples/route-waypoint-icon-style:
     dependencies:
       '@tomtom-org/maps-sdk':
@@ -1757,73 +1475,11 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/route-with-alternatives/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/route-with-guidance:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-    devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/route/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
     devDependencies:
       '@types/geojson':
         specifier: 'catalog:'
@@ -1943,34 +1599,6 @@ importers:
         specifier: 'catalog:'
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  examples/traffic-flow/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
   examples/traffic-incidents:
     dependencies:
       '@tomtom-org/maps-sdk':
@@ -2004,37 +1632,6 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-    devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.1
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.12.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      rollup-plugin-visualizer:
-        specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.3)
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
-
-  examples/waypoints/dist:
-    dependencies:
-      '@tomtom-org/maps-sdk':
-        specifier: workspace:*
-        version: link:../../..
     devDependencies:
       '@types/geojson':
         specifier: 'catalog:'
