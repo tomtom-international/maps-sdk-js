@@ -1,21 +1,23 @@
 import type { DelayMagnitude, DisplayUnits, Route, Routes, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
 import { formatDistance, formatDuration } from '@tomtom-org/maps-sdk/core';
 import type { DisplayRouteProps, DisplayRouteSummaries } from '../types/displayRoutes';
-
 /**
  * Builds map display-ready routes, applying default style props.
  * @ignore
  */
-export const toDisplayRoutes = (routes: Routes, selectedIndex = 0): Routes<DisplayRouteProps> => ({
-    ...routes,
-    features: routes.features.map((route, index) => ({
-        ...route,
-        properties: {
-            ...route.properties,
-            routeState: index === selectedIndex ? 'selected' : 'deselected',
-        },
-    })),
-});
+export const toDisplayRoutes = (routes: Route | Routes, selectedIndex = 0): Routes<DisplayRouteProps> => {
+    const routesCollection: Routes = 'features' in routes ? routes : { type: 'FeatureCollection', features: [routes] };
+    return {
+        ...routesCollection,
+        features: routesCollection.features.map((route, index) => ({
+            ...route,
+            properties: {
+                ...route.properties,
+                routeState: index === selectedIndex ? 'selected' : 'deselected',
+            },
+        })),
+    };
+};
 
 const hasMagnitude = (sections: TrafficSectionProps[], magnitude: DelayMagnitude): boolean =>
     sections.some((section) => section.magnitudeOfDelay === magnitude);
@@ -36,7 +38,6 @@ const summaryDelayMagnitude = (route: Route): DelayMagnitude | undefined => {
     }
     return undefined;
 };
-
 /**
  * Builds map display-ready route summaries based on display routes.
  * @ignore

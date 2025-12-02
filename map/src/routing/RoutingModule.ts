@@ -364,7 +364,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * await routing.showWaypoints(response.routes[0].legs[0].points);
      * ```
      */
-    async showRoutes(routes: Routes, options?: ShowRoutesOptions) {
+    async showRoutes(routes: Route | Routes, options?: ShowRoutesOptions) {
         const displayRoutes = toDisplayRoutes(routes, options?.selectedIndex);
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.mainLines.show(displayRoutes);
