@@ -138,6 +138,8 @@ export type TrafficInput = 'live' | 'historical';
  * what makes a route "better" in the eyes of the routing engine.
  *
  * @remarks
+ * The cost model affects how the route path is calculated, but does not affect what other data the response includes.
+ *
  * The cost model balances multiple factors:
  * - Time efficiency
  * - Distance
@@ -179,12 +181,18 @@ export type CostModel = {
 
     /**
      * Decides how traffic is considered for computing routes.
+     *
      * Possible values are:
      * * live: In addition to historical travel times, routing and estimated travel time
      * consider traffic jams and short- and long-term closures during the travel time window.
      * * historical: Routing and estimated travel time consider historical travel times and long term closures.
      * Traffic jams and short-term closures during the travel time window do not influence routing or travel time.
+     *
      * @default live
+     *
+     * @remarks
+     * This setting does not affect whether live traffic is included in the response or not.
+     * * Considering historical traffic in cost model does not mean live traffic is not included in the response.
      */
     traffic?: TrafficInput;
 
