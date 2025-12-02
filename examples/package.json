@@ -4,7 +4,6 @@
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
   "module": "dist/examples.js",
-  "main": "dist/examples.js",
   "types": "dist/examples.d.ts",
   "scripts": {
     "build": "vite build"
@@ -19,9 +18,6 @@
     "vite-plugin-dts": "catalog:",
     "vite-plugin-singlefile": "catalog:"
   },
-  "publishConfig": {
-    "registry": "https://artifactory.tomtom.com/artifactory/api/npm/maps-sdk-js-npm-local/"
-  },
   "files": [
     "dist",
     "*/dist"
@@ -31,7 +27,5 @@
       "types": "./dist/examples.d.ts",
       "import": "./dist/examples.js"
     }
-  },
-  "author": "TomTom International B.V.",
-  "license": "ISC"
+  }
 }
