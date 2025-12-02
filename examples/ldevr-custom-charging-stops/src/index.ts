@@ -1,7 +1,6 @@
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import chargerFastSVG from './charger-fast.svg?raw';
 import chargerRegularSVG from './charger-regular.svg?raw';
 import chargerSlowSVG from './charger-slow.svg?raw';
@@ -16,8 +15,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     const map = new TomTomMap({
         container: 'sdk-map',
-        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 150 },
+        bounds: bboxFromGeoJSON(waypoints),
+        fitBoundsOptions: { padding: 100 },
     });
 
     const routingModule = await RoutingModule.get(map, {

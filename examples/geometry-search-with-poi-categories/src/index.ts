@@ -3,7 +3,6 @@ import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import bboxPolygon from '@turf/bbox-polygon';
 import difference from '@turf/difference';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -25,7 +24,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const map = new TomTomMap({
         container: 'sdk-map',
         fitBoundsOptions: { padding: 50 },
-        bounds: bboxFromGeoJSON(areaToSearch) as LngLatBoundsLike,
+        bounds: bboxFromGeoJSON(areaToSearch),
     });
 
     const areaGeometry = await geometryData({ geometries: areaToSearch });

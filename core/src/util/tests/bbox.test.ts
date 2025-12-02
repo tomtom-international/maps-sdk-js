@@ -87,7 +87,7 @@ describe('Bounding box from other bounding boxes', () => {
         expect(
             bboxFromBBoxes([
                 [10, 20, 50, 90],
-                [0, 0, 0, 0, 20, 20],
+                [0, 0, 0, 0],
                 [0, -30, 110, 80],
             ]),
         ).toEqual([0, -30, 110, 90]);
@@ -101,9 +101,9 @@ describe('BBox size tests', () => {
         expect(isBBoxWithArea([1] as never)).toStrictEqual(false);
         expect(isBBoxWithArea([1, 2, 1, 2])).toStrictEqual(false);
         expect(isBBoxWithArea([1, 3, 1, 2])).toStrictEqual(false);
-        expect(isBBoxWithArea([1, 2, 2, 2, 3, 4])).toStrictEqual(false);
+        expect(isBBoxWithArea([1, 2, 2, 2])).toStrictEqual(false);
         expect(isBBoxWithArea([1, 20, 10, 1])).toStrictEqual(true);
-        expect(isBBoxWithArea([1, 20, 10, 1, 2, 3])).toStrictEqual(true);
+        expect(isBBoxWithArea([1, 20, 10, 1])).toStrictEqual(true);
         expect(isBBoxWithArea([10, 2, 1, 20])).toStrictEqual(true);
         expect(isBBoxWithArea([-10, 2, 1, -20])).toStrictEqual(true);
         // (similar as above but with smaller differences):
@@ -216,7 +216,6 @@ describe('Bounding box getter/calculator function', () => {
 
     test('Extracting bounding box when passing already a bbox', () => {
         expect(bboxFromGeoJSON([1, 2, 3, 4])).toEqual([1, 2, 3, 4]);
-        expect(bboxFromGeoJSON([1, 2, 3, 4, 5, 6])).toEqual([1, 2, 3, 4, 5, 6]);
     });
 
     test('Extracting bounding box from single features and geometries that already have it', () => {

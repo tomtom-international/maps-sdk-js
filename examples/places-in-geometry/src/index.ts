@@ -1,8 +1,7 @@
-import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import { bboxPolygon, difference } from '@turf/turf';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -11,19 +10,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const placeToSearchInside = await geocode({ query: 'Amsterdam, NL', limit: 1 });
-    // (bounding box is also available directly in placeToSearchInside.bbox)
-    const placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
     const fitBoundsOptions = { padding: 50 };
 
     const map = new TomTomMap({
         container: 'sdk-map',
         fitBoundsOptions,
-        bounds: placeToSearchBBox,
+        bounds: placeToSearchInside.bbox,
     });
 
     document
         .querySelector('#sdk-example-reCenter')
-        ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
+        ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchInside.bbox, fitBoundsOptions));
 
     const geometryToSearch = await geometryData({ geometries: placeToSearchInside });
     // inverting for better look on the map

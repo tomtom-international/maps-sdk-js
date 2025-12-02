@@ -6,7 +6,6 @@ import airportFrSVG from './airport-pin-fr.svg?raw';
 import airportItSVG from './airport-pin-it.svg?raw';
 import './style.css';
 import { API_KEY } from './config';
-import { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
@@ -19,7 +18,7 @@ const [spainAirports, italyAirports, franceAirports] = await Promise.all([
 
 const map = new TomTomMap({
     container: 'sdk-map',
-    bounds: bboxFromGeoJSON([spainAirports, italyAirports, franceAirports]) as LngLatBoundsLike,
+    bounds: bboxFromGeoJSON([spainAirports, italyAirports, franceAirports]),
     fitBoundsOptions: { padding: 50 },
 });
 

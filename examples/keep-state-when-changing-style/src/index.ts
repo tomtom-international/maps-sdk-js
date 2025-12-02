@@ -9,7 +9,6 @@ import {
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, SearchResponse, search } from '@tomtom-org/maps-sdk/services';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -23,7 +22,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'es-ES' });
 
     const map = new TomTomMap({
         container: 'sdk-map',
-        bounds: bboxFromGeoJSON(locations) as LngLatBoundsLike,
+        bounds: bboxFromGeoJSON(locations),
         fitBoundsOptions: { padding: 100 },
     });
     await POIsModule.get(map, {

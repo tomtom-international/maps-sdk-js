@@ -3,7 +3,6 @@ import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { API_KEY } from './config';
-import { LngLatBoundsLike } from 'maplibre-gl';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
@@ -16,7 +15,7 @@ const [firstGroup, secondGroup, thirdGroup] = await Promise.all([
 
 const map = new TomTomMap({
     container: 'sdk-map',
-    bounds: bboxFromGeoJSON([firstGroup, secondGroup]) as LngLatBoundsLike,
+    bounds: bboxFromGeoJSON([firstGroup, secondGroup]),
     fitBoundsOptions: { padding: 50 },
 });
 

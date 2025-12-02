@@ -1,5 +1,4 @@
 import type {
-    BBox,
     Feature,
     FeatureCollection,
     GeoJsonObject,
@@ -10,7 +9,7 @@ import type {
     Polygon,
     Position,
 } from 'geojson';
-import type { HasBBox, OptionalBBox } from '../types';
+import type { BBox, HasBBox, OptionalBBox } from '../types';
 
 /**
  * Calculates whether the given bbox has area (width and height).
@@ -179,7 +178,7 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
     // Else...
     // Already containing a BBox:
     if (hasBBox.bbox) {
-        return hasBBox.bbox;
+        return hasBBox.bbox as BBox;
     }
     // Else...
     // Needs direct or recursive bbox extraction/calculation:

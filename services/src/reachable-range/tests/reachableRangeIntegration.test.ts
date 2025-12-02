@@ -1,4 +1,4 @@
-import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import type { BBox, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { isBBoxWithArea } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
@@ -12,7 +12,7 @@ describe.skip('Reachable Range integration tests', () => {
 
     const expectBasics = (result: PolygonFeature<ReachableRangeParams>, params: ReachableRangeParams): void => {
         expect(result).toBeDefined();
-        expect(isBBoxWithArea(result.bbox)).toBe(true);
+        expect(isBBoxWithArea(result.bbox as BBox)).toBe(true);
         expect(result.geometry.coordinates).toHaveLength(1);
         expect(result.geometry.coordinates[0].length).toBeGreaterThan(40);
         expect(result.properties).toMatchObject(params);

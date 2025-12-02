@@ -3,7 +3,6 @@ import { PlacesModule, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map
 import { calculateRoute, geocodeOne, search } from '@tomtom-org/maps-sdk/services';
 import buffer from '@turf/buffer';
 import type { Polygon } from 'geojson';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -16,7 +15,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const map = new TomTomMap({
         container: 'sdk-map',
-        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
+        bounds: bboxFromGeoJSON(waypoints),
         fitBoundsOptions: { padding: 100 },
     });
 

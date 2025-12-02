@@ -2,7 +2,6 @@ import type { Waypoint } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -10,7 +9,7 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const waypoints: Waypoint[] = await Promise.all([
+    const locations: Waypoint[] = await Promise.all([
         geocodeOne('W Houston St 51, NY'),
         geocodeOne('Lincoln Square, NY'),
         geocodeOne('Carnegie Hill, NY'),
@@ -19,11 +18,16 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const map = new TomTomMap({
         container: 'sdk-map',
-        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 150 },
+        bounds: bboxFromGeoJSON(locations),
+        fitBoundsOptions: { padding: 100 },
     });
 
     const routingModule = await RoutingModule.get(map);
-    routingModule.showWaypoints(waypoints);
-    routingModule.showRoutes(await calculateRoute({ locations: waypoints, costModel: { traffic: 'historical' } }));
+    routingModule.showWaypoints(locations);
+    routingModule.showRoutes(
+        await calculateRoute({
+            locations,
+            costModel: { traffic: 'historical' },
+        }),
+    );
 })();

@@ -1,5 +1,4 @@
 import type {
-    BBox,
     Feature,
     FeatureCollection,
     GeoJsonObject,
@@ -40,6 +39,15 @@ import type {
  * @group Shared
  */
 export type HasLngLat = Position | Point | Feature<Point>;
+
+/**
+ * A geographic bounding box defined by an array of four numbers.
+ *
+ * Bounding boxes follow the format: `[minLon, minLat, maxLon, maxLat]` or `[west, south, east, north]`
+ *
+ * @group Shared
+ */
+export type BBox = [number, number, number, number];
 
 /**
  * Input type representing a geographic bounding box or an object from which a bounding box can be derived.

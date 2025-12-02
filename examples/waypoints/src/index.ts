@@ -1,7 +1,6 @@
 import { asSoftWaypoint, bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlanningWaypoint, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocodeOne } from '@tomtom-org/maps-sdk/services';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -34,8 +33,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const map = new TomTomMap(
         {
             container: 'sdk-map',
-            bounds: bboxFromGeoJSON(allWaypoints) as LngLatBoundsLike,
-            fitBoundsOptions: { padding: 150 },
+            bounds: bboxFromGeoJSON(allWaypoints),
+            fitBoundsOptions: { padding: 100 },
         },
         { style: 'monoLight' },
     );
