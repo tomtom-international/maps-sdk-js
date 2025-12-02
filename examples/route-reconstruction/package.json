@@ -1,5 +1,5 @@
 {
-  "name": "@examples/map-route-reconstruction",
+  "name": "@examples/route-reconstruction",
   "description": "Map route reconstruction example",
   "scripts": {
     "build": "vite build",

@@ -2,7 +2,7 @@ import { bboxFromGeoJSON, RoutePlanningLocation, TomTomConfig, Waypoint } from '
 import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
-import { GeoJSONSource, LngLatBoundsLike, Map } from 'maplibre-gl';
+import { GeoJSONSource, Map } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -103,8 +103,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const map = new TomTomMap({
         container: 'sdk-map',
-        bounds: bboxFromGeoJSON(waypoints) as LngLatBoundsLike,
-        fitBoundsOptions: { padding: 150 },
+        bounds: bboxFromGeoJSON(waypoints),
+        fitBoundsOptions: { padding: 100 },
     });
 
     const routingModule = await RoutingModule.get(map);
