@@ -343,7 +343,7 @@ export const addOrUpdateImage = async (
     }
 
     // Helper function to add or update the image
-    const addOrUpdateImage = (imgElement: HTMLImageElement | ImageData | ImageBitmap) => {
+    const addOrUpdateToMap = (imgElement: HTMLImageElement | ImageData | ImageBitmap) => {
         const imageExists = map.hasImage(imageId);
         if (imageExists && mode == 'add-or-update') {
             map.updateImage(imageId, imgElement);
@@ -352,20 +352,34 @@ export const addOrUpdateImage = async (
         }
     };
 
+    const ensureImageLoaded = (imgElement: HTMLImageElement) => {
+        // An image is successfully loaded if it's complete AND has valid dimensions
+        // (naturalWidth > 0 ensures the image didn't fail to load)
+        if (imgElement.complete) {
+            if (imgElement.naturalWidth > 0) {
+                addOrUpdateToMap(imgElement);
+            } else {
+                // Image is complete but failed to load
+                console.warn(`Failed to load image for ID ${imageId}`);
+            }
+        } else {
+            imgElement.onload = () => addOrUpdateToMap(imgElement);
+            imgElement.onerror = () => console.warn(`Failed to load image for ID ${imageId}`);
+        }
+    };
+
     if (typeof imageToLoad === 'string') {
         if (imageToLoad.includes('<svg')) {
             // Supporting raw SVGs:
             const imgElement = svgToImg(parseSvg(imageToLoad));
-            // (Defensive setTimeout to ensure the image is loaded)
-            setTimeout(() => addOrUpdateImage(imgElement));
+            ensureImageLoaded(imgElement);
         } else {
             // Expecting image URL, so the image needs to be downloaded first:
-            addOrUpdateImage((await map.loadImage(imageToLoad)).data);
+            addOrUpdateToMap((await map.loadImage(imageToLoad)).data);
         }
     } else {
-        // Expecting HTMLImageElement, ready to be added:
-        // (Defensive setTimeout to ensure the image is loaded)
-        setTimeout(() => addOrUpdateImage(imageToLoad));
+        // Expecting HTMLImageElement, wait for it to be loaded
+        ensureImageLoaded(imageToLoad);
     }
 };
 
