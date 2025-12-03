@@ -1,6 +1,6 @@
 {
-  "name": "@examples/rev-geo",
-  "description": "Map reverse geocoding example",
+  "name": "@examples/rev-geo-playground",
+  "description": "Reverse Geocoding playground",
   "scripts": {
     "build": "vite build",
     "clean:dist": "rimraf ./dist",
