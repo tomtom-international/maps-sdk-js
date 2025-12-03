@@ -10,8 +10,7 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const map = new TomTomMap({ container: 'sdk-map', center: [4.89147, 52.37362], zoom: 17 }, { style: 'monoLight' });
-    let isMarkerVisible = false;
+    const map = new TomTomMap({ container: 'sdk-map', center: [4.8896, 52.3732], zoom: 20 }, { style: 'monoLight' });
 
     // we wait for the style to be loaded before adding our custom layers
     await map.mapLibreMap.once('styledata');
@@ -22,6 +21,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const clickedPlace = await PlacesModule.get(map, { icon: { default: { style: { fillColor: '#ffffff' } } } });
     const revGeoPlace = await PlacesModule.get(map, { icon: { default: { style: { fillColor: '#df1b12' } } } });
 
+    let isMarkerVisible = false;
     const removeMarkers = () => {
         revGeoPlace.clear();
         clickedPlace.clear();
@@ -67,5 +67,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     basemap.events.on('click', onMapClick);
 
     // Starting with a Pin in the map
-    await onMapClick(undefined, { lng: 4.8907, lat: 52.37311 } as LngLat);
+    await onMapClick(undefined, new LngLat(4.8896, 52.37321));
 })();
