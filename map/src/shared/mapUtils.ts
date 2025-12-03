@@ -60,9 +60,9 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
             if (typeof feature.properties[key] === 'string') {
                 try {
                     feature.properties[key] = JSON.parse(feature.properties[key]);
-                } catch (e) {
+                } catch (_e) {
                     // We ignore the error if the object can't be parsed and continue.
-                    console.warn('Cannot deserialize feature property', key, 'with value', feature.properties[key], e);
+                    // console.debug('Cannot deserialize feature property', key, 'with value', feature.properties[key], e);
                 }
             }
         }
