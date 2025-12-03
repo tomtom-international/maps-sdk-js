@@ -1,0 +1,145 @@
+---
+title: Long Distance EV Routing
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.35.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning" hasIcon>
+**Important note**
+Long Distance EV Routing is unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+</Blockquote>
+
+Long Distance EV Routing calculates routes for electric vehicles on extended journeys. When you provide an electric vehicle configuration with charging preferences, the `calculateRoute` method automatically calculates energy consumption, determines optimal charging stop locations, estimates charging time at each stop, and returns an extended route with additional legs for each charging stop.
+
+## Activation
+
+Long Distance EV Routing is activated when you provide:
+
+- `vehicle.preferences.chargingPreferences` – Minimum charge at destination/stops
+
+Additionally, these vehicle model parameters become required:
+- `vehicle.model.engine.charging.batteryCurve` – Battery charging characteristics
+- `vehicle.model.engine.charging.chargingConnectors` – Supported charging connectors
+
+*See [Vehicle Configuration](../../services/routing/vehicle.mdx) for the full EV configuration details.*
+
+## Response Structure
+
+*See [Route Object](../../core/route-object.mdx) for the base route structure details.*
+
+Routes with charging stops contain additional information:
+
+**Route Summary:**
+- `totalChargingTimeInSeconds` – Total time spent charging (sum of all stops)
+- `remainingChargeAtArrivalInPCT` – Battery level (in % of maxChargeKWH) when arriving at destination
+- `remainingChargeAtArrivalInkWh` – Battery level (in kWh) when arriving at destination
+
+**Each Leg Summary:**
+- `remainingChargeAtArrivalInPCT` – Battery level (in % of maxChargeKWH) at end of this leg
+- `remainingChargeAtArrivalInkWh` – Battery level (in kWh) at end of this leg
+
+**Charging Stop Leg Summary:**
+- `chargingInformationAtEndOfLeg` – Details about the charging stop (if leg ends at one):
+  - `chargePointOperator` – Operator of the charging station name and ID
+  - `chargingConnectionInfo` – Connector type, power, voltage, current
+  - `chargingParkExternalId` – Unique ID of the charging park
+  - `chargingParkName` – Name of the charging park
+  - `chargingParkOpeningHours` – Flag indicating 24/7 operation and time zone offset
+  - `chargingParkOperatorName` – Name of the charging park operator
+  - `chargingParkPowerInkW` – Maximum power of the charging park
+  - `chargingParkSpeed` – Speed category of the charging park (slow, regular, fast, ultra-fast)
+  - `chargingParkUuid` – UUID of the charging park
+  - `chargingStopType` – Type of charging stop ('Auto_Generated' or 'User_Defined')
+  - `chargingTimeInSeconds` – Time required to charge to target level
+  - `targetChargeInPCT` – Target battery level (in % of maxChargeKWH) after charging
+  - `targetChargeInkWh` – Target battery level (in kWh) after charging
+
+## Example
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const result = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676],  // Amsterdam
+        [13.4050, 52.5200]  // Berlin (long distance)
+    ],
+    vehicle: {
+        engineType: 'electric',
+        model: {
+            engine: {
+                charging: {
+                    maxChargeKWH: 75,
+                    batteryCurve: [
+                        { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+                        { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+                        { stateOfChargeInkWh: 80, maxPowerInkW: 40 },
+                    ],
+                    chargingConnectors: [
+                        {
+                            currentType: 'DC',
+                            plugTypes: ['Combo_to_IEC_62196_Type_2_Base'],
+                            efficiency: 0.9,
+                            maxPowerInkW: 150
+                        }
+                    ]
+                },
+                consumption: {
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 15 },
+                        { speedKMH: 90, consumptionUnitsPer100KM: 18 },
+                        { speedKMH: 120, consumptionUnitsPer100KM: 23 }
+                    ]
+                }
+            }
+        },
+        state: {
+            currentChargePCT: 80
+        },
+        preferences: {
+            chargingPreferences: {
+                minChargeAtDestinationPCT: 20,
+                minChargeAtChargingStopsPCT: 10
+            }
+        }
+    }
+});
+
+// Route now contains charging stops
+console.log(`Total legs: ${result.features[0].properties.sections.leg.length}`);
+console.log(`Total charging time: ${result.features[0].properties.summary.totalChargingTimeInSeconds}s`);
+```
+
+## Unsupported options
+
+- `costModel.routeType` – only 'fast' is supported (default)
+
+## API Reference
+
+- [CalculateRouteParams](/maps-sdk-js/api-reference/types/services.CalculateRouteParams.html) – Route calculation parameters
+- [VehicleParameters](/maps-sdk-js/api-reference/types/services.VehicleParameters.html) – Vehicle configuration
+- [ChargingStop](/maps-sdk-js/api-reference/types/core.ChargingStop.html) – Charging stop details
+- [Long Distance EV Routing API](https://docs.tomtom.com/long-distance-ev-routing-api/documentation/tomtom-maps/long-distance-ev-routing) – API documentation
+
+## Related Guides and Examples
+
+### Related Guides
+
+- [Route Planning Parameters](../../services/routing/parameters.mdx) – All routing options
+- [Vehicle Configuration](../../services/routing/vehicle.mdx) – Complete guide to EV parameters
+- [Route Object](../../core/route-object.mdx) – Understanding route structure
+
