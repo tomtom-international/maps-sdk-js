@@ -321,7 +321,7 @@ export class TomTomMap {
         }
         // Check if the CSS is already loaded to avoid duplicates:
         const existingLink = Array.from(document.querySelectorAll('link[rel="stylesheet"], style')).some((element) =>
-            element.textContent?.includes('maplibre'),
+            element.textContent?.includes('.maplibregl-map'),
         );
         if (existingLink) {
             return;
