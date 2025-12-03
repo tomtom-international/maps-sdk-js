@@ -1,6 +1,15 @@
-import type { DelayMagnitude, DisplayUnits, Route, Routes, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
-import { formatDistance, formatDuration } from '@tomtom-org/maps-sdk/core';
+import {
+    DelayMagnitude,
+    DisplayUnits,
+    formatDistance,
+    formatDuration,
+    generateId,
+    Route,
+    Routes,
+    TrafficSectionProps,
+} from '@tomtom-org/maps-sdk/core';
 import type { DisplayRouteProps, DisplayRouteSummaries } from '../types/displayRoutes';
+
 /**
  * Builds map display-ready routes, applying default style props.
  * @ignore
@@ -13,6 +22,7 @@ export const toDisplayRoutes = (routes: Route | Routes, selectedIndex = 0): Rout
             ...route,
             properties: {
                 ...route.properties,
+                id: route.properties.id ?? generateId(),
                 routeState: index === selectedIndex ? 'selected' : 'deselected',
             },
         })),
@@ -59,12 +69,13 @@ export const toDisplayRouteSummaries = (
                 coordinates: routeCoordinates[Math.round(routeCoordinates.length / 2)],
             },
             properties: {
+                id: route.properties.id ?? generateId(),
                 routeIndex: route.properties.index,
                 routeState: route.properties.routeState,
                 formattedDistance: formatDistance(summary.lengthInMeters, displayUnits?.distance),
-                formattedDuration: formatDuration(summary.travelTimeInSeconds, displayUnits?.time),
                 ...(magnitudeOfDelay && { magnitudeOfDelay }),
                 ...(formattedTraffic && { formattedTraffic }),
+                formattedDuration: formatDuration(summary.travelTimeInSeconds, displayUnits?.time),
             },
         };
     }),

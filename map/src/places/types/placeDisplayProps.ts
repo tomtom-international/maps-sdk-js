@@ -35,10 +35,8 @@ export type PlaceDisplayProps = {
      * Unique identifier for the place feature.
      *
      * @remarks
-     * Typically SDK features have IDs at the GeoJSON Feature root level, as per specification.
-     * However, MapLibre does not reuse the given feature ID. Either we generate it on the fly
+     * MapLibre does not reuse the feature IDs. Either we generate it on the fly
      * or use the one from properties via promotedId value.
-     * We must generate "id" property based on the feature id on the fly in "prepareForDisplay" functions.
      *
      * Used for:
      * - Feature identification in events
@@ -49,10 +47,9 @@ export type PlaceDisplayProps = {
      * ```typescript
      * id: 'place-123'
      * id: 'poi-456'
-     * id: 1234  // Numeric IDs also supported
      * ```
      */
-    id: string | number;
+    id: string;
 
     /**
      * Display title for the place on the map.

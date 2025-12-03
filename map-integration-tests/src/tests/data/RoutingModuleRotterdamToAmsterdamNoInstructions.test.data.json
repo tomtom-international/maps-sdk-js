@@ -1163,6 +1163,7 @@
       },
       "bbox": [4.35232, 51.93171, 4.88965, 52.37574],
       "properties": {
+        "index": 0,
         "summary": {
           "lengthInMeters": 76831,
           "travelTimeInSeconds": 3823,
@@ -3017,6 +3018,7 @@
       },
       "bbox": [4.46038, 51.938, 5.07632, 52.37322],
       "properties": {
+        "index": 1,
         "summary": {
           "lengthInMeters": 93952,
           "travelTimeInSeconds": 4361,
@@ -4532,6 +4534,7 @@
       },
       "bbox": [4.32121, 51.93171, 4.88965, 52.37574],
       "properties": {
+        "index": 2,
         "summary": {
           "lengthInMeters": 84142,
           "travelTimeInSeconds": 4185,

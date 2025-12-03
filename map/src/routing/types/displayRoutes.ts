@@ -61,6 +61,14 @@ export type RouteStateProps = {
  */
 export type DisplayRouteRelatedProps = RouteStateProps & {
     /**
+     * Unique identifier for the object to ensure it can be displayed on MapLibre.
+     *
+     * @remarks
+     * This id es expected to become the main feature id by MapLibre via the 'promotedId' property.
+     */
+    id: string;
+
+    /**
      * Zero-based index of this route in the routes array.
      *
      * @remarks

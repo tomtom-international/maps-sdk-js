@@ -1,4 +1,4 @@
-import { ChargingStop, ChargingStopProps, formatDuration, type Place, type Routes } from 'core';
+import { ChargingStop, ChargingStopProps, formatDuration, generateId, type Place, type Routes } from 'core';
 import { FeatureCollection, Point } from 'geojson';
 import { PlaceDisplayProps } from '../../places';
 import type { DisplayRouteProps, RouteStateProps } from '../types/displayRoutes';
@@ -61,7 +61,7 @@ export const toDisplayChargingStops = (
                         ...chargingStop,
                         properties: {
                             ...chargingStop.properties,
-                            id: chargingStop.properties.chargingParkId,
+                            id: chargingStop.properties.chargingParkId ?? generateId(),
                             iconID: getIconID(chargingStop, config),
                             title: formatTitle(chargingStop),
                             chargingPower: `${properties.chargingConnectionInfo?.chargingPowerInkW} kW`,

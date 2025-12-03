@@ -44,6 +44,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         coordinates: [2, 2],
                     },
                     properties: {
+                        id: 'route-0',
                         routeIndex: 0,
                         routeState: 'selected',
                         formattedDistance: '1 km',
@@ -72,7 +73,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         ],
                     },
                     properties: {
-                        id: 'route-0',
+                        id: 'route-10',
                         index: 0,
                         routeState: 'selected',
                         summary: {
@@ -104,6 +105,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         coordinates: [3, 3],
                     },
                     properties: {
+                        id: 'route-10',
                         routeIndex: 0,
                         routeState: 'selected',
                         formattedDistance: '½ mi',
@@ -168,6 +170,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         coordinates: [2, 2],
                     },
                     properties: {
+                        id: 'route-0',
                         routeIndex: 0,
                         routeState: 'selected',
                         formattedDistance: '½ mi',
@@ -257,6 +260,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         coordinates: [2, 2],
                     },
                     properties: {
+                        id: 'route-0',
                         routeIndex: 0,
                         routeState: 'selected',
                         formattedDistance: '2.5 kilometros',
@@ -270,6 +274,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         coordinates: [2, 2],
                     },
                     properties: {
+                        id: 'route-1',
                         routeIndex: 0,
                         routeState: 'selected',
                         formattedDistance: '1 kilometros',

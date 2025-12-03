@@ -100,10 +100,8 @@ export const toDisplayWaypoints = (
                     hardWaypointIndex++;
                 }
                 const title = buildWaypointTitle(waypoint);
-                const id = waypoint.id ?? generateId();
                 return {
                     ...waypoint,
-                    id,
                     ...(options?.entryPoints === 'main-when-available' && {
                         geometry: {
                             type: 'Point',
@@ -113,7 +111,7 @@ export const toDisplayWaypoints = (
                     }),
                     properties: {
                         ...waypoint.properties,
-                        id, // adding id in display properties due to GeoJSONSourceWithLayers promoteID feature
+                        id: (waypoint.properties?.id as string) ?? generateId(), // adding id in display properties due to GeoJSONSourceWithLayers promoteID feature
                         index,
                         indexType,
                         ...(title && { title }),

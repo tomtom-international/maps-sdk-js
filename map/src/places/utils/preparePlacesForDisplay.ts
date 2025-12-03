@@ -1,4 +1,4 @@
-import type { Place, Places, POICategory } from '@tomtom-org/maps-sdk/core';
+import { generateId, Place, Places, POICategory } from '@tomtom-org/maps-sdk/core';
 import { toMapDisplayPOICategory } from '../../pois/poiCategoryMapping';
 import { DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';
@@ -100,7 +100,7 @@ export const preparePlacesForDisplay = (
                 geometry: { ...place.geometry, bbox: place.bbox },
                 properties: {
                     ...place.properties,
-                    id: place.id,
+                    id: place.id ?? generateId(),
                     title,
                     iconID: getIconIDForPlace(place, instanceIndex, config),
                     ...(config?.theme === 'base-map' && { category: getPOILayerCategoryForPlace(place) }),

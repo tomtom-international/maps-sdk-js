@@ -22,7 +22,6 @@ describe('Tests about building route sections', () => {
             features: [
                 {
                     type: 'Feature',
-                    id: TEST_ID,
                     geometry: {
                         type: 'LineString',
                         coordinates: [
@@ -32,7 +31,7 @@ describe('Tests about building route sections', () => {
                         ],
                     },
                     properties: {
-                        id: TEST_ID,
+                        id: expect.any(String),
                         startPointIndex: 1,
                         endPointIndex: 3,
                         routeIndex: 0,
@@ -48,7 +47,6 @@ describe('Tests about building route sections', () => {
                             [1, 3],
                         ],
                     },
-                    id: TEST_ID,
                     properties: {
                         id: TEST_ID,
                         startPointIndex: 2,
@@ -66,7 +64,6 @@ describe('Tests about building route sections', () => {
             features: [
                 {
                     type: 'Feature',
-                    id: TEST_ID,
                     geometry: {
                         type: 'LineString',
                         coordinates: [
@@ -104,7 +101,6 @@ describe('Tests about building route sections', () => {
                             [1, 5],
                         ],
                     },
-                    id: TEST_ID,
                     properties: {
                         id: TEST_ID,
                         startPointIndex: 3,

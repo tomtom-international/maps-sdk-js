@@ -91,6 +91,27 @@ describe('prepareGeometryForDisplay', () => {
         expect(results.features[1].properties).toHaveProperty('color', '#00aabb');
     });
 
+    test('Prepare geometry for display with undefined title and color', () => {
+        const geometry: FeatureCollection<Polygon> = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: { type: 'Polygon', coordinates: [] },
+                },
+            ],
+        };
+
+        const config: GeometriesModuleConfig = {};
+
+        const results = prepareGeometryForDisplay(geometry, config);
+
+        expect(results.features[0].properties).not.toHaveProperty('color');
+        expect(results.features[0].properties).not.toHaveProperty('title');
+        expect(results.features[0].properties).toHaveProperty('id');
+    });
+
     test('Prepare title for display', () => {
         const geometries: FeatureCollection<Polygon | MultiPolygon> = {
             type: 'FeatureCollection',

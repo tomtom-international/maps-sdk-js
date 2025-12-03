@@ -1,5 +1,4 @@
-import type { TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
-import { formatDuration } from '@tomtom-org/maps-sdk/core';
+import { formatDuration, type TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
 import type { DisplayTrafficSectionProps } from '../types/routeSections';
 
 const hasJam = (sectionProps: TrafficSectionProps): boolean => sectionProps.categories.includes('jam');

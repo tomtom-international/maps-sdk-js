@@ -238,4 +238,35 @@ describe('test prepare places for display', () => {
             ],
         });
     });
+
+    test('prepare places for display with no id generates random ID', () => {
+        const placeWithoutId = {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [1, 1],
+            },
+            properties: {
+                type: 'POI',
+                poi: {
+                    name: 'Place without ID',
+                },
+                address: {
+                    freeformAddress: 'test address',
+                },
+            },
+        } as Place;
+
+        const result = preparePlacesForDisplay(placeWithoutId, 0);
+
+        expect(result.type).toBe('FeatureCollection');
+        expect(result.features).toHaveLength(1);
+
+        const feature = result.features[0];
+        // MapLibre does not reuse the given feature ID. Either we generate it on the fly or use the one from properties via promotedId value.
+        // (feature ID will be auto-generated due to GeoJsonSource 'promoteId' behavior, mapped to properties.id)
+        expect(feature.properties.id).toMatchObject(expect.any(String));
+        expect(feature.properties.title).toBe('Place without ID');
+        expect(feature.properties.iconID).toBe('default_place-0');
+    });
 });

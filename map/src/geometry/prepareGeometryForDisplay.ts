@@ -1,5 +1,4 @@
-import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
-import { bboxCenter, bboxFromCoordsArray } from '@tomtom-org/maps-sdk/core';
+import { bboxCenter, bboxFromCoordsArray, generateId, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
 import { isNil } from 'lodash-es';
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
@@ -130,9 +129,17 @@ export const prepareGeometryForDisplay = (
 ): PolygonFeatures<ExtraGeometryDisplayProps> => ({
     ...geometry,
     features: geometry.features.map((feature, index) => {
-        const title = feature.properties?.title ? feature.properties.title : buildTitle(feature, config);
-        const color = feature.properties?.color ? feature.properties.color : buildColor(config, index);
-        return { ...feature, properties: { ...feature.properties, title, color } };
+        const title = feature.properties?.title ?? buildTitle(feature, config);
+        const color = feature.properties?.color ?? buildColor(config, index);
+        return {
+            ...feature,
+            properties: {
+                ...feature.properties,
+                ...(title && { title }),
+                ...(color && { color }),
+                id: feature.properties?.id ?? generateId(),
+            },
+        };
     }),
 });
 
@@ -154,7 +161,7 @@ const getLongestArray = (coordinates: Position[][][]) =>
  * @returns
  * @ignore
  */
-export const prepareTitleForDisplay = (geometries: PolygonFeatures<GeoJsonProperties>): FeatureCollection<Point> => {
+export const prepareTitleForDisplay = (geometries: PolygonFeatures): FeatureCollection<Point> => {
     const features = geometries.features.map((feature) => {
         let coordinates: Position[] | Position | null;
 
@@ -171,7 +178,10 @@ export const prepareTitleForDisplay = (geometries: PolygonFeatures<GeoJsonProper
         return {
             type: 'Feature',
             geometry: { type: 'Point', coordinates },
-            properties: feature.properties,
+            properties: {
+                ...feature.properties,
+                id: feature.properties?.id ?? generateId(),
+            },
         } as Feature<Point>;
     });
 

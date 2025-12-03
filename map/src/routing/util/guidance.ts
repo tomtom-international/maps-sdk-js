@@ -1,4 +1,4 @@
-import type { Routes } from '@tomtom-org/maps-sdk/core';
+import { generateId, Routes } from '@tomtom-org/maps-sdk/core';
 import calcBearing from '@turf/bearing';
 import type { DisplayRouteProps } from '../types/displayRoutes';
 import type {
@@ -24,7 +24,12 @@ export const toDisplayInstructions = (routes: Routes<DisplayRouteProps>): Displa
                             type: 'LineString',
                             coordinates: instruction.routePath.map((pathPoint) => pathPoint.point),
                         },
-                        properties: { ...instruction, routeIndex, routeState: route.properties.routeState },
+                        properties: {
+                            ...instruction,
+                            id: generateId(),
+                            routeIndex,
+                            routeState: route.properties.routeState,
+                        },
                     }),
                 ) || [],
     ),
@@ -50,6 +55,7 @@ export const toDisplayInstructionArrows = (routes: Routes<DisplayRouteProps>): D
                         geometry: { type: 'Point', coordinates: instructionLastSegment[1] },
                         properties: {
                             ...instruction,
+                            id: generateId(),
                             routeIndex,
                             routeState: route.properties.routeState,
                             lastPointBearingDegrees: calcBearing(instructionLastSegment[0], instructionLastSegment[1]),

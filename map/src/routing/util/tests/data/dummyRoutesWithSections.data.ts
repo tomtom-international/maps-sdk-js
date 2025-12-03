@@ -1,4 +1,4 @@
-import type { RouteSummary, Routes } from '@tomtom-org/maps-sdk/core';
+import type { RouteSummary, Routes, SectionProps } from '@tomtom-org/maps-sdk/core';
 import type { DisplayRouteProps } from '../../../types/displayRoutes';
 
 export const dummyRoutesWithSectionsData: Routes<DisplayRouteProps> = {
@@ -26,10 +26,9 @@ export const dummyRoutesWithSectionsData: Routes<DisplayRouteProps> = {
                     leg: [],
                     ferry: [
                         {
-                            id: '123',
                             startPointIndex: 1,
                             endPointIndex: 3,
-                        },
+                        } as SectionProps,
                     ],
                     motorway: [
                         {

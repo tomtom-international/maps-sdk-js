@@ -211,7 +211,6 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
             this.setIconsVisible(config.icons.visible);
         }
         this._filter(config?.filters, config?.icons?.filters, false);
-        console.log(config);
         return config;
     }
 

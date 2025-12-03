@@ -1,5 +1,4 @@
-import type { Route, Routes, SectionProps, SectionType } from '@tomtom-org/maps-sdk/core';
-import { isNil } from 'lodash-es';
+import { generateId, Route, Routes, SectionProps, SectionType } from '@tomtom-org/maps-sdk/core';
 import type { DisplayRouteProps } from '../types/displayRoutes';
 import type { DisplaySectionProps, RouteSection, RouteSections } from '../types/routeSections';
 
@@ -16,7 +15,6 @@ const buildRouteSectionsFromRoute = <
 ): RouteSection<D>[] =>
     (route.properties.sections[sectionType] as S[])?.map((sectionProps) => ({
         type: 'Feature',
-        id: sectionProps.id,
         geometry: {
             type: 'LineString',
             coordinates: route.geometry.coordinates.slice(sectionProps.startPointIndex, sectionProps.endPointIndex + 1),
@@ -24,7 +22,8 @@ const buildRouteSectionsFromRoute = <
         properties: {
             ...(displaySectionPropsBuilder ? displaySectionPropsBuilder(sectionProps, route.properties) : sectionProps),
             routeState: route.properties.routeState,
-            ...(!isNil(route.properties.index) && { routeIndex: route.properties.index }),
+            routeIndex: route.properties.index,
+            id: sectionProps.id ?? generateId(),
         } as D,
     })) || [];
 
