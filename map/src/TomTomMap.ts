@@ -423,7 +423,7 @@ export class TomTomMap {
                 this.handleStyleData(options.keepState || true);
             }
         });
-        this.mapLibreMap.setStyle(buildStyleInput(this._params));
+        this.mapLibreMap.setStyle(buildStyleInput(this._params), { validate: false });
     };
 
     /**
