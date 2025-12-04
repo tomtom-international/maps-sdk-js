@@ -114,7 +114,7 @@ export const queryRenderedFeatures = async (
     page.evaluate(
         ({ layerIDs, lngLat }) => {
             const mapLibreMap = (globalThis as MapsSDKThis).mapLibreMap;
-            const options = { layers: layerIDs };
+            const options = { layers: layerIDs, validate: false };
             if (lngLat) {
                 return mapLibreMap.queryRenderedFeatures(mapLibreMap.project(lngLat as [number, number]), options);
             }
@@ -135,7 +135,9 @@ export const waitUntilRenderedFeatures = async (
             let currentFeatures: MapGeoJSONFeature[] = [];
             do {
                 await waitForTimeout(500);
+                console.log('will query rendered features...');
                 currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
+                console.log(currentFeatures);
             } while (currentFeatures.length != expectNumFeatures);
             return currentFeatures;
         },
