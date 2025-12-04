@@ -1,6 +1,6 @@
 {
   "name": "@tomtom-org/maps-sdk-examples",
-  "version": "0.35.4",
+  "version": "0.35.5",
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
   "module": "dist/examples.js",
