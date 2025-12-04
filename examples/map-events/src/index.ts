@@ -52,7 +52,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     };
 
     const initTrafficIncidents = async () => {
-        (await TrafficIncidentsModule.get(map)).events.on('long-hover', showTrafficPopup);
+        (await TrafficIncidentsModule.get(map, { visible: true })).events.on('long-hover', showTrafficPopup);
     };
 
     const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
