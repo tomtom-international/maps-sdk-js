@@ -290,7 +290,6 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
 
     private setupImages(config: PlacesModuleConfig | undefined): void {
         // Ensure default pin is added:
-        console.log('setupImages', this.defaultPlaceIconID);
         if (config?.icon) {
             // If we have custom icons, ensure they're added to the map style:
             for (const customIcon of config.icon.categoryIcons ?? []) {
@@ -329,7 +328,6 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
             }
         } else {
             // Ensure default pin is added:
-            console.log('Adding default pin icon for places module', this.defaultPlaceIconID);
             addOrUpdateImage('if-not-in-sprite', this.defaultPlaceIconID, defaultPin(), this.mapLibreMap, {
                 pixelRatio: 2,
             });

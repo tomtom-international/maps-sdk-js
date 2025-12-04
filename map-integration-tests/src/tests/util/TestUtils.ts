@@ -135,9 +135,7 @@ export const waitUntilRenderedFeatures = async (
             let currentFeatures: MapGeoJSONFeature[] = [];
             do {
                 await waitForTimeout(500);
-                console.log('will query rendered features...');
                 currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
-                console.log(currentFeatures);
             } while (currentFeatures.length != expectNumFeatures);
             return currentFeatures;
         },
