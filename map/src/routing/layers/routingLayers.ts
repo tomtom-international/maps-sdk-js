@@ -19,15 +19,47 @@ import {
 } from './routeTrafficSectionLayers';
 import { routeTunnelsLine } from './routeTunnelSectionLayers';
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from './routeVehicleRestrictedLayers';
-import { summaryBubbleSymbolPoint } from './summaryBubbleLayers';
+import { buildSummaryBubbleSymbolPoint, summaryBubbleSymbolPoint } from './summaryBubbleLayers';
 import { waypointLabels, waypointSymbols } from './waypointLayers';
+
+/**
+ * Helper function to add layer ID prefix to beforeID references, but only for internal routing layer IDs
+ * @ignore
+ */
+const prefixBeforeID = (beforeID: string | undefined, layerIDPrefix: string | undefined): string | undefined => {
+    if (!beforeID || !layerIDPrefix) {
+        return beforeID;
+    }
+    // Don't prefix map style layer IDs (they start with capital letters or contain specific prefixes)
+    if (beforeID.startsWith('route') || beforeID.startsWith('waypoint')) {
+        return `${layerIDPrefix}-${beforeID}`;
+    }
+    return beforeID;
+};
+
+/**
+ * Helper function to add instance suffix to image IDs for supporting multiple RoutingModule instances
+ * @ignore
+ */
+const suffixImageID = (imageID: string | undefined, instanceIndex: number | undefined): string | undefined => {
+    if (!imageID || instanceIndex === undefined) {
+        return imageID;
+    }
+    return `${imageID}-${instanceIndex}`;
+};
 
 /**
  * Generates the routing layers configuration for route visualization on the map.
  * @param config - Optional routing module configuration to customize layer properties.
+ * @param layerIDPrefix - Optional prefix to add to layer IDs for supporting multiple instances.
+ * @param instanceIndex - Optional instance index for image ID suffixes.
  * @ignore
  */
-export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<RouteLayersConfig> => {
+export const buildRoutingLayers = (
+    config: RoutingModuleConfig = {},
+    layerIDPrefix?: string,
+    instanceIndex?: number,
+): Required<RouteLayersConfig> => {
     const configLayers = config.layers;
     const configSectionLayers = configLayers?.sections;
     const mainColor = config.theme?.mainColor;
@@ -41,22 +73,22 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
             },
             routeLine: {
                 ...routeMainLine({ color: mainColor }),
-                beforeID: 'routeIncidentBackgroundLine',
+                beforeID: prefixBeforeID('routeIncidentBackgroundLine', layerIDPrefix),
                 ...configLayers?.mainLines?.routeLine,
             },
             routeOutline: {
                 ...routeOutline,
-                beforeID: 'routeLine',
+                beforeID: prefixBeforeID('routeLine', layerIDPrefix),
                 ...configLayers?.mainLines?.routeOutline,
             },
             routeDeselectedLine: {
                 ...routeDeselectedLine,
-                beforeID: 'routeOutline',
+                beforeID: prefixBeforeID('routeOutline', layerIDPrefix),
                 ...configLayers?.mainLines?.routeDeselectedLine,
             },
             routeDeselectedOutline: {
                 ...routeDeselectedOutline,
-                beforeID: 'routeDeselectedLine',
+                beforeID: prefixBeforeID('routeDeselectedLine', layerIDPrefix),
                 ...configLayers?.mainLines?.routeDeselectedOutline,
             },
             ...configLayers?.mainLines?.additional,
@@ -64,12 +96,12 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
         waypoints: {
             routeWaypointSymbol: {
                 ...waypointSymbols,
-                beforeID: 'routeSummaryBubbleSymbol',
+                beforeID: prefixBeforeID('routeSummaryBubbleSymbol', layerIDPrefix),
                 ...configLayers?.waypoints?.routeWaypointSymbol,
             },
             routeWaypointLabel: {
                 ...waypointLabels,
-                beforeID: 'routeWaypointSymbol',
+                beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
                 ...configLayers?.waypoints?.routeWaypointLabel,
             },
             ...configLayers?.waypoints?.additional,
@@ -77,7 +109,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
         chargingStops: {
             routeChargingStopSymbol: {
                 ...chargingStopSymbol(config.chargingStops),
-                beforeID: 'routeWaypointSymbol',
+                beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
                 ...configLayers?.chargingStops?.routeChargingStopSymbol,
             },
             ...configLayers?.chargingStops?.additional,
@@ -86,34 +118,34 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
             incident: {
                 routeIncidentJamSymbol: {
                     ...routeIncidentsJamSymbol,
-                    beforeID: 'routeChargingStopSymbol',
+                    beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
                     ...configSectionLayers?.incident?.routeIncidentJamSymbol,
                 },
                 routeIncidentCauseSymbol: {
                     ...routeIncidentsCauseSymbol,
-                    beforeID: 'routeChargingStopSymbol',
+                    beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
                     ...configSectionLayers?.incident?.routeIncidentCauseSymbol,
                 },
                 routeIncidentBackgroundLine: {
                     ...routeIncidentsBGLine,
-                    beforeID: 'routeIncidentDashedLine',
+                    beforeID: prefixBeforeID('routeIncidentDashedLine', layerIDPrefix),
                     ...configSectionLayers?.incident?.routeIncidentBackgroundLine,
                 },
                 routeIncidentDashedLine: {
                     ...routeIncidentsDashedLine,
-                    beforeID: 'routeTunnelLine',
+                    beforeID: prefixBeforeID('routeTunnelLine', layerIDPrefix),
                     ...configSectionLayers?.incident?.routeIncidentDashedLine,
                 },
             },
             ferry: {
                 routeFerryLine: {
                     ...routeFerriesLine,
-                    beforeID: 'routeLineArrows',
+                    beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix),
                     ...configSectionLayers?.ferry?.routeFerryLine,
                 },
                 routeFerrySymbol: {
                     ...routeFerriesSymbol,
-                    beforeID: 'routeIncidentJamSymbol',
+                    beforeID: prefixBeforeID('routeIncidentJamSymbol', layerIDPrefix),
                     ...configSectionLayers?.ferry?.routeFerrySymbol,
                 },
                 ...configSectionLayers?.ferry?.additional,
@@ -121,12 +153,12 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
             tollRoad: {
                 routeTollRoadOutline: {
                     ...routeTollRoadsOutline,
-                    beforeID: 'routeDeselectedOutline',
+                    beforeID: prefixBeforeID('routeDeselectedOutline', layerIDPrefix),
                     ...configSectionLayers?.tollRoad?.routeTollRoadOutline,
                 },
                 routeTollRoadSymbol: {
                     ...routeTollRoadsSymbol,
-                    beforeID: 'routeChargingStopSymbol',
+                    beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
                     ...configSectionLayers?.tollRoad?.routeTollRoadSymbol,
                 },
                 ...configSectionLayers?.tollRoad?.additional,
@@ -134,7 +166,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
             tunnel: {
                 routeTunnelLine: {
                     ...routeTunnelsLine,
-                    beforeID: 'routeLineArrows',
+                    beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix),
                     ...configSectionLayers?.tunnel?.routeTunnelLine,
                 },
                 ...configSectionLayers?.tunnel?.additional,
@@ -142,7 +174,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
             vehicleRestricted: {
                 routeVehicleRestrictedBackgroundLine: {
                     ...routeVehicleRestrictedBackgroundLine,
-                    beforeID: 'routeVehicleRestrictedForegroundLine',
+                    beforeID: prefixBeforeID('routeVehicleRestrictedForegroundLine', layerIDPrefix),
                     ...configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedBackgroundLine,
                 },
                 routeVehicleRestrictedForegroundLine: {
@@ -161,7 +193,7 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
             },
             routeInstructionOutline: {
                 ...instructionOutline,
-                beforeID: 'routeInstructionLine',
+                beforeID: prefixBeforeID('routeInstructionLine', layerIDPrefix),
                 ...configLayers?.instructionLines?.routeInstructionOutline,
             },
             ...configLayers?.instructionLines?.additional,
@@ -169,14 +201,22 @@ export const buildRoutingLayers = (config: RoutingModuleConfig = {}): Required<R
         instructionArrows: {
             routeInstructionArrowSymbol: {
                 ...instructionArrow,
-                beforeID: 'routeInstructionLine',
+                beforeID: prefixBeforeID('routeInstructionLine', layerIDPrefix),
+                ...(instanceIndex !== undefined && {
+                    layout: {
+                        ...instructionArrow.layout,
+                        'icon-image': suffixImageID(instructionArrow.layout?.['icon-image'] as string, instanceIndex),
+                    },
+                }),
                 ...configLayers?.instructionArrows?.routeInstructionArrowSymbol,
             },
             ...configLayers?.instructionArrows?.additional,
         },
         summaryBubbles: {
             routeSummaryBubbleSymbol: {
-                ...summaryBubbleSymbolPoint,
+                ...(instanceIndex !== undefined
+                    ? buildSummaryBubbleSymbolPoint(instanceIndex)
+                    : summaryBubbleSymbolPoint),
                 ...configLayers?.summaryBubbles?.routeSummaryBubbleSymbol,
             },
             ...configLayers?.summaryBubbles?.additional,

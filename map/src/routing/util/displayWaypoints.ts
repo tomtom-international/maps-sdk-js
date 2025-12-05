@@ -1,6 +1,7 @@
 import type { CommonPlaceProps, Waypoint, WaypointLike, Waypoints } from '@tomtom-org/maps-sdk/core';
 import { generateId, getPosition } from '@tomtom-org/maps-sdk/core';
 import type { Point, Position } from 'geojson';
+import { suffixNumber } from '../../shared/layers/utils';
 import {
     WAYPOINT_FINISH_IMAGE_ID,
     WAYPOINT_SOFT_IMAGE_ID,
@@ -24,18 +25,29 @@ export const buildWaypointTitle = (waypoint: Waypoint): string | undefined => {
     return placeProperties?.poi?.name ?? placeProperties?.address?.freeformAddress ?? undefined;
 };
 
-export const getImageIDForWaypoint = (waypoint: Waypoint, indexType: WaypointIndexType): string => {
+export const getImageIDForWaypoint = (
+    waypoint: Waypoint,
+    indexType: WaypointIndexType,
+    instanceIndex?: number,
+): string => {
     if (waypoint.properties.radiusMeters) {
-        return WAYPOINT_SOFT_IMAGE_ID;
+        return instanceIndex !== undefined
+            ? suffixNumber(WAYPOINT_SOFT_IMAGE_ID, instanceIndex)
+            : WAYPOINT_SOFT_IMAGE_ID;
     }
+    let baseImageID: string;
     switch (indexType) {
         case 'start':
-            return WAYPOINT_START_IMAGE_ID;
+            baseImageID = WAYPOINT_START_IMAGE_ID;
+            break;
         case 'finish':
-            return WAYPOINT_FINISH_IMAGE_ID;
+            baseImageID = WAYPOINT_FINISH_IMAGE_ID;
+            break;
         default:
-            return WAYPOINT_STOP_IMAGE_ID;
+            baseImageID = WAYPOINT_STOP_IMAGE_ID;
+            break;
     }
+    return instanceIndex !== undefined ? suffixNumber(baseImageID, instanceIndex) : baseImageID;
 };
 
 const toWaypointFromPosition = (position: Position): Waypoint => ({
@@ -75,10 +87,12 @@ export const isHardWaypoint = (waypoint: Waypoint): boolean => !waypoint.propert
  * Generates display-ready waypoints for the given planning context ones.
  * @param waypoints The planning context waypoints.
  * @param options
+ * @param instanceIndex Optional instance index for supporting multiple RoutingModule instances
  */
 export const toDisplayWaypoints = (
     waypoints: PlanningWaypoint[],
     options: WaypointsConfig | undefined,
+    instanceIndex?: number,
 ): Waypoints<WaypointDisplayProps> => {
     // Since waypoints are of mixed types (hard and soft), we need to calculate the hard-only indexes
     // in case we have stops with numbered icons:
@@ -115,7 +129,7 @@ export const toDisplayWaypoints = (
                         index,
                         indexType,
                         ...(title && { title }),
-                        iconID: getImageIDForWaypoint(waypoint, indexType),
+                        iconID: getImageIDForWaypoint(waypoint, indexType, instanceIndex),
                         ...(hardWaypoint && indexType === MIDDLE_INDEX && { stopDisplayIndex: hardWaypointIndex }),
                     },
                 };

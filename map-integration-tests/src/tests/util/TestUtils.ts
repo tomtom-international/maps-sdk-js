@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import type { GlobalConfig, Language, Place, Places, PolygonFeatures, WaypointLike, Waypoints } from 'core';
+import type { GlobalConfig, Language, Place, Places, PolygonFeatures, Routes, WaypointLike, Waypoints } from 'core';
 import type { Position } from 'geojson';
 import type {
     BaseMapModuleInitConfig,
@@ -283,6 +283,15 @@ export const initRouting = async (page: Page, config?: RoutingModuleConfig) =>
         const mapsSdkThis = globalThis as MapsSDKThis;
         mapsSdkThis.routing = await mapsSdkThis.MapsSDK.RoutingModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
+
+export const initRouting2 = async (page: Page, config?: RoutingModuleConfig) =>
+    page.evaluate(async (inputConfig) => {
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.routing2 = await mapsSdkThis.MapsSDK.RoutingModule.get(mapsSdkThis.tomtomMap, inputConfig);
+    }, config);
+
+export const showRoutes2 = async (page: Page, routes: Routes) =>
+    page.evaluate((inputRoutes: Routes) => (globalThis as MapsSDKThis).routing2?.showRoutes(inputRoutes), routes);
 
 export const showWaypoints = async (page: Page, waypoints: WaypointLike[]) =>
     page.evaluate((inputWaypoints) => {

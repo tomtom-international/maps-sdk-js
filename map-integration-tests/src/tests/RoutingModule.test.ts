@@ -18,10 +18,12 @@ import {
     getPaintProperty,
     initHillshade,
     initRouting,
+    initRouting2,
     moveAndZoomTo,
     putGlobalConfig,
     queryRenderedFeatures,
     setStyle,
+    showRoutes2,
     showWaypoints,
     waitForMapIdle,
     waitForTimeout,
@@ -30,73 +32,77 @@ import {
     zoomTo,
 } from './util/TestUtils';
 
-const ROUTE_LINE_LAYER_ID = 'routeLine';
-const ROUTE_DESELECTED_LINE_LAYER_ID = 'routeDeselectedLine';
-const ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID = 'routeWaypointSymbol';
-const ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID = 'routeVehicleRestrictedForegroundLine';
-const ROUTE_FERRIES_LINE_LAYER_ID = 'routeFerryLine';
-const ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID = 'routeTollRoadOutline';
-const ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID = 'routeIncidentJamSymbol';
-const ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID = 'routeIncidentCauseSymbol';
-const ROUTE_CHARGING_STOPS_SYMBOL_LAYER_ID = 'routeChargingStopSymbol';
-const ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID = 'routeSummaryBubbleSymbol';
-const ROUTE_INSTRUCTIONS_LINE_LAYER_ID = 'routeInstructionLine';
-const ROUTE_INSTRUCTIONS_ARROW_LAYER_ID = 'routeInstructionArrowSymbol';
-
-// Locally define source ID constants (matching RoutingModule.ts values)
-const ROUTE_CHARGING_STOPS_SOURCE_ID = 'routeChargingStops';
-const ROUTE_FERRIES_SOURCE_ID = 'routeFerries';
-const ROUTE_INCIDENTS_SOURCE_ID = 'routeIncidents';
-const ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID = 'routeInstructionArrows';
-const ROUTE_INSTRUCTION_LINES_SOURCE_ID = 'routeInstructionLines';
-const ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID = 'routeSummaryBubbles';
-const ROUTE_TOLL_ROADS_SOURCE_ID = 'routeTollRoads';
-const ROUTE_TUNNELS_SOURCE_ID = 'routeTunnels';
-const ROUTE_VEHICLE_RESTRICTED_SOURCE_ID = 'routeVehicleRestricted';
-const ROUTE_MAIN_LINES_SOURCE_ID = 'routeMainLines';
-const WAYPOINTS_SOURCE_ID = 'routeWaypoints';
-
-const applyConfig = async (page: Page, config: RoutingModuleConfig) =>
-    // @ts-ignore
-    page.evaluate((inputConfig) => (globalThis as MapsSDKThis).routing?.applyConfig(inputConfig), config);
-
-const showRoutes = async (page: Page, routes: Routes) =>
-    page.evaluate((inputRoutes: Routes) => (globalThis as MapsSDKThis).routing?.showRoutes(inputRoutes), routes);
-
-const selectRoute = async (page: Page, index: number) =>
-    page.evaluate((inputIndex: number) => (globalThis as MapsSDKThis).routing?.selectRoute(inputIndex), index);
-
-const clearRoutes = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearRoutes());
-
-const clearWaypoints = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
-
-const waitForRenderedWaypoints = async (page: Page, numWaypoints: number) =>
-    waitUntilRenderedFeatures(page, [ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID], numWaypoints, 5000);
-
-const getSelectedSummaryBubbleProps = async (page: Page): Promise<DisplayRouteSummaryProps | undefined> => {
-    const renderedBubbles: MapGeoJSONFeature[] = await queryRenderedFeatures(page, [
-        ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID,
-    ]);
-    return renderedBubbles.find((f) => f.properties?.routeState === 'selected')?.properties as DisplayRouteSummaryProps;
-};
-
-// (We reparse the route because it contains Date objects):
-const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJson));
-const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJson));
-
-const NUM_WAYPOINT_LAYERS = 2;
-const NUM_ROUTE_LAYERS = 5;
-const NUM_VEHICLE_RESTRICTED_LAYERS = 2;
-const NUM_INCIDENT_LAYERS = 4;
-const NUM_FERRY_LAYERS = 2;
-const NUM_TUNNEL_LAYERS = 1;
-const NUM_TOLL_ROAD_LAYERS = 2;
-const NUM_EV_STATION_LAYERS = 1;
-const NUM_INSTRUCTION_LINE_LAYERS = 2;
-const NUM_INSTRUCTION_ARROW_LAYERS = 1;
-const NUM_SUMMARY_BUBBLE_LAYERS = 1;
-
 test.describe('Routing and waypoint display tests', () => {
+    const ID_PREFIX = 'routes-0';
+
+    // Layer IDs (including instance index prefix)
+    const ROUTE_LINE_LAYER_ID = `${ID_PREFIX}-routeLine`;
+    const ROUTE_DESELECTED_LINE_LAYER_ID = `${ID_PREFIX}-routeDeselectedLine`;
+    const ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID = `${ID_PREFIX}-routeWaypointSymbol`;
+    const ROUTE_VEHICLE_RESTRICTED_FOREGROUND_LAYER_ID = `${ID_PREFIX}-routeVehicleRestrictedForegroundLine`;
+    const ROUTE_FERRIES_LINE_LAYER_ID = `${ID_PREFIX}-routeFerryLine`;
+    const ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID = `${ID_PREFIX}-routeTollRoadOutline`;
+    const ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID = `${ID_PREFIX}-routeIncidentJamSymbol`;
+    const ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID = `${ID_PREFIX}-routeIncidentCauseSymbol`;
+    const ROUTE_CHARGING_STOPS_SYMBOL_LAYER_ID = `${ID_PREFIX}-routeChargingStopSymbol`;
+    const ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID = `${ID_PREFIX}-routeSummaryBubbleSymbol`;
+    const ROUTE_INSTRUCTIONS_LINE_LAYER_ID = `${ID_PREFIX}-routeInstructionLine`;
+    const ROUTE_INSTRUCTIONS_ARROW_LAYER_ID = `${ID_PREFIX}-routeInstructionArrowSymbol`;
+
+    // Source IDs (including instance index prefix)
+    const ROUTE_CHARGING_STOPS_SOURCE_ID = `${ID_PREFIX}-chargingStops`;
+    const ROUTE_FERRIES_SOURCE_ID = `${ID_PREFIX}-ferries`;
+    const ROUTE_INCIDENTS_SOURCE_ID = `${ID_PREFIX}-incidents`;
+    const ROUTE_INSTRUCTIONS_ARROWS_SOURCE_ID = `${ID_PREFIX}-instructionArrows`;
+    const ROUTE_INSTRUCTION_LINES_SOURCE_ID = `${ID_PREFIX}-instructionLines`;
+    const ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID = `${ID_PREFIX}-summaryBubbles`;
+    const ROUTE_TOLL_ROADS_SOURCE_ID = `${ID_PREFIX}-tollRoads`;
+    const ROUTE_TUNNELS_SOURCE_ID = `${ID_PREFIX}-tunnels`;
+    const ROUTE_VEHICLE_RESTRICTED_SOURCE_ID = `${ID_PREFIX}-vehicleRestricted`;
+    const ROUTE_MAIN_LINES_SOURCE_ID = `${ID_PREFIX}-mainLines`;
+    const WAYPOINTS_SOURCE_ID = `${ID_PREFIX}-waypoints`;
+
+    const applyConfig = async (page: Page, config: RoutingModuleConfig) =>
+        // @ts-ignore
+        page.evaluate((inputConfig) => (globalThis as MapsSDKThis).routing?.applyConfig(inputConfig), config);
+
+    const showRoutes = async (page: Page, routes: Routes) =>
+        page.evaluate((inputRoutes: Routes) => (globalThis as MapsSDKThis).routing?.showRoutes(inputRoutes), routes);
+
+    const selectRoute = async (page: Page, index: number) =>
+        page.evaluate((inputIndex: number) => (globalThis as MapsSDKThis).routing?.selectRoute(inputIndex), index);
+
+    const clearRoutes = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearRoutes());
+
+    const clearWaypoints = async (page: Page) =>
+        page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
+
+    const waitForRenderedWaypoints = async (page: Page, numWaypoints: number) =>
+        waitUntilRenderedFeatures(page, [ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID], numWaypoints, 5000);
+
+    const getSelectedSummaryBubbleProps = async (page: Page): Promise<DisplayRouteSummaryProps | undefined> => {
+        const renderedBubbles: MapGeoJSONFeature[] = await queryRenderedFeatures(page, [
+            ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID,
+        ]);
+        return renderedBubbles.find((f) => f.properties?.routeState === 'selected')
+            ?.properties as DisplayRouteSummaryProps;
+    };
+
+    // (We reparse the route because it contains Date objects):
+    const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJson));
+    const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJson));
+
+    const NUM_WAYPOINT_LAYERS = 2;
+    const NUM_ROUTE_LAYERS = 5;
+    const NUM_VEHICLE_RESTRICTED_LAYERS = 2;
+    const NUM_INCIDENT_LAYERS = 4;
+    const NUM_FERRY_LAYERS = 2;
+    const NUM_TUNNEL_LAYERS = 1;
+    const NUM_TOLL_ROAD_LAYERS = 2;
+    const NUM_EV_STATION_LAYERS = 1;
+    const NUM_INSTRUCTION_LINE_LAYERS = 2;
+    const NUM_INSTRUCTION_ARROW_LAYERS = 1;
+    const NUM_SUMMARY_BUBBLE_LAYERS = 1;
     // TODO: assert traffic incident visuals where more than one incident cause is to be shown (jam + accident, etc.)
 
     test('Basic routes and waypoints show and clear flows', async ({ page }) => {
@@ -455,13 +461,13 @@ test.describe('Routing and waypoint display tests', () => {
             index: 3,
             indexType: 'finish',
             title: 'This is a test POI.',
-            iconID: 'waypointFinish',
+            iconID: 'waypointFinish-0',
         });
         expect(renderedWaypoints[1].properties).toEqual({
             id: expect.any(String),
             index: 2,
             indexType: 'middle',
-            iconID: 'waypointSoft',
+            iconID: 'waypointSoft-0',
             radiusMeters: 30,
         });
         expect(renderedWaypoints[2].properties).toEqual({
@@ -470,14 +476,14 @@ test.describe('Routing and waypoint display tests', () => {
             index: 1,
             indexType: 'middle',
             title: 'This is a test address, 9999 Some Country',
-            iconID: 'waypointStop',
+            iconID: 'waypointStop-0',
             stopDisplayIndex: 1,
         });
         expect(renderedWaypoints[3].properties).toEqual({
             id: expect.any(String),
             index: 0,
             indexType: 'start',
-            iconID: 'waypointStart',
+            iconID: 'waypointStart-0',
         });
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -560,6 +566,55 @@ test.describe('Routing and waypoint display tests', () => {
             formattedDuration: '1 HR 04 MIN',
             formattedTraffic: '3 MIN',
         });
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+});
+
+test.describe('Multiple routing module instances', () => {
+    // (We reparse the route because it contains Date objects):
+    const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJson));
+    const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJson));
+
+    const NUM_ROUTE_LAYERS = 5;
+
+    const showRoutes = async (page: Page, routes: Routes) =>
+        page.evaluate((inputRoutes: Routes) => (globalThis as MapsSDKThis).routing?.showRoutes(inputRoutes), routes);
+
+    test('Multiple routing module instances with different main colors', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: rotterdamToAmsterdamRoutes.bbox,
+            fitBoundsOptions: { padding: 150 },
+        });
+
+        // Initialize two routing modules with different main colors
+        await initRouting(page, { theme: { mainColor: 'white' } });
+        await initRouting2(page, { theme: { mainColor: '#FF0000' } });
+
+        // Show Rotterdam to Amsterdam routes on first instance
+        await showRoutes(page, rotterdamToAmsterdamRoutes);
+        await waitForMapIdle(page);
+
+        // Show LDEVR routes on second instance
+        await showRoutes2(page, ldevrTestRoutes);
+        await waitForMapIdle(page);
+
+        // Assert that both route line layers are visible
+        const ID_PREFIX_1 = 'routes-0';
+        const ID_PREFIX_2 = 'routes-1';
+        const ROUTE_LINE_LAYER_1 = `${ID_PREFIX_1}-routeLine`;
+        const ROUTE_LINE_LAYER_2 = `${ID_PREFIX_2}-routeLine`;
+
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_1], 1, 5000);
+        await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_2], 1, 5000);
+
+        // Verify different colors are applied
+        expect(await getPaintProperty(page, ROUTE_LINE_LAYER_1, 'line-color')).toBe('white');
+        expect(await getPaintProperty(page, ROUTE_LINE_LAYER_2, 'line-color')).toBe('#FF0000');
+
+        // Assert that both routes have visible layers
+        expect(await getNumVisibleLayersBySource(page, `${ID_PREFIX_1}-mainLines`)).toBe(NUM_ROUTE_LAYERS);
+        expect(await getNumVisibleLayersBySource(page, `${ID_PREFIX_2}-mainLines`)).toBe(NUM_ROUTE_LAYERS);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

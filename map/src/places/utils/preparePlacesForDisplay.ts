@@ -1,6 +1,7 @@
 import { generateId, Place, Places, POICategory } from '@tomtom-org/maps-sdk/core';
 import { toMapDisplayPOICategory } from '../../pois/poiCategoryMapping';
 import { DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
+import { suffixNumber } from '../../shared/layers/utils';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';
 import type { PlacesModuleConfig } from '../types/placesModuleConfig';
 import { toMapDisplayPin } from './pinCategoryStandardMapping';
@@ -12,12 +13,6 @@ import { toMapDisplayPin } from './pinCategoryStandardMapping';
  */
 export const buildPlaceTitle = (place: Place): string =>
     place.properties.poi?.name ?? place.properties.address.freeformAddress;
-
-/**
- * @ignore
- */
-export const imageIDWithInstanceSuffix = (baseID: string, instanceIndex: number): string =>
-    `${baseID}-${instanceIndex}`;
 
 /**
  * Gets the map style sprite image ID to display on the map for the give place.
@@ -32,11 +27,11 @@ export const getIconIDForPlace = (place: Place, instanceIndex: number, config: P
     const classificationCode = place.properties.poi?.classifications?.[0]?.code as POICategory;
     const matchingCustomIcon = categoryIcons?.find((customIcon) => customIcon.id === classificationCode);
     if (matchingCustomIcon) {
-        return imageIDWithInstanceSuffix(matchingCustomIcon.id, instanceIndex);
+        return suffixNumber(matchingCustomIcon.id, instanceIndex);
     }
     // Else: if no custom icon matched, we map to the map style icons:
 
-    const defaultPlaceIconID = imageIDWithInstanceSuffix(DEFAULT_PLACE_ICON_ID, instanceIndex);
+    const defaultPlaceIconID = suffixNumber(DEFAULT_PLACE_ICON_ID, instanceIndex);
     let iconId: string;
     if (iconTheme === 'pin') {
         iconId = toMapDisplayPin(place, defaultPlaceIconID);

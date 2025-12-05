@@ -61,10 +61,15 @@ const clearWaypointsClickHandlers = async (page: Page) =>
         mapsSdkThis.routing?.events.waypoints.off('contextmenu');
     });
 
-const waitForWaypointsEventState = async (page: Page, eventState: EventType | undefined, id?: string) =>
-    waitForEventState(page, eventState, ['routeWaypointSymbol'], id);
-
 test.describe('Routing and waypoint events tests', () => {
+    const ID_PREFIX = 'routes-0';
+
+    // Layer IDs (including instance index prefix)
+    const ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID = `${ID_PREFIX}-routeWaypointSymbol`;
+
+    const waitForWaypointsEventState = async (page: Page, eventState: EventType | undefined, id?: string) =>
+        waitForEventState(page, eventState, [ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID], id);
+
     const mapEnv = new MapTestEnv();
     test.beforeEach(async ({ page }) => {
         await mapEnv.loadPageAndMap(

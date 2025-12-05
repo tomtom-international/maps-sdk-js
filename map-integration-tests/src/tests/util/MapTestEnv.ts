@@ -23,6 +23,7 @@ const resetMapModules = async (page: Page) =>
         mapSdkThis.places2 = undefined;
         mapSdkThis.geometries = undefined;
         mapSdkThis.routing = undefined;
+        mapSdkThis.routing2 = undefined;
     });
 
 const resetEventsTestData = async (page: Page) =>

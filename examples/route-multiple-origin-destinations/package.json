@@ -1,0 +1,23 @@
+{
+  "name": "@examples/route-multiple-origin-destinations",
+  "description": "Multiple Parallel Routes - demonstrates using multiple RoutingModule instances with coordinate pairs",
+  "scripts": {
+    "build": "vite build",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/geojson": "catalog:",
+    "@types/node": "catalog:",
+    "maplibre-gl": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

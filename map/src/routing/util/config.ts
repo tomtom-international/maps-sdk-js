@@ -9,37 +9,51 @@ import type { RoutingLayersSpecs } from '../types/routingSourcesAndLayers';
  */
 const mapLayerSpecs = (
     layerSpecs: Record<string, Partial<ToBeAddedLayerSpecTemplate>> = {},
+    layerIDPrefix?: string,
 ): ToBeAddedLayerSpecWithoutSource[] =>
     // The key of the entry is the layer ID:
-    Object.entries(layerSpecs).map(([id, spec]) => ({ ...spec, id }) as ToBeAddedLayerSpecWithoutSource);
+    Object.entries(layerSpecs).map(
+        ([id, spec]) =>
+            ({
+                ...spec,
+                id: layerIDPrefix ? `${layerIDPrefix}-${id}` : id,
+            }) as ToBeAddedLayerSpecWithoutSource,
+    );
 
 /**
  * @ignore
  */
-export const createLayersSpecs = (layerConfigs: RouteLayersConfig = {}): RoutingLayersSpecs => ({
-    mainLines: mapLayerSpecs(layerConfigs.mainLines),
-    waypoints: mapLayerSpecs(layerConfigs.waypoints),
-    chargingStops: mapLayerSpecs(layerConfigs?.chargingStops),
-    ferries: mapLayerSpecs(layerConfigs.sections?.ferry),
-    incidents: mapLayerSpecs(layerConfigs.sections?.incident),
-    tollRoads: mapLayerSpecs(layerConfigs.sections?.tollRoad),
-    tunnels: mapLayerSpecs(layerConfigs.sections?.tunnel),
-    vehicleRestricted: mapLayerSpecs(layerConfigs.sections?.vehicleRestricted),
-    instructionLines: mapLayerSpecs(layerConfigs.instructionLines),
-    instructionArrows: mapLayerSpecs(layerConfigs.instructionArrows),
-    summaryBubbles: mapLayerSpecs(layerConfigs.summaryBubbles),
+export const createLayersSpecs = (
+    layerConfigs: RouteLayersConfig = {},
+    layerIDPrefix?: string,
+): RoutingLayersSpecs => ({
+    mainLines: mapLayerSpecs(layerConfigs.mainLines, layerIDPrefix),
+    waypoints: mapLayerSpecs(layerConfigs.waypoints, layerIDPrefix),
+    chargingStops: mapLayerSpecs(layerConfigs?.chargingStops, layerIDPrefix),
+    ferries: mapLayerSpecs(layerConfigs.sections?.ferry, layerIDPrefix),
+    incidents: mapLayerSpecs(layerConfigs.sections?.incident, layerIDPrefix),
+    tollRoads: mapLayerSpecs(layerConfigs.sections?.tollRoad, layerIDPrefix),
+    tunnels: mapLayerSpecs(layerConfigs.sections?.tunnel, layerIDPrefix),
+    vehicleRestricted: mapLayerSpecs(layerConfigs.sections?.vehicleRestricted, layerIDPrefix),
+    instructionLines: mapLayerSpecs(layerConfigs.instructionLines, layerIDPrefix),
+    instructionArrows: mapLayerSpecs(layerConfigs.instructionArrows, layerIDPrefix),
+    summaryBubbles: mapLayerSpecs(layerConfigs.summaryBubbles, layerIDPrefix),
 });
 
 /**
  * @ignore
  */
-export const routeModuleConfigWithDefaults = (config: RoutingModuleConfig | undefined): RoutingModuleConfig => {
+export const routeModuleConfigWithDefaults = (
+    config: RoutingModuleConfig | undefined,
+    layerIDPrefix: string,
+    instanceIndex: number,
+): RoutingModuleConfig => {
     const globalDisplayUnits = TomTomConfig.instance.get().displayUnits;
     const displayUnits = config?.displayUnits;
     return {
         // First apply the provided configuration not to lose any properties:
         ...config,
         ...(displayUnits ? {} : { displayUnits: globalDisplayUnits }),
-        layers: buildRoutingLayers(config),
+        layers: buildRoutingLayers(config, layerIDPrefix, instanceIndex),
     };
 };

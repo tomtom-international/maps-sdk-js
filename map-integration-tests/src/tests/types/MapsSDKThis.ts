@@ -33,6 +33,7 @@ export type MapsSDKThis = typeof globalThis & {
     places2?: PlacesModule;
     geometries?: GeometriesModule;
     routing?: RoutingModule;
+    routing2?: RoutingModule;
     // These properties are used for testing events in a map
     // It's initialized by 0 and you can assert the count of:
     // Hovers

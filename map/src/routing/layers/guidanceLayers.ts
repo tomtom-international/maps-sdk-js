@@ -48,7 +48,7 @@ export const instructionArrow: LayerSpecTemplate<SymbolLayerSpecification> = {
     type: 'symbol',
     layout: {
         'icon-allow-overlap': true,
-        'icon-image': INSTRUCTION_ARROW_IMAGE_ID,
+        'icon-image': INSTRUCTION_ARROW_IMAGE_ID, // Will be updated with instance suffix in config
         'icon-rotation-alignment': 'map',
         'icon-rotate': ['get', 'lastPointBearingDegrees'],
         'icon-size': ['interpolate', ['linear'], ['zoom'], 16, 1, 22, 2],

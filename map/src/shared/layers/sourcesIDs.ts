@@ -21,17 +21,6 @@ export const POI_SOURCE_ID = 'vectorTiles';
 export const HILLSHADE_SOURCE_ID = 'hillshade';
 
 /**
- * Source identifier prefix for places (geocoding results) features.
- *
- * @remarks
- * Combined with a unique identifier to create source IDs for place markers
- * displayed via the Places module.
- *
- * @group Places
- */
-export const PLACES_SOURCE_PREFIX_ID = 'places';
-
-/**
  * Source identifier for base map vector tiles.
  *
  * @remarks

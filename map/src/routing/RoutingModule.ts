@@ -8,6 +8,7 @@ import {
     mapStyleLayerIDs,
     SVGIconStyleOptions,
 } from '../shared';
+import { suffixNumber } from '../shared/layers/utils';
 import { addLayers, addOrUpdateImage, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { INSTRUCTION_ARROW_IMAGE_ID } from './layers/guidanceLayers';
@@ -106,7 +107,15 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
  * @group Routing
  */
 export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, RoutingModuleConfig> {
+    private static lastInstanceIndex = -1;
     private layersSpecs!: RoutingLayersSpecs;
+    private layerIDPrefix!: string;
+    /**
+     * The index of this instance, to generate unique source and layer IDs.
+     * * Starts with 0 and each instance increments it by one.
+     * @private
+     */
+    private instanceIndex!: number;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -150,40 +159,71 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     private createSourcesWithLayers(layersSpecs: RoutingLayersSpecs): RoutingSourcesWithLayers {
+        const sourcePrefix = suffixNumber('routes', this.instanceIndex);
         return {
-            mainLines: new GeoJSONSourceWithLayers(this.mapLibreMap, 'routeMainLines', layersSpecs.mainLines, false),
-            waypoints: new GeoJSONSourceWithLayers(this.mapLibreMap, 'routeWaypoints', layersSpecs.waypoints, false),
-            incidents: new GeoJSONSourceWithLayers(this.mapLibreMap, 'routeIncidents', layersSpecs.incidents, false),
-            ferries: new GeoJSONSourceWithLayers(this.mapLibreMap, 'routeFerries', layersSpecs.ferries, false),
+            mainLines: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                `${sourcePrefix}-mainLines`,
+                layersSpecs.mainLines,
+                false,
+            ),
+            waypoints: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                `${sourcePrefix}-waypoints`,
+                layersSpecs.waypoints,
+                false,
+            ),
+            incidents: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                `${sourcePrefix}-incidents`,
+                layersSpecs.incidents,
+                false,
+            ),
+            ferries: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                `${sourcePrefix}-ferries`,
+                layersSpecs.ferries,
+                false,
+            ),
             chargingStops: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
-                'routeChargingStops',
+                `${sourcePrefix}-chargingStops`,
                 layersSpecs.chargingStops,
                 false,
             ),
-            tollRoads: new GeoJSONSourceWithLayers(this.mapLibreMap, 'routeTollRoads', layersSpecs.tollRoads, false),
-            tunnels: new GeoJSONSourceWithLayers(this.mapLibreMap, 'routeTunnels', layersSpecs.tunnels, false),
+            tollRoads: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                `${sourcePrefix}-tollRoads`,
+                layersSpecs.tollRoads,
+                false,
+            ),
+            tunnels: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                `${sourcePrefix}-tunnels`,
+                layersSpecs.tunnels,
+                false,
+            ),
             vehicleRestricted: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
-                'routeVehicleRestricted',
+                `${sourcePrefix}-vehicleRestricted`,
                 layersSpecs.vehicleRestricted,
                 false,
             ),
             instructionLines: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
-                'routeInstructionLines',
+                `${sourcePrefix}-instructionLines`,
                 layersSpecs.instructionLines,
                 false,
             ),
             instructionArrows: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
-                'routeInstructionArrows',
+                `${sourcePrefix}-instructionArrows`,
                 layersSpecs.instructionArrows,
                 false,
             ),
             summaryBubbles: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
-                'routeSummaryBubbles',
+                `${sourcePrefix}-summaryBubbles`,
                 layersSpecs.summaryBubbles,
                 false,
             ),
@@ -193,8 +233,18 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     /**
      * @ignore
      */
-    protected _initSourcesWithLayers(config?: RoutingModuleConfig): RoutingSourcesWithLayers {
-        this.layersSpecs = createLayersSpecs(routeModuleConfigWithDefaults(config).layers);
+    protected _initSourcesWithLayers(config?: RoutingModuleConfig, restore?: boolean): RoutingSourcesWithLayers {
+        // Only increment the instance index for new instances, not for restore operations
+        if (!restore) {
+            RoutingModule.lastInstanceIndex++;
+            this.instanceIndex = RoutingModule.lastInstanceIndex;
+            this.layerIDPrefix = suffixNumber('routes', this.instanceIndex);
+        }
+
+        this.layersSpecs = createLayersSpecs(
+            routeModuleConfigWithDefaults(config, this.layerIDPrefix, this.instanceIndex).layers,
+            this.layerIDPrefix,
+        );
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
         addLayers(
             Object.values(routingSourcesWithLayers).flatMap((source) => source._layerSpecs),
@@ -209,32 +259,49 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         };
         const options: Partial<StyleImageMetadata> = { pixelRatio: 2 };
 
+        // Generate instance-specific image IDs to support multiple RoutingModule instances
+        const waypointStartImageId = suffixNumber(WAYPOINT_START_IMAGE_ID, this.instanceIndex);
+        const waypointStopImageId = suffixNumber(WAYPOINT_STOP_IMAGE_ID, this.instanceIndex);
+        const waypointSoftImageId = suffixNumber(WAYPOINT_SOFT_IMAGE_ID, this.instanceIndex);
+        const waypointFinishImageId = suffixNumber(WAYPOINT_FINISH_IMAGE_ID, this.instanceIndex);
+        const instructionArrowImageId = suffixNumber(INSTRUCTION_ARROW_IMAGE_ID, this.instanceIndex);
+        const selectedSummaryPopupImageId = suffixNumber(SELECTED_SUMMARY_POPUP_IMAGE_ID, this.instanceIndex);
+        const deselectedSummaryPopupImageId = suffixNumber(DESELECTED_SUMMARY_POPUP_IMAGE_ID, this.instanceIndex);
+        const trafficClearImageId = suffixNumber(TRAFFIC_CLEAR_IMAGE_ID, this.instanceIndex);
+        const trafficMajorImageId = suffixNumber(TRAFFIC_MAJOR_IMAGE_ID, this.instanceIndex);
+        const trafficModerateImageId = suffixNumber(TRAFFIC_MODERATE_IMAGE_ID, this.instanceIndex);
+        const trafficMinorImageId = suffixNumber(TRAFFIC_MINOR_IMAGE_ID, this.instanceIndex);
+
         // loading of extra assets if not present in the map style:
-        this.addImageIfNotExisting(WAYPOINT_START_IMAGE_ID, waypointStartIcon(svgIconOptions), options);
-        this.addImageIfNotExisting(WAYPOINT_STOP_IMAGE_ID, waypointIcon(undefined, svgIconOptions), options);
-        this.addImageIfNotExisting(WAYPOINT_SOFT_IMAGE_ID, softWaypointIcon(), options);
-        this.addImageIfNotExisting(WAYPOINT_FINISH_IMAGE_ID, waypointFinishIcon(svgIconOptions), options);
-        this.addImageIfNotExisting(INSTRUCTION_ARROW_IMAGE_ID, instructionArrowIconImg, options);
+        this.addImageIfNotExisting(waypointStartImageId, waypointStartIcon(svgIconOptions), options);
+        this.addImageIfNotExisting(waypointStopImageId, waypointIcon(undefined, svgIconOptions), options);
+        this.addImageIfNotExisting(waypointSoftImageId, softWaypointIcon(), options);
+        this.addImageIfNotExisting(waypointFinishImageId, waypointFinishIcon(svgIconOptions), options);
+        this.addImageIfNotExisting(instructionArrowImageId, instructionArrowIconImg, options);
         this.addImageIfNotExisting(
-            SELECTED_SUMMARY_POPUP_IMAGE_ID,
+            selectedSummaryPopupImageId,
             summaryMapBubbleImg('white'),
             summaryBubbleImageOptions,
         );
         this.addImageIfNotExisting(
-            DESELECTED_SUMMARY_POPUP_IMAGE_ID,
+            deselectedSummaryPopupImageId,
             summaryMapBubbleImg('#EEEEEE'),
             summaryBubbleImageOptions,
         );
-        this.addImageIfNotExisting(TRAFFIC_CLEAR_IMAGE_ID, trafficImg(UNKNOWN_DELAY_COLOR), options);
-        this.addImageIfNotExisting(TRAFFIC_MAJOR_IMAGE_ID, trafficImg(MAJOR_DELAY_COLOR), options);
-        this.addImageIfNotExisting(TRAFFIC_MODERATE_IMAGE_ID, trafficImg(MODERATE_DELAY_COLOR), options);
-        this.addImageIfNotExisting(TRAFFIC_MINOR_IMAGE_ID, trafficImg(MINOR_DELAY_LABEL_COLOR), options);
+        this.addImageIfNotExisting(trafficClearImageId, trafficImg(UNKNOWN_DELAY_COLOR), options);
+        this.addImageIfNotExisting(trafficMajorImageId, trafficImg(MAJOR_DELAY_COLOR), options);
+        this.addImageIfNotExisting(trafficModerateImageId, trafficImg(MODERATE_DELAY_COLOR), options);
+        this.addImageIfNotExisting(trafficMinorImageId, trafficImg(MINOR_DELAY_LABEL_COLOR), options);
 
         // If we have custom icons, ensure they're added to the map style:
         for (const customChargingStopIcon of config?.chargingStops?.icon?.customIcons ?? []) {
-            this.addImageIfNotExisting(customChargingStopIcon.id, customChargingStopIcon.image as string, {
-                pixelRatio: customChargingStopIcon.pixelRatio ?? 2,
-            });
+            this.addImageIfNotExisting(
+                suffixNumber(customChargingStopIcon.id, this.instanceIndex),
+                customChargingStopIcon.image as string,
+                {
+                    pixelRatio: customChargingStopIcon.pixelRatio ?? 2,
+                },
+            );
         }
 
         return routingSourcesWithLayers;
@@ -244,12 +311,12 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected _applyConfig(config?: RoutingModuleConfig) {
-        const mergedConfig = routeModuleConfigWithDefaults(config);
+        const mergedConfig = routeModuleConfigWithDefaults(config, this.layerIDPrefix, this.instanceIndex);
 
         // If there was already some config set, we must update the changes:
         if (this.config) {
             // replace existing configuration with new one
-            const newLayersSpecs = createLayersSpecs(mergedConfig.layers);
+            const newLayersSpecs = createLayersSpecs(mergedConfig.layers, this.layerIDPrefix);
 
             // here we assume that keys for layer specs and sources are the same, please keep it that way to simplify the logic
             Object.keys(newLayersSpecs).forEach((layersSpecID) => {
@@ -296,7 +363,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             }))
             .reduce((acc, item) => ({ ...acc, ...item }), {}) as Record<keyof RoutingSourcesWithLayers, any>;
 
-        this.initSourcesWithLayers();
+        this.initSourcesWithLayers(this.config, true);
         this._applyConfig(this.config);
 
         for (const key of Object.keys(previouslyShown) as (keyof RoutingSourcesWithLayers)[]) {
@@ -453,9 +520,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      */
     async showWaypoints(waypoints: PlanningWaypoint[] | Waypoints) {
         const displayWaypoints = Array.isArray(waypoints)
-            ? toDisplayWaypoints(waypoints, this.config?.waypoints)
+            ? toDisplayWaypoints(waypoints, this.config?.waypoints, this.instanceIndex)
             : // FeatureCollection expected:
-              toDisplayWaypoints(waypoints.features as PlanningWaypoint[], this.config?.waypoints);
+              toDisplayWaypoints(waypoints.features as PlanningWaypoint[], this.config?.waypoints, this.instanceIndex);
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.waypoints.show(displayWaypoints);
     }

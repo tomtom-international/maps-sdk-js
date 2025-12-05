@@ -5,8 +5,9 @@ import type {
     PutEventStateOptions,
     SymbolLayerSpecWithoutSource,
 } from '../shared';
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, PLACES_SOURCE_PREFIX_ID } from '../shared';
+import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers } from '../shared';
 import { DEFAULT_PLACE_ICON_ID } from '../shared/layers/symbolLayers';
+import { suffixNumber } from '../shared/layers/utils';
 import { addOrUpdateImage, changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
@@ -19,7 +20,7 @@ import {
     PlacesTheme,
     PlaceTextConfig,
 } from './types/placesModuleConfig';
-import { imageIDWithInstanceSuffix, preparePlacesForDisplay } from './utils/preparePlacesForDisplay';
+import { preparePlacesForDisplay } from './utils/preparePlacesForDisplay';
 
 type PlacesSourcesAndLayers = {
     /**
@@ -122,9 +123,9 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         if (!restore) {
             PlacesModule.lastInstanceIndex++;
             this.instanceIndex = PlacesModule.lastInstanceIndex;
-            this.sourceID = `${PLACES_SOURCE_PREFIX_ID}-${this.instanceIndex}`;
-            this.layerIDPrefix = `places-${this.instanceIndex}`;
-            this.defaultPlaceIconID = imageIDWithInstanceSuffix(DEFAULT_PLACE_ICON_ID, this.instanceIndex);
+            this.sourceID = `places-${this.instanceIndex}`;
+            this.layerIDPrefix = this.sourceID;
+            this.defaultPlaceIconID = suffixNumber(DEFAULT_PLACE_ICON_ID, this.instanceIndex);
         }
 
         // Update each layer id with the instance-specific prefix
@@ -295,7 +296,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
             for (const customIcon of config.icon.categoryIcons ?? []) {
                 addOrUpdateImage(
                     'if-not-in-sprite',
-                    imageIDWithInstanceSuffix(customIcon.id, this.instanceIndex),
+                    suffixNumber(customIcon.id, this.instanceIndex),
                     customIcon.image as string | HTMLImageElement,
                     this.mapLibreMap,
                     {

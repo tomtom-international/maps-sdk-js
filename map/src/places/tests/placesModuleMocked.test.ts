@@ -1,7 +1,7 @@
 import { Place, Places } from '@tomtom-org/maps-sdk/core';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
-import { EventsModule, PLACES_SOURCE_PREFIX_ID } from '../../shared';
+import { EventsModule } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { PlacesModule } from '../PlacesModule';
 
@@ -10,7 +10,7 @@ import { PlacesModule } from '../PlacesModule';
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('GeoJSON Places module tests', () => {
     test('Basic flows', async () => {
-        const placesSource: Partial<GeoJSONSource> = { id: PLACES_SOURCE_PREFIX_ID, setData: vi.fn() };
+        const placesSource: Partial<GeoJSONSource> = { id: 'dummy', setData: vi.fn() };
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: vi.fn().mockReturnValue(placesSource),
