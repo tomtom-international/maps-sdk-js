@@ -10,7 +10,7 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const map = new TomTomMap({ container: 'sdk-map', center: [4.8896, 52.3732], zoom: 20 }, { style: 'monoLight' });
+    const map = new TomTomMap({ container: 'sdk-map', center: [4.8896, 52.37325], zoom: 20 }, { style: 'monoLight' });
 
     // we wait for the style to be loaded before adding our custom layers
     await map.mapLibreMap.once('styledata');
