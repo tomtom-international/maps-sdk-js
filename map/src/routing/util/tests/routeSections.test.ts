@@ -30,6 +30,7 @@ describe('Tests about building route sections', () => {
                             [0, 3],
                         ],
                     },
+                    id: expect.any(String),
                     properties: {
                         id: expect.any(String),
                         startPointIndex: 1,
@@ -47,6 +48,7 @@ describe('Tests about building route sections', () => {
                             [1, 3],
                         ],
                     },
+                    id: TEST_ID,
                     properties: {
                         id: TEST_ID,
                         startPointIndex: 2,
@@ -72,6 +74,7 @@ describe('Tests about building route sections', () => {
                             [1, 5],
                         ],
                     },
+                    id: TEST_ID,
                     properties: {
                         id: TEST_ID,
                         startPointIndex: 3,
@@ -101,6 +104,7 @@ describe('Tests about building route sections', () => {
                             [1, 5],
                         ],
                     },
+                    id: TEST_ID,
                     properties: {
                         id: TEST_ID,
                         startPointIndex: 3,

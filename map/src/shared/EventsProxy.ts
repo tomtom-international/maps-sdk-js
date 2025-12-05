@@ -264,6 +264,7 @@ export class EventsProxy extends AbstractEventProxy {
 
         // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
         this.lastClickedSourceWithLayers = clickHandlers?.[0]?.sourceWithLayers;
+        console.log(this.lastClickedSourceWithLayers);
 
         const eventState = updateEventState(
             clickType,
@@ -272,6 +273,8 @@ export class EventsProxy extends AbstractEventProxy {
             this.lastClickedSourceWithLayers,
             prevClickedSourceWithLayers,
         );
+
+        console.log(eventState);
 
         for (const handler of clickHandlers) {
             handler.fn(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);

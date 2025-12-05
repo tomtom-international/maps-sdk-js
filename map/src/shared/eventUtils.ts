@@ -93,10 +93,7 @@ export const updateEventState = (
             }
         }
 
-        sourceWithLayers.show({
-            ...sourceWithLayers.shownFeatures,
-            features: featuresToUpdate,
-        });
+        sourceWithLayers.show({ ...sourceWithLayers.shownFeatures, features: featuresToUpdate });
 
         return { feature: featuresToUpdate[updatedIndex], index: updatedIndex };
     }

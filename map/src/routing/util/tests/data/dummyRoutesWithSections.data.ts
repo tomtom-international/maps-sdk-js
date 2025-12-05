@@ -17,8 +17,8 @@ export const dummyRoutesWithSectionsData: Routes<DisplayRouteProps> = {
                     [0, 5],
                 ],
             },
+            id: 'route-0',
             properties: {
-                id: 'route-0',
                 index: 0,
                 summary: {} as RouteSummary,
                 routeState: 'selected',
@@ -53,9 +53,9 @@ export const dummyRoutesWithSectionsData: Routes<DisplayRouteProps> = {
                     [1, 5],
                 ],
             },
+            id: 'route-1',
             properties: {
                 index: 1,
-                id: 'route-1',
                 summary: {} as RouteSummary,
                 routeState: 'deselected',
                 sections: {

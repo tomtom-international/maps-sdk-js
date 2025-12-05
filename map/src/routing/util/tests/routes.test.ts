@@ -7,12 +7,12 @@ import { displayRouteSummariesData } from './data/displayRouteSummaries.data';
 describe('Tests to test building display routes', () => {
     test('Build display routes from Routes', () => {
         expect(toDisplayRoutes({ features: [{ properties: {} }] } as Routes)).toEqual({
-            features: [{ properties: { id: expect.any(String), routeState: 'selected' } }],
+            features: [{ id: expect.any(String), properties: { id: expect.any(String), routeState: 'selected' } }],
         });
         expect(toDisplayRoutes({ features: [{ properties: {} }, { properties: {} }] } as Routes)).toEqual({
             features: [
-                { properties: { id: expect.any(String), routeState: 'selected' } },
-                { properties: { id: expect.any(String), routeState: 'deselected' } },
+                { id: expect.any(String), properties: { id: expect.any(String), routeState: 'selected' } },
+                { id: expect.any(String), properties: { id: expect.any(String), routeState: 'deselected' } },
             ],
         });
     });
@@ -21,7 +21,7 @@ describe('Tests to test building display routes', () => {
         const singleRoute = { properties: {} } as Route;
         expect(toDisplayRoutes(singleRoute)).toEqual({
             type: 'FeatureCollection',
-            features: [{ properties: { id: expect.any(String), routeState: 'selected' } }],
+            features: [{ id: expect.any(String), properties: { id: expect.any(String), routeState: 'selected' } }],
         });
     });
 

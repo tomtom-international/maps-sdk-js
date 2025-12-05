@@ -150,12 +150,6 @@ export type RouteProgress = RouteProgressPoint[];
  */
 export type RouteProps = {
     /**
-     * Unique identifier for this route.
-     *
-     * Randomly generated to distinguish between multiple route alternatives.
-     */
-    id: string;
-    /**
      * Summary statistics for the entire route.
      *
      * Contains departure/arrival times, total length, duration, and consumption estimates.
@@ -221,7 +215,14 @@ export type RouteProps = {
  *
  * @group Route
  */
-export type Route<P extends RouteProps = RouteProps> = Feature<LineString, P>;
+export type Route<P extends RouteProps = RouteProps> = Omit<Feature<LineString, P>, 'id'> & {
+    /**
+     * Unique identifier for this route.
+     *
+     * Randomly generated to distinguish between multiple route alternatives.
+     */
+    id: string;
+};
 
 /**
  * GeoJSON FeatureCollection containing one or more calculated routes.
@@ -249,7 +250,12 @@ export type Route<P extends RouteProps = RouteProps> = Feature<LineString, P>;
  *
  * @group Route
  */
-export type Routes<
-    P extends RouteProps = RouteProps,
-    FeatureCollectionProps = unknown,
-> = FeatureCollectionWithProperties<LineString, P, FeatureCollectionProps>;
+export type Routes<P extends RouteProps = RouteProps, FeatureCollectionProps = unknown> = Omit<
+    FeatureCollectionWithProperties<LineString, P, FeatureCollectionProps>,
+    'features'
+> & {
+    /**
+     * Array of route features.
+     */
+    features: Route<P>[];
+};

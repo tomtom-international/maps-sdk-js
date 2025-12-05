@@ -390,7 +390,6 @@ const parseRoute = (apiRoute: RouteAPI, index: number, params: CalculateRoutePar
         id,
         ...(bbox && { bbox }),
         properties: {
-            id,
             index,
             summary: parseSummary(apiRoute.summary, params),
             sections: parseSections(apiRoute, params),

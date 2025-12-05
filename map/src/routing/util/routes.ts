@@ -18,14 +18,18 @@ export const toDisplayRoutes = (routes: Route | Routes, selectedIndex = 0): Rout
     const routesCollection: Routes = 'features' in routes ? routes : { type: 'FeatureCollection', features: [routes] };
     return {
         ...routesCollection,
-        features: routesCollection.features.map((route, index) => ({
-            ...route,
-            properties: {
-                ...route.properties,
-                id: route.properties.id ?? generateId(),
-                routeState: index === selectedIndex ? 'selected' : 'deselected',
-            },
-        })),
+        features: routesCollection.features.map((route, index) => {
+            const id = route.id ?? generateId();
+            return {
+                ...route,
+                id,
+                properties: {
+                    ...route.properties,
+                    id, // we need id in properties due to promoteId feature
+                    routeState: index === selectedIndex ? 'selected' : 'deselected',
+                },
+            };
+        }),
     };
 };
 
@@ -62,14 +66,16 @@ export const toDisplayRouteSummaries = (
         const routeCoordinates = route.geometry.coordinates;
         const formattedTraffic = formatDuration(summary.trafficDelayInSeconds, displayUnits?.time);
         const magnitudeOfDelay = summaryDelayMagnitude(route);
+        const id = route.id ?? generateId();
         return {
             type: 'Feature',
+            id,
             geometry: {
                 type: 'Point',
                 coordinates: routeCoordinates[Math.round(routeCoordinates.length / 2)],
             },
             properties: {
-                id: route.properties.id ?? generateId(),
+                id, // we need id in properties due to promoteId feature
                 routeIndex: route.properties.index,
                 routeState: route.properties.routeState,
                 formattedDistance: formatDistance(summary.lengthInMeters, displayUnits?.distance),

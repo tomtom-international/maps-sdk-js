@@ -90,12 +90,15 @@ export const preparePlacesForDisplay = (
                   )
                 : {};
 
+            const id = place.id ?? generateId();
+
             return {
                 ...place,
+                id,
                 geometry: { ...place.geometry, bbox: place.bbox },
                 properties: {
                     ...place.properties,
-                    id: place.id ?? generateId(),
+                    id, // we need id in properties due to promoteId feature
                     title,
                     iconID: getIconIDForPlace(place, instanceIndex, config),
                     ...(config?.theme === 'base-map' && { category: getPOILayerCategoryForPlace(place) }),

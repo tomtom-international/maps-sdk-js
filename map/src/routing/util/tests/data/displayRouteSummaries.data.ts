@@ -20,8 +20,8 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    id: 'route-0',
                     properties: {
-                        id: 'route-0',
                         index: 0,
                         routeState: 'selected',
                         summary: {
@@ -43,6 +43,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         type: 'Point',
                         coordinates: [2, 2],
                     },
+                    id: 'route-0',
                     properties: {
                         id: 'route-0',
                         routeIndex: 0,
@@ -72,8 +73,8 @@ export const displayRouteSummariesData: TestCase[] = [
                             [5, 5],
                         ],
                     },
+                    id: 'route-10',
                     properties: {
-                        id: 'route-10',
                         index: 0,
                         routeState: 'selected',
                         summary: {
@@ -104,6 +105,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         type: 'Point',
                         coordinates: [3, 3],
                     },
+                    id: 'route-10',
                     properties: {
                         id: 'route-10',
                         routeIndex: 0,
@@ -133,8 +135,8 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    id: 'route-0',
                     properties: {
-                        id: 'route-0',
                         index: 0,
                         routeState: 'selected',
                         summary: {
@@ -169,6 +171,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         type: 'Point',
                         coordinates: [2, 2],
                     },
+                    id: 'route-0',
                     properties: {
                         id: 'route-0',
                         routeIndex: 0,
@@ -198,8 +201,8 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    id: 'route-0',
                     properties: {
-                        id: 'route-0',
                         index: 0,
                         routeState: 'selected',
                         summary: {
@@ -220,8 +223,8 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    id: 'route-1',
                     properties: {
-                        id: 'route-1',
                         index: 0,
                         routeState: 'selected',
                         summary: {
@@ -259,6 +262,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         type: 'Point',
                         coordinates: [2, 2],
                     },
+                    id: 'route-0',
                     properties: {
                         id: 'route-0',
                         routeIndex: 0,
@@ -273,6 +277,7 @@ export const displayRouteSummariesData: TestCase[] = [
                         type: 'Point',
                         coordinates: [2, 2],
                     },
+                    id: 'route-1',
                     properties: {
                         id: 'route-1',
                         routeIndex: 0,

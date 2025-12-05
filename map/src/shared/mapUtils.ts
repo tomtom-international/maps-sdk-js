@@ -88,7 +88,7 @@ export const injectTomTomHeaders =
     };
 
 /**
- * Compares two MapLibre features by reference or ID.
+ * Compares two MapLibre features by ID.
  * @ignore
  */
 export const areBothDefinedAndEqual = (

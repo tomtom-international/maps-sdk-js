@@ -175,12 +175,14 @@ export const prepareTitleForDisplay = (geometries: PolygonFeatures): FeatureColl
             coordinates = feature.geometry.coordinates.flat();
         }
 
+        const id = feature.id ?? feature.properties?.id ?? generateId();
         return {
             type: 'Feature',
+            id,
             geometry: { type: 'Point', coordinates },
             properties: {
                 ...feature.properties,
-                id: feature.properties?.id ?? generateId(),
+                id, // we need id in properties due to promoteId feature
             },
         } as Feature<Point>;
     });

@@ -6363,6 +6363,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
             features: [
                 {
                     type: 'Feature',
+                    id: expect.any(String),
                     geometry: {
                         type: 'LineString',
                         coordinates: [
@@ -6526,7 +6527,6 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                     },
                     bbox: [4.8746, 52.37802, 4.90647, 52.38686],
                     properties: {
-                        id: expect.any(String),
                         summary: {
                             lengthInMeters: 3259,
                             travelTimeInSeconds: 951,
@@ -7380,6 +7380,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                 },
                 {
                     type: 'Feature',
+                    id: expect.any(String),
                     geometry: {
                         type: 'LineString',
                         coordinates: [
@@ -7554,7 +7555,6 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                     bbox: [4.8746, 52.37802, 4.90647, 52.38686],
                     properties: {
                         index: 1,
-                        id: expect.any(String),
                         summary: {
                             lengthInMeters: 3451,
                             travelTimeInSeconds: 908,
@@ -8415,6 +8415,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                 },
                 {
                     type: 'Feature',
+                    id: expect.any(String),
                     geometry: {
                         type: 'LineString',
                         coordinates: [
@@ -8875,7 +8876,6 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                     },
                     bbox: [4.86951, 52.35759, 4.93424, 52.38686],
                     properties: {
-                        id: expect.any(String),
                         summary: {
                             lengthInMeters: 11267,
                             travelTimeInSeconds: 1902,
@@ -16802,6 +16802,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
             features: [
                 {
                     type: 'Feature',
+                    id: expect.any(String),
                     geometry: {
                         type: 'LineString',
                         coordinates: [
@@ -16815,7 +16816,6 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                     },
                     bbox: [2.173445, 41.3850457, 2.770679, 41.8986964],
                     properties: {
-                        id: expect.any(String),
                         index: 0,
                         summary: {
                             lengthInMeters: 106424,
@@ -16833,6 +16833,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         sections: {
                             leg: [
                                 {
+                                    id: expect.any(String),
                                     startPointIndex: 0,
                                     summary: {
                                         lengthInMeters: 91772,

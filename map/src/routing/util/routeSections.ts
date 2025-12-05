@@ -13,19 +13,28 @@ const buildRouteSectionsFromRoute = <
         routeProps?: DisplayRouteProps,
     ) => Omit<D, 'routeState' | 'routeIndex'>,
 ): RouteSection<D>[] =>
-    (route.properties.sections[sectionType] as S[])?.map((sectionProps) => ({
-        type: 'Feature',
-        geometry: {
-            type: 'LineString',
-            coordinates: route.geometry.coordinates.slice(sectionProps.startPointIndex, sectionProps.endPointIndex + 1),
-        },
-        properties: {
-            ...(displaySectionPropsBuilder ? displaySectionPropsBuilder(sectionProps, route.properties) : sectionProps),
-            routeState: route.properties.routeState,
-            routeIndex: route.properties.index,
-            id: sectionProps.id ?? generateId(),
-        } as D,
-    })) || [];
+    (route.properties.sections[sectionType] as S[])?.map((sectionProps) => {
+        const id = sectionProps.id ?? generateId();
+        return {
+            type: 'Feature',
+            id,
+            geometry: {
+                type: 'LineString',
+                coordinates: route.geometry.coordinates.slice(
+                    sectionProps.startPointIndex,
+                    sectionProps.endPointIndex + 1,
+                ),
+            },
+            properties: {
+                ...(displaySectionPropsBuilder
+                    ? displaySectionPropsBuilder(sectionProps, route.properties)
+                    : sectionProps),
+                routeState: route.properties.routeState,
+                routeIndex: route.properties.index,
+                id, // we need id in properties due to promoteId feature
+            } as D,
+        };
+    }) || [];
 
 /**
  * Builds display-ready LineString features to render the sections of a given type, from the given route.
