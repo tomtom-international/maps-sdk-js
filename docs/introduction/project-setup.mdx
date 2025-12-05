@@ -1,0 +1,361 @@
+---
+title: Project setup
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.35.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+This comprehensive setup guide walks you through integrating the TomTom Maps SDK for JavaScript into your project, from obtaining an API key to configuring your development environment for optimal performance and functionality.
+
+## Prerequisites and Requirements
+
+Before beginning the setup process, ensure your development environment meets these requirements:
+
+**API Key:**
+- To use the TomTom Maps SDK in your application, you need to obtain a TomTom API key that provides access to mapping data, services, and real-time traffic information.
+
+**Development Environment:**
+- **Node.js 22+** with npm 11+ for package management
+- **Modern browser** with WebGL support for map rendering
+- **TypeScript support** (optional but recommended for type safety)
+- **Bundler configuration** (Vite, Webpack, or similar for production builds)
+
+**Project Compatibility:**
+- **Web applications** using modern JavaScript frameworks (React, Vue, Angular)
+- **Node.js applications** for server-side location services
+- **React Native projects** for cross-platform mobile development
+- **Static sites** with build-time optimization support
+
+## Obtaining Your API Key
+
+Follow the official TomTom process to get your API key:
+
+1. **Visit the TomTom Developer Portal**: Navigate to [developer.tomtom.com](https://developer.tomtom.com)
+2. **Create an account** or sign in to your existing TomTom developer account
+3. **Generate an API key** following [these detailed instructions](https://developer.tomtom.com/platform/documentation/dashboard/api-key-management)
+4. **Configure key permissions** for the services you plan to use
+
+## Installing Dependencies
+
+The TomTom Maps SDK uses a modular architecture that allows you to install only the components you need, optimizing bundle size and improving application performance.
+
+### Package Manager Setup
+
+We recommend using npm/pnpm for dependency management. Ensure you have the latest version installed:
+
+```bash
+# Check your npm version
+npm --version
+
+# Update npm if needed
+npm install -g npm@latest
+```
+
+### Core SDK Installation
+
+Install the main TomTom Maps SDK package that provides core functionality:
+
+```bash
+npm install @tomtom-org/maps-sdk
+```
+
+### Map-Specific Dependencies
+
+If your application uses interactive maps, install the required MapLibre GL JS peer dependency:
+
+```bash
+npm install maplibre-gl
+```
+
+**Why MapLibre GL JS?**
+The TomTom Maps SDK is built on MapLibre GL JS, a powerful open-source mapping library that provides:
+- **High-performance rendering** with WebGL acceleration
+- **Vector tile support** for crisp maps at all zoom levels
+- **Extensive customization** options for styling and interaction
+- **Active development** with regular updates and community support
+
+## TypeScript Support
+
+For TypeScript projects, the SDK includes comprehensive type definitions. No additional @types packages are required:
+
+```typescript
+import { TomTomConfig, type Language } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+// Full TypeScript support included
+```
+
+## SDK Global Configuration
+
+The TomTom SDK provides a global configuration system that centralizes common settings across all maps and services in your application, ensuring consistent behavior and simplifying configuration management.
+
+### Understanding Global Configuration
+
+**Benefits of Global Configuration:**
+- **Single source of truth** for API keys, language settings, and service endpoints
+- **Automatic injection** into all maps and services without repetitive configuration
+- **Environment-specific settings** easily managed through configuration objects
+- **Runtime flexibility** allowing configuration updates as needed
+
+### Importing Global Configuration
+
+The SDK uses a singleton pattern for global configuration, accessible through `TomTomConfig.instance`:
+
+```javascript
+import { TomTomConfig } from "@tomtom-org/maps-sdk/core";
+```
+
+### Setting Your API Key
+
+Configure your API key once at application startup using the `put()` method. This method merges new configuration values with existing settings:
+
+```javascript
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    apiVersion: 1,
+    commonBaseURL: 'https://api.tomtom.com'
+});
+```
+
+**Note:** The API key is required for all SDK features. Other settings like `apiVersion` and `commonBaseURL` have sensible defaults and typically don't need to be changed.
+
+### Language Configuration
+
+The TomTom Maps SDK supports multiple languages for both map labels and service responses, enabling localized user experiences across global applications.
+
+#### Language Resolution Behavior
+
+**When no language is specified:**
+- **Default**: Uses `ngt` (Neutral Ground Truth) where each location displays in its regional language
+- **Services**: Attempt to match the language to your query content, defaulting to the content's natural language
+
+**When language is specified:**
+- **Maps**: Display labels in the specified language where available
+- **Services**: Return responses in the requested language with appropriate fallbacks
+
+#### Setting Application Language
+
+```javascript
+// Set language with API key
+TomTomConfig.instance.put({
+    language: "en-US",
+    apiKey: process.env.TOMTOM_API_KEY
+});
+
+// Update language at runtime
+TomTomConfig.instance.put({ language: "de-DE" });
+```
+
+For TypeScript projects, the SDK provides a `Language` type that includes all supported language codes:
+
+```typescript
+import { TomTomConfig, type Language } from "@tomtom-org/maps-sdk/core";
+
+const userLanguage: Language = "en-US";
+TomTomConfig.instance.put({ language: userLanguage });
+```
+
+#### Supported Language Codes
+
+The SDK supports a wide range of languages with region-specific variants (like `en-US`, `en-GB`, `pt-BR`, `pt-PT`) and script alternatives (like `zh-Hans` for Simplified Chinese, `ru-Cyrl-RU` for Cyrillic Russian).
+
+Special codes include:
+- **ngt**: Neutral Ground Truth (no translation, uses local language)
+- **ngt-Latn**: Neutral Ground Truth with Latin script preference
+
+For the complete list of all 39 supported languages, see the [languages API reference](https://docs.tomtom.com/maps-sdk-js/api-reference/variables/core.languages.html).
+
+### Advanced Configuration Options
+
+#### Complete Configuration Example
+
+The `GlobalConfig` type supports several configuration properties:
+
+```javascript
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    language: 'en-GB',
+    apiVersion: 1,
+    commonBaseURL: 'https://api.tomtom.com',
+    trackingId: '9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1', // Optional: for support tracing
+    displayUnits: {
+        distance: {
+            type: 'metric',
+            kilometers: 'km',
+            meters: 'm'
+        },
+        time: {
+            hours: 'h',
+            minutes: 'min'
+        }
+    }
+});
+```
+
+#### Configuration Properties
+
+**Required:**
+- **apiKey**: Your TomTom API key (required for all SDK features)
+
+**Optional:**
+- **apiVersion**: API version number (default: `1`)
+- **commonBaseURL**: Base URL for API services (default: `'https://api.tomtom.com'`)
+- **language**: Language code for content (default: `'ngt'` - Neutral Ground Truth)
+- **trackingId**: Request identifier for tracing and support (pattern: `^[a-zA-Z0-9-]{1,100}$`)
+- **displayUnits**: Custom labels for distance and time units
+
+#### Runtime Configuration Updates
+
+You can update configuration at any time using the `put()` method, which performs a shallow merge:
+
+```javascript
+// Update specific configuration properties
+TomTomConfig.instance.put({ language: 'fr-FR' });
+
+// Get current configuration
+const currentConfig = TomTomConfig.instance.get();
+console.log('Current language:', currentConfig.language);
+
+// Reset to defaults (Note: default apiKey is empty string)
+TomTomConfig.instance.reset();
+```
+
+**Important:** The `put()` method performs a shallow merge, so nested objects like `displayUnits` are replaced entirely rather than merged.
+
+## Framework-Specific Setup
+
+### React
+
+```javascript
+// src/config/tomtom.js
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.REACT_APP_TOMTOM_API_KEY,
+    language: 'en-US'
+});
+
+// src/components/Map.jsx
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { useEffect, useRef } from 'react';
+
+export function MapComponent() {
+    const mapRef = useRef();
+
+    useEffect(() => {
+        const map = new TomTomMap({
+            container: mapRef.current
+        });
+
+        return () => map.remove();
+    }, []);
+
+    return <div ref={mapRef} style={{ width: '100%', height: '400px' }} />;
+}
+```
+
+### Vue
+
+```javascript
+// src/plugins/tomtom.js
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.VUE_APP_TOMTOM_API_KEY,
+    language: 'en-US'
+});
+
+// src/components/MapComponent.vue
+<template>
+    <div ref="mapContainer" class="map-container"></div>
+</template>
+
+<script>
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+export default {
+    mounted() {
+        this.map = new TomTomMap({
+            container: this.$refs.mapContainer
+        });
+    },
+    beforeUnmount() {
+        this.map?.remove();
+    }
+};
+</script>
+```
+
+### Node.js
+
+```javascript
+// src/config/tomtom.js
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    language: 'en-US'
+});
+
+// src/services/geocoding.js
+import { geocode } from '@tomtom-org/maps-sdk/services';
+
+export async function geocodeAddress(query) {
+    return await geocode({
+        query
+    });
+}
+```
+
+### Multiple API Keys
+
+While we recommend using a single API key, some applications may require multiple keys with different permissions or rate limits:
+
+```javascript
+// Global configuration with default key
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_DEFAULT_API_KEY,
+    language: 'en-US'
+});
+
+// Service-specific key override
+import { search } from '@tomtom-org/maps-sdk/services';
+
+const results = await search({
+    query: 'restaurants',
+    position: [4.9041, 52.3676],
+    apiKey: process.env.TOMTOM_PREMIUM_API_KEY // Override for this call
+});
+
+// Map-specific key override
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap(
+    { container: 'map' },
+    { apiKey: process.env.TOMTOM_MAP_API_KEY } // Override for this map
+);
+```
+
+## Next Steps
+
+Once your project is configured, explore the SDK's capabilities:
+
+### Getting Started Guides
+- **[Map Integration](/maps-sdk-js/guides/map/quickstart)**: Create interactive maps with TomTom data
+- **[Services Integration](/maps-sdk-js/guides/services/quickstart)**: Add search, geocoding, and routing functionality
+
+### Core Concepts
+- **[Core Bundle](/maps-sdk-js/guides/core/quickstart)**: Understanding the foundation layer
+- **[Map Styles](/maps-sdk-js/guides/map/styles)**: Customizing map appearance
+- **[User Events](/maps-sdk-js/guides/map/user-events)**: Adding interactivity
+
+### Advanced Features
+- **[Traffic Visualization](/maps-sdk-js/guides/map/traffic)**: Real-time traffic data
+- **[POI Management](/maps-sdk-js/guides/map/pois)**: Points of interest display
+- **[Route Planning](/maps-sdk-js/guides/services/routing/quickstart)**: Navigation and routing services
+
+For complete implementation examples and production-ready patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.
