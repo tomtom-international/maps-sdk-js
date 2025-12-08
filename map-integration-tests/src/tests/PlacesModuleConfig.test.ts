@@ -23,7 +23,6 @@ test.describe('GeoJSON Places apply different configs', () => {
             address: { freeformAddress: 'Nieuwezijds Voorburgwal 67, 1012 RE Amsterdam' },
             poi: {
                 name: 'Q-Park Amsterdam Nieuwendijk',
-                categoryIds: [7364],
                 classifications: [
                     {
                         code: 'PARKING_GARAGE',
@@ -58,7 +57,7 @@ test.describe('GeoJSON Places apply different configs', () => {
         await showPlaces(page, testPlace);
 
         let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
-        expect(renderedPlaces[0].properties.iconID).toBe('7364');
+        expect(renderedPlaces[0].properties.iconID).toBe('7313');
 
         // Apply circle theme
         await applyPlacesTheme(page, 'circle');

@@ -1,5 +1,3 @@
-import { Place } from '@tomtom-org/maps-sdk/core';
-
 // Supported sub-categories for map display pins
 // See: https://github.com/tomtom-international/mdt-backend-mapbox-gl-js-styles/blob/orbis-preview/src/orbis/sprites/poi_light/config.json
 // For the rest we'll use the main categories (which are the first 4 digits of a category)
@@ -11,15 +9,11 @@ const supportedPinSubcategories: Set<number> = new Set([
 ]);
 
 /**
- * Maps a place to the ID of the map style sprite image to use as pin for it.
- * NOTE: this is likely to evolve in the future as Orbis APIs mature and stop relying on Genesis categories.
- * @see https://github.com/tomtom-international/mdt-backend-mapbox-gl-js-styles/blob/orbis-preview/src/orbis/sprites/poi_light/config.json
  * @ignore
  */
-export const toMapDisplayPin = (place: Place, defaultPlaceIconID: string): string => {
-    const categoryID = place.properties.poi?.categoryIds?.[0];
+export const toPinImageID = (categoryID: number | undefined): string | undefined => {
     if (!categoryID) {
-        return defaultPlaceIconID;
+        return undefined;
     }
 
     // Check if the category ID is in our supported subcategories:

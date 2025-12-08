@@ -83,7 +83,10 @@ test.describe('PlacesModule tests', () => {
             type: 'Feature',
             id: 'test-place-123',
             geometry: { type: 'Point', coordinates },
-            properties: { type: 'POI', poi: { name: 'Test Place', categoryIds: [7315] } },
+            properties: {
+                type: 'POI',
+                poi: { name: 'Test Place', classifications: [{ code: 'RESTAURANT' }] },
+            },
         } as Place;
 
         const expectedDisplayProps: PlaceDisplayProps[] = [
@@ -125,7 +128,6 @@ test.describe('PlacesModule tests', () => {
                 address: { freeformAddress: 'Nieuwezijds Voorburgwal 67, 1012 RE Amsterdam' },
                 poi: {
                     name: 'Q-Park Amsterdam Nieuwendijk',
-                    categoryIds: [7364],
                     classifications: [
                         {
                             code: 'PARKING_GARAGE',
@@ -146,7 +148,7 @@ test.describe('PlacesModule tests', () => {
         expect(renderedPlaces).toHaveLength(1);
         expect(renderedPlaces[0].properties.id).toBe('528009001852275');
         expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
-        expect(renderedPlaces[0].properties.iconID).toBe('7364');
+        expect(renderedPlaces[0].properties.iconID).toBe('7313');
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
         // Change map style to 'monoLight'

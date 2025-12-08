@@ -1,7 +1,6 @@
 import type { HasLngLat, POICategory } from '@tomtom-org/maps-sdk/core';
-import { getPosition } from '@tomtom-org/maps-sdk/core';
+import { getPosition, poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
-import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import type { CommonServiceParams } from '../serviceTypes';
 
 /**

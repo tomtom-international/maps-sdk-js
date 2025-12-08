@@ -4,6 +4,8 @@ import type { POICategory } from '@tomtom-org/maps-sdk/core';
  * POI categories were retrieved from https://docs.tomtom.com/search-api/documentation/poi-categories-service/poi-categories
  * so it can be passed to search endpoints in a human-readable format in addition to being able to use POI category ID directly
  * categories were put in this format trying to match them poi classification codes as much as possible.
+ *
+ * @ignore
  */
 export const poiCategoriesToID: Record<POICategory, number> = {
     SPORTS_CENTER: 7320,
@@ -609,3 +611,12 @@ export const poiCategoriesToID: Record<POICategory, number> = {
     TOLL_GATE: 7375,
     FERRY_TERMINAL: 7352,
 };
+
+/**
+ * Inverted mapping of POI category IDs to their corresponding category names.
+ *
+ * @ignore
+ */
+export const poiIDsToCategories: Record<number, POICategory> = Object.fromEntries(
+    Object.entries(poiCategoriesToID).map(([category, id]) => [id, category] as [number, POICategory]),
+);

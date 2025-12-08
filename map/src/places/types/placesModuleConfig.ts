@@ -91,15 +91,35 @@ export type PlaceIconConfig = {
     categoryIcons?: CustomImage<MapStylePOICategory>[];
 
     /**
-     * Custom mapping function to generate the icon ID for a given place.
+     * Custom mapping to determine the icon for a given place.
      *
      * @remarks
-     * If provided, this function sets the iconID property on the place.
-     * This allows for full control on how to determine which icon to use for each place based on its properties.
+     * Supports two mapping strategies:
      *
-     * @param place The place to generate the icon ID for.
+     * - **`imageID`**: Directly returns the icon image ID to use for the place.
+     *   This provides full control over icon selection.
+     *
+     * - **`poiCategory`**: Returns a POI category, which is then resolved to an icon
+     *   using the existing category-to-icon logic. This reuses the standard category mapping.
+     *
+     * @example
+     * ```typescript
+     * // Direct image ID mapping
+     * mapping: {
+     *   to: 'imageID',
+     *   fn: (place) => place.properties.poi?.name?.includes('urgent') ? 'urgent-icon' : 'default-icon'
+     * }
+     *
+     * // POI category mapping
+     * mapping: {
+     *   to: 'poiCategory',
+     *   fn: (place) => place.properties.customCategory || 'RESTAURANT'
+     * }
+     * ```
      */
-    mapping?: (place: Place) => string;
+    mapping?:
+        | { to: 'imageID'; fn: (place: Place) => string }
+        | { to: 'poiCategory'; fn: (place: Place) => MapStylePOICategory };
 };
 
 /**

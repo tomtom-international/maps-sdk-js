@@ -110,7 +110,7 @@ export const getPosition = (hasLngLat: HasLngLat | undefined, options?: GetPosit
  * }
  * ```
  *
- * @group Shared
+ * @ignore
  */
 export const getPositionStrict = (hasLngLat: HasLngLat, options?: GetPositionOptions): Position => {
     const position = getPosition(hasLngLat, options);
@@ -122,10 +122,9 @@ export const getPositionStrict = (hasLngLat: HasLngLat, options?: GetPositionOpt
 
 /**
  * @ignore
- * @param lngLat
  */
-export const toPointFeature = (lngLat: Position): Feature<Point> => ({
+export const toPointFeature = (coordinates: Position): Feature<Point> => ({
     type: 'Feature',
-    geometry: { type: 'Point', coordinates: lngLat } as Point,
+    geometry: { type: 'Point', coordinates },
     properties: {},
 });

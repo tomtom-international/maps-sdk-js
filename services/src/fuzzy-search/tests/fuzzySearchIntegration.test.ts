@@ -1,6 +1,6 @@
 import type { Fuel, Place, POICategory, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
+import { poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { poiCategoriesToID } from '../../poi-categories/poiCategoriesToID';
 import { search } from '../../search';
 import type { SearchIndexType } from '../../shared';
 import {

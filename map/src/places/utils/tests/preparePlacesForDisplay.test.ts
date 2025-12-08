@@ -47,7 +47,6 @@ describe('toPlaces tests', () => {
 describe('Get Icon ID for a given Place tests', () => {
     test('Get Icon ID for a given Place', () => {
         expect(getIconIDForPlace({ properties: {} } as Place, 0)).toEqual('default_place-0');
-        expect(getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, 0)).toBe('35');
         expect(
             getIconIDForPlace(
                 {
@@ -72,12 +71,6 @@ describe('Get Icon ID for a given Place tests', () => {
         ).toBe('poi-beach');
 
         expect(
-            getIconIDForPlace({ properties: { poi: { categoryIds: [35] } } } as Place, 0, {
-                icon: { categoryIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
-            }),
-        ).toBe('35');
-
-        expect(
             getIconIDForPlace(
                 { properties: { poi: { categoryIds: [35], classifications: [{ code: 'RESTAURANT' }] } } } as Place,
                 0,
@@ -86,6 +79,85 @@ describe('Get Icon ID for a given Place tests', () => {
                 },
             ),
         ).toBe('RESTAURANT-0');
+    });
+
+    test('Get Icon ID with imageID mapping', () => {
+        const place = {
+            properties: {
+                poi: { name: 'Urgent Care', classifications: [{ code: 'HOSPITAL' }] },
+            },
+        } as Place;
+
+        expect(
+            getIconIDForPlace(place, 0, {
+                icon: {
+                    mapping: {
+                        to: 'imageID',
+                        fn: (p) => (p.properties.poi?.name?.includes('Urgent') ? 'urgent-icon' : 'default-icon'),
+                    },
+                },
+            }),
+        ).toBe('urgent-icon');
+
+        expect(
+            getIconIDForPlace({ properties: { poi: { name: 'Regular Hospital' } } } as Place, 0, {
+                icon: {
+                    mapping: {
+                        to: 'imageID',
+                        fn: (p) => (p.properties.poi?.name?.includes('Urgent') ? 'urgent-icon' : 'default-icon'),
+                    },
+                },
+            }),
+        ).toBe('default-icon');
+    });
+
+    test('Get Icon ID with poiCategory mapping', () => {
+        const place = {
+            properties: {
+                customCategory: 'RESTAURANT',
+                poi: { classifications: [{ code: 'CAFE_PUB' }] },
+            },
+        } as any;
+
+        expect(
+            getIconIDForPlace(place, 0, {
+                icon: {
+                    mapping: {
+                        to: 'poiCategory',
+                        fn: (p) => (p.properties as any).customCategory ?? 'CAFE_PUB',
+                    },
+                },
+            }),
+        ).toBe('7315');
+
+        const placeWithoutCustom = {
+            properties: {
+                poi: { classifications: [{ code: 'HOTEL_MOTEL' }] },
+            },
+        } as any;
+
+        expect(
+            getIconIDForPlace(placeWithoutCustom, 0, {
+                icon: {
+                    mapping: {
+                        to: 'poiCategory',
+                        fn: (p) => (p.properties as any).customCategory ?? 'HOTEL_MOTEL',
+                    },
+                },
+            }),
+        ).toBe('7314');
+
+        expect(
+            getIconIDForPlace(placeWithoutCustom, 0, {
+                theme: 'base-map',
+                icon: {
+                    mapping: {
+                        to: 'poiCategory',
+                        fn: (p) => (p.properties as any).customCategory ?? 'HOTEL_MOTEL',
+                    },
+                },
+            }),
+        ).toBe('poi-hotel_or_motel');
     });
 });
 

@@ -1,7 +1,7 @@
+import { POICategory } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
 import type { FilterSpecification } from 'maplibre-gl';
-import type { MapStylePOICategory } from '../places';
-import { toMapDisplayPOICategory } from '../places';
+import { toBaseMapPOICategory } from '../places';
 import type { ValuesFilter } from '../shared';
 import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
@@ -21,9 +21,9 @@ export const getStyleCategories = (categories: FilterablePOICategory[]): string[
     const categoryIds: string[] = [];
     categories.forEach((category: FilterablePOICategory) => {
         if (category in poiCategoryGroups) {
-            categoryIds.push(...poiCategoryGroups[category].map(toMapDisplayPOICategory));
+            categoryIds.push(...poiCategoryGroups[category].map(toBaseMapPOICategory));
         } else {
-            categoryIds.push(toMapDisplayPOICategory(category as MapStylePOICategory));
+            categoryIds.push(toBaseMapPOICategory(category as POICategory));
         }
     });
     return [...new Set(categoryIds)];
