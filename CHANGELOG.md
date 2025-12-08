@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.36.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.36.3...v0.36.4) (2025-12-08)
+
+
+### Bug Fixes
+
+* regression fix for additional layers vs multiple routing modules support ([8ef6ded](https://github.com/tomtom-international/maps-sdk-js/commit/8ef6ded477c406555665f1f466169c29aa23778b))
+* regression fix regarding unnecessarily suffixing custom images in routing module instances ([2389813](https://github.com/tomtom-international/maps-sdk-js/commit/238981348d3381ac14527739d91eb9c71dc42623))
+
 ## [0.36.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.36.2...v0.36.3) (2025-12-08)
 
 
