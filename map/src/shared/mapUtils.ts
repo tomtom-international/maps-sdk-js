@@ -52,8 +52,8 @@ export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: st
  */
 export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
     for (const feature of features) {
-        if (!feature || Object.keys(feature.properties).length === 0) {
-            return;
+        if (!feature || !Object.keys(feature.properties).length) {
+            continue;
         }
 
         for (const key in feature.properties) {

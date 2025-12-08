@@ -22,7 +22,7 @@ const isHighPriority = (eventType: EventType): boolean => eventType === 'click' 
 /**
  * Puts or removes the given event state to the right feature in featuresToUpdate based on the
  * @param eventState The new event state to apply or to use as reference.
- * @param featureID The ID of the feature to update within featuresToUpdate.
+ * @param featureId The ID of the feature to update within featuresToUpdate.
  * @param featuresToUpdate The features list which will be updated.
  * @param mode If updateInProps, replaces the existing eventState. If removeFromProps, removes the existing eventState.
  * @return The index of the updated feature in the mutated featuresToUpdate array.

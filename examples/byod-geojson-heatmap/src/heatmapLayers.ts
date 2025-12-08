@@ -1,10 +1,17 @@
 import { mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
+import type { GeoJSON } from 'geojson';
 import type { Map } from 'maplibre-gl';
 
 /**
  * Add heatmap layer to the map
  */
-export function addHeatmapLayer(map: Map, sourceId: string): void {
+export const addHeatmapSourceAndLayer = async (map: Map, data: GeoJSON) => {
+    if (!map.isStyleLoaded()) {
+        await map.once('styledata');
+    }
+
+    const sourceId = 'heatmap-data';
+    map.addSource(sourceId, { type: 'geojson', data });
     map.addLayer(
         {
             id: 'heatmap-layer',
@@ -36,4 +43,4 @@ export function addHeatmapLayer(map: Map, sourceId: string): void {
         },
         mapStyleLayerIDs.lowestLabel,
     );
-}
+};

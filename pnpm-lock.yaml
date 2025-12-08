@@ -256,6 +256,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@types/geojson':
+        specifier: 'catalog:'
+        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.1
