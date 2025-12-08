@@ -1,0 +1,143 @@
+---
+title: Map styles
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.36.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Map Styles in the TomTom Maps SDK define the visual appearance and data presentation of maps. This guide covers TomTom's built-in styles, style components, and customization options.
+
+A map style consists of various layers and sources that determine how geographic features are rendered.
+
+The SDK provides several pre-defined styles optimized for different use cases, along with the ability to customize styles by including additional layers or modifying existing ones.
+
+## Built-in Styles
+
+### Basic Styles
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+// Light theme (default)
+const map = new TomTomMap(
+    { container: 'map' },
+    { style: 'monoLight' }
+);
+
+// Dark theme
+const map = new TomTomMap(
+    { container: 'map' },
+    { style: 'monoDark' }
+);
+
+// Satellite imagery with roads
+const map = new TomTomMap(
+    { container: 'map' },
+    { style: 'hybrid' }
+);
+
+// Pure satellite imagery
+const map = new TomTomMap(
+    { container: 'map' },
+    { style: 'satellite' }
+);
+```
+
+## Dynamic Style Switching
+
+```javascript
+const map = new TomTomMap({ container: 'map' });
+
+// Change style after map creation
+map.setStyle('monoDark');
+// ...
+map.setStyle('drivingLight');
+```
+
+## Available Style Parts
+
+The map style includes multiple parts that come from different data sources:
+- **Base Map and POIs**: Core geographic features and points of interest.
+  - Included and visible by default with all styles.
+  - Controlled by [BaseMapModule](../map/base-map.mdx) and [POIsModule](../map/pois.mdx).
+- **Traffic Incidents**: Real-time traffic incident data.
+  - Included in the style by default, but hidden upfront.
+  - Can be optionally excluded from the style for performance.
+  - Controlled by [TrafficIncidentsModule](../map/traffic-incidents.mdx).
+- **Traffic Flow**: Live traffic flow information.
+  - Included in the style by default, but hidden upfront.
+  - Can be optionally excluded from the style for performance.
+  - Controlled by [TrafficFlowModule](../map/traffic-flow.mdx).
+- **Hillshade**: Terrain elevation shading for enhanced topography.
+  - Included in the style by default, but hidden upfront.
+  - Can be optionally excluded from the style for performance.
+  - Controlled by [HillshadeModule](../map/hillshade.mdx).
+
+```javascript
+// Common layer modules you can include or not:
+include: [
+    'trafficIncidents',  // Traffic incidents
+    'trafficFlow',       // Traffic flow data
+    'hillshade'          // Terrain shading
+]
+```
+
+## Map Language
+
+```javascript
+const map = new TomTomMap(
+    { container: 'map' },
+    {
+        style: 'monoLight',
+        language: 'de-DE' // German labels
+    }
+);
+```
+
+## Style Switching with UI
+
+```javascript
+const map = new TomTomMap({ container: 'map' });
+
+// Style selector example
+document.getElementById('light-style').onclick = () => map.setStyle('monoLight');
+document.getElementById('dark-style').onclick = () => map.setStyle('monoDark');
+document.getElementById('hybrid-style').onclick = () => map.setStyle('hybrid');
+```
+
+## Best Practices
+
+1. **Style Selection**: Choose styles that match your application's purpose and user interface
+2. **Performance**: Load only necessary style components to optimize rendering
+3. **User Experience**: Provide smooth transitions when switching styles
+4. **Accessibility**: Consider contrast and readability in style choices
+5. **Branding**: Use custom styles to align with your application's visual identity
+6. **Localization**: Configure appropriate language settings for your target audience
+
+## Related Guides and Examples
+
+### Core Map Setup
+- **[Map Quickstart](./quickstart.mdx)** - Basic map creation and style configuration
+- **[Base Map](./base-map.mdx)** - Control fundamental map layer visibility
+- **[About MapLibre](./about-maplibre.mdx)** - Understanding the underlying mapping technology
+
+### Advanced Features
+- **[Traffic Flow](./traffic-flow.mdx)** - Add real-time traffic data to your styles
+- **[Traffic Incidents](./traffic-incidents.mdx)** - Display traffic incidents with custom styling
+- **[Hillshade](./hillshade.mdx)** - Add terrain elevation shading to your maps
+
+### Practical Examples
+- **[Keep State When Changing Style](../../examples/keep-state-when-changing-style/)** - Maintain map state during style transitions
+- **[Load Style Parts](../../examples/load-style-parts/)** - Dynamic style component loading
+- **[Map Language](../../examples/map-language/)** - Language switching and localization
+- **[Base Map Example](../../examples/base-map/)** - Simple style implementation
+
+### Integration and Customization
+- **[User Events](./user-events.mdx)** - Handle style-related user interactions
+- **[Places](./places.mdx)** - Style integration with places data
+- **[Routes](./routes.mdx)** - Route visualization with different map styles
