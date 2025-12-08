@@ -295,13 +295,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
 
         // If we have custom icons, ensure they're added to the map style:
         for (const customChargingStopIcon of config?.chargingStops?.icon?.customIcons ?? []) {
-            this.addImageIfNotExisting(
-                suffixNumber(customChargingStopIcon.id, this.instanceIndex),
-                customChargingStopIcon.image as string,
-                {
-                    pixelRatio: customChargingStopIcon.pixelRatio ?? 2,
-                },
-            );
+            this.addImageIfNotExisting(customChargingStopIcon.id, customChargingStopIcon.image as string, {
+                pixelRatio: customChargingStopIcon.pixelRatio ?? 2,
+            });
         }
 
         return routingSourcesWithLayers;
