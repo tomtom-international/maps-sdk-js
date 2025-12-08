@@ -90,6 +90,9 @@ export class EventsProxy extends AbstractEventProxy {
     }
 
     private getRenderedFeatures(point: Point2D): MapGeoJSONFeature[] {
+        if (!this.interactiveLayerIDs.length) {
+            return [];
+        }
         const options = { layers: this.interactiveLayerIDs, validate: false };
         const precision = this.config.precisionMode;
         // first attempt right in the given coordinates:
