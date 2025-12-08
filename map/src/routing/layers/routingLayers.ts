@@ -38,6 +38,26 @@ const prefixBeforeID = (beforeID: string | undefined, layerIDPrefix: string | un
 };
 
 /**
+ * Helper function to process additional layers and prefix their beforeID fields
+ * @ignore
+ */
+const prefixBeforeIDs = (
+    additional: Record<string, any> | undefined,
+    layerIDPrefix: string | undefined,
+): Record<string, any> | undefined => {
+    if (!additional || !layerIDPrefix) {
+        return additional;
+    }
+
+    return Object.fromEntries(
+        Object.entries(additional).map(([key, layer]) => [
+            key,
+            layer?.beforeID ? { ...layer, beforeID: prefixBeforeID(layer.beforeID, layerIDPrefix) } : layer,
+        ]),
+    );
+};
+
+/**
  * Helper function to add instance suffix to image IDs for supporting multiple RoutingModule instances
  * @ignore
  */
@@ -91,7 +111,7 @@ export const buildRoutingLayers = (
                 beforeID: prefixBeforeID('routeDeselectedLine', layerIDPrefix),
                 ...configLayers?.mainLines?.routeDeselectedOutline,
             },
-            ...configLayers?.mainLines?.additional,
+            ...prefixBeforeIDs(configLayers?.mainLines?.additional, layerIDPrefix),
         },
         waypoints: {
             routeWaypointSymbol: {
@@ -104,7 +124,7 @@ export const buildRoutingLayers = (
                 beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
                 ...configLayers?.waypoints?.routeWaypointLabel,
             },
-            ...configLayers?.waypoints?.additional,
+            ...prefixBeforeIDs(configLayers?.waypoints?.additional, layerIDPrefix),
         },
         chargingStops: {
             routeChargingStopSymbol: {
@@ -112,7 +132,7 @@ export const buildRoutingLayers = (
                 beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
                 ...configLayers?.chargingStops?.routeChargingStopSymbol,
             },
-            ...configLayers?.chargingStops?.additional,
+            ...prefixBeforeIDs(configLayers?.chargingStops?.additional, layerIDPrefix),
         },
         sections: {
             incident: {
@@ -136,6 +156,7 @@ export const buildRoutingLayers = (
                     beforeID: prefixBeforeID('routeTunnelLine', layerIDPrefix),
                     ...configSectionLayers?.incident?.routeIncidentDashedLine,
                 },
+                ...prefixBeforeIDs(configSectionLayers?.incident?.additional, layerIDPrefix),
             },
             ferry: {
                 routeFerryLine: {
@@ -148,7 +169,7 @@ export const buildRoutingLayers = (
                     beforeID: prefixBeforeID('routeIncidentJamSymbol', layerIDPrefix),
                     ...configSectionLayers?.ferry?.routeFerrySymbol,
                 },
-                ...configSectionLayers?.ferry?.additional,
+                ...prefixBeforeIDs(configSectionLayers?.ferry?.additional, layerIDPrefix),
             },
             tollRoad: {
                 routeTollRoadOutline: {
@@ -161,7 +182,7 @@ export const buildRoutingLayers = (
                     beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
                     ...configSectionLayers?.tollRoad?.routeTollRoadSymbol,
                 },
-                ...configSectionLayers?.tollRoad?.additional,
+                ...prefixBeforeIDs(configSectionLayers?.tollRoad?.additional, layerIDPrefix),
             },
             tunnel: {
                 routeTunnelLine: {
@@ -169,7 +190,7 @@ export const buildRoutingLayers = (
                     beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix),
                     ...configSectionLayers?.tunnel?.routeTunnelLine,
                 },
-                ...configSectionLayers?.tunnel?.additional,
+                ...prefixBeforeIDs(configSectionLayers?.tunnel?.additional, layerIDPrefix),
             },
             vehicleRestricted: {
                 routeVehicleRestrictedBackgroundLine: {
@@ -182,7 +203,7 @@ export const buildRoutingLayers = (
                     beforeID: mapStyleLayerIDs.lowestLabel,
                     ...configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedForegroundLine,
                 },
-                ...configSectionLayers?.vehicleRestricted?.additional,
+                ...prefixBeforeIDs(configSectionLayers?.vehicleRestricted?.additional, layerIDPrefix),
             },
         },
         instructionLines: {
@@ -196,7 +217,7 @@ export const buildRoutingLayers = (
                 beforeID: prefixBeforeID('routeInstructionLine', layerIDPrefix),
                 ...configLayers?.instructionLines?.routeInstructionOutline,
             },
-            ...configLayers?.instructionLines?.additional,
+            ...prefixBeforeIDs(configLayers?.instructionLines?.additional, layerIDPrefix),
         },
         instructionArrows: {
             routeInstructionArrowSymbol: {
@@ -210,7 +231,7 @@ export const buildRoutingLayers = (
                 }),
                 ...configLayers?.instructionArrows?.routeInstructionArrowSymbol,
             },
-            ...configLayers?.instructionArrows?.additional,
+            ...prefixBeforeIDs(configLayers?.instructionArrows?.additional, layerIDPrefix),
         },
         summaryBubbles: {
             routeSummaryBubbleSymbol: {
@@ -219,7 +240,7 @@ export const buildRoutingLayers = (
                     : summaryBubbleSymbolPoint),
                 ...configLayers?.summaryBubbles?.routeSummaryBubbleSymbol,
             },
-            ...configLayers?.summaryBubbles?.additional,
+            ...prefixBeforeIDs(configLayers?.summaryBubbles?.additional, layerIDPrefix),
         },
     };
 };
