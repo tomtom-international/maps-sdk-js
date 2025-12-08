@@ -65,12 +65,14 @@ const withConfig = (
                 typeof textConfig?.title !== 'function' && {
                     'text-field': textConfig?.title,
                 }),
+            ...customLayer?.layout,
         },
         paint: {
             ...layerSpec.paint,
             ...(textConfig?.color && { 'text-color': textConfig.color }),
             ...(textConfig?.haloColor && { 'text-halo-color': textConfig.haloColor }),
             ...(textConfig?.haloWidth && { 'text-halo-width': textConfig.haloWidth }),
+            ...customLayer?.paint,
         },
         ...customLayer,
     };
