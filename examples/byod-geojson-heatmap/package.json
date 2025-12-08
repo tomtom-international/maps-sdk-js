@@ -1,0 +1,22 @@
+{
+  "name": "@examples/byod-geojson-heatmap",
+  "description": "Example for Heatmap West Yorkshire Listed Buildings",
+  "scripts": {
+    "build": "vite build",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "maplibre-gl": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}
