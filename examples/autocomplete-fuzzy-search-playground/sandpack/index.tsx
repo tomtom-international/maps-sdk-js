@@ -1,14 +1,13 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function AutocompleteFuzzySearchPlaygroundSandpack() {
-    const { layout, files } = getSandpackFiles('autocomplete-fuzzy-search-playground');
+export default function AutocompleteFuzzySearchPlaygroundSandpack() {
+    const { layout, files } = getSandpackFiles();
 
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: commonSandpackDependencies,
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,

@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { RouteWaypointIconStyleSandpack } from '../sandpack';
+import RouteWaypointIconStyleSandpack from '../sandpack';
 
 renderSandpackPreview(<RouteWaypointIconStyleSandpack />);

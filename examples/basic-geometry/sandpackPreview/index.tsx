@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { BasicGeometrySandpack } from '../sandpack';
+import BasicGeometrySandpack from '../sandpack';
 
 renderSandpackPreview(<BasicGeometrySandpack />);

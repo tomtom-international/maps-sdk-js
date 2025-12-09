@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { LayerGroupTogglingSandpack } from '../sandpack';
+import LayerGroupTogglingSandpack from '../sandpack';
 
 renderSandpackPreview(<LayerGroupTogglingSandpack />);

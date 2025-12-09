@@ -1,14 +1,13 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function NodejsGeocodeSandpack() {
-    const { layout, files } = getSandpackFiles('nodejs-geocode');
+export default function NodejsGeocodeSandpack() {
+    const { layout, files } = getSandpackFiles();
 
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: commonSandpackDependencies,
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,

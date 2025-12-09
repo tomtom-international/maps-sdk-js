@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { TrafficFlowSandpack } from '../sandpack';
+import TrafficFlowSandpack from '../sandpack';
 
 renderSandpackPreview(<TrafficFlowSandpack />);

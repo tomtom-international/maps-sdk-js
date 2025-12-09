@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { GeocodeInitSandpack } from '../sandpack';
+import GeocodeInitSandpack from '../sandpack';
 
 renderSandpackPreview(<GeocodeInitSandpack />);

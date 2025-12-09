@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { ByodGeojsonHeatmapSandpack } from '../sandpack';
+import ByodGeojsonHeatmapSandpack from '../sandpack';
 
 renderSandpackPreview(<ByodGeojsonHeatmapSandpack />);

@@ -1,14 +1,13 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function PlacesMultipleIconsSameCategorySandpack() {
-    const { layout, files } = getSandpackFiles('places-multiple-icons-same-category');
+export default function PlacesMultipleIconsSameCategorySandpack() {
+    const { layout, files } = getSandpackFiles();
 
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: commonSandpackDependencies,
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,

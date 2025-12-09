@@ -1,18 +1,13 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function SearchParkingSandpack() {
-    const { layout, files } = getSandpackFiles('search-parking');
+export default function SearchParkingSandpack() {
+    const { layout, files } = getSandpackFiles();
 
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: {
-                    ...commonSandpackDependencies,
-                    '@turf/bbox-polygon': '^7.3.1',
-                    '@turf/difference': '^7.3.1',
-                },
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,

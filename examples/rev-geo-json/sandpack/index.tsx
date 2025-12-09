@@ -1,14 +1,13 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function RevGeoJsonSandpack() {
-    const { layout, files } = getSandpackFiles('rev-geo-json');
+export default function RevGeoJsonSandpack() {
+    const { layout, files } = getSandpackFiles();
 
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: commonSandpackDependencies,
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,

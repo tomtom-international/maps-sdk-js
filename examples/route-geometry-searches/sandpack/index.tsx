@@ -1,17 +1,13 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function RouteGeometrySearchesSandpack() {
-    const { layout, files } = getSandpackFiles('route-geometry-searches');
+export default function RouteGeometrySearchesSandpack() {
+    const { layout, files } = getSandpackFiles();
 
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: {
-                    ...commonSandpackDependencies,
-                    '@turf/buffer': '^7.3.1',
-                },
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,

@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { RouteWithAlternativesSandpack } from '../sandpack';
+import RouteWithAlternativesSandpack from '../sandpack';
 
 renderSandpackPreview(<RouteWithAlternativesSandpack />);

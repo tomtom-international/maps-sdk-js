@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { MapConfigPlaygroundSandpack } from '../sandpack';
+import MapConfigPlaygroundSandpack from '../sandpack';
 
 renderSandpackPreview(<MapConfigPlaygroundSandpack />);

@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { DefaultMapSandpack } from '../sandpack';
+import DefaultMapSandpack from '../sandpack';
 
 renderSandpackPreview(<DefaultMapSandpack />);

@@ -1,14 +1,12 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function DefaultMapSandpack() {
-    const { layout, files } = getSandpackFiles('default-map');
-
+export default function DefaultMapSandpack() {
+    const { layout, files } = getSandpackFiles();
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: commonSandpackDependencies,
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,

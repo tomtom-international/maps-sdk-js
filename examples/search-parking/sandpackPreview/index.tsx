@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { SearchParkingSandpack } from '../sandpack';
+import SearchParkingSandpack from '../sandpack';
 
 renderSandpackPreview(<SearchParkingSandpack />);

@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { LdevrModelIdSandpack } from '../sandpack';
+import LdevrModelIdSandpack from '../sandpack';
 
 renderSandpackPreview(<LdevrModelIdSandpack />);

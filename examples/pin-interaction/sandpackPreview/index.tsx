@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { PinInteractionSandpack } from '../sandpack';
+import PinInteractionSandpack from '../sandpack';
 
 renderSandpackPreview(<PinInteractionSandpack />);

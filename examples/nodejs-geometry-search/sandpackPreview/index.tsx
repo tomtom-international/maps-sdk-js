@@ -1,4 +1,4 @@
 import { renderSandpackPreview } from '../../src/sandpackPreview';
-import { NodejsGeometrySearchSandpack } from '../sandpack';
+import NodejsGeometrySearchSandpack from '../sandpack';
 
 renderSandpackPreview(<NodejsGeometrySearchSandpack />);

@@ -1,18 +1,13 @@
-import { commonSandpackDependencies } from '../../src/constants/sandpackDependencies';
 import { SandpackWrapper } from '../../src/sandpack/SandpackWrapper';
-import { getSandpackFiles } from '../../src/utils/getSandpackFiles';
+import { getSandpackDependencies, getSandpackFiles } from '../../src/utils/sandpackUtils';
 
-export function EvChargingStationsPlaygroundSandpack() {
-    const { layout, files } = getSandpackFiles('ev-charging-stations-playground');
+export default function EvChargingStationsPlaygroundSandpack() {
+    const { layout, files } = getSandpackFiles();
 
     return (
         <SandpackWrapper
             customSetup={{
-                dependencies: {
-                    ...commonSandpackDependencies,
-                    '@turf/turf': '^7.3.1',
-                    'lodash-es': '4.17.21',
-                },
+                dependencies: getSandpackDependencies(),
             }}
             options={{
                 layout,
