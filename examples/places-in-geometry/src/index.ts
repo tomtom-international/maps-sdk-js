@@ -3,6 +3,7 @@ import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import './style.css';
+import { LngLatBoundsLike } from 'maplibre-gl';
 import { API_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
@@ -11,16 +12,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 (async () => {
     const placeToSearchInside = await geocode({ query: 'Amsterdam, NL', limit: 1 });
     const fitBoundsOptions = { padding: 50 };
+    const bounds = placeToSearchInside.bbox as LngLatBoundsLike;
 
     const map = new TomTomMap({
         container: 'sdk-map',
         fitBoundsOptions,
-        bounds: placeToSearchInside.bbox,
+        bounds,
     });
 
     document
         .querySelector('#sdk-example-reCenter')
-        ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchInside.bbox, fitBoundsOptions));
+        ?.addEventListener('click', () => map.mapLibreMap.fitBounds(bounds, fitBoundsOptions));
 
     const geometryToSearch = await geometryData({ geometries: placeToSearchInside });
     // inverting for better look on the map

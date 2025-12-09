@@ -1,4 +1,11 @@
-import { ChargingStop, ChargingStopProps, formatDuration, generateId, type Place, type Routes } from 'core';
+import {
+    ChargingStop,
+    ChargingStopProps,
+    formatDuration,
+    generateId,
+    type Place,
+    type Routes,
+} from '@tomtom-org/maps-sdk/core';
 import { FeatureCollection, Point } from 'geojson';
 import { PlaceDisplayProps } from '../../places';
 import type { DisplayRouteProps, RouteStateProps } from '../types/displayRoutes';

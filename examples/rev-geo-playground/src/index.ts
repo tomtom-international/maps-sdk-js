@@ -39,7 +39,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             await clickedPlace.show({
                 type: 'Feature',
                 geometry: { type: 'Point', coordinates: clickedPosition },
+                id: 'clicked-point',
                 properties: {
+                    type: 'Point Address',
                     address: {
                         freeformAddress: `Clicked on\n${clickedLngLat.lng.toFixed(5)}, ${clickedLngLat.lat.toFixed(5)}`,
                     },

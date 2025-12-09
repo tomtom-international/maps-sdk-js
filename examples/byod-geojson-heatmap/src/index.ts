@@ -1,7 +1,6 @@
-import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { Places, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
-import type { GeoJSON } from 'geojson';
 import { API_KEY } from './config';
 import { addHeatmapSourceAndLayer } from './heatmapLayers';
 
@@ -17,14 +16,14 @@ const map = new TomTomMap({
 const DATA_URL = 'https://dataworks.calderdale.gov.uk/download/2kyp8/hcj/listed%20buildings%20west%20yorkshire.json';
 
 (async () => {
-    const data: GeoJSON = await (await fetch(DATA_URL)).json();
+    const data: Places = await (await fetch(DATA_URL)).json();
 
     await addHeatmapSourceAndLayer(map.mapLibreMap, data);
 
     const placesModule = await PlacesModule.get(map, {
         theme: 'base-map',
         icon: { mapping: { to: 'poiCategory', fn: () => 'COMPANY' } },
-        text: { title: (place) => place.properties.Name },
+        text: { title: (place: any) => place.properties.Name },
         layers: { main: { minzoom: 15 } },
     });
 

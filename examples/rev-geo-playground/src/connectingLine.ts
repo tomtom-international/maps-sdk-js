@@ -1,3 +1,4 @@
+import type { Position } from 'geojson';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 
 const SOURCE_ID = 'connecting-line';
@@ -33,7 +34,7 @@ export const initConnectingLine = (map: Map): void => {
 
 export const getConnectingLineSource = (map: Map): GeoJSONSource => map.getSource(SOURCE_ID) as GeoJSONSource;
 
-export const updateConnectingLine = (map: Map, coordinates: [number, number][]): void => {
+export const updateConnectingLine = (map: Map, coordinates: Position[]): void => {
     getConnectingLineSource(map).setData({
         type: 'Feature',
         geometry: {

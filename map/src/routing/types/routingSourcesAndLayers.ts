@@ -1,4 +1,4 @@
-import type { Routes, Waypoints } from 'core';
+import type { Routes, Waypoints } from '@tomtom-org/maps-sdk/core';
 import type { GeoJSONSourceWithLayers, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import type { DisplayRouteProps, DisplayRouteSummaries } from './displayRoutes';
 import type { DisplayInstructionArrows, DisplayInstructions } from './guidance';

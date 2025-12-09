@@ -1,5 +1,4 @@
-import { type Language, mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
-import type { BBox } from 'geojson';
+import { type BBox, type Language, mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
 import { isEqual } from 'lodash-es';
 import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';
 import { version as maplibreVersion } from 'maplibre-gl/package.json';

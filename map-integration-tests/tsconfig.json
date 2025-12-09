@@ -2,10 +2,7 @@
   "extends": "@tsconfig/recommended",
   "compilerOptions": {
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@tomtom-org/maps-sdk/core": ["../core"]
-    }
+    "skipLibCheck": true
   },
   "include": ["../map/src/types.d.ts"]
 }

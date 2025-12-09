@@ -8,13 +8,13 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const destination = await searchOne('Schiphol airport, Amsterdam');
+    const destination = (await searchOne('Schiphol airport, Amsterdam')) as Place;
 
-    const origins: Place[] = await Promise.all([
+    const origins = (await Promise.all([
         searchOne('Amsterdam Centraal'),
         searchOne('Leiden Centraal'),
         searchOne('Utrecht Centraal'),
-    ]);
+    ])) as Place[];
 
     const map = new TomTomMap(
         {

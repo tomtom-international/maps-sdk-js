@@ -12,7 +12,8 @@
   "scripts": {
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "build": "vite build",
+    "test:dist": "vitest run dist-validation.test.ts",
+    "build": "vite build && pnpm test:dist",
     "build:full": "pnpm type-check && pnpm build",
     "build:watch": "pnpm build --watch",
     "type-check": "tsc --noEmit",

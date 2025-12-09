@@ -55,7 +55,17 @@ import routingCustomize from '../routing/customize';
  *
  * @group Advanced
  */
-export const customizeService = {
+export const customizeService: {
+    reverseGeocode: typeof revgeoCustomize;
+    geocode: typeof geocodeCustomize;
+    geometryData: typeof geometryDataCustomize;
+    geometrySearch: typeof geometrySearchCustomize;
+    calculateRoute: typeof routingCustomize;
+    reachableRange: typeof reachableRangeCustomize;
+    evChargingStationsAvailability: typeof evChargingStationsAvailabilityCustomize;
+    placeByID: typeof placeByIdCustomize;
+    autocompleteSearch: typeof autocompleteCustomize;
+} = {
     reverseGeocode: revgeoCustomize,
     geocode: geocodeCustomize,
     geometryData: geometryDataCustomize,

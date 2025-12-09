@@ -1,4 +1,4 @@
-import type { Place } from 'core';
+import type { Place } from '@tomtom-org/maps-sdk/core';
 import { callService } from '../shared/serviceTemplate';
 import type { GeocodingTemplate } from './geocodingTemplate';
 import { geocodingTemplate } from './geocodingTemplate';

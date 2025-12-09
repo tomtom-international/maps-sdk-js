@@ -4,6 +4,7 @@ import { GeometriesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import './style.css';
+import type { LngLatBoundsLike } from 'maplibre-gl';
 import { API_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
@@ -23,7 +24,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         container: 'sdk-map',
         minZoom: 2,
         zoom: 13,
-        bounds: mainPlace.bbox,
+        bounds: mainPlace.bbox as LngLatBoundsLike,
     });
     const mainGeometry = await geometryData({ geometries: mainPlace });
 

@@ -39,7 +39,16 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
                 include: ['index.ts', 'src/**/*'],
                 exclude: ['**/*.test.ts'],
                 bundleTypes: true,
-                aliasesExclude: ['@tomtom-org/maps-sdk/core'], // We don't want to locally resolve @tomtom-org/maps-sdk/core to the local core paths
+                afterBuild: () => {
+                    // Replace relative core imports with the alias in the bundled types
+                    const indexDtsPath = './dist/index.d.ts';
+                    if (fs.existsSync(indexDtsPath)) {
+                        let content = fs.readFileSync(indexDtsPath, 'utf-8');
+                        // Replace any relative path to core with the right package name
+                        content = content.replace(/from ['"](?:\.\.\/)+core['"]/g, "from '@tomtom-org/maps-sdk/core'");
+                        fs.writeFileSync(indexDtsPath, content);
+                    }
+                },
             }),
             ...(process.env.CI
                 ? []

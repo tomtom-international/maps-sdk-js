@@ -1,4 +1,4 @@
-import { inputSectionTypes } from 'core';
+import { inputSectionTypes } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import { validateRequestSchema } from '../../shared/schema/validation';
