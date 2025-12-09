@@ -3,7 +3,8 @@
   "description": "NodeJS example using Reverse Geocoding Service.",
   "type": "module",
   "scripts": {
-    "develop": "node src/index.ts"
+    "develop": "node src/index.ts",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*"

@@ -4,6 +4,10 @@
   "readme": "none",
   "name": "TomTom Maps for JavaScript",
   "exclude": ["**/*.test.ts"],
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "jsx": "preserve"
+  },
   "externalSymbolLinkMappings": {
     "maplibre-gl": {
       "Map": "https://maplibre.org/maplibre-gl-js-docs/api/map/",

@@ -5,6 +5,7 @@
     "build": "vite build",
     "clean:dist": "rimraf ./dist",
     "develop": "vite",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

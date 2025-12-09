@@ -4,6 +4,7 @@
   "scripts": {
     "build": "vite build",
     "develop": "vite",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

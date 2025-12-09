@@ -5,14 +5,22 @@
     "build": "vite build",
     "clean:dist": "rimraf ./dist",
     "develop": "vite",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*"
+    "@tomtom-org/maps-sdk": "workspace:*",
+    "@codesandbox/sandpack-react": "catalog:",
+    "@codesandbox/sandpack-themes": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
     "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
