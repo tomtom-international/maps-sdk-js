@@ -166,7 +166,7 @@ import { geocode } from './index';
 
 describe('Geocode Integration', () => {
   beforeEach(() => {
-    TomTomConfig.apiKey = 'test-key';
+    TomTomConfig.instance.put({ apiKey: 'test-key' });
   });
 
   it('should geocode an address', async () => {
