@@ -11,19 +11,22 @@
     right: 20px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 8px 16px;
     margin: 15px 10px;
-    font-family: "Open Sans", Arial, sans-serif;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-    border-radius: 10px;
+    font-family: Gilroy, sans-serif;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
 }
 
 .sdk-example-button {
     height: 26px;
     margin-bottom: 5px;
+    padding: 8px 16px;
+    font-family: Gilroy, sans-serif;
     color: #fff;
     background-color: #df1b12;
-    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border: 0 solid rgba(0, 0, 0, 0);
     border-radius: 20px;
     text-decoration: none;
@@ -35,10 +38,11 @@
 #sdk-example-mapStyles {
     margin-top: 10px;
     height: 26px;
-    padding: 5px;
+    padding: 8px 16px;
+    font-family: Gilroy, sans-serif;
     color: #fff;
     background-color: #df1b12;
-    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border: 0 solid rgba(0, 0, 0, 0);
     border-radius: 20px;
     text-decoration: none;

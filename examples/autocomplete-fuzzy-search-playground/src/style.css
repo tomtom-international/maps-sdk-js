@@ -130,8 +130,12 @@
 
 .sdk-example-search-this-area-btn {
     display: inline-block;
-    font-family: Arial, Helvetica, Verdana, sans-serif;
+    padding: 8px 16px;
+    height: 35px;
+    width: 150px;
+    font-family: Gilroy, sans-serif;
     font-weight: bold;
+    font-size: 14px;
     line-height: 18px;
     color: #ffffff;
     text-align: center;
@@ -139,16 +143,13 @@
     vertical-align: middle;
     cursor: pointer;
     user-select: none;
-    border-radius: 20px;
-    height: 35px;
-    padding: 7px 10px;
-    width: 150px;
-    box-sizing: border-box;
-    font-size: 14px;
     background-color: #df1b12;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-radius: 20px;
+    box-sizing: border-box;
     position: relative;
     bottom: 100%;
-    border: #727c85;
 }
 
 #sdk-map {

@@ -48,13 +48,17 @@
 
 .sdk-example-input {
     text-indent: 10px;
-    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .sdk-example-button {
+    padding: 8px 16px;
+    font-family: Gilroy, sans-serif;
     color: #fff;
     background-color: #df1b12;
-    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-radius: 20px;
     cursor: pointer;
 }
 

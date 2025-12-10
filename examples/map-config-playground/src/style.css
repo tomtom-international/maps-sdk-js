@@ -14,12 +14,13 @@
 }
 
 .sdk-example-toggle {
-    height: 26px;
-    padding: 5px;
-    margin-bottom: 5px;
+    height: 32px;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    font-family: Gilroy, sans-serif;
     color: #fff;
     background-color: #df1b12;
-    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border: 0 solid rgba(0, 0, 0, 0);
     border-radius: 20px;
     text-decoration: none;

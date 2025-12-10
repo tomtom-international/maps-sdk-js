@@ -10,24 +10,26 @@
     position: absolute;
     right: 0;
     background: white;
-    padding: 10px 20px 0 20px;
+    padding: 8px 16px;
     margin: 10px;
-    font-family: "Open Sans", Arial, sans-serif;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-    border-radius: 10px;
+    font-family: Gilroy, sans-serif;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
 }
 
 #sdk-example-preset-selector,
 #sdk-example-jump-to-location-selector {
     display: block;
-    padding: 7px;
+    padding: 8px 16px;
     margin-bottom: 25px;
     margin-top: 5px;
-    border-radius: 5px;
+    border-radius: 20px;
     width: 100%;
+    font-family: Gilroy, sans-serif;
     color: #fff;
     background-color: #df1b12;
-    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border: 0 solid rgba(0, 0, 0, 0);
     text-decoration: none;
     vertical-align: middle;

@@ -12,11 +12,13 @@
 }
 
 #sdk-example-infoPanel {
-    padding: 20px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 25px;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     background-color: white;
+    font-family: Gilroy, sans-serif;
+    color: #333;
     position: absolute;
     left: calc(50% - 200px);
     display: flex;
