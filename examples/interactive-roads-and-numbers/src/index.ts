@@ -73,12 +73,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     interactiveGroups.events.on('click', async (feature, lngLat) => {
         clickedFeature = findClosestLineString(feature, [lngLat.lng, lngLat.lat]);
         hoveredSource.setData(clickedFeature);
-
-        // We only calculate and show the buffer if zoomed close enough for performance:
-        if (mapLibreMap.getZoom() > 9) {
-            selectedSource.setData(createInvertedBuffer(clickedFeature, pxToMeters(15, mapLibreMap), 'meters'));
-        }
-
+        selectedSource.setData(createInvertedBuffer(clickedFeature, pxToMeters(15, mapLibreMap), 'meters'));
         setTitleAndSubtitle(clickedFeature);
 
         if (clickedFeature.geometry.type == 'LineString') {
