@@ -1,7 +1,7 @@
 import { bboxFromGeoJSON, TomTomConfig, type Waypoint } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne, search } from '@tomtom-org/maps-sdk/services';
-import buffer from '@turf/buffer';
+import { buffer } from '@turf/turf';
 import type { Polygon } from 'geojson';
 import './style.css';
 import { API_KEY } from './config';

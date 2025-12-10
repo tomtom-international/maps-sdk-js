@@ -1,8 +1,7 @@
 import { bboxFromGeoJSON, PolygonFeatures, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
-import bboxPolygon from '@turf/bbox-polygon';
-import difference from '@turf/difference';
+import { bboxPolygon, difference } from '@turf/turf';
 import './style.css';
 import { API_KEY } from './config';
 

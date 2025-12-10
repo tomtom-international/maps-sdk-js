@@ -9,6 +9,7 @@ packages:
 catalog:
   '@microsoft/api-extractor': ^7.55.2
   '@tsconfig/recommended': ^1.0.13
+  '@turf/turf': ^7.3.1
   '@types/geojson': ^7946.0.16
   '@types/lodash-es': ^4.17.12
   '@types/node': ^24.10.1

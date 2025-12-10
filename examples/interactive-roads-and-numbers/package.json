@@ -8,13 +8,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*"
+    "@tomtom-org/maps-sdk": "workspace:*",
+    "@turf/turf": "catalog:"
   },
   "devDependencies": {
-    "@turf/bbox-polygon": "^7.3.1",
-    "@turf/buffer": "^7.3.1",
-    "@turf/difference": "^7.3.1",
-    "@turf/distance": "^7.3.1",
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "maplibre-gl": "catalog:",

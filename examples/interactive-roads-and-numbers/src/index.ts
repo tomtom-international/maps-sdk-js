@@ -1,20 +1,14 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import {
-    BaseMapLayerGroupName,
-    BaseMapModule,
-    mapStyleLayerIDs,
-    POIsModule,
-    TomTomMap,
-} from '@tomtom-org/maps-sdk/map';
-import { ReverseGeocodingResponse, reverseGeocode } from '@tomtom-org/maps-sdk/services';
-import bboxPolygon from '@turf/bbox-polygon';
-import { buffer } from '@turf/buffer';
-import difference from '@turf/difference';
-import distance from '@turf/distance';
-import { Feature, FeatureCollection, LineString } from 'geojson';
-import { GeoJSONSource, Map, MapGeoJSONFeature, PointLike } from 'maplibre-gl';
+import { type BaseMapLayerGroupName, BaseMapModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { type ReverseGeocodingResponse, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+import { distance } from '@turf/turf';
+import type { Feature, FeatureCollection, Position } from 'geojson';
+import { Map, type PointLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
+import { findClosestLineString } from './findClosestLineString';
+import { createInvertedBuffer } from './invertedBuffer';
+import { initHoveredSourceAndLayers, initSelectedSourceAndLayers } from './sourceAndLayers';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
@@ -34,67 +28,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         );
     };
 
-    const initHoveredSourceAndLayers = (mapLibreMap: Map): GeoJSONSource => {
-        const hoveredSourceID = 'hovered';
-        mapLibreMap.addSource(hoveredSourceID, {
-            type: 'geojson',
-            data: { type: 'FeatureCollection', features: [] },
-        });
-        mapLibreMap.addLayer(
-            {
-                id: 'hoveredLine',
-                source: hoveredSourceID,
-                type: 'line',
-                paint: { 'line-color': 'brown', 'line-dasharray': [2, 1], 'line-width': 2 },
-            },
-            mapStyleLayerIDs.lowestLabel,
-        );
-        mapLibreMap.addLayer(
-            {
-                filter: ['==', ['get', 'category'], 'house'],
-                id: 'hoveredPoint',
-                source: hoveredSourceID,
-                type: 'circle',
-                paint: {
-                    'circle-stroke-color': 'grey',
-                    'circle-opacity': 0,
-                    'circle-stroke-width': 1,
-                    'circle-stroke-opacity': 1,
-                    'circle-radius': 15,
-                },
-            },
-            mapStyleLayerIDs.lowestLabel,
-        );
-
-        return mapLibreMap.getSource(hoveredSourceID) as GeoJSONSource;
-    };
-
-    const initSelectedSourceAndLayers = (mapLibreMap: Map): GeoJSONSource => {
-        const selectedSourceID = 'selected';
-        mapLibreMap.addSource(selectedSourceID, {
-            type: 'geojson',
-            data: { type: 'FeatureCollection', features: [] },
-        });
-        mapLibreMap.addLayer(
-            {
-                id: 'selectedBackground',
-                source: selectedSourceID,
-                type: 'fill',
-                paint: { 'fill-color': 'black', 'fill-opacity': 0.25 },
-            },
-            mapStyleLayerIDs.lowestLabel,
-        );
-
-        return mapLibreMap.getSource(selectedSourceID) as GeoJSONSource;
-    };
-
     const map = new TomTomMap({
         container: 'sdk-map',
         center: [-74.00332, 40.71732],
         zoom: 18,
     });
     const mapLibreMap = map.mapLibreMap;
-    await POIsModule.get(map, { visible: false });
 
     const interactiveGroupNames: BaseMapLayerGroupName[] = ['roadLines', 'roadLabels', 'roadShields', 'houseNumbers'];
     const interactiveGroups = await BaseMapModule.get(map, {
@@ -111,7 +50,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const subtitleElement = document.querySelector('#sdk-example-subtitle') as Element;
     const addressesElement = document.querySelector('#sdk-example-addresses') as Element;
 
-    const setTitleAndSubtitle = (feature: MapGeoJSONFeature) => {
+    const setTitleAndSubtitle = (feature: Feature<any, any>) => {
         titleElement.innerHTML = `${feature.properties.category} ${feature.properties.subcategory ?? ''}`;
         subtitleElement.innerHTML = feature.properties.name ?? '';
     };
@@ -122,49 +61,39 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             .join('<br>');
     };
 
-    let clickedFeature: MapGeoJSONFeature | undefined;
-    interactiveGroups.events.on('hover', (feature) => {
+    let clickedFeature: Feature<any, any> | undefined;
+    interactiveGroups.events.on('hover', (feature, lngLat) => {
         if (!clickedFeature) {
-            hoveredSource.setData(feature);
-            setTitleAndSubtitle(feature);
+            const extractedFeature = findClosestLineString(feature, [lngLat.lng, lngLat.lat]);
+            hoveredSource.setData(extractedFeature);
+            setTitleAndSubtitle(extractedFeature);
         }
     });
 
-    interactiveGroups.events.on('click', async (feature) => {
-        clickedFeature = feature;
-        hoveredSource.setData(feature);
+    interactiveGroups.events.on('click', async (feature, lngLat) => {
+        clickedFeature = findClosestLineString(feature, [lngLat.lng, lngLat.lat]);
+        hoveredSource.setData(clickedFeature);
 
         // We only calculate and show the buffer if zoomed close enough for performance:
         if (mapLibreMap.getZoom() > 9) {
-            selectedSource.setData(
-                difference({
-                    type: 'FeatureCollection',
-                    features: [
-                        bboxPolygon([-180, 90, 180, -90]),
-                        // biome-ignore lint/style/noNonNullAssertion: cannot be null
-                        buffer(feature, pxToMeters(15, mapLibreMap), { units: 'meters' })!,
-                    ],
-                }) as Feature,
-            );
+            selectedSource.setData(createInvertedBuffer(clickedFeature, pxToMeters(15, mapLibreMap), 'meters'));
         }
 
-        setTitleAndSubtitle(feature);
+        setTitleAndSubtitle(clickedFeature);
 
-        if (feature.geometry.type == 'MultiLineString') {
-            addressesElement.innerHTML = 'Zoom in closer to select a finer segment.';
-        } else if (feature.geometry.type == 'LineString') {
-            const coordinates = (feature.geometry as LineString).coordinates;
+        if (clickedFeature.geometry.type == 'LineString') {
+            const coordinates = clickedFeature.geometry.coordinates;
             showRevGeoResponses(
                 await Promise.all([
-                    await reverseGeocode({ position: coordinates[0] }),
-                    await reverseGeocode({ position: coordinates[coordinates.length - 1] }),
+                    reverseGeocode({ position: coordinates[0] }),
+                    reverseGeocode({ position: coordinates.at(-1) as Position }),
                 ]),
             );
-        } else if (feature.geometry.type == 'Point') {
+        } else if (clickedFeature.geometry.type == 'Point') {
             showRevGeoResponses([
                 await reverseGeocode({
-                    position: feature.geometry.coordinates,
-                    number: String(feature.properties.number),
+                    position: clickedFeature.geometry.coordinates,
+                    number: String(clickedFeature.properties.number),
                 }),
             ]);
         } else {
