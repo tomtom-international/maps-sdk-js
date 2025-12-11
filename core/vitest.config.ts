@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type ViteUserConfig } from 'vitest/config';
 import commonVitestConfig from '../shared-configs/vitest.config';
 
 /// <reference types="vitest" />
 export default defineConfig({
-    ...commonVitestConfig,
+    ...(commonVitestConfig as ViteUserConfig),
 });
