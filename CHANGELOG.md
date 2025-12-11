@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.36.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.36.6...v0.36.7) (2025-12-11)
+
+
+### Bug Fixes
+
+* consistency with naming map module instance variables ([639ecdd](https://github.com/tomtom-international/maps-sdk-js/commit/639ecdd6eef1fc5ba4c365d678bd24ff986c0f36))
+
 ## [0.36.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.36.5...v0.36.6) (2025-12-10)
 
 
