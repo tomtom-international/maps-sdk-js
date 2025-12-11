@@ -27,8 +27,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     const areaGeometry = await geometryData({ geometries: areaToSearch });
-    const geometry = await GeometriesModule.get(map);
-    geometry.show(invert(areaGeometry));
+    const geometryModule = await GeometriesModule.get(map);
+    geometryModule.show(invert(areaGeometry));
 
     const restaurants = await search({
         query: '',
@@ -37,7 +37,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         limit: 100,
     });
 
-    const places = await PlacesModule.get(map);
-    places.show(restaurants);
+    const placesModule = await PlacesModule.get(map);
+    placesModule.show(restaurants);
     (window as any).map = map;
 })();

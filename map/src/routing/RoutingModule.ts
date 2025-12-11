@@ -80,7 +80,7 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
  * @example
  * ```typescript
  * // Create the module
- * const routing = await RoutingModule.getInstance(map, {
+ * const routingModule = await RoutingModule.getInstance(map, {
  *   displayUnits: {
  *     distance: { type: 'metric' }
  *   }
@@ -99,7 +99,7 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
  *   }
  * });
  *
- * await routing.showRoutes(result);
+ * await routingModule.showRoutes(result);
  * ```
  *
  * @see [Routing Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/routing)
@@ -135,13 +135,13 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @example
      * Default initialization:
      * ```typescript
-     * const routing = await RoutingModule.get(map);
+     * const routingModule = await RoutingModule.get(map);
      * ```
      *
      * @example
      * With custom configuration:
      * ```typescript
-     * const routing = await RoutingModule.get(map, {
+     * const routingModule = await RoutingModule.get(map, {
      *   displayUnits: 'imperial',
      *   waypointsSource: {
      *     entryPoints: 'main-when-available'
@@ -484,13 +484,13 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @example
      * ```typescript
      * // Show multiple routes
-     * await routing.showRoutes(routes);
+     * await routingModule.showRoutes(routes);
      *
      * // User clicks alternative route
-     * await routing.selectRoute(1);
+     * await routingModule.selectRoute(1);
      *
      * // Switch back to first route
-     * await routing.selectRoute(0);
+     * await routingModule.selectRoute(0);
      * ```
      */
     async selectRoute(index: number) {

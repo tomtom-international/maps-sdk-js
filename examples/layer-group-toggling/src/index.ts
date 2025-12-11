@@ -44,10 +44,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             .querySelector(`#sdk-example-toggle-${layerGroup}`)
             ?.addEventListener('click', (ev) => module.setVisible((ev.target as HTMLInputElement).checked));
     }
-    const pois = await POIsModule.get(map);
+    const poisModule = await POIsModule.get(map);
     document
         .querySelector('#sdk-example-togglePOIs')
-        ?.addEventListener('click', (ev) => pois.setVisible((ev.target as HTMLInputElement).checked));
+        ?.addEventListener('click', (ev) => poisModule.setVisible((ev.target as HTMLInputElement).checked));
 
     const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
     for (const id of standardStyleIDs) {

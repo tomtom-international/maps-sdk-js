@@ -120,13 +120,13 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @example
      * Default initialization:
      * ```typescript
-     * const trafficFlow = await TrafficFlowModule.get(map);
+     * const trafficFlowModule = await TrafficFlowModule.get(map);
      * ```
      *
      * @example
      * Auto-add to style:
      * ```typescript
-     * const trafficFlow = await TrafficFlowModule.get(map, {
+     * const trafficFlowModule = await TrafficFlowModule.get(map, {
      *   visible: true,
      *   filters: {
      *     any: [{

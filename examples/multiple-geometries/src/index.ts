@@ -21,15 +21,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const fitBoundsOptions = { padding: 50 };
 
     const map = new TomTomMap({ container: 'sdk-map', fitBoundsOptions });
-    const geometry = await GeometriesModule.get(map);
+    const geometryModule = await GeometriesModule.get(map);
     let placeSubdivisions: Places;
 
     const updateMap = async (config: Config) => {
         placeSubdivisions = await geocode({ limit: 100, query: '', ...config.searchConfig });
         map.mapLibreMap.fitBounds(placeSubdivisions.bbox as LngLatBoundsLike, fitBoundsOptions);
         const geometries = await geometryData({ geometries: placeSubdivisions, zoom: 14 });
-        geometry.applyConfig(config.geometryConfig);
-        geometry.show(geometries);
+        geometryModule.applyConfig(config.geometryConfig);
+        geometryModule.show(geometries);
     };
 
     const listenToUIEvents = async () => {
@@ -41,7 +41,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         const options = document.querySelectorAll<HTMLInputElement>('input[type=radio][name=layerOption]');
         options.forEach((option) => {
             option.addEventListener('change', () =>
-                geometry.moveBeforeLayer(option.value as GeometryBeforeLayerConfig),
+                geometryModule.moveBeforeLayer(option.value as GeometryBeforeLayerConfig),
             );
         });
 

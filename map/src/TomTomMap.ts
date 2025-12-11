@@ -156,7 +156,7 @@ export class TomTomMap {
      * ```typescript
      * if (map.mapReady) {
      *   // Safe to initialize modules
-     *   const trafficModule = await TrafficFlowModule.get(map);
+     *   const trafficFlowModule = await TrafficFlowModule.get(map);
      * }
      * ```
      */

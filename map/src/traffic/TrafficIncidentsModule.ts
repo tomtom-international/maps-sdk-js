@@ -51,23 +51,23 @@ type TrafficIncidentsSourcesWithLayers = {
  * import { TrafficIncidentsModule } from '@tomtom-international/maps-sdk-js/map';
  *
  * // Get module (auto-add to style if needed)
- * const incidents = await TrafficIncidentsModule.get(map, {
+ * const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
  *   visible: true
  * });
  *
  * // Toggle visibility
- * incidents.setVisible(false);
- * incidents.setVisible(true);
+ * trafficIncidentsModule.setVisible(false);
+ * trafficIncidentsModule.setVisible(true);
  *
  * // Control icons separately
- * incidents.setIconsVisible(false);
+ * trafficIncidentsModule.setIconsVisible(false);
  * ```
  *
  * @example
  * Filter by incident type:
  * ```typescript
  * // Show only accidents and road closures
- * incidents.filter({
+ * trafficIncidentsModule.filter({
  *   any: [{
  *     incidentCategories: {
  *       show: 'only',
@@ -77,7 +77,7 @@ type TrafficIncidentsSourcesWithLayers = {
  * });
  *
  * // Hide construction
- * incidents.filter({
+ * trafficIncidentsModule.filter({
  *   any: [{
  *     incidentCategories: {
  *       show: 'all_except',
@@ -156,13 +156,13 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * @example
      * Default initialization:
      * ```typescript
-     * const incidents = await TrafficIncidentsModule.get(map);
+     * const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
      * ```
      *
      * @example
      * With configuration:
      * ```typescript
-     * const incidents = await TrafficIncidentsModule.get(map, {
+     * const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
      *   visible: true,
      *   icons: { visible: true },
      *   filters: {

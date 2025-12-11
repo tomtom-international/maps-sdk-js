@@ -68,24 +68,24 @@ type PoIsSourcesAndLayers = {
  * import { POIsModule } from '@tomtom-international/maps-sdk-js/map';
  *
  * // Get module
- * const pois = await POIsModule.get(map);
+ * const poisModule = await POIsModule.get(map);
  *
  * // Toggle visibility
- * pois.setVisible(false);
- * pois.setVisible(true);
+ * poisModule.setVisible(false);
+ * poisModule.setVisible(true);
  * ```
  *
  * @example
  * Filter specific categories:
  * ```typescript
  * // Show only restaurants and hotels
- * pois.filterCategories({
+ * poisModule.filterCategories({
  *   show: 'only',
  *   values: ['RESTAURANT', 'HOTEL_MOTEL']
  * });
  *
  * // Hide parking garages
- * pois.filterCategories({
+ * poisModule.filterCategories({
  *   show: 'all_except',
  *   values: ['PARKING_GARAGE', 'OPEN_PARKING_AREA']
  * });
@@ -95,7 +95,7 @@ type PoIsSourcesAndLayers = {
  * Filter using category groups:
  * ```typescript
  * // Show only food and shopping POIs
- * pois.filterCategories({
+ * poisModule.filterCategories({
  *   show: 'only',
  *   values: ['FOOD_DRINKS_GROUP', 'SHOPPING_GROUP']
  * });
@@ -142,13 +142,13 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * @example
      * Default initialization:
      * ```typescript
-     * const pois = await POIsModule.get(map);
+     * const poisModule = await POIsModule.get(map);
      * ```
      *
      * @example
      * With initial filter:
      * ```typescript
-     * const pois = await POIsModule.get(map, {
+     * const poisModule = await POIsModule.get(map, {
      *   visible: true,
      *   filters: {
      *     categories: {

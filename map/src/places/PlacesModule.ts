@@ -60,7 +60,7 @@ type PlacesSourcesAndLayers = {
  * @example
  * ```typescript
  * // Create places module with pin markers
- * const places = await PlacesModule.get(map, {
+ * const placesModule = await PlacesModule.get(map, {
  *   icon: {
  *     categoryIcons: []
  *   },
@@ -71,14 +71,14 @@ type PlacesSourcesAndLayers = {
  * });
  *
  * // Display places from search
- * await places.show(searchResults);
+ * await placesModule.show(searchResults);
  *
  * // Handle clicks
- * places.events.on('click', (feature) => {
+ * placesModule.events.on('click', (feature) => {
  *   console.log('Clicked:', feature.properties);
  * });
  *
- * places.events.on('hover', (feature) => {
+ * placesModule.events.on('hover', (feature) => {
  *   showTooltip(feature.properties.poi?.name);
  * });
  * ```
@@ -186,13 +186,13 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * ```typescript
      * // Switch to pin markers
-     * places.applyTheme('pin');
+     * placesModule.applyTheme('pin');
      *
      * // Use simple circles
-     * places.applyTheme('circle');
+     * placesModule.applyTheme('circle');
      *
      * // Match map's POI style (ideal to blend in)
-     * places.applyTheme('base-map');
+     * placesModule.applyTheme('base-map');
      * ```
      */
     applyTheme(theme: PlacesTheme): void {
@@ -211,7 +211,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      *
      * @example
      * ```typescript
-     * places.applyIconConfig({
+     * placesModule.applyIconConfig({
      *   categoryIcons: [
      *     { category: 'RESTAURANT', id: 'restaurant-icon', image: '/icons/food.png' }
      *   ]
@@ -233,12 +233,12 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * ```typescript
      * // Use function
-     * places.applyTextConfig({
+     * placesModule.applyTextConfig({
      *   field: (place) => place.properties.poi?.name || 'Unknown'
      * });
      *
      * // Use MapLibre expression
-     * places.applyTextConfig({
+     * placesModule.applyTextConfig({
      *   field: ['get', 'title'],
      *   size: 14,
      *   color: '#333'
@@ -265,7 +265,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      *
      * @example
      * ```typescript
-     * places.applyExtraFeatureProps({
+     * placesModule.applyExtraFeatureProps({
      *   category: (place) => place.properties.poi?.categories?.[0],
      *   rating: (place) => place.properties.poi?.rating || 0,
      *   isOpen: true
@@ -365,13 +365,13 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * import { search } from '@tomtom-international/maps-sdk-js/services';
      *
      * const results = await search.search({ query: 'coffee' });
-     * await places.show(results.results);
+     * await placesModule.show(results.results);
      * ```
      *
      * @example
      * Display single place:
      * ```typescript
-     * await places.show({
+     * await placesModule.show({
      *   type: 'Feature',
      *   geometry: { type: 'Point', coordinates: [4.9041, 52.3676] },
      *   properties: {
@@ -384,7 +384,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * Display multiple places:
      * ```typescript
-     * await places.show([place1, place2, place3]);
+     * await placesModule.show([place1, place2, place3]);
      * ```
      */
     async show(places: Place | Place[] | Places) {
@@ -402,7 +402,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      *
      * @example
      * ```typescript
-     * await places.clear();
+     * await placesModule.clear();
      * ```
      */
     async clear() {
@@ -421,7 +421,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * ```typescript
      * // Make first place appear clicked
-     * places.putEventState({
+     * placesModule.putEventState({
      *   index: 0,
      *   state: 'click',
      *   mode: 'put'
@@ -439,7 +439,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      *
      * @example
      * ```typescript
-     * places.cleanEventState({ index: 0 });
+     * placesModule.cleanEventState({ index: 0 });
      * ```
      */
     cleanEventState(options: CleanEventStateOptions): void {
@@ -454,10 +454,10 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * ```typescript
      * // Remove all event states
-     * places.cleanEventStates();
+     * placesModule.cleanEventStates();
      *
      * // Remove only hover states
-     * places.cleanEventStates({ states: ['hover'] });
+     * placesModule.cleanEventStates({ states: ['hover'] });
      * ```
      */
     cleanEventStates(options?: CleanEventStatesOptions) {

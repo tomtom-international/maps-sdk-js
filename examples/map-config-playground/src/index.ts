@@ -24,33 +24,35 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
 
     // Traffic Incidents and Flow
-    const incidents = await TrafficIncidentsModule.get(map);
-    const flow = await TrafficFlowModule.get(map);
+    const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
+    const trafficFlowModule = await TrafficFlowModule.get(map);
     document.querySelector('#sdk-example-toggleTraffic')?.addEventListener('click', () => {
-        incidents.setVisible(!incidents.isVisible());
-        flow.setVisible(!flow.isVisible());
+        trafficIncidentsModule.setVisible(!trafficIncidentsModule.isVisible());
+        trafficFlowModule.setVisible(!trafficFlowModule.isVisible());
     });
     document
         .querySelector('#sdk-example-toggleIncidents')
-        ?.addEventListener('click', () => incidents.setVisible(!incidents.isVisible()));
+        ?.addEventListener('click', () => trafficIncidentsModule.setVisible(!trafficIncidentsModule.isVisible()));
     document
         .querySelector('#sdk-example-toggleIncidentIcons')
-        ?.addEventListener('click', () => incidents.setIconsVisible(!incidents.anyIconLayersVisible()));
+        ?.addEventListener('click', () =>
+            trafficIncidentsModule.setIconsVisible(!trafficIncidentsModule.anyIconLayersVisible()),
+        );
     document
         .querySelector('#sdk-example-toggleFlow')
-        ?.addEventListener('click', () => flow.setVisible(!flow.isVisible()));
+        ?.addEventListener('click', () => trafficFlowModule.setVisible(!trafficFlowModule.isVisible()));
 
     // POIs
-    const pois = await POIsModule.get(map);
+    const poisModule = await POIsModule.get(map);
     document
         .querySelector('#sdk-example-togglePOIs')
-        ?.addEventListener('click', () => pois.setVisible(!pois.isVisible()));
+        ?.addEventListener('click', () => poisModule.setVisible(!poisModule.isVisible()));
 
     // Hillshade
-    const hillshade = await HillshadeModule.get(map);
+    const hillshadeModule = await HillshadeModule.get(map);
     document
         .querySelector('#sdk-example-toggleHillshade')
-        ?.addEventListener('click', () => hillshade.setVisible(!hillshade.isVisible()));
+        ?.addEventListener('click', () => hillshadeModule.setVisible(!hillshadeModule.isVisible()));
 
     // Styles selector
     const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;

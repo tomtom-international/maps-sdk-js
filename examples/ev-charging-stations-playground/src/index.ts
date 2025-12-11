@@ -85,9 +85,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     };
 
-    const mapSearchedEVStations = await PlacesModule.get(map, evStationPinConfig);
-    const selectedEVStation = await PlacesModule.get(map, evStationPinConfig);
-    const mapGeometry = await GeometriesModule.get(map);
+    const mapSearchedEVStationsModule = await PlacesModule.get(map, evStationPinConfig);
+    const selectedEVStationModule = await PlacesModule.get(map, evStationPinConfig);
+    const mapGeometryModule = await GeometriesModule.get(map);
 
     let minPowerKWMapEVStations = 50;
     let minPowerKWSearchedEVStations = 0;
@@ -183,9 +183,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         areaToSearch && map.mapLibreMap.fitBounds(areaToSearch.bbox as LngLatBoundsLike, fitBoundsOptions);
         const geometryToSearch = areaToSearch && (await geometryData({ geometries: areaToSearch }));
         if (geometryToSearch) {
-            mapGeometry.show(invert(geometryToSearch));
+            mapGeometryModule.show(invert(geometryToSearch));
         } else {
-            mapGeometry.clear();
+            mapGeometryModule.clear();
         }
 
         const places = await search({
@@ -197,22 +197,22 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             limit: 100,
         });
         // We first show the places, then fetch their EV availability and show them again:
-        mapSearchedEVStations.show(places);
-        mapSearchedEVStations.show(await buildPlacesWithEVAvailability(places));
+        mapSearchedEVStationsModule.show(places);
+        mapSearchedEVStationsModule.show(await buildPlacesWithEVAvailability(places));
     };
 
     const clear = () => {
         evBrandTextBox.value = '';
         areaTextBox.value = '';
         popUp.remove();
-        mapSearchedEVStations.clear();
-        selectedEVStation.clear();
-        mapGeometry.clear();
+        mapSearchedEVStationsModule.clear();
+        selectedEVStationModule.clear();
+        mapGeometryModule.clear();
         mapBasePOIs.setVisible(true);
     };
 
     const selectEVStation = (evStation: Place<EVChargingStationPlaceProps>) => {
-        selectedEVStation.show(evStation);
+        selectedEVStationModule.show(evStation);
         showPopup(evStation);
     };
 
@@ -221,8 +221,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         mapEVStations.events.on('click', async (evStation) =>
             selectEVStation(await buildPlaceWithEVAvailability(evStation)),
         );
-        mapSearchedEVStations.events.on('click', async (evWithAvailability) => selectEVStation(evWithAvailability));
-        popUp.on('close', () => selectedEVStation.clear());
+        mapSearchedEVStationsModule.events.on('click', async (evWithAvailability) =>
+            selectEVStation(evWithAvailability),
+        );
+        popUp.on('close', () => selectedEVStationModule.clear());
     };
 
     const listenToHTMLUserEvents = () => {

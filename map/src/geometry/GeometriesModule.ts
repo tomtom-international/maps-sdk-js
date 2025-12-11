@@ -58,10 +58,10 @@ type GeometrySourcesWithLayers = {
  * import { GeometriesModule } from '@tomtom-international/maps-sdk-js/map';
  *
  * // Initialize module
- * const geometries = await GeometriesModule.get(map);
+ * const geometriesModule = await GeometriesModule.get(map);
  *
  * // Display a polygon
- * await geometries.show({
+ * await geometriesModule.show({
  *   type: 'Feature',
  *   geometry: {
  *     type: 'Polygon',
@@ -76,7 +76,7 @@ type GeometrySourcesWithLayers = {
  * @example
  * Custom styling:
  * ```typescript
- * const geometries = await GeometriesModule.get(map, {
+ * const geometriesModule = await GeometriesModule.get(map, {
  *   colorConfig: {
  *     fillColor: '#FF5733',
  *     fillOpacity: 0.3
@@ -90,13 +90,13 @@ type GeometrySourcesWithLayers = {
  *   }
  * });
  *
- * await geometries.show(polygonFeatures);
+ * await geometriesModule.show(polygonFeatures);
  * ```
  *
  * @example
  * Multiple geometries with different colors:
  * ```typescript
- * await geometries.show({
+ * await geometriesModule.show({
  *   type: 'FeatureCollection',
  *   features: [
  *     {
@@ -116,12 +116,12 @@ type GeometrySourcesWithLayers = {
  * @example
  * Event handling:
  * ```typescript
- * geometries.events.on('click', (feature, lngLat) => {
+ * geometriesModule.events.on('click', (feature, lngLat) => {
  *   console.log('Clicked geometry:', feature.properties.title);
  *   console.log('At coordinates:', lngLat);
  * });
  *
- * geometries.events.on('hover', (feature) => {
+ * geometriesModule.events.on('hover', (feature) => {
  *   showTooltip(feature.properties.title);
  * });
  * ```
@@ -164,13 +164,13 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @example
      * Default initialization:
      * ```typescript
-     * const geometries = await GeometriesModule.get(map);
+     * const geometriesModule = await GeometriesModule.get(map);
      * ```
      *
      * @example
      * With custom styling:
      * ```typescript
-     * const geometries = await GeometriesModule.get(map, {
+     * const geometriesModule = await GeometriesModule.get(map, {
      *   colorConfig: {
      *     fillColor: 'blue',
      *     fillOpacity: 0.25
@@ -190,7 +190,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @example
      * Data-driven styling:
      * ```typescript
-     * const geometries = await GeometriesModule.get(map, {
+     * const geometriesModule = await GeometriesModule.get(map, {
      *   colorConfig: {
      *     // Color based on feature properties
      *     fillColor: [

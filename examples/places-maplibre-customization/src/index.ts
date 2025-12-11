@@ -15,7 +15,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         zoom: 12,
     });
 
-    const places = await PlacesModule.get(map, {
+    const placesModule = await PlacesModule.get(map, {
         theme: 'base-map',
         layers: {
             main: {
@@ -32,7 +32,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    places.events.on('click', () => console.log('clicked'));
+    placesModule.events.on('click', () => console.log('clicked'));
 
     // Search for restaurants in the visible area
     const updatePlaces = async () => {
@@ -42,7 +42,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             limit: 25,
         });
 
-        await places.show(results);
+        await placesModule.show(results);
     };
 
     // Initial load

@@ -17,8 +17,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         center: [2.34281, 48.85639],
         zoom: 12,
     });
-    const incidents = await TrafficIncidentsModule.get(map, { visible: true });
-    const flow = await TrafficFlowModule.get(map, { visible: true });
+    const trafficIncidentsModule = await TrafficIncidentsModule.get(map, { visible: true });
+    const trafficFlowModule = await TrafficFlowModule.get(map, { visible: true });
 
     const cachedPlacesByQuery: Record<string, Place> = {};
     const geocodeWithCache = async (query: string): Promise<Place> => {
@@ -34,8 +34,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     configPresets.forEach((preset, index) => presetSelector.add(new Option(preset.title, String(index))));
     presetSelector.addEventListener('change', (event) => {
         const config = configPresets[Number((event.target as HTMLOptionElement).value)].config;
-        incidents.applyConfig(config?.incidents);
-        flow.applyConfig(config?.flow);
+        trafficIncidentsModule.applyConfig(config?.incidents);
+        trafficFlowModule.applyConfig(config?.flow);
     });
 
     const locationsSelector = document.getElementById('sdk-example-jump-to-location-selector') as HTMLSelectElement;

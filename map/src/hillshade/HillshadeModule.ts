@@ -75,13 +75,13 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * @example
      * Default initialization:
      * ```typescript
-     * const hillshade = await HillshadeModule.get(map);
+     * const hillshadeModule = await HillshadeModule.get(map);
      * ```
      *
      * @example
      * Auto-add to style if missing:
      * ```typescript
-     * const hillshade = await HillshadeModule.get(map, {
+     * const hillshadeModule = await HillshadeModule.get(map, {
      *   visible: true
      * });
      * ```
@@ -89,7 +89,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * @example
      * Start hidden:
      * ```typescript
-     * const hillshade = await HillshadeModule.get(map, {
+     * const hillshadeModule = await HillshadeModule.get(map, {
      *   visible: false
      * });
      * ```

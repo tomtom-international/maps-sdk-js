@@ -19,22 +19,22 @@
  * **RoutingModule** - Positions route visualizations below labels for readability:
  * ```typescript
  * // Routes appear below labels but above the base map
- * const routing = await RoutingModule.get(map);
+ * const routingModule = await RoutingModule.get(map);
  * // Uses mapStyleLayerIDs.lowestLabel by default
  * ```
  *
  * **GeometriesModule** - Configurable layer positioning for polygon areas:
  * ```typescript
  * // Default: below labels
- * const geometries = await GeometriesModule.get(map);
+ * const geometriesModule = await GeometriesModule.get(map);
  *
  * // Custom: below buildings to show at ground level
- * const geometries = await GeometriesModule.get(map, {
+ * const geometriesModule = await GeometriesModule.get(map, {
  *   beforeLayerConfig: 'lowestBuilding'
  * });
  *
  * // On top of everything
- * const geometries = await GeometriesModule.get(map, {
+ * const geometriesModule = await GeometriesModule.get(map, {
  *   beforeLayerConfig: 'top'
  * });
  * ```
