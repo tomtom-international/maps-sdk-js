@@ -3,22 +3,26 @@ import { Map } from 'maplibre-gl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { TomTomMap } from '../TomTomMap';
 
-vi.mock('maplibre-gl', () => ({
-    Map: vi.fn().mockReturnValue({
-        getStyle: vi.fn().mockReturnValue({ layers: [{}] }),
-        isStyleLoaded: vi.fn().mockReturnValue(false),
-        once: vi.fn(),
-        on: vi.fn(),
-        getCanvas: vi.fn().mockReturnValue({
+vi.mock('maplibre-gl', () => {
+    class MapMock {
+        getStyle = vi.fn().mockReturnValue({ layers: [{}] });
+        once = vi.fn();
+        on = vi.fn();
+        getCanvas = vi.fn().mockReturnValue({
             style: {
                 cursor: '',
             },
+        });
+        getZoom = vi.fn();
+    }
+    return {
+        Map: vi.fn().mockImplementation(function () {
+            return new MapMock();
         }),
-        getZoom: vi.fn(),
-    }),
-    setRTLTextPlugin: vi.fn().mockResolvedValue(vi.fn()),
-    getRTLTextPluginStatus: vi.fn(),
-}));
+        setRTLTextPlugin: vi.fn().mockResolvedValue(vi.fn()),
+        getRTLTextPluginStatus: vi.fn(),
+    };
+});
 
 describe('Map initialization mocked tests', () => {
     const mockedContainer = vi.fn() as unknown as HTMLElement;
