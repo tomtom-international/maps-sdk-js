@@ -2,13 +2,13 @@
 
 Thank you for your interest in contributing to the TomTom Maps SDK for JavaScript! We welcome contributions from the community to help improve the SDK.
 
+> **📖 For detailed development guides**, see [documentation/development/](./documentation/development/)
+
 ## Table of Contents
 - [Code of Conduct](#code-of-conduct)
 - [How Can I Contribute?](#how-can-i-contribute)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
+- [Quick Start](#quick-start)
 - [Contribution Workflow](#contribution-workflow)
-- [Coding Guidelines](#coding-guidelines)
 - [Pull Request Process](#pull-request-process)
 - [License and Copyright](#license-and-copyright)
 
@@ -25,92 +25,51 @@ We welcome the following types of contributions:
 
 **Note**: Due to the proprietary nature of this SDK (see [LICENSE.txt](./LICENSE.txt)), all contributions must comply with the license terms. By contributing, you agree that your contributions will be licensed under the same terms as the project.
 
-## Getting Started
+## Quick Start
 
 1. **Fork the repository** - Create your own fork to work on
 2. **Check existing issues** - Look for issues labeled `good first issue` or `help wanted`
-3. **Ask questions** - Feel free to ask questions in issues or discussions before starting work
+3. **Set up development environment** - See [documentation/development/GETTING_STARTED.md](./documentation/development/GETTING_STARTED.md)
+4. **Read development guides**:
+   - [BUILD.md](./documentation/development/BUILD.md) - Building the SDK
+   - [TESTING.md](./documentation/development/TESTING.md) - Running tests
+   - [QUALITY.md](./documentation/development/QUALITY.md) - Code quality guidelines
 
-## Development Setup
+### Quick Setup
 
-### Prerequisites
-- Node.js (latest LTS version recommended)
-- pnpm (this project uses pnpm workspaces)
-
-### Setup Instructions
-
-1. Clone your fork:
 ```bash
 git clone https://github.com/YOUR_USERNAME/maps-sdk-js.git
 cd maps-sdk-js
-```
-
-2. Install dependencies:
-```bash
 pnpm install
+pnpm build
 ```
 
-3. Build the SDK:
-```bash
-pnpm build:sdk
-```
-
-4. Run tests:
-```bash
-pnpm test:sdk
-```
-
-5. Run examples locally:
-```bash
-pnpm build:examples
-```
-
-### Available Scripts
-- `pnpm build:sdk` - Build the SDK packages
-- `pnpm test:sdk` - Run all tests
-- `pnpm test:sdk:coverage` - Run tests with coverage
-- `pnpm lint` - Check code style
-- `pnpm lint:fix` - Fix code style issues
-- `pnpm format:fix` - Format code
-- `pnpm type-check:sdk` - Run TypeScript type checking
+For detailed setup instructions, troubleshooting, and available commands, see [documentation/development/GETTING_STARTED.md](./documentation/development/GETTING_STARTED.md).
 
 ## Contribution Workflow
 
 1. **Create a branch** from `main`:
-```bash
-git checkout -b feature/your-feature-name
-```
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
    Use prefixes: `feature/`, `fix/`, `docs/`, or `refactor/`
 
-2. **Make your changes** following our [coding guidelines](#coding-guidelines)
+2. **Make your changes** following our quality guidelines (see [QUALITY.md](./documentation/development/QUALITY.md))
 
-3. **Write or update tests** to cover your changes
+3. **Write or update tests** (see [testing.md](./documentation/development/testing.md))
 
-4. **Run tests and linting**:
-```bash
-pnpm test:sdk
-pnpm lint:fix
-pnpm format:fix
-pnpm type-check:sdk
-```
+4. **Run quality checks**:
+   ```bash
+   pnpm test
+   pnpm lint:fix
+   pnpm type-check
+   ```
 
-5. **Commit your changes** with clear, descriptive commit messages:
-```bash
-git commit -m "fix: resolve issue with route rendering"
-```
+5. **Commit your changes** with clear, descriptive commit messages
 
-6. **Push to your fork**:
-```bash
-git push origin feature/your-feature-name
-```
+6. **Push to your fork** and open a Pull Request
 
-7. **Open a Pull Request** with a clear description of your changes
-
-## Coding Guidelines
-
-### General Guidelines
-
-We follow clean code principles. Please refer to [Clean Code TypeScript](https://github.com/labs42io/clean-code-typescript) for general best practices.
+For detailed workflow information, see [documentation/development/](./documentation/development/).
 
 ## Pull Request Process
 

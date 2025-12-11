@@ -1,8 +1,8 @@
-# 🧪 Testing the SDK
+# 🧪 TESTING THE SDK
 
 This guide covers the complete testing strategy for the TomTom Maps SDK for JavaScript, including unit tests, integration tests, and end-to-end tests.
 
-## 🎯 Testing Philosophy
+## 🎯 TESTING PHILOSOPHY
 
 The SDK uses a comprehensive, multi-layered testing approach:
 
@@ -13,7 +13,7 @@ The SDK uses a comprehensive, multi-layered testing approach:
 | **E2E Tests** | Complete workflows | Playwright | Slow (minutes) | Specific |
 | **Example Tests** | Validate examples work | Playwright | Slow | Demo verification |
 
-## 🚀 Quick Start
+## 🚀 QUICK START
 
 ```shell
 # Run all SDK tests
@@ -29,7 +29,7 @@ pnpm e2e-test:sdk
 pnpm e2e-test:examples
 ```
 
-## 🚀 Test Commands
+## 🚀 TEST COMMANDS
 
 ### 🔬 SDK Testing
 
@@ -75,38 +75,14 @@ pnpm -F map test:coverage
 pnpm -F map-integration-tests test
 ```
 
-## Test Framework
+## 🧪 TEST FRAMEWORK
 
 The project uses:
 - **Vitest** - Primary testing framework for unit and integration tests
 - **Playwright** - For end-to-end browser testing
 - **Coverage reporting** - Built into Vitest for code coverage analysis
 
-## Writing Tests
-
-### Unit Tests
-
-Place unit tests next to the code they test with `.test.ts` or `.spec.ts` extension:
-
-```
-src/
-  utils/
-    math.ts
-    math.test.ts
-  components/
-    map.ts
-    map.test.ts
-```
-
-### Integration Tests
-
-Integration tests are located in the `map-integration-tests` workspace and test the complete SDK functionality in a browser environment.
-
-### Example Tests
-
-Each example application in the `examples/` directory has its own test suite to ensure examples work correctly.
-
-## Coverage Reports
+## 📋 COVERAGE REPORTS
 
 After running tests with coverage, reports are generated in each workspace's `coverage/` directory:
 
@@ -114,13 +90,13 @@ After running tests with coverage, reports are generated in each workspace's `co
 - `coverage/coverage-final.json` - JSON coverage data
 - `coverage/clover.xml` - XML coverage data for CI/CD
 
-## Test Configuration
+## ⚙️ TEST CONFIGURATION
 
 Each workspace has its own test configuration:
 - `vitest.config.ts` - Vitest configuration for unit tests
 - `playwright.config.ts` - Playwright configuration for E2E tests
 
-## ✍️ Writing Tests
+## 📝 WRITING TESTS GUIDE
 
 ### Test File Structure
 
@@ -195,7 +171,7 @@ describe('Feature with External Dependency', () => {
 });
 ```
 
-## 🎨 Test Best Practices
+## 🎨 Test best practices
 
 ### 1. Test Organization
 ```typescript
@@ -279,7 +255,7 @@ vi.mock('maplibre-gl', () => ({
 // Don't make real API calls in unit tests
 ```
 
-## 🐛 Troubleshooting Tests
+## 🐛 TROUBLESHOOTING TESTS
 
 ### Issue: Tests Fail After SDK Changes
 
@@ -342,7 +318,7 @@ ls -la map/coverage/
 NODE_OPTIONS=--max-old-space-size=4096 pnpm test:sdk
 ```
 
-## 📊 Coverage Analysis
+## 📊 COVERAGE ANALYSIS
 
 ### View Coverage Reports
 
@@ -380,7 +356,7 @@ export default {
 }
 ```
 
-## 🏃‍♂️ Running Specific Tests
+## 🏃‍♂️ RUNNING SPECIFIC TESTS
 
 ```shell
 # Run tests matching pattern
@@ -399,7 +375,7 @@ pnpm -F services test --ui
 pnpm -F map test
 ```
 
-## 🎭 Test Modes
+## 🎭 TEST MODES
 
 ### Watch Mode
 ```shell
@@ -419,7 +395,7 @@ pnpm -F core test --ui
 node --inspect-brk ./node_modules/vitest/vitest.mjs run
 ```
 
-## 📋 Pre-Commit Test Checklist
+## 📋 PRE-COMMIT TEST CHECKLIST
 
 Before committing code:
 - [ ] All tests pass: `pnpm test:sdk`
@@ -429,13 +405,13 @@ Before committing code:
 - [ ] Bug fixes have regression tests
 - [ ] Tests are well-organized and named
 
-## 🔗 Related Documentation
+## 🔗 RELATED DOCUMENTATION
 
 - **[BUILD.md](./BUILD.md)** - Building the SDK
 - **[QUALITY.md](./QUALITY.md)** - Code quality standards
 - **[CI_CD.md](./CI_CD.md)** - CI/CD testing processes
 
-## 📚 External Resources
+## 📚 EXTERNAL RESOURCES
 
 - **Vitest Documentation**: https://vitest.dev/
 - **Playwright Documentation**: https://playwright.dev/

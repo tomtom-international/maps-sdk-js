@@ -3,7 +3,8 @@
 # TomTom Maps SDK for JavaScript
 
 [**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
-[**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
+[**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview) |
+[**API Reference**](https://docs.tomtom.com/maps-sdk-js/api-reference/index.html)
 
 [![NPM Version](https://img.shields.io/npm/v/@tomtom-org/maps-sdk.svg)](https://www.npmjs.com/package/@tomtom-org/maps-sdk)
 

@@ -14,6 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "test:dist": "vitest run dist-validation.test.ts",
     "build": "vite build && pnpm test:dist",
+    "build:watch": "pnpm build --watch",
     "build:full": "pnpm type-check && pnpm build",
     "build:validate": "pnpm build && pnpm test:dist",
     "type-check": "tsc --noEmit",
