@@ -14,7 +14,6 @@
     "lodash-es": "catalog:"
   },
   "devDependencies": {
-    "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "maplibre-gl": "catalog:",

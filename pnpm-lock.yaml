@@ -220,40 +220,19 @@ importers:
       vite-plugin-singlefile:
         specifier: 'catalog:'
         version: 2.3.0(rollup@4.53.3)(vite@7.2.7(@types/node@25.0.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.15(@types/node@25.0.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/autocomplete-fuzzy-search-playground:
     dependencies:
-      '@codesandbox/sandpack-react':
-        specifier: 'catalog:'
-        version: 2.20.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      '@codesandbox/sandpack-themes':
-        specifier: 'catalog:'
-        version: 2.0.21
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      react:
-        specifier: 'catalog:'
-        version: 19.2.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.1(react@19.2.1)
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.7
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.2.3(@types/react@19.2.7)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 5.1.2(vite@7.2.7(@types/node@25.0.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       maplibre-gl:
         specifier: 'catalog:'
         version: 5.14.0
@@ -372,9 +351,6 @@ importers:
         specifier: 'catalog:'
         version: 4.17.21
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
@@ -434,9 +410,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -645,9 +618,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -760,9 +730,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -906,9 +873,6 @@ importers:
         specifier: 'catalog:'
         version: 7.3.1
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1238,9 +1202,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1328,9 +1289,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1359,9 +1317,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1424,9 +1379,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1455,9 +1407,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1486,9 +1435,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1517,9 +1463,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1579,9 +1522,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1610,9 +1550,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1641,9 +1578,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0
@@ -1787,9 +1721,6 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
-      '@types/geojson':
-        specifier: 'catalog:'
-        version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.0

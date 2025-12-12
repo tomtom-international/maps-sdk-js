@@ -6,7 +6,8 @@
   "module": "dist/examples.js",
   "types": "dist/examples.d.ts",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "catalog:",
@@ -29,7 +30,8 @@
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-singlefile": "catalog:",
-    "js-yaml":"^4.1.1"
+    "js-yaml":"^4.1.1",
+    "vitest": "catalog:"
   },
   "files": [
     "dist",
