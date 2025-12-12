@@ -3,29 +3,24 @@ import type { Point } from 'geojson';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
-import { getClickedTopFeature, getPixelCoords, initBasemap, initBasemap2, waitForMapIdle } from './util/TestUtils';
+import {
+    getClickedTopFeature,
+    getCursor,
+    getPixelCoords,
+    initBasemap,
+    initBasemap2,
+    waitForMapIdle,
+    waitForTimeout,
+} from './util/TestUtils';
 
 test.describe('Tests with user events related to Base Map', () => {
     const mapEnv = new MapTestEnv();
 
-    // Reset test variables for each test
-    test.beforeEach(async ({ page }) => {
-        await mapEnv.loadPageAndMap(
-            page,
-            { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
-            {
-                // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                eventsConfig: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
-            },
-        );
-    });
-
-    test('Events from two Base Map modules with mutually exclusive layer groups', async ({ page }) => {
-        await initBasemap(page, { layerGroupsFilter: { mode: 'include', names: ['cityLabels'] } });
-        await initBasemap2(page, { layerGroupsFilter: { mode: 'exclude', names: ['cityLabels'] } });
-        await waitForMapIdle(page);
-
-        const baseMapCityFeature = await getPixelCoords(
+    /**
+     * Helper function to get pixel coordinates of the first city label feature
+     */
+    const getCityFeaturePixelCoords = async (page: any) => {
+        return getPixelCoords(
             page,
             await page.evaluate(
                 () =>
@@ -36,6 +31,26 @@ test.describe('Tests with user events related to Base Map', () => {
                     ).coordinates,
             ),
         );
+    };
+
+    // Reset test variables for each test
+    test.beforeEach(async ({ page }) => {
+        await mapEnv.loadPageAndMap(
+            page,
+            { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
+            {
+                // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
+                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+            },
+        );
+    });
+
+    test('Events from two Base Map modules with mutually exclusive layer groups', async ({ page }) => {
+        await initBasemap(page, { layerGroupsFilter: { mode: 'include', names: ['cityLabels'] } });
+        await initBasemap2(page, { layerGroupsFilter: { mode: 'exclude', names: ['cityLabels'] } });
+        await waitForMapIdle(page);
+
+        const baseMapCityFeature = await getCityFeaturePixelCoords(page);
 
         // only first base map listens to click events for now:
         await page.evaluate(async () => {
@@ -78,6 +93,46 @@ test.describe('Tests with user events related to Base Map', () => {
         expect(
             await page.evaluate(() => ((globalThis as any)._clickedTopFeature2 as MapGeoJSONFeature)?.layer.id),
         ).not.toBe('Places - City');
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Two Base Map modules with exclusive layer groups and different cursor on hover', async ({ page }) => {
+        // Initialize first base map with cityLabels and 'grabbing' cursor on hover
+        await initBasemap(page, {
+            layerGroupsFilter: { mode: 'include', names: ['cityLabels'] },
+            events: { cursorOnHover: 'grabbing' },
+        });
+        // Initialize second base map without cityLabels and 'default' cursor on hover
+        await initBasemap2(page, {
+            layerGroupsFilter: { mode: 'exclude', names: ['cityLabels'] },
+            events: { cursorOnHover: 'cell' },
+        });
+        await waitForMapIdle(page);
+
+        // Get pixel coordinates of a city label feature
+        const baseMapCityFeature = await getCityFeaturePixelCoords(page);
+
+        // Register hover listeners for both base map modules
+        await page.evaluate(async () => {
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            mapsSdkThis.baseMap?.events.on('hover', (topFeature) => {});
+            mapsSdkThis.baseMap2?.events.on('hover', (topFeature) => {});
+        });
+
+        // Hover over the city label (belongs to first base map with 'grabbing' cursor)
+        await page.mouse.move(baseMapCityFeature.x, baseMapCityFeature.y);
+        await waitForTimeout(500); // Wait for hover delay
+
+        // Verify cursor is 'grabbing' when hovering over the city label
+        expect(await getCursor(page)).toBe('grabbing');
+
+        // Move to an area without city labels (should trigger second base map's hover)
+        await page.mouse.move(baseMapCityFeature.x + 50, baseMapCityFeature.y + 50);
+        await waitForTimeout(500); // Wait for hover delay
+
+        // Verify cursor is 'cell' when hovering over the second base map's layers
+        expect(await getCursor(page)).toBe('cell');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

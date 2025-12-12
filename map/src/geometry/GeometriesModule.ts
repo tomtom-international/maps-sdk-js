@@ -502,6 +502,6 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * ```
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.geometry);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.geometry, this.config?.events);
     }
 }

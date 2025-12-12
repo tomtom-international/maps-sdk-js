@@ -368,6 +368,10 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * ```
      */
     get events() {
-        return new EventsModule<POIsModuleFeature>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.poi);
+        return new EventsModule<POIsModuleFeature>(
+            this.tomtomMap._eventsProxy,
+            this.sourcesWithLayers.poi,
+            this.config?.events,
+        );
     }
 }

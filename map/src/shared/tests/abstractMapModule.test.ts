@@ -3,9 +3,10 @@ import { describe, expect, Mock, test, vi } from 'vitest';
 import type { TomTomMap } from '../../TomTomMap';
 import { AbstractMapModule } from '../AbstractMapModule';
 import { waitUntilMapIsReady } from '../mapUtils';
+import type { MapModuleCommonConfig } from '../types';
 
 describe('AbstractMapModule tests', () => {
-    type TestModuleConfig = {
+    type TestModuleConfig = MapModuleCommonConfig & {
         visible?: boolean;
     };
 

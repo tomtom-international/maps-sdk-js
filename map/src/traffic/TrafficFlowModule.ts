@@ -298,6 +298,6 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.trafficFlow);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.trafficFlow, this.config?.events);
     }
 }

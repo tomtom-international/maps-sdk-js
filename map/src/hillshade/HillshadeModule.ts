@@ -184,6 +184,6 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * ```
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.hillshade);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.hillshade, this.config?.events);
     }
 }

@@ -364,8 +364,8 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * ```typescript
      * import { search } from '@tomtom-international/maps-sdk-js/services';
      *
-     * const results = await search.search({ query: 'coffee' });
-     * await placesModule.show(results.results);
+     * const results = await search({ query: 'coffee' });
+     * await placesModule.show(results);
      * ```
      *
      * @example
@@ -469,6 +469,10 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule<Place<DisplayPlaceProps>>(this.eventsProxy, this.sourcesWithLayers.places);
+        return new EventsModule<Place<DisplayPlaceProps>>(
+            this.eventsProxy,
+            this.sourcesWithLayers.places,
+            this.config?.events,
+        );
     }
 }

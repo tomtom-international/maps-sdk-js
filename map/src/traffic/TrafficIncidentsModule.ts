@@ -439,6 +439,10 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.trafficIncidents);
+        return new EventsModule(
+            this.tomtomMap._eventsProxy,
+            this.sourcesWithLayers.trafficIncidents,
+            this.config?.events,
+        );
     }
 }

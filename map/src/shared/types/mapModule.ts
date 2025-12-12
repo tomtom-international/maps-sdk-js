@@ -1,5 +1,13 @@
+import type { EventHandlerConfig } from './events';
+
 /**
- * Whether a map module is based on a map style or on added GeoJSON data.
- * @ignore
+ * Contains configuration options common to all map modules.
+ *
+ * @group Shared
  */
-export type MapModuleSource = 'style' | 'geojson';
+export type MapModuleCommonConfig = {
+    /**
+     * Optional configuration for user event handling that applies to this map module only.
+     */
+    events?: EventHandlerConfig;
+};

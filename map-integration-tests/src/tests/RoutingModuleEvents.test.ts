@@ -7,6 +7,7 @@ import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getClickedTopFeature,
+    getCursor,
     getDisplayWaypoints,
     getHoveredTopFeature,
     getNumHoversAndLongHovers,
@@ -77,7 +78,7 @@ test.describe('Routing and waypoint events tests', () => {
             { bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                eventsConfig: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
             },
         );
         await initRouting(page);
@@ -285,6 +286,33 @@ test.describe('Routing and waypoint events tests', () => {
         // Now we hover far away from the waypoints:
         await page.mouse.move(waypoint0PixelCoords.x - 100, waypoint0PixelCoords.y - 100);
         await waitForEventStates(undefined, undefined, 'click');
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Routing waypoints with grabbing cursor on hover', async ({ page }) => {
+        // Initialize Routing with 'grabbing' cursor on hover for waypoints
+        await initRouting(page, { events: { cursorOnHover: 'grabbing' } });
+        await setupWaypointsHoverHandlers(page);
+        await showWaypoints(page, [waypoint0Coords, waypoint1Coords]);
+        await waitForMapIdle(page);
+        const displayWaypoints = await getDisplayWaypoints(page);
+        expect(displayWaypoints.features).toHaveLength(2);
+
+        // Hover over a waypoint and verify cursor is 'grabbing'
+        const waypoint0PixelCoords = await getPixelCoords(page, waypoint0Coords);
+        await page.mouse.move(waypoint0PixelCoords.x, waypoint0PixelCoords.y);
+        await page.waitForTimeout(500);
+
+        const cursorOnWaypoint = await getCursor(page);
+        expect(cursorOnWaypoint).toBe('grabbing');
+
+        // Move away from the waypoint
+        await page.mouse.move(waypoint0PixelCoords.x - 100, waypoint0PixelCoords.y - 100);
+        await page.waitForTimeout(500);
+
+        // Cursor should return to default
+        expect(await getCursor(page)).toBe('default');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

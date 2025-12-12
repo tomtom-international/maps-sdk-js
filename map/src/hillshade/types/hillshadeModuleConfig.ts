@@ -1,3 +1,5 @@
+import type { MapModuleCommonConfig } from '../../shared';
+
 /**
  * Configuration options for the HillshadeModule.
  *
@@ -30,7 +32,7 @@
  *
  * @group Hillshade
  */
-export type HillshadeModuleConfig = {
+export type HillshadeModuleConfig = MapModuleCommonConfig & {
     /**
      * Controls the visibility of the hillshade layers.
      *

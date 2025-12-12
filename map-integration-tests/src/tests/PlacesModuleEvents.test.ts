@@ -55,7 +55,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                eventsConfig: { longHoverDelayAfterMapMoveMS: 4500, longHoverDelayOnStillMapMS: 4000 },
+                events: { longHoverDelayAfterMapMoveMS: 4500, longHoverDelayOnStillMapMS: 4000 },
             },
         );
     });
@@ -139,13 +139,74 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    test('Click events for a place after changing map style', async ({ page }) => {
+        await initPlaces(page);
+        await setupPlacesClickHandler(page);
+        await showPlaces(page, places);
+        await waitForMapIdle(page);
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+
+        // Click on the place and assert the click works
+        const placePixelCoords = await getPixelCoords(page, firstPlacePosition);
+        await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
+        await waitForEventState(page, 'click', placesLayerIDs);
+        expect(await getNumLeftAndRightClicks(page)).toEqual([1, 0]);
+
+        // Change map style to monoLight
+        await setStyle(page, 'monoLight');
+        await waitForMapIdle(page);
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+
+        // Assert click on place still works after style change
+        const placePixelCoordsAfterStyleChange = await getPixelCoords(page, firstPlacePosition);
+        await page.mouse.click(placePixelCoordsAfterStyleChange.x, placePixelCoordsAfterStyleChange.y);
+        await waitForEventState(page, 'click', placesLayerIDs);
+        expect(await getNumLeftAndRightClicks(page)).toEqual([2, 0]);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Custom cursor on hover persists after changing map style', async ({ page }) => {
+        await initPlaces(page, { events: { cursorOnHover: 'cell' } });
+        await setupPlacesClickHandler(page);
+        await showPlaces(page, places);
+        await waitForMapIdle(page);
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+
+        // Hover on place and verify 'cell' cursor
+        const placePixelCoords = await getPixelCoords(page, firstPlacePosition);
+        await page.mouse.move(placePixelCoords.x, placePixelCoords.y);
+        await waitForTimeout(500);
+        expect(await getCursor(page)).toBe('cell');
+
+        // Move mouse away and verify cursor is default
+        await page.mouse.move(placePixelCoords.x - 100, placePixelCoords.y - 100);
+        await waitForTimeout(500);
+        expect(await getCursor(page)).toBe('default');
+
+        // Change map style to monoLight
+        await setStyle(page, 'monoLight');
+        await waitForMapIdle(page);
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+
+        // Hover on place again and verify 'cell' cursor persists
+        const placePixelCoordsAfterStyleChange = await getPixelCoords(page, firstPlacePosition);
+        await page.mouse.move(placePixelCoordsAfterStyleChange.x, placePixelCoordsAfterStyleChange.y);
+        await waitForTimeout(500);
+        expect(await getCursor(page)).toBe('cell');
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
     test('Hover events for a place shown right after changing map style', async ({ page }) => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces(page);
         await setupPlacesClickHandler(page);
         // We load the places layer IDs before changing the style, to ensure they are still relevant after the style change:
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
 
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
         await setStyle(page, 'standardDark');
 
         // We show the places after the map style has changed.
@@ -194,13 +255,13 @@ test.describe('Tests with user events related to PlacesModule', () => {
 test.describe('Events custom configuration', () => {
     const mapEnv = new MapTestEnv();
 
-    test('Custom cursor', async ({ page }) => {
+    test('Overall custom cursor', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.37313] },
             {
-                eventsConfig: {
+                events: {
                     cursorOnMap: 'help',
                     cursorOnMouseDown: 'crosshair',
                     cursorOnHover: 'wait',
@@ -233,7 +294,7 @@ test.describe('Events custom configuration', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.35313] },
-            { eventsConfig: { precisionMode: 'point' } },
+            { events: { precisionMode: 'point' } },
         );
 
         await initPlaces(page);
@@ -255,7 +316,7 @@ test.describe('Events custom configuration', () => {
         await mapEnv.loadPageAndMap(
             page,
             { zoom: 10, center: [4.89067, 52.37313] },
-            { eventsConfig: { precisionMode: 'point-then-box' } },
+            { events: { precisionMode: 'point-then-box' } },
         );
 
         await initPlaces(page);
@@ -268,6 +329,35 @@ test.describe('Events custom configuration', () => {
 
         await waitForTimeout(500);
         expect(await getCursor(page)).toBe('pointer');
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Places with grabbing cursor on hover', async ({ page }) => {
+        // Amsterdam center
+        await mapEnv.loadPageAndMap(page, { zoom: 10, center: [4.89067, 52.37313] });
+
+        await initPlaces(page, { events: { cursorOnHover: 'grabbing' } });
+        await setupPlacesHoverHandlers(page);
+        await showPlaces(page, places);
+        await waitForMapIdle(page);
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+
+        // Hover over a Place:
+        const placePosition = await getPixelCoords(page, firstPlacePosition);
+        await page.mouse.move(placePosition.x, placePosition.y);
+        await page.waitForTimeout(500);
+
+        expect(await getCursor(page)).toBe('grabbing');
+
+        // Move away from the place
+        const awayPosition = await getPixelCoords(page, [4.85, 52.34]);
+        await page.mouse.move(awayPosition.x, awayPosition.y);
+        await page.waitForTimeout(500);
+
+        // Cursor should return to default
+        expect(await getCursor(page)).toBe('default');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

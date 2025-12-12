@@ -293,7 +293,7 @@ export type StyleInput = StandardStyleID | (StandardStyle & { type: 'standard' }
  *   center: [4.9041, 52.3676],
  *   zoom: 12,
  *   style: 'standardLight',
- *   eventsConfig: {
+ *   events: {
  *     onClick: (event) => console.log('Map clicked', event)
  *   }
  * };
@@ -331,7 +331,7 @@ export type TomTomMapParams = GlobalConfig & {
      *
      * @example
      * ```typescript
-     * eventsConfig: {
+     * events: {
      *   onClick: (event) => {
      *     console.log('Clicked at', event.lngLat);
      *   },
@@ -341,7 +341,7 @@ export type TomTomMapParams = GlobalConfig & {
      * }
      * ```
      */
-    eventsConfig?: MapEventsConfig;
+    events?: MapEventsConfig;
 };
 
 /**

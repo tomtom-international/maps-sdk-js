@@ -41,13 +41,13 @@ describe('AbstractEventProxy tests', () => {
     });
 
     test('Add one event handler', () => {
-        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click');
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click', undefined);
         expect(eventsProxy.hasSourceID(sourceWithLayersMock.places.source.id)).toBe(true);
         expect(eventsProxy.hasSourceID(sourceWithLayersMock.placesStats.source.id)).toBe(false);
     });
 
     test('Check if has any handler registered', () => {
-        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click');
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click', undefined);
         expect(eventsProxy.hasSourceID(sourceWithLayersMock.places.source.id)).toBe(true);
 
         eventsProxy.removeAll();
@@ -55,27 +55,27 @@ describe('AbstractEventProxy tests', () => {
     });
 
     test('Remove event handler', () => {
-        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click');
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click', undefined);
         eventsProxy.remove(sourceWithLayersMock.places, 'click');
         expect(eventsProxy.hasSourceID(sourceWithLayersMock.places.source.id)).toBe(false);
     });
 
     test('Remove all event handlers', () => {
-        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click');
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click', undefined);
         eventsProxy.removeAll();
         expect(eventsProxy.hasSourceID(sourceWithLayersMock.places.source.id)).toBe(false);
     });
 
     test('Update sources with layers', () => {
-        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click');
+        eventsProxy.addEventHandler(sourceWithLayersMock.places, () => 'test', 'click', undefined);
 
         // Happy flow: updating with sourceWithLayers of same source ID:
         eventsProxy.updateIfRegistered(sourceWithLayersMock2);
 
         // updating while not registered yet:
         eventsProxy.updateIfRegistered(sourceWithLayersMock3);
-        eventsProxy.addEventHandler(sourceWithLayersMock3.otherThings, () => 'test', 'click');
+        eventsProxy.addEventHandler(sourceWithLayersMock3.otherThings, () => 'test', 'click', undefined);
         eventsProxy.updateIfRegistered(sourceWithLayersMock);
-        eventsProxy.addEventHandler(sourceWithLayersMock.placesStats, () => 'test', 'click');
+        eventsProxy.addEventHandler(sourceWithLayersMock.placesStats, () => 'test', 'click', undefined);
     });
 });

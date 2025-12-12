@@ -39,8 +39,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const interactiveGroups = await BaseMapModule.get(map, {
         layerGroupsFilter: { mode: 'include', names: interactiveGroupNames },
     });
-    const other = await BaseMapModule.get(map, {
+    const restOfTheMap = await BaseMapModule.get(map, {
         layerGroupsFilter: { mode: 'exclude', names: [...interactiveGroupNames, 'placeLabels'] },
+        events: { cursorOnHover: 'default' },
     });
 
     const hoveredSource = initHoveredSourceAndLayers(mapLibreMap);
@@ -104,14 +105,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const emptyFeatureCollection: FeatureCollection = { type: 'FeatureCollection', features: [] };
 
-    other.events.on('hover', () => {
+    restOfTheMap.events.on('hover', () => {
         if (!clickedFeature) {
             hoveredSource.setData(emptyFeatureCollection);
             setPlaceholderText();
         }
     });
 
-    other.events.on('click', () => {
+    restOfTheMap.events.on('click', () => {
         clickedFeature = undefined;
         hoveredSource.setData(emptyFeatureCollection);
         selectedSource.setData(emptyFeatureCollection);

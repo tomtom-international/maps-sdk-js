@@ -10,6 +10,7 @@ import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getClickedTopFeature,
+    getCursor,
     getGeometriesSourceAndLayerIDs,
     getPixelCoords,
     getPlacesSourceAndLayerIDs,
@@ -70,7 +71,7 @@ test.describe('Tests with user events', () => {
             { zoom: 10, center: [4.89067, 52.34313] }, // Amsterdam center
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
-                eventsConfig: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
+                events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },
             },
         );
     });
@@ -137,6 +138,35 @@ test.describe('Tests with user events', () => {
                 id: expect.anything(),
             },
         });
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Events with Places and BaseMap modules with different event configs', async ({ page }) => {
+        await initBasemap(page, { events: { cursorOnHover: 'not-allowed' } });
+        await initPlaces(page, { events: { cursorOnHover: 'grabbing' } });
+        await setupPlacesClickHandler(page);
+        await setupBasemapClickHandler(page);
+
+        await showPlaces(page, places);
+        await waitForMapIdle(page);
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+
+        // Hover over a Place and verify cursor is 'grabbing'
+        const placePosition = await getPixelCoords(page, firstPlacePosition);
+        await page.mouse.move(placePosition.x, placePosition.y);
+        await page.waitForTimeout(500); // Small delay to ensure hover is registered
+
+        expect(await getCursor(page)).toBe('grabbing');
+
+        // Move to a BaseMap area (away from places) and verify cursor is 'not-allowed'
+        // Use a position slightly offset from the place
+        const baseMapPosition = await getPixelCoords(page, [4.85, 52.34]);
+        await page.mouse.move(baseMapPosition.x, baseMapPosition.y);
+        await page.waitForTimeout(500); // Small delay to ensure hover is registered
+
+        expect(await getCursor(page)).toBe('not-allowed');
+
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

@@ -339,6 +339,6 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
      * ```
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.vectorTiles);
+        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.vectorTiles, this.config?.events);
     }
 }

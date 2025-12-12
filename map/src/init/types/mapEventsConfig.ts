@@ -1,3 +1,5 @@
+import type { CSSCursor, EventHandlerCursorConfig } from '../../shared';
+
 /**
  * Configuration options for map user event handling.
  *
@@ -32,9 +34,59 @@
  * };
  * ```
  *
- * @group Map
+ * @group User Events
  */
-export type MapEventsConfig = {
+export type MapEventsConfig = EventHandlerCursorConfig & {
+    /**
+     * Optional configuration to show custom cursor when clicking (mouse down).
+     *
+     * @remarks
+     * Accepts any valid CSS cursor value. Provides visual feedback during the
+     * click action.
+     *
+     * @default 'grabbing'
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor | MDN cursor documentation}
+     *
+     * @example
+     * ```typescript
+     * // Grabbing hand
+     * cursorOnMouseDown: 'grabbing'
+     *
+     * // Move cursor
+     * cursorOnMouseDown: 'move'
+     *
+     * // Custom cursor
+     * cursorOnMouseDown: 'url(/cursors/drag.png), grabbing'
+     * ```
+     */
+    cursorOnMouseDown?: CSSCursor;
+
+    /**
+     * Optional configuration to show custom cursor on the map canvas when not interacting with any handled features.
+     *
+     * @remarks
+     * Accepts any valid CSS cursor value. This is the default cursor shown
+     * when not interacting with any features.
+     *
+     * @default 'default'
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor | MDN cursor documentation}
+     *
+     * @example
+     * ```typescript
+     * // Standard arrow
+     * cursorOnMap: 'default'
+     *
+     * // Open hand for draggable map
+     * cursorOnMap: 'grab'
+     *
+     * // Crosshair for measurement tools
+     * cursorOnMap: 'crosshair'
+     * ```
+     */
+    cursorOnMap?: CSSCursor;
+
     /**
      * Defines the event coordinates precision mode.
      *
@@ -91,83 +143,6 @@ export type MapEventsConfig = {
      * ```
      */
     paddingBoxPx?: number;
-
-    /**
-     * Optional configuration to show custom cursor when hovering over interactive features.
-     *
-     * @remarks
-     * Accepts any valid CSS cursor value.
-     *
-     * @default 'pointer'
-     *
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor | MDN cursor documentation}
-     *
-     * @example
-     * ```typescript
-     * // Default pointer
-     * cursorOnHover: 'pointer'
-     *
-     * // Crosshair for precise selection
-     * cursorOnHover: 'crosshair'
-     *
-     * // Help cursor for info bubbles
-     * cursorOnHover: 'help'
-     *
-     * // Custom cursor image
-     * cursorOnHover: 'url(/cursors/custom.png), pointer'
-     * ```
-     */
-    cursorOnHover?: string;
-
-    /**
-     * Optional configuration to show custom cursor when clicking (mouse down).
-     *
-     * @remarks
-     * Accepts any valid CSS cursor value. Provides visual feedback during the
-     * click action.
-     *
-     * @default 'grabbing'
-     *
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor | MDN cursor documentation}
-     *
-     * @example
-     * ```typescript
-     * // Grabbing hand
-     * cursorOnMouseDown: 'grabbing'
-     *
-     * // Move cursor
-     * cursorOnMouseDown: 'move'
-     *
-     * // Custom cursor
-     * cursorOnMouseDown: 'url(/cursors/drag.png), grabbing'
-     * ```
-     */
-    cursorOnMouseDown?: string;
-
-    /**
-     * Optional configuration to show custom cursor on the map canvas.
-     *
-     * @remarks
-     * Accepts any valid CSS cursor value. This is the default cursor shown
-     * when not interacting with any features.
-     *
-     * @default 'default'
-     *
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor | MDN cursor documentation}
-     *
-     * @example
-     * ```typescript
-     * // Standard arrow
-     * cursorOnMap: 'default'
-     *
-     * // Open hand for draggable map
-     * cursorOnMap: 'grab'
-     *
-     * // Crosshair for measurement tools
-     * cursorOnMap: 'crosshair'
-     * ```
-     */
-    cursorOnMap?: string;
 
     /**
      * Delay to trigger a long-hover event when map has just moved (milliseconds).

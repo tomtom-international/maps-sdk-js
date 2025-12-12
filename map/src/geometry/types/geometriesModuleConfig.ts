@@ -1,5 +1,5 @@
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
-import type { MapStyleLayerID } from '../../shared';
+import type { MapModuleCommonConfig, MapStyleLayerID } from '../../shared';
 import type { ColorPaletteOptions } from '../layers/geometryLayers';
 
 /**
@@ -265,7 +265,7 @@ export type GeometryBeforeLayerConfig = 'top' | MapStyleLayerID;
  *
  * @group Geometries
  */
-export type GeometriesModuleConfig = {
+export type GeometriesModuleConfig = MapModuleCommonConfig & {
     /**
      * Fill color and opacity configuration.
      *

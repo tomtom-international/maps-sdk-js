@@ -7,6 +7,7 @@ import type {
 import type {
     CustomImage,
     HasAdditionalLayersConfig,
+    MapModuleCommonConfig,
     SVGIconStyleOptions,
     ToBeAddedLayerSpecTemplate,
 } from '../../shared';
@@ -497,7 +498,7 @@ export type RouteTheme = {
  *
  * @group Routing
  */
-export type RoutingModuleConfig = {
+export type RoutingModuleConfig = MapModuleCommonConfig & {
     /**
      * Units for displaying distances in route summaries and instructions.
      *

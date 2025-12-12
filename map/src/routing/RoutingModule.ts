@@ -352,7 +352,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     /**
      * @ignore
      */
-    protected async restoreDataAndConfigImpl() {
+    protected restoreDataAndConfigImpl() {
         const previouslyShown = Object.entries(this.sourcesWithLayers)
             .map((entry) => ({
                 [entry[0]]: entry[1].shownFeatures,
@@ -541,33 +541,52 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             mainLines: new EventsModule<Route<DisplayRouteProps>>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.mainLines,
+                this.config?.events,
             ),
             waypoints: new EventsModule<Waypoint<WaypointDisplayProps>>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.waypoints,
+                this.config?.events,
             ),
             chargingStops: new EventsModule<RouteSection>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.chargingStops,
+                this.config?.events,
             ),
             summaryBubbles: new EventsModule<DisplayRouteSummary>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.summaryBubbles,
+                this.config?.events,
             ),
             incidents: new EventsModule<RouteSections<DisplayTrafficSectionProps>>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.incidents,
+                this.config?.events,
             ),
             vehicleRestricted: new EventsModule<RouteSection>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.vehicleRestricted,
+                this.config?.events,
             ),
-            ferries: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.ferries),
-            tollRoads: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.tollRoads),
-            tunnels: new EventsModule<RouteSection>(this.tomtomMap._eventsProxy, this.sourcesWithLayers.tunnels),
+            ferries: new EventsModule<RouteSection>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.ferries,
+                this.config?.events,
+            ),
+            tollRoads: new EventsModule<RouteSection>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.tollRoads,
+                this.config?.events,
+            ),
+            tunnels: new EventsModule<RouteSection>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.tunnels,
+                this.config?.events,
+            ),
             instructionLines: new EventsModule<DisplayInstruction>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.instructionLines,
+                this.config?.events,
             ),
         };
     }

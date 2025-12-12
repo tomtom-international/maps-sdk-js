@@ -359,3 +359,87 @@ export type UserEventHandler<T> = (
     allEventFeatures: MapGeoJSONFeature[],
     sourceWithLayers: SourceWithLayers,
 ) => void;
+
+/**
+ * Allowed CSS cursor styles for map interactions.
+ *
+ * @group User Events
+ */
+export type CSSCursor =
+    | 'alias'
+    | 'all-scroll'
+    | 'auto'
+    | 'cell'
+    | 'context-menu'
+    | 'col-resize'
+    | 'copy'
+    | 'crosshair'
+    | 'default'
+    | 'e-resize'
+    | 'ew-resize'
+    | 'grab'
+    | 'grabbing'
+    | 'help'
+    | 'move'
+    | 'n-resize'
+    | 'ne-resize'
+    | 'nesw-resize'
+    | 'ns-resize'
+    | 'nw-resize'
+    | 'nwse-resize'
+    | 'no-drop'
+    | 'none'
+    | 'not-allowed'
+    | 'pointer'
+    | 'progress'
+    | 'row-resize'
+    | 's-resize'
+    | 'se-resize'
+    | 'sw-resize'
+    | 'text'
+    | 'vertical-text'
+    | 'w-resize'
+    | 'wait'
+    | 'zoom-in'
+    | 'zoom-out';
+
+/**
+ * Event configuration options related to how the cursor appears during interactions.
+ *
+ * @group User Events
+ */
+export type EventHandlerCursorConfig = {
+    /**
+     * Optional configuration to show custom cursor when hovering over interactive features.
+     *
+     * @remarks
+     * Accepts any valid CSS cursor value.
+     *
+     * @default 'pointer'
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor | MDN cursor documentation}
+     *
+     * @example
+     * ```typescript
+     * // Default pointer
+     * cursorOnHover: 'pointer'
+     *
+     * // Crosshair for precise selection
+     * cursorOnHover: 'crosshair'
+     *
+     * // Help cursor for info bubbles
+     * cursorOnHover: 'help'
+     *
+     * // Custom cursor image
+     * cursorOnHover: 'url(/cursors/custom.png), pointer'
+     * ```
+     */
+    cursorOnHover?: CSSCursor;
+};
+
+/**
+ * Optional events configuration for a map module.
+ *
+ * @group User Events
+ */
+export type EventHandlerConfig = EventHandlerCursorConfig;

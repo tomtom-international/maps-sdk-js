@@ -5,6 +5,7 @@ import type {
     CustomImage,
     HasAdditionalLayersConfig,
     MapFont,
+    MapModuleCommonConfig,
     SVGIconStyleOptions,
     ToBeAddedLayerSpecTemplate,
 } from '../../shared';
@@ -368,7 +369,7 @@ export type PlaceLayerName = keyof PlaceLayersConfig;
  *
  * @group Places
  */
-export type PlacesModuleConfig = {
+export type PlacesModuleConfig = MapModuleCommonConfig & {
     /**
      * Base style for all places.
      *

@@ -1,10 +1,15 @@
 import { isEmpty, remove } from 'lodash-es';
 import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
-import type { EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from './types';
+import type { EventHandlerConfig, EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from './types';
 
 // TODO: add support for multiple handlers per source, layers, and event type?
 //  ... (this means multiple handlers for the same module, or repeated "on" calls for the same module)
-type SourceEventTypeHandler = { sourceWithLayers: SourceWithLayers; layerIDs: string[]; fn: UserEventHandler<any> };
+type SourceEventTypeHandler = {
+    sourceWithLayers: SourceWithLayers;
+    layerIDs: string[];
+    fn: UserEventHandler<any>;
+    config?: EventHandlerConfig;
+};
 
 type SourceEventHandlers = Partial<Record<EventType, SourceEventTypeHandler[]>>;
 
@@ -61,11 +66,13 @@ export abstract class AbstractEventProxy {
      * @param sourceWithLayers The sources and layers to added.
      * @param handlerFn Function that will handle the event.
      * @param type Type of event to listen to.
+     * @param config Optional configuration for the event handler.
      */
     addEventHandler<T = MapGeoJSONFeature>(
         sourceWithLayers: SourceWithLayers,
         handlerFn: UserEventHandler<T>,
         type: EventType,
+        config: EventHandlerConfig | undefined,
     ) {
         this.ensureInteractiveLayerIDsAdded(sourceWithLayers);
         const sourceId = sourceWithLayers.source.id;
@@ -79,6 +86,7 @@ export abstract class AbstractEventProxy {
             sourceWithLayers,
             layerIDs: sourceWithLayers._layerSpecs.map((layer) => layer.id),
             fn: handlerFn,
+            config,
         });
     }
 

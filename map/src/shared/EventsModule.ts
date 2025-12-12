@@ -1,6 +1,6 @@
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { EventsProxy } from './EventsProxy';
-import type { EventType, SourceWithLayers, UserEventHandler } from './types';
+import type { EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler } from './types';
 
 /**
  * Event handling interface for map features.
@@ -99,6 +99,7 @@ export class EventsModule<T = MapGeoJSONFeature> {
     constructor(
         private readonly eventProxy: EventsProxy,
         private readonly sourceWithLayers: SourceWithLayers,
+        private readonly config: EventHandlerConfig | undefined,
     ) {}
 
     /**
@@ -174,7 +175,7 @@ export class EventsModule<T = MapGeoJSONFeature> {
      * ```
      */
     on(type: EventType, handler: UserEventHandler<T>) {
-        this.eventProxy.addEventHandler(this.sourceWithLayers, handler, type);
+        this.eventProxy.addEventHandler(this.sourceWithLayers, handler, type, this.config);
     }
 
     /**

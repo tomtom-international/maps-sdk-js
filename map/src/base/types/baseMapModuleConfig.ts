@@ -1,3 +1,5 @@
+import type { MapModuleCommonConfig } from '../../shared';
+
 /**
  * Available base map layer group identifiers.
  *
@@ -199,7 +201,7 @@ export type BaseMapLayerGroups = {
  *
  * @group Base Map
  */
-export type BaseMapModuleConfig = {
+export type BaseMapModuleConfig = MapModuleCommonConfig & {
     /**
      * Controls the visibility of all layers associated with this module.
      *

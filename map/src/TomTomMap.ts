@@ -128,7 +128,7 @@ export type StyleChangeHandler = {
  *       include: ['trafficFlow', 'trafficIncidents']
  *     },
  *     language: 'en-US',
- *     eventsConfig: {
+ *     events: {
  *       precisionMode: 'point-then-box',
  *       cursorOnHover: 'pointer'
  *     }
@@ -268,7 +268,7 @@ export class TomTomMap {
      *       include: ['trafficFlow', 'hillshade']
      *     },
      *     language: 'en-US',
-     *     eventsConfig: {
+     *     events: {
      *       precisionMode: 'point-then-box',
      *       paddingBoxPx: 10
      *     }
@@ -294,7 +294,7 @@ export class TomTomMap {
         this.mapLibreMap.once('styledata', () => {
             this.handleStyleData(false);
         });
-        this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.eventsConfig);
+        this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.events);
 
         this.loadRTLTextPlugin();
     }

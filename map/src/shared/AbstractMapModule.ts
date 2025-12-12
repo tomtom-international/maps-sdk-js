@@ -2,8 +2,12 @@ import type { Map } from 'maplibre-gl';
 import type { TomTomMap } from '../TomTomMap';
 import type { EventsProxy } from './EventsProxy';
 import { waitUntilMapIsReady } from './mapUtils';
-import type { SourcesWithLayers, SourceWithLayerIDs } from './types';
-import type { MapModuleSource } from './types/mapModule';
+import type { MapModuleCommonConfig, SourcesWithLayers, SourceWithLayerIDs } from './types';
+
+/**
+ * Whether a map module is based on a map style or on added GeoJSON data.
+ */
+type MapModuleSource = 'style' | 'geojson';
 
 /**
  * Base class for all Maps SDK map modules.
@@ -18,7 +22,7 @@ import type { MapModuleSource } from './types/mapModule';
  * handling map style changes by restoring the module's state when needed.
  *
  * @typeParam SOURCES_WITH_LAYERS - The type defining the sources and layers used by this module
- * @typeParam CFG - The configuration type for this module, or undefined if no configuration is needed
+ * @typeParam CFG - The configuration type for this module, or undefined if no configuration is needed. When defined, must extend MapModuleBaseConfig.
  *
  * @example
  * ```typescript
@@ -32,7 +36,10 @@ import type { MapModuleSource } from './types/mapModule';
  *
  * @group Shared
  */
-export abstract class AbstractMapModule<SOURCES_WITH_LAYERS extends SourcesWithLayers, CFG = undefined> {
+export abstract class AbstractMapModule<
+    SOURCES_WITH_LAYERS extends SourcesWithLayers,
+    CFG extends MapModuleCommonConfig | undefined = undefined,
+> {
     private readonly sourceType: MapModuleSource;
     /**
      * @ignore

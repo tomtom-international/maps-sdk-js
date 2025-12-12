@@ -3,7 +3,7 @@ import type { MapEventsConfig } from '../init';
 import { AbstractEventProxy } from './AbstractEventProxy';
 import { detectHoverState, updateEventState } from './eventUtils';
 import { deserializeFeatures } from './mapUtils';
-import type { ClickEventType, SourceWithLayers } from './types';
+import type { ClickEventType, EventHandlerConfig, SourceWithLayers } from './types';
 
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
@@ -43,7 +43,6 @@ export class EventsProxy extends AbstractEventProxy {
     private lastCursorStyle: string;
     // Configuration
     private readonly config: Required<MapEventsConfig>;
-    private readonly defaultZoomLevel: number;
 
     constructor(map: Map, config: MapEventsConfig = {}) {
         super();
@@ -52,7 +51,6 @@ export class EventsProxy extends AbstractEventProxy {
         this.config = { ...eventsProxyDefaultConfig, ...config };
         this.mapCanvas.style.cursor = this.config.cursorOnMap;
         this.lastCursorStyle = this.config.cursorOnMap;
-        this.defaultZoomLevel = Math.round(this.map.getZoom());
         this.listenToEvents();
     }
 
@@ -95,14 +93,14 @@ export class EventsProxy extends AbstractEventProxy {
         }
         const options = { layers: this.interactiveLayerIDs, validate: false };
         const precision = this.config.precisionMode;
-        // first attempt right in the given coordinates:
+        // first optional attempt right in the given coordinates:
         const renderedFeatures =
             precision === 'point-then-box' || precision === 'point'
                 ? this.map.queryRenderedFeatures(point as PointLike, options)
                 : [];
         return renderedFeatures.length || precision === 'point'
             ? renderedFeatures
-            : // second attempt using padded bounds (trying to hit something slightly further from the pointer location)
+            : // second attempt using 'box' = padded bounds (trying to hit something slightly further from the pointer location)
               this.map.queryRenderedFeatures(this.toPaddedBounds(point), options);
     }
 
@@ -201,17 +199,17 @@ export class EventsProxy extends AbstractEventProxy {
             // Hovering basic event states are still processed if any other handlers are registered for that source/layers.
             // We do so because basic hovering states indicate a feature is interactive.
             // (e.g. if there's a click handler, we'll still apply basic hover states, even if we don't fire hover events)
-            const allHandlers = this.findHandlers(
+            const firstHandler = this.findHandlers(
                 ['hover', 'long-hover', 'click', 'contextmenu'],
                 hoveredTopFeature?.source,
                 hoveredTopFeature?.layer.id,
-            );
+            )?.[0];
 
             // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
-            this.hoveringSourceWithLayers = allHandlers?.[0]?.sourceWithLayers;
+            this.hoveringSourceWithLayers = firstHandler?.sourceWithLayers;
 
             if (hoverChanged) {
-                this.updateCursor(prevHoveredFeature);
+                this.updateHoverCursor(firstHandler?.config);
 
                 const eventState = updateEventState(
                     'hover',
@@ -236,12 +234,10 @@ export class EventsProxy extends AbstractEventProxy {
         }
     }
 
-    private updateCursor(prevHoveredFeature: MapGeoJSONFeature | undefined) {
-        if (!prevHoveredFeature && this.hoveringFeature) {
-            // no hover -> hover
-            this.mapCanvas.style.cursor = this.config.cursorOnHover;
-        } else if (prevHoveredFeature && !this.hoveringFeature) {
-            // hover -> no hover (un-hover)
+    private updateHoverCursor(config: EventHandlerConfig | undefined) {
+        if (this.hoveringFeature) {
+            this.mapCanvas.style.cursor = config?.cursorOnHover ?? this.config.cursorOnHover;
+        } else {
             this.mapCanvas.style.cursor = this.config.cursorOnMap;
         }
     }
