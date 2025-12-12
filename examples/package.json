@@ -7,7 +7,7 @@
   "types": "dist/examples.d.ts",
   "scripts": {
     "build": "vite build",
-    "test:run": "vitest run"
+    "test": "vitest run"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "catalog:",
