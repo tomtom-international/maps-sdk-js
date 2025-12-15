@@ -14,11 +14,11 @@ import type { CalculateRouteParams } from './types/calculateRouteParams';
 const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);
 const pathLikeSchema = z.union([lineStringCoordsSchema, featureSchema]);
 
-const calculateRouteRequestSchemaMandatory = z.object({
-    locations: z.array(z.union([waypointLikeSchema, pathLikeSchema])).check(z.minLength(1)),
+const mandatorySchema = z.object({
+    locations: z.array(z.union([waypointLikeSchema, pathLikeSchema])).check(z.minLength(1)), // see calculateRouteLocationsRefinement
 });
 
-const calculateRouteRequestSchemaOptional = z.partial(
+const optionalSchema = z.partial(
     z.object({
         computeAdditionalTravelTimeFor: z.enum(['none', 'all']),
         vehicleHeading: z.number().check(z.minimum(0), z.maximum(359.5)),
@@ -29,18 +29,15 @@ const calculateRouteRequestSchemaOptional = z.partial(
     }),
 );
 
-const calculateRouteRequestSchema = z.extend(
-    commonRoutingRequestSchema,
-    z.extend(calculateRouteRequestSchemaMandatory, calculateRouteRequestSchemaOptional.shape).shape,
-);
+const schema = z.extend(commonRoutingRequestSchema, z.extend(mandatorySchema, optionalSchema.shape).shape);
 
-const calculateRoutelocationsRefinement: SchemaRefinement<CalculateRouteParams> = {
+const locationsRefinement: SchemaRefinement<CalculateRouteParams> = {
     check: (data: CalculateRouteParams): boolean => {
         const routePlanningLocationTypes = data.locations.map(getRoutePlanningLocationType);
         if (!routePlanningLocationTypes.includes('path')) {
             return data.locations.length >= 2;
         }
-        return true;
+        return true; // see calculateRouteRequestSchemaMandatory
     },
     message:
         'When passing waypoints only: at least 2 must be defined. ' +
@@ -50,7 +47,4 @@ const calculateRoutelocationsRefinement: SchemaRefinement<CalculateRouteParams> 
 /**
  * @ignore
  */
-export const routeRequestValidationConfig = {
-    schema: calculateRouteRequestSchema,
-    refinements: [calculateRoutelocationsRefinement],
-};
+export const routeRequestValidationConfig = { schema, refinements: [locationsRefinement] };
