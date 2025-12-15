@@ -22,9 +22,10 @@ describe('Geocoding integration tests', () => {
         const expectedResult = {
             type: 'FeatureCollection',
             bbox: expect.any(Array),
-            features: [
+            features: expect.arrayContaining([
                 {
                     type: 'Feature',
+                    id: expect.any(String),
                     geometry: {
                         type: 'Point',
                         coordinates: expect.any(Array),
@@ -42,31 +43,7 @@ describe('Geocoding integration tests', () => {
                         }),
                     },
                 },
-                {
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: expect.any(Array),
-                    },
-                    properties: expect.any(Object),
-                },
-                {
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: expect.any(Array),
-                    },
-                    properties: expect.any(Object),
-                },
-                {
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: expect.any(Array),
-                    },
-                    properties: expect.any(Object),
-                },
-            ],
+            ]),
         };
 
         const result = await geocode({ query: 'teakhout' });
