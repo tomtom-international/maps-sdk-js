@@ -1,7 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocodeOne } from '@tomtom-org/maps-sdk/services';
-import type { LngLatLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -13,7 +12,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const map = new TomTomMap({
         container: 'sdk-map',
-        center: location.geometry.coordinates as LngLatLike,
+        center: location.geometry.coordinates as [number, number],
         zoom: 17,
     });
 

@@ -14,7 +14,7 @@ import type { SourceWithLayers } from './mapsSDKLayerSpecs';
  * const rightClick: ClickEventType = 'contextmenu';
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type ClickEventType = 'click' | 'contextmenu';
 
@@ -34,7 +34,7 @@ export type ClickEventType = 'click' | 'contextmenu';
  * const sustainedHover: HoverEventType = 'long-hover';
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type HoverEventType = 'hover' | 'long-hover';
 
@@ -51,13 +51,13 @@ export type HoverEventType = 'hover' | 'long-hover';
  * const hoverEvent: EventType = 'long-hover';
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type EventType = ClickEventType | HoverEventType;
 
 /**
  * Parameters to identify a feature by its ID or index in a given features array.
- * @group User Events
+ * @group User Interaction Events
  */
 export type ByIdOrIndex =
     | {
@@ -110,7 +110,7 @@ export type ByIdOrIndex =
  * };
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type PutEventStateOptions = ByIdOrIndex & {
     /**
@@ -183,7 +183,7 @@ export type PutEventStateOptions = ByIdOrIndex & {
  * };
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type CleanEventStateOptions = ByIdOrIndex & {
     /**
@@ -221,7 +221,7 @@ export type CleanEventStateOptions = ByIdOrIndex & {
  * };
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type CleanEventStatesOptions = {
     /**
@@ -282,7 +282,7 @@ export type CleanEventStatesOptions = {
  * const normalProps: SupportsEvents = {};
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type SupportsEvents = {
     /**
@@ -351,7 +351,7 @@ export type SupportsEvents = {
  *
  * @see {@link EventsModule.on} - For registering event handlers
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type UserEventHandler<T> = (
     topFeature: T,
@@ -363,7 +363,7 @@ export type UserEventHandler<T> = (
 /**
  * Allowed CSS cursor styles for map interactions.
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type CSSCursor =
     | 'alias'
@@ -406,7 +406,7 @@ export type CSSCursor =
 /**
  * Event configuration options related to how the cursor appears during interactions.
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type EventHandlerCursorConfig = {
     /**
@@ -440,6 +440,6 @@ export type EventHandlerCursorConfig = {
 /**
  * Optional events configuration for a map module.
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type EventHandlerConfig = EventHandlerCursorConfig;

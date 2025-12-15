@@ -1,10 +1,10 @@
 import {
-    ChargingParkWithAvailability,
-    ConnectorAvailability,
-    EVChargingStationPlaceProps,
+    type ChargingParkWithAvailability,
+    type ConnectorAvailability,
+    type EVChargingStationPlaceProps,
     geographyTypes,
-    Place,
-    PolygonFeatures,
+    type Place,
+    type PolygonFeatures,
     TomTomConfig,
 } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, PlacesModuleConfig, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
@@ -16,7 +16,7 @@ import {
 } from '@tomtom-org/maps-sdk/services';
 import { bboxPolygon, difference } from '@turf/turf';
 import { isEmpty, without } from 'lodash-es';
-import { LngLatBoundsLike, LngLatLike, NavigationControl, Popup } from 'maplibre-gl';
+import { type LngLatBoundsLike, NavigationControl, Popup } from 'maplibre-gl';
 import { connectorIcons } from './connectorIcons';
 import { connectorNames } from './connectorNames';
 import genericIcon from './ic-generic-24.svg?raw';
@@ -48,9 +48,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
         },
     });
-    const mapEVStations = await PlacesModule.get(map, {
-        theme: 'base-map',
-    });
+    const mapEVStations = await PlacesModule.get(map, { theme: 'base-map' });
 
     const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): string => {
         const availability = getChargingPointAvailability(place);
@@ -134,7 +132,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
                     ${connectorsHTML(chargingPark as ChargingParkWithAvailability)}
                 `,
             )
-            .setLngLat(evStation.geometry.coordinates as LngLatLike)
+            .setLngLat(evStation.geometry.coordinates as [number, number])
             .addTo(map.mapLibreMap);
     };
 

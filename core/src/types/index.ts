@@ -1,8 +1,9 @@
 export type * from './extendedGeoJSON';
 export type * from './generic';
+export type * from './geojson';
+export type * from './getPosition';
 export type * from './headers';
 export type * from './languages';
-export type * from './lngLat';
 export * from './place/ev/chargingStation';
 export type * from './place/ev/chargingStationsAvailability';
 export * from './place/ev/connector';
@@ -14,7 +15,6 @@ export type * from './place/poi/classification';
 export type * from './place/poi/fuel';
 export type * from './place/poi/openingHours';
 export type * from './place/poi/poi';
-export type * from './polygonFeature';
 export * from './route/chargingStop';
 export type * from './route/guidance';
 export type * from './route/locations';

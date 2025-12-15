@@ -283,7 +283,7 @@ export class TomTomMap {
      * @see {@link https://maplibre.org/maplibre-gl-js-docs/api/map/ | MapLibre Map Parameters}
      * @see [Map Quickstart Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart)
      * @see [Map Styles Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/map-styles)
-     * @see [User Events Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/user-events)
+     * @see [User Interaction Events Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/user-events)
      */
     constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
         this._params = mergeFromGlobal(mapParams) as TomTomMapParams;

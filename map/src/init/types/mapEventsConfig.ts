@@ -34,7 +34,7 @@ import type { CSSCursor, EventHandlerCursorConfig } from '../../shared';
  * };
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export type MapEventsConfig = EventHandlerCursorConfig & {
     /**

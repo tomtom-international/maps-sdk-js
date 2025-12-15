@@ -38,7 +38,7 @@ import type {
  *
  * @group Shared
  */
-export type HasLngLat = Position | Point | Feature<Point>;
+export type HasLngLat = [number, number] | Position | Point | Feature<Point>;
 
 /**
  * A geographic bounding box defined by an array of four numbers.

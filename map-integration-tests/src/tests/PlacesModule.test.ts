@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { type Place } from 'core';
 import { sortBy } from 'lodash-es';
 import type { PlaceDisplayProps } from 'map';
-import type { LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
 import { DEFAULT_PLACE_ICON_ID } from '../../../map/src/shared/layers/symbolLayers';
 import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
@@ -93,7 +93,7 @@ test.describe('PlacesModule tests', () => {
             { id: 'test-place-123', iconID: '7315', title: 'Test Place' },
         ];
 
-        const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: coordinates as LngLatLike, zoom: 14 });
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: coordinates as [number, number], zoom: 14 });
         await initPlaces(page);
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(0);

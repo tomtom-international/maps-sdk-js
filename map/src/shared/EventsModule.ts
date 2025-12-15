@@ -93,7 +93,7 @@ import type { EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler 
  * });
  * ```
  *
- * @group User Events
+ * @group User Interaction Events
  */
 export class EventsModule<T = MapGeoJSONFeature> {
     constructor(

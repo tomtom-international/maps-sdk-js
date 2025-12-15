@@ -1,6 +1,6 @@
 import type { Feature, FeatureCollection, Point, Position } from 'geojson';
 import type { Anything } from '../generic';
-import type { HasLngLat } from '../polygonFeature';
+import type { HasLngLat } from '../geojson';
 import type { Route } from './route';
 
 /**

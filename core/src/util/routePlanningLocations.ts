@@ -67,30 +67,7 @@ export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Wayp
  * @param routePlanningLocation The geographic input to classify. Can be coordinates, GeoJSON geometry, or GeoJSON Feature.
  * @returns The type of the input: 'waypoint' for point locations or 'path' for line geometries.
  *
- * @example
- * ```typescript
- * // Waypoint as coordinate array
- * getRoutePlanningLocationType([4.9, 52.3]); // Returns: 'waypoint'
- *
- * // Path as array of coordinates
- * getRoutePlanningLocationType([[4.9, 52.3], [4.5, 51.9]]); // Returns: 'path'
- *
- * // Waypoint as Point Feature
- * getRoutePlanningLocationType({
- *   type: 'Feature',
- *   geometry: { type: 'Point', coordinates: [4.9, 52.3] },
- *   properties: {}
- * }); // Returns: 'waypoint'
- *
- * // Path as LineString Feature
- * getRoutePlanningLocationType({
- *   type: 'Feature',
- *   geometry: { type: 'LineString', coordinates: [[4.9, 52.3], [4.5, 51.9]] },
- *   properties: {}
- * }); // Returns: 'path'
- * ```
- *
- * @group Route
+ * @ignore
  */
 export const getRoutePlanningLocationType = (
     routePlanningLocation: RoutePlanningLocation,

@@ -100,7 +100,6 @@ examples/
 
 ### Map Basics
 - **default-map** - Basic map initialization with styles, center, and zoom
-- **map-events** - Map interaction events (click, hover)
 - **map-language** - Display maps in different languages
 - **keep-state-when-changing-style** - Maintain map state when switching styles
 
@@ -157,7 +156,9 @@ examples/
 
 ### Interactions
 - **pin-interaction** - Interactive map pins with click handlers
+- **map-events** - Map interaction events (click, hover)
 - **interactive-roads-and-numbers** - Interactive road highlighting
+- **rest-of-the-map-click** - Detect clicks outside a known feature
 
 ### Traffic
 - **traffic-flow** - Display traffic flow on roads

@@ -2,7 +2,6 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocodeOne, geometryData } from '@tomtom-org/maps-sdk/services';
 import './style.css';
-import type { LngLatLike } from 'maplibre-gl';
 import { API_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
@@ -14,7 +13,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         {
             container: 'sdk-map',
             zoom: 11,
-            center: location.geometry.coordinates as LngLatLike,
+            center: location.geometry.coordinates as [number, number],
         },
         { language: 'en-GB' },
     );
