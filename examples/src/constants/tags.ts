@@ -59,6 +59,10 @@ export const TAG_GROUPS: TagGroup[] = [
                 label: 'Geometry',
             },
             {
+                id: 'user-interaction',
+                label: 'User Interaction Events',
+            },
+            {
                 id: 'byod',
                 label: 'Bring Your Own Data',
             },
