@@ -1,0 +1,87 @@
+---
+title: Services quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.36.9"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Services bundle provides a comprehensive set of GeoJSON-based functions for accessing TomTom's location APIs. These services can be used in any JavaScript-based application, from web browsers to Node.js servers.
+
+## Setup
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+```
+
+## Available Services
+
+### Places Services
+Search, geocoding, and reverse geocoding functionality:
+
+```javascript
+import { search, geocode, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+// Search for places
+const results = await search({
+    query: 'restaurants',
+    position: [4.9041, 52.3676]
+});
+
+// Geocode address
+const location = await geocode({
+    query: 'Dam Square, Amsterdam'
+});
+
+// Reverse geocode coordinates
+const address = await reverseGeocode({
+    position: [4.9041, 52.3676]
+});
+```
+
+### Routing Services
+Route calculation and optimization:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+```
+
+## Node.js Usage
+
+The services work identically in Node.js environments:
+
+```javascript
+const { TomTomConfig } = require('@tomtom-org/maps-sdk/core');
+const { search, calculateRoute } = require('@tomtom-org/maps-sdk/services');
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY
+});
+
+const results = await search({
+    query: 'coffee shops',
+    position: [4.9041, 52.3676]
+});
+```
+
+## Next Steps
+
+- [Places Services](../services/places/quickstart.mdx) - Search, geocoding, reverse geocoding
+- [Routing Services](../services/routing/quickstart.mdx) - Route calculation and optimization
+- [Customizing Services](../services/customizing-services.mdx) - Configuration options
+
