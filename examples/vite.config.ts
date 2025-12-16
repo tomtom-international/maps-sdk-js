@@ -1,9 +1,9 @@
-import path, { basename, dirname } from 'node:path';
-import react from '@vitejs/plugin-react';
+import path from 'node:path';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import dts from 'vite-plugin-dts';
+import { sandpackTransformPlugins } from './example-sandpack-vite.config';
 
 export default defineConfig(({ mode }) => {
     return {
@@ -20,23 +20,7 @@ export default defineConfig(({ mode }) => {
             },
         },
         plugins: [
-            react(),
-            {
-                name: 'inject-example-name',
-                enforce: 'pre',
-                transform(code, id) {
-                    if (!id.endsWith('.tsx')) return;
-
-                    const parentFolder = basename(dirname(dirname(id)));
-
-                    // Replace getSandpackFiles("anything")
-                    const updated = code
-                        .replace(/getSandpackFiles\((.*?)\)/g, `getSandpackFiles("${parentFolder}")`)
-                        .replace(/getSandpackDependencies\((.*?)\)/g, `getSandpackDependencies("${parentFolder}")`);
-
-                    return { code: updated, map: null };
-                },
-            },
+            ...sandpackTransformPlugins,
             dts({
                 outDirs: 'dist',
                 include: ['index.ts', 'src/**/*'],

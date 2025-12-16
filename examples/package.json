@@ -12,7 +12,6 @@
   "dependencies": {
     "@codesandbox/sandpack-react": "catalog:",
     "@codesandbox/sandpack-themes": "catalog:",
-    "lodash-es": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
@@ -20,7 +19,6 @@
     "@microsoft/api-extractor": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
-    "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",

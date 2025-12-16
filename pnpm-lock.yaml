@@ -168,9 +168,6 @@ importers:
       '@codesandbox/sandpack-themes':
         specifier: 'catalog:'
         version: 2.0.21
-      lodash-es:
-        specifier: 'catalog:'
-        version: 4.17.21
       react:
         specifier: 'catalog:'
         version: 19.2.3
@@ -187,9 +184,6 @@ importers:
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
-      '@types/lodash-es':
-        specifier: 'catalog:'
-        version: 4.17.12
       '@types/node':
         specifier: 'catalog:'
         version: 25.0.2
