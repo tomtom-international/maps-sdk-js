@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.37.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.36.9...v0.37.0) (2025-12-16)
+
+
+### Features
+
+* improve bbox types for places and routes so they reflect 4-dimensional types ([bc80e1d](https://github.com/tomtom-international/maps-sdk-js/commit/bc80e1d0cfd4ca0c8d73dc232938f1e2b05adc15))
+* optional events configuration for each map module ([ca823b3](https://github.com/tomtom-international/maps-sdk-js/commit/ca823b367ea2fa123ec0baf3dee3b8d2ce386de4))
+
+
+### Bug Fixes
+
+* add sandpack wrapper for each example ([bbe3a7c](https://github.com/tomtom-international/maps-sdk-js/commit/bbe3a7cc1b1ce2cf34d243811ab5898bbf143e2d))
+* move sandpack local preview inside sandpack folder ([8fe88dc](https://github.com/tomtom-international/maps-sdk-js/commit/8fe88dcd4a555d0ff85f6b908c2aaf559d3542bf))
+* use release please version in tests ([28ebc9b](https://github.com/tomtom-international/maps-sdk-js/commit/28ebc9bc99e4f544ae42fc078a8f864caf50a7ff))
+* use vite to resolve dependencies and examples map ([ce5356e](https://github.com/tomtom-international/maps-sdk-js/commit/ce5356e03316c234d3f2d6beb3f911b09b415cd7))
+
 ## [0.36.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.36.8...v0.36.9) (2025-12-11)
 
 
