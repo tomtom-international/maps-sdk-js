@@ -22,7 +22,7 @@ type MapModuleSource = 'style' | 'geojson';
  * handling map style changes by restoring the module's state when needed.
  *
  * @typeParam SOURCES_WITH_LAYERS - The type defining the sources and layers used by this module
- * @typeParam CFG - The configuration type for this module, or undefined if no configuration is needed. When defined, must extend MapModuleBaseConfig.
+ * @typeParam CFG - The configuration type for this module, or undefined if no configuration is needed. When defined, must extend MapModuleCommonConfig.
  *
  * @example
  * ```typescript
