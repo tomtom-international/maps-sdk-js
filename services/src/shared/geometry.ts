@@ -1,4 +1,5 @@
-import type { BBox, Position } from 'geojson';
+import type { BBox } from '@tomtom-org/maps-sdk/core';
+import type { Position } from 'geojson';
 import type { BoundingBoxAPI, BoundingBoxTopLeftAPI, LatLonAPI } from './types/apiPlacesResponseTypes';
 
 /**

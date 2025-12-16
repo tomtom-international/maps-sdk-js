@@ -1,8 +1,5 @@
 import type { Feature, Point, Position } from 'geojson';
-import type { FeatureCollectionWithProperties } from '../extendedGeoJSON';
-import type { ChargingPark } from './ev/evPlaceProps';
-import type { PlaceDataSources } from './placeDataSources';
-import type { POI, RelatedPOI } from './poi/poi';
+import type { BBox, ChargingPark, FeatureCollectionWithProperties, PlaceDataSources, POI, RelatedPOI } from '../';
 
 /**
  * @group Place
@@ -496,13 +493,20 @@ export type SearchPlaceProps = CommonPlaceProps & {
  *
  * @group Place
  */
-export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, 'id'> & {
+export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, 'id' | 'bbox'> & {
     /**
      * Unique identifier for this place.
      *
      * Required string ID (stricter than GeoJSON Feature's optional id).
      */
     id: string;
+
+    /**
+     * Bounding box that contains the place.
+     *
+     * * Typically significant for places covering wider areas.
+     */
+    bbox?: BBox;
 };
 
 /**

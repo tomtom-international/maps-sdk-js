@@ -1,4 +1,3 @@
-export type * from './extendedGeoJSON';
 export type * from './generic';
 export type * from './geojson';
 export type * from './getPosition';

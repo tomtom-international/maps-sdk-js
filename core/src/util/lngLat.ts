@@ -123,8 +123,16 @@ export const getPositionStrict = (hasLngLat: HasLngLat, options?: GetPositionOpt
 /**
  * @ignore
  */
+export const toPointGeometry = (coordinates: Position): Point => ({
+    type: 'Point',
+    coordinates,
+});
+
+/**
+ * @ignore
+ */
 export const toPointFeature = (coordinates: Position): Feature<Point> => ({
     type: 'Feature',
-    geometry: { type: 'Point', coordinates },
+    geometry: toPointGeometry(coordinates),
     properties: {},
 });

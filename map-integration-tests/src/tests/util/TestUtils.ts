@@ -279,6 +279,7 @@ export const putGlobalConfig = async (page: Page, config: Partial<GlobalConfig>)
     }, config);
 
 export const initRouting = async (page: Page, config?: RoutingModuleConfig) =>
+    // @ts-ignore
     page.evaluate(async (inputConfig) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
         mapsSdkThis.routing = await mapsSdkThis.MapsSDK.RoutingModule.get(mapsSdkThis.tomtomMap, inputConfig);

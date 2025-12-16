@@ -1,4 +1,4 @@
-import { generateId, getPositionStrict, toPointFeature } from '@tomtom-org/maps-sdk/core';
+import { generateId, getPositionStrict, toPointGeometry } from '@tomtom-org/maps-sdk/core';
 import { apiToGeoJSONBBox, csvLatLngToPosition } from '../shared/geometry';
 import type { ReverseGeocodingResponse } from './reverseGeocoding';
 import type { ReverseGeocodingResponseAPI } from './types/apiTypes';
@@ -13,12 +13,12 @@ export const parseRevGeoResponse = (
     apiResponse: ReverseGeocodingResponseAPI,
     params: ReverseGeocodingParams,
 ): ReverseGeocodingResponse => {
-    const pointFeature = toPointFeature(getPositionStrict(params.position));
     const firstApiResult = apiResponse.addresses[0];
     const { boundingBox, sideOfStreet, offsetPosition, ...address } = firstApiResult?.address || {};
     return {
+        type: 'Feature',
         // The requested coordinates are the primary ones, and set as the GeoJSON Feature geometry:
-        ...pointFeature,
+        geometry: toPointGeometry(getPositionStrict(params.position)),
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         id: generateId(),
         ...(firstApiResult && {

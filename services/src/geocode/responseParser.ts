@@ -1,5 +1,5 @@
 import type { GeographyType, Place } from '@tomtom-org/maps-sdk/core';
-import { bboxFromGeoJSON, bboxOnlyIfWithArea, toPointFeature } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, bboxOnlyIfWithArea, toPointGeometry } from '@tomtom-org/maps-sdk/core';
 import { omit } from 'lodash-es';
 import { apiToGeoJSONBBox, latLonAPIToPosition } from '../shared/geometry';
 import type { GeocodingResponseAPI, GeocodingResultAPI } from './types/apiTypes';
@@ -9,7 +9,8 @@ const parseApiResult = (result: GeocodingResultAPI): Place<GeocodingProps> => {
     const { position, boundingBox, dist, entryPoints, addressRanges, entityType, id, ...rest } = result;
 
     return {
-        ...toPointFeature(latLonAPIToPosition(position)),
+        type: 'Feature',
+        geometry: toPointGeometry(latLonAPIToPosition(position)),
         ...(boundingBox && { bbox: apiToGeoJSONBBox(boundingBox) }),
         id,
         properties: {

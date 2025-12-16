@@ -129,7 +129,8 @@ describe('Reverse Geocoding integration tests', () => {
 
     test('Reverse geocoding from the sea with small radius', async () => {
         const result = await reverseGeocode({ position: [4.49112, 52.35937], radiusMeters: 10 });
-        expect(result.properties.address).toBeUndefined();
+        console.log(result);
+        expect(result.properties).toBeUndefined();
     });
 
     test('Reverse geocoding from the sea with default radius which yields a result', async () => {

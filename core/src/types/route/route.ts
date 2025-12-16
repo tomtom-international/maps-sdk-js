@@ -1,8 +1,5 @@
 import type { Feature, LineString } from 'geojson';
-import type { FeatureCollectionWithProperties } from '../extendedGeoJSON';
-import type { Guidance } from './guidance';
-import type { SectionsProps } from './sections';
-import type { RouteSummary } from './summary';
+import type { BBox, FeatureCollectionWithProperties, Guidance, RouteSummary, SectionsProps } from '../';
 
 /**
  * Array of all available route avoidance options.
@@ -215,13 +212,18 @@ export type RouteProps = {
  *
  * @group Route
  */
-export type Route<P extends RouteProps = RouteProps> = Omit<Feature<LineString, P>, 'id'> & {
+export type Route<P extends RouteProps = RouteProps> = Omit<Feature<LineString, P>, 'id' | 'bbox'> & {
     /**
      * Unique identifier for this route.
      *
      * Randomly generated to distinguish between multiple route alternatives.
      */
     id: string;
+
+    /**
+     * Bounding box that contains the entire route or at least its waypoints.
+     */
+    bbox?: BBox;
 };
 
 /**
@@ -252,10 +254,15 @@ export type Route<P extends RouteProps = RouteProps> = Omit<Feature<LineString, 
  */
 export type Routes<P extends RouteProps = RouteProps, FeatureCollectionProps = unknown> = Omit<
     FeatureCollectionWithProperties<LineString, P, FeatureCollectionProps>,
-    'features'
+    'features' | 'bbox'
 > & {
     /**
      * Array of route features.
      */
     features: Route<P>[];
+
+    /**
+     * Bounding box that contains all the routes or at least their waypoints.
+     */
+    bbox?: BBox;
 };
