@@ -188,6 +188,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
 
         // Change map style to monoLight
         await setStyle(page, 'monoLight');
+        await waitForTimeout(500);
         await waitForMapIdle(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
 

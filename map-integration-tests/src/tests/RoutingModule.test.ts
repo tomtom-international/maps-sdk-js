@@ -89,8 +89,8 @@ test.describe('Routing and waypoint display tests', () => {
     };
 
     // (We reparse the route because it contains Date objects):
-    const rotterdamToAmsterdamRoutes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJson));
-    const ldevrTestRoutes = JSON.parse(JSON.stringify(ldevrTestRoutesJson));
+    const rotterdamToAmsterdamRoutes: Routes = JSON.parse(JSON.stringify(rotterdamToAmsterdamRoutesJson));
+    const ldevrTestRoutes: Routes = JSON.parse(JSON.stringify(ldevrTestRoutesJson));
 
     const NUM_WAYPOINT_LAYERS = 2;
     const NUM_ROUTE_LAYERS = 5;
